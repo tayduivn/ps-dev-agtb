@@ -764,27 +764,13 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseDataMock = $this->getMockBuilder('pmse_BpmCaseData')
-                ->disableAutoload()
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
-                ->getMock();
-
-        $caseFlowHandlerMock->expects($this->at(1))
-                ->method('retrieveBean')
-                ->will($this->returnValue($caseDataMock));
-
-        $caseDataMock->expects($this->atLeastOnce())
-            ->method('save')
-            ->will($this->returnValue($caseDataMock));
-
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve_by_string_fields', 'save'))
                 ->getMock();
 
-        $caseFlowHandlerMock->expects($this->at(2))
+        $caseFlowHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->will($this->returnValue($noteMock));
 
@@ -796,7 +782,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $formActionMock->frm_action = '';
 
-        $caseFlowHandlerMock->expects($this->at(3))
+        $caseFlowHandlerMock->expects($this->at(2))
                 ->method('retrieveBean')
                 ->will($this->returnValue($formActionMock));
 
@@ -809,7 +795,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $previousFormActionMock->frm_action = '';
 
 
-        $caseFlowHandlerMock->expects($this->at(4))
+        $caseFlowHandlerMock->expects($this->at(3))
                 ->method('retrieveBean')
                 ->will($this->returnValue($previousFormActionMock));
 
@@ -824,7 +810,6 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
-        $this->assertAttributeContains(json_encode($params), "cas_data", $caseDataMock);
         $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
 
@@ -852,27 +837,13 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseDataMock = $this->getMockBuilder('pmse_BpmCaseData')
-                ->disableAutoload()
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
-                ->getMock();
-
-        $caseFlowHandlerMock->expects($this->at(1))
-                ->method('retrieveBean')
-                ->will($this->returnValue($caseDataMock));
-
-        $caseDataMock->expects($this->atLeastOnce())
-            ->method('save')
-            ->will($this->returnValue($caseDataMock));
-
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve_by_string_fields', 'save'))
                 ->getMock();
 
-        $caseFlowHandlerMock->expects($this->at(2))
+        $caseFlowHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->will($this->returnValue($noteMock));
 
@@ -884,7 +855,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $formActionMock->frm_action = '';
 
-        $caseFlowHandlerMock->expects($this->at(3))
+        $caseFlowHandlerMock->expects($this->at(2))
                 ->method('retrieveBean')
                 ->will($this->returnValue($formActionMock));
 
@@ -899,7 +870,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $previousFormActionMock->fetched_row = array('frm_action' => 'ACCEPT', 'frm_index'=>2);
 
 
-        $caseFlowHandlerMock->expects($this->at(4))
+        $caseFlowHandlerMock->expects($this->at(3))
                 ->method('retrieveBean')
                 ->will($this->returnValue($previousFormActionMock));
 
@@ -914,7 +885,6 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
-        $this->assertAttributeContains(json_encode($params), "cas_data", $caseDataMock);
         $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
 

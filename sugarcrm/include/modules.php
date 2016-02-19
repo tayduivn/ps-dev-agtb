@@ -191,7 +191,6 @@ $beanList['pmse_BpmFlow'] = 'pmse_BpmFlow';
 $beanList['pmse_BpmThread'] = 'pmse_BpmThread';
 $beanList['pmse_BpmNotes'] = 'pmse_BpmNotes';
 $beanList['pmse_BpmRelatedDependency'] = 'pmse_BpmRelatedDependency';
-$beanList['pmse_BpmCaseData'] = 'pmse_BpmCaseData';
 $beanList['pmse_BpmActivityUser'] = 'pmse_BpmActivityUser';
 $beanList['pmse_BpmEventDefinition'] = 'pmse_BpmEventDefinition';
 $beanList['pmse_BpmGatewayDefinition'] = 'pmse_BpmGatewayDefinition';
@@ -355,7 +354,6 @@ $beanFiles['pmse_BpmFlow'] = 'modules/pmse_Project/pmse_BpmFlow/pmse_BpmFlow.php
 $beanFiles['pmse_BpmThread'] = 'modules/pmse_Project/pmse_BpmThread/pmse_BpmThread.php';
 $beanFiles['pmse_BpmNotes'] = 'modules/pmse_Project/pmse_BpmNotes/pmse_BpmNotes.php';
 $beanFiles['pmse_BpmRelatedDependency'] = 'modules/pmse_Project/pmse_BpmRelatedDependency/pmse_BpmRelatedDependency.php';
-$beanFiles['pmse_BpmCaseData'] = 'modules/pmse_Project/pmse_BpmCaseData/pmse_BpmCaseData.php';
 $beanFiles['pmse_BpmActivityUser'] = 'modules/pmse_Project/pmse_BpmActivityUser/pmse_BpmActivityUser.php';
 $beanFiles['pmse_BpmEventDefinition'] = 'modules/pmse_Project/pmse_BpmEventDefinition/pmse_BpmEventDefinition.php';
 $beanFiles['pmse_BpmGatewayDefinition'] = 'modules/pmse_Project/pmse_BpmGatewayDefinition/pmse_BpmGatewayDefinition.php';
@@ -417,7 +415,6 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'pmse_BpmThread',
     'pmse_BpmNotes',
     'pmse_BpmRelatedDependency',
-    'pmse_BpmCaseData',
     'pmse_BpmActivityUser',
     'pmse_BpmEventDefinition',
     'pmse_BpmGatewayDefinition',

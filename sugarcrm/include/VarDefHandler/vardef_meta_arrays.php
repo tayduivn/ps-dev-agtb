@@ -40,7 +40,6 @@ $vardef_meta_array = array(
                 'pmse_bpmthread_link',
                 'pmse_bpmnotes_link',
                 'pmse_bpmrelateddependency_link',
-                'pmse_bpmcasedata_link',
                 'pmse_bpmactivityuser_link',
                 'pmse_bpmeventdefinition_link',
                 'pmse_bpmgatewaydefinition_link',

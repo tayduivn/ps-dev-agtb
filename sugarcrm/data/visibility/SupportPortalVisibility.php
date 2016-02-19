@@ -170,7 +170,6 @@ class SupportPortalVisibility extends SugarVisibility
             case 'pmse_Project/pmse_BpmActivityDefinition':
             case 'pmse_Project/pmse_BpmActivityStep':
             case 'pmse_Project/pmse_BpmActivityUser':
-            case 'pmse_Project/pmse_BpmCaseData':
             case 'pmse_Project/pmse_BpmDynaForm':
             case 'pmse_Project/pmse_BpmEventDefinition':
             case 'pmse_Project/pmse_BpmFlow':
