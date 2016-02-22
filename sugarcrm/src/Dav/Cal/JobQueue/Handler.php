@@ -167,6 +167,9 @@ class Handler implements RunnableInterface
                     break;
             }
             HookHandler::$exportHandler = null;
+            if (!$exportDataSet) {
+                $exportDataSet = array(array());
+            }
             foreach ($exportDataSet as $exportData) {
                 $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $bean);
                 if ($exportData) {
@@ -217,6 +220,9 @@ class Handler implements RunnableInterface
                     break;
             }
             HookHandler::$importHandler = null;
+            if (!$importDataSet) {
+                $importDataSet = array(array());
+            }
             foreach ($importDataSet as $importData) {
                 $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
                 if ($importData) {

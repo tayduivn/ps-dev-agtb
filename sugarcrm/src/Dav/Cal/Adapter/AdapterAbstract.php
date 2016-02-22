@@ -490,7 +490,18 @@ abstract class AdapterAbstract implements AdapterInterface
     public function verifyImportAfterExport($exportData, $importData, \CalDavEventCollection $collection)
     {
         if (!$importData) {
-            return false;
+            $sugarOrder = $collection->getSugarChildrenOrder();
+            $importData = array(
+                array(
+                    'update',
+                    $collection->id,
+                    $sugarOrder ? : null,
+                    null,
+                    $sugarOrder ? array_search($exportData[0][2], $sugarOrder) : null,
+                ),
+                array(),
+                array(),
+            );
         }
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
@@ -513,6 +524,50 @@ abstract class AdapterAbstract implements AdapterInterface
             }
             if ($diff[0] === null) {
                 unset($importFields[$field]);
+            }
+        }
+
+        if ($exportFields) {
+            /** @var Event $event */
+            $event = $this->getCurrentEvent($collection, $exportBean[3], $exportBean[2]);
+            foreach ($exportFields as $key => $value) {
+                if (in_array($key, RecurringHelper::$recurringFieldList)) {
+                    continue;
+                }
+                switch ($key) {
+                    case 'name':
+                        if ($value[0] != $event->getTitle()) {
+                            $importFields['title'] = array($event->getTitle());
+                        }
+                        break;
+                    case 'description':
+                        if ($value[0] != $event->getDescription()) {
+                            $importFields['description'] = array($event->getDescription());
+                        }
+                        break;
+                    case 'date_start':
+                        if ($value[0] != $event->getStartDate()->asDb()) {
+                            $importFields['date_start'] = array($event->getStartDate()->asDb());
+                        }
+                        break;
+                    case 'date_end':
+                        if ($value[0] != $event->getEndDate()->asDb()) {
+                            $importFields['date_end'] = array($event->getEndDate()->asDb());
+                        }
+                        break;
+                    case 'location':
+                        if ($value[0] != $event->getLocation()) {
+                            $importFields['location'] = array($event->getLocation());
+                        }
+                        break;
+                    case 'status':
+                        $map = new CalDavStatus\EventMap();
+                        $status = $map->getCalDavValue($value[0]);
+                        if ($status != $event->getStatus()) {
+                            $importFields['status'] = array($event->getStatus());
+                        }
+                        break;
+                }
             }
         }
 
@@ -550,6 +605,15 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function verifyExportAfterImport($importData, $exportData, \SugarBean $bean)
     {
+        $repeatRootId = $this->getCalendarEvents()->isEventRecurring($bean) ? $bean->repeat_root_id : null;
+        if (!$exportData) {
+            $exportData = array(
+                array('update', $bean->module_name, $bean->id, $repeatRootId, null),
+                array(),
+                array(),
+            );
+        }
+
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
 
@@ -566,6 +630,38 @@ abstract class AdapterAbstract implements AdapterInterface
             if ($diff[0] === null) {
                 unset($exportFields[$field]);
             }
+        }
+
+        $changedByWorkflow = false;
+        foreach ($importFields as $key => $value) {
+            if (in_array($key, RecurringHelper::$rruleFieldList)) {
+                continue;
+            }
+            switch ($key) {
+                case 'title':
+                    if ($value[0] != $bean->name) {
+                        $exportFields['name'] = array($bean->name);
+                        $changedByWorkflow = true;
+                    }
+                    break;
+                case 'status':
+                    $map = new CalDavStatus\EventMap();
+                    $status = $map->getSugarValue($value[0]);
+                    if ($status != $bean->status) {
+                        $changedByWorkflow = true;
+                        $exportFields['status'] = array($bean->status);
+                    }
+                    break;
+                default:
+                    if ($value[0] != $bean->$key) {
+                        $changedByWorkflow = true;
+                        $exportFields[$key] = array($bean->$key);
+                    }
+            }
+        }
+
+        if ($changedByWorkflow) {
+            $exportBean[3] = $repeatRootId;
         }
 
         foreach ($exportInvitees as $action => $list) {
