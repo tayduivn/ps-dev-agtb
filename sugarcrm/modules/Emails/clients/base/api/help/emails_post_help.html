@@ -1,0 +1,195 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
+<span class="lead">
+    Create a new Emails record..
+</span>
+
+<h2>Request Arguments</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                &lt;record field&gt;
+            </td>
+            <td>
+                &lt;record field type&gt;
+            </td>
+            <td>
+                The name value list of fields to populate.
+            </td>
+            <td>
+                True
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Request</h3>
+<pre class="pre-scrollable">
+    {
+      "assigned_user_id": "seed_sarah_id",
+      "from_addr_name": "Administrator <twolf@sugarcrm.com>",
+      "from_addr_name": "Administrator <myname@mydomain.com>",
+      "reply_to_addr": "myname@mydomain.com",
+      "to_addrs_names": "Mike Smith<mike_smith@somedomain.com>, tom_davis@anotherdomain.com",
+      "cc_addrs_names": "John Doe<john_doe@stillanother.com>",
+      "bcc_addrs_names": "jack_benimble@nurseryrhymes.net",
+      "date_sent": "2012-02-17T06:53:00-08:00",
+      "message_id": "",
+      "message_uid": "",
+      "name": "Sample Draft Email",
+      "state": "Draft",
+      "flagged": true,
+      "reply_to_status": false,
+      "intent": "pick",
+      "mailbox_id": "",
+      "parent_type": "Contacts",
+      "parent_id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+      "team_name": [
+        {
+          "id": 1,
+          "name": "Global",
+          "name_2": "",
+          "primary": true,
+          "selected": false
+        }
+      ]
+    }
+</pre>
+
+<h3>Link fields</h3>
+<span class="lead">
+    It is possible to add record relations to other records and create new related records.
+</span>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <code>add</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of related records ID. See <a href="module_record_link_post_help.html">RelateRecordApi</a>
+            for details.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>create</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of name to value arrays of related records.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Response Arguments</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                &lt;record field&gt;
+            </td>
+            <td>
+                &lt;record field type&gt;
+            </td>
+            <td>
+                Returns the fields for the newly created record.
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Response</h3>
+<pre class="pre-scrollable">
+{
+  "id": "a028341c-ba92-9343-55e7-56cf5beda121",
+  "date_entered": "2016-02-25T11:53:07-08:00",
+  "date_modified": "2016-02-25T11:53:07-08:00",
+  "assigned_user_id": "seed_sarah_id",
+  "assigned_user_name": "",
+  "modified_user_id": "1",
+  "modified_by_name": "Administrator",
+  "created_by": "1",
+  "created_by_name": "Administrator",
+  "deleted": false,
+  "from_addr_name": "Administrator <myname@mydomain.com>",
+  "reply_to_addr": "myname@mydomain.com",
+  "to_addrs_names": "Mike Smith<mike_smith@somedomain.com>, tom_davis@anotherdomain.com",
+  "cc_addrs_names": "John Doe<john_doe@stillanother.com>",
+  "bcc_addrs_names": "jack_benimble@nurseryrhymes.net",
+  "description_html": "<p>Now is the time</p>",
+  "description": "For all good men",
+  "date_sent": "2012-02-17T06:53:00-08:00",
+  "message_id": "",
+  "message_uid": "",
+  "name": "Sample Draft Email",
+  "type": "archived",
+  "status": "",
+  "flagged": true,
+  "reply_to_status": true,
+  "intent": "pick",
+  "mailbox_id": "",
+  "state": "Draft",
+  "parent_name": "",
+  "parent_type": "Contacts",
+  "parent_id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+  "team_count": "",
+  "team_name": [
+    {
+      "id": 1,
+      "name": "Global",
+      "name_2": "",
+      "primary": true,
+      "selected": false
+    }
+  ],
+  "my_favorite": false,
+  "_acl": {
+    "fields": [
+
+    ]
+  },
+  "_module": "Emails"
+}
+</pre>

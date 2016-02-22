@@ -1112,6 +1112,12 @@ $app_list_strings = array (
                                         'no curl'       => 'Not Run: No cURL available',
     ),
 
+    'dom_email_states' => array(
+        'Draft' => 'Draft',
+        'Scheduled' => 'Scheduled',
+        'Archived' => 'Archived',
+    ),
+
     'scheduler_status_dom' =>
         array (
         'Active' => 'Active',

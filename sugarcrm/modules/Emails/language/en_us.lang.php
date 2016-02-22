@@ -296,6 +296,7 @@ $mod_strings = array(
     'LBL_EMAIL_FLAGGED' => 'Flagged:',
     'LBL_EMAIL_REPLY_TO_STATUS' => 'Reply To Status:',
     'LBL_TYPE' => 'Type:',
+    'LBL_EMAIL_STATE' => 'State',
 
     //#20680 EmialTemplate Ext.Message.show;
     'LBL_EMAILTEMPLATE_MESSAGE_SHOW_TITLE' => 'Please check!',

@@ -29,6 +29,20 @@ abstract class SugarApi {
     }
 
     /**
+     * Handles removal of arguments that should not be present
+     * on a request and should be ignored if present
+     *
+     * @param array $args
+     * @param array $ignoredFields
+     */
+    public function ignoreArgs(&$args, $ignoredFields = array())
+    {
+        foreach ($ignoredFields as $fieldName) {
+            unset($args[$fieldName]);
+        }
+    }
+
+    /**
      * Fetches data from the $args array and formats the bean with those parameters
      * @param ServiceBase $api The API class of the request, used in cases where the API changes how the formatted data is returned
      * @param array $args The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields

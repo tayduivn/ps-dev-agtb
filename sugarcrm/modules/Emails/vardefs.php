@@ -326,6 +326,15 @@ $dictionary['Email'] = array(
             'bean_name' => 'User',
             'source' => 'non-db',
         ),
+        'state' => array(
+            'name' => 'state',
+            'vname' => 'LBL_EMAIL_STATE',
+            'type' => 'enum',
+            'options' => 'dom_email_states',
+            'len' => 100,
+            'massupdate' => false,
+            'comment' => 'State of the Email (ex: Draft, Archived, Scheduled)',
+        ),
         'parent_name' => array(
             'name' => 'parent_name',
             'parent_type' => 'record_type_display_emails',
