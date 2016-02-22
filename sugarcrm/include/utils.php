@@ -1095,11 +1095,9 @@ function return_app_list_strings_language($language, $useCache = true)
         }
 
         $files = SugarAutoLoader::existing(
-            "custom/application/Ext/Language/$lang.lang.ext.php",
-            "custom/include/language/$lang.lang.php"
+            "custom/include/language/$lang.lang.php",
+            "custom/application/Ext/Language/$lang.lang.ext.php"
         );
-
-        $files = sortExtensionFiles($files);
 
         foreach ($files as $file) {
             $app_list_strings = _mergeCustomAppListStrings($file, $app_list_strings);
@@ -1217,8 +1215,8 @@ function return_application_language($language)
                 "include/language/$lang.lang.php",
                 "include/language/$lang.lang.override.php",
                 "include/language/$lang.lang.php.override",
-                "custom/application/Ext/Language/$lang.lang.ext.php",
-                "custom/include/language/$lang.lang.php"
+                "custom/include/language/$lang.lang.php",
+                "custom/application/Ext/Language/$lang.lang.ext.php"
         ) as $file) {
             include $file;
             $GLOBALS['log']->info("Found language file: $file");
