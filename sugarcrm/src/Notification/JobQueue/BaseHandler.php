@@ -26,6 +26,9 @@ abstract class BaseHandler implements RunnableInterface
      */
     public function __construct()
     {
+        if (!method_exists($this, 'initialize')) {
+            throw new \Exception("Initialize method is not implemented");
+        }
         $arguments = func_get_args();
 
         // Set up global user and eliminate this argument for initialize.
@@ -38,9 +41,7 @@ abstract class BaseHandler implements RunnableInterface
             $arguments[$key] = unserialize($argument[1]);
         }
 
-        if (method_exists($this, 'initialize')) {
-            call_user_func_array(array($this, 'initialize'), $arguments);
-        }
+        call_user_func_array(array($this, 'initialize'), $arguments);
     }
 
     /**
