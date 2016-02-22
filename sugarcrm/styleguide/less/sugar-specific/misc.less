@@ -245,10 +245,6 @@ hr.soften {
 .bwc.layout {
   height: 100%;
 }
-.touch .bwc.layout {
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-}
 
 #tutorial {
   position: absolute;
@@ -423,8 +419,6 @@ hr.soften {
 .touch .bwc-frame {
   display: block;
   border: 1px solid transparent;
-  -webkit-overflow-scrolling: touch;
-  overflow: scroll;
   width: 100%;
 }
 
@@ -532,20 +526,5 @@ hr.soften {
     font-size: 11px;
     color: @grayLight;
     text-align: justify;
-  }
-}
-
-/*
-  Temporary hack for BWC SC-4732:
-    - first line targets webkit on windows;
-    - second line targets firefox on windows.
-*/
-@media only screen and (-webkit-min-device-pixel-ratio:0),
-only screen and (-moz-os-version:windows-win8) {
-  html.touch {
-    .bwc-frame,
-    .bwc.layout {
-      overflow: hidden;
-    }
   }
 }
