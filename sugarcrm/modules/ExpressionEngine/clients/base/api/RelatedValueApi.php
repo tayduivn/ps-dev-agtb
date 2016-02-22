@@ -153,15 +153,15 @@ class RelatedValueApi extends SugarApi
                                 if(is_null($isCurrency)) {
                                     $def = $bean->getFieldDefinition($bean->$rField);
                                     // start by just using the type in the def
-                                    $type = $def['type'];
+                                    $def_type = $def['type'];
                                     // but if custom_type is set, use it, when it's not set and dbType is, use dbType
                                     if (isset($def['custom_type']) && !empty($def['custom_type'])) {
-                                        $type = $def['custom_type'];
+                                        $def_type = $def['custom_type'];
                                     } elseif (isset($def['dbType']) && !empty($def['dbType'])) {
-                                        $type = $def['dbType'];
+                                        $def_type = $def['dbType'];
                                     }
                                     // always lower case the type just to make sure.
-                                    $isCurrency = (strtolower($type) === 'currency');
+                                    $isCurrency = (strtolower($def_type) === 'currency');
                                 }
 
                                 $count++;
