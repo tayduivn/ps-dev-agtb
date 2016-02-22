@@ -481,6 +481,7 @@ class PMSEEngineFilterApi extends FilterApi
         $fields[] = array("process.name", 'pro_title');
         $fields[] = array("process.prj_id", 'prj_id');
         $fields[] = array("process.created_by", 'prj_created_by');
+        $fields[] = array("process.assigned_user_id", 'prj_assigned_to');
 
         //INNER JOIN USER_DATA DEFINTION
         $q->joinTable('users', array('alias' => 'user_data', 'joinType' => 'LEFT', 'linkingTable' => true))
@@ -565,7 +566,7 @@ class PMSEEngineFilterApi extends FilterApi
             if (empty($casUsersBean->full_name)){
                 $arr_aux['cas_user_id_full_name'] = $arr_aux['cas_user_id'];
             }
-            $prjUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['prj_created_by']);
+            $prjUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['prj_assigned_to']);
             $arr_aux['prj_user_id_full_name'] = $prjUsersBean->full_name;
 
             $assignedBean = BeanFactory::getBean($arr_aux['cas_sugar_module'], $arr_aux['cas_sugar_object_id']);
