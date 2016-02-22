@@ -251,6 +251,7 @@ $mod_strings = array(
 	'LBL_DBCONF_HOST_NAME'				=> 'Host Name',
 	'LBL_DBCONF_HOST_INSTANCE'			=> 'Host Instance',
 	'LBL_DBCONF_HOST_PORT'				=> 'Port',
+    'LBL_DBCONF_SSL_ENABLED'            => 'Enable SSL connection',
 	'LBL_DBCONF_INSTRUCTIONS'			=> 'Please enter your database configuration information below. If you are unsure of what to fill in, we suggest that you use the default values.',
 	'LBL_DBCONF_MB_DEMO_DATA'			=> 'Use multi-byte text in demo data?',
     'LBL_DBCONFIG_MSG2'                 => 'Name of web server or machine (host) on which the database is located ( such as localhost or www.mydomain.com ):',

@@ -41,5 +41,12 @@
             });
         }, this);
         return this._super('_previewifyMetadata', [meta]);
-    }
+    },
+
+    /**
+     * We don't need to initialize KB listeners.
+     * @override.
+     * @private
+     */
+    _initKBListeners: function() {}
 })
