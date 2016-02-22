@@ -297,6 +297,8 @@ EOHTML;
         $charset = isset($app_strings['LBL_CHARSET']) ? $app_strings['LBL_CHARSET'] : $sugar_config['default_charset'];
         echo '<meta http-equiv="Content-Type" content="text/html; charset="{$charset}">';
         echo '<script type="text/javascript" src="' . getJSPath('include/javascript/jquery/jquery-min.js') . '"></script>';
+        echo '<script type="text/javascript" src="'
+            . getJSPath('include/javascript/jquery/jquery-migrate-1.2.1.min.js') . '"></script>';
         echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
         echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
         echo '</head>';
