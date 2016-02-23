@@ -2788,7 +2788,7 @@ protected function checkQuery($sql, $object_name = false)
 			// handle some known types
 			switch($this->type_class[$type]) {
 				case 'bool':
-					if (!empty($fieldDef['required']) && $val == ''){
+					if (!empty($fieldDef['required']) && $val === ''){
 						if (isset($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
@@ -2796,7 +2796,7 @@ protected function checkQuery($sql, $object_name = false)
 					}
 					return intval($val);
 				case 'int':
-					if (!empty($fieldDef['required']) && $val == ''){
+					if (!empty($fieldDef['required']) && $val === ''){
 						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
