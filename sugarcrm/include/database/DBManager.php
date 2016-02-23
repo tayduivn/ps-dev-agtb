@@ -2787,26 +2787,16 @@ protected function checkQuery($sql, $object_name = false)
 			// handle some known types
 			switch($this->type_class[$type]) {
 				case 'bool':
-<<<<<<< HEAD
-					if (!empty($fieldDef['required']) && $val == ''){
-						if (!$ignoreDefault && isset($fieldDef['default'])){
-=======
 					if (!empty($fieldDef['required']) && $val === ''){
-						if (isset($fieldDef['default'])){
->>>>>>> upstream/7_7_1
+						if (!$ignoreDefault && isset($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
 					}
 					return intval($val);
 				case 'int':
-<<<<<<< HEAD
-					if (!empty($fieldDef['required']) && $val == ''){
-						if (!$ignoreDefault && isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
-=======
 					if (!empty($fieldDef['required']) && $val === ''){
-						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
->>>>>>> upstream/7_7_1
+						if (!$ignoreDefault && isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
 							return $fieldDef['default'];
 						}
 						return 0;
