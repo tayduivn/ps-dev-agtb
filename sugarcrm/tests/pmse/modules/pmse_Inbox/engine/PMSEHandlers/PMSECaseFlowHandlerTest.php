@@ -95,35 +95,9 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->setMethods(array('save'))
                 ->getMock();
 
-        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
-                ->getMock();
-
-        $caseFlowHandlerMock->expects($this->once())
-                ->method('retrieveSugarQueryObject')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $sugarQueryMock->expects($this->once())
-                ->method('where')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $sugarQueryMock->expects($this->once())
-                ->method('queryAnd')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $expectedArray = array(
-            array('cas_index' => 1),
-            array('cas_index' => 2),
-            array('cas_index' => 3),
-            array('cas_index' => 4),
-            array('cas_index' => 5),
-            array('cas_index' => 6)
-        );
-
-        $sugarQueryMock->expects($this->once())
-                ->method('execute')
-                ->will($this->returnValue($expectedArray));
+        $db = new SugarTestDatabaseMock();
+        $caseFlowHandlerMock->setDb($db);
+        $db->addQuerySpy('max_index','/MAX.*max_index.*FROM/i', array(array('max_index' => 6)));
 
         $flowData = array(
             'cas_id' => 1,
@@ -133,6 +107,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $caseFlowHandlerMock->setBpmFlow($flowMock);
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
         $this->assertEquals(6, $result);
+        $this->assertEquals(1, $db->getQuerySpyRunCount('max_index'));
     }
 
     public function testRetrieveMaxIndexWithoutCases()
@@ -148,28 +123,9 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->setMethods(array('save'))
                 ->getMock();
 
-        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
-                ->getMock();
-
-        $caseFlowHandlerMock->expects($this->once())
-                ->method('retrieveSugarQueryObject')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $sugarQueryMock->expects($this->once())
-                ->method('where')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $sugarQueryMock->expects($this->once())
-                ->method('queryAnd')
-                ->will($this->returnValue($sugarQueryMock));
-
-        $expectedArray = array();
-
-        $sugarQueryMock->expects($this->once())
-                ->method('execute')
-                ->will($this->returnValue($expectedArray));
+        $db = new SugarTestDatabaseMock();
+        $caseFlowHandlerMock->setDb($db);
+        $db->addQuerySpy('max_index','/MAX.*max_index.*FROM/i', array());
 
         $flowData = array(
             'cas_id' => 1,
@@ -179,6 +135,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
         $this->assertEquals(1, $result);
+        $this->assertEquals(1, $db->getQuerySpyRunCount('max_index'));
     }
 
     public function testRetrieveMaxIndexEmptyFlowData()
