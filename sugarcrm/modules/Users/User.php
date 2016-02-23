@@ -1725,7 +1725,14 @@ EOQ;
         if($module=='ContractTypes') {
             $module = 'Contracts';
         }
-        if(preg_match('/Product[a-zA-Z]*/',$module)) {
+        static $productModules = array(
+            'ProductBundles',
+            'ProductBundleNotes',
+            'ProductTemplates',
+            'ProductTypes',
+            'ProductCategories',
+        );
+        if (in_array($module, $productModules)) {
             $module = 'Products';
         }
 
