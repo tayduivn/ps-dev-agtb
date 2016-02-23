@@ -98,6 +98,9 @@ class Report
     // this is a var not in metadata that is set to bypass the sugar_die calls used throughout this class
     public $fromApi = false;
 
+    // an empty bean
+    protected $moduleBean;
+
     /**
      *
      * Default visibility options
@@ -209,6 +212,7 @@ class Report
         }
         if (!empty($this->report_def['module'])) {
             $this->module = $this->report_def['module'];
+            $this->moduleBean = BeanFactory::getBean($this->module);
         }
         if (!empty($this->report_def['report_type'])) {
             $this->report_type = $this->report_def['report_type'];
@@ -2370,12 +2374,10 @@ class Report
                     }
                 } // if
                 
-                $module_bean = BeanFactory::getBean($this->module);
-                if (is_array($module_bean->field_defs)) {
-                    if (isset($module_bean->field_defs[$display_column['type']])) {
-                        if (isset($module_bean->field_defs[$display_column['type']]['options'])) {
-                            
-                            $trans_options = translate($module_bean->field_defs[$display_column['type']]['options']);
+                if (is_array($this->moduleBean->field_defs)) {
+                    if (isset($this->moduleBean->field_defs[$display_column['type']])) {
+                        if (isset($this->moduleBean->field_defs[$display_column['type']]['options'])) {
+                            $trans_options = translate($this->moduleBean->field_defs[$display_column['type']]['options']);
                                                         
                             if (isset($trans_options[$display_column['fields'][$field_name]])) {
                                 $display = $trans_options[$display_column['fields'][$field_name]];
