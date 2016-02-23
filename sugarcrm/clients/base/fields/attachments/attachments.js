@@ -29,6 +29,7 @@
         app.view.Field.prototype.initialize.call(this, options);
 
         this.context.on('attachment:add', this.addAttachment, this);
+        this.context.on('attachment:filepicker:launch', this.launchFilePicker, this);
         this.context.on('attachment:upload:remove', this.removeUploadedAttachment, this);
         this.context.on('attachments:remove-by-tag', this.removeAttachmentsByTag, this);
         this.context.on('attachments:remove-by-id', this.removeAttachmentsById, this);
@@ -90,6 +91,14 @@
         this.refreshFromModel();
 
         return result;
+    },
+
+    /**
+     * Launch the file input picker.
+     */
+    launchFilePicker: function() {
+        var $fileInput = this.$(this.fileInputSelector);
+        $fileInput.click();
     },
 
     /**

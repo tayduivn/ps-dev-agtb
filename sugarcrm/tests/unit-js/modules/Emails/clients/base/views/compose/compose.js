@@ -891,7 +891,7 @@ describe("Emails.Views.Compose", function() {
                 '</div></div>',
                 drawerHeight = view.MIN_EDITOR_HEIGHT + 300,
                 otherHeight = 50,
-                editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING;
+                editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING - view.ATTACHMENT_FIELD_HEIGHT;
 
             view.$el = $(mockHtml);
             $drawer = view.$('.drawer');

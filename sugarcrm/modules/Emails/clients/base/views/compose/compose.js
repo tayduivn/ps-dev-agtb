@@ -21,6 +21,7 @@
     ATTACH_TYPE_TEMPLATE: 'template',
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
+    ATTACHMENT_FIELD_HEIGHT: 44,
     FIELD_PANEL_BODY_SELECTOR: '.row-fluid.panel_body',
 
     sendButtonName: 'send_button',
@@ -35,9 +36,10 @@
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleSenderOptionClick'
         });
-        this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
-        this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
-        this.context.on('actionbar:signature_button:clicked', this.launchSignatureDrawer, this);
+        this.context.on('tinymce:upload_attachment:clicked', this.launchFilePicker, this);
+        this.context.on('tinymce:sugardoc_attachment:clicked', this.launchDocumentDrawer, this);
+        this.context.on('tinymce:signature:clicked', this.launchSignatureDrawer, this);
+        this.context.on('tinymce:template:clicked', this.launchTemplateDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
@@ -641,6 +643,13 @@
     },
 
     /**
+     * Launch the file upload picker on the attachments field.
+     */
+    launchFilePicker: function() {
+        this.context.trigger('attachment:filepicker:launch');
+    },
+
+    /**
      * Open the drawer with the SugarDocuments attachment selection list layout. The callback should take the data
      * passed to it and add the document as an attachment.
      */
@@ -907,7 +916,8 @@
         editorHeight = $editor.height();
 
         //calculate the space left to fill - subtracting padding to prevent scrollbar
-        diffHeight = drawerHeight - headerHeight - recordHeight - showHideHeight - this.EDITOR_RESIZE_PADDING;
+        diffHeight = drawerHeight - headerHeight - recordHeight - showHideHeight -
+            this.ATTACHMENT_FIELD_HEIGHT - this.EDITOR_RESIZE_PADDING;
 
         //add the space left to fill to the current height of the editor to get a new height
         newEditorHeight = editorHeight + diffHeight;

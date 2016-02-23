@@ -14,6 +14,9 @@
  * @class View.Fields.Base.Emails.ComposeActionbarField
  * @alias SUGAR.App.view.fields.BaseEmailsComposeActionbarField
  * @extends View.Fields.Base.FieldsetField
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0. Use htmleditable_tinymce field
+ *   instead to add compose buttons.
  */
 ({
     extendsFrom: 'FieldsetField',
