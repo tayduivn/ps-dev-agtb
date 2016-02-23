@@ -50,9 +50,14 @@
         }
     },
 
+    /**
+     * Import the Email Templates file (.pet)
+     */
     importEmailTemplates: function() {
         var self = this,
             projectFile = $('[name=emailtemplates_import]');
+
+        // Check if a file was chosen
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_emailtemplates', {
                 level:'error',
@@ -60,51 +65,29 @@
                 autoClose: false
             });
         } else {
-            app.file.checkFileFieldsAndProcessUpload(self, {
-                    success: function (data) {
-                        app.router.goBack();
-                        app.alert.show('process-import-saved', {
-                            level: 'success',
-                            messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', self.module),
-                            autoClose: true
-                        });
-                    },
-                    error: function (error) {
-                        app.alert.show('process-import-saved', {
-                            level: 'error',
-                            messages: error.error_message,
-                            autoClose: false
-                        });
-                    }
-                },
-                {deleteIfFails: true, htmlJsonFormat: true}
-            );
-        }
-    },
-    checkFileFieldsAndProcessUpload : function(model, callbacks) {
-
-        callbacks = callbacks || {};
-
-        //check if there are attachments
-        var $files = _.filter($(":file"), function(file) {
-            var $file = $(file);
-            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
-        });
-        var filesToUpload = $files.length;
-
-        //process attachment uploads
-        if (filesToUpload > 0) {
             app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
 
-            //field by field
-            for (var file in $files) {
-                var $file = $($files[file]),
-                    fileField = $file.attr("name");
-                if (callbacks.success) callbacks.success();
-            }
-        }
-        else {
-            if (callbacks.success) callbacks.success();
+            var callbacks = {
+                success: function (data) {
+                    app.alert.dismiss('upload');
+                    app.router.goBack();
+                    app.alert.show('process-import-saved', {
+                        level: 'success',
+                        messages: app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_IMPORT_SUCCESS', self.module),
+                        autoClose: true
+                    });
+                },
+                error: function (error) {
+                    app.alert.dismiss('upload');
+                    app.alert.show('process-import-saved', {
+                        level: 'error',
+                        messages: error.error_message,
+                        autoClose: false
+                    });
+                }
+            };
+
+            this.model.uploadFile('emailtemplates_import', projectFile, callbacks, {deleteIfFails: true, htmlJsonFormat: true});
         }
     }
 })

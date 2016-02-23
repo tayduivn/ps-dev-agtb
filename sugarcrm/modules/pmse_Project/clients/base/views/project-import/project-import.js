@@ -30,9 +30,14 @@
         }
     },
 
+    /**
+     * Import the Process Definition File (.bpm)
+     */
     importProject: function() {
         var self = this,
             projectFile = $('[name=project_import]');
+
+        // Check if a file was chosen
         if (_.isEmpty(projectFile.val())) {
             app.alert.show('error_validation_process', {
                 level:'error',
@@ -40,8 +45,10 @@
                 autoClose: false
             });
         } else {
-            app.file.checkFileFieldsAndProcessUpload(self, {
+            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
+            var callbacks = {
                     success: function (data) {
+                        app.alert.dismiss('upload');
                         var route = app.router.buildRoute(self.module, data.project_import.id);
                         route = route + '/layout/designer';
                         app.router.navigate(route, {trigger: true});
@@ -50,6 +57,7 @@
                             messages: app.lang.get('LBL_PMSE_PROCESS_DEFINITION_IMPORT_SUCCESS', self.module),
                             autoClose: true
                         });
+                        // Shows warning message if PD contains BR
                         if (data.project_import.br_warning) {
                             app.alert.show('process-import-save-with-br', {
                                 level: 'warning',
@@ -59,41 +67,16 @@
                         }
                     },
                     error: function (error) {
+                        app.alert.dismiss('upload');
                         app.alert.show('process-import-saved', {
                             level: 'error',
                             messages: error.error_message,
                             autoClose: false
                         });
                     }
-                },
-                {deleteIfFails: true, htmlJsonFormat: true}
-            );
-        }
-    },
-    checkFileFieldsAndProcessUpload : function(model, callbacks) {
+                }
 
-        callbacks = callbacks || {};
-
-        //check if there are attachments
-        var $files = _.filter($(":file"), function(file) {
-            var $file = $(file);
-            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
-        });
-        var filesToUpload = $files.length;
-
-        //process attachment uploads
-        if (filesToUpload > 0) {
-            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
-
-            //field by field
-            for (var file in $files) {
-                var $file = $($files[file]),
-                    fileField = $file.attr("name");
-                if (callbacks.success) callbacks.success();
-            }
-        }
-        else {
-            if (callbacks.success) callbacks.success();
+            this.model.uploadFile('project_import', projectFile, callbacks, {deleteIfFails: true, htmlJsonFormat: true});
         }
     }
 })
