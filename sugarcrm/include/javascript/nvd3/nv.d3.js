@@ -9594,6 +9594,7 @@ nv.models.multiBarChart = function() {
           groupLabels = [],
           groupTotals = [],
           totalAmount = 0,
+          hasData = true,
           seriesCount = 0,
           groupCount = 0;
 
@@ -9688,7 +9689,7 @@ nv.models.multiBarChart = function() {
           d.total = d3.sum(d.values, function(d) {
             return d.y;
           });
-          if (!d.total) {
+          if (d.values.filter(function(value) {return value.y !== 0}).length === 0) {
             d.disabled = true;
           }
           //make sure untrimmed values array exists
@@ -9730,6 +9731,7 @@ nv.models.multiBarChart = function() {
         });
 
       totalAmount = d3.sum(groupTotals, function(d) { return d.t; });
+      hasData = data.filter(function(d) {return !d.disabled}).length > 0;
 
       // build a trimmed array for active group only labels
       groupLabels = properties.labels
@@ -9777,7 +9779,7 @@ nv.models.multiBarChart = function() {
       //------------------------------------------------------------
       // Display No Data message if there's nothing to show.
 
-      if (!totalAmount) {
+      if (!hasData) {
         displayNoData();
         return chart;
       }
