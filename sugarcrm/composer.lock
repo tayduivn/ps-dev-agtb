@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d73d2f0c6f4db2d925e1eda287365c5e",
-    "content-hash": "b589ba368b970b7a7fc922cf12bac352",
+    "hash": "4d685b69535ee07b60b8a06dc54cc632",
+    "content-hash": "d642ffa7f35ffbf620e925d79bd35ae3",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -445,16 +445,16 @@
         },
         {
             "name": "sabre/dav",
-            "version": "3.0.1",
+            "version": "3.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruux/sabre-dav.git",
-                "reference": "df646ff6c97a69b018abf3a2ead3409026e6f31d"
+                "reference": "294b6e133f3b4cf644b9637a734b53f82d46d7f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruux/sabre-dav/zipball/df646ff6c97a69b018abf3a2ead3409026e6f31d",
-                "reference": "df646ff6c97a69b018abf3a2ead3409026e6f31d",
+                "url": "https://api.github.com/repos/fruux/sabre-dav/zipball/294b6e133f3b4cf644b9637a734b53f82d46d7f7",
+                "reference": "294b6e133f3b4cf644b9637a734b53f82d46d7f7",
                 "shasum": ""
             },
             "require": {
@@ -471,7 +471,7 @@
                 "sabre/event": "~2.0",
                 "sabre/http": "~4.0",
                 "sabre/uri": "~1.0",
-                "sabre/vobject": ">=3.3.4,<4",
+                "sabre/vobject": "^3.3.4",
                 "sabre/xml": "~1.0"
             },
             "require-dev": {
@@ -522,7 +522,7 @@
                 "framework",
                 "iCalendar"
             ],
-            "time": "2015-07-02 21:26:29"
+            "time": "2016-01-12 22:41:05"
         },
         {
             "name": "sabre/event",
