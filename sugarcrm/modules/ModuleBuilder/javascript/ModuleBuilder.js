@@ -1492,7 +1492,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 SUGAR.util.evalScript(win.body.innerHTML);
                 //firefox will ignore the left panel size, so we need to manually force the windows height and width
                 win.body.style.height = "570px";
-                win.body.style.minWidth = "780px";
+                win.body.style.minWidth = "880px";
                 win.center();
             });
             win.show();
