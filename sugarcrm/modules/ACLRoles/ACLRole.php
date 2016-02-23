@@ -306,7 +306,7 @@ function mark_relationships_deleted($id){
 
         $ids = array();
         while ($row = $this->db->fetchByAssoc($result)) {
-            $ids[] = $this->db->quoted($row['id']);
+            $ids[] = $this->db->quoted($row['user_id']);
         }
         if (empty($ids)) {
             return;
