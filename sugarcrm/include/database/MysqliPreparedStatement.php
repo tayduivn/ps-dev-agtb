@@ -43,6 +43,13 @@ class MysqliPreparedStatement extends PreparedStatement
     protected $stmt;
 
     /**
+     * MySQLi result object
+     *
+     * @var mysqli_result
+     */
+    protected $result;
+
+    /**
      * Maps MySQL column datatypes to MySQL bind variable types
      *
      * Possible types are:
@@ -125,7 +132,7 @@ class MysqliPreparedStatement extends PreparedStatement
         if(!$this->prepareStatementData($data, !empty($this->stmt)?$this->stmt->param_count:0, $msg)) {
             return false;
         }
-        $this->preparedStatementResult = null;
+        $this->result = null;
         $res = $this->stmt->execute();
 
         return $this->finishStatement($res, $msg);
@@ -142,13 +149,18 @@ class MysqliPreparedStatement extends PreparedStatement
         }
 
         // first time, create an array of column names from the returned data set
-        if (empty($this->preparedStatementResult)) {
+        if (empty($this->result)) {
             $this->resultFields = null;
-            $this->preparedStatementResult = $this->stmt->result_metadata();
-            if (is_object($this->preparedStatementResult))  {
-                $this->resultFields = $this->preparedStatementResult->fetch_fields();
+            $this->result = $this->stmt->result_metadata();
+            if (is_object($this->result)) {
+                $this->resultFields = $this->result->fetch_fields();
             } else {
-                $this->preparedStatementResult = null;
+                $this->result = null;
+                return false;
+            }
+
+            // see https://bugs.php.net/bug.php?id=51386
+            if (!$this->stmt->store_result()) {
                 return false;
             }
 
@@ -160,7 +172,7 @@ class MysqliPreparedStatement extends PreparedStatement
                 }
                 call_user_func_array(array($this->stmt, "bind_result"), $bound);
             } else {
-                $this->preparedStatementResult = null;
+                $this->result = null;
                 return false;
             }
         }
@@ -183,7 +195,12 @@ class MysqliPreparedStatement extends PreparedStatement
 
     public function preparedStatementClose()
     {
-        if($this->stmt) {
+        if ($this->result) {
+            $this->result->free();
+            $this->result = null;
+        }
+
+        if ($this->stmt) {
             $this->stmt->close();
             $this->stmt = null;
         }
