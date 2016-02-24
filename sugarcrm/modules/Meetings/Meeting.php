@@ -226,29 +226,21 @@ class Meeting extends SugarBean {
         }
 
         $check_notify = $this->send_invites;
-        if ($this->send_invites == false) {
-
-            $old_assigned_user_id = CalendarEvents::getOldAssignedUser($this->module_dir, $this->id);
-
-            if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
-                (!empty($this->assigned_user_id) &&
-                    $this->assigned_user_id != $old_assigned_user_id &&
-                    ($this->fetched_row !== false || $this->assigned_user_id != $GLOBALS['current_user']->id) &&
-                    ($this->repeat_parent_id && $this->isUpdate() || !$this->repeat_parent_id)
-                )
-            ) {
-                $this->special_notification = true;
-                $check_notify = true;
-                CalendarEvents::setOldAssignedUserValue($this->assigned_user_id);
-                if (isset($_REQUEST['assigned_user_name'])) {
-                    $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
-                }
+        if ($this->send_invites == false && $this->isEmailNotificationNeeded()) {
+            $this->special_notification = true;
+            $check_notify = true;
+            CalendarEvents::setOldAssignedUserValue($this->assigned_user_id);
+            if (isset($_REQUEST['assigned_user_name'])) {
+                $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
             }
         }
 
-		// prevent a mass mailing for recurring meetings created in Calendar module
-		if(empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" && !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id))
-			$check_notify = false;
+        // prevent a mass mailing for recurring meetings created in Calendar module
+        $isRecurringInCalendar = empty($this->id) && !empty($_REQUEST['module']) && $_REQUEST['module'] == "Calendar" &&
+            !empty($_REQUEST['repeat_type']) && !empty($this->repeat_parent_id);
+        if ($isRecurringInCalendar) {
+            $check_notify = false;
+        }
 
         if (empty($this->status) ) {
             $this->status = $this->getDefaultStatus();

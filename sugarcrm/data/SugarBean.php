@@ -8170,4 +8170,28 @@ class SugarBean
 
         return $message;
     }
+
+    /**
+     * Checks whether email notification should be send or not
+     * @return bool
+     */
+    public function isEmailNotificationNeeded()
+    {
+        global $current_user;
+
+        $sendingEmailNeeded = false;
+        $old_assigned_user_id = CalendarEvents::getOldAssignedUser($this->module_dir, $this->id);
+        $isInstalling = isset($GLOBALS['installing']) && $GLOBALS['installing'] === true;
+
+        if (!$isInstalling &&                                       // this is not installing process
+            !empty($this->assigned_user_id) &&                      // assigned user exists
+            $this->assigned_user_id != $old_assigned_user_id &&     // assigned user is changed
+            $this->assigned_user_id != $current_user->id            // assigned user is not a current user
+        ) {
+            $sendingEmailNeeded = true;
+        }
+
+        return $sendingEmailNeeded;
+    }
+
 }
