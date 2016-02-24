@@ -479,8 +479,8 @@ class PMSEExecuter
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
         }
 
-        if ($this->caseFlowHandler->numberOfCasesByStatus($flowData,
-                'ERROR') <= 0 && $externalAction == 'RESUME_EXECUTION'
+        if ($externalAction == 'RESUME_EXECUTION'
+            && $this->caseFlowHandler->numberOfCasesByStatus($flowData, 'ERROR') <= 0
         ) {
             $this->caseFlowHandler->changeCaseStatus($flowData['cas_id'], 'IN PROGRESS');
         }
