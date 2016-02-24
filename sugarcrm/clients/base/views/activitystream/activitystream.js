@@ -304,7 +304,9 @@
      */
     decorateRow: function() {
         this.$el.addClass('highlighted');
-        this.$('.preview-btn').addClass('active');
+        this.$('.preview-btn')
+            .addClass('active')
+            .attr('aria-pressed', true);
     },
 
     _renderHtml: function(model) {
@@ -596,8 +598,11 @@
     },
 
     toggleReplyBar: function() {
-        this.$(".comment-btn").toggleClass("active");
-        this.$(".reply-area").toggleClass("hide");
+        var isHidden = this.$('.reply-area').hasClass('hide');
+        this.$('.reply-area').toggleClass('hide', !isHidden);
+        this.$('.comment-btn')
+            .toggleClass('active', isHidden)
+            .attr('aria-pressed', isHidden);
     },
 
     /**
