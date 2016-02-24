@@ -16,32 +16,17 @@
          */
         app.plugins.register('EllipsisInline', ['view', 'field'], {
 
-            events:{
-                'mouseenter .ellipsis_inline': '_showEllipsisTooltip',
-                'mouseleave .ellipsis_inline': '_hideEllipsisTooltip'
-            },
-
             _$ellipsisTooltips: null, //array of all initialized tooltips
 
             /**
              * Initialize tooltips on render and destroy tooltip before render.
              */
-            onAttach: function() {
-                this.before('render', function() {
-                    this.destroyEllipsisTooltips();
-                }, this);
-
-                this.on('render', function() {
-                    this.initializeEllipsisTooltips();
-                }, this);
-            },
+            onAttach: $.noop,
 
             /**
              * Destory all tooltips on dispose.
              */
-            onDetach: function() {
-                this.destroyEllipsisTooltips();
-            },
+            onDetach: $.noop,
 
             /**
              * Create tooltips for all elements that have `ellipsis_inline` class.

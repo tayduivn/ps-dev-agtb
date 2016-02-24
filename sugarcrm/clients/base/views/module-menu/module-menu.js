@@ -249,8 +249,6 @@
             return;
         }
 
-        this.destroyEllipsisTooltips();
-
         options = options || {};
         tpl = app.template.getView(this.name + '.' + tplName, this.module) ||
             app.template.getView(this.name + '.' + tplName);
@@ -275,9 +273,6 @@
                 $newFocus.focus();
             }
         }
-
-        this.initializeEllipsisTooltips();
-
     },
 
     /**
