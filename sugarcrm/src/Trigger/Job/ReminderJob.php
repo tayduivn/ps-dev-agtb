@@ -20,15 +20,13 @@ use Sugarcrm\Sugarcrm\Trigger\Reminder;
  */
 class ReminderJob implements \RunnableSchedulerJob
 {
-    protected $job;
-
     /**
      * @inheritdoc
      * @codeCoverageIgnore
      */
     public function setJob(\SchedulersJob $job)
     {
-        $this->job = $job;
+
     }
 
     /**
