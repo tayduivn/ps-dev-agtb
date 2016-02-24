@@ -320,7 +320,7 @@ class AbstractRelationships
      * @param string $installDefPrefix  Pathname prefix for the installdefs, for example for ModuleBuilder use "<basepath>/SugarModules"
      * @param array $relationships      Relationships to implement
      */
-    protected function build ($basepath , $installDefPrefix , $relationships )
+    public function build($basepath, $installDefPrefix, $relationships)
     {
         global $sugar_config;
     	// keep the relationships data separate from any other build data by ading /relationships to the basepath

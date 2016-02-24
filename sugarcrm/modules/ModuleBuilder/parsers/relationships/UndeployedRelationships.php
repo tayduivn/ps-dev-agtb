@@ -198,7 +198,7 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
      * Translate the set of relationship objects into files that the Module Loader can work with
      * @param $basepath string Pathname of the directory to contain the build
      */
-    protected function build($basepath = null, $installDefPrefix = null, $relationships = null)
+    public function build($basepath = null, $installDefPrefix = null, $relationships = null)
     {
         
         // first expand out any reference to Activities to its submodules
