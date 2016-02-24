@@ -76,7 +76,7 @@ $mod_strings = array (
     'LBL_CREATE_REVISION_BUTTON_LABEL' => 'Create Revision',
     'LBL_CANNOT_CREATE_LOCALIZATION' =>
         'Unable to create a new localization as a localization version exists for all available languages.',
-    'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without entering a Publish Date?',
+    'LBL_SPECIFY_PUBLISH_DATE' => 'Schedule this article to be published by specifying the Publish Date. Do you wish to continue without updating a Publish Date?',
     'LBL_MODIFY_EXP_DATE_LOW' => 'The Expiration Date occur on a date before the Publish Date. Do you wish to continue without modify a Expiration Date?',
     'LBL_PANEL_INMORELESS' => 'Usefulness',
     'LBL_MORE_OTHER_LANGUAGES' => 'More Other Languages...',
