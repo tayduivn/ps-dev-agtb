@@ -112,6 +112,17 @@ $out =<<<EOQ
             </tr>
 EOQ;
 
+if ($db->supports('ssl')) {
+$SSLEnabled = !empty($_SESSION['setup_db_options']['ssl']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
+$out .=<<<EOQ
+            <tr>
+                <td></td>
+                <td><b>{$mod_strings['LBL_DBCONF_SSL_ENABLED']} </b></td>
+                <td>{$SSLEnabled}</td>
+            </tr>
+EOQ;
+}
+
 $out .=<<<EOQ
             <tr>
                 <td></td>

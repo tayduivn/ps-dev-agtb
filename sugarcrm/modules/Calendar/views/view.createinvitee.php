@@ -41,6 +41,9 @@ class CalendarViewCreateInvitee extends SugarView
             'module' => $this->bean->object_name,
             'fields' => array(),
         );
+
+        $this->bean->ACLFilterFieldList($_REQUEST['fieldList']);
+
         foreach ($_REQUEST['fieldList'] as $field) {
             $sendbackArr['fields'][$field] = $this->bean->$field;
         }

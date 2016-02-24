@@ -405,6 +405,9 @@ function callDBCheck(){
                 if(typeof(document.setConfig.dbUSRData) != 'undefined'){
                     postData += "&dbUSRData="+document.getElementById('dbUSRData').value;
                 }
+                if(typeof(document.setConfig.setup_db_ssl_is_enabled) != 'undefined') {
+                    postData += "&setup_db_ssl_is_enabled="+document.getElementById('setup_db_ssl_is_enabled').value;
+                }
 
 EOQ4;
 
@@ -493,6 +496,14 @@ function confirm_drop_tables(yes_no){
 EOQ5;
 
 
+$sslDD = "<select name='setup_db_ssl_is_enabled' id='setup_db_ssl_is_enabled'><option value='no' >".$mod_strings['LBL_NO']."</option><option value='yes' ".(!empty($_SESSION['setup_db_options']['ssl'])?'selected':'').">".$mod_strings['LBL_YES']."</option>";
+$sslDD .= "</select><br>&nbsp;";
+ 
+$outSSL=<<<SSL
+<table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
+<tr><td width='1%'>&nbsp;</td><td width='60%'><div id='sugarDBSSL'><b>{$mod_strings['LBL_DBCONF_SSL_ENABLED']}</b></div>&nbsp;</td><td width='35%'>$sslDD</td></tr>
+</table>
+SSL;
 
 
 ////	END PAGE OUTPUT
@@ -509,6 +520,9 @@ $sugar_smarty->assign('MOD', $mod_strings);
 echo $out;
 echo $out2;
 
+if ($db->supports("ssl")) {
+    echo $outSSL;
+}
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
     echo $out3;
 
