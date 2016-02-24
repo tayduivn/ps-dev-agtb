@@ -50,10 +50,16 @@ class CalDavSynchronization extends SugarBean
      */
     public function setSaveCounter()
     {
-        $syncCounter = ++ $this->save_counter;
-        $this->save();
+        if ($this->isUpdate()) {
+            $this->db->query('UPDATE ' . $this->table_name . ' set save_counter = save_counter + 1 WHERE id = ' .
+                $this->db->quoted($this->id));
+        } else {
+            ++ $this->save_counter;
+            $this->save();
+        }
+        $this->retrieve();
 
-        return $syncCounter;
+        return $this->save_counter;
     }
 
     /**
@@ -62,10 +68,16 @@ class CalDavSynchronization extends SugarBean
      */
     public function setJobCounter()
     {
-        $syncCounter = ++ $this->job_counter;
-        $this->save();
+        if ($this->isUpdate()) {
+            $this->db->query('UPDATE ' . $this->table_name . ' set job_counter = job_counter + 1 WHERE id = ' .
+                $this->db->quoted($this->id));
+        } else {
+            ++ $this->job_counter;
+            $this->save();
+        }
+        $this->retrieve();
 
-        return $syncCounter;
+        return $this->job_counter;
     }
 
     /**
@@ -81,7 +93,19 @@ class CalDavSynchronization extends SugarBean
         } else {
             $this->conflict_counter = 0;
         }
-        $this->save();
+        if ($this->isUpdate()) {
+            $this->db->updateParams(
+                $this->table_name,
+                $this->getFieldDefinitions(),
+                array('conflict_counter' => $this->conflict_counter),
+                array('id' => $this->id),
+                null,
+                true,
+                true
+            );
+        } else {
+            $this->save();
+        }
 
         return $this->conflict_counter;
     }
