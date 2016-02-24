@@ -376,10 +376,6 @@ class HealthCheckScanner
             'table' => 'pmse_bpm_process_definition',
             'cols' => array('pro_locked_variables'),
         ),
-        'bpmFormActionTable' => array(
-            'table' => 'pmse_bpm_form_action',
-            'cols' => array('cas_data', 'cas_pre_data'),
-        ),
         'dynamicFormTable' => array(
             'table' => 'pmse_bpm_dynamic_forms',
             'cols' => array('dyn_view_defs'),

@@ -223,7 +223,6 @@ class PMSEHistoryLogWrapper
             $entry['current_date'] =  PMSEEngineUtils::getDateToFE(TimeDate::getInstance()->nowDb(), 'datetime');
             $entry['delegate_date'] = !empty($caseData['cas_delegate_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_delegate_date'], 'datetime'): '';
             $entry['start_date'] = !empty($caseData['cas_start_date']) ? PMSEEngineUtils::getDateToFE($caseData['cas_start_date'], 'datetime'): '';
-            $entry['var_values'] = '';
             $entry['completed'] = true;
             $entry['cas_user_id'] = $caseData['cas_user_id'];
 
@@ -268,10 +267,6 @@ class PMSEHistoryLogWrapper
                     }
                     if (!empty($action)) {
                         $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_PERFORMED', 'pmse_Inbox'), $action);
-                    }
-                    if (isset($this->formAction->cas_pre_data)) {
-                        $logdata = json_decode($this->formAction->cas_pre_data);
-                        $entry['var_values'] = $logdata;
                     }
                 } else {
                     $dataString .= sprintf(translate('LBL_PMSE_HISTORY_LOG_ACTION_STILL_ASSIGNED', 'pmse_Inbox'));

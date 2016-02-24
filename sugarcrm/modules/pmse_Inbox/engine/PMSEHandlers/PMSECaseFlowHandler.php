@@ -814,8 +814,6 @@ class PMSECaseFlowHandler
         $flowBeanObject = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $flowBeanObject->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index));
 
-        $caseData = json_encode($params);
-
         //ADD COMMENT IN BPM_NOTES
         if (isset($params['not_type']) && !empty($params['not_type'])) {
             $noteBean = $this->retrieveBean('pmse_BpmNotes');
@@ -855,10 +853,6 @@ class PMSECaseFlowHandler
             $formActionBeanObject->$key = $value;
         }
 
-        $formActionBeanObject->cas_data = $caseData;
-        if (isset($params['log_data'])) {
-            $formActionBeanObject->cas_pre_data = json_encode($params['log_data']);
-        }
         if (isset($params['Type'])) {
             $frmAction = $params['Type'];
         } else if (isset($params['frm_action'])) {

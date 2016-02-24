@@ -763,11 +763,9 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'not_type' => 'ELEMENT',
             'not_user_recipient_id' => 'usr980',
             'frm_comment' => 'some comment',
-            'log_data' => 'Some Log Data'
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
-        $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
 
     public function testSaveFormActionIfPreviousActionExists()
@@ -838,11 +836,9 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'not_type' => 'ELEMENT',
             'not_user_recipient_id' => 'usr980',
             'frm_comment' => 'some comment',
-            'log_data' => 'Some Log Data'
         );
 
         $caseFlowHandlerMock->saveFormAction($params);
-        $this->assertAttributeContains(json_encode($params['log_data']), "cas_pre_data", $formActionMock);
     }
 
 }

@@ -46,8 +46,6 @@ class pmse_BpmFormAction_sugar extends Basic {
     var $user_id;
     var $frm_index;
     var $frm_last;
-    var $cas_pre_data;
-    var $cas_data;
     var $frm_action;
     var $frm_user_id;
     var $frm_user_name;
