@@ -173,10 +173,49 @@
         cursor: pointer;
       }
     }
-    &.attachments .select2-search-choice {
-      div {
-        background: @gray;
-        padding: 2px 6px 2px 6px;
+    &.attachments {
+      &:not(.select2-container-active) {
+        .select2-choices {
+          border: 1px solid transparent;
+        }
+      }
+      .select2-search-choice {
+        border-radius: 3px;
+        padding: 4px 24px 4px 6px;
+        color: @gray;
+        background-color: darken(@grayLighter, 10%);
+        font-weight: normal;
+        margin: 1px 4px 1px 0;
+        position: relative;
+        line-height: 1px;
+        &.select2-search-choice-focus {
+          background-color: darken(@grayLighter, 20%);
+        }
+        div {
+          display: inline-block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 200px;
+          font-size: 13px;
+          line-height: 20px;
+        }
+        a.select2-search-choice-close {
+          position: absolute;
+          top: 8px;
+          right: 6px;
+          left: auto;
+          color: inherit;
+          &::before {
+            content: "\f00d";
+          }
+          &:hover {
+            color: @grayLight;
+          }
+        }
+        .select2-search-field input {
+          margin: 0;
+          min-height: 19px;
+        }
       }
     }
     //forecasts
@@ -220,64 +259,6 @@
       .select2-search-field {
         input.select2-active {
           background: transparent !important;
-        }
-      }
-    }
-
-    &.select2-choices-pills-square {
-      li {
-        border-radius: 3px;
-        padding: 6px;
-        color: @white;
-        font-weight: 600;
-        &.select2-search-choice-focus {
-          color: @dropdownLinkColor;
-          border-radius: 3px;
-          border-color: @linkColor !important;
-          background-color: lighten(@grayDark, 10%);
-        }
-      }
-      .select2-choices {
-        padding-left: 2px;
-        min-height: 30px;
-      }
-      .select2-search-choice {
-        div {
-          font-size: @baseFontSize;
-          padding: 0px 12px 0px 0px;
-          border-radius: 3px;
-          color: @white;
-          .label {
-            background: #499C00;
-            text-align: center;
-            color: @white;
-            line-height: 16px;
-          }
-        }
-        .icon {
-          display: block;
-          float: left;
-          width: 20px;
-          height: 20px;
-          margin: -5px 5px 0 -5px;
-          box-sizing: border-box;
-          img {
-            width: inherit;
-            height: inherit;
-          }
-        }
-        a.select2-search-choice-close {
-          top: 6px;
-          right: 4px;
-          font-size: 12px;
-          font-weight: normal;
-          color: @black;
-          &::before {
-            content: "\f00d";
-          }
-          &:hover {
-            color: @grayLight;
-          }
         }
       }
     }
@@ -627,6 +608,39 @@
       color: @white;
       font-weight: 600;
     }
+  }
+}
+
+
+.square-pill {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  padding: 3px 24px 3px 6px;
+  box-sizing: border-box;
+  color: @gray;
+  font-size: 12px;
+  line-height: 1px;
+  white-space: nowrap;
+  background-color: darken(@grayLighter, 10%);
+  border: 1px solid darken(@grayLighter, 10%);
+  border-radius: 3px;
+  cursor: default;
+  a {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+    color: inherit;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 20px;
+  }
+  span {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    color: inherit;
   }
 }
 
