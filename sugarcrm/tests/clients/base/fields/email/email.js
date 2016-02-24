@@ -1,6 +1,6 @@
 describe('Base.Email', function() {
 
-    var app, field, model, mock_addr, oldjQueryFn;
+    var app, field, model, mock_addr;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -27,12 +27,6 @@ describe('Base.Email', function() {
         }));
         model = field.model;
 
-        if ($.fn.tooltip) {
-            oldjQueryFn = $.fn.tooltip;
-        }
-        $.fn.tooltip = function(){};
-        field.addPluginTooltips = field.removePluginTooltips = function(){};
-
         field.render();
     });
 
@@ -42,10 +36,6 @@ describe('Base.Email', function() {
         SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         field = null;
-        if (oldjQueryFn) {
-            $.fn.tooltip = oldjQueryFn;
-            oldjQueryFn = null;
-        }
     });
 
     describe("initial rendering", function() {
@@ -469,9 +459,6 @@ describe('Base.Email', function() {
             );
             field = SugarTest.createField('base', 'email', 'email', 'edit', undefined, undefined, model);
             model = field.model;
-
-            field.addPluginTooltips = field.removePluginTooltips = function()
-            {};
 
             field.render();
         });

@@ -158,9 +158,6 @@
                 .closest('.email')
                 .before(emailFieldHtml);
 
-            // add tooltips
-            this.addPluginTooltips($newEmailField.prev());
-
             if (this.def.required && this._shouldRenderRequiredPlaceholder()) {
                 // we need to remove the required place holder now
                 var label = app.lang.get('LBL_REQUIRED_FIELD', this.module),
@@ -248,7 +245,6 @@
         primaryRemoved = this._removeExistingAddressInModel(index);
 
         $removeThisField = $deleteButton.closest('.email');
-        this.removePluginTooltips($removeThisField); // remove tooltips
         $removeThisField.remove();
 
         if (primaryRemoved) {

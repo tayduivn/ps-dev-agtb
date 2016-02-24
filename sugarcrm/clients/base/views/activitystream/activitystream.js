@@ -267,7 +267,6 @@
 
         this.processAvatars();
         this.$('.comments').prepend(template(model.attributes));
-        this.initializeAllPluginTooltips();
         this.context.trigger('activitystream:post:prepend', this.model);
     },
 
