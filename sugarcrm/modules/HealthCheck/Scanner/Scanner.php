@@ -393,6 +393,98 @@ class HealthCheckScanner
     );
 
     /**
+     * Methods to run as part of the Process Author invalid field check
+     * @var array
+     */
+    protected $invalidFieldUseMethods = array(
+        'checkActionsForInvalidFields',
+        'checkBusinesRulesForInvalidFields',
+    );
+
+    /**
+     * List of fields blacklisted for Process Author as of 7.6.2
+     * @var array
+     */
+    protected $blacklistedPAFields = array(
+        'ALL' => array(
+            'deleted',
+            'system_id',
+            'mkto_sync',
+            'mkto_id',
+            'mkto_lead_score',
+            'parent_type',
+            'user_name',
+            'user_hash',
+            'portal_app',
+            'portal_active',
+            'portal_name',
+            'password',
+            'is_admin',
+        ),
+        'BR' => array(
+            'duration_hours',
+            'duration_minutes',
+            'repeat_type',
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
+        ),
+        'BRR' => array(),
+        'CF' => array(
+            'created_by',
+            'modified_user_id',
+            'date_entered',
+            'date_modified',
+        ),
+    );
+
+    /**
+     * PA special fields
+     * @var array
+     */
+    protected $whitelistedPAFields = array(
+        'ALL' => array('created_by', 'modified_user_id'),
+        'BR' => array('assigned_user_id', 'email1', 'outlook_id'),
+        'BRR' => array('assigned_user_id', 'email1', 'outlook_id'),
+        'ET' => array('email1'),
+        'AC' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
+        'CF' => array('assigned_user_id', 'likely_case', 'worst_case', 'best_case', 'teams'),
+        'RR' => array(),
+    );
+
+    /**
+     * List of field types that are blacklisted throughout Process Author
+     * @var array
+     */
+    protected $blacklistedPAFieldTypes = array('image','password','file');
+
+    /**
+     * List of validation types needed when checking process author fields
+     * @var array
+     */
+    protected $processFieldValidationTypes = array(
+        'ADD_RELATED_RECORD' => 'AC',
+        'CHANGE_FIELD' => 'CF',
+        'BUSINESS_RULE' => 'BR',
+    );
+
+    /**
+     * List of business rule validation types
+     * @var array
+     */
+    protected $businessRuleTypes = array(
+        'BRR' => 'conditions',
+        'BR' => 'conclusions',
+    );
+
+    /**
+     * Stack of invalid Process Author fields used in context, and their counts
+     * @var array
+     */
+    protected $invalidPAFields = array();
+
+    /**
      *
      * Ctor setup
      * @return void
@@ -766,6 +858,9 @@ class HealthCheckScanner
         // Check Process Author unserialization
         $this->checkPAUnserialization();
 
+        // Check Process Author invalid fields in activities and business rules
+        $this->checkPAInvalidFields();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -1068,6 +1163,759 @@ class HealthCheckScanner
         }
 
         return "Could not determine reason (Reason Code: $reason)";
+    }
+
+    /**
+     * Trigger method that actually handles launching the Process Author invalid
+     * field use scan, captures log messages and updates the scanner status.
+     */
+    protected function checkPAInvalidFields()
+    {
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Only run this for 7.6 instances
+        if (version_compare($version, '7.7.0.0', '<') && version_compare($version, '7.6.0.0', '>=')) {
+            // And only run this for ENT or ULT flavors
+            if (in_array(strtolower($flavor), array('ent', 'ult'))) {
+                $warnings = $this->checkPAInvalidFieldUse();
+                foreach ($warnings as $warning) {
+                    $this->updateStatus('invalidPAFieldUse', $warning['count'], $warning['type']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks for invalid field use across PA modules (as needed) and returns a
+     * list of warnings based on the scan.
+     * @return array
+     */
+    protected function checkPAInvalidFieldUse()
+    {
+        foreach ($this->invalidFieldUseMethods as $method) {
+            $this->$method();
+        }
+
+        return $this->getInvalidFieldUseWarnings();
+    }
+
+    /**
+     * Checks all process definition actions for valid fields. If any field in
+     * the def is invalid, this will log that and the scanner will fail with
+     * Bucket F failures.
+     */
+    protected function checkActionsForInvalidFields()
+    {
+        // Decorate our SQL so that each DB can parse this properly
+        $afmNotEmptyString = $this->getNotEmptyFieldSQL('ad.act_field_module');
+        $afNotEmptyString = $this->getNotEmptyFieldSQL('ad.act_fields');
+
+        // build the SQL now
+        $sql = "SELECT
+                    /* Activity definition fields - the basis for what we are doing */
+                    ad.id id, ad.name action_name,
+                    ad.act_fields action_fields, ad.act_field_module action_module,
+                    /* Process Definition fields - needed for target module */
+                    pd.pro_module target_module,
+                    /* Project fields - needed for logging the PD name */
+                    p.name process_name,
+                    /* Activity fields - needed for activity type validation */
+                    a.act_task_type action_task_type, a.act_script_type action_script_type
+                FROM
+                    pmse_bpm_activity_definition ad
+                    INNER JOIN
+                        pmse_bpmn_activity a ON ad.id = a.id
+                    INNER JOIN
+                        pmse_bpm_process_definition pd ON ad.pro_id = pd.id
+                    INNER JOIN
+                        pmse_project p ON pd.prj_id = p.id
+                WHERE
+                    $afmNotEmptyString
+                    AND $afNotEmptyString
+                    AND a.act_task_type = 'SCRIPTTASK'
+                    AND pd.deleted = 0
+                    AND ad.deleted = 0
+                    AND p.deleted =0";
+
+        $result = $this->db->query($sql);
+
+        // Always send false as the second argument to fetch so that we do not
+        // get bitten by encoded data
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            $validationType = $this->getValidationType($row['action_script_type']);
+            $this->scanActionsForInvalidFields($row, $row['target_module'], $validationType);
+        }
+    }
+
+    /**
+     * Gets a validation type code if one exists for $key
+     * @param string $key The script type to check against
+     * @return string
+     */
+    protected function getValidationType($key)
+    {
+        return isset($this->processFieldValidationTypes[$key]) ? $this->processFieldValidationTypes[$key] : '';
+    }
+
+    /**
+     * Scans action definition data for invalid fields
+     * @param array $element An activity element from an import
+     * @param string $module The module to get fields to validate from
+     * @param string $type The type of field validation to apply
+     * @return string
+     */
+    protected function scanActionsForInvalidFields(array $element, $module, $type = '')
+    {
+        if (!empty($element['action_module'])) {
+            // This gets the correct bean for testing the action
+            $bean = $this->getProperProcessBean($module, $element['action_module']);
+
+            // Get the field data array for this action
+            $fieldData = json_decode($element['action_fields'], true);
+
+            // In some cases $fieldData comes back null, so we need to check
+            // if it is actually an array before trying to use it as one
+            if (is_array($fieldData)) {
+                foreach ($fieldData as $fieldDef) {
+                    $field = $fieldDef['field'];
+                    if (isset($bean->field_defs[$field])) {
+                        if (!$this->isValidPAField($bean->field_defs[$field], $type)) {
+                            // Get the message to log
+                            $msg = $this->getInvalidPAActionFieldLogMessage(
+                                $bean->module_dir,
+                                $field,
+                                $element['action_script_type'],
+                                $element['process_name'],
+                                $element['action_name'],
+                                $element['id']
+                            );
+
+                            // Log the message
+                            $this->log($msg);
+
+                            // Add the failure to the stack
+                            $this->addInvalidPAFieldWarning('Actions');
+                        }
+                    } else {
+                        // A field that is not found on the module is also a
+                        // problem
+                        $msg = $this->getInvalidPANotFoundFieldLogMessage(
+                            $bean->module_dir,
+                            $field,
+                            $element['action_script_type'],
+                            $element['process_name'],
+                            $element['id']
+                        );
+
+                        // Log the message
+                        $this->log($msg);
+
+                        // Add the failure to the stack
+                        $this->addInvalidPAFieldWarning('Actions');
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the proper module for a field validation check
+     * @param string $tModule Target module name
+     * @param string $aModule Related module name
+     * @return string
+     */
+    protected function getProperProcessModule($tModule, $aModule)
+    {
+        return $this->getProperProcessBean($tModule, $aModule, true);
+    }
+
+    /**
+     * Gets the proper bean for a field validation check
+     * @param string $tModule Target module name
+     * @param string $aModule Action module name
+     * @param boolean $asModule If true, sends back just the module name
+     * @return SugarBean
+     */
+    protected function getProperProcessBean($tModule, $aModule, $asModule = false)
+    {
+        // If there is a field on the target module that matches the action module
+        // but is different from the target module...
+        if ($tModule != $aModule) {
+            // Start with the target module bean
+            $bean = BeanFactory::getBean($tModule);
+
+            // See if there is a corresponding field for this module
+            if (isset($bean->field_defs[$aModule])) {
+                // If we have a link field load the relationship for it
+                if ($bean->field_defs[$aModule]['type'] === 'link') {
+                    // Load the relationship for the action module
+                    $bean->load_relationship($aModule);
+
+                    // If the relationship loaded, get the related bean for it
+                    if ($bean->$aModule) {
+                        $rModule = $bean->$aModule->getRelatedModuleName();
+
+                        // If we want just the module, send that back
+                        if ($asModule) {
+                            return $rModule;
+                        }
+
+                        return BeanFactory::getBean($rModule);
+                    } else {
+                        $this->log("Could not load relationship for link field $aModule on {$bean->module_dir}");
+                    }
+                } elseif (isset($bean->field_defs[$aModule]['module'])) {
+                    // If we are a relate field, see if we have a module on that def
+                    $rModule = $bean->field_defs[$aModule]['module'];
+
+                    // If we want just the module, send that back
+                    if ($asModule) {
+                        return $rModule;
+                    }
+
+                    return BeanFactory::getBean($rModule);
+                }
+            }
+        }
+
+        // If we want just the module, send that back, otherwise return the bean
+        // for the target module
+        if ($asModule) {
+            return $tModule;
+        }
+
+        // If we had a bean, send it back
+        if (isset($bean)) {
+            return $bean;
+        }
+
+        // If we didn't make it into the conditional, build the bean here
+        return BeanFactory::getBean($tModule);
+    }
+
+    /**
+     * Gets the message to log when an invalid field is discovered
+     * @param string $module The module that this field is on
+     * @param string $field The field that is invalid
+     * @param string $action The action type that is being validated
+     * @param string $processName The name of the process definition this is on
+     * @param string $actionName The name of the action element that contains the field
+     * @param string $id The id of the action
+     * @return string
+     */
+    protected function getInvalidPAActionFieldLogMessage($module, $field, $action, $processName, $actionName, $id)
+    {
+        $msg  = "-----\n%s->%s field is not a valid action field for the %s action type.\n";
+        $msg .= "Process Definition Name: %s\nAction Name: %s\n";
+        $msg .= "Table: pmse_bpm_activity_definition\nColumn: act_fields\nID: %s\n-----";
+
+        return sprintf(
+            $msg,
+            $module,
+            $field,
+            $action,
+            $processName,
+            $actionName,
+            $id
+        );
+    }
+
+    /**
+     * Gets the message to log when an invalid field is discovered
+     * @param string $module The module that this field is on
+     * @param string $field The field that is invalid
+     * @param string $action The action type that is being validated
+     * @param string $processName The name of the process definition this is on
+     * @param string $id The id of the action
+     * @return string
+     */
+    protected function getInvalidPANotFoundFieldLogMessage($module, $field, $processName, $actionName, $id)
+    {
+        $msg  = "-----\n%s was not found as a field on the %s module.\n";
+        $msg .= "Process Definition Name: %s\nAction Name: %s\n";
+        $msg .= "Table: pmse_bpm_activity_definition\nColumn: act_fields\nID: %s\n-----";
+
+        return sprintf(
+            $msg,
+            $field,
+            $module,
+            $processName,
+            $actionName,
+            $id
+        );
+    }
+
+    /**
+     * Field validator that simulates isValidField in PMSEEngineUtils.
+     * @param array $def Field def
+     * @param string $type Type of action validation
+     * @return boolean
+     */
+    protected function isValidPAField($def, $type = '')
+    {
+        // Empty name attribute is always a false
+        if (empty($def['name'])) {
+            return false;
+        }
+
+        if (($return = $this->isValidPAFieldByVardef($def)) !== null) {
+            return $return;
+        }
+
+        if ($this->isWhitelistedPAField($def['name'], $type)){
+            return true;
+        }
+
+        if ($this->isBlacklistedPAField($def['name'], $type)) {
+            return false;
+        }
+
+        if ($this->isNonDBField($def)) {
+            return false;
+        }
+
+        if ($this->isBlacklistedPAFieldType($def)) {
+            return false;
+        }
+
+        if ($this->isCalculatedField($def, $type)) {
+            return false;
+        }
+
+        if ($this->isReadonlyField($def, $type)) {
+            return false;
+        }
+
+        if (($return = $this->isValidStudioField($def)) !== null) {
+            return $return;
+        }
+
+        return $this->isValidFieldBySourceAndType($def);
+    }
+
+    /**
+     * Checks a vardef for processes directive. If founds, calculates it and
+     * returns it. Otherwise returns null.
+     * @param array $def The vardef to check
+     * @return boolean True|false if evaluated, null if not
+     */
+    protected function isValidPAFieldByVardef($def)
+    {
+        // The class that will be used to check function evaluation, if it exists
+        $utilClass = 'PMSEEngineUtils';
+
+        // First things first... if we are explicitly directed to do something
+        // based on the vardefs, do that thing first
+        if (isset($def['processes'])) {
+            // If a field is explicitly marked for processes, handle it
+            if (is_bool($def['processes'])) {
+                return $def['processes'];
+            }
+
+            // If the marker is a string or an array, it is mapped to a method
+            if (is_string($def['processes'])) {
+                $def['processes'] = array($def['processes']);
+            }
+
+            // For a field validation list, run through until you hit a false,
+            // otherwise let the rest of the validation processes run
+            foreach ($def['processes'] as $method) {
+                // Only try to use the util class if it exists, without autoloading
+                // it to prevent issues
+                if (class_exists($utilClass, false) && method_exists($utilClass, $method)) {
+                    if ($utilClass::$method() === false) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // Nothing to do, return null to let consumers know this wasn't used
+        return null;
+    }
+
+    /**
+     * Checks the whitelist to force PA field validity
+     * @param string $field The field name to check
+     * @param string $type The validation type code
+     * @return boolean
+     */
+    protected function isWhitelistedPAField($field, $type)
+    {
+        $list = $this->whitelistedPAFields['ALL'];
+        if ($type && array_key_exists($type, $this->whitelistedPAFields)) {
+            $list = array_merge($list, $this->whitelistedPAFields[$type]);
+        }
+
+        return in_array($field, $list);
+    }
+
+    /**
+     * Checks the field blacklist for validity
+     * @param string $field The name of the field to check
+     * @param string $type The validation type code
+     * @return boolean
+     */
+    protected function isBlacklistedPAField($field, $type = '')
+    {
+        $list = $this->blacklistedPAFields['ALL'];
+        if ($type && array_key_exists($type, $this->blacklistedPAFields)) {
+            $list = array_merge($list, $this->blacklistedPAFields[$type]);
+        }
+
+        return in_array($field, $list);
+    }
+
+    /**
+     * Checks if a field is non-db source
+     * @param array $def Field def
+     * @return boolean
+     */
+    protected function isNonDBField($def)
+    {
+        return isset($def['source']) && $def['source'] === 'non-db';
+    }
+
+    /**
+     * Checks the field blacklist for validity
+     * @param array $def The vardef to check
+     * @return boolean
+     */
+    protected function isBlacklistedPAFieldType($def)
+    {
+        return isset($def['type']) && in_array($def['type'], $this->blacklistedPAFieldTypes);
+    }
+
+    /**
+     * Checks whether a field is calculated and is a write type validation
+     * @param array $def Field def
+     * @param string $type The validation type code
+     * @return boolean
+     */
+    protected function isCalculatedField($def, $type)
+    {
+        return in_array($type, array('AC', 'CF', 'BR')) && isset($def['formula']);
+    }
+
+    /**
+     * Checks whether a field is readonly
+     * @param array $def Field def
+     * @param string $type The validation type code
+     * @return boolean
+     */
+    protected function isReadonlyField($def, $type)
+    {
+        return in_array($type, array('RR', 'AC', 'CF', 'BR')) && isset($def['readonly']);
+    }
+
+    /**
+     * Checks if a field is valid based on the studio attribute
+     * @param array $def Field def
+     * @return boolean
+     */
+    protected function isValidStudioField($def)
+    {
+        // We only do something here is there is a studio attribute
+        if (isset($def['studio'])) {
+            // If the studio attribue is an array, check editField and required
+            // If either of those is truthy, this is a valid field
+            if (is_array($def ['studio'])) {
+                if (!empty($def['studio']['editField']) || !empty($def['studio']['required'])) {
+                    return true;
+                }
+            } else {
+                // If the studio attribute is a string and set to visible, then
+                // it is valid
+                if ($def['studio'] === 'visible') {
+                    return true;
+                }
+
+                // If the studio attribute is falsey then it is not valid
+                if (empty($def['studio']) || $def['studio'] === 'hidden' || $def['studio'] === 'false') {
+                    return false;
+                }
+            }
+        }
+
+        // No studio directive, return null
+        return null;
+    }
+
+    /**
+     * Checks a vardef for a proper type to make a field valid for edits
+     * @param array $def Field def
+     * @return boolean
+     */
+    protected function isValidFieldBySourceAndType($def)
+    {
+        // The basics here are simple... if this is a DB field or a custom field
+        // and it is not an ID type, it is valid for edits
+        if (empty($def['source']) || $def['source'] === 'db' || $def['source'] === 'custom_fields') {
+            if ($def['type'] !== 'id' && (empty($def['dbType']) || $def['dbType'] !== 'id')) {
+                return true;
+            }
+        }
+
+        // Otherwise it is not
+        return false;
+    }
+
+    /**
+     * Checks all business rules in the system for valid fields. If any field is
+     * invalid for READ or WRITE ops, this method will log that and the scan will
+     * fail with a Bucket F report.
+     */
+    protected function checkBusinesRulesForInvalidFields()
+    {
+        // Decorate our SQL so that each DB can parse this properly
+        $defNotEmptyString = $this->getNotEmptyFieldSQL('br.rst_source_definition');
+
+        // Build up the query that is needed for this process
+        $sql = "SELECT
+                    br.id id, br.name name, br.rst_source_definition definition,
+                    br.rst_module module
+                FROM
+                    pmse_business_rules br
+                WHERE
+                    $defNotEmptyString
+                    AND br.deleted = 0";
+
+        $result = $this->db->query($sql);
+
+        // Always send false as the second argument to fetch so that we do not
+        // get bitten by encoded data
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            $data = $this->getParsedBusinessRuleData($row['definition']);
+            foreach ($data['scan'] as $type => $rows) {
+                foreach ($rows as $row) {
+                    $bean = BeanFactory::getBean($row['module']);
+                    $field = $row['field'];
+                    if ($bean) {
+                        if (isset($bean->field_defs[$field])) {
+                            if (!$this->isValidPAField($bean->field_defs[$field], $type)) {
+                                // Get the business rule type
+                                $brType = $this->getBusinessRuleValidationType($type);
+
+                                // Get the message to log
+                                $msg = $this->getInvalidBusinessRuleFieldLogMessage(
+                                    $row['module'],
+                                    $field,
+                                    $brType,
+                                    $data['name'],
+                                    $data['id']
+                                );
+
+                                // Log the message
+                                $this->log($msg);
+
+                                // Add the failure to the stack
+                                $this->addInvalidPAFieldWarning('Business Rules');
+                            }
+                        } else {
+                            // A field not found is also a problem
+                            $msg = $this->getInvalidPABRNotFoundFieldLogMessage(
+                                $row['module'],
+                                $field,
+                                $data['name'],
+                                $data['id']
+                            );
+
+                            // Log the message
+                            $this->log($msg);
+
+                            // Add the failure to the stack
+                            $this->addInvalidPAFieldWarning('Business Rules');
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds an invalid field type count increment
+     * @param string $type The type of element that contains the invalid field
+     */
+    protected function addInvalidPAFieldWarning($type)
+    {
+        if (!isset($this->invalidPAFields[$type])) {
+            $this->invalidPAFields[$type] = 0;
+        }
+
+        $this->invalidPAFields[$type]++;
+    }
+
+    /**
+     * Gets a properly formatted list of invalid field use types and counts
+     * @return array
+     */
+    protected function getInvalidFieldUseWarnings()
+    {
+        $return = array();
+        foreach ($this->invalidPAFields as $type => $count) {
+            $return[] = array(
+                'type' => $type,
+                'count' => $count,
+            );
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets a business rule validation type based on a shortcode key
+     * @param string $key The shortcode key for this business rule element type
+     * @return string
+     */
+    protected function getBusinessRuleValidationType($key)
+    {
+        return $this->businessRuleTypes[$key];
+    }
+
+    /**
+     * Gets the message to log when an invalid field is discovered
+     * @param string $module The module that this field is on
+     * @param string $field The field that is invalid
+     * @param string $type The business rule type (condition or conclusion)
+     * @param string $name The name of the business rule this is on
+     * @param string $id The id of the business rule
+     * @return string
+     */
+    protected function getInvalidBusinessRuleFieldLogMessage($module, $field, $type, $name, $id)
+    {
+        $msg  = "-----\n%s->%s field is not a valid business rule %s field.\n";
+        $msg .= "Business Rule Name: %s\nID: %s\n-----";
+
+        return sprintf(
+            $msg,
+            $module,
+            $field,
+            $type,
+            $name,
+            $id
+        );
+    }
+
+    /**
+     * Gets the message to log when an invalid field is discovered
+     * @param string $module The module that this field is on
+     * @param string $field The field that is invalid
+     * @param string $name The name of the business rule this is on
+     * @param string $id The id of the business rule
+     * @return string
+     */
+    protected function getInvalidPABRNotFoundFieldLogMessage($module, $field, $name, $id)
+    {
+        $msg  = "-----\n%s was not found as a field on the %s module.\n";
+        $msg .= "Business Rule Name: %s\nID: %s\n-----";
+
+        return sprintf(
+            $msg,
+            $field,
+            $module,
+            $name,
+            $id
+        );
+    }
+
+    /**
+     * Parses a business rule definition to get relevent information for validation
+     * @param string $def JSON encoded string of definition data
+     * @return array
+     */
+    protected function getParsedBusinessRuleData($def)
+    {
+        // Start with decoding the json string
+        $data = json_decode($def, true);
+
+        // Now set the return, using some parts of the definition that we need
+        $return = array(
+            'id' => $data['id'],
+            'name' => $data['name'],
+            'module' => $data['base_module'],
+            'scan' => array(
+                'BR' => array(),
+                'BRR' => array(),
+            ),
+        );
+
+        // We are going to need the bean for the target module, so get that
+        $bean = BeanFactory::getBean($data['base_module']);
+
+        // Since we are going to be checking read and write ops, we need to
+        // make sure we have both of these values
+        if (isset($data['columns'], $data['ruleset'])) {
+            // Conditions on columns are an easy fetch, so collect those now
+            foreach ($data['columns']['conditions'] as $row) {
+                // Get the module in question
+                $module = $this->getProperProcessModule($data['base_module'], $row['module']);
+
+                // When it comes times to check this later, it makes no sense
+                // to check the same combination of module:field more than once
+                $key = $this->getBusinessRuleKey($module, $row['field']);
+
+                // Create a scannable row of business rule condition fields
+                // by module
+                $return['scan']['BRR'][$key] = array(
+                    'module' => $module,
+                    'field' => $row['field'],
+                );
+            }
+
+            // Handle the rulesets, or what is actually checked and returned
+            // and written
+            foreach ($data['ruleset'] as $ruleset) {
+                // Start with the conditions of each ruleset
+                if (isset($ruleset['conditions']) && is_array($ruleset['conditions'])) {
+                    foreach ($ruleset['conditions'] as $condition) {
+                        // Again, get the module we need
+                        $module = $this->getProperProcessModule($data['base_module'], $condition['variable_module']);
+
+                        // Again, make a key
+                        $key = $this->getBusinessRuleKey($module, $condition['variable_name']);
+
+                        // Add this module:field to the stack of READ ops checks
+                        $return['scan']['BRR'][$key] = array(
+                            'module' => $module,
+                            'field' => $condition['variable_name'],
+                        );
+                    }
+                }
+
+                // Now handle conclusions... these are write ops
+                if (isset($ruleset['conclusions']) && is_array($ruleset['conclusions'])) {
+                    foreach ($ruleset['conclusions'] as $conclusion) {
+                        // These are return value types and need no checking
+                        if ($conclusion['conclusion_type'] === 'return') {
+                            continue;
+                        }
+
+                        // Create a key for this like the others
+                        $key = $this->getBusinessRuleKey($data['base_module'], $conclusion['conclusion_value']);
+
+                        // Add this module:field to the stack of WRITE ops checks
+                        $return['scan']['BR'][$key] = array(
+                            'module' => $data['base_module'],
+                            'field' => $conclusion['conclusion_value'],
+                        );
+                    }
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets an array index used for stacking invalid fields
+     * @param string $module The module for this field
+     * @param string $field The field name
+     * @return string
+     */
+    protected function getBusinessRuleKey($module, $field)
+    {
+        return "$module:$field";
     }
 
     /**
@@ -2470,7 +3318,7 @@ ENDP;
 
     /**
      * Checking PHP file content and returning true if there was no code found.
-     * 
+     *
      * @param string $file path to file
      * @return bool is file empty or not
      */

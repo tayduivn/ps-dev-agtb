@@ -64,9 +64,13 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
             ->willReturn(array('include/language/en_us.lang.php'));
-        $mockLoader->expects($this->once())
+        $mockLoader->expects($this->exactly(2))
             ->method('getCustomFile')
-            ->willReturn('custom/include/language/en_us.lang.php');
+            ->willReturnOnConsecutiveCalls(
+                'custom/include/language/en_us.lang.php',
+                null
+
+            );
         $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
 
         $mockLoader->run();
@@ -134,9 +138,12 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
             ->willReturn(array('include/language/en_us.lang.php'));
-        $mockLoader->expects($this->once())
+        $mockLoader->expects($this->exactly(2))
             ->method('getCustomFile')
-            ->willReturn('custom/include/language/en_us.lang.php');
+            ->willReturnOnConsecutiveCalls(
+                'custom/include/language/en_us.lang.php',
+                null
+            );
         $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
 
         $mockLoader->run();
@@ -204,7 +211,7 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
 
         $mockLoader = $this->getMock(
             'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
+            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage', 'getFileMTime'),
             array($this->upgrader)
         );
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
@@ -214,15 +221,23 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
                 "include/lanaguage/{$firstLanguage}.lang.php",
                 "include/language/{$secondLanguage}.lang.php",
             ));
-        $mockLoader->expects($this->exactly(2))
+        $mockLoader->expects($this->exactly(4))
             ->method('getCustomFile')
             ->willReturnOnConsecutiveCalls(
                 "custom/include/lanaguage/{$firstLanguage}.lang.php",
-                "custom/include/language/{$secondLanguage}.lang.php"
+                "custom/application/Ext/Language/{$firstLanguage}.lang.ext.php",
+                "custom/include/lanaguage/{$secondLanguage}.lang.php",
+                "custom/application/Ext/Language/{$secondLanguage}.lang.ext.php"
+            );
+        $mockLoader->expects($this->exactly(4))
+            ->method('getFileMTime')
+            ->willReturnOnConsecutiveCalls(
+                1, 0, 1, 0
             );
         $mockLoader->expects($this->exactly(2))
             ->method('getLanguage')
             ->willReturnOnConsecutiveCalls($firstLanguage, $secondLanguage);
+
 
         $mockLoader->run();
 
@@ -273,9 +288,12 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
             ->willReturn(array('include/language/en_us.lang.php'));
-        $mockLoader->expects($this->once())
+        $mockLoader->expects($this->exactly(2))
             ->method('getCustomFile')
-            ->willReturn('custom/include/language/en_us.lang.php');
+            ->willReturnOnConsecutiveCalls(
+                'custom/include/language/en_us.lang.php',
+                null
+            );
         $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
 
         $mockLoader->run();
@@ -304,9 +322,12 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
             ->willReturn(array('include/language/en_us.lang.php'));
-        $mockLoader->expects($this->once())
+        $mockLoader->expects($this->exactly(2))
             ->method('getCustomFile')
-            ->willReturn('custom/include/language/en_us.lang.php');
+            ->willReturnOnConsecutiveCalls(
+                'custom/include/language/en_us.lang.php',
+                null
+            );
         $mockLoader->expects($this->once())->method('getLanguage')->willReturn('en_us');
 
         $mockLoader->run();

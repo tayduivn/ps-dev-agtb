@@ -440,6 +440,11 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Invalid_PA_Serialization/',
         ),
+        542 => array(
+            'report' => 'invalidPAFieldUse',
+            'bucket' => self::MANUAL,
+            //'kb'     => '',
+        ),
 
         // Bucket G
         901 => array(

@@ -1296,6 +1296,43 @@ class PMSEEngineUtils
     }
 
     /**
+     * Gets the proper bean for a field validation check
+     * @param string $tModule Target module name
+     * @param string $aModule Action module name
+     * @return SugarBean
+     */
+    public static function getProperProcessBean($tModule, $aModule)
+    {
+        // Start with the target module
+        $bean = BeanFactory::getBean($tModule);
+
+        // If there is a field on the target module that matches the action module
+        // but is different from the target module...
+        if ($tModule != $aModule && isset($bean->field_defs[$aModule])) {
+            // If we have a link field load the relationship for it
+            if ($bean->field_defs[$aModule]['type'] === 'link') {
+                // Load the relationship for the action module
+                $bean->load_relationship($aModule);
+
+                // If the relationship loaded, get the related bean for it
+                if ($bean->$aModule) {
+                    $rModule = $bean->$aModule->getRelatedModuleName();
+                    return BeanFactory::getBean($rModule);
+                } else {
+                    PMSELogger::getInstance()->warning("Could not load relationship for link field $aModule on {$bean->module_dir}");
+                }
+            } elseif (isset($bean->field_defs[$aModule]['module'])) {
+                // If we are a relate field, see if we have a module on that def
+                $rModule = $bean->field_defs[$aModule]['module'];
+                return BeanFactory::getBean($rModule);
+            }
+        }
+
+        // Just return the bean for the target module
+        return $bean;
+    }
+
+    /**
      * Santizies imported activity fields, since some fields may have been exported
      * in a version when they were still acceptable valid fields
      * @param array $element An activity element from an import
@@ -1306,32 +1343,32 @@ class PMSEEngineUtils
     public static function sanitizeImportActivityFields(array $element, $module, $type = '')
     {
         if (!empty($element['act_field_module'])) {
-            // We will need these for validations
-            $targetBean = BeanFactory::getBean($module);
-            if (isset($targetBean->field_defs[$element['act_field_module']]['module'])) {
-                // We need the related module bean to get field defs for validation
-                $relBeanName = $targetBean->field_defs[$element['act_field_module']]['module'];
-                $relBean = BeanFactory::getBean($relBeanName);
+            // Get the proper bean for this action
+            $bean = self::getProperProcessBean($module, $element['act_field_module']);
 
+            // Get the field information for this action
+            $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
+
+            // In some cases $fieldData comes back null, so we need to check
+            // if it is actually an array before trying to use it as one
+            if (is_array($fieldData)) {
+                // Set the variable that will hold the data
                 $newData = array();
-                $fieldData = json_decode(html_entity_decode($element['act_fields']), true);
-                // In some cases $fieldData comes back null, so we need to check
-                // if it is actually an array before trying to use it as one
-                if (is_array($fieldData)) {
-                    foreach ($fieldData as $fieldDef) {
-                        $field = $fieldDef['field'];
-                        if (isset($relBean->field_defs[$field])) {
-                            if (self::isValidField($relBean->field_defs[$field], $type)) {
-                                $newData[] = $fieldDef;
-                            } else {
-                                $typeMark = empty($type) ? '(EMPTY)' : $type;
-                                PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field on $relBeanName module did not pass validation for $typeMark");
-                            }
+
+                foreach ($fieldData as $fieldDef) {
+                    $field = $fieldDef['field'];
+                    if (isset($bean->field_defs[$field])) {
+                        if (self::isValidField($bean->field_defs[$field], $type)) {
+                            $newData[] = $fieldDef;
                         } else {
-                            PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field not found in $relBeanName module");
+                            $typeMark = empty($type) ? '(EMPTY)' : $type;
+                            PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field on the {$bean->module_dir} module did not pass validation for $typeMark");
                         }
+                    } else {
+                        PMSELogger::getInstance()->warning("sanitizeImportActivityFields: $field field not found in the {$bean->module_dir} module");
                     }
                 }
+
                 $element['act_fields'] = json_encode($newData);
             }
         }
