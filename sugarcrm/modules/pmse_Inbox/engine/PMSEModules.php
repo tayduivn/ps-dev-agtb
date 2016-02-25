@@ -34,7 +34,6 @@ $pmseModulesList = array (
     'pmse_BpmThread',
     'pmse_BpmNotes',
     'pmse_BpmRelatedDependency',
-    'pmse_BpmCaseData',
     'pmse_BpmActivityUser',
     'pmse_BpmEventDefinition',
     'pmse_BpmGatewayDefinition',

@@ -50,10 +50,6 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
             'cols' => array('pro_locked_variables'),
             'encode' => true,
         ),
-        'casDataVariables' => array(
-            'table' => 'pmse_bpm_case_data',
-            'cols' => array('cas_data'),
-        ),
         'bpmFormActionTable' => array(
             'table' => 'pmse_bpm_form_action',
             'cols' => array('cas_data', 'cas_pre_data'),
