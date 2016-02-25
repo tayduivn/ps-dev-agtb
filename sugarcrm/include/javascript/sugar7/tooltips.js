@@ -94,7 +94,7 @@
 
         $('html').on({
             'mouseenter': function(event) {
-                _.delay(onMouseEnter, 200, event);
+                _.delay(onMouseEnter, 500, event);
             },
             'mouseleave': onMouseLeave,
             'click': onClick
