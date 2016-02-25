@@ -936,12 +936,4 @@ class SubscriptionsRegistry
     {
         return new \SugarQuery();
     }
-
-    /**
-     * @see CarrierRegistry::getInstance
-     */
-    protected function getCarrierRegistry()
-    {
-        return CarrierRegistry::getInstance();
-    }
 }
