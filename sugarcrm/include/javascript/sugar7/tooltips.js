@@ -17,37 +17,42 @@
         /**
          * Checks if we should show a tooltip for the given element.
          *
-         * @param {DOM} target The DOM element that has the tooltip.
+         * @param {HTMLElement} target The DOM element that has the tooltip.
          * @return {boolean} `true` if we should show a tooltip.
          * @private
          */
         var _shouldShowTooltip = function(target) {
             var $target = $(target);
-            if (!$target.is(":hover")) return false;
+            if (!$target.is(':hover')) {
+                return false;
+            }
+            var showTooltip = ($target.attr('rel') === 'tooltip' || target.offsetWidth < target.scrollWidth);
 
-            return ($target.attr('rel') === 'tooltip' || target.offsetWidth < target.scrollWidth);
-        }
+            return showTooltip;
+        };
 
         /**
          * Checks if a tooltip exists on the target and if it is currently
          * displayed.
          *
-         * @param {DOM} target The DOM element that has the tooltip.
+         * @param {HTMLElement} target The DOM element that has the tooltip.
          * @return {boolean} `true` if we should hide the tooltip.
          * @private
          */
         var _shouldHideTooltip = function(target) {
             var tooltip = app.utils.tooltip.get(target);
-            if (!tooltip) return false;
+            if (!tooltip) {
+                return false;
+            }
 
             return tooltip.tip().hasClass('in');
-        }
+        };
 
         /**
          * Initializes and shows a tooltip on the element that triggered the
          * event.
          *
-         * @param event The `mouseenter` event.
+         * @param {Event} event The `mouseenter` event.
          */
         var onMouseEnter = function(event) {
             var element = event.currentTarget;
@@ -56,37 +61,39 @@
                 app.utils.tooltip.initialize($element, {trigger: 'manual'}, $element.data('placement'));
                 app.utils.tooltip.show(element);
             }
-        }
+        };
 
         /**
          * Destroys the tooltip on the element that triggered the event.
          *
-         * @param event The `mouseleave` event.
+         * @param {Event} event The `mouseleave` event.
          */
         var onMouseLeave = function(event) {
             var element = event.currentTarget;
             if (_shouldHideTooltip(element)) {
                 app.utils.tooltip.destroy($(element));
             }
-        }
+        };
 
         /**
          * Destroys the tooltip on the clicked element.
          *
-         * @param event The `click` event.
+         * @param {Event} event The `click` event.
          */
         var onClick = function(event) {
             var element = event.currentTarget;
-            if (!_shouldHideTooltip(element)) return;
+            if (!_shouldHideTooltip(element)) {
+                return;
+            }
 
             var tooltip = app.utils.tooltip.get(element);
-            if (tooltip && tooltip.options && tooltip.options.trigger.indexOf('click') === -1) {
+            if (tooltip && tooltip.options && !_.contains(tooltip.options.trigger, 'click')) {
                 app.utils.tooltip.destroy($(element));
             }
-        }
+        };
 
         $('html').on({
-            'mouseenter': function (event) {
+            'mouseenter': function(event) {
                 _.delay(onMouseEnter, 200, event);
             },
             'mouseleave': onMouseLeave,
@@ -104,7 +111,6 @@
             return;
         }
         /**
-         * @inheritdoc
          * Deactivates tooltip plugin on touch devices.
          */
         $.fn.tooltip = function() {
