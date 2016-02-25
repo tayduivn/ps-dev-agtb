@@ -214,10 +214,26 @@ To create a {{meetings_singular_module}}:
 3. Click "Save" to finalize the new record and return to the previous page.',
 
   // Notification Center Strings
-    'LBL_EMITTER_TITLE' => 'Notifications for Meetings',
-    'LBL_EMITTER_HELP' => 'ToDo: Help text of Notifications for Meetings settings',
-    'LBL_EMITTER_DESC_ADMIN' => 'Chose what types of notifications your users receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
-    'LBL_EMITTER_DESC_USER' => 'Chose what types of notifications your receive. You can also change the delivery methods for each notification. Notifications apply to the users that are assigned to a record, on a team with belonging to a record, or invited to a call or meeting.',
+    'LBL_EMITTER_TITLE' => 'Notifications for {{plural_module_name}}',
+    'LBL_EMITTER_HELP_ADMIN' =>
+        'Configure the types of notifications and the delivery methods available '.
+        'for the {{plural_module_name}} module.<br/><br/>' .
+        'If you would like to give your users a particular option, click the corresponding checkbox ' .
+        'in the delivery method column.<br/><br/>' .
+        'It is also possible to enable/disable all notification delivery methods by clicking the leftmost checkbox.',
+    'LBL_EMITTER_HELP' =>
+        'You can configure delivery of notifications for the {{plural_module_name}} module.<br/><br/>' .
+        'If you want to receive a reminder by a particular method, click the corresponding checkbox ' .
+        'in the delivery method column.<br/><br/>' .
+        'It is also possible to enable/disable all reminder methods by clicking the leftmost checkbox.<br/><br/>' .
+        'Please note, some notification methods may be unavailable because your administrator ' .
+        'has disabled these options.',
+    'LBL_EMITTER_DESC_ADMIN' => 'Choose what types of notifications and the delivery methods you would like ' .
+        'for your users. Notifications can apply to users that are assigned to a record-, ' .
+        'on a team with belonging to a record,- or invited to a meeting.',
+    'LBL_EMITTER_DESC_USER' => 'Choose the types of notifications you would like to receive. You can also change ' .
+        'the delivery method for each notification. Notifications apply to the users that are assigned to ' .
+        'the record-, on a team with belonging to the record,- or invited to a meeting.',
   // Event remind
     'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about Meeting',
     'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',

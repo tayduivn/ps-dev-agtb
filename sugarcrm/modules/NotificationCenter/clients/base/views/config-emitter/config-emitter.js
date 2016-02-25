@@ -167,8 +167,11 @@
                 module = this.meta.emitter;
         }
 
-        this.meta.label = app.lang.get(title, module);
-        this.meta.description = app.lang.get(desc, module);
+        var additionalText = {
+            plural_module_name: app.lang.getModuleName(module, {plural: true})
+        };
+        this.meta.label = app.lang.get(title, module, additionalText);
+        this.meta.description = app.lang.get(desc, module, additionalText);
     },
 
     /**
