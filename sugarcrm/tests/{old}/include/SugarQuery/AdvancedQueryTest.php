@@ -25,7 +25,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $contacts = array();
     protected $accounts = array();
-    protected $up = true;
 
     public static function setUpBeforeClass()
     {
@@ -43,12 +42,10 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();
         }
-        $this->up = $this->_db->usePreparedStatements;
     }
 
     public function tearDown()
     {
-        $this->_db->usePreparedStatements = $this->up;
         BeanFactory::setBeanClass('Contacts');
 
         if ( !empty($this->contacts) ) {
@@ -353,9 +350,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRelateConditions()
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $contact = BeanFactory::getBean("Contacts");
         // regular query

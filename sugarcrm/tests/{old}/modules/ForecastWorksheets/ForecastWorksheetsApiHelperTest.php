@@ -50,6 +50,8 @@ class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFormatForApiSetsParentDeleted($parent_deleted)
     {
+        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
+
         $product_name = 'My Test Product';
         $product_id = 'my_test_id';
         if ($parent_deleted === 0) {

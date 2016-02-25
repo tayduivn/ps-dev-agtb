@@ -88,42 +88,6 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Data provider for testSetDBManager
-     * @return array
-     */
-    public function setDBManagerProvider()
-    {
-        return array(
-            array(false, true, false),
-            array(false, false, false),
-            array(true, true, true),
-            array(true, false, false),
-        );
-    }
-
-    /**
-     * function to test setDBManager
-     * @dataProvider setDBManagerProvider
-     */
-    public function testSetDBManager($qPrepStatements, $dbPrepStatements, $expected)
-    {
-        $dbManager = new SugarTestDatabaseMock();
-
-        $q = $this->getMockBuilder('SugarQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        // test SugarQuery default
-        $this->assertTrue($q->usePreparedStatements, 'SugarQuery should have prepared statements enabled by default');
-
-        $q->usePreparedStatements = $qPrepStatements;
-        $dbManager->usePreparedStatements = $dbPrepStatements;
-        $q->setDBManager($dbManager);
-        $this->assertSame($expected, $q->usePreparedStatements, 'Prepared statements flag not properly set');
-    }
-    
-    /**
      * @dataProvider dataProviderGetJoinOnField
      *
      * @param string $side

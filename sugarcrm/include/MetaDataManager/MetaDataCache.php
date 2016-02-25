@@ -157,24 +157,11 @@ class MetaDataCache
             $this->db->commit();
             if (empty($values['id'])) {
                 $values['id'] = create_guid();
-                $return = $this->db->insertParams(
-                    static::$cacheTable,
-                    $fields,
-                    $values,
-                    null,
-                    true,
-                    $this->db->supports('prepared_statements')
-                );
+                $return = $this->db->insertParams(static::$cacheTable, $fields, $values);
             } else {
-                $return = $this->db->updateParams(
-                    static::$cacheTable,
-                    $fields,
-                    $values,
-                    array('id' => $values['id']),
-                    null,
-                    true,
-                    $this->db->supports('prepared_statements')
-                );
+                $return = $this->db->updateParams(static::$cacheTable, $fields, $values, array(
+                    'id' => $values['id'],
+                ));
             }
             $this->db->commit();
 

@@ -31,9 +31,7 @@ class TargetModuleDeveloperVisibilityTest extends Sugar_PHPUnit_Framework_TestCa
         global $current_user;
         global $db;
 
-        if ($db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $bean = new Call();
         $bean->parent_type = "Accounts";

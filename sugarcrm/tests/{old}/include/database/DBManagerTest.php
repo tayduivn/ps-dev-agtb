@@ -23,9 +23,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     protected $backupGlobals = false;
 
     /**
-     * @var bool Backup for DBManager::usePreparedStatements.
+     * @var bool Backup for DBManager::encode.
      */
-    protected $usePStates, $dbEncode;
+    protected $dbEncode;
 
     static public function setUpBeforeClass()
     {
@@ -46,7 +46,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db))
         {
             $this->_db = DBManagerFactory::getInstance();
-            $this->usePStates = $this->_db->usePreparedStatements;
             $this->dbEncode = $this->_db->getEncode();
         }
         $this->created = array();
@@ -55,7 +54,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->_db->usePreparedStatements = $this->usePStates;
         $this->_db->setEncode($this->dbEncode);
         foreach($this->created as $table => $dummy) {
             $this->_db->dropTableName($table);
@@ -1525,7 +1523,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->createTableParams($tableName, $params, array());
 
-        $this->_db->insertParams($tableName, $params, array('foo' => $insertValue), null, true, true);
+        $this->_db->insertParams($tableName, $params, array('foo' => $insertValue));
 
         $params = array(
             'foo' => array(
@@ -2182,9 +2180,7 @@ SQL;
     */
     public function testInsertSQL($name, $defs, $data, $result)
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $vardefs = array(
 			'table' => $name,
@@ -2212,9 +2208,7 @@ SQL;
     */
     public function testUpdateSQL($name, $defs, $data, $_, $result = null)
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $name = "update$name";
         $vardefs = array(
@@ -2271,9 +2265,7 @@ SQL;
     */
     public function testUpdateSQLNoDeleted($name, $defs, $data, $_, $result = null)
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $name = "updatenodel$name";
         $vardefs = array(
@@ -2398,7 +2390,7 @@ SQL;
         {
             $str .= $basestr;
             $size = strlen($str);
-            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str), null, true, true);
+            $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
 
             $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
             $strresult = $this->_db->getOne($select);
@@ -3303,8 +3295,7 @@ SQL;
      */
     public function setupPreparedStatementsInsertStructure()
     {
-        if ( !$this->_db->supports('prepared_statements') )
-        {
+        if (empty($this->_db->preparedStatementClass)) {
             $this->markTestSkipped('This DBManager does not support prepared statements');
         }
 
@@ -3409,7 +3400,7 @@ SQL;
         $dataStructure = $this->setupPreparedStatementsInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+        $this->_db->insertParams($tableName, $params, $data);
         $resultsCntExpected = 1;
 
         $result = $this->_db->query("SELECT * FROM $tableName");
@@ -3439,7 +3430,7 @@ SQL;
         }
 
         $data = array( 'id'=> '1', 'col1' => '10', 'col2' => $blobData);
-        $this->_db->insertParams($tableName, $params, $data, null, true, true);
+        $this->_db->insertParams($tableName, $params, $data);
 
         $result = $this->_db->query("SELECT * FROM $tableName");
         $row = $this->_db->fetchByAssoc($result);
@@ -3495,7 +3486,6 @@ SQL;
      */
     public function testPreparedStatementsBean()
     {
-        $this->_db->usePreparedStatements = true;
         // insert test
         $bean = new Contact();
         $bean->last_name = 'foobar' . mt_rand();
@@ -3542,8 +3532,7 @@ SQL;
     private function setupPreparedStatementsDataTypesStructure()
     {
         // create test table for datatType testing
-        if ( !$this->_db->supports('prepared_statements') )
-        {
+        if (empty($this->_db->preparedStatementClass)) {
             $this->markTestSkipped('DBManager does not support prepared statements');
         }
 
@@ -3695,7 +3684,7 @@ SQL;
         $dataArray = $this->setupPreparedStatementsDataTypesData();
 
         foreach($dataArray as $data) {  // insert a single row of data and check it column by column
-            $this->_db->insertParams($tableName, $params, $data, null, true, true);
+            $this->_db->insertParams($tableName, $params, $data);
             $id = $data['id'];
             $result = $this->_db->query("SELECT * FROM $tableName WHERE id = " . $this->_db->quoted($id));
             while(($row = $this->_db->fetchByAssoc($result)) != null) {
@@ -3727,7 +3716,7 @@ SQL;
         // load and test each data record
         $data = $this->setupPreparedStatementsDataTypesData();
         foreach ($data as $row) {  // insert a single row of data and check it column by column
-            $res = $this->_db->insertParams($tableName, $params, $row, null, true, true);
+            $res = $this->_db->insertParams($tableName, $params, $row);
             $this->assertNotEmpty($res, "Failed to insert");
         }
 
@@ -3746,9 +3735,7 @@ SQL;
 
     public function testDecodeHTML()
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         if ($this->_db instanceof OracleManager) {
             $this->markTestSkipped('Description is lob field and oracle uses prepared statement for that in AltlobExecute method');
@@ -3793,7 +3780,7 @@ SQL;
         }
         $this->createTableParams($tableName, $params, array());
 
-        $this->_db->insertParams($tableName, $params, array('logmeta' => $data), null, true, true);
+        $this->_db->insertParams($tableName, $params, array('logmeta' => $data));
 
         $params = array(
             'logmeta' => array(
@@ -3860,9 +3847,7 @@ SQL;
 
     public function testDeleteSQL()
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $sql = $this->_db->deleteSQL(new Contact, array("id" => "1"));
 
@@ -3872,9 +3857,7 @@ SQL;
 
     public function testRetrieveSQL()
     {
-        if ($this->_db->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
 
         $sql = $this->_db->retrieveSQL(new Contact, array("id" => "1"));
 

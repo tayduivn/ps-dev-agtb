@@ -75,7 +75,6 @@ class SqlsrvManager extends MssqlManager
         'create_user' => true,
         "create_db" => true,
         "recursive_query" => true,
-        "prepared_statements" => true,
     );
 
     public $preparedStatementClass = 'SqlsrvPreparedStatement';

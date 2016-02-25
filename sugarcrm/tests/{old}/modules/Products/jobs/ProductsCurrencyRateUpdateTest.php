@@ -59,6 +59,8 @@ class ProductsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDoCustomUpdateRate()
     {
+        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
+
         $this->mock->expects($this->once())
             ->method('getProductsWithNonClosedQuote')
             ->will($this->returnValue(array('id1', 'id2')));

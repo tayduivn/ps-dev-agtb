@@ -39,13 +39,13 @@ class DBManagerTest extends \PHPUnit_Framework_TestCase
      * @covers ::getColumnWhereClause
      * @dataProvider providerTestUpdateParams
      */
-    public function testUpdateParams($table, $field_defs, $data, array $where, $field_map, $usePreparedStatements, $expected)
+    public function testUpdateParams($table, $field_defs, $data, array $where, $field_map, $expected)
     {
         $db = $this->getMockDB();
 
-        $result = $db->updateParams($table, $field_defs, $data, $where, $field_map, false, $usePreparedStatements);
+        $result = $db->updateParams($table, $field_defs, $data, $where, $field_map, false);
         //Remove newlines and excess whitespace
-        $result = preg_replace('/[\s]+/', ' ', $result);
+        $result = preg_replace('/[\s]+/', ' ', $result[0]);
 
         $this->assertEquals($expected, $result);
     }
@@ -68,8 +68,8 @@ class DBManagerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array('id' => '1234'),
                 null,
-                false,
-                "UPDATE test_table SET none_req_field=NULL, req_field_with_default='' WHERE test_table.id = '1234'",
+                "UPDATE test_table SET none_req_field=?varchar, req_field_with_default=?varchar "
+                    . "WHERE test_table.id = ?id",
             ),
             array(
                 'test_table',
@@ -92,8 +92,8 @@ class DBManagerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array('id' => '1234'),
                 null,
-                false,
-                "UPDATE test_table SET bool_field=0, bool_field_truthy=1, req_bool_field=0 WHERE test_table.id = '1234'",
+                "UPDATE test_table SET bool_field=?bool, bool_field_truthy=?bool, req_bool_field=?bool "
+                    . "WHERE test_table.id = ?id",
             ),
             array(
                 'test_table',
@@ -125,9 +125,9 @@ class DBManagerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array('id' => '1234'),
                 null,
-                false,
-                "UPDATE test_table SET int_field=NULL, int_field_with_bool=1, req_int_field=0, "
-                . "req_int_field_with_null=0, req_int_field_with_null_and_default=0 WHERE test_table.id = '1234'",
+                "UPDATE test_table SET int_field=?int, int_field_with_bool=?int, req_int_field=?int, "
+                    . "req_int_field_with_null=?int, req_int_field_with_null_and_default=?int "
+                    . "WHERE test_table.id = ?id",
             ),
         );
     }

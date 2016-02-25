@@ -110,11 +110,8 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
     }
 
     /**
-     * @param $field
      * @param $value
-     * @param bool $bean
      * @param bool $operator
-     *
      * @return string
      */
     public function quoteValue($value, $operator = false, $forPrepared = false)

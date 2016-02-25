@@ -471,9 +471,7 @@ class SugarQuery_Compiler_SQL
      */
     protected function prepareValue($value, SugarQuery_Builder_Condition $condition)
     {
-        if($this->sugar_query->usePreparedStatements && !empty($condition->field->def)
-            && !($value instanceof SugarQuery_Builder_Literal)
-        ) {
+        if (!empty($condition->field->def) && !($value instanceof SugarQuery_Builder_Literal)) {
             $type = $this->db->getFieldType($condition->field->def);
             $this->sugar_query->addData($condition->field->quoteValue($value, $condition->operator, true));
             return "?$type";

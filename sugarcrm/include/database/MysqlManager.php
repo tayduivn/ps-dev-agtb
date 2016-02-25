@@ -1189,10 +1189,9 @@ FROM information_schema.statistics';
 		return "ALTER TABLE $tablename CHANGE COLUMN $column ".$this->oneColumnSQLRep($field);
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 * @see DBManager::emptyValue()
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public function emptyValue($type, $forPrepared = false)
    	{
    		$ctype = $this->getColumnType($type);

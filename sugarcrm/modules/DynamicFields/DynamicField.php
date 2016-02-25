@@ -469,24 +469,11 @@ class DynamicField {
                 }
             }
             if ($isUpdate) {
-                $db->updateParams(
-                    $this->bean->table_name . "_cstm",
-                    $fields,
-                    $values,
-                    array('id_c' => $values['id_c']),
-                    null,
-                    true,
-                    $db->usePreparedStatements
-                );
+                $db->updateParams($this->bean->table_name . "_cstm", $fields, $values, array(
+                    'id_c' => $values['id_c'],
+                ));
             } else {
-                $db->insertParams(
-                    $this->bean->table_name . "_cstm",
-                    $fields,
-                    $values,
-                    null,
-                    true,
-                    $db->usePreparedStatements
-                );
+                $db->insertParams($this->bean->table_name . "_cstm", $fields, $values);
             }
         }
     }

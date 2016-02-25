@@ -1320,12 +1320,7 @@ class MssqlManager extends DBManager
         return $this->getColumnType($type) === 'image';
     }
 
-    /**
-     * Return representation of an empty value depending on type
-     * @param string $type
-     * @param bool $forPrepared Is it going to be used for prepared statement?
-     * @return mixed Empty value
-     */
+    /** {@inheritDoc} */
     public function emptyValue($type, $forPrepared = false)
     {
         $ctype = $this->getColumnType($type);

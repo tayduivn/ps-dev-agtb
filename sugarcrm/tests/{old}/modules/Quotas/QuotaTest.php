@@ -63,6 +63,8 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRollupQuota()
     {
+        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
+
         SugarTestHelper::setUp('mock_db');
 
         $test_tp_id = create_guid();

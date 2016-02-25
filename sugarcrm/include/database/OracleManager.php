@@ -54,7 +54,6 @@ class OracleManager extends DBManager
         "auto_increment_sequence" => true,
         'limit_subquery' => true,
         "recursive_query" => true,
-        "prepared_statements" => true,
         "case_insensitive" => true,
     );
 
@@ -572,176 +571,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::update()
-     */
-    public function update(SugarBean $bean, array $where = array())
-    {
-        $this->tableName = $bean->getTableName();
-        $msg = "Error updating table: ".$this->tableName;
-        // usePreparedStatements will be deprecated in 7.8 version and above
-        if($this->usePreparedStatements) {
-            list($sql, $data, $blobs) = $this->updateSQL($bean, $where, true);
-            return $this->preparedQuery($sql, $data, $blobs, $msg);
-        } else {
-            $sql = $this->updateSQL($bean,$where);
-            $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
-        }
-
-        $this->checkError($msg.' Query Failed: ' . $sql, true);
-        return $ret;
-    }
-
-    /**
-     * @see DBManager::insert()
-     */
-    public function insert(SugarBean $bean)
-    {
-        $this->tableName = $bean->getTableName();
-        $msg = "Error inserting into table: ".$this->tableName;
-        // usePreparedStatements will be deprecated in 7.8 version and above
-        if($this->usePreparedStatements) {
-            list($sql, $data, $blobs) = $this->insertSQL($bean, true);
-            return $this->preparedQuery($sql, $data, $blobs, $msg);
-        } else {
-            $sql = $this->insertSQL($bean);
-            $ret = $this->AltlobExecute($this->tableName, $bean->getFieldDefinitions(), get_object_vars($bean), $sql);
-
-            $this->checkError($msg.' Query Failed: ' . $sql, true);
-        }
-        return $ret;
-    }
-
-    /**
-     * TODO: may want to join it with Altlobexecute
-     * (non-PHPdoc)
-     * @see DBManager::insertParams()
-     */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePrepared = false)
-    {
-
-        if (!$usePrepared) {
-            $sql = parent::insertParams($table, $field_defs, $data, $field_map, false, $usePrepared);
-            if (!$execute) {
-                return $sql;
-            }
-
-            return $this->AltlobExecute($table, $field_defs, $data, $sql);
-        } else {
-            return parent::insertParams($table, $field_defs, $data, $field_map, $execute, $usePrepared);
-        }
-    }
-
-
-    /**
-     * TODO: may want to join it with Altlobexecute
-     * (non-PHPdoc)
-     * @see DBManager::updateParams()
-     */
-    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePrepared = false)
-    {
-
-        if (!$usePrepared) {
-            $sql = parent::updateParams($table, $field_defs, $data, $where, $field_map, false, $usePrepared);
-            if (!$execute) {
-                return $sql;
-            }
-
-            return $this->AltlobExecute($table, $field_defs, $data, $sql);
-        } else {
-            return parent::updateParams($table, $field_defs, $data, $where, $field_map, $execute, $usePrepared);
-        }
-    }
-
-    /**
-     * Executes a query, with special handling for Oracle CLOB and BLOB field type
-     *
-     * Oracle seems to need special treatment for BLOB/CLOB insertion, so this method
-     * inserts BLOB data properly.
-     *
-     * @param string   $table Table name
-     * @param array $field_defs Field metadata definitions
-     * @param  array   $data  Data being inserted
-     * @param  string   $sql  SQL statement
-     * @return bool Success?
-     */
-    protected function AltlobExecute($table, $field_defs, $data, $sql)
-    {
-    	$GLOBALS['log']->debug("Oracle Execute Args: $sql");
-        $this->checkConnection();
-        if(empty($sql)){
-            return false;
-        }
-
-        $lob_fields=array();
-        $lob_field_type=array();
-        $lobs=array();
-        foreach ($field_defs as $fieldDef) {
-            $type = $this->getColumnType($this->getFieldType($fieldDef));
-            if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
-                continue;
-            }
-
-            //not include the field if a value is not set...
-            if (!isset($data[$fieldDef['name']])) continue;
-
-            $lob_type = false;
-            if ($this->isTextType($type)) {
-                if($this->getColumnType($type) == 'clob') {
-                    $lob_type = OCI_B_CLOB;
-                } else {
-                    $lob_type = OCI_B_BLOB;
-                }
-            }
-
-            // this is not a lob, continue;
-            if ($lob_type === false) continue;
-
-            $lob_fields[$fieldDef['name']]=":".$fieldDef['name'];
-            $lob_field_type[$fieldDef['name']]=$lob_type;
-        }
-
-        if (count($lob_fields) > 0 ) {
-            $sql .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
-        }
-        $GLOBALS['log']->info("Oracle Execute: $sql");
-        $stmt = oci_parse($this->database, $sql);
-        if($this->checkError("Update parse failed: $sql", false)) {
-            return false;
-        }
-
-        foreach ($lob_fields as $key=>$descriptor) {
-            $newlob = oci_new_descriptor($this->database, OCI_D_LOB);
-            oci_bind_by_name($stmt, $descriptor, $newlob, -1, $lob_field_type[$key]);
-            $lobs[$key] = $newlob;
-        }
-        $result = false;
-        oci_execute($stmt,OCI_DEFAULT);
-        if(!$this->checkError("Update execute failed: $sql", false, $stmt)) {
-            foreach ($lobs as $key=>$lob){
-                if (isset($data[$key])) {
-                    // clean the incoming value..
-                    $val = from_html($data[$key]);
-                } elseif (isset($field_defs[$key]['default']) && strlen($field_defs[$key]['default']) > 0) {
-                    $val = $field_defs[$key]['default'];
-                } else {
-                    $val = null;
-                }
-                $lob->save($val);
-            }
-            oci_commit($this->database);
-            $result = true;
-        }
-
-        // free all the lobs.
-        foreach ($lobs as $lob){
-            $lob->free();
-        }
-        $this->freeDbResult($stmt);
-
-        return $result;
-    }
-
-    /**
      * @see DBManager::quote()
      */
     public function quote($string)
@@ -1062,8 +891,8 @@ class OracleManager extends DBManager
     }
 
     /**
-	 * @see DBManager::massageValue()
-	 */
+     * {@inheritDoc}
+     */
     public function massageValue($val, $fieldDef, $forPrepared = false)
     {
         $type = $this->getFieldType($fieldDef);
@@ -1800,6 +1629,9 @@ LEFT JOIN all_constraints c
         return $sequence_name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function emptyValue($type, $forPrepared = false)
     {
         $ctype = $this->getColumnType($type);

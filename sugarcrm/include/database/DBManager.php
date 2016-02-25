@@ -119,12 +119,6 @@ abstract class DBManager
 	 */
 	protected $preparedTokens = array();
 
-    /**
-     * default state for using Prepared Statements
-	 * @deprecated("Will be deprecated in 7.8 version and above")
-     */
-    public $usePreparedStatements;
-
 	/**
 	 * TimeDate instance
 	 * @var TimeDate
@@ -424,10 +418,6 @@ abstract class DBManager
 		    $this->encode = false;
 		}
         $this->request = InputValidation::getService();
-
-        if ($this->usePreparedStatements === null) {
-            $this->usePreparedStatements = !empty($this->capabilities['prepared_statements']);
-        }
 	}
 
     /**
@@ -761,15 +751,9 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename =  $bean->getTableName();
 		$msg = "Error inserting into table: $tablename:";
-		// usePreparedStatements will be deprecated in 7.8 version and above
-	    if ($this->usePreparedStatements) {
-	        list($sql, $data, $clob) = $this->insertSQL($bean, true);
-	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, $clob, $msg);
-	    } else {
-	       $sql = $this->insertSQL($bean);
-	       return $this->query($sql,true,$msg);
-	    }
+        list($sql, $data, $clob) = $this->insertSQL($bean);
+        // Prepare and execute the statement
+        return $this->preparedQuery($sql, $data, $clob, $msg);
 	}
 
 	/**
@@ -808,15 +792,10 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param array $data Key/value to insert
 	 * @param array $field_map Fields map from SugarBean
      * @param bool $execute Execute or return query? Deprecated, will be always considered TRUE
-	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return bool query result
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true, $usePreparedStatements = null)
+    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
 	{
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
         $values = array();
         foreach ($field_defs as $fieldDef) {
             $field = $fieldDef['name'];
@@ -824,17 +803,9 @@ protected function checkQuery($sql, $object_name = false)
 			//custom fields handle their save separately
 			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
 
-			if(isset($data[$field])) {
-				// clean the incoming value..
-				if ($usePreparedStatements) {
-				    $val = $this->decodeHTML($data[$field]);
-				} else {
-				    // if it's not for prep, massageValue will decode it
-				    $val = $data[$field];
-				}
-                if ($val === '' && $this->isNullable($fieldDef)) {
-                    $val = null;
-                }
+            if (isset($data[$field]) && ($data[$field] !== '' || !$this->isNullable($fieldDef))) {
+                // clean the incoming value..
+                $val = $this->decodeHTML($data[$field]);
 			} else {
 					$val = null;
 			}
@@ -849,49 +820,43 @@ protected function checkQuery($sql, $object_name = false)
 				$values['deleted'] = (int)$val;
 			} else {
 				// need to do some thing about types of values
-                                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+                $values[$field] = $this->massageValue($val, $fieldDef, true);
 			}
 		}
 
 		if (empty($values))
 			return $execute?true:''; // no columns set
 
-        if (!$usePreparedStatements) {
-            // get the entire sql
-            $query = "INSERT INTO $table (".implode(",", array_keys($values)).")
-                        VALUES (".implode(",", $values).")";
-            return $execute?$this->query($query):$query;
-        } else {  //Prepared Statement
-            $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
-            $blobs = $types = $data_values = array();
+        $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
+        $blobs = $types = $data_values = array();
 
-            // :TODO: make sure all field defs are indexed by name and get rid of this
-            $field_defs_indexed = array();
-            foreach ($field_defs as $field_def) {
-                $field_defs_indexed[$field_def['name']] = $field_def;
-            }
-
-            foreach($values as $valueKey => $value) {
-                if (!empty($field_defs_indexed[$valueKey]) && !empty($field_defs_indexed[$valueKey]['auto_increment'])) {
-                    $types[] = $value;
-                } else {
-                    $type = $this->getFieldType($field_defs_indexed[$valueKey]);
-                    $types[] = $this->convert("?$type", $type);
-                    $data_values[] = $value;
-                    if ($this->isBlobType($type)) {
-                        $blobs[] = $valueKey;
-                    }
-                }
-            }
-            $query .= join(",", $types).")";
-
-            if (!$execute)
-                return array($query, $data_values, $blobs);
-
-            // Prepare and execute the statement
-            return $this->preparedQuery($query, $data_values, $blobs);
+        // :TODO: make sure all field defs are indexed by name and get rid of this
+        $field_defs_indexed = array();
+        foreach ($field_defs as $field_def) {
+            $field_defs_indexed[$field_def['name']] = $field_def;
         }
 
+        foreach ($values as $valueKey => $value) {
+            if (!empty($field_defs_indexed[$valueKey]) && !empty($field_defs_indexed[$valueKey]['auto_increment'])) {
+                $types[] = $value;
+            } else {
+                $type = $this->getFieldType($field_defs_indexed[$valueKey]);
+                $types[] = $this->convert("?$type", $type);
+                $data_values[] = $value;
+                if ($this->isBlobType($type)) {
+                    $blobs[] = $valueKey;
+                }
+            }
+        }
+
+        $query .= join(",", $types).")";
+
+        if (!$execute) {
+            return array($query, $data_values, $blobs);
+        }
+
+        // Prepare and execute the statement
+        return $this->preparedQuery($query, $data_values, $blobs);
 	}
 
     /**
@@ -908,15 +873,9 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename = $bean->getTableName();
 		$msg = "Error updating table: $tablename:";
-		// usePreparedStatements will be deprecated in 7.8 version and above
-	    if($this->usePreparedStatements) {
-            list($sql, $data, $blobs) = $this->updateSQL($bean, $where, true);
-            // Prepare and execute the statement
-            return $this->preparedQuery($sql, $data, $blobs, $msg);
-	    } else {
-	        $sql = $this->updateSQL($bean, $where);
-	        return $this->query($sql,true,$msg);
-	    }
+        list($sql, $data, $blobs) = $this->updateSQL($bean, $where);
+        // Prepare and execute the statement
+        return $this->preparedQuery($sql, $data, $blobs, $msg);
 	}
 
     /**
@@ -934,15 +893,9 @@ protected function checkQuery($sql, $object_name = false)
 	{
 	    $tablename =  $bean->getTableName();
 	    $msg = "Error deleting from table: $tablename:";
-		// usePreparedStatements will be deprecated in 7.8 version and above
-	    if($this->usePreparedStatements) {
-	        list($sql, $data) = $this->deleteSQL($bean, $where, true);
-	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, array(), $msg);
-	    } else {
-	        $sql = $this->deleteSQL($bean, $where);
-	        return $this->query($sql,true,$msg);
-	    }
+        list($sql, $data) = $this->deleteSQL($bean, $where);
+        // Prepare and execute the statement
+        return $this->preparedQuery($sql, $data, array(), $msg);
 	}
 
 	/**
@@ -961,15 +914,9 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		$tablename =  $bean->getTableName();
 	    $msg = "Error retriving values from table: $tablename:";
-		// usePreparedStatements will be deprecated in 7.8 version and above
-	    if($this->usePreparedStatements) {
-	        list($sql, $data) = $this->retrieveSQL($bean, $where, true);
-	        // Prepare and execute the statement
-	        return $this->preparedQuery($sql, $data, array(), $msg);
-	    } else {
-	        $sql = $this->retrieveSQL($bean, $where);
-	        return $this->query($sql,true,$msg);
-	    }
+        list($sql, $data) = $this->retrieveSQL($bean, $where);
+        // Prepare and execute the statement
+        return $this->preparedQuery($sql, $data, array(), $msg);
 	}
 
 	/**
@@ -2551,25 +2498,18 @@ protected function checkQuery($sql, $object_name = false)
 	 * Generates SQL for insert statement.
 	 *
 	 * @param  SugarBean $bean SugarBean instance
-	 * @param bool usePreparedStatements (will be deprecated in 7.8 version and above)
 	 * @return string SQL Create Table statement
      *
      * @deprecated Use DBManager::insert() instead
 	 */
-    public function insertSQL(SugarBean $bean, $usePreparedStatements = null)
+    public function insertSQL(SugarBean $bean)
 	{
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
-        // get column names and values
         return $this->insertParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
             get_object_vars($bean),
-            isset($bean->field_defs) ? $bean->field_defs : null,
-            false,
-            $usePreparedStatements
+            null,
+            false
         );
 	}
 
@@ -2578,17 +2518,12 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $where Optional, where conditions in an array
-	 * @param bool usePreparedStatements (will be deprecated in 7.8 version and above)
 	 * @return string SQL Create Table statement
      *
      * @deprecated Use DBManager::update() instead
 	 */
-    public function updateSQL(SugarBean $bean, array $where = array(), $usePreparedStatements = null)
+    public function updateSQL(SugarBean $bean, array $where = array())
 	{
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
         $dataFields = array();
         $dataValues = array();
         $primaryField = $bean->getPrimaryFieldDefinition();
@@ -2627,7 +2562,7 @@ protected function checkQuery($sql, $object_name = false)
 		}
 
         // build where clause
-		$where_data = $this->updateWhereArray($bean, $where, $usePreparedStatements);
+        $where_data = $this->updateWhereArray($bean, $where);
         if (isset($fields['deleted'])) {
             $where_data['deleted'] = "0";
         }
@@ -2635,7 +2570,7 @@ protected function checkQuery($sql, $object_name = false)
             $dataFields[$field] = $fields[$field];
         }
 
-        return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data, null, false, $usePreparedStatements);
+        return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data, null, false);
 	}
 
     /**
@@ -2647,16 +2582,11 @@ protected function checkQuery($sql, $object_name = false)
      * @param array $where Key/value for where
      * @param array $field_map Fields map from SugarBean
      * @param bool $execute Execute or return query? Deprecated, will be always considered TRUE
-     * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      *
-     * @return bool|string|array|PreparedStatement query result
+     * @return bool|PreparedStatement query result
      */
-    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true, $usePreparedStatements = null)
+    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true)
     {
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
         $values = array();
         foreach ($field_defs as $field => $fieldDef) {
             if (!array_key_exists($field, $data)) {
@@ -2671,12 +2601,7 @@ protected function checkQuery($sql, $object_name = false)
             }
 
             $fieldType = $this->getFieldType($fieldDef);
-            if ($usePreparedStatements) {
-                $val = $this->decodeHTML($data[$field]);
-            } else {
-                // BR-2052: if it's not for prep, massageValue will decode it
-                $val = $data[$field];
-            }
+            $val = $this->decodeHTML($data[$field]);
 
             //Required fields should never be null (but they can be empty values)
             if ($val === '' && $this->isNullable($fieldDef)) {
@@ -2691,11 +2616,11 @@ protected function checkQuery($sql, $object_name = false)
             if (!empty($fieldDef['auto_increment'])) {
                 continue;
             } elseif (!is_null($val) || !empty($fieldDef['required'])) {
-                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+                $values[$field] = $this->massageValue($val, $fieldDef, true);
             } elseif ($this->isNullable($fieldDef)) {
-                $values[$field] = $usePreparedStatements ? null : 'NULL';
+                $values[$field] = null;
             } else {
-                $values[$field] = $this->emptyValue($fieldType, $usePreparedStatements);
+                $values[$field] = $this->emptyValue($fieldType, true);
             }
         }
 
@@ -2703,52 +2628,34 @@ protected function checkQuery($sql, $object_name = false)
             return $execute ? true : ''; // no columns set
         }
 
-        if ($usePreparedStatements) {
-            $types = array();
-            foreach ($where as $field => $value) {
-                $types[$field] = '?' . $field_defs[$field]['type'];
-            }
-            $whereString = $this->getColumnWhereClause($table, $types, true);
-        } else {
-            $whereString = $this->getColumnWhereClause($table, $where);
+        $types = array();
+        foreach ($where as $field => $value) {
+            $types[$field] = '?' . $field_defs[$field]['type'];
         }
+        $whereString = $this->getColumnWhereClause($table, $types, true);
+
         if (!empty($whereString)) {
             $whereString = ' WHERE ' . $whereString;
         }
 
-        if (!$usePreparedStatements) {
-            $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
-            $sep = ' ';
-            foreach ($values as $field => $value) {
-                $query .= $sep . $field . '=' . $value;
-                $sep = ', ';
+        $data = array_merge(array_values($values), array_values($where));
+        $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
+        $blobs = array();
+        $sep = ' ';
+        foreach ($values as $field => $value) {
+            $type = $this->getFieldType($field_defs[$field]);
+            $query .= $sep . $field . '=' . $this->convert("?$type", $type);
+            $sep = ', ';
+            if ($this->isBlobType($type)) {
+                $blobs[] = $field;
             }
-            $query .= "\n\t\t\t\t\t" . $whereString;
-
-            if (!$execute) {
-                return $query;
-            }
-            return $this->query($query);
-        } else { //Prepared Statement
-            $data = array_merge(array_values($values), array_values($where));
-            $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
-            $blobs = array();
-            $sep = ' ';
-            foreach ($values as $field => $value) {
-                $type = $this->getFieldType($field_defs[$field]);
-                $query .= $sep . $field . '=' . $this->convert("?$type", $type);
-                $sep = ', ';
-                if ($this->isBlobType($type)) {
-                    $blobs[] = $field;
-                }
-            }
-            $query .= "\n\t\t\t\t\t" . $whereString;
-
-            if (!$execute) {
-                return array($query, $data, $blobs);
-            }
-            return $this->preparedQuery($query, $data, $blobs);
         }
+        $query .= "\n\t\t\t\t\t" . $whereString;
+
+        if (!$execute) {
+            return array($query, $data, $blobs);
+        }
+        return $this->preparedQuery($query, $data, $blobs);
     }
 
 	/**
@@ -2784,7 +2691,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getColumnWhereClause($table, array $whereArray = array(), $forPrepared = false)
+    protected function getColumnWhereClause($table, array $whereArray = array())
 	{
 		$where = array();
 		foreach ($whereArray as $name => $val) {
@@ -2793,12 +2700,10 @@ protected function checkQuery($sql, $object_name = false)
 				$op = "IN";
 				$temp = array();
 				foreach ($val as $tval){
-					$temp[] = $forPrepared?$tval:$this->quoted($tval);
+                    $temp[] = $tval;
 				}
 				$val = implode(",", $temp);
 				$val = "($val)";
-			} else {
-				$val = $forPrepared?$val:$this->quoted($val);
 			}
 
 			$where[] = " $table.$name $op $val";
@@ -2836,13 +2741,12 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
-	protected function getWhereClause(SugarBean $bean, array $whereArray=array(), $forPrepared = false)
-	{
-	    if($forPrepared) {
-	       $where = $this->getColumnWhereClause($bean->getTableName(), $this->prepareTypeData($bean, array_keys($whereArray)), true);
-	    } else {
-	        $where = $this->getColumnWhereClause($bean->getTableName(), $whereArray);
-	    }
+    protected function getWhereClause(SugarBean $bean, array $whereArray = array())
+    {
+        $where = $this->getColumnWhereClause(
+            $bean->getTableName(),
+            $this->prepareTypeData($bean, array_keys($whereArray))
+        );
 
 	    return " WHERE $where";
 	}
@@ -3040,25 +2944,16 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @param SugarBean $bean SugarBean instance
      * @param array $where where conditions in an array
-	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return string SQL Update Statement
      *
      * @deprecated Use SugarBean::mark_deleted() instead
      */
-    public function deleteSQL(SugarBean $bean, array $where, $usePreparedStatements = null)
+    public function deleteSQL(SugarBean $bean, array $where)
     {
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
         $where_data = $this->updateWhereArray($bean, $where);
         $tname = $bean->getTableName();
-        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
-        if ($usePreparedStatements) {
-            return array("UPDATE $tname SET deleted=1 $where", array_values($where_data));
-        } else {
-            return "UPDATE $tname SET deleted=1 $where";
-        }
+        $where = $this->getWhereClause($bean, $where_data);
+        return array("UPDATE $tname SET deleted=1 $where", array_values($where_data));
     }
 
     /**
@@ -3066,25 +2961,16 @@ protected function checkQuery($sql, $object_name = false)
      *
      * @param SugarBean $bean SugarBean instance
      * @param array $where where conditions in an array
-	 * @param bool $usePreparedStatements (will be deprecated in 7.8 version and above)
      * @return string SQL Select Statement
      *
      * @depreated Use SugarBean::retrieve() instead
      */
-    public function retrieveSQL(SugarBean $bean, array $where, $usePreparedStatements = null)
+    public function retrieveSQL(SugarBean $bean, array $where)
     {
-        if ($usePreparedStatements === null) {
-            $usePreparedStatements = $this->usePreparedStatements;
-        }
-
         $where_data = $this->updateWhereArray($bean, $where);
         $tname = $bean->getTableName();
-        $where = $this->getWhereClause($bean, $where_data, $usePreparedStatements);
-        if ($usePreparedStatements) {
-            return array("SELECT * FROM $tname $where AND deleted=0", array_values($where_data));
-        } else {
-            return "SELECT * FROM $tname $where AND deleted=0";
-        }
+        $where = $this->getWhereClause($bean, $where_data);
+        return array("SELECT * FROM $tname $where AND deleted=0", array_values($where_data));
     }
 
     /**
@@ -4597,7 +4483,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
     public function prepareStatement($sql, array $blobs = array(), $msg = '')
 	{
-	    if(empty($this->capabilities['prepared_statements']) || empty($this->preparedStatementClass)) {
+        if (empty($this->preparedStatementClass)) {
 	       $this->registerError($msg, "Prepared statements not supported");
 	    }
 	    $ps = new $this->preparedStatementClass($this);

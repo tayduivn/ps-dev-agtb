@@ -776,6 +776,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetRelatedNameReturnsName()
     {
+        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
+
         $acc_name = 'My Test Account';
         $acc_id = 'my_test_id';
         self::$db->addQuerySpy(
@@ -803,6 +805,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveReassignedItems($settings, $expected, $tp_id, $execute_count, $beans)
     {
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
+
         $fw = $this->getMockbuilder('ForecastWorksheet')
             ->setMethods(array(
                 'getForecastSettings',

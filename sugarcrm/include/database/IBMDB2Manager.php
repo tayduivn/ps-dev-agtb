@@ -102,7 +102,6 @@ class IBMDB2Manager  extends DBManager
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
         "recursive_query" => true,
-        "prepared_statements" => true,
 
         /* Do not consider DB2 order stability as we have experienced issues
          * that this is not something we can rely on. By disabling this flag
@@ -1495,13 +1494,7 @@ FROM SYSIBMTS.TSINDEXES';
 	}
 
     /**
-     * Return representation of an empty value depending on type
-     * The value is fully quoted, converted, etc.
-     * @param string $type
-     * @param bool $forPrepared Is it going to be used for prepared statement?
-     * @return mixed Empty value
-     * 
-     * @see DBManager::emptyValue()
+     * {@inheritDoc}
      */
     public function emptyValue($type, $forPrepared = false)
 	{

@@ -263,14 +263,14 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = BeanFactory::getBean("Contacts");
         $bean->date_modified = '2011-05-24 12:34:56';
-        list($sql, $data) = $this->_db->insertSQL($bean, true);
+        list($sql, $data) = $this->_db->insertSQL($bean);
         $this->assertContains("to_date(?datetime, 'YYYY-MM-DD HH24:MI:SS')", $sql);
         $this->assertNotContains('2011-05-24 12:34:56', $sql);
         $this->assertContains('2011-05-24 12:34:56', $data);
 
         $bean->id = create_guid();
         $bean->date_modified = '2014-03-21 13:24:46';
-        list($sql, $data) = $this->_db->updateSQL($bean, array("id" => $bean->id), true);
+        list($sql, $data) = $this->_db->updateSQL($bean, array("id" => $bean->id));
         $this->assertContains("date_modified=to_date(?datetime, 'YYYY-MM-DD HH24:MI:SS')", $sql);
         $this->assertNotContains('2014-03-21 13:24:46', $sql);
         $this->assertContains('2014-03-21 13:24:46', $data);

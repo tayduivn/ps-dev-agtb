@@ -115,13 +115,6 @@ class SugarQuery
     public $customJoined = false;
 
     /**
-     * Should we use prepared statements?
-     * @var bool
-     * @deprecated("Will be deprecated in 7.8 version and above")
-     */
-    public $usePreparedStatements = true;
-
-    /**
      * Prepared statement data
      * @var array
      */
@@ -146,10 +139,6 @@ class SugarQuery
     public function setDBManager(DBManager $db)
     {
         $this->db = $db;
-        // usePreparedStatements will be deprecated in 7.8 version and above
-        if (!$this->db->usePreparedStatements) {
-            $this->usePreparedStatements = false;
-        }
     }
 
     /**
@@ -683,12 +672,7 @@ class SugarQuery
     protected function runQuery()
     {
         $sql = $this->compileSql();
-        // usePreparedStatements will be deprecated in 7.8 version and above
-        if($this->usePreparedStatements) {
-            return $this->db->preparedQuery($sql, $this->data);
-        } else {
-            return $this->db->query($sql);
-        }
+        return $this->db->preparedQuery($sql, $this->data);
     }
 
     /**

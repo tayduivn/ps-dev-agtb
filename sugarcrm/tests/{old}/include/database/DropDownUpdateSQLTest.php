@@ -37,12 +37,10 @@ class DropDownUpdateSQLTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDropDownUpdateSQL($fieldDefs, $value, $expected)
     {
+        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
+
         $dbManagerFactory = new DBManagerFactory();
         $dbManager = $dbManagerFactory->getInstance();
-
-        if ($dbManager->usePreparedStatements) {
-            $this->markTestSkipped('This test is only relevant with prepared statements disabled');
-        }
 
         $bean = SugarTestLeadUtilities::createLead();
         $bean->field_defs = $fieldDefs;
