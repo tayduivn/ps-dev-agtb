@@ -2170,145 +2170,6 @@ SQL;
         );
     }
 
-   /**
-    * Test InserSQL functions
-    * @dataProvider vardefProvider
-    * @param string $name
-    * @param array $defs
-    * @param array $data
-    * @param array $result
-    */
-    public function testInsertSQL($name, $defs, $data, $result)
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $vardefs = array(
-			'table' => $name,
-            'fields' => $defs,
-        );
-        $obj = new TestSugarBean($name, $vardefs);
-        // regular fields
-        foreach($data as $k => $v) {
-            $obj->$k = $v;
-        }
-        $sql = $this->_db->insertSQL($obj);
-        $names = join('\s*,\s*',array_map('preg_quote', array_keys($result)));
-        $values = join('\s*,\s*',array_map('preg_quote', array_values($result)));
-        $this->assertRegExp("/INSERT INTO $name\s+\(\s*$names\s*\)\s+VALUES\s+\(\s*$values\s*\)/is", $sql, "Bad sql: $sql");
-    }
-
-   /**
-    * Test UpdateSQL functions
-    * @dataProvider vardefProvider
-    * @param string $name
-    * @param array $defs
-    * @param array $data
-    * @param array $_
-    * @param array $result
-    */
-    public function testUpdateSQL($name, $defs, $data, $_, $result = null)
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $name = "update$name";
-        $vardefs = array(
-			'table' => $name,
-            'fields' => $defs,
-        );
-        // ensure it has an ID
-        $vardefs['fields']['id'] = array (
-                    'name' => 'id',
-                    'type' => 'id',
-                    'required'=>true,
-                  );
-        $vardefs['fields']['deleted'] = array (
-                    'name' => 'deleted',
-                    'type' => 'bool',
-                  );
-
-        $obj = new TestSugarBean($name, $vardefs);
-        // regular fields
-        foreach($defs as $k => $v) {
-            if(isset($data[$k])) {
-                $obj->$k = $data[$k];
-            } else {
-                $obj->$k = null;
-            }
-        }
-        // set fixed ID
-        $obj->id = 'test_ID';
-        $sql = $this->_db->updateSQL($obj);
-        if(is_null($result)) {
-            $result = $_;
-        }
-        $names_i = array();
-        foreach($result as $k => $v) {
-            if($k == "id" || $k == 'deleted') continue;
-            $names_i[] = preg_quote("$k=$v");
-        }
-        if(empty($names_i)) {
-            $this->assertEquals("", $sql, "Bad sql: $sql");
-            return;
-        }
-        $names = join('\s*,\s*',$names_i);
-        $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID'\s+AND\s+$name\.deleted\s*=\s*'0'/is", $sql, "Bad sql: $sql");
-    }
-
-     /**
-    * Test UpdateSQL functions
-    * @dataProvider vardefProvider
-    * @param string $name
-    * @param array $defs
-    * @param array $data
-    * @param array $_
-    * @param array $result
-    */
-    public function testUpdateSQLNoDeleted($name, $defs, $data, $_, $result = null)
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $name = "updatenodel$name";
-        $vardefs = array(
-			'table' => $name,
-            'fields' => $defs,
-        );
-        // ensure it has an ID
-        $vardefs['fields']['id'] = array (
-                    'name' => 'id',
-                    'type' => 'id',
-                    'required'=>true,
-                  );
-        unset($vardefs['fields']['deleted']);
-
-        $obj = new TestSugarBean($name, $vardefs);
-        // regular fields
-        foreach($defs as $k => $v) {
-            if(isset($data[$k])) {
-                $obj->$k = $data[$k];
-            } else {
-                $obj->$k = null;
-            }
-        }
-        // set fixed ID
-        $obj->id = 'test_ID';
-        $sql = $this->_db->updateSQL($obj);
-        if(is_null($result)) {
-            $result = $_;
-        }
-        $names_i = array();
-        foreach($result as $k => $v) {
-            if($k == "id" || $k == 'deleted') continue;
-            $names_i[] = preg_quote("$k=$v");
-        }
-        if(empty($names_i)) {
-            $this->assertEquals("", $sql, "Bad sql: $sql");
-            return;
-        }
-        $names = join('\s*,\s*',$names_i);
-        $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID'/is", $sql, "Bad sql: $sql");
-        $this->assertNotContains(" AND deleted=0", $sql, "Bad sql: $sql");
-    }
-
     /**
      * Test the canInstall
      * @return void
@@ -3733,27 +3594,6 @@ SQL;
         $ps->preparedStatementClose();
     }
 
-    public function testDecodeHTML()
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        if ($this->_db instanceof OracleManager) {
-            $this->markTestSkipped('Description is lob field and oracle uses prepared statement for that in AltlobExecute method');
-        }
-
-        $acc = BeanFactory::getBean('Accounts');
-        $this->_db->setEncode(true);
-        $testString = 'Test <test> &gt;TEST&lt; <br><p>Test&more test';
-        $acc->description = $this->_db->encodeHTML($testString);
-
-        $isql = $this->_db->insertSQL($acc);
-        $this->assertContains($testString, $isql);
-
-        $acc->id = create_guid();
-        $usql = $this->_db->updateSQL($acc);
-        $this->assertContains($testString, $usql);
-    }
-
     /**
      * This test is checking conversion blob field to clob
      * @param string $data Data for insert into table
@@ -3817,32 +3657,6 @@ SQL;
             $bean->getIndices());
 
         $this->assertRegExp('/create\s*table\s*contacts/i',$sql);
-    }
-
-    /**
-     * @ticket 38216
-     */
-    public function testInsertSQLProperlyDecodesHtmlEntities()
-    {
-        $bean = BeanFactory::getBean('Contacts');
-        $bean->last_name = '&quot;Test&quot;';
-
-        $sql = $this->_db->insertSQL($bean);
-
-        $this->assertNotContains("&quot;",$sql);
-    }
-
-    /**
-     * @ticket 38216
-     */
-    public function testUpdateSQLProperlyDecodesHtmlEntities()
-    {
-        $bean = BeanFactory::getBean('Contacts');
-        $bean->last_name = '&quot;Test&quot;';
-
-        $sql = $this->_db->updateSQL($bean, array("id" => "1"));
-
-        $this->assertNotContains("&quot;",$sql);
     }
 
     public function testDeleteSQL()

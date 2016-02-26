@@ -21,13 +21,4 @@ class DBManagerTestPrep extends DBManagerTest
         $this->assertRegExp('/where\s*contacts.id\s*=\s*\?id/i',$sql);
         $this->assertContains("18", $data);
     }
-
-    public function testUpdateSQLPrep()
-    {
-        list($sql, $data) = $this->_db->updateSQL(new Contact, array("id" => "19"));
-
-        $this->assertRegExp('/update\s*contacts\s*set/i',$sql);
-        $this->assertRegExp('/where\s*contacts.id\s*=\s*\?id/i',$sql);
-        $this->assertContains("19", $data);
-    }
 }

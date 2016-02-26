@@ -12,6 +12,7 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * Base database driver implementation.
@@ -749,11 +750,11 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function insert(SugarBean $bean)
 	{
-		$tablename =  $bean->getTableName();
-		$msg = "Error inserting into table: $tablename:";
-        list($sql, $data, $clob) = $this->insertSQL($bean);
-        // Prepare and execute the statement
-        return $this->preparedQuery($sql, $data, $clob, $msg);
+        return $this->insertParams(
+            $bean->getTableName(),
+            $bean->getFieldDefinitions(),
+            get_object_vars($bean)
+        );
 	}
 
 	/**
@@ -790,18 +791,17 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $table Table name
 	 * @param array $field_defs Definitions in vardef-like format
 	 * @param array $data Key/value to insert
-	 * @param array $field_map Fields map from SugarBean
-     * @param bool $execute Execute or return query? Deprecated, will be always considered TRUE
-     * @return bool query result
+     * @return int The number of affected rows
      */
-    public function insertParams($table, $field_defs, $data, $field_map = null, $execute = true)
+    public function insertParams($table, $field_defs, $data)
 	{
-        $values = array();
-        foreach ($field_defs as $fieldDef) {
-            $field = $fieldDef['name'];
+        $values = $expressions = array();
+        foreach ($field_defs as $field => $fieldDef) {
 			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
 			//custom fields handle their save separately
-			if(!empty($field_map) && !empty($field_map[$field]['custom_type'])) continue;
+            if (!empty($fieldDef['custom_type'])) {
+                continue;
+            }
 
             if (isset($data[$field]) && ($data[$field] !== '' || !$this->isNullable($fieldDef))) {
                 // clean the incoming value..
@@ -814,68 +814,87 @@ protected function checkQuery($sql, $object_name = false)
 			if (!empty($fieldDef['auto_increment'])) {
 				$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
 				if(!empty($auto)) {
-					$values[$field] = $auto;
+                    $expressions[$field] = $auto;
 				}
-			} elseif (!empty($fieldDef['name']) && $fieldDef['name'] == 'deleted') {
-				$values['deleted'] = (int)$val;
 			} else {
-				// need to do some thing about types of values
-                $values[$field] = $this->massageValue($val, $fieldDef, true);
-			}
-		}
-
-		if (empty($values))
-			return $execute?true:''; // no columns set
-
-        $query = "INSERT INTO $table (".implode(",", array_keys($values)).") VALUES (";
-        $blobs = $types = $data_values = array();
-
-        // :TODO: make sure all field defs are indexed by name and get rid of this
-        $field_defs_indexed = array();
-        foreach ($field_defs as $field_def) {
-            $field_defs_indexed[$field_def['name']] = $field_def;
-        }
-
-        foreach ($values as $valueKey => $value) {
-            if (!empty($field_defs_indexed[$valueKey]) && !empty($field_defs_indexed[$valueKey]['auto_increment'])) {
-                $types[] = $value;
-            } else {
-                $type = $this->getFieldType($field_defs_indexed[$valueKey]);
-                $types[] = $this->convert("?$type", $type);
-                $data_values[] = $value;
-                if ($this->isBlobType($type)) {
-                    $blobs[] = $valueKey;
+                if (!array_key_exists($field, $data)) {
+                    continue;
                 }
+
+                // clean the incoming value
+                $value = $this->decodeHTML($data[$field]);
+
+                $fieldType = $this->getFieldType($fieldDef);
+
+                // boolean fields are nullable in Sugar
+                if ($fieldType == 'bool') {
+                    //$value = (int) !empty($value);
+                }
+
+                // need to do some thing about types of values
+                $values[$field] = $this->massageValue($value, $fieldDef, true);
             }
         }
 
-        $query .= join(",", $types).")";
+        $builder = $this->getConnection()->createQueryBuilder();
+        $builder->insert($table);
 
-        if (!$execute) {
-            return array($query, $data_values, $blobs);
+        foreach ($values as $field => $value) {
+            $builder->setValue(
+                $field,
+                $this->bindValue($builder, $value, $field_defs[$field])
+            );
         }
 
-        // Prepare and execute the statement
-        return $this->preparedQuery($query, $data_values, $blobs);
+        foreach ($expressions as $field => $expression) {
+            $builder->setValue($field, $expression);
+        }
+
+        return $builder->execute();
 	}
 
     /**
      * Implements a generic update for any bean
      *
      * @param SugarBean $bean Sugarbean instance
-     * @param array $where values with the keys as names of fields.
-     * If we want to pass multiple values for a name, pass it as an array
-     * If where is not passed, it defaults to id of table. Deprecated.
-     * @return bool query result
-     *
+     * @return int The number of affected rows
      */
-	public function update(SugarBean $bean, array $where = array())
-	{
-		$tablename = $bean->getTableName();
-		$msg = "Error updating table: $tablename:";
-        list($sql, $data, $blobs) = $this->updateSQL($bean, $where);
-        // Prepare and execute the statement
-        return $this->preparedQuery($sql, $data, $blobs, $msg);
+    public function update(SugarBean $bean)
+    {
+        $dataFields = array();
+        $dataValues = array();
+        $primaryField = $bean->getPrimaryFieldDefinition();
+        $fields = $bean->getFieldDefinitions();
+        // get column names and values
+        foreach ($fields as $field => $fieldDef) {
+            // Do not write out the id field on the update statement.
+            // We are not allowed to change ids.
+            if ($fieldDef['name'] == $primaryField['name']) {
+                continue;
+            }
+
+            if (!isset($bean->$field)) {
+                continue;
+            }
+
+            $dataValues[$field] = $bean->$field;
+            $dataFields[$field] = $fieldDef;
+        }
+
+        if (empty($dataValues)) {
+            return 0; // no columns set
+        }
+
+        // build where clause
+        $where_data = $this->updateWhereArray($bean);
+        if (isset($fields['deleted'])) {
+            $where_data['deleted'] = "0";
+        }
+        foreach ($where_data as $field => $value) {
+            $dataFields[$field] = $fields[$field];
+        }
+
+        return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data);
 	}
 
     /**
@@ -2494,85 +2513,6 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->createTableSQLParams($tablename, $fieldDefs, $indices);
 	}
 
-	/**
-	 * Generates SQL for insert statement.
-	 *
-	 * @param  SugarBean $bean SugarBean instance
-	 * @return string SQL Create Table statement
-     *
-     * @deprecated Use DBManager::insert() instead
-	 */
-    public function insertSQL(SugarBean $bean)
-	{
-        return $this->insertParams(
-            $bean->getTableName(),
-            $bean->getFieldDefinitions(),
-            get_object_vars($bean),
-            null,
-            false
-        );
-	}
-
-	/**
-	 * Generates SQL for update statement.
-	 *
-	 * @param  SugarBean $bean SugarBean instance
-	 * @param  array  $where Optional, where conditions in an array
-	 * @return string SQL Create Table statement
-     *
-     * @deprecated Use DBManager::update() instead
-	 */
-    public function updateSQL(SugarBean $bean, array $where = array())
-	{
-        $dataFields = array();
-        $dataValues = array();
-        $primaryField = $bean->getPrimaryFieldDefinition();
-        $fields = $bean->getFieldDefinitions();
-		// get column names and values
-		foreach ($fields as $field => $fieldDef) {
-			if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-			// Do not write out the id field on the update statement.
-    		// We are not allowed to change ids.
-    		if ($fieldDef['name'] == $primaryField['name']) continue;
-
-    		// If the field is an auto_increment field, then we shouldn't be setting it.  This was added
-    		// specially for Bugs and Cases which have a number associated with them.
-            if (!empty($bean->field_defs[$field]['auto_increment'])) {
-                continue;
-            }
-
-    		//custom fields handle their save separately
-            if (isset($bean->field_defs) && !empty($bean->field_defs[$field]['custom_type'])) {
-                continue;
-            }
-
-    		// no need to clear deleted since we only update not deleted records anyway
-    		if($fieldDef['name'] == 'deleted' && empty($bean->deleted)) continue;
-
-            if (!isset($bean->$field)) {
-                continue;
-    		}
-
-            $dataValues[$field] = $bean->$field;
-            $dataFields[$field] = $fieldDef;
-		}
-
-		if (empty($dataValues)) {
-			return ""; // no columns set
-		}
-
-        // build where clause
-        $where_data = $this->updateWhereArray($bean, $where);
-        if (isset($fields['deleted'])) {
-            $where_data['deleted'] = "0";
-        }
-        foreach ($where_data as $field => $value) {
-            $dataFields[$field] = $fields[$field];
-        }
-
-        return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data, null, false);
-	}
-
     /**
      * Update data in table by parameter definition
      *
@@ -2580,12 +2520,9 @@ protected function checkQuery($sql, $object_name = false)
      * @param array $field_defs Definitions in vardef-like format
      * @param array $data Key/value for update
      * @param array $where Key/value for where
-     * @param array $field_map Fields map from SugarBean
-     * @param bool $execute Execute or return query? Deprecated, will be always considered TRUE
-     *
-     * @return bool|PreparedStatement query result
+     * @return int The number of affected rows
      */
-    public function updateParams($table, $field_defs, $data, array $where = array(), $field_map = null, $execute = true)
+    public function updateParams($table, $field_defs, $data, array $where = array())
     {
         $values = array();
         foreach ($field_defs as $field => $fieldDef) {
@@ -2595,8 +2532,20 @@ protected function checkQuery($sql, $object_name = false)
             if (isset($fieldDef['source']) && $fieldDef['source'] != 'db') {
                 continue;
             }
-            //custom fields handle their save separately
-            if (!empty($field_map) && !empty($field_map[$field]['custom_type'])) {
+
+            // If the field is an auto_increment field, then we shouldn't be setting it. This was added
+            // specially for Bugs and Cases which have a number associated with them.
+            if (!empty($fieldDef['auto_increment'])) {
+                continue;
+            }
+
+            // custom fields handle their save separately
+            if (!empty($field_map['custom_type'])) {
+                continue;
+            }
+
+            // no need to clear deleted since we only update not deleted records anyway
+            if ($field == 'deleted' && empty($data['deleted'])) {
                 continue;
             }
 
@@ -2606,10 +2555,6 @@ protected function checkQuery($sql, $object_name = false)
             //Required fields should never be null (but they can be empty values)
             if ($val === '' && $this->isNullable($fieldDef)) {
                 $val = null;
-            }
-
-            if ($fieldType == 'bool') {
-                $val = (int)$val;
             }
 
             // we should care about auto_increment in update query
@@ -2624,38 +2569,66 @@ protected function checkQuery($sql, $object_name = false)
             }
         }
 
-        if (empty($values)) {
-            return $execute ? true : ''; // no columns set
-        }
+        $builder = $this->getConnection()->createQueryBuilder();
+        $builder->update($table);
 
-        $types = array();
-        foreach ($where as $field => $value) {
-            $types[$field] = '?' . $field_defs[$field]['type'];
-        }
-        $whereString = $this->getColumnWhereClause($table, $types, true);
-
-        if (!empty($whereString)) {
-            $whereString = ' WHERE ' . $whereString;
-        }
-
-        $data = array_merge(array_values($values), array_values($where));
-        $query = "UPDATE " . $table . "\n\t\t\t\t\tSET";
-        $blobs = array();
-        $sep = ' ';
         foreach ($values as $field => $value) {
-            $type = $this->getFieldType($field_defs[$field]);
-            $query .= $sep . $field . '=' . $this->convert("?$type", $type);
-            $sep = ', ';
-            if ($this->isBlobType($type)) {
-                $blobs[] = $field;
-            }
+            $builder->set(
+                $field,
+                $this->bindValue($builder, $value, $field_defs[$field])
+            );
         }
-        $query .= "\n\t\t\t\t\t" . $whereString;
 
-        if (!$execute) {
-            return array($query, $data, $blobs);
+        if (count($where) > 0) {
+            $predicates = array();
+            foreach ($where as $field => $value) {
+                $predicates[] = $field . ' = ' . $this->bindValue($builder, $value, $field_defs[$field]);
+            }
+
+            call_user_func_array(array($builder, 'where'), $predicates);
         }
-        return $this->preparedQuery($query, $data, $blobs);
+
+        return $builder->execute();
+    }
+
+    /**
+     * Binds value to the query and returns the query fragment representing the placeholder
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param mixed $value The value to be bound
+     * @param array $fieldDef Field definition
+     * @return string
+     */
+    public function bindValue(QueryBuilder $builder, $value, array $fieldDef)
+    {
+        return $this->convert(
+            $builder->createPositionalParameter(
+                $value,
+                $this->getParamType($fieldDef)
+            ),
+            $this->getFieldType($fieldDef)
+        );
+    }
+
+    /**
+     * Returns the binding type for the given field
+     *
+     * @param array $fieldDef Field definition
+     * @return int|null
+     */
+    protected function getParamType(array $fieldDef)
+    {
+        $type = $this->getFieldType($fieldDef);
+        if ($this->isBlobType($type)) {
+            return \PDO::PARAM_LOB;
+        }
+        $typeClass = $this->getTypeClass($type);
+        if ($typeClass == 'bool') {
+            return \PDO::PARAM_BOOL;
+        } elseif ($typeClass == 'int') {
+            return \PDO::PARAM_INT;
+        }
+        return null;
     }
 
 	/**

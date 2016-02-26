@@ -26,7 +26,6 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         self::$monitorList = TrackerManager::getInstance()->getDisabledMonitors();
 
-        SugarTestHelper::setUp('mock_db');
         SugarTestHelper::setUp('current_user');
     }
 
