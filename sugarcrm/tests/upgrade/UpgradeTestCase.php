@@ -25,28 +25,26 @@ abstract class UpgradeTestCase extends Sugar_PHPUnit_Framework_TestCase
      */
     static protected $admin;
 
-    public static function setUpBeforeClass()
-    {
+    public static function setUpBeforeClass(){
         // create admin user
         self::$admin = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $GLOBALS['current_user'] = static::$admin;
     }
 
-    public static function tearDownAfterClass()
-    {
+    public static function tearDownAfterClass(){
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    protected function setUp()
-	{
-	    $this->upgrader = new TestUpgrader(self::$admin);
-	    SugarTestHelper::setUp("files");
-	}
+    protected function setUp(){
+        // make sure current_user is not flushed out by SugarTestHelper::tearDown()
+        $GLOBALS['current_user'] = static::$admin;
+        $this->upgrader = new TestUpgrader(self::$admin);
+        SugarTestHelper::setUp("files");
+    }
 
-    protected function tearDown()
-	{
-	    $this->upgrader->cleanState();
-	    $this->upgrader->cleanDir($this->upgrader->getTempDir());
-	    SugarTestHelper::tearDown();
-	}
+    protected function tearDown(){
+        $this->upgrader->cleanState();
+        $this->upgrader->cleanDir($this->upgrader->getTempDir());
+        SugarTestHelper::tearDown();
+    }
 }
