@@ -16,7 +16,7 @@
 class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
 {
     public $order = 7100;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
     public $version = '7.5';
 
     /**
@@ -262,6 +262,7 @@ EOF;
     protected function checkMenu()
     {
         require_once('modules/MySettings/TabController.php');
+        require_once('include/SubPanel/SubPanelDefinitions.php');
         $tc = new TabController();
 
         if (!empty($this->upgrader->state['addKBToMenu'])) {
@@ -279,6 +280,14 @@ EOF;
             $tc->setPortalTabs(array_values($tabs));
         }
         //END SUGARCRM flav=ent ONLY
+        //Check KBDocuments in hidden subpanels.
+        $focus = BeanFactory::getBean('KBContents');
+        $subpanel = new SubPanelDefinitions($focus);
+        $panels = $subpanel->get_hidden_subpanels();
+        if (in_array('kbdocuments', $panels)) {
+            unset($panels['kbdocuments']);
+            $subpanel->set_hidden_subpanels($panels);
+        }
     }
 
     /**

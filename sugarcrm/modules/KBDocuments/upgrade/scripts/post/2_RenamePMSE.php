@@ -17,7 +17,7 @@
 class SugarUpgradeRenamePMSE extends UpgradeScript
 {
     public $order = 2200;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
     public $version = '7.5';
 
     /**

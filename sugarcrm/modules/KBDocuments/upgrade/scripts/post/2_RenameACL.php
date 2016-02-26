@@ -16,7 +16,7 @@
 class SugarUpgradeRenameACL extends UpgradeScript
 {
     public $order = 2001;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
     public $version = '7.5';
 
     public function run()
