@@ -321,21 +321,9 @@
     },
 
     handleSave: function() {
-        var self = this;
-        self.inlineEditMode = false;
+        this.inlineEditMode = false;
 
-        app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function(response) {
-                    if (response.record && response.record.date_modified) {
-                        self.model.set('date_modified', response.record.date_modified);
-                    }
-                    self._saveModel();
-                }
-            }, {
-                deleteIfFails: false
-            }
-        );
-
+        this._saveModel();
         self.$('.record-save-prompt').hide();
         if (!self.disposed) {
             self.render();
