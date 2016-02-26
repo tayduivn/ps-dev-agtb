@@ -650,7 +650,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                 //exit();
             }
             $this->diagram->fetched_row['activities'] = $activityData;
-            if (!empty($invalidActivity)) {
+            if (!empty($invalidActivities)) {
                 $this->diagram->fetched_row['invalidElements']['invalidActivities'] = $invalidActivities;
             }
 
