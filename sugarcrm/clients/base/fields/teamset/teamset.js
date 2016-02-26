@@ -416,12 +416,17 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on('change:' + this.name, function() {
-                if (this._currentIndex !== this.model.get(this.name).length - 1) {
-                    this._currentIndex = this.model.get(this.name).length - 1;
+                var teamList = this.model.get(this.name);
+
+                if (!_.isUndefined(teamList) && (this._currentIndex !== teamList.length - 1)) {
+                    this._currentIndex = teamList.length - 1;
                 }
+
                 this.render();
-                if (!_.isEmpty(this.$(this.fieldTag).data('select2'))) {
-                    this.$(this.$(this.fieldTag).get(this._currentIndex)).focus();
+
+                var $fieldTag = this.$(this.fieldTag);
+                if (!_.isEmpty($fieldTag.data('select2'))) {
+                    this.$($fieldTag.get(this._currentIndex)).focus();
                 }
             }, this);
         }
