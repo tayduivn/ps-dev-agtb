@@ -496,11 +496,16 @@ abstract class DBManager
      * additional reporting or log in a different area in the future.
      *
      * @param  string  $query query to log
+     * @param  array   $boundData prepared statement bound data
      * @return boolean true if the query was logged, false otherwise
      */
-    public function dump_slow_queries($query)
+    public function dump_slow_queries($query, $boundData = null)
     {
         global $sugar_config;
+
+        if (!empty($sugar_config['xhprof_config'])) {
+            SugarXHprof::getInstance()->trackSQL($query, $this->query_time, $boundData);
+        }
 
         $do_the_dump = isset($sugar_config['dump_slow_queries'])
             ? $sugar_config['dump_slow_queries'] : false;
