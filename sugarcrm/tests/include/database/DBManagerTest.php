@@ -1872,7 +1872,7 @@ SQL;
                   ),
                   ),
                   array(),
-                  array("text1" => "''"),
+                  array("text1" => "''", "text2" => "NULL"),
                   array()
             ),
             array("testtext2", array (
@@ -2050,7 +2050,9 @@ SQL;
                       ),
                   ),
                   array("id" => 123),
-                  array("id" => "'123'"),
+                  array("id" => "'123'", 'intval' => 'NULL', 'floatval' => 'NULL',
+                        'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
+                        'test_dt' => 'NULL', 'test_tm' => 'NULL'),
                   array(),
             ),
             array("testempty", array (
@@ -2104,9 +2106,9 @@ SQL;
                   		'money' => '', 'test_dtm' => '', 'test_dtm2' => '',
                         'test_dt' => '', 'test_tm' => '', 'text_txt' => null
                   ),
-                  array("id" => "''", 'intval' => 0, 'floatval' => 0,
-                  		'money' => 0, 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
-                        'test_dt' => "NULL", 'test_tm' => 'NULL'
+                  array("id" => "''", 'intval' => "NULL", 'floatval' => "NULL",
+                        'money' => "NULL", 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
+                        'test_dt' => "NULL", 'test_tm' => 'NULL', 'test_txt' => 'NULL'
                   ),
                   array('intval' => 'NULL', 'floatval' => 'NULL',
                   		'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
@@ -2749,6 +2751,44 @@ SQL;
         // remove data from table
         $result = $this->deleteTableArray( $tableName, $tableDataArray );
 
+    }
+
+    /**
+     * @group dbmanager
+     * @group db
+     * @ticket PAT-2513
+     */
+    public function testMassageValueReturnIsZeroForFloatWhenValIsNullAndFieldIsRequired()
+    {
+        $fieldDef = array(
+            'name' => 'test_field',
+            'type' => 'float',
+            'required' => true,
+            'default' => ''
+        );
+
+        $return = $this->_db->massageValue('', $fieldDef);
+
+        $this->assertEquals('0', $return);
+    }
+
+    /**
+     * @group dbmanager
+     * @group db
+     * @ticket PAT-2513
+     */
+    public function testMassageValueReturnIsNullForFloatWhenValIsNullAndFieldIsNotRequired()
+    {
+        $fieldDef = array(
+            'name' => 'test_field',
+            'type' => 'float',
+            'required' => false,
+            'default' => ''
+        );
+
+        $return = $this->_db->massageValue('', $fieldDef);
+
+        $this->assertEquals('NULL', $return);
     }
 
     /**
