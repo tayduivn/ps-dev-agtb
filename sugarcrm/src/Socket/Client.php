@@ -225,8 +225,7 @@ class Client
         $client = $this->getHttpHelper();
         $url = $this->getSugarConfig()->get('websockets.server.url') . '/forward';
 
-        $client->getRemoteData($url, $params, $this->makeHeaders());
-        return $client->isSuccess();
+        return $client->send('post', $url, $params, $this->makeHeaders());
     }
 
     /**
@@ -243,16 +242,21 @@ class Client
         $httpClient = $this->getHttpHelper();
 
         if (filter_var($url, FILTER_VALIDATE_URL) && $httpClient->ping($url)) {
-            $fileContent = $httpClient->getRemoteData($url);
 
-            if (isset($fileContent['type']) && $fileContent['type'] == 'balancer') {
-                $isBalancer = true;
-                $fileContent = $httpClient->getRemoteData($fileContent['location']);
-            }
+            if ($httpClient->send('get', $url)) {
+                $fileContent = $httpClient->getLastResponse();
 
-            if (isset($fileContent['type']) && in_array($fileContent['type'], array('client', 'server'))) {
-                $availability = true;
-                $type = $fileContent['type'];
+                if (isset($fileContent['type']) && $fileContent['type'] == 'balancer') {
+                    $isBalancer = true;
+                    if ($httpClient->send('get', $fileContent['location'])) {
+                        $fileContent = $httpClient->getLastResponse();
+                    }
+                }
+
+                if (isset($fileContent['type']) && in_array($fileContent['type'], array('client', 'server'))) {
+                    $availability = true;
+                    $type = $fileContent['type'];
+                }
             }
         }
         return array('url' => $url, 'type' => $type, 'available' => $availability, 'isBalancer' => $isBalancer);
