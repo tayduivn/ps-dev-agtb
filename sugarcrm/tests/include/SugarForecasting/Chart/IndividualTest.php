@@ -53,6 +53,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
         $tp_mock = $this->getMock('TimePeriod', array('save', 'getChartLabels'));
         $tp_mock->name = 'Q2 2012';
+        $tp_mock->id = 1;
 
         $tp_mock->expects($this->atLeastOnce())
             ->method('getChartLabels')

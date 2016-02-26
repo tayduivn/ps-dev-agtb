@@ -155,7 +155,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $repairClass->expects($this->once())
             ->method('rebuildExtensions')
-            ->with($module);
+            ->with(array($module));
 
         $apiClass->rebuildExtensions($module);
     }

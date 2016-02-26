@@ -8788,6 +8788,7 @@ $app_strings = array (
     'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has sub-periods',
     'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Sub Time Periods cannot have sub-periods',
     'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any Time Periods of type: {0}',
+    'ERR_NO_ACTIVE_TIMEPERIOD' => 'No active Time Periods for the current settings.',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',

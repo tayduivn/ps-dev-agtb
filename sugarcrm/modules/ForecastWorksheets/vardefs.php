@@ -279,7 +279,7 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'date_closed_timestamp',
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
-            'type' => 'int',
+            'type' => 'ulong',
             'studio' => false
         ),
         'sales_stage' =>
