@@ -20,7 +20,7 @@
 
     scrollTopPositions: [], //stores scroll positions for main and side pane
 
-    pixelsFromFooter: 80, //how many pixels from the footer the drawer will drop down to
+    pixelsFromFooter: 69, //how many pixels from the footer the drawer will drop down to
 
     initialize: function(options) {
         var self = this;
