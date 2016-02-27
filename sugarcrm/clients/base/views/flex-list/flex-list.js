@@ -761,13 +761,11 @@
         if (_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)) {
             this._previewed = model;
             this.$('.btn.rowaction.active').removeClass('active').attr('aria-pressed', false);
-            this.$("tr.highlighted").removeClass("highlighted current above below");
+            this.$("tr.highlighted").removeClass("highlighted current");
             if (model) {
                 var rowName = model.module + "_" + model.id;
                 var curr = this.$("tr[name='" + rowName + "']");
                 curr.addClass("current highlighted");
-                curr.prev("tr").addClass("highlighted above");
-                curr.next("tr").addClass("highlighted below");
                 this.$('tr.current .btn.rowaction').addClass('active').attr('aria-pressed', true);
             }
         }
