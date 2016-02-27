@@ -12,18 +12,9 @@
 
 class SugarQuery_Builder_Andwhere extends SugarQuery_Builder_Where
 {
-    /**
-     * @var array(SugarQuery_Builder_Condition)
-     */
-    public $conditions = array();
-    /**
-     * @var bool|string
-     */
-    public $raw = false;
-
-    /**
-     * @var bool|SugarQuery
-     */
-    public $query = false;
-
+    /** {@inheritDoc} */
+    public function operator()
+    {
+        return 'AND';
+    }
 }

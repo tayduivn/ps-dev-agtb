@@ -57,7 +57,7 @@ class TargetModuleDeveloperVisibilityTest extends Sugar_PHPUnit_Framework_TestCa
         $sq->select('id');
         $vis->addVisibilityWhereQuery($sq);
         if (empty($queryFrag)) {
-            $inWhere = array_filter($sq->where['and']->conditions, function($clause) {
+            $inWhere = array_filter($sq->where->conditions, function ($clause) {
                 return !empty($clause->operator) && $clause->operator == 'IN';
             });
             $this->assertEmpty($inWhere);

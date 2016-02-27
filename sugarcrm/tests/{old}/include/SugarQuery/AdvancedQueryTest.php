@@ -170,11 +170,13 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sqUnion = new SugarQuery();
         $sqUnion->union($sq1);
         $sqUnion->union($sq2);
+        $sqUnion->orderBy('name', 'ASC');
 
         $result = $sqUnion->execute();
 
-        $this->assertEquals(2, count($result), "More than 2 rows were returned.");
-
+        $this->assertCount(2, $result, 'Exactly 2 rows were expected to be returned');
+        $this->assertSame('Awesome', $result[0]['name']);
+        $this->assertSame('Not Awesome', $result[1]['name']);
     }
 
     public function testSelectNotes() {

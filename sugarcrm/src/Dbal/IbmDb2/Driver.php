@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Dbal\IbmDb2;
 
 use Doctrine\DBAL\Driver\IBMDB2\DB2Driver as BaseDriver;
+use Sugarcrm\Sugarcrm\Dbal\Platforms\IbmDb2Platform;
 
 /**
  * IBM DB2 driver
@@ -25,5 +26,13 @@ class Driver extends BaseDriver
     public function connect(array $params, $username = null, $password = null, array $driverOptions = array())
     {
         return new Connection($params['connection']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDatabasePlatform()
+    {
+        return new IbmDb2Platform();
     }
 }

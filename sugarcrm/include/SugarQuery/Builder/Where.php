@@ -18,7 +18,7 @@ abstract class SugarQuery_Builder_Where
     public $raw = null;
 
     /**
-     * @var array
+     * @var SugarQuery_Builder_Condition[]
      */
     public $conditions = array();
 
@@ -27,10 +27,23 @@ abstract class SugarQuery_Builder_Where
      */
     public $query = false;
 
+    /**
+     * Constructor
+     *
+     * @param SugarQuery $query
+     * @throws SugarQueryException
+     */
     public function __construct(SugarQuery $query)
     {
         $this->query = $query;
     }
+
+    /**
+     * Returns the operator for joining conditions
+     *
+     * @return string
+     */
+    abstract public function operator();
 
     /**
      * @param $field

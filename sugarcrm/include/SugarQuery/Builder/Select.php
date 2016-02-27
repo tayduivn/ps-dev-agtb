@@ -12,10 +12,8 @@
 
 class SugarQuery_Builder_Select
 {
-
     /**
-     * Array of Select fields/statements
-     * @var array
+     * @var SugarQuery_Builder_Field_Select[]
      */
     public $select = array();
 
@@ -109,9 +107,9 @@ class SugarQuery_Builder_Select
     }
 
     /**
-     * SelectReset method
-     * clear out the objects select array
-     * @return object this
+     * Clear out the objects select array
+     *
+     * @return static
      */
     public function selectReset()
     {
@@ -128,12 +126,22 @@ class SugarQuery_Builder_Select
         return $this->$name;
     }
 
+    /**
+     * Make the query COUNT query
+     *
+     * @return static
+     */
     public function setCountQuery()
     {
         $this->countQuery = true;
         return $this;
     }
 
+    /**
+     * Check if the the query is COUNT query
+     *
+     * @return bool
+     */
     public function getCountQuery()
     {
         return $this->countQuery;

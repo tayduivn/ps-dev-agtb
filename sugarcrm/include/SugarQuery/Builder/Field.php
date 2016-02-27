@@ -109,8 +109,8 @@ class SugarQuery_Builder_Field
         // if its a linking table let it slide
         if (!empty($this->query->join[$this->table]->options['linkingTable'])){
             $this->nonDb = 0;
-        } elseif (empty($this->def) && $this->field != '*') {
-            $this->nonDb = 1;
+        } elseif (empty($this->def) && $this->field != 'id_c' && $this->field != '*') {
+            $this->markNonDb();
             return;
         }
 
@@ -148,10 +148,16 @@ class SugarQuery_Builder_Field
             $this->moduleName = $bean->module_name;
         } else {
             $bean = $this->query->getTableBean($this->table);
-
-            if (!empty($bean->field_defs[$this->field])) {
-                $this->moduleName = $bean->module_name;
-                $def = $bean->field_defs[$this->field];
+            if ($bean) {
+                if (!empty($bean->field_defs[$this->field])) {
+                    $this->moduleName = $bean->module_name;
+                    $def = $bean->field_defs[$this->field];
+                }
+            } else {
+                $metadata = $this->query->getTableMetadata($this->table);
+                if (isset($metadata['fields'][$this->field])) {
+                    $def = $metadata['fields'][$this->field];
+                }
             }
         }
 

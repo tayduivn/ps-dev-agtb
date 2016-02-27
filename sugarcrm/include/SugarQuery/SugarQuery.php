@@ -27,17 +27,17 @@ class SugarQuery
     public $union = null;
 
     /**
-     * @var null|array
+     * @var SugarQuery_Builder_Groupby[]
      */
-    public $group_by = null;
+    public $group_by = array();
 
     /**
-     * @var null|array
+     * @var null|SugarQuery_Builder_Where
      */
-    public $having = null;
+    public $having;
 
     /**
-     * @var null|array
+     * @var SugarQuery_Builder_Orderby[]
      */
     public $order_by = array();
 
@@ -62,9 +62,9 @@ class SugarQuery
     public $from = false;
 
     /**
-     * @var SugarQuery_Builder_Where[]
+     * @var null|SugarQuery_Builder_Where
      */
-    public $where = array();
+    public $where;
 
     /**
      * @var SugarQuery_Builder_Join[]
@@ -246,13 +246,23 @@ class SugarQuery
      */
     public function where($conditions = array())
     {
-        if (!isset($this->where['and'])) {
-            $this->where['and'] = new SugarQuery_Builder_Andwhere($this);
+        if (isset($this->where)) {
+            if (!$this->where instanceof SugarQuery_Builder_Andwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level WHERE operator from %s to %s',
+                    $this->where->operator(),
+                    'AND'
+                ));
+            }
+        } else {
+            $this->where = new SugarQuery_Builder_Andwhere($this);
         }
+
         if (!empty($conditions)) {
-            $this->where['and']->add($conditions);
+            $this->where->add($conditions);
         }
-        return $this->where['and'];
+
+        return $this->where;
     }
 
     /**
@@ -266,11 +276,11 @@ class SugarQuery
     {
         $where = new SugarQuery_Builder_Andwhere($this);
         $where->addRaw($sql);
-        if (!isset($this->where['and'])) {
-            $this->where['and'] = new SugarQuery_Builder_Andwhere($this);
+        if (!isset($this->where)) {
+            $this->where = new SugarQuery_Builder_Andwhere($this);
         }
-        $this->where['and']->add($where);
-        return $this->where['and'];
+        $this->where->add($where);
+        return $this->where;
     }
 
 
@@ -283,17 +293,24 @@ class SugarQuery
      */
     public function orWhere($conditions = array())
     {
-        if (!isset($this->where['or'])) {
-            $this->where['or'] = new SugarQuery_Builder_Orwhere($this);
+        if (isset($this->where)) {
+            if (!$this->where instanceof SugarQuery_Builder_Orwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level WHERE operator from %s to %s',
+                    $this->where->operator(),
+                    'OR'
+                ));
+            }
+        } else {
+            $this->where = new SugarQuery_Builder_Orwhere($this);
         }
 
         if (!empty($conditions)) {
-            $this->where['or']->add($conditions);
+            $this->where->add($conditions);
         }
 
-        return $this->where['or'];
+        return $this->where;
     }
-
 
     /**
      * Add a traditional query builder join object to this query
@@ -509,8 +526,13 @@ class SugarQuery
     /**
      * If group by is not empty, then add rest of fields in select statement
      */
-    protected function addGroupByFields()
+    public function ensureGroupByFields()
     {
+        // check if short list of fields in GROUP BY is supported
+        if ($this->db->supports('short_group_by')) {
+            return;
+        }
+
         //make sure 'group by' is not empty, if 'group by' is empty then we don't need to modify 'group by'
         if (!empty($this->group_by)) {
             $groupByCols = array();
@@ -596,11 +618,7 @@ class SugarQuery
         $compiler = new SugarQuery_Compiler();
         $this->data = $this->dataItems = array();
 
-        //check if short list of fields in 'group by' is supported, if not add all fields in select
-        if (!$this->db->supports('short_group_by')) {
-            //add fields to group by
-            $this->addGroupByFields();
-        }
+        $this->ensureGroupByFields();
 
         $sql = $compiler->compile($this, $this->db);
         if($parent) {
@@ -760,28 +778,68 @@ class SugarQuery
     /**
      * Add a having statement to this query
      *
-     * @param array $array
+     * @param array $conditions
      *
      * @return SugarQuery
+     * @throws SugarQueryException
      */
     public function having($conditions)
     {
-        $having = new SugarQuery_Builder_Andwhere($this);
-        if (!empty($conditions)) {
-            $having->add($conditions);
+        if (isset($this->having)) {
+            if (!$this->having instanceof SugarQuery_Builder_Andwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level HAVING operator from %s to %s',
+                    $this->where->operator(),
+                    'AND'
+                ));
+            }
+        } else {
+            $this->having = new SugarQuery_Builder_Andwhere($this);
         }
-        $this->having[] = $having;
-        return end($this->having);
+
+        if (!empty($conditions)) {
+            $this->having->add($conditions);
+        }
+
+        return $this->having;
+    }
+
+    /**
+     * Add a having statement to this query
+     *
+     * @param array $conditions
+     *
+     * @return SugarQuery
+     * @throws SugarQueryException
+     */
+    public function orHaving($conditions)
+    {
+        if (isset($this->having)) {
+            if (!$this->having instanceof SugarQuery_Builder_Orwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level HAVING operator from %s to %s',
+                    $this->where->operator(),
+                    'OR'
+                ));
+            }
+        } else {
+            $this->having = new SugarQuery_Builder_Orwhere($this);
+        }
+
+        if (!empty($conditions)) {
+            $this->having->add($conditions);
+        }
+
+        return $this->having;
     }
 
     public function havingRaw($expression)
     {
         $having = new SugarQuery_Builder_Andwhere($this);
         $having->addRaw($expression);
-        $this->having[] = $having;
-        return end($this->having);
+        $this->having = $having;
+        return $this->having;
     }
-
 
     /**
      * Add an order by statement for this query
@@ -857,20 +915,8 @@ class SugarQuery
 
         if (!empty($this->join)) {
             foreach ($this->join as $joinObj) {
-                if (!empty($joinObj->on['and'])) {
-                    foreach ($joinObj->on['and'] as $whereObj) {
-                        if (empty($whereObj->conditions)) {
-                            continue;
-                        }
-                        foreach ($whereObj->conditions as $conditionObj) {
-                            if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
-                                $conditionObj->field->setupField($this);
-                            }
-                        }
-                    }
-                }
-                if (!empty($joinObj->on['or'])) {
-                    foreach ($joinObj->on['or'] as $whereObj) {
+                if (!empty($joinObj->on)) {
+                    foreach ($joinObj->on as $whereObj) {
                         if (empty($whereObj->conditions)) {
                             continue;
                         }
@@ -884,21 +930,8 @@ class SugarQuery
             }
         }
 
-        if (!empty($this->where['and'])) {
-            foreach ($this->where['and'] as $whereObj) {
-                if (empty($whereObj->conditions)) {
-                    continue;
-                }
-                foreach ($whereObj->conditions as $conditionObj) {
-                    if ($conditionObj->field instanceof SugarQuery_Builder_Field) {
-                        $conditionObj->field->setupField($this);
-                    }
-                }
-            }
-        }
-
-        if (!empty($this->where['or'])) {
-            foreach ($this->where['or'] as $whereObj) {
+        if (!empty($this->where)) {
+            foreach ($this->where as $whereObj) {
                 if (empty($whereObj->conditions)) {
                     continue;
                 }
@@ -939,6 +972,7 @@ class SugarQuery
             }
         }
     }
+
     /**
      * Load Beans uses Link2 to take a SugarQuery object and add the joins needed to take a link and make the connection
      *
@@ -1031,6 +1065,22 @@ class SugarQuery
             $this->table_beans[$table_name] = $bean;
         }
         return $this->table_beans[$table_name];
+    }
+
+    public function getTableMetadata($alias)
+    {
+        global $dictionary;
+
+        if (!isset($this->join[$alias])) {
+            return array();
+        }
+
+        $table = $this->join[$alias]->table;
+        if (!isset($dictionary[$table])) {
+            return array();
+        }
+
+        return $dictionary[$table];
     }
 
     public function getJoinAlias($name, $isLink = true)

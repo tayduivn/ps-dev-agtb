@@ -12,15 +12,22 @@
 
 class SugarQuery_Builder_Groupby
 {
+    /**
+     * @var null|SugarQuery_Builder_Field_Groupby
+     */
     public $column;
+
+    /**
+     * @var SugarQuery
+     */
     public $query;
 
-    public function __construct($query)
+    public function __construct(SugarQuery $query)
     {
         $this->query = $query;
     }
 
-    public function addField($column, $options = array())
+    public function addField($column)
     {
         $this->column = new SugarQuery_Builder_Field_Groupby($column, $this->query);
         return $this;

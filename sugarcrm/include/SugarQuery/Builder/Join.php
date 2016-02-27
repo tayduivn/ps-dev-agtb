@@ -16,17 +16,17 @@ class SugarQuery_Builder_Join {
     /**
      * @var array
      */
-    protected $options = array();
+    public $options = array();
 
     /**
-     * @var null|string
+     * @var null|string|SugarQuery
      */
     public $table;
 
     /**
-     * @var array
+     * @var null|SugarQuery_Builder_Where
      */
-    protected $on = array();
+    public $on;
 
     /**
      * @var bool|string
@@ -51,51 +51,76 @@ class SugarQuery_Builder_Join {
     public $relatedJoin = false;
 
     /**
+     * @var string
+     */
+    public $relationshipTableAlias;
+
+    /**
      * Create the JOIN Object
      * @param string $table
      * @param string $type
      */
     public function __construct($table = null, array $options = array())
     {
+        if ($table instanceof SugarQuery && !isset($options['alias'])) {
+            throw new SugarQueryException('Joined sub-query must have alias');
+        }
+
         // Set the table to JOIN on
         $this->table = $table;
         $this->bean = !empty($options['bean']) ? $options['bean'] : false;
         unset($options['bean']);
         $this->relatedJoin = !empty($options['relatedJoin']) ? $options['relatedJoin'] : false;
         unset($options['relatedJoin']);
-        $this->options = $options;
+        $this->options = array_merge(array(
+            'joinType' => 'INNER',
+        ), $options);
     }
 
     /**
-     * Set the ON criteria
-     * @param string $c1
-     * @param string $op
-     * @param string $c2
-     * @return object this
+     * Sets and returns the ON criteria
+     *
+     * @return SugarQuery_Builder_Andwhere
+     * @throws SugarQueryException
      */
     public function on()
     {
-        if (!isset($this->on['and'])) {
-            $this->on['and'] = new SugarQuery_Builder_Andwhere($this->query, $this->bean);
+        if (isset($this->on)) {
+            if (!$this->on instanceof SugarQuery_Builder_Andwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level ON operator from %s to %s',
+                    $this->on->operator(),
+                    'AND'
+                ));
+            }
+        } else {
+            $this->on = new SugarQuery_Builder_Andwhere($this->query, $this->bean);
         }
 
-        return $this->on['and'];
+        return $this->on;
     }
 
     /**
-     * Set the ON criteria
-     * @param string $c1
-     * @param string $op
-     * @param string $c2
+     * Sets and returns the ON criteria
+     *
      * @return object this
+     * @throws SugarQueryException
      */
     public function onOr()
     {
-        if (!isset($this->on['or'])) {
-            $this->on['or'] = new SugarQuery_Builder_Orwhere($this->query, $this->bean);
+        if (isset($this->on)) {
+            if (!$this->on instanceof SugarQuery_Builder_Orwhere) {
+                throw new SugarQueryException(sprintf(
+                    'Cannot change the top level ON operator from %s to %s',
+                    $this->on->operator(),
+                    'OR'
+                ));
+            }
+        } else {
+            $this->on = new SugarQuery_Builder_Orwhere($this->query, $this->bean);
         }
 
-        return $this->on['or'];
+        return $this->on;
     }
 
     /**
@@ -142,5 +167,4 @@ class SugarQuery_Builder_Join {
     {
         return $this->$name;
     }
-
 }

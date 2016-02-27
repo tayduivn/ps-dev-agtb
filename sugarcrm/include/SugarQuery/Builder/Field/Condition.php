@@ -21,12 +21,6 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
     protected $rNameExists = false;
     protected $fieldCompare;
 
-    public function __construct($field, SugarQuery $query)
-    {
-        parent::__construct($field, $query);
-    }
-
-
     public function expandField()
     {
         if(!isset($this->def['source']) || $this->def['source'] == 'db') {
@@ -94,70 +88,19 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             return;
         }
         if (empty($this->moduleName)) {
-            $this->nonDb = 1;
+            $this->markNonDb();
             return;
         }
         if (isset($this->def['source']) && $this->def['source'] == 'non-db' && !isset($this->def['dbType'])) {
-            $this->nonDb = 1;
+            $this->markNonDb();
             return;
         } elseif (empty($this->def)) {
-            $this->nonDb = 1;
+            $this->markNonDb();
             return;
         }
 
         $this->nonDb = 0;
         return;
-    }
-
-    /**
-     * @param $value
-     * @param bool $operator
-     * @return string
-     */
-    public function quoteValue($value, $operator = false, $forPrepared = false)
-    {
-        global $db;
-        if ($value instanceof SugarQuery_Builder_Literal) {
-            return (string)$value;
-        }
-
-        if ($this->field == 'deleted' && empty($this->def)) {
-            return (int) isTruthy($value);
-        }
-
-        if (!empty($this->def)) {
-            $dbtype = $db->getFieldType($this->def);
-
-            if (is_null($value) || $value === false || $value === '') {
-                return $db->emptyValue($dbtype, $forPrepared);
-            }
-
-            switch ($dbtype) {
-                case 'date':
-                case 'datetime':
-                case 'time':
-                    if (strtoupper($value) == 'NOW()') {
-                        return $forPrepared ? TimeDate::getInstance()->nowDb() : $db->now();
-                    }
-                    break;
-                case 'bool':
-                    return (int)isTruthy($value);
-            }
-
-            if ($db->getTypeClass($dbtype) == 'string') {
-                if ($operator == 'STARTS') {
-                    $value = $value . '%';
-                }
-                if ($operator == 'CONTAINS' || $operator == 'DOES NOT CONTAIN') {
-                    $value = '%' . $value . '%';
-                }
-                if ($operator == 'ENDS') {
-                    $value = '%' . $value;
-                }
-            }
-            return $forPrepared ? $value : $db->quoteType($dbtype, $value);
-        }
-        return $forPrepared ? $value : $db->quoted($value);
     }
 
     /**

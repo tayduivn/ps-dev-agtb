@@ -227,11 +227,11 @@ class SugarQuery_Compiler_SQL
     /**
      * Create a Having statement
      *
-     * @param string $having
+     * @param SugarQuery_Builder_Where $having
      *
      * @return string
      */
-    protected function compileHaving($having)
+    protected function compileHaving(SugarQuery_Builder_Where $having)
     {
         return $this->compileWhere($having);
     }
@@ -361,14 +361,12 @@ class SugarQuery_Compiler_SQL
     protected function compileFrom($bean)
     {
         $alias = "";
-        $return = array();
         if (is_array($bean)) {
             list($bean, $alias) = $bean;
             $this->from_alias = $alias;
         }
         $this->from_bean = $bean;
         $table = $bean->getTableName();
-        $table_cstm = '';
         $from_clause = "{$table}";
 
         if (!empty($alias)) {
@@ -378,88 +376,58 @@ class SugarQuery_Compiler_SQL
         //SugarQuery will determine if we actually need to add the table or not.
         $this->sugar_query->joinCustomTable($bean, $alias);
 
-        if (!empty($this->from_alias)) {
-            $this->primary_table = $this->from_alias;
-            $this->primary_custom_table = $this->from_alias . '_c';
-        } else {
-            $this->primary_table = $this->from_bean->getTableName();
-            $this->primary_custom_table = $this->from_bean->get_custom_table_name();
-        }
-
-        $return = $from_clause;
-
-        return $return;
+        return $from_clause;
     }
     /**
      * Create a where statement
      *
-     * @param array $where SugarQuery_Builder_Where
+     * @param SugarQuery_Builder_Where $where
      *
      * @return string
      */
-    protected function compileWhere(array $where)
+    protected function compileWhere(SugarQuery_Builder_Where $where)
     {
-        $sql = array();
-        foreach ($where as $whereObj) {
-            if ($whereObj instanceof SugarQuery_Builder_Andwhere) {
-                $operator = "AND";
-            } else {
-                $operator = "OR";
-            }
-            $sql[] = $this->buildWhereSql($operator, $whereObj);
-        }
-
-        $compiledSql = '';
-        foreach ($sql as $conditionals) {
-            foreach($conditionals as $operator => $statement) {
-                if(count($statement) > 1) {
-                    $compiledSql .= implode(" {$operator} ", $statement);
-                } else {
-                    $compiledSql .= reset($statement);
-                }
-            }
-        }
-
-        return $compiledSql;
+        return $this->buildWhereSql($where);
     }
 
     /**
      * Build the Where Statement using arrays, to keep it nice and clean
      *
-     * @param string $operator [AND/OR]
-     * @param object SugarQuery_Builder_AndWhere/SugarQuery_Builder_OrWhere
+     * @param SugarQuery_Builder_Where $where
      *
      * @return array
      */
-    protected function buildWhereSql($operator, $whereObj)
+    protected function buildWhereSql(SugarQuery_Builder_Where $where)
     {
-        $sql[$operator] = array();
-        if (!empty($whereObj->raw)) {
-            $compiledField = $this->compileField($whereObj->raw);
+        $operator = $where->operator();
+
+        $sql = array();
+        if (!empty($where->raw)) {
+            $compiledField = $this->compileField($where->raw);
             if (!empty($compiledField)) {
-                $sql[$operator][] = $compiledField;
+                $sql[] = $compiledField;
             }
         }
-        foreach ($whereObj->conditions as $condition) {
-            $compiledField = false;
+        foreach ($where->conditions as $condition) {
             if ($condition instanceof SugarQuery_Builder_Where) {
-                $compiledField = $this->compileWhere(array($condition));
+                $compiledField = $this->compileWhere($condition);
                 if (!empty($compiledField)) {
-                    $sql[$operator][] = "({$compiledField})";
+                    $sql[] = "({$compiledField})";
                 }
                 continue;
             } elseif ($condition instanceof SugarQuery_Builder_Condition) {
                 $compiledField = $this->compileCondition($condition);
                 if (!empty($compiledField)) {
-                    $sql[$operator][] = $compiledField;
+                    $sql[] = $compiledField;
                 }
             } else {
                 if (is_array($condition) && !empty($condition)) {
-                    $sql[$operator][] = join(' ', $condition);
+                    $sql[] = join(' ', $condition);
                 }
             }
         }
-        return $sql;
+
+        return implode(" {$operator} ", $sql);
     }
 
 
@@ -471,13 +439,14 @@ class SugarQuery_Compiler_SQL
      */
     protected function prepareValue($value, SugarQuery_Builder_Condition $condition)
     {
-        if (!empty($condition->field->def) && !($value instanceof SugarQuery_Builder_Literal)) {
-            $type = $this->db->getFieldType($condition->field->def);
-            $this->sugar_query->addData($condition->field->quoteValue($value, $condition->operator, true));
-            return "?$type";
-        } else {
-            return $condition->field->quoteValue($value, $condition->operator);
+        $value = $condition->field->quoteValue($value);
+        $this->sugar_query->addData($value);
+        if (empty($condition->field->def)) {
+            return '?';
         }
+
+        $type = $this->db->getFieldType($condition->field->def);
+        return '?' . $type;
     }
 
     /**
@@ -553,37 +522,7 @@ class SugarQuery_Compiler_SQL
                 case 'CONTAINS':
                 case 'DOES NOT CONTAIN':
                 case 'ENDS':
-                    //Handling for not contains
-                    $comparitor = 'LIKE';
-                    $chainWith = 'OR';
-                    if ($condition->operator === 'DOES NOT CONTAIN') {
-                        $comparitor = 'NOT LIKE';
-                        $chainWith = 'AND';
-                    }
-
-                    if ($this->db->supports('case_insensitive')) {
-                        $field = "UPPER($field)";
-                    }
-
-                    if (is_array($condition->values)) {
-                        $conditions = array();
-                        foreach ($condition->values as $value) {
-                            if ($this->db->supports('case_insensitive')) {
-                                $value = strtoupper($value);
-                            }
-                            $val = $this->prepareValue($value, $condition);
-                            $conditions[] = "{$field} {$comparitor} {$val}";
-                        }
-                        $sql .= '(' . implode(' ' . $chainWith . ' ', $conditions);
-                        if ($condition->operator === 'DOES NOT CONTAIN') {
-                            $sql .= " OR {$field} IS NULL";
-                        }
-                        $sql .= ') ';
-                    } else {
-                        $value = $this->db->supports('case_insensitive') ? strtoupper($condition->values) : $condition->values;
-                        $value = $this->prepareValue($value, $condition);
-                        $sql .= "{$field} {$comparitor} {$value}";
-                    }
+                    $sql .= $this->compileLike($field, $condition);
                     break;
                 case 'EQUALFIELD':
                     $sql .= "{$castedField} = " . $this->compileField($this->getFieldCondition($condition->values));
@@ -591,12 +530,6 @@ class SugarQuery_Compiler_SQL
                 case 'NOTEQUALFIELD':
                     $sql .= "{$castedField} != " . $this->compileField($this->getFieldCondition($condition->values));
                     break;
-                case '=':
-                case '!=':
-                case '>':
-                case '<':
-                case '>=':
-                case '<=':
                 default:
                     $sql .= $castedField . ' ' . $condition->operator . ' ';
                     if ($condition->values instanceof SugarQuery) {
@@ -613,11 +546,78 @@ class SugarQuery_Compiler_SQL
         if (!$condition->isAclIgnored()) {
             $isFieldAccessible = ACLField::generateAclCondition($condition, $current_user);
             if ($isFieldAccessible) {
-                $sql = '(' . $sql . ' AND (' . $this->compileWhere(array($isFieldAccessible)) . '))';
+                $sql = '(' . $sql . ' AND (' . $this->compileWhere($isFieldAccessible) . '))';
             }
         }
 
         return $sql;
+    }
+
+    protected function compileLike($field, $condition)
+    {
+        $operator = $condition->operator;
+        switch ($operator) {
+            case 'STARTS':
+                $format = '%s%%';
+                break;
+            case 'CONTAINS':
+            case 'DOES NOT CONTAIN':
+                $format = '%%%s%%';
+                break;
+            case 'ENDS':
+                $format = '%%%s';
+                break;
+            default:
+                $format = null;
+                break;
+        }
+
+        $isNegation = strpos($operator, 'NOT') !== false;
+        if ($isNegation) {
+            $comparator = 'NOT LIKE';
+            $chainWith = 'AND';
+        } else {
+            $comparator = 'LIKE';
+            $chainWith = 'OR';
+        }
+
+        if ($this->db->supports('case_insensitive')) {
+            $field = "UPPER($field)";
+        }
+
+        $sql = '(';
+        if ($isNegation) {
+            $sql .= $field . ' IS NULL OR ';
+        }
+
+        if (is_array($condition->values)) {
+            $conditions = array();
+            foreach ($condition->values as $value) {
+                $conditions[] = $this->compilePattern($field, $comparator, $format, $condition, $value);
+            }
+            $sql .= implode(' ' . $chainWith . ' ', $conditions);
+        } else {
+            $sql .= $this->compilePattern($field, $comparator, $format, $condition, $condition->values);
+        }
+
+        $sql .= ')';
+
+        return $sql;
+    }
+
+    protected function compilePattern($field, $comparitor, $format, $condition, $value)
+    {
+        if ($this->db->supports('case_insensitive')) {
+            $value = strtoupper($value);
+        }
+
+        $pattern = sprintf($format, str_replace(
+            array('\\', '_', '%'),
+            array('\\\\', '\\_', '\\%'),
+            $value
+        ));
+
+        return $field . ' ' . $comparitor . ' ' . $this->prepareValue($pattern, $condition);
     }
 
     /**

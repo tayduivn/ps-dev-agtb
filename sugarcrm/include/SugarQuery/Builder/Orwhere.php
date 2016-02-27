@@ -12,15 +12,9 @@
 
 class SugarQuery_Builder_Orwhere extends SugarQuery_Builder_Where
 {
-    /**
-     * @var array(SugarQuery_Builder_Condition)
-     */
-    public $conditions = array();
-
-    /**
-     * @var null|string
-     */
-    public $raw = null;
-
-    public $query = false;
+    /** {@inheritDoc} */
+    public function operator()
+    {
+        return 'OR';
+    }
 }
