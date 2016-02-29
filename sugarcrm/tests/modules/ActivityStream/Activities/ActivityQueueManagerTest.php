@@ -69,8 +69,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actManager->prepareChanges($contact, $activityData);
+        $actManager = new ActivityQueueManager();
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($contact, &$activityData));
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -117,8 +117,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actManager->prepareChanges($lead, $activityData);
+        $actManager = new ActivityQueueManager();
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($lead, &$activityData));
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -166,8 +166,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actManager->prepareChanges($account1, $activityData);
+        $actManager = new ActivityQueueManager();
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($account1, &$activityData));
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -220,8 +220,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actManager->prepareChanges($account1, $activityData);
+        $actManager = new ActivityQueueManager();
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($account1, &$activityData));
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -342,8 +342,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actManager->prepareChanges($contact, $activityData);
+        $actManager = new ActivityQueueManager();
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($contact, &$activityData));
 
         //restore contact field defs
         $contact->field_defs = $originalFieldDefs;
@@ -422,8 +422,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockActivity->expects($this->once())
             ->method('processRecord');
 
-        $actManager = self::getMock(
-            'TestActivityQueueManager',
+        $actManager = $this->getMock(
+            'ActivityQueueManager',
             array(
                 'subscribeUserToRecord',
                 'prepareChanges'
@@ -432,7 +432,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $actManager->expects($this->exactly($subscriptions))
             ->method('subscribeUserToRecord');
 
-        $actManager->createOrUpdate($bean, $args, $mockActivity);
+        SugarTestReflection::callProtectedMethod($actManager, 'createOrUpdate', array($bean, $args, $mockActivity));
 
         Activity::$enabled = $save_enabled;
     }
@@ -554,8 +554,8 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'dataChanges' => $auditedChanges,
         );
 
-        $actManager = new TestActivityQueueManager();
-        $actual = $actManager->assignmentChanged($bean, $auditedDataChanges);
+        $actManager = new ActivityQueueManager();
+        $actual = SugarTestReflection::callProtectedMethod($actManager, 'assignmentChanged', array($bean, $auditedDataChanges));
         $this->assertEquals($expected, $actual, $assertMessage);
     }
 
@@ -646,21 +646,5 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array($link2, $link3, false),
             array($link4, $link5, false),
         );
-    }
-}
-
-class TestActivityQueueManager extends ActivityQueueManager
-{
-    public function prepareChanges($bean, &$data)
-    {
-        parent::prepareChanges($bean, $data);
-    }
-    public function createOrUpdate($bean, $args, $activity)
-    {
-        return parent::createOrUpdate($bean, $args, $activity);
-    }
-    public function assignmentChanged($bean, $args)
-    {
-        return parent::assignmentChanged($bean, $args);
     }
 }

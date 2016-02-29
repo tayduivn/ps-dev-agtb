@@ -183,7 +183,8 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                 if(isset($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
                     //$options['showRowCount']=1;
                 }
-                if(key_exists($product_bundle->bundle_stage, $in_total_group_stages)){
+
+                if (array_key_exists($product_bundle->bundle_stage, $in_total_group_stages)) {
                     $count = 0;
                     $item = array();
                     $product_list = $product_bundle->get_products();

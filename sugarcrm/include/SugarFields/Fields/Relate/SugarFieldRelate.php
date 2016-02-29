@@ -348,8 +348,9 @@ class SugarFieldRelate extends SugarFieldBase {
                             && is_array($relatedFieldDef['db_concat_fields']) ) {
                         assignConcatenatedValue($newbean, $relatedFieldDef, $value);
                     }
-                    else
-                        $newbean->$vardef['rname'] = $value;
+                    else {
+                        $newbean->{$vardef['rname']} = $value;
+                    }
                     if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' )
                         $newbean->assigned_user_id = $GLOBALS['current_user']->id;
                     else

@@ -144,12 +144,11 @@ class TrackableArray extends \ArrayObject
     public function enableTracking($track = true)
     {
         $this->track = $track;
-        array_walk($this, function ($val) use ($track) {
+        foreach ($this as $val) {
             if ($val instanceof TrackableArray) {
                 $val->enableTracking($track);
             }
         }
-        );
     }
 
     /**

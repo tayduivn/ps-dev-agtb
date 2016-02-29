@@ -21,7 +21,7 @@ class SugarWidgetFieldTag extends SugarWidgetFieldVarchar {
      * @param array $layout_def The defs of the field from the report
      * @return string
      */
-    function displayList(&$layout_def)
+    public function displayList($layout_def)
     {
         // Get the value of the field
         $value = $this->displayListPlain($layout_def);

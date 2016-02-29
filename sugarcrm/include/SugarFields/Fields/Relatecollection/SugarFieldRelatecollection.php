@@ -63,7 +63,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
      *
      * {@inheritdoc}
      */
-    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties, array $fieldList = null, ServiceBase $service = null)
     {
         list ($relName, $fields, $limit) = $this->parseProperties($properties);
         $records = $this->getLinkedRecords($bean, $relName, $fields, $limit);
@@ -74,7 +74,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
      *
      * {@inheritdoc}
      */
-    public function apiSave($bean, $params, $field, $properties)
+    public function apiSave(SugarBean $bean, array $params, $field, $properties)
     {
         if (empty($params[$field]) || !is_array($params[$field])) {
             return;

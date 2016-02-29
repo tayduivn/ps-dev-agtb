@@ -106,9 +106,9 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProductTypesUtilities::createType(false, '3');
 
         //creating test product
-        SugarTestProductUtilitiesWithTypes::createProduct("1");
-        SugarTestProductUtilitiesWithTypes::createProduct("2");
-        SugarTestProductUtilitiesWithTypes::createProduct("3");
+        SugarTestProductUtilitiesWithTypes::createProduct('', '1');
+        SugarTestProductUtilitiesWithTypes::createProduct('', '2');
+        SugarTestProductUtilitiesWithTypes::createProduct('', '3');
     }
 
     public function tearDown()
@@ -229,7 +229,7 @@ class SugarTestProductUtilitiesWithTypes extends SugarTestProductUtilities
      * @param string $typeName type of created product will be
      * @param int $id id of created product
      */
-    public static function createProduct($typeName, $id = '')
+    public static function createProduct($id = '', $typeName = null)
     {
         $time = mt_rand();
         $name = 'SugarProduct';

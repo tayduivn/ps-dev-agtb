@@ -10,19 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-    require_once 'vendor/Zend/Oauth/Consumer.php';
-    // use ZF oauth
-    /**
-     * Sugar Oauth consumer
-     * @api
-     */
-    class SugarOAuth extends Zend_Oauth_Consumer
-    {
+require_once 'vendor/Zend/Oauth/Consumer.php';
+// use ZF oauth
+/**
+ * Sugar Oauth consumer
+ * @api
+ */
+class SugarOAuth
+{
 
-        public $token;
+    public $token;
 
-        protected $_last = '';
-        protected $_oauth_config = array();
+    protected $_last = '';
+    protected $_lastReq = '';
+    protected $_oauth_config = array();
+    protected $oAuthConsumer;
 
         /**
          * Create OAuth client
@@ -39,7 +41,7 @@
             if(!empty($params)) {
                 $this->_oauth_config = array_merge($this->_oauth_config, $params);
             }
-            parent::__construct($this->_oauth_config);
+            $this->oAuthConsumer = new Zend_Oauth_Consumer($this->_oauth_config);
         }
 
         /**
@@ -138,15 +140,15 @@
         public function getRequestToken($url, $callback = null, $params = array())
         {
             if(!empty($callback)) {
-                $this->setCallbackUrl($callback);
+                $this->oAuthConsumer->setCallbackUrl($callback);
             }
 
             list($url, $query_params) = $this->parseUrl($url);
             $params = array_merge($params, $query_params);
 
-            $this->setRequestTokenUrl($url);
+            $this->oAuthConsumer->setRequestTokenUrl($url);
             try{
-                $this->_last = $token = parent::getRequestToken($params);
+                $this->_last = $token = $this->oAuthConsumer->getRequestToken($params);
                 return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
             }catch(Zend_Oauth_Exception $e){
                 //print out the exception message to the logs and return blank array
@@ -163,8 +165,8 @@
          */
         public function getAccessToken($url)
         {
-            $this->setAccessTokenUrl($url);
-            $this->_last = $token = parent::getAccessToken($_REQUEST, $this->makeRequestToken());
+            $this->oAuthConsumer->setAccessTokenUrl($url);
+            $this->_last = $token = $this->oAuthConsumer->getAccessToken($_REQUEST, $this->makeRequestToken());
             return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
         }
 

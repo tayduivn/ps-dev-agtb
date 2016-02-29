@@ -215,7 +215,7 @@ class PMSEBeanHandler
                         $value = $newBean->$field;
                     }
                 } else {
-                     $value = !empty($newBean)?array_pop($newBean)->$field_array['name']:null;
+                     $value = !empty($newBean) ? array_pop($newBean)->{$field_array['name']} : null;
                 }
                 if (($field_array['value_type']) === 'href_link') {
                     $replace_array[$field_array['original']] = bpminbox_get_href($newBean, $field, $value);

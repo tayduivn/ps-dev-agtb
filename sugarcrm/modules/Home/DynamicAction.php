@@ -21,7 +21,7 @@ if (!isset($_REQUEST['DynamicAction'])) {
 }
 // commit session before returning output so we can serialize AJAX requests
 // and not get session into a wrong state
-$res = $mySugar->$_REQUEST['DynamicAction']();
+$res = $mySugar->{$_REQUEST['DynamicAction']}();
 if(isset($_REQUEST['commit_session'])) {
     session_commit();
 }

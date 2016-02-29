@@ -15,11 +15,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.list.php');
 
 class ViewSourceProperties extends ViewList {
-   
- 	function ViewSourceProperties(){
- 		parent::ViewList();
- 	}
-
     public function display()
     {
         global $sugar_config;

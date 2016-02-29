@@ -64,7 +64,8 @@ class ModuleInstaller{
      */
     protected $patch = array();
 
-    function ModuleInstaller(){
+    public function __construct()
+    {
         $this->ms = new ModuleScanner();
         $this->modules = $this->getModuleDirs();
         $this->db = DBManagerFactory::getInstance();
@@ -2808,7 +2809,7 @@ class ModuleInstaller{
     /**
      * Get portal configuration
      */
-    public function getPortalConfig()
+    public static function getPortalConfig()
     {
         $config = SugarConfig::getInstance();
 

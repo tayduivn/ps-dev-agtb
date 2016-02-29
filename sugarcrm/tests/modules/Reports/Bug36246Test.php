@@ -19,16 +19,15 @@ class Bug36246Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testIfWidgetFieldUrlReturnsALink()
 	{
-        $fieldurl = new SugarWidgetFieldURLBug36246Mock(new LayoutManager());
+        $layoutManager = new LayoutManager();
+        $fieldurl = $this->getMockBuilder('SugarWidgetFieldURL')
+            ->setConstructorArgs(array(&$layoutManager))
+            ->setMethods(array('_get_list_value'))
+            ->getMock();
+        $fieldurl->expects($this->any())
+            ->method('_get_list_value')
+            ->will($this->returnValue('sugarcrm.com'));
         $link = $fieldurl->displayList(array());
         $this->assertRegExp("|<a([^>]*)href=\"sugarcrm.com\"([^>]*)>sugarcrm.com<\/a>|", $link, 'SugarWidgetFieldurl should return a link');
 	}
-}
-
-class SugarWidgetFieldURLBug36246Mock extends SugarWidgetFieldURL {
-    
-    function _get_list_value($layoutDef) 
-    {
-        return 'sugarcrm.com';
-    }
 }

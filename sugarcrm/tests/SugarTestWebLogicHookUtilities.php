@@ -74,7 +74,7 @@ class WebLogicHookMock extends WebLogicHook
         return array(1, $this->name, 'tests/SugarTestWebLogicHookUtilities.php', __CLASS__, 'dispatchRequest', $this->id);
     }
 
-    public function dispatchRequest($seed, $event, $arguments, $id)
+    public function dispatchRequest(SugarBean $seed, $event, $arguments, $id)
     {
         self::$dispatchOptions = array(
             'seed' => $seed,

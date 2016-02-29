@@ -49,7 +49,7 @@ class VarDefHandler {
     );
 
 
-    function VarDefHandler($module, $meta_array_name=null)
+    public function __construct($module, $meta_array_name = null)
     {
         $this->meta_array_name = $meta_array_name;
 		$this->module_object = $module;
@@ -110,17 +110,17 @@ class VarDefHandler {
                 $label_name = '';
                 if ($value_array['type'] == 'link') {
                     $this->module_object->load_relationship($value_array['name']);
-                    if (empty($this->module_object->$value_array['name'])) {
+                    if (empty($this->module_object->{$value_array['name']})) {
                         $GLOBALS['log']->fatal("Failed to load relationship {$value_array['name']}");
                         continue;
                     }
                     // Exclude modules on the many side if $mlink == false
-                    if (!$mlink && $this->module_object->$value_array['name']->getType() === 'many') {
+                    if (!$mlink && $this->module_object->{$value_array['name']}->getType() === 'many') {
                         continue;
                     }
                 }
                 if ($value_array['type'] == 'link' && !$use_field_label) {
-                    $relModName = $this->module_object->$value_array['name']->getRelatedModuleName();
+                    $relModName = $this->module_object->{$value_array['name']}->getRelatedModuleName();
                     if(!empty($app_list_strings['moduleList'][$relModName])){
                     	$label_name = $app_list_strings['moduleList'][$relModName];
                     }else{

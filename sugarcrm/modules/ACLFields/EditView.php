@@ -11,7 +11,8 @@
  */
 
 class ACLFieldsEditView{
-	function getView($module, $role_id){
+    public static function getView($module, $role_id)
+    {
 		$fields = ACLField::getFields( $module, '', $role_id);
 		$sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('LBL_MODULE', $module);
@@ -32,4 +33,3 @@ class ACLFieldsEditView{
 		return  $sugar_smarty->fetch('modules/ACLFields/EditView.tpl');
 	}
 }
-?>

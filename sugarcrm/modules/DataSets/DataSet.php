@@ -98,16 +98,6 @@ class DataSet extends SugarBean {
 		);
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DataSet()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();
@@ -123,20 +113,9 @@ class DataSet extends SugarBean {
 		return "$this->name";
 	}
 
-
-
-
-	/** Returns a list of the associated product_templates
-	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-	 * All Rights Reserved.
-	 * Contributor(s): ______________________________________..
-	*/
-
-
-	function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
-
 
 	function mark_relationships_deleted($id)
 	{

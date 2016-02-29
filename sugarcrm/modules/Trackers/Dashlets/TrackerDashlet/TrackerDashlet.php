@@ -28,7 +28,8 @@ class TrackerDashlet extends Dashlet {
      * @param guid $id id for the current dashlet (assigned from Home module)
      * @param array $def options saved for this dashlet
      */
-    function TrackerDashlet($id, $def) {
+    public function __construct($id, $def)
+    {
         $this->loadLanguage('TrackerDashlet', 'modules/Trackers/Dashlets/'); // load the language strings here
 
         if(!empty($def['height'])) // set a default height if none is set
@@ -168,5 +169,3 @@ class TrackerDashlet extends Dashlet {
 		echo $json->encode(array('col_labels' => $column_labels, 'col_headers' => $col_headers, 'col_widths' => $col_widths, 'data' => $result, 'sort_types'=>$sortType));
 	}
 }
-
-?>

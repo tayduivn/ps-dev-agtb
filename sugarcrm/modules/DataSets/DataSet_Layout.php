@@ -80,17 +80,6 @@ class DataSet_Layout extends SugarBean {
         );
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DataSet_Layout()
-    {
-        self::__construct();
-    }
-
     public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
@@ -109,19 +98,9 @@ class DataSet_Layout extends SugarBean {
         return "$this->layout_type";
     }
 
-
-
-
-    /** Returns a list of the associated product_templates
-    * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-    * All Rights Reserved.
-    * Contributor(s): ______________________________________..
-    */
-
-    function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
-
 
     function mark_relationships_deleted($id)
     {

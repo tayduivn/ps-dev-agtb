@@ -17,14 +17,14 @@ require_once('include/MVC/Controller/SugarController.php');
 class ViewClassic extends SugarView
 {
  	/**
- 	 * @see SugarView::SugarView()
+     * @see SugarView::__construct()
  	 */
     public function __construct(
  	    $bean = null,
         $view_object_map = array()
         )
     {
- 		parent::SugarView();
+        parent::__construct();
  		$this->type = $this->action;
  	}
 

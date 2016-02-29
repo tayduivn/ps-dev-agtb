@@ -33,7 +33,8 @@ class SugarFieldMultienum extends SugarFieldEnum
     	}
     }
 
-    function displayFromFunc( $displayType, $parentFieldArray, $vardef, $displayParams, $tabindex ) {
+    public function displayFromFunc($displayType, $parentFieldArray, $vardef, $displayParams, $tabindex = 0)
+    {
         if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
             return parent::displayFromFunc($displayType, $parentFieldArray, $vardef, $displayParams, $tabindex);
         }
@@ -59,7 +60,8 @@ class SugarFieldMultienum extends SugarFieldEnum
         $data[$fieldName] = $this->getNormalizedFieldValues($bean, $fieldName);
     }
 
-    public function save(&$bean, $params, $field, $properties, $prefix = ''){
+    public function save($bean, $params, $field, $properties, $prefix = '')
+    {
         global $app_list_strings;
 
         // Used for value validation and allowing empty leading and ending selected

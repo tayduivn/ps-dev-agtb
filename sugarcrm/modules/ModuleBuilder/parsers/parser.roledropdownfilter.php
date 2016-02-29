@@ -27,7 +27,7 @@ class ParserRoleDropDownFilter extends ModuleBuilderParser
      * @param $data
      * @return boolean
      */
-    public function handleSave($fieldName, $role, $data)
+    public function handleSave($fieldName = null, $role = null, $data = null)
     {
         $path = $this->getFilePath($fieldName, $role);
         $dir = dirname($path);

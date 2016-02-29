@@ -35,10 +35,6 @@ class SubPanelViewTeams {
 		$this->hideNewButton = $value;
 	}
 
-	function SubPanelViewTeams() 
-    {
-	}
-
 	function getHeaderText($action, $currentModule){
 		///////////////////////////////////////
 		///

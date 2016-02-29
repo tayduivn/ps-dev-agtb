@@ -63,7 +63,7 @@ class UploadFile
 	 * Create upload file handler
 	 * @param string $field_name Form field name
 	 */
-	function UploadFile ($field_name = '')
+    public function __construct($field_name = '')
 	{
 		// $field_name is the name of your passed file selector field in your form
 		// i.e., for Emails, it is "email_attachmentX" where X is 0-9
@@ -693,7 +693,7 @@ class UploadStream
     /**
      * Register the stream
      */
-    public function register()
+    public static function register()
     {
         if(isset($GLOBALS['sugar_config']['upload_wrapper_class'])) {
             SugarAutoLoader::requireWithCustom("include/{$GLOBALS['sugar_config']['upload_wrapper_class']}.php");

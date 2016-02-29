@@ -723,7 +723,7 @@ class MBModule
         return $this->providedSubpanels;
     }
 
-    function getTypes ()
+    public static function getTypes()
     {
         $types = array ( ) ;
         $d = dir ( MB_TEMPLATES ) ;

@@ -31,8 +31,7 @@ class CasesApi extends ModuleApi
     /**
      * Create the case record and optionally perform post-save actions for Portal
      */
-
-    public function createRecord($api, $args)
+    public function createRecord(ServiceBase $api, array $args)
     {
         //create the case using the ModuleApi
 

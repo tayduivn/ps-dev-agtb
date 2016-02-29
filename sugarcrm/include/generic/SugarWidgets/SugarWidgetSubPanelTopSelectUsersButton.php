@@ -18,7 +18,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSelectButton
 {
 	//button_properties is a collection of properties associated with the widget_class definition. layoutmanager
-	function SugarWidgetSubPanelTopSelectUsersButton($button_properties=array())
+    public function __construct($button_properties = array())
 	{
 		$this->button_properties=$button_properties;
 	}
@@ -28,7 +28,7 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
         return $GLOBALS['app_strings']['LBL_SELECT_USER_BUTTON_LABEL'];
     }
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
-	function display(&$widget_data)
+    public function display($widget_data)
 	{
 		global $app_strings;
 		$initial_filter = '';

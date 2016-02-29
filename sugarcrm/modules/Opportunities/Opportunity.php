@@ -117,17 +117,6 @@ class Opportunity extends SugarBean
         'quote_id' => 'quotes',
     );
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Opportunity()
-    {
-        self::__construct();
-    }
-
 
     public function __construct()
     {
@@ -427,7 +416,7 @@ class Opportunity extends SugarBean
         return parent::save($check_notify);
     }
 
-    public function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
         //if account_id was replaced unlink the previous account_id.
         //this rel_fields_before_value is populated by sugarbean during the retrieve call.

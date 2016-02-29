@@ -80,18 +80,6 @@ class aCase extends Basic
         'email_id'=>'emails',
     );
 
-    /**
-     * This is deprecated since 7.7.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.7.0
-     * @see __construct
-     */
-    public function aCase()
-    {
-        self::__construct();
-        $GLOBALS['log']->deprecated('aCase::aCase() is deprecated since 7.7.0. and will be removed in 7.9.0. ' .
-            'Please use aCase::__construct() instead.');
-    }
 
     public function __construct()
     {
@@ -139,7 +127,16 @@ class aCase extends Basic
         return $array_assign;
     }
 
-    function save_relationship_changes($is_update)
+    /**
+     * This function is a good location to save changes that have been made to a relationship.
+     * This should be overridden in subclasses that have something to save.
+     *
+     * @param boolean $is_update    true if this save is an update.
+     * @param array $exclude        a way to exclude relationships
+     *
+     * @see SugarBean::save_relationship_changes()
+     */
+    public function save_relationship_changes($is_update, $exclude = array())
     {
         parent::save_relationship_changes($is_update);
 

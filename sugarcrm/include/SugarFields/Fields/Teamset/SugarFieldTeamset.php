@@ -274,7 +274,7 @@ class SugarFieldTeamset extends SugarFieldBase {
             {
                 // fixing bug #40003: Teams revert to self when Previewing a report
                 // check if there are teams in POST
-                $teams = $this->getTeamsFromRequest($this->field_name, $_POST);
+                $teams = self::getTeamsFromRequest($this->field_name, $_POST);
                 if (empty($teams))
                 {
                     $this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
@@ -425,7 +425,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	public function getTeamSetIdSearchField($field, $type = 'any', $teams = array(), $params = array()){
 
 		if(empty($teams)){
-			$teams = $this->getTeamsFromRequest($field, $params);
+			$teams = self::getTeamsFromRequest($field, $params);
 		}
 		$teams = array_keys($teams);
 		$team_count = count($teams);
@@ -476,7 +476,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 * @param string $field	the name of the field on the UI
 	 * @return array		array of team ids
 	 */
-	 public function getTeamsFromRequest($field, $vars = array()){
+    public static function getTeamsFromRequest($field, $vars = array())
+     {
 		if(empty($vars)){
 			$vars = $_REQUEST;
 		}
@@ -507,7 +508,8 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 * @param array $vars		array of REQUEST params to look at
 	 * @return string			the primary team id or empty
 	 */
-	public function getPrimaryTeamIdFromRequest($field, $vars){
+    public static function getPrimaryTeamIdFromRequest($field, $vars)
+    {
 		if(isset($vars["primary_" . $field . "_collection"])){
         	$primary = $vars["primary_" . $field . "_collection"];
         	$key = "id_" . $field . "_collection_" . $primary;
@@ -530,10 +532,10 @@ class SugarFieldTeamset extends SugarFieldBase {
         $value_name = $field . "_values";
 
         $team_ids = array();
-        $teams = $this->getTeamsFromRequest($field, $params);
+        $teams = self::getTeamsFromRequest($field, $params);
 		$team_ids = array_keys($teams);
 
-	    $primaryTeamId = $this->getPrimaryTeamIdFromRequest($field, $params);
+	    $primaryTeamId = self::getPrimaryTeamIdFromRequest($field, $params);
 	    //if the team id here is blank then let's not set it as the team_id on the bean
 	    if(!empty($primaryTeamId)){
         	$bean->team_id = $primaryTeamId;
@@ -591,7 +593,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                 //3) ok we did not find the id, so we need to create a team.
                 $newbean = BeanFactory::getBean('Teams');
                  if ( $newbean->ACLAccess('save') ) {
-                 	$newbean->$vardef['rname'] = $val;
+                    $newbean->{$vardef['rname']} = $val;
 
                     if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' ){
                     	$newbean->assigned_user_id = $GLOBALS['current_user']->id;

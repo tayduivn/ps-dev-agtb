@@ -16,9 +16,6 @@ require_once('modules/Users/UserViewHelper.php');
 
 class UsersViewEdit extends ViewEdit {
 var $useForSubpanel = true;
- 	function UsersViewEdit(){
- 		parent::ViewEdit();
- 	}
 
     function preDisplay() {
         $this->fieldHelper = UserViewHelper::create($this->ss, $this->bean, 'EditView');

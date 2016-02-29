@@ -22,11 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
@@ -44,16 +39,6 @@ require_once('modules/ProductCategories/TreeData.php');
 
 class Popup_Picker
 {
-
-
-    /*
-     *
-     */
-    function Popup_Picker()
-    {
-        ;
-    }
-
     function process_page()
     {
         global $mod_strings, $app_strings, $currentModule,
@@ -189,4 +174,3 @@ END;
 
 
 }
-?>

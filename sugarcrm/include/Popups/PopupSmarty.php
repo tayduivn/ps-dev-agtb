@@ -44,8 +44,9 @@ class PopupSmarty extends ListViewSmarty{
     var $module;
     var $massUpdateData = '';
 
-	function PopupSmarty($seed, $module){
-		parent::ListViewSmarty();
+    public function __construct($seed, $module)
+    {
+        parent::__construct();
 		$this->th = new TemplateHandler();
 		$this->th->loadSmarty();
 		$this->seed = $seed;

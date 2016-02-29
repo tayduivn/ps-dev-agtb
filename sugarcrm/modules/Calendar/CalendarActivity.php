@@ -20,17 +20,6 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function CalendarActivity($args)
-    {
-        $GLOBALS['log']->deprecated('Calls to CalendarActivity::CalendarActivity() are deprecated.');
-        self::__construct($args);
-    }
 
 	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot

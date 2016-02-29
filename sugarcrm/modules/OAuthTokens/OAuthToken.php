@@ -104,7 +104,9 @@ class OAuthToken extends SugarBean
 	 */
 	protected static function randomValue()
 	{
-	    return bin2hex(Zend_Oauth_Provider::generateToken(6));
+        $provider = new Zend_Oauth_Provider();
+        $token = $provider->generateToken(6);
+        return bin2hex($token);
 	}
 
 	/**
@@ -118,14 +120,14 @@ class OAuthToken extends SugarBean
         return new self($t, $s);
     }
 
-    public function save()
+    public function save($check_notify = false)
     {
         $this->token_ts = time();
         if(!isset($this->id)) {
             $this->new_with_id = true;
             $this->id = $this->token;
         }
-        parent::save();
+        parent::save($check_notify);
     }
 
     /**

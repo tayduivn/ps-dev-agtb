@@ -176,7 +176,7 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
             if ($field['type'] == 'link') {
                 $seed->load_relationship($field['name']);
                 $wRel = false;
-                if (empty($seed->$field['name'])) {
+                if (empty($seed->{$field['name']})) {
                     $wRel = true;
                 } else {
                     if ($this->checkRelationshipDef($field['name'], $seed)) {
@@ -186,10 +186,10 @@ class SugarUpgradeClearVarDefs extends UpgradeScript
                         }
                         SugarRelationshipFactory::deleteCache();
                         SugarRelationshipFactory::rebuildCache();
-                        unset($seed->$field['name']);
+                        unset($seed->{$field['name']});
                         $seed->load_relationship($field['name']);
                     }
-                    $relModule = $seed->$field['name']->getRelatedModuleName();
+                    $relModule = $seed->{$field['name']}->getRelatedModuleName();
                     $relBean = $this->getBean($relModule);
                     if (empty($relBean)) {
                         $wRel = true;

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "40bb822f080513405022ae1f2a9409c7",
-    "content-hash": "f554264f52015bbc51cd5a1e75cd0355",
+    "hash": "15deb65594df60f8c4343bed40ecbcdb",
+    "content-hash": "222774e038852e913aca9c248bc477b2",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -306,6 +306,42 @@
                 "saml"
             ],
             "time": "2015-09-09 14:18:12"
+        },
+        {
+            "name": "parsecsv/php-parsecsv",
+            "version": "0.4.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/parsecsv/parsecsv-for-php.git",
+                "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/parsecsv/parsecsv-for-php/zipball/0486a4bf3ef80dfa215f38f865ed8685fbb472c7",
+                "reference": "0486a4bf3ef80dfa215f38f865ed8685fbb472c7",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "."
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jim Myhrberg",
+                    "email": "contact@jimeh.me"
+                }
+            ],
+            "description": "CSV data parser for PHP",
+            "time": "2014-06-03 00:37:04"
         },
         {
             "name": "phpmailer/phpmailer",

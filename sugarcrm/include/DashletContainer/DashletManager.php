@@ -94,7 +94,7 @@ class DashletManager
         if(empty($options)){
             $options = (isset(DashletManager::$dashletCache[$dashletID]['options'])) ? DashletManager::$dashletCache[$dashletID]['options'] : array();
         }
-        $dashlet = DashletManager::$dashletCache[$dashletID]['class'](rand(0,100000),$options);
+        $dashlet = DashletManager::{$dashletCache[$dashletID]['class']}(rand(0, 100000), $options);
 
         return $dashlet;
 	}

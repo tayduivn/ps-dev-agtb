@@ -570,7 +570,8 @@ function setDisplayHeaderAndFooter($bool) {
  * All Rights Reserved.
  * Contributor(s): ______________________________________.
 */
- function ListView() {
+    public function __construct()
+    {
 
     $this->request = InputValidation::getService();
 
@@ -932,7 +933,7 @@ function getUserVariable($localVarName, $varName) {
         );
 
         foreach($priority_map as $p) {
-            if (key_exists($p, $sortOrderList)) {
+            if (array_key_exists($p, $sortOrderList)) {
                 $order = strtolower($sortOrderList[$p]);
                 if (in_array($order, array('asc', 'desc'))) {
                     return $order;
@@ -1865,7 +1866,8 @@ function getUserVariable($localVarName, $varName) {
         return "&nbsp;<!--not_in_theme!--><img border='0' src='".$imgFileParts['dirname']."/".$imgFileParts['filename']."";
     }
 
-    function getArrowUpDownStart($upDown) {
+    public static function getArrowUpDownStart($upDown)
+    {
         $ext = ( SugarThemeRegistry::current()->pngSupport ? "png" : "gif" );
 
         if (!isset($upDown) || empty($upDown)) {
@@ -1882,7 +1884,8 @@ function getUserVariable($localVarName, $varName) {
 		return '.'.$imgFileParts['extension']."' width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
     }
 
-    function getArrowUpDownEnd($upDown) {
+    public static function getArrowUpDownEnd($upDown)
+    {
         if (!isset($upDown) || empty($upDown)) {
             $upDown = "";
         }

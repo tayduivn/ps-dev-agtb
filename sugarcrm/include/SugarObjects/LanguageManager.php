@@ -119,7 +119,7 @@ class LanguageManager
 		//otherwise go through each module and clean up the language
 		if(!empty($module_dir)) {
 			foreach($languages as $clean_lang) {
-				LanguageManager::_clearCache($module_dir, $clean_lang);
+                self::_clearCache($module_dir, $clean_lang);
 			}
 		} else {
             $cache_dir = sugar_cached('modules');
@@ -127,7 +127,7 @@ class LanguageManager
                 foreach (glob("{$cache_dir}/*", GLOB_ONLYDIR|GLOB_NOSORT) as $entry) {
                     $module = basename($entry);
                     foreach ($languages as $clean_lang) {
-                        LanguageManager::_clearCache($module, $clean_lang);
+                        self::_clearCache($module, $clean_lang);
                     }
                 }
             }
@@ -139,7 +139,7 @@ class LanguageManager
 	 * @param string module_dir the module_dir to clear
 	 * @param string lang the name of the language file we are clearing this is for sugar_cache
 	 */
-    private function _clearCache($module_dir = '', $lang)
+    private static function _clearCache($module_dir = '', $lang)
     {
 		if(!empty($module_dir) && !empty($lang)){
 			$file = sugar_cached('modules/').$module_dir.'/language/'.$lang.'.lang.php';

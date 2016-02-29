@@ -21,7 +21,7 @@ class EmployeesSearchForm extends SearchForm {
         if (!($oldSearchForm instanceof SearchForm) && !empty($module)) {
             $oldSearchForm = new SearchForm($oldSearchForm, $module);
         }
-        parent::SearchForm($oldSearchForm->seed, $oldSearchForm->module, $oldSearchForm->action);
+        parent::__construct($oldSearchForm->seed, $oldSearchForm->module, $oldSearchForm->action);
         $this->setup(
             // $searchdefs
             array($oldSearchForm->module => $oldSearchForm->searchdefs),
@@ -35,7 +35,6 @@ class EmployeesSearchForm extends SearchForm {
             $oldSearchForm->listViewDefs);
         
         $this->lv = $oldSearchForm->lv;
-                     
     }
     
     public function generateSearchWhere($add_custom_fields = false, $module = '') {

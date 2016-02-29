@@ -76,9 +76,9 @@ class ForecastsFilterApi extends FilterApi
      * @return array
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function filterList(ServiceBase $api, array $args)
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
-        if (!SugarACL::checkAccess('Forecasts', 'list')) {
+        if (!SugarACL::checkAccess('Forecasts', $acl)) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: Forecasts');
         }
 
@@ -120,7 +120,7 @@ class ForecastsFilterApi extends FilterApi
 
         $args['filter'] = $this->createFilter($api, $found_assigned_user, $found_timeperiod, $found_type);
 
-        return parent::filterList($api, $args);
+        return parent::filterList($api, $args, $acl);
     }
 
     /**

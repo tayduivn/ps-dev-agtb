@@ -59,16 +59,6 @@ class pmse_Inbox_sugar extends Basic
     var $cas_pin;
     var $cas_assigned_status;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-     */
-    function pmse_Inbox_sugar()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

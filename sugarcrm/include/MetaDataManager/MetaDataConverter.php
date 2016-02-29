@@ -815,7 +815,7 @@ class MetaDataConverter
             $data['openwindow'] = $option['OPENWINDOW'];
         }
         if(isset($option['ICON'])){
-            $data['icon'] = $this->$option['ICON'];
+            $data['icon'] = $this->{$option['ICON']};
         }
         return $data;
     }

@@ -33,7 +33,8 @@ abstract class AbstractAction {
 	 * @param Array $params A set of parameters to use in this action.
 	 * @return AbstractAction
 	 */
-	function AbstractAction($params) {
+    public function __construct($params)
+    {
 		$this->params = $params;
 		if (is_array($params) && isset($params['target'])) {
 			$this->targetField = $params['target'];

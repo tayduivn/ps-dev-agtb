@@ -40,16 +40,6 @@ class SugarEmailAddress extends SugarBean
      */
     public $fetchedAddresses = null;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function SugarEmailAddress()
-    {
-        self::__construct();
-    }
 
     public function __construct() {
         parent::__construct();
@@ -711,7 +701,7 @@ class SugarEmailAddress extends SugarBean
      * @param string $addr Dirty email address
      * @return string clean email address
      */
-    function _cleanAddress($addr)
+    static function _cleanAddress($addr)
     {
         $addr = trim(from_html($addr));
 

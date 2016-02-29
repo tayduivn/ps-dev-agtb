@@ -43,7 +43,7 @@ class SugarFieldImage extends SugarFieldBase
         return $this->fetch($this->findTemplate('UserDetailView'));
     }
 
-    public function save(&$bean, $params, $field, $properties, $prefix = '')
+    public function save($bean, $params, $field, $properties, $prefix = '')
     {
         require_once('include/upload_file.php');
         $upload_file = new UploadFile($field);

@@ -87,17 +87,6 @@ class DocumentRevision extends SugarBean {
 	var $required_fields = Array("revision");
 	
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function DocumentRevision()
-    {
-        self::__construct();
-    }
-
 
 	public function __construct() {
 		parent::__construct();
@@ -126,7 +115,8 @@ class DocumentRevision extends SugarBean {
 		return "$this->filename";
 	}
 
-	function retrieve($id, $encode=false, $deleted=true){
+    public function retrieve($id = '-1', $encode = false, $deleted = true)
+    {
 		$ret = parent::retrieve($id, $encode,$deleted);	
 		
 		return $ret;
@@ -244,7 +234,8 @@ class DocumentRevision extends SugarBean {
 		}	
 	}
 	
-	function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
+    public function list_view_parse_additional_sections(&$list_form)
+    {
 		return $list_form;
 	}
 	
@@ -255,8 +246,8 @@ class DocumentRevision extends SugarBean {
 		return $revision_fields;
 	}
 
-	//static function..
-	function get_document_revision_name($doc_revision_id){
+    public static function get_document_revision_name($doc_revision_id)
+    {
 		if (empty($doc_revision_id)) return null;
 		
 		$db = DBManagerFactory::getInstance();				
@@ -270,9 +261,9 @@ class DocumentRevision extends SugarBean {
 		}
 		return null;
 	}
-	
-	//static function.
-	function get_document_revisions($doc_id){
+
+    public static function get_document_revisions($doc_id)
+    {
 		$return_array= Array();
 		if (empty($doc_id)) return $return_array;
 		

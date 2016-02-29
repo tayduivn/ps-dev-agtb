@@ -20,21 +20,24 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  	/**
  	 * records the query in the session for later retrieval
  	 */
- 	function store($module, $query){
+    public static function store($module, $query)
+    {
  		$_SESSION[$module .'2_QUERY'] = $query;
  	}
 
  	/**
  	 * This function retrieves a query from the session
  	 */
- 	function retrieve($module){
+    public static function retrieve($module)
+    {
  		return (!empty($_SESSION[$module .'2_QUERY']) ? $_SESSION[$module .'2_QUERY'] : '');
  	}
 
  	/**
  	 * return the start, prev, next, end
  	 */
- 	function play($module, $offset){
+    public static function play($module, $offset)
+    {
  		//given some global offset try to determine if we have this
  		//in our array.
  		$ids = array();
@@ -52,7 +55,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  		return $menu;
  	}
 
-    function menu($module, $offset, $isAuditEnabled, $saveAndContinue = false ){
+    public static function menu($module, $offset, $isAuditEnabled, $saveAndContinue = false)
+    {
         $html_text = "";
         if ($offset < 0)
         {
@@ -121,7 +125,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
         return $html_text;
     }
 
- 	function record($module, $offset){
+    public static function record($module, $offset)
+    {
  		$GLOBALS['log']->debug('SUGARVCR is recording more records');
         $page_length = $GLOBALS['sugar_config']['list_max_entries_per_page'] + 1;
  		$start = max(0, $offset - $page_length);
@@ -145,7 +150,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  		return $ids;
  	}
 
- 	function recordIDs($module, $rids, $offset, $totalCount){
+    public static function recordIDs($module, $rids, $offset, $totalCount)
+    {
  		$index = $offset;
  		$index++;
  		$ids = array();
@@ -158,9 +164,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  		$_SESSION[$module.'total'] = $totalCount;
  	}
 
- 	function erase($module){
+    public static function erase($module)
+    {
  		unset($_SESSION[$module. 'QUERY_ARRAY']);
  	}
-
- }
-?>
+}

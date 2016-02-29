@@ -15,12 +15,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 class MyDocumentsDashlet extends DashletGeneric { 
 
-	function MyDocumentsDashlet($id, $def = null)
+    public function __construct($id, $def = null)
 	{
 		global $current_user, $app_strings;
 		require('modules/Documents/Dashlets/MyDocumentsDashlet/MyDocumentsDashlet.data.php');
 
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'Documents');
 
@@ -42,5 +42,3 @@ class MyDocumentsDashlet extends DashletGeneric {
         return $this->configureSS->fetch($this->configureTpl);
     }
 }
-
-?>

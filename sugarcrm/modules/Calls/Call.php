@@ -90,16 +90,6 @@ class Call extends SugarBean {
 
 	public $send_invites = false;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Call()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();
@@ -622,7 +612,8 @@ class Call extends SugarBean {
 		return $array_assign;
 	}
 
-	function save_relationship_changes($is_update) {
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
 		$exclude = array();
 		if(empty($this->in_workflow))
         {

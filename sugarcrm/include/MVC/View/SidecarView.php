@@ -32,7 +32,7 @@ class SidecarView extends SugarView
     public function __construct()
     {
         $this->configFile = sugar_cached($this->configFileName);
-        parent::SugarView();
+        parent::__construct();
     }
 
     /**
@@ -44,8 +44,9 @@ class SidecarView extends SugarView
     /**
      * This method checks to see if the configuration file exists and, if not, creates one by default
      *
+     * @param array $params additional view paramters passed through from the controller
      */
-    public function preDisplay()
+    public function preDisplay($params = array())
     {
         global $app_strings;
 
@@ -94,8 +95,9 @@ class SidecarView extends SugarView
     /**
      * This method sets the config file to use and renders the template
      *
+     * @param array $params additional view paramters passed through from the controller
      */
-    public function display()
+    public function display($params = array())
     {
         $this->ss->display(SugarAutoLoader::existingCustomOne('include/MVC/View/tpls/sidecar.tpl'));
     }

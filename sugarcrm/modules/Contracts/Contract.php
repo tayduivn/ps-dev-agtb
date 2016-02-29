@@ -91,16 +91,6 @@ class Contract extends SugarBean
     public $new_schema = true;
     public $module_dir = 'Contracts';
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Contracts()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {
@@ -307,7 +297,7 @@ class Contract extends SugarBean
         $this->_set_time_to_expiry($isFromDb);
     }
 
-    function list_view_parse_additional_sections(& $list_form, $xTemplateSection)
+    public function list_view_parse_additional_sections(&$list_form)
     {
         return $list_form;
     }

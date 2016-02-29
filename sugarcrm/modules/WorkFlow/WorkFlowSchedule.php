@@ -79,16 +79,6 @@ class WorkFlowSchedule extends SugarBean {
 
     var $disable_row_level_security = true;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function WorkFlowSchedule()
-    {
-        self::__construct();
-    }
 
     public function __construct() {
         global $dictionary;
@@ -106,7 +96,7 @@ class WorkFlowSchedule extends SugarBean {
         return "$this->module";
     }
 
-    function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

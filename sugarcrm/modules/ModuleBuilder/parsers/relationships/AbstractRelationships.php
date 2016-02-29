@@ -71,7 +71,7 @@ class AbstractRelationships
      * @param boolean $includeActivitiesSubmodules True if the list should include Calls, Meetings etc; false if they should be replaced by the parent, Activities
      * @return array    Array of [$module][$subpanel]
      */
-    static function findRelatableModules ($includeActivitiesSubmodules = true)
+    public static function findRelatableModules($includeActivitiesSubmodules = true)
     {
         $relatableModules = array ( ) ;
 
@@ -320,7 +320,7 @@ class AbstractRelationships
      * @param string $installDefPrefix  Pathname prefix for the installdefs, for example for ModuleBuilder use "<basepath>/SugarModules"
      * @param array $relationships      Relationships to implement
      */
-    protected function build ($basepath , $installDefPrefix , $relationships )
+    public function build($basepath, $installDefPrefix, $relationships)
     {
         global $sugar_config;
     	// keep the relationships data separate from any other build data by ading /relationships to the basepath

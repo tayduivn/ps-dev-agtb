@@ -215,12 +215,11 @@ class Bug61373Test extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->$field = $value;
         $this->bean->save();
 
-        $aclField = new ACLField();
         // Set ACL for the field
-        $aclField->setAccessControl($this->bean->module_name, $this->role->id, $field, $acl);
+        ACLField::setAccessControl($this->bean->module_name, $this->role->id, $field, $acl);
 
         // Load the ACLs
-        $aclField->loadUserFields(
+        ACLField::loadUserFields(
             $this->bean->module_name,
             $this->bean->object_name,
             $GLOBALS['current_user']->id,

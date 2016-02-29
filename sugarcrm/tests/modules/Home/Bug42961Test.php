@@ -39,7 +39,7 @@ class Bug42961Test extends Sugar_PHPUnit_Framework_TestCase
         {
             foreach ($moduleInformation['fields'] as $fieldName=>$fieldInformation)
             {
-                if (key_exists('force_unifiedsearch', $fieldInformation)) {
+                if (array_key_exists('force_unifiedsearch', $fieldInformation)) {
                     $force_unifiedsearch++;
                 }
             }

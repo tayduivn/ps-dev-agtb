@@ -914,7 +914,7 @@ EOF;
      *
      * @param string $url The URL to redirect to.
      */
-    public function redirect($url)
+    public static function redirect($url)
     {
         global $disable_redirects;
 

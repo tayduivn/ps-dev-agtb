@@ -17,7 +17,7 @@ class tracker_sessions_monitor extends Monitor
 {
     public function __construct($name = '', $monitorId = '', $metadata = '', $store = '')
     {
-        parent::Monitor($name, $monitorId, $metadata, $store);
+        parent::__construct($name, $monitorId, $metadata, $store);
 
         $this->setValue('session_id', $this->getSessionId());
 

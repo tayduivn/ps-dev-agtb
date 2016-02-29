@@ -75,7 +75,7 @@ function canSendPassword() {
 function hasPasswordExpired($user, $updateNumberLogins = false)
 {
     if (!$user instanceof User) {
-        $usr_id = User::retrieve_user_id($user);
+        $usr_id = BeanFactory::getBean('Users')->retrieve_user_id($user);
         $user = BeanFactory::getBean('Users', $usr_id);
     }
     $type = '';

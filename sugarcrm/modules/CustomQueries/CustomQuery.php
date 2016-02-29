@@ -62,16 +62,6 @@ class CustomQuery extends SugarBean {
      */
     protected $db_slave;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function CustomQuery()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();
@@ -285,7 +275,7 @@ class CustomQuery extends SugarBean {
 	//end function export query
 	}
 
-	function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

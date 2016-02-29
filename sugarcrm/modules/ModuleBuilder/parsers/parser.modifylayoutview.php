@@ -34,7 +34,7 @@ class ParserModifyLayoutView extends ModuleBuilderParser
     /**
      * Constructor
      */
-    function init ($module, $view, $submittedLayout = false)
+    public function init($module = null, $view = null, $submittedLayout = false)
     {
         $this->_view = ucfirst($view);
         $this->_module = $module;

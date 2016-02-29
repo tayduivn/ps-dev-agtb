@@ -42,7 +42,7 @@ class DropDownUpdateSQLTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean = SugarTestLeadUtilities::createLead();
         $bean->field_defs = $fieldDefs;
-        $bean->$fieldDefs['status']['name'] = $value;
+        $bean->{$fieldDefs['status']['name']} = $value;
 
         $sql = $dbManager->updateSQL($bean);
 

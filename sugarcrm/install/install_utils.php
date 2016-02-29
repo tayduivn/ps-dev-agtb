@@ -2382,7 +2382,6 @@ function addDefaultRoles($defaultRoles = array()) {
 
 
     foreach($defaultRoles as $roleName=>$role){
-        $ACLField = new ACLField();
         $role1= new ACLRole();
         $role1->name = $roleName;
         $role1->description = $roleName." Role";
@@ -2391,7 +2390,7 @@ function addDefaultRoles($defaultRoles = array()) {
             foreach($actions as $name=>$access_override){
                 if($name=='fields'){
                     foreach($access_override as $field_id=>$access){
-                        $ACLField->setAccessControl($category, $role1_id, $field_id, $access);
+                        ACLField::setAccessControl($category, $role1_id, $field_id, $access);
                     }
                 }else{
                     $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";

@@ -68,7 +68,8 @@ class SugarDependentDropdown {
 	 * Sole constructor
 	 * @param string $metadata Path to metadata file to consume
 	 */
-	function SugarDependentDropdown($metadata='') {
+    public function __construct($metadata = '')
+    {
 		if(!empty($metadata)) {
 			$this->init($metadata);
 		}

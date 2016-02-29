@@ -33,16 +33,8 @@ class ViewDetailTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MockViewDetailDirect extends ViewDetail
 {
-    public function __construct()
-    {
-        parent::ViewDetail();
-    }
 }
 
 class MockViewDetailConstructor extends ViewDetail
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
 }

@@ -81,9 +81,8 @@ class SugarTinyMCE
     /**
      * Sole constructor
      */
-    function SugarTinyMCE()
+    public function __construct()
     {
-
         $this->overloadButtonConfigs();
         $this->overloadDefaultConfigs();
         $this->overloadPluginConfigs();

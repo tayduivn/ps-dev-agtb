@@ -17,12 +17,6 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalConfig extends SugarView
 {
-	function ViewPortalSync()
-	{
-	    $GLOBALS['log']->debug('ViewPortalSync constructor');
-	    parent::SugarView();
-	}
-
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */

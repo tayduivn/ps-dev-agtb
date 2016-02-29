@@ -117,18 +117,6 @@ class Account extends Company {
     var $push_billing;
     var $push_shipping;
 
-    /**
-     * This is deprecated since 7.0.0 and will be removed in 7.9.0.
-     * Please use __construct() instead.
-     * @deprecated 7.0.0
-     * @see __construct
-     */
-    public function Account()
-    {
-        $GLOBALS['log']->deprecated('Account::Account() is deprecated since 7.0.0. and will be removed in 7.9.0. ' .
-            'Please use Account::__construct() instead.');
-        self::__construct();
-    }
 
 	public function __construct() {
         parent::__construct();

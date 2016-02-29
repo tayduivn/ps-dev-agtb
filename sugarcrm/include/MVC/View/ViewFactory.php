@@ -31,7 +31,13 @@ class ViewFactory{
 	 * @param string $type View Type
 	 * @return valid view
 	 */
-	function loadView($type = 'default', $module, $bean = null, $view_object_map = array(), $target_module=''){
+    public static function loadView(
+        $type,
+        $module,
+        $bean = null,
+        $view_object_map = array(),
+        $target_module = ''
+    ) {
 		$type = strtolower($type);
 
 		//first let's check if the module handles this view
@@ -70,7 +76,8 @@ class ViewFactory{
 	/**
 	 * Load the view_<view>_config.php file which holds options used by the view.
 	 */
-	function _loadConfig(&$view, $type){
+    static function _loadConfig(&$view, $type)
+    {
 		$view_config_custom = array();
 		$view_config_module = array();
 		$view_config_root_cstm = array();

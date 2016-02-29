@@ -25,7 +25,8 @@ class DefineTimeExpression extends TimeExpression
 		    return false;
 		}
 
-		$time = TimeDate::fromUserTime($params);
+        $timedate = TimeDate::getInstance();
+		$time = $timedate->fromUserTime($params);
 
 		if ( $time == false ) {
 			throw new Exception("Incorrect time format");

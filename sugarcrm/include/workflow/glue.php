@@ -45,8 +45,8 @@ class WorkFlowGlue {
     );
 
 
-	function WorkFlowGlue(){
-
+    public function __construct()
+    {
 		global $db;
 		$this->db = & $db;
 

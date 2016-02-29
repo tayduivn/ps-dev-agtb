@@ -26,7 +26,7 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
         return 'project_task_submit_button';
     }
 	//widget_data is the collection of attributes associated with the button in the layout_defs file.
-	function display(&$widget_data)
+    public function display($widget_data)
 	{
 		global $mod_strings;
 

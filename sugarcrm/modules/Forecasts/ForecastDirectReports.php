@@ -88,7 +88,8 @@ class ForecastDirectReports extends SugarBean {
         return "$this->user_name";
     }
 
-    function retrieve($id, $encode=false, $deleted=true){
+    public function retrieve($id = '-1', $encode = false, $deleted = true)
+    {
         $ret = parent::retrieve($id, $encode, $deleted);
 
         return $ret;
@@ -241,7 +242,8 @@ class ForecastDirectReports extends SugarBean {
         return $forecast_fields;
     }
 
-    function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
+    public function list_view_parse_additional_sections(&$list_form)
+    {
         return $list_form;
     }
 
@@ -267,7 +269,8 @@ class ForecastDirectReports extends SugarBean {
         return $query;
 
     }
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false){
+    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $ifListForExport = false)
+    {
 //        _pp(func_get_args());
         $ret_array=array();
         $ret_array['select'] = "SELECT id, users.first_name ,users.last_name, users.id as user_id";

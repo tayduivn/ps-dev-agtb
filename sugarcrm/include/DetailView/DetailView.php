@@ -30,8 +30,9 @@ class DetailView extends ListView {
      */
     protected $request;
 
-	function DetailView(){
-		parent::ListView();
+    public function __construct()
+    {
+        parent::__construct();
 
         $this->request = InputValidation::getService();
 

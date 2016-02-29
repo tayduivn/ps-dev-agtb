@@ -464,7 +464,7 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @param string $viewname Target view name
      * @return string
      */
-    public function getNewFileContents($viewname)
+    public function getNewFileContents($viewname = null)
     {
         $module = $this->getNormalizedModuleName();
         $viewname = MetaDataFiles::getName($viewname);

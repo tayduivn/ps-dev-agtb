@@ -23,22 +23,22 @@ class pmse_BpmThread_sugar extends Basic {
 	var $object_name = 'pmse_BpmThread';
 	var $table_name = 'pmse_bpm_thread';
 	var $importable = false;
-        var $id;
-		var $name;
-		var $date_entered;
-		var $date_modified;
-		var $modified_user_id;
-		var $modified_by_name;
-		var $created_by;
-		var $created_by_name;
-		var $description;
-		var $deleted;
-		var $created_by_link;
-		var $modified_user_link;
-		var $activities;
-		var $assigned_user_id;
-		var $assigned_user_name;
-		var $assigned_user_link;
+    var $id;
+    var $name;
+    var $date_entered;
+    var $date_modified;
+    var $modified_user_id;
+    var $modified_by_name;
+    var $created_by;
+    var $created_by_name;
+    var $description;
+    var $deleted;
+    var $created_by_link;
+    var $modified_user_link;
+    var $activities;
+    var $assigned_user_id;
+    var $assigned_user_name;
+    var $assigned_user_link;
     var $cas_id;
     var $cas_thread_index;
     var $cas_thread_parent;
@@ -47,15 +47,6 @@ class pmse_BpmThread_sugar extends Basic {
     var $cas_thread_tokens;
     var $cas_thread_passes;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmThread_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

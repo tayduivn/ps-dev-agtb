@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-01-22 - avlasov - PHP 7 compatibility
+
 r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
 
 r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
@@ -84,7 +86,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 function MakeFont($fontfile, $fmfile, $embedded=true, $enc='cp1252', $patch=array()/* BEGIN SUGARCRM SPECIFIC */, $cidInfo=""/* END SUGARCRM SPECIFIC */) {
 	//Generate a font definition file
-	set_magic_quotes_runtime(0);
 	ini_set('auto_detect_line_endings', '1');
 	if (!file_exists($fontfile)) {
 		die('Error: file not found: '.$fontfile);
@@ -592,7 +593,7 @@ function MakeFontDescriptor($fm, $symbolic=false) {
 	//StemV
 	if (isset($fm['StdVW'])) {
 		$stemv = $fm['StdVW'];
-	} elseif (isset($fm['Weight']) and eregi('(bold|black)', $fm['Weight'])) {
+    } elseif (isset($fm['Weight']) && preg_match('/(bold|black)/i', $fm['Weight'])) {
 		$stemv = 120;
 	} else {
 		$stemv = 70;

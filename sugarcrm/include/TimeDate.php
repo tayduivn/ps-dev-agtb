@@ -834,7 +834,7 @@ class TimeDate
      * @param interger|string $ts
      * @return SugarDateTime
      */
-    public function fromTimestamp($ts)
+    public static function fromTimestamp($ts)
     {
         return new SugarDateTime("@$ts");
     }

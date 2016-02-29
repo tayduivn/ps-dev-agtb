@@ -16,7 +16,8 @@ require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
 require_once('modules/ModuleBuilder/Module/SugarPortalBrowser.php');
 
 class SugarPortalTree extends MBPackageTree{
-	function SugarPortalTree(){
+    public function __construct()
+    {
 		$this->tree = new Tree('package_tree');
 		$this->tree->id = 'package_tree';
 		$this->mb = new SugarPortalBrowser();
@@ -27,4 +28,3 @@ class SugarPortalTree extends MBPackageTree{
 		return translate('LBL_SECTION_PORTAL');
 	}
 }
-?>

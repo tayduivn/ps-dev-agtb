@@ -36,7 +36,8 @@ class Tree {
   //collection of parmeter properties;
   var $_params=array();
   				   
-  function Tree($name) {
+    public function __construct($name)
+    {
 		$this->_name=$name;
 		$this->json=new JSON(JSON_LOOSE_TYPE);  
   }

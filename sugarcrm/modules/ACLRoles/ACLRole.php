@@ -24,17 +24,6 @@ class ACLRole extends SugarBean{
 
     var $created_by;
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @deprecated since 7.0.0. Use __construct() instead.
-     */
-    public function ACLRole()
-    {
-        $GLOBALS['log']->deprecated('Calls to ACLRole::ACLRole() are deprecated.');
-        self::__construct();
-    }
 
     public function __construct(){
         parent::__construct();
@@ -123,14 +112,13 @@ public static function getUserRoles($user_id, $getAsNameArray = true)
 }
 
 /**
- * static  getUserRoleNames($user_id)
- * returns a list of Role names for a given user id
+ * Returns a list of Role names for a given user id
  *
- * @param GUID $user_id
- * @return a list of ACLRole Names
+ * @param string $user_id
+ * @return array List of ACLRole Names
  */
-function getUserRoleNames($user_id){
-
+public static function getUserRoleNames($user_id)
+{
         $user_roles = sugar_cache_retrieve("RoleMembershipNames_".$user_id);
 
         if(!$user_roles){
@@ -162,7 +150,8 @@ function getUserRoleNames($user_id){
  * @param boolean $returnAsArray - should it return the results as an array of arrays or as an array of ACLRoles
  * @return either an array of array representations of acl roles or an array of ACLRoles
  */
-function getAllRoles($returnAsArray = false){
+public static function getAllRoles($returnAsArray = false)
+{
         $db = DBManagerFactory::getInstance();
         $query = "SELECT acl_roles.* FROM acl_roles
                     WHERE acl_roles.deleted=0 ORDER BY name";
@@ -193,7 +182,8 @@ function getAllRoles($returnAsArray = false){
  * @param GUID $role_id
  * @return array of actions
  */
-function getRoleActions($role_id, $type='module'){
+    public static function getRoleActions($role_id, $type = 'module')
+    {
         global $beanList;
         //if we don't have it loaded then lets check against the db
         $additional_where = '';
@@ -267,13 +257,14 @@ function mark_relationships_deleted($id){
         parent::mark_relationships_deleted($id);
 }
 
-   /**
-    *  toArray()
-    * returns this role as an array
-    *
-    * @return array of fields with id, name, description
-    */
-    function toArray(){
+    /**
+     *  toArray()
+     * returns this role as an array
+     *
+     * @return array of fields with id, name, description
+     */
+    public function toArray($dbOnly = false, $stringOnly = false, $upperKeys = false)
+    {
         $array_fields = array('id', 'name', 'description');
         $arr = array();
         foreach($array_fields as $field){

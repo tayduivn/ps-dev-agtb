@@ -15,11 +15,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.detail.php');
 
 class EmployeesViewDetail extends ViewDetail {
-
- 	function EmployeesViewDetail(){
- 		parent::ViewDetail();
- 	}
- 	
    /**
     * Return the "breadcrumbs" to display at the top of the page
     *
@@ -98,4 +93,3 @@ EOHTML;
  		parent::display();
  	}
 }
-?>

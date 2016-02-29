@@ -45,16 +45,6 @@ class EmailUI {
      */
     protected $request;
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function EmailUI()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		global $sugar_config;
@@ -1313,7 +1303,8 @@ eoq;
 	 * @param array $ret
 	 * @return array
 	 */
-	function getDraftAttachments($ret) {
+    public static function getDraftAttachments($ret)
+    {
 		global $db;
 
 		// $ret['uid'] is the draft Email object's GUID

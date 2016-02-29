@@ -44,18 +44,6 @@ class Release extends SugarBean {
 	var $additional_column_fields = Array();
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Release()
-    {
-        self::__construct();
-    }
-
-
 	public function __construct() {
 		parent::__construct();
 		$this->disable_row_level_security = true;

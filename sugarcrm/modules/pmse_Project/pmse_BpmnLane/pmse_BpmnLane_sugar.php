@@ -23,37 +23,28 @@ class pmse_BpmnLane_sugar extends Basic {
 	var $object_name = 'pmse_BpmnLane';
 	var $table_name = 'pmse_bpmn_lane';
 	var $importable = false;
-        var $id;
-		var $name;
-		var $date_entered;
-		var $date_modified;
-		var $modified_user_id;
-		var $modified_by_name;
-		var $created_by;
-		var $created_by_name;
-		var $description;
-		var $deleted;
-		var $created_by_link;
-		var $modified_user_link;
-		var $activities;
-		var $assigned_user_id;
-		var $assigned_user_name;
-		var $assigned_user_link;
+    var $id;
+    var $name;
+    var $date_entered;
+    var $date_modified;
+    var $modified_user_id;
+    var $modified_by_name;
+    var $created_by;
+    var $created_by_name;
+    var $description;
+    var $deleted;
+    var $created_by_link;
+    var $modified_user_link;
+    var $activities;
+    var $assigned_user_id;
+    var $assigned_user_name;
+    var $assigned_user_link;
     var $lan_uid;
     var $prj_id;
     var $lns_id;
     var $lan_child_laneset;
     var $lan_is_horizontal;
 
-	/**
-	 * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @depreciated
-	 */
-	function pmse_BpmnLane_sugar(){
-		self::__construct();
-	}
 
 	public function __construct(){
 		parent::__construct();

@@ -430,7 +430,7 @@ function set_entry($session,$module_name, $name_value_list){
 		if(!is_array($value)){
 			$seed->$name = $value;
 		}else{
-			$seed->$value['name'] = $value['value'];
+            $seed->{$value['name']} = $value['value'];
 		}
 	}
     if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
@@ -537,7 +537,7 @@ public function login($user_auth, $application, $name_value_list){
 			$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			self::$helperObject->setFaultObject($error);
 			return;
-	} else if(function_exists('mcrypt_cbc')){
+    } elseif (extension_loaded('mcrypt')) {
 		$password = self::$helperObject->decrypt_string($user_auth['password']);
         $authController->loggedIn = false; // reset login attempt to try again with decrypted password
 		if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])){

@@ -20,7 +20,8 @@ require_once('include/workflow/workflow_utils.php');
  */
 class WorkFlowHandler {
 
-    function WorkFlowHandler(&$focus, $event){
+    public function __construct(&$focus, $event)
+    {
 
     	//Confirm we are not running populating seed data
     	if(isset($_SESSION['disable_workflow'])) return;

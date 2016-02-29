@@ -31,12 +31,6 @@ $focus = BeanFactory::getBean($_REQUEST['module_name']);
 class Popup_Picker
 {
     /**
-    * sole constructor
-    */
-    function Popup_Picker() {
-    }
-
-    /**
     *
     */
     function process_page() {
@@ -451,4 +445,3 @@ class Popup_Picker
 		return nl2br($description);
 	}
 } // end of class Popup_Picker
-?>

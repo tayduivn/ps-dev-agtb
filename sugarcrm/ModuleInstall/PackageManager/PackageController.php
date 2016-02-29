@@ -14,13 +14,14 @@
  class PackageController{
         var $_pm;
 
-        /**
-         * Constructor: this class is called from the the ajax call and handles invoking the correct
-         * functionality on the server.
-         */
-        function PackageController(){
-           $this->_pm = new PackageManager();
-        }
+    /**
+     * Constructor: this class is called from the the ajax call and handles invoking the correct
+     * functionality on the server.
+     */
+    public function __construct()
+    {
+        $this->_pm = new PackageManager();
+    }
 
         function performBasicSearch(){
             $search_term = '';

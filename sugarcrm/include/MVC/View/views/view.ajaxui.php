@@ -19,7 +19,7 @@ class ViewAjaxUI extends SugarView
     /**
      * Constructor
      *
-     * @see SugarView::SugarView()
+     * @see SugarView::__construct()
      */
  	public function __construct()
  	{
@@ -30,7 +30,7 @@ class ViewAjaxUI extends SugarView
 		$this->options['show_subpanels'] = false; 
 		$this->options['show_search'] = false;
 		
- 		parent::SugarView();
+        parent::__construct();
  	}
 
     public function display()

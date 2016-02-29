@@ -21,25 +21,7 @@ class Group extends User {
 	var $importable = false;
 
 
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function Group()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 	}
-
-	/** 
-	 * overrides SugarBean method
-	 */
-	function mark_deleted($id) {
-		SugarBean::mark_deleted($id);
-	}
-} // end class def 
+}

@@ -17,12 +17,8 @@ if(!defined('sugarEntry') || !sugarEntry)
 
 
 class SugarWidgetField extends SugarWidget {
-
-	function SugarWidgetField(&$layout_manager) {
-        parent::SugarWidget($layout_manager);
-    }
-
-	function display($layout_def) {
+    public function display($layout_def)
+    {
 		//print $layout_def['start_link_wrapper']."===";
 		$context = $this->layout_manager->getAttribute('context'); //_ppd($context);
 		$func_name = 'display'.$context;
@@ -91,8 +87,9 @@ class SugarWidgetField extends SugarWidget {
 
 		$subpanel_module = $layout_def['subpanel_module'];
 		$html_var = $subpanel_module . "_CELL";
+        $listView = new ListView();
 		if (empty ($this->base_URL)) {
-			$this->base_URL = ListView :: getBaseURL($html_var);
+            $this->base_URL = $listView->getBaseURL($html_var);
 			$split_url = explode('&to_pdf=true&action=SubPanelViewer&subpanel=', $this->base_URL);
 			$this->base_URL = $split_url[0];
 			$this->base_URL .= '&inline=true&to_pdf=true&action=SubPanelViewer&subpanel=';
@@ -102,7 +99,7 @@ class SugarWidgetField extends SugarWidget {
 			$sort_by_name = $layout_def['sort_by'];
 		}
 
-		$sort_by = ListView :: getSessionVariableName($html_var, "ORDER_BY").'='.$sort_by_name;
+        $sort_by = $listView->getSessionVariableName($html_var, "ORDER_BY").'='.$sort_by_name;
 
 		$start = (empty ($layout_def['start_link_wrapper'])) ? '' : $layout_def['start_link_wrapper'];
 		$end = (empty ($layout_def['end_link_wrapper'])) ? '' : $layout_def['end_link_wrapper'];

@@ -49,7 +49,8 @@ class Bug42475Test extends Sugar_PHPUnit_Framework_TestCase
 
 class Bug42475TestBean extends SugarBean
 {
-    function Bug42475TestBean() {
+    public function __construct()
+    {
         $this->module_dir = 'Accounts';
         $this->object_name = 'Account';
         parent::__construct();

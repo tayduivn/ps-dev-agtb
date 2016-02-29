@@ -70,7 +70,7 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
     {
         if ($event == 'after_relationship_delete') {
             if ($bean->load_relationship($args['link'])) {
-                $relationshipDef = $bean->$args['link']->getRelationshipObject()->def;
+                $relationshipDef = $bean->{$args['link']}->getRelationshipObject()->def;
                 $name_field = str_replace('_id', '_name', $relationshipDef['rhs_key']);
                 if ($bean->getFieldDefinition($name_field)) {
                     $sql = "UPDATE {$bean->table_name} SET {$name_field} = NULL WHERE id = "

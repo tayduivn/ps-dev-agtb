@@ -61,7 +61,8 @@ class OutboundEmail {
 	/**
 	 * Sole constructor
 	 */
-	function OutboundEmail() {
+    public function __construct()
+    {
 		$this->db = DBManagerFactory::getInstance();
 	}
 
