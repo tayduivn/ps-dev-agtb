@@ -108,7 +108,7 @@ class ImportFileSplitter
             // same for error records file
             $importFile->writeErrorRecord();
         }
-        while ( $row = $importFile->getNextRow() ) {
+        while ($row = $importFile->getNextRow(false)) {
             // after $this->_recordThreshold rows, close this import file and goto the next one
             if ( $count >= $this->_recordThreshold ) {
                 fclose($fw);
