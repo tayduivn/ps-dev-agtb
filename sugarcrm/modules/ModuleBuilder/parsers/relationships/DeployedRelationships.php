@@ -198,8 +198,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         if (!isset(static::$subpanelDefs[$module])) {
             static::$subpanelDefs[$module] = array();
             $spd = new SubPanelDefinitions ($bean);
-            static::$subpanelDefs[$module] = $spd->layout_defs['subpanel_setup'];
-            
+            static::$subpanelDefs[$module] = isset($spd->layout_defs['subpanel_setup'])
+                ? $spd->layout_defs['subpanel_setup']
+                : array();
         }
         return static::$subpanelDefs[$module];
     }
