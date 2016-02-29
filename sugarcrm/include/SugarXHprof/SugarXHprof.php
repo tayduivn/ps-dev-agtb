@@ -257,9 +257,9 @@ class SugarXHprof
         if (!empty($GLOBALS['app']) && $GLOBALS['app'] instanceof SugarApplication && $GLOBALS['app']->controller instanceof SugarController) {
             // we validate entry point name against controller registry
             $entryPoint = $request->getValidInputRequest('entryPoint');
-            if (!empty($_REQUEST['entryPoint'])) {
-                if (!empty($GLOBALS['app']->controller->entry_point_registry) && !empty($GLOBALS['app']->controller->entry_point_registry[$_REQUEST['entryPoint']])) {
-                    $action .= 'entryPoint.' . $_REQUEST['entryPoint'];
+            if ($entryPoint) {
+                if (!empty($GLOBALS['app']->controller->entry_point_registry) && !empty($GLOBALS['app']->controller->entry_point_registry[$entryPoint])) {
+                    $action .= 'entryPoint.' . $entryPoint;
                 } else {
                     $action .= 'entryPoint.unknown';
 
@@ -291,8 +291,8 @@ class SugarXHprof
             $action .= 'rest.' . $GLOBALS['service_object']->getRegisteredImplClass();
             $method = $request->getValidInputRequest('method');
             if (!empty($method) && method_exists($GLOBALS['service_object']->implementation, $method)) {
-                $action .= '.' . $_REQUEST['method'];
-            } elseif (empty($_REQUEST['method'])) {
+                $action .= '.' . $method;
+            } elseif (empty($method)) {
                 $action .= '.index';
             } else {
                 $action .= '.unknown';
