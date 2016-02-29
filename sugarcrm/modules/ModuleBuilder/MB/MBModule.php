@@ -939,12 +939,16 @@ class MBModule
 
         $label = $request->getValidInputRequest('label');
         if ($label) {
-            $this->config['label'] = $label;
+            $label = htmlspecialchars_decode($label, ENT_QUOTES);
+            $label = SugarCleaner::cleanHtml($label, false);
+            $this->config['label'] = $label == '' ? $this->name : $label;
         }
 
         $singularLabel = $request->getValidInputRequest('label_singular');
         if ($singularLabel) {
-            $this->config['label_singular'] = $singularLabel;
+            $label = htmlspecialchars_decode($singularLabel, ENT_QUOTES);
+            $label = SugarCleaner::cleanHtml($label, false);
+            $this->config['label_singular'] = $label == '' ? $this->name : $label;
         }
 
         $this->config['importable'] = (bool) $request->getValidInputRequest('importable');
