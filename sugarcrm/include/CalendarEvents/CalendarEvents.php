@@ -106,7 +106,7 @@ class CalendarEvents
         $repeatDateTimeArray = $this->buildRecurringSequence($dateStart, $params);
 
         $limit = $this->getRecurringLimit();
-        if (count($repeatDateTimeArray) > ($limit - 1)) {
+        if (count($repeatDateTimeArray) > $limit) {
             $logMessage = sprintf(
                 'Calendar Events (%d) exceed Event Limit: (%d)',
                 count($repeatDateTimeArray),
