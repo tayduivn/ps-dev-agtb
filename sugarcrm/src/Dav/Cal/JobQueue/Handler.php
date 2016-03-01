@@ -42,6 +42,9 @@ class Handler implements RunnableInterface
      */
     public function run()
     {
+        /** @var \User $currentUser */
+        $currentUser = $GLOBALS['current_user'];
+
         /** @var \CalDavEventCollection $calDavBean */
         $calDavBean = \BeanFactory::getBean('CalDavEvents', $this->eventId, array(
             'strict_retrieve' => true,
@@ -57,6 +60,7 @@ class Handler implements RunnableInterface
 
         /** @var \CalDavQueue $queueItem */
         while ($queueItem = $queueBean->findFirstQueued($calDavBean->id)) {
+            $GLOBALS['current_user'] = \BeanFactory::getBean('Users', $queueItem->created_by);
             $conflictCounter = $calDavBean->getSynchronizationObject()->getConflictCounter();
             if ($conflictCounter && $queueItem->save_counter < $conflictCounter) {
                 $calDavBean->getSynchronizationObject()->setJobCounter();
@@ -93,6 +97,7 @@ class Handler implements RunnableInterface
             $calDavBean->retrieve(-1, true, false);
         }
 
+        $GLOBALS['current_user'] = $currentUser;
         return \SchedulersJob::JOB_SUCCESS;
     }
 
