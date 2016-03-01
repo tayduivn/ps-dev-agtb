@@ -113,7 +113,9 @@ class RecurringHelper
         if ($recurring['repeat_count']) {
             $rRule->setCount($recurring['repeat_count']);
         } elseif ($recurring['repeat_until']) {
-            $rRule->setUntil(new \SugarDateTime($recurring['repeat_until'], new \DateTimeZone('UTC')));
+            $sugarTimeDate = new \TimeDate();
+            $until = $sugarTimeDate->fromString($recurring['repeat_until']);
+            $rRule->setUntil($until);
         }
 
         $convertedDow = array();

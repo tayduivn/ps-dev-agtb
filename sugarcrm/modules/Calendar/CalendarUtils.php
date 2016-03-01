@@ -314,19 +314,13 @@ class CalendarUtils
 		$date_modified = $GLOBALS['timedate']->nowDb();
 		$lower_name = strtolower($bean->object_name);
 
-		$qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
-		$re = $db->query($qu);
-		$users_rel_arr = array();
-		// If the bean has a users_arr then related records for those ids will have
-		// already been created. This prevents duplicates of those records for 
-		// users, contacts and leads (handled below)
-		$exclude_users = empty($bean->users_arr) ? array() : array_flip($bean->users_arr);
-		
-		while($ro = $db->fetchByAssoc($re)) {
-			if (!isset($exclude_users[$ro['user_id']])) {
-				$users_rel_arr[] = $ro['user_id'];
-			}
-		}
+        $qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
+        $re = $db->query($qu);
+        $users_rel_arr = array();
+
+        while ($ro = $db->fetchByAssoc($re)) {
+            $users_rel_arr[] = $ro['user_id'];
+        }
 
 		$qu = "SELECT * FROM {$bean->rel_contacts_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
