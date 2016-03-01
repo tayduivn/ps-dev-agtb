@@ -161,9 +161,10 @@ class SugarFieldRelatecollection extends SugarFieldBase
      * @param string    $relName
      * @param array     $fields
      * @param integer   $limit
+     * @param string|array $orderBy field name or array of field name and direction to sort by
      * @return array
      */
-    protected function getLinkedRecords(SugarBean $parent, $relName, array $fields, $limit)
+    protected function getLinkedRecords(SugarBean $parent, $relName, array $fields, $limit, $orderBy = '')
     {
         if (! $relSeed = $this->getRelatedSeedBean($parent, $relName)) {
             return array();
@@ -176,6 +177,12 @@ class SugarFieldRelatecollection extends SugarFieldBase
 
         if ($limit > 0) {
             $sq->limit($limit);
+        }
+
+        if (is_array($orderBy)) {
+            $sq->orderBy($orderBy[0], $orderBy[1]);
+        } elseif (is_string($orderBy)) {
+            $sq->orderBy($orderBy);
         }
 
         // join against parent module

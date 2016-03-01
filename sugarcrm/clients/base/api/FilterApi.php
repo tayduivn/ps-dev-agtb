@@ -225,8 +225,11 @@ class FilterApi extends SugarApi
                         }
                     }
                 }
-                if (!empty($def['relate_collection'])) {
-                    $options['relate_collections'][$def['name']] = $def;
+            }
+
+            foreach ($options['select'] as $field) {
+                if (isset($seed->field_defs[$field]) && !empty($seed->field_defs[$field]['relate_collection'])) {
+                    $options['relate_collections'][$field] = $seed->field_defs[$field];
                 }
             }
         }
@@ -532,7 +535,7 @@ class FilterApi extends SugarApi
 
         // Get the related bean options to be able to handle related collections, like
         // in tags. Do this early, before beans in the collection are mutated
-        $rcOptions = $this->getRelatedCollectionOptions($beans);
+        $rcOptions = $this->getRelatedCollectionOptions($beans, $fields);
         $rcBeans = $this->runRelateCollectionQuery($beans, $rcOptions);
 
         $i = $distinctCompensation;
@@ -990,9 +993,10 @@ class FilterApi extends SugarApi
      * Gets relate collection information from a collection of beans
      *
      * @param array $beans Collection of beans to get relate collections from
+     * @param array $fields List of fields to check for relate collection information
      * @return array
      */
-    protected function getRelatedCollectionOptions(array $beans)
+    protected function getRelatedCollectionOptions(array $beans, array $fields)
     {
         $options = array();
         if (empty($beans) || !is_array($beans)) {
@@ -1008,7 +1012,7 @@ class FilterApi extends SugarApi
         // simple array of values
         if ($bean instanceof SugarBean) {
             foreach ($bean->field_defs as $def) {
-                if (!empty($def['relate_collection'])) {
+                if ((count($fields) == 0 || in_array($def['name'], $fields)) && !empty($def['relate_collection'])) {
                     $options['relate_collections'][$def['name']] = $def;
                     if (!isset($options['module'])) {
                         $options['module'] = $bean->module_dir;
