@@ -912,10 +912,14 @@ class Importer
     {
         global $timedate, $current_user;
 
-        if ( is_array($fieldValue) )
+        $defaultRowValue = '';
+        if (is_array($fieldValue)) {
             $defaultRowValue = encodeMultienumValue($fieldValue);
-        else
+        } elseif (!empty($_REQUEST[$field])) {
             $defaultRowValue = $_REQUEST[$field];
+        }
+
+
         // translate default values to the date/time format for the import file
         if( $fieldDef['type'] == 'date' && $this->ifs->dateformat != $timedate->get_date_format() )
             $defaultRowValue = $timedate->swap_formats($defaultRowValue, $this->ifs->dateformat, $timedate->get_date_format());
