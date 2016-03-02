@@ -225,7 +225,7 @@ describe("datepicker", function() {
 
         it("should expose the 'dates' language dictionary", function() {
             var firstMonth, secondDayOfWeek;
-            // Rebuld widget and verify picker markup has appropriate language we just set
+            // Rebuild widget and verify picker markup has appropriate language we just set
             this.picker.remove();
             this.component = $('<div class="input-append date" id="datepicker">'+
                                 '<input size="16" type="text" value="10-30-2012" readonly>'+

@@ -97,11 +97,10 @@
 		}
 		this.weekEnd = this.weekStart === 0 ? 6 : this.weekStart - 1;
 
-        // Removed daysMin and replaced with daysShort since extracting first two characters in many languages
-        // doesn't make any sense, therefore we will use daysShort for now, and daysMin can be localized in the future
 		this.dates = options.languageDictionary || {  // defaults to English
 			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
 			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 		};
@@ -117,7 +116,7 @@
 		// Precondition: We presume that datesLangDict exists and is an object literal
 		languageDictionary: function(datesLangDict) {
 			var reqPropsIndx,
-				requiredProperties = ['days', 'daysShort', 'months', 'monthsShort'];
+				requiredProperties = ['days', 'daysShort', 'daysMin', 'months', 'monthsShort'];
 
 			// If all required properties are not included in datesLangDict we return false
 			for (reqPropsIndx = 0; reqPropsIndx < requiredProperties.length; reqPropsIndx++) {
@@ -244,7 +243,16 @@
 			var dowCnt = this.weekStart;
 			var html = '<tr>';
 			while (dowCnt < this.weekStart + 7) {
-				html += '<th class="dow">'+this.dates.daysShort[(dowCnt++)%7]+'</th>';
+				//FIXME: SC-4404 Should use `this.dates.daysMin` after
+				// translations for `dom_cal_day_min` are integrated
+				// use daysMin by default, fall back to daysShort when daysMin is not available
+				var daysMinShort = "";
+				if (!_.isEmpty(this.dates.daysMin)) {
+					daysMinShort = this.dates.daysMin[(dowCnt++)%7];
+				} else {
+					daysMinShort = this.dates.daysShort[(dowCnt++)%7];
+				}
+				html += '<th class="dow">'+ daysMinShort +'</th>';
 			}
 			html += '</tr>';
 			this.picker.find('.datepicker-days thead').append(html);

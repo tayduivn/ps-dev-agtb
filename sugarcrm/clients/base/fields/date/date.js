@@ -322,7 +322,7 @@
         };
 
         // Note that ordering here is used in following for loop
-        calendarPropsMap = ['dom_cal_day_long', 'dom_cal_day_short', 'dom_cal_month_long', 'dom_cal_month_short'];
+        calendarPropsMap = ['dom_cal_day_long', 'dom_cal_day_short', 'dom_cal_day_min', 'dom_cal_month_long', 'dom_cal_month_short'];
 
         for (calMapIndex = 0, mapLen = calendarPropsMap.length; calMapIndex < mapLen; calMapIndex++) {
 
@@ -350,9 +350,12 @@
                     pickerMapKey = 'daysShort';
                     break;
                 case 2:
-                    pickerMapKey = 'months';
+                    pickerMapKey = 'daysMin';
                     break;
                 case 3:
+                    pickerMapKey = 'months';
+                    break;
+                case 4:
                     pickerMapKey = 'monthsShort';
                     break;
             }
