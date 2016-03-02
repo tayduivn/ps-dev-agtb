@@ -1484,10 +1484,14 @@ class PMSEEngineUtils
     {
         $bean->load_relationship('teams');
 
+        $tbaModuleEnabled = true;
+
+        //BEGIN SUGARCRM flav=ent ONLY
         $tbaConfig = new TeamBasedACLConfigurator();
 
         // Find Out If Table Based ACLs are enabled for this module
         $tbaModuleEnabled = $tbaConfig->isEnabledForModule($bean->module_dir);
+        //END SUGARCRM flav=ent ONLY
 
         // The TeamSetLink could have the _saved property set to true indicating previous data has been saved.
         // So we need to Explicitly set _saved of TeamSetLink class to false so that the new teams
