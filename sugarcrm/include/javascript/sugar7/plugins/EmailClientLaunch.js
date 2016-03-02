@@ -36,6 +36,8 @@
              * @param {Object} [options]
              */
             launchSugarEmailClient: function(options) {
+                var module = 'Emails';
+
                 //clean the recipient fields before handing off to email compose
                 _.each(['to_addresses', 'cc_addresses', 'bcc_addresses'], function(recipientType) {
                     if (options[recipientType]) {
@@ -44,16 +46,21 @@
                 }, this);
 
                 app.drawer.open({
-                    layout : 'compose',
+                    layout: 'compose',
                     context: {
                         create: 'true',
-                        module: 'Emails',
+                        module: module,
                         prepopulate: options
                     }
                 }, _.bind(function(model) {
                     if (model) {
-                        //allow for component to perform action after close
+                        // Allow for component to perform action after close
                         this.trigger('emailclient:close');
+
+                        // Refresh current list view if it is the Emails list view
+                        if (app.controller.context.get('module') === module) {
+                            app.controller.context.reloadData();
+                        }
                     }
                 }, this));
             },

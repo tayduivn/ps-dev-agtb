@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('EmailClientLaunch Plugin', function() {
-    var app, field, originalDrawer, setUseSugarClient, userPrefs;
+    var app, field, originalDrawer, setUseSugarClient, userPrefs, sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -18,14 +18,17 @@ describe('EmailClientLaunch Plugin', function() {
         SugarTest.loadPlugin('EmailClientLaunch');
         SugarTest.app.plugins.attach(field, 'field');
 
+        sandbox = sinon.sandbox.create();
+
         originalDrawer = app.drawer;
         app.drawer = {
-            open: sinon.stub()
+            open: sandbox.stub()
         };
         userPrefs = app.user.get('preferences');
     });
 
     afterEach(function() {
+        sandbox.restore();
         field.dispose();
         app.drawer = originalDrawer;
         app.user.set('preferences', userPrefs);
@@ -39,13 +42,14 @@ describe('EmailClientLaunch Plugin', function() {
         var retrieveValidRecipientsStub;
 
         beforeEach(function() {
-            retrieveValidRecipientsStub = sinon.stub(field, '_retrieveValidRecipients', function(recipients) {
-                return recipients;
-            });
-        });
-
-        afterEach(function() {
-            retrieveValidRecipientsStub.restore();
+            retrieveValidRecipientsStub = sandbox.stub(
+                field,
+                '_retrieveValidRecipients',
+                function(recipients) {
+                    return recipients;
+                }
+            );
+            sandbox.stub(app.controller.context, 'reloadData');
         });
 
         it('should launch the Sugar Email Client if user profile says internal', function() {
@@ -67,6 +71,41 @@ describe('EmailClientLaunch Plugin', function() {
                 bcc_addresses: [{email: 'bar3@baz.com'}]
             });
             expect(retrieveValidRecipientsStub.callCount).toBe(3);
+        });
+
+        it('should refresh app context if module is Emails', function() {
+            var drawerCloseCallback,
+                model = app.data.createBean('Emails');
+
+            app.controller.context.set('module', 'Emails');
+            setUseSugarClient(true);
+            field.launchEmailClient({});
+            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback(model);
+            expect(app.controller.context.reloadData).toHaveBeenCalled();
+        });
+
+        it('should not refresh app context if module is not Emails', function() {
+            var drawerCloseCallback,
+                model = app.data.createBean('Emails');
+
+            app.controller.context.set('module', 'Tasks');
+            setUseSugarClient(true);
+            field.launchEmailClient({});
+            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback(model);
+            expect(app.controller.context.reloadData).not.toHaveBeenCalled();
+        });
+
+        it('should not refresh app context if drawer is canceled - no model', function() {
+            var drawerCloseCallback;
+
+            app.controller.context.set('module', 'Emails');
+            setUseSugarClient(true);
+            field.launchEmailClient({});
+            drawerCloseCallback = app.drawer.open.lastCall.args[1];
+            drawerCloseCallback();
+            expect(app.controller.context.reloadData).not.toHaveBeenCalled();
         });
     });
 
@@ -125,7 +164,7 @@ describe('EmailClientLaunch Plugin', function() {
 
     describe('Should Add Email Options', function() {
         it('should set a copy of the related model in email options', function() {
-            var createBeanStub = sinon.stub(app.data, 'createBean', function() {
+            sandbox.stub(app.data, 'createBean', function() {
                     var bean = new Backbone.Model();
                     bean.copy = function(copyFrom) {
                         bean.set('foo', copyFrom.get('foo'));
@@ -141,7 +180,6 @@ describe('EmailClientLaunch Plugin', function() {
             field.addEmailOptions({related: model});
             expect(field.emailOptions.related).not.toBe(model);
             expect(field.emailOptions.related.toJSON()).toEqual(model.toJSON());
-            createBeanStub.restore();
         });
 
         it('should not specify related on email options if model specified has no module', function() {
