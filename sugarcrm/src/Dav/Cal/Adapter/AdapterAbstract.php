@@ -172,6 +172,10 @@ abstract class AdapterAbstract implements AdapterInterface
             return static::NOTHING;
         }
 
+        if ((isset($recurringParam['repeat_type']) || $rootBeanId) && $collection->addIdToSugarChildrenOrder($beanId)) {
+            $collection->save();
+        }
+
         $event = $this->getCurrentEvent($collection, $rootBeanId, $beanId);
         if (!$event || $event->isDeleted()) {
             return static::NOTHING;
@@ -259,6 +263,9 @@ abstract class AdapterAbstract implements AdapterInterface
             if ($recurringParam) {
                 if ($this->setCalDavRecurring($recurringParam, $collection)) {
                     $isChanged = true;
+                    if (!empty($recurringParam['repeat_type'])) {
+                        $collection->setSugarChildrenOrder(array($beanId));
+                    }
                 } else {
                     $data[0][3] = null;
                     foreach (RecurringHelper::$recurringFieldList as $recurringFieldName) {
@@ -268,6 +275,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             } elseif ($collection->getRRule()) {
                 $collection->resetChildrenChanges();
+                $collection->setSugarChildrenOrder(array($beanId));
             }
         }
 
