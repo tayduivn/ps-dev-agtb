@@ -16,7 +16,7 @@ class VisibilityAction extends AbstractAction
     protected $targetField = array();
     protected $expression = "";
 
-    function VisibilityAction($params)
+    public function __construct($params)
     {
         $this->params = $params;
         $this->targetField = $params['target'];

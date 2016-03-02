@@ -40,7 +40,8 @@ class BeanExtendTest extends Sugar_PHPUnit_Framework_TestCase
 class TestBean1 extends SugarBean
 {
     public $ok;
-    function TestBean1() {
+    public function __construct()
+    {
 		parent::__construct();
 		$this->ok = true;
 	}
@@ -49,7 +50,8 @@ class TestBean1 extends SugarBean
 class TestBean2 extends SugarBean
 {
     public $ok;
-    function TestBean2() {
+    public function __construct()
+    {
         parent::__construct();
 		$this->ok = true;
     }
@@ -76,7 +78,8 @@ class TestBean4 extends SugarBean
 class TestBean5 extends Basic
 {
     public $ok;
-    function TestBean5() {
+    public function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -85,7 +88,8 @@ class TestBean5 extends Basic
 class TestBean6 extends Basic
 {
     public $ok;
-    function TestBean6() {
+    public function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }

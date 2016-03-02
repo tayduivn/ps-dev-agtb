@@ -5,6 +5,7 @@ require_once 'clients/base/api/FileTempApi.php';
 /**
  * RS-108
  * Prepare FileTemp Api
+ * @requires extension gd
  */
 class RS108Test extends Sugar_PHPUnit_Framework_TestCase
 {

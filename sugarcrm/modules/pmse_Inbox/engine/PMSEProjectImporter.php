@@ -746,7 +746,7 @@ class PMSEProjectImporter extends PMSEImporter
             if (!empty($elementBean)) {
                 $flowBean = BeanFactory::getBean('pmse_BpmnFlow', $this->savedElements['bpmnFlows'][$defaultFlow['default_flow_value']]);
                 if (!empty($flowBean)){
-                    $elementBean->$defaultFlow['default_flow_field'] = $flowBean->id;
+                    $elementBean->{$defaultFlow['default_flow_field']} = $flowBean->id;
                     $elementBean->save();
                 }
             }
@@ -767,7 +767,7 @@ class PMSEProjectImporter extends PMSEImporter
             'OPPORTUNITIES' => 'Opportunities',
             'DOCUMENTS' => 'Documents'
         );
-        if (key_exists($message, $arr)) {
+        if (array_key_exists($message, $arr)) {
             return $arr[$message];
         } else {
             return $message;

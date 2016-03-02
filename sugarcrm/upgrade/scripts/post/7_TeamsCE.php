@@ -26,7 +26,7 @@ class SugarUpgradeTeamsCE extends UpgradeScript
         $globalteam = new Team();
         $globalteam->retrieve('1');
         if(empty($globalteam->name)){
-            $globalteam->create_team("Global", $this->mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
+            Team::create_team("Global", $this->mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
         }
 
         $this->log("Start Building private teams");

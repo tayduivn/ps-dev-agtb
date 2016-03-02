@@ -204,6 +204,7 @@ class OraclePreparedStatement extends PreparedStatement
         }
         $this->DBM->countQuery($this->parsedSQL);
         $GLOBALS['log']->info("Executing Query: {$this->parsedSQL} with ".var_export($data, true));
+        $this->bound_data = $data;
 
         $this->DBM->query_time = microtime(true);
 

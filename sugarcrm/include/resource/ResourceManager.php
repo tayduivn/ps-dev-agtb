@@ -20,12 +20,12 @@ class ResourceManager {
 private static $instance;
 private $_observers = array();
 
-/**
- * The constructor; declared as private
- */
-private function ResourceManager() {
-	
-}
+    /**
+     * The constructor; declared as private
+     */
+    private function __construct()
+    {
+    }
 
 /**
  * getInstance

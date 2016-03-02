@@ -28,7 +28,7 @@ class SugarAuthenticate{
 	 *
 	 * @return SugarAuthenticate
 	 */
-	function SugarAuthenticate()
+    public function __construct()
 	{
 	    // check in custom dir first, in case someone want's to override an auth controller
 	    SugarAutoLoader::requireWithCustom('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
@@ -339,7 +339,8 @@ class SugarAuthenticate{
 	 * @param STRING $password
 	 * @return STRING $encoded_password
 	 */
-	function encodePassword($password){
+    public static function encodePassword($password)
+    {
 		return strtolower(md5($password));
 	}
 

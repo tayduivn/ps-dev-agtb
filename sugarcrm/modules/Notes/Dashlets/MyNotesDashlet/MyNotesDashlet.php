@@ -15,11 +15,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyNotesDashlet extends DashletGeneric { 
-    function MyNotesDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
         global $current_user, $app_strings, $dashletData;
 		require('modules/Notes/Dashlets/MyNotesDashlet/MyNotesDashlet.data.php');
         
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_MY_NOTES_DASHLETNAME', 'Notes');
          
@@ -29,4 +30,3 @@ class MyNotesDashlet extends DashletGeneric {
         $this->seedBean = BeanFactory::getBean('Notes');        
     }    
 }
-?>

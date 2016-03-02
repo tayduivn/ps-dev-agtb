@@ -268,8 +268,11 @@ class MysqlManager extends DBManager
 
 	/**
 	 * @see DBManager::checkQuery()
+     * @param  string $sql         query to be run
+     * @param  bool   $object_name optional, object to look up indices in
+     * @return bool   true if an index is found false otherwise
 	 */
-	protected function checkQuery($sql)
+    protected function checkQuery($sql, $object_name = false)
 	{
 		$result   = $this->query('EXPLAIN ' . $sql);
 		$badQuery = array();

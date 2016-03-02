@@ -20,8 +20,9 @@ class SugarNewsDashlet extends Dashlet {
     var $defaultURL = 'http://apps.sugarcrm.com/dashlet/sugarcrm-news-dashlet.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@';
     var $url;
 
-    function SugarNewsDashlet($id, $options = null) {
-        parent::Dashlet($id);
+    public function __construct($id, $options = null)
+    {
+        parent::__construct($id);
         $this->isConfigurable = true;
         
         if(empty($options['title'])) { 

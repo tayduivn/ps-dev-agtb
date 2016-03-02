@@ -32,8 +32,8 @@ function __construct() {
  * @param Array $panels Array of panels as defined in a metadata file
  * @return bool Returns true if there are multiple panels defined; false otherwise
  */
-function hasMultiplePanels($panels) {
-
+public static function hasMultiplePanels($panels)
+{
    if(!isset($panels) || empty($panels) || !is_array($panels)) {
    	  return false;
    }
@@ -65,7 +65,8 @@ function hasMultiplePanels($panels) {
  * @param string $javascript String contents of javascript
  * @return string Formatted javascript String with Smarty tags applied
  */
-function parseDelimiters($javascript) {
+public static function parseDelimiters($javascript)
+{
     $newJavascript = '';
     $scriptLength = strlen($javascript);
     $count = 0;

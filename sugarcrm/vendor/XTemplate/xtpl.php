@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-01-22 - avlasov - PHP 7 compatibility
+
 jvink@sugarcrm.com - 2015-06-30 - Adding CSRF form token support
 
 Stas 2010-12-20 Added 'VERSION_MARK' to templates
@@ -151,7 +153,8 @@ var $AUTORESET=1;										/* auto-reset sub blocks */
 
 /***[ constructor ]*********************************************************/
 
-function XTemplate ($file, $alt_include = "", $mainblock="main") {
+    public function __construct($file, $alt_include = '', $mainblock = 'main')
+    {
 	$this->alternate_include_directory = $alt_include;
 	$this->mainblock=$mainblock;
 	$this->filecontents=$this->r_getfile($file);	/* read in template file */

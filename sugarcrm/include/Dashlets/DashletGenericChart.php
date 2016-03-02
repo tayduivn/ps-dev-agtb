@@ -75,7 +75,7 @@ abstract class DashletGenericChart extends Dashlet
         array $options = null
         )
     {
-        parent::Dashlet($id);
+        parent::__construct($id);
 
         if ( isset($options) ) {
             foreach ( $options as $key => $value ) {
@@ -284,9 +284,9 @@ abstract class DashletGenericChart extends Dashlet
      *
      * @return string HTML that displays Dashlet
      */
-    public function display()
+    public function display($text = '')
     {
-        return parent::display() . $this->processAutoRefresh();
+        return parent::display($text) . $this->processAutoRefresh();
     }
 
     /**

@@ -41,7 +41,8 @@ class SchedulerDaemon extends Scheduler {
 	/**
 	 * Sole constructor.
 	 */
-	function SchedulerDaemon () {
+    public function __construct()
+    {
 		if(empty($this->db)) {
 			
 			$this->db = DBManagerFactory::getInstance();

@@ -40,9 +40,6 @@ class LogicHook{
 
 	var $bean = null;
 
-	function LogicHook(){
-	}
-
 	/**
 	 * Static Function which returns and instance of LogicHook
 	 *

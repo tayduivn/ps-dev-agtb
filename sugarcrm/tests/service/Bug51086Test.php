@@ -23,7 +23,6 @@ require_once 'tests/service/SOAPTestCase.php';
 class Bug51086Test extends SOAPTestCase
 {
     private $_aclRole;
-    private $_aclField;
     private $_contact;
     private $_blockedfield = 'description';
     private $_nonAdminUser;
@@ -61,8 +60,7 @@ class Bug51086Test extends SOAPTestCase
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         //Disable access to the blocked field on contacts bean.
-        $this->_aclField = new ACLField();
-        $this->_aclField->setAccessControl('Contacts', $this->_aclRole->id, $this->_blockedfield, -99);
+        ACLField::setAccessControl('Contacts', $this->_aclRole->id, $this->_blockedfield, -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         //create Contact
@@ -85,7 +83,6 @@ class Bug51086Test extends SOAPTestCase
         $GLOBALS['db']->commit();
 
         SugarTestHelper::tearDown();
-        unset($this->_aclField);
         unset($this->_aclRole);
         unset($this->_contact);
         unset($this->_blockedfield);

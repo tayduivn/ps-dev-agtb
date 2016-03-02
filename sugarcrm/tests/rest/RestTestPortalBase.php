@@ -124,7 +124,7 @@ class RestTestPortalBase extends RestTestBase {
     }
 
 
-    protected function _restLogin($username = '', $password = '')
+    protected function _restLogin($username = '', $password = '', $platform = 'base')
     {
         $args = array(
             'grant_type' => 'password',

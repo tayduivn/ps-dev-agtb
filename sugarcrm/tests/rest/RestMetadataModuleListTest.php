@@ -294,7 +294,7 @@ class RestMetadataModuleListTest extends RestTestBase {
                         }
                     } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
                         $bean->load_relationship($fieldDef['name']);
-                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $otherSide = $bean->{$fieldDef['name']}->getRelatedModuleName();
                         $data['full_module_list'][$otherSide] = $otherSide;
                     }
                 }

@@ -16,7 +16,8 @@ class SoapError{
 	var $number;
 	var $description;
 
-	function SoapError(){
+    public function __construct()
+    {
 		$this->set_error('no_error');
 	}
 
@@ -54,5 +55,3 @@ class SoapError{
 
 
 }
-
-?>

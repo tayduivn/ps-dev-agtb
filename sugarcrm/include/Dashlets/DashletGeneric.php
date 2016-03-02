@@ -86,8 +86,9 @@ class DashletGeneric extends Dashlet {
     var $lvs;
     var $layoutManager;
 
-    function DashletGeneric($id, $options = null) {
-        parent::Dashlet($id);
+    public function __construct($id, $options = null)
+    {
+        parent::__construct($id);
         $this->isConfigurable = true;
         if(isset($options)) {
             if(!empty($options['filters'])) $this->filters = $options['filters'];
@@ -288,8 +289,8 @@ class DashletGeneric extends Dashlet {
                         // No break here, we want to run through the default handler
                     case 'relate':
                         if (isset($widgetDef['link']) && $this->seedBean->load_relationship($widgetDef['link'])) {
-                            $widgetDef['module'] = $this->seedBean->$widgetDef['link']->focus->module_name;
-                            $widgetDef['link'] = $this->seedBean->$widgetDef['link']->getRelationshipObject()->name;
+                            $widgetDef['module'] = $this->seedBean->{$widgetDef['link']}->focus->module_name;
+                            $widgetDef['link'] = $this->seedBean->{$widgetDef['link']}->getRelationshipObject()->name;
                         }
                         // No break - run through the default handler
                     default:
@@ -429,8 +430,9 @@ class DashletGeneric extends Dashlet {
      *
      * @return string HTML that displays Dashlet
      */
-    function display() {
-        return parent::display() . $this->lvs->display(false) . $this->processAutoRefresh();
+    public function display($text = '')
+    {
+        return parent::display($text) . $this->lvs->display(false) . $this->processAutoRefresh();
     }
 
     /**

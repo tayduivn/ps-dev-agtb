@@ -37,9 +37,7 @@ class Crypt
      *
      * @return Crypt
      */
-
-
-    public function Crypt()
+    public function __construct()
     {
         require_once 'vendor/Pear/Crypt_Blowfish/Blowfish.php';
         $this->pmse = PMSE::getInstance();

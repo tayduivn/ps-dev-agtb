@@ -24,10 +24,6 @@ class ListViewXTPL extends ListViewDisplay{
 	var $pro_nav_block = 'main.pro_nav';
 	var $data;
 	var $xtpl;
-
-	function ListViewXTPL() {
-		parent::ListViewDisplay();
-	}
 	
     /**
      * Processes the request. Calls ListViewData process. Also assigns all lang strings, export links,
@@ -191,6 +187,3 @@ class ListViewXTPL extends ListViewDisplay{
 		}
 	}
 }
-
-
-?>

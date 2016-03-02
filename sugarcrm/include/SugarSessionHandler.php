@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
  * Session handler for Sugar
  */
@@ -35,22 +36,29 @@ class SugarSessionHandler extends SessionHandler
      */
     protected $log;
 
+    /**
+     * Ctor
+     */
     public function __construct()
     {
         $this->max_session_time = SugarConfig::getInstance()->get('max_session_time');
         $this->log = LoggerManager::getLogger('SugarCRM');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function open($save_path, $session_id)
     {
-        parent::open($save_path, $session_id);
         $this->session_start = time();
+        return parent::open($save_path, $session_id);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function close()
     {
-        parent::close();
-                
         if ($this->isCurrentSessionExceeded()) {
             $this->log->error(sprintf("[SessionLock] Session lock was held for %s seconds which is longer than the maximum of %s seconds. Request details: 
                 SERVER_NAME     | %s 
@@ -71,13 +79,15 @@ class SugarSessionHandler extends SessionHandler
                 $_SERVER['QUERY_STRING']
             ));           
         }
+
+        return parent::close();
     }
 
     /**
      * Calculate session time
-     * @return int
+     * @return int|false
      */
-    public function getCurrentSessionTime()
+    protected function getCurrentSessionTime()
     {
         if (!$this->session_start) {
             return false;
@@ -90,7 +100,7 @@ class SugarSessionHandler extends SessionHandler
      * Check if session time more than defined treshhold
      * @return bool
      */
-    public function isCurrentSessionExceeded() 
+    protected function isCurrentSessionExceeded()
     {
         $this->session_time = $this->getCurrentSessionTime();
 

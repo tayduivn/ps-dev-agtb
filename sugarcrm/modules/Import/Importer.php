@@ -263,7 +263,7 @@ class Importer
 
                 if ($fieldDef['type'] == 'relate' && !empty($row[$fieldNum]) && $row[$fieldNum] != $_REQUEST["default_value_$field"]) {
                     if (!empty($fieldDef['id_name']) && empty($row[$fieldDef['id_name']])) {
-                        $focus->$fieldDef['id_name'] = "";
+                        $focus->{$fieldDef['id_name']} = '';
                     }
                 }
 
@@ -272,8 +272,7 @@ class Importer
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
                 {
                     require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-                    $sugar_field = new SugarFieldTeamset('Teamset');
-                    $rowValue = implode(', ',$sugar_field->getTeamsFromRequest($field));
+                    $rowValue = implode(', ', SugarFieldTeamset::getTeamsFromRequest($field));
                 }
 
                 if( empty($rowValue))
@@ -869,8 +868,7 @@ class Importer
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset')
                 {
                     require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-                    $sugar_field = new SugarFieldTeamset('Teamset');
-                    $teams = $sugar_field->getTeamsFromRequest($field);
+                    $teams = SugarFieldTeamset::getTeamsFromRequest($field);
                     if(isset($_REQUEST['primary_team_name_collection']))
                     {
                         $primary_index = $_REQUEST['primary_team_name_collection'];

@@ -49,7 +49,7 @@ if(file_exists($file)) {
  * @return bool
  */
 function delete_bean($action, $bean) {
-	$bean->mark_deleted();
+    $bean->mark_deleted($bean->id);
 	return true;
 }
 ////	END SUGARBEAN RULES

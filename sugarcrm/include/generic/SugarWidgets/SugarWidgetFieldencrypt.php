@@ -14,10 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldEncrypt extends SugarWidgetReportField
 {
-    public function SugarWidgetFieldEncrypt($layout_manager) {
-        parent::SugarWidgetReportField($layout_manager);
-    }
-
     function queryFilterEquals(&$layout_def)
     {
         require_once("include/utils/encryption_utils.php");

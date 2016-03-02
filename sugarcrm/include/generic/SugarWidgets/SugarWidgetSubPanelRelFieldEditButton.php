@@ -22,7 +22,7 @@ class SugarWidgetSubPanelRelFieldEditButton extends SugarWidgetField
 		return '&nbsp;';
 	}
 
-	function displayList(&$layout_def)
+    public function displayList($layout_def)
 	{
 		die("<pre>" . print_r($layout_def, true) . "</pre>");
 

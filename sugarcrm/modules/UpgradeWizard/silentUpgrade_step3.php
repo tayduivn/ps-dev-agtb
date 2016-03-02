@@ -252,7 +252,7 @@ if($ce_to_pro_ent) {
 		echo 'Global '.$mod_strings['LBL_UPGRADE_TEAM_EXISTS'].'<br>';
 		logThis(" Finish Building Global Team", $path);
 	}else{
-		$globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
+        Team::create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
 	}
 
 	logThis(" Start Building private teams", $path);

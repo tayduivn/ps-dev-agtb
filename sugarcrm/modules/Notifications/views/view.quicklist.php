@@ -11,10 +11,6 @@
  */
 
 class ViewQuicklist extends SugarView{
-	function ViewQuicklist(){
-		parent::SugarView();
-	}
-
 	function display()
 	{
 		global $current_user;

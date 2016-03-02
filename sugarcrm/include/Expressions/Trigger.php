@@ -24,7 +24,8 @@ class Trigger
 	public $conditionFunction = "";
 	static $ValueNotSetError = -1;
 
-	function Trigger($condition, $fields = array()) {
+    public function __construct($condition, $fields = array())
+    {
 		$this->conditionFunction = $condition;
 		if (!is_array($fields))
 			$fields = array($fields);

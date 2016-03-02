@@ -26,7 +26,7 @@ class Popup_Picker
 	 * Creates a new Popup_Picker object. Controls displaying of single select and multi select popups
 	 *
 	 */
-	function Popup_Picker()
+    public function __construct()
 	{
 		global $currentModule, $popupMeta;
 

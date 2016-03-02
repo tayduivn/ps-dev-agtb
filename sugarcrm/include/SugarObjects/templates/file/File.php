@@ -20,10 +20,6 @@ class File extends Basic
 	public $file_url;
 	public $file_url_noimage;
 
-    public function __construct(){
-		parent::__construct();
-	}
-
 	/**
 	 * @see SugarBean::save()
 	 */

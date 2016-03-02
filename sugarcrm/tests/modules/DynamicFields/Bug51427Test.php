@@ -36,7 +36,9 @@ class Bug51427Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->old_dictionary=$dictionary;
         $this->old_bean_list=$bean_list;
-        $this->test_standart_field = new TestStandardField();
+        $this->test_standart_field = $this->getMockBuilder('StandardField')
+            ->setMethods(array('loadCustomDef', 'writeVardefExtension'))
+            ->getMock();
         $this->test_standart_field->module='Accounts';
         loadBean($this->test_standart_field->module);
         $this->test_field=get_widget('varchar');
@@ -208,22 +210,5 @@ class Bug51427Test extends Sugar_PHPUnit_Framework_TestCase
                 }
             }
         }
-    }
-}
-
-
-/*
- * inherits StandardField
- * some methods aren't used in the test
- */
-class TestStandardField extends StandardField
-{
-    function writeVardefExtension()
-    {
-    }
-
-    function loadCustomDef()
-    {
-        $this->custom_def=array();
     }
 }

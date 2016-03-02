@@ -31,7 +31,9 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->jq = $jobq = new SugarCronRemoteJobs();
-        $this->client = new CronHttpMock();
+        $this->client = $this->getMockBuilder('SugarHttpClient')
+            ->setMethods(array('callRest'))
+            ->getMock();
         $this->jq->setClient($this->client);
     }
 
@@ -42,7 +44,6 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testQueueJob()
     {
-        $this->markTestIncomplete('This is not working due to bad encoding of the call_data. FRM team will fix');
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
@@ -53,20 +54,26 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
         $job->save();
         $jobid = $job->id;
 
-        $this->client->return = json_encode(array("ok" => $job->id));
+        $jq = $this->jq;
+        $this->client->expects($this->once())
+            ->method('callRest')
+            ->with(
+                $this->equalTo('http://test.job.server/submitJob'),
+                $this->callback(function ($value) use ($jq, $jobid) {
+                    parse_str($value, $qdata);
+                    $data = json_decode($qdata['data'], true);
+                    return ($jobid == $data['job'])
+                        && ($jq->getMyId() == $data['client'])
+                        && ($GLOBALS['sugar_config']['site_url'] == $data['instance']);
+                })
+            )
+            ->will($this->returnValue(json_encode(array('ok' => $job->id))));
 
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->disable_schedulers = true;
         $this->jq->runCycle();
 
         $this->assertTrue($this->jq->runOk());
-
-        $this->assertEquals("http://test.job.server/submitJob", $this->client->call_url);
-        parse_str($this->client->call_data, $qdata);
-        $data = json_decode($qdata['data'], true);
-        $this->assertEquals($jobid, $data['job']);
-        $this->assertEquals($this->jq->getMyId(), $data['client']);
-        $this->assertEquals($GLOBALS['sugar_config']['site_url'], $data['instance']);
 
         $job = new SchedulersJob();
         $job->retrieve($jobid);
@@ -86,7 +93,9 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
         $job->save();
         $jobid = $job->id;
 
-        $this->client->return = ''; // return nothing
+        $this->client->expects($this->once())
+            ->method('callRest')
+            ->will($this->returnValue(''));
 
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->disable_schedulers = true;
@@ -111,7 +120,9 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
         $job->save();
         $jobid = $job->id;
 
-        $this->client->return = 'This is not the server you are looking for';
+        $this->client->expects($this->once())
+            ->method('callRest')
+            ->will($this->returnValue('This is not the server you are looking for'));
 
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->disable_schedulers = true;
@@ -126,14 +137,3 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class CronHttpMock extends SugarHttpClient
-{
-     public $call_url;
-     public $call_data;
-     public $return;
-     public function callRest($url, $data) {
-         $this->call_url = $url;
-         $this->call_data = $data;
-         return $this->return;
-     }
-}

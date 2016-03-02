@@ -220,7 +220,7 @@ abstract class SugarRelationship
      *
      * @return bool|void null if new row was inserted and true if an existing row was updated
      */
-    protected function addRow($row)
+    protected function addRow(array $row)
     {
         $existing = $this->checkExisting($row);
         if (!empty($existing)) //Update the existing row, overriding the values with those passed in

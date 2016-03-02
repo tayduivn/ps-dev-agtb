@@ -35,22 +35,14 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
     public function testExpandDateToday()
     {
         global $timedate;
-        $widget = new SugarWidgetFieldDateTime48616Mock(new LayoutManager());
+        $widget = new SugarWidgetFieldDateTime(new LayoutManager());
 
-        $result = $widget->expandDate('Today');
+        $result = SugarTestReflection::callProtectedMethod($widget, 'expandDate', array('Today'));
 
         $this->assertContains(
             $timedate->asDbDate($timedate->getNow(true)),
             $result,
             "'Today' macro was not processed properly by expandDate()"
         );
-    }
-}
-
-class SugarWidgetFieldDateTime48616Mock extends SugarWidgetFieldDateTime
-{
-    public function expandDate($date)
-    {
-        return parent::expandDate($date);
     }
 }

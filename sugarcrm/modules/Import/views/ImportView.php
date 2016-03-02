@@ -47,7 +47,7 @@ class ImportView extends SugarView
     /**
      * @see SugarView::getMenu()
      */
-    public function getMenu($module = null)
+    public function getMenu($module = null, $mod_strings_override = false)
     {
         global $mod_strings, $current_language;
 
@@ -56,7 +56,7 @@ class ImportView extends SugarView
 
         $old_mod_strings = $mod_strings;
         $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
+        $returnMenu = parent::getMenu($module, $mod_strings_override);
         $mod_strings = $old_mod_strings;
 
         return $returnMenu;

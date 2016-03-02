@@ -60,11 +60,6 @@ class Note extends SugarBean
         'last_name'
     );
 
-
-	public function __construct() {
-		parent::__construct();
-	}
-
     function safeAttachmentName()
     {
         global $sugar_config;

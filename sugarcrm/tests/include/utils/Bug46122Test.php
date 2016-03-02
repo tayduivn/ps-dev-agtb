@@ -67,7 +67,7 @@ class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
         $hooks = $GLOBALS['logic_hook']->getHooks('Contacts');
-        $sugarViewMock = new Bug46122TestSugarViewMock();
+        $sugarViewMock = $this->getSugarViewMock();
         $sugarViewMock->module = 'Contacts';
         $sugarViewMock->process();
         $expectedHookCount = isset($hooks['after_ui_frame']) ? count($hooks['after_ui_frame']) : 0;
@@ -79,24 +79,21 @@ class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
         $hooks = $GLOBALS['logic_hook']->getHooks('');
-        $sugarViewMock = new Bug46122TestSugarViewMock();
+        $sugarViewMock = $this->getSugarViewMock();
         $sugarViewMock->module = '';
         $sugarViewMock->process();
         $expectedHookCount = isset($hooks['after_ui_frame']) ? count($hooks['after_ui_frame']) : 0;
         $this->assertEquals($expectedHookCount, $GLOBALS['logic_hook']->hookRunCount, 'Assert that one logic hook file was run');
     }
-}
-
-class Bug46122TestSugarViewMock extends SugarView
-{
-    var $options = array();
-    //no-opt methods we override
-    function _trackView() {}
-    function renderJavascript() {}
-    function _buildModuleList() {}
-    function preDisplay() {}
-    function displayErrors() {}
-    function display() {}
+    
+    protected function getSugarViewMock()
+    {
+        $mock = $this->getMockBuilder('SugarView')
+            ->setMethods(array('_trackView', 'renderJavascript', '_buildModuleList', 'preDisplay', 'displayErrors', 'display'))
+            ->getMock();
+        $mock->options = array();
+        return $mock;
+    }
 }
 
 class LogicHookMock extends LogicHook
@@ -114,4 +111,3 @@ class LogicHookMock extends LogicHook
     }
 }
 
-?>

@@ -60,6 +60,7 @@
         "symfony/validator": "v2.7.1",
         "symfony/translation": "v2.7.1",
         "google/apiclient": "1.1.4",
+        "parsecsv/php-parsecsv": "0.4.5",
         "php": ">=5.4.0"
     },
     "require-dev": {

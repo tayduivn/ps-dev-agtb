@@ -17,11 +17,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
         
 class MyCallsDashlet extends DashletGeneric { 
-    function MyCallsDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
         global $current_user, $app_strings;
 		require('modules/Calls/Dashlets/MyCallsDashlet/MyCallsDashlet.data.php');
 
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_CALLS', 'Calls');
         $this->searchFields = $dashletData['MyCallsDashlet']['searchFields'];     
@@ -132,5 +133,3 @@ class MyCallsDashlet extends DashletGeneric {
         return $this->configureSS->fetch($this->configureTpl);
     }
 }
-
-?>

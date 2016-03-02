@@ -129,9 +129,11 @@ foreach ($temp_field_array as $field_array) {
         $section_name='merge_row_similar';
 
         //Prcoess locaton of the field. if values are different show field in first section. else 2nd.
-        $select_row_curr_field_value = $focus->merge_bean->$field_array['name'];
+        $select_row_curr_field_value = $focus->merge_bean->{$field_array['name']};
         foreach ($merge_ids_array as $id) {
-            if (($mergeBeanArray[$id]-> $field_array['name']=='' and $select_row_curr_field_value =='') or $mergeBeanArray[$id]-> $field_array['name'] == $select_row_curr_field_value ) {
+            if ((($mergeBeanArray[$id]->{$field_array['name']} == '')
+                    && ($select_row_curr_field_value ==''))
+                || ($mergeBeanArray[$id]->{$field_array['name']} == $select_row_curr_field_value)) {
                 $section_name='merge_row_similar';
             } else  {
                 $section_name='merge_row_diff';
@@ -210,7 +212,7 @@ foreach ($temp_field_array as $field_array) {
             case ('link') :
                 //get_related_name
                 if (empty($select_row_curr_field_value)) {
-                    $related_name=get_related_name($field_array,$focus->merge_bean->$field_array['id_name']);
+                    $related_name = get_related_name($field_array, $focus->merge_bean->{$field_array['id_name']});
                     if ($related_name !== false ) {
                        $select_row_curr_field_value=$related_name;
                     }
@@ -221,7 +223,7 @@ foreach ($temp_field_array as $field_array) {
                 $xtpl->assign("POPUP_ID_FIELD", $field_array['id_name']);
                 $xtpl->assign("POPUP_NAME_FIELD", $field_array['name']);
                 $xtpl->assign("POPUP_NAME_VALUE", $select_row_curr_field_value);
-                $xtpl->assign("POPUP_ID_VALUE", $focus->merge_bean-> $field_array['id_name']);
+                $xtpl->assign('POPUP_ID_VALUE', $focus->merge_bean->{$field_array['id_name']});
                 $xtpl->assign("POPUP_MODULE", $field_array['module']);
                 $xtpl->assign("CELL_WIDTH", $col_width);
                 $xtpl->assign("MERGED_LINKS", implode(',', $exclude));
@@ -280,7 +282,10 @@ foreach ($temp_field_array as $field_array) {
             $field_name=null;
             switch ($field_check) {
                 case ('bool') :
-                    if (($mergeBeanArray[$id]->$field_array['name'] == '1' || $mergeBeanArray[$id]->$field_array['name'] == 'yes' || $mergeBeanArray[$id]->$field_array['name'] == 'on') && !empty($mergeBeanArray[$id]->$field_array['name'])) {
+                    if ((($mergeBeanArray[$id]->{$field_array['name']} == '1')
+                            || ($mergeBeanArray[$id]->{$field_array['name']} == 'yes')
+                            || ($mergeBeanArray[$id]->{$field_array['name']} == 'on'))
+                        && !empty($mergeBeanArray[$id]->{$field_array['name']})) {
                         $xtpl->assign("FIELD_VALUE", " checked");
                     } else {
                         $xtpl->assign("FIELD_VALUE", "");
@@ -288,31 +293,36 @@ foreach ($temp_field_array as $field_array) {
                     $field_name="main.".$section_name.".merge_cell_field_value_checkbox";
                     break;
                 case ('enum') :
-                    if ($mergeBeanArray[$id]-> $field_array['name'] != '' and isset($field_array['options']) and isset($app_list_strings[$field_array['options']][$mergeBeanArray[$id]-> $field_array['name']])) {
-                        display_field_value( $app_list_strings[$field_array['options']][$mergeBeanArray[$id]-> $field_array['name']]);
+                    if (($mergeBeanArray[$id]->{$field_array['name']} != '')
+                        && isset($field_array['options'])
+                        && isset($app_list_strings[$field_array['options']][$mergeBeanArray[$id]->{$field_array['name']}])) {
+                        display_field_value( $app_list_strings[$field_array['options']][$mergeBeanArray[$id]->{$field_array['name']}]);
                     } else {
-                        display_field_value($mergeBeanArray[$id]-> $field_array['name']);
+                        display_field_value($mergeBeanArray[$id]->{$field_array['name']});
                     }
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
                 case ('multienum') :
-                    if ($mergeBeanArray[$id]-> $field_array['name'] != '' and isset($field_array['options']) and isset($app_list_strings[$field_array['options']][$mergeBeanArray[$id]-> $field_array['name']])) {
-                        display_field_value(str_replace("^","",$app_list_strings[$field_array['options']][$mergeBeanArray[$id]-> $field_array['name']]));
+                    if (($mergeBeanArray[$id]->{$field_array['name']} != '')
+                        && isset($field_array['options'])
+                        && isset($app_list_strings[$field_array['options']][$mergeBeanArray[$id]->{$field_array['name']}])) {
+                        display_field_value(str_replace("^","",$app_list_strings[$field_array['options']][$mergeBeanArray[$id]->{$field_array['name']}]));
                     } else {
-                        display_field_value(str_replace("^","",$mergeBeanArray[$id]-> $field_array['name']));
+                        display_field_value(str_replace("^","",$mergeBeanArray[$id]->{$field_array['name']}));
                     }
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
                 case ('relate') :
                 case ('link') :
                     $related_name=false;
-                    if (empty($mergeBeanArray[$id]-> $field_array['name']) && !empty($mergeBeanArray[$id]-> $field_array['id_name'])) {
-                       $related_name=get_related_name($field_array,$mergeBeanArray[$id]-> $field_array['id_name']);
+                    if (empty($mergeBeanArray[$id]->{$field_array['name']})
+                        && !empty($mergeBeanArray[$id]->{$field_array['id_name']})) {
+                        $related_name = get_related_name($field_array, $mergeBeanArray[$id]->{$field_array['id_name']});
                        if ($related_name !== false) {
-                            $mergeBeanArray[$id]-> $field_array['name']=$related_name;
+                            $mergeBeanArray[$id]->{$field_array['name']} = $related_name;
                        }
                     }
-               	    display_field_value($mergeBeanArray[$id]-> $field_array['name']);
+                    display_field_value($mergeBeanArray[$id]->{$field_array['name']});
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
                 case ('teamset') :
@@ -321,7 +331,7 @@ foreach ($temp_field_array as $field_array) {
 					$field_name="main.".$section_name.".merge_cell_field_value";
 	            	break;
                 default :
-                    display_field_value($mergeBeanArray[$id]-> $field_array['name']);
+                    display_field_value($mergeBeanArray[$id]->{$field_array['name']});
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
             }
@@ -331,15 +341,18 @@ foreach ($temp_field_array as $field_array) {
             //for setting all the values for merge
             if ($field_check == 'relate' or $field_check == 'link') {
                 $temp_array = Array ();
-                $json_data['popup_fields'] = Array ($field_array['name'] => $mergeBeanArray[$id]-> $field_array['name'], $field_array['id_name'] => $mergeBeanArray[$id]-> $field_array['id_name'],);
+                $json_data['popup_fields'] = array(
+                    $field_array['name'] => $mergeBeanArray[$id]->{$field_array['name']},
+                    $field_array['id_name'] => $mergeBeanArray[$id]->{$field_array['id_name']}
+                );
             } else if($field_check == 'teamset') {
             	$json_data['field_value'] = TeamSetManager::getCommaDelimitedTeams($mergeBeanArray[$id]->team_set_id, $mergeBeanArray[$id]->team_id, true);
             	$json_data['field_value2'] = TeamSetManager::getTeamsFromSet($mergeBeanArray[$id]->team_set_id);
             	$json_data['field_value3'] =  $mergeBeanArray[$id]->team_set_id;
             } else if($field_check == 'multienum') {
-                $json_data['field_value'] = unencodeMultienum($mergeBeanArray[$id]-> $field_array['name']);
+                $json_data['field_value'] = unencodeMultienum($mergeBeanArray[$id]->{$field_array['name']});
             } else {
-                $json_data['field_value'] = $mergeBeanArray[$id]-> $field_array['name'];
+                $json_data['field_value'] = $mergeBeanArray[$id]->{$field_array['name']};
             }
             $encoded_json_data = $json->encode($json_data);
             $xtpl->assign('ENCODED_JSON_DATA', $encoded_json_data);

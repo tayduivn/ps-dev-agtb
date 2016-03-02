@@ -21,9 +21,9 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalLayoutView extends ViewLayoutView
 {
-	function ViewPortalLayoutView($bean = null, $view_object_map = array(), Request $request = null)
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
 	{
-		parent::SugarView($bean, $view_object_map, $request);
+        parent::__construct($bean, $view_object_map, $request);
 		$GLOBALS['log']->debug('in ViewPortalLayoutView');
 		$this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\Mvc\ModuleName');
 		$this->editLayout = $this->request->getValidInputRequest('view', 'Assert\ComponentName');

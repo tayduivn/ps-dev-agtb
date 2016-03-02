@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-01-22 - avlasov - PHP 7 compatibility
+
 r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
 
 r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
@@ -96,7 +98,7 @@ class Config_File {
      *
      * @param string $config_path (optional) path to the config files
      */
-    function Config_File($config_path = NULL)
+    public function __construct($config_path = NULL)
     {
         if (isset($config_path))
             $this->set_path($config_path);

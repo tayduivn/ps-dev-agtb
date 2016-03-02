@@ -39,7 +39,8 @@ class Common {
 	var $timedate;
 
 	//class constructor.
-	function Common() {
+    public function __construct()
+    {
 	  global $db;
 	  $this->db = $db;
 	  if (empty($this->db)) {

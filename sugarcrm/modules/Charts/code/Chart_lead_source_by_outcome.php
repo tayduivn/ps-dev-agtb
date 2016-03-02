@@ -27,10 +27,6 @@ class Chart_lead_source_by_outcome
 {
 	var $modules = array('Opportunities');
 	var $order = 0;
-function Chart_lead_source_by_outcome()
-{
-
-}
 
 function draw($extra_tools)
 {
@@ -420,5 +416,3 @@ global  $timedate;
 		return array( 'lead_source', 'sales_stage' );
 	}
 }
-
-?>

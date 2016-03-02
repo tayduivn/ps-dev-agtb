@@ -18,11 +18,6 @@ require_once('include/MVC/View/views/view.list.php');
 require_once('include/connectors/ConnectorFactory.php');
 
 class ViewRetrieveSource extends ViewList {
-   
- 	function ViewRetrieveSource(){
- 		parent::ViewList();
- 	}
-
     function display() {
 
         $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');

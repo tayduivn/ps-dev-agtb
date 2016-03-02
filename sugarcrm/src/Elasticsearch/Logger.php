@@ -64,6 +64,13 @@ class Logger extends BaseLogger
             );
             $this->log(LogLevel::DEBUG, $msg);
         }
+
+        if (!empty($GLOBALS['sugar_config']['xhprof_config'])) {
+            \SugarXHprof::getInstance()->trackElasticQuery(array(
+                $request->getMethod(),
+                $info['url'],
+            ), $request->getData(), $response->getQueryTime());
+        }
     }
 
     /**

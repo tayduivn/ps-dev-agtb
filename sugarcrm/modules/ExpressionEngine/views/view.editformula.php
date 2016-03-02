@@ -14,13 +14,14 @@ require_once('modules/ExpressionEngine/formulaHelper.php');
 
 class ViewEditFormula extends SugarView
 {
-	function ViewEditFormula(){
+    public function __construct()
+    {
 		$this->options['show_footer'] = false;
 		if (isset ($_REQUEST['embed']) && $_REQUEST['embed'])
 		{
 			$this->options['show_header'] = false;
 		}
-		parent::SugarView();
+        parent::__construct();
 
  	}
 

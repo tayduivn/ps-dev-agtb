@@ -102,7 +102,7 @@ class Relationship extends SugarBean
      * Retrieving by modules is impossible as multiple relationships may exist between the same two modules.
      * Plese interact only through 'link' fields on SugarBean objects
      */
-    public function retrieve_by_modules($lhs_module, $rhs_module, $db, $type = '')
+    public static function retrieve_by_modules($lhs_module, $rhs_module, $db, $type = '')
     {
         $srf = SugarRelationshipFactory::getInstance();
         $rels = $srf->getRelationshipsBetweenModules($lhs_module, $rhs_module);

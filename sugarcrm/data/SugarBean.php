@@ -1194,7 +1194,7 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    function removeRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir)
+    public static function removeRelationshipMeta($key, $db, $tablename, $dictionary, $module_dir)
     {
         //load the module dictionary if not supplied.
         if ((!isset($dictionary) or empty($dictionary)) && !empty($module_dir))
@@ -1256,7 +1256,7 @@ class SugarBean
      *
      *  Internal function, do not override.
      */
-    function createRelationshipMeta($key,$db,$tablename,$_,$module_dir,$iscustom=false)
+    public static function createRelationshipMeta($key, $db, $tablename, $_, $module_dir, $iscustom = false)
     {
         $GLOBALS['log']->deprecated("Deprecated function createRelationshipMeta called");
     }
@@ -1643,7 +1643,9 @@ class SugarBean
             if ($this->db->tableExists($this->table_name. '_cstm'))
             {
                 $this->db->dropTableName($this->table_name. '_cstm');
-                DynamicField::deleteCache();
+                if (isset($this->custom_fields)) {
+                    $this->custom_fields->deleteCache();
+                }
             }
             if ($this->db->tableExists($this->get_audit_table_name())) {
                 $this->db->dropTableName($this->get_audit_table_name());
@@ -2560,7 +2562,7 @@ class SugarBean
                             if (!empty($this->rel_fields_before_value[$idName])) {
                                 //if before value is not empty then attempt to delete relationship
                                 $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
-                                $success = $this->$def ['link']->delete($this->id, $this->rel_fields_before_value[$def ['id_name']]);
+                                $success = $this->{$def['link']}->delete($this->id, $this->rel_fields_before_value[$def['id_name']]);
                                 // just need to make sure it's true and not an array as it's possible to return an array
                                 if($success == true) {
                                     $modified_relationships['remove']['success'][] = $def['link'];
@@ -2571,7 +2573,7 @@ class SugarBean
                             }
 
                             if (!empty($newValue) && is_string($newValue)) {
-                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}");
+                                $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->{$def['id_name']}}");
 
                                 $success = $this->$linkField->add($newValue);
 
@@ -3184,8 +3186,9 @@ class SugarBean
             if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset($def['save'])) {
                 if (isset($this->$key)) {
                     $this->rel_fields_before_value[$key]=$this->$key;
-                    if (isset($this->$def [ 'id_name']))
-                        $this->rel_fields_before_value[$def [ 'id_name']]=$this->$def [ 'id_name'];
+                    if (isset($this->{$def['id_name']})) {
+                        $this->rel_fields_before_value[$def['id_name']] = $this->{$def['id_name']};
+                    }
                 }
                 else
                     $this->rel_fields_before_value[$key]=null;
@@ -4081,9 +4084,17 @@ class SugarBean
      * Internal Function, do not overide.
      * @deprecated Use SugarQuery & $this->fetchFromQuery() instead
      */
-    function get_union_related_list($parentbean, $order_by = "", $sort_order='', $where = "",
-    $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $subpanel_def)
-    {
+    public static function get_union_related_list(
+        $parentbean,
+        $order_by = "",
+        $sort_order = '',
+        $where = "",
+        $row_offset = 0,
+        $limit = -1,
+        $max = -1,
+        $show_deleted = 0,
+        $subpanel_def
+    ) {
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
@@ -4549,8 +4560,7 @@ class SugarBean
             if ($this->is_relate_field($field))
             {
                 $this->load_relationship($data['link']);
-                if(!empty($this->$data['link']))
-                {
+                if (!empty($this->{$data['link']})) {
                     $params = array();
                     if(empty($join_type))
                     {
@@ -4578,7 +4588,7 @@ class SugarBean
                         $params['join_table_link_alias'] = 'jtl' . $jtcount;
                     }
                     $join_primary = !isset($data['join_primary']) || $data['join_primary'];
-                    $join = $this->$data['link']->getJoin($params, true);
+                    $join = $this->{$data['link']}->getJoin($params, true);
                     $used_join_key[] = $join['rel_key'];
                     $table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
 
@@ -6055,7 +6065,7 @@ class SugarBean
      * Let implementing classes to fill in row specific columns of a list view form
      *
      */
-    function list_view_parse_additional_sections(&$list_form)
+    public function list_view_parse_additional_sections(&$list_form)
     {
     }
 	/*
@@ -6688,15 +6698,6 @@ class SugarBean
     function bean_implements($interface)
     {
         return false;
-    }
-
-    /**
-     * static method for checking if bean implements $interface
-     * @param $interface
-     * @return bool
-     */
-    static function bean_implements_static($interface) {
-        return static::bean_implements($interface);
     }
 
     /**
@@ -7474,7 +7475,7 @@ class SugarBean
 
                 //check to see that link exists
                 if (!empty($data['link']) && $this->load_relationship($data['link'])) {
-                    $type = !empty($data['export_link_type']) ? $data['export_link_type'] : $this->$data['link']->getType();
+                    $type = !empty($data['export_link_type']) ? $data['export_link_type'] : $this->{$data['link']}->getType();
 
                     //filter out relationships that can point to multiple records
                     if ($type != "one") {

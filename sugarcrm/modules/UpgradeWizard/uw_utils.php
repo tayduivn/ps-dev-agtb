@@ -2664,7 +2664,7 @@ function repairDBForUpgrade($execute=false,$path=''){
 	global $dictionary;
 	set_time_limit(3600);
 
-	$db = &DBManagerFactory::getInstance();
+    $db = DBManagerFactory::getInstance();
 	$sql = '';
 	VardefManager::clearVardef();
 	require_once('include/ListView/ListView.php');
@@ -2745,7 +2745,7 @@ function upgradeDashletsForSalesAndMarketing() {
         'obm_ids' => 'OutcomeByMonthDashlet');
 
 	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
-   	$db = &DBManagerFactory::getInstance();
+    $db = DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
 
    	while($row = $db->fetchByAssoc($result)) {
@@ -3024,7 +3024,7 @@ function upgradeUserPreferences() {
 
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && preg_match('/^SugarCE.*?(Pro|Ent|Corp|Ult)$/', $_SESSION['upgrade_from_flavor']));
 
-   	$db = &DBManagerFactory::getInstance();
+    $db = DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users WHERE " . User::getLicensedUsersWhere());
    	while($row = $db->fetchByAssoc($result))
     {

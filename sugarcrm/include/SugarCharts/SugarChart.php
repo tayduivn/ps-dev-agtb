@@ -39,7 +39,7 @@ class SugarChart
 
     public function __construct()
     {
-        $this->db = &DBManagerFactory::getInstance();
+        $this->db = DBManagerFactory::getInstance();
         $this->ss = new Sugar_Smarty();
 
         $this->chart_yAxis['yMin'] = 0;

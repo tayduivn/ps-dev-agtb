@@ -16,7 +16,7 @@ class S_428_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
         './modules/Accounts/Account.php' => 'fakeMD5'
     );
 
-    public function isStockBWCModule()
+    public function isStockBWCModule($module)
     {
         return false;
     }

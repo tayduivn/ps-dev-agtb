@@ -24,11 +24,4 @@ class Group extends User {
 	public function __construct() {
 		parent::__construct();
 	}
-
-	/** 
-	 * overrides SugarBean method
-	 */
-	function mark_deleted($id) {
-		SugarBean::mark_deleted($id);
-	}
-} // end class def 
+}

@@ -19,11 +19,12 @@ require_once 'include/Dashlets/DashletGeneric.php';
 require_once 'modules/pmse_Inbox/pmse_Inbox.php';
 
 class pmse_InboxDashlet extends DashletGeneric {
-    function pmse_InboxDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
 		global $current_user, $app_strings;
 		require 'modules/pmse_Inbox/metadata/dashletviewdefs.php';
 
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'pmse_Inbox');
 

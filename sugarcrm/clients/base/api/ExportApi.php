@@ -44,7 +44,7 @@ class ExportApi extends SugarApi
      * @param $args array The arguments array passed in from the API
      * @return String
      */
-    public function export(ServiceBase $api, array $args)
+    public function export(ServiceBase $api, array $args = array())
     {
         $seed = BeanFactory::newBean($args['module']);
 

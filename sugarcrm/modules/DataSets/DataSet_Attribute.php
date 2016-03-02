@@ -111,7 +111,7 @@ class DataSet_Attribute extends SugarBean {
         return "$this->display_name";
     }
 
-    function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

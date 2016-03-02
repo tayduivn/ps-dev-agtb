@@ -50,7 +50,6 @@ class Bug47722Test extends Sugar_PHPUnit_Framework_TestCase
         
         $sfr = new SugarFieldRelate('relate');
         $value = $sfr->importSanitize($value, $vardef, $focus, $settings);
-        $this->assertEquals($focus->$vardef['id_name'], $this->contact->id);
+        $this->assertEquals($focus->{$vardef['id_name']}, $this->contact->id);
     }
 }
-?>

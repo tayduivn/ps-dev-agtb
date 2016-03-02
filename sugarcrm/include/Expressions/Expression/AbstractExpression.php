@@ -58,7 +58,8 @@ abstract class AbstractExpression
 	/**
 	 * Constructs an Expression object given the parameters.
 	 */
-	function AbstractExpression($params=null) {
+    public function __construct($params=null)
+    {
         self::initBoolConstants();
 		// if the array contains only one value, then set params equal to that value
 		if ($this->getParamCount() == 1 && is_array($params) && sizeof($params) == 1) {

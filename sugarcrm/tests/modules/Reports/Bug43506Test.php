@@ -124,7 +124,7 @@ class Bug43506Test extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $report = new Report($content);
-        $report->db = &DBManagerFactory::getInstance('reports');
+        $report->db = DBManagerFactory::getInstance('reports');
         $report->layout_manager = new LayoutManager();
         $report->layout_manager->default_widget_name = 'ReportField';
         $report->layout_manager->setAttributePtr('reporter', $report);

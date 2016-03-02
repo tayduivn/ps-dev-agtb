@@ -35,10 +35,6 @@ class SubPanelViewTeams {
 		$this->hideNewButton = $value;
 	}
 
-	function SubPanelViewTeams() 
-    {
-	}
-
 	function getHeaderText($action, $currentModule){
 		global $app_strings;
 		$button  = "<form border='0' action='index.php' method='post' name='TeamsDetailView' id='TeamsDetailView'>\n";
@@ -72,4 +68,3 @@ class SubPanelViewTeams {
 		$ListView->processListView($this->users_list, "users", "USER");
 	}
 }
-?>

@@ -20,7 +20,7 @@ class ParserSearchFields extends ModuleBuilderParser
 	var $searchFields;
 	var $packageKey; 
 	
-    function ParserSearchFields ($moduleName, $packageName='')
+    public function __construct($moduleName, $packageName = '')
     {
         $this->moduleName = $moduleName;
         if (!empty($packageName))

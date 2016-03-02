@@ -158,7 +158,7 @@ class Report
      */
     protected $request;
 
-    function Report($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
+    public function __construct($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;
         if (!isset($current_user) || empty($current_user)) {

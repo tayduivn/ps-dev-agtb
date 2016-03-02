@@ -66,11 +66,11 @@ class ForecastManagerWorksheetHooks
             $onlyQuotaChanged = true;
 
             foreach ($fields as $field) {
-                if ($field['type'] == 'currency' && preg_match('#\.[\d]{6}$#', $worksheet->$field['name']) === 0) {
-                    $worksheet->$field['name'] = SugarMath::init($worksheet->$field['name'], 6)->result();
+                if (($field['type'] == 'currency') && preg_match('#\.[\d]{6}$#', $worksheet->{$field['name']}) === 0) {
+                    $worksheet->{$field['name']} = SugarMath::init($worksheet->{$field['name']}, 6)->result();
                 }
 
-                if ($worksheet->fetched_row[$field['name']] !== $worksheet->$field['name']) {
+                if ($worksheet->fetched_row[$field['name']] !== $worksheet->{$field['name']}) {
                     if ($field['name'] !== 'quota') {
                         $onlyQuotaChanged = false;
                         break;

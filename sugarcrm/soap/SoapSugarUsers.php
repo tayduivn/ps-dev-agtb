@@ -96,7 +96,7 @@ function login($user_auth, $application){
 			LogicHook::initialize();
 			$GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
 			return array('id'=>-1, 'error'=>$error);
-	} else if(function_exists('mcrypt_cbc')){
+    } elseif (extension_loaded('mcrypt')) {
 		$password = decrypt_string($user_auth['password']);
         $authController = AuthenticationController::getInstance();
         $authController->loggedIn = false; // reset login attempt to try again with decrypted password
@@ -562,7 +562,7 @@ function set_entry($session,$module_name, $name_value_list){
 	}
 	foreach($name_value_list as $value){
         $GLOBALS['log']->debug($value['name']." : ".$value['value']);
-		$seed->$value['name'] = $value['value'];
+        $seed->{$value['name']} = $value['value'];
 	}
 	if(! $seed->ACLAccess('Save') || ($seed->deleted == 1  &&  !$seed->ACLAccess('Delete')))
 	{
@@ -1307,7 +1307,7 @@ function handle_set_relationship($set_relationship_value, $session='')
 	else{
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
     	if(!$key) {
-    	    $key = Relationship::retrieve_by_modules($module1, $module2, $GLOBALS['db']);
+            $key = $mod->retrieve_by_modules($module1, $module2, $GLOBALS['db']);
 
             // BEGIN SnapLogic fix for bug 32064
             if ($module1 == "Quotes" && $module2 == "ProductBundles") {
@@ -2179,7 +2179,7 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
             //allow string or int of 0 to be updated if set.
             if(!empty($val) || ($val==='0' || $val===0))
             {
-                $seed->$value['name'] = $val;
+                $seed->{$value['name']} = $val;
             }
             //Store all the values in dataValues Array to apply later
             $dataValues[$value['name']] = $val;

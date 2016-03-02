@@ -15,7 +15,7 @@
 class SugarPortalModule{
 	var $name;
 	
-	function SugarPortalModule($module)
+    public function __construct($module)
 	{
 	    global $app_list_strings;
         $moduleNames = array_change_key_case($app_list_strings['moduleList']);

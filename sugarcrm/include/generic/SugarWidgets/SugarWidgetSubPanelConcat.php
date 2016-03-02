@@ -17,7 +17,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetSubPanelConcat extends SugarWidgetField
 {
-	function displayList(&$layout_def)
+    public function displayList($layout_def)
 	{
 		$value='';
 		if (isset($layout_def['source']) and is_array($layout_def['source']) and isset($layout_def['fields']) and is_array($layout_def['fields'])) {
@@ -34,4 +34,3 @@ class SugarWidgetSubPanelConcat extends SugarWidgetField
 		return $value;
 	}
 }
-?>

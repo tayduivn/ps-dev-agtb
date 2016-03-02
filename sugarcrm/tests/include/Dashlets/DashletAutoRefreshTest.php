@@ -33,18 +33,18 @@ class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testIsAutoRefreshableIfRefreshable() 
     {
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
+        $dashlet = new Dashlet('unit_test_run');
         $dashlet->isRefreshable = true;
-        
-        $this->assertTrue($dashlet->isAutoRefreshable());
+
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($dashlet, 'isAutoRefreshable'));
     }
     
     public function testIsNotAutoRefreshableIfNotRefreshable() 
     {
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
+        $dashlet = new Dashlet('unit_test_run');
         $dashlet->isRefreshable = false;
-        
-        $this->assertFalse($dashlet->isAutoRefreshable());
+
+        $this->assertFalse(SugarTestReflection::callProtectedMethod($dashlet, 'isAutoRefreshable'));
     }
   
     public function testReturnCorrectAutoRefreshOptionsWhenMinIsSet() 
@@ -64,8 +64,8 @@ class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     
         $GLOBALS['sugar_config']['dashlet_auto_refresh_min'] = 60;
         
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
-        $options = $dashlet->getAutoRefreshOptions();
+        $dashlet = new Dashlet('unit_test_run');
+        $options = SugarTestReflection::callProtectedMethod($dashlet, 'getAutoRefreshOptions');
         $this->assertEquals(
             array(
                 '-1' 	=> 'Never',
@@ -95,8 +95,8 @@ class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
             );
         $langpack->save();
     
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
-        $options = $dashlet->getAutoRefreshOptions();
+        $dashlet = new Dashlet('unit_test_run');
+        $options = SugarTestReflection::callProtectedMethod($dashlet, 'getAutoRefreshOptions');
         $this->assertEquals(
             array(
                 '-1' 	=> 'Never',
@@ -114,55 +114,37 @@ class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testProcessAutoRefreshReturnsAutoRefreshTemplateNormally()
     {
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
+        $dashlet = new Dashlet('unit_test_run');
         $dashlet->isRefreshable = true;
         $_REQUEST['module'] = 'unit_test';
         $_REQUEST['action'] = 'unit_test';
         $dashlet->seedBean = new stdClass;
         $dashlet->seedBean->object_name = 'unit_test';
         
-        $this->assertNotEmpty($dashlet->processAutoRefresh());
+        $this->assertNotEmpty(SugarTestReflection::callProtectedMethod($dashlet, 'processAutoRefresh'));
     }
     
     public function testProcessAutoRefreshReturnsNothingIfDashletIsNotRefreshable()
     {
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
+        $dashlet = new Dashlet('unit_test_run');
         $dashlet->isRefreshable = false;
         $_REQUEST['module'] = 'unit_test';
         $_REQUEST['action'] = 'unit_test';
         $dashlet->seedBean = new stdClass;
         $dashlet->seedBean->object_name = 'unit_test';
         
-        $this->assertEmpty($dashlet->processAutoRefresh());
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($dashlet, 'processAutoRefresh'));
     }
     
     public function testProcessAutoRefreshReturnsNothingIfAutoRefreshingIsDisabled()
     {
-        $dashlet = new DashletAutoRefreshTestMock('unit_test_run');
+        $dashlet = new Dashlet('unit_test_run');
         $GLOBALS['sugar_config']['dashlet_auto_refresh_min'] = -1;
         $_REQUEST['module'] = 'unit_test';
         $_REQUEST['action'] = 'unit_test';
         $dashlet->seedBean = new stdClass;
         $dashlet->seedBean->object_name = 'unit_test';
         
-        $this->assertEmpty($dashlet->processAutoRefresh());
-    }
-}
-
-class DashletAutoRefreshTestMock extends Dashlet
-{
-    public function isAutoRefreshable() 
-    {
-        return parent::isAutoRefreshable();
-    }
-    
-    public function getAutoRefreshOptions() 
-    {
-        return parent::getAutoRefreshOptions();
-    }
-    
-    public function processAutoRefresh() 
-    {
-        return parent::processAutoRefresh();
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($dashlet, 'processAutoRefresh'));
     }
 }

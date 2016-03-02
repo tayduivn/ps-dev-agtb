@@ -25,7 +25,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->_lvd = new ListViewDisplayMock();
+        $this->_lvd = new ListViewDisplay();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         global $sugar_config;
@@ -319,45 +319,42 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'testtest';
-        $output = $this->_lvd->buildExportLink();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildExportLink');
 
         $this->assertContains("return sListView.send_form(true, 'testtest', 'index.php?entryPoint=export',",$output);
     }
 
     public function testBuildMassUpdateLink()
     {
-        $output = $this->_lvd->buildMassUpdateLink();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMassUpdateLink');
         
         $this->assertRegExp("/.*document\.getElementById\(['\"]massupdate_form['\"]\)\.style\.display\s*=\s*['\"]['\"].*/", $output);
     }
 
-    public function testComposeEmailIfFieldDefsNotAnArray()
+    public function composeEmailEmptyDataProvider()
+    {
+        return array(
+            array(false),
+            array(array()),
+            array(
+                array(
+                    'field1' => array(
+                        'type' => 'text',
+                    ),
+                )
+            )
+        );
+    }
+
+    /**
+     * @dataProvider composeEmailEmptyDataProvider
+     */
+    public function testComposeEmailEmpty($fieldDefs)
     {
         $this->_lvd->seed = new stdClass;
-        $this->_lvd->seed->field_defs = false;
+        $this->_lvd->seed->field_defs = $fieldDefs;
         
-        $this->assertEmpty($this->_lvd->buildComposeEmailLink(0));
-    }
-
-    public function testComposeEmailIfFieldDefsAreAnEmptyArray()
-    {
-        $this->_lvd->seed = new stdClass;
-        $this->_lvd->seed->field_defs = array();
-
-        $this->assertEmpty($this->_lvd->buildComposeEmailLink(0));
-    }
-
-    public function testComposeEmailIfFieldDefsDoNotHaveAnEmailAddressesRelationship()
-    {
-        $this->_lvd->seed = new stdClass;
-        $this->_lvd->seed->object_name = 'foobar';
-        $this->_lvd->seed->field_defs = array(
-            'field1' => array(
-                'type' => 'text',
-                ),
-            );
-
-        $this->assertEmpty($this->_lvd->buildComposeEmailLink(0));
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(0)));
     }
 
     public function testComposeEmailIfFieldDefsIfUsingSugarEmailClient()
@@ -374,7 +371,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
         $GLOBALS['current_user']->setPreference('email_link_type','sugar');
 
-        $output = $this->_lvd->buildComposeEmailLink(5);
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
 
         $this->assertContains(', \'foobarfoobar\', \'5\', ',$output);
 
@@ -398,7 +395,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
         $GLOBALS['current_user']->setPreference('email_link_type','mailto');
 
-        $output = $this->_lvd->buildComposeEmailLink(5);
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
 
         $this->assertContains('sListView.use_external_mail_client',$output);
 
@@ -408,7 +405,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testBuildDeleteLink()
     {
-        $output = $this->_lvd->buildDeleteLink();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildDeleteLink');
 
         $this->assertContains("return sListView.send_mass_update",$output);
     }
@@ -433,7 +430,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['dictionary']['foobar']['duplicate_merge'] = false;
         $GLOBALS['current_user']->is_admin = 1;
 
-        $this->assertEmpty($this->_lvd->buildMergeDuplicatesLink());
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink'));
     }
 
     public function testBuildMergeDuplicatesLink()
@@ -444,7 +441,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['dictionary']['foobar']['duplicate_merge'] = true;
         $GLOBALS['current_user']->is_admin = 1;
 
-        $output = $this->_lvd->buildMergeDuplicatesLink();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink');
 
         $this->assertContains('"foobarfoobar", "");}', htmlspecialchars_decode($output));
     }
@@ -464,7 +461,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         ), array());
         SugarTestReflection::setProtectedValue($this->_lvd, 'request', $request);
 
-        $output = $this->_lvd->buildMergeDuplicatesLink();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink');
 
         $this->assertContains(
             '"foobarfoobar", "&return_module=Accounts&return_action=bar&return_id=1");}',
@@ -478,7 +475,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->seed->module_dir = 'foobarfoobar';
         $GLOBALS['current_user']->setPreference('mailmerge_on','off');
 
-        $this->assertEmpty($this->_lvd->buildMergeLink());
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink'));
     }
 
     public function testBuildMergeLinkWhenSystemDisabledMailMerge()
@@ -495,7 +492,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $settings_cache['system_mailmerge_on'] = false;
         sugar_cache_put('admin_settings_cache',$settings_cache);
 
-        $this->assertEmpty($this->_lvd->buildMergeLink());
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink'));
 
         sugar_cache_clear('admin_settings_cache');
     }
@@ -514,7 +511,9 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $settings_cache['system_mailmerge_on'] = true;
         sugar_cache_put('admin_settings_cache',$settings_cache);
 
-        $this->assertEmpty($this->_lvd->buildMergeLink(array('foobar' => 'foobar')));
+        $this->assertEmpty(
+            SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', array(array('foobar' => 'foobar')))
+        );
 
         sugar_cache_clear('admin_settings_cache');
     }
@@ -533,7 +532,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $settings_cache['system_mailmerge_on'] = true;
         sugar_cache_put('admin_settings_cache',$settings_cache);
 
-        $output = $this->_lvd->buildMergeLink(array('foobarfoobar' => 'foobarfoobar'));
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', array(array('foobarfoobar' => 'foobarfoobar')));
         $this->assertContains("index.php?action=index&module=MailMerge&entire=true",$output);
 
         sugar_cache_clear('admin_settings_cache');
@@ -545,7 +544,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'foobarfoobar';
 
-        $output = $this->_lvd->buildTargetList();
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildTargetList');
 
         $this->assertContains("input.setAttribute ( 'name' , 'module' );			    input.setAttribute ( 'value' , 'foobarfoobar' );",$output);
         $this->assertContains("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '".base64_encode(serialize($_REQUEST))."' );",$output);
@@ -652,7 +651,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $data = $this->_lvd->setupHTMLFields($data);
+        $data = SugarTestReflection::callProtectedMethod($this->_lvd, 'setupHTMLFields', array($data));
 
         $this->assertEquals($expected, $data['data'][0][$field], 'HTML Field value not set');
     }
@@ -683,7 +682,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->lvd = new stdClass;
         $this->_lvd->lvd->seed = new stdClass;
         $this->_lvd->lvd->seed->field_defs = $fieldDefs;
-        $this->_lvd->fillDisplayColumnsWithVardefs();
+        SugarTestReflection::callProtectedMethod($this->_lvd, 'fillDisplayColumnsWithVardefs');
         foreach ($this->_lvd->displayColumns as $columnName => $def) {
             $seedName = strtolower($columnName);
             $seedDef = $this->_lvd->lvd->seed->field_defs[$seedName];
@@ -728,53 +727,5 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
                 ))
             ),
         );
-    }
-}
-
-class ListViewDisplayMock extends ListViewDisplay
-{
-    public function buildExportLink()
-    {
-        return parent::buildExportLink();
-    }
-
-    public function buildMassUpdateLink()
-    {
-        return parent::buildMassUpdateLink();
-    }
-
-    public function buildComposeEmailLink($totalCount)
-    {
-        return parent::buildComposeEmailLink($totalCount);
-    }
-
-    public function buildDeleteLink()
-    {
-        return parent::buildDeleteLink();
-    }
-
-    public function buildMergeDuplicatesLink()
-    {
-        return parent::buildMergeDuplicatesLink();
-    }
-
-    public function buildMergeLink(array $modules_array = null)
-    {
-        return parent::buildMergeLink($modules_array);
-    }
-
-    public function buildTargetList()
-    {
-        return parent::buildTargetList();
-    }
-
-    public function fillDisplayColumnsWithVardefs()
-    {
-        return parent::fillDisplayColumnsWithVardefs();
-    }
-
-    public function setupHTMLFields($data)
-    {
-        return parent::setupHTMLFields($data);
     }
 }

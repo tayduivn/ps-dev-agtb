@@ -181,9 +181,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
 
         // set the name field as Read Only
-        $aclField = new ACLField();
-
-        $aclField->setAccessControl('Accounts', $role->id, 'website', -99);
+        ACLField::setAccessControl('Accounts', $role->id, 'website', -99);
 
         unset($_SESSION['ACL']);
 

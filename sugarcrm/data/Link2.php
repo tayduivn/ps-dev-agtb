@@ -812,7 +812,7 @@ class Link2 {
      *
      */
     public function _get_alternate_key_fields($table_name) {
-        $indices=Link::_get_link_table_definition($table_name,'indices');
+        $indices = Link::get_link_table_definition($table_name, null, 'indices');
         if (!empty($indices)) {
             foreach ($indices as $index) {
                 if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {

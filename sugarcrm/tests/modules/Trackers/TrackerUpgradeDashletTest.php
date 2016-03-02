@@ -129,7 +129,7 @@ private function upgradeUserPreferencesCopy() {
 
 	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
 	
-   	$db = &DBManagerFactory::getInstance();
+    $db = DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result)){
 	      $current_user = new User();

@@ -55,8 +55,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 */
 
-require_once('include/parsecsv.lib.php');
-
 class CsvAutoDetect {
 
     protected $_parser = null;
@@ -165,6 +163,7 @@ class CsvAutoDetect {
         if (!$found_setting) {
             $depth = 1;
             $enclosure = "'";
+            $this->_parser->enclosure = $enclosure;
             $delimiter2 = $this->_parser->auto($this->_csv_file, true, null, null, $enclosure);
             if (strlen($delimiter2) == 1) { // this means parsing ok
                 $singleQuoteParsedOK = true;

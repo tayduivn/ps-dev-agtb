@@ -22,6 +22,21 @@
             'KBContent'
         ]);
         this._super('initialize', [options]);
-    }
+    },
 
+    /**
+     * Using the model returned from the API call, build the success message.
+     * @param {Data.Bean} model KBContents bean for record that was just created.
+     * @return {string} The success message.
+     */
+    buildSuccessMessage: function(model) {
+        var message = this._super('buildSuccessMessage', [model]);
+
+        // If user has no access to view record - don't show record link for him
+        if (!app.acl.hasAccessToModel('view', this.model)) {
+            message = message.replace(/<\/?a[^>]+>/g, '');
+        }
+
+        return message;
+    }
 })

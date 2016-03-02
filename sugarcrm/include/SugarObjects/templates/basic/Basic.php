@@ -13,15 +13,6 @@
 class Basic extends SugarBean
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
-    /**
      * @see SugarBean::get_summary_text()
      */
     public function get_summary_text()

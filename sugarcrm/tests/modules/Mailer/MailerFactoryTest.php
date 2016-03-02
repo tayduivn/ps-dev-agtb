@@ -141,7 +141,7 @@ class MailerFactoryTest_MockMailerFactory extends MailerFactory
     public static $outboundEmailConfiguration;
     public static $strategies;
 
-    public static function getOutboundEmailConfiguration()
+    public static function getOutboundEmailConfiguration(User $user)
     {
         return self::$outboundEmailConfiguration;
     }
@@ -158,7 +158,7 @@ class MailerFactoryTest_MockMailerFactory extends MailerFactory
 
 class MockMailerFactoryThrowsException extends MailerFactory
 {
-    public static function getOutboundEmailConfiguration()
+    public static function getOutboundEmailConfiguration(User $user)
     {
         throw new MailerException();
     }

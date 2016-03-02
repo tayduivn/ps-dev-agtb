@@ -18,11 +18,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyMeetingsDashlet extends DashletGeneric {
-    function MyMeetingsDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
         global $current_user, $app_strings;
 		require('modules/Meetings/Dashlets/MyMeetingsDashlet/MyMeetingsDashlet.data.php');
 
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_MEETINGS', 'Meetings');
 
@@ -166,5 +167,3 @@ class MyMeetingsDashlet extends DashletGeneric {
 
     }
 }
-
-?>

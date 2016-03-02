@@ -253,7 +253,7 @@ class HistoryApi extends RelateApi
         return $args;
     }
 
-    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options)
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed = null)
     {
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
 

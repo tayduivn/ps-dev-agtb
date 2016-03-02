@@ -45,7 +45,7 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
         return array('6.5.0', 'ent');
     }
 
-    public function ping()
+    public function ping($data)
     {
         // nothing to do
     }

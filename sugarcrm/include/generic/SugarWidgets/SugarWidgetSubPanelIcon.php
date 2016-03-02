@@ -22,7 +22,7 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 		return '&nbsp;';
 	}
 
-	function displayList(&$layout_def)
+    public function displayList($layout_def)
 	{
 		global $app_strings;
 		global $app_list_strings;
@@ -134,4 +134,3 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 		return $ret;
 	}
 }
-?>

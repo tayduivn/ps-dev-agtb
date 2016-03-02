@@ -138,7 +138,7 @@ class SidecarLayoutdefsMetaDataUpgraderMock extends SidecarLayoutdefsMetaDataUpg
      * @param string $module Module name.
      * @param array $data
      */
-    public function loadSubpanelData($module, Array $data)
+    public function loadSubpanelData($module, array $data = array())
     {
         self::$supanelData[$module] = $data;
     }
@@ -149,7 +149,7 @@ class SidecarLayoutdefsMetaDataUpgraderMock extends SidecarLayoutdefsMetaDataUpg
      * @param array $data $layout_defs[{module}]['subpanel_setup'].
      * @return void
      */
-    public function setLegacyViewdefs(Array $data)
+    public function setLegacyViewdefs(array $data = array())
     {
         $this->legacyViewdefs = $data;
     }

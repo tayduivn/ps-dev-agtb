@@ -66,7 +66,7 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
      * @param int $panel What panel are we looking for?
      * @return array|bool
      */
-    protected function getPanel($panel)
+    protected function getPanel($panel = null)
     {
         if (isset($this->_paneldefs[$panel])) {
             return $this->_paneldefs[$panel];

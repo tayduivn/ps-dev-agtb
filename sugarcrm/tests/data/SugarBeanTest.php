@@ -449,9 +449,12 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCheckUserAccessWithoutACLAccess()
     {
         $user = UserHelper::createAnonymousUser();
-        BeanFactory::setBeanClass('Accounts', 'NoAccessAccount');
-
-        $account = BeanFactory::getBean('Accounts');
+        $account = $this->getMockBuilder('Account')
+            ->setMethods(array('ACLAccess'))
+            ->getMock();
+        $account->expects($this->any())
+            ->method('ACLAccess')
+            ->will($this->returnValue(false));
         $account->id = 'foo';
 
         $this->assertFalse($account->checkUserAccess($user));
@@ -1000,10 +1003,6 @@ class MockMysqlDb extends MssqlManager
 class BeanMockTestObjectName extends SugarBean
 {
     var $table_name = "my_table";
-
-    function BeanMockTestObjectName() {
-		parent::__construct();
-	}
 }
 
 class BeanIsRelateFieldMock extends SugarBean
@@ -1024,13 +1023,5 @@ class BeanFunctionFieldsMock extends SugarBean
     public static function toUpper($arg)
     {
         return strtoupper($arg);
-    }
-}
-
-class NoAccessAccount extends Account
-{
-    public function ACLAccess()
-    {
-        return false;
     }
 }

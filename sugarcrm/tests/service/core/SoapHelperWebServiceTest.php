@@ -77,6 +77,18 @@ public function testCheckQuery($errorObject, $query, $expected)
      $this->assertEquals($expected, $result, 'SoapHelperWebService->checkQuery functions as expected');
 }
 
+    public function testDecryptTripledesMethod()
+    {
+        $string = 'a0b0c0f0';
+        $key = '123456789012345678901234';
+        $key = substr(md5($key), 0, 24);
+        $iv = 'password';
+        $this->assertEquals(
+            '960bff7e0ea58290',
+            bin2hex(SoapHelperWebServices::decrypt_tripledes($string, $key, $iv))
+        );
+    }
+
 }
 
 /**

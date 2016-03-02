@@ -23,7 +23,8 @@ class TemplateHandler {
     var $cacheDir;
     var $templateDir = 'modules/';
     var $ss;
-    function TemplateHandler() {
+    public function __construct()
+    {
       $this->cacheDir = sugar_cached('');
     }
 
@@ -39,7 +40,8 @@ class TemplateHandler {
      * Helper function to remove all .tpl files in the cache directory
      *
      */
-    function clearAll() {
+    public static function clearAll()
+    {
     	global $beanList;
 		foreach($beanList as $module_dir =>$object_name){
                 TemplateHandler::clearCache($module_dir);
@@ -54,7 +56,8 @@ class TemplateHandler {
      * @param String $module The module directory to clear
      * @param String $view Optional view value (DetailView, EditView, etc.)
      */
-    function clearCache($module, $view=''){
+    public static function clearCache($module, $view = '')
+    {
         $cacheDir = create_cache_directory('modules/'. $module . '/');
         $d = dir($cacheDir);
         while($e = $d->read()){

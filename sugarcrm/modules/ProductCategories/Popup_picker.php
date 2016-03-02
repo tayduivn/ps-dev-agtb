@@ -46,16 +46,6 @@ require_once('modules/ProductCategories/TreeData.php');
 
 class Popup_Picker
 {
-
-
-    /*
-     *
-     */
-    function Popup_Picker()
-    {
-        ;
-    }
-
     function process_page()
     {
         global $mod_strings, $app_strings, $currentModule,
@@ -191,4 +181,3 @@ END;
 
 
 }
-?>

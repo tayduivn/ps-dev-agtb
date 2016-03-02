@@ -742,10 +742,10 @@ function process_advanced_actions(& $focus, $field, $meta_array, & $rel_this){
 		}
 
 		if($meta_array['ext1']=="Self"){
-			return $focus->$meta_array['value'];
+            return $focus->{$meta_array['value']};
 		}
 		if($meta_array['ext1']=="Manager"){
-			return get_manager_info($focus->$meta_array['value']);
+            return get_manager_info($focus->{$meta_array['value']});
 		}
 
 	}
@@ -760,7 +760,7 @@ function process_advanced_actions(& $focus, $field, $meta_array, & $rel_this){
 			}
 		//if value is current_team
 		}
-		return $focus->$meta_array['value'];
+        return $focus->{$meta_array['value']};
 	}
 
 	if($meta_array['adv_type']=='value_calc'){
