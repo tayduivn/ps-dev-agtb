@@ -1704,8 +1704,18 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        if (!$bean->assigned_user_id && $GLOBALS['current_user'] instanceof \User) {
-            $bean->assigned_user_id = $GLOBALS['current_user']->id;
+        if ($GLOBALS['current_user'] instanceof \User) {
+            if (!$bean->assigned_user_id) {
+                $bean->assigned_user_id = $GLOBALS['current_user']->id;
+            }
+
+            if (!$bean->created_by) {
+                $bean->created_by = $GLOBALS['current_user']->id;
+            }
+
+            if ($bean->created_by == $GLOBALS['current_user']->id) {
+                $bean->set_accept_status($GLOBALS['current_user'], 'accept');
+            }
         }
 
         if (isset($value['deleted'])) {
