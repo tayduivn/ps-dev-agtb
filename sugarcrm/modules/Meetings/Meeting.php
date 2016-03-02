@@ -235,7 +235,9 @@ class Meeting extends SugarBean {
             if ((empty($GLOBALS['installing']) || $GLOBALS['installing'] != true) &&
                 (!empty($this->assigned_user_id) &&
                     $this->assigned_user_id != $old_assigned_user_id &&
-                    ($this->fetched_row !== false || $this->assigned_user_id != $GLOBALS['current_user']->id))
+                    ($this->fetched_row !== false || $this->assigned_user_id != $GLOBALS['current_user']->id) &&
+                    ($this->repeat_parent_id && $this->isUpdate() || !$this->repeat_parent_id)
+                )
             ) {
                 $this->special_notification = true;
                 $check_notify = true;

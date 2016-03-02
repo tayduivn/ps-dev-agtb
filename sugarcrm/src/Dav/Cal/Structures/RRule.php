@@ -297,8 +297,8 @@ class RRule
     public function setUntil(\SugarDateTime $value)
     {
         if ($value != $this->getUntil()) {
-            $value->setTimezone(new \DateTimeZone('UTC'));
             $value = $this->normalizeUntil($value);
+            $value->setTimezone(new \DateTimeZone('UTC'));
             $until = $value->format('Ymd\THis\Z');
 
             $this->deleteParameter('COUNT');
