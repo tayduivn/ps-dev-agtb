@@ -85,6 +85,18 @@ var link_defs_<?php echo $module_name; ?> = new Object();
             $vname = $linked_field['vname'];
         }
 
+        //if the relationship module does not match the current module and a relationship side is defined
+        //then use the linked field module title if available.
+        $relationship_module = isset($linked_field['module']) ? $linked_field['module'] : '' ;
+        $relateFieldLabel = strtoupper('LBL_' . $field . '_FROM_' . $relationship_module . '_TITLE');
+        if ((!empty($relationship_module) && !empty($field)) &&
+            $currentModule != $relationship_module &&
+            !empty($linked_field['side']) &&
+            !empty($mod_strings[$relateFieldLabel])
+        ) {
+            $vname = $mod_strings[$relateFieldLabel];
+        }
+
         // In order to get the correct label, we have to track down and see if there is a name field and use that for the label.
         foreach ($module->field_defs as $idx => $fieldDef) {
             if (!isset($fieldDef['link'])) {
