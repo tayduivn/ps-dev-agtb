@@ -208,7 +208,7 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOrderStability()
     {
-        $msg = 'IBMDB2Manager is missing order_stability capability';
-        $this->assertTrue($this->_db->supports('order_stability'), $msg);
+        $msg = 'IBMDB2Manager should not have order_stability capability';
+        $this->assertFalse($this->_db->supports('order_stability'), $msg);
     }
 }

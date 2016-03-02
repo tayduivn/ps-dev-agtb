@@ -273,7 +273,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOrderStability()
     {
-        $msg = 'MysqlManager cannot have order_stability capability';
+        $msg = 'MysqlManager should not have order_stability capability';
         $this->assertFalse($this->_db->supports('order_stability'), $msg);
     }
 }
