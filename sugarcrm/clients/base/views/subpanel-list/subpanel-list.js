@@ -60,6 +60,7 @@
      * When parent recordlist's initialize is invoked (above), this will get called
      * and populate our the list's meta with the proper view subpanel metadata.
      *
+     * @private
      * @param {Object} options
      * @return {Object} The view metadata for this module's subpanel.
      */

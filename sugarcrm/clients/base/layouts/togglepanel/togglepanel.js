@@ -107,7 +107,9 @@
     },
 
     /**
-     * Get components from the metadata and declare toggles
+     * Get components from the metadata and declare toggles.
+     *
+     * @param {Object} options The Backbone.View initialization options.
      */
     processToggles: function(options) {
         var temp = {};

@@ -29,15 +29,6 @@
              * Create new shortcut session.
              */
             onAttach: function(layout) {
-                this._bindShortcutEvents(layout);
-            },
-
-            /**
-             * Binds events that this plugin uses.
-             *
-             * @param {View.Layout} layout
-             */
-            _bindShortcutEvents: function(layout) {
                 layout.on('init', _.bind(_createShortcutSession, this, layout));
             }
         });
