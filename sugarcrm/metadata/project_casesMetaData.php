@@ -9,23 +9,66 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// adding project-to-cases relationship
+
 $dictionary['projects_cases'] = array(
     'table' => 'projects_cases',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'case_id', 'type' => 'id'),
-        array('name' => 'project_id', 'type' => 'id'),
-        array('name' => 'date_modified', 'type' => 'datetime'),
-        array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'case_id' => array(
+            'name' => 'case_id',
+            'type' => 'id',
+        ),
+        'project_id' => array(
+            'name' => 'project_id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => false,
+        ),
     ),
-    'indices' => array (
-        array('name' => 'projects_cases_pk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' => 'idx_proj_case_proj', 'type' =>'index', 'fields'=>array('project_id')),
-        array('name' => 'idx_proj_case_case', 'type' =>'index', 'fields'=>array('case_id')),
-        array('name' => 'projects_cases_alt', 'type'=>'alternate_key', 'fields'=>array('project_id','case_id')),
+    'indices' => array(
+        array(
+            'name' => 'projects_cases_pk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_case_proj',
+            'type' => 'index',
+            'fields' => array(
+                'project_id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_case_case',
+            'type' => 'index',
+            'fields' => array(
+                'case_id',
+            ),
+        ),
+        array(
+            'name' => 'projects_cases_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'project_id',
+                'case_id',
+            ),
+        ),
     ),
-    'relationships' => array (
+    'relationships' => array(
         'projects_cases' => array(
             'lhs_module' => 'Project',
             'lhs_table' => 'project',
@@ -40,4 +83,3 @@ $dictionary['projects_cases'] = array(
         ),
     ),
 );
-?>

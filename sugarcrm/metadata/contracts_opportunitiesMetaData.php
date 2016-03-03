@@ -10,24 +10,51 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: contracts_opportunitiesMetaData.php 55782 2010-04-02 21:07:20Z clee $
-
-
 $dictionary['contracts_opportunities'] = array(
     'table' => 'contracts_opportunities',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'opportunity_id', 'type' => 'id'),
-        array('name' => 'contract_id', 'type' => 'id'),
-		array('name' => 'date_modified', 'type' => 'datetime'),
-		array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
-	),
-	'indices' => array (
-		array('name' => 'contracts_opp_pk', 'type' =>'primary', 'fields'=>array('id')),
-		array('name' => 'contracts_opp_alt', 'type'=>'alternate_key', 'fields'=>array('contract_id')),
-	),
-	'relationships' => array (
-		'contracts_opportunities' => array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'opportunity_id' => array(
+            'name' => 'opportunity_id',
+            'type' => 'id',
+        ),
+        'contract_id' => array(
+            'name' => 'contract_id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => false,
+        ),
+    ),
+    'indices' => array(
+        array(
+            'name' => 'contracts_opp_pk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'contracts_opp_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'contract_id',
+            ),
+        ),
+    ),
+    'relationships' => array(
+        'contracts_opportunities' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
             'lhs_key' => 'id',

@@ -10,23 +10,65 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: vardefs.php 13782 2006-06-06 17:58:55 +0000 (Tue, 06 Jun 2006) majed $
 $dictionary['projects_opportunities'] = array(
     'table' => 'projects_opportunities',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'opportunity_id', 'type' => 'id'),
-        array('name' => 'project_id', 'type' => 'id'),
-        array('name' => 'date_modified', 'type' => 'datetime'),
-        array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'opportunity_id' => array(
+            'name' => 'opportunity_id',
+            'type' => 'id',
+        ),
+        'project_id' => array(
+            'name' => 'project_id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => false,
+        ),
     ),
-    'indices' => array (
-        array('name' => 'projects_opportunities_pk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' => 'idx_proj_opp_proj', 'type' =>'index', 'fields'=>array('project_id')),
-        array('name' => 'idx_proj_opp_opp', 'type' =>'index', 'fields'=>array('opportunity_id')),
-        array('name' => 'projects_opportunities_alt', 'type'=>'alternate_key', 'fields'=>array('project_id','opportunity_id')),
+    'indices' => array(
+        array(
+            'name' => 'projects_opportunities_pk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_opp_proj',
+            'type' => 'index',
+            'fields' => array(
+                'project_id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_opp_opp',
+            'type' => 'index',
+            'fields' => array(
+                'opportunity_id',
+            ),
+        ),
+        array(
+            'name' => 'projects_opportunities_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'project_id',
+                'opportunity_id',
+            ),
+        ),
     ),
-    'relationships' => array (
+    'relationships' => array(
         'projects_opportunities' => array(
             'lhs_module' => 'Project',
             'lhs_table' => 'project',
@@ -41,4 +83,3 @@ $dictionary['projects_opportunities'] = array(
         ),
     ),
 );
-?>

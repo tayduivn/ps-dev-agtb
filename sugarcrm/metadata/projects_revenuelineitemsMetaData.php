@@ -9,32 +9,32 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// adding project-to-products relationship
+
 $dictionary['projects_revenuelineitems'] = array(
     'table' => 'projects_revenue_line_items',
     'fields' => array(
-        array(
+        'id' => array(
             'name' => 'id',
             'type' => 'id',
         ),
-        array(
+        'rli_id' => array(
             'name' => 'rli_id',
             'type' => 'id',
         ),
-        array(
+        'project_id' => array(
             'name' => 'project_id',
             'type' => 'id',
         ),
-        array(
+        'date_modified' => array(
             'name' => 'date_modified',
-            'type' => 'datetime'
+            'type' => 'datetime',
         ),
-        array(
+        'deleted' => array(
             'name' => 'deleted',
             'type' => 'bool',
             'len' => '1',
             'default' => '0',
-            'required' => false
+            'required' => false,
         ),
     ),
     'indices' => array(
@@ -42,30 +42,30 @@ $dictionary['projects_revenuelineitems'] = array(
             'name' => 'projects_rli_pk',
             'type' => 'primary',
             'fields' => array(
-                'id'
-            )
+                'id',
+            ),
         ),
         array(
             'name' => 'idx_proj_rli_project',
             'type' => 'index',
             'fields' => array(
-                'project_id'
-            )
+                'project_id',
+            ),
         ),
         array(
             'name' => 'idx_proj_rli_product',
             'type' => 'index',
             'fields' => array(
-                'rli_id'
-            )
+                'rli_id',
+            ),
         ),
         array(
             'name' => 'projects_rli_alt',
             'type' => 'alternate_key',
             'fields' => array(
                 'project_id',
-                'rli_id'
-            )
+                'rli_id',
+            ),
         ),
     ),
     'relationships' => array(

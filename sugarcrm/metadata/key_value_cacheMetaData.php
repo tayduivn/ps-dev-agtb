@@ -13,19 +13,19 @@
 $dictionary['key_value_cache'] = array(
     'table' => 'key_value_cache',
     'fields' => array(
-        array(
+        'id' => array(
             'name' => 'id',
             'type' => 'char',
-            'len'=>'32',
+            'len' => '32',
             'required' => true,
         ),
-        array(
+        'date_expires' => array(
             'name' => 'date_expires',
             'type' => 'datetime',
             'default' => null,
             'required' => true,
         ),
-        array(
+        'value' => array(
             'name' => 'value',
             'type' => 'longtext',
             'default' => null,
@@ -36,12 +36,16 @@ $dictionary['key_value_cache'] = array(
         array(
             'name' => 'key_value_cache_name',
             'type' => 'primary',
-            'fields' => array('id')
+            'fields' => array(
+                'id',
+            ),
         ),
         array(
             'name' => 'key_value_cache_date_expires',
             'type' => 'index',
-            'fields' => array('date_expires')
+            'fields' => array(
+                'date_expires',
+            ),
         ),
     ),
 );

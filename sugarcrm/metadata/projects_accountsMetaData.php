@@ -10,23 +10,65 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: vardefs.php 13782 2006-06-06 17:58:55 +0000 (Tue, 06 Jun 2006) majed $
 $dictionary['projects_accounts'] = array(
     'table' => 'projects_accounts',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'account_id', 'type' => 'id'),
-        array('name' => 'project_id', 'type' => 'id'),
-        array('name' => 'date_modified', 'type' => 'datetime'),
-        array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'account_id' => array(
+            'name' => 'account_id',
+            'type' => 'id',
+        ),
+        'project_id' => array(
+            'name' => 'project_id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => false,
+        ),
     ),
-    'indices' => array (
-        array('name' => 'projects_accounts_pk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' => 'idx_proj_acct_proj', 'type' =>'index', 'fields'=>array('project_id')),
-        array('name' => 'idx_proj_acct_acct', 'type' =>'index', 'fields'=>array('account_id')),
-        array('name' => 'projects_accounts_alt', 'type'=>'alternate_key', 'fields'=>array('project_id','account_id')),
+    'indices' => array(
+        array(
+            'name' => 'projects_accounts_pk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_acct_proj',
+            'type' => 'index',
+            'fields' => array(
+                'project_id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_acct_acct',
+            'type' => 'index',
+            'fields' => array(
+                'account_id',
+            ),
+        ),
+        array(
+            'name' => 'projects_accounts_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'project_id',
+                'account_id',
+            ),
+        ),
     ),
-    'relationships' => array (
+    'relationships' => array(
         'projects_accounts' => array(
             'lhs_module' => 'Project',
             'lhs_table' => 'project',
@@ -41,4 +83,3 @@ $dictionary['projects_accounts'] = array(
         ),
     ),
 );
-?>

@@ -10,87 +10,71 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary["documents_quotes"] = array (
-  'true_relationship_type' => 'many-to-many',
-  'relationships' => 
-  array (
-    'documents_quotes' => 
-    array (
-      'lhs_module' => 'Documents',
-      'lhs_table' => 'documents',
-      'lhs_key' => 'id',
-      'rhs_module' => 'Quotes',
-      'rhs_table' => 'quotes',
-      'rhs_key' => 'id',
-      'relationship_type' => 'many-to-many',
-      'join_table' => 'documents_quotes',
-      'join_key_lhs' => 'document_id',
-      'join_key_rhs' => 'quote_id',
+$dictionary['documents_quotes'] = array(
+    'true_relationship_type' => 'many-to-many',
+    'relationships' => array(
+        'documents_quotes' => array(
+            'lhs_module' => 'Documents',
+            'lhs_table' => 'documents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Quotes',
+            'rhs_table' => 'quotes',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'documents_quotes',
+            'join_key_lhs' => 'document_id',
+            'join_key_rhs' => 'quote_id',
+        ),
     ),
-  ),
-  'table' => 'documents_quotes',
-  'fields' => 
-  array (
-    0 => 
-    array (
-      'name' => 'id',
-      'type' => 'id',
+    'table' => 'documents_quotes',
+    'fields' => array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        'document_id' => array(
+            'name' => 'document_id',
+            'type' => 'id',
+        ),
+        'quote_id' => array(
+            'name' => 'quote_id',
+            'type' => 'id',
+        ),
     ),
-    1 => 
-    array (
-      'name' => 'date_modified',
-      'type' => 'datetime',
+    'indices' => array(
+        array(
+            'name' => 'documents_quotesspk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'documents_quotes_quote_id',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'quote_id',
+                'document_id',
+            ),
+        ),
+        array(
+            'name' => 'documents_quotes_document_id',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'document_id',
+                'quote_id',
+            ),
+        ),
     ),
-    2 => 
-    array (
-      'name' => 'deleted',
-      'type' => 'bool',
-      'len' => '1',
-      'default' => '0',
-      'required' => true,
-    ),
-    3 => 
-    array (
-      'name' => 'document_id',
-      'type' => 'id',
-    ),
-    4 => 
-    array (
-      'name' => 'quote_id',
-      'type' => 'id',
-    ),
-  ),
-  'indices' => 
-  array (
-    0 => 
-    array (
-      'name' => 'documents_quotesspk',
-      'type' => 'primary',
-      'fields' => 
-      array (
-        0 => 'id',
-      ),
-    ),
-    1 => 
-    array (
-      'name' => 'documents_quotes_quote_id',
-      'type' => 'alternate_key',
-      'fields' => 
-      array (
-        0 => 'quote_id',
-        1 => 'document_id',
-      ),
-    ),
-    2 => 
-    array (
-      'name' => 'documents_quotes_document_id',
-      'type' => 'alternate_key',
-      'fields' => 
-      array (
-        0 => 'document_id',
-        1 => 'quote_id',
-      ),
-    ),
-  ),
 );
-

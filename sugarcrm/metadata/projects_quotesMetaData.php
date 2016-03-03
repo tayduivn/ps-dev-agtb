@@ -10,23 +10,65 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: vardefs.php 13782 2006-06-06 17:58:55 +0000 (Tue, 06 Jun 2006) majed $
 $dictionary['projects_quotes'] = array(
     'table' => 'projects_quotes',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'quote_id', 'type' => 'id'),
-        array('name' => 'project_id', 'type' => 'id'),
-        array('name' => 'date_modified', 'type' => 'datetime'),
-        array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'quote_id' => array(
+            'name' => 'quote_id',
+            'type' => 'id',
+        ),
+        'project_id' => array(
+            'name' => 'project_id',
+            'type' => 'id',
+        ),
+        'date_modified' => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => false,
+        ),
     ),
-    'indices' => array (
-        array('name' => 'projects_quotes_pk', 'type' =>'primary', 'fields'=>array('id')),
-        array('name' => 'idx_proj_quote_proj', 'type' =>'index', 'fields'=>array('project_id')),
-        array('name' => 'idx_proj_quote_quote', 'type' =>'index', 'fields'=>array('quote_id')),
-        array('name' => 'projects_quotes_alt', 'type'=>'alternate_key', 'fields'=>array('project_id','quote_id')),
+    'indices' => array(
+        array(
+            'name' => 'projects_quotes_pk',
+            'type' => 'primary',
+            'fields' => array(
+                'id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_quote_proj',
+            'type' => 'index',
+            'fields' => array(
+                'project_id',
+            ),
+        ),
+        array(
+            'name' => 'idx_proj_quote_quote',
+            'type' => 'index',
+            'fields' => array(
+                'quote_id',
+            ),
+        ),
+        array(
+            'name' => 'projects_quotes_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                'project_id',
+                'quote_id',
+            ),
+        ),
     ),
-    'relationships' => array (
+    'relationships' => array(
         'projects_quotes' => array(
             'lhs_module' => 'Project',
             'lhs_table' => 'project',
@@ -41,4 +83,3 @@ $dictionary['projects_quotes'] = array(
         ),
     ),
 );
-?>

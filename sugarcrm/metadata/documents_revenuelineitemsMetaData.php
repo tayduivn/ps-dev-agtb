@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary["documents_revenuelineitems"] = array(
+$dictionary['documents_revenuelineitems'] = array(
     'true_relationship_type' => 'many-to-many',
     'relationships' => array(
         'documents_revenuelineitems' => array(
@@ -25,56 +25,55 @@ $dictionary["documents_revenuelineitems"] = array(
             'join_key_lhs' => 'document_id',
             'join_key_rhs' => 'rli_id',
         ),
-
     ),
     'table' => 'documents_revenuelineitems',
     'fields' => array(
-        0 => array(
+        'id' => array(
             'name' => 'id',
             'type' => 'id',
         ),
-        1 => array(
+        'date_modified' => array(
             'name' => 'date_modified',
             'type' => 'datetime',
         ),
-        2 => array(
+        'deleted' => array(
             'name' => 'deleted',
             'type' => 'bool',
             'len' => '1',
             'default' => '0',
             'required' => true,
         ),
-        3 => array(
+        'document_id' => array(
             'name' => 'document_id',
             'type' => 'id',
         ),
-        4 => array(
+        'rli_id' => array(
             'name' => 'rli_id',
             'type' => 'id',
         ),
     ),
     'indices' => array(
-        0 => array(
+        array(
             'name' => 'documents_revenuelineitemssspk',
             'type' => 'primary',
             'fields' => array(
-                0 => 'id',
+                'id',
             ),
         ),
-        1 => array(
+        array(
             'name' => 'documents_revenuelineitems_revenuelineitem_id',
             'type' => 'alternate_key',
             'fields' => array(
-                0 => 'rli_id',
-                1 => 'document_id',
+                'rli_id',
+                'document_id',
             ),
         ),
-        2 => array(
+        array(
             'name' => 'documents_revenuelineitems_document_id',
             'type' => 'alternate_key',
             'fields' => array(
-                0 => 'document_id',
-                1 => 'rli_id',
+                'document_id',
+                'rli_id',
             ),
         ),
     ),
