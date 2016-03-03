@@ -263,7 +263,17 @@ class SugarTestDatabaseMock extends DBManager
     public function getFromDummyTable() {}
     public function getGuidSQL() {}
     public function prepareStatement($sql, array $lobs = array(), $msg = '') { return null; }
-    public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true) {}
+    public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true)
+    {
+        $response = $this->query($sql, $dieOnError, $msg);
+
+        // if it's not an array or it's empty, return false
+        if (!is_array($response) || empty($response)) {
+            return false;
+        }
+        // return the first record
+        return array_shift($response);
+    }
 
     /** {@inheritDoc} */
     protected function get_index_data($table_name = null, $index_name = null)
