@@ -115,56 +115,9 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($bean->field_defs), "No field defs for {$bean->module_dir}");
 
         foreach ($bean->field_defs as $key => $def) {
-            $this->assertArrayHasKey('name', $def, "Def for {$bean->module_dir}/$key is missing a name attribute");
-            $this->assertEquals($key, $def['name'], "Def's name for {$bean->module_dir}/$key doesn't match the key");
-
-            $this->assertArrayHasKey('type', $def, "Def for {$bean->module_dir}/$key is missing a type");
-
-            // Teams operate in their own weird way
-            if ($key == 'team_name') {
-                continue;
-            }
-
-            if (in_array($def['type'], $bean::$relateFieldTypes)
-                || (isset($def['source'])
-                    && $def['source'] == 'non-db'
-                    && !empty($def['link'])) ) {
-                // These are related items, they get checked differently
-                continue;
-            }
-
-            if (!empty($def['rname'])
-                && $def['type'] != 'link'
-                && !empty($def['source'])
-                && $def['source'] == 'non-db' ) {
-                $this->assertTrue(!empty($def['link']), "Def for {$bean->module_dir}/{$key} has an rname, but no link");
-            }
-
-            if (isset($def['sort_on'])) {
-                // Sort on can be either a string or an array... make it an array
-                // for testing
-                if (is_string($def['sort_on'])) {
-                    $def['sort_on'] = array($def['sort_on']);
-                }
-
-                // Loop and test
-                foreach ($def['sort_on'] as $sortField) {
-                    $this->assertArrayHasKey($sortField, $bean->field_defs, "Sort on for {$bean->module_dir}/$key points to an invalid field.");
-                }
-            }
-
-            if (isset($def['fields'])) {
-                foreach ($def['fields'] as $subField) {
-                    $this->assertArrayHasKey($subField, $bean->field_defs, "Sub field $subField for {$bean->module_dir}/$key points to an invalid field.");
-                }
-            }
-
-            if (isset($def['db_concat_fields'])) {
-                foreach ($def['db_concat_fields'] as $subField) {
-                    $this->assertArrayHasKey($subField, $bean->field_defs, "DB concat field $subField for {$bean->module_dir}/$key points to an invalid field.");
-                }
-            }
+            $this->checkFieldDefinition($bean->module_dir, $bean->field_defs, $key, $def, $bean::$relateFieldTypes);
         }
+
         //Check correct definitions for fields in primary keys.
         foreach ($this->getBeanPrimaryIndexes($bean) as $index) {
             $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
@@ -181,45 +134,101 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test definitions in metadata for fields in primary keys.
+     * Test definitions in metadata
+     *
+     * @dataProvider tableMetadataProvider
      */
-    public function testMetaDefs()
+    public function testMetaDefs($table, $metadata)
     {
         $db = DBManagerFactory::getInstance();
-        $dictionary = array();
-        include ("modules/TableDictionary.php");
-        foreach ($dictionary as $meta) {
-            foreach ($this->getMetaPrimaryIndexes($meta) as $index) {
-                $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
-                foreach ($index['fields'] as $field) {
-                    $def = $this->getFieldDefFromMeta($meta, $field);
-                    $this->assertNotEmpty($def, 'Field for primary key should exists');
-                    $db->massageFieldDef($def, $meta['table']);
-                    $this->assertFalse(
-                        SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
-                        'Field for primary key shouldn\'t be nullable'
-                    );
-                }
+
+        foreach ($metadata['fields'] as $key => $def) {
+            $this->checkFieldDefinition($table, $metadata['fields'], $key, $def, array());
+        }
+
+        foreach ($this->getMetaPrimaryIndexes($metadata) as $index) {
+            $this->assertInternalType('array', $index['fields'], 'Fields for primary index should be as array');
+            foreach ($index['fields'] as $field) {
+                $def = $metadata['fields'][$field];
+                $this->assertNotEmpty($def, 'Field for primary key should exists');
+                $db->massageFieldDef($def, $metadata['table']);
+                $this->assertFalse(
+                    SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
+                    'Field for primary key shouldn\'t be nullable'
+                );
             }
         }
     }
 
     /**
-     * Return field definition from metadata.
-     * @param array $meta
-     * @param string $fieldName
-     * @return array
+     * Checks whether the field is properly defined
+     *
+     * @param string $table Table or module name
+     * @param array $defs All field definitions
+     * @param string $key Definition key
+     * @param array $def Definition
+     * @param array $relate_types Allowed types of relate fields
      */
-    protected function getFieldDefFromMeta($meta, $fieldName)
+    private function checkFieldDefinition($table, array $defs, $key, array $def, array $relate_types)
     {
-        $result = array();
-        foreach ($meta['fields'] as $field) {
-            if ($field['name'] == $fieldName) {
-                $result = $field;
-                break;
+        $this->assertArrayHasKey('name', $def, "Def for $table/$key is missing a name attribute");
+        $this->assertEquals($key, $def['name'], "Def's name for $table/$key doesn't match the key");
+        $this->assertArrayHasKey('type', $def, "Def for $table/$key is missing a type");
+
+        // Teams operate in their own weird way
+        if ($key == 'team_name') {
+            return;
+        }
+
+        if (in_array($def['type'], $relate_types)
+            || (isset($def['source']) && $def['source'] == 'non-db' && !empty($def['link']))) {
+            // These are related items, they get checked differently
+            return;
+        }
+
+        if (!empty($def['rname'])
+            && $def['type'] != 'link'
+            && !empty($def['source'])
+            && $def['source'] == 'non-db' ) {
+            $this->assertTrue(!empty($def['link']), "Def for $table/{$key} has an rname, but no link");
+        }
+
+        if (isset($def['sort_on'])) {
+            // Sort on can be either a string or an array... make it an array
+            // for testing
+            if (is_string($def['sort_on'])) {
+                $def['sort_on'] = array($def['sort_on']);
+            }
+
+            // Loop and test
+            foreach ($def['sort_on'] as $sortField) {
+                $this->assertArrayHasKey($sortField, $defs, "Sort on for $table/$key points to an invalid field.");
             }
         }
-        return $result;
+
+        if (isset($def['fields'])) {
+            foreach ($def['fields'] as $subField) {
+                $this->assertArrayHasKey($subField, $defs, "Sub field $subField for $table/$key points to an invalid field.");
+            }
+        }
+
+        if (isset($def['db_concat_fields'])) {
+            foreach ($def['db_concat_fields'] as $subField) {
+                $this->assertArrayHasKey($subField, $defs, "DB concat field $subField for $table/$key points to an invalid field.");
+            }
+        }
+    }
+
+    public static function tableMetadataProvider()
+    {
+        $dictionary = $data = array();
+        include 'modules/TableDictionary.php';
+
+        foreach ($dictionary as $table => $metadata) {
+            $data[] = array($table, $metadata);
+        }
+
+        return $data;
     }
 
     /**
