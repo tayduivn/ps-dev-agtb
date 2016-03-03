@@ -27,7 +27,9 @@ class Bug61201Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::setProtectedValue('MetaDataManager', 'isQueued', false);
         SugarTestReflection::setProtectedValue('MetaDataManager', 'inProcess', false);
         $queue = SugarTestReflection::getProtectedValue('MetaDataManager', 'queue');
-        $queue->clear();
+        if ($queue) {
+            $queue->clear();
+        }
 
         TimeDate::getInstance()->allow_cache = true;
         SugarTestHelper::tearDown();

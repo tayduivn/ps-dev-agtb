@@ -1470,18 +1470,40 @@ class MetaDataManager
         //If this is private meta, we will still need to build the public javascript to verify that it hasn't changed.
         //If it has changed, the client will need to refresh to load it.
         if (!$this->public) {
+            $publicJsSource = $this->getPublicJsSource($context);
+            if ($publicJsSource) {
+                $data['jssource_public'] = $publicJsSource;
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Returns the file path for the current public javascript component file
+     * @param MetaDataContextInterface $context
+     *
+     * @return bool|string
+     *
+     */
+    protected function getPublicJsSource(MetaDataContextInterface $context)
+    {
+        $publicJsSource = false;
+        if (!$this->public) {
             $this->public = true;
             $cache = $this->getMetadataCache(true, $context);
             if (empty($cache['jssource'])) {
                 $publicMM = MetaDataManager::getManager($this->platforms, true);
-                $cache = $publicMM->getMetadata($this->args);
+                $args = isset($this->args) ? $this->args : array();
+                $cache = $publicMM->getMetadata($args);
             }
             if ($cache && !empty($cache['jssource'])) {
-                $data['jssource_public'] =  $cache['jssource'];
+                $publicJsSource = $cache['jssource'];
             }
             $this->public = false;
         }
-        return $data;
+
+
+        return $publicJsSource;
     }
 
     /**
@@ -2320,7 +2342,7 @@ class MetaDataManager
         $oldHash = !empty($data['_hash']) ? $data['_hash'] : null;
 
         //If we failed to load the metadata from cache, load it now the hard way.
-        if (empty($data) || !$this->verifyJSSource($data)) {
+        if (empty($data) || !$this->verifyJSSource($data, $context)) {
             // Allow more time for private metadata builds since it is much heavier
             if (!$this->public) {
                 ini_set('max_execution_time', 0);
@@ -2375,10 +2397,21 @@ class MetaDataManager
      *
      * @return bool true if the js-component file for this metadata call exists, false otherwise
      */
-    protected function verifyJSSource($data) {
+    protected function verifyJSSource($data, MetaDataContextInterface $context = null) {
         if (!empty($data['jssource']) && !SugarAutoLoader::fileExists($data['jssource'])) {
             //The jssource file is invalid, we need to invalidate the hash as well.
             return false;
+        }
+        //It is possible for the public and private metadata caches to get otu of sync around the public
+        //JsSource. When this occurs we have to invalidated the private metadata cache.
+        if (!empty($data['jssource_public'])) {
+            if (!$context) {
+                $context = $this->getDefaultContext();
+            }
+            $publicJsSource = $this->getPublicJsSource($context);
+            if ($data['jssource_public'] != $publicJsSource || !SugarAutoLoader::fileExists($publicJsSource)) {
+                return false;
+            }
         }
 
         return true;

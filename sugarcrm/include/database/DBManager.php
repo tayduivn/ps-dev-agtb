@@ -1089,7 +1089,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Builds the SQL commands that repair a table structure
 	 *
-	 * @param  string $tableName
+     * @param  string $tableName Table name
 	 * @param  array  $fielddefs Field definitions, in vardef format
 	 * @param  array  $indices   Index definitions, in vardef format
 	 * @param  bool   $execute   optional, true if we want the queries executed instead of returned
@@ -1097,8 +1097,7 @@ protected function checkQuery($sql, $object_name = false)
      * @todo: refactor engine param to be more generic
      * @return string
      */
-
-    public function repairTableParams($tableName, $fielddefs,  $indices, $execute = true, $engine = null)
+    public function repairTableParams($tableName, $fielddefs, array $indices, $execute = true, $engine = null)
     {
         global  $sugar_config;
         //jc: had a bug when running the repair if the tablename is blank the repair will

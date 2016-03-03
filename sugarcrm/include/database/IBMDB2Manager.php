@@ -108,14 +108,15 @@ class IBMDB2Manager  extends DBManager
         "recursive_query" => true,
         "prepared_statements" => true,
 
-        /* DB2 has stable order stability if no heavy insert/deletes are
-         * happening. With this capability enabled, the ORDER BY clauses
-         * will not get an additional id (unique) column added to ensure
-         * orderby stability in the query. Using this has negative impact
-         * on performance. Therefor for DB2 we rely on the default order
-         * stability of DB2 itself.
+        /* Do not consider DB2 order stability as we have experienced issues
+         * that this is not something we can rely on. By disabling this flag
+         * sugar will add an additional id column in the ORDER BY clause to
+         * to ensure stability of the results during result paging. Although
+         * this below behavior is the default, leaving this capability flag
+         * in here as a reference as in previous versions we used to rely on
+         * DB2 order stability without altering the ORDER BY clause.
          */
-        "order_stability" => true,
+        "order_stability" => false,
 	);
 
 	public $preparedStatementClass = 'IBMDB2PreparedStatement';
