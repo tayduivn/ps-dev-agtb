@@ -1303,7 +1303,8 @@ eoq;
 	 * @param array $ret
 	 * @return array
 	 */
-	function getDraftAttachments($ret) {
+    public static function getDraftAttachments($ret)
+    {
 		global $db;
 
 		// $ret['uid'] is the draft Email object's GUID

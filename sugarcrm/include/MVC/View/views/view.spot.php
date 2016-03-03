@@ -22,11 +22,13 @@ class ViewSpot extends ViewAjax
     /**
      * Constructor
      *
-     * @see SugarView::SugarView()
+     * @see SugarView::__construct()
      */
-    public function ViewSpot() {
-        $this->options['show_header'] = true;
-        parent::SugarView();
+    public function __construct()
+    {
+        $options = $this->options;
+        parent::__construct();
+        $this->options = $options;
     }
 
     /**

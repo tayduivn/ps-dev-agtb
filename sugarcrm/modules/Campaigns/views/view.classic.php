@@ -14,9 +14,9 @@ require_once('include/MVC/Controller/SugarController.php');
 
 class CampaignsViewClassic extends SugarView
 {
- 	function CampaignsViewClassic()
+    public function __construct()
  	{
- 		parent::SugarView();
+        parent::__construct();
  		$this->type = $this->action;
  	}
 

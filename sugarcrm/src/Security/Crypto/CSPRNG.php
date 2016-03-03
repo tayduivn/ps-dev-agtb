@@ -67,7 +67,8 @@ class CSPRNG
      *
      * @param integer $size Byte size
      * @param boolean $encode
-     * @return string|false
+     * @return string
+     * @throws \RuntimeException
      */
     public function generate($size, $encode = false)
     {
@@ -83,7 +84,11 @@ class CSPRNG
             return $encode ? $this->binaryEncode($random, $size) : $random;
         }
 
-        return false;
+        throw new \RuntimeException(sprintf(
+            'CSPRNG unable to generate random %s bytes (last used generator %s)',
+            $size,
+            $name
+        ));
     }
 
     /**
@@ -98,10 +103,10 @@ class CSPRNG
         $generators = array();
 
         /*
-         * Available on most *nix systems
+         * PHP7 CSPRNG
          */
-        if (@is_readable('/dev/urandom')) {
-            $generators['urandom'] = 'genUrandom';
+        if (function_exists('random_bytes')) {
+            $generators['csprng'] = 'genCsprng';
         }
 
         /*
@@ -122,24 +127,17 @@ class CSPRNG
     }
 
     /**
-     * Generator using /dev/urandon
+     * Generator using PHP7 builtin CSPRNG
      * @param integer $size Byte size
      * @return string|false
      */
-    protected function genUrandom($size)
+    protected function genCsprng($size)
     {
-        $random = false;
-        $fp = @fopen('/dev/urandom', 'rb');
-
-        // use unbuffered stream to make sure we only consume the amount
-        // of bytes we actually need to avoid exhaustion
-        stream_set_read_buffer($fp, 0);
-
-        if ($fp !== false) {
-            $random = fread($fp, $size);
-            fclose($fp);
+        try {
+            $random = random_bytes($size);
+        } catch (\Error $e) {
+            $random = false;
         }
-
         return $random;
     }
 

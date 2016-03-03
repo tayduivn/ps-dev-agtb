@@ -154,7 +154,7 @@ function save_altered($module_name, $list){
 			if(isset($record['name_value_list'])){
 				foreach($record['name_value_list'] as $name_value){
 					if($name_value['name'] != 'user_preferences'){
-						$cur->$name_value['name'] = $name_value['value'];
+                        $cur->{$name_value['name']} = $name_value['value'];
 					}
 
 				}
@@ -360,14 +360,14 @@ function display_conflict($conflict){
 	foreach($conflict['name_value_list'] as $name_value)
 	{
 		if(!isset($cur->field_defs[$name_value['name']]['source']) || $cur->field_defs[$name_value['name']]['source'] == 'db'){
-		if(isset($cur->$name_value['name'])){
-			if( $cur->$name_value['name'] != $name_value['value']){
+        if (isset($cur->{$name_value['name']})) {
+            if ($cur->{$name_value['name']} != $name_value['value']) {
 				$title .= '<th>&nbsp;';
 				if(isset($cur->field_defs[$name_value['name']]['vname'])){
 					$title .=  translate($cur->field_defs[$name_value['name']]['vname'], $module_name);
 				}
 				$title .=  '</th>';
-				$client .= '<td>&nbsp;' . $cur->$name_value['name']. '</td>';
+                $client .= '<td>&nbsp;' . $cur->{$name_value['name']} . '</td>';
 				$server .= '<td>&nbsp;' . $name_value['value']. '</td>';
 				$exists = true;
 			}

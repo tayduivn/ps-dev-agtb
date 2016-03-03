@@ -51,7 +51,8 @@ class PackageManagerComm{
      /**
       * Check for errors in the response or error_str
       */
-     function errorCheck(){
+    public static function errorCheck()
+    {
      	if(!empty($GLOBALS['SugarDepot']->error_str)){
      		$GLOBALS['log']->fatal($GLOBALS['SugarDepot']->error_str);
      		$GLOBALS['log']->fatal($GLOBALS['SugarDepot']->response);
@@ -74,7 +75,8 @@ class PackageManagerComm{
      /**
       * Clears out the session so we can reauthenticate.
       */
-     function clearSession(){
+    public static function clearSession()
+    {
      	$_SESSION['SugarDepotSessionID'] = null;
      	unset($_SESSION['SugarDepotSessionID']);
      }
@@ -85,7 +87,8 @@ class PackageManagerComm{
       *
       * @return true if successful, false otherwise
       */
-     function login($terms_checked = true){
+    public static function login($terms_checked = true)
+    {
       if(empty($_SESSION['SugarDepotSessionID'])){
 	      global $license;
 	        $GLOBALS['log']->debug("Begin SugarDepot Login");
@@ -125,7 +128,8 @@ class PackageManagerComm{
      /**
       * Get all promotions from the depot
       */
-     function getPromotion(){
+    public static function getPromotion()
+    {
         PackageManagerComm::initialize();
         //check for fault first and then return
         $name_value_list = $GLOBALS['SugarDepot']->call('depotGetPromotion', array('session_id' => $_SESSION['SugarDepotSessionID']));
@@ -141,7 +145,8 @@ class PackageManagerComm{
      * @return categories_and_packages
      * @see categories_and_packages
     */
-    function getCategoryPackages($category_id, $filter = array()){
+    public static function getCategoryPackages($category_id, $filter = array())
+    {
         PackageManagerComm::initialize();
         //check for fault
          return $GLOBALS['SugarDepot']->call('depotGetCategoriesPackages', array('session_id' => $_SESSION['SugarDepotSessionID'], 'category_id' => $category_id, 'filter' => $filter));
@@ -155,7 +160,8 @@ class PackageManagerComm{
      * @return categories_and_packages
      * @see categories_and_packages
      */
-    function getCategories($category_id, $filter = array()){
+    public static function getCategories($category_id, $filter = array())
+    {
         PackageManagerComm::initialize();
         //check for fault
         return $GLOBALS['SugarDepot']->call('depotGetCategories', array('session_id' => $_SESSION['SugarDepotSessionID'], 'category_id' => $category_id, 'filter' => $filter));
@@ -169,7 +175,8 @@ class PackageManagerComm{
      * @return packages
      * @see packages
     */
-    function getPackages($category_id, $filter = array()){
+    public static function getPackages($category_id, $filter = array())
+    {
         PackageManagerComm::initialize();
         //check for fault
          return $GLOBALS['SugarDepot']->call('depotGetPackages', array('session_id' => $_SESSION['SugarDepotSessionID'], 'category_id' => $category_id, 'filter' => $filter));
@@ -183,7 +190,8 @@ class PackageManagerComm{
      * @return packages
      * @see packages
     */
-    function getReleases($category_id, $package_id, $filter = array()){
+    public static function getReleases($category_id, $package_id, $filter = array())
+    {
         PackageManagerComm::initialize();
          //check for fault
          return $GLOBALS['SugarDepot']->call('depotGetReleases', array('session_id' => $_SESSION['SugarDepotSessionID'], 'category_id' => $category_id, 'package_id' => $package_id, 'filter' => $filter));
@@ -212,7 +220,8 @@ class PackageManagerComm{
      * @param release_id  the release we want to download
      * @return the filename to download
      */
-    function addDownload($category_id, $package_id, $release_id){
+    public static function addDownload($category_id, $package_id, $release_id)
+    {
         PackageManagerComm::initialize();
          //check for fault
          return $GLOBALS['SugarDepot']->call('depotAddDownload', array('session_id' => $_SESSION['SugarDepotSessionID'], 'category_id' => $category_id, 'package_id' => $package_id, 'release_id' => $release_id, 'download_key' => '123'));
@@ -239,13 +248,15 @@ class PackageManagerComm{
      *
      * @return documents
      */
-    function getDocumentation($package_id, $release_id){
+    public static function getDocumentation($package_id, $release_id)
+    {
     	 PackageManagerComm::initialize();
          //check for fault
          return $GLOBALS['SugarDepot']->call('depotGetDocumentation', array('session_id' => $_SESSION['SugarDepotSessionID'], 'package_id' => $package_id, 'release_id' => $release_id));
     }
 
-    function getTermsAndConditions(){
+    public static function getTermsAndConditions()
+    {
     	 PackageManagerComm::initialize(false);
     	  return $GLOBALS['SugarDepot']->call('depotTermsAndConditions',array());
     }
@@ -255,7 +266,8 @@ class PackageManagerComm{
      *
      * @param document_id	the document the user has clicked on
      */
-    function downloadedDocumentation($document_id){
+    public static function downloadedDocumentation($document_id)
+    {
     	 PackageManagerComm::initialize();
          //check for fault
          $GLOBALS['log']->debug("Logging Document: ".$document_id);
@@ -271,7 +283,8 @@ class PackageManagerComm{
 	 *
 	 * @return array of name_value_lists of corresponding updates
 	 */
-	function checkForUpdates($objects_to_check){
+    public static function checkForUpdates($objects_to_check)
+    {
 		PackageManagerComm::initialize();
          //check for fault
          return $GLOBALS['SugarDepot']->call('depotCheckForUpdates', array('session_id' => $_SESSION['SugarDepotSessionID'], 'objects' => $objects_to_check));

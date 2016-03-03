@@ -15,13 +15,6 @@ require_once('include/Sugarpdf/sugarpdf_config.php');
 require_once('include/MVC/View/SugarView.php');
 require_once('include/Sugarpdf/FontManager.php');
 class ConfiguratorViewFontManager extends SugarView {
-   
-    /**
-     * Constructor
-     */
-    public function FontManager(){
-        parent::SugarView();
-    }
     /** 
      * display the form
      */

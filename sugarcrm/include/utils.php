@@ -3181,7 +3181,7 @@ function check_php_version($sys_php_version = '')
     $min_considered_php_version = '5.3.25';
     //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
-    $version_threshold  = '5.6.unsupported';
+    $version_threshold  = '7.0.unsupported';
 
     // only the supported versions,
     // should be mutually exclusive with $invalid_php_versions
@@ -3859,8 +3859,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
-        //	echo $focus->$field_def['id_name'];
-            $temp_bean->retrieve($focus->$field_def['id_name']);
+            $temp_bean->retrieve($focus->{$field_def['id_name']});
             if ($temp_bean->id!="") {
 
                 $rel_list[] = $temp_bean;
@@ -3871,8 +3870,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         } elseif (!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
-        //	echo $focus->$rel_value['id_name'];
-            $temp_bean->retrieve($focus->$rel_value['id_name']);
+            $temp_bean->retrieve($focus->{$rel_value['id_name']});
             if ($temp_bean->id!="") {
 
                 $rel_list[] = $temp_bean;
@@ -4087,12 +4085,13 @@ function appendPortToHost($url, $port)
 /**
  * Singleton to return JSON object
  * @return	JSON object
+ * @deprecated JSON.php is composed of static methods only and can be called
+ * directly as `JSON::encode`, ... JSON class is autoloaded.
  */
 function getJSONobj()
 {
     static $json = null;
     if (!isset($json)) {
-        require_once 'include/JSON.php';
         $json = new JSON();
     }
 
@@ -4127,6 +4126,7 @@ function setPhpIniSettings()
     if (!empty($backtrack_limit)) {
         ini_set('pcre.backtrack_limit', '-1');
     }
+    ini_set('always_populate_raw_post_data', '-1');
 }
 
 /**
@@ -5021,7 +5021,7 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
             } else {
                 $params['join_table_link_alias'] = 'join_link_'.$field['name'];
             }
-            $join = $seed->$field['link']->getJoin($params, true);
+            $join = $seed->{$field['link']}->getJoin($params, true);
             $join_table_alias = 'join_'.$field['name'];
             if (isset($field['db_concat_fields'])) {
                 $db_field = db_concat($join_table_alias, $field['db_concat_fields']);

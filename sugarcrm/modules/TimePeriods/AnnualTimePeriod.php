@@ -63,7 +63,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param $count The timeperiod series count
      * @return string The formatted name of the timeperiod
      */
-    public function getTimePeriodName($count)
+    public function getTimePeriodName($count, $timeperiod = null)
     {
         $timedate = TimeDate::getInstance();
         $year = $timedate->fromDbDate($this->start_date);

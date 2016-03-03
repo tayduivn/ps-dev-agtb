@@ -140,7 +140,8 @@ class SugarFolder {
 	/**
 	 * Sole constructor
 	 */
-	function SugarFolder() {
+    public function __construct()
+    {
 		$this->db = DBManagerFactory::getInstance();
         $this->emailBean = BeanFactory::getBean('Emails');
 	}

@@ -11,10 +11,11 @@
  */
 class ViewCfTest extends SugarView
 {
-	function ViewCfTest(){
+    public function __construct()
+    {
 		$this->options['show_footer'] = true;
 		$this->options['show_header'] = true;
- 		parent::SugarView();
+        parent::__construct();
  	}
  	
  	function display() {

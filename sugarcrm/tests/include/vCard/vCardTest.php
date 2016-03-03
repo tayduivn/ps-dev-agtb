@@ -20,8 +20,6 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        $GLOBALS['beanList']['vCardMockModule'] = 'vCardMockModule';
-        $GLOBALS['beanFiles']['vCardMockModule'] = 'tests/include/vCard/vCardTest.php';
         global $app_strings, $app_list_strings, $current_language;
         $app_strings = return_application_language($current_language);
         $app_list_strings = return_app_list_strings_language($current_language);
@@ -79,29 +77,38 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testImportedVcardWithDifferentCharsetIsTranslatedToTheDefaultCharset()
     {
         $filename  = dirname(__FILE__)."/vcf/ISO88591SampleFile.vcf";
-        $module = "vCardMockModule";
+        
+        $personMock = $this->getMockBuilder('Person')
+            ->setMethods(array('save'))
+            ->getMock();
 
-        $vcard = new vCard();
-        $record = $vcard->importVCard($filename,$module);
+        $vcard = $this->getMockBuilder('vCard')
+            ->setMethods(array('getBean'))
+            ->getMock();
+        $vcard->expects($this->once())
+            ->method('getBean')
+            ->will($this->returnValue($personMock));
+        $record = $vcard->importVCard($filename, 'PersonMock');
 
-        $bean = new vCardMockModule;
-        $bean = $bean->retrieve($record);
-
-        $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
+        $this->assertEquals('Hans Müster', $personMock->first_name . ' ' . $personMock->last_name);
     }
 
     public function testImportedVcardWithSameCharsetIsNotTranslated()
     {
         $filename  = dirname(__FILE__)."/vcf/UTF8SampleFile.vcf";
-        $module = "vCardMockModule";
 
-        $vcard = new vCard();
-        $record = $vcard->importVCard($filename,$module);
+        $personMock = $this->getMockBuilder('Person')
+            ->setMethods(array('save'))
+            ->getMock();
+        $vcard = $this->getMockBuilder('vCard')
+            ->setMethods(array('getBean'))
+            ->getMock();
+        $vcard->expects($this->once())
+            ->method('getBean')
+            ->will($this->returnValue($personMock));
+        $record = $vcard->importVCard($filename, 'PersonMock');
 
-        $bean = new vCardMockModule;
-        $bean = $bean->retrieve($record);
-
-        $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
+        $this->assertEquals('Hans Müster', $personMock->first_name . ' ' . $personMock->last_name);
     }
 
     /**
@@ -110,14 +117,19 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
     public function testImportVcard_NameIncludesSalutation_PersonIsCreatedWithFirstNameAndLastNameAndSalutation($vcard)
     {
         $filename = dirname(__FILE__) . "/vcf/{$vcard}";
-        $module = 'vCardMockModule';
-        $vcard = new vCard();
-        $record = $vcard->importVCard($filename, $module);
-        $bean = new vCardMockModule();
-        $bean = $bean->retrieve($record);
-        $this->assertNotEmpty($bean->first_name, 'The first name should have been parsed from the vcard');
-        $this->assertNotEmpty($bean->last_name, 'The last name should have been parsed from the vcard');
-        $this->assertNotEmpty($bean->salutation, 'The salutation should have been parsed from the vcard');
+        $personMock = $this->getMockBuilder('Person')
+            ->setMethods(array('save'))
+            ->getMock();
+        $vcard = $this->getMockBuilder('vCard')
+            ->setMethods(array('getBean'))
+            ->getMock();
+        $vcard->expects($this->once())
+            ->method('getBean')
+            ->will($this->returnValue($personMock));
+        $record = $vcard->importVCard($filename, 'PersonMock');
+        $this->assertNotEmpty($personMock->first_name, 'The first name should have been parsed from the vcard');
+        $this->assertNotEmpty($personMock->last_name, 'The last name should have been parsed from the vcard');
+        $this->assertNotEmpty($personMock->salutation, 'The salutation should have been parsed from the vcard');
     }
 
     public function vCardNames()
@@ -135,15 +147,19 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testExportVcard($fname, $lname)
     {
-        $vcard = new vCard();
+        $vcard = $this->getMockBuilder('vCard')
+            ->setMethods(array('getBean'))
+            ->getMock();
 
-        $data = new vCardMockModule();
+        $data = $this->getMock('Person');
         $data->first_name = $fname;
         $data->last_name = $lname;
         $GLOBALS['current_user']->setPreference('default_export_charset', 'UTF-8');
-        $id = $data->save();
+        $vcard->expects($this->once())
+            ->method('getBean')
+            ->will($this->returnValue($data));
 
-        $vcard->loadContact($id, 'vCardMockModule');
+        $vcard->loadContact('person-id', 'Person');
         $cardtext = $vcard->toString();
 
         $this->assertContains("N;CHARSET=utf-8:$lname;$fname", $cardtext, "Cannot find N name", true);
@@ -188,51 +204,5 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $vcard->setORG('foo','bar');
         
         $this->assertEquals('foo;bar',$vcard->getProperty('ORG'));
-    }
-}
-
-class vCardMockModule extends Person
-{
-    public static $_savedObjects = array();
-    
-    public $first_name;
-    public $last_name;
-    public $salutation;
-    public $phone_fax;
-    public $phone_home;
-    public $phone_mobile;
-    public $phone_work;
-    public $email1;
-    public $primary_address_street;
-    public $primary_address_city;
-    public $primary_address_state;
-    public $primary_address_postalcode;
-    public $primary_address_country;
-    public $department;
-    public $title;
-
-    public function save()
-    {
-        $this->id = create_guid();
-
-        self::$_savedObjects[$this->id] = $this;
-
-        return $this->id;
-    }
-
-    public function retrieve($id = -1, $encode=true,$deleted=true)
-	{
-        if ( isset(self::$_savedObjects[$id]) ) {
-            foreach(get_object_vars(self::$_savedObjects[$id]) as $var => $val) {
-                $this->$var = $val;
-            }
-            return self::$_savedObjects[$id];
-        }
-
-        return null;
-    }
-
-    public function ACLFilterFields()
-    {
     }
 }

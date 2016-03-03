@@ -128,7 +128,7 @@ class SugarFieldTag extends SugarFieldRelatecollection
     /**
      * {@inheritDoc}
      */
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties, array $fieldList = null, ServiceBase $service = null)
     {
         if (isset($args['rc_beans'])) {
             if (!empty($args['rc_beans'][$fieldName][$bean->id])) {
@@ -137,30 +137,10 @@ class SugarFieldTag extends SugarFieldRelatecollection
                 $data[$fieldName] = array();
             }
         } else {
-            $relField = $properties['link'];
-            $tags = array();
-
-            if ($bean->load_relationship($relField)) {
-                $currRelBeans = $bean->$relField->getBeans();
-
-                if (!empty($currRelBeans)) {
-                    // Placeholder for sorting the tags array by name
-                    $names = array();
-
-                    foreach ($currRelBeans as $tagId => $tagRecord) {
-                        // Build a sort case-insensitively array for sorting the tag list
-                        $names[$tagId] = strtolower($tagRecord->name);
-
-                        // Build a tag list, using the sort tag name value as the tag
-                        $tags[] = array('id' => $tagId, 'name' => $tagRecord->name);
-                    }
-
-                    // Sort the tags array in alphabetical order
-                    array_multisort($names, SORT_ASC, $tags);
-                }
-            }
-
-            $data[$fieldName] = $tags;
+            list ($relName, $fields, $limit) = $this->parseProperties($properties);
+            $data[$fieldName] = array_values(
+                $this->getLinkedRecords($bean, $relName, $fields, $limit, array('name_lower', 'ASC'))
+            );
         }
     }
 

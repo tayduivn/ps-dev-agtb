@@ -57,7 +57,8 @@ class SugarFieldTime extends SugarFieldBase {
         return $this->fetch('include/SugarFields/Fields/Time/SearchView.tpl');
     }
 
-    public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
+    public function save($bean, $params, $field, $properties, $prefix = '')
+    {
         if ( !isset($inputData[$prefix.$field]) ) {
             $bean->$field = '';
             return;

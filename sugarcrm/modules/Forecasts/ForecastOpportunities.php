@@ -115,11 +115,13 @@ class ForecastOpportunities extends SugarBean {
         return $temp_array;
     }
 
-    function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
+    public function list_view_parse_additional_sections(&$list_form)
+    {
         return $list_form;
     }
 
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean){
+    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $ifListForExport = false)
+    {
 //        _pp(func_get_args());
         // Workaround due to fix for Bug 14232. date_entered is ambiguous in this case, so we specify it if it is the default sort
         if (strpos($order_by, 'date_entered') !== false) {

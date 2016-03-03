@@ -15,11 +15,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.detail.php');
 
 class ProspectsViewDetail extends ViewDetail {
-
- 	function ProspectsViewDetail(){
- 		parent::ViewDetail();
- 	}
- 	
  	function display() {
 		if(isset($this->bean->lead_id) && !empty($this->bean->lead_id)){
 			

@@ -30,7 +30,8 @@ class Dependency
     protected $isRelated = false;
     protected $relatedFields = array();
 
-	function Dependency($id) {
+    public function __construct($id)
+    {
 		$this->id = $id;
 		$this->trigger = new Trigger('true');
 	}

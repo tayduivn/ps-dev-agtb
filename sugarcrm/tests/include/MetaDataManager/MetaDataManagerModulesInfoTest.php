@@ -136,7 +136,31 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $fullModuleList = array_merge($moduleList, $modInvisList);
 
         // Run the test
-        $mm = new MetadataManagerBaseMockForModulesData();
+        $mm = $this->getMockBuilder('MetadataManager')
+            ->setMethods(array('getModulesData'))
+            ->getMock();
+        $mm->expects($this->any())
+            ->method('getModulesData')
+            ->will($this->returnValue(array(
+                'Accounts' => array(
+                    'menu' => array(
+                        'quickcreate' => array(
+                            'meta' => array(
+                                'visible' => false,
+                            ),
+                        ),
+                    ),
+                ),
+                'Cases' => array(
+                    'menu' => array(
+                        'quickcreate' => array(
+                            'meta' => array(
+                                'visible' => true,
+                            ),
+                        ),
+                    ),
+                ),
+            )));
         $expectedTabs = array_keys(self::$testSystemTabs);
         $expectedSubpanels = SubPanelDefinitions::get_all_subpanels();
 
@@ -189,7 +213,31 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $browser->loadModules();
 
         // Run the test
-        $mm = new MetadataManagerPortalMockForModulesData();
+        $mm = $this->getMockBuilder('MetadataManager')
+            ->setMethods(array('getModulesData'))
+            ->getMock();
+        $mm->expects($this->any())
+            ->method('getModulesData')
+            ->will($this->returnValue(array(
+                'Bugs' => array(
+                    'menu' => array(
+                        'quickcreate' => array(
+                            'meta' => array(
+                                'visible' => true,
+                            ),
+                        ),
+                    ),
+                ),
+                'Cases' => array(
+                    'menu' => array(
+                        'quickcreate' => array(
+                            'meta' => array(
+                                'visible' => false,
+                            ),
+                        ),
+                    ),
+                ),
+            )));
         $expectedTabs = array_keys(self::$testPortalTabs);
         $expectedSubpanels = SubPanelDefinitions::get_all_subpanels();
 
@@ -327,60 +375,3 @@ EOF;
     }
 }
 
-class MetadataManagerBaseMockForModulesData extends MetadataManager
-{
-    public function getModulesData()
-    {
-        $modules = array(
-            'Accounts' => array(
-                'menu' => array(
-                    'quickcreate' => array(
-                        'meta' => array(
-                            'visible' => false,
-                        ),
-                    ),
-                ),
-            ),
-            'Cases' => array(
-                'menu' => array(
-                    'quickcreate' => array(
-                        'meta' => array(
-                            'visible' => true,
-                        ),
-                    ),
-                ),
-            ),
-        );
-        return $modules;
-    }
-}
-
-//BEGIN SUGARCRM flav=ent ONLY
-class MetadataManagerPortalMockForModulesData extends MetaDataManagerPortal
-{
-    public function getModulesData()
-    {
-        $modules = array(
-            'Bugs' => array(
-                'menu' => array(
-                    'quickcreate' => array(
-                        'meta' => array(
-                            'visible' => true,
-                        ),
-                    ),
-                ),
-            ),
-            'Cases' => array(
-                'menu' => array(
-                    'quickcreate' => array(
-                        'meta' => array(
-                            'visible' => false,
-                        ),
-                    ),
-                ),
-            ),
-        );
-        return $modules;
-    }
-}
-//END SUGARCRM flav=ent ONLY

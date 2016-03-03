@@ -111,9 +111,10 @@ abstract class ServiceBase {
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
      * @param string $etag ETag to use for this content.
+     * @param int $cache_age age in seconds for Cache-control max-age header
      * @return bool Did we have a match?
      */
-    public function generateETagHeader()
+    public function generateETagHeader($etag, $cache_age = null)
     {
         // do nothing in base class
         return false;

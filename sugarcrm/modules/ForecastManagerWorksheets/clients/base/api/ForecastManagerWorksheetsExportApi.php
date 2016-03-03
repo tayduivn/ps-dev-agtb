@@ -32,7 +32,7 @@ class ForecastManagerWorksheetsExportApi extends ExportApi
         );
     }
 
-    public function export(ServiceBase $api, $args = array())
+    public function export(ServiceBase $api, array $args = array())
     {
         ob_start();
         // Load up a seed bean

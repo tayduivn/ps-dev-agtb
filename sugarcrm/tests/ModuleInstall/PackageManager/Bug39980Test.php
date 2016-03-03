@@ -72,8 +72,7 @@ class Bug39980PackageManger extends PackageManager {
         
 EOQ;
 	}
-
-	public function getInstalled($types)
+    public function getInstalled($types = array('module'))
 	{
 		include($this->extractManifest(0,0));
 		$sm = array(

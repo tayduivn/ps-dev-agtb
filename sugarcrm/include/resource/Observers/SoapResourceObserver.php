@@ -17,11 +17,6 @@ class SoapResourceObserver extends ResourceObserver {
 
 private $soapServer;
 
-function SoapResourceObserver($module) {
-   parent::ResourceObserver($module);
-}
-
-
 /**
  * set_soap_server
  * This method accepts an instance of the nusoap soap server so that a proper

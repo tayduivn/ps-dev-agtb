@@ -103,13 +103,6 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('GMT', $this->_user->getPreference('timezone'));
     }
 
-    public function testDeprecatedUserPreferenceInterface()
-    {
-        User::setPreference('deprecated_pref', 'dog', 0, 'global', $this->_user);
-
-        $this->assertEquals('dog', User::getPreference('deprecated_pref', 'global', $this->_user));
-    }
-
     public function testSavingToMultipleUserPreferenceCategories()
     {
         $this->_user->setPreference('test_pref1', 'dog', 0, 'cat1');

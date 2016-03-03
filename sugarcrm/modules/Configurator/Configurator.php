@@ -61,7 +61,6 @@ class Configurator {
         'save',
     );
 
-
     /**
      * Ctor
      */

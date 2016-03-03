@@ -433,9 +433,9 @@ class RevenueLineItem extends SugarBean
         foreach ($this->getFieldDefinitions() as $field) {
             if ($field['name'] == 'id') {
                 // if it's the ID field, associate it back to the product on the relationship field
-                $product->revenuelineitem_id = $this->$field['name'];
+                $product->revenuelineitem_id = $this->{$field['name']};
             } else {
-                $product->$field['name'] = $this->$field['name'];
+                $product->{$field['name']} = $this->{$field['name']};
             }
         }
         // use product name if available

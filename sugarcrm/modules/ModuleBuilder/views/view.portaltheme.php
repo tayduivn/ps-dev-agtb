@@ -18,12 +18,6 @@ require_once("include/SugarTheme/SidecarTheme.php");
 
 class ViewPortalTheme extends SugarView
 {
-	function ViewPortalSync()
-	{
-	    $GLOBALS['log']->debug('ViewPortalSync constructor');
-	    parent::SugarView();
-	}
-
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */

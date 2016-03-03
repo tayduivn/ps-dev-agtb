@@ -276,10 +276,9 @@ else if(!isset($_GET['execute'])){
 			$tousername = $row['user_name'];
 	}
 	//rrs bug: 31056 - instead of setting the team_id let's set the team_set_id and set the team_id as the primary
-	$teamSetField = new SugarFieldTeamset('Teamset');
-	$teams = $teamSetField->getTeamsFromRequest('team_name');
+    $teams = SugarFieldTeamset::getTeamsFromRequest('team_name');
 	$team_ids = array_keys($teams);
-	$team_id = $teamSetField->getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
+    $team_id = SugarFieldTeamset::getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
 	$teamSet = BeanFactory::getBean('TeamSets');
 	$team_set_id = $teamSet->addTeams($team_ids);
 

@@ -14,9 +14,9 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewDisplaydeploy extends SugarView 
 {
-	function ViewDisplaydeploy()
+    public function __construct()
 	{
-        parent::SugarView();
+        parent::__construct();
 
         $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
 		$smarty = new Sugar_Smarty();

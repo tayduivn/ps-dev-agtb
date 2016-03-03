@@ -155,7 +155,7 @@ if($sync_module_index == -1)add_to_msg("Logging Into Server...");
                                 $mi->rebuild_all(true);
 								$current_user->is_admin = 0;
 
-                                $db = &DBManagerFactory::getInstance();
+                                $db = DBManagerFactory::getInstance();
                                 $query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
                                 $db->query($query);
 

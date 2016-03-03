@@ -36,7 +36,7 @@ class PersonFilterApi extends FilterApi {
         );
     }
 
-    public function filterList(ServiceBase $api, array $args)
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         if (!empty($args['q'])) {
             return $this->globalSearch($api, $args);

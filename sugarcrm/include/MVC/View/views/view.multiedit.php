@@ -14,9 +14,6 @@
 require_once('include/EditView/EditView2.php');
  class ViewMultiedit extends SugarView{
  	var $type ='edit';
- 	function ViewMultiedit(){
- 		parent::SugarView();
- 	}
  	
  	function display(){
 		global $beanList, $beanFiles;

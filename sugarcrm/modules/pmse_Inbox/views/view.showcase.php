@@ -49,11 +49,11 @@ class pmse_InboxViewShowCase extends SugarView
         ),
     );
 
-    public function pmse_InboxViewShowCase()
+    public function __construct()
     {
         $this->pmse = PMSE::getInstance();
         $this->wrapper = new PMSEWrapper();
-        parent::SugarView();
+        parent::__construct();
     }
 
     /**
@@ -316,7 +316,8 @@ FLIST;
                 $data_aux->cas_delegate_date = $caseData['cas_delegate_date'];
                 // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
                 // $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
-                $expTime = PMSECaseWrapper::processDueDateTime($caseData['cas_due_date']);
+                $caseWrapper = new PMSECaseWrapper();
+                $expTime = $caseWrapper->processDueDateTime($caseData['cas_due_date']);
                 $expected_time = $expTime['expected_time'];
                 $expected_time_warning = $expTime['expected_time_warning'];
                 if ($expected_time_warning == true) {

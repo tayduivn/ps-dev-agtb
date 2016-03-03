@@ -771,7 +771,7 @@ class User extends Person {
      * @param bool $deleted      Include deleted users
      * @return User|null         Returns the user object unless once is not found, then it returns null
      */
-    public function retrieve($id, $encode = true, $deleted = true) {
+    public function retrieve($id = -1, $encode = true, $deleted = true) {
         $ret = parent::retrieve($id, $encode, $deleted);
         //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
         $this->hashTS = $this->fetched_row['date_modified'];
@@ -1260,7 +1260,8 @@ EOQ;
 		return $user_fields;
 	}
 
-	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
+    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection = null)
+    {
 		return $list_form;
 	}
 

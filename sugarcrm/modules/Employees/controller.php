@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 class EmployeesController extends SugarController{
-	function EmployeesController(){
-		parent::SugarController();
-	}
-
 	function action_editview(){
 		if(is_admin($GLOBALS['current_user']) || $_REQUEST['record'] == $GLOBALS['current_user']->id) 
 			$this->view = 'edit';
@@ -43,4 +39,3 @@ class EmployeesController extends SugarController{
 	}
 	
 }
-?>

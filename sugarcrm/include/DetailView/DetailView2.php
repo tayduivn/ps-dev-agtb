@@ -38,7 +38,8 @@ class DetailView2 extends EditView
         $module,
         $focus,
         $metadataFile = null,
-        $tpl = 'include/DetailView/DetailView.tpl'
+        $tpl = 'include/DetailView/DetailView.tpl',
+        $createFocus = true
         )
     {
         $this->th = new TemplateHandler();

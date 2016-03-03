@@ -16,7 +16,8 @@ class TemplateDecimal extends TemplateFloat{
 	var $default = null;
 	var $default_value = null;
 	
-	function TemplateDecimal(){
+    public function __construct()
+    {
     	parent::__construct();
 	}
 

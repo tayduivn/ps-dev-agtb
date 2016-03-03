@@ -12,10 +12,6 @@
 require_once('modules/Notifications/views/view.quicklist.php');
 
 class ViewSystemQuicklist extends ViewQuickList{
-	function ViewSystemQuicklist(){
-		parent::ViewQuickList();
-	}
-
 	function display()
 	{
 		$GLOBALS['system_notification_buffer'] = array();

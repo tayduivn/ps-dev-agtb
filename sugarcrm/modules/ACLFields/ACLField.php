@@ -16,7 +16,7 @@ require_once('modules/ACLFields/actiondefs.php');
  * Field-level ACLs
  * @api
  */
-class ACLField  extends ACLAction
+class ACLField extends SugarBean
 {
     public $module_dir = 'ACLFields';
     public $object_name = 'ACLField';
@@ -105,9 +105,10 @@ class ACLField  extends ACLAction
      * @param string $module
      * @param string $user_id
      * @param string $role_id
+     * @return array
      */
-    function getFields($module,$user_id='',$role_id=''){
-
+    public static function getFields($module, $user_id = '', $role_id = '')
+    {
         $fields = ACLField::getAvailableFields($module, false);
         if(!empty($role_id)){
             $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
@@ -140,13 +141,16 @@ class ACLField  extends ACLAction
     /**
      * @internal
      * @param string $role_id
+     * @return array
      */
-    function getACLFieldsByRole($role_id){
+    public static function getACLFieldsByRole($role_id)
+    {
         $fields = array();
         $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
         $query .=  " WHERE af.deleted = 0 ";
         $query .= " AND af.role_id='$role_id' ";
         $result = $GLOBALS['db']->query($query);
+        $fields = array();
         while($row = $GLOBALS['db']->fetchByAssoc($result)){
             $fields[$row['id']] =  $row;
         }
@@ -231,7 +235,7 @@ class ACLField  extends ACLAction
      * @param bool $addACLParam Add 'acl' key with acl access value?
      * @param string $suffix Field suffix to strip from the list.
      */
-    function listFilter(&$list,$category, $user_id, $is_owner, $by_key=true, $min_access = 1, $blank_value=false, $addACLParam=false, $suffix='')
+    public static function listFilter(&$list, $category, $user_id, $is_owner, $by_key = true, $min_access = 1, $blank_value = false, $addACLParam = false, $suffix = '')
     {
         foreach($list as $key=>$value){
             if($by_key){
@@ -301,7 +305,7 @@ class ACLField  extends ACLAction
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    static function hasAccess($field, $module, $user_id, $is_owner)
+    static function hasAccess($field = false, $module = 0, $user_id = null, $is_owner = null)
     {
         if(is_null($user_id)) {
             $user = $GLOBALS['current_user'];
@@ -425,7 +429,7 @@ class ACLField  extends ACLAction
      * @param string $field_id
      * @param string $access
      */
-    function setAccessControl($module, $role_id, $field_id, $access)
+    public static function setAccessControl($module, $role_id, $field_id, $access)
     {
         $acl = new ACLField();
         $id = md5($module. $role_id . $field_id);
@@ -444,10 +448,10 @@ class ACLField  extends ACLAction
 
     }
 
-    public function clearACLCache()
+    public static function clearACLCache()
     {
         self::$acl_fields = array();
-        parent::clearACLCache();
+        ACLAction::clearACLCache();
     }
 
     /**
@@ -462,5 +466,24 @@ class ACLField  extends ACLAction
             self::$acl_fields[$user_id] = self::loadFromCache($user_id, 'fields');
         }
         return !empty(self::$acl_fields[$user_id][$module]);
+    }
+
+    /**
+     * @param string $user_id
+     * @param string $type
+     */
+    protected static function loadFromCache($user_id, $type)
+    {
+        return AclCache::getInstance()->retrieve($user_id, $type);
+    }
+
+    /**
+     * @param string $user_id
+     * @param string $type
+     * @param array $data
+     */
+    protected static function storeToCache($user_id, $type, $data)
+    {
+        return AclCache::getInstance()->store($user_id, $type, $data);
     }
 }

@@ -32,22 +32,6 @@ class {{$class.name}}_sugar extends {{$class.extends}} {
     public $disable_row_level_security = true;
     {{/if}}
 
-    /**
-     * This is a deprecated method, please start using __construct() as this
-     * method will be removed in a future version.
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function {{$class.name}}_sugar(){
-        $GLOBALS['log']->deprecated('Calls to {{$class.name}}::{{$class.name}} are deprecated.');
-        self::__construct();
-    }
-
-    public function __construct(){
-        parent::__construct();
-    }
-    
 {{if $class.acl}}
     public function bean_implements($interface){
         switch($interface){

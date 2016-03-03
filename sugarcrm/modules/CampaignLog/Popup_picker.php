@@ -15,26 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
-
-
-
-
-
-
-
 class Popup_Picker
 {
-	
-	
-	/*
-	 * 
-	 */
-	function Popup_Picker()
-	{
-		;
-	}
-	
 	/*
 	 * 
 	 */

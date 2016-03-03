@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-01-22 - avlasov - PHP 7 compatibility
+
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
     Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
 
@@ -97,8 +99,9 @@ class nusoap_xmlschema extends nusoap_base  {
 	* @param	string $namespaces namespaces defined in enclosing XML
 	* @access   public
 	*/
-	function nusoap_xmlschema($schema='',$xml='',$namespaces=array()){
-		parent::nusoap_base();
+    public function __construct($schema = '', $xml = '', $namespaces = array())
+    {
+        parent::__construct();
 		$this->debug('nusoap_xmlschema class instantiated, inside constructor');
 		// files
 		$this->schema = $schema;

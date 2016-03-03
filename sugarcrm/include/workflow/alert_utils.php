@@ -77,7 +77,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 		if($user_meta_array['array_type'] == 'past'){
 			$target_user_id = $focus->fetched_row[$user_meta_array['field_value']];
 		} else {
-			$target_user_id = $focus->$user_meta_array['field_value'];
+            $target_user_id = $focus->{$user_meta_array['field_value']};
 		}
 	//END Bug Fix
 		//Get user's manager id?
@@ -577,7 +577,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 		//compile user address info based on target object
 
 		if($user_meta_array['rel_email_value']==""){
-			$target_user_id = $target_object->$user_meta_array['field_value'];
+            $target_user_id = $target_object->{$user_meta_array['field_value']};
 			//Get user's manager id?
 			if($user_meta_array['relate_type'] != "Self"){
 				$target_user_id = get_manager_info($target_user_id);
@@ -586,11 +586,11 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 			$user_array = get_alert_recipient($target_user_id);
 		} else {
 			//use the custom fields
-			if($target_object->$user_meta_array['rel_email_value']==""){
+            if ($target_object->{$user_meta_array['rel_email_value']} == '') {
 				//no address;
 				return;
 			} else {
-				$notify_address = $target_object->$user_meta_array['rel_email_value'];
+                $notify_address = $target_object->{$user_meta_array['rel_email_value']};
 			}
 			$notify_name = check_special_fields($user_meta_array['field_value'], $target_object);
 			$user_array['address'] = $notify_address;

@@ -18,11 +18,12 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyLeadsDashlet extends DashletGeneric { 
-    function MyLeadsDashlet($id, $def = null) {
+    public function __construct($id, $def = null)
+    {
         global $current_user, $app_strings;
 		require('modules/Leads/Dashlets/MyLeadsDashlet/MyLeadsDashlet.data.php');
 		
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
          
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_LEADS', 'Leads');
         
@@ -31,5 +32,3 @@ class MyLeadsDashlet extends DashletGeneric {
         $this->seedBean = BeanFactory::getBean('Leads');        
     }
 }
-
-?>

@@ -104,10 +104,10 @@ class SugarUpgradeScanModules extends UpgradeScript
             // drop whitespace
             $data = preg_replace('/\s+/', '', $data);
             /* File data is:
-             * {(){parent::ViewEdit();}(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}?>
-             * md5 is: c8251f6b50e3e814135c936f6b5292eb
+             * {(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}
+             * md5 is: 794b5f58a557c243ddea04382996891f
              */
-            if(md5($data) !== 'c8251f6b50e3e814135c936f6b5292eb') {
+            if(md5($data) !== '794b5f58a557c243ddea04382996891f') {
                 $this->log("Bad md5 for $file");
                 return false;
             }

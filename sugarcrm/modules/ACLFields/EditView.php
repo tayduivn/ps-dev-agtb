@@ -11,7 +11,8 @@
  */
 
 class ACLFieldsEditView{
-	function getView($module, $role_id){
+    public static function getView($module, $role_id)
+    {
         $options = array();
         //BEGIN SUGARCRM flav=ent ONLY
         $tbaConfigurator = new TeamBasedACLConfigurator();
@@ -44,4 +45,3 @@ class ACLFieldsEditView{
 		return  $sugar_smarty->fetch('modules/ACLFields/EditView.tpl');
 	}
 }
-?>

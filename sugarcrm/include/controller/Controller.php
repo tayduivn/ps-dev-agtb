@@ -28,7 +28,8 @@ class Controller extends SugarBean {
 	var $type;  //defines id this is a new list order or existing, or delete
 				// New, Save, Delete
 	
-	function Controller() {
+    public function __construct()
+    {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;

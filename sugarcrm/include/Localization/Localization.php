@@ -67,7 +67,8 @@ class Localization {
 	/**
 	 * sole constructor
 	 */
-	function Localization() {
+    public function __construct()
+    {
 		global $sugar_config;
 		$this->localeNameFormatDefault = empty($sugar_config['locale_name_format_default']) ? 's f l' : $sugar_config['default_name_format'];
 		$this->loadCurrencies();

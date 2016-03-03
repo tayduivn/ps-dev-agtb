@@ -36,7 +36,8 @@ class EditView {
      * @param string $module module to use
      * @param string $template template of the form to retreive
      */
-    function EditView($module, $template) {
+    public function __construct($module, $template)
+    {
         $this->module = $module;
         $this->template = $template;
         $this->ss = new Sugar_Smarty();

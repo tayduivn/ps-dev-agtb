@@ -14,11 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Users/UserViewHelper.php');
 
 class UsersViewDetail extends ViewDetail {
-
- 	function UsersViewDetail(){
- 		parent::ViewDetail();
- 	}
-
     function preDisplay() {
         global $current_user, $app_strings, $sugar_config;
 

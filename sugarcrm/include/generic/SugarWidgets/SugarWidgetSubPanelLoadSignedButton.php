@@ -22,7 +22,7 @@ class SugarWidgetSubPanelLoadSignedButton extends SugarWidgetField
 		return '&nbsp;';
 	}
 
-	function displayList(&$layout_def)
+    public function displayList($layout_def)
 	{
 		global $app_strings;
 		

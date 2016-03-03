@@ -767,12 +767,8 @@ class VardefManager{
         if(!empty($dictionary[$object]) && !isset($dictionary[$object]['acls']['SugarACLStatic'])){
             // $beanList is a mess. most of its keys are module names (Cases, etc.),
             // but some are object names (ForecastOpportunities), so we check both
-            $class = BeanFactory::getBeanName($object);
-            if (!$class) {
-                $class = BeanFactory::getBeanName($module);
-            }
-            if ($class && is_subclass_of($class, 'SugarBean')
-                && call_user_func(array($class, 'bean_implements_static'), 'ACL')) {
+            $bean = BeanFactory::getBean($object) ?: BeanFactory::getBean($module);
+            if ($bean && ($bean instanceof SugarBean) && $bean->bean_implements('ACL')) {
                 $dictionary[$object]['acls']['SugarACLStatic'] = true;
             }
         }

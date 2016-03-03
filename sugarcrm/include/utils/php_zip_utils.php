@@ -115,7 +115,7 @@ function zip_files_list($zip_file, $file_list, $prefix = '')
         } else {
             $zipname = $file;
         }
-        $archive->addFile($file, $zipname);
+        $archive->addFile(UploadFile::realpath($file), $zipname);
     }
     return TRUE;
 }

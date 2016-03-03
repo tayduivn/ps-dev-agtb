@@ -85,15 +85,6 @@ class SugarView
     protected $request;
 
     /**
-     * @see __construct
-     * @deprecated
-     */
-    protected function SugarView($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    /**
      * Ctor
      * @param SugarBean $bean
      * @param array $view_object_map
@@ -236,20 +227,16 @@ class SugarView
      * view can do the setup in preDisplay() that is common to itself and any subviews
      * and then the subview can just override display(). If it so desires, can also override
      * preDisplay().
-     *
-     * @param array $params additional view paramters passed through from the controller
      */
-    public function preDisplay($params = array())
+    public function preDisplay()
     {
     }
 
     /**
      * [OVERRIDE] - This method is meant to overidden in a subclass. This method
      * will handle the actual display logic of the view.
-     *
-     * @param array $params additional view paramters passed through from the controller
      */
-    public function display($params = array())
+    public function display()
     {
     }
 
@@ -1400,11 +1387,20 @@ EOHTML;
      */
     public function getBreadCrumbSymbol()
     {
-    	if(SugarThemeRegistry::current()->directionality == "ltr") {
-        	return "<span class='breadCrumbSymbol'>&raquo;</span>";
-        }
-        else {
-        	return "<span class='breadCrumbSymbol'>&laquo;</span>";
+        return self::staticGetBreadCrumbSymbol();
+    }
+
+    /**
+     * Returns the correct breadcrumb symbol according to theme's directionality setting
+     *
+     * @return string
+     */
+    public static function staticGetBreadCrumbSymbol()
+    {
+        if (SugarThemeRegistry::current()->directionality == "ltr") {
+            return "<span class='breadCrumbSymbol'>&raquo;</span>";
+        } else {
+            return "<span class='breadCrumbSymbol'>&laquo;</span>";
         }
     }
 

@@ -43,9 +43,6 @@ function setHideSelectButton($value){
 	$this->hideSelectButton = $value;	
 }
 
-function SubPanelViewProducts(){
-}
-
 function getHeaderText($action, $currentModule){
 	global $app_strings;
 	global $locale;
@@ -128,5 +125,3 @@ if((is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Produ
 	$ListView->processListView($this->products_list, "products", "PRODUCT");
 }
 }
-
-?>

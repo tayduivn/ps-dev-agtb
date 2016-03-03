@@ -240,7 +240,7 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
      * @param array $args
      * @return array
      */
-    public function filterList(ServiceBase $api, array $args)
+    public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         // some local variables
         $found_assigned_user = false;
@@ -275,7 +275,7 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
 
         $args['filter'] = $this->createFilter($api, $found_assigned_user, $found_timeperiod);
 
-        return parent::filterList($api, $args);
+        return parent::filterList($api, $args, $acl);
     }
 
     /**

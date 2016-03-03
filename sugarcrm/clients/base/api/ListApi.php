@@ -24,8 +24,8 @@ class ListApi extends SugarListApi {
         $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
     }
 
-    public function parseArguments($api, $args, $seed) {
-
+    public function parseArguments(ServiceBase $api, array $args, $seed = null)
+    {
         $parsed = parent::parseArguments($api, $args, $seed);
 
         $deleted = false;

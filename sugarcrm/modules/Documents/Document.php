@@ -283,12 +283,13 @@ class Document extends SugarBean {
 	       $this->status = $app_list_strings['document_status_dom'][$this->status_id];
 	    }
         if (!empty($this->related_doc_id)) {
-            $this->related_doc_name = Document::get_document_name($this->related_doc_id);
+            $this->related_doc_name = self::get_document_name($this->related_doc_id);
             $this->related_doc_rev_number = DocumentRevision::get_document_revision_name($this->related_doc_rev_id);
         }
 	}
 
-	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
+    public function list_view_parse_additional_sections(&$list_form)
+    {
 		return $list_form;
 	}
 
@@ -362,8 +363,8 @@ class Document extends SugarBean {
 		return false;
 	}
 
-	//static function.
-	function get_document_name($doc_id){
+    public static function get_document_name($doc_id)
+    {
 		if (empty($doc_id)) return null;
 
 		$db = DBManagerFactory::getInstance();

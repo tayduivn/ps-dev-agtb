@@ -1072,7 +1072,7 @@ class SugarAutoLoader
      *
      * @return array Flattened data
      */
-    protected function flatten($dir, array $data, $get_dirs, $extension, $recursive)
+    protected static function flatten($dir, array $data, $get_dirs, $extension, $recursive)
     {
         $result = array();
         foreach ($data as $file => $nodes) {

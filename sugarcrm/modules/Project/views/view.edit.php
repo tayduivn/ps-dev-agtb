@@ -12,11 +12,6 @@
  */
 
 class ProjectViewEdit extends ViewEdit {
-
- 	function ProjectViewEdit(){
- 		parent::ViewEdit();
- 	}
-
  	function display() {
         $this->bean->is_template = 0;
         if (!empty($this->ev->ss)){
@@ -25,4 +20,3 @@ class ProjectViewEdit extends ViewEdit {
  		parent::display();
  	}
 }
-?>

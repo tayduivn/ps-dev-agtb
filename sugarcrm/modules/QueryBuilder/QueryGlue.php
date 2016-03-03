@@ -35,7 +35,8 @@ class QueryGlue {
 	var $select_array = array();
 	var $rel_mod_array = array();
 	
-	function QueryGlue(& $seed_object){
+    public function __construct(& $seed_object)
+    {
 		
 
 		
@@ -168,8 +169,3 @@ class QueryGlue {
 	
 //end class QueryGlue
 }	
-
-
-
-
-?>

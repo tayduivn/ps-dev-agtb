@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/SugarObjects/templates/person/Person.php';
+require_once 'modules/Contacts/Contact.php';
+require_once 'modules/vCals/vCal.php';
 
 class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -19,7 +20,9 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Can't use Person since Localization needs actual bean
-        $this->_bean = BeanFactory::getBean('Contacts');
+        $this->_bean = $this->getMockBuilder('Contact')
+            ->setMethods(array('getVCalData'))
+            ->getMock();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('files');
     }
@@ -80,36 +83,28 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
         $sugarDateTime = $timedate->fromIso($expectedEndTime);
         $vcalEndTime   = $sugarDateTime->format($vcalFormat);
 
-        $vcalData = "
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//SugarCRM//SugarCRM Calendar//EN
-BEGIN:VFREEBUSY
-ORGANIZER;CN=Sally Bronsen:sally@example.com
-DTSTART:2014-08-11 00:00:00
-DTEND:2014-10-11 00:00:00
-FREEBUSY:{$vcalStartTime}/{$vcalEndTime}
-DTSTAMP:2014-08-12 20:34:26
-END:VFREEBUSY
-END:VCALENDAR";
+        $vcalData = array(
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//SugarCRM//SugarCRM Calendar//EN',
+            'BEGIN:VFREEBUSY',
+            'ORGANIZER;CN=Sally Bronsen:sally@example.com',
+            'DTSTART:2014-08-11 00:00:00',
+            'DTEND:2014-10-11 00:00:00',
+            "FREEBUSY:{$vcalStartTime}/{$vcalEndTime}",
+            'DTSTAMP:2014-08-12 20:34:26',
+            'END:VFREEBUSY',
+            'END:VCALENDAR'
+        );
 
-        PersonTemplateTest_Mock_vCal::$returnValue = $vcalData;
-        BeanFactory::setBeanClass('vCals', 'PersonTemplateTest_Mock_vCal');
+        $this->_bean->expects($this->once())
+            ->method('getVCalData')
+            ->will($this->returnValue($vcalData));
 
         $result = $this->_bean->getFreeBusySchedule();
 
         $this->assertEquals(1, count($result), 'Unexpected number of Start/End times from getFreeBusySchedule()');
         $this->assertEquals($expectedStartTime, $result[0]['start'], 'Unexpected Start time from getFreeBusySchedule()');
         $this->assertEquals($expectedEndTime, $result[0]['end'], 'Unexpected Start time from getFreeBusySchedule()');
-    }
-}
-
-class PersonTemplateTest_Mock_vCal extends vCal
-{
-    public static $returnValue;
-
-    public function get_vcal_freebusy(Person $person, $cached)
-    {
-        return static::$returnValue;
     }
 }

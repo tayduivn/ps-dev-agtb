@@ -995,7 +995,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      * @param  string $fieldname The fieldname to get the defs for
      * @return array
      */
-    protected function getViewDefFromFieldname($fieldname)
+    protected function getViewDefFromFieldname($fieldname, $withFieldset = true)
     {
         if (is_array($fieldname)) {
             if (isset($fieldname['name'])) {
@@ -1013,7 +1013,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             return false;
         }
 
-        return parent::getViewDefFromFieldname($fieldname);
+        return parent::getViewDefFromFieldname($fieldname, $withFieldset);
     }
 
     /**

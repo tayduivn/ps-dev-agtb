@@ -28,7 +28,7 @@ class vCard
 	function loadContact($contactid, $module='Contacts')
 	{
 		global $app_list_strings;
-		$contact = BeanFactory::getBean($module, $contactid);
+        $contact = $this->getBean($module, $contactid);
 		// Bug 21824 - Filter fields exported to a vCard by ACLField permissions.
 		$contact->ACLFilterFields();
 		// cn: bug 8504 - CF/LB break Outlook's vCard import
@@ -164,7 +164,7 @@ class vCard
         $lines = file($filename);
         $start = false;
 
-        $bean = BeanFactory::getBean($module);
+        $bean = $this->getBean($module);
         $bean->assigned_user_id = $current_user->id;
         $email_suffix = 1;
 
@@ -304,7 +304,7 @@ class vCard
                 if ($keys[0] == 'ORG') {
                     if (!empty($value)) {
                         if ($bean instanceof Contact || $bean instanceof Lead) {
-                            $accountBean = BeanFactory::getBean('Accounts');
+                            $accountBean = $this->getBean('Accounts');
                             // It's a contact, we better try and match up an account
                             $full_company_name = trim($values[0]);
                             // Do we have a full company name match?
@@ -361,7 +361,7 @@ class vCard
 
         if ($bean instanceof Contact && empty($bean->account_id) && !empty($bean->account_name)) {
             // We need to create a new account
-            $accountBean = BeanFactory::getBean('Accounts');
+            $accountBean = $this->getBean('Accounts');
             // Populate the newly created account with all of the contact information
             foreach ($bean->field_defs as $field_name => $field_def) {
                 if (!empty($bean->$field_name)) {
@@ -375,5 +375,15 @@ class vCard
 
         $beanId = $bean->save();
         return $beanId;
+    }
+
+    /**
+     * @param string $module
+     * @param string $id Optional
+     * @return SugarBean|null
+     */
+    protected function getBean($module, $id = null)
+    {
+        return BeanFactory::getBean($module, $id);
     }
 }

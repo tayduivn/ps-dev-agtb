@@ -31,7 +31,7 @@ class BugsApi extends ModuleApi
     /**
      * Create the bug record and optionally perform post-save actions for Portal
      */
-    public function createRecord($api, $args)
+    public function createRecord(ServiceBase $api, array $args)
     {
         //create the bug using the ModuleApi
 

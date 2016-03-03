@@ -13,10 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldEnum extends SugarWidgetReportField
 {
-    public function SugarWidgetFieldEnum($layout_manager) {
-        parent::SugarWidgetReportField($layout_manager);
-    }
-
     public function queryFilterEmpty($layout_def)
     {
         $column = $this->_get_column_select($layout_def);
@@ -60,7 +56,8 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $this->_get_column_select($layout_def)." NOT IN (".$str.")\n";
 	}
 
-    function & displayList($layout_def) {
+    function displayList($layout_def)
+    {
         if(!empty($layout_def['column_key'])){
             $field_def = $this->reporter->all_fields[$layout_def['column_key']];
         }else if(!empty($layout_def['fields'])){
@@ -94,7 +91,8 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
         }
         return $str;
     }
-	function & displayListPlain($layout_def) {
+    public function displayListPlain($layout_def)
+    {
 		if(!empty($layout_def['column_key'])){
 			$field_def = $this->reporter->all_fields[$layout_def['column_key']];
 		}else if(!empty($layout_def['fields'])){

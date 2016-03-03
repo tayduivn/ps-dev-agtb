@@ -198,7 +198,7 @@ class LeadConvert
             $relate = $moduleDef['contactRelateField'];
             $fieldDef = $this->contact->field_defs[$relate];
             if (!empty($fieldDef['id_name'])) {
-                $this->contact->$fieldDef['id_name'] = $this->modules[$moduleName]->id;
+                $this->contact->{$fieldDef['id_name']} = $this->modules[$moduleName]->id;
                 if ($fieldDef['id_name'] != $relate) {
                     $rname = isset($fieldDef['rname']) ? $fieldDef['rname'] : "";
                     if (!empty($rname) && isset($this->modules[$moduleName]->$rname))

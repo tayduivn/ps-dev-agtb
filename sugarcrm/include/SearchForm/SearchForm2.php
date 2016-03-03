@@ -61,7 +61,7 @@ require_once('include/EditView/EditView2.php');
       */
      protected $request;
 
-    public function SearchForm($seed, $module, $action = 'index', $options = array())
+    public function __construct($seed, $module, $action = 'index', $options = array())
     {
         $this->request = InputValidation::getService();
  		$this->th = new TemplateHandler();
@@ -129,7 +129,8 @@ require_once('include/EditView/EditView2.php');
         }
  	}
 
- 	function display($header = true){
+    public function display($header = true, $ajaxSave = false)
+    {
     	global $theme, $timedate, $current_user;
  		$header_txt = '';
  		$footer_txt = '';

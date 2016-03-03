@@ -541,7 +541,7 @@ class TreeApi extends FilterApi
     /**
      * {@inheritDoc}
      */
-    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed)
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed = null)
     {
         $data = parent::runQuery($api, $args, $q, $options, $seed);
 

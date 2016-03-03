@@ -18,9 +18,9 @@ class ViewAjax extends SugarView
     /**
      * Constructor
      *
-     * @see SugarView::SugarView()
+     * @see SugarView::__construct()
      */
- 	public function ViewAjax()
+    public function __construct()
  	{
  		$this->options['show_title'] = false;
 		$this->options['show_header'] = false;
@@ -29,6 +29,6 @@ class ViewAjax extends SugarView
 		$this->options['show_subpanels'] = false; 
 		$this->options['show_search'] = false; 
 		
- 		parent::SugarView();
+        parent::__construct();
  	}
 }

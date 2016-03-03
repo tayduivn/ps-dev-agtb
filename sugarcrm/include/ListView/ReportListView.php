@@ -45,14 +45,6 @@ class ReportListView  extends ListView {
 	//related to reporting
 	var $export_type = "Normal";
 
-
-	function ReportListView(){
-
-		parent::ListView();
-	
-	//end function ReportListView
-	}
-
 	function setup($seed_object, $data_object=null, $x_block, $html_var, $interlock=false){
 	
 		$this->seed_object = $seed_object;
@@ -658,20 +650,5 @@ class ReportListView  extends ListView {
 	//end function get_column_width
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //end class
 }
-?>

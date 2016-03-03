@@ -30,7 +30,8 @@ function get_currency()
 
 class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 {
-    function SugarWidgetFieldCurrency(&$layout_manager) {
+    public function __construct(&$layout_manager)
+    {
         parent::__construct($layout_manager);
         $this->reporter = $this->layout_manager->getAttribute('reporter');
     }

@@ -411,7 +411,7 @@ function portal_set_entry($session,$module_name, $name_value_list){
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
-    if($_SESSION['type'] == 'contact' && !key_exists($module_name, $valid_modules_for_contact) ){
+    if ($_SESSION['type'] == 'contact' && !array_key_exists($module_name, $valid_modules_for_contact)) {
         $error->set_error('no_access');
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
@@ -427,13 +427,13 @@ function portal_set_entry($session,$module_name, $name_value_list){
             break;
         }
         $values_set[$value['name']] = $value['value'];
-        $seed->$value['name'] = $value['value'];
+        $seed->{$value['name']} = $value['value'];
     }
 
     // If it was an update, we have to set the values again
     if($is_update) {
         foreach($name_value_list as $value){
-            $seed->$value['name'] = $value['value'];
+            $seed->{$value['name']} = $value['value'];
         }
     }
 
@@ -442,17 +442,22 @@ function portal_set_entry($session,$module_name, $name_value_list){
     }
 
     if(!$is_update){
-        if(!key_exists('team_id', $values_set) && isset($_SESSION['team_id'])){
+    //BEGIN SUGARCRM flav=pro ONLY
+        if (!array_key_exists('team_id', $values_set) && isset($_SESSION['team_id'])) {
             $seed->team_id = $_SESSION['team_id'];
         }
 
-        if(!key_exists('team_set_id', $values_set) && isset($_SESSION['team_set_id'])){
+        if (!array_key_exists('team_set_id', $values_set) && isset($_SESSION['team_set_id'])) {
             $seed->team_set_id = $_SESSION['team_set_id'];
         }
-        if(isset($_SESSION['assigned_user_id']) && (!key_exists('assigned_user_id', $values_set) || empty($values_set['assigned_user_id']))){
+    //END SUGARCRM flav=pro ONLY
+        if (isset($_SESSION['assigned_user_id'])
+            && (!array_key_exists('assigned_user_id', $values_set) || empty($values_set['assigned_user_id']))) {
             $seed->assigned_user_id = $_SESSION['assigned_user_id'];
         }
-        if(isset($_SESSION['account_id']) && (!key_exists('account_id', $values_set) || empty($values_set['account_id']))){
+
+        if (isset($_SESSION['account_id'])
+            && (!array_key_exists('account_id', $values_set) || empty($values_set['account_id']))) {
             $seed->account_id = $_SESSION['account_id'];
         }
         $seed->portal_flag = 1;
@@ -745,7 +750,8 @@ function portal_get_module_fields($session, $module_name){
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
-    if(($_SESSION['type'] == 'portal'||$_SESSION['type'] == 'contact') &&  !key_exists($module_name, $valid_modules_for_contact)){
+    if (($_SESSION['type'] == 'portal' || $_SESSION['type'] == 'contact')
+        && !array_key_exists($module_name, $valid_modules_for_contact)) {
         $error->set_error('no_module');
         return array('module_name'=>$module_name, 'module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
     }

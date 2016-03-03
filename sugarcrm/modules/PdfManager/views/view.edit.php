@@ -17,11 +17,6 @@ require_once 'include/MVC/View/views/view.edit.php';
 
 class PdfManagerViewEdit extends ViewEdit
 {
-    public function PdfManagerViewEdit()
-    {
-        parent::ViewEdit();
-    }
-
     public function display()
     {
     

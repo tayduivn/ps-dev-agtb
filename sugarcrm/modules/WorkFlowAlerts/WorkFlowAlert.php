@@ -112,7 +112,7 @@ class WorkFlowAlert extends SugarBean {
 
 	}
 
-	function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

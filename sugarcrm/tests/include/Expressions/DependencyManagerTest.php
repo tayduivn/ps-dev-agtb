@@ -222,12 +222,12 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
 
 class MockDependencyManager extends DependencyManager
 {
-    public static function getModuleDependenciesForAction($module, $type, $view)
+    public static function getModuleDependenciesForAction($module, $action, $form = 'EditView')
     {
         return array(
             'module' => $module,
-            'type' => $type,
-            'view' => $view
+            'type' => $action,
+            'view' => $form
         );
     }
 }

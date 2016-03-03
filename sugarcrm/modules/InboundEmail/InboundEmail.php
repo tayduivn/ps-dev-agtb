@@ -166,7 +166,8 @@ class InboundEmail extends SugarBean {
 	 * @param string id
 	 * @return object Bean
 	 */
-	function retrieve($id, $encode=true, $deleted=true) {
+    function retrieve($id = -1, $encode=true, $deleted=true)
+    {
 		$ret = parent::retrieve($id,$encode,$deleted);
 		// if I-E bean exist
 		if (!is_null($ret)) {
@@ -776,12 +777,8 @@ class InboundEmail extends SugarBean {
 					if(	isset($colDef['len']) && !empty($colDef['len']) &&
 						isset($colDef['type']) && !empty($colDef['type']) &&
 						$colDef['type'] == 'varchar'
-					)
-                    {
-                        if (isset($overview->$colDef['name']))
-                        {
-                            $overview->$colDef['name'] = substr($overview->$colDef['name'], 0, $colDef['len']);
-                        }
+                        && isset($overview->{$colDef['name']})) {
+                            $overview->{$colDef['name']} = substr($overview->{$colDef['name']}, 0, $colDef['len']);
                     }
 
 					switch($colDef['name']) {
@@ -832,8 +829,8 @@ class InboundEmail extends SugarBean {
 						break;
 
 						default:
-							$overview->$colDef['name'] = SugarCleaner::cleanHtml(from_html($overview->$colDef['name']));
-							$values .= $this->db->quoted($overview->$colDef['name']);
+                            $overview->{$colDef['name']} = SugarCleaner::cleanHtml(from_html($overview->{$colDef['name']}));
+                            $values .= $this->db->quoted($overview->{$colDef['name']});
 						break;
 					}
 				}
@@ -875,9 +872,8 @@ class InboundEmail extends SugarBean {
                                 $set .= ",";
                             }
                             $value = '';
-                            if (isset($overview->$colDef['name']))
-                            {
-                                $value = $this->db->quoted($overview->$colDef['name']);
+                            if (isset($overview->{$colDef['name']})) {
+                                $value = $this->db->quoted($overview->{$colDef['name']});
                             }
                             else
                             {
@@ -1080,7 +1076,8 @@ class InboundEmail extends SugarBean {
 				$diff = array_diff_assoc($UIDLs, $cacheUIDLs);
 				$diff = $this->pop3_shiftCache($diff, $cacheUIDLs);
 				require_once('modules/Emails/EmailUI.php');
-				EmailUI::preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
+                $ui = new EmailUI();
+                $ui->preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
 
 				if (count($diff)> 50) {
                 	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -2291,7 +2288,13 @@ class InboundEmail extends SugarBean {
 		$this->mailbox_type = 'pick'; // forcing this
 
 		if(!empty($userId)) {
-			$teamId = ($_REQUEST['ie_team'] == '-1') ? User::getPrivateTeam($userId) : $_REQUEST['ie_team'];
+            if ($_REQUEST['ie_team'] == -1) {
+                /** @var User $user */
+                $user = BeanFactory::getBean('Users', $userId);
+                $teamId = $user->getPrivateTeamID();
+            } else {
+                $teamId = $_REQUEST['ie_team'];
+            }
 			$this->team_id = $teamId;
 			$this->team_set_id = $this->getTeamSetIdForTeams($teamId);
 		}
@@ -4790,19 +4793,22 @@ eoq;
         return false;
     }
 
-	function get_stored_options($option_name,$default_value=null,$stored_options=null) {
-		if (empty($stored_options)) {
-			$stored_options=$this->stored_options;
-		}
-		if(!empty($stored_options)) {
-			$storedOptions = Serialized::unserialize($stored_options, array(), true);
-			if (isset($storedOptions[$option_name])) {
-				$default_value=$storedOptions[$option_name];
-			}
-		}
-		return $default_value;
-	}
+    public function get_stored_options($option_name, $default_value = null)
+    {
+        return self::decode_stored_option($this->stored_options, $option_name, $default_value);
+    }
 
+    public static function decode_stored_option($stored_options, $option_name, $default_value = null)
+    {
+        if (!empty($stored_options)) {
+            $decoded = Serialized::unserialize($stored_options, array(), true);
+            if (isset($decoded[$option_name])) {
+                return $decoded[$option_name];
+            }
+        }
+
+        return $default_value;
+    }
 
 	/**
 	 * This function returns a contact or user ID if a matching email is found
@@ -6959,7 +6965,9 @@ class Overview {
 			),
 		);
 	*/
-	function Overview() {
+
+    public function __construct()
+    {
 		global $dictionary;
 
 		if(!isset($dictionary['email_cache']) || empty($dictionary['email_cache'])) {

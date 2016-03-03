@@ -11,10 +11,6 @@
  */
 
 class ViewQuickview extends SugarView{
-	function ViewQuickview(){
-		parent::SugarView();
-	}
-
 	function display()
 	{
 	    $focus = BeanFactory::getBean('Notifications', empty($_REQUEST['record']) ? "" : $_REQUEST['record']);

@@ -40,7 +40,8 @@ class ProcessView {
     var $top_block;
     var $bottom_block;
 
-    function ProcessView($workflow_object, $target_bean){
+    public function __construct($workflow_object, $target_bean)
+    {
         $this->xtpl = new XTemplate ('include/ListView/ProcessView.html');
         $this->workflow_object = $workflow_object;
         $this->target_bean = $target_bean;
@@ -496,7 +497,7 @@ class ProcessView {
 
             $expression_object = BeanFactory::getBean('Expressions');
 
-            $select_options = $expression_object->get_selector_array("dom_array", $this->target_bean->$option_array['value'], $option_array['dom_name'], false);
+            $select_options = $expression_object->get_selector_array('dom_array', $this->target_bean->{$option_array['value']}, $option_array['dom_name'], false);
             return "<select id='".$option_array['value']."' name='".$option_array['value']."' tabindex='1'>".$select_options."</select>";
         }
         //end function get_input_element
@@ -523,7 +524,7 @@ class ProcessView {
         global $app_list_strings;
         global $local_string;
 
-        $target_element = $this->target_bean->$option_array['value'];
+        $target_element = $this->target_bean->{$option_array['value']};
         if(!empty($option_array['possess_next']) && $option_array['possess_next']=="Yes"
         ){
             $possess_next = true;
@@ -532,7 +533,7 @@ class ProcessView {
         }
 
         if(!empty($option_array['value2'])){
-            $target_element2 = $this->target_bean->$option_array['value2'];
+            $target_element2 = $this->target_bean->{$option_array['value2']};
         } else {
             $target_element2 = "";
         }
@@ -1010,7 +1011,7 @@ class ProcessView {
         }
     }
 
-    function get_js_exception_fields()
+    public static function get_js_exception_fields()
     {
         return array("char", "varchar", "text", "name", "phone", "email", "enum", "assigned_user_name");
     }

@@ -24,11 +24,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.detail.php');
 
 class OpportunitiesViewDetail extends ViewDetail {
-
- 	function OpportunitiesViewDetail(){
- 		parent::ViewDetail();
- 	}
- 	
  	function display() {
 
 	    $currency = BeanFactory::getBean('Currencies');
@@ -47,4 +42,3 @@ class OpportunitiesViewDetail extends ViewDetail {
  		parent::display();
  	}
 }
-?>

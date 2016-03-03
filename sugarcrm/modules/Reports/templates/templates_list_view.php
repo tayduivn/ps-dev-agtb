@@ -738,9 +738,6 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 			$columnData[$count++] = $rowData;
 		}
 	} // while
-	$previousRow = array();
-	$count = 0;
-	$countIndex = 0;
 	
 	// to find header row index except group by
 	$groupByIndexInHeaderRow = array();
@@ -762,50 +759,25 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	if (count($rowArray) <= 0) {
 		return array();
 	} // if
-	// generate rows and columns data in tree structure
-	for ($i = 0 ; $i < count($rowArray) ; $i++) {
-		$row = $rowArray[$i];
-		$changeGroupHappend = false;
-
-		$whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
-		if ($whereToStartGroupByRow === -1) {
-			$rowsAndColumnsData[$count] = array();
-			$changeGroupHappend = true;
-			$countIndex = $count;
-		}
-		else
-		{
-			$countIndex = $whereToStartGroupByRow;
-		}
-		
-		for ($j = 0 ; $j < count($group_def_array) ; $j++) {
-			$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name']."#".$group_def_array[$j]['table_key']]['label'];
-			$key = $reporter->group_defs_Info[$group_def_array[$j]['name']."#".$group_def_array[$j]['table_key']]['index'];
-			if ($j == 0) {
-				$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
-			} else {
-				$rowData = array();
-				for ($k = 0 ; $k < count($headerRowIndexExceptGpBy) ; $k++) {
-					$indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
-					$rowData[$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
-				}
-
-				if ($rowsAndColumnsData[$countIndex][$row['cells'][$key]] != $rowData) {
-					$countIndex = $count;
-					$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
-					$changeGroupHappend = true;
-				}
-
-				if (!array_key_exists($row['cells'][$key], $rowsAndColumnsData[$countIndex])) {
-					$rowsAndColumnsData[$countIndex][$row['cells'][$key]] = $rowData;
-				}
-			}
-		}
-
-		if ($changeGroupHappend) {
-			$count++;
-		}
-	}
+    // generate rows and columns data in tree structure
+    for ($i = 0; $i < count($rowArray); $i++) {
+        $row = $rowArray[$i];
+        $rowsAndColumnsData[$i] = array();
+        for ($j = 0; $j < count($group_def_array); $j++) {
+            $groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name'] . "#" . $group_def_array[$j]['table_key']]['label'];
+            $key = $reporter->group_defs_Info[$group_def_array[$j]['name'] . "#" . $group_def_array[$j]['table_key']]['index'];
+            if ($j == 0) {
+                $rowsAndColumnsData[$i][$groupByColumnLabel] = $row['cells'][$key];
+            } else {
+                $rowData = array();
+                for ($k = 0; $k < count($headerRowIndexExceptGpBy); $k++) {
+                    $indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
+                    $rowData[$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
+                }
+                $rowsAndColumnsData[$i][$row['cells'][$key]] = $rowData;
+            }
+        }
+    }
 
 	// generates row level summation and grand total
 	$grandTotal = array();

@@ -47,16 +47,17 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
      *
      * @param string $name
      * @param string $password
+	 * @param STRING $fallback - is this authentication a fallback from a failed authentication
      * @return string id - used for loading the user
      *
      *         Contributions by Erik Mitchell erikm@logicpd.com
      */
-    public function authenticateUser($name, $password)
+    public function authenticateUser($name, $password, $fallback = false)
     {
         $GLOBALS['log']->debug('authenticating user.');
 
         if (empty($_POST['SAMLResponse'])) {
-            return parent::authenticateUser($name, $password);
+            return parent::authenticateUser($name, $password, $fallback);
         }
 
         $GLOBALS['log']->debug('have saml data.');

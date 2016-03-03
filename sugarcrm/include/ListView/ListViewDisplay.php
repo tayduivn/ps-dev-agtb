@@ -50,7 +50,7 @@ class ListViewDisplay {
      *
      * @param Request $request
 	 */
-    public function ListViewDisplay(Request $request = null)
+    public function __construct(Request $request = null)
     {
         $this->request = $request ?: InputValidation::getService();
         $this->lvd = new ListViewData($this->request);

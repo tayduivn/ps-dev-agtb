@@ -49,7 +49,8 @@ class SidecarSearchMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      *
      * @return string
      */
-    public function getNewFileContents() {
+    public function getNewFileContents($viewname = null)
+    {
         return file_get_contents($this->fullpath);
     }
 }

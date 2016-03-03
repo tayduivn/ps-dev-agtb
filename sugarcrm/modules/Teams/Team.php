@@ -107,7 +107,8 @@ class Team extends SugarBean
 		return $team_fields;
 	}
 
-	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
+    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection = '')
+    {
 		global $current_user;
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView"))
@@ -134,7 +135,14 @@ class Team extends SugarBean
 		return $list_form;
 	}
 
-	function create_team($name, $description, $team_id = null, $private = 0, $name_2 = '', $associated_user_id = null) {
+    public static function create_team(
+        $name,
+        $description,
+        $team_id = null,
+        $private = 0,
+        $name_2 = '',
+        $associated_user_id = null
+    ) {
 		$team = BeanFactory::getBean('Teams');
 
 		if(isset($team_id)) {
@@ -176,7 +184,14 @@ class Team extends SugarBean
 			if(empty($team_id)) {
 				self::set_team_name_from_user($team, $user);
 				$description = "{$mod_strings['LBL_PRIVATE_TEAM_FOR']} {$user->user_name}";
-				$team_id = $this->create_team($user->first_name, $description, create_guid(), 1, $user->last_name, $user->id);
+                $team_id = self::create_team(
+                    $user->first_name,
+                    $description,
+                    create_guid(),
+                    1,
+                    $user->last_name,
+                    $user->id
+                );
 			}
 
 			$team->retrieve($team_id);

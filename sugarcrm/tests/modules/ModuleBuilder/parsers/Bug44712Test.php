@@ -10,23 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+require_once 'modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php';
 
 class Bug44712Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
     public function testTranslateLabel()
     {
-        $activitiesRelationship = new ActivitiesRelationshipMock(array());
-        $vardef = $activitiesRelationship->getLinkFieldDefinition('Tasks', 'abc_MyCustomBasic_Activities_Tasks');
+        $activitiesRelationship = new ActivitiesRelationship(array());
+        $vardef = SugarTestReflection::callProtectedMethod($activitiesRelationship, 'getLinkFieldDefinition', array('Tasks', 'abc_MyCustomBasic_Activities_Tasks'));
         $this->assertEquals('LBL_ABC_MYCUSTOMBASIC_ACTIVITIES_TASKS_FROM_TASKS_TITLE', $vardef['vname'], "Assert that vardef['vname'] is set to LBL_ABC_MYCUSTOMBASIC_ACTIVITIES_FROM_TASKS_TITLE");
     }
-}
-
-require_once('modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php');
-class ActivitiesRelationshipMock extends ActivitiesRelationship
-{
-	public function getLinkFieldDefinition($sourceModule, $relationshipName)
-	{
-		return parent:: getLinkFieldDefinition($sourceModule, $relationshipName);
-	}
 }

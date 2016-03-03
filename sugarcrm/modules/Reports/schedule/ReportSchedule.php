@@ -18,10 +18,11 @@ class ReportSchedule{
 var $table_name='report_schedules';
     /** @var DBManager */
 var $db;
-function ReportSchedule(){
-	$this->db = DBManagerFactory::getInstance();
 
-}
+    public function __construct()
+    {
+        $this->db = DBManagerFactory::getInstance();
+    }
 
 /**
  * This is deprecated since 7.7.0 and will be removed in 7.9.0.

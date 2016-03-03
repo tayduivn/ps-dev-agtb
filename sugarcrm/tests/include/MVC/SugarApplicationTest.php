@@ -24,7 +24,10 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $system_config = new Administration();
         $system_config->retrieveSettings();
         $GLOBALS['system_config'] = $system_config;
-        $this->_app = new SugarApplicationMock();
+        $this->_app = $this->getMockBuilder('SugarApplication')
+            ->setMethods(null)
+            ->getMock();
+        $this->_app->controller = new stdClass();
         if ( isset($_SESSION['authenticated_user_theme']) )
             unset($_SESSION['authenticated_user_theme']);
 
@@ -214,7 +217,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'dog';
         $this->_app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     /**
@@ -226,25 +229,25 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'localhost';
         $this->_app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
         $_SERVER['SERVER_NAME'] = 'localhost';
         $this->_app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://localhost';
         $_SERVER['SERVER_NAME'] = '127.0.0.1';
         $this->_app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
         $_SERVER['SERVER_NAME'] = '127.0.0.1';
         $this->_app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsServerName()
@@ -253,7 +256,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'dog';
         $this->_app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsInWhitelist()
@@ -264,7 +267,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['http_referer']['list'][] = 'http://dog';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsFalseIfRefererIsNotInWhitelist()
@@ -275,7 +278,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['http_referer']['list'] = array();
 
-        $this->assertFalse($this->_app->checkHTTPReferer());
+        $this->assertFalse($this->_app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIs()
@@ -284,7 +287,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIsInConfig()
@@ -294,7 +297,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_app->controller->action = 'poo';
 
         $GLOBALS['sugar_config']['http_referer']['actions'][] = 'poo';
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
     }
 
     /**
@@ -306,11 +309,11 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'cat';
         $GLOBALS['sugar_config']['http_referer']['actions'] = array('poo');
         $this->_app->controller->action = 'oauth';
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
         $this->_app->controller->action = 'index';
-        $this->assertTrue($this->_app->checkHTTPReferer());
+        $this->assertTrue($this->_app->checkHTTPReferer(false));
         $this->_app->controller->action = 'save';
-        $this->assertFalse($this->_app->checkHTTPReferer());
+        $this->assertFalse($this->_app->checkHTTPReferer(false));
     }
 
     /**
@@ -387,18 +390,4 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
-}
-
-class SugarApplicationMock extends SugarApplication
-{
-    public function __construct()
-    {
-        parent::SugarApplication();
-        $this->controller = new stdClass();
-    }
-
-    public function checkHTTPReferer()
-	{
-	    return parent::checkHTTPReferer(false);
-	}
 }

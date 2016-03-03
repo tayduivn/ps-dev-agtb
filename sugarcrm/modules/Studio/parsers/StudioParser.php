@@ -112,7 +112,9 @@ class StudioParser {
 EOQ;
 
 	}
-	function buildImageButtons($buttons,$horizontal=true){
+
+    public static function buildImageButtons($buttons, $horizontal = true)
+    {
 		$text = '<table cellspacing=2><tr>';
 		foreach($buttons as $button){
 			if(!$horizontal){
@@ -165,7 +167,7 @@ EOQ;
 	}
 	function getFormButtons(){
 		$buttons = $this->generateButtons();
-		return $this->buildImageButtons($buttons);
+        return self::buildImageButtons($buttons);
 	}
 	function getForm(){
 		return $this->form  . <<<EOQ

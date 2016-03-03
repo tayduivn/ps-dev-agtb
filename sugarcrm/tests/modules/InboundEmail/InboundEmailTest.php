@@ -64,7 +64,7 @@ class InboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
 		$focus->status = "Active";
 		$focus->mailbox_type = 'pick';
 		$focus->group_id = $current_user->id;
-		$teamId = User::getPrivateTeam($current_user->id);
+        $teamId = $this->_user->getPrivateTeam($current_user->id);
 		$focus->team_id = $teamId;
 		$focus->team_set_id = $focus->getTeamSetIdForTeams($teamId);
 		$focus->stored_options = base64_encode(serialize($stored_options));

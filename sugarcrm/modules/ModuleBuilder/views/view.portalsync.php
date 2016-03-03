@@ -17,10 +17,10 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalSync extends SugarView 
 {
-	function ViewPortalSync()
+    public function __construct()
 	{
 	    $GLOBALS['log']->debug('ViewPortalSync constructor');
-	    parent::SugarView();
+        parent::__construct();
 	}
 
 	/**

@@ -18,7 +18,7 @@ class ModuleBuilderParser
 	var $_defMap; // private - mapping from view to variable name inside the viewdef file
 	var $_variables = array(); // private - set of additional variables (other than the viewdefs) found in the viewdef file that need to be added to the file again when it is saved - used by ModuleBuilder
 	
-	function ModuleBuilderParser()
+    public function __construct()
 	{
 		$this->_defMap = array(
             'listview'=>'listViewDefs',
@@ -89,7 +89,7 @@ class ModuleBuilderParser
         return (array('viewdefs' => $defs, 'variables' => $variables));
 	}
 	
-	function handleSave ($file,$view,$moduleName,$defs)
+    public function handleSave()
 	{
 	}
 	

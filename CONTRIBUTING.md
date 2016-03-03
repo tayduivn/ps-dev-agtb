@@ -160,7 +160,19 @@ Work on the code as much as you want and commit as much as you want; but keep in
 * Make commits of logical units.
 * Make sure your commit messages are in the proper format.
 
-> A good commit message is composed of a summary (the first line), optionally followed by a blank line and a more detailed description. The summary should start with the Module you are working on in square brackets (`[Core]`, `[Accounts]`, `[Contacts]` …). Use a verb in the infinitive on present form (`fix …`, `add …`, `update …`, `restore …`, …) to start the summary and **don't** add a period at the end.
+> A good commit message is composed of a summary (the first line) that contains the ticket number, optionally followed by a blank line and a more detailed description.  Use a verb in the infinitive on present form (`fix …`, `add …`, `update …`, `restore …`, …) to start the summary and **don't** add a period at the end. More details about what was changed/fixed should be places after the summary line.
+
+##### Example Commit Messages
+
+*Example 1*
+> SC-XXXX: Fix Account Record View
+>
+> Fix an issue on the account record view where the xyz widget was not displaying correctly.
+
+*Example 2*
+> Account Record View (fixes SC-XXXX)
+>
+> Fix an issue on the account record view where the xyz widget was not displaying correctly.
 
 #### Prepare your Patch for Submission
 

@@ -62,7 +62,8 @@ class MBPackage{
 // END SUGARCRM flav=ent ONLY
     );
 
-    function MBPackage($name){
+    public function __construct($name)
+    {
         $this->name = $name;
         $this->request = InputValidation::getService();
         $this->load();
