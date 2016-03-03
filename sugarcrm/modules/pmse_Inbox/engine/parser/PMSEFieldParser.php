@@ -148,37 +148,6 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseCriteria($criteriaToken, $params = array())
     {
-        switch ($criteriaToken->expOperator) {
-            case 'equals':
-                $delimiter = '==';
-                break;
-            case 'not_equals':
-                $delimiter = '!=';
-                break;
-            case 'major_equals_than':
-                $delimiter = '>=';
-                break;
-            case 'minor_equals_than':
-                $delimiter = '<=';
-                break;
-            case 'minor_than':
-                $delimiter = '<';
-                break;
-            case 'major_than':
-                $delimiter = '>';
-                break;
-            case 'within':
-                $delimiter = 'within';
-                break;
-            case 'not_within':
-                $delimiter = 'not within';
-                break;
-            default:
-                $delimiter = '==';
-                break;
-        }
-
-        //$tokenValueArray = explode($delimiter, $criteriaToken->expLabel);
         $tokenDelimiter = '::';
         $newTokenArray = array('{', 'future', $criteriaToken->expModule, $criteriaToken->expField, '}');
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
@@ -250,37 +219,6 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseVariable($criteriaToken, $params = array())
     {
-        switch ($criteriaToken->expOperator) {
-            case 'equals':
-                $delimiter = '==';
-                break;
-            case 'not_equals':
-                $delimiter = '!=';
-                break;
-            case 'major_equals_than':
-                $delimiter = '>=';
-                break;
-            case 'minor_equals_than':
-                $delimiter = '<=';
-                break;
-            case 'minor_than':
-                $delimiter = '<';
-                break;
-            case 'major_than':
-                $delimiter = '>';
-                break;
-            case 'within':
-                $delimiter = 'within';
-                break;
-            case 'not_within':
-                $delimiter = 'not within';
-                break;
-            default:
-                $delimiter = '==';
-                break;
-        }
-
-        //$tokenValueArray = explode($delimiter, $criteriaToken->expLabel);
         $tokenDelimiter = '::';
 
         $newTokenArray = array('{', 'future', $criteriaToken->expModule, $criteriaToken->expValue, '}');

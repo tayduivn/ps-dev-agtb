@@ -131,6 +131,18 @@ ExpressionControl.prototype.OPERATORS  = {
 ExpressionControl.prototype.initComparisonOperators = function(module) {
     ExpressionControl.prototype.OPERATORS.comparison = [
         {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            value: 'equals'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE', module),
+            value: 'not_equals'
+        },
+        {
             text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR', module),
             datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE', module),
             value: 'major_than'
@@ -139,12 +151,6 @@ ExpressionControl.prototype.initComparisonOperators = function(module) {
             text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN', module),
             datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE', module),
             value: 'minor_than'
-        },
-        {
-            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
-            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT', module),
-            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
-            value: 'equals'
         },
         {
             text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL', module),
@@ -157,10 +163,20 @@ ExpressionControl.prototype.initComparisonOperators = function(module) {
             value: 'minor_equals_than'
         },
         {
-            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL', module),
-            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT', module),
-            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE', module),
-            value: 'not_equals'
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_STARTS_TEXT', module),
+                value: "starts_with"
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_ENDS_TEXT', module),
+                value: "ends_with"
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT', module),
+                value: "contains"
+        },
+        {
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT', module),
+                value: "does_not_contain"
         }
     ];
 };
@@ -1525,7 +1541,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     newFieldSettings.timeFormat = that._timeFormat;
                                 case 'date':
                                     labelField = "datefield";
-                                    operators = that.OPERATORS.comparison;
+                                    operators = that.OPERATORS.comparison.slice(0, 6);
                                     newFieldSettings.dateFormat = that._dateFormat;
                                     break;
                                 case 'currency':
@@ -1533,18 +1549,23 @@ ExpressionControl.prototype._createModulePanel = function () {
                                 case 'decimal':
                                 case 'float':
                                 case 'integer':
-                                    operators = that.OPERATORS.comparison;
+                                    operators = that.OPERATORS.comparison.slice(0, 6);
                                     newFieldSettings.precision =
                                         (type === 'integer' ? 0 : (type === 'currency' ? 2 : -1));
                                     newFieldSettings.groupingSeparator =
                                         (type === 'currency' ? that._numberGroupingSeparator : "");
                                     newFieldSettings.decimalSeparator = that._decimalSeparator;
                                     break;
+                                case 'text':
+                                    labelField = "textfield";
+                                    operators = that.OPERATORS.comparison.slice();
+                                    operators.splice(2, 4);
+                                    break;
                                 default:
                                     if (type !== "dropdown" && type !== "checkbox") {
                                         labelField = "textfield";
                                     }
-                                    operators = [that.OPERATORS.comparison[2], that.OPERATORS.comparison[5]];
+                                    operators = that.OPERATORS.comparison.slice(0, 2);
                             }
                             if (that.EXTRA_OPERATORS[labelField]) {
                                 operators = operators.concat(that.EXTRA_OPERATORS[labelField]);
@@ -1608,10 +1629,7 @@ ExpressionControl.prototype._createFormResponsePanel = function () {
                     name: "operator",
                     label: "",
                     width: "20%",
-                    options: [
-                        this.OPERATORS.comparison[2],
-                        this.OPERATORS.comparison[5],
-                    ],
+                    options: this.OPERATORS.comparison.slice(0, 2),
                     valueField: "value",
                     labelField: "text"
                 }, {
@@ -1667,10 +1685,7 @@ ExpressionControl.prototype._createBusinessRulePanel = function () {
                     name: "operator",
                     width: "20%",
                     labelField: "text",
-                    options: [
-                        this.OPERATORS.comparison[2],
-                        this.OPERATORS.comparison[5]
-                    ]
+                    options: this.OPERATORS.comparison.slice(0, 2),
                 }, {
                     type: "text",
                     label: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_RESPONSE"),

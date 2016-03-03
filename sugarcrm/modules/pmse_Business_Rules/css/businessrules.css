@@ -169,11 +169,11 @@
 }
 
 .decision-table .decision-table-operator > * {
-  width: 3.5em;
+  width: 92px;
 }
 
 .decision-table .decision-table-operator select {
-  width: 4.3em;
+  width: 102px;
   height: 1.8em;
 }
 

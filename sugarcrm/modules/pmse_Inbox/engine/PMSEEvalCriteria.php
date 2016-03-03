@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'PMSEEvalRelations.php';
 
 /**
  * Class criteria that evaluates whether logical, arithmetic, relationship
@@ -20,6 +21,8 @@
  */
 class PMSEEvalCriteria
 {
+    use PMSEEvalRelations;
+
     /**
      * Store the existing groups and subgroups
      * @var array
@@ -357,93 +360,6 @@ class PMSEEvalCriteria
             default:
                 $ret = 0;
                 break;
-        }
-        return $ret;
-    }
-
-    /**
-     * Method that evaluates the relational part
-     * @param string $value1 value
-     * @param string $relational This value can be null or must not contain the "==", "=", ">", "> =", "<>", "! =", "<", "<="
-     * @param string $value2 value
-     * @return int
-     */
-    public function evalRelations($value1, $relational, $value2, $typeDate = 'typeDefault')
-    {
-        $arrayRelationsSig = array("==", ">", ">=", "!=", "<", "<=");
-        $arrayRelationsLit = array(
-            "equals",
-            "major_than",
-            "major_equals_than",
-            "not_equals",
-            "minor_than",
-            "minor_equals_than",
-            "within",
-            "not_within"
-        );
-        $pos = false;
-        $relLit = $relational;
-        if (in_array($relational, $arrayRelationsLit)) {
-            $pos = true;
-        }
-        if (in_array($relational, $arrayRelationsSig)) {//transform sign the literal
-            $clave = array_search($relational, $arrayRelationsSig);
-            $relLit = $arrayRelationsLit[$clave];
-            $pos = true;
-        }
-        if ($pos === false) {
-            return 0;
-        }
-        $value1 = $this->typeData($value1, $typeDate);
-        $value2 = $this->typeData($value2, $typeDate);
-        $this->condition .= ':(' . $value1 . '):'; // . $relSig . ' ' . $value2 . '::';
-        switch ($relLit) {
-            case 'equals':
-                if ($value1 == $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-            case 'major_than':
-                if ($value1 > $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-            case 'major_equals_than':
-                if ($value1 >= $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-            case 'not_equals':
-                if ($value1 != $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-            case 'minor_than':
-                if ($value1 < $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-            case 'minor_equals_than':
-                if ($value1 <= $value2) {
-                    $ret = 1;
-                } else {
-                    $ret = 0;
-                }
-                break;
-//            case 'within'://revisar
-//                break;
-//            case 'not_within'://revisar
-//                break;
         }
         return $ret;
     }

@@ -1991,7 +1991,7 @@
             changed = oldValue !== this.value;
             that[member] = this.value;
             if(that[member]) {
-                text = $(this).find("option:selected").text();
+                text = $(this).find('option:selected').attr('label');
                 span.appendChild(document.createTextNode(text));
             } else {
                 span.innerHTML = '&nbsp;';
@@ -2101,9 +2101,61 @@
 
     DecisionTableValueEvaluation.prototype = new DecisionTableValue();
 
-    DecisionTableValueEvaluation.prototype.OPERATORS = ["==", ">=", "<=", ">", "<", "!="/*, "within", "not within"*/];
+    DecisionTableValueEvaluation.prototype.initOperators = function (module) {
+        DecisionTableValueEvaluation.prototype.OPERATORS = [
+            {
+                label: '==',
+                value: '==',
+            },
+            {
+                label: '!=',
+                value: '!=',
+            },
+            {
+                label: '>=',
+                value: '>=',
+            },
+            {
+                label: '<=',
+                value: '<=',
+            },
+            {
+                label: '>',
+                value: '>',
+            },
+            {
+                label: '<',
+                value: '<',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT', module),
+                value: 'equals',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT', module),
+                value: 'not_equals',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_STARTS_TEXT', module),
+                value: 'starts_with',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_ENDS_TEXT', module),
+                value: 'ends_with',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT', module),
+                value: 'contains',
+            },
+            {
+                label: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT', module),
+                value: 'does_not_contain',
+            }
+        ];
+    };
 
     DecisionTableValueEvaluation.prototype.initObject = function(settings) {
+        DecisionTableValueEvaluation.prototype.initOperators('pmse_Project');
         this.setOperator(settings.operator || "");
     };
 
@@ -2113,13 +2165,24 @@
         return this;
     };
 
+    DecisionTableValueEvaluation.prototype.findOperatorLabel = function(operator) {
+        var i;
+        for (i = 0; i < this.OPERATORS.length; i++) {
+            if (operator == this.OPERATORS[i].value) {
+                operator = this.OPERATORS[i].label;
+                break;
+            }
+        }
+        return operator;
+    };
+
     DecisionTableValueEvaluation.prototype.setOperator = function(operator) {
         var $span;
         this.operator = operator;
         if (this.html && this.html[0]) {
             $span = jQuery(this.html[0]).find('span').empty();
             if (operator) {
-                $span.append(operator);
+                $span.append(this.findOperatorLabel(operator));
             } else {
                 $span.html("&nbsp;");
             }
@@ -2140,7 +2203,7 @@
         span = this.createHTMLElement("span");
         span.tabIndex = 0;
         if(this.operator) {
-            span.appendChild(document.createTextNode(this.operator));
+            span.appendChild(document.createTextNode(this.findOperatorLabel(this.operator)));
         } else {
             span.innerHTML = '&nbsp';
         }
@@ -2163,20 +2226,26 @@
             case 'currency':
             case 'float':
             case 'integer':
-                enabledOperators = this.OPERATORS;
+                enabledOperators = this.OPERATORS.slice(0, 6);
+                break;
+            case 'textarea':
+            case 'textfield':
+            case 'email':
+            case 'phone':
+            case 'url':
+            case 'name':
+                enabledOperators = this.OPERATORS.slice(6);
                 break;
             default:
-                enabledOperators = [this.OPERATORS[0], this.OPERATORS[5]];
+                enabledOperators = this.OPERATORS.slice(0, 2);
         }
-
-        $(select).append('<option></option>');
 
         for(i = 0; i < enabledOperators.length; i+=1) {
             option = this.createHTMLElement("option");
 
-            option.label = option.value = enabledOperators[i];
-            option.appendChild(document.createTextNode(option.label));
-            option.selected = enabledOperators[i] === this.operator;
+            option.label = enabledOperators[i].label;
+            option.value = enabledOperators[i].value;
+            option.selected = enabledOperators[i].value === this.operator;
             select.appendChild(option);
         }
 

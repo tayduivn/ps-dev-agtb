@@ -226,11 +226,13 @@ class PMSEBusinessRuleConversor
             case '>':
                 return 'major_than';
                 break;
-            case 'within':
-                return 'within';
-                break;
-            case 'not within':
-                return 'not_within';
+            case 'equals':
+            case 'not_equals':
+            case 'starts_with':
+            case 'ends_with':
+            case 'contains':
+            case 'does_not_contain':
+                return $condition;
                 break;
             default:
                 break;

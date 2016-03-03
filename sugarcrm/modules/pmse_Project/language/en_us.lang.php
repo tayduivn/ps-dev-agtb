@@ -319,6 +319,10 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL' => 'is greater than or equal to',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR' => 'is greater than',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE' => 'after',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_STARTS_TEXT' => 'starts with',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_ENDS_TEXT' => 'ends with',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT' => 'contains',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT' => 'does not contain',
 
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE' => 'on or after',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE' => 'on or before',
