@@ -52,6 +52,7 @@
             layout.find(".side-pane").addClass("active");
             layout.find(".dashboard-pane").show();
             layout.find(".preview-pane").removeClass("active");
+            app.events.trigger('list:preview:decorate', false);
         }
     },
 
