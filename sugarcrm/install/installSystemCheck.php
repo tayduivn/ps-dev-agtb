@@ -164,6 +164,26 @@ if(!function_exists('mb_strlen')) {
     installLog("MBString Support Found");
 }
 
+// mcrypt extension check
+if (!extension_loaded('mcrypt')) {
+    $error_found = true;
+    installLog(sprintf('ERROR:: %s', $mod_strings['ERR_CHECKSYS_MCRYPT']));
+    $error_txt .= sprintf(
+        '<tr>
+        <td>
+            <strong>%s</strong>
+        </td>
+        <td class="error">
+            <b><span class="stop">%s</font></b>
+        </td>
+    </tr>',
+        $mod_strings['LBL_CHECKSYS_MCRYPT'],
+        $mod_strings['ERR_CHECKSYS_MCRYPT']
+    );
+} else {
+    installLog("MCrypt is loaded");
+}
+
 // zip
 if(!class_exists('ZipArchive')) {
     $zipStatus = "<b><span class=stop>{$mod_strings['ERR_CHECKSYS_ZIP']}</font></b>";
