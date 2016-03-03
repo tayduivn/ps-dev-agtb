@@ -17,6 +17,9 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class ParserFactory
 {
+    private static $emptyModEntries = array(
+        MB_DROPDOWN,
+    );
     // BEGIN SUGARCRM flav=ent ONLY
     /**
      * @param $view
@@ -56,7 +59,7 @@ class ParserFactory
      */
     public static function getParser(
         $view,
-        $moduleName,
+        $moduleName = null,
         $packageName = null,
         $subpanelName = null,
         $client = '',
@@ -65,7 +68,8 @@ class ParserFactory
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
         $sm = null;
         $lView = strtolower ( $view );
-        if ( empty ( $packageName ) || ( $packageName == 'studio' ) ) {
+
+        if (!in_array($lView, self::$emptyModEntries) && (empty($packageName) || ($packageName == 'studio'))) {
             $packageName = null ;
             //For studio modules, check for view parser overrides
             $parser = self::checkForStudioParserOverride($view, $moduleName, $packageName);
@@ -82,14 +86,17 @@ class ParserFactory
 
         switch ( $lView) {
             case MB_RECORDVIEW:
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
-                return new SidecarGridLayoutMetaDataParser($view, $moduleName, $packageName, 'base', $params);
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarGridLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName, 'base', $params);
             case MB_EDITVIEW :
             case MB_DETAILVIEW :
             case MB_QUICKCREATE :
-                require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
-
-                return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php');
+                $parserClass = SugarAutoLoader::customClass('GridLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName);
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
             //BEGIN SUGARCRM flav=ent ONLY
@@ -105,24 +112,32 @@ class ParserFactory
                 }
                     //END SUGARCRM flav=ent ONLY
                 }
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
-
-                return new SidecarGridLayoutMetaDataParser($view, $moduleName, $packageName, $client, $params);
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarGridLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName, $client, $params);
             case MB_WIRELESSLISTVIEW:
                 // Handle client settings if we can
                 if (empty($client)) {
                     $client = MB_WIRELESS;
                 }
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarListLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName, $client);
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
                 // Handle client settings if we can
                 if (empty($client)) {
                     $client = MB_PORTAL;
                 }
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php';
-                return new SidecarPortalListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarPortalListLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName, $client);
             //END SUGARCRM flav=ent ONLY
             case MB_BASICSEARCH :
             case MB_ADVANCEDSEARCH :
@@ -134,62 +149,85 @@ class ParserFactory
                 }
                 // When it comes to search, mobile is like BWC
                 if (isModuleBWC($moduleName) || $client == MB_WIRELESS) {
-                    require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
-                    return new SearchViewMetaDataParser($view, $moduleName, $packageName, $client) ;
+                    SugarAutoLoader::requireWithCustom(
+                        'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php'
+                    );
+                    $parserClass = SugarAutoLoader::customClass('SearchViewMetaDataParser');
+                    return new $parserClass($view, $moduleName, $packageName, $client) ;
                 }
 
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarFilterLayoutMetaDataParser.php';
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarFilterLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarFilterLayoutMetaDataParser');
                 $client = empty($client) ? 'base' : $client;
-                return new SidecarFilterLayoutMetaDataParser($moduleName, $packageName, $client);
+                return new $parserClass($moduleName, $packageName, $client);
 
             case MB_LISTVIEW :
                 if ($subpanelName == null) {
                     if (isModuleBWC($moduleName)) {
-                        require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
-
-                        return new ListLayoutMetaDataParser ( MB_LISTVIEW, $moduleName, $packageName ) ;
+                        SugarAutoLoader::requireWithCustom(
+                            'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php'
+                        );
+                        $parserClass = SugarAutoLoader::customClass('ListLayoutMetaDataParser');
+                        return new $parserClass(MB_LISTVIEW, $moduleName, $packageName);
                     } else {
-                        require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-
-                        return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
+                        SugarAutoLoader::requireWithCustom(
+                            'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php'
+                        );
+                        $parserClass = SugarAutoLoader::customClass('SidecarListLayoutMetaDataParser');
+                        return new $parserClass(MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base');
                     }
                 } else {
                     if (isModuleBWC($moduleName)) {
-                        require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php' ;
-                        return new SubpanelMetaDataParser($subpanelName, $moduleName, $packageName);
+                        SugarAutoLoader::requireWithCustom(
+                            'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php'
+                        );
+                        $parserClass = SugarAutoLoader::customClass('SubpanelMetaDataParser');
+                        return new $parserClass($subpanelName, $moduleName, $packageName);
                     } else {
                         // $client can be empty for all other Parsers, however SidecarSubpanelLayout needs it set, therefore if its blank its base
                         $client = empty($client) ? 'base' : $client;
-                        require_once 'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php' ;
-                        return new SidecarSubpanelLayoutMetaDataParser($subpanelName, $moduleName, $packageName, $client);
+                        SugarAutoLoader::requireWithCustom(
+                            'modules/ModuleBuilder/parsers/views/SidecarSubpanelLayoutMetaDataParser.php'
+                        );
+                        $parserClass = SugarAutoLoader::customClass('SidecarSubpanelLayoutMetaDataParser');
+                        return new $parserClass($subpanelName, $moduleName, $packageName, $client);
                     }
                 }
             case MB_DASHLET :
             case MB_DASHLETSEARCH :
-                require_once 'modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php';
-
-                return new DashletMetaDataParser($view, $moduleName, $packageName  );
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php');
+                $parserClass = SugarAutoLoader::customClass('DashletMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName);
             case MB_SIDECARPOPUPVIEW:
             case MB_SIDECARDUPECHECKVIEW:
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
-                return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, 'base');
+                SugarAutoLoader::requireWithCustom(
+                    'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php'
+                );
+                $parserClass = SugarAutoLoader::customClass('SidecarListLayoutMetaDataParser');
+                return new $parserClass($view, $moduleName, $packageName, 'base');
             case MB_POPUPLIST :
             case MB_POPUPSEARCH :
-                require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php';
-
-                $parser = new PopupMetaDataParser($view, $moduleName, $packageName);
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php');
+                $parserClass = SugarAutoLoader::customClass('PopupMetaDataParser');
+                $parser = new $parserClass($view, $moduleName, $packageName);
                 // The popup parser needs the client and needs it to be set to
                 // something in order to validate fields
                 $parser->client = empty($client) ? 'base' : $client;
                 return $parser;
+            case MB_DROPDOWN:
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/parser.dropdown.php');
+                $parserClass = SugarAutoLoader::customClass('ParserDropDown');
+                return new $parserClass();
             case MB_LABEL :
-                require_once 'modules/ModuleBuilder/parsers/parser.label.php';
-
-                return new ParserLabel ( $moduleName, $packageName ) ;
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/parser.label.php');
+                $parserClass = SugarAutoLoader::customClass('ParserLabel');
+                return new $parserClass($moduleName, $packageName);
             case MB_VISIBILITY :
-                require_once 'modules/ModuleBuilder/parsers/parser.visibility.php';
-
-                return new ParserVisibility ( $moduleName, $packageName ) ;
+                SugarAutoLoader::requireWithCustom('modules/ModuleBuilder/parsers/parser.visibility.php');
+                $parserClass = SugarAutoLoader::customClass('ParserVisibility');
+                return new $parserClass($moduleName, $packageName);
             default :
                 $parser = self::checkForParserClass($view, $moduleName, $packageName);
                 if ($parser)
