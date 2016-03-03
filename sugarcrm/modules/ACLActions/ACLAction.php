@@ -401,11 +401,13 @@ class ACLAction  extends SugarBean
 
             if (!empty(self::$acls[$user_id][$category][$type]['admin']) && self::$acls[$user_id][$category][$type]['admin']['aclaccess'] >= ACL_ALLOW_ADMIN)
             {
+                //BEGIN SUGARCRM flav=ent ONLY
                 $tbaConfigurator = new TeamBasedACLConfigurator();
                 if ($tbaConfigurator->isValidAccess($actionAccess)) {
                     // The TBA is not suppressed by admin access.
                     return $actionAccess;
                 }
+                //END SUGARCRM flav=ent ONLY
                 // If you have admin access for a module, all ACL's are allowed
                 return self::$acls[$user_id][$category][$type]['admin']['aclaccess'];
             }
