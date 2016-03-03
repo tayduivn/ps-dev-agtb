@@ -270,10 +270,15 @@ class CalDavEventCollection extends SugarBean
         /* @var $eventClass \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event */
         $eventClass = $this->getEventClass();
         $vCalendar = $this->getVCalendar();
-        $parent = $vCalendar->getBaseComponent();
+        $parent = $this->getBaseComponent($vCalendar);
 
         if ($parent->DTSTART) {
-            $it = new EventIterator($vCalendar, $parent->UID);
+            try {
+                $it = new EventIterator($vCalendar, $parent->UID);
+            } catch (VObject\Recur\NoInstancesException $e) {
+                return array();
+            }
+
             $maxRecur = DavConstants::MAX_INFINITE_RECCURENCE_COUNT;
             $endDate = clone $parent->DTSTART->getDateTime();
             $endDate->modify('+' . $maxRecur . ' day');
@@ -429,7 +434,7 @@ class CalDavEventCollection extends SugarBean
 
         /* @var $eventClass \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event */
         $vCalendar = $this->getVCalendar();
-        $parent = $vCalendar->getBaseComponent();
+        $parent = $this->getBaseComponent($vCalendar);
         $eventClass = $this->getEventClass();
         $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $this->getParticipantsLinks());
 
@@ -672,6 +677,28 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Get Main or First VEVENT component from calendar
+     * @param VObject\Component\VCalendar $vObject
+     * @return VObject\Component\VEvent
+     */
+    protected function getBaseComponent(VObject\Component\VCalendar $vObject)
+    {
+        $component = $vObject->getBaseComponent();
+
+        if ($component) {
+            return $component;
+        }
+
+        foreach ($vObject->getComponents() as $component) {
+            if ($component->name !== 'VTIMEZONE') {
+                return $component;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Retrieve component type from vobject
      * Component type can be VEVENT, VTODO or VJOURNAL
      * @param string $data Calendar event text data
@@ -680,7 +707,7 @@ class CalDavEventCollection extends SugarBean
     protected function calculateComponentType($data)
     {
         $vObject = VObject\Reader::read($data);
-        $component = $vObject->getBaseComponent();
+        $component = $this->getBaseComponent($vObject);
         if ($component) {
             $this->component_type = $component->name;
             if ($component->UID) {
@@ -703,7 +730,7 @@ class CalDavEventCollection extends SugarBean
             return;
         }
         $vObject = VObject\Reader::read($this->calendar_data);
-        $component = $vObject->getBaseComponent();
+        $component = $this->getBaseComponent($vObject);
         if ($component->name === 'VEVENT' && $component->DTSTART) {
             $this->first_occurence = $component->DTSTART->getDateTime()->getTimestamp();
 

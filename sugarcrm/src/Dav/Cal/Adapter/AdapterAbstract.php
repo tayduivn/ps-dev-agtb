@@ -26,6 +26,12 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 abstract class AdapterAbstract implements AdapterInterface
 {
     /**
+     * Storage for prevent infinity email sending
+     * @var array
+     */
+    protected static $sendingImportGroup = array();
+
+    /**
      * @inheritDoc
      * @param \Call|\Meeting|\SugarBean $bean
      * @param array|false $previousData
@@ -291,11 +297,16 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
+        $importGroupId = create_guid();
         $action = 'override';
         if ($previousData) {
             $action = array_shift($previousData);
             if ($previousData) {
-                return $collection->getDiffStructure(current($previousData));
+                $diffStructure = $collection->getDiffStructure(current($previousData));
+                array_walk($diffStructure, function (&$item) use ($importGroupId) {
+                    array_push($item[0], $importGroupId);
+                });
+                return $diffStructure;
             }
         }
         if ($action == 'delete') {
@@ -312,6 +323,7 @@ abstract class AdapterAbstract implements AdapterInterface
                             $sugarChildren,
                             $recurrenceId->asDb(),
                             $position,
+                            $importGroupId,
                         ),
                         array(),
                         array(),
@@ -327,6 +339,7 @@ abstract class AdapterAbstract implements AdapterInterface
                             null,
                             null,
                             null,
+                            $importGroupId,
                         ),
                         array(),
                         array(),
@@ -334,7 +347,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 );
             }
         }
-        return $collection->getDiffStructure('');
+        $diffStructure = $collection->getDiffStructure('');
+        array_walk($diffStructure, function (&$item) use ($importGroupId) {
+            array_push($item[0], $importGroupId);
+        });
+        return $diffStructure;
     }
 
     /**
@@ -345,7 +362,7 @@ abstract class AdapterAbstract implements AdapterInterface
         /**@var \Meeting $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
+        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $importGroupId) = $beanData;
 
         if ($bean->assigned_user_id) {
             \CalendarEvents::$old_assigned_user_id = $bean->assigned_user_id;
@@ -353,8 +370,9 @@ abstract class AdapterAbstract implements AdapterInterface
             \CalendarEvents::$old_assigned_user_id = $GLOBALS['current_user']->id;
         }
 
-        if (!$bean->repeat_parent_id) {
+        if ($importGroupId && !isset(static::$sendingImportGroup[$importGroupId])) {
             $bean->send_invites = true;
+            static::$sendingImportGroup[$importGroupId] = true;
         }
 
         if ($action == 'delete' && !$bean->deleted) {
