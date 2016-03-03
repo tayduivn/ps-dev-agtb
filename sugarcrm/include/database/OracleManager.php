@@ -214,7 +214,20 @@ class OracleManager extends DBManager
         return $where;
     }
 
-    public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
+    /**
+     * Builds the SQL commands that repair a table structure
+     *
+     * @param string $tablename Table name
+     * @param array  $fielddefs Field definitions, in vardef format
+     * @param array  $indices   Index definitions, in vardef format
+     * @param bool   $execute   optional, true if we want the queries executed instead of returned
+     * @param string $engine    optional, MySQL engine
+     *
+     * @return string
+     * {@inheritDoc}
+     * @see    DBManager::repairTableParams()
+     */
+    public function repairTableParams($tablename, $fielddefs, array $indices, $execute = true, $engine = null)
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them
         foreach ($indices as $key => $value) {
