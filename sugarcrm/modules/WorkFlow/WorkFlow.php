@@ -698,7 +698,8 @@ $alert_file_contents = "";
 			}
 
 			if($row['fire_order']=='actions_alerts'){
-				$eval_dump .= "\t" . $this->get_action_contents($row['id'], $trigger_count, $this->base_module, $randId);
+                $eval_dump .= "\t"
+                    . $this->get_action_contents($row['id'], $trigger_count, $this->base_module, $randID);
 				$out_data = $this->get_alert_contents_for_file($row['id'], $trigger_count, $this->base_module);
                 $eval_dump .= "\t" . $out_data[0];
                 $alert_file_contents .= $out_data[1];

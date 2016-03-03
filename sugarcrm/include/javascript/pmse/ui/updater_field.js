@@ -371,7 +371,7 @@ UpdaterField.prototype.isValid = function () {
         field = this.options[i];
 
         //TODO: create validation for expressions built with expressionControl.
-        if (field._parent.hasCheckbox && field.isDisabled()) {
+        if (!field.isRequired() || field._parent.hasCheckbox && field.isDisabled()) {
             valid = true;
         } else {
             valid = field.isValid();
@@ -1788,6 +1788,10 @@ NumberUpdaterItem.prototype.isValid = function () {
     var prev = null;
     var currType;
     var currValue;
+
+    if (value.length < 1) {
+        return false;
+    }
 
     // TODO: the next validation must be implemented in ExpressionControl based on the kind of result it expects to return.
 
