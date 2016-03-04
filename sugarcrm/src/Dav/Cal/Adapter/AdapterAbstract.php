@@ -245,6 +245,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['name']);
             }
         }
+        if ($this->checkCalDavUrl('', $event)) {
+            global $sugar_config;
+            $this->setCalDavUrl($sugar_config['site_url'] . '/#' . $beanModuleName . '/' . $beanId, $event);
+            $isChanged = true;
+        }
         if (isset($changedFields['description'])) {
             if ($this->setCalDavDescription($changedFields['description'][0], $event)) {
                 $isChanged = true;
@@ -1050,6 +1055,18 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * Checks that url matches current one.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function checkCalDavUrl($value, Event $event)
+    {
+        return $event->getUrl() == $value;
+    }
+
+    /**
      * Checks that status matches current one.
      *
      * @param string $value
@@ -1210,6 +1227,18 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setCalDavLocation($value, Event $event)
     {
         return $event->setLocation($value);
+    }
+
+    /**
+     * Sets url to provided event and returns true if it was changed.
+     *
+     * @param string $value
+     * @param Event $event
+     * @return bool
+     */
+    protected function setCalDavUrl($value, Event $event)
+    {
+        return $event->setUrl($value);
     }
 
     /**

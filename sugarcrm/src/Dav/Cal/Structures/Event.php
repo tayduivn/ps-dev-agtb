@@ -391,6 +391,16 @@ class Event
     }
 
     /**
+     * Get event url.
+     *
+     * @return null|string
+     */
+    public function getUrl()
+    {
+        return $this->getStringProperty('URL');
+    }
+
+    /**
      * Get event visibility (PUBLIC, PRIVATE, CONFIDENTIAL)
      * @return null|string
      */
@@ -642,6 +652,17 @@ class Event
     public function setLocation($value)
     {
         return $this->setStringProperty('LOCATION', $value);
+    }
+
+    /**
+     * Set event url.
+     *
+     * @param string $url
+     * @return bool
+     */
+    public function setUrl($url)
+    {
+        return $this->setStringProperty('URL', $url);
     }
 
     /**
