@@ -175,7 +175,7 @@ if($installActions || $missingAclRolesActions) {
                     }
                 }else{
                     $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
-                    $actionId = $GLOBALS['db']->fetchOe($queryACL);
+                    $actionId = $GLOBALS['db']->fetchOne($queryACL);
                     if (isset($actionId['id']) && !empty($actionId['id'])){
                         $role1->setAction($role1_id, $actionId['id'], $access_override);
                     }
