@@ -175,7 +175,7 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['columncount'] = 3;
         $_REQUEST['colnum_0'] = 'id';
         $_REQUEST['colnum_1'] = $nameField;
-        $_REQUEST['colnum_2'] = 'email1';
+        $_REQUEST['colnum_2'] = 'email';
         $_REQUEST['import_module'] = $bean->module_dir;
 
         // Create the Importer and try importing
@@ -205,7 +205,7 @@ class ImportEmailsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->emails[] = $expected;
         $bean->retrieve($this->cleanId);
-        $this->assertEquals($expected, $bean->email1);
+        $this->assertEquals($expected, $bean->email[0]['email_address']);
 
     }
 

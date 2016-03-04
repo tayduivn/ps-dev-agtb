@@ -534,7 +534,7 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOrderStability()
     {
-        $msg = 'MssqlManager cannot have order_stability capability';
+        $msg = 'MssqlManager should not have order_stability capability';
         $this->assertFalse($this->_db->supports('order_stability'), $msg);
     }
 }

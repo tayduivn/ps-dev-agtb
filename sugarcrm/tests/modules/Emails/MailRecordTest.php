@@ -479,7 +479,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 //                "id"   => "abcd-1234",
 //            ),
 //        );
-        $mailRecord->html_body   = urlencode("<b>Hello, World!</b>");
+        $mailRecord->html_body   = to_html("<b>Hello, World!</b>");
         $mailRecord->text_body   = "Hello, World!";
         $mailRecord->related     = array(
             "type" => "Opportunities",
@@ -516,7 +516,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             "status"           => "draft",
             "type"             => "draft",
             "name"             => $mailRecord->subject,
-            "description_html" => htmlentities(urldecode($mailRecord->html_body)),
+            "description_html" => $mailRecord->html_body,
             "description"      => $mailRecord->text_body,
             "parent_id"        => $mailRecord->related["id"],
             "parent_type"      => $mailRecord->related["type"],

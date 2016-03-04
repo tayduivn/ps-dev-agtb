@@ -174,10 +174,10 @@ class MailRecord
         );
 
         if (!empty($this->html_body)) {
-            $request["sendDescription"] = urldecode($this->html_body);
+            $request["sendDescription"] = from_html($this->html_body);
             $request["setEditor"] = "1";
         } elseif (!empty($this->text_body)) {
-            $request["sendDescription"] = urldecode($this->text_body);
+            $request["sendDescription"] = from_html($this->text_body);
         }
 
         $requestKeys = array(
