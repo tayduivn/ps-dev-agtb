@@ -11657,7 +11657,6 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     //Tag Strings
     'LBL_TAG_NEW_TAG' => '(New Tag)',
     'LBL_TAG_FETCH_ERROR' => 'An error has occurred while retrieving tags.',
-    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create Another',
 
     // Javascript enable string
     'LBL_ENABLE_JAVASCRIPT' => 'Sugar 7 requires javascript. Please enable Javascript in your browser to use Sugar 7.',
