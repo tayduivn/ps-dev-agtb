@@ -272,6 +272,9 @@ class HealthCheckScanner
         'modules/SugarFeed/SugarFeed.php',
         'modules/Cases/SugarFeeds/CaseFeed.php',
         'modules/Opportunities/SugarFeeds/OppFeed.php',
+
+        // incorrect path to trigger server hook, fixed in RC2 added here in RC3
+        'sugarcrm/src/Trigger/HookManager.php',
     );
 
     /**
