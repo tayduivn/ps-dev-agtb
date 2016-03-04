@@ -207,8 +207,17 @@ class AdministrationController extends SugarController
      */
     public function action_saveWebSocketsConfiguration()
     {
-        $websocket_client_url = !empty($_REQUEST['websocket_client_url']) ? urldecode($_REQUEST['websocket_client_url']) : '';
-        $websocket_server_url = !empty($_REQUEST['websocket_server_url']) ? urldecode($_REQUEST['websocket_server_url']) : '';
+        $websocket_client_url = InputValidation::getService()->getValidInputRequest('websocket_client_url', array(
+            'Assert\Url' => array(
+                'protocols' => array('http', 'https'),
+            )
+        ));
+        $websocket_server_url = InputValidation::getService()->getValidInputRequest('websocket_server_url', array(
+            'Assert\Url' => array(
+                'protocols' => array('http', 'https'),
+            )
+        ));
+
         $siteUrl = $GLOBALS['sugar_config']['site_url'];
 
         $result = array();
@@ -278,7 +287,12 @@ class AdministrationController extends SugarController
      */
     public function action_saveTriggerServerConfiguration()
     {
-        $triggerServerUrl = !empty($_REQUEST['trigger_server_url']) ? urldecode($_REQUEST['trigger_server_url']) : '';
+        $triggerServerUrl = InputValidation::getService()->getValidInputRequest('trigger_server_url', array(
+            'Assert\Url' => array(
+                'protocols' => array('http', 'https'),
+            )
+        ));
+        
         $siteUrl = $GLOBALS['sugar_config']['site_url'];
 
         $result = array();
