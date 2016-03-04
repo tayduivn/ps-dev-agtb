@@ -209,8 +209,8 @@
      * @inheritdoc
      */
     _render: function() {
-        this._sanitizeModels();
         this._super('_render');
+        this._sanitizeModels();
     },
 
     /**
