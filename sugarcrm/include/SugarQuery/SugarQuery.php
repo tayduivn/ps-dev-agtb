@@ -628,39 +628,30 @@ class SugarQuery
     }
 
     /**
-     * Execute this query and return it as a raw string, db object json, or array
+     * Converts SugarQuery into Doctrine DBAL query
      *
-     * @param string $type The type of the returned value. Deprecated, will be always considered 'array'
-     * @param bool $encode Whether the returned value should be HTML-encoded.
-     *                     Deprecated, will be determined based on ENTRY_POINT_TYPE
-     *
-     * @return array|resource|object|string
+     * @return \Doctrine\DBAL\Query\QueryBuilder
      */
-    public function execute($type = "array", $encode = true)
+    public function compile()
     {
-        switch ($type) {
-            case 'raw':
-                return $this->compileSql($this);
-                break;
-            case 'db':
-                return $this->runQuery($this);
-                break;
-            case 'json':
-            case 'array':
-            default:
-                $results = $this->runQuery($this);
-                $return = array();
-                while ($row = $this->db->fetchByAssoc($results, $encode)) {
-                    //Apply any post data cleanup/db abstraction
-                    $row = $this->formatRow($row);
-                    $return[] = $row;
-                }
-                if ($type == 'json') {
-                    return json_encode($return);
-                }
-                return $return;
-                break;
+        $compiler = new SugarQuery_Compiler_Doctrine($this->db);
+        return $compiler->compile($this);
+    }
+
+    /**
+     * Execute this query and return the resulting data set as aarray
+     *
+     * @return array
+     */
+    public function execute()
+    {
+        $result = array();
+        $stmt = $this->runQuery();
+        while ($row = $stmt->fetch()) {
+            //Apply any post data cleanup/db abstraction
+            $result[] = $this->formatRow($row);
         }
+        return $result;
     }
 
     /**
@@ -672,25 +663,22 @@ class SugarQuery
        if(empty($this->limit)) {
            $this->offset(0)->limit(1);
        }
-       $result = $this->runQuery();
-       if(empty($result)) {
-           return false;
-       }
-       $row = $this->db->fetchByAssoc($result, true, true);
-       if(!empty($row)) {
-           return array_shift($row);
-       }
-       return false;
+
+        $stmt = $this->runQuery();
+        $result = $stmt->fetchColumn();
+        $stmt->closeCursor();
+
+        return $result;
     }
 
     /**
      * Run the query and return the db result object
-     * @return db result object
+     *
+     * @return Doctrine\DBAL\Statement
      */
     protected function runQuery()
     {
-        $sql = $this->compileSql();
-        return $this->db->preparedQuery($sql, $this->data);
+        return $this->compile()->execute();
     }
 
     /**
