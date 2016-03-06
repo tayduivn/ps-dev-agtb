@@ -34,7 +34,6 @@
         this.conclusionFields = [];
         this.conclusionCombos = {};
         this.conclusionFieldsReady = false;
-        this.language = {};
         this.correctlyBuilt = false;
         this.globalCBControl = null;
         this.globalDDSelector = null;
@@ -50,6 +49,8 @@
     DecisionTable.prototype = new Element();
 
     DecisionTable.prototype.type = 'DecisionTable';
+
+    DecisionTable.LANG_MODULE = 'pmse_Business_Rules';
 
     DecisionTable.prototype.initObject = function(options) {
         var defaults = {
@@ -72,35 +73,6 @@
             currencies: [],
             dateFormat: "YYYY-MM-DD",
             timeFormat: "H:i",
-            language: {
-                SINGLE_HIT: 'Single Hit',
-                MULTIPLE_HIT: 'Multiple Hit',
-                CONDITIONS: 'Conditions',
-                CONCLUSIONS: 'Conclusions',
-                ADD_ROW: 'Add row',
-                REMOVE_ROW: 'Remove row',
-                CLICK_TO_EDIT: 'Click to edit',
-                ERROR_CONCLUSION_VAR_DUPLICATED: 'conclusion variable is duplicated',
-                ERROR_EMPTY_RETURN_VALUE: 'The "Return" conclusion is empty',
-                ERROR_EMPTY_ROW: 'No conditions were specified in row with conclusions, It\'s allowed only one row with no conditions (default ruleset)',
-                ERROR_NOT_EXISTING_FIELDS: 'This Business Rules Table can\'t be created, some required fields are missing: %s.',
-                ERROR_INCORRECT_BUILD: 'This Business Rules Table can\'t is incorrectly built',
-                MSG_DELETE_ROW: 'Do you really want to delete this rule set?',
-                MIN_ROWS: 'The decision table must have at least 1 row',
-                MIN_CONDITIONS_COLS: 'The decision table must have at least 1 condition column',
-                MIN_CONCLUSIONS_COLS: 'The decision table must have at least 1 conclusion column',
-                //--for DecisionTableVariable--//
-                LBL_RETURN: 'Return',
-                ERROR_NO_VARIABLE_SELECTED: 'No variable was selected',
-                //for DecisionTableValue
-                ERROR_INVALID_EXPRESSION: 'Invalid expression',
-                LBL_VARIABLES: 'Variables',
-                LBL_CONSTANTS: 'Constants',
-                LBL_ADD_CONDITION: 'Add condition',
-                LBL_ADD_CONCLUSION: 'Add conclusion',
-                //for DecisionTableSingleValue
-                ERROR_MISSING_EXPRESSION_OR_OPERATOR: 'missing expression or operator'
-            }
         }, that = this;
 
         $.extend(true, defaults, options);
@@ -113,7 +85,6 @@
         this.onRemoveColumn = defaults.onRemoveColumn;
         this.onChange = defaults.onChange;
         this.rows = parseInt(defaults.rows, 10);
-        this.language = defaults.language;
 
         this.setCurrencies(defaults.currencies)
             .setDateFormat(defaults.dateFormat)
@@ -315,7 +286,7 @@
             if (showAlert) {
                 App.alert.show(this.invalidFieldAlertKey, {
                     level: "error",
-                    messages: this.language.ERROR_NOT_EXISTING_FIELDS
+                    messages: translate('LBL_PMSE_MESSAGE_REQUIRED_FIELDS_BUSINESSRULES', DecisionTable.LANG_MODULE)
                 });
             }
         }
@@ -568,7 +539,7 @@
         if(this.decisionRows === 1) {
             App.alert.show('mininal-error', {
                 level: 'warning',
-                messages: this.language.MIN_ROWS,
+                messages: translate('LBL_PMSE_MESSAGE_LABEL_MIN_ROWS', DecisionTable.LANG_MODULE),
                 autoClose: true
             });
             return this;
@@ -592,7 +563,7 @@
         if (ask) {
             App.alert.show('message-config-delete-row', {
                 level: 'confirmation',
-                messages: this.language.MSG_DELETE_ROW,
+                messages: translate('LBL_PMSE_MESSAGE_LABEL_DELETE_ROW', DecisionTable.LANG_MODULE),
                 onConfirm: function() {
                     return self.removeRowWithoutConfirmation(index);
                 },
@@ -776,8 +747,7 @@
             field: defaultValue || null,
             fields: this.conditionFields,
             combos: this.conditionCombos,
-            inputFields: this.conditionFields,
-            language: this.language
+            inputFields: this.conditionFields
         }), i, html;
 
         condition.onBeforeValueOpenPanel = this.onBeforeVariableOpenPanelHandler();
@@ -815,8 +785,7 @@
             combos: this.conclusionCombos,
             inputFields: this.conditionFields,
             field: defaultValue,
-            parent: this,
-            language: this.language
+            parent: this
         }), i;
 
         conclusion.onBeforeValueOpenPanel = this.onBeforeVariableOpenPanelHandler();
@@ -850,7 +819,7 @@
                 if(!res) {
                     App.alert.show('mininal-column-error', {
                         level: 'warning',
-                        messages: this.language.MIN_CONDITIONS_COLS,
+                        messages: translate('LBL_PMSE_MESSAGE_LABEL_MIN_CONDITIONS_COLS', DecisionTable.LANG_MODULE),
                         autoClose: true
                     });
                 }
@@ -859,7 +828,7 @@
                 if(!res) {
                     App.alert.show('mininal-column-error', {
                         level: 'warning',
-                        messages: this.language.MIN_CONCLUSIONS_COLS,
+                        messages: translate('LBL_PMSE_MESSAGE_LABEL_MIN_CONCLUSIONS_COLS', DecisionTable.LANG_MODULE),
                         autoClose: true
                     });
                 }
@@ -875,41 +844,7 @@
 
         var table, row, cell, header, body, textContainer, subtable, button, i, span;
 
-        //create the table header
         header = this.createHTMLElement('thead');
-        //row = this.createHTMLElement('tr');
-        //cell = this.createHTMLElement('th');
-        //cell.className = 'decision-table-title';
-        //cell.colSpan = 3;
-        //textContainer = this.createHTMLElement('div');
-        //span = this.createHTMLElement('span');
-        //span.appendChild(document.createTextNode((this.hitType === 'single' ? "[" + this.language.SINGLE_HIT + "]" : "[" + this.language.MULTIPLE_HIT + "]")));
-        //span.className = 'decision-table-type';
-        //span.title = this.language.CLICK_TO_EDIT;
-        //span.tabIndex = 0;
-        //this.dom.hitTypeLabel = span;
-        //textContainer.appendChild(span);
-        //span = span.cloneNode(false);
-        //span.appendChild(document.createTextNode(this.name));
-        //span.className = 'decision-table-name';
-        //span.title = this.language.CLICK_TO_EDIT;
-        //this.dom.nameLabel = span;
-        //textContainer.appendChild(span);
-        //span = span.cloneNode(false);
-        //span.title = "";
-        //$(span).removeAttr("tabIndex");
-        //span.textContent = this.isDirty ? '*' : '';
-        //textContainer.appendChild(span);
-        //this.dom.dirtyIndicator = span;
-        //span = span.cloneNode(false);
-        //span.className = 'decision-table-module';
-        //span.appendChild(document.createTextNode(this.base_module));
-        //textContainer.appendChild(span);
-        //
-        //cell.appendChild(textContainer);
-        //row.appendChild(cell);
-        //header.appendChild(row);
-        //this.dom.title = cell;
 
         plusNode = this.createHTMLElement('span');
         plusNode.className = 'fa fa-plus';
@@ -924,20 +859,20 @@
         button = this.createHTMLElement('button');
         button.appendChild(plusNode);
         button.className = 'decision-table-add-button';
-        button.title = this.language.LBL_ADD_CONDITION;
+        button.title = translate('LBL_PMSE_TOOLTIP_ADD_CONDITION', DecisionTable.LANG_MODULE);
         this.dom.addConditionButton = button;
         textContainer = this.createHTMLElement('span');
-        textContainer.appendChild(document.createTextNode(this.language.CONDITIONS));
+        textContainer.appendChild(document.createTextNode(translate('LBL_PMSE_LABEL_CONDITIONS', DecisionTable.LANG_MODULE)));
         textContainer.appendChild(button);
         cell.appendChild(textContainer);
         cell.className = 'decision-table-separator-border';
         row.appendChild(cell);
         cell = cell.cloneNode(false);
         button = button.cloneNode(true);
-        button.title = this.language.LBL_ADD_CONCLUSION;
+        button.title = translate('LBL_PMSE_TOOLTIP_ADD_CONCLUSION', DecisionTable.LANG_MODULE);
         this.dom.addConclusionButton = button;
         textContainer = textContainer.cloneNode(false);
-        textContainer.appendChild(document.createTextNode(this.language.CONCLUSIONS));
+        textContainer.appendChild(document.createTextNode(translate('LBL_PMSE_LABEL_CONCLUSIONS', DecisionTable.LANG_MODULE)));
         textContainer.appendChild(button);
         cell.appendChild(textContainer);
         row.appendChild(cell);
@@ -948,7 +883,7 @@
         cell = this.createHTMLElement('th');
         textContainer = this.createHTMLElement('button');
         textContainer.appendChild(plusNode2);
-        textContainer.title = this.language.ADD_ROW;
+        textContainer.title = translate('LBL_PMSE_TOOLTIP_ADD_ROW', DecisionTable.LANG_MODULE);
         textContainer.className = 'decision-table-add-row';
         cell.appendChild(textContainer);
         row.appendChild(cell);
@@ -1158,51 +1093,6 @@
             that.addDecisionRow();
         });
 
-        //$(this.dom.nameLabel).on('focus', function() {
-        //    var input = that.createHTMLElement('input');
-        //    input.type = 'text';
-        //    input.value = that.name;
-        //    $(this).empty().append(input);
-        //    $(input).select().focus();
-        //}).on('blur', 'input', function() {
-        //    var name = that.name, value = $.trim(this.value);
-        //    if(value) {
-        //        that.name = value;
-        //    }
-        //    if(name != that.name) {
-        //        that.setIsDirty(true);
-        //    }
-        //    $(this.parentElement).text(that.name);
-        //});
-
-        //$(this.dom.hitTypeLabel).on('focus', function() {
-        //    var select = that.createHTMLElement('select'),
-        //        option = that.createHTMLElement('option');
-        //
-        //    option.label = that.language.MULTIPLE_HIT;
-        //    option.value = 'multiple';
-        //    option.appendChild(document.createTextNode(option.label));
-        //    option.selected = that.hitType !== 'single';
-        //    select.appendChild(option);
-        //
-        //    option = option.cloneNode(false);
-        //    option.label = that.language.SINGLE_HIT;
-        //    option.value = 'single';
-        //    option.appendChild(document.createTextNode(option.label));
-        //    option.selected = that.hitType === 'single';
-        //    select.appendChild(option);
-        //
-        //    $(this).empty().append(select);
-        //    $(select).focus();
-        //}).on('blur', 'select', function() {
-        //    var prevValue = that.hitType;
-        //    that.hitType = this.value;
-        //    $(this.parentElement).text(that.hitType === 'single' ? '[' + that.language.SINGLE_HIT + ']' : '[' + that.language.MULTIPLE_HIT + ']');
-        //    if(prevValue !== this.value) {
-        //        that.setIsDirty(true);
-        //    }
-        //});
-
         $(this.dom.conditionsTable).add(this.dom.conclusionsTable).add(this.dom.indexTable).on("focus", "td", function() {
             var row = this.parentElement, index;
             $(that.html).find("tr.cell-edit").removeClass("cell-edit");
@@ -1233,7 +1123,7 @@
                     return {
                         valid: false,
                         location: "Conclusion # " + (i + 1),
-                        message: this.language.ERROR_CONCLUSION_VAR_DUPLICATED
+                        message: translate('LBL_PMSE_BUSINESSRULES_ERROR_CONCLUSIONVARDUPLICATED', DecisionTable.LANG_MODULE)
                     }
                 }
             }
@@ -1268,7 +1158,7 @@
                     $(this.conclusions[0].values[i].getHTML()).addClass("error");
                     return {
                         valid: false,
-                        message: this.language.ERROR_EMPTY_RETURN_VALUE,
+                        message: translate('LBL_PMSE_MESSAGE_LABEL_EMPTY_RETURN_VALUE', DecisionTable.LANG_MODULE),
                         location: "row # " + (i + 1)
                     };
                 } else {
@@ -1291,7 +1181,7 @@
                     $(this.dom.conditionsTable).find('tr').eq(i).addClass('error');
                     return {
                         valid: false,
-                        message: this.language.ERROR_EMPTY_ROW,
+                        message: translate('LBL_PMSE_BUSINESSRULES_ERROR_EMPTYROW', DecisionTable.LANG_MODULE),
                         location: 'row # ' + (i + 1)
                     };
                 }
@@ -1348,7 +1238,7 @@
         if(!this.correctlyBuilt) {
             return {
                 valid: false,
-                message: this.language.ERROR_INCORRECT_BUILD
+                message: translate('LBL_PMSE_BUSINESSRULES_ERROR_INCORRECT_BUILD', DecisionTable.LANG_MODULE)
             };
         }
 
@@ -1481,7 +1371,6 @@
         this.onChange = null;
         this.onChangeValue = null;
 
-        this.language = {};
         DecisionTableVariable.prototype.initObject.call(this, options);
     };
 
@@ -1503,14 +1392,11 @@
             onBeforeValueOpenPanel: null,
             onRemove: null,
             onChange: null,
-            onChangeValue: null,
-
-            language: {}
+            onChangeValue: null
         };
 
         $.extend(true, defaults, options);
 
-        this.language = defaults.language;
         this.parent = defaults.parent;
         this.variableMode = defaults.variableMode;
         this.isReturnType = defaults.isReturnType;
@@ -1702,8 +1588,7 @@
                     value: values[i].value,
                     operator: values[i].operator,
                     parent: this,
-                    fields: this.inputFields,
-                    language: this.language
+                    fields: this.inputFields
                 }));
             }
         }
@@ -1738,7 +1623,7 @@
             content = this.createHTMLElement('span');
             content.className = 'decision-table-return';
             content.appendChild(document.createTextNode(
-                this.isReturnType ? this.language.LBL_RETURN : (this.fieldName || "")
+                this.isReturnType ? translate('LBL_PMSE_LABEL_RETURN', DecisionTable.LANG_MODULE) : (this.fieldName || "")
             ));
         } else {
             content = this.select;
@@ -1918,9 +1803,9 @@
     DecisionTableVariable.prototype.addValue = function(value, operator) {
         var value;
         if(this.variableMode === 'conclusion') {
-            value = new DecisionTableSingleValue({value: value, parent: this, fields: this.inputFields, language: this.language});
+            value = new DecisionTableSingleValue({value: value, parent: this, fields: this.inputFields});
         } else {
-            value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.inputFields, language: this.language});
+            value = new DecisionTableValueEvaluation({value: value, operator: operator, parent: this, fields: this.inputFields});
         }
         value.onBeforeOpenPanel = this.onBeforeValueOpenPanelHandler();
         value.onRemove = this.onRemoveValueHandler();
@@ -2002,7 +1887,7 @@
             $(this.select.parentElement).addClass("error");
             valid = {
                 valid: false,
-                message: this.language.ERROR_NO_VARIABLE_SELECTED
+                message: translate('LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE', DecisionTable.LANG_MODULE)
             };
         }
 
@@ -2019,7 +1904,6 @@
         this.onRemove = null;
         this.onChange = null;
         this.parent = null;
-        this.language = {};
         DecisionTableValue.prototype.initObject.call(this, settings);
     };
 
@@ -2032,17 +1916,14 @@
             onRemove: null,
             onChange: null,
             parent: null,
-            fields: [],
-            language: {}
+            fields: []
         };
         $.extend(true, defaults, settings || {});
-        this.language = defaults.language;
         this.parent = defaults.parent;
         this.expression = new ExpressionContainer({
             variables: defaults.fields,
             onBeforeOpenPanel: this.onBeforeOpenPanelHandler(),
-            onChange: this.onChangeExpressionHandler(),
-            language: this.language
+            onChange: this.onChangeExpressionHandler()
         }, this);
         this.setValue(defaults.value);
         this.onBeforeOpenPanel = defaults.onBeforeOpenPanel;
@@ -2141,7 +2022,7 @@
             $(this.html).addClass('error');
             return {
                 valid: false,
-                message: this.language.ERROR_INVALID_EXPRESSION
+                message: translate('LBL_PMSE_BUSINESSRULES_ERROR_INVALIDEXPRESSION', DecisionTable.LANG_MODULE)
             }
         }
     };
@@ -2320,7 +2201,7 @@
             if (typeof type !== 'string') {
                 App.alert.show(null, {
                     level: 'warning',
-                    messages: parent.language.ERROR_NO_VARIABLE_SELECTED,
+                    messages: translate('LBL_PMSE_MESSAGE_LABEL_DEFINE_COLUMN_TYPE', DecisionTable.LANG_MODULE),
                     autoClose: true
                 });
                 return null;
@@ -2362,7 +2243,7 @@
             };
             if(!res.valid) {
                 $(this.html).addClass('error');
-                res.message = this.language.ERROR_MISSING_EXPRESSION_OR_OPERATOR;
+                res.message = translate('LBL_PMSE_MESSAGE_LABEL_MISSING_EXPRESSION_OR_OPERATOR', DecisionTable.LANG_MODULE);
             } else {
                 $(this.html).removeClass('error');
             }

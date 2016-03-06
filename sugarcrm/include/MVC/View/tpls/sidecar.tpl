@@ -107,5 +107,10 @@
         {if !empty($voodooFile)}
             <script src="{sugar_getjspath file=$voodooFile}"></script>
         {/if}
+        {if !empty($processAuthorFiles)}
+            {sugar_getscript file="cache/include/javascript/pmse.utils.min.js"}
+            {sugar_getscript file="cache/include/javascript/pmse.jcore.min.js"}
+            {sugar_getscript file="cache/include/javascript/pmse.ui.min.js"}
+        {/if}
     </body>
 </html>

@@ -14,6 +14,7 @@
      * @extends Layout
      */
     initialize: function(options) {
+        this.plugins = _.union(this.plugins || [], ['ProcessAuthorActions']);
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
 //        this.collection.allowed_modules = ['Cases Title', 'Process Name', 'Status', 'Owner'];
@@ -33,13 +34,13 @@
 //        this.context.on('list:executeCase:fire', this.executeCases, this);
     },
     viewStatus: function(model){
-        showImage(model.get('cas_id'));
+        this.showStatus(model.get('cas_id'));
     },
     viewHistory: function(model){
-        showHistory(model.get('cas_id'));
+        this.getHistory(model.get('cas_id'));
     },
     viewNotes: function(model){
-        showNotes(model.get('cas_id'),1,1);
+        this.showNotes(model.get('cas_id'), 1);
     },
     executeCase: function(model){
         app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});

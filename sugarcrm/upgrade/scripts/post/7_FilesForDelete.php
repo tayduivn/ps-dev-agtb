@@ -184,6 +184,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'vendor/PHPMailer/',
             // PAT-2081 Move Google API library to composer
             'include/google-api-php-client',
+            // MACAROON-1125
+            'include/javascript/pmse/business_rules.js'
         );
 
         // must be upgrading from between 710 to 722
