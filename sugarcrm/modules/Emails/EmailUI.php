@@ -1526,7 +1526,7 @@ EOQ;
         $prefillData = $json->encode($emailAddress);
         $EditView->assignVar('prefillData', $prefillData);
         $EditView->assignVar('prefillEmailAddresses', 'false');
-        
+
         if ($module == 'Users') {
             $EditView->assignVar('useReplyTo', true);
         } else {
@@ -2464,11 +2464,11 @@ eoq;
 				{
 				    $searchq = $this->findEmailFromBeanIds('', $searchBean, $whereArr);
 				    if(!empty($searchq)) {
-					    $q[] = "($searchq)";
+                        $q[] = $searchq;
 				    }
 				}
 				if (!empty($q))
-    			    $finalQuery .= implode("\n UNION ALL \n", $q);
+                    $finalQuery .= implode("\n UNION \n", $q);
 			}
 			else
 				$finalQuery = $this->findEmailFromBeanIds('', $beanType, $whereArr);
@@ -2485,11 +2485,11 @@ eoq;
     	            {
     	                $data = $focus->$searchBean->get();
     	                if (count($data) != 0)
-    	                $q[] = '('.$this->findEmailFromBeanIds($data, $searchBean, $whereArr).')';
+                            $q[] = $this->findEmailFromBeanIds($data, $searchBean, $whereArr);
     	            }
     	        }
     	        if (!empty($q))
-    	        $finalQuery .= implode("\n UNION ALL \n", $q);
+                    $finalQuery .= implode("\n UNION \n", $q);
     	    }
     	    else
     	    {
@@ -2507,8 +2507,8 @@ eoq;
 
     function findEmailFromBeanIds($beanIds, $beanType, $whereArr) {
     	global $current_user;
-		$q = '';
-		$whereAdd = "";
+        $q = array();
+        $finalQuery = '';
 		$relatedIDs = '';
 		if ($beanIds != '') {
 			foreach ($beanIds as $key => $value) {
@@ -2525,43 +2525,96 @@ eoq;
 			unset($whereArr['first_name']);
 		}
 
-		foreach($whereArr as $column => $clause) {
-			if(!empty($whereAdd)) {
-				$whereAdd .= " OR ";
-			}
-			$clause = $current_user->db->quote($clause);
-			$whereAdd .= "{$column} LIKE '{$clause}%'";
-		}
-		$table = $beanType;
-		$module = ucfirst($table);
-		$person = BeanFactory::getBean($module);
-		if ($person->ACLAccess('list')) {
-			if ($relatedIDs != '') {
-				$where = "({$table}.deleted = 0 AND eabr.primary_address = 1 AND {$table}.id in ($relatedIDs))";
-			} else {
-				$where = "({$table}.deleted = 0 AND eabr.primary_address = 1)";
-			}
+        $table = $beanType;
+        $module = ucfirst($table);
+        $person = BeanFactory::getBean($module);
+        $personACLAccessList = $person->ACLAccess('list');
+        $requireOwner = ACLController::requireOwner($module, 'list');
+        if ($personACLAccessList) { // build query
+            if (empty($whereArr)) {
+                $whereAdd = '';
+                $t = $this->buildQuery(
+                    $relatedIDs,
+                    $table,
+                    $whereAdd,
+                    $requireOwner,
+                    $current_user,
+                    $beanType,
+                    $module,
+                    $person
+                );
+                if (!empty($t)) {
+                    $q[] = '(' . $t . ')';
+                }
+            } else {
+                foreach ($whereArr as $column => $clause) {
+                    $clause = $current_user->db->quote($clause);
+                    $whereAdd = "{$column} LIKE '{$clause}%'";
+                    $t = $this->buildQuery(
+                        $relatedIDs,
+                        $table,
+                        $whereAdd,
+                        $requireOwner,
+                        $current_user,
+                        $beanType,
+                        $module,
+                        $person
+                    );
+                    if (!empty($t)) {
+                        $q[] = '(' . $t . ')';
+                    }
+                }
+            }
+        }
 
-			if (ACLController::requireOwner($module, 'list')) {
-				$where = $where . " AND ({$table}.assigned_user_id = '{$current_user->id}')";
-			} // if
-			if(!empty($whereAdd)) {
-				$where .= " AND ({$whereAdd})";
-			}
+        if (!empty($q)) {
+            $finalQuery = implode("\n UNION \n", $q);
+        }
 
-			if ($beanType === 'accounts') {
-				$t = "SELECT {$table}.id, '' first_name, {$table}.name last_name, eabr.primary_address, ea.email_address, '{$module}' module ";
-			} else {
-				$t = "SELECT {$table}.id, {$table}.first_name, {$table}.last_name, eabr.primary_address, ea.email_address, '{$module}' module ";
-			}
+        return $finalQuery;
+    }
 
-			$t .= "FROM {$table} ";
-			$t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
-			$t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
-			$person->add_team_security_where_clause($t);
-			$t .= " WHERE {$where} AND ea.invalid_email = 0 AND ea.opt_out = 0";
-		} // if
-		return $t;
+    private function buildQuery(
+        $relatedIDs,
+        $table,
+        $whereAdd,
+        $requireOwner,
+        $current_user,
+        $beanType,
+        $module,
+        $person
+    ) {
+        $t = '';
+
+        if ($relatedIDs != '') {
+            $where = "({$table}.deleted = 0 AND eabr.primary_address = 1 AND {$table}.id in ($relatedIDs))";
+        } else {
+            $where = "({$table}.deleted = 0 AND eabr.primary_address = 1)";
+        }
+
+        if ($requireOwner) {
+            $where = $where . " AND ({$table}.assigned_user_id = '{$current_user->id}')";
+        } // if
+        if (!empty($whereAdd)) {
+            $where .= " AND ({$whereAdd})";
+        }
+
+        if ($beanType === 'accounts') {
+            $t = "SELECT {$table}.id, '' first_name, {$table}.name last_name, ";
+            $t .= "eabr.primary_address, ea.email_address, '{$module}' module ";
+        } else {
+            $t = "SELECT {$table}.id, {$table}.first_name, {$table}.last_name, ";
+            $t .= "eabr.primary_address, ea.email_address, '{$module}' module ";
+        }
+
+        $t .= "FROM {$table} ";
+        $t .= "JOIN email_addr_bean_rel eabr ON ({$table}.id = eabr.bean_id and eabr.deleted=0) ";
+        $t .= "JOIN email_addresses ea ON (eabr.email_address_id = ea.id) ";
+        $person->add_team_security_where_clause($t);
+        $t .= " WHERE {$where} AND ea.invalid_email = 0 AND ea.opt_out = 0";
+
+
+        return $t;
     }
 
 	/**

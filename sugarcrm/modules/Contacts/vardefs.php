@@ -686,11 +686,6 @@ $dictionary['Contact'] = array(
     ),
     'indices' => array(
         array(
-            'name' => 'idx_cont_last_first',
-            'type' => 'index',
-            'fields' => array('last_name', 'first_name', 'deleted'),
-        ),
-        array(
             'name' => 'idx_contacts_del_last',
             'type' => 'index',
             'fields' => array('deleted', 'last_name'),

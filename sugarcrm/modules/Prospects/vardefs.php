@@ -186,15 +186,6 @@ $dictionary['Prospect'] = array(
             'fields' => array('tracker_key')
         ),
         array(
-            'name' => 'idx_prospects_last_first',
-            'type' => 'index',
-            'fields' => array(
-                'last_name',
-                'first_name',
-                'deleted'
-            )
-        ),
-        array(
             'name' => 'idx_prospecs_del_last',
             'type' => 'index',
             'fields' => array(

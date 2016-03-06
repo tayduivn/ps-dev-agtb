@@ -571,11 +571,6 @@ $dictionary['Lead'] = array(
     'indices' => array(
         array('name' => 'idx_lead_acct_name_first', 'type' => 'index', 'fields' => array('account_name', 'deleted')),
         array(
-            'name' => 'idx_lead_last_first',
-            'type' => 'index',
-            'fields' => array('last_name', 'first_name', 'deleted')
-        ),
-        array(
             'name' => 'idx_lead_del_stat',
             'type' => 'index',
             'fields' => array('last_name', 'status', 'deleted', 'first_name')
