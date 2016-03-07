@@ -55,11 +55,15 @@ class Reminder
      */
     protected function validate(\SugarBean $bean, \User $user)
     {
+        $isValid = false;
         $reminderDateTime = Helper::calculateReminderDateTime($bean, $user);
-        $now = new \DateTime();
-        $diff = abs($reminderDateTime->getTimestamp() - $now->getTimestamp());
+        if ($reminderDateTime) {
+            $now = \TimeDate::getInstance()->getNow();
+            $diff = abs($reminderDateTime->getTimestamp() - $now->getTimestamp());
+            $isValid = ($diff <= self::MAX_TIME_DIFF);
+        }
 
-        return $diff <= self::MAX_TIME_DIFF;
+        return $isValid;
     }
 
     /**
