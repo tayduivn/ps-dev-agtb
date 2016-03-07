@@ -53,7 +53,9 @@ class TriggerServer extends Base
     public function addReminderForUser(\SugarBean $bean, \User $user, \DateTime $reminderTime)
     {
         $id = $bean->id . '-' . $user->id;
-        $formattedTime = $reminderTime->format('Y-m-d\TH:i:s');
+        $utcReminderTime = clone $reminderTime;
+        $utcReminderTime->setTimezone(new \DateTimeZone('UTC'));
+        $formattedTime = $utcReminderTime->format('Y-m-d\TH:i:s');
         $args = $this->prepareTriggerArgs($bean, $user);
         $tags = $this->prepareTags($bean, $user);
         $this->getTriggerClient()->push($id, $formattedTime, 'post', static::CALLBACK_URL, $args, $tags);
