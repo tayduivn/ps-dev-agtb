@@ -146,8 +146,8 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
         // New. In-review or published.
         if ($bean->new_with_id &&
             (
-                $bean->status == KBContent::ST_IN_REVIEW ||
-                in_array($bean->status, KBContent::getPublishedStatuses())
+                ($bean->status == KBContent::ST_IN_REVIEW && !empty($bean->kbsapprover_id)) ||
+                (in_array($bean->status, KBContent::getPublishedStatuses()) && !empty($bean->assigned_user_id))
             )
         ) {
             return true;
@@ -155,9 +155,14 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
         // Update. To in-review or published. From in-review to draft.
         if ($prevStatus &&
             (
-                $bean->status == KBContent::ST_IN_REVIEW ||
-                in_array($bean->status, KBContent::getPublishedStatuses()) ||
-                ($bean->status == KBContent::ST_DRAFT && $prevStatus == KBContent::ST_IN_REVIEW)
+                ($bean->status == KBContent::ST_IN_REVIEW && !empty($bean->kbsapprover_id)) ||
+                (
+                    !empty($bean->assigned_user_id) &&
+                    (
+                        in_array($bean->status, KBContent::getPublishedStatuses()) ||
+                        ($bean->status == KBContent::ST_DRAFT && $prevStatus == KBContent::ST_IN_REVIEW)
+                    )
+                )
             )
         ) {
             return true;
