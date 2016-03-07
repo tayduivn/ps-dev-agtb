@@ -306,7 +306,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12,
                 ),
-                'status',
+                array(
+                    'name' => 'status',
+                    'type' => 'status',
+                ),
                 'status_description',
                 'lead_source',
                 'lead_source_description',
