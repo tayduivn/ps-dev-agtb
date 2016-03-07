@@ -29,6 +29,7 @@ $dictionary['Lead'] = array(
             'default' => '0',
             'comment' => 'Has Lead been converted to a Contact (and other Sugar objects)',
             'massupdate' => false,
+            'studio' => false,
         ),
         'refered_by' => array(
             'name' => 'refered_by',
