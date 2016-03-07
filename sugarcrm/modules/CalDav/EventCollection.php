@@ -338,9 +338,6 @@ class CalDavEventCollection extends SugarBean
      */
     public function addIdToSugarChildrenOrder($id)
     {
-        if (!$this->parent_type || !$this->parent_id) {
-            return false;
-        }
         $currentOrder = $this->getSugarChildrenOrder();
         $idIndex = array_search($id, $currentOrder);
         if ($idIndex === false) {
@@ -1110,9 +1107,8 @@ class CalDavEventCollection extends SugarBean
         if ($result && $currentETag != $this->etag) {
             $operation = $isUpdate ? DavConstants::OPERATION_MODIFY : DavConstants::OPERATION_ADD;
             $this->addChange($operation);
+            $this->getCalDavHook()->import($this, array('update', $originalCalendarData));
         }
-
-        $this->getCalDavHook()->import($this, array('update', $originalCalendarData));
 
         return $result;
     }

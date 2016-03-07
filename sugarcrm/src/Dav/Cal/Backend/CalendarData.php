@@ -348,10 +348,20 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         if (!$events) {
             return null;
         }
+        /** @var \CalDavEventCollection $event */
         $event = array_shift($events);
 
         if ($event->getSynchronizationObject()->getConflictCounter()) {
             throw new DAV\Exception\Conflict('Event in the middle of conflict solving');
+        }
+
+        if ($event->getRRule() && $event->getBean()) {
+            $sugarChildrenCount = count($event->getSugarChildrenOrder());
+            $eventChildrenCount = count($event->getAllChildrenRecurrenceIds());
+
+            if ($sugarChildrenCount < $eventChildrenCount) {
+                throw new DAV\Exception\Locked('Event in the middle of import in instance');
+            }
         }
 
         $event->doLocalDelivery = false;

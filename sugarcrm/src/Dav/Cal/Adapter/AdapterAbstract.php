@@ -180,7 +180,7 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         if ((isset($recurringParam['repeat_type']) || $rootBeanId) && $collection->addIdToSugarChildrenOrder($beanId)) {
-            $collection->save();
+            $isChanged = true;
         }
 
         $event = $this->getCurrentEvent($collection, $rootBeanId, $beanId);

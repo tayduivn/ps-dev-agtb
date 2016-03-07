@@ -30,7 +30,7 @@ class CalDavSynchronizationTest extends Sugar_PHPUnit_Framework_TestCase
         $rand = rand(0, 999);
         $syncBean = $this->getMockBuilder('\CalDavSynchronization')
                          ->disableOriginalConstructor()
-                         ->setMethods(array('save'))
+                         ->setMethods(array('save', 'retrieve'))
                          ->getMock();
         $syncBean->save_counter = $rand;
 
@@ -51,7 +51,7 @@ class CalDavSynchronizationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $syncBean = $this->getMockBuilder('\CalDavSynchronization')
                          ->disableOriginalConstructor()
-                         ->setMethods(array('save'))
+                         ->setMethods(array('save', 'retrieve'))
                          ->getMock();
 
         $syncBean->job_counter = $rand;
