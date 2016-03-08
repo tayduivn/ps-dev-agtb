@@ -222,6 +222,23 @@ describe("Forecasts.Layout.Records", function() {
                 expect(layout.model.get('forecastType')).toEqual('Rollup');
             });
         });
+
+        describe('bindDataChange', function() {
+            beforeEach(function() {
+                sinon.stub(layout, 'bindDataChange');
+            });
+            it('is called when eventsBound is false', function() {
+                layout.eventsBound = false;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.bindDataChange).toHaveBeenCalled();
+            });
+
+            it('is not called when eventsBound is true', function() {
+                layout.eventsBound = true;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.bindDataChange).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe('sync', function() {

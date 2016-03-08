@@ -44,6 +44,11 @@
     initOptions: undefined,
 
     /**
+     * Are the event already bound to the context and the models?
+     */
+    eventsBound: false,
+
+    /**
      * Overrides the Layout.initialize function and does not call the parent so we can defer initialization
      * until _onceInitSelectedUser is called
      *
@@ -76,7 +81,8 @@
     bindDataChange: function() {
         // we need this here to track when the selectedTimeperiod changes and then also move it up to the context
         // so the recordlists can listen for it.
-        if (!_.isUndefined(this.model)) {
+        if (!_.isUndefined(this.model) && this.eventsBound == false) {
+            this.eventsBound = true;
             this.collection.on('reset', function() {
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
@@ -91,7 +97,7 @@
                 var update = {
                     'selectedUserId': changed.id,
                     'forecastType': app.utils.getForecastType(changed.is_manager, changed.showOpps)
-                }
+                };
                 this.model.set(update);
             }, this);
 
@@ -116,21 +122,21 @@
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
-            
+
             //listen for the worksheets to be dirty/clean
-            this.context.on("forecasts:worksheet:dirty", function(type, isDirty){
+            this.context.on("forecasts:worksheet:dirty", function(type, isDirty) {
                 this.isDirty = isDirty;
                 this.worksheetType = type;
             }, this);
-            
+
             //listen for the worksheet navigation messages
-            this.context.on("forecasts:worksheet:navigationMessage", function(message){
+            this.context.on("forecasts:worksheet:navigationMessage", function(message) {
                 this.navigationMessage = message;
             }, this);
-            
+
             //listen for the user to change
-            this.context.on("forecasts:user:changed", function(selectedUser, context){
-                if(this.isDirty){
+            this.context.on("forecasts:user:changed", function(selectedUser, context) {
+                if (this.isDirty) {
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
                         messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
@@ -145,7 +151,7 @@
                     app.utils.getSelectedUsersReportees(selectedUser, context);
                 }
             }, this);
-            
+
             //handle timeperiod change events
             this.context.on('forecasts:timeperiod:changed', function(model, startEndDates) {
                 // create an anonymous function to combine the two calls where this is used
@@ -316,8 +322,10 @@
 
         // load the data
         app.view.Layout.prototype.loadData.call(this);
-        // bind the data change
-        this.bindDataChange();
+        if (this.eventsBound === false) {
+            // bind the data change
+            this.bindDataChange();
+        }
         // render everything
         if (!this.disposed) this.render();
     },
