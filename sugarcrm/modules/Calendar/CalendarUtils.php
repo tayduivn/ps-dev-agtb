@@ -305,6 +305,8 @@ class CalendarUtils
 	 */
 	static function saveRecurring(SugarBean $bean, $timeArray)
 	{
+        set_time_limit(0); // Required to prevent inadvertent timeouts for large recurring series
+
 		// Here we will create single big inserting query for each invitee relationship
 		// rather than using relationships framework due to performance issues.
 		// Relationship framework runs very slowly
