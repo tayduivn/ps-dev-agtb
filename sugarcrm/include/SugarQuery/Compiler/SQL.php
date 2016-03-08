@@ -701,8 +701,7 @@ class SugarQuery_Compiler_SQL
             $sql .= ' ' . $join->options['alias'];
         }
 
-        $sql .= ' ON ';
-        $sql .= '(' . $this->compileWhere($join->on) . ')';
+        $sql .= ' ON ' . $this->compileWhere($join->on);
 
         return $sql;
     }

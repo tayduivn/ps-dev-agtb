@@ -16,6 +16,14 @@
  */
 class CaseEmailsLink extends ArchivedEmailsBeanLink
 {
+    /**
+     * {@inheritDoc}
+     */
+    protected function joinEmails(SugarQuery $query, $fromAlias, $alias)
+    {
+        // TODO: needs to be rewritten using the logic from static::getEmailsJoin()
+        return parent::joinEmails($query, $fromAlias, $alias);
+    }
 
     /**
      * We need this one because cases have match by subject macro

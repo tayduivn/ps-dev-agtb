@@ -201,13 +201,20 @@ class SugarACLTeamBased extends SugarACLStrategy
         $sq = new SugarQuery();
         $sq->select('id');
         $sq->from($bean, array('alias' => 'bean', 'team_security' => false));
-        $sq->joinRaw(
-            "INNER JOIN team_sets_teams tst ON tst.team_set_id = bean.acl_team_set_id AND tst.deleted = 0"
-        );
-        $sq->joinRaw(
-            'INNER JOIN team_memberships tm ON tm.team_id = tst.team_id ' .
-            "AND tm.user_id = '{$user->id}' AND tm.deleted = 0"
-        );
+
+        $join = $sq->joinTable('team_sets_teams', array(
+            'alias' => 'tst',
+        ));
+        $join->on()->equalsField('tst.team_set_id', 'bean.acl_team_set_id');
+        $join->on()->equals('tst.deleted', 0);
+
+        $join = $sq->joinTable('team_memberships', array(
+            'alias' => 'tm',
+        ));
+        $join->on()->equalsField('tm.team_id', 'tst.team_id');
+        $join->on()->equals('tm.user_id', $user->id);
+        $join->on()->equals('tm.deleted', 0);
+
         $sq->where()->equals('id', $bean->id);
         $result = (bool)$sq->getOne();
 

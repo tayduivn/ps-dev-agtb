@@ -352,7 +352,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("contacts_cstm.bigname_c", $sql);
         $this->assertContains("_cstm.bigname_c report_to_bigname", $sql);
         $this->assertContains("LEFT JOIN contacts_cstm ON contacts_cstm.id_c = contacts.id", $sql);
-        $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON \(jt\1_cstm.id_c = jt\1\.id\)/', $sql);
+        $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON jt\1_cstm.id_c = jt\1\.id/', $sql);
     }
 
     /**

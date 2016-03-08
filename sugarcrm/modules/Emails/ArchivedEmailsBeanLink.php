@@ -17,6 +17,14 @@
  */
 class ArchivedEmailsBeanLink extends ArchivedEmailsLink
 {
+    /**
+     * {@inheritDoc}
+     */
+    protected function joinEmails(SugarQuery $query, $fromAlias, $alias)
+    {
+        // TODO: needs to be rewritten using the logic from static::getEmailsJoin()
+        return parent::joinEmails($query, $fromAlias, $alias);
+    }
 
     /**
      * Override to go to both direct emails and linked bean

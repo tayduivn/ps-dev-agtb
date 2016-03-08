@@ -1110,14 +1110,19 @@ class SugarQuery
             $table = $bean->getTableName();
             $table_cstm = $bean->get_custom_table_name();
             if (!empty($table_cstm)) {
-                // TODO: CLEAN THIS UP
+                $options = array(
+                    'joinType' => 'left',
+                );
                 if (!empty($alias)) {
-                    $sql = "LEFT JOIN {$table_cstm} {$alias}_c ON {$alias}_c.id_c = {$alias}.id";
+                    $fromAlias = $alias;
+                    $joinAlias = $alias . '_c';
+                    $options['alias'] = $joinAlias;
                 } else {
-                    $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$table}.id";
+                    $fromAlias = $table;
+                    $joinAlias = $table_cstm;
                 }
-                // can do a join here because we haven't got to the joins yet in the compile sequence.
-                $this->joinRaw($sql);
+                $this->joinTable($table_cstm, $options)
+                    ->on()->equalsField($joinAlias . '.id_c', $fromAlias . '.id');
             }
         }
     }
