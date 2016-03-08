@@ -41,10 +41,8 @@
             if (model && model.id && !this.disposed) {
                 this.model.fetch();
                 _.each(this.context.children, function(child) {
-                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
-                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
-                            child.attributes.collection.fetch();
-                        }
+                    if (child.get('isSubpanel') && !child.get('hidden')) {
+                        child.get('collapsed') ? child.resetLoadFlag(false) : child.reloadData({recursive: false});
                     }
                 });
             }
