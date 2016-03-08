@@ -152,12 +152,12 @@ class Plugin extends DavSchedulePlugin
      * This method need to be called whenever there was a calendar object gets
      * created or updated from SugarCRM.
      *
-     * @param VCalendar $vCalendar event for schedule
-     * @param string $currentData  Current event data
+     * @param VCalendar|string $newData updated data of event
+     * @param VCalendar|string $oldData old data of event
      * @param string $userName     User name
      * @return bool A marker to indicate that the original object modified by this process.
      */
-    public function calendarObjectSugarChange(VCalendar $vCalendar, $currentData, $userName)
+    public function calendarObjectSugarChange($newData, $oldData, $userName)
     {
         $caldavNS = '{' . self::NS_CALDAV . '}';
         $aclPlugin = $this->server->getPlugin('acl');
@@ -165,8 +165,6 @@ class Plugin extends DavSchedulePlugin
         if (!$aclPlugin) {
             return false;
         }
-
-        $modified = false;
 
         $result = $this->server->getProperties(
             $aclPlugin->defaultUsernamePath . '/' . $userName,
@@ -186,14 +184,31 @@ class Plugin extends DavSchedulePlugin
             $calendarNode->getOwner()
         );
 
-        if ($currentData) {
-            $oldObj = Reader::read($currentData);
-        } else {
-            $oldObj = null;
+        if (!$newData) {
+            $newData = null;
+        }
+        if (is_string($newData)) {
+            $newData = Reader::read($newData);
+        }
+        if (!$oldData) {
+            $oldData = null;
+        }
+        if (is_string($oldData)) {
+            $oldData = Reader::read($oldData);
         }
 
-        $this->processICalendarChange($oldObj, $vCalendar, $addresses, array(), $modified);
+        if ($newData) {
+            $modified = false;
+            $this->processICalendarChange($oldData, $newData, $addresses, array(), $modified);
+            return $modified;
+        } else {
+            $broker = new ITip\Broker();
+            $messages = $broker->parseEvent($newData, $addresses, $oldData);
 
-        return $modified;
+            foreach ($messages as $message) {
+                $this->deliver($message);
+            }
+            return false;
+        }
     }
 }

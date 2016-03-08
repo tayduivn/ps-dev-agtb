@@ -1131,6 +1131,9 @@ class CalDavEventCollection extends SugarBean
         $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
         if (!$deletedStatus && $this->deleted) {
+            if ($this->isImportable() && $this->doLocalDelivery) {
+                $this->scheduleLocalDelivery('delete');
+            }
             $this->getCalDavHook()->import($this, array('delete'));
         }
     }
@@ -1153,6 +1156,9 @@ class CalDavEventCollection extends SugarBean
         $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
         if ($deletedStatus && !$this->deleted) {
+            if ($this->isImportable() && $this->doLocalDelivery) {
+                $this->scheduleLocalDelivery('restore');
+            }
             $this->getCalDavHook()->import($this);
         }
     }
@@ -1178,9 +1184,10 @@ class CalDavEventCollection extends SugarBean
      * This handler attempts to look at local accounts to deliver the
      * scheduling object from sugar to caldav.
      *
+     * @param string $action possible values: update, delete, restore
      * @return bool is event object was changed or not
      */
-    protected function scheduleLocalDelivery()
+    protected function scheduleLocalDelivery($action = 'update')
     {
         if ($this->etag === '') {
             return false;
@@ -1198,13 +1205,27 @@ class CalDavEventCollection extends SugarBean
         }
 
         $schedulePlugin = $server->getPlugin('caldav-schedule');
-        $oldCalendarData = isset($this->fetched_row['calendar_data']) ? $this->fetched_row['calendar_data'] : null;
 
-        return $schedulePlugin->calendarObjectSugarChange(
-            $this->getVCalendar(),
-            $oldCalendarData,
-            $schedulingUser->user_name
-        );
+        $oldData = null;
+        $newData = null;
+        switch ($action) {
+            case 'update':
+                if (isset($this->fetched_row['calendar_data'])) {
+                    $oldData = $this->fetched_row['calendar_data'];
+                }
+                $newData = $this->getVCalendar();
+                break;
+            case 'delete':
+                if (isset($this->fetched_row['calendar_data'])) {
+                    $oldData = $this->fetched_row['calendar_data'];
+                }
+                break;
+            case 'restore':
+                $newData = $this->getVCalendar();
+                break;
+        }
+
+        return $schedulePlugin->calendarObjectSugarChange($newData, $oldData, $schedulingUser->user_name);
     }
 
     /**
