@@ -147,7 +147,6 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testHandleRelateField()
     {
-        $this->markTestSkipped("Failing in RM-2799. Need to be fixed.");
         self::$db->addQuerySpy(
             'translateQuery',
             '/jim_id/',
