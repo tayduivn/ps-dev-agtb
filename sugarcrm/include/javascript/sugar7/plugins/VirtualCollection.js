@@ -1208,7 +1208,7 @@
         };
 
         /**
-         * {@link Data.Bean#getSynced}
+         * {@link Data.Bean#getSyncedAttributes}
          *
          * Includes in the return value all collection fields and their
          * associated link attributes. When comparing objects, Backbone does
@@ -1218,9 +1218,38 @@
          *
          * TODO: Don't assume the collection is synchronized when moving
          * collection field support to sidecar.
+         *
+         * @deprecated since 7.7. Will be removed in 7.9.
+         * Use {@link BeanOverrides#getSynced} instead.
          */
-        BeanOverrides.prototype.getSynced = function() {
+        BeanOverrides.prototype.getSyncedAttributes = function() {
+            app.logger.warn('BeanOverrides#getSyncedAttributes is deprecated. ' +
+            'Please update your code to use getSynced');
+            return this.getSynced();
+        };
+
+        /**
+         * {@link Data.Bean#getSynced}
+         *
+         * Includes in the return value all collection fields and their
+         * associated link attributes. When comparing objects, Backbone does
+         * not do a deep comparison. As collections are objects, the current
+         * state of the collection is assumed to be synchronized. This method
+         * handles the deep comparison for us. If a key is provided, only that
+         * attribute is returned.
+         *
+         * TODO: Don't assume the collection is synchronized when moving
+         * collection field support to sidecar.
+         *
+         * @param {string} [key] The attribute name.
+         * @return {Mixed} The synced attribute's value.
+         */
+        BeanOverrides.prototype.getSynced = function(key) {
             var syncedAttributes = {};
+
+            if (key) {
+                return this.model.get(key);
+            }
 
             _.reduce(this.model.getCollectionFieldNames(), function(memo, attr) {
                 var collection = this.get(attr);
@@ -1249,6 +1278,7 @@
              * {@link Data.Bean#hasChanged}
              * {@link Data.Bean#changedAttributes}
              * {@link Data.Bean#revertAttributes}
+             * {@link Data.Bean#getSyncedAttributes}
              * {@link Data.Bean#getSynced}
              *
              * @param {Data.Bean} model The model to which the plugin is
@@ -1389,11 +1419,25 @@
                 });
 
                 /**
+                 * See {@link Data.Bean#getSyncedAttributes} and
+                 * {@link BeanOverrides#getSyncedAttributes}.
+                 *
+                 * @deprecated since 7.7. Will be removed in 7.9.
+                 * Use {@link #getSynced} instead.
+                 *
+                 */
+                this.getSyncedAttributes = function() {
+                    app.logger.warn('Data.Bean#getSyncedAttributes is deprecated. ' +
+                    'Please update your code to use Data.Bean#getSynced');
+                    return this.getSynced();
+                };
+
+                /**
                  * See {@link Data.Bean#getSynced} and
                  * {@link BeanOverrides#getSynced}.
                  */
-                this.getSynced = _.wrap(this.getSynced, function(_super) {
-                    return _.extend(app.utils.deepCopy(_super.call(this) || {}), overrides.getSynced());
+                this.getSynced = _.wrap(this.getSynced, function(_super, key) {
+                    return _.extend(app.utils.deepCopy(_super.call(this, key) || {}), overrides.getSynced(key));
                 });
             },
 
