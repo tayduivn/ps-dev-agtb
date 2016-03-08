@@ -265,12 +265,13 @@ class PMSEPreProcessor
         $fields = array('cas_id', 'cas_index', 'pro_id');
         $sugarQuery->select($fields);
         $sugarQuery->from($flowBean, array('alias' => 'flow'));
-        $sugarQuery->joinRaw("INNER JOIN pmse_bpm_process_definition definition ON definition.id = flow.pro_id");
+        $sugarQuery->joinTable('pmse_bpm_process_definition', array(
+            'alias' => 'definition',
+        ))->on()->equalsField('definition.id', 'flow.pro_id');
         $sugarQuery->where()->queryAnd()
             ->addRaw("cas_sugar_object_id = '{$bean->id}' AND cas_sugar_module = '{$bean->module_name}' AND cas_flow_status <> 'CLOSED'");
         $sugarQuery->select->fieldRaw('definition.pro_terminate_variables');
         $flows = $sugarQuery->execute();
-        $query = $sugarQuery->compileSql();
         return $flows;
     }
 

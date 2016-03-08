@@ -164,7 +164,9 @@ class Category extends SugarBean implements NestedBeanInterface
     {
         $db = DBManagerFactory::getInstance();
         $query = $this->getQuery();
-        $query->joinRaw('INNER JOIN ' . $this->table_name . ' root ON root.id=node.root');
+        $query->joinTable($this->table_name, array(
+            'alias' => 'root',
+        ))->on()->equalsField('root.id', 'node.root');
 
         $condition = array(
             'node.lft < ' . $this->lft,
