@@ -210,6 +210,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'sidecar/lib/jquery/jquery.placeholder.min.js';
             $files[] = 'modules/Home/clients/base/views/about-source-code/about-source-code.php';
             $files[] = 'portal2/portal-ui.js';
+        }
+
+        if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'include/Expressions/Expression/Numeric/CurrencyAddExpression.php';
             $files[] = 'include/Expressions/Expression/Numeric/CurrencySubtractExpression.php';
             $files[] = 'include/Expressions/Expression/Numeric/CurrencyMultiplyExpression.php';

@@ -80,11 +80,11 @@ class SugarUpgradeMigrateCreateActions extends UpgradeScript
         $filesToMigrate = array_merge($custom, $customModules, $modules);
         $jsMigrateOptions = array(
             'regex' => "/(extendsFrom('|\")?(\s)*:(\s)*('|\")(.)*)CreateActions/U",
-            'replacement' => "$1Create",
+            'replacement' => '$1Create',
         );
         $phpMigrateOptions = array(
-            'regex' => "/(\$viewdefs(.)*\[('|\"))create-actions/U",
-            'replacement' => "$1create",
+            'regex' => "/(\\\$viewdefs(.)*\[('|\"))create-actions/U",
+            'replacement' => '$1create',
         );
 
         foreach ($filesToMigrate as $file) {
