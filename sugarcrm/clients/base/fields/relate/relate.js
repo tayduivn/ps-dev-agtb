@@ -552,12 +552,13 @@
             this._buildRoute();
         }
 
+        var idList = this.model.get(this.def.id_name);
         if (_.isArray(value)) {
             this.formattedRname = value.join(this._separator);
-            this.formattedIds = this.model.get(this.def.id_name).join(this._separator);
+            this.formattedIds = idList.join(this._separator);
         } else {
             this.formattedRname = value;
-            this.formattedIds = this.model.get(this.def.id_name);
+            this.formattedIds = idList;
         }
         return value;
     },
