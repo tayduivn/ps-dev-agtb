@@ -37,9 +37,18 @@ var setupMCE = function() {
     ModuleBuilder.tabPanel.get("activeTab").on("remove", function() {
 		tinyMCE.execCommand('mceRemoveControl', false, 'htmlarea');
 	});
-	tinyMCE.execCommand('mceAddControl', false, 'htmlarea');
-	editor = tinyMCE.get('htmlarea');
-	editor.setContent(html_editor);
+    var oldEditor = tinyMCE.get('htmlarea');
+    if (typeof oldEditor != 'undefined') { // cleanup existing old editor if any
+        tinyMCE.remove(oldEditor);
+    }
+    if (tinyMCE.execCommand('mceAddControl', false, 'htmlarea')) {
+        var callback = tinyMCE.onAddEditor.add(function (mgr, ed) {
+            ed.onInit.add(function (editor) {
+                editor.setContent(html_editor);
+            });
+            mgr.remove(callback);
+        });
+    }
 	document.forms.popup_form.required.value = false;
 	YAHOO.util.Dom.getAncestorByTagName(document.forms.popup_form.required, 'tr').style.display='none';
 }
