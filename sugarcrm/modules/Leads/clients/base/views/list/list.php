@@ -33,6 +33,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'status',
+                    'type' => 'status',
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
