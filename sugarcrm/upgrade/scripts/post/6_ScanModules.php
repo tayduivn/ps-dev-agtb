@@ -106,8 +106,13 @@ class SugarUpgradeScanModules extends UpgradeScript
             /* File data is:
              * {(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}
              * md5 is: 794b5f58a557c243ddea04382996891f
+             * or
+             * File data is:
+             * {(){parent::ViewEdit();}(){if(isset($this->bean->id)){$this->ss->assign("FILE_OR_HIDDEN","hidden");if(empty($_REQUEST['isDuplicate'])||$_REQUEST['isDuplicate']=='false'){$this->ss->assign("DISABLED","disabled");}}else{$this->ss->assign("FILE_OR_HIDDEN","file");}parent::display();}}?>
+             * md5 is: c8251f6b50e3e814135c936f6b5292eb
              */
-            if(md5($data) !== '794b5f58a557c243ddea04382996891f') {
+            $md5 = md5($data);
+            if (($md5 !== '794b5f58a557c243ddea04382996891f') && ($md5 !== 'c8251f6b50e3e814135c936f6b5292eb')) {
                 $this->log("Bad md5 for $file");
                 return false;
             }

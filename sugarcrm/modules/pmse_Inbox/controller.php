@@ -14,11 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class pmse_InboxController extends SugarController
 {
-    public function __construct()
-    {
-        parent::SugarController();
-    }
-
     public function action_studio_configuration()
     {
         $this->view = 'studio_configuration';

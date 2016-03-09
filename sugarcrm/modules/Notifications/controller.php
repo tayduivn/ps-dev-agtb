@@ -24,6 +24,6 @@ class NotificationsController extends SugarController
     public function __construct()
     {
         $GLOBALS['log']->deprecated('Notifications/controller.php is deprecated');
-        parent::SugarController();
+        parent::__construct();
     }
 }
