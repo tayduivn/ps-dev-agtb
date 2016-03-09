@@ -788,9 +788,9 @@ class Call extends SugarBean {
     /**
      * Add or delete invitee from Call.
      *
-     * @param $link_name
-     * @param $invitees
-     * @param $existing
+     * @param string $link_name
+     * @param array $invitees
+     * @param array $existing
      */
     public function upgradeAttachInvitees($link_name, $invitees, $existing)
     {

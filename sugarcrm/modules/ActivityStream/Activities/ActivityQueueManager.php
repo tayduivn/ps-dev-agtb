@@ -267,6 +267,15 @@ class ActivityQueueManager
     }
 
     /**
+     * Clears $linkDupeCheck property.
+     * Used mainly for daemon scripts.
+     */
+    public static function resetDuplicateCheck()
+    {
+        self::$linkDupeCheck = array();
+    }
+
+    /**
      * Prepare the Change Data to be returned
      * Eliminates IDs and removes fields where activity_enabled is false
      * @param  $bean

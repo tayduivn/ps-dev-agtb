@@ -163,7 +163,13 @@ class Handler implements RunnableInterface
         if ($result != AdapterInterface::NOTHING) {
             switch ($result) {
                 case AdapterInterface::SAVE :
+                    if (!empty($bean->repeat_parent_id)) {
+                        \Activity::disable();
+                    }
                     $bean->save();
+                    if (!empty($bean->repeat_parent_id)) {
+                        \Activity::enable();
+                    }
                     break;
                 case AdapterInterface::DELETE :
                     $bean->mark_deleted($bean->id);

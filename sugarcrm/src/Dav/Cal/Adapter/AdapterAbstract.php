@@ -1915,6 +1915,12 @@ abstract class AdapterAbstract implements AdapterInterface
             $value = array_filter($value);
         }
 
+        $inviteesMethodMap = array(
+            'Users' => 'setUserInvitees',
+            'Contacts' => 'setContactInvitees',
+            'Leads' => 'setLeadInvitees',
+            'Addressees' => 'setAddresseeInvitees',
+        );
         $map = new CalDavStatus\AcceptedMap();
         if (isset($value['added'])) {
             foreach ($value['added'] as $k => $invitee) {
@@ -1922,8 +1928,15 @@ abstract class AdapterAbstract implements AdapterInterface
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
-                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
+                    $existingParticipants = isset($existingLinks[$participant->module_name]) ?
+                        array_keys($existingLinks[$participant->module_name]) : array();
                     $existingLinks[$participant->module_name][$participant->id] = true;
+                    $method = $inviteesMethodMap[$participant->module_name];
+                    if (!method_exists($bean, $method)) {
+                        continue;
+                    }
+                    $bean->$method(array_keys($existingLinks[$participant->module_name]), $existingParticipants);
+                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
                     $result = true;
                 } else {
                     unset($value['added'][$k]);
@@ -1984,16 +1997,16 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($value['deleted']);
             }
             foreach ($existingLinks as $module => $ids) {
-                $objectName = \BeanFactory::getObjectName($module);
-                if (!$objectName || !method_exists($bean, 'set' . $objectName . 'Invitees')) {
+                $method = $inviteesMethodMap[$module];
+                if (!method_exists($bean, $method)) {
                     continue;
                 }
-                call_user_func_array(array($bean, 'set' . $objectName . 'Invitees'), array(
+                $bean->$method(
                     array_keys($ids),
                     array(
                         0 => true, // trick to delete everybody if $ids is empty
-                    ),
-                ));
+                    )
+                );
             }
         }
 
