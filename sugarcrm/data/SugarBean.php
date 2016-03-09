@@ -4867,25 +4867,11 @@ class SugarBean
             }
         }
         $results = array();
-        foreach ($queries as $module => $query) {
+        foreach ($queries as $query) {
             $result = $this->db->query($query . ')');
             while($row = $this->db->fetchByAssoc($result))
             {
-                $id = $row['id'];
-
-                // trying to reconstruct parent bean from fetched data
-                $parent = BeanFactory::getBean($module);
-                $parent->id = $id;
-                if (isset($row['parent_name_owner'])) {
-                    $parent->assigned_user_id = $row['parent_name_owner'];
-                }
-
-                // remove parent ID from the result in case it's inaccessible to the user
-                if (!SugarACL::checkAccess($module, 'view', array('bean' => $parent))) {
-                    unset($row['id']);
-                }
-
-                $results[$id] = $row;
+                $results[$row['id']] = $row;
             }
         }
 
@@ -6889,24 +6875,44 @@ class SugarBean
     }
 
     /**
+     * Returns the owner field of the bean
+     *
+     * @return string|null
+     */
+    public function getOwnerField()
+    {
+        if (isset($this->field_defs['assigned_user_id'])) {
+            return 'assigned_user_id';
+        }
+
+        if (isset($this->field_defs['created_by'])) {
+            return 'created_by';
+        }
+
+        return null;
+    }
+
+    /**
     * Gets there where statement for checking if a user is an owner
     *
-    * @param GUID $user_id
+    * @param string $user_id
     * @param string $table_alias What table name should we be using (optional)
     * @return STRING
     */
     function getOwnerWhere($user_id, $table_alias = null)
     {
+        $ownerField = $this->getOwnerField();
+        if (!$ownerField) {
+            return '';
+        }
+
         if ($table_alias == null) {
             $table_alias = $this->table_name;
         }
-        if (isset($this->field_defs['assigned_user_id'])) {
-            return " $table_alias.assigned_user_id ='$user_id' ";
-        }
-        if (isset($this->field_defs['created_by'])) {
-            return " $table_alias.created_by ='$user_id' ";
-        }
-        return '';
+
+        $ownerField = $this->getOwnerField();
+
+        return " $table_alias.$ownerField = " . $this->db->quoted($user_id) . " ";
     }
 
     /**
