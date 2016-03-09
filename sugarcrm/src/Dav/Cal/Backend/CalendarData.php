@@ -386,6 +386,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         }
         $event = array_shift($events);
         if ($event && $event->id) {
+            $event->doLocalDelivery = false;
             $event->mark_deleted($event->id);
         }
     }
