@@ -82,7 +82,9 @@ class Handler implements DispatcherInterface
             }
             try {
                 $this->logger->info("Run handler '{$className}'.");
-                return $handler->run();
+                $result = $handler->run();
+                \ActivityQueueManager::resetDuplicateCheck();
+                return $result;
             } catch (\Exception $ex) {
                 $errorMessage = $reflector->getName() . ' error: ' . $ex->getMessage();
                 $this->logger->error($errorMessage);

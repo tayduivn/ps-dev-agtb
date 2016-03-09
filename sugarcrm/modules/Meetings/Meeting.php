@@ -934,8 +934,10 @@ class Meeting extends SugarBean {
     /**
      * Stores user invitees
      *
-     * @patam array $userInvitees Array of user invitees ids
-     * @patam array $existingUsers
+     * @param array $userInvitees Array of user invitees ids
+     * @param array $existingUsers
+     *
+     * @return boolean true if no users given.
      */
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
@@ -960,37 +962,26 @@ class Meeting extends SugarBean {
               }
         }
 
-        if (count($deleteUsers) > 0) {
-            $sql = '';
-            foreach ($deleteUsers as $u) {
-                $sql .= ",'" . $u . "'";
-            }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_users SET deleted = 1 WHERE user_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
+        foreach ($deleteUsers as $id) {
+            $this->users->delete($this->id, $id);
         }
 
-        foreach ($userInvitees as $userId) {
-            if (empty($userId) || isset($existingUsers[$userId]) || isset($deleteUsers[$userId])) {
+        foreach ($userInvitees as $id) {
+            if (empty($id) || isset($existingUsers[$id]) || isset($deleteUsers[$id])) {
                 continue;
             }
-            if (!isset($acceptStatusUsers[$userId])) {
-                $this->users->add($userId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_users SET deleted = 0, accept_status = \''.$acceptStatusUsers[$userId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND user_id = \''.$userId.'\'';
-                $this->db->query($qU);
-            }
+            $acceptStatus = isset($acceptStatusUsers[$id]) ?
+                array('accept_status' => $acceptStatusUsers[$id]) :
+                array();
+            $this->users->add($id, $acceptStatus);
         }
     }
 
     /**
      * Stores contact invitees
      *
-     * @patam array $userInvitees Array of contact invitees ids
-     * @patam array $existingUsers
+     * @param array $contactInvitees Array of contact invitees ids
+     * @param array $existingContacts
      */
     public function setContactInvitees($contactInvitees, $existingContacts = array())
     {
@@ -1009,37 +1000,26 @@ class Meeting extends SugarBean {
               }
         }
 
-        if (count($deleteContacts) > 0) {
-            $sql = '';
-            foreach ($deleteContacts as $u) {
-                    $sql .= ",'" . $u . "'";
-            }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_contacts SET deleted = 1 WHERE contact_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
+        foreach ($deleteContacts as $id) {
+            $this->contacts->delete($this->id, $id);
         }
 
-        foreach ($contactInvitees as $contactId) {
-            if (empty($contactId) || isset($existingContacts[$contactId]) || isset($deleteContacts[$contactId])) {
+        foreach ($contactInvitees as $id) {
+            if (empty($id) || isset($existingContacts[$id]) || isset($deleteContacts[$id])) {
                 continue;
             }
-            if (!isset($acceptStatusContacts[$contactId])) {
-                $this->contacts->add($contactId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_contacts SET deleted = 0, accept_status = \''.$acceptStatusContacts[$contactId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND contact_id = \''.$contactId.'\'';
-                $this->db->query($qU);
-            }
+            $acceptStatus = isset($acceptStatusContacts[$id]) ?
+                array('accept_status' => $acceptStatusContacts[$id]) :
+                array();
+            $this->contacts->add($id, $acceptStatus);
         }
     }
 
     /**
      * Stores lead invitees
      *
-     * @patam array $userInvitees Array of lead invitees ids
-     * @patam array $existingUsers
+     * @param array $leadInvitees Array of lead invitees ids
+     * @param array $existingLeads
      */
     public function setLeadInvitees($leadInvitees, $existingLeads = array())
     {
@@ -1058,29 +1038,18 @@ class Meeting extends SugarBean {
               }
         }
 
-        if (count($deleteLeads) > 0) {
-            $sql = '';
-            foreach($deleteLeads as $u) {
-                    $sql .= ",'" . $u . "'";
-            }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_leads SET deleted = 1 WHERE lead_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
+        foreach ($deleteLeads as $id) {
+            $this->leads->delete($this->id, $id);
         }
 
-        foreach ($leadInvitees as $leadId) {
-            if(empty($leadId) || isset($existingLeads[$leadId]) || isset($deleteLeads[$leadId])) {
+        foreach ($leadInvitees as $id) {
+            if (empty($id) || isset($existingLeads[$id]) || isset($deleteLeads[$id])) {
                 continue;
             }
-            if(!isset($acceptStatusLeads[$leadId])) {
-                $this->leads->add($leadId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$leadId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND lead_id = \''.$leadId.'\'';
-                $this->db->query($qU);
-            }
+            $acceptStatus = isset($acceptStatusLeads[$id]) ?
+                array('accept_status' => $acceptStatusLeads[$id]) :
+                array();
+            $this->leads->add($id, $acceptStatus);
         }
     }
 
@@ -1110,30 +1079,18 @@ class Meeting extends SugarBean {
             }
         }
 
-        if (count($deleteAddressees) > 0) {
-            $ids = array();
-            foreach ($deleteAddressees as $u) {
-                $ids[] = $this->db->quoted($u);
-            }
-
-            $sql = 'UPDATE meetings_addressees SET deleted = 1';
-            $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND meeting_id = ' . $this->db->quoted($this->id);
-            $this->db->query($sql);
+        foreach ($deleteAddressees as $id) {
+            $this->addressees->delete($this->id, $id);
         }
 
-        foreach ($addresseeInvitees as $addresseeId) {
-            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
+        foreach ($addresseeInvitees as $id) {
+            if (empty($id) || isset($existingAddressees[$id]) || isset($deleteAddressees[$id])) {
                 continue;
             }
-            if (!isset($acceptStatusAddressees[$addresseeId])) {
-                $this->leads->add($addresseeId);
-            } else {
-                // update query to preserve accept_status
-                $sql  = 'UPDATE meetings_addressees SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddressees[$addresseeId]);
-                $sql .= ' WHERE meeting_id = ' . $this->db->quoted($this->id);
-                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
-                $this->db->query($sql);
-            }
+            $acceptStatus = isset($acceptStatusAddressees[$id]) ?
+                array('accept_status' => $acceptStatusAddressees[$id]) :
+                array();
+            $this->addressees->add($id, $acceptStatus);
         }
     }
 
