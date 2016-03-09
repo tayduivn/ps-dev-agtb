@@ -78,6 +78,6 @@ class TeamsViewTBA extends SugarView
             }
         }
 
-        return array_diff(array_keys($actionsList), TeamBasedACLConfigurator::getDisabledModules());
+        return array_diff(array_keys($actionsList), TeamBasedACLConfigurator::getHiddenModules());
     }
 }

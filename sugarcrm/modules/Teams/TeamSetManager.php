@@ -357,7 +357,10 @@ class TeamSetManager {
     {
         $result = array();
         //BEGIN SUGARCRM flav=ent ONLY
-        $isTBAEnabled = TeamBasedACLConfigurator::isEnabledForModule($focus->module_dir);
+        $isTBAEnabled = (bool)TeamBasedACLConfigurator::isEnabledForModule($focus->module_dir);
+        // Users module is removed from Team-based Permissions page to not to be disabled.
+        // But TBA is enabled for Users module.
+        $isTBAEnabled |= $focus->module_dir == 'Users';
         //END SUGARCRM flav=ent ONLY
 
         $team_set_id = $focus->team_set_id ? $focus->team_set_id : $focus->team_id;
