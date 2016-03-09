@@ -1420,16 +1420,35 @@ protected function checkQuery($sql, $object_name = false)
      * @param bool $ignoreName Ignore name-only differences?
      * @return bool   true if they match, false if they don't
      */
-	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
-	{
-		foreach ( $fielddef1 as $key => $value ) {
-			if ( $key == 'name' && ( strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) || $ignoreName) )
-				continue;
-			if ( isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key] )
-				continue;
-			//Ignore len if its not set in the vardef
-			if ($key == 'len' && empty($fielddef2[$key]))
-				continue;
+    public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
+    {
+        foreach ($fielddef1 as $key => $value) {
+            if ($key == 'name' &&
+                (strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) ||
+                    $ignoreName) ) {
+                continue;
+            }
+            if (isset($fielddef2[$key])) {
+                if ($fielddef1[$key] == $fielddef2[$key]) {
+                    continue;
+                }
+
+                if ($key === 'default' && // ignore vardef default value = '' and db value = 0.0
+                    isset($fielddef1['type']) && $this->isNumericType($fielddef1['type']) &&
+                    floatval($fielddef1[$key]) == floatval($fielddef2[$key])) {
+                    continue;
+                }
+
+                if ($key === 'auto_increment') { // check loose true value
+                    if (isTruthy($fielddef1[$key]) && isTruthy($fielddef2[$key])) {
+                        continue;
+                    }
+                }
+            }
+            //Ignore len if its not set in the vardef
+            if ($key == 'len' && empty($fielddef2[$key])) {
+                continue;
+            }
             // if the length in db is greather than the vardef, ignore it
             if ($key == 'len') {
                 list($dblen, $dbprec) = $this->parseLenPrecision($fielddef1);
@@ -1439,10 +1458,10 @@ protected function checkQuery($sql, $object_name = false)
                 }
             }
             return false;
-		}
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 	/**
 	 * Compare a field in two tables
@@ -3860,13 +3879,16 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $type
      * @return bool
 	 */
-	public function isNumericType($type)
-	{
-	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float' || $this->type_class[$type] == 'bool')) {
-	        return true;
-	    }
-		return false;
-	}
+    public function isNumericType($type)
+    {
+        if (isset($this->type_class[$type])) {
+            $dataType = $this->type_class[$type];
+            if ($dataType == 'int' || $dataType == 'float' || $dataType == 'bigint' || $dataType == 'bool') {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Check if the value is empty value for this type
