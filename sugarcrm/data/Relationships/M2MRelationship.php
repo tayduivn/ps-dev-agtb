@@ -162,7 +162,7 @@ class M2MRelationship extends SugarRelationship
                     LoggerManager::getLogger()->error("Warning: failure calling addSelfReferencing for relationship {$this->name} within M2MRelationship->add() ");
                 }
             }
-            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
+            if (!$isUpdate && (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
                 $lhs->$lhsLinkName->resetLoaded();
                 $rhs->$rhsLinkName->resetLoaded();
 

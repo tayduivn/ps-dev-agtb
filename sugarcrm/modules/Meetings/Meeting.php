@@ -310,7 +310,11 @@ class Meeting extends SugarBean {
         }
 
         if ($isUpdate) {
-            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesBefore, CalendarUtils::getInvitees($this)));
+            $inviteesChanges = $this->getParticipantsHelper()->getInviteesDiff(
+                $this->inviteesBefore,
+                CalendarUtils::getInvitees($this)
+            );
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $inviteesChanges));
         } else {
             $this->getCalDavHook()->export($this);
         }
@@ -326,6 +330,14 @@ class Meeting extends SugarBean {
     public function getCalDavHook()
     {
         return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
+    }
+
+    /**
+     * @return \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
+     */
+    public function getParticipantsHelper()
+    {
+        return new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper();
     }
 
     /**
