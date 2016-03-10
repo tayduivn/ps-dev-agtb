@@ -445,8 +445,7 @@ class SugarBean
         'htmleditable_tinymce',
         'pmse_htmleditable_tinymce',
     );
-
-    /**
+    
     // FIXME: this will be removed, needed for ensuring BeanFactory is always used
     protected function checkBacktrace()
     {
