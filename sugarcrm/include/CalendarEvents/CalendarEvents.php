@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 
 class CalendarEvents
 {
-    public static $old_assigned_user_id = '';
+    public static $old_assigned_user_id = null;
 
     /**
      * Schedulable calendar events (modules) supported
@@ -744,10 +744,23 @@ class CalendarEvents
         return $sugarDateTime;
     }
 
+    public static function getOldAssignedUser($module, $id = null)
+    {
+        if (static::$old_assigned_user_id === null) { // lazy load
+            static::setOldAssignedUser($module, $id);
+        }
+        return self::$old_assigned_user_id;
+    }
+
+    public static function setOldAssignedUserValue($value)
+    {
+        static::$old_assigned_user_id = $value;
+    }
+
     /**
      * Store Current Assignee Id or blank if New Bean (Create)
      */
-    public function setOldAssignedUser($module, $id = null)
+    public static function setOldAssignedUser($module, $id = null)
     {
         static::$old_assigned_user_id = '';
         if (!empty($module) && !empty($id)) {

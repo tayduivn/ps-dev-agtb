@@ -56,50 +56,113 @@ class RS798Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Send notifications according to status.
-     * @dataProvider providerStatus
+     * @dataProvider dataProviderForCheckNotifyStatus
      */
-    public function testCheckNotifyStatus($statuses)
+    public function testCheckNotifyStatus($data)
     {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+
         $bean = SugarTestKBContentUtilities::createBean();
-        if ($statuses['before']) {
-            $bean->status = $statuses['before'];
+        if ($data['before']) {
+            $bean->status = $data['before'];
             $bean->save();
             // Fill data changes.
             $bean->retrieve();
         } else {
             $bean->new_with_id = true;
         }
-        $bean->status = $statuses['after'];
+
+        $bean->status = $data['after'];
+
+        if (isset($data['setUser']) && $data['setUser']) {
+            if ($data['after'] == KBContent::ST_IN_REVIEW) {
+                $bean->kbsapprover_id = $user->id;
+            } else {
+                $bean->assigned_user_id = $user->id;
+            }
+        }
 
         $notify = ApiHelper::getHelper(new RestService(), $bean)->checkNotify($bean);
 
-        $this->assertEquals($statuses['notify'], $notify);
+        $this->assertEquals($data['notify'], $notify);
     }
 
-    public function providerStatus()
+    /**
+     * Data Provider for testCheckNotifyStatus
+     *
+     * @return array
+     */
+    public function dataProviderForCheckNotifyStatus()
     {
         return array(
             array(
                 array(
+                    'setUser' => false,
+                    'before' => null,
+                    'after' => KBContent::ST_IN_REVIEW,
+                    'notify' => false,
+                ),
+            ),
+            array(
+                array(
+                    'setUser' => true,
                     'before' => null,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => true,
                 ),
             ),
+
             array(
                 array(
+                    'setUser' => false,
+                    'before' => null,
+                    'after' => KBContent::ST_PUBLISHED,
+                    'notify' => false,
+                ),
+            ),
+            array(
+                array(
+                    'setUser' => true,
                     'before' => null,
                     'after' => KBContent::ST_PUBLISHED,
                     'notify' => true,
                 ),
             ),
+
             array(
                 array(
+                    'setUser' => false,
+                    'before' => KBContent::ST_DRAFT,
+                    'after' => KBContent::ST_IN_REVIEW,
+                    'notify' => false,
+                ),
+            ),
+            array(
+                array(
+                    'setUser' => true,
                     'before' => KBContent::ST_DRAFT,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => true,
                 ),
             ),
+
+            array(
+                array(
+                    'setUser' => false,
+                    'before' => KBContent::ST_IN_REVIEW,
+                    'after' => KBContent::ST_DRAFT,
+                    'notify' => false,
+                ),
+            ),
+            array(
+                array(
+                    'setUser' => true,
+                    'before' => KBContent::ST_IN_REVIEW,
+                    'after' => KBContent::ST_DRAFT,
+                    'notify' => true,
+                ),
+            ),
+
             array(
                 array(
                     'before' => KBContent::ST_IN_REVIEW,
