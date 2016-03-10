@@ -116,55 +116,60 @@ ExpressionControl.prototype.OPERATORS  = {
             value: "NOT"
         }
     ],
-    "comparison": [
+    'group': [
         {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE'),
-            value: "major_than"
+            text: '(',
+            value: '('
         },
         {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE'),
-            value: "minor_than"
-        },
-        {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL'),
-            textfield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL'),
-            value: "equals"
-        },
-        {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE'),
-            value: "major_equals_than"
-        },
-        {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE'),
-            value: "minor_equals_than"
-        },
-        {
-            text: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL'),
-            textfield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT'),
-            datefield: translate('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE'),
-            value: "not_equals"
-        }
-    ],
-    "group": [
-        {
-            text: "(",
-            value: "("
-        },
-        {
-            text: ")",
-            value: ")"
+            text: ')',
+            value: ')'
         }
     ]
 };
 
+ExpressionControl.prototype.initComparisonOperators = function(module) {
+    ExpressionControl.prototype.OPERATORS.comparison = [
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_DATE', module),
+            value: 'major_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_THAN_DATE', module),
+            value: 'minor_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
+            value: 'equals'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE', module),
+            value: 'major_equals_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_THAN', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE', module),
+            value: 'minor_equals_than'
+        },
+        {
+            text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL', module),
+            textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT', module),
+            datefield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE', module),
+            value: 'not_equals'
+        }
+    ];
+};
+
 ExpressionControl.prototype.EXTRA_OPERATORS = {};
 
-ExpressionControl.prototype.init = function (settings) {
+ExpressionControl.prototype.init = function(settings) {
+    var module = 'pmse_Project';
+    ExpressionControl.prototype.initComparisonOperators(module);
     var defaults = {
         width: 200,
         itemContainerHeight: 80, //only applicable when it is not external
