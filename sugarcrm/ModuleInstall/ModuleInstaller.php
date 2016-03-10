@@ -2900,7 +2900,7 @@ class ModuleInstaller{
             'alertAutoCloseDelay' => 2500,
             'serverUrl' => 'rest/v10',
             'siteUrl' => '',
-            'unsecureRoutes' => array('login', 'error', 'forgotpassword'),
+            'unsecureRoutes' => array('login', 'logout', 'error', 'forgotpassword'),
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
