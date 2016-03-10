@@ -51,30 +51,6 @@ describe('Base.Field.Timeperiod', function() {
         });
     });
 
-    describe('onSelectOpen', function() {
-        it('will remove and add tooltips', function() {
-            sinon.collection.stub(field, 'removePluginTooltips');
-            sinon.collection.stub(field, 'addPluginTooltips');
-
-            field.onSelectOpen();
-
-            expect(field.removePluginTooltips).toHaveBeenCalled();
-            expect(field.addPluginTooltips).toHaveBeenCalled();
-        });
-    });
-
-    describe('onSelectClear', function() {
-        it('will remove and add tooltips', function() {
-            sinon.collection.stub(field, 'removePluginTooltips');
-            sinon.collection.stub(field, 'addPluginTooltips');
-
-            field.onSelectClear();
-
-            expect(field.removePluginTooltips).toHaveBeenCalled();
-            expect(field.addPluginTooltips).toHaveBeenCalled();
-        });
-    });
-
     describe('getLoadEnumOptionsModule', function() {
         it('will return forecasts', function() {
             expect(field.getLoadEnumOptionsModule(), 'Forecasts');
@@ -96,38 +72,6 @@ describe('Base.Field.Timeperiod', function() {
             expect(options.formatResult).toBeDefined();
             expect(options.formatSelection).toBeDefined();
             expect(field.cssClassSelector).toEqual(options.dropdownCssClass);
-        });
-    });
-
-    describe('_render', function() {
-        beforeEach(function() {
-            field.items = ['1'];
-        });
-        it('renders the field and call initializeAllPluginTooltips', function() {
-            sinon.collection.stub(field, 'initializeAllPluginTooltips');
-            field._render();
-            expect(field.initializeAllPluginTooltips).toHaveBeenCalled();
-        });
-        it('does not render when no access', function() {
-            sinon.collection.stub(field, 'initializeAllPluginTooltips');
-            sinon.collection.stub(field, '_loadTemplate');
-            field.tplName = 'noaccess';
-            field._render();
-            expect(field.initializeAllPluginTooltips).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('bindDataChange', function() {
-        it('adds a listener to the model', function() {
-            sinon.collection.stub(field.model, 'on');
-            field.bindDataChange();
-
-            expect(field.model.on)
-                .toHaveBeenCalledWith(
-                'change:' + field.name,
-                field.initializeAllPluginTooltips,
-                field
-            );
         });
     });
 

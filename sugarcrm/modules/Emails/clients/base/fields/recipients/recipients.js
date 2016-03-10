@@ -54,7 +54,6 @@
             // put the formatted recipients in the DOM
             this.getFieldElement().select2('data', recipients);
             // rebuild the tooltips
-            this.initializeAllPluginTooltips();
             if (!this.def.readonly) {
                 this.setDragDropPluginEvents(this.getFieldElement());
             }
@@ -153,9 +152,7 @@
                 formatSearching: _.bind(this.formatSearching, this),
                 formatInputTooShort: _.bind(this.formatInputTooShort, this),
                 selectOnBlur: true
-            }).on('select2-removed', _.bind(function() {
-                    this.initializeAllPluginTooltips();
-                }, this));
+            });
 
             if (!!this.def.disabled) {
                 $recipientsField.select2('disable');

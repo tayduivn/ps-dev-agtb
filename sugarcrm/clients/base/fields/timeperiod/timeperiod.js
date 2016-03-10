@@ -104,19 +104,6 @@
     },
 
     /**
-     * @inheritdoc
-     *
-     * Add a change event handler for initializing all the plugin tooltips again
-     */
-    bindDataChange: function() {
-        this._super('bindDataChange');
-        if (this.model) {
-            // when the value changes on the model, we need to initialize the Tooltips again
-            this.model.on('change:' + this.name, this.initializeAllPluginTooltips, this);
-        }
-    },
-
-    /**
      * Utility method to take the TimePeriod collection and parse our the start and end dates to be in the user
      * date preference and store them for when the enum is actually opened
      * @param {Backbone.Collection} data
@@ -138,43 +125,6 @@
             var tooltipText = app.lang.get('LBL_DROPDOWN_TOOLTIP', 'TimePeriods', this.tpTooltipMap[this.value[0]]);
             this.$('[rel="tooltip"]').attr('data-original-title', tooltipText);
         }
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _render: function() {
-        this._super('_render');
-        if (this.tplName == 'noaccess') {
-            return this;
-        }
-
-        var $el = this.$(this.fieldTag);
-        $el.on('select2-selected', _.bind(this.onSelectClear, this));
-        $el.on('select2-open', _.bind(this.onSelectOpen, this));
-        $el.on('select2-close', _.bind(this.onSelectClear, this));
-
-        this.initializeAllPluginTooltips();
-
-        return this;
-    },
-
-    /**
-     * On select open, we need to bind the tool tips
-     */
-    onSelectOpen: function() {
-        var $el = $('div.' + this.cssClassSelector);
-        this.removePluginTooltips();
-        this.addPluginTooltips($el);
-    },
-
-    /**
-     * When an item is selected of or the select is closed, we need to clean up the tool tips
-     */
-    onSelectClear: function() {
-        var $el = $('div.' + this.cssClassSelector);
-        this.removePluginTooltips($el);
-        this.addPluginTooltips();
     },
 
     /**

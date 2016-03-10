@@ -1,6 +1,6 @@
 describe('Base.Email', function() {
 
-    var app, field, model, mock_addr, oldjQueryFn;
+    var app, field, model, mock_addr;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -27,12 +27,6 @@ describe('Base.Email', function() {
         }));
         model = field.model;
 
-        if ($.fn.tooltip) {
-            oldjQueryFn = $.fn.tooltip;
-        }
-        $.fn.tooltip = function(){};
-        field.addPluginTooltips = field.removePluginTooltips = function(){};
-
         field.render();
     });
 
@@ -42,10 +36,6 @@ describe('Base.Email', function() {
         SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         field = null;
-        if (oldjQueryFn) {
-            $.fn.tooltip = oldjQueryFn;
-            oldjQueryFn = null;
-        }
     });
 
     describe("initial rendering", function() {
@@ -290,7 +280,7 @@ describe('Base.Email', function() {
             expect(field.$('.add-on').length).toEqual(0);
             field.decorateError({email: ["test2@test.com"]});
             expect(field.$('.add-on').length).toEqual(1);
-            expect(field.$('.add-on').prop('title')).toEqual('ERROR_EMAIL');
+            expect(field.$('.add-on').data('original-title')).toEqual('ERROR_EMAIL');
             expect($inputs.index(field.$('.add-on').prev())).toEqual(1);
         });
         it("should decorate the first field if there isn't any primary address set", function(){
@@ -301,7 +291,7 @@ describe('Base.Email', function() {
             expect(field.$('.add-on').length).toEqual(0);
             field.decorateError({primaryEmail: true});
             expect(field.$('.add-on').length).toEqual(1);
-            expect(field.$('.add-on').prop('title')).toEqual('ERROR_PRIMARY_EMAIL');
+            expect(field.$('.add-on').data('original-title')).toEqual('ERROR_PRIMARY_EMAIL');
             expect($inputs.index(field.$('.add-on').prev())).toEqual(0);
         });
     });
@@ -469,9 +459,6 @@ describe('Base.Email', function() {
             );
             field = SugarTest.createField('base', 'email', 'email', 'edit', undefined, undefined, model);
             model = field.model;
-
-            field.addPluginTooltips = field.removePluginTooltips = function()
-            {};
 
             field.render();
         });

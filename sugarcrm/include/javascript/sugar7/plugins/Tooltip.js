@@ -29,31 +29,12 @@
              * Initialize tooltips on render and destroy tooltip before render for views and fields.
              * Initialize tooltips on initialize for layouts.
              */
-            onAttach: function() {
-                if (app.utils.isTouchDevice()) {
-                    return;
-                }
-                if ((this instanceof app.view.View) || (this instanceof app.view.Field)) {
-                    this.before('render', function() {
-                        this.destroyAllPluginTooltips();
-                    }, this);
-                    this.on('render', function() {
-                        this.initializeAllPluginTooltips();
-                    }, this);
-                    this.on('dismiss', this.removePluginTooltips, this);
-                } else if (this instanceof app.view.Layout) {
-                    this.on('init', function() {
-                        this.initializeAllPluginTooltips();
-                    }, this);
-                }
-            },
+            onAttach: $.noop,
 
             /**
              * Destroy tooltips on dispose.
              */
-            onDetach: function() {
-                this.destroyAllPluginTooltips();
-            },
+            onDetach: $.noop,
 
             /**
              * Create all tooltips in this component.
@@ -123,18 +104,3 @@
         });
     });
 })(SUGAR.App);
-
-(function($) {
-    $(function() {
-        if (!Modernizr.touch) {
-            return;
-        }
-        /**
-         * @inheritdoc
-         * Deactivate tooltip plugin on touch devices.
-         */
-        $.fn.tooltip = function() {
-            return this;
-        };
-    });
-})(jQuery);

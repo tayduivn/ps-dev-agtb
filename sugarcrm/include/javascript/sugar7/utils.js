@@ -24,23 +24,20 @@
                  * @param {object} (optional) options - see bootstrap-tooltip docs
                  * @returns {jQuery}
                  */
-                initialize: function($elements, options, direction) {
+                initialize: function($element, options, direction) {
                     options = options || {};
 
-                    _.each($elements, function(element) {
-                        var $element = $(element);
-                        if (!$element.data('bs.tooltip')) {
-                            var data = $element.data();
-                            if (direction) {
-                                options.template = $tooltipTemplate.attr('dir', direction);
-                            }
-                            $element.tooltip(_.extend({
-                                container: 'body',
-                                trigger: 'hover' //show tooltip on hover only (not on focus)
-                            }, data, options));
+                    if (!$element.data('bs.tooltip')) {
+                        var data = $element.data();
+                        if (direction) {
+                            options.template = $tooltipTemplate.attr('dir', direction);
                         }
-                    });
-                    return $elements;
+                        $element.tooltip(_.extend({
+                            container: 'body',
+                            trigger: 'hover' //show tooltip on hover only (not on focus)
+                        }, data, options));
+                    }
+                    return $element;
                 },
 
                 /**

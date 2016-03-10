@@ -562,7 +562,6 @@
 
         //add tooltip
         $drawerTab = $bottom.find('.drawer-tab');
-        this.addPluginTooltips($drawerTab);
 
         //add expand/collapse tab behavior
         $drawerTab.on('click', _.bind(function(event) {
@@ -586,9 +585,6 @@
         var $drawerTab = $drawer.find('.drawer-tab')
             .off('click')
             .remove();
-
-        //remove tooltip
-        this.removePluginTooltips($drawerTab);
 
         //remove backdrop
         $drawer.find('.drawer-backdrop')
