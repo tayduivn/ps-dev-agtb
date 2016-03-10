@@ -18,14 +18,22 @@ class SugarTestTaskUtilities
 
     private function __construct() {}
 
-    public static function createTask($id = '') 
+    /**
+     * @return Task
+     */
+    public static function createTask($id = '', $values = array())
     {
         $time = mt_rand();
-    	$name = 'SugarTask';
-    	$email1 = 'task@sugar.com';
-    	$task = new Task();
-        $task->name = $name . $time;
-        $task->email1 = 'task@'. $time. 'sugar.com';
+        $task = BeanFactory::newBean('Tasks');
+
+        $values = array_merge(array(
+            'name' => 'SugarTask' . $time,
+        ), $values);
+
+        foreach ($values as $property => $value) {
+            $task->$property = $value;
+        }
+
         if(!empty($id))
         {
             $task->new_with_id = true;
@@ -59,4 +67,3 @@ class SugarTestTaskUtilities
         return $task_ids;
     }
 }
-?>

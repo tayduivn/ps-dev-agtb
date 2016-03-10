@@ -11,33 +11,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
+class Bug40989Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $contact;
-/*
-	public static function setUpBeforeClass()
-	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-       
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-	}
-*/
 	public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->contact = SugarTestContactUtilities::createContact();
+        SugarTestHelper::setUp('current_user');
 	}
 
 	public function tearDown()
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestHelper::tearDown();
 	}
 
     /*
@@ -45,9 +29,15 @@ class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRetrieveByStringFieldsFetchedRow()
     {
+        $contact = SugarTestContactUtilities::createContact(null, array(
+            'last_name' => 'Bug40989Test',
+        ));
+
         $loadedContact = BeanFactory::getBean('Contacts');
-        $loadedContact = $loadedContact->retrieve_by_string_fields(array('last_name'=>'SugarContactLast'));
-        $this->assertEquals('SugarContactLast', $loadedContact->fetched_row['last_name']);
+        $loadedContact = $loadedContact->retrieve_by_string_fields(array(
+            'last_name' => $contact->last_name,
+        ));
+        $this->assertEquals($contact->last_name, $loadedContact->fetched_row['last_name']);
     }
 
     public function testProcessFullListQuery()
