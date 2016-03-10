@@ -46,6 +46,10 @@ class Client
     const RECIPIENT_TEAM_ID = 'teamId';
     const RECIPIENT_USER_TYPE = 'userType';
 
+    const AUTH_TOKEN_HEADER = 'X-Auth-Token';
+    const AUTH_VERSION_HEADER = 'X-Auth-Version';
+    const AUTH_VERSION = 1;
+
     /**
      * @var Client
      */
@@ -168,6 +172,19 @@ class Client
     }
 
     /**
+     * Makes auth headers.
+     *
+     * @return array
+     */
+    protected function makeHeaders()
+    {
+        return array(
+            static::AUTH_TOKEN_HEADER . ': ' . $this->retrieveToken(),
+            static::AUTH_VERSION_HEADER . ': ' . static::AUTH_VERSION,
+        );
+    }
+
+    /**
      * Sending $message with $data to socket
      *
      * @param string $message
@@ -180,12 +197,10 @@ class Client
             $this->getLogger()->error('Socket\\Client::send - attempt to use client which is not configured.');
             return false;
         }
-        $token = $this->retrieveToken();
 
         $params = json_encode(
             array(
                 'to' => $this->to + array('url' => $this->getSugarConfig()->get('site_url')),
-                'token' => $token,
                 'data' => array(
                     'message' => $message,
                     'args' => $data,
@@ -195,7 +210,7 @@ class Client
         $client = $this->getHttpHelper();
         $url = $this->getSugarConfig()->get('websockets.server.url') . '/forward';
 
-        $client->getRemoteData($url, $params);
+        $client->getRemoteData($url, $params, $this->makeHeaders());
         return $client->isSuccess();
     }
 

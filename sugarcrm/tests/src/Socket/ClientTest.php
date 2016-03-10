@@ -24,6 +24,10 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     const SITE_URL = 'http://dummy-site';
     const SOCKET_SERVER_URL = 'http://dummy-socket-server';
 
+    const AUTH_TOKEN_HEADER = 'X-Auth-Token';
+    const AUTH_VERSION_HEADER = 'X-Auth-Version';
+    const AUTH_VERSION = 1;
+
     /**
      * Data provider for testRecipient()
      *
@@ -454,7 +458,8 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
                     $messagePassed = (isset($data['data']['message']) && $message == $data['data']['message']);
                     $argsPassed = (array_key_exists('args', $data['data']) && $args == $data['data']['args']);
                     return $messagePassed && $argsPassed;
-                })
+                }),
+                $this->anything()
             );
 
         $client->send($message, $args);
@@ -557,7 +562,8 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
                 $this->callback(function ($val) use ($expectedTo) {
                     $actualData = json_decode($val, true);
                     return 0 == count(array_diff($expectedTo, $actualData['to']));
-                })
+                }),
+                $this->anything()
             );
 
         $client->send($message);
@@ -598,7 +604,8 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
                     return $actualData['to']['type'] == Client::RECIPIENT_ALL
                     && is_null($actualData['to']['id'])
                     && is_null($actualData['to']['channel']);
-                })
+                }),
+                $this->anything()
             );
 
         $client->send($message);
@@ -777,13 +784,20 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
         $client->expects($this->any())->method('getSugarConfig')->willReturn($config);
         $client->expects($this->any())->method('retrieveToken')->willReturn($dummyToken);
 
+        $test = $this;
+        $headers = array(
+            SocketClientTest::AUTH_TOKEN_HEADER . ': ' . $dummyToken,
+            SocketClientTest::AUTH_VERSION_HEADER . ': ' . SocketClientTest::AUTH_VERSION,
+        );
+
         $httpHelper->expects($this->once())
             ->method('getRemoteData')
             ->with(
                 $this->anything(),
-                $this->callback(function ($val) use ($dummyToken) {
-                    $actualData = json_decode($val, true);
-                    return $actualData['token'] == $dummyToken;
+                $this->anything(),
+                $this->callback(function ($val) use ($headers, $test) {
+                    $test->assertEquals($headers, $val);
+                    return true;
                 })
             );
 
@@ -822,7 +836,8 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
                 $this->callback(function ($val) use ($url) {
                     $actualData = json_decode($val, true);
                     return $actualData['to']['url'] == $url;
-                })
+                }),
+                $this->anything()
             );
 
         $client->send('test');
@@ -855,7 +870,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $httpHelper->expects($this->once())
             ->method('getRemoteData')
-            ->with($this->equalTo($serverUrl . '/forward'), $this->anything());
+            ->with($this->equalTo($serverUrl . '/forward'), $this->anything(), $this->anything());
 
         $client->send('test');
     }
