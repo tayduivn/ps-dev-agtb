@@ -430,6 +430,7 @@ nv.models.axis = function() {
         tickDimensions.forEach(function(d, i) {
           var isMin = dMin === null || d.left <= dMin,
               isMax = dMax === null || d.right >= dMax,
+              textWidth = 0,
               tickPosition = 0,
               availableSpace = 0;
 
