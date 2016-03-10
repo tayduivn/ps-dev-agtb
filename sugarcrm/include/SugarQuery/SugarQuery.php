@@ -616,105 +616,12 @@ class SugarQuery
                     $row = $this->formatRow($row);
                     $return[] = $row;
                 }
-
-                $return = $this->unsetInvisibleRelateIds($return);
-
                 if ($type == 'json') {
                     return json_encode($return);
                 }
                 return $return;
                 break;
         }
-    }
-
-    /**
-     * Returns associative array of related ID fields and module names they point to selected in the query
-     *
-     * @return array
-     */
-    protected function getIdNames()
-    {
-        $bean = $this->getFromBean();
-        if (!$bean) {
-            return array();
-        }
-
-        $fieldDefs = $bean->getFieldDefinitions('type', array('relate'));
-        $idNames = array();
-        foreach ($fieldDefs as $name => $definition) {
-            if (isset($definition['id_name'], $definition['module'])) {
-                $idNames[$definition['id_name']] = $definition['module'];
-            }
-        }
-
-        if (count($this->select->select) > 0) {
-            $idNames = array_intersect_key($idNames, $this->select->select);
-        }
-
-        return $idNames;
-    }
-
-    /**
-     * @param array[] $rows Original dataset
-     * @return array Filtered dataset
-     */
-    protected function unsetInvisibleRelateIds(array $rows)
-    {
-        if (count($rows) == 0) {
-            return $rows;
-        }
-
-        $idNames = $this->getIdNames();
-        if (count($idNames) == 0) {
-            return $rows;
-        }
-
-        $index = array();
-        foreach ($idNames as $field => $module) {
-            foreach ($rows as $i => $row) {
-                if (!empty($row[$field])) {
-                    $index[$module][$row[$field]][$i][] = $field;
-                }
-            }
-        }
-
-        foreach ($index as $module => $moduleIndex) {
-            $bean = BeanFactory::getBean($module);
-            $ids = array_keys($moduleIndex);
-            $invisibleIds = $this->getInvisibleIds($bean, $ids);
-            $moduleIndex = array_intersect_key($moduleIndex, array_flip($invisibleIds));
-            foreach ($moduleIndex as $id => $rowIndex) {
-                foreach ($rowIndex as $i => $fields) {
-                    foreach ($fields as $field) {
-                        $rows[$i][$field] = null;
-                    }
-                }
-            }
-        }
-
-        return $rows;
-    }
-
-    /**
-     * Returns a subset of the given bean identifiers invisible to the current user
-     *
-     * @param SugarBean $bean
-     * @param array $ids Original set of IDs
-     *
-     * @return array Visible IDs
-     * @throws SugarQueryException
-     */
-    protected function getInvisibleIds(SugarBean $bean, array $ids)
-    {
-        $query = new static();
-        $query->from($bean, array(
-            'action' => 'view',
-        ));
-        $query->select('id');
-        $query->where()->in('id', $ids);
-        return array_diff($ids, array_map(function (array $row) {
-            return $row['id'];
-        }, $query->execute()));
     }
 
     /**

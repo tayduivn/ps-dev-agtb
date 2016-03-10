@@ -12,6 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 // Task is used to store customer information.
+
+/**
+ * @property Link2 $contacts
+ */
 class Task extends SugarBean {
         var $field_name_map;
 
