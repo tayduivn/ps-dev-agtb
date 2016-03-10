@@ -6910,8 +6910,6 @@ class SugarBean
             $table_alias = $this->table_name;
         }
 
-        $ownerField = $this->getOwnerField();
-
         return " $table_alias.$ownerField = " . $this->db->quoted($user_id) . " ";
     }
 
