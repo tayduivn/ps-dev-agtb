@@ -20,9 +20,8 @@
                 <span>{{value}}</span>
             {{/if}}
         {{else}}
-            {{field ../../templateComponent model=../../model template='list'}}
+            {{field ../../view model=../../model template='list'}}
         {{/if}}
-
         {{#notEq type 'avatar'}}</h3>{{/notEq}}
     {{/each}}
 </div>
@@ -31,7 +30,11 @@
         {{~#if highlighted~}}
         <span>{{str ../label ../../module}}:</span> <span>{{../value}}</span>{{#unless @last}}, {{/unless}}
         {{~^~}}
-        <span>{{str ../label ../../module}}: </span>{{field ../../templateComponent model=../../model template='list'}}{{#unless @last}}, {{/unless}}
+        <span>{{str ../label ../../module}}: </span>{{field ../../view model=../../model template='list'}}{{#unless @last}}, {{/unless}}
         {{~/if~}}
     {{/each}}
 </div>
+
+{{#each view.meta.rowactions.actions}}
+    {{field ../view model=../model}}
+{{/each}}
