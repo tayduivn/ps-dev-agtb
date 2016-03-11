@@ -111,8 +111,7 @@ class UserDemoData {
 
         if($id == "seed_jim_id") {
             // add to Sales Administrator Role
-            $acl_roles = new ACLRole();
-            $arrRoles = $acl_roles->getAllRoles(true);
+            $arrRoles = ACLRole::getAllRoles(true);
 
             foreach($arrRoles as $role) {
                 if($role['name'] == "Sales Administrator") {

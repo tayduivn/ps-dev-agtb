@@ -340,13 +340,12 @@ class TeamBasedACLConfigurator
      */
     protected function fallbackTBA($modules)
     {
-        $aclRole = new ACLRole();
         $aclField = new ACLField();
         $fieldOptions = $this->getFieldOptions();
 
-        $allRoles = $aclRole->getAllRoles();
+        $allRoles = ACLRole::getAllRoles();
         foreach ($allRoles as $role) {
-            $actions = $aclRole->getRoleActions($role->id);
+            $actions = ACLRole::getRoleActions($role->id);
             $fields = $aclField->getACLFieldsByRole($role->id);
 
             foreach ($actions as $aclKey => $aclModule) {
