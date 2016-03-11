@@ -94,3 +94,8 @@
 {if !empty($vardef.group)}
     <input type="hidden" name="group" value="{$vardef.group}">
 {/if}
+
+{if !empty($vardef.options)}
+    <input type="hidden" name="options" value="{$vardef.options}">
+{/if}
+

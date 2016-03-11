@@ -386,6 +386,10 @@ class TemplateField{
             $array['group'] = $this->group;
         }
 
+        if (!empty($this->options)) {
+            $array['options'] = $this->options;
+        }
+
         $this->get_dup_merge_def($array);
 
 		return $array;
