@@ -49,7 +49,7 @@ class PMSEElementTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'execute'))
+            ->setMethods(array('select', 'from', 'where', 'joinTable', 'on', 'equalsField', 'execute'))
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -69,7 +69,13 @@ class PMSEElementTest extends PHPUnit_Framework_TestCase
         $sugarQuery->expects($this->exactly(1))
             ->method('where')
             ->will($this->returnValue($whereMock));
-        
+        $sugarQuery->expects($this->any())
+            ->method('joinTable')
+            ->willReturnSelf();
+        $sugarQuery->expects($this->any())
+            ->method('on')
+            ->willReturnSelf();
+
         $sugarQuery->expects($this->exactly(1))
             ->method('execute')
             ->will($this->returnValue(array(

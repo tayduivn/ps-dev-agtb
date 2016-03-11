@@ -10,7 +10,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
+
+class PMSEConvergingGatewayTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
@@ -57,7 +58,20 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute', 'fieldRaw'))
+            ->setMethods(
+                array(
+                    'select',
+                    'from',
+                    'where',
+                    'joinTable',
+                    'on',
+                    'equalsField',
+                    'queryAnd',
+                    'addRaw',
+                    'execute',
+                    'fieldRaw',
+                )
+            )
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -67,7 +81,7 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
 
         $sugarQuery->expects($this->atLeastOnce())
             ->method('select')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
 
         $this->convergingGateway->expects($this->exactly(1))
             ->method('retrieveSugarQueryObject')
@@ -75,16 +89,22 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
         
         $sugarQuery->expects($this->exactly(1))
             ->method('where')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
         
         $sugarQuery->expects($this->exactly(1))
             ->method('queryAnd')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
         
         $sugarQuery->expects($this->exactly(1))
             ->method('execute')
             ->will($this->returnValue(array(array('id'=>'abc123'))));
-        
+        $sugarQuery->expects($this->any())
+            ->method('joinTable')
+            ->will($this->returnSelf());
+        $sugarQuery->expects($this->any())
+            ->method('on')
+            ->willReturnSelf();
+
         $this->convergingGateway->setCaseFlowHandler($caseFlowHandler);
         
         $type = 'PASSED';
@@ -116,7 +136,20 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'from', 'where', 'joinRaw', 'queryAnd', 'addRaw', 'execute', 'fieldRaw'))
+            ->setMethods(
+                array(
+                    'select',
+                    'from',
+                    'where',
+                    'joinTable',
+                    'on',
+                    'equalsField',
+                    'queryAnd',
+                    'addRaw',
+                    'execute',
+                    'fieldRaw',
+                )
+            )
             ->getMock();
         
         $this->convergingGateway->expects($this->exactly(1))
@@ -129,20 +162,26 @@ class PMSEConvergingGatewayTest extends PHPUnit_Framework_TestCase
 
         $sugarQuery->expects($this->atLeastOnce())
             ->method('select')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
         
         $sugarQuery->expects($this->exactly(1))
             ->method('where')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
         
         $sugarQuery->expects($this->exactly(1))
             ->method('queryAnd')
-            ->will($this->returnValue($sugarQuery));
+            ->willReturnSelf();
         
         $sugarQuery->expects($this->exactly(1))
             ->method('execute')
             ->will($this->returnValue(array(array('id'=>'abc123'))));
-        
+        $sugarQuery->expects($this->any())
+            ->method('joinTable')
+            ->willReturnSelf();
+        $sugarQuery->expects($this->any())
+            ->method('on')
+            ->willReturnSelf();
+
         $this->convergingGateway->setCaseFlowHandler($caseFlowHandler);
         
         $type = 'ALL';

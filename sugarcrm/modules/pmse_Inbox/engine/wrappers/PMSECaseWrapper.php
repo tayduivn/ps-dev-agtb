@@ -215,9 +215,12 @@ class PMSECaseWrapper //extends FilterApi
         //TODO Update this way to declare joins when SugarQuery will accept them.
         //$q->joinRaw('INNER JOIN pmse_inbox ON pmse_inbox.cas_id=pmse_bpm_flow.cas_id', array('alias'=>'pmse_inbox'));
         //$q->joinRaw('INNER JOIN pmse_bpmn_activity ON pmse_bpm_flow.bpmn_id=pmse_bpmn_activity.id', array('alias'=>'pmse_bpmn_activity'));
-        $q->joinRaw("LEFT JOIN pmse_bpm_flow b ON (a.cas_id = b.cas_id)");
-        $q->joinRaw("LEFT JOIN pmse_bpmn_activity c ON (b.bpmn_id  = c.id and b.bpmn_type = 'bpmnActivity')");
-        $q->joinRaw("INNER JOIN pmse_bpm_activity_definition d ON (c.id = d.id)");
+        $q->joinTable('pmse_bpm_flow', array('joinType' => 'LEFT', 'alias' => 'b'))
+            ->on()->equalsField('a.cas_id', 'b.cas_id');
+        $q->joinTable('pmse_bpmn_activity', array('joinType' => 'LEFT', 'alias' => 'c'))
+            ->on()->equalsField('b.bpmn_id', 'c.id')->equals('b.bpmn_type', 'bpmnActivity');
+        $q->joinTable('pmse_bpm_activity_definition', array('alias' => 'd'))
+            ->on()->equalsField('c.id', 'd.id');
         //$q->joinRaw("INNER JOIN pmse_bpmn_process ON(e.id = a.pro_id)", array('alias'=>'e'));
 
         // Add external fields using fieldRaw method

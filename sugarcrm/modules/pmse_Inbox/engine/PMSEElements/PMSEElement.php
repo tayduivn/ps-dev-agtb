@@ -332,8 +332,8 @@ class PMSEElement implements PMSERunnable
             ));
 
             $sugarQueryObject->from($eventBean, array('alias' => 'a'));
-            $sugarQueryObject->joinRaw("LEFT JOIN pmse_bpmn_flow b ON (b.flo_element_dest = a.id)",
-                array('alias' => 'b'));
+            $sugarQueryObject->joinTable('pmse_bpmn_flow', array('joinType' => 'LEFT', 'alias' => 'b'))
+                ->on()->equalsField('b.flo_element_dest', 'a.id');
             $sugarQueryObject->where()->queryAnd()
                 ->addRaw('b.id=\'' . $element['bpmn_id'] . '\'');
 

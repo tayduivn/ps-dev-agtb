@@ -72,7 +72,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
 
         $bean = BeanFactory::getBean('Accounts');
         $request->setBean($bean);
-        
+
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
                 ->setMethods(array('getAllEvents'))
@@ -214,18 +214,37 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     {                     
         
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableOriginalConstructor()
-                ->setMethods(array('select', 'where', 'from', 'joinRaw', 'queryAnd', 'addRaw', 'compileSql', 'execute'))
-                ->getMock();
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array(
+                    'select',
+                    'where',
+                    'from',
+                    'joinTable',
+                    'on',
+                    'equalsField',
+                    'queryAnd',
+                    'addRaw',
+                    'compileSql',
+                    'execute',
+                )
+            )
+            ->getMock();
         
         $sugarQueryMock->expects($this->once())
                 ->method('where')
-                ->will($this->returnValue($sugarQueryMock));
+                ->will($this->returnSelf());
         
         $sugarQueryMock->expects($this->once())
                 ->method('queryAnd')
-                ->will($this->returnValue($sugarQueryMock));
-        
+                ->will($this->returnSelf());
+        $sugarQueryMock->expects($this->any())
+            ->method('joinTable')
+            ->will($this->returnSelf());
+        $sugarQueryMock->expects($this->any())
+            ->method('on')
+            ->will($this->returnSelf());
+
         $sugarQueryMock->expects($this->once())
                 ->method('execute')
                 ->will($this->returnValue('QUERY_RESULT'));

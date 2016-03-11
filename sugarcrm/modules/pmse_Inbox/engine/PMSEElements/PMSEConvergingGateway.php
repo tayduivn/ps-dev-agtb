@@ -29,17 +29,18 @@ class PMSEConvergingGateway extends PMSEGateway
         
         switch ($type){
             case 'PASSED':
-                $joinClause = 'INNER JOIN';
+                $joinType = 'INNER';
                 $whereClause = 'b.bpmn_type=\'bpmnFlow\' AND b.cas_id=\''.$casId.'\' AND';
                 break;
             case 'ALL':
             default:
-                $joinClause = 'LEFT JOIN';
+                $joinType = 'LEFT';
                 $whereClause = '';
                 break;
         };
 
-        $sugarQuery->joinRaw("{$joinClause} pmse_bpm_flow b ON (a.id = b.bpmn_id)", array('alias'=>'b'));
+        $sugarQuery->joinTable('pmse_bpm_flow', array('joinType' => $joinType, 'alias' => 'b'))
+            ->on()->equalsField('a.id', 'b.bpmn_id');
         $sugarQuery->where()->queryAnd()
             ->addRaw("{$whereClause} a.flo_element_dest='{$elementId}' AND a.flo_element_dest_type='bpmnGateway'");
         $flows = $sugarQuery->execute();

@@ -32,7 +32,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
     protected $inboxBean;
     
     protected $sugarQueryMock;
-    protected $aclRoleObjectMock;
 
     protected $teams;
     protected $users;
@@ -126,16 +125,19 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('get_full_list'))
                 ->getMock();
-        
-        $this->aclRoleObjectMock = $this->getMockBuilder('ACLRole')                
-                ->disableAutoload()                
-                ->setMethods(array('getAllRoles'))
-                ->getMock();
         $this->sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableAutoload()
-                ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'joinRaw', 'where', 'compileSql', 'execute'))
-                ->getMock();
+            ->disableAutoload()
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('select', 'from', 'joinTable', 'on', 'equalsField', 'where', 'compileSql', 'execute', 'equals')
+            )
+            ->getMock();
+        $this->sugarQueryMock->expects($this->any())
+            ->method('joinTable')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->any())
+            ->method('on')
+            ->willReturnSelf();
     }
 
     /**
@@ -241,48 +243,14 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $result);
         
     }
-    
-    /**
-     * @covers PMSECrmDataWrapper::retrieveModules
-     */
-    public function testRetrieveModules()
-    {
-        $modules = array(
-            "pmse_Project" => json_decode('{"module":"pmse_Project", "name": "pmse_Project"}'),
-            "pmse_Inbox" => json_decode('{"module":"pmse_Inbox", "name": "pmse_Inbox"}'),
-            "leads" => json_decode('{"module":"leads", "name": "Leads"}'),
-            "opportunity" => json_decode('{"module":"opportunity", "name": "Opportunity"}'),
-            "activity" => json_decode('{"module":"activity", "name": "Activity"}')
-        );
-       
-        $expectedResult = array(
-            array("value" => "activity", "text" => "Activity"),
-            array("value" => "leads", "text" => "Leads"),
-            array("value" => "opportunity", "text" => "Opportunity")
-        );
-    
-
-        $studio = $this->createPartialMock('StudioBrowser', array('loadModules'));
-        $studio->expects($this->any())
-            ->method('loadModules')
-            ->will($this->returnValue($modules));
-
-        $studio->modules = $modules;
-
-        $this->object->setStudioBrowser($studio);
-
-        $result = $this->object->retrieveModules();
-//        var_dump($result);
-        $this->assertEquals($expectedResult, $result);
-}
 
     /**
      * @covers PMSECrmDataWrapper::retrieveDynaforms
      */
     public function testRetrieveDynaforms()
     {        
-        $this->projectBean->expects($this->any())
-            ->method('retrieve_by_string_fields')
+        $this->projectBean->expects($this->once())
+            ->method('retrieve')
             ->will($this->returnValue(true));
         
         $this->processBean->expects($this->any())
@@ -318,24 +286,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $someFilter = 'filter';
         $result = $this->object->retrieveDynaforms($someFilter);
         $this->assertEquals($expectedResult, $result);
-
-//        $this->dynaformBean->expects($this->any())
-//            ->method('getSelectRows')
-//            ->with($this->equalTo(''), $this->equalTo('bpm_dynamic_forms.pro_id=1'))
-//            ->will($this->returnValue(array(
-//                "rowList" => array(
-//                    array("dyn_uid" => "abcdeff", "dyn_name" => "Test DynaForm"),
-//                    array("dyn_uid" => "abcdefg", "dyn_name" => "Test DynaForm 01"),
-//                    array("dyn_uid" => "abcdefh", "dyn_name" => "Test DynaForm 02"),
-//                    array("dyn_uid" => "abcdefi", "dyn_name" => "Test DynaForm 03"),
-//                    array("dyn_uid" => "abcdefj", "dyn_name" => "Test DynaForm 04"),
-//                ),
-//                "totalRows" => 5,
-//                "currentOffset" => 0
-//            )));
-//        $result = $this->object->retrieveDynaforms('Leads');
-////        var_dump($result);
-//        $this->assertEquals($res, $result);
     }
 
     /**
@@ -382,7 +332,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
                 ->getMock();
         $this->object->setActivityBean($activityBeanMock);
         $result = $this->object->retrieveActivities();
-//        var_dump($result);
         $this->assertEquals($expectedResult, $result);
     }
     
@@ -395,26 +344,34 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
                 ->getMock();
         
         $this->sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableOriginalConstructor()
-                ->setMethods(array('queryAnd', 'addRaw', 'select', 'from', 'where', 'execute', 'joinRaw'))
-                ->getMock();
-        
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('queryAnd', 'addRaw', 'select', 'from', 'where', 'execute', 'joinTable', 'on', 'equalsField')
+            )
+            ->getMock();
+
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('where')
-                ->will($this->returnSelf());
-        
+            ->method('where')
+            ->willReturnSelf();
+
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('queryAnd')
-                ->will($this->returnSelf());
-        
+            ->method('queryAnd')
+            ->willReturnSelf();
+
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('addRaw')
-                ->will($this->returnSelf());
-        
+            ->method('addRaw')
+            ->willReturnSelf();
+
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('joinRaw')
-                ->will($this->returnSelf());
-        
+            ->method('joinTable')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->atLeastOnce())
+            ->method('on')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->atLeastOnce())
+            ->method('equalsField')
+            ->willReturnSelf();
+
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
         $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
@@ -476,27 +433,32 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
                             'from', 
                             'where', 
                             'execute', 
-                            'joinRaw'
+                            'joinTable',
+                            'on',
+                            'equalsField',
                         )
                     )
                 ->getMock();
         
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('where')
-                ->will($this->returnSelf());
-        
+            ->method('where')
+            ->willReturnSelf();
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('queryAnd')
-                ->will($this->returnSelf());
-        
+            ->method('queryAnd')
+            ->willReturnSelf();
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('addRaw')
-                ->will($this->returnSelf());
-        
+            ->method('addRaw')
+            ->willReturnSelf();
         $this->sugarQueryMock->expects($this->atLeastOnce())
-                ->method('joinRaw')
-                ->will($this->returnSelf());
-        
+            ->method('joinTable')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->atLeastOnce())
+            ->method('on')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->atLeastOnce())
+            ->method('equalsField')
+            ->willReturnSelf();
+
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
         $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
@@ -573,7 +535,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieveRuleSets()
     {
         $this->projectBean->expects($this->any())
-            ->method('retrieve_by_string_fields')
+            ->method('retrieve')
             ->will($this->returnValue(true));
 
         $this->processDefinitionBean->expects($this->any())
@@ -871,7 +833,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $result = $this->object->defaultUsersList();
-//        var_dump($result);
         $this->assertEquals($expected, $result);
     }
 
@@ -880,28 +841,11 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRolesList()
     {
-        
         $expected = array(
-            array ('value'=>'is_admin', 'text'=>'LBL_PMSE_FORM_OPTION_ADMINISTRATOR'),
-            array ('value'=>'rol01', 'text'=>'role name 01'),
-            array ('value'=>'rol02', 'text'=>'role name 02'),
-            array ('value'=>'rol03', 'text'=>'role name 03')
+            array('value' => 'is_admin', 'text' => translate('LBL_PMSE_FORM_OPTION_ADMINISTRATOR', 'pmse_Project')),
         );
-
-        $this->aclRoleObjectMock->expects($this->any())
-            ->method('getAllRoles')
-            ->with(true)
-            ->will($this->returnValue(
-                array(
-                    array('id' => 'rol01', 'name' => 'role name 01'),
-                    array('id' => 'rol02', 'name' => 'role name 02'),
-                    array('id' => 'rol03', 'name' => 'role name 03')
-                )
-            ));
-
-        $this->object->setAclRoleObject($this->aclRoleObjectMock);
         $result = $this->object->rolesList();
-        $this->assertEquals($expected, $result);
+        $this->assertArraySubset($expected, $result);
     }
 
     /**
@@ -925,8 +869,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
                     array(
                         'getModuleFilter', 
                         'getRelationshipData',
-                        'isValidStudioField',
-                        'fieldTodo'
                     )
                 )
                 ->getMock();
@@ -943,15 +885,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->object->expects($this->once())
                 ->method('getModuleFilter')
                 ->will($this->returnValue($moduleFilter));
-        
-        $this->object->expects($this->once())
-                ->method('isValidStudioField')
-                ->will($this->returnValue(true));
-        
-        $this->object->expects($this->once())
-                ->method('fieldTodo')
-                ->will($this->returnValue(false));
-        
+
         $this->object->setBeanList($this->beanList);
         $result = $this->object->retrieveDateFields('Leads');
 //        var_dump($result);
@@ -1055,54 +989,41 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $result);
         $this->assertCount(3, $result);
     }
-  
-    public function testRetrieveTeamsPublic()
+
+    public function retrieveTeamsDataProvider()
     {
-        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
-                ->disableOriginalConstructor()
-                ->setMethods(NULL)
-                ->getMock();
-
-        $filter = 'public';
-
-        $teamMock = $this->getMockBuilder('Teams')
-            ->disableOriginalConstructor()
-            ->setMethods(array('get_full_list'))
-            ->getMock();
-
-        $teamMock->id = 'team01';
-        $teamMock->name = 'Team #1';
-
-        $teamMock->expects($this->once())
-            ->method('get_full_list')
-            ->will($this->returnValue(array($teamMock)));
-        
-        $this->object->setTeamsBean($teamMock);
-        $result = $this->object->retrieveTeams($filter);
-        $this->assertCount(1, $result);
+        return array(
+            array('public'),
+            array('private'),
+        );
     }
 
-    public function testRetrieveTeamsPrivate()
+    /**
+     * @dataProvider retrieveTeamsDataProvider
+     */
+    public function testRetrieveTeams($filter)
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(NULL)
             ->getMock();
+        $this->object->setSugarQueryObject($this->sugarQueryMock);
+        $this->sugarQueryMock->expects($this->any())
+            ->method('where')
+            ->willReturnSelf();
+        $this->sugarQueryMock->expects($this->any())
+            ->method('equals')
+            ->willReturnSelf();
 
-        $filter = 'private';
-
-        $teamMock = $this->getMockBuilder('Teams')
+        $teamMock = $this->getMockBuilder('Team')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_full_list'))
+            ->setMethods(null)
             ->getMock();
 
-        $teamMock->id = 'team01';
-        $teamMock->name = 'Team #1';
+        $this->sugarQueryMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue(array(array('id' => 'team01', 'name' => 'Team #1'))));
 
-        $teamMock->expects($this->once())
-            ->method('get_full_list')
-            ->will($this->returnValue(array($teamMock)));
-        
         $this->object->setTeamsBean($teamMock);
         $result = $this->object->retrieveTeams($filter);
         $this->assertCount(1, $result);
@@ -1321,88 +1242,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->object->getAjaxRelationships($relationshipMock);
     }
-    
-    public function testRetrieveRelatedBeansFound()
-    {
-        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
-            ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields', 'getModuleFilter', 'getAjaxRelationships'))
-            ->getMock();
-        
-        $moduleObj = new stdClass();
-        
-        $this->object->expects($this->once())
-            ->method('getModuleFilter')
-            ->will($this->returnValue($moduleObj));
 
-        $ajaxRelationships = array(
-            array(
-                'lhs_module' => 'Project Tasks',
-                'rhs_module' => 'Leads',
-                'lhs_table' => 'project_tasks',
-                'relationship_type' => 'one-to-many',
-                'relationship_name' => 'project_project_tasks',
-                'name' => 'some relationship'
-            ),
-            array(
-                'lhs_module' => 'Project Tasks',
-                'rhs_module' => 'Meetings',
-                'lhs_table' => 'project_tasks',
-                'relationship_type' => 'one-to-one',
-                'relationship_name' => 'meetings_project_tasks',
-                'name' => 'some relationship'
-            ),
-            array(
-                'lhs_module' => 'Project Tasks',
-                'rhs_module' => 'Opportunities',
-                'lhs_table' => 'project_tasks',
-                'relationship_type' => 'one-to-one',
-                'relationship_name' => 'opportunities_project_tasks',
-                'name' => 'some relationship'
-            )
-        );
-
-        $this->object->expects($this->once())
-            ->method('getAjaxRelationships')
-            ->will($this->returnValue($ajaxRelationships));
-
-        $filter = 'ProjectTask';
-
-        global $beanList;
-        $beanList = array('Leads' => array(), 'ProjectTask' => array());
-
-        $result = $this->object->retrieveRelatedBeans($filter);
-        $this->assertCount(3, $result);
-
-    }
-    
-    public function testRetrieveRelatedBeansNotFound()
-    {
-        $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
-            ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields', 'getModuleFilter', 'getAjaxRelationships'))
-            ->getMock();
-        
-        $moduleObj = new stdClass();
-        
-        $this->object->expects($this->once())
-            ->method('getModuleFilter')
-            ->will($this->returnValue($moduleObj));
-
-        $ajaxRelationships = array();
-
-        $this->object->expects($this->once())
-            ->method('getAjaxRelationships')
-            ->will($this->returnValue($ajaxRelationships));
-
-        $filter = 'Leads';
-
-        global $beanList;
-        $beanList = array();
-
-        $this->object->retrieveRelatedBeans($filter);
-
-    }
 
     public function testRetrieveRelatedModulesFilterFound()
     {
@@ -1561,11 +1401,11 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $projectMock = $this->getMockBuilder('pmse_bpmProject')
                 ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(array('save', 'retrieve'))
             ->getMock();
         
         $projectMock->expects($this->once())
-            ->method('retrieve_by_string_fields')
+            ->method('retrieve')
             ->will($this->returnValue(true));
         
         $projectMock->id = 'prj01';

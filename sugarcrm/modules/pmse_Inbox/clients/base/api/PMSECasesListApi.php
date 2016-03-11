@@ -396,9 +396,10 @@ class PMSECasesListApi extends FilterApi
         // adding the seed bean
         $q->from($seed);
         // joining the users table
-        $q->joinRaw('INNER JOIN users ON users.id=pmse_bpm_flow.cas_user_id');
+        $q->joinTable('users')->on()->equalsField('users.id', 'pmse_bpm_flow.cas_user_id');
         // joining the process definition table in order to retrieve the process status
-        $q->joinRaw('INNER JOIN pmse_bpm_process_definition pdef ON pmse_bpm_flow.pro_id = pdef.id');
+        $q->joinTable('pmse_bpm_process_definition', array('alias' => 'pdef'))
+            ->on()->equalsField('pmse_bpm_flow.pro_id', 'pdef.id');
         // retrieving the user_name attribute,
         // it could be the first_name or last_name
         $q->select->fieldRaw("users.id", "user_name");
@@ -475,7 +476,7 @@ class PMSECasesListApi extends FilterApi
         // adding the seed bean
         $q->from($seed);
         // joining the users table
-        $q->joinRaw('INNER JOIN pmse_bpmn_process ON pmse_bpmn_process.id=pmse_inbox.pro_id');
+        $q->joinTable('pmse_bpmn_process')->on()->equalsField('pmse_bpmn_process.id', 'pmse_inbox.pro_id');
 
         $q->select->field("cas_status");
         $q->select->fieldRaw("COUNT(*) as total");

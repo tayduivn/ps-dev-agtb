@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/ACLRoles/ACLRole.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
@@ -137,12 +138,6 @@ class PMSECrmDataWrapper implements PMSEObservable
      *
      * @var type
      */
-    protected $aclRoleObject;
-
-    /**
-     *
-     * @var type
-     */
     protected $db;
 
     /**
@@ -179,7 +174,6 @@ class PMSECrmDataWrapper implements PMSEObservable
          * @name $db
          */
         global $db;
-        $this->aclRoleObject = new ACLRole();
 
         $this->defaultDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
         $this->teamsBean = BeanFactory::getBean('Teams');
@@ -604,16 +598,6 @@ class PMSECrmDataWrapper implements PMSEObservable
     public function setInboundEmailBean($inboundEmailBean)
     {
         $this->inboundEmailBean = $inboundEmailBean;
-    }
-
-    /**
-     * Set class ACLRoleObject.
-     * @codeCoverageIgnore
-     * @return object
-     */
-    public function setAclRoleObject($aclRoleObject)
-    {
-        $this->aclRoleObject = $aclRoleObject;
     }
 
     /**
@@ -1062,16 +1046,10 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function retrieveDynaforms($filter = '')
     {
-//        $dynaformBean = new BpmDynaForm();
-//        $projectBean = new BpmnProject();
-//        $processBean = new BpmnProcess();
         $dynaformBean = $this->getDynaformBean();
         $projectBean = $this->getProjectBean();
         $processBean = $this->getProcessBean();
 
-//        $res = new stdClass();
-//        $res->search = $filter;
-//        $res->success = true;
         $output = array();
         if ($projectBean->retrieve($filter)) {
 
@@ -1089,7 +1067,6 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output[] = $tmpDynaform;
             }
         }
-        //$res->result = $output;
         return $output;
     }
 
@@ -1118,14 +1095,10 @@ class PMSECrmDataWrapper implements PMSEObservable
 //                );
 //                $select = array('pmse_bpmn_activity.*');
                 $where = "a.act_task_type='USERTASK'";
-                $this->sugarQueryObject->joinRaw(
-                    "INNER JOIN pmse_bpm_activity_definition b ON (b.id=a.id)",
-                    array('alias' => 'b')
-                );
-                $this->sugarQueryObject->joinRaw(
-                    "INNER JOIN pmse_bpm_dynamic_forms c ON (c.dyn_uid=b.act_type)",
-                    array('alias' => 'c')
-                );
+                $this->sugarQueryObject->joinTable('pmse_bpm_activity_definition', array('alias' => 'b'))
+                    ->on()->equalsField('b.id', 'a.id');
+                $this->sugarQueryObject->joinTable('pmse_bpm_dynamic_forms', array('alias' => 'c'))
+                    ->on()->equalsField('c.dyn_uid', 'b.act_type');
                 break;
             case 'script':
 //                $where = 'pmse_bpmn_activity.act_task_type=\'SCRIPTTASK\'';
@@ -1134,10 +1107,8 @@ class PMSECrmDataWrapper implements PMSEObservable
 //                );
 //                $select = array('pmse_bpmn_activity.*');
                 $where = "a.act_task_type='SCRIPTTASK'";
-                $this->sugarQueryObject->joinRaw(
-                    "INNER JOIN pmse_bpm_activity_definition b ON (b.id=a.id)",
-                    array('alias' => 'b')
-                );
+                $this->sugarQueryObject->joinTable('pmse_bpm_activity_definition', array('alias' => 'b'))
+                    ->on()->equalsField('b.id', 'a.id');
                 break;
             case '':
                 $where = '';
@@ -1553,7 +1524,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @return object
      * @codeCoverageIgnore
      */
-    public function retrieveFields($filter = '', ModuleApi $moduleApi, $type = '', $baseModule = '')
+    public function retrieveFields($filter = '', ModuleApi $moduleApi = null, $type = '', $baseModule = '')
     {
         global $beanList;
         if (isset($beanList[$filter])) {
@@ -1634,7 +1605,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                         if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
                             if (PMSEEngineUtils::specialFields($field, $type)) {
                                 $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
-                            } else {
+                            } elseif ($moduleApi !== null) {
                                 $tmpField['optionItem'] = $moduleApi->getEnumValues(
                                     array(),
                                     array(
@@ -1884,7 +1855,8 @@ class PMSECrmDataWrapper implements PMSEObservable
 
             $this->sugarQueryObject->select(array('id', 'name'));
             $this->sugarQueryObject->from($activityDefinitionBean, array('alias' => 'a'));
-            $this->sugarQueryObject->joinRaw("INNER JOIN pmse_bpmn_activity b ON (b.id = a.id)", array('alias' => 'b'));
+            $this->sugarQueryObject->joinTable('pmse_bpmn_activity', array('alias' => 'b'))
+                ->on()->equalsField('b.id', 'a.id');
             $this->sugarQueryObject->where()->queryAnd()
                 ->addRaw(
                     "b.prj_id='" . $projectBean->id . "' AND b.act_script_type = 'BUSINESS_RULE'"
@@ -2041,7 +2013,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      */
     public function rolesList()
     {
-        $userRoles = $this->aclRoleObject->getAllRoles(true);
+        $userRoles = ACLRole::getAllRoles(true);
         $tmpArray = array();
         $tmpArray[] = array(
             'value' => 'is_admin',
@@ -2069,7 +2041,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $caseBean = $this->getInboxBean();
         $this->sugarQueryObject->select(array('a.cas_id'));
         $this->sugarQueryObject->from($caseBean, array('alias' => 'a'));
-        $this->sugarQueryObject->joinRaw("LEFT JOIN pmse_bpm_flow b ON (a.cas_id = b.cas_id)", array('alias' => 'b'));
+        $this->sugarQueryObject->joinTable('pmse_bpm_flow', array('joinType' => 'LEFT', 'alias' => 'b'))
+            ->on()->equalsField('a.cas_id', 'b.cas_id');
         $this->sugarQueryObject->where()->queryAnd()
             ->addRaw("b.cas_id = $casID and a.cas_index = $casIndex");
         $rows = $this->sugarQueryObject->execute();
