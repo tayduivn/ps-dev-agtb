@@ -153,8 +153,59 @@ class EmailsApi extends ModuleApi
     }
 
     /**
+     * Don't allow existing Notes to be attached.
+     *
+     * {@inheritdoc}
+     */
+    protected function linkRelatedRecords(
+        ServiceBase $service,
+        SugarBean $bean,
+        array $ids,
+        $securityTypeLocal = 'view',
+        $securityTypeRemote = 'view'
+    ) {
+        unset($ids['attachments']);
+
+        parent::linkRelatedRecords($service, $bean, $ids, $securityTypeLocal, $securityTypeRemote);
+    }
+
+    /**
+     * Create an array of Attachment File Ids needed by parent method
+     *
+     * {@inheritdoc}
+     */
+    protected function createRelatedRecords(ServiceBase $service, SugarBean $bean, array $data)
+    {
+        $relate = array();
+
+        foreach ($data as $linkName => $records) {
+            if ($linkName === 'attachments') {
+                $relate[$linkName] = array();
+
+                foreach ($records as $record) {
+                    $sourceFile = $this->getAttachmentSource($record);
+                    if (!empty($sourceFile)) {
+                        unset($record['_file']);
+                        $destinationFile = $this->setupAttachmentNoteRecord($bean, $record);
+
+                        $uploaded = !empty($record['_uploaded']);
+                        unset($record['_uploaded']);
+                        if ($this->moveOrCopyAttachment($sourceFile, $destinationFile, $uploaded)) {
+                            $relate[$linkName][] = $record;
+                        }
+                    }
+                }
+            } else {
+                $relate[$linkName] = $records;
+            }
+        }
+
+        parent::createRelatedRecords($service, $bean, $relate);
+    }
+
+    /**
      * Respond as to whether the supplied state transition is valid
-     * @param array State validation array based on any set of operations and states
+     * @param array $validStates - state validation array based on any set of operations and states
      * @param string $operation
      * @param string $fromState
      * @param string $toState
@@ -175,5 +226,70 @@ class EmailsApi extends ModuleApi
             return false;
         }
         return true; // default to valid
+    }
+
+    /**
+     * Return the qualified upload source file if the attachment record is valid
+     * Note: An attachment record is valid if an attachment file is specified and it exists in the upload directory
+     * @param array $record
+     * @return null|string  - null if not a valid Attachment
+     */
+    protected function getAttachmentSource(array $record)
+    {
+        if (!empty($record['_file'])) {
+            $guid = preg_replace('/[^a-z0-9\-]/', '', $record['_file']);
+            $source = "upload://{$guid}";
+            if (file_exists($source)) {
+                return $source;
+            }
+        }
+        return null; // Not a valid Attachment
+    }
+
+    /**
+     * Spec out a new Notes object in the array format that ModuleApi::createBean() expects.
+     * Preset the ID and return the qualified destinationFile for the subsequent move/copy.
+     * @param SugarBean $bean
+     * @param array $record
+     * @return string
+     */
+    protected function setupAttachmentNoteRecord(SugarBean $bean, array &$record)
+    {
+        $record['id'] = create_guid();
+        $record['email_id'] = $bean->id;
+        $record['email_type'] = $bean->module_dir;
+        $record['team_id'] = $bean->team_id;
+        $record['team_set_id'] = $bean->team_set_id;
+
+        return "upload://{$record['id']}";
+    }
+
+    /**
+     *  If the file was uploaded for this Email, simply rename the file.
+     *  Otherwise, to avoid multiplication of read-only attachment files, try first to hard link the file
+     *  and only copy the file if the hard link is not successful.
+     * @param string $source
+     * @param string $dest
+     * @param bool $uploaded - true if file was uploaded for this Email ... Move it instead of Copying it
+     * @return bool
+     */
+    protected function moveOrCopyAttachment($source, $dest, $uploaded = false)
+    {
+        // Resolve upload and relative paths.
+        $source = UploadFile::realpath($source);
+        $dest = UploadFile::realpath($dest);
+
+        if ($uploaded) {
+            $result = rename($source, $dest);
+        } elseif (link($source, $dest)) {
+            $result = true; // create a hard link if possible
+        } else {
+            $result = copy($source, $dest);
+        }
+
+        if (!$result) {
+            $GLOBALS['log']->error("Failed to link/copy file from {$source} to {$dest}");
+        }
+        return $result;
     }
 }
