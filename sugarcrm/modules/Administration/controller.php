@@ -15,6 +15,8 @@ use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
 use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
+use Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Dot as TriggerRepairRunner;
+use Sugarcrm\Sugarcrm\Trigger\Repair\Repair as TriggerRepair;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'modules/Configurator/Configurator.php';
@@ -413,6 +415,23 @@ class AdministrationController extends SugarController
             echo "true";
         } catch (Exception $ex) {
             echo "false";
+        }
+    }
+
+    /**
+     * action_callRebuildReminders
+     *
+     * Clean legacy job queue reminders and re-create new.
+     */
+    public function action_callRebuildReminders()
+    {
+        $this->view = 'ajax';
+        if (is_admin($GLOBALS['current_user'])) {
+            ob_flush();
+            $runner = new TriggerRepairRunner(new TriggerRepair());
+            $runner->run();
+            echo "<br />{$GLOBALS['mod_strings']['LBL_DONE']}";
+            ob_flush();
         }
     }
 

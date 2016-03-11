@@ -69,7 +69,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
             array('RecreateUserRemindersJob')
         );
 
-        $this->hookManager->method('getTriggerClient')->willReturn($this->triggerClient);
+        \SugarTestReflection::setProtectedValue('Sugarcrm\Sugarcrm\Trigger\Client', 'instance', $this->triggerClient);
         $this->hookManager->method('getTriggerServerManager')->willReturn($this->triggerServerManager);
         $this->hookManager->method('getSchedulerManager')->willReturn($this->schedulerManager);
         $this->hookManager->method('getJobQueueManager')->willReturn($this->jobQueueManager);
@@ -83,6 +83,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         \BeanFactory::setBeanClass('Users');
+        TriggerClient::getInstance(true);
         $GLOBALS['current_user'] = $this->currentUser;
         parent::tearDown();
     }
