@@ -105,6 +105,21 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
         if (!empty($this->def['rname']) && !empty($this->jta)) {
             $field = array("{$this->jta}.{$this->def['rname']}", $this->def['name']);
             $this->addToSelect(array($field));
+            if (isset($this->def['module'])
+                && ($this->def['rname'] === 'full_name'
+                    || $this->def['rname'] === 'document_name'
+                    || $this->def['rname'] === 'name'
+                    || $this->def['rname'] === 'user_name'
+                )
+            ) {
+                $rBean = BeanFactory::getBean($this->def['module']);
+                $ownerField = $rBean->getOwnerField();
+                if ($ownerField) {
+                    $this->query->select->addField($this->jta . '.' . $ownerField, array(
+                        'alias' => $this->def['name'] . '_owner',
+                    ));
+                }
+            }
             $this->markNonDb();
         }
         if (!empty($this->def['rname_link']) && !empty($this->jta)) {
