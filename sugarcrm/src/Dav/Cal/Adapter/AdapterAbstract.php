@@ -369,6 +369,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if ($importGroupId && !isset(static::$sendingImportGroup[$importGroupId])) {
             $bean->send_invites = true;
+            $bean->ignoreOrganizerNotification = true;
             static::$sendingImportGroup[$importGroupId] = true;
         }
 

@@ -139,6 +139,12 @@ class Call extends SugarBean {
      */
     public $repeat_root_id = null;
 
+    /**
+     * Flag whether or not to ignore sending notification organizer.
+     * @var boolean
+     */
+    public $ignoreOrganizerNotification = false;
+
 	public function __construct() {
 		parent::__construct();
 		global $app_list_strings;
@@ -633,7 +639,10 @@ class Call extends SugarBean {
             $mergedInvitees[$invitee[1]] = $invitee[0];
         }
 
-        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
+        if (!$this->ignoreOrganizerNotification &&
+            !empty($this->created_by) &&
+            !isset($mergedInvitees[$this->created_by])
+        ) {
             $mergedInvitees[$this->created_by] = 'Users';
         }
 
