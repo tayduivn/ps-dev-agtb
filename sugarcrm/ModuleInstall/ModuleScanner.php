@@ -434,6 +434,7 @@ class ModuleScanner{
 
 	private $issues = array();
 	private $pathToModule = '';
+        private $baseDir = '';
 
 	/**
 	 *returns a list of issues
@@ -485,8 +486,11 @@ class ModuleScanner{
 
 	/**
 	 *Scans a directory and calls on scan file for each file
+         * @param string $path path of the directory to be scanned
+         * @param string $sugarFileAllowed whether should allow to override core files
 	 **/
-	public function scanDir($path){
+        public function scanDir($path, $sugarFileAllowed = true)
+        {
 		static $startPath = '';
 		if(empty($startPath))$startPath = $path;
 		if(!is_dir($path))return false;
@@ -495,11 +499,9 @@ class ModuleScanner{
 		$next = $path . '/' . $e;
 		if(is_dir($next)){
 			if(substr($e, 0, 1) == '.')continue;
-			$this->scanDir($next);
+                        $this->scanDir($next, $sugarFileAllowed);
 		}else{
-			$issues = $this->scanFile($next);
-
-
+                    $issues = $this->scanFile($next, $sugarFileAllowed);
 		}
 		}
     	return true;
@@ -529,9 +531,12 @@ class ModuleScanner{
 	 * Given a file it will open it's contents and check if it is a PHP file (not safe to just rely on extensions) if it finds <?php tags it will use the tokenizer to scan the file
 	 * $var()  and ` are always prevented then whatever is in the blacklist.
 	 * It will also ensure that all files are of valid extension types
+         * @param string $file file to be scanned
+         * @param string $sugarFileAllowed whether should allow to override core files
 	 *
 	 */
-	public function scanFile($file){
+        public function scanFile($file, $sugarFileAllowed = true)
+        {
 		$issues = array();
 		if(!$this->isValidExtension($file)){
 			$issues[] = translate('ML_INVALID_EXT');
@@ -543,6 +548,18 @@ class ModuleScanner{
 			$this->issues['file'][$file] = $issues;
 			return $issues;
 		}
+        if (!$sugarFileAllowed) {
+            $baseDir = $this->baseDir;
+            if (!empty($this->baseDir) && substr($this->baseDir, -1) != '/') {
+                $baseDir = $this->baseDir . '/';
+            }
+            $fileNoBase = str_replace($baseDir, '', $file);
+            if ($this->sugarFileExists($fileNoBase)) {
+                $issues[] = translate('ML_OVERRIDE_CORE_FILES');
+                $this->issues['file'][$file] = $issues;
+                return $issues;
+            }
+        }
 		$contents = file_get_contents($file);
 		if(!$this->isPHPFile($contents)) return $issues;
 		$tokens = @token_get_all($contents);
@@ -783,13 +800,17 @@ class ModuleScanner{
 	 *Main external function that takes in a path to a package and then scans
 	 *that package's manifest for disabled actions and then it scans the PHP files
 	 *for restricted function calls
+         * @param string $path path of the package to be scanned
+         * @param string $sugarFileAllowed whether should allow to override core files
 	 *
 	 */
-	public function scanPackage($path){
+        public function scanPackage($path, $sugarFileAllowed = true)
+        {
+        $this->baseDir = $path;
 		$this->pathToModule = $path;
 		$this->scanManifest($path . '/manifest.php');
 		if(empty($this->config['disableFileScan'])){
-			$this->scanDir($path);
+            $this->scanDir($path, $sugarFileAllowed);
 		}
 	}
 
