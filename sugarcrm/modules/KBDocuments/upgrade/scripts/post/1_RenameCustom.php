@@ -83,11 +83,47 @@ class SugarUpgradeRenameCustom extends UpgradeScript
     );
 
     /**
+     * Array of mod_strings for new module.
+     * @var array
+     */
+    protected $language = array();
+
+    /**
      * {@inheritDoc}
      */
     public function run()
     {
         if (version_compare($this->from_version, '7.7.0', '<')) {
+
+            sugar_mkdir('custom/modules/KBContents/language', null, true);
+            foreach (glob('custom/modules/KBDocuments/language/*.php') as $file) {
+                $dest = str_replace('/KBDocuments/', '/KBContents/', $file);
+                copy($file, $dest);
+                SugarAutoLoader::addToMap($dest);
+
+                SugarAutoLoader::delFromMap($file);
+                $this->fileToDelete(array($file));
+            }
+
+            sugar_mkdir('custom/Extension/modules/KBContents/Ext/Language', null, true);
+            foreach (glob('custom/Extension/modules/KBDocuments/Ext/Language/*.php') as $file) {
+                $dest = str_replace('/KBDocuments/', '/KBContents/', $file);
+                copy($file, $dest);
+                SugarAutoLoader::addToMap($dest);
+
+                SugarAutoLoader::delFromMap($file);
+                $this->fileToDelete(array($file));
+            }
+
+            foreach (glob('custom/include/language/*.php') as $file) {
+                $this->updateLanguageFile($file);
+            }
+
+            $langs = SugarConfig::getInstance()->get('languages');
+            $lang = SugarConfig::getInstance()->get('default_language');
+            $mi = new ModuleInstaller();
+            $mi->rebuild_languages($langs, array('KBContents'));
+            $this->language = LanguageManager::loadModuleLanguage('KBContents', $lang);
 
             if (file_exists('custom/modules/KBDocuments/metadata/listviewdefs.php')) {
                 $this->copyListView('custom/modules/KBDocuments/metadata/listviewdefs.php');
@@ -112,25 +148,12 @@ class SugarUpgradeRenameCustom extends UpgradeScript
                     'custom/modules/KBContents/clients/base/views/selection-list/selection-list.php'
                 );
             }
-            sugar_mkdir('custom/Extension/modules/KBContents/Ext/Language', null, true);
-            foreach (glob('custom/Extension/modules/KBDocuments/Ext/Language/*.php') as $file) {
-                copy($file, str_replace('/KBDocuments/', '/KBContents/', $file));
-            }
-
-
-            sugar_mkdir('custom/modules/KBContents/language', null, true);
-            foreach (glob('custom/modules/KBDocuments/language/*.php') as $file) {
-                copy($file, str_replace('/KBDocuments/', '/KBContents/', $file));
-            }
 
             sugar_mkdir('custom/Extension/modules/KBContents/Ext/Vardefs', null, true);
             foreach (glob('custom/Extension/modules/KBDocuments/Ext/Vardefs/*.php') as $file) {
                 $this->copyDefs($file, str_replace('/KBDocuments/', '/KBContents/', $file));
             }
 
-            foreach (glob('custom/include/language/*.php') as $file) {
-                $this->updateLanguageFile($file);
-            }
 
             foreach (glob('custom/Extension/application/Ext/Language/*.php') as $file) {
                 $this->updateLanguageFile($file);
@@ -240,6 +263,9 @@ class SugarUpgradeRenameCustom extends UpgradeScript
         foreach ($defs as $key => $def) {
             $name = strtolower(!empty($def['name']) ? $def['name'] : $key);
             if (!empty($this->fieldsViewMap[$name])) {
+                if (!empty($def['label']) && !empty($this->language[$def['label']])) {
+                    $this->fieldsViewMap[$name]['label'] = $def['label'];
+                }
                 $def = array_merge($def, $this->fieldsViewMap[$name]);
                 $name = strtolower($this->fieldsViewMap[$name]['name']);
             }
