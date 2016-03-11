@@ -140,6 +140,22 @@ echo '.';
 
 
 ///////////////////////////////////////////////////////////////////////////////
+//BEGIN SUGARCRM flav=ent ONLY
+if (file_exists("install/demoData.{$current_language}.php")) {
+    $preferred_language = $current_language;
+} else {
+    $preferred_language = "en_us";
+}
+//END SUGARCRM flav=ent ONLY
+$titles = $sugar_demodata['titles'];
+$first_name_max = $first_name_count - 1;
+$last_name_max = $last_name_count - 1;
+$street_address_max = $street_address_count - 1;
+$city_array_max = $city_array_count - 1;
+$lead_source_max = count($app_list_strings['lead_source_dom']) - 1;
+$lead_status_max = count($app_list_strings['lead_status_dom']) - 1;
+$title_max = count($titles) - 1;
+$contacts = array();
 ////	ACCOUNTS
 
 // Make a copy of the company name list we can destroy in
@@ -235,6 +251,35 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account_ids[] = $account->id;
 	$accounts[] = $account;
 
+    $contact = new Contact();
+    $contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0, $first_name_max)];
+    $contact->last_name = $sugar_demodata['last_name_array'][mt_rand(0, $last_name_max)];
+    $contact->assigned_user_id = $account->assigned_user_id;
+    $contact->primary_address_street = $sugar_demodata['street_address_array'][mt_rand(0, $street_address_max)];
+    $contact->primary_address_city = $sugar_demodata['city_array'][mt_rand(0, $city_array_max)];
+    $contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
+    $contact->title = $titles[mt_rand(0, $title_max)];
+    $contact->emailAddress->addAddress(createEmailAddress(), true, true);
+    $contact->emailAddress->addAddress(createEmailAddress(), false, false, false, true);
+//BEGIN SUGARCRM flav=ent ONLY
+    $contact->portal_active = 1;
+    $contact->portal_name = $contact->first_name . $contact->last_name . $i;
+    $contact->portal_password = User::getPasswordHash($contact->first_name . $contact->last_name . $i);
+    $contact->preferred_language = $preferred_language;
+//END SUGARCRM flav=ent ONLY
+    $contact->phone_work = create_phone_number();
+    $contact->phone_home = create_phone_number();
+    $contact->phone_mobile = create_phone_number();
+    // Fill in a bogus address
+    $contact->primary_address_state = $account->billing_address_state;
+    $contact->team_id = $account->team_id;
+    $contact->team_set_id = $account->team_set_id;
+    $contact->assigned_user_name = $account->assigned_user_name;
+    $contact->primary_address_postalcode = mt_rand(10000, 99999);
+    $contact->primary_address_country = 'USA';
+    $contact->save();
+    $contacts[] = $contact->id;
+
     for($c = 0; $c < $number_cases; $c++) {
 	// Create a case for the account
 	$case = new aCase();
@@ -297,7 +342,9 @@ for($i = 0; $i < $number_companies; $i++) {
     $call->status = array_rand($app_list_strings['call_status_dom']);
 	$call->team_id = $account->team_id;
 	$call->team_set_id = $account->team_set_id;
+    $call->contacts_arr[0] = $contact->id;
 	$call->save();
+    $call->setContactInvitees($call->contacts_arr);
 
     //Set the user to accept the call
     $seed_user->id = $call->assigned_user_id;
@@ -312,26 +359,12 @@ installLog("DemoData: Done Companies + Related Calls, Notes Meetings and Bugs");
 
 unset($accounts_companies_list);
 
-$titles = $sugar_demodata['titles'];
 $account_max = count($account_ids) - 1;
-$first_name_max = $first_name_count - 1;
-$last_name_max = $last_name_count - 1;
-$street_address_max = $street_address_count - 1;
-$city_array_max = $city_array_count - 1;
-$lead_source_max = count($app_list_strings['lead_source_dom']) - 1;
-$lead_status_max = count($app_list_strings['lead_status_dom']) - 1;
-$title_max = count($titles) - 1;
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	DEMO CONTACTS
 installLog("DemoData: Contacts");
-$contacts = array();
-//BEGIN SUGARCRM flav=ent ONLY
-if (file_exists("install/demoData.{$current_language}.php")) {
-    $preferred_language = $current_language;
-} else {
-    $preferred_language = "en_us";
-}
-//END SUGARCRM flav=ent ONLY
+
 for($i=0; $i<$number_contacts; $i++) {
 	$contact = new Contact();
 	$contact->first_name = $sugar_demodata['first_name_array'][mt_rand(0,$first_name_max)];
@@ -380,7 +413,8 @@ for($i=0; $i<1000; $i++)
 	$contact->primary_address_country = 'USA';
 	$contact->save();
     $contacts[] = $contact->id;
-	// Create a linking table entry to assign an account to the contact.
+
+    // Create a linking table entry to assign an account to the contact.
 	$contact->set_relationship('accounts_contacts', array('contact_id'=>$contact->id ,'account_id'=> $account_id, 'primary_account' => 1), false);
 
 	//Create new tasks
@@ -426,7 +460,9 @@ for($i=0; $i<1000; $i++)
 	$meeting->parent_type = 'Accounts';
     // dont update vcal
     $meeting->update_vcal  = false;
+    $meeting->contacts_arr[0] = $contact->id;
 	$meeting->save();
+    $meeting->setContactInvitees($meeting->contacts_arr);
 	// leverage the seed user to set the acceptance status on the meeting.
 	$seed_user->id = $meeting->assigned_user_id;
     $meeting->set_accept_status($seed_user,'accept');
