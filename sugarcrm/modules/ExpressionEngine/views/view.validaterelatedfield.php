@@ -18,7 +18,7 @@ class ViewValidateRelatedField extends ViewAjax
 
     public function __construct()
     {
-        parent::ViewAjax();
+        parent::__construct();
         foreach($this->vars as $var)
         {
             if (empty($_REQUEST[$var]))
