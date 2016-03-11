@@ -40,11 +40,11 @@ class TeamBasedACLConfigurator
     );
 
     /**
-     * Permanently disabled modules.
+     * Permanently hidden modules.
      * These modules can't be enabled/disabled on Team-based Permissions admin page.
      * @var array
      */
-    protected static $disabledModules = array(
+    protected static $hiddenModules = array(
         'pmse_Inbox', // see RS-1275
         'Users', // see RS-1347
     );
@@ -219,7 +219,7 @@ class TeamBasedACLConfigurator
             $config = self::getConfig();
             self::$moduleCache[$module] =
                 !in_array($module, $config['disabled_modules'])
-                && !in_array($module, self::$disabledModules);
+                && !in_array($module, self::$hiddenModules);
         }
         return self::$moduleCache[$module];
     }
@@ -477,9 +477,9 @@ class TeamBasedACLConfigurator
      * Returns permanently disabled modules.
      * @return array
      */
-    public static function getDisabledModules()
+    public static function getHiddenModules()
     {
-        return self::$disabledModules;
+        return self::$hiddenModules;
     }
 
     /**
