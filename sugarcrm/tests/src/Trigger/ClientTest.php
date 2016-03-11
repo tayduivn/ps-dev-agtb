@@ -13,636 +13,832 @@
 namespace Sugarcrm\SugarcrmTests\Trigger;
 
 use Sugarcrm\Sugarcrm\Trigger\Client;
+use Sugarcrm\SugarcrmTests\clients\base\api\AdministrationCRYS1259;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class ClientTest
  * @package Sugarcrm\SugarcrmTestsUnit\Trigger
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Trigger\Client
+ * @covers \Sugarcrm\Sugarcrm\Trigger\Client
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     const SITE_URL = 'http://dummy-site';
-    const TRIGGER_SERVER_URL = 'http://dummy-trigger-server';
-    const TOKEN = 'token';
+
+    /** @var \Sugarcrm\Sugarcrm\Trigger\HttpHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $httpHelper;
+
+    /** @var \Sugarcrm\Sugarcrm\Trigger\Client|\PHPUnit_Framework_MockObject_MockObject */
+    protected $client;
+
+    /** @var \SugarConfig|\PHPUnit_Framework_MockObject_MockObject */
+    protected $sugarConfig = null;
+
+    /** @var \LoggerManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $loggerManager = null;
 
     /**
-     * @param string $triggerServerUrl
-     * @param bool $returnIsConfigured
-     * @dataProvider providerIsConfigured
-     * @covers ::isConfigured
+     * @inheritDoc
      */
-    public function testIsConfigured($triggerServerUrl, $returnIsConfigured)
+    protected function setUp()
     {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, $triggerServerUrl),
-        ));
+        parent::setUp();
 
-        $client = $this->getClientMock(array('getSugarConfig'));
-        $client->method('getSugarConfig')
-            ->willReturn($sugarConfig);
+        $this->httpHelper = $this->getMock('Sugarcrm\Sugarcrm\Trigger\HttpHelper');
+        $this->sugarConfig = $this->getMock('SugarConfig');
+        $this->loggerManager = $this->getMockBuilder('LoggerManager')
+            ->setMethods(array('error'))
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->assertEquals($returnIsConfigured, $client->isConfigured());
+        $this->client = $this->getMock(
+            'Sugarcrm\Sugarcrm\Trigger\Client',
+            array('getSugarConfig', 'getLogger', 'getHttpHelper', 'createGuid')
+        );
+        $this->client->method('getLogger')->willReturn($this->loggerManager);
+        $this->client->method('getSugarConfig')->willReturn($this->sugarConfig);
+        $this->client->method('getHttpHelper')->willReturn($this->httpHelper);
+
+        AdministrationCRYS1494::$saveSetting['calls'] = array();
+        AdministrationCRYS1494::$getConfigForModule['calls'] = array();
+        \BeanFactory::setBeanClass('Administration', '\Sugarcrm\SugarcrmTests\Trigger\AdministrationCRYS1494');
     }
 
     /**
-     * (trigger server url, expected value)
+     * @inheritDoc
+     */
+    protected function tearDown()
+    {
+        \BeanFactory::setBeanClass('Administration');
+
+        parent::tearDown();
+    }
+
+    /**
+     * IsConfigured provider.
+     *
+     * @see Sugarcrm\SugarcrmTests\Trigger\ClientTest::testIsConfigured
      * @return array
      */
-    public function providerIsConfigured()
+    public static function isConfiguredProvider()
     {
         return array(
-            array(static::TRIGGER_SERVER_URL, true),
-            array(null, false),
+            'configuredTriggerServerUrl' => array(
+                'triggerServerUrl' => 'http://dummy-trigger-server',
+                'expectsIsConfigured' => true,
+            ),
+            'emptyTriggerServerUrl' => array(
+                'triggerServerUrl' => null,
+                'expectsIsConfigured' => false,
+            ),
         );
     }
 
     /**
-     * @param boolean $httpClientReturns
-     * @param boolean $expected
-     * @dataProvider providerIsAvailable
-     * @covers ::isAvailable
+     * Testing is configured.
+     *
+     * @dataProvider isConfiguredProvider
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::isConfigured
+     * @param string $triggerServerUrl trigger server url saved in config.
+     * @param bool $expectsIsConfigured expects IsConfigured result.
      */
-    public function testIsAvailable($httpClientReturns, $expected)
+    public function testIsConfigured($triggerServerUrl, $expectsIsConfigured)
     {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, static::TRIGGER_SERVER_URL),
-        ));
+        $this->sugarConfig->method('get')
+            ->willReturnMap(array(
+                array('trigger_server.url', null, $triggerServerUrl),
+            ));
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->once())
-            ->method('ping')
-            ->with($this->equalTo(static::TRIGGER_SERVER_URL))
-            ->willReturn($httpClientReturns);
+        $this->client->method('getSugarConfig')
+            ->willReturn($this->sugarConfig);
 
-        $client = $this->getClientMock(array('getSugarConfig', 'getHttpHelper'));
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
-
-        $this->assertEquals($expected, $client->isAvailable());
+        $this->assertEquals($expectsIsConfigured, $this->client->isConfigured());
     }
 
     /**
-     * (HttpClient::ping returned value, expected value)
-     * @return array
+     * Testing case when trigger server not configured.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::push
      */
-    public function providerIsAvailable()
+    public function testPushNotConfigured()
     {
-        return array(
-            array(false, false),
-            array(true, true),
-        );
-    }
-
-    /**
-     * @param string|null $storedToken
-     * @param string|null $newToken
-     * @param int $count
-     * @param string $returnToken
-     * @dataProvider providerRetrieveToken
-     * @covers ::retrieveToken
-     */
-    public function testRetrieveToken($storedToken, $newToken, $count, $returnToken)
-    {
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => $storedToken)),
-        ));
-        $adminBean->expects($this->exactly($count))
-            ->method('saveSetting')
-            ->with(
-                $this->equalTo('auth'),
-                $this->equalTo('external_token_trigger'),
-                $this->equalTo($newToken),
-                $this->equalTo('base')
-            )
-            ->willReturn(1);
-
-        $client = $this->getClientMock(array('getAdministrationBean', 'createGuid'));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('createGuid')->willReturn($newToken);
-
-        $this->assertEquals($returnToken, TestReflection::callProtectedMethod($client, 'retrieveToken'));
-
-    }
-
-    /**
-     * (stored token, new generated token,
-     * expected Administration::saveSetting number of calls,
-     * Client::retrieveToken returns)
-     * @return array
-     */
-    public function providerRetrieveToken()
-    {
-        return array(
-            'token exists' => array('stored-token', null, 0, 'stored-token'),
-            'token doesn\'t exists' => array(null, 'new-token', 1, 'new-token'),
-        );
-    }
-
-    /**
-     * @param array $params
-     * @param string $method
-     * @param array $args
-     * @param array|null $tags
-     * @param string $encodedMessageToSend
-     * @dataProvider providerPush
-     * @covers ::push
-     */
-    public function testPush($params, $method, $args, $tags, $encodedMessageToSend)
-    {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
+        $this->sugarConfig->method('get')->willReturnMap(array(
+            array('trigger_server.url', null, null),
             array('site_url', null, ClientTest::SITE_URL),
         ));
 
-        $triggerServerPostUrl = static::TRIGGER_SERVER_URL . Client::POST_URI;
-        $headers = $this->getDefaultAuthHeaders();
+        $this->loggerManager->expects($this->once())
+            ->method('error')
+            ->with($this->equalTo('Trigger\\Client::push - attempt to use client which is not configured.'));
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->once())
-            ->method('send')
-            ->with(
-                $this->equalTo(Client::POST_METHOD),
-                $this->equalTo($triggerServerPostUrl),
-                $this->equalTo($encodedMessageToSend),
-                $this->equalTo($headers)
-            )
-            ->willReturn(true);
+        $this->httpHelper
+            ->expects($this->never())
+            ->method('send');
 
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
+        $result = $this->client->push(rand(1000, 9999), rand(1000, 9999), rand(1000, 9999), rand(1000, 9999));
 
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
-
-        $client->push($params['id'], $params['stamp'], $method, $params['uri'], $args, $tags);
+        $this->assertFalse($result);
     }
 
     /**
-     * (Client::push params, method, args, expected JSON encoded message to HttpHelper::send $args)
+     * Data provider for testPush.
+     *
+     * @see \Sugarcrm\SugarcrmTests\Trigger\ClientTest::testPush
      * @return array
      */
-    public function providerPush()
+    public static function providerPush()
     {
         $params = array(
-            'id' => 'dummy-id',
-            'stamp' => 'dummy-stamp',
+            'id' => 'dummy-id' . rand(1000, 999),
+            'stamp' => 'dummy-stamp' . rand(1000, 999),
             'uri' => '/dummy-uri',
         );
 
         $args = array(
-            'stringArg' => 'dummy-string',
-            'intArg' => 1,
+            'stringArg' => 'dummy-string' . rand(1000, 999),
+            'intArg' => 132,
         );
         $tags = array(
-            'tag 1',
-            'tag 2',
+            'tag 1-' . rand(1000, 999),
+            'tag 2-' . rand(1000, 999),
         );
+
+        $token1 = 'token:1:' . rand(1000, 9999);
+        $token2 = 'token:2:' . rand(1000, 9999);
+        $token3 = 'token:3:' . rand(1000, 9999);
 
         return array(
-            'method GET without args' => array(
-                $params,
-                'get',
-                null,
-                null,
-                $this->getEncodedMessageToPush($params, 'get', null),
+            'methodGetWithoutArgumentsRetrieveTokenUrlServerUrlWithSlash' => array(
+                'arguments' => array(
+                    'pushArguments' => array(
+                        'id' => $params['id'],
+                        'stamp' => $params['stamp'],
+                        'uri' => $params['uri'],
+                        'method' => 'get',
+                        'arguments' => null,
+                        'tags' => null,
+                    ),
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'token' => $token3,
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => null,
+                ),
+                'saveSetting' => array(
+                    'arguments' => array('auth', 'external_token_trigger', $token3, 'base'),
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'method' => Client::POST_METHOD,
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $params['id'],
+                            'stamp' => $params['stamp'],
+                            'trigger' => array(
+                                'url' => $params['uri'],
+                                'method' => 'get',
+                            ),
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token3,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
             ),
-            'method GET with args' => array(
-                $params,
-                'get',
-                $args,
-                null,
-                $this->getEncodedMessageToPush($params, 'get', $args),
+            'methodPostWithArgumentsWithExistingTokenServerUrlWithoutSlash' => array(
+                'arguments' => array(
+                    'pushArguments' => array(
+                        'id' => $params['id'],
+                        'stamp' => $params['stamp'],
+                        'uri' => $params['uri'],
+                        'method' => 'post',
+                        'arguments' => $args,
+                        'tags' => null,
+                    ),
+                    'serverUrl' => 'http://dummy-trigger-server.com',
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => array('external_token_trigger' => $token1),
+                ),
+                'saveSetting' => array(
+                    'arguments' => null,
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'method' => Client::POST_METHOD,
+                    'serverUrl' => 'http://dummy-trigger-server.com/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $params['id'],
+                            'stamp' => $params['stamp'],
+                            'trigger' => array(
+                                'url' => $params['uri'],
+                                'method' => 'post',
+                                'args' => $args,
+                            ),
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token1,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
             ),
-            'method POST without args' => array(
-                $params,
-                'post',
-                null,
-                null,
-                $this->getEncodedMessageToPush($params, 'post', null),
+            'methodGetWithArgumentsWithExistingTokenServerUrlWithSlash' => array(
+                'arguments' => array(
+                    'pushArguments' => array(
+                        'id' => $params['id'],
+                        'stamp' => $params['stamp'],
+                        'uri' => $params['uri'],
+                        'method' => 'get',
+                        'arguments' => $args,
+                        'tags' => null,
+                    ),
+                    'serverUrl' => 'http://dummy-trigger-server.com:8080/',
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => array('external_token_trigger' => $token2),
+                ),
+                'saveSetting' => array(
+                    'arguments' => null,
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'method' => Client::POST_METHOD,
+                    'serverUrl' => 'http://dummy-trigger-server.com:8080/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $params['id'],
+                            'stamp' => $params['stamp'],
+                            'trigger' => array(
+                                'url' => $params['uri'],
+                                'method' => 'get',
+                            ),
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token2,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
             ),
-            'method POST with args' => array(
-                $params,
-                'post',
-                $args,
-                null,
-                $this->getEncodedMessageToPush($params, 'post', $args),
-            ),
-            'method PUT without args' => array(
-                $params,
-                'put',
-                null,
-                null,
-                $this->getEncodedMessageToPush($params, 'put', null),
-            ),
-            'method PUT with args' => array(
-                $params,
-                'put',
-                $args,
-                null,
-                $this->getEncodedMessageToPush($params, 'put', $args),
-            ),
-            'method DELETE without args' => array(
-                $params,
-                'delete',
-                null,
-                null,
-                $this->getEncodedMessageToPush($params, 'delete', null),
-            ),
-            'method DELETE with args' => array(
-                $params,
-                'delete',
-                $args,
-                null,
-                $this->getEncodedMessageToPush($params, 'delete', $args),
-            ),
-            'any method with tags' => array(
-                $params,
-                'get',
-                $args,
-                $tags,
-                $this->getEncodedMessageToPush($params, 'get', $args, $tags),
+            'methodPostWithTagsWithExistingTokenServerUrlWithoutSlashWithPort' => array(
+                'arguments' => array(
+                    'pushArguments' => array(
+                        'id' => $params['id'],
+                        'stamp' => $params['stamp'],
+                        'uri' => $params['uri'],
+                        'method' => 'post',
+                        'arguments' => null,
+                        'tags' => $tags,
+                    ),
+                    'serverUrl' => 'http://dummy-trigger-server.com:8080',
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => array('external_token_trigger' => $token1),
+                ),
+                'saveSetting' => array(
+                    'arguments' => null,
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'method' => Client::POST_METHOD,
+                    'serverUrl' => 'http://dummy-trigger-server.com:8080/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $params['id'],
+                            'stamp' => $params['stamp'],
+                            'trigger' => array(
+                                'url' => $params['uri'],
+                                'method' => 'post',
+                            ),
+                            'tags' => $tags
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token1,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
             ),
         );
     }
 
     /**
-     * @param array $params
-     * @param string $method
-     * @param array $args
-     * @param array|null $tags
-     * @return string
+     * Testing adding or updating triggers tasks.
+     *
+     * @dataProvider providerPush
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::push
+     * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
+     * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
+     * @param array $saveSetting settings for mock simulator \Administration::getConfigForModule.
+     * @param array $expected all all expectations(http method, server url, generated message).
      */
-    private function getEncodedMessageToPush($params, $method, $args, $tags = null)
+    public function testPush($arguments, $getConfigForModule, $saveSetting, $expected)
     {
-        $encodedMessageToSend = array(
-            'url' => static::SITE_URL,
-            'id' => $params['id'],
-            'stamp' => $params['stamp'],
-            'trigger' => array(
-                'url' => $params['uri'],
-                'method' => $method,
-            ),
-        );
-
-        if ($args && !in_array($method, array('get', 'delete'))) {
-            $encodedMessageToSend['trigger']['args'] = $args;
-        }
-
-        if ($tags) {
-            $encodedMessageToSend['tags'] = $tags;
-        }
-
-        return json_encode($encodedMessageToSend);
-    }
-
-    /**
-     * @param boolean $isConfigured
-     * @param boolean $send
-     * @param boolean $returned
-     * @dataProvider providerCheckIsConfigured
-     * @covers ::push
-     */
-    public function testPushIsConfigured($isConfigured, $send, $returned)
-    {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
+        $this->sugarConfig->method('get')->willReturnMap(array(
+            array('trigger_server.url', null, $arguments['serverUrl']),
             array('site_url', null, ClientTest::SITE_URL),
         ));
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->exactly($send ? 1 : 0))
+        AdministrationCRYS1494::$saveSetting['returns'] = $saveSetting['returns'];
+        AdministrationCRYS1494::$getConfigForModule['returns'] = $getConfigForModule['returns'];
+
+        if (!empty($arguments['token'])) {
+            $this->client->method('createGuid')->willReturn($arguments['token']);
+        }
+
+        $this->httpHelper
+            ->expects($this->once())
             ->method('send')
+            ->with(
+                $this->equalTo($expected['method']),
+                $this->equalTo($expected['serverUrl']),
+                $this->equalTo($expected['message']),
+                $this->equalTo($expected['headers'])
+            )
             ->willReturn(true);
 
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
+        $result = $this->client->push(
+            $arguments['pushArguments']['id'],
+            $arguments['pushArguments']['stamp'],
+            $arguments['pushArguments']['method'],
+            $arguments['pushArguments']['uri'],
+            $arguments['pushArguments']['arguments'],
+            $arguments['pushArguments']['tags']
+        );
 
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
+        $this->assertTrue($result);
 
-        $this->assertEquals($returned, $client->push('dummy-id', 'dummy-stamp', 'get', '/dummy-uri', null, null));
+        if (!empty($saveSetting['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$saveSetting['calls']);
+            foreach (AdministrationCRYS1494::$saveSetting['calls'][0] as $key => $value) {
+                $this->assertEquals($saveSetting['arguments'][$key], $value);
+            }
+        }
+
+        if (!empty($getConfigForModule['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$getConfigForModule['calls']);
+
+            foreach (AdministrationCRYS1494::$getConfigForModule['calls'][0] as $key => $value) {
+                $this->assertEquals($getConfigForModule['arguments'][$key], $value);
+            }
+        }
     }
 
     /**
-     * @covers ::delete
+     * Testing case when trigger server not configured.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::delete
      */
-    public function testDelete()
+    public function testDeleteNotConfigured()
     {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
+        $triggerId = 'trigger:id:' . rand(1000, 9999);
+
+        $this->sugarConfig->method('get')->will($this->returnValueMap(array(
+            array('trigger_server.url', null, null),
+            array('site_url', null, ClientTest::SITE_URL),
+        )));
+
+        $this->loggerManager->expects($this->once())
+            ->method('error')
+            ->with($this->equalTo('Trigger\\Client::push - attempt to use client which is not configured.'));
+
+        $this->httpHelper
+            ->expects($this->never())
+            ->method('send');
+
+        $result = $this->client->delete($triggerId);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Data provider for testDelete.
+     *
+     * @see \Sugarcrm\SugarcrmTests\Trigger\ClientTest::testPush
+     * @return array
+     */
+    public static function deleteProvider()
+    {
+        $id1 = 'trigger:id:1:' . rand(1000, 9999);
+        $id2 = 'trigger:id:2:' . rand(1000, 9999);
+
+        $token1 = 'token:1:' . rand(1000, 9999);
+        $token2 = 'token:2:' . rand(1000, 9999);
+
+        return array(
+            'retrieveTokenUrlServerUrlWithSlash' => array(
+                'arguments' => array(
+                    'id' => $id1,
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'token' => $token1,
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => null,
+                ),
+                'saveSetting' => array(
+                    'arguments' => array('auth', 'external_token_trigger', $token1, 'base'),
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $id1,
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token1,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
+            ),
+            'existingTokenUrlServerUrlWithoutSlash' => array(
+                'arguments' => array(
+                    'id' => $id2,
+                    'serverUrl' => 'http://dummy-trigger-server',
+                    'token' => null,
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => array('external_token_trigger' => $token2),
+                ),
+                'saveSetting' => array(
+                    'arguments' => null,
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'id' => $id2,
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token2,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
+            )
+        );
+    }
+
+    /**
+     * Testing deleting triggers tasks.
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::delete
+     * @dataProvider deleteProvider
+     * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
+     * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
+     * @param array $saveSetting settings for mock simulator \Administration::getConfigForModule.
+     * @param array $expected all all expectations(http method, server url, generated message).
+     */
+    public function testDelete($arguments, $getConfigForModule, $saveSetting, $expected)
+    {
+        $this->sugarConfig->method('get')->willReturnMap(array(
+            array('trigger_server.url', null, $arguments['serverUrl']),
             array('site_url', null, ClientTest::SITE_URL),
         ));
 
-        $triggerId = 'dummy-id';
-        $triggerServerDeleteUrl = static::TRIGGER_SERVER_URL . Client::DELETE_URI;
-        $headers = $this->getDefaultAuthHeaders();
+        AdministrationCRYS1494::$saveSetting['returns'] = $saveSetting['returns'];
+        AdministrationCRYS1494::$getConfigForModule['returns'] = $getConfigForModule['returns'];
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->once())
+        if (!empty($arguments['token'])) {
+            $this->client->method('createGuid')->willReturn($arguments['token']);
+        }
+
+        $this->httpHelper
+            ->expects($this->once())
             ->method('send')
             ->with(
                 $this->equalTo(Client::DELETE_METHOD),
-                $this->equalTo($triggerServerDeleteUrl),
-                $this->equalTo($this->getEncodedMessageToDelete($triggerId)),
-                $this->equalTo($headers)
+                $this->equalTo($expected['serverUrl']),
+                $this->equalTo($expected['message']),
+                $this->equalTo($expected['headers'])
             )
             ->willReturn(true);
 
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
+        $result = $this->client->delete($arguments['id']);
 
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
+        $this->assertTrue($result);
 
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
+        if (!empty($saveSetting['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$saveSetting['calls']);
 
-        $client->delete($triggerId);
+            foreach (AdministrationCRYS1494::$saveSetting['calls'][0] as $key => $value) {
+                $this->assertEquals($saveSetting['arguments'][$key], $value);
+            }
+        }
+
+        if (!empty($getConfigForModule['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$getConfigForModule['calls']);
+
+            foreach (AdministrationCRYS1494::$getConfigForModule['calls'][0] as $key => $value) {
+                $this->assertEquals($getConfigForModule['arguments'][$key], $value);
+            }
+        }
     }
 
     /**
-     * @param string $id
-     * @return string
+     * Testing case when trigger server not configured.
+     *
+     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
      */
-    private function getEncodedMessageToDelete($id)
+    public function testDeleteByTagsNotConfigured()
     {
-        return json_encode(array(
-            'url' => static::SITE_URL,
-            'id' => $id,
-        ));
-    }
+        $tags = array('tag1' . rand(1000, 9999), 'tag2' . rand(1000, 9999));
 
-    /**
-     * @param boolean $isConfigured
-     * @param boolean $send
-     * @param boolean $returned
-     * @dataProvider providerCheckIsConfigured
-     * @covers ::delete
-     */
-    public function testDeleteIsConfigured($isConfigured, $send, $returned)
-    {
-        $triggerId = 'dummy-id';
-
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
+        $this->sugarConfig->method('get')->will($this->returnValueMap(array(
+            array('trigger_server.url', null, null),
             array('site_url', null, ClientTest::SITE_URL),
-        ));
+        )));
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->exactly($send ? 1 : 0))
-            ->method('send')
-            ->willReturn(true);
+        $this->loggerManager->expects($this->once())
+            ->method('error')
+            ->with($this->equalTo('Trigger\\Client::push - attempt to use client which is not configured.'));
 
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
+        $this->httpHelper
+            ->expects($this->never())
+            ->method('send');
 
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
+        $result = $this->client->deleteByTags($tags);
 
-        $this->assertEquals($returned, $client->delete($triggerId));
+        $this->assertFalse($result);
     }
 
     /**
-     * @param array $tags
-     * @param int $sendCallsCount
-     * @param boolean $expected
-     * @dataProvider providerDeleteByTags
-     * @covers ::deleteByTags
+     * Data provider for testDeleteWitInvalidTags with invalid tags.
+     *
+     * @see \Sugarcrm\SugarcrmTests\Trigger\ClientTest::testDeleteWitInvalidTags
+     * @return array
      */
-    public function testDeleteByTags($tags, $sendCallsCount, $expected)
+    public function deleteWitInvalidTagsProvider()
     {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, ClientTest::TRIGGER_SERVER_URL),
+        return array(
+            'emptyArray' => array('tags' => array()),
+            'string' => array('tags' => 'some:tags:string'),
+            'null' => array('tags' => null),
+        );
+    }
+
+    /**
+     * Testing deleteByTags with invalid tags.
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
+     * @dataProvider deleteWitInvalidTagsProvider
+     * @param mixed $tags variant of invalid tags.
+     */
+    public function testDeleteWitInvalidTags($tags)
+    {
+        $this->sugarConfig->method('get')->will($this->returnValueMap(array(
+            array('trigger_server.url', null, 'http://dummy-trigger-server/'),
             array('site_url', null, ClientTest::SITE_URL),
-        ));
+        )));
 
-        $triggerServerDeleteByTagsUrl = static::TRIGGER_SERVER_URL . Client::DELETE_BY_TAGS_URI;
-        $headers = $this->getDefaultAuthHeaders();
+        $this->httpHelper
+            ->expects($this->never())
+            ->method('send');
 
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->exactly($sendCallsCount))
+        $result = $this->client->deleteByTags($tags);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Data provider for testDeleteByTags.
+     *
+     * @see \Sugarcrm\SugarcrmTests\Trigger\ClientTest::testDeleteByTags
+     * @return array
+     */
+    public static function deleteByTagsProvider()
+    {
+        $tags1 = array('tag1:1:' . rand(1000, 9999), 'tag1:2:' . rand(1000, 9999));
+        $tags2 = array('tag2:1:' . rand(1000, 9999), 'tag2:2:' . rand(1000, 9999));
+
+        $token1 = 'token:1:' . rand(1000, 9999);
+        $token2 = 'token:2:' . rand(1000, 9999);
+
+        return array(
+            'retrieveTokenUrlServerUrlWithSlash' => array(
+                'arguments' => array(
+                    'tags' => $tags1,
+                    'serverUrl' => 'http://dummy-trigger-server/',
+                    'token' => $token1,
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => null,
+                ),
+                'saveSetting' => array(
+                    'arguments' => array('auth', 'external_token_trigger', $token1, 'base'),
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'serverUrl' => 'http://dummy-trigger-server/' . Client::DELETE_BY_TAGS_URI,
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'tags' => $tags1,
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token1,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
+            ),
+            'existingTokenUrlServerUrlWithoutSlash' => array(
+                'arguments' => array(
+                    'tags' => $tags2,
+                    'serverUrl' => 'http://dummy-trigger-server',
+                    'token' => null,
+                ),
+                'getConfigForModule' => array(
+                    'arguments' => array('auth', 'base', true),
+                    'returns' => array('external_token_trigger' => $token2),
+                ),
+                'saveSetting' => array(
+                    'arguments' => null,
+                    'returns' => null,
+                ),
+                'expected' => array(
+                    'serverUrl' => 'http://dummy-trigger-server/' . Client::DELETE_BY_TAGS_URI,
+                    'message' => json_encode(
+                        array(
+                            'url' => static::SITE_URL,
+                            'tags' => $tags2,
+                        )
+                    ),
+                    'headers' => array(
+                        Client::AUTH_TOKEN_HEADER . ': ' . $token2,
+                        Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
+                    ),
+                ),
+            )
+        );
+    }
+
+    /**
+     * Testing deleting triggers tasks.
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
+     * @dataProvider deleteByTagsProvider
+     * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
+     * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
+     * @param array $saveSetting settings for mock simulator \Administration::getConfigForModule.
+     * @param array $expected all all expectations(http method, server url, generated message).
+     */
+    public function testDeleteByTags($arguments, $getConfigForModule, $saveSetting, $expected)
+    {
+        $this->sugarConfig->method('get')->will($this->returnValueMap(array(
+            array('trigger_server.url', null, $arguments['serverUrl']),
+            array('site_url', null, ClientTest::SITE_URL),
+        )));
+
+        AdministrationCRYS1494::$saveSetting['returns'] = $saveSetting['returns'];
+        AdministrationCRYS1494::$getConfigForModule['returns'] = $getConfigForModule['returns'];
+
+        if (!empty($arguments['token'])) {
+            $this->client->method('createGuid')->willReturn($arguments['token']);
+        }
+
+        $this->httpHelper
+            ->expects($this->once())
             ->method('send')
             ->with(
-                $this->equalTo(Client::DELETE_BY_TAGS_METHOD),
-                $this->equalTo($triggerServerDeleteByTagsUrl),
-                $this->equalTo($this->getEncodedMessageToDeleteByTags($tags)),
-                $this->equalTo($headers)
+                $this->equalTo(Client::DELETE_METHOD),
+                $this->equalTo($expected['serverUrl']),
+                $this->equalTo($expected['message']),
+                $this->equalTo($expected['headers'])
             )
             ->willReturn(true);
 
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
+        $result = $this->client->deleteByTags($arguments['tags']);
 
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
+        $this->assertTrue($result);
 
-        $this->assertEquals($expected, $client->deleteByTags($tags));
+        if (!empty($saveSetting['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$saveSetting['calls']);
+
+            foreach (AdministrationCRYS1494::$saveSetting['calls'][0] as $key => $value) {
+                $this->assertEquals($saveSetting['arguments'][$key], $value);
+            }
+        }
+
+        if (!empty($getConfigForModule['arguments'])) {
+            $this->assertCount(1, AdministrationCRYS1494::$getConfigForModule['calls']);
+
+            foreach (AdministrationCRYS1494::$getConfigForModule['calls'][0] as $key => $value) {
+                $this->assertEquals($getConfigForModule['arguments'][$key], $value);
+            }
+        }
     }
 
     /**
-     * (array of tags, expected result)
+     * Data provider for testCheckTriggerServerSettings.
+     *
+     * @see \Sugarcrm\SugarcrmTests\Trigger\ClientTest::testCheckTriggerServerSettings
      * @return array
      */
-    public function providerDeleteByTags()
+    public function checkTriggerServerSettingsProvider()
     {
         return array(
-            'false if $tags is empty' => array(array(), 0, false),
-            'true if $tags contains one tag' => array(array('tag'), 1, true),
-            'true if $tags contains three tags' => array(array('tag 1', 'tag 2', 'tag 3'), 1, true),
+            'invalidUrl' => array(
+                'url' => 'invalid-url',
+                'expectedPingCallsCount' => 0,
+                'pingReturns' => null,
+                'expectedResult' => false,
+            ),
+            'validUrlButPingFail' => array(
+                'url' => 'http://dummy-site.com',
+                'expectedPingCallsCount' => 1,
+                'pingReturns' => false,
+                'expectedResult' => false,
+            ),
+            'validUrlAndPingSuccess' => array(
+                'url' => 'http://dummy-site.com',
+                'expectedPingCallsCount' => 1,
+                'pingReturns' => true,
+                'expectedResult' => true,
+            ),
         );
     }
 
     /**
-     * @param array $tags
-     * @return string
+     * Testing checks trigger server settings.
+     *
+     * @param string $url url for checking.
+     * @param int $expectedPingCallsCount expected count calls of method ping.
+     * @param bool $pingReturns method ping will return.
+     * @param bool $expectedResult expected result.
+     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::::checkTriggerServerSettings
+     * @dataProvider checkTriggerServerSettingsProvider
      */
-    private function getEncodedMessageToDeleteByTags($tags)
+    public function testCheckTriggerServerSettings($url, $expectedPingCallsCount, $pingReturns, $expectedResult)
     {
-        return json_encode(array(
-            'url' => static::SITE_URL,
-            'tags' => $tags,
-        ));
-    }
-
-    /**
-     * @param boolean $isConfigured
-     * @param boolean $send
-     * @param boolean $returned
-     * @dataProvider providerCheckIsConfigured
-     * @covers ::delete
-     */
-    public function testDeleteByTagsIsConfigured($isConfigured, $send, $returned)
-    {
-        $sugarConfig = $this->getSugarConfigMock();
-        $sugarConfig->method('get')->willReturnMap(array(
-            array('trigger_server.url', null, $isConfigured ? ClientTest::TRIGGER_SERVER_URL : ''),
-            array('site_url', null, ClientTest::SITE_URL),
-        ));
-
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->exactly($send ? 1 : 0))
-            ->method('send')
-            ->willReturn(true);
-
-        $adminBean = $this->getAdministrationBeanMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_trigger' => static::TOKEN)),
-        ));
-
-        $client = $this->getClientMock(array(
-            'getAdministrationBean',
-            'getSugarConfig',
-            'getHttpHelper',
-        ));
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getSugarConfig')->willReturn($sugarConfig);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
-
-        $this->assertEquals($returned, $client->deleteByTags(array('tag 1', 'tag 2', 'tag 3')));
-    }
-
-    /**
-     * (is Trigger server configured, is HttpHelper::send() called, returned)
-     * @return array
-     */
-    public function providerCheckIsConfigured()
-    {
-        return array(
-            'Trigger server is not configured' => array(false, false, false),
-            'Trigger server is configured' => array(true, true, true),
-        );
-    }
-
-    /**
-     * @param string $url
-     * @param int $count
-     * @param bool $returnPing
-     * @param bool $return
-     * @covers ::checkTriggerServerSettings
-     * @dataProvider providerCheckTriggerServerSettings
-     */
-    public function testCheckTriggerServerSettings($url, $count, $returnPing, $return)
-    {
-        $httpHelper = $this->getHttpHelperMock();
-        $httpHelper->expects($this->exactly($count))
+        $this->httpHelper->expects($this->exactly($expectedPingCallsCount))
             ->method('ping')
-            ->with($this->equalTo($url))
-            ->willReturn($returnPing);
+            ->with($url)
+            ->willReturn($pingReturns);
 
-        $client = $this->getClientMock(array('getHttpHelper'));
-        $client->method('getHttpHelper')->willReturn($httpHelper);
+        $this->assertEquals($expectedResult, $this->client->checkTriggerServerSettings($url));
+    }
+}
 
-        $this->assertEquals($return, $client->checkTriggerServerSettings($url));
+/**
+ * Mock for \Administration.
+ */
+class AdministrationCRYS1494 extends \Administration
+{
+    /** @var array */
+    public static $getConfigForModule = array(
+        'calls' => array(),
+        'returns' => null,
+    );
+
+    /** @var array */
+    public static $saveSetting = array(
+        'calls' => array(),
+        'returns' => null,
+    );
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct()
+    {
+
     }
 
     /**
-     * (url,
-     * expected HttpHelper::ping number of calls,
-     * HttpHelper::ping returns,
-     * Client::checkTriggerServerSettings returns)
-     * @return array
+     * @inheritDoc
      */
-    public function providerCheckTriggerServerSettings()
+    public function getConfigForModule($module, $platform = 'base', $clean = false)
     {
-        return array(
-            'invalid url' => array('dummy-url', 0, null, false),
-            'valid url but ping fail' => array('http://dummy-site.com', 1, false, false),
-            'valid url and ping success' => array('http://dummy-site.com', 1, true, true),
-        );
+        static::$getConfigForModule['calls'][] = func_get_args();
+        return static::$getConfigForModule['returns'];
     }
 
     /**
-     * @param string[] $methods
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Trigger\Client|Object
+     * @inheritDoc
      */
-    protected function getClientMock($methods)
+    public function saveSetting()
     {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Trigger\Client')
-            ->setMethods($methods)
-            ->getMock();
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Trigger\HttpHelper
-     */
-    protected function getHttpHelperMock()
-    {
-        return $this->getMockBuilder('Sugarcrm\Sugarcrm\Trigger\HttpHelper')->getMock();
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\SugarConfig
-     */
-    protected function getSugarConfigMock()
-    {
-        return $this->getMockBuilder('SugarConfig')->getMock();
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Administration
-     */
-    protected function getAdministrationBeanMock()
-    {
-        return $this->getMockBuilder('Administration')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getDefaultAuthHeaders()
-    {
-        return array(
-            Client::AUTH_TOKEN_HEADER . ': ' . static::TOKEN,
-            Client::AUTH_VERSION_HEADER . ': ' . Client::AUTH_VERSION,
-        );
+        static::$saveSetting['calls'][] = func_get_args();
+        return static::$saveSetting['returns'];
     }
 }
