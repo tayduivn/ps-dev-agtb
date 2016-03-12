@@ -33,8 +33,8 @@
             /**
              * @inheritdoc
              */
-            initialize: function(models, options) {
-                app.BeanCollection.prototype.initialize.call(this, models, options);
+            initialize: function(attributes, options) {
+                app.Bean.prototype.initialize.call(this, attributes);
                 this.on('sync', function(model, data, options, request) {
                     if (!_.isUndefined(model.children.rootCollection)) {
                         app.events.trigger(
