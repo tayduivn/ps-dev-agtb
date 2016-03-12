@@ -931,7 +931,7 @@
              */
             _triggerChange: function(change, options) {
                 this.parent.trigger('change:' + this.fieldName, this.parent, this, change, options);
-                this.parent.trigger('change', this, options);
+                this.parent.trigger('change', this.parent, options);
             }
         });
 
