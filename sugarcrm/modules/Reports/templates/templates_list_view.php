@@ -759,24 +759,38 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	if (count($rowArray) <= 0) {
 		return array();
 	} // if
+
+    $lastGroupedRow = array();
+    $groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[0]['name'] .
+    '#' . $group_def_array[0]['table_key']]['label'];
+    $rowsAndColumnsData = array();
+
     // generate rows and columns data in tree structure
     for ($i = 0; $i < count($rowArray); $i++) {
         $row = $rowArray[$i];
-        $rowsAndColumnsData[$i] = array();
         for ($j = 0; $j < count($group_def_array); $j++) {
-            $groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name'] . "#" . $group_def_array[$j]['table_key']]['label'];
-            $key = $reporter->group_defs_Info[$group_def_array[$j]['name'] . "#" . $group_def_array[$j]['table_key']]['index'];
+            $key = $reporter->group_defs_Info[$group_def_array[$j]['name'] .
+            '#' . $group_def_array[$j]['table_key']]['index'];
+
             if ($j == 0) {
-                $rowsAndColumnsData[$i][$groupByColumnLabel] = $row['cells'][$key];
+                if ($lastGroupedRow[$groupByColumnLabel] != $row['cells'][$key]) {
+                    if (sizeof($lastGroupedRow)) {
+                        $rowsAndColumnsData[] = $lastGroupedRow;
+                    }
+                    $lastGroupedRow = array($groupByColumnLabel => $row['cells'][$key]);
+                }
             } else {
                 $rowData = array();
                 for ($k = 0; $k < count($headerRowIndexExceptGpBy); $k++) {
                     $indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
                     $rowData[$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
                 }
-                $rowsAndColumnsData[$i][$row['cells'][$key]] = $rowData;
+                $lastGroupedRow[$row['cells'][$key]] = $rowData;
             }
         }
+    }
+    if (sizeof($lastGroupedRow)) {
+        $rowsAndColumnsData[] = $lastGroupedRow;
     }
 
 	// generates row level summation and grand total
