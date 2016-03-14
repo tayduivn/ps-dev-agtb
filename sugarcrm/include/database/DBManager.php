@@ -2025,14 +2025,29 @@ protected function checkQuery($sql, $object_name = false)
 		self::$queryCount = 0;
 	}
 
-	/**
-	 * This function increments the global $sql_queries variable
-	 *
-	 * @param string $sql The query that was just run
-	 */
-	public function countQuery($sql = '')
-	{
+    /**
+     * @param int $amount
+     */
+    public static function increaseQueryLimit($amount = 1)
+    {
+        self::$queryLimit += $amount;
+    }
+
+    /**
+     * This function increments the global $sql_queries variable
+     *
+     * @param string $sql The query that was just run
+     */
+    public function countQuery($sql = '')
+    {
         global $current_user;
+        //Need to use a static flag to prevent possible loops
+        static $in_count_query;
+
+        if ($in_count_query) {
+            return;
+        }
+        $in_count_query = true;
         if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
             && (empty($GLOBALS['current_user']) || !$current_user->isDeveloperForAnyModule())
         ) {
@@ -2042,8 +2057,9 @@ protected function checkQuery($sql, $object_name = false)
             }
             $resourceManager = ResourceManager::getInstance();
             $resourceManager->notifyObservers('ERR_QUERY_LIMIT');
-		}
-	}
+        }
+        $in_count_query = false;
+    }
 
 	/**
 	 * Pre-process string for quoting
