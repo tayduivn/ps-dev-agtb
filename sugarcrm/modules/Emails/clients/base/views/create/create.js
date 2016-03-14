@@ -9,14 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Since 7.9. Use {@link View.Views.Base.Emails.CreateView} instead.
- *
  * @class View.Views.Base.Emails.ComposeView
  * @alias SUGAR.App.view.views.BaseEmailsComposeView
- * @extends View.Views.Base.RecordView
+ * @extends View.Views.Base.CreateView
  */
 ({
-    extendsFrom: 'RecordView',
+    extendsFrom: 'CreateView',
 
     _lastSelectedSignature: null,
     ATTACH_TYPE_SUGAR_DOCUMENT: 'document',
@@ -35,9 +33,6 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        app.logger.warn('Warning: View.Views.Base.Emails.ComposeView is deprecated since 7.9.0 and will be ' +
-            'removed in 7.11.0. Use View.Views.Base.Emails.CreateView instead.');
-
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleSenderOptionClick'
         });
@@ -66,21 +61,21 @@
      * @inheritdoc
      */
     _render: function() {
-        var prepopulateValues;
-
         this._super('_render');
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }
 
-        prepopulateValues = this.context.get('prepopulate');
-        if (!_.isEmpty(prepopulateValues)) {
-            this.prepopulate(prepopulateValues);
-        }
-        this.addSenderOptions();
+        if (this.model.isNotEmpty) {
+            var prepopulateValues = this.context.get('prepopulate');
+            if (!_.isEmpty(prepopulateValues)) {
+                this.prepopulate(prepopulateValues);
+            }
+            this.addSenderOptions();
 
-        if (this.model.isNew()) {
-            this._updateEditorWithSignature(this._lastSelectedSignature);
+            if (this.model.isNew()) {
+                this._updateEditorWithSignature(this._lastSelectedSignature);
+            }
         }
 
         this.notifyConfigurationStatus();
@@ -460,15 +455,6 @@
         var myURL,
             sendModel = this.initializeSendEmailModel();
 
-        if (this._hasInvalidRecipients(sendModel)) {
-            app.alert.show('mail_invalid_recipients', {
-                level: 'error',
-                messages: app.lang.get('ERR_INVALID_RECIPIENTS', this.module)
-            });
-            this.setMainButtonsDisabled(false);
-            return;
-        }
-
         this.setMainButtonsDisabled(true);
         app.alert.show('mail_call_status', {level: 'process', title: pendingMessage});
 
@@ -512,26 +498,6 @@
     },
 
     /**
-     * Check if the recipients in any of the recipient fields are invalid.
-     *
-     * @param {Backbone.Model} model
-     * @return {boolean} Return true if there are invalid recipients in any of
-     *   the fields. Return false otherwise.
-     * @private
-     */
-    _hasInvalidRecipients: function(model) {
-        return _.some(['to_addresses', 'cc_addresses', 'bcc_addresses'], function(fieldName) {
-            var recipients = model.get(fieldName);
-            if (!recipients) {
-                return false;
-            }
-            return _.some(recipients.models, function(recipient) {
-                return recipient.get('_invalid');
-            });
-        }, this);
-    },
-
-    /**
      * Open the drawer with the EmailTemplates selection list layout. The callback should take the data passed to it
      * and replace the existing editor contents with the selected template.
      */
@@ -557,7 +523,7 @@
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
                 success: _.bind(this.confirmTemplate, this),
-                error: _.bind(function(model, error) {
+                error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -617,7 +583,7 @@
                         this.insertTemplateAttachments(data.models);
                     }
                 }, this),
-                error: _.bind(function(collection, error) {
+                error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -686,7 +652,7 @@
                         type: this.ATTACH_TYPE_SUGAR_DOCUMENT
                     });
                 }, this),
-                error: _.bind(function(model, error) {
+                error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -744,7 +710,7 @@
                         this._lastSelectedSignature = model;
                     }
                 }, this),
-                error: _.bind(function(model, error) {
+                error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
             });
