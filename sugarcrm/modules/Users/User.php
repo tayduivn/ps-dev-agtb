@@ -1101,10 +1101,13 @@ EOQ;
         // ~jmorais@dri
 		global $locale;
 
-		$query = "SELECT u1.first_name, u1.last_name from users  u1, users  u2 where u1.id = u2.reports_to_id AND u2.id = '$this->id' and u1.deleted=0";
-		$result = $this->db->query($query, true, "Error filling in additional detail fields");
-
-		$row = $this->db->fetchByAssoc($result);
+        $query = 'SELECT u1.first_name, u1.last_name
+            FROM users u1, users u2
+            WHERE u1.id = u2.reports_to_id
+                AND u2.id = ?
+                AND u1.deleted = 0';
+        $stmt = $this->db->getConnection()->executeQuery($query, [$this->id]);
+        $row = $stmt->fetch();
 
 		if ($row != null) {
             global $locale;
@@ -1157,28 +1160,36 @@ EOQ;
 		global $mod_strings, $current_user;
 		$verified = true;
 
+        $conn = $this->db->getConnection();
 		if (!empty ($this->id)) {
 			// Make sure the user doesn't report to themselves.
 			$reports_to_self = 0;
 			$check_user = $this->reports_to_id;
 			$already_seen_list = array ();
-			while (!empty ($check_user)) {
-				if (isset ($already_seen_list[$check_user])) {
-					// This user doesn't actually report to themselves
-					// But someone above them does.
-					$reports_to_self = 1;
-					break;
-				}
-				if ($check_user == $this->id) {
-					$reports_to_self = 1;
-					break;
-				}
-				$already_seen_list[$check_user] = 1;
-				$query = "SELECT reports_to_id FROM users WHERE id='".$this->db->quote($check_user)."'";
-				$result = $this->db->query($query, true, "Error checking for reporting-loop");
-				$row = $this->db->fetchByAssoc($result);
-				$check_user = $row['reports_to_id'];
-			}
+            if (!empty($check_user)) {
+                $query = 'SELECT reports_to_id
+                    FROM users
+                    WHERE id = ?';
+                $stmt = $conn->prepare($query);
+                while (!empty($check_user)) {
+                    if (isset($already_seen_list[$check_user])) {
+                        // This user doesn't actually report to themselves
+                        // But someone above them does.
+                        $reports_to_self = 1;
+                        break;
+                    }
+                    if ($check_user == $this->id) {
+                        $reports_to_self = 1;
+                        break;
+                    }
+                    $already_seen_list[$check_user] = 1;
+                    $stmt->bindValue(1, $check_user);
+                    $stmt->execute();
+                    $row = $stmt->fetch();
+                    $check_user = $row['reports_to_id'];
+                }
+                $stmt->closeCursor();
+            }
 
 			if ($reports_to_self == 1) {
 				$this->error_string .= $mod_strings['ERR_REPORT_LOOP'];
@@ -1191,10 +1202,16 @@ EOQ;
 			}
 		}
 
-		$query = "SELECT user_name from users where user_name='".$this->db->quote($this->user_name)."' AND deleted=0";
-		if(!empty($this->id))$query .=  " AND id<>'$this->id'";
-		$result = $this->db->query($query, true, "Error selecting possible duplicate users: ");
-		$dup_users = $this->db->fetchByAssoc($result);
+        $qb = $conn->createQueryBuilder();
+        $query = $qb->select('user_name')
+            ->from($this->table_name)
+            ->where($qb->expr()->eq('user_name', $qb->createPositionalParameter($this->user_name)))
+            ->andWhere('deleted = 0');
+        if (!empty($this->id)) {
+            $query->andWhere($qb->expr()->neq('id', $qb->createPositionalParameter($this->id)));
+        }
+        $stmt = $query->execute();
+        $dup_users = $stmt->fetch();
 
 		if (!empty($dup_users)) {
             // Due to the amount of legacy code and no clear separation between logic and presentation layers, this is
@@ -1209,7 +1226,8 @@ EOQ;
 		}
 
 		if (is_admin($current_user)) {
-		    $remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where is_admin = 1 AND deleted=0");
+            $query = 'SELECT COUNT(*) AS c FROM users WHERE is_admin = 1 AND deleted = 0';
+            $remaining_admins = $conn->fetchColumn($query);
 
 			if (($remaining_admins <= 1) && ($this->is_admin != '1') && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");

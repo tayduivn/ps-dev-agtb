@@ -6254,45 +6254,48 @@ class SugarBean
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';
         $table = $GLOBALS['dictionary'][$object]['table'];
         $hasCustomFields = false;
-        $query  = 'SELECT id';
+        $selectFields = ['id'];
         foreach($fields as $field=>$alias){
             if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])){
-                $query .= ' ,' .$this->db->concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields']) .  ' as ' . $alias ;
+                $selectFields[]
+                    = $this->db->concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])
+                        . ' AS ' . $alias;
             }else if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]) &&
                 (empty($GLOBALS['dictionary'][$object]['fields'][$field]['source']) ||
                 $GLOBALS['dictionary'][$object]['fields'][$field]['source'] != "non-db"))
             {
                 if ('_c' == strtolower(substr($field, -2))) {
-                    $query .= ' ,' . $table . '_cstm.' . $field . ' as ' . $alias;
+                    $selectFields[] = $table . '_cstm.' . $field . ' AS ' . $alias;
                     $hasCustomFields = true;
                 } else {
-                    $query .= ' ,' . $table . '.' . $field . ' as ' . $alias;
+                    $selectFields[] = $table . '.' . $field . ' AS ' . $alias;
                 }
             }
             if(!$return_array)$this->$alias = '';
         }
-        if($query == 'SELECT id' || empty($id)){
+        if (count($selectFields) == 1 || empty($id)) {
             return '';
         }
 
 
         if(isset($GLOBALS['dictionary'][$object]['fields']['assigned_user_id']))
         {
-            $query .= " , ".	$table  . ".assigned_user_id owner";
-
+            $selectFields[] = $table . '.assigned_user_id AS owner';
         }
         else if(isset($GLOBALS['dictionary'][$object]['fields']['created_by']))
         {
-            $query .= " , ".	$table . ".created_by owner";
-
+            $selectFields[] = $table . '.created_by AS owner';
         }
+        $qb = $this->db->getConnection()->createQueryBuilder();
+        $qb->select($selectFields)
+            ->from($table)
+            ->where('deleted = 0')
+            ->andWhere($qb->expr()->eq('id', $qb->createPositionalParameter($id)));
         if ($hasCustomFields) {
-            $query .=  ' FROM ' . $table  . ', ' . $table . '_cstm WHERE deleted=0 AND id=id_c AND id=';
-        } else {
-            $query .=  ' FROM ' . $table  . ' WHERE deleted=0 AND id=';
+            $qb->leftJoin($table, $table . '_cstm', $table . '_cstm', 'id = id_c');
         }
-        $result = $GLOBALS['db']->query($query . "'$id'" );
-        $row = $GLOBALS['db']->fetchByAssoc($result, true);
+        $stmt = $qb->execute();
+        $row = $stmt->fetch();
         if($return_array){
             return $row;
         }

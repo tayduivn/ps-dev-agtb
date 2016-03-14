@@ -72,14 +72,13 @@ class TeamMembership extends SugarBean {
     public function retrieve_by_user_and_team($user_id, $team_id)
     {
         // determine whether the user is already on the team
-        $query = sprintf(
-            'SELECT id FROM team_memberships WHERE user_id = %s AND team_id = %s AND deleted = 0',
-            $this->db->quoted($user_id),
-            $this->db->quoted($team_id)
-        );
-        $result = $this->db->query($query, TRUE, "Error finding team memberships: ");
-
-        $row = $this->db->fetchByAssoc($result);
+        $query = 'SELECT id
+            FROM team_memberships
+            WHERE user_id = ?
+                AND team_id = ?
+                AND deleted = 0';
+        $stmt = $this->db->getConnection()->executeQuery($query, [$user_id, $team_id]);
+        $row = $stmt->fetch();
 
         if ($row!= null) {
             $this->retrieve($row['id']);

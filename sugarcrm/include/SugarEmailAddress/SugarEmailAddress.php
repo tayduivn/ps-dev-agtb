@@ -1292,22 +1292,22 @@ class SugarEmailAddress extends SugarBean
 
     public function stash($parentBeanId, $moduleName)
     {
-        $result = $this->db->query("select email_address_id from email_addr_bean_rel eabr WHERE eabr.bean_id = '".$this->db->quote($parentBeanId)."' AND eabr.bean_module = '".$this->db->quote($moduleName)."' and eabr.deleted=0");
+        $conn = $this->db->getConnection();
+        $qb = $conn->createQueryBuilder();
+        $qbSubquery = $conn->createQueryBuilder();
+        $qbSubquery->select('email_address_id')
+            ->from('email_addr_bean_rel')
+            ->where($qbSubquery->expr()->eq('bean_id', $qbSubquery->createPositionalParameter($parentBeanId)))
+            ->andWhere($qbSubquery->expr()->eq('bean_module', $qbSubquery->createPositionalParameter($moduleName)))
+            ->andWhere($qbSubquery->expr()->eq('deleted', 0));
+        $query = $qb->select('id', 'email_address', 'invalid_email', 'opt_out')
+            ->from($this->table_name)
+            ->where($qb->expr()->in('id', $qb->importSubQuery($qbSubquery)))
+            ->andWhere($qb->expr()->eq('deleted', 0));
+        $stmt = $query->execute();
         $this->stateBeforeWorkflow = array();
-        $ids = array();
-        while ($row = $this->db->fetchByAssoc($result, false))
-        {
-            $ids[] =$this->db->quote($row['email_address_id']); // avoid 2nd order SQL Injection
-        }
-        if (!empty($ids))
-        {
-            $ids = implode("', '", $ids);
-            $queryEmailData = "SELECT id, email_address, invalid_email, opt_out FROM {$this->table_name} WHERE id IN ('$ids') AND deleted=0";
-            $result = $this->db->query($queryEmailData);
-            while ($row = $this->db->fetchByAssoc($result, false))
-            {
-                $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
-            }
+        while ($row = $stmt->fetch()) {
+            $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
         }
     }
 } // end class def

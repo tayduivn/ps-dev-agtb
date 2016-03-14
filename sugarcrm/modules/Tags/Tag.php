@@ -166,19 +166,13 @@ class Tag extends Basic
      */
     public function getTagIdsByBeanId($beanId, $beanModule)
     {
-        $tags = array();
-        $sql = sprintf(
-            "SELECT tag_id FROM tag_bean_rel " .
-            "WHERE bean_id = %s AND bean_module = %s AND deleted = 0 ",
-            $this->db->quoted($beanId),
-            $this->db->quoted($beanModule)
-        );
-
-        $result = $this->db->query($sql);
-        while ($data = $this->db->fetchByAssoc($result)) {
-            $tags[] = $data["tag_id"];
-        }
-        return $tags;
+        $query = 'SELECT tag_id
+            FROM tag_bean_rel
+            WHERE bean_id = ?
+                AND bean_module = ?
+                AND deleted = 0';
+        $stmt = $this->db->getConnection()->executeQuery($query, [$beanId, $beanModule]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**

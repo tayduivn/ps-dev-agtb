@@ -191,17 +191,17 @@ class ACLField extends SugarBean
             }
         }
 
-        $query = "SELECT  af.name, af.aclaccess FROM acl_fields af ";
-        $query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
-                    INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
-        $query .=  " WHERE af.deleted = 0 ";
-        $query .= " AND af.category='$module_name'";
+        $query = 'SELECT af.name, af.aclaccess FROM acl_fields af '
+            . 'INNER JOIN acl_roles_users aru ON aru.user_id = ? AND aru.deleted=0 '
+            . 'INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0 '
+            . 'WHERE af.deleted = 0 '
+            . 'AND af.category = ?';
 
-        $result = $GLOBALS['db']->query($query);
+        $stmt = $GLOBALS['db']->getConnection()->executeQuery($query, [$user_id, $module_name]);
 
         $allFields = ACLField::getAvailableFields($module_name, $object);
         self::$acl_fields[$user_id][$module_name] = array();
-        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        while ($row = $stmt->fetch()) {
             if($row['aclaccess'] != 0 && (empty(self::$acl_fields[$user_id][$module_name][$row['name']]) || self::$acl_fields[$user_id][$module_name][$row['name']] > $row['aclaccess']))
             {
                 self::$acl_fields[$user_id][$module_name][$row['name']] = $row['aclaccess'];
