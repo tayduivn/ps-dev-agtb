@@ -14,6 +14,8 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
 use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ExportNotifier;
+use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ImportNotifier;
 
 /**
  *
@@ -31,14 +33,18 @@ class Handler
     protected static $disabled = false;
 
     /**
-     * @var callable
+     * Notifier class used to notify import job listeners.
+     *
+     * @var ImportNotifier
      */
-    public static $importHandler = null;
+    protected static $importNotifier;
 
     /**
-     * @var callable
+     * Notifier class used to notify export job listeners.
+     *
+     * @var ExportNotifier
      */
-    public static $exportHandler = null;
+    protected static $exportNotifier;
 
     /**
      * @param \CalDavEventCollection $collection
@@ -65,14 +71,7 @@ class Handler
         }
 
         foreach ($preparedDataSet as $preparedData) {
-            $continue = true;
-            if (is_callable(static::$importHandler)) {
-                $continue = call_user_func_array(static::$importHandler, array(
-                    $collection->module_name,
-                    $collection->id,
-                    $preparedData,
-                ));
-            }
+            $continue = $this->getImportNotifier()->notify($collection->module_name, $collection->id, $preparedData);
             if ($continue && $preparedData) {
                 $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
                 if ($conflictSolver) {
@@ -86,7 +85,6 @@ class Handler
                 }
             }
         }
-        static::$importHandler = null;
         return true;
     }
 
@@ -128,14 +126,7 @@ class Handler
         }
 
         foreach ($preparedDataSet as $preparedData) {
-            $continue = true;
-            if (is_callable(static::$exportHandler)) {
-                $continue = call_user_func_array(static::$exportHandler, array(
-                    $bean->module_name,
-                    $rootBeanId,
-                    $preparedData,
-                ));
-            }
+            $continue = $this->getExportNotifier()->notify($bean->module_name, $rootBeanId, $preparedData);
             if ($continue && $preparedData) {
                 $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
                 if ($conflictSolver) {
@@ -149,8 +140,33 @@ class Handler
                 }
             }
         }
-        static::$exportHandler = null;
         return true;
+    }
+
+    /**
+     * Get ImportNotifier.
+     *
+     * @return ImportNotifier
+     */
+    public function getImportNotifier()
+    {
+        if (!isset(static::$importNotifier)) {
+            static::$importNotifier = new ImportNotifier();
+        }
+        return static::$importNotifier;
+    }
+
+    /**
+     * Get ExportNotifier.
+     *
+     * @return ExportNotifier
+     */
+    public function getExportNotifier()
+    {
+        if (!isset(static::$exportNotifier)) {
+            static::$exportNotifier = new ExportNotifier();
+        }
+        return static::$exportNotifier;
     }
 
     /**
