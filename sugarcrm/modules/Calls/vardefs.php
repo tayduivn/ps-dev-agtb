@@ -469,7 +469,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array(
     'name' => 'repeat_until',
     'vname' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
-    'type' => 'date',
+    'type' => 'datetime',
     'comment' => 'Repeat until specified date',
     'importable' => 'false',
     'massupdate' => false,

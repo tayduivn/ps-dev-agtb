@@ -96,7 +96,7 @@ class CalendarEvents
         $params['type'] = $parentBean->repeat_type;
         $params['interval'] = $parentBean->repeat_interval;
         $params['count'] = $parentBean->repeat_count;
-        $params['until'] = $this->formatDateTime('date', $parentBean->repeat_until, 'user');
+        $params['until'] = $this->formatDateTime('datetime', $parentBean->repeat_until, 'user');
         $params['dow'] = $parentBean->repeat_dow;
 
         $params['selector'] = isset($parentBean->repeat_selector) ? $parentBean->repeat_selector : '';
@@ -191,8 +191,7 @@ class CalendarEvents
         $options['start'] = $start;
 
         if (!empty($options['until'])) {
-            $end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $options['until']);
-            $end->setTime(23, 59, 59);   // inclusive
+            $end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(), $options['until']);
         } else {
             $end = $start;
         }
