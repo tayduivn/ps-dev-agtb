@@ -29,20 +29,18 @@ class SugarTestContactUtilities
         $time = mt_rand();
         $contact = new $class();
 
-        if (isset($contactValues['first_name'])) {
-            $contact->first_name = $contactValues['first_name'];
-        } else {
-            $contact->first_name = 'SugarContactFirst' . $time;
-        }
-        if (isset($contactValues['last_name'])) {
-            $contact->last_name = $contactValues['last_name'];
-        } else {
-            $contact->last_name = 'SugarContactLast';
-        }
-        if (isset($contactValues['email'])) {
-            $contact->email1 = $contactValues['email'];
-        } else {
-            $contact->email1 = 'contact@'. $time. 'sugar.com';
+        $contactValues = array_merge(array(
+            'first_name' => 'SugarContactFirst' . $time,
+            'last_name' => 'SugarContactLast' . $time,
+            'email' => 'contact@'. $time. 'sugar.com',
+        ), $contactValues);
+
+        // for backward compatibility with existing tests
+        $contactValues['email1'] = $contactValues['email'];
+        unset($contactValues['email']);
+
+        foreach ($contactValues as $property => $value) {
+            $contact->$property = $value;
         }
 
         if(!empty($id))
@@ -110,20 +108,5 @@ class SugarTestContactUtilities
             $contact_ids[] = $contact->id;
         }
         return $contact_ids;
-    }
-}
-
-
-class ContactMock extends Contact
-{
-    public function getNotificationEmailTemplate($test = false)
-    {
-        if ($test) {
-            $templateName = $this->getTemplateNameForNotificationEmail();
-            return $this->createNotificationEmailTemplate($templateName);    
-        }
-        
-        return $this->createNotificationEmailTemplate($templateName);
-
     }
 }

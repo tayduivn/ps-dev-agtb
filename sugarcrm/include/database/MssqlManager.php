@@ -435,7 +435,7 @@ class MssqlManager extends DBManager
             $GLOBALS['log']->debug(print_r(func_get_args(),true));
             $this->lastsql = $sql;
             $matches = array();
-            preg_match('/^(.*SELECT\s+)(.*?FROM.*WHERE)(.*)$/isU', $sql, $matches);
+            preg_match('/^(.*?SELECT\s+?)(.*?FROM.*WHERE)(.*?)$/si', $sql, $matches);
             if (!empty($matches[3])) {
                 if ($start == 0) {
                     $match_two = strtolower($matches[2]);
@@ -490,7 +490,15 @@ class MssqlManager extends DBManager
                     //if there is a distinct clause, parse sql string as we will have to insert the rownumber
                     //for paging, AFTER the distinct clause
                     $grpByStr = '';
-                    $hasDistinct = strpos(strtolower($matches[0]), "distinct");
+                    $distinctPos = stripos($matches[2], 'distinct');
+                    $fromPos = stripos($matches[2], 'from');
+
+                    if ($distinctPos && $fromPos && $fromPos < $distinctPos) { // distinct is a part of sub-query!
+                        $hasDistinct = false;
+                    } else {
+                        $hasDistinct = $distinctPos;
+                    }
+
                     if ($hasDistinct) {
                         $matches_sql = strtolower($matches[0]);
                         //remove reference to distinct and select keywords, as we will use a group by instead

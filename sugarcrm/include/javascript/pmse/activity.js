@@ -128,7 +128,7 @@ var AdamActivity = function (options) {
      * Define the order to be executed when exists several task in parallel mode
      * @type {Number}
      */
-    this.act_ordering = null;
+    this.act_ordering = 'PARALLEL';
     /**
      * Defines if into a loop all instances would be cancelled
      * @type {Boolean}

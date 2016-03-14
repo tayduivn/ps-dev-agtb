@@ -196,4 +196,25 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array($contacts[0]->id, $contacts[1]->id, $GLOBALS['current_user']->id);
         $this->assertEquals($expected, array_keys($actual));
     }
+
+    public function testIgnoreOrganizerNotification()
+    {
+        $contacts = array(
+            SugarTestContactUtilities::createContact(),
+            SugarTestContactUtilities::createContact(),
+        );
+
+        $currentUser = $GLOBALS['current_user']->id;
+        $meeting = SugarTestMeetingUtilities::createMeeting();
+        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $currentUser);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[0]->id);
+        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
+
+        $meeting->ignoreOrganizerNotification = true;
+
+        $actual = $meeting->get_notification_recipients();
+        $this->assertArrayNotHasKey($currentUser, $actual, 'The current user should not be in the list.');
+        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
+        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
+    }
 }

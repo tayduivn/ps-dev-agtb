@@ -63,7 +63,7 @@ var AdamEvent = function (options) {
      * Defines if the event needs to wait for completation status
      * @type {Boolean}
      */
-    this.evn_wait_for_completion = false;
+    this.evn_wait_for_completion = true;
     /**
      * Defines the error name when event is playing like an error event
      * @type {String}

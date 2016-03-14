@@ -144,6 +144,12 @@ class Meeting extends SugarBean {
      */
     public $repeat_root_id = null;
 
+    /**
+     * Flag whether or not to ignore sending notification organizer.
+     * @var boolean
+     */
+    public $ignoreOrganizerNotification = false;
+
 	/**
 	 * sole constructor
 	 */
@@ -828,7 +834,10 @@ class Meeting extends SugarBean {
             $mergedInvitees[$invitee[1]] = $invitee[0];
         }
 
-        if (!empty($this->created_by) && !isset($mergedInvitees[$this->created_by])) {
+        if (!$this->ignoreOrganizerNotification &&
+            !empty($this->created_by) &&
+            !isset($mergedInvitees[$this->created_by])
+        ) {
             $mergedInvitees[$this->created_by] = 'Users';
         }
 

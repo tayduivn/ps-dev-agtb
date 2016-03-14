@@ -18,6 +18,9 @@ class SugarTestAccountUtilities
 
     private function __construct() {}
 
+    /**
+     * @return Account
+     */
     public static function createAccount($id = '', $accountValues = array())
     {
         $time = mt_rand();

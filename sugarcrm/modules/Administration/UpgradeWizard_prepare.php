@@ -86,7 +86,9 @@ if (((defined('MODULE_INSTALLER_PACKAGE_SCAN') && MODULE_INSTALLER_PACKAGE_SCAN)
     || !empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan'])) && $install_type != 'patch') {
 	require_once('ModuleInstall/ModuleScanner.php');
 	$ms = new ModuleScanner();
-	$ms->scanPackage($unzip_dir);
+    // package types that should not override sugar core files
+    $cantOverrideSugarFilePackTypes = array('langpack');
+    $ms->scanPackage($unzip_dir, !in_array($install_type, $cantOverrideSugarFilePackTypes));
 	if($ms->hasIssues()){
 	    rmdir_recursive($unzip_dir);
 		$ms->displayIssues();

@@ -122,81 +122,6 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $q->setDBManager($dbManager);
         $this->assertSame($expected, $q->usePreparedStatements, 'Prepared statements flag not properly set');
     }
-
-    /**
-     * @dataProvider unsetInvisibleRelateIdsProvider
-     */
-    public function testUnsetInvisibleRelateIds(
-        $module,
-        array $fields,
-        array $rows,
-        array $invisibleIds,
-        array $expected
-    ) {
-        /** @var SugarQuery|PHPUnit_Framework_MockObject_MockObject $query */
-        $query = $this->getMock('SugarQuery', array('getInvisibleIds'));
-        $query->expects($this->any())
-            ->method('getInvisibleIds')
-            ->will(
-                call_user_func_array(array($this, 'onConsecutiveCalls'), $invisibleIds)
-            );
-        $query->select($fields);
-        $query->from(BeanFactory::getBean($module));
-
-        $actual = SugarTestReflection::callProtectedMethod($query, 'unsetInvisibleRelateIds', array($rows));
-        $this->assertEquals($expected, $actual);
-    }
-
-    public static function unsetInvisibleRelateIdsProvider()
-    {
-        return array(
-            array(
-                'Contacts',
-                array(
-                    // for some reason we should manually select Used ID but Account ID is selected automatically
-                    'assigned_user_id',
-                    'assigned_user_name',
-                    'account_name',
-                ),
-                array(
-                    array(
-                        'assigned_user_id' => 'user-id-1',
-                        'assigned_user_name' => 'User #1 Name',
-                        'account_id' => 'account-id-1',
-                        'account_name' => 'Account #1 Name',
-                    ),
-                    array(
-                        'assigned_user_id' => 'user-id-2',
-                        'assigned_user_name' => 'User #2 Name',
-                        'account_id' => 'account-id-2',
-                        'account_name' => 'Account #2 Name',
-                    ),
-                ),
-                array(
-                    array(
-                        'account-id-1',
-                    ),
-                    array(
-                        'user-id-2',
-                    ),
-                ),
-                array(
-                    array(
-                        'assigned_user_id' => 'user-id-1',
-                        'assigned_user_name' => 'User #1 Name',
-                        'account_id' => null,
-                        'account_name' => 'Account #1 Name',
-                    ),
-                    array(
-                        'assigned_user_id' => null,
-                        'assigned_user_name' => 'User #2 Name',
-                        'account_id' => 'account-id-2',
-                        'account_name' => 'Account #2 Name',
-                    ),
-                ),
-            ),
-        );
-    }
     
     /**
      * @dataProvider dataProviderGetJoinOnField
@@ -259,5 +184,4 @@ class SugarQueryTest extends Sugar_PHPUnit_Framework_TestCase
             array('LHS', 'right_hand_side_id')
         );
     }
-
 }
