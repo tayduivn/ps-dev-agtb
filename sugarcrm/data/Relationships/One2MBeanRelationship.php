@@ -187,18 +187,11 @@ class One2MBeanRelationship extends One2MRelationship
                     $rows[$id] = array('id' => $id);
                 }
             }
-        } else //If the link is LHS, we need to query to get the full list and load all the beans.
-        {
-            $db = DBManagerFactory::getInstance();
-            $query = $this->getQuery($link, $params);
-            if (empty($query)) {
-                $GLOBALS['log']->fatal(
-                    "query for {$this->name} was empty when loading from   {$this->lhsLink}\n"
-                );
-                return array("rows" => array());
-            }
-            $result = $db->query($query);
-            while ($row = $db->fetchByAssoc($result, false)) {
+        } elseif ($link->getSide() == REL_LHS) {
+            //If the link is LHS, we need to query to get the full list and load all the beans.
+            $result = $this->getSugarQuery($link, $params)->execute();
+            $rows = array();
+            foreach ($result as $row) {
                 $id = $row['id'];
                 $rows[$id] = $row;
             }
@@ -214,7 +207,7 @@ class One2MBeanRelationship extends One2MRelationship
             $params = array("return_as_array" => true);
         }
 
-        if ($link->getSide() == REL_RHS) {
+        if ($link->getSide() != REL_LHS) {
             return false;
         } else {
             $lhsKey = $this->def['lhs_key'];
@@ -280,6 +273,60 @@ class One2MBeanRelationship extends One2MRelationship
                 );
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getSugarQuery(Link2 $link, array $params = array())
+    {
+        if ($link->getSide() != REL_LHS) {
+            throw new \Exception('Wrong side of the link, we shouldn\'t query DB for this case');
+        }
+        $lhsKey = $this->def['lhs_key'];
+        $rhsTable = $this->def['rhs_table'];
+        $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
+        $deleted = !empty($params['deleted']) ? 1 : 0;
+        $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+
+        $query = new SugarQuery();
+        $query->from(
+            $relatedSeed,
+            array('team_security' => !empty($params['enforce_teams']), 'add_deleted' => false)
+        );
+        $query->select('id');
+        $query->where()->equals($rhsTableKey, $link->getFocus()->$lhsKey)
+            ->equals("$rhsTable.deleted", $deleted);
+
+        //Check for role column
+        foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+            if (!empty($value)) {
+                $query->where()->equals("$rhsTable.$column", $value);
+            }
+        }
+
+        //Add any optional where clause
+        if (!empty($params['where'])) {
+            if (is_string($params['where'])) {
+                $query->where()->addRaw($params['where']);
+            } else {
+                $this->buildOptionalQueryWhere($query, $params['where'], $rhsTable, $relatedSeed);
+            }
+        }
+
+        if (!empty($params['orderby'])) {
+            $orderByFields = $this->getOrderByFields($params['orderby']);
+            foreach ($orderByFields as $field => $direction) {
+                $query->orderBy("$rhsTable.$field", $direction);
+            }
+        }
+        if (!empty($params['limit']) && ($params['limit'] > 0)) {
+            $query->limit($params['limit']);
+        }
+        if (isset($params['offset'])) {
+            $query->offset($params['offset']);
+        }
+        return $query;
     }
 
     public function getJoin($link, $params = array(), $return_array = false)

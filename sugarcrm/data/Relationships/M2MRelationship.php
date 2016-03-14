@@ -445,17 +445,14 @@ class M2MRelationship extends SugarRelationship
     }
     /**
      * @param  $link Link2 loads the relationship for this link.
-     * @return void
+     * @return array
      */
     public function load($link, $params = array())
     {
-        $db = DBManagerFactory::getInstance();
-        $query = $this->getQuery($link, $params);
-        $result = $db->query($query);
-        $rows = Array();
-        $idField = $link->getSide() == REL_LHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
-        while ($row = $db->fetchByAssoc($result, false))
-        {
+        $result = $this->getSugarQuery($link, $params)->execute();
+        $idField = $this->linkIsLHS($link) ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
+        $rows = array();
+        foreach ($result as $row) {
             if (empty($row['id']) && empty($row[$idField]))
                 continue;
             $id = empty($row['id']) ? $row[$idField] : $row['id'];
@@ -557,6 +554,99 @@ class M2MRelationship extends SugarRelationship
         }
     }
 
+    /**
+     * Get SugarQuery for loading relationship records
+     *
+     * @param Link2 $link
+     * @param array $params
+     *
+     * @return SugarQuery
+     * @throws \Exception
+     */
+    protected function getSugarQuery(Link2 $link, array $params = array())
+    {
+        if ($this->linkIsLHS($link)) {
+            $knownKey = $this->def['join_key_lhs'];
+            $targetKey = $this->def['join_key_rhs'];
+            $relatedSeed = BeanFactory::getBean($this->getRHSModule());
+            if (empty($params['right_join_table_alias'])) {
+                if (!empty($relatedSeed)) {
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['right_join_table_alias'];
+            }
+        } else {
+            $knownKey = $this->def['join_key_rhs'];
+            $targetKey = $this->def['join_key_lhs'];
+            $relatedSeed = BeanFactory::getBean($this->getLHSModule());
+            if (empty($params['left_join_table_alias'])) {
+                if (!empty($relatedSeed)) {
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['left_join_table_alias'];
+            }
+        }
+        if (empty($whereTable)) {
+            $message = 'Related table is undefined for ' . $this->name . ' relationship';
+            $GLOBALS['log']->fatal($message);
+            throw new \Exception($message);
+        }
+        $rel_table = $this->getRelationshipTable();
+
+        $query = new SugarQuery();
+        $query->from($relatedSeed, array('team_security' => !empty($params['enforce_teams']), 'add_deleted' => false));
+        $query->joinTable($rel_table, array('alias' => $rel_table))
+            ->on()->equalsField("$rel_table.$targetKey", "$whereTable.id");
+
+        $query->select()->selectReset();
+        $query->select(array(array("$rel_table.$targetKey", 'id'))); // id is an alias here
+        foreach ($this->getAdditionalFields() as $field => $def) {
+            $query->select()->addField("$rel_table.$field");
+        }
+
+        $query->where()->equals("$rel_table.$knownKey", $link->getFocus()->id);
+        $this->buildSugarQueryRoleWhere($query, $rel_table);
+
+        //Add any optional where clause
+        if (!empty($params['where']) && !empty($whereTable)) {
+            if (is_string($params['where'])) {
+                $query->where()->addRaw($params['where']);
+            } else {
+                // Build up the where clause
+                $optionalWhereAdded = $this->buildOptionalQueryWhere(
+                    $query,
+                    $params['where'],
+                    $whereTable,
+                    $relatedSeed
+                );
+
+                if ($optionalWhereAdded) {
+                    $query->where()->equalsField("$rel_table.$targetKey", "$whereTable.id");
+                }
+            }
+        }
+
+        $deleted = empty($params['deleted']) ? 0 : 1;
+        $query->where()->equals("$rel_table.deleted", $deleted);
+
+        if (!empty($params['orderby']) && !empty($whereTable)) {
+            $orderByFields = $this->getOrderByFields($params['orderby']);
+            foreach ($orderByFields as $field => $direction) {
+                $query->orderBy("$whereTable.$field", $direction);
+            }
+        }
+        if (!empty($params['limit']) && ($params['limit'] > 0)) {
+            $query->limit($params['limit']);
+        }
+        if (isset($params['offset'])) {
+            $query->offset($params['offset']);
+        }
+
+        return $query;
+    }
+
     public function getJoin($link, $params = array(), $return_array = false)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
@@ -608,7 +698,6 @@ class M2MRelationship extends SugarRelationship
 
         $join1 = "$startingTable.$startingKey=$joinTable.$startingJoinKey";
         $join2 = "$targetTable.$targetKey=$joinTable.$joinKey";
-        $where = "";
 
 
         //First join the relationship table
@@ -626,11 +715,11 @@ class M2MRelationship extends SugarRelationship
                 'type' => $this->type,
                 'rel_key' => $joinKey,
                 'join_tables' => array($joinTable, $targetTable),
-                'where' => $where,
+                'where' => '',
                 'select' => "$targetTable.id",
             );
         }
-        return $join . $where;
+        return $join;
     }
 
     /**

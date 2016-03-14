@@ -146,6 +146,7 @@ $vardefs = array(
 	      'source' => 'non-db',
 	      'duplicate_merge' => 'disabled',
 	      'studio' => 'false',
+            'side' => 'right',
         ),
 	    'team_count_link' =>
   			array (
@@ -159,6 +160,7 @@ $vardefs = array(
 		    'duplicate_merge' => 'disabled',
   			'reportable'=>false,
   			'studio' => 'false',
+            'side' => 'right',
             ),
   		'teams' =>
 		array (
@@ -173,6 +175,7 @@ $vardefs = array(
 		'link_file' => 'modules/Teams/TeamSetLink.php',
 		'studio' => 'false',
 		'reportable'=>false,
+            'side' => 'left',
         ),
 ),
 

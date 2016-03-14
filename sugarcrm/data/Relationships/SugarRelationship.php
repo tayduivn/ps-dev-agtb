@@ -91,6 +91,8 @@ abstract class SugarRelationship
      * Gets the query to load a link.
      * This is currently public, but should prob be made protected later.
      * See Link2->getQuery
+     *
+     * @deprecated
      * @abstract
      *
      * @param  $link Link Object to get query for.
@@ -110,6 +112,7 @@ abstract class SugarRelationship
 
     /**
      * @abstract
+     * @internal
      *
      * @param Link2 $link
      * @param SugarQuery $sugar_query
@@ -668,17 +671,17 @@ abstract class SugarRelationship
      * @param SugarBean $relatedBean
      * @return string
      */
-    protected function getOptionalWhereClause($optional_array, $whereTable = '', $relatedBean = null)
+    protected function getOptionalWhereClause($optional_array, $whereTable = '', SugarBean $relatedBean = null)
     {
         //lhs_field, operator, and rhs_value must be set in optional_array
         foreach (array("lhs_field", "operator", "rhs_value") as $required) {
             if (empty($optional_array[$required])) {
-                return "";
+                throw new \InvalidArgumentException('lhs_field, operator and rhs_value must be set');
             }
         }
 
         // If there was a related bean passed, use it to get the where table
-        if ($relatedBean instanceof SugarBean) {
+        if ($relatedBean) {
             $whereTable = $this->getWhereTable($whereTable, $relatedBean, $optional_array['lhs_field']);
         }
 
@@ -688,6 +691,71 @@ abstract class SugarRelationship
         }
 
         return $whereTable . $optional_array['lhs_field'] . "" . $optional_array['operator'] . "'" . $optional_array['rhs_value'] . "'";
+    }
+
+
+    /**
+     * Adds optional where clause to the sugar query
+     *
+     * @param SugarQuery $query
+     * @param array $optional_array List of conditionals to apply to a custom where
+     * @param string $whereTable The existing where table to select from
+     * @param SugarBean $relatedBean
+     *
+     * @return bool
+     */
+    protected function buildOptionalQueryWhere(
+        SugarQuery $query,
+        $optional_array,
+        $whereTable = '',
+        SugarBean $relatedBean = null
+    ) {
+        //lhs_field, operator, and rhs_value must be set in optional_array
+        foreach (array('lhs_field', 'operator', 'rhs_value') as $required) {
+            if (empty($optional_array[$required])) {
+                throw new \InvalidArgumentException('lhs_field, operator and rhs_value must be set');
+            }
+        }
+
+        // If there was a related bean passed, use it to get the where table
+        if ($relatedBean) {
+            $whereTable = $this->getWhereTable($whereTable, $relatedBean, $optional_array['lhs_field']);
+        }
+
+        // If $whereTable is not empty, add the dot
+        if ($whereTable) {
+            $whereTable .= '.';
+        }
+
+        $condition = new SugarQuery_Builder_Condition($query);
+        $condition->setField($whereTable . $optional_array['lhs_field'])
+            ->setOperator($optional_array['operator'])
+            ->setValues($optional_array['rhs_value']);
+        $query->where()->add($condition);
+        return true;
+    }
+
+    /**
+     * Parses string representation of ORDER BY into an array
+     *
+     * @param string $orderBy Order by string
+     *
+     * @return array
+     */
+    protected function getOrderByFields($orderBy)
+    {
+        $parts = explode(',', $orderBy);
+        array_walk($parts, 'trim');
+        $fields = array();
+        foreach ($parts as $part) {
+            $matches = array();
+            if (preg_match('/^(.*)\s+(asc|desc)$/i', $part, $matches)) {
+                $fields[$matches[1]] = $matches[2];
+            } else {
+                $fields[$part] = 'ASC';
+            }
+        }
+        return $fields;
     }
 
     /**

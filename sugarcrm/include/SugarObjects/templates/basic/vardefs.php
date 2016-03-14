@@ -217,6 +217,7 @@ $vardefs = array(
                 'module' => 'Users',
                 'bean_name' => 'User',
                 'source' => 'non-db',
+                'side' => 'right',
             ),
         'modified_user_link' => array(
                 'name' => 'modified_user_link',
@@ -227,6 +228,7 @@ $vardefs = array(
                 'module' => 'Users',
                 'bean_name' => 'User',
                 'source' => 'non-db',
+                'side' => 'right',
             ),
         'activities' => array(
             'name' => 'activities',

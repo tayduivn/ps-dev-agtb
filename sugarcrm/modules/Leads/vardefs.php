@@ -206,6 +206,7 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
             'reportable' => false,
+            'side' => 'right',
         ),
         'contact_name' => array(
             'name' => 'contact_name',
