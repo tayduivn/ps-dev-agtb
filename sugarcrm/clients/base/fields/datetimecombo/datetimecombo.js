@@ -197,7 +197,7 @@
                 startDate = app.date(dateStartString);
                 endDate = app.date(dateEndString);
 
-                if ((startDate.years() === endDate.years()) && (startDate.months() === endDate.months()) && (startDate.days() === endDate.days())) {
+                if ((startDate.year() === endDate.year()) && (startDate.month() === endDate.month()) && (startDate.days() === endDate.days())) {
                     this.minTime = app.date.duration({
                         hours: startDate.hours(),
                         minutes: startDate.minutes()

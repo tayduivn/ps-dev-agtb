@@ -476,7 +476,7 @@ describe("Activity Stream View", function() {
         });
 
         it('Should show date and time format when activity created past threshold', function() {
-            var date = app.date().subtract('days', 7);
+            var date = app.date().subtract(7, 'days');
             view.model.set('date_entered', date.format());
             view._setRelativeTimeAvailable();
 
