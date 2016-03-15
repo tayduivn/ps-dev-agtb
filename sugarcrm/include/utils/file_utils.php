@@ -143,6 +143,48 @@ function write_array_to_file( $the_name, $the_array, $the_file, $mode="w", $head
     return false;
 }
 
+/**
+ * write a flat array to a file with format as $the_name[$key] = $value,
+ * @param $the_name
+ * @param $the_array
+ * @param $the_file
+ * @param string $mode
+ * @param string $header
+ * @return bool
+ */
+function write_array_to_file_as_key_value_pair($the_name, $the_array, $the_file, $mode = "w", $header = '')
+{
+    if (!empty($header) && ($mode != 'a' || !file_exists($the_file))) {
+        $the_string = $header;
+    } else {
+        $the_string =   "<?php\n" .
+            '// created: ' . date('Y-m-d H:i:s') . "\n";
+    }
+
+    $arrayName = "\$$the_name";
+    foreach ($the_array as $key => $value) {
+        $the_string .= $arrayName . "['$key'] = ";
+        if (is_string($value)) {
+            $the_string .= "'$value'";
+        } elseif (is_array($value)) {
+            $the_string .= var_export_helper($value);
+        } else {
+            $the_string .= $value;
+        }
+
+        $the_string .= ";" . PHP_EOL;
+    }
+
+    if (sugar_file_put_contents_atomic($the_file, $the_string) !== false) {
+        if (substr($the_file, 0, 7) === 'custom/') {
+            // record custom writes to file map
+            SugarAutoLoader::addToMap($the_file);
+        }
+        return true;
+    }
+    return false;
+}
+
 function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" )
 {
     // this function dies when encountering an error -- use with caution!
