@@ -114,18 +114,25 @@ class Call extends SugarBean {
     public $send_invites_uid = '';
 
     /**
-     * Helper-field to store invites before linking new ones.
+     * Helper-field to store invites for notification.
      * Is not a sugar-field, is not persisted anywhere.
      * @var null|array
      */
-    public $inviteesBefore = null;
+    public $inviteesNotification = null;
 
     /**
-     * Helper-field to store information to change all recurrence or only participants or only parent.
+     * Helper-field to store invites changes for export.
      * Is not a sugar-field, is not persisted anywhere.
-     * @var int
+     * @var array
      */
-    public $updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
+    public $inviteesChanges = array();
+
+    /**
+     * Helper-field to store information to change all recurrence or only parent.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var bool
+     */
+    public $updateAllChildren = false;
 
     /**
      * Parent id of recurring.
@@ -179,8 +186,8 @@ class Call extends SugarBean {
 
 		$isUpdate = $this->isUpdate();
 
-        if ($isUpdate && is_null($this->inviteesBefore)) {
-            $this->inviteesBefore = CalendarUtils::getInvitees($this);
+        if ($isUpdate && is_null($this->inviteesNotification)) {
+            $this->inviteesNotification = CalendarUtils::getInvitees($this);
         }
 
         if (isset($this->date_start)) {
@@ -240,8 +247,6 @@ class Call extends SugarBean {
 
         $return_id = parent::save($check_notify);
 
-        $this->setUserInvitees($this->users_arr);
-
         if ($this->update_vcal) {
             $assigned_user = BeanFactory::getBean('Users', $this->assigned_user_id);
             vCal::cache_sugar_vcal($assigned_user);
@@ -260,16 +265,13 @@ class Call extends SugarBean {
         }
 
         if ($isUpdate) {
-            $inviteesChanges = $this->getParticipantsHelper()->getInviteesDiff(
-                $this->inviteesBefore,
-                CalendarUtils::getInvitees($this)
-            );
-            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $inviteesChanges));
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesChanges));
         } else {
             $this->getCalDavHook()->export($this);
         }
 
-        $this->inviteesBefore = null;
+        $this->inviteesNotification = null;
+        $this->inviteesChanges = array();
 
         return $return_id;
 	}
@@ -627,7 +629,7 @@ class Call extends SugarBean {
             return parent::get_notification_recipients();
         }
 
-        $inviteesBefore = $this->inviteesBefore ? : array();
+        $inviteesBefore = $this->inviteesNotification ? : array();
         $inviteesAfter = \CalendarUtils::getInvitees($this);
 
         $mergedInvitees = array();
@@ -784,45 +786,29 @@ class Call extends SugarBean {
     }
 
     /**
-     * Stores contact invitees
+     * Add or delete invitee from Call.
      *
-     * @param array $contactInvitees Array of contact invitees ids
-     * @param array $existingContacts
+     * @param $link_name
+     * @param $invitees
+     * @param $existing
      */
-    public function setContactInvitees($contactInvitees, $existingContacts = array())
+    public function upgradeAttachInvitees($link_name, $invitees, $existing)
     {
-        $this->contacts_arr = $contactInvitees;
-
-        $deleteContacts = array();
-        $this->load_relationship('contacts');
-        $q = 'SELECT mu.contact_id, mu.accept_status FROM calls_contacts mu WHERE mu.call_id = \''.$this->id.'\'';
-        $r = $this->db->query($q);
-        $acceptStatusContacts = array();
-        while ($a = $this->db->fetchByAssoc($r)) {
-              if(!in_array($a['contact_id'], $contactInvitees)) {
-                   $deleteContacts[$a['contact_id']] = $a['contact_id'];
-              } else {
-                   $acceptStatusContacts[$a['contact_id']] = $a['accept_status'];
-              }
-        }
-
-        foreach ($deleteContacts as $id) {
-            $this->contacts->delete($this->id, $id);
-        }
-
-        foreach ($contactInvitees as $id) {
-            if (empty($id) || isset($existingContacts[$id]) || isset($deleteContacts[$id])) {
-                continue;
+        $this->load_relationship($link_name);
+        foreach (array_diff($this->{$link_name}->get(), $invitees) as $id) {
+            if ($this->created_by != $id) {
+                $this->{$link_name}->delete($this->id, $id);
             }
-            $acceptStatus = isset($acceptStatusContacts[$id]) ?
-                array('accept_status' => $acceptStatusContacts[$id]) :
-                array();
-            $this->contacts->add($id, $acceptStatus);
+        }
+        foreach (array_diff($invitees, $this->{$link_name}->get()) as $id) {
+            if (!isset($existing[$id])) {
+                $this->{$link_name}->add($id);
+            }
         }
     }
 
     /**
-     * Stores user invitees
+     * Stores user invitees.
      *
      * @param array $userInvitees Array of user invitees ids
      * @param array $existingUsers
@@ -831,44 +817,30 @@ class Call extends SugarBean {
      */
     public function setUserInvitees($userInvitees, $existingUsers = array())
     {
-    	// if both are empty, don't do anything.  From the App these will always be set [they are set to at least current-user].
-    	// For the api, these sometimes will not be set [linking related records]
-    	if(empty($userInvitees) && empty($existingUsers)) {
-    		return true;
-    	}
+        // If both are empty, don't do anything.
+        // From the App these will always be set [they are set to at least current-user].
+        // For the api, these sometimes will not be set [linking related records]
+        if (empty($userInvitees) && empty($existingUsers)) {
+            return true;
+        }
         $this->users_arr = $userInvitees;
-
-        $deleteUsers = array();
-        $this->load_relationship('users');
-        // Get all users for the call
-        $q = 'SELECT mu.user_id, mu.accept_status FROM calls_users mu WHERE mu.call_id = \''.$this->id.'\'';
-        $r = $this->db->query($q);
-        $acceptStatusUsers = array();
-        while ($a = $this->db->fetchByAssoc($r)) {
-              if (!in_array($a['user_id'], $userInvitees)) {
-                   $deleteUsers[$a['user_id']] = $a['user_id'];
-              } else {
-                 $acceptStatusUsers[$a['user_id']] = $a['accept_status'];
-              }
-        }
-
-        foreach ($deleteUsers as $id) {
-            $this->users->delete($this->id, $id);
-        }
-
-        foreach ($userInvitees as $id) {
-            if (empty($id) || isset($existingUsers[$id]) || isset($deleteUsers[$id])) {
-                continue;
-            }
-            $acceptStatus = isset($acceptStatusContacts[$id]) ?
-                array('accept_status' => $acceptStatusContacts[$id]) :
-                array();
-            $this->users->add($id, $acceptStatus);
-        }
+        $this->upgradeAttachInvitees('users', $userInvitees, $existingUsers);
     }
 
     /**
-     * Stores lead invitees
+     * Stores contact invitees.
+     *
+     * @param array $contactInvitees Array of contact invitees ids
+     * @param array $existingContacts
+     */
+    public function setContactInvitees($contactInvitees, $existingContacts = array())
+    {
+        $this->contacts_arr = $contactInvitees;
+        $this->upgradeAttachInvitees('contacts', $contactInvitees, $existingContacts);
+    }
+
+    /**
+     * Stores lead invitees.
      *
      * @param array $leadInvitees Array of lead invitees ids
      * @param array $existingLeads
@@ -876,37 +848,11 @@ class Call extends SugarBean {
     public function setLeadInvitees($leadInvitees, $existingLeads = array())
     {
         $this->leads_arr = $leadInvitees;
-
-        $deleteLeads = array();
-        $this->load_relationship('leads');
-        $q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leads mu WHERE mu.call_id = \''.$this->id.'\'';
-        $r = $this->db->query($q);
-        $acceptStatusLeads = array();
-        while($a = $this->db->fetchByAssoc($r)) {
-              if(!in_array($a['lead_id'], $leadInvitees)) {
-                   $deleteLeads[$a['lead_id']] = $a['lead_id'];
-              }    else {
-                   $acceptStatusLeads[$a['lead_id']] = $a['accept_status'];
-              }
-        }
-
-        foreach ($deleteLeads as $id) {
-            $this->leads->delete($this->id, $id);
-        }
-
-        foreach ($leadInvitees as $id) {
-            if (empty($id) || isset($existingLeads[$id]) || isset($deleteLeads[$id])) {
-                continue;
-            }
-            $acceptStatus = isset($acceptStatusLeads[$id]) ?
-                array('accept_status' => $acceptStatusLeads[$id]) :
-                array();
-            $this->leads->add($id, $acceptStatus);
-        }
+        $this->upgradeAttachInvitees('leads', $leadInvitees, $existingLeads);
     }
 
     /**
-     * Stores addressee invitees
+     * Stores addressee invitees.
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
      * @param array $existingAddressees
@@ -914,36 +860,7 @@ class Call extends SugarBean {
     public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
         $this->addressees_arr = $addresseeInvitees;
-
-        $deleteAddressees = array();
-        $this->load_relationship('addressees');
-
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM calls_addressees mu';
-        $sql .= ' WHERE mu.call_id = ' . $this->db->quoted($this->id);
-        $result = $this->db->query($sql);
-
-        $acceptStatusAddressees = array();
-        while ($a = $this->db->fetchByAssoc($result)) {
-            if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
-            } else {
-                $acceptStatusAddressees[$a['addressee_id']] = $a['accept_status'];
-            }
-        }
-
-        foreach ($deleteAddressees as $id) {
-            $this->addressees->delete($this->id, $id);
-        }
-
-        foreach ($addresseeInvitees as $id) {
-            if (empty($id) || isset($existingAddressees[$id]) || isset($deleteAddressees[$id])) {
-                continue;
-            }
-            $acceptStatus = isset($acceptStatusAddressees[$id]) ?
-                array('accept_status' => $acceptStatusAddressees[$id]) :
-                array();
-            $this->addressees->add($id, $acceptStatus);
-        }
+        $this->upgradeAttachInvitees('addressees', $addresseeInvitees, $existingAddressees);
     }
 
     /**

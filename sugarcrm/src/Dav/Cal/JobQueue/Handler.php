@@ -154,12 +154,13 @@ class Handler implements RunnableInterface
         }
 
         $importData = json_decode($queueItem->data, true);
-
+        
+        $this->listener = new ExportListener($bean);
+        $this->hookHandler->getExportNotifier()->attach($this->listener);
+        
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $importData);
         $result = $adapter->import($importData, $bean);
         if ($result != AdapterInterface::NOTHING) {
-            $this->listener = new ExportListener($bean);
-            $this->hookHandler->getExportNotifier()->attach($this->listener);
             switch ($result) {
                 case AdapterInterface::SAVE :
                     if (!empty($bean->repeat_parent_id)) {
@@ -190,6 +191,8 @@ class Handler implements RunnableInterface
                     $calDavBean->getQueueObject()->export($exportData, $saveCounter);
                 }
             }
+        } else {
+            $this->hookHandler->getExportNotifier()->detach($this->listener);
         }
     }
 
@@ -210,10 +213,11 @@ class Handler implements RunnableInterface
 
         $exportData = json_decode($queueItem->data, true);
 
+        $this->listener = new ImportListener($calDavBean);
+        $this->hookHandler->getImportNotifier()->attach($this->listener);
+
         $result = $adapter->export($exportData, $calDavBean);
         if ($result != AdapterInterface::NOTHING) {
-            $this->listener = new ImportListener($calDavBean);
-            $this->hookHandler->getImportNotifier()->attach($this->listener);
             switch ($result) {
                 case AdapterInterface::SAVE :
                     $calDavBean->save();
@@ -238,6 +242,8 @@ class Handler implements RunnableInterface
                     $calDavBean->getQueueObject()->import($importData, $saveCounter);
                 }
             }
+        } else {
+            $this->hookHandler->getExportNotifier()->detach($this->listener);
         }
     }
 

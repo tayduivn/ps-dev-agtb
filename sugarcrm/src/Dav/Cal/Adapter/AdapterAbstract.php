@@ -407,7 +407,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if ($action == 'delete' && !$bean->deleted) {
             if ($bean->send_invites) {
-                $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+                $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
             }
             return static::DELETE;
         }
@@ -443,7 +443,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+        $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
 
         // setting values
         if (isset($changedFields['title'])) {
