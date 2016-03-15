@@ -69,7 +69,15 @@
         {sugar_getscript file="cache/include/javascript/sugar_grp7.min.js"}
         {literal}
         <script language="javascript">
-            if (parent.window != window && typeof(parent.SUGAR.App.router) != "undefined") {
+            var parentIsSugar = false;
+            try {
+                parentIsSugar = (parent.window != window)
+                    && (typeof parent.SUGAR != "undefined")
+                    && (typeof parent.SUGAR.App.router != "undefined");
+            } catch (e) {
+                // if we got here, we were trying to access parent window from different domain
+            }
+            if (parentIsSugar) {
                 parent.SUGAR.App.router.navigate("#Home", {trigger:true});
             } else {
                 var App;

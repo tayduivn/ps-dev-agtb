@@ -981,6 +981,16 @@ $app_list_strings = array (
                 '6'=>"Fri",
                 '7'=>"Sat",
         ),
+        'dom_cal_day_min'=>array(
+            '0'=>"",
+            '1'=>"Su",
+            '2'=>"Mo",
+            '3'=>"Tu",
+            '4'=>"We",
+            '5'=>"Th",
+            '6'=>"Fr",
+            '7'=>"Sa",
+        ),
     'dom_cal_day_of_week' => array(
         '0' => 'Sun',
         '1' => 'Mon',

@@ -23,9 +23,7 @@
      *
      * @override
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-
+    loadConfig: function(options) {
         var section = this.context.get('section');
         var url = app.api.buildURL('caldav', 'config'+(section ? '/'+section : ''), null, options.params);
         app.api.call('READ', url, options.attributes, {

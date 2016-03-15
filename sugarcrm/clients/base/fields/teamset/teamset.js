@@ -316,15 +316,16 @@
             return !_.isUndefined(primaryTeam) && !_.isUndefined(primaryTeam.name) ? primaryTeam.name : "";
         }
         // Place the add button as needed
-        if (_.isArray(value) && value.length > 0) {
-            _.each(value, function (team) {
+        if (_.isArray(value) && !_.isEmpty(value)) {
+            _.each(value, function(team, index, list) {
                 delete team.remove_button;
-                delete team.add_button;
+                if (!team.add_button && index === list.length - 1) {
+                    team.add_button = true;
+                } else {
+                    delete team.add_button;
+                }
             });
-            if (!value[this._currentIndex]) {
-                value[this._currentIndex] = {};
-            }
-            value[value.length - 1].add_button = true;
+
             // number of valid teams
             var numTeams = _.filter(value, function (team) {
                 return !_.isUndefined(team.id);

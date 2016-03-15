@@ -4441,6 +4441,12 @@ function rebuildConfigFile($sugar_config, $sugar_version)
         //no need to write to config.php
         unset($sugar_config['disable_team_access_check']);
     }
+    if (isset($sugar_config['team_based_acl']['disabled_modules'])) {
+        // [team_based_acl][disabled_modules] param is designed to be managed by config_override.php
+        // see TeamBasedACLConfigurator::saveConfig
+        // so empty this current value to use actual value from config_override.php after configs merge
+        $sugar_config['team_based_acl']['disabled_modules'] = array();
+    }
     // need to override version with default no matter what
     $sugar_config['sugar_version'] = $sugar_version;
 
