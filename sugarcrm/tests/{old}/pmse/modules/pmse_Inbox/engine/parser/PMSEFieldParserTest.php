@@ -1157,11 +1157,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
         $token = "{::future::Leads::do_not_call::}";
-        $expectedToken = "true";
+        $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
-        $this->assertEquals($expectedToken, $processedToken);
+        $this->assertSame($expectedToken, $processedToken);
     }
     
     public function testParseTokenValueTokenEmptyModules()
@@ -1204,11 +1204,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             )
         );
         $token = "{::future::Leads::do_not_call::}";
-        $expectedToken = "true";
+        $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
-        $this->assertEquals($expectedToken, $processedToken);
+        $this->assertSame($expectedToken, $processedToken);
     }
     
     public function testDecomposeToken()
