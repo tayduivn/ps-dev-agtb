@@ -56,5 +56,5 @@ $class_map = array(
     'SugarJobQueue' => 'include/SugarQueue/SugarJobQueue.php',
     'EmbedLinkService' => 'include/EmbedLinkService.php',
     'SugarApi' => 'include/api/SugarApi.php',
-
+    'ParseCSV' => 'vendor/parsecsv/php-parsecsv/parsecsv.lib.php'
 );
