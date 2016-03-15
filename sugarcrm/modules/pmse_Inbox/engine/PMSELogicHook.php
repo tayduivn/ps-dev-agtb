@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+
 class PMSELogicHook
 {
     function after_save($bean, $event, $arguments)
@@ -21,7 +23,7 @@ class PMSELogicHook
             return true;
         }
 
-        if (!$this->isExpectedModule($bean)) {
+        if (!PMSEEngineUtils::hasActiveProcesses($bean)) {
             return true;
         }
         //Define PA Hook Handler
@@ -35,7 +37,7 @@ class PMSELogicHook
             return true;
         }
 
-        if (!$this->isExpectedModule($bean)) {
+        if (!PMSEEngineUtils::hasActiveProcesses($bean)) {
             return true;
         }
         //Define PA Hook Handler
@@ -43,126 +45,7 @@ class PMSELogicHook
         return $handler->terminateCaseAfterDelete($bean, $event, $arguments);
     }
 
-    private function isExpectedModule($bean)
-    {
-        include 'modules/pmse_Inbox/engine/PMSEModules.php';
-        $pmseModulesList = (isset($pmseModulesList)) ? $pmseModulesList : array();
-        //returns immediately if the bean is a common module
-        $result = true;
-        //Modules that will not be processed by PA
-        $blacklistedModules = array(
-            'Teams',
-            'UserPreferences',
-            'Subscriptions',
-            'OAuthToken',
-            'Dashboards',
-            'Activities',
-            'Filters',
-            'ACLAction',
-            'SessionManager',
-            'vCal',
-            'TeamSetModule',
-            'ForecastWorksheet',
-            'ACLField',
-            'ACLRole',
-            'DocumentRevision',
-            'SavedReport',
-            'ForecastManagerWorksheet',
-            'KBDocumentRevision',
-            'KBDocumentKBTag',
-            'EmailTemplate',
-            'TeamMembership',
-            'TaxRate',
-            'TeamSets',
-            'Import',
-            'Email',
-            'ACLRoleSet',
-            'FieldsMetaData',
-            'EmailAddress',
-            'SchedulersJob',
-            'Scheduler',
-            'SugarFavorites',
-            'OAuthKey',
-            'TeamNotices',
-            'UpgradeHistory',
-            'WebLogicHook',
-            'Currency',
-            'Notifications',
-            'EAPM',
-            'TimePeriod',
-            'MonthTimePeriod',
-            'AnnualTimePeriod',
-            'QuarterTimePeriod',
-            'InboundEmail',
-            'Home',
-            'Calendar',
-            'Currencies',
-            'WebLogicHooks',
-            'ProductCategories',
-            'ProductTypes',
-            'Reports',
-            'ForecastWorksheets',
-            'ForecastManagerWorksheets',
-            'MergeRecords',
-            'Quotas',
-            'Manufacturers',
-            'Comments',
-            'Feeds',
-            'iFrames',
-            'TimePeriods',
-            'TaxRates',
-            'ContractTypes',
-            'Schedulers',
-            'CampaignLog',
-            'CampaignTrackers',
-            'DocumentRevisions',
-            'Connectors',
-            'Roles',
-            'Sync',
-            'ReportMaker',
-            'DataSets',
-            'CustomQueries',
-            'WorkFlow',
-            'Worksheet',
-            'Administration',
-            'ACLRoles',
-            'Releases',
-            'Queues',
-            'EmailMarketing',
-            'EmailTemplates',
-            'SNIP',
-            'ProspectLists',
-            'SavedSearch',
-            'UpgradeWizard',
-            'Trackers',
-            'TrackerPerfs',
-            'TrackerSessions',
-            'TrackerQueries',
-            'FAQ',
-            'Newsletters',
-            'PdfManager',
-            'OAuthKeys',
-            'OAuthTokens',
-            'UserSignatures',
-            'Shippers',
-            'Styleguide',
-            'Library',
-            'EmailAddresses',
-            'Words',
-            'Sugar_Favorites',
-            'Audit',
-        );
-        if (isset($bean->module_name)) {
-            $excludedModules = array_merge($blacklistedModules, $pmseModulesList);
-            if (in_array($bean->module_name, $excludedModules) OR in_array($bean->object_name, $excludedModules)) {
-                return false;
-            }
-        }
-
-        return $result;
-    }
-
-    private function isSugarInstalled()
+    protected function isSugarInstalled()
     {
         global $sugar_config;
 

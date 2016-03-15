@@ -49,5 +49,22 @@ class pmse_BpmRelatedDependency extends pmse_BpmRelatedDependency_sugar {
 		return parent::ACLAccess($view, $context);
 	}
 
+    /**
+     * @inheritdoc
+     */
+    public function mark_deleted($id)
+    {
+        parent::mark_deleted($id);
+        PMSEEngineUtils::resetActiveProcessesModulesCache();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        $result = parent::save($check_notify);
+        PMSEEngineUtils::resetActiveProcessesModulesCache();
+        return $result;
+    }
 }
-?>
