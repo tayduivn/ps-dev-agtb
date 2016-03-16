@@ -249,6 +249,10 @@ class SugarUpgradeRenameCustom extends UpgradeScript
     protected function updateLanguageFile($file)
     {
         $this->upgrader->backupFile($file);
+
+        global $app_list_strings;
+        // backup global $app_list_strings
+        $g_app_list_strings = $app_list_strings;
         $app_list_strings = array();
         include $file;
 
@@ -259,6 +263,10 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             $out .= override_value_to_string_recursive2('app_list_strings', $key, $app_list_strings[$key]);
         }
         file_put_contents($file, $out);
+
+        // restore global $app_list_strings
+        $app_list_strings = $g_app_list_strings;
+
     }
 
     /**

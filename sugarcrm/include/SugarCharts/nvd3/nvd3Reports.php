@@ -128,7 +128,8 @@ class nvd3Reports extends nvd3
         $lastgroupfield = end($this->group_by);
 
         if (isset($this->reporter->focus->field_defs[$lastgroupfield]) &&
-            $this->reporter->focus->field_defs[$lastgroupfield]['type'] === "date") {
+            ($this->reporter->focus->field_defs[$lastgroupfield]['type'] === "date"
+            || $this->reporter->focus->field_defs[$lastgroupfield]['type'] === "datetime")) {
             usort($super_set, array($this, "runDateSort"));
         } else {
             asort($super_set);
