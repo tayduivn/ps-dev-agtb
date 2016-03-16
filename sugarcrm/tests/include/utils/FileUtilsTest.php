@@ -115,6 +115,46 @@ class FileUtilsTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('application/octet-stream', $actual, "Upload File Get Mime on nonexistent file should have returned 'application/octet-stream' but returned $actual");
     }
 
+    public function testWriteArrayToFileWithKeyValuePair()
+    {
+        $the_file = "temp_file.php";
+        $testArray = array (
+            'name' => 'solution_number',
+            'vname' => 'LBL_SOLUTION_NUMBER',
+            'type' => 'int',
+            'len' => 11,
+            'auto_increment' => 'true',
+            'required' => 'true',
+            'enable_range_search' => '',
+            'full_text_search' => array (
+                'enabled' => 1,
+                'searchable' =>'',
+                'boost' => 1 ),
+            'merge_filter' => 'disabled',
+            'autoinc_next' => '51',
+            'dbType' => 'int'
+        );
+
+        $the_name = 'mod_strings';
+        write_array_to_file_as_key_value_pair($the_name, $testArray, $the_file, 'w');
+
+        if (!file_exists($the_file)) {
+            $this->assertEquals(1, 0, "failed to write to file!");
+        } else {
+            $mod_strings = array();
+            require $the_file;
+            foreach ($testArray as $key => $value) {
+                if (!is_array($value)) {
+                    $this->assertEquals($mod_strings[$key], $value, "key=$key value=$value doesn't match");
+                } else {
+                    $this->assertEquals(var_export($mod_strings[$key], true), var_export($value, true));
+                }
+            }
+            // clean up
+            unlink($the_file);
+        }
+    }
+
     protected function _getDefaultMimeType()
     {
         $mime = 'text/plain';
