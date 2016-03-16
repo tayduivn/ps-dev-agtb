@@ -42,12 +42,12 @@ class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
     public function startQuery($sql, array $params = null, array $types = null)
     {
         if ($this->logger->wouldLog(self::LEVEL)) {
-            $message = 'Query:' . $sql;
+            $message = 'Query: ' . $sql;
             if (count($params)) {
-                $message .= PHP_EOL . 'Params:' . $this->stringify($params);
+                $message .= PHP_EOL . 'Params: ' . $this->stringify($params);
             }
             if (count($types)) {
-                $message .= PHP_EOL . 'Types:' . $this->stringify($types);
+                $message .= PHP_EOL . 'Types: ' . $this->stringify($types);
             }
             $this->log($message);
         }

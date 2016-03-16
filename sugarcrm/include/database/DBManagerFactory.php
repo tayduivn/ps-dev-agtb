@@ -186,25 +186,15 @@ class DBManagerFactory
             throw new Exception('Unsupported DB driver ' . $instance->variant);
         }
 
-        $config = self::getDoctrineConfiguration();
+        $conn = DoctrineDriverManager::getConnection(array(
+            'driverClass' => $driverMap[$instance->variant],
+            'connection' => $instance->getDatabase(),
+        ));
 
-        return DoctrineDriverManager::getConnection(
-            array(
-                'driverClass' => $driverMap[$instance->variant],
-                'connection' => $instance->getDatabase(),
-            ),
-            $config
-        );
-    }
+        $logger = new \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger();
+        $conn->getConfiguration()->setSQLLogger($logger);
 
-    /**
-     * @return DoctrineConfiguraton
-     */
-    protected static function getDoctrineConfiguration()
-    {
-        $config = new DoctrineConfiguraton();
-        $config->setSQLLogger(new \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger());
-        return $config;
+        return $conn;
     }
 
     /**
