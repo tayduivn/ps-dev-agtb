@@ -548,9 +548,9 @@ class ForecastWorksheet extends SugarBean
             $sq = $this->getSugarQuery();
             $sq->select(array('id'));
             $sq->from($this, array('alias'=>'fw','team_security'=>false))
-                ->joinRaw('inner join forecast_worksheets fw2 ' .
-                          'on fw2.parent_id = fw.parent_id ' .
-                            'and fw2.assigned_user_id <> fw.assigned_user_id');
+                ->joinTable('forecast_worksheets', array('alias' => 'fw2'))
+                ->on()->equalsField('fw2.parent_id', 'fw.parent_id')
+                ->notEqualsField('fw2.assigned_user_id', 'fw.assigned_user_id');
             $sq->where()
                 ->equals("draft", 0)
                 ->queryAnd()

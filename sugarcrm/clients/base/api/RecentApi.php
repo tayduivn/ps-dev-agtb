@@ -182,19 +182,10 @@ class RecentApi extends SugarApi
         // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
 
         // Since tracker relationships don't actually exist, we're gonna have to add a direct join
-        $query->joinRaw(
-            sprintf(
-                " JOIN tracker ON tracker.item_id=%s.id AND tracker.module_name='%s' AND tracker.user_id='%s' ",
-                $query->from->getTableName(),
-                $query->from->module_name,
-                $currentUser->id
-            ),
-            array('alias' => 'tracker')
-        );
-
-        // we need to set the linkName to hack around tracker not having real relationships
-        /* TODO think about how to fix this so we can be less restrictive to raw joins that don't have a relationship */
-        $query->join['tracker']->linkName = 'tracker';
+        $join = $query->joinTable('tracker');
+        $join->on()->equalsField('tracker.item_id', $query->from->getTableName() . '.id')
+            ->equals('tracker.module_name', $query->from->module_name)
+            ->equals('tracker.user_id', $currentUser->id);
 
         $query->select(array('id', array('tracker.module_name', 'module_name')));
 

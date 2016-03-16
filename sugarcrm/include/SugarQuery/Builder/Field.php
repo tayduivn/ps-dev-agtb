@@ -239,10 +239,9 @@ class SugarQuery_Builder_Field
                     }
                     //Now actually join the related table
                     $jta = $this->query->getJoinTableAlias($this->def['name']);
-                    $join = $this->query->joinRaw(
-                        " LEFT JOIN {$farBean->table_name} {$jta} ON ({$idField->table}.{$this->def['id_name']} = {$jta}.id AND {$jta}.deleted = 0) ",
-                        array('alias' => $jta)
-                    );
+                    $join = $this->query->joinTable($farBean->table_name, array('joinType' => 'LEFT', 'alias' => $jta))
+                        ->on()->equalsField("{$idField->table}.{$this->def['id_name']}", "{$jta}.id")
+                        ->equals("{$jta}.deleted", 0);
                     $join->bean = $farBean;
                 }
             }

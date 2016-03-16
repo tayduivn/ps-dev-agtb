@@ -1137,17 +1137,17 @@ class FilterApi extends SugarApi
 
         // Have to do a subselect because MAX() and GROUP BY don't get along with
         // databases other than MySQL
-        $q->joinRaw(
-            ' INNER JOIN ( SELECT t.item_id item_id, MAX(t.date_modified) track_max ' .
+        $join = $q->joinTable(
+            '(SELECT t.item_id item_id, MAX(t.date_modified) track_max ' .
             ' FROM tracker t ' .
-            " WHERE t.module_name = '" . $db->quote($q->from->module_name) . "' " .
-            " AND t.user_id = '" . $db->quote($GLOBALS['current_user']->id) . "' " .
+            ' WHERE t.module_name = ' . $db->quoted($q->from->module_name) . ' ' .
+            ' AND t.user_id = ' . $db->quoted($GLOBALS['current_user']->id) . ' ' .
             ' AND t.date_modified >= ' . $db->convert("'$min_date'", 'datetime') . ' ' .
             ' AND t.deleted = 0 ' .
-            ' GROUP BY t.item_id ' .
-            ' ) tracker ON tracker.item_id = ' . $q->from->getTableName() . '.id ',
+            ' GROUP BY t.item_id)',
             array('alias' => 'tracker')
         );
+        $join->on()->equalsField('tracker.item_id', $q->from->getTableName() . '.id');
 
         if (empty($q->order_by)) {
             // Now, if they want tracker records without specific order, so let's order it by the tracker date_modified

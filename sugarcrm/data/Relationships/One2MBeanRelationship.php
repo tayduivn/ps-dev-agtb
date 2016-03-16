@@ -367,7 +367,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         if (empty($options['ignoreRole'])) {
             foreach ($this->getRelationshipRoleColumns() as $column => $value) {
-                $sugar_query->where()->equals("{$relTable}.$column", $value);
+                $joinTable->on()->equals("{$relTable}.$column", $value);
             }
         }
 

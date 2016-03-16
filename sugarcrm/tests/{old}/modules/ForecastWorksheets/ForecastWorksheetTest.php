@@ -818,7 +818,9 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp->id = $tp_id;
 
-        $sql = "SELECT  fw.id id FROM forecast_worksheets fw inner join forecast_worksheets fw2 on fw2.parent_id = fw.parent_id and fw2.assigned_user_id <> fw.assigned_user_id  WHERE fw.deleted = 0 AND fw.draft = 0 AND (fw.assigned_user_id = 'foo')";
+        $sql = "SELECT  fw.id id FROM forecast_worksheets fw JOIN forecast_worksheets fw2 ON "
+            . "fw2.parent_id = fw.parent_id AND fw2.assigned_user_id != fw.assigned_user_id  WHERE fw.deleted = 0 "
+            . "AND fw.draft = 0 AND (fw.assigned_user_id = 'foo')";
 
         $sq->expects($this->exactly($execute_count))
             ->method('execute')

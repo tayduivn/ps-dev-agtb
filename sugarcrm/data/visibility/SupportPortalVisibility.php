@@ -48,6 +48,7 @@ class SupportPortalVisibility extends SugarVisibility
      * @param $query string The query string (probably shouldn't need to modify it here, but just in case)
      * @param $queryType string Either 'from' or 'where' to match the two types we understand right now.
      * @return string What to append to the query
+     * @see static::addVisibilityPortalFromQuery(), should be kept synced
      */
     protected function addVisibilityPortal($query, $queryType) 
     {
@@ -75,8 +76,6 @@ class SupportPortalVisibility extends SugarVisibility
             // According to the SQL specification this should never return any records
             $accountIn = "(NULL)";
         }
-        // $_SESSION['contact_id']
-        // $accountIds
 
         $queryPart = '';
 
@@ -202,7 +201,6 @@ class SupportPortalVisibility extends SugarVisibility
                 // Cases: Any case that has the portal_viewable flag set to true and is related to the account list
             default:
                 // Other: Same as cases, if there is no portal_viewable (or portal_viewable_c) field, it is not portal accessible
-                $additionalPart = '';
                 if ( $this->bean->module_dir == 'Cases' ) {
                     $portalEnabled = true;
                     $linkName = 'accounts';
@@ -235,14 +233,14 @@ class SupportPortalVisibility extends SugarVisibility
 
     public function addVisibilityFrom(&$query)
     {
-        $query .= $this->addVisibilityPortal($query,'from');
+        $query .= $this->addVisibilityPortal($query, 'from');
         return;
     }
 
     public function addVisibilityWhere(&$query)
     {
-        $queryPart = $this->addVisibilityPortal($query,'where');
-        if ( !empty($query) && !empty($queryPart) ) {
+        $queryPart = $this->addVisibilityPortal($query, 'where');
+        if (!empty($query) && !empty($queryPart)) {
             $query .= " AND ".$queryPart;
         } else if (!empty($queryPart)) {
             $query .= $queryPart;
@@ -252,16 +250,80 @@ class SupportPortalVisibility extends SugarVisibility
 
     /**
      * Add Visibility to a SugarQuery Object
+     *
      * @param SugarQuery $sugarQuery
-     * @param array $options
+     * @param array      $options
+     *
      * @return object|SugarQuery
      */
     public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array())
     {
-        $query = '';
-        $join = $this->addVisibilityPortal($query, 'from');
-        if(!empty($join)) {
-            $sugarQuery->joinRaw($join);
+        if (empty($_SESSION['type']) || $_SESSION['type'] != 'support_portal') {
+            $GLOBALS['log']->error("Not a portal user, but running through the portal visibility class.");
+            return;
+        }
+        if ($this->bean->disable_row_level_security) {
+            $GLOBALS['log']->debug(
+                "No portal security applied to module (row-level security disabled): ".$this->bean->module_dir
+            );
+            return;
+        }
+        $table_alias = $this->getOption('table_alias');
+        if (empty($table_alias)) {
+            $table_alias = $this->bean->table_name;
+        }
+        $accountIds = $this->getAccountIds();
+        // The Portal Rules Of Visibility:
+        switch ($this->bean->module_dir) {
+            case 'Contacts':
+                // Contacts: Any contact related to the account list
+                if (count($accountIds) || empty($_SESSION['contact_id'])) {
+                    $this->bean->load_relationship('accounts');
+                    $joins = $this->bean->accounts->buildJoinSugarQuery(
+                        $sugarQuery,
+                        array('joinTableAlias' => 'accounts_pv', 'ignoreRole' => true)
+                    );
+                    $joins['accounts_pv']->in('accounts_pv.id', $accountIds);
+                }
+                break;
+            case 'Notes':
+                // Notes: Notes that are connected to a Case or a Bug that is connected to one of our Accounts and
+                // has the portal_flag set to true
+                $this->bean->load_relationship('bugs');
+                if (!empty($accountIds)) {
+                    $this->bean->load_relationship('cases');
+                    $join = $this->bean->cases->buildJoinSugarQuery(
+                        $sugarQuery,
+                        array('joinTableAlias' => 'cases_pv', 'joinType' => 'LEFT')
+                    );
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    $join->on()->equals('cases_pv.portal_viewable', 1);
+                    //END SUGARCRM flav=ent ONLY
+                    $caseBean = BeanFactory::newBean('Cases');
+                    $caseBean->load_relationship('accounts');
+                    $join = $caseBean->accounts->buildJoinSugarQuery(
+                        $sugarQuery,
+                        array('joinTableAlias' => 'accounts_cases_pv', 'joinType' => 'LEFT')
+                    );
+                    $join->on()->equalsField('cases_pv.account_id', 'accounts_cases_pv.id')
+                        ->in('accounts_cases_pv.id', $accountIds);
+                }
+                $join = $this->bean->bugs->buildJoinSugarQuery(
+                    $sugarQuery,
+                    array('joinTableAlias' => 'bugs_pv', 'joinType' => 'LEFT')
+                );
+                //BEGIN SUGARCRM flav=ent ONLY
+                $join->on()->equals('bugs_pv.portal_viewable', 1);
+                //END SUGARCRM flav=ent ONLY
+                break;
+            case 'Cases':
+                $this->bean->load_relationship('accounts');
+                $join = $this->bean->accounts->buildJoinSugarQuery(
+                    $sugarQuery,
+                    array('joinTableAlias' => 'accounts_pv', 'ignoreRole' => true)
+                );
+                $join->on()->in('accounts_pv.id', $accountIds);
+                break;
         }
         return $sugarQuery;
     } 
