@@ -96,6 +96,7 @@ $mod_strings = array(
     'LBL_EMPTY_FOLDER' => 'No Emails to display',
     'LBL_ERROR_SENDING_EMAIL' => 'Error sending email!',
     'LBL_ERROR_SAVING_DRAFT' => 'Error saving draft!',
+    'LBL_FILTER_MY_DRAFTS' => 'My Drafts',
     'LBL_FORWARD_HEADER' => 'Begin forwarded message:',
     'LBL_FROM_NAME' => 'From Name',
     'LBL_FROM' => 'From:',

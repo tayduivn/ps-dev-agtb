@@ -537,6 +537,7 @@ for($i=0; $i<$number_contacts; $i++) {
 	$email->assigned_user_name = $contacts_account->assigned_user_name;
 	$email->description = $sugar_demodata['email_seed_data_descriptions'];
 	$email->status = 'sent';
+    $email->state = $i % 2 === 0 ? 'Draft' : 'Archived';
 	$email->parent_id = $account_id;
 	$email->parent_type = 'Accounts';
 	$email->to_addrs = $contact->emailAddress->getPrimaryAddress($contact);

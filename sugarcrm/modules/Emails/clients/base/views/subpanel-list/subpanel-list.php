@@ -28,7 +28,7 @@ $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
                     'link' => 'true'
                 ),
                 array(
-                    'name' => 'status',
+                    'name' => 'state',
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,

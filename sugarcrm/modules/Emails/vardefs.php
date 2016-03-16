@@ -332,6 +332,8 @@ $dictionary['Email'] = array(
             'type' => 'enum',
             'options' => 'dom_email_states',
             'len' => 100,
+            // fixme: state field defaults will be reevaluated/updated in MAR-3897
+            'default' => 'Draft',
             'massupdate' => false,
             'comment' => 'State of the Email (ex: Draft, Archived, Scheduled)',
         ),

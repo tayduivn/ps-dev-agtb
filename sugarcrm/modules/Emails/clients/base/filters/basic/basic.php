@@ -18,7 +18,7 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
             'id' => 'all_records',
             'name' => 'LBL_LISTVIEW_FILTER_ALL',
             'filter_definition' => array(),
-            'editable' => false
+            'editable' => false,
         ),
         array(
             'id' => 'assigned_to_me',
@@ -26,7 +26,22 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
             'filter_definition' => array(
                 '$owner' => '',
             ),
-            'editable' => false
+            'editable' => false,
+        ),
+        array(
+            'id' => 'my_drafts',
+            'name' => 'LBL_FILTER_MY_DRAFTS',
+            'filter_definition' => array(
+                array(
+                    '$owner' => '',
+                ),
+                array(
+                    'state' => array(
+                        '$in' => array('Draft'),
+                    ),
+                ),
+            ),
+            'editable' => false,
         ),
         array(
             'id' => 'recently_viewed',
@@ -34,7 +49,7 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
             'filter_definition' => array(
                 '$tracker' => '-7 DAY',
             ),
-            'editable' => false
+            'editable' => false,
         ),
         array(
             'id' => 'recently_created',
@@ -44,7 +59,7 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
                     '$dateRange' => 'last_7_days',
                 ),
             ),
-            'editable' => false
+            'editable' => false,
         ),
     ),
 );

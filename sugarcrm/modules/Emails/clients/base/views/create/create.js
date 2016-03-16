@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.Emails.ComposeView
- * @alias SUGAR.App.view.views.BaseEmailsComposeView
+ * @class View.Views.Base.Emails.CreateView
+ * @alias SUGAR.App.view.views.BaseEmailsCreateView
  * @extends View.Views.Base.CreateView
  */
 ({
