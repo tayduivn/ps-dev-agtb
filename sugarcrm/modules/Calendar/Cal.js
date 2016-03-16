@@ -1511,7 +1511,7 @@
             meetingDurationMinutes = 15,
             meetingAttributes = {
                 'date_start': dateStart,
-                'date_end': app.date(dateStart).add('m', meetingDurationMinutes).formatServer(),
+                'date_end': app.date(dateStart).add(meetingDurationMinutes, 'm').formatServer(),
                 'duration_hours': 0,
                 'duration_minutes': meetingDurationMinutes
             },
