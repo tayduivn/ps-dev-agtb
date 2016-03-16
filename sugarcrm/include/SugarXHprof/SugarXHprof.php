@@ -56,13 +56,6 @@ class SugarXHprof
     protected static $instance = null;
 
     /**
-     * Because of unregister_shutdown_function is not present in php we have to skip calls of 'end' method if that property equals to false
-     *
-     * @var bool is shutdown function registered or not
-     */
-    protected $registered = false;
-
-    /**
      * @var bool enable profiler or not, it will be disabled by some reasons
      * @see SugarXHprof::loadConfig()
      */
@@ -347,7 +340,6 @@ class SugarXHprof
             $this,
             'end'
         ));
-        $this->registered = true;
 
         $this->startTime = isset($_SERVER['REQUEST_TIME_FLOAT']) ? $_SERVER['REQUEST_TIME_FLOAT'] : microtime(true);
 
@@ -395,11 +387,11 @@ class SugarXHprof
      */
     public function end()
     {
-        if ($this->registered == false || static::$enable == false) {
+        if (!static::$enable) {
             return;
         }
-        $this->registered = false;
 
+        static::$enable = false;
         $origMemLimit = ini_get('memory_limit');
         ini_set('memory_limit', static::$memory_limit);
 
