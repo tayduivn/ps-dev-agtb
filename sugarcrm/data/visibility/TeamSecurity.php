@@ -89,6 +89,8 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
      * Get team security as a JOIN clause
      * @param string $current_user_id
      * @return string
+     *
+     * @see static::join(), should be kept synced
      */
     protected function getJoin($current_user_id)
     {
@@ -107,6 +109,48 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
             $query .= " INNER JOIN teams ON teams.id = {$team_table_alias}.team_id AND teams.deleted=0 ";
         }
         return $query;
+    }
+
+    /**
+     * Joins visibility condition to the query
+     *
+     * @param SugarQuery $query
+     * @param string $user_id
+     *
+     * @see static::getJoin(), should be kept synced
+     */
+    protected function join(SugarQuery $query, $user_id)
+    {
+        $team_table_alias = 'team_memberships';
+        $table_alias = $this->getOption('table_alias');
+        if (!empty($table_alias)) {
+            $team_table_alias = $this->bean->db->getValidDBName($team_table_alias.$table_alias, true, 'table');
+        } else {
+            $table_alias = $this->bean->table_name;
+        }
+
+        $user_id = $query->getDBManager()->quoted($user_id);
+        $table = <<<SQL
+(
+  SELECT tst.team_set_id
+  FROM team_sets_teams tst
+  INNER JOIN team_memberships $team_table_alias
+  ON tst.team_id = $team_table_alias.team_id
+    AND $team_table_alias.user_id = $user_id
+    AND $team_table_alias.deleted = 0
+  GROUP BY tst.team_set_id
+)
+SQL;
+        $query->joinTable($table, array(
+            'alias' => $table_alias . '_tf'
+        ))->on()->equalsField($table_alias . '_tf.team_set_id', $table_alias . '.team_set_id');
+
+        if ($this->getOption('join_teams')) {
+            $query->joinTable('teams')
+                ->on()
+                ->equalsField('teams.id', $team_table_alias . '.team_id')
+                ->equals('teams.deleted', 0);
+        }
     }
 
     /**
@@ -146,6 +190,8 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
     /**
      * Add visibility query
      * @param string $query
+     *
+     * @see static::addVisibilityQuery(), should be kept synced
      */
     protected function addVisibility(&$query)
     {
@@ -173,6 +219,34 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
    }
 
     /**
+     * Add visibility query
+     *
+     * @param SugarQuery $query
+     *
+     * @see static::addVisibility(), should be kept synced
+     */
+    public function addVisibilityQuery(SugarQuery $query)
+    {
+        // Support portal will never respect Teams, even if they do earn more than them even while raising the teamsets
+        if (isset($_SESSION['type']) && $_SESSION['type'] === 'support_portal') {
+            return;
+        }
+
+        if (!$this->isTeamSecurityApplicable()) {
+            return;
+        }
+
+        $current_user_id = empty($GLOBALS['current_user']) ? '' : $GLOBALS['current_user']->id;
+
+        if ($this->useCondition()) {
+            $cond = $this->getCondition($current_user_id);
+            $query->where()->addRaw($cond);
+        } else {
+            $this->join($query, $current_user_id);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addVisibilityFromQuery(SugarQuery $sugarQuery, array $options = array())
@@ -195,11 +269,7 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
                 $join->on()->queryAnd()->addRaw($add_join);
             }
         } else {
-            $join = '';
-            $this->addVisibilityFrom($join, $options);
-            if (!empty($join)) {
-                $sugarQuery->joinRaw($join);
-            }
+            $this->addVisibilityQuery($sugarQuery);
         }
 
         return $sugarQuery;

@@ -1002,7 +1002,9 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 $worksheet
             );
 
-        $sq = $this->createPartialMock('SugarQuery', array('execute'));
+        $sq = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('execute'))
+            ->getMock();
 
         $sq->expects($this->once())
             ->method('execute')
@@ -1084,7 +1086,9 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 $worksheet
             );
 
-        $sq = $this->createPartialMock('SugarQuery', array('execute'));
+        $sq = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('execute'))
+            ->getMock();
 
         $sq->expects($this->once())
             ->method('execute')

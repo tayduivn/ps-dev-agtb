@@ -1382,7 +1382,9 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ))
             ->getMock();
 
-        $sq = $this->createPartialMock('SugarQuery', array('getOne'));
+        $sq = $this->getMockBuilder('SugarQuery')
+            ->setMethods(array('getOne'))
+            ->getMock();
         $sq->expects($this->once())
             ->method('getOne')
             ->willReturn('50.000000');
