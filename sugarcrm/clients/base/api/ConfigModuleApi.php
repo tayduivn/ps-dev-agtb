@@ -170,7 +170,7 @@ class ConfigModuleApi extends ModuleApi
     protected function getPlatform($platform)
     {
         // if the platform is not a valid registered platform, default it back to base
-        $platforms = MetadataManager::getPlatformList();
+        $platforms = MetaDataManager::getPlatformList();
 
         if (!in_array($platform, $platforms)) {
             $platform = 'base';

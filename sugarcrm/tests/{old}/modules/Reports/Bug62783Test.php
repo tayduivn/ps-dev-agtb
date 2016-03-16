@@ -475,7 +475,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Helper class for testing getFiscalYearFilter() method
  */
-class SugarWidgetFielddatetime62783Test extends SugarWidgetFielddatetime
+class SugarWidgetFielddatetime62783Test extends SugarWidgetFieldDateTime
 {
     public function getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date = '')
     {
@@ -486,7 +486,7 @@ class SugarWidgetFielddatetime62783Test extends SugarWidgetFielddatetime
 /**
  * Helper class for testing getFiscalYearFilter() method
  */
-class SugarWidgetFielddate62783Test extends SugarWidgetFielddate
+class SugarWidgetFielddate62783Test extends SugarWidgetFieldDate
 {
     public function getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date = '')
     {

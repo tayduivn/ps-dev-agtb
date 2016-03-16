@@ -10,7 +10,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
 
     public function setUp()
     {
-        $this->parser = $this->createPartialMock('SidecarListLayoutMetadataParser', array('handleSave'));
+        $this->parser = $this->createPartialMock('SidecarListLayoutMetaDataParser', array('handleSave'));
 
         $implementation = $this->createPartialMock(
             'DeployedMetaDataImplementation',

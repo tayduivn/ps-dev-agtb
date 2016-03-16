@@ -144,7 +144,7 @@ class SugarCacheDbTest extends \PHPUnit_Framework_TestCase
                 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30=',
             ),
             array(
-                new \StdClass(),
+                new \stdClass(),
                 'Tzo4OiJzdGRDbGFzcyI6MDp7fQ==',
             ),
             array(

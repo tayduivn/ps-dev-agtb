@@ -30,7 +30,7 @@ if (!$current_user->isAdminForModule("InboundEmail")) {
 
 $focus = BeanFactory::getBean('InboundEmail');
 $focus->checkImap();
-$javascript = new Javascript();
+$javascript = new javascript();
 $email = BeanFactory::getBean('Emails');
 /* Start standard EditView setup logic */
 

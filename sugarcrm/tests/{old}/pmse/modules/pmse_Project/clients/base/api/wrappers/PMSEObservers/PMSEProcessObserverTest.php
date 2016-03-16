@@ -60,7 +60,7 @@ class PMSEProcessObserverTest extends PHPUnit_Framework_TestCase
                 ->setMethods(array('getEvent', 'getEventDefinition', 'getProcessDefinition'))
                 ->getMock();
         
-        $processDefMock = $this->getMockBuilder('pmse_bpmProcessDefinition')
+        $processDefMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
                 ->setMethods(NULL)

@@ -46,7 +46,7 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->passwordApi->usr->db = $this->createMock(get_class($GLOBALS['db']));
         $this->passwordApi->usr->db->expects($this->any())->method('query')->will($this->returnValue(true));
-        $this->passwordApi->usr->emailAddress = $this->createMock('emailAddress');
+        $this->passwordApi->usr->emailAddress = $this->createMock('EmailAddress');
         $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will($this->returnValue($this->args['email']));
 
         $this->passwordApi->usr->portal_only = false;
@@ -154,7 +154,7 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
             $this->returnValue($data['primary'])
         );
-        $this->passwordApi->usr->emailAddress = $this->createMock('emailAddress');
+        $this->passwordApi->usr->emailAddress = $this->createMock('EmailAddress');
         $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will(
             $this->returnValue($data['email'])
         );

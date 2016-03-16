@@ -145,7 +145,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $module = 'foo';
         SugarAutoLoader::load('modules/Administration/QuickRepairAndRebuild.php');
         $apiClass = $this->createPartialMock('ForecastsConfigApi', array('getRepairAndClear'));
-        $repairClass = $this->getMockBuilder('RepairandClear')->getMock();
+        $repairClass = $this->getMockBuilder('RepairAndClear')->getMock();
 
         $apiClass->expects($this->once())
                  ->method('getRepairandClear')

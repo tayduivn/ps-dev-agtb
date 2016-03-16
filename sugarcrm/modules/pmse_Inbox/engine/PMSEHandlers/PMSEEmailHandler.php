@@ -180,7 +180,7 @@ class PMSEEmailHandler
     public function processEmailsFromJson($bean, $json, $flowData)
     {
         $addresses = json_decode($json);
-        $result = new StdClass();
+        $result = new stdClass();
         if (isset($addresses->to) && is_array($addresses->to)) {
             $result->to = $this->processEmailsAndExpand($bean, $addresses->to, $flowData);
         }
@@ -294,7 +294,7 @@ class PMSEEmailHandler
         }
         
         if (isset($user->full_name) && isset($user->email1)) {
-            $item = new StdClass();
+            $item = new stdClass();
             $item->name = $user->full_name;
             $item->address = $user->email1;
             $res[] = $item;

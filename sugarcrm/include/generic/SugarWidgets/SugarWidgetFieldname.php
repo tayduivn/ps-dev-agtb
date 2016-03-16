@@ -173,7 +173,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 			$input_name0 = $current_user->id;
 		}
 
-		return SugarWidgetFieldid::_get_column_select($layout_def)."<>"
+        return SugarWidgetFieldId::_get_column_select($layout_def)."<>"
 			.$this->reporter->db->quoted($input_name0)."\n";
 	}
 
@@ -199,7 +199,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 		$str = implode(",",$arr);
 
-		return SugarWidgetFieldid::_get_column_select($layout_def)." IN (".$str.")\n";
+        return SugarWidgetFieldId::_get_column_select($layout_def)." IN (".$str.")\n";
 	}
     // $rename_columns, if true then you're coming from reports
 	function queryFilternot_one_of($layout_def, $rename_columns = true)
@@ -223,7 +223,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 
 		$str = implode(",",$arr);
 
-		return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN (".$str.")\n";
+        return SugarWidgetFieldId::_get_column_select($layout_def)." NOT IN (".$str.")\n";
 	}
 
     /**
@@ -245,7 +245,10 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
             $input_name0 = $current_user->id;
         }
 
-        return SugarWidgetFieldid::_get_column_select($layout_def)." IN (SELECT id FROM users WHERE reports_to_id = ". $this->reporter->db->quoted($input_name0). " AND status = 'Active' AND deleted=0)\n";
+        return SugarWidgetFieldId::_get_column_select($layout_def)
+            . " IN (SELECT id FROM users WHERE reports_to_id = "
+            . $this->reporter->db->quoted($input_name0)
+            . " AND status = 'Active' AND deleted = 0)\n";
    	}
 
 	function &queryGroupBy($layout_def)
@@ -254,7 +257,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
              $layout_def['name'] = 'id';
              $layout_def['type'] = 'id';
 
-             $group_by =  SugarWidgetFieldid::_get_column_select($layout_def)."\n";
+             $group_by =  SugarWidgetFieldId::_get_column_select($layout_def)."\n";
         } else {
             // group by clause for user name passes through here.
              $group_by = $this->_get_column_select($layout_def)."\n";

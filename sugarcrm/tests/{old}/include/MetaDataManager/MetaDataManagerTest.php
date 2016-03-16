@@ -258,7 +258,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetLanguage($params)
     {
-        $manager = $this->getMockBuilder('MetadataManager')
+        $manager = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
         //Skipping the constructor requires we set up the db ourselves
         $manager->db = DBManagerFactory::getInstance();
@@ -667,7 +667,7 @@ PLATFORMS;
 
         $app_list_strings['md_fix_filter_test'] = $defaults;
 
-        $mock = $this->createPartialMock('MetadataManager', array('getRawFilter'));
+        $mock = $this->createPartialMock('MetaDataManager', array('getRawFilter'));
         $mock->expects($this->any())->method('getRawFilter')->willReturn($filter);
         $actual = $mock->getEditableDropdownFilter('md_fix_filter_test', 'foo');
 
@@ -739,7 +739,7 @@ PLATFORMS;
 // END SUGARCRM flav=ent ONLY
 }
 
-class MetadataManagerMock extends MetadataManager
+class MetadataManagerMock extends MetaDataManager
 {
     public function getConfigs()
     {

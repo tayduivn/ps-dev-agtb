@@ -21,7 +21,7 @@ global $sugar_config;
 
 $ie = BeanFactory::getBean('InboundEmail');
 $focus = new SugarFolder();
-$javascript = new Javascript();
+$javascript = new javascript();
 /* Start standard EditView setup logic */
 
 if(isset($_REQUEST['record'])) {

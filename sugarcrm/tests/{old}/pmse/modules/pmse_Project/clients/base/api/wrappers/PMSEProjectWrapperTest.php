@@ -1223,7 +1223,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $activityMock = $this->getMockBuilder('pmse_bpmnActivity')
+        $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
             ->setMethods(NULL)
             ->getMock();
@@ -1241,7 +1241,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('create')
             ->will($this->returnValue('elem01'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmActivityDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1250,7 +1250,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getBean')
             ->will($this->returnValue($definitionMock));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1299,7 +1299,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $activityMock = $this->getMockBuilder('pmse_bpmnGateway')
+        $activityMock = $this->getMockBuilder('pmse_BpmnGateway')
             ->disableOriginalConstructor()
             ->setMethods(NULL)
             ->getMock();
@@ -1317,7 +1317,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('create')
             ->will($this->returnValue('elem01'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmGatewayDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmGatewayDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1326,7 +1326,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getBean')
             ->will($this->returnValue($definitionMock));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1375,7 +1375,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $activityMock = $this->getMockBuilder('pmse_bpmnEvent')
+        $activityMock = $this->getMockBuilder('pmse_BpmnEvent')
             ->disableOriginalConstructor()
             ->setMethods(NULL)
             ->getMock();
@@ -1392,7 +1392,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('create')
             ->will($this->returnValue('elem01'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmEventDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmEventDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1401,7 +1401,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getBean')
             ->will($this->returnValue($definitionMock));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
@@ -1452,7 +1452,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $activityMock = $this->getMockBuilder('pmse_bpmnActivity')
+        $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve_by_string_fields', 'save'))
             ->getMock();
@@ -1488,7 +1488,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('id'));
 
 
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1542,7 +1542,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $activityMock = $this->getMockBuilder('pmse_bpmnActivity')
+        $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve_by_string_fields', 'save'))
             ->getMock();
@@ -1573,7 +1573,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getPrimaryFieldName')
             ->will($this->returnValue('id'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmActivityDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1587,7 +1587,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('delete')
             ->will($this->returnValue('act01'));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1645,7 +1645,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $eventMock = $this->getMockBuilder('pmse_bpmnEvent')
+        $eventMock = $this->getMockBuilder('pmse_BpmnEvent')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve_by_string_fields', 'save'))
             ->getMock();
@@ -1674,7 +1674,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getPrimaryFieldName')
             ->will($this->returnValue('id'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmEventDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmEventDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields', 'delete'))
             ->getMock();
@@ -1688,7 +1688,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('delete')
             ->will($this->returnValue(true));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1748,7 +1748,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $activityMock = $this->getMockBuilder('pmse_bpmnActivity')
+        $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve_by_string_fields', 'save'))
             ->getMock();
@@ -1779,7 +1779,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('getPrimaryFieldName')
             ->will($this->returnValue('id'));
 
-        $definitionMock = $this->getMockBuilder('pmse_bpmActivityDefinition')
+        $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1793,7 +1793,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->method('delete')
             ->will($this->returnValue('act01'));
         
-        $boundMock = $this->getMockBuilder('pmse_bpmnBound')
+        $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))
             ->getMock();
@@ -1892,7 +1892,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $processDefinitionMock = $this->getMockBuilder('pmse_bpmProcessDefinition')
+        $processDefinitionMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
             ->disableOriginalConstructor()
             ->setMethods(array('retrieve_by_string_fields', 'save'))
             ->getMock();

@@ -128,9 +128,9 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
             array(
                 Superglobals::GET,
                 InputParameters::ERROR_GET,
-                new \StdClass(),
+                new \stdClass(),
                 'msgGeneric',
-                array(new \StdClass()),
+                array(new \stdClass()),
             ),
 
             // null byte tests

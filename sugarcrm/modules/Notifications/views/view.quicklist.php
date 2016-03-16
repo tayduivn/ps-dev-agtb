@@ -12,8 +12,8 @@
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-class ViewQuicklist extends SugarView{
-
+class ViewQuickList extends SugarView
+{
     /**
      * @deprecated Use __construct() instead
      */

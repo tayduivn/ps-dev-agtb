@@ -203,7 +203,7 @@ class ForecastReset
         $listDefsParser->resetPanelFields();
 
         // get the proper order from the admin panel, where we defined what is displayed, in the order that we want it
-        $mm = MetadataManager::getManager();
+        $mm = MetaDataManager::getManager();
         $views = $mm->getModuleViews('Forecasts');
         $fields = $views['config-worksheet-columns']['meta']['panels'][0]['fields'];
 

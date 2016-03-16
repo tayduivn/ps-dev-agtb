@@ -12,7 +12,7 @@
 
 
 
-class SugarWidgetFieldusername extends SugarWidgetFieldname
+class SugarWidgetFieldusername extends SugarWidgetFieldName
 {
     public function displayInput($layout_def)
  {

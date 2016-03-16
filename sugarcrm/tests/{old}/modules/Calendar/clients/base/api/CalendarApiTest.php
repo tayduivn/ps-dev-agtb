@@ -206,7 +206,7 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class CalendarApiTest_CalendarApi extends calendarApi
+class CalendarApiTest_CalendarApi extends CalendarApi
 {
     public function publicBuildSearchParams($args)
     {

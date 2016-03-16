@@ -44,7 +44,7 @@ class RS64Test extends Sugar_PHPUnit_Framework_TestCase
             $this->bug->mark_deleted($this->bug->id);
         }
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactutilities::removeAllCreatedContacts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }
 

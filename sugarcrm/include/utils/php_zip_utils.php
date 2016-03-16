@@ -70,7 +70,8 @@ function zip_dir( $zip_dir, $zip_archive )
     }
     $zip = new ZipArchive();
     // we need this for shadow path resolution to work
-    $zip->open(UploadFile::realpath($zip_archive), ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE); // we need realpath here for PHP streams support
+    // we need realpath here for PHP streams support
+    $zip->open(UploadFile::realpath($zip_archive), ZipArchive::CREATE|ZipArchive::OVERWRITE);
     $path = UploadFile::realpath($zip_dir);
 
     /** @var RecursiveIteratorIterator|RecursiveDirectoryIterator $it */

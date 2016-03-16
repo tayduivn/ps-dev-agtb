@@ -125,7 +125,7 @@ class Bug63814Test extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Helper class for testing getQuarterFilter() method
  */
-class SugarWidgetFielddatetime63814Test extends SugarWidgetFielddatetime
+class SugarWidgetFielddatetime63814Test extends SugarWidgetFieldDateTime
 {
     public function getQuarterFilter($layout_def, $modifyFilter, $date = '')
     {
@@ -136,7 +136,7 @@ class SugarWidgetFielddatetime63814Test extends SugarWidgetFielddatetime
 /**
  * Helper class for testing getQuarterFilter() method
  */
-class SugarWidgetFielddate63814Test extends SugarWidgetFielddate
+class SugarWidgetFielddate63814Test extends SugarWidgetFieldDate
 {
     public function getQuarterFilter($layout_def, $modifyFilter, $date = '')
     {

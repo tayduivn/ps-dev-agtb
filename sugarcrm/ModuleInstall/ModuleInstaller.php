@@ -3232,11 +3232,11 @@ class ModuleInstaller{
 
         foreach ($copyList as $to => $from) {
             $contents = file_get_contents($from);
-            SugarAutoloader::ensureDir(dirname($to));
-            SugarAutoloader::put($to, $contents, false);
+            SugarAutoLoader::ensureDir(dirname($to));
+            SugarAutoLoader::put($to, $contents, false);
         }
 
-        SugarAutoloader::saveMap();
+        SugarAutoLoader::saveMap();
     }
 
     /**

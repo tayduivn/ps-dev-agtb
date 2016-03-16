@@ -183,7 +183,7 @@ class ViewSugarFieldCollection{
         if(isset($this->displayParams['collection_field_list'])){
 
             $relatedObject = BeanFactory::getObjectName($this->related_module);
-            vardefmanager::loadVardef($this->related_module, $relatedObject);
+            VardefManager::loadVardef($this->related_module, $relatedObject);
             foreach($this->displayParams['collection_field_list'] as $k=>$v){
                 $javascript='';
                 $collection_field_vardef = $GLOBALS['dictionary'][$relatedObject]['fields'][$v['name']];

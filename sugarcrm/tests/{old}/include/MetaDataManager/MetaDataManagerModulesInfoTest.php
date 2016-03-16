@@ -133,7 +133,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $fullModuleList = array_merge($moduleList, $modInvisList);
 
         // Run the test
-        $mm = $this->getMockBuilder('MetadataManager')
+        $mm = $this->getMockBuilder('MetaDataManager')
             ->setMethods(array('getModulesData'))
             ->getMock();
         $mm->expects($this->any())
@@ -210,7 +210,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
         $browser->loadModules();
 
         // Run the test
-        $mm = $this->getMockBuilder('MetadataManager')
+        $mm = $this->getMockBuilder('MetaDataManager')
             ->setMethods(array('getModulesData'))
             ->getMock();
         $mm->expects($this->any())
@@ -274,7 +274,7 @@ class MetaDataManagerModulesInfoTest extends Sugar_PHPUnit_Framework_TestCase
     {
 
         // Run the test
-        $mm = new MetadataManagerMobile();
+        $mm = new MetaDataManagerMobile();
         $fullModuleList = $mm->getFullModuleList();
         $defaultEnabledModuleList = $mm->getDefaultEnabledModuleList();
         $expectedTabs = array_keys(self::$testSystemTabs);

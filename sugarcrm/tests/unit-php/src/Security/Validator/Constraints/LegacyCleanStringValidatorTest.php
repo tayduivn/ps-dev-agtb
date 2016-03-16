@@ -157,7 +157,7 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
         return array(
             // non strings should always fail regardless the filter
             array(LegacyCleanString::STANDARD, null),
-            array(LegacyCleanString::STANDARD, new \StdClass()),
+            array(LegacyCleanString::STANDARD, new \stdClass()),
             array(LegacyCleanString::STANDARD, 17),
             array(LegacyCleanString::STANDARD, 23.69),
 

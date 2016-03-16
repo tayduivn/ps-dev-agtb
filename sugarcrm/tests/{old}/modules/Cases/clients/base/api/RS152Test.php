@@ -55,7 +55,7 @@ class RS152Test extends Sugar_PHPUnit_Framework_TestCase
             $this->case->mark_deleted($this->case->id);
         }
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactutilities::removeAllCreatedContacts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
     }
 

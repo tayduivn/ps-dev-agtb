@@ -135,7 +135,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'module-specific' => array(new UsersApi(), 'UsersApi'),
-            'non-module' => array(new StdClass(), 'ModuleApi'),
+            'non-module' => array(new stdClass(), 'ModuleApi'),
             'default' => array(null, 'ModuleApi'),
         );
     }

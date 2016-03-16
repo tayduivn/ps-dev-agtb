@@ -45,7 +45,7 @@ class Bug60372Test extends Sugar_PHPUnit_Framework_TestCase
 
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
-        $SWFDT = new SugarWidgetFielddatetime($layoutManager);
+        $SWFDT = new SugarWidgetFieldDateTime($layoutManager);
         $layoutDef = array(
             'type' => 'datetime',
             'input_name0' => $days,

@@ -58,7 +58,7 @@ class ForecastManagerWorksheetHooks
         // this should only run on before_save and when the worksheet is a draft record
         // and the draft_save_type is assign_quota
         if ($event == 'before_save' && $worksheet->draft == 1 && $worksheet->draft_save_type == 'assign_quota') {
-            $mm = MetadataManager::getManager();
+            $mm = MetaDataManager::getManager();
             $views = $mm->getModuleViews($worksheet->module_name);
 
             $fields = $views['list']['meta']['panels'][0]['fields'];

@@ -71,7 +71,7 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
     	require_once('include/utils/layout_utils.php');
     	$popup = new ViewPopup();
     	$popup->module = 'Accounts';
-    	$popup->bean = new account();
+        $popup->bean = new Account();
     	$this->expectOutputRegex('/Perform a search using the search form above/');
     	$popup->display();
     }
@@ -90,7 +90,7 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
     	require_once('include/utils/layout_utils.php');
     	$popup = new ViewPopup();
     	$popup->module = 'Accounts';
-    	$popup->bean = new account();
+        $popup->bean = new Account();
     	// Negative regexp
     	$this->expectOutputNotRegex('/Perform a search using the search form above/');
     	$popup->display();

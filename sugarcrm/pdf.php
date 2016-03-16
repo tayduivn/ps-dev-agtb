@@ -39,7 +39,7 @@ if (empty($GLOBALS['focus'])) {
 
 $includeFile = "modules/$module/$action.php";
 
-if (!SugarAutoloader::fileExists($includeFile)) {
+if (!SugarAutoLoader::fileExists($includeFile)) {
     sugar_die("pdf.php - include file does not exist");
 }
 

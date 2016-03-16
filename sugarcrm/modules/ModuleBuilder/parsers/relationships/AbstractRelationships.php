@@ -657,7 +657,7 @@ class AbstractRelationships
                 $from = "{$basepath}/{$moduleName}/".$fileName;
                 $to = "modules/{$moduleName}/".$fileName;
                 $installDefs[$moduleName][$to] = $from;
-                SugarAutoloader::ensureDir(dirname($from));
+                SugarAutoLoader::ensureDir(dirname($from));
                 sugar_file_put_contents($from, $contents);
             }
         }

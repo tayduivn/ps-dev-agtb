@@ -57,7 +57,7 @@ class EmailManController extends SugarController
 
         // mark user metadata changed so the user preferences get refreshed
         // (user preferences contain email client preference)
-        $mm = MetadataManager::getManager();
+        $mm = MetaDataManager::getManager();
         $mm->setUserMetadataHasChanged($current_user);
 
         // save User defaults for emails

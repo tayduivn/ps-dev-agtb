@@ -12,7 +12,7 @@
 
 
 
-class SugarWidgetFieldteam_name extends SugarWidgetFieldname
+class SugarWidgetFieldteam_name extends SugarWidgetFieldName
 {
     public function displayInput($layout_def)
  {

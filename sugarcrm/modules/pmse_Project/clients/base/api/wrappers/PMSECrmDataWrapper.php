@@ -1540,7 +1540,7 @@ class PMSECrmDataWrapper implements PMSEObservable
               $resultUpdate = $db->Query($update_event); */
 
             $res->success = true;
-        } catch (exception $ex) {
+        } catch (Exception $ex) {
             $res->error = $ex->getMessage();
         }
         return $res;

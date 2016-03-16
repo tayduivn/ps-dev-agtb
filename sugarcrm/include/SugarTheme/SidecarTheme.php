@@ -152,7 +152,7 @@ class SidecarTheme
                 $css[$lessFile] = $this->compileFile($lessFile, $min, false);
             }
             return implode('', array_values($css));
-        } catch (exception $e) {
+        } catch (Exception $e) {
             throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
         }
     }
@@ -206,7 +206,7 @@ class SidecarTheme
             sugar_mkdir($this->paths['cache'], null, true);
             sugar_file_put_contents($this->getCssFileLocation($lessFile, $hash), $css);
             return $hash;
-        } catch (exception $e) {
+        } catch (Exception $e) {
             throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
         }
     }

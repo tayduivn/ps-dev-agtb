@@ -34,7 +34,7 @@ class Bug49898Test extends SOAPTestCase
 
     /**
      * setUp
-     * Override the setup from SoapTestCase to also create the seed search data for Accounts and Contacts.
+     * Override the setup from SOAPTestCase to also create the seed search data for Accounts and Contacts.
      */
     public function setUp()
     {

@@ -16,7 +16,7 @@ require_once('vendor/nusoap//nusoap.php');
 /**
  * @group bug43282
  */
-class Bug43282Test extends SoapTestCase
+class Bug43282Test extends SOAPTestCase
 {
 	public $_soapURL = null;
     private $_tsk = null;

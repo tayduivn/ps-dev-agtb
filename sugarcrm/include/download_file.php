@@ -256,7 +256,7 @@ class DownloadFile {
         }
 
         $zip = new ZipArchive();
-        $zip->open($archive, ZIPARCHIVE::OVERWRITE);
+        $zip->open($archive, ZipArchive::OVERWRITE);
         foreach ($files as $file => $path) {
             $zip->addFromString($file, file_get_contents($path));
         }

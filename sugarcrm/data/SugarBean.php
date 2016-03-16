@@ -5351,7 +5351,7 @@ class SugarBean
      *
      * @return SugarBean[]
      */
-    protected function createSubPanelBeanList(aSubpanel $subpanel, array $data)
+    protected function createSubPanelBeanList(aSubPanel $subpanel, array $data)
     {
         $is_collection = $subpanel->isCollection();
 

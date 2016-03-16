@@ -98,7 +98,7 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $field = SugarFieldHandler::getSugarField('datetime');
         $q = new SugarQuery();
-        $w = new SugarQuery_Builder_AndWhere($q);
+        $w = new SugarQuery_Builder_Andwhere($q);
         $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), $q, $w, $op);
         $this->assertEquals($fixedDate, $date);
     }

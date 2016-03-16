@@ -21,7 +21,7 @@ class SugarWidgetFieldintTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         global $current_user;
-        $this->widgetField = new SugarWidgetFieldint(new LayoutManager());
+        $this->widgetField = new SugarWidgetFieldInt(new LayoutManager());
         $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 

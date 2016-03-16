@@ -97,7 +97,7 @@ if ($guid)
 	    		if (isset($_REQUEST['login']) && $_REQUEST['login'] =='1'){
 	    			if ( $row['username'] == $_POST['user_name'] ){
 
-						$usr= new user();
+                        $usr = new User();
 						$usr_id=$usr->retrieve_user_id($_POST['user_name']);
 	    				$usr->retrieve($usr_id);
 	    				$usr->setNewPassword($_POST['new_password']);

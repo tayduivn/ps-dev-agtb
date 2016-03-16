@@ -72,7 +72,7 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($this->any())
             ->will($this->returnValue($clientMock2));
 
-        $oauthMock = $this->createPartialMock('SugarOauth', array('setUri'));
+        $oauthMock = $this->createPartialMock('SugarOAuth', array('setUri'));
         $oauthMock->expects($this->any())
             ->method('setUri')
             ->will($this->returnValue($clientMock));

@@ -876,7 +876,7 @@ class Bug45716Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
             );
         $fakeLayoutManager = new Bug45716Helper();
-        $sugarWidget = new SugarWidgetFieldrelate($fakeLayoutManager);
+        $sugarWidget = new SugarWidgetFieldRelate($fakeLayoutManager);
         
         $output = $sugarWidget->displayList($layout_def);
 

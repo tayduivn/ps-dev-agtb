@@ -149,7 +149,7 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
                 "Users",
             ),
             array(
-                new StdClass(),
+                new stdClass(),
                 false,
             ),
             array(

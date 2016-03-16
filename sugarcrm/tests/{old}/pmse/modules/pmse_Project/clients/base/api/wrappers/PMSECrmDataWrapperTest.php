@@ -1516,14 +1516,14 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->object->setObservers(array());
         
-        $dynaformMock = $this->getMockBuilder('PMSEDynaform')
+        $dynaformMock = $this->getMockBuilder('PMSEDynaForm')
             ->disableOriginalConstructor()
             ->setMethods(array('generateDefaultDynaform'))
             ->getMock();
         
         $this->object->setDefaultDynaform($dynaformMock);
         
-        $processDefMock = $this->getMockBuilder('pmse_bpmProcessDefinition')
+        $processDefMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(array('save', 'retrieve_by_string_fields'))

@@ -35,7 +35,7 @@ if(isset( $_POST['Users0emailAddress0'])){
         $useremail = $_POST['user_email'];
 }
 
-    $usr= new user();
+    $usr = new User();
     if(isset($username) && $username != '' && isset($useremail) && $useremail != '')
     {
         if ($username != '' && $useremail != ''){
