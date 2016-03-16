@@ -526,16 +526,16 @@
             meetingEnd = app.date(dateEndString);
         } else {
             meetingEnd = app.date(meetingStart)
-                .add('hours', durationHours || 0)
-                .add('minutes', durationMins || 0);
+                .add(durationHours || 0, 'hours')
+                .add(durationMins || 0, 'minutes');
         }
 
 
         if (!meetingStart.isAfter(meetingEnd)) {
             result.meetingStart = meetingStart;
             result.meetingEnd = meetingEnd;
-            result.timelineStart = app.date(meetingStart).subtract('hours', this.timelineStart).minutes(0);
-            result.timelineEnd = app.date(result.timelineStart).add('hours', this.timelineLength).minutes(0);
+            result.timelineStart = app.date(meetingStart).subtract(this.timelineStart, 'hours').minutes(0);
+            result.timelineEnd = app.date(result.timelineStart).add(this.timelineLength, 'hours').minutes(0);
         }
 
         return result;
