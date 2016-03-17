@@ -191,7 +191,7 @@ class DBManagerFactory
             'connection' => $instance->getDatabase(),
         ));
 
-        $logger = new \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger();
+        $logger = new \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger($GLOBALS['log']);
         $conn->getConfiguration()->setSQLLogger($logger);
 
         return $conn;

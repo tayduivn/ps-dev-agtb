@@ -29,14 +29,18 @@ class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
     const MAX_PARAM_LENGTH = 100;
 
     /**
-     * Sugar logger
-     * @var \SugarLogger
+     * Sugar log
+     *
+     * @var \LoggerManager
      */
     protected $logger;
 
-    public function __construct()
+    /**
+     * @param \LoggerManager $logger Sugar log, usually $GLOBALS['log']
+     */
+    public function __construct(\LoggerManager $logger)
     {
-        $this->logger = $GLOBALS['log'];
+        $this->logger = $logger;
     }
 
     public function startQuery($sql, array $params = null, array $types = null)

@@ -12,8 +12,9 @@
 
 namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Logging;
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
+/**
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger
+ */
 class SugarLoggerTest extends \PHPUnit_Framework_TestCase
 {
     public function startQueryDataProvider()
@@ -22,7 +23,7 @@ class SugarLoggerTest extends \PHPUnit_Framework_TestCase
             array('Query: SELECT \'test\' FROM DUAL'),
             array(
                 'Query: SELECT \'test\' FROM DUAL'
-                    . PHP_EOL . 'Params : ["some-param"]',
+                    . PHP_EOL . 'Params: ["some-param"]',
                 array('some-param'),
             ),
             array(
@@ -37,24 +38,47 @@ class SugarLoggerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider startQueryDataProvider
+     * @covers ::startQuery
      */
     public function testStartQuery($expectedMessage, array $params = null, array $types = null)
     {
-        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject $sugarLogger */
-        $sugarLogger = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
-            ->setMethods(array('log'))
-            ->getMock();
-        $sugarLogger->expects($this->once())
-            ->method('log')
-            ->with($expectedMessage);
-        $loggerMock = $this->getMockBuilder('LoggerManager')
+        $loggerMock = $this->getMockBuilder('\LoggerManager')
             ->disableOriginalConstructor()
             ->getMock();
         $loggerMock->expects($this->any())
             ->method('wouldLog')
             ->will($this->returnValue(true));
-        TestReflection::setProtectedValue($sugarLogger, 'logger', $loggerMock);
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject $sugarLogger */
+        $sugarLogger = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
+            ->setConstructorArgs(array($loggerMock))
+            ->setMethods(array('log'))
+            ->getMock();
+        $sugarLogger->expects($this->once())
+            ->method('log')
+            ->with($expectedMessage);
 
         $sugarLogger->startQuery('SELECT \'test\' FROM DUAL', $params, $types);
+    }
+
+    /**
+     * @covers ::startQuery
+     */
+    public function testStartQueryNoLogging()
+    {
+        $loggerMock = $this->getMockBuilder('\LoggerManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $loggerMock->expects($this->any())
+            ->method('wouldLog')
+            ->will($this->returnValue(false));
+        /** @var \Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger|\PHPUnit_Framework_MockObject_MockObject $sugarLogger */
+        $sugarLogger = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger')
+            ->setConstructorArgs(array($loggerMock))
+            ->setMethods(array('log'))
+            ->getMock();
+        $sugarLogger->expects($this->never())
+            ->method('log');
+
+        $sugarLogger->startQuery('SELECT \'test\' FROM DUAL');
     }
 }
