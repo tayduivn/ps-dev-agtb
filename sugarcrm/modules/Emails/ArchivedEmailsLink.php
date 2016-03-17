@@ -132,10 +132,10 @@ class ArchivedEmailsLink extends Link2
         }
 
         if (!empty($options['reverse'])) {
-            $this->joinEmails($sugar_query, $fromAlias, $jta);
+            return $this->joinEmails($sugar_query, $fromAlias, $jta);
         } else {
             $sugar_query->joinTable('emails', $joinParams);
-            $this->joinEmails($sugar_query, $fromAlias, $jta);
+            return $this->joinEmails($sugar_query, $fromAlias, $jta);
         }
     }
 
