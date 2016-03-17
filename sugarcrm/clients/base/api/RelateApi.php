@@ -145,14 +145,14 @@ class RelateApi extends FilterApi {
 
     public function filterRelatedCount(ServiceBase $api, array $args)
     {
-
         $api->action = 'list';
 
-        list($args, $q, $options, $linkSeed) = $this->filterRelatedSetup($api, $args);
+        /** @var SugarQuery $q */
+        list(, $q) = $this->filterRelatedSetup($api, $args);
 
         $q->select->selectReset()->setCountQuery();
         $q->limit = null;
-        $q->order_by = null;
+        $q->orderByReset();
 
         return reset($q->execute());
     }

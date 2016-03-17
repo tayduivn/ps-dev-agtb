@@ -471,11 +471,13 @@ class FilterApi extends SugarApi
      */
     public function getFilterListCount(ServiceBase $api, array $args)
     {
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
         $api->action = 'list';
 
+        /** @var SugarQuery $q */
+        list(, $q) = $this->filterListSetup($api, $args);
+
         $q->select->selectReset()->setCountQuery();
-        $q->order_by = null;
+        $q->orderByReset();
         $q->limit = null;
 
         return reset($q->execute());
