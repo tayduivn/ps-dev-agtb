@@ -18,18 +18,29 @@ class SugarTestProspectUtilities
 
     private function __construct() {}
 
-    public static function createProspect($id = '') 
+    public static function createProspect($id = '', $prospectValues = array())
     {
-        $first_name = 'SugarProspectFirst';
-    	$last_name = 'SugarProspectLast';
-    	$email1 = 'prospect@sugar.com';
-		$title = 'Test prospect title';
-    	$prospect = new Prospect();
-        $prospect->first_name = $first_name;
-        $prospect->last_name = $last_name ;
-		$prospect->title = $title;
-        $prospect->email1 = 'prospect@sugar.com';
-		  
+        $time = mt_rand();
+        $prospect = BeanFactory::newBean('Prospects');
+
+        $prospectValues = array_merge(
+            array(
+                'first_name' => "SugarProspectFirst{$time}",
+                'last_name' => 'SugarProspectLast',
+                'title' => 'Test prospect title',
+                'email' => "prospect@{$time}sugar.com",
+            ),
+            $prospectValues
+        );
+
+        // for backward compatibility with existing tests
+        $prospectValues['email1'] = $prospectValues['email'];
+        unset($prospectValues['email']);
+
+        foreach ($prospectValues as $property => $value) {
+            $prospect->$property = $value;
+        }
+
         if(!empty($id))
         {
             $prospect->new_with_id = true;
@@ -45,7 +56,32 @@ class SugarTestProspectUtilities
     {
         $prospect_ids = self::getCreatedProspectIds();
         $GLOBALS['db']->query('DELETE FROM prospects WHERE id IN (\'' . implode("', '", $prospect_ids) . '\')');
+        static::removeCreatedProspectsEmailAddresses();
     }
+
+    /**
+     * This function removes email addresses that may have been associated with the accounts created.
+     *
+     * @static
+     */
+    public static function removeCreatedProspectsEmailAddresses()
+    {
+        $prospectIds = static::getCreatedProspectIds();
+        $prospectIdsSql = "'" . implode("','", $prospectIds) . "'";
+
+        if ($prospectIds) {
+            $subQuery = "SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Prospects' " .
+                "AND bean_id IN ({$prospectIdsSql})";
+            $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN ({$subQuery})");
+            $GLOBALS['db']->query(
+                "DELETE FROM emails_beans WHERE bean_module='Prospects' AND bean_id IN ({$prospectIdsSql})"
+            );
+            $GLOBALS['db']->query(
+                "DELETE FROM email_addr_bean_rel WHERE bean_module='Prospects' AND bean_id IN ({$prospectIdsSql})"
+            );
+        }
+    }
+
    public static function getCreatedProspectIds() 
     {
         $prospect_ids = array();

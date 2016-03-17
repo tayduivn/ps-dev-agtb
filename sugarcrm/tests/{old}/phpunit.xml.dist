@@ -216,6 +216,25 @@
             <file>./modules/ACL/TeamBasedACLModuleTest.php</file>
             <file>./modules/ACL/TeamBasedACLFieldTest.php</file>
         </testsuite>
+        <testsuite name="Emails">
+            <file>./data/Relationships/EmailRelationshipsTest.php</file>
+            <directory>./include/OutboundEmail</directory>
+            <directory>./include/SugarEmailAddress</directory>
+            <directory>./include/SugarFields/Fields/Email</directory>
+            <directory>./include/SugarFolders</directory>
+            <directory>./modules/CampaignLog</directory>
+            <directory>./modules/Campaigns</directory>
+            <directory>./modules/CampaignTrackers</directory>
+            <directory>./modules/EmailAddresses</directory>
+            <directory>./modules/EmailMan</directory>
+            <directory>./modules/Emails</directory>
+            <directory>./modules/EmailTemplates</directory>
+            <directory>./modules/InboundEmail</directory>
+            <directory>./modules/Mailer</directory>
+            <directory>./modules/OutboundEmailConfiguration</directory>
+            <directory>./modules/SNIP</directory>
+            <directory>./modules/UserSignatures</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <blacklist>

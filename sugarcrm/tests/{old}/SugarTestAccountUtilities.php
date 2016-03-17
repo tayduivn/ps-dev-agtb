@@ -61,6 +61,30 @@ class SugarTestAccountUtilities
     {
         $account_ids = self::getCreatedAccountIds();
         $GLOBALS['db']->query('DELETE FROM accounts WHERE id IN (\'' . implode("', '", $account_ids) . '\')');
+        static::removeCreatedAccountsEmailAddresses();
+    }
+
+    /**
+     * This function removes email addresses that may have been associated with the accounts created.
+     *
+     * @static
+     */
+    public static function removeCreatedAccountsEmailAddresses()
+    {
+        $accountIds = static::getCreatedAccountIds();
+        $accountIdsSql = "'" . implode("','", $accountIds) . "'";
+
+        if ($accountIds) {
+            $subQuery = "SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Accounts' AND " .
+                "bean_id IN ({$accountIdsSql})";
+            $GLOBALS['db']->query("DELETE FROM email_addresses WHERE id IN ({$subQuery})");
+            $GLOBALS['db']->query(
+                "DELETE FROM emails_beans WHERE bean_module='Accounts' AND bean_id IN ({$accountIdsSql})"
+            );
+            $GLOBALS['db']->query(
+                "DELETE FROM email_addr_bean_rel WHERE bean_module='Accounts' AND bean_id IN ({$accountIdsSql})"
+            );
+        }
     }
 
     public static function getCreatedAccountIds()

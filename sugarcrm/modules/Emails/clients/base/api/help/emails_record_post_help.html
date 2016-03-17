@@ -12,7 +12,7 @@
 -->
 <h2 xmlns="http://www.w3.org/1999/html">Overview</h2>
 <span class="lead">
-    Create a new Emails record..
+    Create a new Emails record.
 </span>
 
 <h2>Request Arguments</h2>
@@ -98,7 +98,7 @@
             List
         </td>
         <td>
-            List of related records ID. See <a href="module_record_link_post_help.html">RelateRecordApi</a>
+            List of related record IDs. See <a href="module_record_link_post_help.html">RelateRecordApi</a>
             for details.
         </td>
     </tr>
@@ -115,6 +115,173 @@
     </tr>
     </tbody>
 </table>
+
+<h3>Sender Link</h3>
+<span class="lead">
+    Specify the sender of an email.
+</span>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <code>add</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of one record representing the sender. An email address can be specified along with the record.
+            The following links are supported OOTB: <code>accounts_from</code>, <code>contacts_from</code>,
+            <code>email_addresses_from</code>, <code>leads_from</code>, <code>prospects_from</code>,
+            <code>users_from</code>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>create</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of one record representing the sender. Specify an email address to use as the sender. The email
+            address may be new or existing. This action is only available for <code>email_addresses_from</code>.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<pre class="pre-scrollable">
+    {
+      "contacts_from": {
+        "add": [
+          "afe9702e-53a3-0efb-6bbe-56c3580885ef"
+        ]
+      }
+    }
+
+    {
+      "contacts_from": {
+        "add": [
+          {
+            "id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+            "email_address": "myname@mydomain.com"
+          }
+        ]
+      }
+    }
+
+    {
+      "contacts_from": {
+        "add": [
+          {
+            "id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+            "email_address_id": "a028341c-ba92-9343-55e7-56cf5beda121"
+          }
+        ]
+      }
+    }
+
+    {
+      "email_addresses_from": {
+        "add": [
+          "afe9702e-53a3-0efb-6bbe-56c3580885ef"
+        ]
+      }
+    }
+
+    {
+      "email_addresses_from": {
+        "create": [
+          {
+            "email_address": "myname@mydomain.com"
+          }
+        ]
+      }
+    }
+</pre>
+
+<h3>Recipients Links</h3>
+<span class="lead">
+    Specify the recipients of an email.
+</span>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <code>add</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of records representing the recipients. An email address can be specified along with the record.
+            The following links are supported OOTB: <code>accounts_to</code>, <code>accounts_cc</code>,
+            <code>accounts_bcc</code>, <code>contacts_to</code>, <code>contacts_cc</code>, <code>contacts_bcc</code>,
+            <code>email_addresses_to</code>, <code>email_addresses_cc</code>, <code>email_addresses_bcc</code>,
+            <code>leads_to</code>, <code>leads_cc</code>, <code>leads_bcc</code>, <code>prospects_to</code>,
+            <code>prospects_cc</code>, <code>prospects_bcc</code>, <code>users_to</code>, <code>users_cc</code>,
+            <code>users_bcc</code>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>create</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of records representing the recipients. Specify an email address to use for recipient. The email
+            address may be new or existing. This action is only available for <code>email_addresses_to</code>,
+            <code>email_addresses_cc</code>, and <code>email_addresses_bcc</code>.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<pre class="pre-scrollable">
+    {
+      "contacts_to": {
+        "add": [
+          "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+          {
+            "id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+            "email_address": "myname@mydomain.com"
+          }
+        ]
+      },
+      "leads_cc": {
+        "add": [
+          {
+            "id": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+            "email_address_id": "a028341c-ba92-9343-55e7-56cf5beda121"
+          }
+        ]
+      },
+      "email_addresses_bcc": {
+        "create": [
+          {
+            "email_address": "myname@mydomain.com"
+          }
+        ]
+      }
+    }
+</pre>
 
 <h2>Response Arguments</h2>
 <table class="table table-hover">
@@ -193,3 +360,19 @@
   "_module": "Emails"
 }
 </pre>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v11
+        </td>
+        <td>
+            Added <code>/Emails</code> POST endpoint.
+        </td>
+    </tr>
+</table>

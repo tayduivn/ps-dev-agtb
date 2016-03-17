@@ -752,19 +752,12 @@ class SugarEmailAddress extends SugarBean
      */
     function getEmailGUID($addr)
     {
-        $address = $this->db->quote($this->_cleanAddress($addr));
-        $addressCaps = strtoupper($address);
+        $guid = $this->getGuid($addr);
 
-        //use email address in captial letters for query
-        $q = "SELECT id FROM " . $this->table_name . " WHERE email_address_caps = ?";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($q, array($addressCaps));
-        $id = $stmt->fetchColumn();
+        if (empty($guid)) {
+            $address = $this->db->quote($this->_cleanAddress($addr));
+            $addressCaps = strtoupper($address);
 
-        if (!empty($id)) {
-            return $id;
-        } else {
-            $guid = '';
             if (!empty($address)) {
                 $guid = create_guid();
                 $now = TimeDate::getInstance()->nowDb();
@@ -779,8 +772,29 @@ class SugarEmailAddress extends SugarBean
                     'deleted' => 0,
                 ));
             }
-            return $guid;
         }
+
+        return $guid;
+    }
+
+    /**
+     * Returns the ID of an email address or an empty string if the email address is not found.
+     *
+     * @param string $address
+     * @return string
+     */
+    public function getGuid($address)
+    {
+        $address = $this->db->quote($this->_cleanAddress($address));
+        $addressCaps = strtoupper($address);
+
+        //use email address in captial letters for query
+        $q = "SELECT id FROM " . $this->table_name . " WHERE email_address_caps = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($q, array($addressCaps));
+        $id = $stmt->fetchColumn();
+
+        return empty($id) ? '' : $id;
     }
 
     /**
@@ -874,7 +888,7 @@ class SugarEmailAddress extends SugarBean
         } else {
             $guid = '';
         }
-        
+
         return $guid;
     }
 

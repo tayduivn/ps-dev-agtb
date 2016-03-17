@@ -21,11 +21,12 @@ class SugarTestEmailAddressUtilities
     {
         if (null === $address)
         {
-            $address = 'address-' . mt_rand() . '@example.com';
+            $address = 'address-' . create_guid() . '@example.com';
         }
 
         $email_address = new EmailAddress();
         $email_address->email_address = $address;
+        $email_address->email_address_caps = strtoupper($address);
         $email_address->save();
 
         self::$createdAddresses[] = $email_address;
@@ -35,13 +36,13 @@ class SugarTestEmailAddressUtilities
     /**
      * Add specified email address to the person
      *
-     * @param Person $person
+     * @param SugarBean $person Any of the Person or Company beans.
      * @param string|EmailAddress $address
      * @param array $additional_values
      * @return boolean|EmailAddress
      * @throws InvalidArgumentException
      */
-    public static function addAddressToPerson(Person $person, $address, array $additional_values = array())
+    public static function addAddressToPerson(SugarBean $person, $address, array $additional_values = array())
     {
         if (is_string($address))
         {
@@ -85,5 +86,39 @@ class SugarTestEmailAddressUtilities
             $ids[] = $address->id;
         }
         return $ids;
+    }
+
+    /**
+     * Add one or more email address ID's that can be deleted later during tear down.
+     *
+     * @param array|string $ids
+     */
+    public static function setCreatedEmailAddress($ids)
+    {
+        $ids = is_array($ids) ? $ids : array($ids);
+
+        foreach ($ids as $id) {
+            $email = new EmailAddress();
+            $email->id = $id;
+            static::$createdAddresses[] = $email;
+        }
+    }
+
+    /**
+     * Add an email address that can be deleted later during tear down.
+     *
+     * @param string $address
+     * @return string
+     */
+    public static function setCreatedEmailAddressByAddress($address)
+    {
+        $ea = BeanFactory::newBean('EmailAddresses');
+        $id = $ea->getGuid($address);
+
+        if (!empty($id)) {
+            static::setCreatedEmailAddress($id);
+        }
+
+        return $id;
     }
 }

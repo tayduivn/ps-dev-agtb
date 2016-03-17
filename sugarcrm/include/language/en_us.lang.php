@@ -1118,6 +1118,22 @@ $app_list_strings = array (
         'Archived' => 'Archived',
     ),
 
+    'dom_emails_participants_roles' => array(
+        'from' => 'From',
+        'to' => 'To',
+        'cc' => 'CC',
+        'bcc' => 'BCC',
+    ),
+
+    'dom_emails_participants_participant_modules' => array(
+        'Accounts' => 'Account',
+        'Contacts' => 'Contact',
+        'EmailAddresses' => 'Email Address', // Used when the email address does not map to a known record.
+        'Leads' => 'Lead',
+        'Prospects' => 'Target',
+        'Users' => 'User',
+    ),
+
     'scheduler_status_dom' =>
         array (
         'Active' => 'Active',
@@ -2601,6 +2617,15 @@ $app_strings = array (
     'LBL_EMAIL_MESSAGE_NO'                  => 'Message No',
     'LBL_EMAIL_IMPORT_SUCCESS'              => 'Import Passed',
     'LBL_EMAIL_IMPORT_FAIL'                 => 'Import Failed because either the message is already imported or deleted from server',
+
+    'LBL_EMAILS_FROM' => 'Emails Sent',
+    'LBL_EMAILS_RECEIVED' => 'Emails Received',
+    'LBL_EMAIL_ADDRESSES_USED' => 'Email Addresses Used In Emails',
+    'LBL_EMAIL_ADDRESS' => 'Email Address',
+    'LBL_FROM' => 'From',
+    'LBL_TO' => 'To',
+    'LBL_CC' => 'CC',
+    'LBL_BCC' => 'BCC',
 
     'LBL_LINK_NONE'=> 'None',
     'LBL_LINK_ALL'=> 'All',

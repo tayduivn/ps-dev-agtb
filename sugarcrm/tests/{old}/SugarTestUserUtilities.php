@@ -47,6 +47,9 @@ class SugarTestUserUtilities
             $user->is_admin = 1;
         }
 
+        $user->email1 = isset($fields['email']) ? $fields['email'] : "user@{$time}sugar.com";
+        unset($fields['email']);
+
         if (is_array($fields)) {
             foreach ($fields as $field => $value) {
                 $user->$field = $value;

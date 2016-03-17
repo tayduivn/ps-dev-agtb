@@ -13,7 +13,7 @@
 require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 /**
- * @covers SugarEmailAddress
+ * @coversDefaultClass SugarEmailAddress
  */
 class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -63,6 +63,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestHelper::tearDown();
 
         parent::tearDownAfterClass();
@@ -109,6 +110,9 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::addAddress
+     */
     public function testAddressesAreZeroBased()
     {
         // make sure that initially there are no addresses
@@ -124,6 +128,9 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, key($this->ea->addresses), 'Email addresses is not a 0-based array');
     }
 
+    /**
+     * @covers ::handleLegacySave
+     */
     public function testEmail1SavesWhenEmailIsEmpty()
     {
         $bean = BeanFactory::newBean('Accounts');
@@ -136,7 +143,10 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('email_address', $this->ea->addresses[0]);
         $this->assertEquals('a@a.com', $this->ea->addresses[0]['email_address']);
     }
-    
+
+    /**
+     * @covers ::handleLegacySave
+     */
     public function testSavedEmailsPersistAfterSave()
     {
         $addresses = array(
@@ -159,7 +169,10 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('email_address', $this->ea->addresses[3]);
         $this->assertEquals('d@d.com', $this->ea->addresses[3]['email_address']);
     }
-    
+
+    /**
+     * @covers ::handleLegacySave
+     */
     public function testSaveUsesCorrectValues()
     {
         // Set values on the email address object for testing
@@ -222,6 +235,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::isValidEmail
      * @dataProvider isValidEmailProvider
      * @group bug40068
      */
@@ -239,7 +253,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * When primary address exists, it's used to populate email1 property
      *
-     * @covers SugarEmailAddress::populateLegacyFields
+     * @covers ::populateLegacyFields
      */
     public function testPrimaryAttributeConsidered()
     {
@@ -261,7 +275,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
      * When multiple primary addresses exist, the first of them is used to
      * populate email1 property
      *
-     * @covers SugarEmailAddress::populateLegacyFields
+     * @covers ::populateLegacyFields
      */
     public function testMultiplePrimaryAddresses()
     {
@@ -281,7 +295,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
      * When no primary address exists, the first of non-primary ones is used to
      * populate email1 property
      *
-     * @covers SugarEmailAddress::populateLegacyFields
+     * @covers ::populateLegacyFields
      */
     public function testNoPrimaryAddress()
     {
@@ -300,7 +314,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * All available addresses are used to populate email properties
      *
-     * @covers SugarEmailAddress::populateLegacyFields
+     * @covers ::populateLegacyFields
      */
     public function testAllPropertiesArePopulated()
     {
@@ -318,5 +332,46 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('p2@example.com', $bean->email2);
         $this->assertEquals('a1@example.com', $bean->email3);
         $this->assertEquals('a2@example.com', $bean->email4);
+    }
+
+    /**
+     * @covers ::getGuid
+     */
+    public function testGetGuid_EmailAddressExists()
+    {
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $actual = $this->ea->getGuid($address->email_address);
+        $this->assertSame($address->id, $actual);
+    }
+
+    /**
+     * @covers ::getGuid
+     */
+    public function testGetGuid_EmailAddressDoesNotExist()
+    {
+        $actual = $this->ea->getGuid('address-' . create_guid() . '@example.com');
+        $this->assertSame('', $actual);
+    }
+
+    /**
+     * @covers ::getEmailGUID
+     * @covers ::getGuid
+     */
+    public function testGetEmailGUID_CreatesNewEmailAddress()
+    {
+        $guid = $this->ea->getEmailGUID('address-' . create_guid() . '@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddress($guid);
+        $this->assertNotEmpty($guid);
+    }
+
+    /**
+     * @covers ::getEmailGUID
+     * @covers ::getGuid
+     */
+    public function testGetEmailGUID_ReturnsExistingId()
+    {
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $guid = $this->ea->getEmailGUID($address->email_address);
+        $this->assertSame($address->id, $guid);
     }
 }

@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
+
 
 class SugarTestLeadUtilities
 {
@@ -20,13 +20,17 @@ class SugarTestLeadUtilities
     public static function createLead($id = '', $leadValues = array())
     {
         $time = mt_rand();
-        $lead = new Lead();
+        $lead = BeanFactory::newBean('Leads');
 
-        $leadValues = array_merge(array(
-            'first_name' => 'SugarLeadFirst' . $time,
-            'last_name' => 'SugarLeadLast' . $time,
-            'email' => 'lead@'. $time. 'sugar.com',
-        ), $leadValues);
+
+        $leadValues = array_merge(
+            array(
+                'first_name' => "SugarLeadFirst{$time}",
+                'last_name' => 'SugarLeadLast',
+                'email' => "lead@{$time}sugar.com",
+            ),
+            $leadValues
+        );
 
         // for backward compatibility with existing tests
         $leadValues['email1'] = $leadValues['email'];

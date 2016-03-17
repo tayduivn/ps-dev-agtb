@@ -13,16 +13,14 @@
 require_once 'modules/Emails/clients/base/api/EmailsApi.php';
 
 /**
+ * @coversDefaultClass EmailsApi
  * @group api
  * @group email
  */
 class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    const UPLOADED_FILES = 1;
-    public static $testEmailName;
-    public $emailsApi;
-    public $serviceMock;
-    public $fileUploads;
+    protected $api;
+    protected $service;
 
     public static function setUpBeforeClass()
     {
@@ -30,467 +28,374 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
-        static::$testEmailName = "EmailsApiTest: " . create_guid();
     }
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->fileUploads = array();
-        for ($i = 0; $i < static::UPLOADED_FILES; $i++) {
-            $fileName = create_guid();
-            file_put_contents('upload://' . $fileName, 'test');
-            $this->fileUploads[] = $fileName;
-        }
-        $this->emailsApi = new EmailsApi();
-        $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
+        $this->api = new EmailsApi();
+        $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
-        for ($i = 0; $i < count($this->fileUploads); $i++) {
-            unlink('upload://' . $this->fileUploads[$i]);
-        }
-        $this->removeAllCreatedEmailsAndAttachments();
+        SugarTestEmailUtilities::removeAllCreatedEmails();
         parent::tearDown();
     }
 
-    public static function tearDownAfterClass()
+    public function createProvider()
     {
-        SugarTestEmailUtilities::removeAllCreatedEmails();
-        SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
+        return array(
+            array(
+                array(
+                    'name' => 'Sugar Email' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'assigned_user_id' => $GLOBALS['current_user']->id,
+                ),
+            ),
+            array(
+                array(
+                    'name' => 'Sugar Email' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'assigned_user_id' => create_guid(),
+                ),
+            ),
+            array(
+                array(
+                    'name' => 'Sugar Email' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_READY,
+                    'assigned_user_id' => $GLOBALS['current_user']->id,
+                ),
+            ),
+            array(
+                array(
+                    'name' => 'Sugar Email' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_SCHEDULED,
+                    'assigned_user_id' => create_guid(),
+                ),
+            ),
+        );
     }
 
-    public function testCreateEmail_SaveAsDraft_EmailCreated()
+    public function noStateChangeProvider()
     {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'assigned_user_id' => $GLOBALS['current_user']->id
+        return array(
+            array(
+                array(
+                    'name' => 'SugarEmail' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'assigned_user_id' => create_guid(),
+                ),
+            ),
+            array(
+                array(
+                    'name' => 'SugarEmail' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_SCHEDULED,
+                    'assigned_user_id' => create_guid(),
+                ),
+            ),
+            array(
+                array(
+                    'name' => 'SugarEmail' . mt_rand(),
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'assigned_user_id' => create_guid(),
+                ),
+            ),
         );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
+    }
 
-        //--- Verify Created Email Record Returned
+    public function invalidStateTransitionProvider()
+    {
+        return array(
+            array(
+                Email::EMAIL_STATE_ARCHIVED,
+                Email::EMAIL_STATE_READY,
+            ),
+            array(
+                Email::EMAIL_STATE_DRAFT,
+                Email::EMAIL_STATE_ARCHIVED,
+            ),
+            array(
+                Email::EMAIL_STATE_SCHEDULED,
+                Email::EMAIL_STATE_DRAFT,
+            ),
+        );
+    }
+
+    /**
+     * @covers ::createRecord
+     * @covers ::createBean
+     * @covers ::isValidStateTransition
+     * @dataProvider createProvider
+     * @param array $args
+     */
+    public function testCreateRecord(array $args)
+    {
+        $args['module'] = 'Emails';
+        $result = $this->api->createRecord($this->service, $args);
+
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('id', $result);
-        $this->assertEquals($createArgs['name'], $result['name']);
-        $this->assertEquals($createArgs['state'], $result['state']);
-        $this->assertEquals($createArgs['assigned_user_id'], $result['assigned_user_id']);
+        SugarTestEmailUtilities::setCreatedEmail($result['id']);
 
-        //--- Verify Created Email Record Created in Database
-        $email = BeanFactory::newBean('Emails');
-        $email->retrieve($result['id']);
-        $this->assertAttributeNotEmpty('id', $email);
-        $this->assertEquals($createArgs['name'], $email->name);
-        $this->assertEquals($createArgs['state'], $email->state);
-        $this->assertEquals($createArgs['assigned_user_id'], $email->assigned_user_id);
+        $this->assertEquals($args['name'], $result['name']);
+        $this->assertEquals($args['state'], $result['state']);
+        $this->assertEquals($args['assigned_user_id'], $result['assigned_user_id']);
     }
 
-    public function testUpdateDraftEmail_SaveAsDraft_EmailUpdated()
+    /**
+     * @covers ::createRecord
+     * @covers ::createBean
+     * @covers ::isValidStateTransition
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testCreateRecord_StatusIsInvalid()
     {
-        $createArgs = array(
+        $args = array(
             'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'assigned_user_id' => $GLOBALS['current_user']->id
-        );
-        $createResult = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertNotEmpty($createResult);
-        $this->assertArrayHasKey('id', $createResult);
-
-        $updateArgs = array(
-            'module' => 'Emails',
-            'record' => $createResult['id'],
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-        );
-        $updateResult = $this->emailsApi->updateRecord($this->serviceMock, $updateArgs);
-
-        //--- Verify Updated Email Record Returned
-        $this->assertNotEmpty($updateResult);
-        $this->assertArrayHasKey('id', $updateResult);
-        $this->assertEquals($createResult['id'], $updateResult['id']);
-        $this->assertEquals($updateArgs['name'], $updateResult['name']);
-        $this->assertEquals($updateArgs['state'], $updateResult['state']);
-        $this->assertEquals($createArgs['assigned_user_id'], $updateResult['assigned_user_id']);
-
-        //--- Verify Email Record Created in Database
-        $email = BeanFactory::newBean('Emails');
-        $email->retrieve($updateResult['id']);
-        $this->assertAttributeNotEmpty('id', $email);
-        $this->assertEquals($updateResult['name'], $email->name);
-        $this->assertEquals($updateResult['state'], $email->state);
-        $this->assertEquals($updateResult['assigned_user_id'], $email->assigned_user_id);
-    }
-
-    public function testEmailCreate_StateTransition_ExceptionThrown()
-    {
-        $createArgs = array(
-            'name' => static::$testEmailName,
-            'module' => 'Emails',
+            'name' => 'Sugar Email' . mt_rand(),
             'state' => 'SomeBogusToState',
         );
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
+        $this->api->createRecord($this->service, $args);
     }
 
     /**
-     * @dataProvider emailCreate_StateTransitionProvider
+     * @covers ::updateRecord
+     * @covers ::updateBean
+     * @dataProvider noStateChangeProvider
+     * @param array $args
      */
-    public function testEmailCreate_StateTransition($toState)
+    public function testUpdateRecord_NoStateChange(array $args)
     {
-        $createArgs = array(
-            'name' => static::$testEmailName,
-            'module' => 'Emails',
-            'state' => $toState,
-        );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
+        $email = SugarTestEmailUtilities::createEmail('', array('state' => $args['state']));
 
-    public function emailCreate_StateTransitionProvider()
-    {
-        return array(
-            array(Email::EMAIL_STATE_DRAFT),
-            array(Email::EMAIL_STATE_ARCHIVED),
-            array(Email::EMAIL_STATE_READY),
-            array(Email::EMAIL_STATE_SCHEDULED),
-        );
+        $args['module'] = 'Emails';
+        $args['record'] = $email->id;
+        $result = $this->api->updateRecord($this->service, $args);
+
+        $this->assertNotEmpty($result);
+        $this->assertEquals($email->id, $result['id']);
+        $this->assertEquals($args['name'], $result['name']);
+        $this->assertEquals($args['state'], $result['state']);
+        $this->assertEquals($args['assigned_user_id'], $result['assigned_user_id']);
     }
 
     /**
-     * @dataProvider emailUpdate_StateTransitionProvider_ExceptionThrown
+     * @covers ::updateRecord
+     * @covers ::updateBean
+     * @covers ::isValidStateTransition
+     * @dataProvider invalidStateTransitionProvider
+     * @param string $fromState
+     * @param string $toState
+     * @expectedException SugarApiExceptionInvalidParameter
      */
-    public function testEmailUpdate_StateTransition_ExceptionThrown($fromState, $toState)
+    public function testUpdateRecord_StateTransitionIsInvalid($fromState, $toState)
     {
-        $createArgs = array(
-            'name' => static::$testEmailName,
-            'module' => 'Emails',
-            'state' => $fromState,
-        );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertTrue(!empty($result['id']), 'Create Email Failed');
-        $args['record'] = $result['id'];
+        $email = SugarTestEmailUtilities::createEmail('', array('state' => $fromState));
 
-        $updateArgs = array(
+        $args = array(
             'module' => 'Emails',
-            'record' => $result['id'],
+            'record' => $email->id,
             'state' => $toState,
         );
-
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
-
-        $result = $this->emailsApi->updateRecord($this->serviceMock, $updateArgs);
-        $this->assertTrue(!empty($result['id']), 'Update Email Failed');
-
-    }
-
-    public function emailUpdate_StateTransitionProvider_ExceptionThrown()
-    {
-        return array(
-            array(Email::EMAIL_STATE_ARCHIVED, Email::EMAIL_STATE_ARCHIVED),
-            array(Email::EMAIL_STATE_ARCHIVED, Email::EMAIL_STATE_READY),
-            array(Email::EMAIL_STATE_DRAFT, Email::EMAIL_STATE_ARCHIVED),
-            array(Email::EMAIL_STATE_SCHEDULED, Email::EMAIL_STATE_DRAFT),
-        );
+        $this->api->updateRecord($this->service, $args);
     }
 
     /**
-     * @dataProvider emailUpdate_StateTransitionProvider_ExceptionThrown
+     * Existing Notes records cannot be used as attachments.
+     *
+     * @covers ::linkRelatedRecords
      */
-    public function testEmailUpdate_StateTransition($fromState, $toState)
+    public function testLinkRelatedRecords()
     {
-        $createArgs = array(
-            'name' => static::$testEmailName,
-            'module' => 'Emails',
-            'state' => $fromState,
-        );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertTrue(!empty($result['id']), 'Create Email Failed');
-        $args['record'] = $result['id'];
+        $relateRecordApi = $this->getMockBuilder('RelateRecordApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('createRelatedLinks'))
+            ->getMock();
+        $relateRecordApi->expects($this->never())
+            ->method('createRelatedLinks');
 
-        $updateArgs = array(
-            'module' => 'Emails',
-            'record' => $result['id'],
-            'state' => $toState,
-        );
+        $api = $this->getMockBuilder('EmailsApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getRelateRecordApi'))
+            ->getMock();
+        $api->method('getRelateRecordApi')
+            ->willReturn($relateRecordApi);
 
-        $this->setExpectedException('SugarApiExceptionInvalidParameter');
-
-        $result = $this->emailsApi->updateRecord($this->serviceMock, $updateArgs);
-        $this->assertTrue(!empty($result['id']), 'Update Email Failed');
-
-    }
-
-    public function emailUpdate_StateTransitionProvider()
-    {
-        return array(
-            array(Email::EMAIL_STATE_DRAFT, Email::EMAIL_STATE_DRAFT, false),
-            array(Email::EMAIL_STATE_DRAFT, Email::EMAIL_STATE_SCHEDULED, false),
-            array(Email::EMAIL_STATE_DRAFT, Email::EMAIL_STATE_READY, false),
-            array(Email::EMAIL_STATE_SCHEDULED, Email::EMAIL_STATE_SCHEDULED, false),
-            array(Email::EMAIL_STATE_SCHEDULED, Email::EMAIL_STATE_ARCHIVED, false),
-        );
-    }
-
-
-    public function testEmailCreateDraft_WithUploadedAttachment_AttachmentMovedOrCopied()
-    {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
+        $email = BeanFactory::newBean('Emails');
+        $email->id = create_guid();
+        $args = array(
             'attachments' => array(
+                'id' => create_guid(),
+                'email_id' => $email->id,
+                'email_type' => $email->module_name,
+                'team_id' => $email->team_id,
+                'team_set_id' => $email->team_set_id,
+            ),
+        );
+
+        SugarTestReflection::callProtectedMethod($api, 'linkRelatedRecords', array($this->service, $email, $args));
+    }
+
+    /**
+     * The sender cannot be unlinked. The sender can only be replaced.
+     *
+     * @covers ::linkRelatedRecords
+     */
+    public function testUnlinkRelatedRecords()
+    {
+        $relateRecordApi = $this->getMockBuilder('RelateRecordApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('deleteRelatedLink'))
+            ->getMock();
+        $relateRecordApi->expects($this->never())
+            ->method('deleteRelatedLink');
+
+        $api = $this->getMockBuilder('EmailsApi')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getRelateRecordApi'))
+            ->getMock();
+        $api->method('getRelateRecordApi')
+            ->willReturn($relateRecordApi);
+
+        $email = BeanFactory::newBean('Emails');
+        $email->id = create_guid();
+        $args = array(
+            'accounts_from' => array(
+                create_guid(),
+            ),
+            'contacts_from' => array(
+                create_guid(),
+            ),
+            'email_addresses_from' => array(
+                create_guid(),
+            ),
+            'leads_from' => array(
+                create_guid(),
+            ),
+            'prospects_from' => array(
+                create_guid(),
+            ),
+            'users_from' => array(
+                create_guid(),
+            ),
+        );
+
+        SugarTestReflection::callProtectedMethod($api, 'unlinkRelatedRecords', array($this->service, $email, $args));
+    }
+
+    /**
+     * Create related record arguments for email_addresses_from, email_addresses_to, email_address_cc, and
+     * email_addresses_bcc are moved to the "add" arguments when the email address is a duplicate.
+     *
+     * @covers ::getRelatedRecordArguments
+     */
+    public function testGetRelatedRecordArguments()
+    {
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address3 = 'address-' . create_guid() . '@example.com';
+
+        $email = BeanFactory::newBean('Emails');
+        $args = array(
+            'email_addresses_from' => array(
                 'create' => array(
+                    // Using an existing email address.
                     array(
-                        '_file' => $this->fileUploads[0],
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
+                        'email_address' => $address1->email_address,
                     ),
+                ),
+            ),
+            'email_addresses_to' => array(
+                'create' => array(
+                    // Creating a new email address.
+                    array(
+                        'email_address' => $address3,
+                    ),
+                    // Using an existing email address.
+                    array(
+                        'email_address' => $address1->email_address,
+                    ),
+                ),
+            ),
+            'email_addresses_cc' => array(
+                'add' => array(
+                    // Using an existing email address.
+                    $address1->id,
+                ),
+                'create' => array(
+                    // Using an existing email address.
+                    array(
+                        'email_address' => $address2->email_address,
+                    ),
+                ),
+            ),
+            'email_addresses_bcc' => array(
+                'add' => array(
+                    // Using an existing email address.
+                    $address2->id,
                 ),
             ),
         );
 
-        $emailsApiMock = $this->getMock('EmailsApi', array('moveOrCopyAttachment'));
-        $emailsApiMock->expects($this->once())
-            ->method('moveOrCopyAttachment')
-            ->with('upload://' . $this->fileUploads[0], $this->stringContains('upload://'), false)
-            ->will($this->returnValue(true));
+        $expected = array(
+            'email_addresses_from' => array(
+                // Moved to add.
+                array(
+                    'email_address' => $address1->email_address,
+                    'id' => $address1->id,
+                ),
+            ),
+            'email_addresses_to' => array(
+                // Moved to add.
+                array(
+                    'email_address' => $address1->email_address,
+                    'id' => $address1->id,
+                ),
+            ),
+            'email_addresses_cc' => array(
+                // Remained in add.
+                $address1->id,
+                // Moved to add.
+                array(
+                    'email_address' => $address2->email_address,
+                    'id' => $address2->id,
+                ),
+            ),
+            'email_addresses_bcc' => array(
+                // Remained in add.
+                $address2->id,
+            ),
+        );
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'getRelatedRecordArguments',
+            array($email, $args, 'add')
+        );
+        $this->assertSame($expected, $actual);
 
-        $result = $emailsApiMock->createRecord($this->serviceMock, $createArgs);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
-
-    public function testEmailCreateDraft_WithExistingAttachment_AttachmentMovedOrCopied()
-    {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'attachments' => array(
-                'create' => array(
-                    array(
-                        '_file' => $this->fileUploads[0],
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
-                    ),
+        $expected = array(
+            'email_addresses_to' => array(
+                // Remained in create.
+                array(
+                    'email_address' => $address3,
                 ),
             ),
         );
-
-        $emailsApiMock = $this->getMock('EmailsApi', array('moveOrCopyAttachment'));
-        $emailsApiMock->expects($this->once())
-            ->method('moveOrCopyAttachment')
-            ->with('upload://' . $this->fileUploads[0], $this->stringContains('upload://'), false)
-            ->will($this->returnValue(true));
-
-        $result = $emailsApiMock->createRecord($this->serviceMock, $createArgs);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
-
-    public function testEmailUpdateDraft_WithExistingAttachment_AttachmentMovedOrCopied()
-    {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'getRelatedRecordArguments',
+            array($email, $args, 'create')
         );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertTrue(!empty($result['id']), 'Create Email Failed');
+        $this->assertSame($expected, $actual);
 
-        $updateArgs = array(
-            'module' => 'Emails',
-            'record' => $result['id'],
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'attachments' => array(
-                'create' => array(
-                    array(
-                        '_file' => $this->fileUploads[0],
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
-                    ),
-                ),
-            ),
+        $actual = SugarTestReflection::callProtectedMethod(
+            $this->api,
+            'getRelatedRecordArguments',
+            array($email, $args, 'delete')
         );
+        $this->assertEmpty($actual);
 
-        $emailsApiMock = $this->getMock('EmailsApi', array('moveOrCopyAttachment'));
-        $emailsApiMock->expects($this->once())
-            ->method('moveOrCopyAttachment')
-            ->with('upload://' . $this->fileUploads[0], $this->stringContains('upload://'), false)
-            ->will($this->returnValue(true));
-
-        $result = $emailsApiMock->updateRecord($this->serviceMock, $updateArgs);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
-
-    public function testEmailCreateDraft_WithAttachment_NoteCreated()
-    {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'attachments' => array(
-                'create' => array(
-                    array(
-                        '_file' => $this->fileUploads[0],
-                        '_uploaded' => true,
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
-                    ),
-                ),
-            ),
-        );
-
-        $note = BeanFactory::newBean('Notes');
-        $note->id = $this->fileUploads[0];
-
-        $notesModuleApiMock = $this->getMock('ModuleApi', array('createBean'));
-        $notesModuleApiMock->expects($this->once())
-            ->method('createBean')
-            ->will($this->returnValue($note));
-
-        $relatedApiMock = $this->getMock('RelateRecordApi', array('getModuleApi', 'getRelatedRecord'));
-        $relatedApiMock->expects($this->once())
-            ->method('getModuleApi')
-            ->with($this->serviceMock, 'Notes')
-            ->will($this->returnValue($notesModuleApiMock));
-        $relatedApiMock->expects($this->once())
-            ->method('getRelatedRecord')
-            ->will($this->returnValue(array()));
-
-        $emailsApiMock = $this->getMock('EmailsApi', array('getRelateRecordApi', 'moveOrCopyAttachment'));
-        $emailsApiMock->expects($this->any())
-            ->method('getRelateRecordApi')
-            ->will($this->returnValue($relatedApiMock));
-
-        $emailsApiMock->expects($this->once())
-            ->method('moveOrCopyAttachment')
-            ->with('upload://' . $this->fileUploads[0], $this->stringContains('upload://'), true)
-            ->will($this->returnValue(true));
-
-        $result = $emailsApiMock->createRecord($this->serviceMock, $createArgs);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
-
-    public function testEmailUpdateDraft_WithAttachment_NoteCreated()
-    {
-        $createArgs = array(
-            'module' => 'Emails',
-            'name' => static::$testEmailName,
-            'state' => Email::EMAIL_STATE_DRAFT,
-        );
-        $result = $this->emailsApi->createRecord($this->serviceMock, $createArgs);
-        $this->assertTrue(!empty($result['id']), 'Create Email Failed');
-
-        $updateArgs = array(
-            'module' => 'Emails',
-            'record' => $result['id'],
-            'state' => Email::EMAIL_STATE_DRAFT,
-            'attachments' => array(
-                'create' => array(
-                    array(
-                        '_file' => $this->fileUploads[0],
-                        '_uploaded' => true,
-                        'name' => 'aaaaa',
-                        'filename' => 'aaaaa.png',
-                        'file_mime_type' => 'image/png',
-                    ),
-                ),
-            ),
-        );
-
-        $note = BeanFactory::newBean('Notes');
-        $note->id = $this->fileUploads[0];
-
-        $notesModuleApiMock = $this->getMock('ModuleApi', array('createBean'));
-        $notesModuleApiMock->expects($this->once())
-            ->method('createBean')
-            ->will($this->returnValue($note));
-
-        $relatedApiMock = $this->getMock('RelateRecordApi', array('getModuleApi', 'getRelatedRecord'));
-        $relatedApiMock->expects($this->once())
-            ->method('getModuleApi')
-            ->with($this->serviceMock, 'Notes')
-            ->will($this->returnValue($notesModuleApiMock));
-        $relatedApiMock->expects($this->once())
-            ->method('getRelatedRecord')
-            ->will($this->returnValue(array()));
-
-        $emailsApiMock = $this->getMock('EmailsApi', array('getRelateRecordApi', 'moveOrCopyAttachment'));
-        $emailsApiMock->expects($this->any())
-            ->method('getRelateRecordApi')
-            ->will($this->returnValue($relatedApiMock));
-
-        $emailsApiMock->expects($this->once())
-            ->method('moveOrCopyAttachment')
-            ->with('upload://' . $this->fileUploads[0], $this->stringContains('upload://'), true)
-            ->will($this->returnValue(true));
-
-        $result = $emailsApiMock->updateRecord($this->serviceMock, $updateArgs);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-    }
-
-    private function getCreatedEmailIds()
-    {
-        $ids = array();
-        $sql = "SELECT id FROM emails WHERE name = '" . static::$testEmailName . "'";
-        $result = $GLOBALS['db']->query($sql);
-        if ($result) {
-            while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-                $ids[] = $row['id'];
-            }
-        }
-        return $ids;
-    }
-
-    private function removeAllCreatedEmailsAndAttachments()
-    {
-        $emailIds = $this->getCreatedEmailIds();
-        foreach ($emailIds as $emailId) {
-            $this->deleteAllAttachments($emailId);
-            $GLOBALS['db']->query("DELETE from emails WHERE id = '{$emailId}'");
-        }
-    }
-
-    private function getEmailAttachmentIds($emailId)
-    {
-        $idArray = array();
-        $sql = "SELECT id from notes WHERE email_id='" . $emailId . "' AND deleted=0";
-        $result = $GLOBALS['db']->query($sql);
-        if ($result) {
-            while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-                $idArray[$row['id']] = true;
-            }
-        }
-        return $idArray;
-    }
-
-    private function deleteAllAttachments($emailId)
-    {
-        $idArray = $this->getEmailAttachmentIds($emailId);
-        foreach (array_keys($idArray) as $fileId) {
-            $sql = "DELETE from notes WHERE id='" . $fileId . "'";
-            $GLOBALS['db']->query($sql);
-            unlink('upload://' . $fileId);
-        }
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress($address3);
     }
 }

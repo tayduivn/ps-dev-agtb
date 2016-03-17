@@ -44,6 +44,7 @@ class AbstractRelationships
     protected $specialCaseBaseNames = array( 'quotes_accounts',
                                              'quotes_contacts',
                                              'emails_beans',
+        'emails_participants',
                                              'linked_documents',
                                              'project_relation',
                                              'prospect_lists_prospects',

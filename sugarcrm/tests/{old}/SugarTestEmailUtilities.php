@@ -50,8 +50,12 @@ class SugarTestEmailUtilities
     public static function removeAllCreatedEmails() 
     {
         $email_ids = self::getCreatedEmailIds();
-        $GLOBALS['db']->query('DELETE FROM emails WHERE id IN (\'' . implode("', '", $email_ids) . '\')');
+        $emailIdsSql = "'" . implode("','", $email_ids) . "'";
+        $GLOBALS['db']->query("DELETE FROM emails WHERE id IN ({$emailIdsSql})");
+        $GLOBALS['db']->query("DELETE FROM emails_text WHERE id IN ({$emailIdsSql})");
+        $GLOBALS['db']->query("DELETE FROM emails_participants WHERE email_id IN ({$emailIdsSql})");
         self::removeCreatedEmailBeansRelationships();
+        static::removeCreatedEmailsAttachments();
         self::$_createdEmails = array();
     }
     
@@ -65,6 +69,25 @@ class SugarTestEmailUtilities
     private static function removeCreatedEmailBeansRelationships(){
     	$email_ids = self::getCreatedEmailIds();
         $GLOBALS['db']->query('DELETE FROM emails_beans WHERE email_id IN (\'' . implode("', '", $email_ids) . '\')');
+    }
+
+    /**
+     * Deletes all notes, and associated files, that are attached to created emails.
+     */
+    private static function removeCreatedEmailsAttachments()
+    {
+        $emailIds = static::getCreatedEmailIds();
+        $result = $GLOBALS['db']->query("SELECT id FROM notes WHERE email_id IN ('" . implode("','", $emailIds) . "')");
+
+        while ($result && $row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $file = "upload://{$row['id']}";
+
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+
+        $GLOBALS['db']->query("DELETE FROM notes WHERE email_id IN ('" . implode("','", $emailIds) . "')");
     }
     
     public static function getCreatedEmailIds() 
@@ -87,4 +110,3 @@ class SugarTestEmailUtilities
         }
     }
 }
-?>
