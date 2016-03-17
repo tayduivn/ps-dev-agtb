@@ -42,7 +42,7 @@ class Bug40989Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testProcessFullListQuery()
     {
-        $loadedContact = new Contact(); // loadBean('Contacts');
+        $loadedContact = SugarTestContactUtilities::createContact();
         $loadedContact->disable_row_level_security = true;
         $contactList = $loadedContact->get_full_list();
         $exampleContact = array_pop($contactList);	
