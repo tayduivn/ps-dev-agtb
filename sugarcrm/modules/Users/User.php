@@ -793,7 +793,7 @@ class User extends Person {
 
 	function retrieve_by_email_address($email) {
 
-		$email1= strtoupper($email);
+                $email1= strtoupper($this->db->quote($email));
 		$q=<<<EOQ
 
 		select id from users where id in ( SELECT  er.bean_id AS id FROM email_addr_bean_rel er,

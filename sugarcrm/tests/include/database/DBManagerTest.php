@@ -1805,6 +1805,58 @@ SQL;
                     'len' => '255',
                     ),
                 true),
+                array(
+                    array(
+                        'name' => 'foo',
+                        'type' => 'decimal',
+                        'len' => '16,6',
+                        'default' => '0.000000',
+                    ),
+                    array(
+                        'name' => 'foo',
+                        'type' => 'decimal',
+                        'default' => '',
+                        'no_default' => '',
+                        'len' => '16,6',
+                        'size' => '20',
+                        'precision' => '6',
+                    ),
+                    true),
+                    array(
+                        array(
+                            'name' => 'foo',
+                            'type' => 'decimal',
+                            'len' => '16,6',
+                            'default' => '0.000000',
+                        ),
+                        array(
+                            'name' => 'foo',
+                            'type' => 'decimal',
+                            'default' => '0',
+                            'no_default' => '',
+                            'len' => '16,6',
+                            'size' => '20',
+                            'precision' => '6',
+                        ),
+                        true),
+                        array(
+                            array(
+                                'name' => 'solution_number',
+                                'type' => 'int',
+                                'len' => '11',
+                                'auto_increment' => '1',
+                                'required' => 'true',
+                            ),
+                            array(
+                                'name' => 'solution_number',
+                                'type' => 'int',
+                                'len' => '11',
+                                'auto_increment' => 'true',
+                                'required' => 'true',
+                                'autoinc_next' => '51',
+                                'dbType' => 'int'
+                            ),
+                            true,),
             );
 
         return $returnArray;

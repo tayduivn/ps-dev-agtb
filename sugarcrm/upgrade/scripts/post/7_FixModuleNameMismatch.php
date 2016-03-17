@@ -53,7 +53,7 @@ class SugarUpgradeFixModuleNameMismatch extends UpgradeScript
     
                         if (isset($mod_strings['LBL_MODULE_NAME']) && $moduleName != $mod_strings['LBL_MODULE_NAME']) {
                             $mod_strings['LBL_MODULE_NAME'] = $moduleName;
-                            write_array_to_file('mod_strings', $mod_strings, $langFile, 'w', $header);
+                            write_array_to_file_as_key_value_pair('mod_strings', $mod_strings, $langFile, 'w', $header);
                             $this->log("Fixed module name mismatch for module: $moduleId in file: $langFile");
                         }
                     }
@@ -78,7 +78,7 @@ class SugarUpgradeFixModuleNameMismatch extends UpgradeScript
                     }
 
                     if ($fixed) {
-                        write_array_to_file('mod_strings', $mod_strings, $langFile, 'w', $header);
+                        write_array_to_file_as_key_value_pair('mod_strings', $mod_strings, $langFile, 'w', $header);
                         $this->log("Fixed subpanel title for module: $moduleId in file: $langFile");
                     }
                 }
