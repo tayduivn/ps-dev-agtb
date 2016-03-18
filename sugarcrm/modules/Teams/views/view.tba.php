@@ -51,6 +51,7 @@ class TeamsViewTBA extends SugarView
         $sugar_smarty->assign('APP_LIST', $GLOBALS['app_list_strings']);
         $sugar_smarty->assign('actionsList', $this->_getUserActionsList());
         $sugar_smarty->assign('moduleTitle', $this->getModuleTitle(false));
+        $sugar_smarty->assign('isUserAdmin', $GLOBALS['current_user']->isAdmin());
 
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $sugar_smarty->assign('config', $tbaConfigurator->getConfig());
