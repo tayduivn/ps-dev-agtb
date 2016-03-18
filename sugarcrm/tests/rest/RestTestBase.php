@@ -234,6 +234,18 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                         $postBody[$k] = "@".UploadFile::realpath($name);
                     }
                 }
+            } else {
+                // see https://bugs.php.net/bug.php?id=69982
+                $hasContentType = false;
+                foreach ($addedHeaders as $header) {
+                    if (stripos($header, 'Content-Type') !== false) {
+                        $hasContentType = true;
+                        break;
+                    }
+                }
+                if (!$hasContentType) {
+                    $addedHeaders[] = 'Content-Type: application/json';
+                }
             }
 
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
@@ -244,8 +256,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         }
 
         if ( !empty($this->authToken) && $this->authToken != 'LOGGING_IN' ) {
-            //curl_setopt($ch, CURLOPT_HTTPHEADER, array('oauth_token: '.$this->authToken));
-            $addedHeaders[] = 'oauth_token: '.$this->authToken;
+            $addedHeaders[] = 'OAuth-Token: ' . $this->authToken;
         }
 
         // Only set a custom request for not POST with a body
