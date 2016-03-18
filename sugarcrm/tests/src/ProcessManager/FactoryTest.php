@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\ProcessManager;
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Exception as PME;
 
 class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -45,83 +46,131 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * Tests getting any PMSE object
+     * @dataProvider getPMSEObjectProvider
+     * @param string $name The name of the object to load
+     */
+    public function testGetPMSEObject($name)
+    {
+        $obj = ProcessManager\Factory::getPMSEObject($name);
+        $this->assertInstanceOf($name, $obj);
+    }
+
+    /**
+     * Tests that proper exceptions are thrown on failure
+     * @dataProvider getPMSEObjectThrowsExceptionProvider
+     * @param string $name Errant class name
+     */
+    public function testGetPMSEObjectThrowsException($name)
+    {
+        $this->setExpectedException(PME\RuntimeException::class);
+        $obj = ProcessManager\Factory::getPMSEObject($name);
+    }
+
     public function getFieldEvaluatorProvider()
     {
         $nsRoot = 'Sugarcrm\\Sugarcrm\\ProcessManager\\Field\\Evaluator\\';
 
-        return array(
-            array(
-                'def' => array(
+        return [
+            [
+                'def' => [
                     'type' => 'int',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Base',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
+                ],
+            ],
             // Tests date type fields
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'type' => 'date',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Datetime',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
+                ],
+            ],
             // tests time type fields
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'type' => 'time',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Datetime',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
+                ],
+            ],
             // tests datetimecombo type fields
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'type' => 'datetimecombo',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Datetime',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
+                ],
+            ],
             // Tests datetime type fields
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'type' => 'datetime',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Datetime',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
-            array(
-                'def' => array(
+                ],
+            ],
+            [
+                'def' => [
                     'custom_type' => 'foobar',
-                ),
-                'instances' => array(
+                ],
+                'instances' => [
                     $nsRoot . 'Base',
                     $nsRoot . 'EvaluatorInterface',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function getElementProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'name' => '',
-                'instances' => array('PMSEElement', 'PMSERunnable'),
-            ),
-            array(
+                'instances' => ['PMSEElement', 'PMSERunnable'],
+            ],
+            [
                 'name' => 'PMSEActivity',
-                'instances' => array('PMSEActivity', 'PMSERunnable'),
-            ),
-        );
+                'instances' => ['PMSEActivity', 'PMSERunnable'],
+            ],
+        ];
+    }
+
+    public function getPMSEObjectProvider()
+    {
+        return [
+            // parser
+            ['name' => 'PMSEBusinessRuleParser'],
+            // Elements
+            ['name' => 'PMSEBusinessRule'],
+            // Handlers
+            ['name' => 'PMSECaseFlowHandler'],
+            // PreProcessor
+            ['name' => 'PMSERequest'],
+            // wrappers
+            ['name' => 'PMSECaseWrapper'],
+            // engine
+            ['name' => 'PMSEEvalCriteria'],
+        ];
+    }
+
+    public function getPMSEObjectThrowsExceptionProvider()
+    {
+        return [
+            ['name' => ''],
+            ['name' => 'FooeyFooFoo'],
+        ];
     }
 }

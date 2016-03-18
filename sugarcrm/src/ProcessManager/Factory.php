@@ -44,6 +44,105 @@ class Factory
     ];
 
     /**
+     * Root of all files that shipped with PMSE
+     * @var string
+     */
+    protected static $pmseBasePath = 'modules/pmse_Inbox/engine/';
+
+    /**
+     * PMSE Paths off of the pmseBasePath where files live
+     * @var array
+     */
+    protected static $pmsePaths = [
+        'parser/',
+        'PMSEElements/',
+        'PMSEHandlers/',
+        'PMSEPreProcessor/',
+        'wrappers/',
+        '',
+    ];
+
+    /**
+     * Gets an array of assembled paths for include.
+     * @return array
+     */
+    protected static function getPMSEPaths()
+    {
+        // Set a default return
+        $paths = [];
+
+        // Loop and set now
+        foreach (self::$pmsePaths as $path) {
+            // Assumption here: basePaths are properly suffixed with /
+            $paths[] = static::$pmseBasePath . $path;
+        }
+
+        return $paths;
+    }
+
+
+    /**
+     * Gets a Process Author object. This expects a mapping of file basename to
+     * class name. This method allows for extending a Process Author class using
+     * the 'Custom' prefix on a classname OR overriding a Process Author class
+     * completely by reusing the name of the class/file. Priority is given to
+     * Custom classes before overrides.
+     *
+     * @param string $name Name of the element to get the object for
+     * @return PMSE* Object
+     */
+    public static function getPMSEObject($name)
+    {
+        // Default variable for our classname
+        $class = '';
+
+        // Handle verification of the name being requested
+        if (empty($name)) {
+            $msg = 'Cannot load an unnamed PMSE Object';
+            $exception = static::getException('Runtime', $msg);
+            throw $exception;
+        }
+
+        // Get the paths to traverse
+        $paths = self::getPMSEPaths();
+
+        // First check for Custom classes of the type Custom$name
+        foreach ($paths as $path) {
+            $custom = 'Custom' . $name;
+            if (\SugarAutoLoader::requireWithCustom("custom/$path{$custom}.php") !== false) {
+                // Set our class name and move on
+                $class = $custom;
+
+                // Stop looking when we find something
+                break;
+            }
+        }
+
+        // Next check for PMSE standard / overridden classes
+        if (empty($class)) {
+            foreach ($paths as $path) {
+                if (\SugarAutoLoader::requireWithCustom("$path{$name}.php") !== false) {
+                    // Set it and forget it
+                    $class = $name;
+
+                    // Again, stop searching if we find something
+                    break;
+                }
+            }
+        }
+
+        // Validate our return before sending anything back
+        if (empty($class)) {
+            $msg = "Unable to find/load a PMSE class named $name";
+            $exception = static::getException('Runtime', $msg);
+            throw $exception;
+        }
+
+        // Get new object. Argument passing will take place in other methods.
+        return new $class;
+    }
+
+    /**
      * Gets the correct field evaluator type for building an field evaluator
      * object.
      * @param array $def Field def for this field
@@ -140,7 +239,42 @@ class Factory
             return $return;
         }
 
+        // Handle the exception for this case
         $msg = "Could not instantiate a Process Manager $name Element object.";
-        throw new PME\RuntimeException($msg);
+        $exception = static::getException('Runtime', $msg);
+        throw $exception;
+    }
+
+    /**
+     * Gets a Process Manager exception object
+     * @param string $type The type of object to get
+     * @param string $message The exception message to throw and log
+     * @return ExceptionInterface
+     */
+    public static function getException($type = '', $message = '')
+    {
+        // Since we need to log our exceptions, let's get the logger
+        require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
+        // Type will determine what class to load
+        if ($type === '') {
+            $class = '\\Exception';
+        } else {
+            $class = 'Sugarcrm\\Sugarcrm\\ProcessManager\\Exception\\' . ucfirst(strtolower($type)) . 'Exception';
+        }
+
+        // Handle the message now
+        if (empty($message)) {
+            $message = 'An unknown Process Manager exception had occurred';
+        }
+
+        // Create the exception object
+        $obj = new $class($message);
+
+        // Log it
+        \PMSELogger::getInstance()->alert($message);
+
+        // Return it
+        return $obj;
     }
 }
