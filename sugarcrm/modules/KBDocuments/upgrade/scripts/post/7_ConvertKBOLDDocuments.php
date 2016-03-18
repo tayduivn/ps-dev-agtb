@@ -161,6 +161,7 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
             foreach ($matches[0] as $key => $match) {
                 $file = 'upload://' . $matches[1][$key];
                 if (!file_exists($file)) {
+                    $this->log("Embedded file {$matches[1][$key]} doesn't exist");
                     continue;
                 }
                 $ef = BeanFactory::getBean('EmbeddedFiles');
@@ -325,6 +326,10 @@ EOF;
         $result = $this->db->query($query);
         while ($row = $this->db->fetchByAssoc($result)) {
             $fileLocation = "upload://{$row['id']}";
+            if (!file_exists($fileLocation)) {
+                $this->log("Attachment file {$fileLocation} doesn't exist");
+                continue;
+            }
             $note = BeanFactory::getBean('Notes');
             $note->id = create_guid();
             $note->new_with_id = true;
