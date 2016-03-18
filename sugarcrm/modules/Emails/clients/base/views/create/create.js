@@ -295,13 +295,6 @@
     },
 
     /**
-     * Cancel and close the drawer
-     */
-    cancel: function() {
-        app.drawer.close();
-    },
-
-    /**
      * Get the attachments from the model and format for the API
      *
      * @return {Array} array of attachments or empty array if none found
@@ -375,9 +368,6 @@
      */
     initializeSendEmailModel: function() {
         var sendModel = new Backbone.Model(_.extend({}, this.model.attributes, {
-            to_addresses: this.model.get('to_addresses'),
-            cc_addresses: this.model.get('cc_addresses'),
-            bcc_addresses: this.model.get('bcc_addresses'),
             attachments: this.getAttachmentsForApi(),
             related: this.getRelatedForApi(),
             teams: this.getTeamsForApi()
@@ -461,11 +451,12 @@
         sendModel.set('status', status);
         myURL = app.api.buildURL('Mail');
         app.api.call('create', myURL, sendModel, {
-            success: function() {
+            success: _.bind(function() {
                 app.alert.dismiss('mail_call_status');
                 app.alert.show('mail_call_status', {autoClose: true, level: 'success', messages: successMessage});
-                app.drawer.close(sendModel);
-            },
+                sendModel.module = this.module;
+                app.drawer.close(this.context, sendModel);
+            }, this),
             error: function(error) {
                 var msg = {level: 'error'};
                 if (error && _.isString(error.message)) {
@@ -537,7 +528,10 @@
      * @param {Data.Bean} template
      */
     confirmTemplate: function(template) {
-        if (this.disposed === true) return; //if view is already disposed, bail out
+        //if view is already disposed, bail out
+        if (this.disposed === true) {
+            return;
+        }
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
@@ -721,7 +715,7 @@
      * Inserts the signature into the editor.
      *
      * @param {Data.Bean} signature
-     * @return {Boolean}
+     * @return {boolean}
      * @private
      */
     _insertSignature: function(signature) {
@@ -839,31 +833,15 @@
         this.resizeEditor();
     },
 
+    /**
+     * @inheritdoc
+     */
     _dispose: function() {
         if (app.drawer) {
             app.drawer.off(null, null, this);
         }
         app.alert.dismiss('email-client-status');
         this._super('_dispose');
-    },
-
-    /**
-     * Register keyboard shortcuts.
-     */
-    registerShortcuts: function() {
-        app.shortcuts.register({
-            id: 'Compose:Action:More',
-            keys: 'm',
-            component: this,
-            description: 'LBL_SHORTCUT_OPEN_MORE_ACTION',
-            handler: function() {
-                var $primaryDropdown = this.$('.btn-primary[data-toggle=dropdown]');
-                if ($primaryDropdown.is(':visible') && !$primaryDropdown.hasClass('disabled')) {
-                    $primaryDropdown.click();
-                }
-            }
-        });
-        this._super('registerShortcuts');
     },
 
     /**
@@ -900,14 +878,5 @@
 
         //set the new height for the editor
         $editor.height(newEditorHeight);
-    },
-
-    /**
-     * Turn off logic from record view which handles clicking the cancel button
-     * as it causes issues for email compose.
-     *
-     * TODO: Remove this when record view changes to use button events instead
-     * of DOM based events
-     */
-    cancelClicked: $.noop
+    }
 })
