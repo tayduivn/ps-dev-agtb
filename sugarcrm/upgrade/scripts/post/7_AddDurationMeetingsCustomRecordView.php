@@ -11,7 +11,8 @@
  */
 /**
  * This upgrader will check whether the converted custom record view is a tab layout and duration field missing
- * when converting from bwc to sidecar.  It will add the duration field to the bottom of the business card.
+ * when converting from bwc to sidecar.  It will add the duration field to the bottom of the business card
+ *
  * @see MAR-3872
  */
 class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
@@ -21,18 +22,21 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
 
     /**
      * The current viewdefs for a given file
+     *
      * @var array
      */
     public $viewdefs = array();
 
     /**
-     * The path for the custom record view
+     * The path for the custom record
+     *
      * @var array
      */
     protected $filePath = 'custom/modules/Meetings/clients/base/views/record/record.php';
 
     /**
      * The state of the save, true when a save needs to be run
+     *
      * @var boolean
      */
     protected $save = false;
@@ -46,6 +50,7 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
 
     /**
      * Handles checking whether this upgrader needs to run or not
+     *
      * @return boolean
      */
     protected function shouldRun()
@@ -86,6 +91,7 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
 
     /**
      * Handles the loading of the custom record view def
+     *
      * @return array
      */
     protected function getCustomRecordViewDef()
@@ -99,6 +105,7 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
     /**
      * Handles actual replacement of viewdefs when needed. This check if the duration
      * fieldset exists and added to the business card if not on the panel
+     *
      * @param array $defs The complete viewdef
      */
     protected function replaceFieldsForRecordView($defs)
@@ -161,7 +168,10 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
                 foreach ($viewdefs['Meetings']['base']['view']['record']['panels'] as $panel) {
                     if (isset($panel['fields'])) {
                         foreach ($panel['fields'] as $field) {
-                            if (isset($field['name']) && $field['name'] === 'duration' && $field['type'] === 'duration') {
+                            if (isset($field['name'])
+                                && $field['name'] === 'duration'
+                                && $field['type'] === 'duration'
+                            ) {
                                 return $field;
                             }
                         }
@@ -173,7 +183,8 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
     }
 
     /**
-     * Returns whether a save should happen depending whether changes were made
+     * Returns whether a save should happen depending whether changes were
+     *
      * @return boolean
      */
     protected function shouldSave()
@@ -190,7 +201,7 @@ class SugarUpgradeAddDurationMeetingsCustomRecordView extends UpgradeScript
         $data = $this->viewdefs[$module]['base']['view']['record'];
         $this->log('Meetings Record View Upgrade for Tab Layout: Adding Duration Field.');
         $this->log('Meetings Record View Upgrade for Tab Layout: Saving custom record view def.');
-        write_array_to_file("viewdefs['$module']['base']['view']", $data, $this->filePath);
+        write_array_to_file("viewdefs['$module']['base']['view']['record']", $data, $this->filePath);
 
     }
 }
