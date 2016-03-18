@@ -76,6 +76,7 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
 		}    	
     	
 		$query = 'SELECT id FROM email_templates WHERE deleted=0';
+        $result = $GLOBALS['db']->query($query);
     	while($row = $GLOBALS['db']->fetchByAssoc($result))
     	{
 			  $this->emailmarketing->template_id = $row['id'];
