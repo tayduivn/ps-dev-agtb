@@ -16,7 +16,7 @@
 class SugarUpgradeKBPrepare extends UpgradeScript
 {
     public $order = 2000;
-    public $type = self::UPGRADE_CORE;
+    public $type = self::UPGRADE_DB;
 
     /**
      * {@inheritDoc}

@@ -131,6 +131,11 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             foreach (glob('custom/include/language/*.php') as $file) {
                 $this->updateLanguageFile($file);
             }
+
+            foreach (glob('custom/Extension/application/Ext/Language/*.php') as $file) {
+                $this->updateLanguageFile($file);
+            }
+
             $query = "UPDATE fields_meta_data set custom_module = 'KBContents' where custom_module = 'KBDocuments'";
             $this->db->query($query);
         }
@@ -199,7 +204,9 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             $dest
         );
         //need to merge
-        $this->upgrader->state['for_merge'][$cname] = $viewdefs['KBDocuments'][$platform]['view'][$viewname];
+        $viewdefs['KBContents'] = $viewdefs['KBDocuments'];
+        unset($viewdefs['KBDocuments']);
+        $this->upgrader->state['for_merge'][$cname] = $viewdefs;
         $cname = str_replace('custom/', '', $file);
         if (!empty($this->upgrader->state['for_merge'][$cname])) {
             unset($this->upgrader->state['for_merge'][$cname]);

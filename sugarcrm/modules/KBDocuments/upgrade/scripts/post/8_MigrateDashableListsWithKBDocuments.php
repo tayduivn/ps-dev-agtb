@@ -19,7 +19,7 @@ class SugarUpgradeMigrateDashableListsWithKBDocuments extends UpgradeScript
     const NEW_MODULE_NAME = 'KBContents';
 
     public $order = 8100;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
     public $version = '7.7';
 
     private $displayColumnsMap = array(
