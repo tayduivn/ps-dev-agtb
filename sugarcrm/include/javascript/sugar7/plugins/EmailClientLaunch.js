@@ -46,13 +46,13 @@
                 }, this);
 
                 app.drawer.open({
-                    layout: 'compose',
+                    layout: 'create',
                     context: {
                         create: 'true',
                         module: module,
                         prepopulate: options
                     }
-                }, _.bind(function(model) {
+                }, _.bind(function(context, model) {
                     if (model) {
                         // Allow for component to perform action after close
                         this.trigger('emailclient:close');

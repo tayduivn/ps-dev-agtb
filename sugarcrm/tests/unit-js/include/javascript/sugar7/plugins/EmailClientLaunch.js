@@ -81,7 +81,7 @@ describe('EmailClientLaunch Plugin', function() {
             setUseSugarClient(true);
             field.launchEmailClient({});
             drawerCloseCallback = app.drawer.open.lastCall.args[1];
-            drawerCloseCallback(model);
+            drawerCloseCallback(field.context, model);
             expect(app.controller.context.reloadData).toHaveBeenCalled();
         });
 
