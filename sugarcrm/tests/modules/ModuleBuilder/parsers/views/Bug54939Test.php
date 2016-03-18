@@ -13,8 +13,9 @@
 
 require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
+//BEGIN SUGARCRM flav=ent ONLY
 require_once 'modules/ModuleBuilder/parsers/views/SidecarPortalListLayoutMetaDataParser.php';
-
+//END SUGARCRM flav=ent ONLY
 /**
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.
@@ -24,14 +25,14 @@ class Bug54939TestListParser extends SidecarListLayoutMetaDataParser {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
-
+//BEGIN SUGARCRM flav=ent ONLY
 class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser {
     public function changeFieldType($field, $type)
     {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
-
+//END SUGARCRM flav=ent ONLY
 
 class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
     public function changeFieldType($field, $type) {
