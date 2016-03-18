@@ -69,6 +69,7 @@
 
             if (!this.model.has(this.name)) {
                 this.model.set(this.name, defaultValue.id);
+                this.model.setDefault(this.name, defaultValue.id);
             }
         }
 

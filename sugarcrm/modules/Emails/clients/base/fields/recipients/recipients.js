@@ -36,7 +36,7 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         // initialize the value to an empty collection
-        this.model.set(this.name, new Backbone.Collection);
+        this.model.setDefault(this.name, new Backbone.Collection);
     },
 
     /**
