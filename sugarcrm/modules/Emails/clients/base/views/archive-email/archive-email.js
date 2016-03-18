@@ -11,14 +11,15 @@
 /**
  * @class View.Views.Base.Emails.ArchiveEmailView
  * @alias SUGAR.App.view.views.BaseEmailsArchiveEmailView
- * @extends View.Views.Base.Emails.ComposeView
+ * @extends View.Views.Base.Emails.CreateView
  */
 ({
-    extendsFrom: 'EmailsComposeView',
+    extendsFrom: 'EmailsCreateView',
 
     /**
+     * @inheritdoc
+     *
      * Add click event handler to archive an email.
-     * @param options
      */
     initialize: function(options) {
         this.events = _.extend({}, this.events, {
@@ -36,7 +37,7 @@
      * Set headerpane title.
      * @private
      */
-    _render: function () {
+    _render: function() {
         this._super('_render');
         this.setTitle(app.lang.get('LBL_ARCHIVE_EMAIL', this.module));
     },
@@ -57,7 +58,7 @@
 
     /**
      * Get fields that needs to be validated.
-     * @returns {object}
+     * @return {Object}
      */
     getFieldsToValidate: function() {
         var fields = {};
@@ -95,7 +96,7 @@
                 app.alert.dismiss(alertKey);
                 app.alert.show(alertKey, msg);
             },
-            complete:_.bind(function() {
+            complete: _.bind(function() {
                 if (!this.disposed) {
                     this.setMainButtonsDisabled(false);
                 }
@@ -105,7 +106,7 @@
 
     /**
      * Get model that will be used to archive the email.
-     * @returns {Backbone.Model}
+     * @return {Backbone.Model}
      */
     initializeSendEmailModel: function() {
         var model = this._super('initializeSendEmailModel');
@@ -119,7 +120,7 @@
 
     /**
      * Disable/enable archive button.
-     * @param disabled
+     * @param {boolean} disabled
      */
     setMainButtonsDisabled: function(disabled) {
         this.getField('archive_button').setDisabled(disabled);

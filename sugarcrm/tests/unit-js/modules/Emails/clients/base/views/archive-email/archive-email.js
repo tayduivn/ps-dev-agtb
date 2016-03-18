@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Archive Email View', function () {
+describe('Archive Email View', function() {
     var view,
         setMainButtonsDisabledStub,
         userId = '1234567890',
@@ -20,22 +20,23 @@ describe('Archive Email View', function () {
         var metadata = {
             fields: {
                 name: {
-                    name: "name",
-                    vname: "LBL_NAME",
-                    type: "varchar",
+                    name: 'name',
+                    vname: 'LBL_NAME',
+                    type: 'varchar',
                     len: 255,
-                    comment: "Name of this bean"
+                    comment: 'Name of this bean'
                 }
             },
             favoritesEnabled: true,
             views: [],
             layouts: [],
-            _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
+            _hash: 'bc6fc50d9d0d3064f5d522d9e15968fa'
         };
 
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', 'compose', 'Emails');
+        SugarTest.loadComponent('base', 'view', 'create');
+        SugarTest.loadComponent('base', 'view', 'create', 'Emails');
         SugarTest.loadComponent('base', 'view', 'archive-email', 'Emails');
         SugarTest.testMetadata.updateModuleMetadata('Emails', metadata);
         SugarTest.testMetadata.set();
@@ -55,11 +56,12 @@ describe('Archive Email View', function () {
         SugarTest.app.user.attributes.full_name = userName;
 
         view = SugarTest.createView('base', 'Emails', 'archive-email', null, context, true);
-        setMainButtonsDisabledStub = sinon.stub(view, 'setMainButtonsDisabled');
+
+        setMainButtonsDisabledStub = sinon.collection.stub(view, 'setMainButtonsDisabled');
     });
 
     afterEach(function() {
-        setMainButtonsDisabledStub.restore();
+        sinon.collection.restore();
         view.dispose();
         SugarTest.app.drawer = undefined;
         SugarTest.app.user.id = userIdBefore;
@@ -75,55 +77,46 @@ describe('Archive Email View', function () {
         expect(view.model.get('assigned_user_name')).toEqual(userName);
     });
 
-    describe('archive', function () {
-        it('should call the archive email api if the validation passes', function () {
-            var apiCallStub = sinon.stub(SugarTest.app.api, 'call'),
-                validationStub = sinon.stub(view.model, 'doValidate', function(fields, callback) {
-                    callback(true);
-                });
+    describe('archive', function() {
+        it('should call the archive email api if the validation passes', function() {
+            var apiCallStub = sinon.collection.stub(SugarTest.app.api, 'call');
 
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
+                callback(true);
+            });
             view.archive();
 
             expect(apiCallStub.calledOnce).toBe(true);
-
-            apiCallStub.restore();
-            validationStub.restore();
         });
 
-        it('should not call the archive email api if the validation fails', function () {
-            var apiCallStub = sinon.stub(SugarTest.app.api, 'call'),
-                validationStub = sinon.stub(view.model, 'doValidate', function(fields, callback) {
-                    callback(false);
-                });
+        it('should not call the archive email api if the validation fails', function() {
+            var apiCallStub = sinon.collection.stub(SugarTest.app.api, 'call');
 
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
+                callback(false);
+            });
             view.archive();
 
             expect(apiCallStub.called).toBe(false);
-
-            apiCallStub.restore();
-            validationStub.restore();
         });
 
-        it('should call the correct api', function () {
-            var apiCallStub = sinon.stub(SugarTest.app.api, 'call'),
-                validationStub = sinon.stub(view.model, 'doValidate', function(fields, callback) {
-                    callback(true);
-                });
+        it('should call the correct api', function() {
+            var apiCallStub = sinon.collection.stub(SugarTest.app.api, 'call');
 
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
+                callback(true);
+            });
             view.archive();
 
             expect(apiCallStub.getCall(0).args[1]).toMatch('Mail/archive');
-
-            apiCallStub.restore();
-            validationStub.restore();
         });
 
-        it('should send date_sent, from_address, and status to the server', function () {
-            var apiCallStub = sinon.stub(SugarTest.app.api, 'call'),
-                validationStub = sinon.stub(view.model, 'doValidate', function(fields, callback) {
-                    callback(true);
-                });
+        it('should send date_sent, from_address, and status to the server', function() {
+            var apiCallStub = sinon.collection.stub(SugarTest.app.api, 'call');
 
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
+                callback(true);
+            });
             view.model.set({
                 'date_sent': 'foo',
                 'from_address': 'bar'
@@ -133,14 +126,11 @@ describe('Archive Email View', function () {
             expect(apiCallStub.getCall(0).args[2].get('date_sent')).toBe('foo');
             expect(apiCallStub.getCall(0).args[2].get('from_address')).toBe('bar');
             expect(apiCallStub.getCall(0).args[2].get('status')).toBe('archive');
-
-            apiCallStub.restore();
-            validationStub.restore();
         });
 
-        it('should first disable the archive button and then enable it back when validation fails', function () {
-            var apiCallStub = sinon.stub(SugarTest.app.api, 'call'),
-                validationStub = sinon.stub(view.model, 'doValidate', function(fields, callback) {
+        it('should first disable the archive button and then enable it back when validation fails', function() {
+            sinon.collection.stub(SugarTest.app.api, 'call');
+            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
                     callback(false);
                 });
 
@@ -149,9 +139,6 @@ describe('Archive Email View', function () {
             expect(setMainButtonsDisabledStub.calledTwice).toBe(true);
             expect(setMainButtonsDisabledStub.getCall(0).args[0]).toBe(true);
             expect(setMainButtonsDisabledStub.getCall(1).args[0]).toBe(false);
-
-            apiCallStub.restore();
-            validationStub.restore();
         });
     });
 });
