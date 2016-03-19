@@ -89,6 +89,8 @@ var Field = function (options, parent) {
 
     this.disabled = null;
 
+    this.tooltipHandler = null;
+
     Field.prototype.initObject.call(this, options, parent);
 };
 Field.prototype = new Element();
@@ -148,6 +150,28 @@ Field.prototype.initObject = function (options, parent) {
         } else {
             this.enable();
         }
+};
+
+/**
+ * Sets tooltip handler to Field element
+ *
+ * @param {object} element
+ */
+Field.prototype.setTooltip = function(element) {
+    var disableTooltip = function() {
+        if (this.tooltipHandler) {
+            this.tooltipHandler.tooltip('destroy');
+            this.tooltipHandler = null;
+        }
+    };
+    $(element).on({
+        'mouseenter': function() {
+            this.tooltipHandler = $(this).tooltip({container: 'body', trigger: 'manual'}, $(this).data('placement'));
+            this.tooltipHandler.tooltip('show');
+        },
+        'mouseleave': disableTooltip,
+        'click': disableTooltip
+    });
 };
 
 /**
