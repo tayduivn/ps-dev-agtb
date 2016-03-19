@@ -629,8 +629,6 @@ $mod_strings = array (
     'LBL_REBUILD_JAVASCRIPT_LANG_DESC' => 'Removing javascript versions of language files, will rebuild when needed.',
     'LBL_REBUILD_JAVASCRIPT_LANG_TITLE' => 'Rebuild Javascript Languages',
 
-    'LBL_REBUILD_JS_FILES_TITLE' => 'Rebuild JS Compressed Files',
-    'LBL_REBUILD_JS_FILES_DESC_SHORT' => 'Copies original Full JS Source files and replaces existing compressed JS files',
     'LBL_REBUILD_CONCAT_JS_FILES_TITLE' => 'Rebuild JS Grouping Files',
     'LBL_REBUILD_CONCAT_JS_FILES_DESC_SHORT' => 'Re-concatenates and overwrites existing group files with latest versions of group files',
     'LBL_REPAIR_JS_FILES_TITLE' => 'Repair JS Files',
@@ -942,7 +940,6 @@ $mod_strings = array (
     'NTC_OC_NOT_AVAILABLE' => 'Not Available',
     'NTC_OC_RESERVED' => 'Reserved',
     'REMOVE_QUESTION'           => 'Are you sure you wish to remove the selected package?',
-    'WARN_POSSIBLE_JS_OVERWRITE'=>'Caution, this will overwrite any changes you may have made to javascript files, would you like to proceed?',
     'WARN_INSTALLER_LOCKED'=>'<b>Warning:</b> To safeguard your data, the installer must be locked by setting \'installer_locked\' to \'true\' in the config.php file.',
  	'WARN_LICENSE_EXPIRED'=> "<b>Notice:</b> Your license expires in ",
     'WARN_LICENSE_EXPIRED2' =>" day(s). Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",

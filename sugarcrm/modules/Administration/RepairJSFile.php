@@ -12,11 +12,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
-if ($_REQUEST['type'] === 'mini') {
+if (in_array($_REQUEST['type'], array('mini', 'replace'), true)) {
     // don't run it without forcing admins to realize this is deprecated
     if (empty($_REQUEST['run_deprecated_feature'])) {
+        var $runAction = $_REQUEST['type'] === 'mini' ? 'Rebuild Minified JS Files' : 'Rebuild JS Compressed Files';
         echo "<br><b>Note:</b> This feature is deprecated.<br>";
-        echo "To Rebuild Minified JS Files, <b>run_deprecated_feature=1</b> must be set as a request parameter.";
+        echo "To $runAction, <b>run_deprecated_feature=1</b> must be set as a request parameter.";
         return;
     }
 }
