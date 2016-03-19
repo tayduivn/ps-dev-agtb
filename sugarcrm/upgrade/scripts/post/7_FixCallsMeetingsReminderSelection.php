@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
  * Fix separate selection of reminder time for Emails and Popups in Calls & Meetings.
  *
@@ -28,6 +29,21 @@ class SugarUpgradeFixCallsMeetingsReminderSelection extends UpgradeScript
         'list',
         'selection-list',
     );
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($upgrader, $modules = array(), $sidecarViewsToFix = array())
+    {
+        parent::__construct($upgrader);
+        if ($modules) {
+            $this->modules = $modules;
+        }
+        if ($sidecarViewsToFix) {
+            $this->sidecarViewsToFix = $sidecarViewsToFix;
+        }
+    }
+
 
     /**
      * {@inheritdoc}
@@ -59,6 +75,17 @@ class SugarUpgradeFixCallsMeetingsReminderSelection extends UpgradeScript
         $fileName = "custom/modules/$module/clients/$platform/views/$view/$view.php";
         $fixesMade = false;
         if (file_exists($fileName)) {
+            $viewdefs = array(
+                $module => array(
+                    $platform => array(
+                        'view' => array(
+                            $view => array(
+                                'panels' => array(),
+                            ),
+                        ),
+                    ),
+                ),
+            );
             include $fileName;
 
             foreach ($viewdefs[$module][$platform]['view'][$view]['panels'] as $panelKey => $panel) {
@@ -101,6 +128,7 @@ class SugarUpgradeFixCallsMeetingsReminderSelection extends UpgradeScript
     {
         $fileName = "custom/modules/$module/metadata/popupdefs.php";
         if (file_exists($fileName)) {
+            $popupMeta = array('listviewdefs' => array());
             include $fileName;
 
             foreach ($popupMeta['listviewdefs'] as $fieldKey => $field) {
@@ -123,13 +151,27 @@ class SugarUpgradeFixCallsMeetingsReminderSelection extends UpgradeScript
      */
     public function getCanonicalSidecarFieldDef($module, $view, $fieldName, $platform = 'base')
     {
-        include "modules/$module/clients/$platform/views/$view/$view.php";
+        $fileName = "modules/$module/clients/$platform/views/$view/$view.php";
+        if (file_exists($fileName)) {
+            $viewdefs = array(
+                $module => array(
+                    $platform => array(
+                        'view' => array(
+                            $view => array(
+                                'panels' => array(),
+                            ),
+                        ),
+                    ),
+                ),
+            );
+            include $fileName;
 
-        foreach ($viewdefs[$module][$platform]['view'][$view]['panels'] as $panel) {
-            foreach ($panel['fields'] as $field) {
-                if ((is_array($field) && isset($field['name']) && $field['name'] === $fieldName) ||
-                    is_string($field) && $field === $fieldName) {
-                    return $field;
+            foreach ($viewdefs[$module][$platform]['view'][$view]['panels'] as $panel) {
+                foreach ($panel['fields'] as $field) {
+                    if ((is_array($field) && isset($field['name']) && $field['name'] === $fieldName) ||
+                        is_string($field) && $field === $fieldName) {
+                        return $field;
+                    }
                 }
             }
         }

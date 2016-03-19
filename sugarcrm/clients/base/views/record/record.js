@@ -818,10 +818,8 @@
                 // Loop through the visible subpanels and have them sync. This is to update any related
                 // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {
-                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
-                        if (child.attributes.isSubpanel && !child.attributes.hidden && !child.get('skipFetch')) {
-                            child.reloadData({recursive: false});
-                        }
+                    if (child.get('isSubpanel') && !child.get('hidden')) {
+                        child.get('collapsed') ? child.resetLoadFlag(false) : child.reloadData({recursive: false});
                     }
                 });
                 if (this.createMode) {

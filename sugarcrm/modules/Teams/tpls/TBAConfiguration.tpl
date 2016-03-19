@@ -46,7 +46,7 @@
         <tr>
             <td align="left" scope="row" colspan="2" class="left">
                 <div class="padding-bottom-20">{$MOD.LBL_TBA_CONFIGURATION_TITLE}</div>
-                <div class="padding-bottom-20">{$MOD.LBL_TBA_CONFIGURATION_WARNING_DESC}</div>
+                <div class="padding-bottom-20">{if $isUserAdmin}{$MOD.LBL_TBA_CONFIGURATION_WARNING_DESC}{else}{$MOD.LBL_TBA_CONFIGURATION_WARNING_DESC_NO_ADMIN}{/if}</div>
             </td>
         </tr>
         <tr>

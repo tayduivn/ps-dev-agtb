@@ -998,6 +998,7 @@ class SugarTestHelper
                 SugarAutoLoader::addToMap($filename, false);
             }
         }
+        rsort(self::$oldDirs);
         foreach (self::$oldDirs as $dirname) {
             if (file_exists($dirname)) {
                 rmdir($dirname);

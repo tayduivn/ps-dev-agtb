@@ -169,7 +169,7 @@
 
         if (defaultDateTime.minutes() > 30) {
             defaultDateTime
-                .add('h', 1)
+                .add(1, 'h')
                 .minutes(0);
         } else if (defaultDateTime.minutes() > 0) {
             defaultDateTime.minutes(30);
@@ -220,7 +220,7 @@
         } else {
             // Set the end date to be an hour from the start date if the end
             // date has not been set yet.
-            endDate = app.date(startDateString).add('m', 30).formatServer();
+            endDate = app.date(startDateString).add(30, 'm').formatServer();
             this.model.set('date_end', endDate);
         }
     },

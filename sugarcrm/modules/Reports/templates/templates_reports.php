@@ -233,8 +233,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$report_export_access = SugarACL::checkAccess('Reports', 'export', $context);
 	$smarty->assign('report_export_access', $report_export_access);
 
-     //check to see if exporting is allowed
-    $isExportAccess = hasExportAccess($args);
+    //check to see if exporting is allowed
+    $isExportAccess = hasExportAccess($args) && $report_export_access;
 
 	$smarty->assign('report_export_as_csv_access', $isExportAccess);
 	$formSubmit = $request->getValidInputRequest('form_submit', null, false);

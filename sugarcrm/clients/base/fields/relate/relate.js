@@ -415,7 +415,7 @@
         var $el = $(el),
             id = $el.val(),
             text = $el.data('rname');
-        
+
         if (!this.def.isMultiSelect) {
             return callback({id: id, text: text});
         }
@@ -550,6 +550,15 @@
         }
         if (!this.def.isMultiSelect) {
             this._buildRoute();
+        }
+
+        var idList = this.model.get(this.def.id_name);
+        if (_.isArray(value)) {
+            this.formattedRname = value.join(this._separator);
+            this.formattedIds = idList.join(this._separator);
+        } else {
+            this.formattedRname = value;
+            this.formattedIds = idList;
         }
         return value;
     },
