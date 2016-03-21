@@ -70,6 +70,23 @@
     /**
      * @inheritdoc
      */
+    unformat: function(value) {
+      if (!value) {
+        return value;
+      }
+
+      value = app.date(value, app.date.convertFormat(this.getUserDateFormat()), true);
+
+      if (!value.isValid()) {
+        return;
+      }
+
+      return value.formatServer(false);
+    },
+
+    /**
+     * @inheritdoc
+     */
     _dispose: function() {
         this.model.removeValidationTask('repeat_until_validator_' + this.cid);
         this._super('_dispose');

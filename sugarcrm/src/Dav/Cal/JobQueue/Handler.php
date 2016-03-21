@@ -174,6 +174,9 @@ class Handler implements RunnableInterface
             }
             $exportDataSet = $this->listener->getDataSet();
             $this->hookHandler->getExportNotifier()->detach($this->listener);
+            if (!$exportDataSet) {
+                $exportDataSet = array(array());
+            }
             foreach ($exportDataSet as $exportData) {
                 $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $bean);
                 if ($exportData) {
@@ -219,6 +222,9 @@ class Handler implements RunnableInterface
             }
             $importDataSet = $this->listener->getDataSet();
             $this->hookHandler->getImportNotifier()->detach($this->listener);
+            if (!$importDataSet) {
+                $importDataSet = array(array());
+            }
             foreach ($importDataSet as $importData) {
                 $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
                 if ($importData) {

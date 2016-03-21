@@ -176,6 +176,10 @@ class SugarXHprof
             }
         }
 
+        if (!static::$enable) {
+            return;
+        }
+
         // disabling profiler if XHprof extension is not loaded
         if (extension_loaded('xhprof') == false) {
             static::$enable = false;

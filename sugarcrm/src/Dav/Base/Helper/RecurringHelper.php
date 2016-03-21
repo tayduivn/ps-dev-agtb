@@ -76,12 +76,18 @@ class RecurringHelper
      */
     protected $dayPositionMap;
 
+    /**
+     * @var DateTimeHelper
+     */
+    protected $dateTimeHelper;
+
     public function __construct()
     {
         $this->frequencyMap = new StatusMapper\IntervalMap();
         $this->dayMap = new StatusMapper\DayMap();
         $this->monthlyDayMap = new StatusMapper\MonthlyDayMap();
         $this->dayPositionMap = new StatusMapper\DayPositionMap();
+        $this->dateTimeHelper = new DateTimeHelper();
     }
 
     /**
@@ -113,8 +119,7 @@ class RecurringHelper
         if ($recurring['repeat_count']) {
             $rRule->setCount($recurring['repeat_count']);
         } elseif ($recurring['repeat_until']) {
-            $sugarTimeDate = new \TimeDate();
-            $until = $sugarTimeDate->fromString($recurring['repeat_until']);
+            $until = $this->dateTimeHelper->sugarDateToUTC($recurring['repeat_until']);
             $rRule->setUntil($until);
         }
 
@@ -204,7 +209,7 @@ class RecurringHelper
 
         if (isset($value['rrule_until'])) {
             $valueToSet = is_null($value['rrule_until'][0]) ? '' : $value['rrule_until'][0];
-            $beanValue = $bean->repeat_until ? $dateTimeHelper->sugarDateToUTC($bean->repeat_until)->asDbDate() : '';
+            $beanValue = $bean->repeat_until ? $dateTimeHelper->sugarDateToUTC($bean->repeat_until)->asDb() : '';
             if ($beanValue != $valueToSet) {
                 $bean->repeat_until = $valueToSet;
                 $isChanged = true;

@@ -88,6 +88,7 @@
 
             SUGAR.saveWebSocketsConfiguration = function(event) {
                 event.preventDefault();
+                app.alert.dismiss('WebSocketsErr');
                 
                 var websocket_client_url = document.getElementById('websocket_client_url').value;
                 var websocket_server_url = document.getElementById('websocket_server_url').value;
