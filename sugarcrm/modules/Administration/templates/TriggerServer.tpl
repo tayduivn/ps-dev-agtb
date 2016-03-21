@@ -80,6 +80,7 @@
 
             SUGAR.saveTriggerServerConfiguration = function(event) {
                 event.preventDefault();
+                app.alert.dismiss('TriggerServerErr');
                                 
                 var trigger_server_url = document.getElementById('trigger_server_url').value;
 
@@ -113,7 +114,7 @@
                     }
                     window.location.assign('index.php?module=Administration&action=index');
                 } else {
-                    app.alert.show('WebSocketsErr', {level: 'error', messages: response.errMsg});
+                    app.alert.show('TriggerServerErr', {level: 'error', messages: response.errMsg});
                 }
             };
         })();
