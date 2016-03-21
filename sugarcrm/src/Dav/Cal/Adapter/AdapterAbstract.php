@@ -942,14 +942,15 @@ abstract class AdapterAbstract implements AdapterInterface
             ));
 
             if (!$beanForImport) {
-                $beanForImport = \BeanFactory::getBean($bean->module_name);
+                $beanForImport = clone $bean;
                 $beanForImport->id = $childrenIds[$recurrenceIndex];
                 $beanForImport->new_with_id = true;
                 $beanForImport->repeat_root_id = $bean->id;
                 $beanForImport->repeat_parent_id = $bean->id;
-                foreach (RecurringHelper::$recurringFieldList as $recurringField) {
-                    $beanForImport->$recurringField = $bean->$recurringField;
-                }
+                $beanForImport->fetched_row = false;
+                $beanForImport->send_invites = false;
+                $beanForImport->update_vcal = false;
+                $beanForImport->updateAllChildren = false;
             }
 
             return $beanForImport;
