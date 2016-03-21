@@ -1895,10 +1895,6 @@ NumberUpdaterItem.prototype.init = function (settings) {
     this.setValue(defaults.value);
 };
 
-NumberUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!this._value.length : true;
-};
-
 NumberUpdaterItem.prototype.isCurrency = function() {
     return this._currency;
 };
@@ -1926,46 +1922,179 @@ NumberUpdaterItem.prototype.setValue = function (value) {
 };
 
 NumberUpdaterItem.prototype.isValid = function () {
-    var isValid = true;
-    var value = this.getValue().slice(0);
-    var i;
-    var prev = null;
-    var currType;
-    var currValue;
-
-    if (value.length < 1) {
-        return false;
-    }
-
-    // TODO: the next validation must be implemented in ExpressionControl based on the kind of result it expects to return.
-
-    // We need to validate that a valid expression is inserted in the control
-    // First, check the syntax
-    for (i = 0; i < value.length; i += 1) {
-        currType = value[i].expType;
-        currValue = value[i].expValue;
-        if (prev === null) {
-            if (currType === 'ARITMETIC' && currValue !== '(') {
-                return false;
-            }
-        } else {
-            if ((currType === 'CONSTANT' || currType === 'VARIABLE' || (currType === 'ARITMETIC' && currValue === '(')) && (prev.expType === 'CONSTANT' || prev.expType === 'VARIABLE' || (prev.expType === 'ARITMETIC' && prev.expValue === ')'))) {
-                return false;
-            } else if ((currType === 'ARITMETIC' && currValue !== '(') && (prev.expType === 'ARITMETIC' && prev.expValue !== '(')) {
-                return false;
-            }
+    var result = this.evaluateExpression(this.getValue());
+    if (result.valid) {
+        if (this.isCurrency() && result.expSubtype.toLowerCase() != 'currency') {
+            return false;
         }
-        prev = value[i];
-    }
-
-    if (currType === 'ARITMETIC' && currValue !== ')') {
+    } else {
         return false;
-    }
-
-    if (!isValid) {
-        return isValid;
     }
     return UpdaterItem.prototype.isValid.call(this);
+};
+
+/**
+ * Utility function to evaluate a value expression
+ *
+ * @param Array an array of tokens that form an expression
+ *
+ * @return Object with the following fields: valid, expType and expSubtype
+ */
+NumberUpdaterItem.prototype.evaluateExpression = function (value) {
+    var result = {valid:false}, exp, val, curr, i, j, c, left, right;
+    if (Array.isArray(value) && value.length > 0) {
+        // first pass to handle the GROUP operators ( and )
+        exp = value.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'GROUP') {
+                // opening bracket
+                if (curr.expValue == '(') {
+                    // search for the matching closing bracket
+                    for (j = i + 1, c = 1; j < exp.length; j++) {
+                        curr = exp[j];
+                        if (curr.expType == 'GROUP') {
+                            // enclosed inner brackets
+                            if (curr.expValue == '(') {
+                                c++;
+                            } else {
+                                c--;
+                                if (c == 0) {
+                                    // found it
+                                    curr = this.evaluateExpression(exp.slice(i + 1, j));
+                                    if (curr.valid) {
+                                        val.push(curr);
+                                        break;
+                                    } else {
+                                        // recursive call failed
+                                        return result;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (j < exp.length) {
+                        i = j;
+                    } else {
+                        // no matching closing bracket found
+                        return result;
+                    }
+                } else {
+                    // closing bracket without a matching opening one
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // second pass to process the multiplicative operators x and /
+        exp = val.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'ARITHMETIC' && (curr.expValue == 'x' || curr.expValue == '/')) {
+                // needs to have a left hand operand
+                if (val.length > 0) {
+                    left = val.pop();
+                    // left hand operand needs to be of a value type
+                    if (left.expType == 'CONSTANT' || left.expType == 'VARIABLE') {
+                        // needs to have a right hand operand
+                        if (i < exp.length - 1) {
+                            right = exp[i + 1];
+                            // right hand operand needs to be of a value type
+                            if (right.expType == 'CONSTANT' || right.expType == 'VARIABLE') {
+                                if (left.expSubtype.toLowerCase() == 'currency') {
+                                    if (right.expSubtype.toLowerCase() == 'currency') {
+                                        if (curr.expValue == 'x') {
+                                            // currency x currency
+                                            return result;
+                                        } else {
+                                            // currency / currency
+                                            curr = left;
+                                            curr.expSubtype = 'number';
+                                        }
+                                    } else {
+                                        // currency x / number
+                                        curr = left;
+                                    }
+                                } else {
+                                    if (right.expSubtype.toLowerCase() == 'currency') {
+                                        if (curr.expValue == 'x') {
+                                            // number x currency
+                                            curr = right;
+                                        } else {
+                                            // number / currency
+                                            return result;
+                                        }
+                                    } else {
+                                        // number x / number
+                                        curr = left;
+                                    }
+                                }
+                                val.push(curr);
+                                i++;
+                            } else {
+                                return result;
+                            }
+                        } else {
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // third pass to process the additive operators + and -
+        exp = val.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'ARITHMETIC' && (curr.expValue == '+' || curr.expValue == '-')) {
+                // needs to have a left hand operand
+                if (val.length > 0) {
+                    left = val.pop();
+                    // left hand operand needs to be of a value type
+                    if (left.expType == 'CONSTANT' || left.expType == 'VARIABLE') {
+                        // needs to have a right hand operand
+                        if (i < exp.length - 1) {
+                            right = exp[i + 1];
+                            // right hand operand needs to be of a value type
+                            if (right.expType == 'CONSTANT' || right.expType == 'VARIABLE') {
+                                // the two operands should be of the same value type
+                                if (left.expSubtype.toLowerCase() != right.expSubtype.toLowerCase()) {
+                                    return result;
+                                }
+                                val.push(left);
+                                i++;
+                            } else {
+                                return result;
+                            }
+                        } else {
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // should have only one token left
+        if (val.length == 1) {
+            result = val[0];
+            result.valid = true;
+        }
+    }
+    return result;
 };
 
 NumberUpdaterItem.prototype._createControl = function () {
