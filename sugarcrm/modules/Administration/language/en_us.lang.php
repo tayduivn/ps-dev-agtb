@@ -631,8 +631,6 @@ $mod_strings = array (
 
     'LBL_REBUILD_CONCAT_JS_FILES_TITLE' => 'Rebuild JS Grouping Files',
     'LBL_REBUILD_CONCAT_JS_FILES_DESC_SHORT' => 'Re-concatenates and overwrites existing group files with latest versions of group files',
-    'LBL_REPAIR_JS_FILES_TITLE' => 'Repair JS Files',
-    'LBL_REPAIR_JS_FILES_DESC_SHORT' => 'Compresses Existing JS files - includes any changes made, but does not overwrite original JS Source files',
     'LBL_REPAIR_JS_FILES_PROCESSING' => 'Processing files. This may take several minutes.  Going away from this page will not cancel the process, so feel free to move on or wait for confirmation...',
     'LBL_REPAIR_JS_FILES_DONE_PROCESSING' => 'Done Processing files.',
     'LBL_REPAIR_FIELD_CASING_TITLE' => 'Repair Non-Lowercase Fields',
