@@ -39,12 +39,8 @@
 		<td >
 			<input class="checkbox" type="checkbox" id="sendPlainText" name="sendPlainText" value="1" {$sendPlainTextChecked} />
 		</td>
-		<td NOWRAP scope="row">
-		  {$mod_strings.LBL_SIGNATURE_PREPEND}:
-		</td>
-		<td NOWRAP>
-		<input type="checkbox" name="signature_prepend" {$signaturePrepend}>
-		</td>
+		<td NOWRAP scope="row"></td>
+		<td NOWRAP></td>
 	</tr>
 	<tr>
 		<td NOWRAP scope="row">

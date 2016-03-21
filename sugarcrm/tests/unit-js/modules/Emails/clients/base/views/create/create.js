@@ -631,6 +631,10 @@ describe('Emails.Views.Create', function() {
         beforeEach(function() {
             ajaxSpy = sandbox.spy($, 'ajax');
             view.model.off('change');
+
+            sandbox.stub(view, '_insertInEditor', function() {
+                return view.model.get('html_body');
+            });
         });
 
         it('should retrieve a signature when the signature ID is present', function() {
@@ -729,103 +733,81 @@ describe('Emails.Views.Create', function() {
                     expect(actual).toBe(data.expected);
                 });
             }, this);
-
-            var tag = '<signature />';
-
-            dataProvider = [
-                {
-                    message: 'should prepend the signature block at the absolute beginning when <body> is not found',
-                    body: 'my message body is rockin',
-                    prepend: true,
-                    expected: tag + 'my message body is rockin'
-                },
-                {
-                    message: 'should prepend the signature block inside <body> when <body> is found',
-                    body: '<html><head></head><body>my message body is rockin',
-                    prepend: true,
-                    expected: '<html><head></head><body>' + tag + 'my message body is rockin'
-                },
-                {
-                    message: 'should append the signature block at the absolute end when </body> is not found',
-                    body: 'my message body is rockin',
-                    prepend: false,
-                    expected: 'my message body is rockin' + tag
-                },
-                {
-                    message: 'should append the signature block inside </body> when </body> is found',
-                    body: '<html><head></head><body>my message body is rockin</body></html>',
-                    prepend: false,
-                    expected: '<html><head></head><body>my message body is rockin' + tag + '</body></html>'
-                }
-            ];
-
-            _.each(dataProvider, function(data) {
-                it(data.message, function() {
-                    var actual = view._insertSignatureTag(data.body, tag, data.prepend);
-                    expect(actual).toBe(data.expected);
-                });
-            }, this);
         });
 
         describe('insert a signature', function() {
-            var htmlBody = 'my message body is rockin',
-                signatureTagBegin = '<br class="signature-begin" />',
-                signatureTagEnd = '<br class="signature-end" />';
+            var htmlBody = 'my message body is rockin\'',
+                signatureTagBegin = '<div class="signature">',
+                signatureTagEnd = '</div>',
+                signature;
 
-            dataProvider = [
-                {
-                    message: 'should append a signature when it is an object, the signature_html attribute exists, there is no existing signature, and the user preference says not to prepend the signature',
-                    body: htmlBody,
-                    signature: {signature_html: '<b>Sincerely, John</b>'},
-                    expectedReturn: true,
-                    expectedBody: htmlBody + signatureTagBegin + '<b>Sincerely, John</b>' + signatureTagEnd
-                },
-                {
-                    message: 'should insert a signature that runs from open tag until EOF when there is no close tag',
-                    body: htmlBody + signatureTagBegin + '<b>Sincerely, John</b>' + htmlBody,
-                    signature: {signature_html: '<i>Regards, Jim</i>'},
-                    expectedReturn: true,
-                    expectedBody: htmlBody + signatureTagBegin + '<i>Regards, Jim</i>' + signatureTagEnd
-                },
-                {
-                    message: 'should insert a signature that runs from BOF until close tag when there is no open tag',
-                    body: htmlBody + '<b>Sincerely, John</b><br class="signature-end" />' + htmlBody,
-                    signature: {signature_html: '<i>Regards, Jim</i>'},
-                    expectedReturn: true,
-                    expectedBody: signatureTagBegin + '<i>Regards, Jim</i>' + signatureTagEnd + htmlBody
-                },
-                {
-                    message: 'should insert a signature that contains any whitespace and non-white space characters',
-                    body: htmlBody,
-                    signature: {signature_html: '<b>Sincerely, John</b>\r\n<b>how are you doing</b>\r\n\t\f'},
-                    expectedReturn: true,
-                    expectedBody: htmlBody + signatureTagBegin + '<b>Sincerely, John</b>\r\n<b>how are you doing</b>\r\n\t\f' + signatureTagEnd
-                },
-                {
-                    message: 'should not insert a signature because signature is not an object',
-                    body: htmlBody,
-                    signature: '<b>Sincerely, John</b>',
-                    expectedReturn: false,
-                    expectedBody: htmlBody
-                },
-                {
-                    message: 'should not insert a signature because the signature_html attribute does not exist',
-                    body: htmlBody,
-                    signature: {html: '<b>Sincerely, John</b>'},
-                    expectedReturn: false,
-                    expectedBody: htmlBody
-                }
-            ];
-
-            _.each(dataProvider, function(data) {
-                it(data.message, function() {
-                    view.model.set('html_body', data.body);
-                    var actualReturn = view._insertSignature(new app.Bean(data.signature)),
-                        actualBody = view.model.get('html_body');
-                    expect(actualReturn).toBe(data.expectedReturn);
-                    expect(actualBody).toBe(data.expectedBody);
+            beforeEach(function() {
+                sandbox.restore();
+                sandbox.stub(view, '_insertInEditor', function(content) {
+                    return view.model.get('html_body') + content;
                 });
-            }, this);
+            });
+
+            it('should append the signature to the email body', function() {
+                var id = 'abcd',
+                    htmlBody = 'my message body is awesome!';
+
+                signature = new app.Bean({
+                    id: id,
+                    name: 'Signature A',
+                    signature: 'Regards',
+                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                });
+
+                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
+                view.model.set('html_body', htmlBody);
+                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                var actualReturn = view._insertSignature(signature);
+                expect(actualReturn).toBe(true);
+                expect(view.model.get('html_body')).toBe(expectedBody);
+            });
+
+            it('should remove a nested signature from the email body', function() {
+                var id = 'abcd',
+                    message = 'my message body is awesome!' +
+                        '<div class="signature"><div class="signature">SIG</div><p>Regards</p></div>',
+                    htmlBody = 'my message body is awesome!';
+
+                signature = new app.Bean({
+                    id: id,
+                    name: 'Signature A',
+                    signature: 'Regards',
+                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                });
+
+                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
+                view.model.set('html_body', message);
+                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                var actualReturn = view._insertSignature(signature);
+                expect(actualReturn).toBe(true);
+                expect(view.model.get('html_body')).toBe(expectedBody);
+            });
+
+            it('should remove a signature marked for removal', function() {
+                var id = 'abcd',
+                    message = '<div class="signature remove"><p>Regards, Jim</p></div>' +
+                        'my message body is awesome!<div class="signature"><p>Regards</p></div>',
+                    htmlBody = 'my message body is awesome!';
+
+                signature = new app.Bean({
+                    id: id,
+                    name: 'Signature A',
+                    signature: 'Regards',
+                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                });
+
+                signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
+                view.model.set('html_body', message);
+                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                var actualReturn = view._insertSignature(signature);
+                expect(actualReturn).toBe(true);
+                expect(view.model.get('html_body')).toBe(expectedBody);
+            });
         });
     });
 

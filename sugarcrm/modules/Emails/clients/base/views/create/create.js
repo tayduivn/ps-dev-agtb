@@ -38,7 +38,7 @@
         });
         this.context.on('tinymce:upload_attachment:clicked', this.launchFilePicker, this);
         this.context.on('tinymce:sugardoc_attachment:clicked', this.launchDocumentDrawer, this);
-        this.context.on('tinymce:signature:clicked', this.launchSignatureDrawer, this);
+        this.context.on('tinymce:selected_signature:clicked', this._updateEditorWithSignature, this);
         this.context.on('tinymce:template:clicked', this.launchTemplateDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
@@ -719,32 +719,39 @@
      * @private
      */
     _insertSignature: function(signature) {
+        var htmlBodyObj;
+
         if (_.isObject(signature) && signature.get('signature_html')) {
-            var signatureContent = this._formatSignature(signature.get('signature_html')),
-                emailBody = this.model.get('html_body') || '',
-                signatureOpenTag = '<br class="signature-begin" />',
-                signatureCloseTag = '<br class="signature-end" />',
-                signatureOpenTagForRegex = '(<br\ class=[\'"]signature\-begin[\'"].*?\/?>)',
-                signatureCloseTagForRegex = '(<br\ class=[\'"]signature\-end[\'"].*?\/?>)',
-                signatureOpenTagMatches = emailBody.match(new RegExp(signatureOpenTagForRegex, 'gi')),
-                signatureCloseTagMatches = emailBody.match(new RegExp(signatureCloseTagForRegex, 'gi')),
-                regex = new RegExp(signatureOpenTagForRegex + '[\\s\\S]*?' + signatureCloseTagForRegex, 'g');
+            var emailBody = this.model.get('html_body'),
+                signatureOpenTag = '<div class="signature keep">',
+                signatureCloseTag = '</div>',
+                signatureContent = this._formatSignature(signature.get('signature_html'));
 
-            if (signatureOpenTagMatches && !signatureCloseTagMatches) {
-                // there is a signature, but no close tag; so the signature runs from open tag until EOF
-                emailBody = this._insertSignatureTag(emailBody, signatureCloseTag, false); // append the close tag
-            } else if (!signatureOpenTagMatches && signatureCloseTagMatches) {
-                // there is a signature, but no open tag; so the signature runs from BOF until close tag
-                emailBody = this._insertSignatureTag(emailBody, signatureOpenTag, true); // prepend the open tag
-            } else if (!signatureOpenTagMatches && !signatureCloseTagMatches) {
-                // there is no signature, so add the tag to the correct location
-                emailBody = this._insertSignatureTag(
-                    emailBody,
-                    signatureOpenTag + signatureCloseTag, // insert both tags as one
-                    (app.user.getPreference('signature_prepend') == 'true'));
-            }
+            // insert signature at cursor location
+            emailBody = this._insertInEditor(signatureOpenTag + signatureContent + signatureCloseTag);
+            htmlBodyObj = $('<div>' + emailBody + '</div>');
 
-            this.model.set('html_body', emailBody.replace(regex, '$1' + signatureContent + '$2'));
+            // Mark each signature to either keep or remove
+            $('div.signature', htmlBodyObj).each(function() {
+                if (!$(this).hasClass('keep')) {
+                    // Mark for removal
+                    $(this).addClass('remove');
+                } else {
+                    // if the parent is also a signature, move node out of the parent so it isn't removed
+                    if ($(this).parent().hasClass('signature')) {
+                        // Move the signature outside of the nested signature
+                        $(this).parent().before(this);
+                    }
+                    // Remove the "keep" class so if another signature is added it will remove this one
+                    $(this).removeClass('keep');
+                }
+            });
+
+            // After each signature is marked, perform the removal
+            htmlBodyObj.find('div.signature.remove').remove();
+
+            emailBody = htmlBodyObj.html();
+            this.model.set('html_body', emailBody);
 
             return true;
         }
@@ -753,43 +760,27 @@
     },
 
     /**
-     * Inserts a tag into the editor to surround the signature so the signature can be identified again.
+     * Inserts the content into the tinyMCE editor at the cursor location.
      *
-     * @param {string} body
-     * @param {string} tag
-     * @param {string} prepend
-     * @return {string}
+     * @param {String} content
+     * @return {String} the content of the editor
      * @private
      */
-    _insertSignatureTag: function(body, tag, prepend) {
-        var preSignature = '',
-            postSignature = '';
+    _insertInEditor: function(content) {
+        var editor = this.getField('html_body').getEditor();
 
-        prepend = prepend || false;
+        if (!_.isEmpty(content) && !_.isNull(editor)) {
+            editor.execCommand(
+                'mceInsertContent',
+                false,
+                '<div></div>' + content + '<div></div>'
+            );
 
-        if (prepend) {
-            var bodyOpenTag = '<body>',
-                bodyOpenTagLoc = body.indexOf(bodyOpenTag);
-
-            if (bodyOpenTagLoc > -1) {
-                preSignature = body.substr(0, bodyOpenTagLoc + bodyOpenTag.length);
-                postSignature = body.substr(bodyOpenTagLoc + bodyOpenTag.length, body.length);
-            } else {
-                postSignature = body;
-            }
-        } else {
-            var bodyCloseTag = '</body>',
-                bodyCloseTagLoc = body.indexOf(bodyCloseTag);
-
-            if (bodyCloseTagLoc > -1) {
-                preSignature = body.substr(0, bodyCloseTagLoc);
-                postSignature = body.substr(bodyCloseTagLoc, body.length);
-            } else {
-                preSignature = body;
-            }
+            return editor.getContent();
         }
 
-        return preSignature + tag + postSignature;
+        // No content for signature found or no editor instance found, return the model html_body
+        return this.model.get('html_body');
     },
 
     /**

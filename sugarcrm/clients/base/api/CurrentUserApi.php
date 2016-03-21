@@ -30,7 +30,6 @@ class CurrentUserApi extends SugarApi
         'timef' => 'timepref',
         'currency' => 'currency',
         'signature_default' => 'signature_default',
-        'signature_prepend' => 'signature_prepend',
         'email_link_type' => 'email_link_type',
         'default_locale_name_format' => 'default_locale_name_format',
         'fdow' => 'first_day_of_week',
@@ -513,18 +512,7 @@ class CurrentUserApi extends SugarApi
         // email signature preferences
         return array('signature_default' => $user->getDefaultSignature());
     }
-    
-    /**
-     * Helper function to get a signature prepend setting
-     * 
-     * @param User $user Current User
-     * @return array
-     */
-    protected function getUserPrefSignature_prepend(User $user, $category = 'global')
-    {
-        return array('signature_prepend' => $user->getPreference('signature_prepend', $category) ? 'true' : 'false');
-    }
-    
+
     /**
      * Helper function to get the email link type user pref
      * @param User $user Current User object
