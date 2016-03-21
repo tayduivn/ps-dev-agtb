@@ -15,7 +15,17 @@ require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
 if (in_array($_REQUEST['type'], array('mini', 'replace', 'repair'), true)) {
     // don't run it without forcing admins to realize this is deprecated
     if (empty($_REQUEST['run_deprecated_feature'])) {
-        $runAction = $_REQUEST['type'] === 'mini' ? 'Rebuild Minified JS Files' : 'Rebuild JS Compressed Files';
+        switch($_REQUEST['type']) {
+            case 'mini':
+                $runAction = 'Rebuild Minified JS Files';
+                break;
+            case 'replace':
+                $runAction = 'Rebuild JS Compressed Files';
+                break;
+            case 'repair':
+                $runAction = 'Repair JS Files';
+                break;
+        }
         echo "<br><b>Note:</b> This feature is deprecated.<br>";
         echo "To $runAction, <b>run_deprecated_feature=1</b> must be set as a request parameter.";
         return;
