@@ -497,6 +497,9 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $this->deleteRevenueLineItemsRelatedTriggers();
         $this->deleteRevenueLineItemWorkFlowEmailTemplates();
 
+        // Process Author RLI Definitions need to be disabled
+        $this->disableRevenueLineItemsProcessDefinitions();
+
         parent::processWorkFlows();
     }
 
@@ -589,5 +592,34 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $sql = 'UPDATE email_templates SET deleted = 1 WHERE base_module = ' . $db->quoted('RevenueLineItems');
 
         $db->query($sql);
+    }
+
+    /**
+     * Disable all Process Definitions with target module as Revenue Line Items.
+     * Use a job queue since process can take a while.
+     * @throws SugarQueryException
+     */
+    private function disableRevenueLineItemsProcessDefinitions()
+    {
+        $projectBean = BeanFactory::getBean('pmse_Project');
+        $q = new SugarQuery();
+        $q->select(array('id'));
+        $q->from($projectBean);
+        $q->where()->equals('prj_module', 'RevenueLineItems');
+
+        $results = $q->execute();
+        $ids = array_map(function ($obj) {
+            return $obj['id'];
+        }, $results);
+
+        /* @var $job SchedulersJob */
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->name = "Mass Enable/Disable Process Definitions";
+        $job->target = "class::SugarJobUpdatePdStatus";
+        $job->data = json_encode(array('ids' => $ids, 'status' => 'INACTIVE'));
+
+        require_once('include/SugarQueue/SugarJobQueue.php');
+        $jq = new SugarJobQueue();
+        $jq->submitJob($job);
     }
 }
