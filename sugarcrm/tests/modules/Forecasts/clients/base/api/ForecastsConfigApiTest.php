@@ -70,11 +70,13 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('timePeriodSettingsChanged')
             ->will($this->returnValue(false));
 
+        //BEGIN SUGARCRM flav=ent ONLY
         $apiClass->expects($this->once())
             ->method('refreshForecastByMetadata');
 
         $apiClass->expects($this->once())
             ->method('rebuildExtensions');
+        //END SUGARCRM flav=ent ONLY
 
         $result = $apiClass->forecastsConfigSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
@@ -89,6 +91,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($results['testSetting'], "testValue");
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testRefreshForecastByMetadata()
     {
         SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItem.php');
@@ -150,10 +153,11 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $repairClass->expects($this->once())
             ->method('rebuildExtensions')
-            ->with($module);
+            ->with(array($module));
 
         $apiClass->rebuildExtensions($module);
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * test the get config

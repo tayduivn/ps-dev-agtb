@@ -26,14 +26,14 @@ class Bug54939TestListParser extends SidecarListLayoutMetaDataParser {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
-
+//BEGIN SUGARCRM flav=ent ONLY
 class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser {
     public function changeFieldType($field, $type)
     {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
-
+//END SUGARCRM flav=ent ONLY
 
 class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
     public function changeFieldType($field, $type) {

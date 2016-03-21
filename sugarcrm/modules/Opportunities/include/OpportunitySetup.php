@@ -415,13 +415,8 @@ abstract class OpportunitySetup
     protected function setRevenueLineItemInParentRelateDropDown($add = true)
     {
         $rli = BeanFactory::getBean('RevenueLineItems');
-
-        // get the default system language
-        $default_lang = SugarConfig::getInstance()->get('default_language');
-
-        // get the default app_list_strings and the default language for Revenue Line Items
-        $app_list_stings = return_app_list_strings_language($default_lang);
-        $module_lang = return_module_language($default_lang, 'RevenueLineItems');
+        $all_languages = get_languages();
+        $old_request = $_REQUEST;
 
         // What lists need updating
         $listsToUpdate = array(
@@ -435,45 +430,56 @@ abstract class OpportunitySetup
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
         $dd_parser = new ParserDropDown();
 
-        foreach($listsToUpdate as $list_key) {
-            $list = $app_list_stings[$list_key];
-            $hasRLI = isset($list[$rli->module_name]);
+        foreach ($all_languages as $current_lang => $current_lang_name) {
+            // get the default app_list_strings and the default language for Revenue Line Items
+            $app_list_stings = return_app_list_strings_language($current_lang);
+            $module_lang = return_module_language($current_lang, 'RevenueLineItems');
 
-            if ($add && !$hasRLI) {
-            // get the translated value
-                $list[$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
-                $GLOBALS['app_list_strings'][$list_key][$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
-            } elseif (!$add && $hasRLI) {
-                unset($GLOBALS['app_list_strings'][$list_key][$rli->module_name]);
-                unset($list[$rli->module_name]);
-            } else {
-                // nothing changed, we can continue
-                continue;
+            foreach ($listsToUpdate as $list_key) {
+                $list = $app_list_stings[$list_key];
+                $hasRLI = isset($list[$rli->module_name]);
+
+                if ($add && (!$hasRLI || $list[$rli->module_name] !== $module_lang['LBL_MODULE_NAME'])) {
+                    // get the translated value
+                    $list[$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+                    $GLOBALS['app_list_strings'][$list_key][$rli->module_name] = $module_lang['LBL_MODULE_NAME'];
+                } elseif (!$add && $hasRLI) {
+                    unset($GLOBALS['app_list_strings'][$list_key][$rli->module_name]);
+                    unset($list[$rli->module_name]);
+                } else {
+                    // nothing changed, we can continue
+                    continue;
+                }
+
+                // the parser need all the values to be in their own array with the key first then the value
+                $new_list = array();
+                foreach ($list as $k => $v) {
+                    $new_list[] = array($k, $v);
+                }
+
+                $params = array(
+                    'dropdown_name' => $list_key,
+                    'dropdown_lang' => $current_lang,
+                    'list_value' => json_encode($new_list),
+                    'view_package' => 'studio',
+                    'use_push' => ($list_key == 'moduleList'),
+                    'skipSaveExemptDropdowns' => true,
+                    'skip_sync' => true,
+                );
+                // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
+                // was passed in.
+                $_REQUEST['view_package'] = 'studio';
+                $_REQUEST['dropdown_lang'] = $current_lang;
+
+                $dd_parser->saveDropDown($params);
+
+                // clean up the request object
+                unset($_REQUEST['dropdown_lang']);
+                unset($_REQUEST['view_package']);
             }
-
-            // the parser need all the values to be in their own array with the key first then the value
-            $new_list = array();
-            foreach($list as $k => $v) {
-                $new_list[] = array($k, $v);
-            }
-
-            $params = array(
-                'dropdown_name' => $list_key,
-                'dropdown_lang' => $default_lang,
-                'list_value' => json_encode($new_list),
-                'view_package' => 'studio',
-                'use_push' => ($list_key == 'moduleList'),
-                'skipSaveExemptDropdowns' => true,
-            );
-            // for some reason, the ParserDropDown class uses $_REQUEST vs getting it from what
-            // was passed in.
-            $_REQUEST['view_package'] = 'studio';
-
-            $dd_parser->saveDropDown($params);
-
-            // clean up the request object
-            unset($_REQUEST['view_package']);
         }
+
+        $_REQUEST = $old_request;
     }
 
     protected function toggleRevenueLineItemQuickCreate($enable = false)

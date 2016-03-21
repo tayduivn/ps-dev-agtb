@@ -301,6 +301,12 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                     'label' => 'LBL_INVITEES',
                     'span' => 12,
                     'fields' => array('name', 'accept_status_meetings', 'picture'),
+                    'related_fields' => array(
+                        'date_start',
+                        'date_end',
+                        'duration_hours',
+                        'duration_minutes',
+                    ),
                 ),
                 'assigned_user_name',
                 'team_name',

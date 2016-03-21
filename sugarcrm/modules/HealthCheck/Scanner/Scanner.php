@@ -177,6 +177,9 @@ class HealthCheckScanner
         ),
         'tagMe' => array(
             array('version' => '*'),
+        ),
+        'Map to Lead' => array(
+            array('version' => '2.6.0'),
         )
     );
 

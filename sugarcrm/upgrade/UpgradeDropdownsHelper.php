@@ -45,8 +45,8 @@ class UpgradeDropdownsHelper
             'forecasts_timeperiod_options_dom',
             'generic_timeperiod_options',
             //END SUGARCRM flav=pro ONLY
-            // 'moduleList', // We may want to put this in at a later date
-            // 'moduleListSingular', // Same with this
+            'moduleList', // We may want to put this in at a later date
+            'moduleListSingular', // Same with this
         );
 
         $dropdowns = array();
