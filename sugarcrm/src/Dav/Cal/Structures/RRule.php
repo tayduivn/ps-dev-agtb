@@ -196,7 +196,13 @@ class RRule
         $until = $this->getParameter('UNTIL');
         if ($until) {
             $untilDateTime = new \SugarDateTime($until, new \DateTimeZone('UTC'));
-            return $this->normalizeUntil($untilDateTime);
+            $aParts = explode('T', $until);
+            if (!isset($aParts[1])) {
+                $untilDateTime->setTime(23, 59, 0);
+            } else {
+                $untilDateTime->setTime($untilDateTime->getHour(), $untilDateTime->getMinute(), 0);
+            }
+            return $untilDateTime;
         }
 
         return null;
@@ -297,8 +303,6 @@ class RRule
     public function setUntil(\SugarDateTime $value)
     {
         if ($value != $this->getUntil()) {
-            $value = $this->normalizeUntil($value);
-            $value->setTimezone(new \DateTimeZone('UTC'));
             $until = $value->format('Ymd\THis\Z');
 
             $this->deleteParameter('COUNT');
@@ -381,15 +385,5 @@ class RRule
     public function getObject()
     {
         return $this->rRule;
-    }
-
-    /**
-     * Set until date as day end datetime
-     * @param \SugarDateTime $until
-     * @return \SugarDateTime
-     */
-    public function normalizeUntil(\SugarDateTime $until)
-    {
-        return $until->get_day_end_time();
     }
 }

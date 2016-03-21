@@ -1535,7 +1535,7 @@ class CalDavEventCollection extends SugarBean
                 $changedFields['rrule_frequency'] = array(null, $oldRRule->getFrequency());
                 $changedFields['rrule_interval'] = array(null, $oldRRule->getInterval());
                 $changedFields['rrule_count'] = array(null, $oldRRule->getCount());
-                $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
+                $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDb() : null;
                 $changedFields['rrule_until'] = array(null, $oldUntil);
                 $changedFields['rrule_byday'] = array(null, $oldRRule->getByDay());
                 $changedFields['rrule_bymonthday'] = array(null, $oldRRule->getByMonthDay());
@@ -1558,8 +1558,8 @@ class CalDavEventCollection extends SugarBean
                 }
 
                 if ($oldRRule->getUntil() != $currentRRule->getUntil()) {
-                    $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDbDate() : null;
-                    $currentUntil = $currentRRule->getUntil() ? $currentRRule->getUntil()->asDbDate() : null;
+                    $oldUntil = $oldRRule->getUntil() ? $oldRRule->getUntil()->asDb() : null;
+                    $currentUntil = $currentRRule->getUntil() ? $currentRRule->getUntil()->asDb() : null;
                     $changedFields['rrule_until'] = array($currentUntil, $oldUntil);
                 }
 
@@ -1581,7 +1581,7 @@ class CalDavEventCollection extends SugarBean
             $changedFields['rrule_interval'] = array($currentRRule->getInterval());
             $changedFields['rrule_count'] = array($currentRRule->getCount());
             $until = $currentRRule->getUntil();
-            $changedFields['rrule_until'] = $until ? array($until->asDbDate()) : array(null);
+            $changedFields['rrule_until'] = $until ? array($until->asDb()) : array(null);
             $changedFields['rrule_byday'] = array($currentRRule->getByDay());
             $changedFields['rrule_bymonthday'] = array($currentRRule->getByMonthDay());
             $changedFields['rrule_bysetpos'] = array($currentRRule->getBySetPos());

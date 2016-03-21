@@ -1113,7 +1113,7 @@ abstract class AdapterAbstract implements AdapterInterface
             return false;
         }
 
-        if (isset($value['repeat_until'][1]) && ($value['repeat_until'][1] != $currentRule->getUntil()->asDbDate())) {
+        if (isset($value['repeat_until'][1]) && ($value['repeat_until'][1] != $currentRule->getUntil()->asDb())) {
             return false;
         }
 
@@ -1199,8 +1199,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setCalDavStartDate($value, Event $event)
     {
-        $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
-        return $event->setStartDate($value);
+        $utcValue = $this->getDateTimeHelper()->sugarDateToUTC($value);
+        return $event->setStartDate($this->getSugarTimeDate()->tzUser($utcValue));
     }
 
     /**
@@ -1212,8 +1212,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setCalDavEndDate($value, Event $event)
     {
-        $value = new \SugarDateTime($value, new \DateTimeZone('UTC'));
-        return $event->setEndDate($value);
+        $utcValue = $this->getDateTimeHelper()->sugarDateToUTC($value);
+        return $event->setEndDate($this->getSugarTimeDate()->tzUser($utcValue));
     }
 
     /**
@@ -1615,7 +1615,7 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         $untilDate =
-            $bean->repeat_until ? $this->getDateTimeHelper()->sugarDateToUTC($bean->repeat_until)->asDbDate() : '';
+            $bean->repeat_until ? $this->getDateTimeHelper()->sugarDateToUTC($bean->repeat_until)->asDb() : '';
         if (isset($value['rrule_until']) && count($value['rrule_until']) == 2 &&
             $untilDate != $value['rrule_until'][1]
         ) {
@@ -1897,5 +1897,14 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function getRecurringHelper()
     {
         return new RecurringHelper();
+    }
+
+    /**
+     * Get Sugar TimeDate instance
+     * @return \TimeDate
+     */
+    protected function getSugarTimeDate()
+    {
+        return new \TimeDate();
     }
 }
