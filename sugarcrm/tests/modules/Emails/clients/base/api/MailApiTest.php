@@ -155,11 +155,8 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->any())
-            ->method("findCount")
-            ->will($this->returnValue(10));
-        $emailRecipientsServiceMock->expects($this->any())
             ->method("find")
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue(array_pad(array(10), 10, 0)));
 
         $this->mailApi->expects($this->any())
             ->method("getEmailRecipientsService")
@@ -222,16 +219,11 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->once())
-            ->method("findCount")
-            ->with($this->isEmpty(),
-                $this->equalTo("LBL_DROPDOWN_LIST_ALL"))
-            ->will($this->returnValue(0));
-        $emailRecipientsServiceMock->expects($this->once())
             ->method("find")
             ->with($this->isEmpty(),
                 $this->equalTo("LBL_DROPDOWN_LIST_ALL"),
                 $this->isEmpty(),
-                $this->equalTo(20),
+                $this->equalTo(21),
                 $this->equalTo(0))
             ->will($this->returnValue(array()));
 
@@ -254,16 +246,11 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->once())
-            ->method("findCount")
-            ->with($this->equalTo($args["q"]),
-                $this->equalTo($args["module_list"]))
-            ->will($this->returnValue(0));
-        $emailRecipientsServiceMock->expects($this->once())
             ->method("find")
             ->with($this->equalTo($args["q"]),
                 $this->equalTo($args["module_list"]),
                 $this->equalTo(array("name" => "ASC", "email" => "DESC")),
-                $this->equalTo(5),
+                $this->equalTo(6),
                 $this->equalTo(3))
             ->will($this->returnValue(array()));
 

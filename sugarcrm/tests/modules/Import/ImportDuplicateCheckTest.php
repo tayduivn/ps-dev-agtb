@@ -204,8 +204,13 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         //we are going to test agains the first name, last name, full name, and assigned to indexes
         //to prove that only selected indexes are being used.
 
+        $msg = 'simulated check against first name index (idx_contacts_last_first::first_name) ';
+        $msg .= 'failed  (returned false instead of true).';
         //lets do a straight dupe check with the same bean on first name, should return true
-        $this->assertTrue($idc->isADuplicateRecord(array('idx_cont_last_first::first_name')),'simulated check against first name index (idx_cont_last_first::first_name) failed  (returned false instead of true).');
+        $this->assertTrue(
+            $idc->isADuplicateRecord(array('idx_contacts_last_first::first_name')),
+            $msg
+        );
 
         //now lets test on full name index should also return true
         $this->assertTrue($idc->isADuplicateRecord(array('full_name::full_name')),'first simulated check against full name index (full_name::full_name) failed (returned false instead of true).  This check means BOTH first AND last name must match.');
@@ -213,7 +218,13 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         //now lets remove the first name and redo the check, should return false
         $focus->first_name = '';
         $idc = new ImportDuplicateCheck($focus);
-        $this->assertFalse($idc->isADuplicateRecord(array('idx_cont_last_first::first_name')),'simulated check against first name index (idx_cont_last_first::first_name) failed (returned true instead of false).  This is wrong because we removed the first name so there should be no match.');
+        $msg = 'simulated check against first name index (idx_contacts_last_first::first_name) ';
+        $msg .= 'failed (returned true instead of false).  This is wrong because ';
+        $msg .= 'we removed the first name so there should be no match.';
+        $this->assertFalse(
+            $idc->isADuplicateRecord(array('idx_contacts_last_first::first_name')),
+            $msg
+        );
 
         //lets retest on full name index should return false now as first AND last do not match the original
         $this->assertFalse($idc->isADuplicateRecord(array('full_name::full_name')),'second simulated check against full name index (full_name::full_name) failed (returned true instead of false).  This check means BOTH first AND last name must match and is wrong because we removed the first name so there should be no match.');
