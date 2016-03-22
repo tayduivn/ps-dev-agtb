@@ -33,7 +33,14 @@
      */
     initialize: function(options) {
         options.def.readonly = true;
-        app.view.Field.prototype.initialize.call(this, options);
+        // We change the field name to be 'my_favorite' because it's its name in
+        // the vardefs and thus in the model attributes. Since the model listens
+        // to `my_favorite` for several events ('change:my_favorite',
+        // 'acl:change:my_favorite', 'error:validation:my_favorite', ...), the
+        // names need to be equal.
+        options.def.name = 'my_favorite';
+
+        this._super('initialize', [options]);
     },
 
     /**

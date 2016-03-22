@@ -38,12 +38,11 @@ describe('favorite field', function() {
             name: 'Lórem ipsum dolor sit àmêt, ut úsu ómnés tatión imperdiet.'
         });
 
-        field = SugarTest.createField('base', 'toggle_favorite', 'favorite', 'detail');
-        field.model = model;
-
+        field = SugarTest.createField('base', 'favorite', 'favorite', 'detail', null, null, model);
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -54,6 +53,17 @@ describe('favorite field', function() {
 
         moduleName = null;
         metadata = null;
+    });
+
+    it('should rerender if the value change on the model', function() {
+        field.model.set('my_favorite', true);
+        sinon.collection.spy(field, 'render');
+
+        field.model.set('my_favorite', false);
+        expect(field.render).toHaveBeenCalled();
+
+        field.model.set('my_favorite', true);
+        expect(field.render).toHaveBeenCalled();
     });
 
     it("should not render and log error if the module has no favorites enabled", function() {
