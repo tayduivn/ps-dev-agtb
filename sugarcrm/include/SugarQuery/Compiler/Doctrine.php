@@ -255,11 +255,19 @@ class SugarQuery_Compiler_Doctrine
      */
     protected function compileWhere(QueryBuilder $builder, SugarQuery $query)
     {
-        if ($query->where) {
-            $builder->where(
-                $this->compileExpression($builder, $query->where)
-            );
+        if ($query->shouldSkipDeletedRecords()) {
+            $where = new SugarQuery_Builder_Andwhere($query);
+            if ($query->where) {
+                $where->add($query->where);
+            }
+            $where->equals('deleted', 0);
+        } else {
+            $where = $query->where;
         }
+
+        $builder->where(
+            $this->compileExpression($builder, $where)
+        );
     }
 
     /**

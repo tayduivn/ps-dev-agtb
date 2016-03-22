@@ -233,7 +233,7 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileHaving(SugarQuery_Builder_Where $having)
     {
-        return $this->compileWhere($having);
+        return $this->buildWhereSql($having);
     }
 
     /**
@@ -387,6 +387,15 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileWhere(SugarQuery_Builder_Where $where)
     {
+        if ($this->sugar_query->shouldSkipDeletedRecords()) {
+            $whereNotDeleted = new SugarQuery_Builder_Andwhere($this->sugar_query);
+            if ($where) {
+                $whereNotDeleted->add($where);
+            }
+            $whereNotDeleted->equals('deleted', 0);
+            $where = $whereNotDeleted;
+        }
+
         return $this->buildWhereSql($where);
     }
 
@@ -410,7 +419,7 @@ class SugarQuery_Compiler_SQL
         }
         foreach ($where->conditions as $condition) {
             if ($condition instanceof SugarQuery_Builder_Where) {
-                $compiledField = $this->compileWhere($condition);
+                $compiledField = $this->buildWhereSql($condition);
                 if (!empty($compiledField)) {
                     $sql[] = "({$compiledField})";
                 }
@@ -439,7 +448,6 @@ class SugarQuery_Compiler_SQL
      */
     protected function prepareValue($value, SugarQuery_Builder_Condition $condition)
     {
-        $value = $condition->field->quoteValue($value);
         $this->sugar_query->addData($value);
         if (empty($condition->field->def)) {
             return '?';
@@ -546,7 +554,7 @@ class SugarQuery_Compiler_SQL
         if (!$condition->isAclIgnored()) {
             $isFieldAccessible = ACLField::generateAclCondition($condition, $current_user);
             if ($isFieldAccessible) {
-                $sql = '(' . $sql . ' AND (' . $this->compileWhere($isFieldAccessible) . '))';
+                $sql = '(' . $sql . ' AND (' . $this->buildWhereSql($isFieldAccessible) . '))';
             }
         }
 
@@ -699,7 +707,7 @@ class SugarQuery_Compiler_SQL
             $sql .= ' ' . $join->options['alias'];
         }
 
-        $sql .= ' ON ' . $this->compileWhere($join->on);
+        $sql .= ' ON ' . $this->buildWhereSql($join->on);
 
         return $sql;
     }

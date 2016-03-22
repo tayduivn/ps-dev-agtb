@@ -124,6 +124,13 @@ class SugarQuery
     protected $dataSegment;
 
     /**
+     * Whether the query should skip deleted records
+     *
+     * @var bool
+     */
+    protected $shouldSkipDeletedRecords = true;
+
+    /**
      * @param DBManager $db
      */
     public function __construct(DBManager $db = null)
@@ -213,7 +220,6 @@ class SugarQuery
         }
 
         $team_security = (isset($options['team_security'])) ? $options['team_security'] : true;
-        $add_deleted = (isset($options['add_deleted'])) ? $options['add_deleted'] : true;
         $this->from = $bean;
         if (!empty($alias)) {
             $this->from = array($bean, $alias);
@@ -229,8 +235,8 @@ class SugarQuery
             $bean->addVisibilityQuery($this, $options);
         }
 
-        if ($add_deleted === true) {
-            $this->where()->equals('deleted', 0);
+        if (isset($options['add_deleted']) && !$options['add_deleted']) {
+            $this->shouldSkipDeletedRecords = false;
         }
         $this->rebuildFields();
 
@@ -1185,4 +1191,13 @@ class SugarQuery
         return $this->dataItems[$segment];
     }
 
+    /**
+     * Returns whether the query should skip deleted records
+     *
+     * @return mixed
+     */
+    public function shouldSkipDeletedRecords()
+    {
+        return $this->shouldSkipDeletedRecords;
+    }
 }

@@ -509,4 +509,36 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('id', $row);
         $this->assertEquals($user->id, $row['id']);
     }
+
+    public function testSelectWhereOrNotDeleted()
+    {
+        $user1 = SugarTestUserUtilities::createAnonymousUser();
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+        $user3 = SugarTestUserUtilities::createAnonymousUser();
+        $user3->mark_deleted($user3->id);
+
+        $sq = new SugarQuery();
+        $sq->from($user1);
+        $sq->select('id');
+        $sq->orWhere()
+            ->equals('id', $user1->id)
+            ->equals('id', $user2->id)
+            ->equals('id', $user3->id);
+        $sq->orderBy('id', "ASC");
+
+        $data = $sq->execute();
+        $this->assertCount(2, $data);
+
+        $expected = array($user1->id, $user2->id);
+        sort($expected);
+
+        $this->assertArraySubset(array(
+            array(
+                'id' => $expected[0],
+            ),
+            array(
+                'id' => $expected[1],
+            ),
+        ), $data);
+    }
 }
