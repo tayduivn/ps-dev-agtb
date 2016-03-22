@@ -15,13 +15,13 @@
         {{#each collection.models}}
             <li>
                 <h4>
-                    <a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a>
-                    <span class="pull-right label">{{getFieldValue this "language"}}</span>
+                    <a href="#{{buildRoute model=this action="detail"}}">{{fieldValue this "name"}}</a>
+                    <span class="pull-right label">{{fieldValue this "language"}}</span>
                 </h4>
                 <div class="details">
                     {{str "LBL_CREATED" this.module}}
-                    <a href="#{{buildRoute module="Employees" id=(getFieldValue this "created_by")}}">
-                        {{getFieldValue this "created_by_name"}}</a>
+                    <a href="#{{buildRoute module="Employees" id=(fieldValue this "created_by")}}">
+                        {{fieldValue this "created_by_name"}}</a>
                     {{relativeTime attributes.date_entered class='date'}}
                 </div>
             </li>
