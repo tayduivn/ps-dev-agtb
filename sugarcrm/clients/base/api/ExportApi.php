@@ -122,6 +122,12 @@ class ExportApi extends SugarApi
         $api->setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
         $api->setHeader("Last-Modified", TimeDate::httpTime());
         $api->setHeader("Cache-Control", "post-check=0, pre-check=0");
-        return $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
+        return $GLOBALS['locale']->translateCharset(
+            $content,
+            'UTF-8',
+            $GLOBALS['locale']->getExportCharset(),
+            false,
+            true
+        );
     }
 }
