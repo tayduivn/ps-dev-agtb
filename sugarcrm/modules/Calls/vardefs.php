@@ -273,6 +273,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'relationship' => 'calls_addressees',
                 'source'=>'non-db',
                 'vname'=>'LBL_ADDRESSEES',
+                'visible' => false,
             ),
     // Bug #42619 Missed back-relation from Project module
     'project'=> array (

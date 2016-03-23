@@ -338,6 +338,8 @@ d3.svg.axisStatic = function() {
 /*****
  * A no frills tooltip implementation.
  *****/
+// REFERENCES:
+// http://www.jacklmoore.com/notes/mouse-position/
 
 
 (function() {
@@ -402,10 +404,12 @@ d3.svg.axisStatic = function() {
     gravity = gravity || 's';
     dist = dist || 5;
 
+    var rect = container.getBoundingClientRect();
+
     var pos = [
-      typeof evt.layerX === 'undefined' ? evt.offsetX : evt.layerX,
-      typeof evt.layerY === 'undefined' ? evt.offsetY : evt.layerY
-      ];
+          evt.clientX - rect.left,
+          evt.clientY - rect.top
+        ];
 
     var tooltipWidth = parseInt(tooltip.offsetWidth, 10),
         tooltipHeight = parseInt(tooltip.offsetHeight, 10),
@@ -893,7 +897,8 @@ nv.utils.stringEllipsify = function(_string, _container, _length) {
   var txt = _container.select('.tmp-text-strings').select('text'),
       str = _string,
       len = 0,
-      ell = 0;
+      ell = 0,
+      strLen = 0;
   if (txt.empty()) {
     txt = _container.append('g').attr('class', 'tmp-text-strings').append('text');
   }
@@ -1443,6 +1448,7 @@ nv.models.axis = function() {
         tickDimensions.forEach(function(d, i) {
           var isMin = dMin === null || d.left <= dMin,
               isMax = dMax === null || d.right >= dMax,
+              textWidth = 0,
               tickPosition = 0,
               availableSpace = 0;
 
@@ -5896,15 +5902,13 @@ nv.models.funnelChart = function() {
   };
 
   chart.x = function(_) {
-    if (!arguments.length) { return getX; }
-    getX = _;
-    funnelWrap.x(_);
+    if (!arguments.length) { return funnel.x(); }
+    funnel.x(_);
     return chart;
   };
 
   chart.y = function(_) {
-    if (!arguments.length) { return getY; }
-    getY = _;
+    if (!arguments.length) { return funnel.y(); }
     funnel.y(_);
     return chart;
   };
@@ -9689,6 +9693,7 @@ nv.models.multiBarChart = function() {
           d.total = d3.sum(d.values, function(d) {
             return d.y;
           });
+          // disabled if all values are zero
           if (d.values.filter(function(value) {return value.y !== 0}).length === 0) {
             d.disabled = true;
           }
