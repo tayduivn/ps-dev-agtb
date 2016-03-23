@@ -20,7 +20,7 @@ class TeamNoticesDashlet extends Dashlet
 
     public function __construct($id)
     {
-        parent::Dashlet($id);
+        parent::__construct($id);
         $this->title = translate('LBL_MODULE_NAME', 'TeamNotices');
     }
 

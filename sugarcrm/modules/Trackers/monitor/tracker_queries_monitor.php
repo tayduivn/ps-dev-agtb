@@ -21,14 +21,6 @@ class tracker_queries_monitor extends Monitor implements Trackable {
     var $cached_data = array();
 
     /**
-     * @deprecated
-     */
-    public function tracker_monitor($name = '', $monitorId = '', $metadata = '', $store = '') {
-        $GLOBALS['log']->deprecated('Please use parent::__construct() instead of parent::ClassName()');
-        self::__construct($name, $monitorId, $metadata, $store);
-    }
-
-    /**
      * save
      * This method retrieves the Store instances associated with monitor and calls
      * the flush method passing with the montior ($this) instance.
