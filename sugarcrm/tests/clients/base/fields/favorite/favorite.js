@@ -55,7 +55,7 @@ describe('favorite field', function() {
         metadata = null;
     });
 
-    it('should rerender if the value change on the model', function() {
+    it('should re-render if the value change on the model', function() {
         field.model.set('my_favorite', true);
         sinon.collection.spy(field, 'render');
 
@@ -63,7 +63,7 @@ describe('favorite field', function() {
         expect(field.render).toHaveBeenCalled();
 
         field.model.set('my_favorite', true);
-        expect(field.render).toHaveBeenCalled();
+        expect(field.render).toHaveBeenCalledTwice();
     });
 
     it('should not render and log error if the module has no favorites enabled', function() {
