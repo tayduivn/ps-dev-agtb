@@ -41,6 +41,8 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestNoteUtilities::removeAllCreatedNotes();
 	}
 
 
@@ -98,10 +100,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $account2->save();
         $this->createdBeans[] = $account2;
 
-        $lead  = BeanFactory::newBean("Leads");
-        $lead->last_name = "Link 1->M Test Lead";
-        $lead->save();
-        $this->createdBeans[] = $lead;
+        $lead = SugarTestLeadUtilities::createLead('linktest-1', array('last_name' => 'Link 1->M Test Lead'));
 
         //Start by adding it from the Account side.
         $this->assertTrue($account->load_relationship("leads"));
@@ -147,20 +146,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testParentRelationships()
 	{
-        $lead  = BeanFactory::newBean("Leads");
-        $lead->last_name = "Parent Lead";
-        $lead->save();
-        $this->createdBeans[] = $lead;
+        $lead = SugarTestLeadUtilities::createLead('linktest-2', array('last_name' => 'Parent Lead'));
 
-        $note1  = BeanFactory::newBean("Notes");
-        $note1->name = "Lead Note 1";
-        $note1->save();
-        $this->createdBeans[] = $note1;
-
-        $note2  = BeanFactory::newBean("Notes");
-        $note2->name = "Lead Note 2";
-        $note2->save();
-        $this->createdBeans[] = $note2;
+        $note1 = SugarTestNoteUtilities::createNote('lead-note-1', array('name' => 'Lead Note 1'));
+        $note2 = SugarTestNoteUtilities::createNote('lead-note-2', array('name' => 'Lead Note 2'));
 
         //Test saving from the RHS
         $note1->load_relationship ('leads') ;

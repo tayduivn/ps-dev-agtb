@@ -254,19 +254,19 @@ class SupportPortalVisibility extends SugarVisibility
      * @param SugarQuery $sugarQuery
      * @param array      $options
      *
-     * @return object|SugarQuery
+     * @return SugarQuery
      */
     public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array())
     {
         if (empty($_SESSION['type']) || $_SESSION['type'] != 'support_portal') {
-            $GLOBALS['log']->error("Not a portal user, but running through the portal visibility class.");
-            return;
+            $GLOBALS['log']->error('Not a portal user, but running through the portal visibility class.');
+            return $sugarQuery;
         }
         if ($this->bean->disable_row_level_security) {
             $GLOBALS['log']->debug(
-                "No portal security applied to module (row-level security disabled): ".$this->bean->module_dir
+                'No portal security applied to module (row-level security disabled): ' . $this->bean->module_dir
             );
-            return;
+            return $sugarQuery;
         }
         $table_alias = $this->getOption('table_alias');
         if (empty($table_alias)) {
