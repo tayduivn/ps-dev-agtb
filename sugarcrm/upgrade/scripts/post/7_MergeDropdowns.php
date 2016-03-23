@@ -18,7 +18,9 @@ require_once 'modules/UpgradeWizard/SugarMerge/DropdownMerger.php';
  */
 class SugarUpgradeMergeDropdowns extends UpgradeScript
 {
-    public $order = 7999;
+    // BR-3995 fix: This script needs to run before 7_FixModuleNamesMismatch
+    // to retain custom module names
+    public $order = 7920;
     public $type = self::UPGRADE_CUSTOM;
     public $version = '7.6.0';
 

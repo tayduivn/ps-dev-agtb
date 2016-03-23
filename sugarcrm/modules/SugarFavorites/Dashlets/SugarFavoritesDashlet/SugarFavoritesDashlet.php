@@ -31,7 +31,7 @@ class SugarFavoritesDashlet extends DashletGeneric
 		global $current_user, $app_strings;
 		require('modules/SugarFavorites/metadata/dashletviewdefs.php');
 		$this->loadLanguage('SugarFavoritesDashlet', 'modules/SugarFavorites/Dashlets/');
-        parent::DashletGeneric($id, $def);
+        parent::__construct($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFavorites');
 

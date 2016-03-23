@@ -15,7 +15,9 @@
  */
 class SugarUpgradeFixModuleNameMismatch extends UpgradeScript
 {
-    public $order = 7099;
+    // BR-3995 Fix: This script needs to run after 7_MergeDropDowns
+    // to retain custom module names
+    public $order = 7950;
     public $type = self::UPGRADE_CUSTOM;
 
     public function run()

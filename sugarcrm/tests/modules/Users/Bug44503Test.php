@@ -28,10 +28,6 @@ require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.p
 class {$this->authclassname} extends SugarAuthenticate {
     public \$userAuthenticateClass = '{$this->authclassname}User';
     public \$authenticationDir = '{$this->authclassname}';
-
-    public function _construct(){
-	    parent::SugarAuthenticate();
-	}
 }"
             );
         sugar_file_put_contents(

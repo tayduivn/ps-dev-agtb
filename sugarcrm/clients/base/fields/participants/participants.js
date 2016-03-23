@@ -350,7 +350,7 @@
             startAndEndDates = this.getStartAndEndDates(),
             participants = this.getFieldValue();
 
-        if (this.freebusy.isFetching()) {
+        if (this.freebusy.isFetching() || _.isEmpty(startAndEndDates)) {
             return;
         }
 
@@ -511,16 +511,30 @@
     getStartAndEndDates: function() {
         var dateStartString = this.model.get('date_start'),
             dateEndString = this.model.get('date_end'),
+            durationHours = this.model.get('duration_hours'),
+            durationMins = this.model.get('duration_minutes'),
             meetingStart,
             meetingEnd,
             result = {};
 
-        if (!dateStartString || !dateEndString) {
+        // must have date_start, but if we don't have date_end we need to have at least
+        // duration_hours or duration_minutes to judge an end time
+        if (!dateStartString ||
+            (!dateEndString && !(_.isFinite(durationHours) || _.isFinite(durationMins)))) {
             return result;
         }
 
         meetingStart = app.date(dateStartString);
-        meetingEnd = app.date(dateEndString);
+
+        // if we don't have the date_end string, create it from the duration times
+        if (dateEndString) {
+            meetingEnd = app.date(dateEndString);
+        } else {
+            meetingEnd = app.date(meetingStart)
+                .add(durationHours || 0, 'hours')
+                .add(durationMins || 0, 'minutes');
+        }
+
 
         if (!meetingStart.isAfter(meetingEnd)) {
             result.meetingStart = meetingStart;
