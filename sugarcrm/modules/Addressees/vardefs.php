@@ -62,7 +62,7 @@ $dictionary['Addressee'] = array(
     'ignore_templates' => array(
         'taggable',
     ),
-    'use' => array(
+    'uses' => array(
         'basic',
         'assignable',
         'person',
