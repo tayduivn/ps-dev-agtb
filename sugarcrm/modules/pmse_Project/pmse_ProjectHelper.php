@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapper.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 function getTargetsModules()
 {
@@ -18,7 +18,7 @@ function getTargetsModules()
     $modules = array();
 
     // Get the module list from the data wrapper
-    $wrapper = new PMSECrmDataWrapper();
+    $wrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
     $list = $wrapper->retrieveModules();
 
     // If there are results, use them to build the list

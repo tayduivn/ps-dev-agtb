@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSECriteriaEvaluator
@@ -23,7 +24,7 @@ class PMSECriteriaEvaluator
 
     public function __construct()
     {
-        $this->expressionEvaluator = new PMSEExpressionEvaluator();
+        $this->expressionEvaluator = ProcessManager\Factory::getPMSEObject('PMSEExpressionEvaluator');
     }
     
     public function isCriteriaToken($token)

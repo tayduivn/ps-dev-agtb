@@ -16,9 +16,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-//require_once 'clients/base/api/FileApi.php';
 require_once 'clients/base/api/FileTempApi.php';
-require_once 'modules/pmse_Inbox/engine/PMSEImageGenerator.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * API Class to handle temporary image (attachment) interactions with a field in
@@ -119,7 +119,7 @@ class PMSEImageGeneratorApi extends FileTempApi
     public function getProcessImage($api, $args)
     {
         $path = 'upload://tmp/';
-        $image = new PMSEImageGenerator();
+        $image = ProcessManager\Factory::getPMSEObject('PMSEImageGenerator');
         $img = empty($args['_project']) ?
             $image->get_image($args['record']) : $image->getProjectImage($args['record']);
         $file = new UploadStream();

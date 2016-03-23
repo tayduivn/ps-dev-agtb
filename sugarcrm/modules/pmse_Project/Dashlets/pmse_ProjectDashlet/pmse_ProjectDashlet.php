@@ -16,7 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once 'include/Dashlets/DashletGeneric.php';
-require_once 'modules/pmse_Project/pmse_Project.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_ProjectDashlet extends DashletGeneric { 
     public function __construct($id, $def = null)
@@ -31,6 +32,6 @@ class pmse_ProjectDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['pmse_ProjectDashlet']['searchFields'];
         $this->columns = $dashletData['pmse_ProjectDashlet']['columns'];
 
-        $this->seedBean = new pmse_Project();        
+        $this->seedBean = ProcessManager\Factory::getPMSEObject('pmse_Project');
     }
 }

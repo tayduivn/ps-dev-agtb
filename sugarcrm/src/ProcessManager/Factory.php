@@ -47,19 +47,27 @@ class Factory
      * Root of all files that shipped with PMSE
      * @var string
      */
-    protected static $pmseBasePath = 'modules/pmse_Inbox/engine/';
+    protected static $pmseBasePath = 'modules/';
 
     /**
      * PMSE Paths off of the pmseBasePath where files live
      * @var array
      */
     protected static $pmsePaths = [
-        'parser/',
-        'PMSEElements/',
-        'PMSEHandlers/',
-        'PMSEPreProcessor/',
-        'wrappers/',
-        '',
+        'pmse_Business_Rules/',
+        'pmse_Business_Rules/clients/base/api/',
+        'pmse_Emails_Templates/',
+        'pmse_Emails_Templates/clients/base/api/',
+        'pmse_Inbox/clients/base/api/',
+        'pmse_Inbox/engine/',
+        'pmse_Inbox/engine/parser/',
+        'pmse_Inbox/engine/PMSEElements/',
+        'pmse_Inbox/engine/PMSEHandlers/',
+        'pmse_Inbox/engine/PMSEPreProcessor/',
+        'pmse_Inbox/engine/wrappers/',
+        'pmse_Project/clients/base/api/',
+        'pmse_Project/clients/base/api/wrappers/',
+        'pmse_Project/clients/base/api/wrappers/PMSEObservers/'
     ];
 
     /**

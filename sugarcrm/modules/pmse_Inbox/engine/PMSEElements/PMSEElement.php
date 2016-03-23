@@ -14,12 +14,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSERunnable.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEEmailHandler.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'include/SugarQuery/SugarQuery.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEElement implements PMSERunnable
 {
@@ -84,10 +82,10 @@ class PMSEElement implements PMSERunnable
     {
         global $db;
         $this->executionMode = 'DEFAULT';
-        $this->caseFlowHandler = new PMSECaseFlowHandler();
-        $this->userAssignmentHandler = new PMSEUserAssignmentHandler();
-        $this->beanHandler = new PMSEBeanHandler();
-        $this->emailHandler = new PMSEEmailHandler();
+        $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
+        $this->userAssignmentHandler = ProcessManager\Factory::getPMSEObject('PMSEUserAssignmentHandler');
+        $this->beanHandler = ProcessManager\Factory::getPMSEObject('PMSEBeanHandler');
+        $this->emailHandler = ProcessManager\Factory::getPMSEObject('PMSEEmailHandler');
         $this->dbHandler = $db;
         $this->logger = PMSELogger::getInstance();
     }

@@ -12,9 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'include/EditView/EditView2.php';
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
-require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_InboxViewShowCase extends SugarView
 {
@@ -52,7 +52,7 @@ class pmse_InboxViewShowCase extends SugarView
     public function __construct()
     {
         $this->pmse = PMSE::getInstance();
-        $this->wrapper = new PMSEWrapper();
+        $this->wrapper = ProcessManager\Factory::getPMSEObject('PMSEWrapper');
         parent::__construct();
     }
 
@@ -316,7 +316,7 @@ FLIST;
                 $data_aux->cas_delegate_date = $caseData['cas_delegate_date'];
                 // Commenting out below line. We don't want due date to be calculated dynamically. Once a process due date is set it should stay.
                 // $expTime = PMSECaseWrapper::expectedTime($this->activityRow['act_expected_time'], $data_aux);
-                $caseWrapper = new PMSECaseWrapper();
+                $caseWrapper = ProcessManager\Factory::getPMSEObject('PMSECaseWrapper');
                 $expTime = $caseWrapper->processDueDateTime($caseData['cas_due_date']);
                 $expected_time = $expTime['expected_time'];
                 $expected_time_warning = $expTime['expected_time_warning'];

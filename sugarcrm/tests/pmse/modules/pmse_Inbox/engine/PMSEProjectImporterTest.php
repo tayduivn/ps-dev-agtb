@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEProjectImporterTest extends PHPUnit_Framework_TestCase
 {
 
@@ -24,7 +27,7 @@ class PMSEProjectImporterTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new PMSEProjectImporter;
+        $this->object = ProcessManager\Factory::getPMSEObject('PMSEProjectImporter');
     }
 
     /**

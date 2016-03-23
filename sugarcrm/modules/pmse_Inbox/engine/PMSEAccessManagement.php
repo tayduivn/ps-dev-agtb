@@ -13,7 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 session_start();
-require_once 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEAccessManagement {
     protected  $licM;
     protected  $objM=array();
@@ -34,7 +36,7 @@ class PMSEAccessManagement {
     {
         if(!($_SESSION['serial']))
         {
-            $this->licM = new PMSELicenseManager();
+            $this->licM = ProcessManager\Factory::getPMSEObject('PMSELicenseManager');
             $this->objM  = $this->licM->getActiveLicenseData();
             $_SESSION['serial']=$this->closeLicence($this->objM);
         }
@@ -43,7 +45,7 @@ class PMSEAccessManagement {
             if(!$this->_GETparams($_SESSION['serial'],sha1($this->keyPrimary)))
             {
                 unset($_SESSION['serial']);
-                $this->licM = new PMSELicenseManager();
+                $this->licM = ProcessManager\Factory::getPMSEObject('PMSELicenseManager');
                 $this->objM  = $this->licM->getActiveLicenseData();
                 $_SESSION['serial']=$this->closeLicence($this->objM);
             }
@@ -194,7 +196,7 @@ class lookLicenced
 {
     public function look($actionEvent)
     {
-        $openLic=new PMSEAccessManagement();
+        $openLic = ProcessManager\Factory::getPMSEObject('PMSEAccessManagement');
         $open=$openLic->expirationKey();
         $openAux=$openLic->licEventLook();
         if($open && $openAux)

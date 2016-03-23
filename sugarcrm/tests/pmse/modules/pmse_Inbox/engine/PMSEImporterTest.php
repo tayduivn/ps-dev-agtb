@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEImporterTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -35,7 +38,7 @@ class PMSEImporterTest extends PHPUnit_Framework_TestCase
         $row4->name = "Email Template (1)";
         $row5->name = "Email Template (2)";
 
-        $this->object = new PMSEImporter;
+        $this->object = ProcessManager\Factory::getPMSEObject('PMSEImporter');
         $this->bean = $this->getMock('pmse_EmailsTemplates', array('get_full_list', 'save', 'in_save'));
         $this->bean->table_name = 'pmse_emails_templates';
         $this->bean->expects($this->any())

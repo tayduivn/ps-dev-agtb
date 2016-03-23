@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEDataParserGatewayTest extends PHPUnit_Framework_TestCase
 {
     private $parserGateway;
@@ -22,7 +25,7 @@ class PMSEDataParserGatewayTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->parserGateway = new PMSEDataParserGateway();
+        $this->parserGateway = ProcessManager\Factory::getPMSEObject('PMSEDataParserGateway');
         $this->resultArray = array(
             array(
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',

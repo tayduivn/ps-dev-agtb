@@ -13,9 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEExecuter
 {
@@ -68,8 +68,8 @@ class PMSEExecuter
     public function __construct()
     {
         global $sugar_config;
-        $this->caseFlowHandler = new PMSECaseFlowHandler();
-        $this->flowRouter = new PMSEFlowRouter();
+        $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
+        $this->flowRouter = ProcessManager\Factory::getPMSEObject('PMSEFlowRouter');
         $this->logger = PMSELogger::getInstance();
 
         $settings = $sugar_config['pmse_settings_default'];
@@ -147,75 +147,7 @@ class PMSEExecuter
      */
     public function retrievePMSEElement($elementName = '')
     {
-        $modulePath = 'modules/pmse_Inbox/engine/PMSEElements';
-        switch ($elementName) {
-            case 'PMSEStartEvent':
-                require_once $modulePath . '/PMSEStartEvent.php';
-                return new PMSEStartEvent();
-            case 'PMSEEndEvent':
-                require_once $modulePath . '/PMSEEndEvent.php';
-                return new PMSEEndEvent();
-            case 'PMSEEndSendMessageEvent':
-                require_once $modulePath . '/PMSEEndSendMessageEvent.php';
-                return new PMSEEndSendMessageEvent();
-            case 'PMSETerminateEvent':
-                require_once $modulePath . '/PMSETerminateEvent.php';
-                return new PMSETerminateEvent();
-            case 'PMSESendMessageEvent':
-                require_once $modulePath . '/PMSESendMessageEvent.php';
-                return new PMSESendMessageEvent();
-            case 'PMSEReceiveMessageEvent':
-                require_once $modulePath . '/PMSEReceiveMessageEvent.php';
-                return new PMSEReceiveMessageEvent();
-            case 'PMSETimerEvent':
-                require_once $modulePath . '/PMSETimerEvent.php';
-                return new PMSETimerEvent();
-            case 'PMSEUserTask':
-                require_once $modulePath . '/PMSEUserTask.php';
-                return new PMSEUserTask();
-            case 'PMSEBusinessRule':
-                require_once $modulePath . '/PMSEBusinessRule.php';
-                return new PMSEBusinessRule();
-            case 'PMSEChangeField':
-                require_once $modulePath . '/PMSEChangeField.php';
-                return new PMSEChangeField();
-            case 'PMSERoundRobin':
-                require_once $modulePath . '/PMSERoundRobin.php';
-                return new PMSERoundRobin();
-            case 'PMSEAssignUser':
-                require_once $modulePath . '/PMSEAssignUser.php';
-                return new PMSEAssignUser();
-            case 'PMSEAddRelatedRecord':
-                require_once $modulePath . '/PMSEAddRelatedRecord.php';
-                return new PMSEAddRelatedRecord();
-            case 'PMSEConvergingParallelGateway':
-                require_once $modulePath . '/PMSEConvergingParallelGateway.php';
-                return new PMSEConvergingParallelGateway();
-            case 'PMSEDivergingParallelGateway':
-                require_once $modulePath . '/PMSEDivergingParallelGateway.php';
-                return new PMSEDivergingParallelGateway();
-            case 'PMSEConvergingExclusiveGateway':
-                require_once $modulePath . '/PMSEConvergingExclusiveGateway.php';
-                return new PMSEConvergingExclusiveGateway();
-            case 'PMSEDivergingExclusiveGateway':
-                require_once $modulePath . '/PMSEDivergingExclusiveGateway.php';
-                return new PMSEDivergingExclusiveGateway();
-            case 'PMSEDivergingInclusiveGateway':
-                require_once $modulePath . '/PMSEDivergingInclusiveGateway.php';
-                return new PMSEDivergingInclusiveGateway();
-            case 'PMSEDivergingEventBasedGateway':
-                require_once $modulePath . '/PMSEDivergingEventBasedGateway.php';
-                return new PMSEDivergingEventBasedGateway();
-            case 'PMSESequenceFlow':
-                require_once $modulePath . '/PMSESequenceFlow.php';
-                return new PMSESequenceFlow();
-            case 'PMSEInvalidElement':
-                require_once $modulePath . '/PMSEInvalidElement.php';
-                return new PMSEInvalidElement();
-            default:
-                require_once $modulePath . '/PMSEElement.php';
-                return new PMSEElement();
-        }
+        return ProcessManager\Factory::getElement($elementName);
     }
 
     /**
@@ -439,7 +371,7 @@ class PMSEExecuter
                 $fd->save();
 
                 // Updating process to error
-                $cf = new PMSECaseFlowHandler();
+                $cf = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
                 $cf->changeCaseStatus($flowData['cas_id'], 'TERMINATED');
 
                 // Exiting without errors

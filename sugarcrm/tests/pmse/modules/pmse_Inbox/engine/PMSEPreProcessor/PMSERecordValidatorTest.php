@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSERecordValidatorTest extends PHPUnit_Framework_TestCase 
 {
     /**
@@ -43,7 +46,7 @@ class PMSERecordValidatorTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(NULL)
                 ->getMock();
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $recordValidatorMock->setLogger($loggerMock);
         $recordValidatorMock->validateRequest($request);
         $this->assertEquals(true, $request->isValid());

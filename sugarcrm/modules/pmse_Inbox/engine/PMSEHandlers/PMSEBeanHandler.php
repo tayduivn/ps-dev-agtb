@@ -14,8 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEBeanHandler
 {
@@ -39,8 +39,8 @@ class PMSEBeanHandler
     public function __construct()
     {
         $this->logger = PMSELogger::getInstance();
-        $this->evaluator = new PMSEEvaluator();
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
     }
 
     /**

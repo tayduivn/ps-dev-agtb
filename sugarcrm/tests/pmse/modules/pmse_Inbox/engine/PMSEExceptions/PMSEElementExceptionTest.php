@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
+
 class PMSEElementExceptionTest extends PHPUnit_Framework_TestCase 
 {
     /**

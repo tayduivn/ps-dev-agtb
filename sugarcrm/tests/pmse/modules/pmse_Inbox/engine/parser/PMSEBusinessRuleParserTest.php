@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEBusinessRuleParserTest extends PHPUnit_Framework_TestCase
 {
     protected $dataParser;
@@ -22,7 +25,7 @@ class PMSEBusinessRuleParserTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->dataParser = new PMSEBusinessRuleParser();
+        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleParser');
         
         $this->resultArray = array(
             array(

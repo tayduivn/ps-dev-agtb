@@ -12,18 +12,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Description of PMSEElementValidator
  *
  */
-class PMSEElementValidator implements PMSEValidate
+class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
 {
 
     /**
-     *
      * @var type
      */
     protected $dbHandler;
@@ -39,20 +38,13 @@ class PMSEElementValidator implements PMSEValidate
     protected $beanFlow;
 
     /**
-     *
-     * @var type
-     */
-    protected $logger;
-
-    /**
-     *
      * @codeCoverageIgnore
      */
     public function __construct()
     {
         $this->sugarQueryObject = new SugarQuery();
         $this->beanFlow = BeanFactory::getBean('pmse_BpmFlow');
-        $this->logger = PMSELogger::getInstance();
+        parent::__construct();
     }
 
     /**
@@ -63,16 +55,6 @@ class PMSEElementValidator implements PMSEValidate
     public function getDbHandler()
     {
         return $this->dbHandler;
-    }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getLogger()
-    {
-        return $this->logger;
     }
 
     /**
@@ -99,16 +81,6 @@ class PMSEElementValidator implements PMSEValidate
     public function setDbHandler($dbHandler)
     {
         $this->dbHandler = $dbHandler;
-    }
-
-    /**
-     *
-     * @param type $logger
-     * @codeCoverageIgnore
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
     }
 
     public function setBeanFlow($beanFlow)

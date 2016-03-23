@@ -12,8 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEShape.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSEActivity
@@ -45,7 +46,9 @@ class PMSEActivity extends PMSEShape
      */
     protected function retrieveHistoryData($module)
     {
-        return new PMSEHistoryData($module);
+        $data = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
+        $data->setModule($module);
+        return $data;
     }
 
     /**

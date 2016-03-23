@@ -13,8 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEDirectRequestHandler
 {
@@ -41,7 +42,7 @@ class PMSEDirectRequestHandler
      */
     public function __construct()
     {
-        $this->request = new PMSERequest();
+        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $this->logger = PMSELogger::getInstance();
         $this->request->setType('direct');
         $this->preProcessor = PMSEPreProcessor::getInstance();

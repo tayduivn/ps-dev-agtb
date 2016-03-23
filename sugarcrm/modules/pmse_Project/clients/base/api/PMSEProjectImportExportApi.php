@@ -14,8 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/vCardApi.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectImportExportApi extends vCardApi
 {
@@ -71,7 +71,7 @@ class PMSEProjectImportExportApi extends vCardApi
     public function projectDownload($api, $args)
     {
         $this->checkACL($api, $args);
-        $projectBean = new PMSEProjectExporter();
+        $projectBean = ProcessManager\Factory::getPMSEObject('PMSEProjectExporter');
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
             if (!array_key_exists($fieldName, $args)) {
@@ -104,7 +104,7 @@ class PMSEProjectImportExportApi extends vCardApi
                 && isset($_FILES[$first_key]['size'])
                 && isset($_FILES[$first_key]['size']) > 0
             ) {
-                $importerObject = new PMSEProjectImporter();
+                $importerObject = ProcessManager\Factory::getPMSEObject('PMSEProjectImporter');
                 $name = $_FILES[$first_key]['name'];
                 $extension = pathinfo($name,  PATHINFO_EXTENSION);
                 if ($extension == $importerObject->getExtension()) {

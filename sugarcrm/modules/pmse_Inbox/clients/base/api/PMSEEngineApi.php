@@ -16,15 +16,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'include/api/SugarApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
-require_once 'modules/pmse_Inbox/engine/wrappers/PMSEHistoryLogWrapper.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEDirectRequestHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEEngineRequestHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEUserAssignmentHandler.php';
-require_once 'modules/pmse_Inbox/engine/wrappers/PMSECaseWrapper.php';
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /*
  * Record List API implementation
  */
@@ -38,12 +33,12 @@ class PMSEEngineApi extends SugarApi
 
     public function __construct()
     {
-        $this->caseFlowHandler = new PMSECaseFlowHandler();
-        $this->userAssignmentHandler = new PMSEUserAssignmentHandler();
+        $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
+        $this->userAssignmentHandler = ProcessManager\Factory::getPMSEObject('PMSEUserAssignmentHandler');
         $this->pmse = PMSE::getInstance();
-        $this->wrapper = new PMSEWrapper();
-        $this->requestHandler = new PMSEDirectRequestHandler();
-        $this->caseWrapper = new PMSECaseWrapper();
+        $this->wrapper = ProcessManager\Factory::getPMSEObject('PMSEWrapper');
+        $this->requestHandler = ProcessManager\Factory::getPMSEObject('PMSEDirectRequestHandler');
+        $this->caseWrapper = ProcessManager\Factory::getPMSEObject('PMSECaseWrapper');
     }
 
     public function registerApiRest()
@@ -327,7 +322,7 @@ class PMSEEngineApi extends SugarApi
     public function retrieveHistoryLog($api, $args)
     {
         $this->checkACL($api, $args);
-        $historyLog = new PMSEHistoryLogWrapper();
+        $historyLog = ProcessManager\Factory::getPMSEObject('PMSEHistoryLogWrapper');
         $res = $historyLog->_get($args);
         return array('success' => true, 'result' => $res->result);
     }
@@ -757,11 +752,11 @@ class PMSEEngineApi extends SugarApi
     {
         switch ($type) {
             case 'reactivate':
-                return new PMSEEngineRequestHandler();
+                return ProcessManager\Factory::getPMSEObject('PMSEEngineRequestHandler');
                 break;
             case 'direct':
             default:
-                return new PMSEDirectRequestHandler();
+                return ProcessManager\Factory::getPMSEObject('PMSEDirectRequestHandler');
                 break;
         }
     }

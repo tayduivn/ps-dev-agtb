@@ -12,9 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEEventDefinitionWrapper implements PMSEObservable
 {
@@ -35,7 +36,7 @@ class PMSEEventDefinitionWrapper implements PMSEObservable
         $this->relationship = BeanFactory::getBean('Relationships');
         $this->eventDefinition = BeanFactory::getBean('pmse_BpmEventDefinition');
         $this->processDefinition = BeanFactory::getBean('pmse_BpmProcessDefinition');
-        $this->crmDataWrapper = new PMSECrmDataWrapper();
+        $this->crmDataWrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
     }
 
     /**

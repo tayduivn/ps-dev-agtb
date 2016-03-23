@@ -12,10 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Class PMSEWrapperCrmData
@@ -180,11 +180,11 @@ class PMSECrmDataWrapper implements PMSEObservable
         require_once 'modules/ACLRoles/ACLRole.php';
         $this->aclRoleObject = new ACLRole();
 
-        $this->defaultDynaform = new PMSEDynaForm();
+        $this->defaultDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
         $this->teamsBean = BeanFactory::getBean('Teams');
         $this->usersBean = BeanFactory::getBean('Users');
         $this->sugarQueryObject = new SugarQuery();
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
 
 
         $this->beanList = $beanList;

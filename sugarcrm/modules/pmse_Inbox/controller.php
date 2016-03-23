@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class pmse_InboxController extends SugarController
 {
     public function action_studio_configuration()
@@ -39,20 +41,18 @@ class pmse_InboxController extends SugarController
      */
     public function action_routeCase()
     {
-        require_once 'modules/pmse_Inbox/clients/base/api/PMSEEngineApi.php';
         $data = $_REQUEST;
         $data['frm_action'] = $data['Type'];
         $data['taskName'] = '';
-        $engineApi = new PMSEEngineApi();
+        $engineApi = ProcessManager\Factory::getPMSEObject('PMSEEngineApi');
         $result = $engineApi->engineRoute(array(), $data);
         header('Location: index.php');
     }
     
     public function action_showPNG()
     {
-        require_once 'modules/pmse_Inbox/clients/base/api/PMSEImageGeneratorApi.php';
         header('Content-Type: image/png');
-        $img = new PMSEImageGeneratorApi();
+        $img = ProcessManager\Factory::getPMSEObject('PMSEImageGeneratorApi');
         $img->getProcessImage(null, array('record' => $_REQUEST['case']));
     }
 

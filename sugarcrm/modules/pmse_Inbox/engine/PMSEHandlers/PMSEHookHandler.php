@@ -14,8 +14,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'include/SugarQuery/SugarQuery.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEHookHandler
 {
@@ -49,7 +50,7 @@ class PMSEHookHandler
     public function __construct()
     {
         global $db;
-        $this->request = new PMSERequest();
+        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $this->request->setType('hook');
         $this->preProcessor = PMSEPreProcessor::getInstance();
         $this->logger = PMSELogger::getInstance();
@@ -215,8 +216,7 @@ class PMSEHookHandler
 
     public function newFollowFlow($flowData, $createThread = false, $bean = null, $externalAction = '')
     {
-        require_once 'modules/pmse_Inbox/engine/PMSEExecuter.php';
-        $fr = new PMSEExecuter();
+        $fr = ProcessManager\Factory::getPMSEObject('PMSEExecuter');
         return $fr->runEngine($flowData, $createThread, $bean, $externalAction);
     }
 }

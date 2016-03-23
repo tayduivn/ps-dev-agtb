@@ -10,13 +10,17 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEHistoryDataTest extends PHPUnit_Framework_TestCase
 {
 
     private $module= 'Leads';
 
     protected function setUp() {
-        $this->object = new PMSEHistoryData($this->module);
+        $this->object = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
+        $this->object->setModule($this->module);
     }
 
     public function testSavePredata()

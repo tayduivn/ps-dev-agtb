@@ -12,15 +12,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * The flow router class is in charge of manage all the routing and derivation
  * of all the instances of PMSEElement subclasses and also of evaluating the
  * execution result of those classes.
  *
  */
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEJobQueueHandler.php';
-
 class PMSEFlowRouter
 {
 
@@ -51,8 +50,8 @@ class PMSEFlowRouter
      */
     public function __construct()
     {
-        $this->caseFlowHandler = new PMSECaseFlowHandler();
-        $this->jobQueueHandler = new PMSEJobQueueHandler();
+        $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
+        $this->jobQueueHandler = ProcessManager\Factory::getPMSEObject('PMSEJobQueueHandler');
         $this->logger = PMSELogger::getInstance();
     }
 

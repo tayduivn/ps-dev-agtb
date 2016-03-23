@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 {
 
@@ -51,7 +54,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
         $expressionValidatorMock->setLogger($this->loggerMock);
 
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setFlowData(array('evn_id' => 'NO_TERMINATE'));
         $request->setBean(new stdClass());
 
@@ -67,7 +70,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateExpressionEmpty()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $flowDataMock = array('evn_criteria' => '[]');
         $beanMock = new stdClass();
 
@@ -92,7 +95,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateExpressionWithConditionTrue()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $flowDataMock = array('evn_criteria' => '[{1==1}]');
         $beanMock = new stdClass();
 
@@ -119,7 +122,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateExpressionWithConditionFalse()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $flowDataMock = array('evn_criteria' => '[{1==1}]');
         $beanMock = new stdClass();
 
@@ -147,7 +150,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateParamsRelatedWithoutRelationship()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_MAIN_MODULE');
         $flowDataMock = array('evn_criteria' => '[{1==1}]', 'cas_sugar_module'=>'Leads', 'cas_sugar_object_id' => 'id');
         $beanMock = new stdClass();
@@ -166,7 +169,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateParamsRelatedWithRelationship()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_RELATED_MODULE');
         $flowDataMock = array('evn_criteria' => '[{1==1}]');
         $flowDataMock['rel_process_module'] = 'PARENT_MODULE';
@@ -201,7 +204,7 @@ class PMSEExpressionValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateParamsRelatedWithInvalidRelationship()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_RELATED_MODULE');
         $flowDataMock = array('evn_criteria' => '[{1==1}]');
         $flowDataMock['rel_process_module'] = 'PARENT_MODULE';

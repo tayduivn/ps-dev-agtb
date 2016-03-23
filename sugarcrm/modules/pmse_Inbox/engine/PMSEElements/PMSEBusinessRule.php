@@ -12,8 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleReader.php';
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEScriptTask.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEBusinessRule extends PMSEScriptTask
 {
@@ -26,8 +27,9 @@ class PMSEBusinessRule extends PMSEScriptTask
      */
     public function getBusinessRuleReader($appData, $global)
     {
-        return new PMSEBusinessRuleReader($appData, $global);
-
+        $reader = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleReader');
+        $reader->init($appData, $global);
+        return $reader;
     }
 
     /**
