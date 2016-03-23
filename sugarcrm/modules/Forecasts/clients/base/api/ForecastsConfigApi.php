@@ -164,15 +164,18 @@ class ForecastsConfigApi extends ConfigModuleApi
             $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }
 
+        //BEGIN SUGARCRM flav=ent ONLY
         //If the Opps/RLI switch was done before forecasts was set up, then things were partially configured. Let's
         //reset that stuff now.
         $forecast_by = $current_forecasts_settings['forecast_by'];
         $this->refreshForecastByMetadata($forecast_by);
         $this->rebuildExtensions($forecast_by);
+        //END SUGARCRM flav=ent ONLY
 
         return $current_forecasts_settings;
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Refreshes the ForecastBy module's metadata.  Needed for when forecasts is set up after any opps/rli switching.
      * @param $forecast_by
@@ -230,6 +233,7 @@ class ForecastsConfigApi extends ConfigModuleApi
         return new RepairAndClear();
     }
 
+    //END SUGARCRM flav=ent ONLY
     /**
      * Compares two sets of forecasting settings to see if the primary timeperiods settings are the same
      *
