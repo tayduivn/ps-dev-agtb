@@ -16,7 +16,7 @@
 class SugarUpgradeRemoveData extends UpgradeScript
 {
     public $order = 1001;
-    public $type = self::UPGRADE_CUSTOM;
+    public $type = self::UPGRADE_DB;
     public $version = '7.5';
 
     public function run()

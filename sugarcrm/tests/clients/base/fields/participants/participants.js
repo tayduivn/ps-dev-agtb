@@ -948,4 +948,71 @@ describe('View.Fields.Base.ParticipantsField', function() {
             }
         );
     });
+
+    describe('getStartAndEndDates()', function() {
+        var results;
+
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'invitees',
+                'participants',
+                'detail',
+                fieldDef,
+                module,
+                model,
+                context
+            );
+        });
+
+        describe('should return empty', function() {
+            it('if date_start does not exist', function() {
+                results = field.getStartAndEndDates();
+
+                expect(_.isEmpty(results)).toBeTruthy();
+            });
+
+            it('if date_start does exists but date_end/duration_hours/minutes does not exist', function() {
+                field.model.set('date_start', '2016-04-06Z')
+                results = field.getStartAndEndDates();
+
+                expect(_.isEmpty(results)).toBeTruthy();
+            });
+        });
+
+        describe('should return meeting start/end Object', function() {
+            it('with date_start and date_end defined', function() {
+                field.model.set({
+                    date_start: '2016-04-06T14:00:00Z',
+                    date_end: '2016-04-06T15:30:00Z'
+                });
+                results = field.getStartAndEndDates();
+
+                expect(results.meetingStart).toBeDefined();
+                expect(results.meetingEnd).toBeDefined();
+                expect(results.timelineStart).toBeDefined();
+                expect(results.timelineEnd).toBeDefined();
+
+                expect(results.meetingStart.toISOString()).toBe('2016-04-06T14:00:00.000Z');
+                expect(results.meetingEnd.toISOString()).toBe('2016-04-06T15:30:00.000Z');
+            });
+
+            it('with date_start, duration_hours, and duration_minutes defined', function() {
+                field.model.set({
+                    date_start: '2016-04-06T14:00:00Z',
+                    duration_hours: 1,
+                    duration_minutes: 30
+                });
+                results = field.getStartAndEndDates();
+
+                expect(results.meetingStart).toBeDefined();
+                expect(results.meetingEnd).toBeDefined();
+                expect(results.timelineStart).toBeDefined();
+                expect(results.timelineEnd).toBeDefined();
+
+                expect(results.meetingStart.toISOString()).toBe('2016-04-06T14:00:00.000Z');
+                expect(results.meetingEnd.toISOString()).toBe('2016-04-06T15:30:00.000Z');
+            });
+        });
+    });
 });
