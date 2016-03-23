@@ -65,8 +65,7 @@ class Person extends Basic
 	 */
 	public function _create_proper_name_field()
 	{
-        global $locale;
-        $this->name = $this->full_name = $locale->formatName($this);
+        $this->name = $this->full_name = $this->getRecordName();
 	}
 
     /**
@@ -248,5 +247,23 @@ class Person extends Basic
         $vcalData = str_replace("\r\n", "\n", $vcalData);
         $lines = explode("\n", $vcalData);
         return $lines;
+    }
+
+    /**
+     * Gets a Localization object
+     * @return Localization
+     */
+    protected function getLocaleObject()
+    {
+        global $locale;
+        return $locale;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRecordName()
+    {
+        return $this->getLocaleObject()->formatName($this);
     }
 }

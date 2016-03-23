@@ -8063,4 +8063,19 @@ class SugarBean
     {
         return $this->module_name;
     }
+
+    /**
+     * All module types have a "name" type field that is central to the module.
+     * This method returns that name. This could be a different value depending
+     * on the module type. For example, Person type modules should return a full
+     * name. File type modules would return document name.
+     *
+     * This method is very similar to {@see get_summary_text} but behaves differently.
+     *
+     * @return string
+     */
+    public function getRecordName()
+    {
+        return isset($this->name) ? trim($this->name) : '';
+    }
 }
