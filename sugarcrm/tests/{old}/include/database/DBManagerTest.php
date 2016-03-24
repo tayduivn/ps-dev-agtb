@@ -4533,4 +4533,28 @@ SQL;
         $row = $this->_db->fetchOne($query);
         $this->assertInternalType('array', $row);
     }
+
+    public function testLimitSubQueryWithUnionAndComment()
+    {
+        $dummy = 'SELECT \'x\' id ' . $this->_db->getFromDummyTable();
+
+        $query = <<<SQL
+SELECT
+  accounts.id
+FROM accounts
+JOIN (
+  /* this comments makes a fool of MSSQLManager's query parser,
+     it thinks that UNION is in the top level query */
+  $dummy
+  UNION
+  $dummy
+) x ON x.id = accounts.id
+WHERE 1 = 1
+ORDER BY accounts.id
+SQL;
+
+        // the LIMIT needs to be greater than 1
+        $result = $this->_db->limitQuery($query, 0, 2);
+        $this->assertNotEmpty($result);
+    }
 }

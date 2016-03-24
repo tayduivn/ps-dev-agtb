@@ -430,6 +430,10 @@ class MssqlManager extends DBManager
     {
         $start = (int)$start;
         $count = (int)$count;
+
+        // remove comments from the query in order to simplify further parsing
+        $sql = preg_replace('/\/\*(\*(?!\/)|[^*])*\*\//', ' ', $sql);
+
         $newSQL = $sql;
         $distinctSQLARRAY = array();
         if ($this->isUnionQuery($sql))
