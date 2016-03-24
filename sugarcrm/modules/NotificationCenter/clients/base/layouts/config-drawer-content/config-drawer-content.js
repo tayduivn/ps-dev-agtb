@@ -77,25 +77,40 @@
      * @inheritdoc
      */
     _switchHowToData: function(helpId) {
-        var title, text;
+        var title, text, helpLabel, additionalText;
+
+        additionalText = {
+            sendFor: app.lang.get('LBL_SEND_NOTIFICATION_FOR', this.module),
+            deliverySection: app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', this.module)
+        };
 
         switch(helpId) {
             case 'config-carriers':
                 title = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', this.module);
-                text = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_HELP', this.module);
+                helpLabel = 'LBL_CARRIER_DELIVERY_OPTION_HELP';
+                if (this.model.get('configMode') !== 'user') {
+                    helpLabel += '_ADMIN';
+                }
+                text = app.lang.get(helpLabel, this.module, additionalText);
                 break;
             case 'config-ApplicationEmitter':
                 title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
-                text = app.lang.get('LBL_APPLICATION_EMITTER_HELP', this.module);
+                text = app.lang.get('LBL_APPLICATION_EMITTER_HELP', this.module, additionalText);
                 break;
             case 'config-BeanEmitter':
                 title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
-                text = app.lang.get('LBL_BEAN_EMITTER_HELP', this.module);
+                text = app.lang.get('LBL_BEAN_EMITTER_HELP', this.module, additionalText);
                 break;
             default: // Module Emitter case
                 var module = helpId.substring(7);
-                title = app.lang.get('LBL_EMITTER_TITLE', module);
-                text = app.lang.get('LBL_EMITTER_HELP', module);
+                additionalText.plural_module_name = app.lang.getModuleName(module, {plural: true});
+
+                helpLabel = 'LBL_EMITTER_HELP';
+                if (this.model.get('configMode') !== 'user') {
+                    helpLabel += '_ADMIN';
+                }
+                title = app.lang.get('LBL_EMITTER_TITLE', module, additionalText);
+                text = app.lang.get(helpLabel, module, additionalText);
         }
 
         this.currentHowToData.title = title;
