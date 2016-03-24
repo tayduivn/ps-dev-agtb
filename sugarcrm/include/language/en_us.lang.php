@@ -115,6 +115,8 @@ $app_list_strings = array (
     'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
     'CarrierEmail' => 'Email Carrier',
     'CarrierSugar' => 'Sugar Carrier',
+    'TriggerServer' => 'Trigger Server',
+    'WebSockets' => 'WebSockets',
     'Addressees' => 'Addressees',
   ),
 
@@ -234,6 +236,8 @@ $app_list_strings = array (
     'NotificationCenterSubscriptions' => 'Notification Center Subscription',
     'CarrierEmail' => 'Email Carrier',
     'CarrierSugar' => 'Sugar Carrier',
+    'TriggerServer' => 'Trigger Server',
+    'WebSockets' => 'WebSockets',
     'Addressees' => 'Addressee',
   ),
 
@@ -11793,6 +11797,11 @@ $app_list_strings['activity_user_options'] = array (
     '7' => 'Last 7 Days',
     '30' => 'Last 30 Days',
     '90' => 'Last Quarter',
+);
+
+$app_list_strings['http_type_protocol_options'] = array(
+    'http' => 'http',
+    'https' => 'https'
 );
 
 $app_list_strings['planned_activities_filter_options'] = array (

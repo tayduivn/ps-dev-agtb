@@ -74,6 +74,12 @@
             'siteConfig_submitted' => false,
             'dbUSRData' => 'same',
 
+            'trigger_server_protocol' => 'http',
+            'trigger_server_port' => '3000',
+            'websockets_server_protocol' => 'http',
+            'websockets_server_port' => '2999',
+            'websockets_client_protocol' => 'http',
+            'websockets_client_port' => '3001',
         );
 
 ?>
