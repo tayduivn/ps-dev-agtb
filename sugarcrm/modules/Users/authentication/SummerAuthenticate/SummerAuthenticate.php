@@ -21,7 +21,7 @@ class SummerAuthenticate extends SugarAuthenticate
 
 	public function __construct()
 	{
-		parent::SugarAuthenticate();
+        parent::__construct();
 		$this->box = BoxOfficeClient::getInstance();
 	}
 

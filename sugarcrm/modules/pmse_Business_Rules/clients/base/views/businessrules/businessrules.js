@@ -190,7 +190,7 @@
      * @param route
      * @param id
      */
-    _saveBR: function (route, id) {
+    _saveBR: function (id, route) {
         var json,
             base64encoded,
             url,
@@ -237,7 +237,7 @@
      * Handler for the 'businessRules:save:finish' event.
      */
     saveBusinessRules: function() {
-        this._saveBR(App.router.buildRoute("pmse_Business_Rules"), this.model.id);
+        this._saveBR(this.model.id, App.router.buildRoute("pmse_Business_Rules"));
     },
 
     /**

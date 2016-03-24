@@ -14,7 +14,7 @@ require_once 'modules/Reports/Report.php';
 
 class SubpanelFromReports extends Report {
 	public function __construct($report) {
-		parent::Report($report->content);
+        parent::__construct($report->content);
 		if (isset($this->report_def['display_columns'])) {	
 			if (!empty($this->report_def['display_columns'])) {
 				foreach ($this->report_def['display_columns'] as $key => $column) {

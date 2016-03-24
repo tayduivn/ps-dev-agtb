@@ -28,6 +28,16 @@ class SugarUpgradeAddTagFieldToViews extends UpgradeScript
         'record',
     );
 
+    /**
+     * Lookup of problem modules that we should skip.
+     * @var array
+     */
+    protected $skipModules = array(
+        // FIXME INT-1312: Figure out why, in certain configurations,
+        // isModuleBWC("Documents") returns false.
+        'Documents' => true,
+    );
+
     public function run()
     {
         // For upgrades from pre-7.7 to 7.7 and above, add tags to the record
@@ -197,11 +207,14 @@ class SugarUpgradeAddTagFieldToViews extends UpgradeScript
      */
     protected function isTaggable($module)
     {
-        if (!isModuleBWC($module)) {
-            $bean = BeanFactory::getBean($module);
-            if (isset($bean->field_defs['tag'])) {
-                return true;
-            }
+        // FIXME INT-1312: Figure out why, in certain configurations,
+        // isModuleBWC("Documents") returns false.
+        if (isModuleBWC($module) || isset($this->skipModules[$module])) {
+            return false;
+        }
+        $bean = BeanFactory::getBean($module);
+        if (isset($bean->field_defs['tag'])) {
+            return true;
         }
 
         return false;

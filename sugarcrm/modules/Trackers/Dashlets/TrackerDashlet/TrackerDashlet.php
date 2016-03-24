@@ -35,7 +35,7 @@ class TrackerDashlet extends Dashlet {
         if(!empty($def['height'])) // set a default height if none is set
             $this->height = $def['height'];
 
-        parent::Dashlet($id); // call parent constructor
+        parent::__construct($id); // call parent constructor
 
         $this->isConfigurable = true; // dashlet is configurable
         $this->hasScript = true;  // dashlet has javascript attached to it

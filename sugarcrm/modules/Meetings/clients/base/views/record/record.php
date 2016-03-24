@@ -334,6 +334,12 @@ $viewdefs['Meetings']['base']['view']['record'] = array(
                         'picture',
                         'email',
                     ),
+                    'related_fields' => array(
+                        'date_start',
+                        'date_end',
+                        'duration_hours',
+                        'duration_minutes',
+                    ),
                 ),
                 'assigned_user_name',
                 'team_name',
