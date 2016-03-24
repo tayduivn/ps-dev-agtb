@@ -439,7 +439,9 @@
      * @inheritdoc
      */
     _renderHtml: function() {
-        if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
+        if (!app.api.isAuthenticated() ||
+            app.config.appStatus === 'offline' ||
+            !app.acl.hasAccess('view', this.module)) {
             return;
         }
 

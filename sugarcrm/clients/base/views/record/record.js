@@ -35,6 +35,7 @@
 
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
+        'click a[name=cancel_button]': '_deprecatedCancelClicked',
         'click [data-action=scroll]': 'paginateRecord',
         'click .record-panel-header': 'togglePanel',
         'click #recordTab > .tab > a:not(.dropdown-toggle)': 'setActiveTab',
@@ -731,6 +732,26 @@
         this.model.doValidate(fieldsToValidate, _.bind(this.validationComplete, this));
     },
 
+    /**
+     * Handles when the cancel_button view event is triggered.
+     *
+     * FIXME: This method will be removed as part of BR-3945
+     *
+     * @private
+     *
+     * @deprecated Since 7.7. Will be removed in 7.9.
+     *   Use the `MetadataEventDriven` plugin events from the
+     *   `record.php` button metadata instead.
+     */
+    _deprecatedCancelClicked: function() {
+        var cancelBtn = this.getField('cancel_button');
+        if (!cancelBtn || !cancelBtn.def || !cancelBtn.def.events) {
+            app.logger.warn(this.module + ': Invoking the cancel_button from `this.events` has been deprecated' +
+                ' since 7.7. This handler will be removed in 7.9. Please use the `MetadataEventDriven` plugin' +
+                ' events from the \'record.php\' button metadata instead.');
+            this.cancelClicked.apply(this, arguments);
+        }
+    },
 
     cancelClicked: function() {
         this.handleCancel();

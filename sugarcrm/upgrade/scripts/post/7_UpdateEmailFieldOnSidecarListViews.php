@@ -157,57 +157,30 @@ class SugarUpgradeUpdateEmailFieldOnSidecarListViews extends UpgradeScript
                     $path = sprintf($filePath, $package, $module);
                     $files = array_merge($files, glob($path));
                 }
-            }
 
-            // Then get build files
-            $builds = $this->getPackageBuildFiles($view, $package);
-            $files = array_merge($files, $builds);
+                // Then get build files
+                $builds = $this->getPackageBuildFiles($package, $module, $view);
+                $files = array_merge($files, $builds);
+            }
         }
 
         return $files;
     }
 
     /**
-     * Gets build files for a view and package for company modules
-     * @param string $view The view to get the file path for
+     * Gets build files for a view, module and package
      * @param string $package The package to get the build files for
+     * @param string $module The module to get the file path for
+     * @param string $view The view to get the file path for
      * @return array
      */
-    public function getPackageBuildFiles($view, $package)
+    protected function getPackageBuildFiles($package, $module, $view)
     {
-        $files = array();
-
         // Common path prefix for this method
         $prefix = "custom/modulebuilder/builds/$package/SugarModules/modules";
 
         // Get all of our $view files in the build tree
-        $builds = glob("$prefix/*/clients/*/views/$view/$view.php");
-        foreach ($builds as $path) {
-            // Get our module name for this path if we have one
-            preg_match('#/modules/(.*)/clients/#', $path, $m);
-            if (!empty($m[1])) {
-                $module = $m[1];
-
-                // We need the bean to get its parent types
-                if (!class_exists($module)) {
-                    $beanFile = "$prefix/$module/$module.php";
-                    if (file_exists($beanFile)) {
-                        include_once $beanFile;
-                    }
-                }
-
-                if (class_exists($module)) {
-                    // If the bean for this module is a Company type, snag it
-                    if (is_subclass_of($module, "Company")) {
-                        $files[] = $path;
-                    }
-                } else {
-                    $this->log("Unable to load class for $module");
-                }
-            }
-        }
-
-        return $files;
+        return glob("$prefix/{$package}_$module/clients/*/views/$view/$view.php");
     }
 
     /**
