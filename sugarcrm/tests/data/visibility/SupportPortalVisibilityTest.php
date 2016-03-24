@@ -17,15 +17,17 @@ require_once 'data/visibility/SupportPortalVisibility.php';
  */
 class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private static $accounts = array();
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         $_SESSION['type'] = 'support_portal';
+        self::setUpAccounts();
     }
 
     protected function tearDown()
     {
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestCaseUtilities::removeAllCreatedCases();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestNoteUtilities::removeAllCreatedNotes();
@@ -37,58 +39,70 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::tearDownAfterClass();
         unset($_SESSION['type']);
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     /**
      * @dataProvider addVisibilityFromAccountsBasedRuleDataProvider
      * @covers ::addVisibilityFrom
      */
-    public function testAccountBasedSql($module, $accountsIds, $expected)
+    public function testAccountBasedSql($module, $accountsIndexes, $expected)
     {
         $bean = $this->setUpAccountBasedFixture($module);
+        $accountsIds = array();
+        foreach ($accountsIndexes as $index) {
+            $accountsIds[] = self::$accounts[$index]->id;
+        }
         $visibility = $this->getVisibility($bean, $accountsIds);
         $rows = $this->selectSql($bean, $visibility);
-        $this->assertEquals($expected, $rows);
+        $this->assertEquals($expected ? array(array('id' => $bean->id)) : array(), $rows);
     }
 
     /**
      * @dataProvider addVisibilityFromAccountsBasedRuleDataProvider
      * @covers ::addVisibilityFromQuery
      */
-    public function testAccountBasedSugarQuery($module, $accountsIds, $expected)
+    public function testAccountBasedSugarQuery($module, $accountsIndexes, $expected)
     {
         $bean = $this->setUpAccountBasedFixture($module);
+        $accountsIds = array();
+        foreach ($accountsIndexes as $index) {
+            $accountsIds[] = self::$accounts[$index]->id;
+        }
         $visibility = $this->getVisibility($bean, $accountsIds);
         $rows = $this->selectSugarQuery($bean, $visibility);
-        $this->assertEquals($expected, $rows);
+        $this->assertEquals($expected ? array(array('id' => $bean->id)) : array(), $rows);
     }
 
     private function setUpAccountBasedFixture($module)
     {
-        $accounts = array();
-        $accounts[] = SugarTestAccountUtilities::createAccount('account-1');
-        $accounts[] = SugarTestAccountUtilities::createAccount('account-2');
         $testUtilities = "SugarTest{$module}Utilities";
         $testUtilitiesMethod = "create$module";
-        $bean = $testUtilities::$testUtilitiesMethod(strtolower($module) . '-1');
+        $bean = $testUtilities::$testUtilitiesMethod(null, array('portal_viewable' => 1));
         $bean->load_relationship('accounts');
-        $bean->accounts->add($accounts[0]);
+        $bean->accounts->add(self::$accounts[0]);
 
         return $bean;
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
+    private static function setUpAccounts()
+    {
+        if (!count(self::$accounts)) {
+            self::$accounts[] = SugarTestAccountUtilities::createAccount(null, array('name' => 'account-1'));
+            self::$accounts[] = SugarTestAccountUtilities::createAccount(null, array('name' => 'account-2'));
+            self::$accounts[] = SugarTestAccountUtilities::createAccount(null, array('name' => 'account-3'));
+        }
+    }
+
     public static function addVisibilityFromAccountsBasedRuleDataProvider()
     {
         return array(
-            array('Contact', array('account-1', 'account-2'), array(array('id' => 'contact-1'))),
-            array('Contact', array('account-3'), array()),
-            array('Case', array('account-1', 'account-2'), array(array('id' => 'case-1'))),
-            array('Case', array('account-3'), array()),
-            // for Leads there are no special portal rules
-            array('Lead', array('account-1', 'account-2'), array(array('id' => 'lead-1')))
+            array('Contact', array(0, 1), true),
+            array('Contact', array(2), false),
+            array('Case', array(0, 1), true),
+            array('Case', array(2), false),
+            // Leads aren't available in portal
+            array('Lead', array(0, 1), false)
         );
     }
 
@@ -98,9 +112,9 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNotesSql()
     {
         $bean = $this->setUpNotesFixture();
-        $visibility = $this->getVisibility($bean, array('account-1', 'account-2'));
+        $visibility = $this->getVisibility($bean, array(self::$accounts[0]->id, self::$accounts[1]->id));
         $rows = $this->selectSql($bean, $visibility);
-        $this->assertEquals(array('id' => 'note-2'), $rows);
+        $this->assertEquals(array(array('id' => $bean->id)), $rows);
     }
 
     /**
@@ -109,20 +123,17 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNotesSugarQuery()
     {
         $bean = $this->setUpNotesFixture();
-        $visibility = $this->getVisibility($bean, array('account-1', 'account-2'));
+        $visibility = $this->getVisibility($bean, array(self::$accounts[0]->id, self::$accounts[1]->id));
         $rows = $this->selectSugarQuery($bean, $visibility);
-        $this->assertEquals(array('id' => 'note-2'), $rows);
+        $this->assertEquals(array(array('id' => $bean->id)), $rows);
     }
 
     private function setUpNotesFixture()
     {
-        $accounts = array();
-        $accounts[] = SugarTestAccountUtilities::createAccount('account-1');
-        $accounts[] = SugarTestAccountUtilities::createAccount('account-2');
-        $case = SugarTestCaseUtilities::createCase('case-2');
+        $case = SugarTestCaseUtilities::createCase(null, array('portal_viewable' => 1));
         $case->load_relationship('accounts');
-        $case->accounts->add($accounts[0]);
-        $bean = SugarTestNoteUtilities::createNote('note-2');
+        $case->accounts->add(self::$accounts[0]);
+        $bean = SugarTestNoteUtilities::createNote(null, array('portal_viewable' => 1, 'portal_flag' => 1));
         $bean->load_relationship('cases');
         $bean->cases->add($case);
 
@@ -159,6 +170,7 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $query = 'SELECT ' . $bean->table_name . '.id FROM ' . $bean->table_name;
         $visibility->addVisibilityFrom($query);
         $query .= ' WHERE ' . $bean->table_name . '.deleted = 0';
+        $visibility->addVisibilityWhere($query);
 
         $result = $bean->db->query($query);
         $rows = array();
@@ -182,6 +194,7 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $query->select('id');
         $query->from($bean);
         $visibility->addVisibilityFromQuery($query);
+        $visibility->addVisibilityWhereQuery($query);
         return $query->execute();
     }
 }

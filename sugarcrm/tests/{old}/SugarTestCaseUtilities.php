@@ -23,10 +23,12 @@ class SugarTestCaseUtilities
         $time = mt_rand();
         $case = new aCase();
 
-        if (isset($caseValues['name'])) {
-            $case->name = $caseValues['name'];
-        } else {
+        if (!isset($caseValues['name'])) {
             $case->name = 'SugarCase' . $time;
+        }
+
+        foreach ($caseValues as $property => $value) {
+            $case->$property = $value;
         }
 
         if (!empty($id)) {
