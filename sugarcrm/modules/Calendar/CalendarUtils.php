@@ -379,7 +379,7 @@ class CalendarUtils
             $clone->repeat_root_id = null;
             $clone->update_vcal = false;
             $clone->send_invites = false;
-            $clone->updateAllChildren = false;
+            $clone->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
 
             $fields = array(
                 'id' => array('name' => 'id', 'type' => 'id'),

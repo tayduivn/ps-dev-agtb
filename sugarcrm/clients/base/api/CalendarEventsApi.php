@@ -122,7 +122,7 @@ class CalendarEventsApi extends ModuleApi
 
         if ($this->getCalendarEvents()->isEventRecurring($bean)) {
             if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
-                $bean->updateAllChildren = true;
+                $bean->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS;
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
             } else {
                 // when updating a single occurrence of a recurring meeting without the
@@ -221,7 +221,7 @@ class CalendarEventsApi extends ModuleApi
 
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
-        $bean->updateAllChildren = true;
+        $bean->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS;
 
         // Turn off The Cache Updates while deleting the multiple recurrences.
         // The current Cache Enabled status is returned so it can be appropriately
