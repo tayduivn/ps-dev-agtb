@@ -47,8 +47,9 @@
 @pacific:               #0f7799;
 @teal:                  #0d806c;
 @coral:                 #ff6fcf;
-@goldenRod:             #e5a117;
-@wheat:                 #f5d9a0;
+
+// Doesn't appear to be used any more
+// @wheat:                 lighten(@yellow, 29.99%);
 
 // Scaffolding
 // -------------------------
@@ -77,7 +78,7 @@
 
 //Shadows
 //--------------------------
-@shadowWidget: 	0 2px 1px rgba(0,0,0,.1);
+@shadowWidget: 	0 2px 2px 0 rgba(0,0,0,.1);
 @shadowWidgetInset: inset 0 2px 1px rgba(0,0,0,.1);
 
 @borderWidget: 1px solid darken(@grayLighter, 10%);
@@ -116,26 +117,31 @@
 @infoText:              @inform;
 @infoAlertText:         @white;
 @infoBackground:        @inform;
-@infoBorder:            darken(@inform, 10%);
+@infoBorder:            @inform;
 
 @success:               @green;
 @successText:           @success;
 @successAlertText:      @white;
 @successBackground:     @success;
-@successBorder:         darken(@success, 10%);
+@successBorder:         @success;
 
 @warning:               @yellow;
 @warningText:           @warning;
-@warningAlertText:      @grayDark;
-@warningBackground:     lighten(@warning, 47%);
-@warningBorder:         lighten(@warning, 30%);
+@warningAlertText:      @white;
+@warningBackground:     @warning;
+@warningBorder:         @warning;
 
 @error:                 @red;
 @errorText:             @error;
 @errorAlertText:        @white;
 @errorBackground:       @error;
-@errorBorder:           darken(@error, 10%);
+@errorBorder:           @error;
 
+@warningTableBackground:lighten(@yellow, 47%);
+@confirmationBackground:lighten(@yellow, 47%);
+
+@loadingBackground:     darken(@white, 3.4%);
+@loadingBorder:         lighten(@black, 44.3%);
 
 // Buttons
 // -------------------------

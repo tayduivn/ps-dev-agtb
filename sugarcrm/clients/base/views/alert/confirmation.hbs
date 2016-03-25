@@ -13,7 +13,7 @@
 <div class="alert-page-overlay"></div>
 <div class="alert-confirmation">
     <div class="alert {{alertClass}} alert-block">
-        {{#if title}}<strong>{{title}}</strong>{{/if}}
+        {{#if title}}<div class="indicator"><i class="fa {{alertIcon}}"></i> <strong>{{title}}</strong></div>{{/if}}
         <div class="alert-messages">{{#each messages}}{{./this}} {{/each}}</div>
         <div class="row-fluid">
             <a class="span6 alert-btn-cancel" data-action="cancel">{{str alert.cancelLabel}}</a>

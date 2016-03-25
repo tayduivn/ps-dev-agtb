@@ -170,6 +170,7 @@
         var template;
         var level = options.level;
         var alertClasses = this.getAlertClasses(level);
+        var alertIcon = this.getAlertIcon(level);
         var title = options.title || this.getDefaultTitle(level);
 
         switch (level) {
@@ -192,6 +193,7 @@
         }
         var seed = _.extend({}, {
             alertClass: alertClasses,
+            alertIcon: alertIcon,
             title: this.getTranslatedLabels(title),
             messages: this.getTranslatedLabels(options.messages),
             closeable: _.isUndefined(options.closeable) || options.closeable,
@@ -221,6 +223,30 @@
                 return 'alert-warning';
             default:
                 return '';
+        }
+    },
+
+    /**
+     * Get icons given alert level
+     * @param {String} level
+     * @return {String}
+     */
+    getAlertIcon: function(level) {
+        switch (level) {
+            case this.LEVEL.PROCESS:
+                return '';
+            case this.LEVEL.SUCCESS:
+                return 'fa-check-circle';
+            case this.LEVEL.WARNING:
+                return 'fa-exclamation-triangle';
+            case this.LEVEL.INFO:
+                return 'fa-info-circle';
+            case this.LEVEL.ERROR:
+                return 'fa-exclamation-circle';
+            case this.LEVEL.CONFIRMATION:
+                return 'fa-exclamation-triangle';
+            default:
+                return 'fa-info-circle';
         }
     },
 

@@ -11,7 +11,12 @@
  */
 --}}
 <div class="alert {{alertClass}} alert-block{{#if closeable}} closeable{{/if}}">
-    {{#if closeable}}<button class="close" data-action="close"><i class="fa fa-times"></i></button>{{/if}}
-    {{#if title}}<strong>{{title}}</strong>{{/if}}
-    {{#each messages}}{{./this}}{{/each}}
+    <div class="indicator">
+        <i class="fa {{alertIcon}}"></i>
+    </div>
+    {{#if closeable}}<button class="close btn btn-link btn-invisible" data-action="close"><i class="fa fa-times"></i></button>{{/if}}
+    <span class="text">{{#if title}}
+        <strong>{{title}}</strong>
+        {{/if}}{{#each messages}}{{./this}}{{/each}}
+    </span>
 </div>
