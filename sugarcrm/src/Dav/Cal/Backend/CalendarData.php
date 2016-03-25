@@ -90,7 +90,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
                 !empty($rRule['BYWEEKNO']) ||
                 !empty($rRule['BYHOUR']) ||
                 $rRule['FREQ'] == 'MINUTELY' ||
-                $rRule['FREQ'] == 'HOURLY';
+                $rRule['FREQ'] == 'HOURLY' ||
+                (!empty($rRule['INTERVAL']) && $rRule['INTERVAL'] > 99);
         }
 
         return false;
