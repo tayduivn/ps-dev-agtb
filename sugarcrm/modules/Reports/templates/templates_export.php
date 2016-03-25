@@ -48,9 +48,15 @@ $content = '';
 
                 $content .= $line;
         }
-global $locale, $sugar_config;
+        global $locale, $sugar_config;
 
-$transContent = $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
+        $transContent = $GLOBALS['locale']->translateCharset(
+            $content,
+            'UTF-8',
+            $GLOBALS['locale']->getExportCharset(),
+            false,
+            true
+        );
 
 ob_clean();
 header("Pragma: cache");
