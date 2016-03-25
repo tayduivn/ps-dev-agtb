@@ -509,6 +509,9 @@ $dictionary['CalDavQueue'] = array(
             'fields' => array('event_id', 'status', 'save_counter'),
         ),
     ),
+    'ignore_templates' => array(
+        'taggable',
+    ),
 );
 
 VardefManager::createVardef(
