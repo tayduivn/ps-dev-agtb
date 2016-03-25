@@ -329,11 +329,13 @@ class SugarXHprof
         }
 
         if (static::$sample_rate == 0) {
+            static::$enable = false;
             return;
         }
 
         $rate = 1 / static::$sample_rate * 100;
         if (rand(0, 100) > $rate) {
+            static::$enable = false;
             return;
         }
 

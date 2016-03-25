@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'PMSEObservers/PMSEObservable.php';
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 
 
 class PMSEEventDefinitionWrapper implements PMSEObservable
