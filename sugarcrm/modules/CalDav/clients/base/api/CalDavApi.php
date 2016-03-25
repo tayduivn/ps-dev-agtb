@@ -197,15 +197,18 @@ class CalDavApi extends SugarApi
     }
 
     /**
-     * Return enable CalDav modules
+     * Return enabled CalDav modules.
      *
-     * @return array CalDav modules
+     * @return array CalDav modules.
      */
     public function getSupportedCalDavModules()
     {
         $adapters = new Adapters;
-        $modules = $adapters->getSupportedModules();
-        return array_combine($modules, $modules);
+        $modules = array();
+        foreach ($adapters->getSupportedModules() as $module) {
+            $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
+        }
+        return $modules;
     }
 
     /**

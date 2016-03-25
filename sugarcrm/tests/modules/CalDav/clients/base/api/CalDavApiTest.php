@@ -290,15 +290,22 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * test
+     * Testing is correctly generated list of Supported CalDav Modules.
+     *
      * @group caldav
      * @covers \CalDavApi::getSupportedCalDavModules
      */
     public function testGetSupportedCalDavModules()
     {
         $apiClass = new CalDavApi();
+        foreach ($GLOBALS['app_list_strings']['moduleList'] as $module => $moduleTitle) {
+            $GLOBALS['app_list_strings']['moduleList'][$module] = $moduleTitle . rand(1000, 9999);
+        }
         $modules = $apiClass->getSupportedCalDavModules();
 
         $this->assertInternalType('array', $modules);
+        foreach (array_keys($modules) as $module) {
+            $this->assertEquals($GLOBALS['app_list_strings']['moduleList'][$module], $modules[$module]);
+        }
     }
 }
