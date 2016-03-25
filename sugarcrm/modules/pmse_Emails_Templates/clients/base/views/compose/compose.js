@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.pmse_Emails_Templates.ComposeView
+ * @alias SUGAR.App.view.views.Basepmse_Emails_TemplatesComposeView
+ * @extends View.Views.Base.RecordView
+ */
 ({
     extendsFrom: 'RecordView',
 
@@ -30,30 +35,13 @@
         this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
 
-    _render: function () {
-        var self= this;
-        var url,
-            $editor;
-
-        this._super("_render");
-        if (this.createMode) {
-            if (this.getField('name')) {
-                this.setTitle(app.lang.get('LBL_PMSE_EMAIL_TEMPLATES_DASHLET', this.module) + ' | ' + Handlebars.Utils.escapeExpression(this.getField('name').value));
-            }
-        }
-    },
     /**
-    * Sets field's view element and invokes render on the given field.
-    * @param field
-    * @param $fieldEl
-    * @private
-    */
-    _renderField: function(field, $fieldEl) {
-        //for custom modules, we need the pluralized form of module name
-        if (!field.model.get('lbl_base_module')) {
-            field.model.set('lbl_base_module', app.lang.getModuleName(field.model.get('base_module'), {plural: true}));
-        }
-        this._super('_renderField', [field, $fieldEl]);
+     * Set the title to the module name
+     * @private
+     */
+    _render: function () {
+        this._super('_render');
+        this.setTitle(app.lang.get('LBL_MODULE_NAME', this.module));
     },
 
     /**

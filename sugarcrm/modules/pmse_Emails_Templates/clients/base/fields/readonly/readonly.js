@@ -8,14 +8,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Fields.Base.pmse_Emails_Templates.ReadonlyField
+ * @alias SUGAR.App.view.fields.Basepmse_Emails_TemplatesReadonlyField
+ * @extends View.Fields.Base.BaseField
+ */
 ({
     plugins: ['EllipsisInline'],
-    'events': {
-        'keyup input[name=name]': 'handleKeyup',
-//        "click .btn": "_showVarBook"
-    },
+
     fieldTag: 'input.inherit-width',
 
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        options.def.readonly = true;
+        this._super('initialize', [options]);
+    },
+    
     _render: function() {
         if (this.view.name === 'record') {
             this.def.link = false;
@@ -24,6 +34,7 @@
         }
         this._super('_render');
     },
+
     /**
      * Gets the recipients DOM field
      *
@@ -34,13 +45,9 @@
     },
 
     /**
-     * Handles the keyup event in the account create page
+     * @inheritdoc
      */
-    handleKeyup: _.throttle(function() {
-        var searchedValue = this.$('input.inherit-width').val();
-        if (searchedValue && searchedValue.length >= 3) {
-            this.context.trigger('input:name:keyup', searchedValue);
-        }
-    }, 1000, {leading: false})
-
+    format: function(value) {
+        return app.lang.getModuleName(value, {plural: true})
+    }
 })
