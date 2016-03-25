@@ -57,6 +57,8 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testQueryReturnWithAccounts()
     {
+        $this->markTestIncomplete('[BR-3907] Testing SQL doesn\'t work with prepared statements');
+
         $contact = new ContactsPortalVisibilityQueryMock();
         $contact->setVisibility(new SupportPortalVisibilityQueryMock($contact));
         $contact->id = 1;

@@ -36,6 +36,10 @@ class Bug64655AliasTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUpBeforeClass();
 
+        // this test will fail in developer mode because VarDefManager will
+        // rebuild User's vardefs
+        unset($_SESSION['developerMode']);
+
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, true));

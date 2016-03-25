@@ -17,17 +17,11 @@
  */
 class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected static $reloadVardefs;
-    protected static $inDeveloperMode;
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        
-        self::$reloadVardefs = isset($GLOBALS['reload_vardefs']) ? $GLOBALS['reload_vardefs'] : null;
-        self::$inDeveloperMode = isset($_SESSION['developerMode']) ? $_SESSION['developerMode'] : false;
-        
+
         // Force a vardef refresh forcefully because some tests in the suite 
         // actively destroy some globals. This will have an effect on getBean
         // for the duration of this test
@@ -37,13 +31,8 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
     
     public static function tearDownAfterClass()
     {
-        if (self::$reloadVardefs) {
-            $GLOBALS['reload_vardefs'] = self::$reloadVardefs;
-        }
-        
-        if (self::$inDeveloperMode) {
-            $_SESSION['developerMode'] = self::$inDeveloperMode;
-        }
+        unset($_SESSION['developerMode']);
+        SugarTestHelper::tearDown();
     }
 
     public function testForecastBean()
