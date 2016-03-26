@@ -43,12 +43,11 @@ class Bug48555Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_user->first_name = "FIRST-NAME";
         $this->_user->last_name = "LAST-NAME";
-        $this->_user->emailAddress->addAddress("test@test.test", $primary=true);
-        $this->_user->emailAddress->save($this->_user->id, $this->_user->module_dir);;
+        $address = $this->_user->emailAddress->getPrimaryAddress($this->_user);
+
         $test_array = $this->_user->getUsersNameAndEmail();
-        
         $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['name']);
-        $this->assertEquals('test@test.test',$test_array['email']);
+        $this->assertEquals($address, $test_array['email']);
     }
     
     public function testgetEmailLink2()

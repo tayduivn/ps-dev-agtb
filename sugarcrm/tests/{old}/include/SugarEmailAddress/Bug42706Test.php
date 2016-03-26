@@ -17,29 +17,28 @@
 class Bug42706Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function providerGetPrimaryAddress()
-        {
-            return array(
-                array('test1@test.com', true),
-                array('test2@test.com', false)
-            );
-        }
+    {
+        return array(
+            array(true),
+            array(false),
+        );
+    }
 
     /**
      * @group bug42706
      * @dataProvider providerGetPrimaryAddress
      */
-    public function testGetPrimaryAddress($email, $invalid)
+    public function testGetPrimaryAddress($invalid)
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
-        $user->emailAddress->addAddress($email, false, false, $invalid);
-        $user->emailAddress->save($user->id, $user->module_dir);
 
-        if ($invalid == true)
-        {
+        // Update the user's primary email address to be valid or invalid, according to the data provided.
+        $email = $user->emailAddress->getPrimaryAddress($user);
+        $user->emailAddress->AddUpdateEmailAddress($email, $invalid);
+
+        if ($invalid) {
             $this->assertEmpty($user->emailAddress->getPrimaryAddress($user), 'Primary email should be empty');
-        }
-        else
-        {
+        } else {
             $this->assertEquals($email, $user->emailAddress->getPrimaryAddress($user), 'Primary email should be '.$email);
         }
     }

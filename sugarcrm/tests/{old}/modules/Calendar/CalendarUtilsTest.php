@@ -135,7 +135,7 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
             array(
                 'Users',
                 $current_user->id,
-                '',
+                $current_user->emailAddress->getPrimaryAddress($current_user),
                 'accept',
                 $locale->formatName($current_user)
             ),

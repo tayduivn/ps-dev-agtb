@@ -18,6 +18,7 @@ class SugarUpgradeSetCreatedByTest extends UpgradeTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->upgrader->setDb(DBManagerFactory::getInstance());
         $user1 = SugarTestUserUtilities::createAnonymousUser();
         $user2 = SugarTestUserUtilities::createAnonymousUser();
         $fields = array(

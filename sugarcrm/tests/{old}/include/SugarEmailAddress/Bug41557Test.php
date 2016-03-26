@@ -35,11 +35,7 @@ class Bug41557Test extends Sugar_PHPUnit_Framework_TestCase
             $_REQUEST['action'] = 'ConvertLead';
         }
 
-        $user = SugarTestUserUtilities::createAnonymousUser();
-
-        // primary email address
-        $user->emailAddress->addAddress($oldemail, true, false);
-        $user->emailAddress->save($user->id, $user->module_dir);
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, array('email' => $oldemail));
 
         $this->assertEquals($oldemail, $user->emailAddress->getPrimaryAddress($user), 'Primary email should be '.$oldemail);
 

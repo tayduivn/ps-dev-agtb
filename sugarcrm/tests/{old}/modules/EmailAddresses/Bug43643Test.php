@@ -26,6 +26,7 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
     }
 
 
@@ -37,11 +38,7 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
         $current_user->load_relationship('email_addresses');
 
-        $non_reply_to_value = 'non-reply-to@example.com';
-        $non_reply_to_address = SugarTestEmailAddressUtilities::addAddressToPerson(
-            $current_user,
-            $non_reply_to_value
-        );
+        $non_reply_to_value = $current_user->emailAddress->getPrimaryAddress($current_user);
 
         $email_address = new EmailAddress();
 
@@ -56,7 +53,7 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
 
         // create reply-to address
         $reply_to_value = 'some-address-2@example.com';
-        $reply_to_address = SugarTestEmailAddressUtilities::addAddressToPerson(
+        SugarTestEmailAddressUtilities::addAddressToPerson(
             $current_user,
             $reply_to_value,
             array(
@@ -67,10 +64,5 @@ class Bug43643Test extends Sugar_PHPUnit_Framework_TestCase
         // ensure that reply-to address is returned
         $reply_to_only_result2 = $email_address->getReplyToAddress($current_user, true);
         $this->assertEquals($reply_to_value, $reply_to_only_result2);
-
-        // clean everything up
-        $non_reply_to_address->mark_deleted($non_reply_to_address->id);
-        $reply_to_address->mark_deleted($reply_to_address->id);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 }

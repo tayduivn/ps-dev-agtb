@@ -42,7 +42,9 @@ class Bug56938Test extends Sugar_PHPUnit_Framework_TestCase
         $original->retrieve($this->user->id);
 
         // simulate request parameters of "Duplicate" web form
+        // Attempt to reuse the same email_address_id, but change email_address.
         $address = $original->emailAddress->addresses[0];
+        $address['email_address'] = 'bug-56938-changed@example.com';
         $_REQUEST = array(
             'Users_email_widget_id' => '1',
             'Users1emailAddress0'   => $address['email_address'],
@@ -59,11 +61,8 @@ class Bug56938Test extends Sugar_PHPUnit_Framework_TestCase
         // ensure that email address is created in duplicate
         $this->assertEquals(1, count($retrieved->emailAddress->addresses));
 
-        // ensure that it's value is the same as original email address
-        $this->assertEquals(
-            $original->emailAddress->addresses[0]['email_address'],
-            $retrieved->emailAddress->addresses[0]['email_address']
-        );
+        // ensure that the duplicate user's email address is correct
+        $this->assertEquals($address['email_address'], $retrieved->emailAddress->addresses[0]['email_address']);
 
         // ensure that new instance of EmailAddress is created instead of
         // sharing the same instance between users
@@ -71,6 +70,10 @@ class Bug56938Test extends Sugar_PHPUnit_Framework_TestCase
             $original->emailAddress->addresses[0]['email_address_id'],
             $retrieved->emailAddress->addresses[0]['email_address_id']
         );
+
+        // Ensure that the original user's email address did not change.
+        $addresses = $original->emailAddress->getAddressesForBean($original, true);
+        $this->assertEquals($original->emailAddress->addresses[0]['email_address'], $addresses[0]['email_address']);
     }
 
     /**
