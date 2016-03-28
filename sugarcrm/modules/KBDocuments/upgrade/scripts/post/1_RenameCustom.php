@@ -289,32 +289,36 @@ class SugarUpgradeRenameCustom extends UpgradeScript
         $app_list_strings = array();
         include $file;
 
-        $app_list_strings = $this->moveRecursive($app_list_strings);
-        $this->log("Updating language file {$file} with new KB module");
-        $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
-        foreach (array_keys($app_list_strings) as $key) {
-            $out .= override_value_to_string_recursive2('app_list_strings', $key, $app_list_strings[$key]);
+        $mod_app_list_strings = false;
+        $app_list_strings = $this->moveKBDocumentsToKBContents($app_list_strings, $mod_app_list_strings);
+        if ($mod_app_list_strings === true) {
+            $this->log("Updating language file {$file} with new KB module");
+            $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
+            foreach (array_keys($app_list_strings) as $key) {
+                $out .= override_value_to_string_recursive2('app_list_strings', $key, $app_list_strings[$key]);
+            }
+            file_put_contents($file, $out);
         }
-        file_put_contents($file, $out);
-
         // restore global $app_list_strings
         $app_list_strings = $g_app_list_strings;
 
     }
 
     /**
-     * Recursive move `app_list_strings` to new KB.
+     * Recursive move `app_list_strings` from KBDocuments to KBContents.
      * @param mixed $array Array to work with.
+     * @param        $array_modified_flag set to true when $array is changed
      * @return array Updated array.
      */
-    protected function moveRecursive($array)
+    protected function moveKBDocumentsToKBContents($array, &$array_modified_flag)
     {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
-                $array[$key] = $this->moveRecursive($value);
+                $array[$key] = $this->moveKBDocumentsToKBContents($value, &$array_modified_flag);
                 if ($key === 'KBDocuments') {
                     $array['KBContents'] = $array['KBDocuments'];
                     unset($array['KBDocuments']);
+                    $array_modified_flag = true;
                 }
             }
         }
