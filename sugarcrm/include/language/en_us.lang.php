@@ -8213,9 +8213,10 @@ $app_strings = array (
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activity Stream',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2015 SugarCRM Inc. All Rights Reserved.',
-  'LBL_TRADEMARK' => 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
-  'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
-  'LBL_SEND_INVITE' => 'Send invite',
+    'LBL_TRADEMARK' => 'Sugar and SugarCRM are trademarks owned by SugarCRM Inc. '.
+        'All other trademarks are the property of their respective owners.',
+    'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
+    'LBL_SEND_INVITE' => 'Send invite',
   'LBL_INVITEES' => 'Guests',
     'LBL_GUEST_WILL_NOT_RECEIVE_INVITE' => 'Guest will not receive your invite',
   'LBL_SELECT_ACTION_LABEL' => 'Select Action',
@@ -9383,7 +9384,10 @@ $app_strings = array (
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2016 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_SUB' =>
+        '&copy; 2004-2016 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> '.
+        'All Rights Reserved.<br />Sugar and SugarCRM are trademarks owned by SugarCRM Inc. '.
+        'All other trademarks are the property of their respective owners.',
 
     // GENERIC JOB NOTIFICATIONS LABELS
     'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
