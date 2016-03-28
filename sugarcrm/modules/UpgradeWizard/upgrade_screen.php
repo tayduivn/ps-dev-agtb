@@ -282,6 +282,7 @@ $(window).bind("load", function () {
                     files: $("#uploadForm :file"),
                     iframe: true,
                     processData: false,
+                    dataType: 'json',
                     error: function (e) {
                         uploader.displayError("A server error occurred, please check your logs");
                     }
