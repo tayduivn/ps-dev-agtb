@@ -340,9 +340,6 @@ UpdaterField.prototype.createHTML = function () {
 
     this.html.appendChild(criteriaContainer);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -391,31 +388,21 @@ UpdaterField.prototype.setValue = function (value) {
  * @return {Boolean}
  */
 UpdaterField.prototype.isValid = function () {
-    var i, valid = true, current, field;
+    var valid = true, i, field, field_valid;
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
-
-        //TODO: create validation for expressions built with expressionControl.
-        if (!field.isRequired() || field._parent.hasCheckbox && field.isDisabled()) {
-            valid = true;
+        if (field._parent.hasCheckbox && !field.isDisabled() || !field._parent.hasCheckbox) {
+            field_valid = field.isValid();
+            if (!field_valid) {
+                valid = false;
+            }
         } else {
-            valid = field.isValid();
+            field_valid = true;
         }
-
-        if (!valid) {
-            break;
-        }
+        field.decorateValid(field_valid);
     }
-
     if (valid) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        valid = valid && Field.prototype.isValid.call(this);
-    } else {
-        this.visualObject.scrollTop += getRelativePosition(field.getHTML(), this.visualObject).top;
-        this.errorTooltip.setMessage(this.language.LBL_ERROR_ON_FIELDS);
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
+        valid = Field.prototype.isValid.call(this);
     }
     return valid;
 };
@@ -689,6 +676,7 @@ var UpdaterItem = function (settings) {
     this._dirty = false;
     this._allowDisabling = true;
     this._controlContainer = null;
+    this._invalidFieldClass = 'pmse-field-error';
     UpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -801,6 +789,20 @@ UpdaterItem.prototype.isRequired = function () {
 UpdaterItem.prototype.isValid = function () {
     return this._required ? this._value !== '' : true;
 };
+
+/**
+ * Add or remove the invalid field class
+ * @param boolean valid
+ */
+UpdaterItem.prototype.decorateValid = function (valid) {
+    if (this._control) {
+        if (valid) {
+            $(this._control).removeClass(this._invalidFieldClass);
+        } else {
+            $(this._control).addClass(this._invalidFieldClass);
+        }
+    }
+}
 
 UpdaterItem.prototype.clear = function () {
     if (this._control) {

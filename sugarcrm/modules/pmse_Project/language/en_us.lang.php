@@ -30,6 +30,7 @@ $mod_strings = array (
   'LBL_PMSE_BUTTON_YES' => 'Yes',
   'LBL_PMSE_BUTTON_NO' => 'No',
   'LBL_PMSE_BUTTON_OK' => 'Ok',
+    'LBL_PMSE_FORM_ERROR' => 'Please resolve any errors before proceeding.',
 
     'LBL_PMSE_LABEL_DESIGN' => 'Design',
     'LBL_PMSE_LABEL_EXPORT' => 'Export',

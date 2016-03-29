@@ -2330,6 +2330,9 @@ AdamActivity.prototype.actionFactory = function (type) {
             labelWidth = '20%';
             navigableData = { 'edit': true };
             changeFieldsFn = function () {
+                $(".pmse-form-error")
+                    .removeClass('pmse-form-error-on')
+                    .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
 
                 updater_field.proxy.url = 'pmse_Project/CrmData/relatedfields/'+ combo_modules.value;
@@ -2427,6 +2430,9 @@ AdamActivity.prototype.actionFactory = function (type) {
             labelWidth = '20%';
             navigableData = { 'edit': true };
             changeFieldsFn = function () {
+                $(".pmse-form-error")
+                    .removeClass('pmse-form-error-on')
+                    .addClass('pmse-form-error-off');
                 App.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
                 updater_field.proxy.uid = combo_modules.value;
                 updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + combo_modules.value;
@@ -2575,7 +2581,7 @@ AdamActivity.prototype.actionFactory = function (type) {
         proxy: proxy,
         items: items,
         closeContainerOnSubmit: true,
-        footerAlign: 'right',
+        footerAlign: 'left',
         buttons: [
             {
                 jtype: 'normal',
