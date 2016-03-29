@@ -247,6 +247,13 @@ $dictionary['EmailTemplate'] = array(
             'type' => 'link',
             'vname' => 'LBL_ATTACHMENTS',
         ),
+        'has_variables' => array(
+            'name' => 'has_variables',
+            'vname' => 'LBL_TEMPLATE_HAS_VARIABLES',
+            'type' => 'bool',
+            'default' => '0',
+            'readonly' => true,
+        ),
 	),
 	'indices' => array(
 		array(

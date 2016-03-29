@@ -31,6 +31,7 @@ class EmailTemplate extends SugarBean {
 	var $body_html;
     var $subject;
 	var $attachments;
+    public $has_variables;
 	var $from_name;
 	var $from_address;
 	var $team_id;
@@ -701,5 +702,27 @@ class EmailTemplate extends SugarBean {
             $this->storedVariables[$text[0]] = md5($text[0]);
         }
         return $this->storedVariables[$text[0]];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save($check_notify = false)
+    {
+        // check if email has dynamic variables
+        $this->has_variables = static::checkStringHasVariables($this->body . $this->body_html);
+        return parent::save($check_notify);
+    }
+
+    /**
+     * Checks a template string and returns true if the template has dynamic variables added
+     *
+     * @param string $tplStr The template string to check for dynamic variables
+     * @return bool True if string has variables, false if no variables detected
+     */
+    protected static function checkStringHasVariables($tplStr)
+    {
+        $pattern = '/\$[a-zA-Z]+_[a-zA-Z0-9_]+/';
+        return preg_match($pattern, $tplStr);
     }
 }
