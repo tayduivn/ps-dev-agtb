@@ -20,6 +20,13 @@ $viewdefs['Emails']['base']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
+            'label' => 'LBL_LEADS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'leads',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
             'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'contacts',
@@ -32,13 +39,7 @@ $viewdefs['Emails']['base']['layout']['subpanels'] = array(
                 'link' => 'opportunities',
             ),
         ),
-        array(
-            'layout' => 'subpanel',
-            'label' => 'LBL_LEADS_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'leads',
-            ),
-        ),
+
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_CASES_SUBPANEL_TITLE',
@@ -48,9 +49,23 @@ $viewdefs['Emails']['base']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_USERS_SUBPANEL_TITLE',
+            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'users',
+                'link' => 'notes',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_TASKS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'tasks',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_BUGS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'bugs',
             ),
         ),
         array(

@@ -230,6 +230,13 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUGS',
         ),
+        'emails' => array(
+            'name' => 'emails',
+            'type' => 'link',
+            'relationship' => 'emails_tasks_rel',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS',
+        ),
         'leads' => array(
             'name' => 'leads',
             'type' => 'link',
