@@ -337,7 +337,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
-        $events->expects($this->once())->method('isEventRecurring')->willReturn(false);
+        $events->expects($this->exactly(2))->method('isEventRecurring')->willReturn(false);
         $events->expects($this->never())->method('getChildrenQuery');
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());
@@ -398,7 +398,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
             ->getMock();
-        $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
+        $events->expects($this->exactly(2))->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
 
         $invitee = BeanFactory::getBean('Contacts', create_guid());

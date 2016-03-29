@@ -52,7 +52,11 @@ abstract class AdapterAbstract implements AdapterInterface
         $parentBean = null;
         $childEvents = null;
         $recurringParam = null;
-        $rootBeanId = $bean->repeat_root_id == $bean->id || $bean->updateAllChildren ? null : $bean->repeat_root_id;
+        $rootBeanId =
+            $bean->repeat_root_id == $bean->id ||
+            $bean->updateChildrenStrategy & (\CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS) ?
+                null :
+                $bean->repeat_root_id;
 
         if (!$rootBeanId) {
             switch ($action) {
@@ -66,15 +70,17 @@ abstract class AdapterAbstract implements AdapterInterface
                         $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
                         $action = 'override';
                     } elseif ($this->getCalendarEvents()->isEventRecurring($bean)) {
-                        if (!$bean->updateAllChildren) {
+                        if ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_CURRENT) {
                             $rootBeanId = $bean->repeat_root_id;
-                        } else {
+                        } elseif ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_FIELDS) {
                             $action = 'override';
                         }
                     }
                     break;
                 case 'delete':
-                    if (!$bean->updateAllChildren && $this->getCalendarEvents()->isEventRecurring($bean)) {
+                    if ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_CURRENT &&
+                        $this->getCalendarEvents()->isEventRecurring($bean)
+                    ) {
                         $rootBeanId = $bean->repeat_root_id;
                     }
                     break;
@@ -91,7 +97,10 @@ abstract class AdapterAbstract implements AdapterInterface
                 break;
             case 'update' :
                 $changedFields = $this->getFieldsDiff($changedFields);
-                if ($bean->updateAllChildren) { // no validation is needed in that case
+                // no validation is needed in that case
+                if ($bean->updateChildrenStrategy &
+                    (\CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS)
+                ) {
                     foreach ($changedFields as $field => $value) {
                         if (count($value) == 2) {
                             unset($changedFields[$field][1]);
@@ -100,7 +109,9 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
                 break;
             case 'delete':
-                if ($bean->updateAllChildren) {
+                if ($bean->updateChildrenStrategy &
+                    (\CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS)
+                ) {
                     $rootBeanId = null;
                 }
                 break;
@@ -276,7 +287,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     }
                     unset($data[1]['repeat_parent_id']);
                 }
-            } elseif ($collection->getRRule()) {
+            } elseif ($collection->getRRule() && $action == 'override') {
                 $collection->resetChildrenChanges();
                 $collection->setSugarChildrenOrder(array($beanId));
             }
@@ -950,7 +961,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 $beanForImport->fetched_row = false;
                 $beanForImport->send_invites = false;
                 $beanForImport->update_vcal = false;
-                $beanForImport->updateAllChildren = false;
+                $beanForImport->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
             }
 
             return $beanForImport;
