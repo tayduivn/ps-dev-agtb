@@ -918,6 +918,10 @@ abstract class AdapterAbstract implements AdapterInterface
         $recurrenceId = array_slice($recurrenceIds, $eventIndex, 1);
         $recurrenceId = current($recurrenceId);
 
+        if (!$recurrenceId) {
+            return null;
+        }
+
         return $collection->getChild($recurrenceId);
     }
 
