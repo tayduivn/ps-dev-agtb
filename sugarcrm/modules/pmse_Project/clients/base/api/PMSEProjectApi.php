@@ -15,17 +15,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
 
-require_once 'wrappers/PMSEProjectWrapper.php';
-require_once 'wrappers/PMSECrmDataWrapper.php';
-require_once 'wrappers/PMSEActivityDefinitionWrapper.php';
-require_once 'wrappers/PMSEEventDefinitionWrapper.php';
-require_once 'wrappers/PMSEGatewayDefinitionWrapper.php';
-require_once 'wrappers/PMSEDynaForm.php';
-require_once 'wrappers/PMSEObservers/PMSEEventObserver.php';
-require_once 'wrappers/PMSEObservers/PMSEProcessObserver.php';
+$wrapperPath = 'modules/pmse_Project/clients/base/api/wrappers/';
+require_once $wrapperPath . 'PMSEProjectWrapper.php';
+require_once $wrapperPath . 'PMSECrmDataWrapper.php';
+require_once $wrapperPath . 'PMSEActivityDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEEventDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEGatewayDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEDynaForm.php';
+require_once $wrapperPath . 'PMSEObservers/PMSEEventObserver.php';
+require_once $wrapperPath . 'PMSEObservers/PMSEProcessObserver.php';
 
-require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
+$enginePath = 'modules/pmse_Inbox/engine/';
+require_once $enginePath . 'PMSEProjectImporter.php';
+require_once $enginePath . 'PMSEProjectExporter.php';
 
 class PMSEProjectApi extends ModuleApi
 {

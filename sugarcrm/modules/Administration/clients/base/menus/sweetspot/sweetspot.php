@@ -37,6 +37,14 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => '#bwc/index.php?module=Teams&action=index',
     ),
+    // Team-based Permissions.
+    array(
+        'label' => 'LBL_TBA_CONFIGURATION',
+        'acl_action' => 'studio',
+        'module' => $moduleName,
+        'icon' => 'fa-cogs',
+        'route' => '#bwc/index.php?module=Teams&action=tba',
+    ),
     // Password Management
     array(
         'label' => 'LBL_MANAGE_PASSWORD_TITLE',

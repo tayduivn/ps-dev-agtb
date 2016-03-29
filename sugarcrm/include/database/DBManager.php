@@ -2049,7 +2049,10 @@ protected function checkQuery($sql, $object_name = false)
      */
     public static function increaseQueryLimit($amount = 1)
     {
-        self::$queryLimit += $amount;
+        // For admin user, $queryLimit is 0 meaning infinite.
+        if (self::$queryLimit != 0) {
+            self::$queryLimit += $amount;
+        }
     }
 
     /**

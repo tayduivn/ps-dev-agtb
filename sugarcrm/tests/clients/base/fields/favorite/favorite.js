@@ -13,17 +13,17 @@ describe('favorite field', function() {
         metadata = {
             fields: {
                 name: {
-                    name: "name",
-                    vname: "LBL_NAME",
-                    type: "varchar",
+                    name: 'name',
+                    vname: 'LBL_NAME',
+                    type: 'varchar',
                     len: 255,
-                    comment: "Name of this bean"
+                    comment: 'Name of this bean'
                 }
             },
             favoritesEnabled: true,
             views: [],
             layouts: [],
-            _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
+            _hash: 'bc6fc50d9d0d3064f5d522d9e15968fa'
         };
 
         app = SugarTest.app;
@@ -38,12 +38,11 @@ describe('favorite field', function() {
             name: 'Lórem ipsum dolor sit àmêt, ut úsu ómnés tatión imperdiet.'
         });
 
-        field = SugarTest.createField('base', 'toggle_favorite', 'favorite', 'detail');
-        field.model = model;
-
+        field = SugarTest.createField('base', 'favorite', 'favorite', 'detail', null, null, model);
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -56,7 +55,18 @@ describe('favorite field', function() {
         metadata = null;
     });
 
-    it("should not render and log error if the module has no favorites enabled", function() {
+    it('should re-render if the value change on the model', function() {
+        field.model.set('my_favorite', true);
+        sinon.collection.spy(field, 'render');
+
+        field.model.set('my_favorite', false);
+        expect(field.render).toHaveBeenCalled();
+
+        field.model.set('my_favorite', true);
+        expect(field.render).toHaveBeenCalledTwice();
+    });
+
+    it('should not render and log error if the module has no favorites enabled', function() {
 
         var error = sinon.spy(app.logger, 'error');
 
@@ -79,7 +89,7 @@ describe('favorite field', function() {
         loadTemplate.restore();
     });
 
-    it("should not render doesnt not have id", function() {
+    it('should not render doesnt not have id', function() {
 
         var loadTemplate = sinon.stub(field, '_loadTemplate', function() {
             this.template = function() {
@@ -96,7 +106,7 @@ describe('favorite field', function() {
         loadTemplate.restore();
     });
 
-    describe("toggle favorite", function() {
+    describe('toggle favorite', function() {
 
         var templateFavoriteIsActive   = '<button type="button" class="btn btn-invisible active"><i class="fa fa-favorite"></i></button>',
             templateFavoriteIsInactive = '<button type="button" class="btn btn-invisible"><i class="fa fa-favorite"></i></button>',
@@ -185,18 +195,18 @@ describe('favorite field', function() {
             errorSpy.restore();
         });
 
-        describe("trigger 'favorite:active' on context", function() {
+        describe('trigger `favorite:active` on context', function() {
             var triggerSpy;
 
             beforeEach(function() {
-                triggerSpy = sinon.spy(field.model, "trigger");
+                triggerSpy = sinon.spy(field.model, 'trigger');
             });
 
             afterEach(function() {
                 triggerSpy.restore();
             });
 
-            it("Should trigger the favorite:active event on the context when favorite an unfavorite record.", function() {
+            it('Should trigger the favorite:active event on the context when favorite an unfavorite record.', function() {
                 loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
                     this.template = function() {
                         return templateFavoriteIsInactive;
@@ -207,11 +217,11 @@ describe('favorite field', function() {
                 field.model = model;
                 field.render();
 
-                field.$(".btn").trigger("click");
-                expect(triggerSpy.calledWithExactly("favorite:active")).toBeTruthy();
+                field.$('.btn').trigger('click');
+                expect(triggerSpy.calledWithExactly('favorite:active')).toBeTruthy();
             });
 
-            it("Should not trigger the favorite:active event on the context when unfavorite a favorite record.", function() {
+            it('Should not trigger the favorite:active event on the context when unfavorite a favorite record.', function() {
                 loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
                     this.template = function() {
                         return templateFavoriteIsActive;
@@ -222,8 +232,8 @@ describe('favorite field', function() {
                 field.model = model;
                 field.render();
 
-                field.$(".btn").trigger("click");
-                expect(triggerSpy.neverCalledWith("favorite:active")).toBeTruthy();
+                field.$('.btn').trigger('click');
+                expect(triggerSpy.neverCalledWith('favorite:active')).toBeTruthy();
             });
         });
     });

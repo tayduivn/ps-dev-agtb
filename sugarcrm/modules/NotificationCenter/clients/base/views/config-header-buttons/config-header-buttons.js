@@ -16,11 +16,16 @@
 ({
     extendsFrom: 'ConfigHeaderButtonsView',
 
+    titleLabel: '',
+
     initialize: function(options) {
         this.events = _.extend({}, this.events, {
             'click a[name=reset_all_button]': 'resetConfig'
         });
         this._super('initialize', [options]);
+        this.titleLabel = (this.model.get('configMode') !== 'user') ?
+            'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' :
+            'LBL_CONFIG_TITLE_MODULE_SETTINGS';
     },
 
     /**

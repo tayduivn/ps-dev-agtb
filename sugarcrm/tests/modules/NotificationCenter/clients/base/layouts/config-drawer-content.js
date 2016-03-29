@@ -80,6 +80,7 @@ describe('NotificationCenter.Layout.ConfigDrawerContent', function() {
         beforeEach(function() {
             layout.currentHowToData = {};
             module = layout.module;
+            layout.model.set('configMode', 'user');
         });
 
         it('should set currentHowToData properly for Carriers', function() {

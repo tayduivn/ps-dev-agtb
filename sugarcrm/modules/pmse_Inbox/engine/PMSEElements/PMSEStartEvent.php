@@ -79,10 +79,6 @@ class PMSEStartEvent extends PMSEEvent
         $moduleName = $bean->module_name;
         $objectId = $bean->id;
 
-        //autoincrement, if cas_title is empty we need to update after the insert
-        $cas_id = 0;
-        $updateCaseWithNumber = false;
-
         $today = TimeDate::getInstance()->nowDb();
         $_date = TimeDate::getInstance()->getNow()->add(new DateInterval('P2D'));
         $dueDate = $_date->asDb();
@@ -95,7 +91,7 @@ class PMSEStartEvent extends PMSEEvent
         $processBean = BeanFactory::getBean('pmse_BpmnProcess', $pro_id); //new BpmnProcess();
 
         if (!$processBean->fetched_row) {
-            $this->logger->error("[$cas_id][1] process name not found using Process Number: $pro_id");
+            $this->logger->error("[0][1] process name not found using Process Number: $pro_id");
             //$this->bpmLog('ERROR', "[$cas_id][1] process name not found using Process Id: $pro_id");
             $pro_title = 'unknown';
         } else {
@@ -112,6 +108,7 @@ class PMSEStartEvent extends PMSEEvent
             }
         }
 
+        $updateCaseWithNumber = false;
         if (isset($bean->name) && (trim($bean->name) != '')) {
             $cas_title = $bean->name;
         } elseif ($this->isDocumentBean($bean)) {
@@ -123,19 +120,9 @@ class PMSEStartEvent extends PMSEEvent
             $updateCaseWithNumber = true;
         }
 
-        //TODO this is for work, remove after solutions
-        $sql = 'select max(cas_id) as cas_id from pmse_inbox';
-        $case_aux = $this->dbHandler->Query($sql);
-        $row_aux = $this->dbHandler->fetchByAssoc($case_aux);
-        if (is_array($row_aux)) {
-            $cas_id_aux = (int)$row_aux['cas_id'] + 1;
-        } else {
-            $cas_id_aux = 1;
-        }
         //create a ProcessMaker row
         $case = BeanFactory::getBean('pmse_Inbox'); //new BpmInbox();
         $case->name = $cas_title;
-        $case->cas_id = $cas_id; //0 value for autoincrement
         $case->cas_parent = 0;
         $case->cas_status = 'IN PROGRESS';
         $case->cas_title = $cas_title;
@@ -152,12 +139,14 @@ class PMSEStartEvent extends PMSEEvent
 
         $case->save();
 
+        $cas_id = $case->db->getOne(sprintf(
+            'SELECT cas_id FROM %s WHERE id = %s',
+            $case->getTableName(),
+            $case->db->quoted($case->id)
+        ));
+        $case->cas_id = $cas_id;
+
         if (!$case->in_save) {
-            if (empty($case->cas_id)) {
-                $cas_id = $cas_id_aux;
-            } else {
-                $cas_id = $case->cas_id;
-            }
             if ($updateCaseWithNumber) {
                 $case->cas_title = "Process # $cas_id";
                 $case->new_with_id = false;

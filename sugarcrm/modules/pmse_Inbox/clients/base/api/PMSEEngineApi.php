@@ -1038,7 +1038,7 @@ class PMSEEngineApi extends SugarApi
                 $row['cas_user_full_name'] = $usersBean->full_name;
                 $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
                 $row['prj_id']=$processBean->prj_id;
-                $prjUsersBean = BeanFactory::getBean('Users', $processBean->created_by);
+                $prjUsersBean = BeanFactory::getBean('Users', $processBean->assigned_user_id);
                 $row['prj_user_id_full_name'] = $prjUsersBean->full_name;
                 $row['cas_sugar_object_id']=$arrayCases[$arrayId]['cas_sugar_object_id'];
                 $row['cas_sugar_module']=$arrayCases[$arrayId]['cas_sugar_module'];

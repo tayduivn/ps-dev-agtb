@@ -10,7 +10,12 @@
  */
 ({
 
+    /**
+     * @deprecated Since 7.8. Will be removed in 7.10
+     * @param options
+     */
     initialize: function(options) {
+        app.logger.warn('View.Views.Base.pmse_Inbox.ShowCaseView is deprecated. It will be removed in 7.10');
         this.inboxId = options.context.attributes.modelId;
         this.flowId = options.context.attributes.action;
         app.routing.before('route', this.beforeRouteChange, this);

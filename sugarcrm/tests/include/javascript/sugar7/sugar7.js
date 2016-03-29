@@ -3,9 +3,6 @@ describe('Sugar7.Routes', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.controller.loadAdditionalComponents(app.config.additionalComponents);
-        //FIXME: SC-4677, load additionalComponents in tests
-        //"Before Route Show Wizard Check" dependency
         loadViewStub = sinon.collection.stub(app.controller, 'loadView');
         buildKeyStub = sinon.collection.stub(app.user.lastState, 'buildKey');
         getStub = sinon.collection.stub(app.user.lastState, 'get');
@@ -77,11 +74,15 @@ describe('Sugar7.Routes', function() {
         var hasAccessStub;
 
         beforeEach(function() {
+            app.controller.$el.append('<div id="header"></div>');
+            app.controller.loadAdditionalComponents(app.config.additionalComponents);
             hasAccessStub = sinon.stub(app.acl, 'hasAccess');
             hasAccessStub.returns(true);
         });
 
         afterEach(function() {
+            app.additionalComponents = {};
+            app.controller.$el.empty();
             hasAccessStub.restore();
             app.user.unset('show_wizard', {silent: true});
         });
