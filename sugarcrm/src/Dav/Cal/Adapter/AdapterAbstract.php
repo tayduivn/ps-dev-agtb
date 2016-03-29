@@ -136,7 +136,18 @@ abstract class AdapterAbstract implements AdapterInterface
 
         $changedFields = array_intersect_key($changedFields, $changedFieldsFilter);
 
-        if (!$changedFields && !$changedInvitees) {
+        foreach ($changedInvitees as $inviteeAction => &$invitees) {
+            foreach ($invitees as $key => $invitee) {
+                if ($invitee[1] == $bean->created_by && $invitee[0] == 'Users') {
+                    unset($invitees[$key]);
+                }
+            }
+            if (!$changedInvitees[$inviteeAction]) {
+                unset($changedInvitees[$inviteeAction]);
+            }
+        }
+
+        if (!$changedFields && !$changedInvitees || ($bean->deleted && $action == 'update')) {
             return false;
         }
 
@@ -175,7 +186,10 @@ abstract class AdapterAbstract implements AdapterInterface
             return static::NOTHING;
         }
 
-        if ((isset($recurringParam['repeat_type']) || $rootBeanId) && $collection->addIdToSugarChildrenOrder($beanId)) {
+        if ((isset($recurringParam['repeat_type']) || $rootBeanId) &&
+            $action == 'override' &&
+            $collection->addIdToSugarChildrenOrder($beanId)
+        ) {
             $isChanged = true;
         }
 
@@ -282,7 +296,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        if ($isChanged) {
+        if ($isChanged && $event->getStartDate()) {
             return static::SAVE;
         }
         return static::NOTHING;
@@ -917,6 +931,10 @@ abstract class AdapterAbstract implements AdapterInterface
         }
         $recurrenceId = array_slice($recurrenceIds, $eventIndex, 1);
         $recurrenceId = current($recurrenceId);
+
+        if (!$recurrenceId) {
+            return null;
+        }
 
         return $collection->getChild($recurrenceId);
     }
