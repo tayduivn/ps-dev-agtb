@@ -10,7 +10,19 @@
  */
 ({
     extendsFrom: 'ConfigPanelView',
+
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         this._super('initialize', [options]);
-    },
+
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field, fieldKey) {
+                if (this.context.get('section') !== 'user') {
+                    panel.fields[fieldKey].description += '_ADMIN';
+                }
+            }, this);
+        }, this);
+    }
 })

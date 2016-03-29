@@ -23,6 +23,16 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.titleLabel = (this.context.get('section') !== 'user') ?
+            'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' :
+            'LBL_CONFIG_TITLE_MODULE_SETTINGS';
+    },
+
+    /**
      * Save the drawer.
      *
      * @private
