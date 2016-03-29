@@ -207,11 +207,13 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
             expect(testIntervalMethodStub).toHaveBeenCalled();
         });
 
-        it('should check that the method to select the interval and default the leaf set the model correctly', function() {
-            spyOn($.fn, 'val').andReturn('Annual');
-            intervalField._updateIntervals({target: 'timeperiod_interval'}, {selected: 'Annual'});
-            expect(view.model.get('timeperiod_interval')).toEqual('Annual');
-            expect(view.model.get('timeperiod_leaf_interval')).toEqual('Quarter');
-        });
+        it('should check that the method to select the interval and default the leaf set the model correctly',
+            function() {
+                spyOn($.fn, 'val').andReturn('Annual');
+                intervalField._updateIntervals({target: 'timeperiod_interval'}, {selected: 'Annual'});
+                expect(view.model.get('timeperiod_interval')).toEqual('Annual');
+                expect(view.model.get('timeperiod_leaf_interval')).toEqual('Quarter');
+            }
+        );
     });
 });
