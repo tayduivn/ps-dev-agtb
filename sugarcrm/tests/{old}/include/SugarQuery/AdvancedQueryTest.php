@@ -27,17 +27,15 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     protected $accounts = array();
     protected $up = true;
 
-    static public function setupBeforeClass()
+    public static function setUpBeforeClass()
     {
+        parent::setUpBeforeClass();
+
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-    }
-
-    static public function tearDownAfterClass()
-    {
-        SugarTestHelper::tearDown();
+        SugarTestHelper::setUp('dictionary');
     }
 
     public function setUp()
@@ -108,11 +106,6 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
                 );
             }
         }
-
-        if (!empty($GLOBALS['dictionary']['Contact_Mock_Bug62961'])) {
-            unset($GLOBALS['dictionary']['Contact_Mock_Bug62961']);
-        }
-
     }
 
     public function testSelectInWhere()
@@ -402,7 +395,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         // custom field
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
         $contact = BeanFactory::getBean("Contacts");
-        $GLOBALS['dictionary']['Contact_Mock_Bug62961']['fields'] = $contact->field_defs;
+        $GLOBALS['dictionary']['Contact']['fields'] = $contact->field_defs;
         $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
         $this->assertTrue($contact->hasCustomFields());
 
