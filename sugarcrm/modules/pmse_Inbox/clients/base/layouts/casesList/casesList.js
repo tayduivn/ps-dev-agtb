@@ -14,7 +14,7 @@
      * @extends Layout
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['ProcessAuthorActions']);
+        this.plugins = _.union(this.plugins || [], ['ProcessActions']);
         app.view.Layout.prototype.initialize.call(this, options);
         this.collection.sync = this.sync;
 //        this.collection.allowed_modules = ['Cases Title', 'Process Name', 'Status', 'Owner'];
