@@ -11,6 +11,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @coversDefaultClass BeanFactory
+ */
 class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
@@ -27,8 +30,9 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
-    }
 
+        BeanFactory::unsetBeanClass();
+    }
 
     /**
      * Create a new account and bug, then link them.
@@ -198,6 +202,25 @@ class BeanFactoryTest extends Sugar_PHPUnit_Framework_TestCase
                 false,
             ),
         );
+    }
+
+    /**
+     * @covers ::setBeanClass()
+     */
+    public function testSetBeanClass()
+    {
+        $this->assertEquals('Contact', BeanFactory::getObjectName('Contacts'));
+        $this->assertEquals('Contact', BeanFactory::getBeanClass('Contacts'));
+
+        BeanFactory::setBeanClass('Contacts', 'MyContact');
+
+        $this->assertEquals('Contact', BeanFactory::getObjectName('Contacts'));
+        $this->assertEquals('MyContact', BeanFactory::getBeanClass('Contacts'));
+
+        BeanFactory::unsetBeanClass('Contacts');
+
+        $this->assertEquals('Contact', BeanFactory::getObjectName('Contacts'));
+        $this->assertEquals('Contact', BeanFactory::getBeanClass('Contacts'));
     }
 }
 

@@ -30,7 +30,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSubscribedUsers()
     {
-        $kls = BeanFactory::getBeanName('Subscriptions');
+        $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::getSubscribedUsers($this->record);
         $this->assertInternalType('array', $return);
         $this->assertCount(0, $return);
@@ -47,7 +47,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSubscribedRecords()
     {
-        $kls = BeanFactory::getBeanName('Subscriptions');
+        $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::getSubscribedRecords($this->user);
         $this->assertInternalType('array', $return);
         $this->assertCount(0, $return);
@@ -64,7 +64,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckSubscription()
     {
-        $kls = BeanFactory::getBeanName('Subscriptions');
+        $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::checkSubscription($this->user, $this->record);
         $this->assertNull($return, "A subscription shouldn't exist for a new record.");
 
@@ -78,7 +78,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSubscribeUserToRecord()
     {
-        $kls = BeanFactory::getBeanName('Subscriptions');
+        $kls = BeanFactory::getBeanClass('Subscriptions');
         $return = $kls::subscribeUserToRecord($this->user, $this->record);
         // Expect a Subscription bean GUID if we're creating the subscription.
         $this->assertInternalType('string', $return);
@@ -109,7 +109,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+        $subscriptionsBeanName = BeanFactory::getBeanClass('Subscriptions');
         $subscriptionsBeanName::addActivitySubscriptions($data);
         $activity->load_relationship('activities_users');
         $expected = array($this->user->id);

@@ -281,7 +281,7 @@ class Activity extends Basic
         if (empty($this->parent_type)) {
             return true;
         }
-        $aclActionBeanName = BeanFactory::getBeanName('ACLActions');
+        $aclActionBeanName = BeanFactory::getBeanClass('ACLActions');
         return $aclActionBeanName::userHasAccess($userId, $this->parent_type, 'view');
     }
 
@@ -346,7 +346,7 @@ class Activity extends Basic
     {
         if (isset($this->parent_type) && isset($this->parent_id)) {
             $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-            $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+            $subscriptionsBeanName = BeanFactory::getBeanClass('Subscriptions');
             $this->processRecord($bean);
             $subscriptionsBeanName::processSubscriptions($bean, $this, array());
         } else {

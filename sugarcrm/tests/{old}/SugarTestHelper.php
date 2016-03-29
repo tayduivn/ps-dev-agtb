@@ -1104,7 +1104,7 @@ class SugarTestHelper
         VardefManager::$linkFields = array();
         VardefManager::clearVardef();
         foreach ($modules as $module) {
-            VardefManager::refreshVardefs($module, BeanFactory::getBeanName($module));
+            VardefManager::refreshVardefs($module, BeanFactory::getBeanClass($module));
         }
         SugarRelationshipFactory::rebuildCache();
 

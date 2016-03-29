@@ -71,7 +71,7 @@ class BeanFactory {
             self::$touched[$module] = array();
         }
 
-        $beanClass = self::getBeanName($module);
+        $beanClass = self::getBeanClass($module);
 
         if (empty($beanClass) || !class_exists($beanClass)) return null;
 
@@ -228,7 +228,7 @@ class BeanFactory {
      * @param string $module
      * @return string|false
      */
-    public static function getBeanName($module)
+    public static function getBeanClass($module)
     {
         if(!empty(self::$bean_classes[$module])) {
             return self::$bean_classes[$module];
@@ -242,6 +242,18 @@ class BeanFactory {
     }
 
     /**
+     * Get bean class name by module name
+     *
+     * @param string $module
+     * @return string|false
+     * @deprecated Use self::getBeanClass() instead
+     */
+    public static function getBeanName($module)
+    {
+        return self::getBeanClass($module);
+    }
+
+    /**
      * Returns the object name / dictionary key for a given module. This should normally
      * be the same as the bean name, but may not for special case modules (ex. Case vs aCase)
      * @static
@@ -252,7 +264,7 @@ class BeanFactory {
     {
         global $objectList;
         if (empty($objectList[$module]))
-            return self::getBeanName($module);
+            return self::getBeanClass($module);
 
         return $objectList[$module];
     }
@@ -423,10 +435,30 @@ class BeanFactory {
      */
     public static function setBeanClass($module, $klass = null)
     {
+        global $beanList;
+        global $objectList;
+
         if(empty($klass)) {
+            self::unsetBeanClass($module);
+        } else {
+            if (!isset($objectList[$module]) && isset($beanList[$module])) {
+                $objectList[$module] = $beanList[$module];
+            }
+            self::$bean_classes[$module] = $klass;
+        }
+    }
+
+    /**
+     * Removes overridden module's class
+     *
+     * @param string|null $module
+     */
+    public static function unsetBeanClass($module = null)
+    {
+        if ($module) {
             unset(self::$bean_classes[$module]);
         } else {
-            self::$bean_classes[$module] = $klass;
+            self::$bean_classes = array();
         }
     }
 }

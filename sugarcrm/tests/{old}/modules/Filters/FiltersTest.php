@@ -58,7 +58,7 @@ class FiltersTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetOperators()
     {
-        $filters = BeanFactory::getBeanName('Filters');
+        $filters = BeanFactory::getBeanClass('Filters');
         $operators = $filters::getOperators();
 
         $this->assertArrayHasKey('enum', $operators, 'It should contain "enum" field type');
@@ -80,7 +80,7 @@ class FiltersTest extends Sugar_PHPUnit_Framework_TestCase
 EOQ;
         $this->generateOperatorsFile($generatedFile, $fakeMeta);
 
-        $filters = BeanFactory::getBeanName('Filters');
+        $filters = BeanFactory::getBeanClass('Filters');
         $operators = $filters::getOperators();
 
         $this->assertArrayHasKey('enum', $operators, 'It should contain "enum" field type');
@@ -102,7 +102,7 @@ EOQ;
 EOQ;
         $this->generateOperatorsFile($generatedFile, $fakeMeta);
 
-        $filters = BeanFactory::getBeanName('Filters');
+        $filters = BeanFactory::getBeanClass('Filters');
         $operators = $filters::getOperators('latrop');
 
         $this->assertArrayNotHasKey('enum', $operators, 'It should not contain "enum" field type');
@@ -124,7 +124,7 @@ EOQ;
 EOQ;
         $this->generateOperatorsFile($generatedFile, $fakeMeta);
 
-        $filters = BeanFactory::getBeanName('Filters');
+        $filters = BeanFactory::getBeanClass('Filters');
         $operators = $filters::getOperators('latrop');
 
         $this->assertArrayNotHasKey('enum', $operators, 'It should not contain "enum" field type');

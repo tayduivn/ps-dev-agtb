@@ -266,7 +266,7 @@ class TemplateRelatedTextField extends TemplateText{
         if (!$df->fieldExists($this->name)) {
 	    	$id = new TemplateId();
 	        $id->len = 36;
-            $id->label = strtoupper("LBL_{$this->name}_".BeanFactory::getBeanName($this->ext2)."_ID");
+            $id->label = strtoupper("LBL_{$this->name}_".BeanFactory::getBeanClass($this->ext2)."_ID");
             $id->vname = $id->label;
             $this->saveIdLabel($id->label, $df);
 

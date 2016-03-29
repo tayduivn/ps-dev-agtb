@@ -2707,7 +2707,7 @@ class SugarBean
                     return $this->$lower_link->add($new_rel_id);
                 } //Check if the $new_rel_id was a
                 else {
-                    if (BeanFactory::getBeanName($new_rel_id)) {
+                    if (BeanFactory::getBeanClass($new_rel_id)) {
                         $GLOBALS['log']->fatal("A request is attempting to relate two records by module name rather than link");
 
                         $rels = SugarRelationshipFactory::getInstance()->getRelationshipsBetweenModules($new_rel_id, $this->module_dir, "many-to-many");

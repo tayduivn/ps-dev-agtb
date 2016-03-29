@@ -56,7 +56,7 @@ class ActivityQueueManager
             // join table. This has been moved to the job queue as it's a
             // potentially slow operation.
             if ($eventTriggered) {
-                $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+                $subscriptionsBeanName = BeanFactory::getBeanClass('Subscriptions');
                 $subscriptionsBeanName::processSubscriptions($bean, $activity, $args, array('disable_row_level_security' => true));
             }
         }
@@ -536,7 +536,7 @@ class ActivityQueueManager
      */
     protected function subscribeUserToRecord(User $user, SugarBean $bean)
     {
-        $subs = BeanFactory::getBeanName('Subscriptions');
+        $subs = BeanFactory::getBeanClass('Subscriptions');
         $subs::subscribeUserToRecord($user, $bean, array('disable_row_level_security' => true));
     }
 }

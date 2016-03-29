@@ -98,6 +98,6 @@ class ModuleNameValidator extends BeanModuleNameValidator
      */
     protected function isValidBeanModule($module)
     {
-        return \BeanFactory::getBeanName($module) ? true : false;
+        return \BeanFactory::getBeanClass($module) ? true : false;
     }
 }

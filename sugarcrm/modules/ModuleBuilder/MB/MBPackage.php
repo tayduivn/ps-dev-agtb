@@ -1025,8 +1025,7 @@ function buildInstall($path){
      */
     protected function getExtensionsList($module, $includeRelationships = true)
     {
-        if (BeanFactory::getBeanName($module) === false)
-        {
+        if (BeanFactory::getBeanClass($module) === false) {
             return array();
         }
         
@@ -1223,8 +1222,7 @@ function buildInstall($path){
      */
     protected function getCustomRelationshipsByModuleName($moduleName, $lhs = false)
     {
-        if (BeanFactory::getBeanName($moduleName) === false)
-        {
+        if (BeanFactory::getBeanClass($moduleName) === false) {
             return false;
         }
         

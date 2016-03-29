@@ -1396,7 +1396,7 @@ eoq;
 		global $current_language;
 
         $module   = $_REQUEST['qc_module'];
-        $beanName = BeanFactory::getBeanName($module);
+        $beanName = BeanFactory::getBeanClass($module);
 
 		//Setup the current module languge
 		$mod_strings = return_module_language($current_language, $module);

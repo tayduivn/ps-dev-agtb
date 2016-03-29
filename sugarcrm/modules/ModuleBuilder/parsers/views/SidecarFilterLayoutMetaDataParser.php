@@ -50,7 +50,7 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
 
         $this->columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_HIDDEN' => 'getAvailableFields');
 
-        $filterBeanClass = BeanFactory::getBeanName('Filters');
+        $filterBeanClass = BeanFactory::getBeanClass('Filters');
         $this->operators = $filterBeanClass::getOperators($client);
     }
 

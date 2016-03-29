@@ -58,6 +58,6 @@ class ModuleNameValidator extends ConstraintValidator
      */
     protected function isValidModule($module)
     {
-        return \BeanFactory::getBeanName($module) ? true : false;
+        return \BeanFactory::getBeanClass($module) ? true : false;
     }
 }
