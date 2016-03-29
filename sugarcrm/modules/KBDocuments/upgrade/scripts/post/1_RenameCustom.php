@@ -314,7 +314,7 @@ class SugarUpgradeRenameCustom extends UpgradeScript
     {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
-                $array[$key] = $this->moveKBDocumentsToKBContents($value, &$array_modified_flag);
+                $array[$key] = $this->moveKBDocumentsToKBContents($value, $array_modified_flag);
                 if ($key === 'KBDocuments') {
                     $array['KBContents'] = $array['KBDocuments'];
                     unset($array['KBDocuments']);
