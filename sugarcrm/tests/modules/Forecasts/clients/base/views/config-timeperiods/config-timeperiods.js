@@ -39,6 +39,12 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
             }]
         };
 
+        sinon.stub(app.user, 'getPreference', function(pref) {
+            if (pref == 'datepref') {
+                return 'MM/DD/YYYY';
+            }
+        });
+
         options = {
             context: context,
             meta: meta
@@ -50,6 +56,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
     });
 
     afterEach(function() {
+        app.user.getPreference.restore();
         sinon.collection.restore();
         view = null;
     });
@@ -65,7 +72,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
 
         it('should set this.tpStartDate', function() {
             view.initialize(options);
-            expect(view.tpStartDate).toEqual(app.date('01/01/2014'));
+            expect(view.tpStartDate).toEqual(app.date('01/01/2014', 'MM/DD/YYYY'));
         });
     });
 
@@ -74,7 +81,7 @@ describe('Forecasts.View.ConfigTimeperiods', function() {
             view.initialize(options);
 
             sinon.collection.stub(view.tpStartDate, 'formatUser', function() {
-                return app.date(view.tpStartDate).format('MM/DD/YYYY');
+                return app.date(view.tpStartDate, 'MM/DD/YYYY').format('MM/DD/YYYY');
             });
 
             view._updateTitleValues();
