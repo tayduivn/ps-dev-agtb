@@ -1832,7 +1832,8 @@ function getXMLHTTPinstance() {
 // NOW LOAD THE OBJECT..
 var global_xmlhttp = getXMLHTTPinstance();
 
-function http_fetch_sync(url,post_data) {
+function http_fetch_sync(url, post_data, headers) {
+    headers = headers || {};
 	global_xmlhttp = getXMLHTTPinstance();
 	var method = 'GET';
 
@@ -1843,9 +1844,13 @@ function http_fetch_sync(url,post_data) {
 	catch(e) {
 		alert('message:'+e.message+":url:"+url);
 	}
-	if(method == 'POST') {
-		global_xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    if (method == 'POST' && typeof(headers['Content-Type']) === 'undefined') {
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
 	}
+
+    for (var header in headers) {
+        global_xmlhttp.setRequestHeader(header, headers[header]);
+    }
 
 	global_xmlhttp.send(post_data);
 
