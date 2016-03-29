@@ -125,8 +125,8 @@ class ArchivedEmailsLink extends Link2
             $jta = $joinParams['alias'] = $options['joinTableAlias'];
         }
 
-        if (!empty($options['join_table_alias'])) {
-            $fromAlias = $options['join_table_alias'];
+        if (!empty($options['myAlias'])) {
+            $fromAlias = $options['myAlias'];
         } else {
             $fromAlias = 'emails';
         }

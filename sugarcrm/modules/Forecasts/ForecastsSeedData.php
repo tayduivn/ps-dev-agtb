@@ -286,7 +286,7 @@ class ForecastsSeedData
 
         $link_name = ($forecast_by == 'RevenueLineItems') ? 'account_link' : 'accounts';
         $bean->load_relationship($link_name);
-        $bean->$link_name->buildJoinSugarQuery($sq, array('joinTableAlias', 'account'));
+        $bean->$link_name->buildJoinSugarQuery($sq, array('joinTableAlias' => 'account'));
         $sq->select(array('account.id', 'account_id'));
 
         $beans = $sq->execute();
