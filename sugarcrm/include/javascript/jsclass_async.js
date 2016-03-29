@@ -192,12 +192,15 @@ SugarRPCClient.prototype.call_method = function(method, args, synchronous) {
 
     try {
         if (synchronous) {
-            result = http_fetch_sync(this.serviceURL, post_data);
+            result = http_fetch_sync(this.serviceURL, post_data, {'Content-Type': 'application/json'});
             result = YAHOO.lang.JSON.parse(result.responseText).result;
             return result;
         } else { // asynchronous call
             // note: Unfortunately we don't have a separate error handler and it is built into the method_callback. Maybe a future todo.
+            YAHOO.util.Connect.initHeader('Content-Type', 'application/json', true);
+            YAHOO.util.Connect.setDefaultPostHeader(false);
             transaction = YAHOO.util.Connect.asyncRequest('POST', this.serviceURL, {success: method_callback, failure: method_callback}, post_data);
+            YAHOO.util.Connect.resetDefaultHeaders();
             return transaction.tId;
         }
     } catch(e) { // error before calling server
