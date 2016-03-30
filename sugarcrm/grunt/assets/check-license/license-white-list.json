@@ -2,6 +2,7 @@
     "excludedFiles": [
         "sidecar/lib/",
         "include/javascript/yui3/",
-        "styleguide/less/twitter-bootstrap"
+        "styleguide/less/twitter-bootstrap",
+        "LICENSE"
     ]
 }
