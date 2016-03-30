@@ -12,6 +12,8 @@
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSERelatedModule
 {
     /**
@@ -52,7 +54,7 @@ class PMSERelatedModule
     {
         $bean = BeanFactory::getBean($module);
         if (empty($bean))
-            throw new Exception("No bean for module $module");
+            throw ProcessManager\Factory::getException('InvalidData', "No bean for module $module");
         return $bean;
     }
 
@@ -60,7 +62,7 @@ class PMSERelatedModule
     {
         $bean = BeanFactory::newBean($module);
         if (empty($bean))
-            throw new Exception("No bean for module $module");
+            throw ProcessManager\Factory::getException('InvalidData', "No bean for module $module");
         return $bean;
     }
 
@@ -68,10 +70,10 @@ class PMSERelatedModule
     {
         $fieldName = $linkField;
         if (empty($moduleBean->field_defs[$fieldName]))
-            throw new Exception("Unable to find field {$fieldName}");
+            throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}");
 
         if(!$moduleBean->load_relationship($fieldName))
-            throw new Exception("Unable to load relationship $fieldName");
+            throw ProcessManager\Factory::getException('InvalidData', "Unable to load relationship $fieldName");
 
         $relatedBean = $moduleBean->$fieldName->getBeans(array('limit' => 1));
 
@@ -87,7 +89,7 @@ class PMSERelatedModule
         $moduleBean = $this->newBean($moduleBeanName);
 
         if (!$moduleBean->load_relationship($linkField))
-            throw new Exception("Unable to load relationship $linkField");
+            throw ProcessManager\Factory::getException('InvalidData', "Unable to load relationship $linkField");
 
         if (!empty($moduleBean->field_defs[$linkField])) {
             $moduleName = $moduleBean->$linkField->getRelatedModuleName();
@@ -226,10 +228,10 @@ class PMSERelatedModule
     {
         $fieldName = $linkField;
         if (empty($moduleBean->field_defs[$fieldName]))
-            throw new Exception("Unable to find field {$fieldName}");
+            throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}");
 
         if(!$moduleBean->load_relationship($fieldName))
-            throw new Exception("Unable to load relationship $fieldName");
+            throw ProcessManager\Factory::getException('InvalidData', "Unable to load relationship $fieldName");
 
         $rModule = $moduleBean->$fieldName->getRelatedModuleName();
 

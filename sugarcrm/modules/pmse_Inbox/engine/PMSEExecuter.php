@@ -391,7 +391,6 @@ class PMSEExecuter
             $this->validateFailSafes($flowData, $executionData);
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
         } catch (PMSEElementException $e) {
-            $this->logger->alert($e->getMessage());
             $element = $e->getElement();
             $flow = $e->getFlowData();
             $state = (empty($flow['id'])) ? 'CREATE' : 'UPDATE';
@@ -400,7 +399,6 @@ class PMSEExecuter
             $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
             $routeData = $this->flowRouter->routeFlow($executionData, $flowData, $createThread);
         } catch (Exception $e) {
-            $this->logger->alert($e->getMessage());
             $element = $this->retrievePMSEElement('');
             $status = $e->getCode() == 0 ? 'QUEUE' : 'ERROR';
             $preparedData['cas_flow_status'] = $status;
@@ -516,7 +514,7 @@ class PMSEExecuter
         }
         $remain = $this->executionTime > $maxExecutionTime;
         if ($remain) {
-            throw new Exception("Script execution is taking too much time", 0);
+            throw ProcessManager\Factory::getException('Execution', "Script execution is taking too much time", 0);
         } else {
             return $this->executionTime;
         }
@@ -543,7 +541,7 @@ class PMSEExecuter
             $limit = $this->maxExecutionCycleNumber;
 
             if ($count > $limit) {
-                throw new Exception("Nested loops limit of {$limit} reached", 1);
+                throw ProcessManager\Factory::getException('Execution', "Nested loops limit of {$limit} reached", 1);
             } else {
                 return $count;
             }

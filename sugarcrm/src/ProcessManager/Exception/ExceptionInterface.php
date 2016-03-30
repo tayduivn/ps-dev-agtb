@@ -19,3 +19,4 @@ namespace Sugarcrm\Sugarcrm\ProcessManager\Exception;
 interface ExceptionInterface
 {
 }
+

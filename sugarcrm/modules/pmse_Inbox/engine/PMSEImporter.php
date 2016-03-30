@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Class ADAMImporterImport a record from a file encryption
@@ -138,17 +139,25 @@ class PMSEImporter
         $_data = $this->getDataFile($file);
         if ($this->isPAOldVersionFile($_data)) {
             LoggerManager::getLogger()->fatal('PA Unsupported file. The version of this file is not currently supported.');
-            throw new SugarApiExceptionRequestMethodFailure('ERROR_PA_UNSUPPORTED_FILE');
+            $sugarApiExceptionRequestMethodFailure = new SugarApiExceptionRequestMethodFailure(
+                'ERROR_PA_UNSUPPORTED_FILE'
+            );
+            PMSELogger::getInstance()->alert($sugarApiExceptionRequestMethodFailure->getMessage());
+            throw $sugarApiExceptionRequestMethodFailure;
         }
         $project = json_decode($_data, true);
         if (!empty($project) && isset($project['project'])) {
             if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
                 $result = $this->saveProjectData($project['project']);
             } else {
-                throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         } else {
-            throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+            $sugarApiExceptionRequestMethodFailure = new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+            PMSELogger::getInstance()->alert($sugarApiExceptionRequestMethodFailure->getMessage());
+            throw $sugarApiExceptionRequestMethodFailure;
         }
         return $result;
     }

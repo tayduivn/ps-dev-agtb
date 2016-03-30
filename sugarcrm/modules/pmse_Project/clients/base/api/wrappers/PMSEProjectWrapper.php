@@ -15,6 +15,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
+require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
@@ -835,7 +839,10 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 //            $this->diagram->fetched_row['data'] = $retrievedData;
             array_push($diagramData, $this->diagram->fetched_row);
         } else {
-            throw new SugarApiException('Invalid Process Definiton', 500);
+
+            $sugarApiException = new SugarApiException('Invalid Process Definiton', 500);
+            PMSELogger::getInstance()->alert($sugarApiException->getMessage());
+            throw $sugarApiException;
         }
         return $diagramData;
     }
