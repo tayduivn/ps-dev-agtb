@@ -279,11 +279,10 @@ class CalDavEventCollection extends SugarBean
                 return array();
             }
 
-            $maxRecur = DavConstants::MAX_INFINITE_RECCURENCE_COUNT;
-            $endDate = clone $parent->DTSTART->getDateTime();
-            $endDate->modify('+' . $maxRecur . ' day');
-            $end = $it->getDtEnd();
-            while ($it->valid() && $end < $endDate) {
+            $maxRecur = $this->getCalendarEvents()->getRecurringLimit();
+            $isCountable = !$it->isInfinite();
+            $currentChildIndex = 0;
+            while ($it->valid() && ($currentChildIndex < $maxRecur || $isCountable)) {
                 $state = $eventClass::STATE_VIRTUAL;
                 $child = $it->getEventObject();
                 if (!$child->{'RECURRENCE-ID'}) {
@@ -299,7 +298,7 @@ class CalDavEventCollection extends SugarBean
                     $event = new $eventClass($child, $state, $this->getParticipantsLinks());
                     $this->childEvents[$event->getRecurrenceID()->getTimestamp()] = $event;
                 }
-                $end = $it->getDtEnd();
+                $currentChildIndex ++;
                 $it->next();
             }
         }
@@ -746,20 +745,11 @@ class CalDavEventCollection extends SugarBean
                     $this->last_occurence = $this->first_occurence;
                 }
             } else {
-                $it = new VObject\Recur\EventIterator($vObject, $component->UID);
-                $maxRecur = DavConstants::MAX_INFINITE_RECCURENCE_COUNT;
-
-                $endDate = clone $component->DTSTART->getDateTime();
-                $endDate->modify('+' . $maxRecur . ' day');
-                if ($it->isInfinite()) {
-                    $this->last_occurence = $endDate->getTimestamp();
+                $allChildren = $this->getAllChildrenRecurrenceIds();
+                if ($allChildren) {
+                    $this->last_occurence = array_pop(array_keys($allChildren));
                 } else {
-                    $end = $it->getDtEnd();
-                    while ($it->valid() && $end < $endDate) {
-                        $end = $it->getDtEnd();
-                        $it->next();
-                    }
-                    $this->last_occurence = $end->getTimestamp();
+                    $this->last_occurence = $this->first_occurence;
                 }
             }
         }
@@ -1748,5 +1738,15 @@ class CalDavEventCollection extends SugarBean
     public function getCalDavHook()
     {
         return new CalDavHook();
+    }
+
+    /**
+     * Get CalendarEvents objects.
+     *
+     * @return CalendarEvents
+     */
+    public function getCalendarEvents()
+    {
+        return new CalendarEvents();
     }
 }

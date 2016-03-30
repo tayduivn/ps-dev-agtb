@@ -81,6 +81,11 @@ class RecurringHelper
      */
     protected $dateTimeHelper;
 
+    /**
+     * @var \CalendarEvents
+     */
+    protected $calendarEvents;
+
     public function __construct()
     {
         $this->frequencyMap = new StatusMapper\IntervalMap();
@@ -88,6 +93,7 @@ class RecurringHelper
         $this->monthlyDayMap = new StatusMapper\MonthlyDayMap();
         $this->dayPositionMap = new StatusMapper\DayPositionMap();
         $this->dateTimeHelper = new DateTimeHelper();
+        $this->calendarEvents = new \CalendarEvents();
     }
 
     /**
@@ -217,7 +223,7 @@ class RecurringHelper
         }
 
         if (empty($bean->repeat_count) && empty($bean->repeat_until)) {
-            $bean->repeat_count = Constants::MAX_INFINITE_RECCURENCE_COUNT;
+            $bean->repeat_count = $this->calendarEvents->getRecurringLimit();
             $isChanged = true;
         }
 

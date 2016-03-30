@@ -291,7 +291,13 @@ abstract class AdapterAbstract implements AdapterInterface
             if ($recurringParam) {
                 if ($this->setCalDavRecurring($recurringParam, $collection)) {
                     $isChanged = true;
-                    if (!empty($recurringParam['repeat_type'])) {
+                    $collectionChildrenCount = count($collection->getAllChildrenRecurrenceIds());
+                    $sugarChildrenCount = count($collection->getSugarChildrenOrder());
+                    if (!empty($recurringParam['repeat_type']) &&
+                        ($action == 'override' ||
+                            ($action == 'update' && $collectionChildrenCount != $sugarChildrenCount)
+                        )
+                    ) {
                         $collection->setSugarChildrenOrder(array($beanId));
                     }
                 } else {
