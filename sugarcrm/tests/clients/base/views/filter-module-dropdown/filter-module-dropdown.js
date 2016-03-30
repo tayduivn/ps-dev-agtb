@@ -1,18 +1,19 @@
 describe('Base.View.FilterModuleDropdown', function() {
     var view, layout, app;
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-module-dropdown');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
-        layout.filters = app.data.createBeanCollection('Filters', null, { moduleName: 'Cases' });
-        view = SugarTest.createView("base", "Cases", "filter-module-dropdown", null, null, null, layout);
+        layout = SugarTest.createLayout('base', 'Cases', 'filter', {}, null, null, { layout: new Backbone.View() });
+        layout.filters = app.data.createBeanCollection('Filters');
+        layout.filters.setOption('moduleName', 'Cases');
+        view = SugarTest.createView('base', 'Cases', 'filter-module-dropdown', null, null, null, layout);
         view.layout = layout;
     });
 
-    afterEach(function () {
+    afterEach(function() {
         view.dispose();
         layout.dispose();
         SugarTest.testMetadata.dispose();
