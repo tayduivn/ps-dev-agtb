@@ -1328,6 +1328,17 @@ class Importer
                 'opt_out' => false,
             );
 
+            // check for current opt_out and invalid email settings for this email address
+            // if we find any, set them now
+            $db = DBManagerFactory::getInstance();
+            $queryStr = "SELECT opt_out, invalid_email FROM email_addresses WHERE email_address = ".
+                $db->quoted($email_address);
+            $queryResult = $db->query($queryStr);
+
+            if ($row = $db->fetchByAssoc($queryResult)) {
+                $address = array_merge($address, $row);
+            }
+
             // check if there are elements in $attrs after $email_address was shifted from there
             if ($attrs) {
                 $invalid_email = array_shift($attrs);
