@@ -23,6 +23,11 @@ require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
  */
 class PMSEEngineUtils
 {
+    /**
+     * Lists of Process Author supported module names keyed to the module type (target vs related)
+     * @var array
+     */
+    protected static $supportedModules = array();
 
     public static $uploadObject;
 
@@ -1287,12 +1292,14 @@ class PMSEEngineUtils
     }
 
     public static function getSupportedModules ($type = '') {
-        $out = array();
-        $moduleList = self::getStudioModules($type);
-        foreach ($moduleList as $key => $module) {
-            $out[] = $module->module;
+        if (!isset(self::$supportedModules[$type])) {
+            self::$supportedModules[$type] = array();
+            $moduleList = self::getStudioModules($type);
+            foreach ($moduleList as $key => $module) {
+                self::$supportedModules[$type][] = $module->module;
+            }
         }
-        return $out;
+        return self::$supportedModules[$type];
     }
 
     /**
