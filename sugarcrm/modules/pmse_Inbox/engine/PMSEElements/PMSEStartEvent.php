@@ -108,16 +108,15 @@ class PMSEStartEvent extends PMSEEvent
             }
         }
 
-        $updateCaseWithNumber = false;
-        if (isset($bean->name) && (trim($bean->name) != '')) {
-            $cas_title = $bean->name;
-        } elseif ($this->isDocumentBean($bean)) {
-            $cas_title = $bean->document_name;
-        } elseif (isset($bean->user_name) && (trim($bean->user_name) != '')) {
-            $cas_title = $bean->user_name;
-        } else {
+        // Get the name of the record
+        $cas_title = $bean->getRecordName();
+
+        // Used later to determine if we need to add a case number to the title
+        $addCaseNumber = empty($cas_title);
+
+        // If there is no record name, use a generic value because this is required
+        if ($addCaseNumber) {
             $cas_title = "Case without name";
-            $updateCaseWithNumber = true;
         }
 
         //create a ProcessMaker row
@@ -146,12 +145,10 @@ class PMSEStartEvent extends PMSEEvent
         ));
         $case->cas_id = $cas_id;
 
-        if (!$case->in_save) {
-            if ($updateCaseWithNumber) {
-                $case->cas_title = "Process # $cas_id";
-                $case->new_with_id = false;
-                $case->save();
-            }
+        if (!$case->in_save && $addCaseNumber) {
+            $case->cas_title = "Process # $cas_id";
+            $case->new_with_id = false;
+            $case->save();
         }
 
         $flowData = array();
@@ -180,17 +177,5 @@ class PMSEStartEvent extends PMSEEvent
         $flowData['cas_delayed'] = 0;
 
         return $flowData;
-    }
-
-    /**
-     * Documents and File based custom modules uses document_name field as the name field
-     * @param SugarBean $bean
-     * @return boolean
-     */
-    private function isDocumentBean($bean)
-    {
-        return (isset($bean->document_name) && (trim($bean->document_name) != '')
-            && (get_class($bean) == 'Document' || is_subclass_of($bean, "file")));
-
     }
 }
