@@ -13,7 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSERelatedDependencyWrapper
@@ -46,7 +47,7 @@ class PMSERelatedDependencyWrapper
     {
         $this->logger = PMSELogger::getInstance();
         $this->relationship = BeanFactory::getBean('Relationships');
-        $this->relatedModule = new PMSERelatedModule();
+        $this->relatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
     }
 
     /**
@@ -276,7 +277,7 @@ class PMSERelatedDependencyWrapper
 
             // Update 'Process' to ERROR status
             $cas_id = $e->cas_id;
-            $cf = new PMSECaseFlowHandler();
+            $cf = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
             $cf->changeCaseStatus($cas_id, 'TERMINATED');
         }
     }

@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 if (empty($job_strings)) {
     $job_strings = array();
 }
@@ -21,12 +23,10 @@ array_push($job_strings, 'PMSEEngineCron');
 if (!function_exists("PMSEEngineCron")) {
     function PMSEEngineCron()
     {
-        require_once("modules/pmse_Inbox/engine/PMSEHandlers/PMSEHookHandler.php");
-
 //      Calls and Meetings modules uses this session variable on save function,
 //      in order to do not send notification email to the owner. (within Process Author cron)
         $_SESSION['process_author_cron'] = true;
-        $hookHandler = new PMSEHookHandler();
+        $hookHandler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
         $hookHandler->executeCron();
         unset($_SESSION['process_author_cron']);
 
@@ -37,13 +37,10 @@ if (!function_exists("PMSEEngineCron")) {
 if (!function_exists("PMSEJobRun")) {
     function PMSEJobRun($job)
     {
-        require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
-        require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-
         if (!empty($job->data)) {
             $flowData = (array)json_decode($job->data);
             $externalAction = 'RESUME_EXECUTION';
-            $jobQueueHandler = new PMSEJobQueueHandler();
+            $jobQueueHandler = ProcessManager\Factory::getPMSEObject('PMSEJobQueueHandler');
 
             $jobQueueHandler->executeRequest($flowData, false, null, $externalAction);
         }

@@ -12,12 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEExecuter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEPreProcessor
 {
@@ -63,9 +60,9 @@ class PMSEPreProcessor
      */
     private function __construct()
     {
-        $this->executer = new PMSEExecuter();
-        $this->validator = new PMSEValidator();
-        $this->caseFlowHandler = new PMSECaseFlowHandler();
+        $this->executer = ProcessManager\Factory::getPMSEObject('PMSEExecuter');
+        $this->validator = ProcessManager\Factory::getPMSEObject('PMSEValidator');
+        $this->caseFlowHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
         $this->logger = PMSELogger::getInstance();
     }
 
@@ -101,7 +98,7 @@ class PMSEPreProcessor
      */
     public function retrieveRequest($module, $id = null)
     {
-        return new PMSERequest();
+        return ProcessManager\Factory::getPMSEObject('PMSERequest');
     }
 
     /**

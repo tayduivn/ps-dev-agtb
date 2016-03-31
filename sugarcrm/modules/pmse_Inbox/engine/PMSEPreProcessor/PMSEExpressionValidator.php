@@ -12,108 +12,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
 
 /**
  * Description of PMSERecordValidator
  *
  */
-class PMSEExpressionValidator implements PMSEValidate
+class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
 {
-
-    /**
-     *
-     * @var Integer
-     */
-    protected $level;
-
-    /**
-     *
-     * @var PMSELogger
-     */
-    protected $logger;
-
-    /**
-     *
-     * @var type
-     */
-    protected $evaluator;
-
-    /**
-     *
-     * @param type $level
-     * @codeCoverageIgnore
-     */
-    public function __construct($level)
-    {
-        $this->level = $level;
-        $this->logger = PMSELogger::getInstance();
-        $this->evaluator = new PMSEEvaluator();
-    }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     *
-     * @return PMSELogger
-     * @codeCoverageIgnore
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getEvaluator()
-    {
-        return $this->evaluator;
-    }
-
-    /**
-     *
-     * @param type $evaluator
-     * @codeCoverageIgnore
-     */
-    public function setEvaluator($evaluator)
-    {
-        $this->evaluator = $evaluator;
-    }
-
-    /**
-     *
-     * @param PMSELogger $logger
-     * @codeCoverageIgnore
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     *
-     * @param type $level
-     * @codeCoverageIgnore
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-    }
-
     /**
      *
      * @param PMSERequest $request

@@ -12,74 +12,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
-class PMSERecordValidator implements PMSEValidate
+class PMSERecordValidator extends PMSEBaseValidator implements PMSEValidate
 {
-    /**
-     *
-     * @var Integer
-     */
-    protected $level;
-
-    /**
-     *
-     * @var PMSELogger
-     */
-    protected $logger;
-
-    /**
-     *
-     * @param type $level
-     * @codeCoverageIgnore
-     */
-    public function __construct($level)
-    {
-        $this->level = $level;
-        $this->logger = PMSELogger::getInstance();
-    }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     *
-     * @param PMSELogger $logger
-     * @codeCoverageIgnore
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     *
-     * @param type $level
-     * @codeCoverageIgnore
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-    }
-
     /**
      *
      * @param PMSERequest $request
@@ -93,6 +30,4 @@ class PMSERecordValidator implements PMSEValidate
         $request->validate();
         return $request;
     }
-
-
 }

@@ -19,8 +19,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/vCardApi.php';
 
-require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleExporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleImporter.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEBusinessRules extends vCardApi
 {
@@ -93,7 +92,7 @@ class PMSEBusinessRules extends vCardApi
                 && $this->isUploadedFile($_FILES[$first_key]['tmp_name'])
                 && !empty($_FILES[$first_key]['size'])
             ) {
-                $importerObject = new PMSEBusinessRuleImporter();
+                $importerObject = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleImporter');
                 $name = $_FILES[$first_key]['name'];
                 $extension = pathinfo($name,  PATHINFO_EXTENSION);
                 if ($extension == $importerObject->getExtension()) {
@@ -142,6 +141,6 @@ class PMSEBusinessRules extends vCardApi
      */
     public function getPMSEBusinessRuleExporter()
     {
-        return new PMSEBusinessRuleExporter();
+        return ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleExporter');
     }
 }

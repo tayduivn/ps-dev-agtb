@@ -13,7 +13,8 @@
 
 require_once 'tests/SugarTestACLUtilities.php';
 require_once 'include/api/RestService.php';
-require_once 'modules/pmse_Emails_Templates/clients/base/api/PMSEEmailsTemplates.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Unit test class to cover ACL testing for Process Author Apis
@@ -24,7 +25,7 @@ class PMSEEmailsTemplatesApiAclTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
 
-        $this->PMSEEmailsTemplates = new PMSEEmailsTemplates();
+        $this->PMSEEmailsTemplates = ProcessManager\Factory::getPMSEObject('PMSEEmailsTemplates');
         $this->api = new RestService();
         $this->api->getRequest()->setRoute(array('acl' => array()));
     }

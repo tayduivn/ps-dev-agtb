@@ -10,7 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEHookHandler.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSELogicHook
 {
@@ -24,7 +25,7 @@ class PMSELogicHook
             return true;
         }
         //Define PA Hook Handler
-        $hookHandler = new PMSEHookHandler();
+        $hookHandler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
         //Define if this is a new record or an updated record
         $isNewRecord = empty($bean->fetched_row['id']);
         return $hookHandler->runStartEventBeforeSave($bean, $event, $arguments, array(), $isNewRecord);
@@ -40,7 +41,7 @@ class PMSELogicHook
             return true;
         }
         //Define PA Hook Handler
-        $handler = new PMSEHookHandler();
+        $handler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
         return $handler->runStartEventAfterSave($bean, $event, $arguments);
     }
 
@@ -54,7 +55,7 @@ class PMSELogicHook
             return true;
         }
         //Define PA Hook Handler
-        $handler = new PMSEHookHandler();
+        $handler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
         return $handler->terminateCaseAfterDelete($bean, $event, $arguments);
     }
 

@@ -20,10 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * @codeCoverageIgnore
  */
 require_once 'modules/pmse_Inbox/engine/parser/PMSEDataParserInterface.php';
-require_once 'modules/pmse_Inbox/engine/parser/PMSEFieldParser.php';
-require_once 'modules/pmse_Inbox/engine/parser/PMSEBusinessRuleParser.php';
-require_once 'modules/pmse_Inbox/engine/parser/PMSEFormResponseParser.php';
-require_once 'modules/pmse_Inbox/engine/parser/PMSEUserRoleParser.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEDataParserGateway implements PMSEDataParserInterface
 {
@@ -121,18 +119,18 @@ class PMSEDataParserGateway implements PMSEDataParserInterface
                     case 'USER_ROLE':
                     case 'USER_IDENTITY':
                     case 'USER_ADMIN':
-                        $this->dataParser = new PMSEUserRoleParser();
+                        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEUserRoleParser');
                         break;
                     case 'CONTROL':
-                        $this->dataParser = new PMSEFormResponseParser();
+                        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEFormResponseParser');
                         break;
                     case 'MODULE':
                     case 'VARIABLE':
                     case 'DEFAULT_MODULE':
-                        $this->dataParser = new PMSEFieldParser();
+                        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEFieldParser');
                         break;
                     case 'BUSINESS_RULES':
-                        $this->dataParser = new PMSEBusinessRuleParser();
+                        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleParser');
                         break;
                     default:
                         $isDefault = true;

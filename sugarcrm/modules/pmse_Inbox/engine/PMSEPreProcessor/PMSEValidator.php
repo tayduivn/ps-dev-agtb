@@ -14,12 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidationLevel.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSETerminateValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEConcurrencyValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERecordValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEElementValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEExpressionValidator.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEValidator
 {
@@ -40,6 +36,18 @@ class PMSEValidator
      * @var PMSELogger
      */
     protected $logger;
+
+    /**
+     * List of known validator classes to be used in the retrieveValidator method
+     * @var array
+     */
+    protected $validatorClasses = [
+        'terminate' => 'PMSETerminateValidator',
+        'concurrency' => 'PMSEConcurrencyValidator',
+        'record' => 'PMSERecordValidator',
+        'element' => 'PMSEElementValidator',
+        'expression' => 'PMSEExpressionValidator'
+    ];
 
     /**
      * Class constructor
@@ -144,32 +152,20 @@ class PMSEValidator
      *
      * @param type $name
      * @param type $level
-     * @return boolean|\PMSEConcurrencyValidator|\PMSEElementValidator|\PMSERecordValidator
+     * @return boolean|PMSEBaseValidator
      * @codeCoverageIgnore
      */
     public function retrieveValidator($name, $level)
     {
         $this->logger->debug("Retrieving a " . $name . " validator");
-        switch ($name) {
-            case 'terminate':
-                return new PMSETerminateValidator($level);
-                break;
-            case 'concurrency':
-                return new PMSEConcurrencyValidator($level);
-                break;
-            case 'record':
-                return new PMSERecordValidator($level);
-                break;
-            case 'element':
-                return new PMSEElementValidator($level);
-                break;
-            case 'expression':
-                return new PMSEExpressionValidator($level);
-                break;
-            default :
-                return false;
-                break;
+        $validator = false;
+        if (isset($this->validatorClasses[$name])) {
+            $validator = ProcessManager\Factory::getPMSEObject($this->validatorClasses[$name]);
+            if ($validator) {
+                $validator->setLevel($level);
+            }
         }
+        return $validator;
     }
 
     /**
@@ -179,7 +175,7 @@ class PMSEValidator
      */
     public function generateNewRequest()
     {
-        return new PMSERequest();
+        return ProcessManager\Factory::getPMSEObject('PMSERequest');
     }
 
     /**

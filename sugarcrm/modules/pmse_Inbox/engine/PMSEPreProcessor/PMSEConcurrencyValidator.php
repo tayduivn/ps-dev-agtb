@@ -12,8 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
@@ -24,45 +24,8 @@ use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
  * from a direct request.
  *
  */
-class PMSEConcurrencyValidator implements PMSEValidate
+class PMSEConcurrencyValidator extends PMSEBaseValidator implements PMSEValidate
 {
-    /**
-     *
-     * @var PMSELogger
-     */
-    protected $logger;
-
-    /**
-     * Class constructor.
-     * Retrieving the logger instance from the singleton.
-     * @codeCoverageIgnore
-     */
-    public function __construct()
-    {
-        $this->logger = PMSELogger::getInstance();
-    }
-
-    /**
-     *
-     * @return PMSELogger
-     * @codeCoverageIgnore
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     *
-     * @param PMSELogger $logger
-     * @codeCoverageIgnore
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
-
-
     /**
      * Validates that if a second request from the same event and bean record
      * is received, the second request should be invalidated and thus ignored.

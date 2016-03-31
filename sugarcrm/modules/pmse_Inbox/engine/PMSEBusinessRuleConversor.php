@@ -12,7 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Parses a condition of a business rule to a standard criterion to the value of the condition
  * one json is entered as a parameter to parser and get the new value of each case
@@ -37,7 +38,7 @@ class PMSEBusinessRuleConversor
 
     public function __construct()
     {
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
     }
 
     /**
@@ -185,7 +186,7 @@ class PMSEBusinessRuleConversor
             }
         }
         if (count($dataEval) > 1) {
-            $evaluator = new PMSEEvaluator();
+            $evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
             $response->value = $evaluator->evaluateExpression(json_encode($dataEval), $this->evaluatedBean);
             $response->type = gettype($response->value);
         } else {

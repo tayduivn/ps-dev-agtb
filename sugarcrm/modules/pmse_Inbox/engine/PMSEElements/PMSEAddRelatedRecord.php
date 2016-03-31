@@ -13,7 +13,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEScriptTask.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
+require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEExpressionEvaluationException.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEAddRelatedRecord extends PMSEScriptTask
 {
@@ -21,7 +24,7 @@ class PMSEAddRelatedRecord extends PMSEScriptTask
 
     public function __construct()
     {
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
         parent::__construct();
     }
 

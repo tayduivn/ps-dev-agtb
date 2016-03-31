@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * @covers PMSEActivityDefinitionWrapper
  */
@@ -55,7 +58,7 @@ class PMSEActivityDefinitionWrapperTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->actDefWrapper = new PMSEActivityDefinitionWrapper();
+        $this->actDefWrapper = ProcessManager\Factory::getPMSEObject('PMSEActivityDefinitionWrapper');
         $this->actDefWrapper->setActivityDefinition($this->mocActDef);
         $this->actDefWrapper->setActivity($this->mocActivity);
         $this->actDefWrapper->setProcessDefinition($this->mocProcessDefinition);

@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEValidatorTest extends PHPUnit_Framework_TestCase
 {
 
@@ -45,7 +48,7 @@ class PMSEValidatorTest extends PHPUnit_Framework_TestCase
                 ->setMethods(array('retrieveValidator'))
                 ->getMock();
 
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setType('invalid_type');
         $validatorMock->setLogger($this->loggerMock);
 
@@ -55,9 +58,9 @@ class PMSEValidatorTest extends PHPUnit_Framework_TestCase
 
     public function testValidateRequestDirectAndValid()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setType('direct');
-        $resultRequest = new PMSERequest();
+        $resultRequest = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $resultRequest->validate();
 
         $validatorElementMock = $this->getMockBuilder('PMSEValidate')
@@ -94,9 +97,9 @@ class PMSEValidatorTest extends PHPUnit_Framework_TestCase
     
     public function testValidateRequestDirectAndInvalid()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setType('direct');
-        $resultRequest = new PMSERequest();
+        $resultRequest = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $resultRequest->invalidate();
 
         $validatorElementMock = $this->getMockBuilder('PMSEValidate')

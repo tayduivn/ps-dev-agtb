@@ -12,15 +12,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Class that takes a parser expression to be evaluated and then return a value true or false
  * the expression to be entered in json
  *
  */
-require_once 'modules/pmse_Inbox/engine/PMSEExpressionEvaluator.php';
-require_once 'modules/pmse_Inbox/engine/PMSECriteriaEvaluator.php';
-require_once 'modules/pmse_Inbox/engine/parser/PMSEDataParserGateway.php';
-
 class PMSEEvaluator
 {
     /**
@@ -48,9 +46,9 @@ class PMSEEvaluator
      */
     public function __construct()
     {
-        $this->expressionEvaluator = new PMSEExpressionEvaluator();
-        $this->criteriaEvaluator = new PMSECriteriaEvaluator();
-        $this->parser = new PMSEDataParserGateway();
+        $this->expressionEvaluator = ProcessManager\Factory::getPMSEObject('PMSEExpressionEvaluator');
+        $this->criteriaEvaluator = ProcessManager\Factory::getPMSEObject('PMSECriteriaEvaluator');
+        $this->parser = ProcessManager\Factory::getPMSEObject('PMSEDataParserGateway');
     }
 
 

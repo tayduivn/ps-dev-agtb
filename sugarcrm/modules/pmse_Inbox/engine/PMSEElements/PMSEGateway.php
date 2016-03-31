@@ -13,7 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEShape.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEGateway extends PMSEShape
 {
@@ -46,7 +47,7 @@ class PMSEGateway extends PMSEShape
     public function __construct()
     {
         parent::__construct();
-        $this->evaluator = new PMSEEvaluator();
+        $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
     }
 
 }

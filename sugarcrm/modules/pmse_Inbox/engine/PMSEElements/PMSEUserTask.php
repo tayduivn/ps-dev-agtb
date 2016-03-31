@@ -13,9 +13,9 @@
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHistoryData.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 class PMSEUserTask extends PMSEActivity
@@ -210,7 +210,8 @@ class PMSEUserTask extends PMSEActivity
         }
 
         $beanObject = BeanFactory::getBean($moduleName, $moduleId);
-        $historyData = new PMSEHistoryData($moduleName);
+        $historyData = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
+        $historyData->setModule($moduleName);
 
         //If a module includes custom save/editview logic in Save.php, use that instead of a direct save.
         if (isModuleBWC($beanObject->module_dir) &&

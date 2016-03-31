@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
 {
 
@@ -379,7 +382,7 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
                 ->will($this->returnValue(true));
         
         $beanMock = new stdClass();
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         
         $flowDataMock = array('evn_params'=>'new');
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
@@ -402,7 +405,7 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
                 ->will($this->returnValue(false));
         
         $beanMock = new stdClass();
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         
         $flowDataMock = array('evn_params'=>'updated');
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
@@ -425,7 +428,7 @@ class PMSEElementValidatorTest extends PHPUnit_Framework_TestCase
                 ->will($this->returnValue(true));
 
         $beanMock = new stdClass();
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
 
         $flowDataMock = array('evn_params'=>'updated');
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);

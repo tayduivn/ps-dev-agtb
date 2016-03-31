@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSEUserAssignmentHandler
@@ -39,7 +39,7 @@ class PMSEUserAssignmentHandler
      */
     public function __construct()
     {
-        $this->wrapper = new PMSEWrapper();
+        $this->wrapper = ProcessManager\Factory::getPMSEObject('PMSEWrapper');
         $this->logger = PMSELogger::getInstance();
     }
 

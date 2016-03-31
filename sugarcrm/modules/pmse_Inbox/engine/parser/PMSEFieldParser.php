@@ -12,7 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Class that analyzes the data type of a bean
  * getting the value of this field according to the data type
@@ -267,7 +268,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
      */
     public function parseTokenValue($token)
     {
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
         $tokenArray = $this->decomposeToken($token);
 
         $bean = $this->evaluatedBean;

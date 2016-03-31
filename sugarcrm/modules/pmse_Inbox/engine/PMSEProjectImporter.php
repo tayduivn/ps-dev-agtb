@@ -14,7 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSEImporter.php';
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of the ProjectImporter class
@@ -76,7 +77,7 @@ class PMSEProjectImporter extends PMSEImporter
     public function __construct()
     {
         $this->bean = BeanFactory::getBean('pmse_Project');
-        $this->dependenciesWrapper = new PMSERelatedDependencyWrapper();
+        $this->dependenciesWrapper = ProcessManager\Factory::getPMSEObject('PMSERelatedDependencyWrapper');
         $this->name = 'name';
         $this->id = 'prj_id';
         $this->extension = 'bpm';

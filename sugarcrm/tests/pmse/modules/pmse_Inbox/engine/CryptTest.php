@@ -10,11 +10,14 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class CryptTest extends PHPUnit_Framework_TestCase
 {
 
     protected function setUp() {
-        $this->cript = new Crypt();
+        $this->cript = ProcessManager\Factory::getPMSEObject('Crypt');
         $this->mockCriptBF = $this->getMockBuilder('Crypt_Blowfish')
             ->disableOriginalConstructor()
             ->setMethods(array('encrypt', 'decrypt'))

@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
 {
     
@@ -40,7 +43,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListDirect()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setType('direct');
         $request->setArguments($arguments);
@@ -61,7 +64,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListHook()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setArguments($arguments);
         $request->setType('hook');
@@ -90,7 +93,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListQueue()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setArguments($arguments);
         $request->setType('queue');
@@ -111,7 +114,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListEngine()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setArguments($arguments);
         $request->setType('engine');
@@ -132,7 +135,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListInvalid()
     {
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setArguments($arguments);
         $request->setType('invalid_type');
@@ -267,10 +270,10 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                 ->setMethods(array('load_relationships'))
                 ->getMock();
         
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setBean($beanMock);
         
-        $resultRequest = new PMSERequest();
+        $resultRequest = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $resultRequest->validate();
         
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')                
@@ -317,10 +320,10 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                 ->setMethods(array('load_relationships'))
                 ->getMock();
         
-        $request = new PMSERequest();
+        $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setBean($beanMock);
         
-        $resultRequest = new PMSERequest();
+        $resultRequest = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $resultRequest->invalidate();
         
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')                

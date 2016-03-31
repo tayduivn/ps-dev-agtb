@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEAccessManagerTest extends PHPUnit_Framework_TestCase
 {
     protected $accessManager;
@@ -22,7 +25,7 @@ class PMSEAccessManagerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->accessManager = new PMSEAccessManager();
+        $this->accessManager = ProcessManager\Factory::getPMSEObject('PMSEAccessManager');
     }
     
     public function testGetAssignedDashlets()

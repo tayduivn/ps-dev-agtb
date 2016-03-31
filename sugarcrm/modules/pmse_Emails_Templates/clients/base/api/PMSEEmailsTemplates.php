@@ -14,18 +14,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once 'clients/base/api/vCardApi.php';
-
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapper.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEmailTemplateExporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEmailTemplateImporter.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEEmailsTemplates extends vCardApi
 {
     public function __construct()
     {
-        $this->crmDataWrapper = new PMSECrmDataWrapper();
+        $this->crmDataWrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
     }
 
     public function registerApiRest()
@@ -173,7 +170,7 @@ class PMSEEmailsTemplates extends vCardApi
     public function retrieveFields($filter, $orderBy, $limit, $offset, $baseModule, $q = null)
     {
         global $beanList;
-        $pmseRelatedModule = new PMSERelatedModule();
+        $pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
         if (isset($beanList[$filter])) {
             $newModuleFilter = $filter;
         } else {
@@ -244,7 +241,7 @@ class PMSEEmailsTemplates extends vCardApi
                 && $this->isUploadedFile($_FILES[$first_key]['tmp_name'])
                 && !empty($_FILES[$first_key]['size'])
             ) {
-                $importerObject = new PMSEEmailTemplateImporter();
+                $importerObject = ProcessManager\Factory::getPMSEObject('PMSEEmailTemplateImporter');
                 $name = $_FILES[$first_key]['name'];
                 $extension = pathinfo($name,  PATHINFO_EXTENSION);
                 if ($extension == $importerObject->getExtension()) {
@@ -267,7 +264,7 @@ class PMSEEmailsTemplates extends vCardApi
     public function emailTemplateDownload ($api, $args)
     {
         $this->checkACL($api, $args);
-        $emailTemplate = new PMSEEmailTemplateExporter();
+        $emailTemplate = ProcessManager\Factory::getPMSEObject('PMSEEmailTemplateExporter');
         $requiredFields  = array('record', 'module');
         foreach ( $requiredFields as $fieldName ) {
             if ( !array_key_exists($fieldName, $args) ) {

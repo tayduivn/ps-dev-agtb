@@ -11,6 +11,7 @@
  */
 
 require_once 'clients/base/api/FilterApi.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 abstract class PMSEFilterApi extends FilterApi
 {
