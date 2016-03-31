@@ -26,18 +26,37 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /** @var array */
     protected $args;
 
+    /** @var \User */
+    protected $currentUser = null;
+
+    /** @var string */
+    protected $currentUserPrimaryEmail = '';
+
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        BeanFactory::setBeanClass('Users', 'UserCRYS1579');
+        $this->currentUserPrimaryEmail = 'mail' . rand(1000, 1999) . '@domain.test';
+
+        $emailAddress = $this->getMock('EmailAddress');
+        $emailAddress->method('getPrimaryAddress')->willReturn($this->currentUserPrimaryEmail);
+
+        $this->user = new UserCRYS1579();
+        $this->user->id = create_guid();
+        $this->user->emailAddress = $emailAddress;
+        $this->user->name = 'User' . rand(1000, 1999);
+        $this->currentUser = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $this->user;
+        UserCRYS1579::$currentUser = $this->user;
+
         CallCRYS1415TestMock::$calDavHandler =
             $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', array('export'));
         $this->call = new CallCRYS1415TestMock();
         $this->call->name = 'Call' . mt_rand();
         $this->call->date_start = TimeDate::getInstance()->getNow()->asDb();
-        $this->call->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->call->assigned_user_id = $this->user->id;
         $this->call->save();
 
         $this->call->set_accept_status($this->user, 'none');
@@ -60,6 +79,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->call->mark_deleted($this->call->id);
+        $GLOBALS['current_user'] = $this->currentUser;
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
@@ -82,7 +102,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                 array(
                                     'Users',
                                     $this->user->id,
-                                    $this->user->emailAddress->getPrimaryAddress($this->user),
+                                    $this->currentUserPrimaryEmail,
                                     'none',
                                     $GLOBALS['locale']->formatName($this->user),
                                 ),
@@ -118,7 +138,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                 array(
                                     'Users',
                                     $this->user->id,
-                                    $this->user->emailAddress->getPrimaryAddress($this->user),
+                                    $this->currentUserPrimaryEmail,
                                     'accept',
                                     $GLOBALS['locale']->formatName($this->user),
                                 ),
@@ -152,7 +172,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
                                 array(
                                     'Users',
                                     $this->user->id,
-                                    $this->user->emailAddress->getPrimaryAddress($this->user),
+                                    $this->currentUserPrimaryEmail,
                                     'none',
                                     $GLOBALS['locale']->formatName($this->user),
                                 ),
@@ -178,5 +198,25 @@ class CallCRYS1415TestMock extends Call
     public function getCalDavHook()
     {
         return self::$calDavHandler;
+    }
+}
+
+/**
+ * Class UserCRYS1579
+ */
+class UserCRYS1579 extends User
+{
+    /** @var User */
+    public static $currentUser = null;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function retrieve($id = '-1', $encode = true, $deleted = true)
+    {
+        $this->id = static::$currentUser->id;
+        $this->name = static::$currentUser->name;
+        $this->emailAddress = static::$currentUser->emailAddress;
+        return $this;
     }
 }
