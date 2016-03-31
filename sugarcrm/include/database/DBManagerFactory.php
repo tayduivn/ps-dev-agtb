@@ -158,7 +158,7 @@ class DBManagerFactory
      * Returns Doctrine connection for the given database instance
      *
      * @param string $instanceName Name of the instance
-     * @return \Doctrine\DBAL\Connection
+     * @return \Sugarcrm\Sugarcrm\Dbal\Connection
      */
     public static function getConnection($instanceName = '')
     {
@@ -188,6 +188,7 @@ class DBManagerFactory
 
         $conn = DoctrineDriverManager::getConnection(array(
             'driverClass' => $driverMap[$instance->variant],
+            'wrapperClass' => 'Sugarcrm\Sugarcrm\Dbal\Connection',
             'connection' => $instance->getDatabase(),
         ));
 

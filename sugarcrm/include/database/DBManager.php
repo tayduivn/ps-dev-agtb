@@ -444,7 +444,7 @@ abstract class DBManager
     /**
      * Returns the Doctrine connection with the same connection resource
      *
-     * @return \Doctrine\DBAL\Connection
+     * @return \Sugarcrm\Sugarcrm\Dbal\Connection
      * @throws Exception
      */
     public function getConnection()
