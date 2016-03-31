@@ -96,7 +96,14 @@ class EAPMViewEdit extends ViewEdit {
  	function display() {
         $returnModuleFromRequest = $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName');
         $returnActionFromRequest = $this->request->getValidInputRequest('return_action');
-        $applicationFromRequest = $this->request->getValidInputRequest('application');
+        $applicationFromRequest = $this->request->getValidInputRequest(
+            'application',
+            array(
+                'Assert\Choice' => array(
+                    'choices' => array_keys(ExternalAPIFactory::loadFullAPIList())
+                )
+            )
+        );
 
         $this->bean->password = empty($this->bean->password) ? '' : EAPM::$passwordPlaceholder;
 
