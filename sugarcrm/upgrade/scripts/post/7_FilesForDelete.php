@@ -354,6 +354,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/portal/views/passwordmodal';
             $files[] = 'modules/Notifications/controller.php';
             $files[] = 'include/api/AttachmentListApi.php';
+            $files[] = 'clients/base/views/pmse-case/businesscard.hbs';
+            $files[] = 'clients/base/views/pmse-case/headerpane.hbs';
+            $files[] = 'clients/base/views/pmse-case/tabspanels.hbs';
         }
 
         $this->fileToDelete($files);
