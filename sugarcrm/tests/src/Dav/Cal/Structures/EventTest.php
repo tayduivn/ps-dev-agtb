@@ -39,6 +39,29 @@ class EventTest extends \PHPUnit_Framework_TestCase
         return $vCalendar->getBaseComponent();
     }
 
+    /**
+     * Provide data for testIsAllDay.
+     *
+     * @return array
+     */
+    public function isAllDayProvider()
+    {
+        return array(
+            array(
+                'vEvent' => $this->getEvent('allday'),
+                'result' => true,
+            ),
+            array(
+                'vEvent' => $this->getEvent('vevent'),
+                'result' => false,
+            ),
+            array(
+                'vEvent' => $this->getEvent('vemptyevent'),
+                'result' => false,
+            ),
+        );
+    }
+
     public function getTitleProvider()
     {
         return array(
@@ -1023,6 +1046,22 @@ class EventTest extends \PHPUnit_Framework_TestCase
         foreach ($expectedOrganizer as $method => $value) {
             $this->assertEquals($value, $organizer->$method());
         }
+    }
+
+    /**
+     * Test for checking all day events.
+     *
+     * @param VEvent $VEvent
+     * @param bool $expectedResult
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::isAllDay
+     *
+     * @dataProvider isAllDayProvider
+     */
+    public function testIsAllDay(VEvent $VEvent, $expectedResult)
+    {
+        $eventMock = $this->getEventMock($VEvent);
+        $this->assertEquals($expectedResult, $eventMock->isAllDay());
     }
 
     /**
