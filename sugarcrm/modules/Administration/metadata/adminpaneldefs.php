@@ -130,7 +130,7 @@ $admin_option_defs['Campaigns']['register_snip']=array('icon_AdminThemes','LBL_C
 
 $admin_option_defs['CalDav']['caldav_config'] = array('ical-settings-icon',
     'LBL_CONFIGURE_CALDAV',
-    '',
+    'LBL_CONFIGURE_CALDAV_DESC',
     'javascript:parent.SUGAR.App.router.navigate("CalDav/config", {trigger: true});');
 
 $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL_EMAIL_DESC');

@@ -276,8 +276,9 @@ $mod_strings = array (
     'LBL_DST_UPGRADE' => 'Upgrade:',
     'LBL_EDIT_CUSTOM_FIELDS' => 'Edit Custom Fields',
     'LBL_EDIT_TABS'=>'Edit Tabs',
-    'LBL_EMAIL_TITLE' => 'Email',
-    'LBL_EMAIL_DESC' => 'Manage outbound and inbound emails. The email settings must be configured in order to enable users to send out email and newsletter campaigns.',
+    'LBL_EMAIL_TITLE' => 'Email and Calendar',
+    'LBL_EMAIL_DESC' => 'Manage email and calendar settings. The email settings must be configured in order to ' .
+                        'enable users to send out email and newsletter campaigns.',
     'LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE' => 'A primary email address is required for each user in order to use this feature.',
 	'LBL_ENABLE_MAILMERGE' => 'Enable Mail Merge?',
 	'LBL_ENABLED' => 'Enabled',
@@ -406,7 +407,8 @@ $mod_strings = array (
     'LBL_LOCALE' => 'Set default localization settings for your system',
     'LBL_LOGIN_SUGAR_SERVER_DESC'          => '- The User Name of the person who will operate this offline client',
     'LBL_LOGIN_SUGAR_SERVER'                => 'End User Name:',
-    'LBL_MAILBOX_DESC' => 'Set up group mail accounts for monitoring inbound email and manage personal inbound mail account information for users',
+    'LBL_MAILBOX_DESC' => 'Set up inbound email accounts, including group mail, ' .
+                          'bounce handling and CalDAV response handling accounts',
     'LBL_MANAGE_CONTRACTEMPLATES_TITLE'=>'Contract Types',
     'LBL_MANAGE_CURRENCIES' => 'Currencies',
     'LBL_MANAGE_GROUPS_TITLE'   => 'Manage Groups',
@@ -1285,7 +1287,7 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     //END SUGARCRM flav=ent ONLY
 
     //CalDav
-    'LBL_CONFIGURE_CALDAV' => 'CalDAV Sync Settings',
-    'LBL_CONFIGURE_CALDAV_DESC' => 'Here you can configure default bean for new events from client side, and setup sync period.',
+    'LBL_CONFIGURE_CALDAV' => 'Calendar Sync Settings',
+    'LBL_CONFIGURE_CALDAV_DESC' => 'Configure default calendar sync settings',
 
 );
