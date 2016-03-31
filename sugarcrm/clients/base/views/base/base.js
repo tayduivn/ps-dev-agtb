@@ -38,4 +38,12 @@
  * @alias SUGAR.App.view.views.BaseBaseView
  * @extends View.View
  */
-({})
+({
+    /**
+     * The Base View will always clear any tooltips after `render`.
+     */
+    initialize: function() {
+        this._super('initialize', arguments);
+        this.on('render', app.tooltip.clear);
+    }
+})
