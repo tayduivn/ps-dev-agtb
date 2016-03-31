@@ -524,4 +524,31 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
         }
         return $modules;
     }
+
+    /**
+     * @dataProvider m2MRelationshipsProvider
+     */
+    public function testM2MRelationships($name, array $def)
+    {
+        $this->assertArrayHasKey('fields', $def, 'M2M relationship must have field definitions');
+
+        foreach ($def['fields'] as $key => $fieldDef) {
+            $this->checkFieldDefinition($name, $def['fields'], $key, $fieldDef, array());
+        }
+    }
+
+    public static function m2MRelationshipsProvider()
+    {
+        $factory = SugarRelationshipFactory::getInstance();
+        $factory->rebuildCache();
+        $defs = $factory->getRelationshipDefs();
+        $data = array();
+        foreach ($defs as $name => $def) {
+            if (isset($def['relationship_type']) && $def['relationship_type'] == 'many-to-many') {
+                $data[$name] = array($name, $def);
+            }
+        }
+
+        return $data;
+    }
 }

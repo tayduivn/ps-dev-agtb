@@ -290,9 +290,25 @@ class SugarRelationshipFactory {
                         $relationships[$key] = array_merge(array('name' => $key), $def, $relDef);
                     } else {
                         $relationships[$relKey] = array_merge(array('name' => $relKey), $relDef);
-                        if(!empty($relationships[$relKey]['join_table']) && empty($relationships[$relKey]['fields'])
-                            && isset($dictionary[$relationships[$relKey]['join_table']]['fields'])) {
-                            $relationships[$relKey]['fields'] = $dictionary[$relationships[$relKey]['join_table']]['fields'];
+                        if (empty($relationships[$relKey]['fields'])) {
+                            if (isset($relationships[$relKey]['table'])) {
+                                $table = $relationships[$relKey]['table'];
+                            } elseif (isset($relationships[$relKey]['join_table'])) {
+                                $table = $relationships[$relKey]['join_table'];
+                            } else {
+                                $table = null;
+                            }
+
+                            if ($table) {
+                                if ($table == 'team_memberships') {
+                                    $tableKey = 'TeamMembership';
+                                } else {
+                                    $tableKey = $table;
+                                }
+                                if (isset($dictionary[$tableKey]['fields'])) {
+                                    $relationships[$relKey]['fields'] = $dictionary[$tableKey]['fields'];
+                                }
+                            }
                         }
                     }
                 }
