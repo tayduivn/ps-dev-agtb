@@ -268,7 +268,7 @@
     _setRowFields: function() {
         this.rowFields = {};
         _.each(this.fields, function(field) {
-            if (field.model.id && _.isUndefined(field.parent)) {
+            if (field.model && field.model.id && _.isUndefined(field.parent)) {
                 this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
                 this.rowFields[field.model.id].push(field);
             }
