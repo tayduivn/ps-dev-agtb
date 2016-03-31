@@ -142,4 +142,12 @@ class File extends Basic
 
         return $row;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRecordName()
+    {
+        return isset($this->document_name) ? trim($this->document_name) : '';
+    }
 }

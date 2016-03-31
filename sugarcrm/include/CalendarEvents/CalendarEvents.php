@@ -30,6 +30,22 @@ class CalendarEvents
         'Calls',
         'Tasks',
     );
+
+    /**
+     *  Update only current event in iCal.
+     */
+    const UPDATE_CURRENT = 1;
+
+    /**
+     *  Update only participants in all recurrence children in iCal.
+     */
+    const UPDATE_PARTICIPANTS = 2;
+
+    /**
+     *  Update only fields in all recurrence children in iCal.
+     */
+    const UPDATE_FIELDS = 4;
+
     /**
      * @param SugarBean $bean
      * @return bool
@@ -837,7 +853,7 @@ class CalendarEvents
         $options = array()
     ) {
         $changeWasMade = false;
-        $inviteesBefore = CalendarUtils::getInvitees($event);
+        $inviteesChanges = array();
         if (in_array($event->status, array('Held', 'Not Held'))) {
             $GLOBALS['log']->debug(
                 sprintf(
@@ -861,8 +877,25 @@ class CalendarEvents
                 )
             );
             $event->update_vcal = false;
+            if ($this->isEventRecurring($event) && !$event->repeat_parent_id) {
+                $event->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS;
+            }
+
             $event->set_accept_status($invitee, $status);
             $changeWasMade = true;
+            $inviteesChanges = array(
+                'changed' => array(
+                    array(
+                        $invitee->module_name,
+                        $invitee->id,
+                        $invitee->emailAddress->getPrimaryAddress($invitee),
+                        $status,
+                        $GLOBALS['locale']->formatName($invitee),
+                    ),
+                ),
+            );
+            $calDavHook = new CalDavHook();
+            $calDavHook->export($event, array('update', array(), $inviteesChanges));
         }
 
         if ($this->isEventRecurring($event)) {
@@ -871,7 +904,14 @@ class CalendarEvents
              *
              * @param array $row The child record to update. Only the ID is used.
              */
-            $callback = function(array $row) use ($event, $invitee, $status, $options, &$changeWasMade) {
+            $callback = function (array $row) use (
+                $event,
+                $invitee,
+                $status,
+                $options,
+                &$changeWasMade,
+                $inviteesChanges
+            ) {
                 $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
 
                 if ($child) {
@@ -885,6 +925,11 @@ class CalendarEvents
                     ));
                     $child->update_vcal = false;
                     $child->set_accept_status($invitee, $status);
+                    if ($inviteesChanges) {
+                        $child->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
+                        $calDavHook = new CalDavHook();
+                        $calDavHook->export($child, array('update', array(), $inviteesChanges));
+                    }
                     $changeWasMade = true;
                 } else {
                     $GLOBALS['log']->error("Could not set acceptance status for {$event->module_name}/{$row['id']}");
@@ -900,10 +945,6 @@ class CalendarEvents
         }
 
         if ($changeWasMade) {
-            $participantHelper = new ParticipantsHelper();
-            $inviteesChanges = $participantHelper->getInviteesDiff($inviteesBefore, CalendarUtils::getInvitees($event));
-            $calDavHook = new CalDavHook();
-            $calDavHook->export($event, array('update', array(), $inviteesChanges));
             if ($invitee instanceof User) {
                 $GLOBALS['log']->debug(sprintf('Update vCal cache for %s/%s', $invitee->module_name, $invitee->id));
                 vCal::cache_sugar_vcal($invitee);

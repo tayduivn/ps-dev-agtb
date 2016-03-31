@@ -406,6 +406,14 @@ class Document extends SugarBean {
 
         return '';
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRecordName()
+    {
+        return isset($this->document_name) ? trim($this->document_name) : '';
+    }
 }
 
 require_once('modules/Documents/DocumentExternalApiDropDown.php');

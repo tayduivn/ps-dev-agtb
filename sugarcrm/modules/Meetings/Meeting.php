@@ -126,11 +126,11 @@ class Meeting extends SugarBean {
     public $inviteesBefore = null;
 
     /**
-     * Helper-field to store information to change all recurrence or only parent.
+     * Helper-field to store information to change all recurrence or only participants or only parent.
      * Is not a sugar-field, is not persisted anywhere.
-     * @var bool
+     * @var int
      */
-    public $updateAllChildren = false;
+    public $updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
 
     /**
      * Parent id of recurring.

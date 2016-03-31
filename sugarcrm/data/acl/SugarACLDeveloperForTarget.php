@@ -12,7 +12,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('data/SugarACLStrategy.php');
+require_once 'data/SugarACLStrategy.php';
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
 /**
  * This class is used to enforce ACLs on modules that are restricted to developers of a specific module
@@ -56,7 +57,13 @@ class SugarACLDeveloperForTarget extends SugarACLStrategy
         }
 
         if (empty($context['bean'])) {
-            return $current_user->isDeveloperForAnyModule();
+            $dev_mods = $current_user->getDeveloperModules();
+            if (count($dev_mods)) {
+                $sup_mods = PMSEEngineUtils::getSupportedModules();
+                $valid_mods = array_intersect($dev_mods, $sup_mods);
+                return !empty($valid_mods);
+            }
+            return false;
         }
 
         if (!empty($this->targetModuleField) && !empty($context['bean'])) {

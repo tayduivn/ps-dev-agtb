@@ -59,10 +59,14 @@ class CheckUpgraderTest extends UpgradeTestCase
             ),
             array(
                 '7.6.0.0',
-                true,
+                false,
             ),
             array(
                 '7.7.0.0',
+                true,
+            ),
+            array(
+                '7.8.0.0',
                 true,
             ),
         );
