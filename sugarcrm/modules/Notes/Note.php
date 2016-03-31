@@ -41,6 +41,8 @@ class Note extends SugarBean
     var $contact_phone;
     var $contact_email;
     var $file_mime_type;
+    public $file_source;
+    public $file_size;
     var $module_dir = "Notes";
     var $default_note_name_dom = array('Meeting notes', 'Reminder');
     var $table_name = "notes";
@@ -57,6 +59,20 @@ class Note extends SugarBean
         'first_name',
         'last_name'
     );
+
+    /**
+     * Get and save file size if note represents and email file attachment
+     *
+     * {@inheritdoc}
+     */
+    public function save($check_notify = false)
+    {
+        if (!empty($this->email_id)) {
+            $filePath = "upload://{$this->id}";
+            $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;
+        }
+        return parent::save($check_notify);
+    }
 
     function safeAttachmentName()
     {

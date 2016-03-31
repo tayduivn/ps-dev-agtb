@@ -44,6 +44,21 @@ $dictionary['Note'] = array(
     'comment' => 'Attachment MIME type',
     'importable' => false,
   ),
+        'file_source' => array(
+            'name' => 'file_source',
+            'vname' => 'LBL_FILE_SOURCE',
+            'type' => 'varchar',
+            'len' => '32',
+            'comment' => 'Attachment File Source',
+            'importable' => false,
+        ),
+        'file_size' => array(
+            'name' => 'file_size',
+            'vname' => 'LBL_FILE_SIZE',
+            'type' => 'int',
+            'comment' => 'Attachment File Size',
+            'importable' => false,
+        ),
   'file_url'=>
   array(
   	'name'=>'file_url',

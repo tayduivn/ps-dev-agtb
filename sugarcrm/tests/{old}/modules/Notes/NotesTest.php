@@ -21,6 +21,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestNoteUtilities::removeAllCreatedNotes();
         unset($GLOBALS['current_user']);
     }
     
@@ -46,5 +47,35 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains($contact->last_name,$note->contact_name);
         
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id =\''.$contact_id.'\'');
+    }
+
+    public function testEmailAttachmentNote_attachmentFileFound_fileSizeSaved()
+    {
+        $noteId = create_guid();
+        $fileName = 'upload://' . $noteId;
+        $note = \SugarTestNoteUtilities::createNote($noteId);
+        $note->email_id = create_guid();
+        file_put_contents($fileName, 'test');
+        $note->save();
+        $this->assertEquals(filesize($fileName), $note->file_size, 'File Size Not computed on Attachment Save');
+    }
+
+    public function testEmailAttachmentNote_attachmentFileNotFound_fileSizeIsZero()
+    {
+        $noteId = create_guid();
+        $note = \SugarTestNoteUtilities::createNote($noteId);
+        $note->email_id = create_guid();
+        $note->save();
+        $this->assertEquals(0, $note->file_size, 'File Size Should be Zero when No Matching File');
+    }
+
+    public function testNoteWithAttachedFile_MatchingFileButNoEmailReference_fileSizeIsZero()
+    {
+        $noteId = create_guid();
+        $fileName = 'upload://' . $noteId;
+        $note = \SugarTestNoteUtilities::createNote($noteId);
+        file_put_contents($fileName, 'test');
+        $note->save();
+        $this->assertEquals(0, $note->file_size, 'File Size computed for Note with No Email Reference');
     }
 }

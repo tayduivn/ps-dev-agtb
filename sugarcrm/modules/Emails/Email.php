@@ -17,6 +17,10 @@ class Email extends SugarBean {
     const EMAIL_STATE_DRAFT = 'Draft';
     const EMAIL_STATE_ARCHIVED = 'Archived';
 
+    const EMAIL_ATTACHMENT_UPLOADED = 'Uploaded';
+    const EMAIL_ATTACHMENT_DOCUMENT = 'Document';
+    const EMAIL_ATTACHMENT_TEMPLATE = 'Template';
+
     public $emailStates = array(
         self::EMAIL_STATE_READY,
         self::EMAIL_STATE_SCHEDULED,
