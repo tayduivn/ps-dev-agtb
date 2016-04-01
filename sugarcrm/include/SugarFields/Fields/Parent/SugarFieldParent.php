@@ -227,6 +227,13 @@ class SugarFieldParent extends SugarFieldRelate {
         if ($bean->parent_type && $bean->parent_id) {
             // trying to reconstruct the parent bean from the fetched data
             $parent = BeanFactory::getBean($bean->parent_type);
+
+            //processing case when parent_type contains name of non-existing bean
+            if ($parent === null) {
+                $data['parent'] = array();
+                return;
+            }
+
             $parent->id = $bean->parent_id;
             if (isset($bean->parent_name_owner)) {
                 $parent->assigned_user_id = $bean->parent_name_owner;
