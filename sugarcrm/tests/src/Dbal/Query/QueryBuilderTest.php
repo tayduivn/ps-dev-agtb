@@ -17,7 +17,7 @@ use SugarTestHelper;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder
  */
-class SugarAuthTest extends \Sugar_PHPUnit_Framework_TestCase
+class QueryBuilderTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -38,7 +38,7 @@ class SugarAuthTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $q2 = $conn->createQueryBuilder();
         $q2->select('*')
-            ->from($q2->importSubQuery($q1), 'q1');
+            ->from('(' . $q2->importSubQuery($q1) . ')', 'q1');
 
         $data = $q2->execute()->fetchAll();
         $this->assertArraySubset(array(
@@ -62,7 +62,7 @@ class SugarAuthTest extends \Sugar_PHPUnit_Framework_TestCase
         $q2 = $conn->createQueryBuilder();
         $q2->select(array('q2.id, q1.last_name'))
             ->from('users', 'q2')
-            ->join('q2', $q2->importSubQuery($q1), 'q1', 'q2.id = q1.id');
+            ->join('q2', '(' . $q2->importSubQuery($q1) . ')', 'q1', 'q2.id = q1.id');
 
         $data = $q2->execute()->fetchAll();
         $this->assertArraySubset(array(
@@ -86,7 +86,7 @@ class SugarAuthTest extends \Sugar_PHPUnit_Framework_TestCase
         $q2 = $conn->createQueryBuilder();
         $q2->select(array('id, last_name'))
             ->from('users')
-            ->where('id IN ' . $q2->importSubQuery($q1));
+            ->where('id IN(' . $q2->importSubQuery($q1) . ')');
 
         $data = $q2->execute()->fetchAll();
         $this->assertArraySubset(array(

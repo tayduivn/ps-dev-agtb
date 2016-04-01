@@ -15,7 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Dbal\Query;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder
  */
-class SugarAuthTest extends \PHPUnit_Framework_TestCase
+class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::importSubQuery
@@ -38,7 +38,7 @@ class SugarAuthTest extends \PHPUnit_Framework_TestCase
             ->setMethods(null)
             ->getMock();
         $sql = $q2->importSubQuery($q1);
-        $this->assertEquals('(SELECT 1 FROM DUAL)', $sql);
+        $this->assertEquals('SELECT 1 FROM DUAL', $sql);
 
         $q2->createPositionalParameter('y', \PDO::PARAM_BOOL);
 
