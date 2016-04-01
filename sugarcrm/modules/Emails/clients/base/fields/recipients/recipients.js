@@ -34,7 +34,7 @@
      * @param {Object} options
      */
     initialize: function(options) {
-        app.view.Field.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         // initialize the value to an empty collection
         this.model.setDefault(this.name, new Backbone.Collection);
     },
@@ -124,7 +124,7 @@
             value.off(null, null, this);
         }
 
-        app.view.Field.prototype.unbindData.call(this);
+        this._super('unbindData');
     },
 
     /**
@@ -133,9 +133,18 @@
      * @private
      */
     _render: function() {
-        app.view.Field.prototype._render.call(this);
+        var $controlsEl,
+            $recipientsField;
 
-        var $recipientsField = this.getFieldElement();
+        if (this.$el) {
+            $controlsEl = this.$el.closest('.controls');
+            if ($controlsEl.length) {
+                $controlsEl.addClass('controls-one btn-fit');
+            }
+        }
+        this._super('_render');
+
+        $recipientsField = this.getFieldElement();
 
         if ($recipientsField.length > 0) {
             $recipientsField.select2({
@@ -399,7 +408,7 @@
      */
     unbindDom: function() {
         this.getFieldElement().select2('destroy');
-        app.view.Field.prototype.unbindDom.call(this);
+        this._super('unbindDom');
     },
 
     /**

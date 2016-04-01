@@ -75,7 +75,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'           => 'recipients',
                     'label'          => 'LBL_TO_ADDRS',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
                     'required'       => true,
                 ),
                 array(
@@ -83,14 +82,12 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'           => 'recipients',
                     'label'          => 'LBL_CC',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'           => 'bcc_addresses',
                     'type'           => 'recipients',
                     'label'          => 'LBL_BCC',
                     'span'           => 12,
-                    'cell_css_class' => 'controls-one btn-fit',
                 ),
                 array(
                     'name'            => 'subject',
