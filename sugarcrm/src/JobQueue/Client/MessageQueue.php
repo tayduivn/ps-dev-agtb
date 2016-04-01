@@ -58,8 +58,8 @@ class MessageQueue implements ClientInterface
     public function addJob(WorkloadInterface $workload)
     {
         $this->logger->info('[MessageQueue]: serialize workload.');
-        $this->logger->debug('[MessageQueue]: workload ' . var_export($workload, true));
         $data = $this->serializer->serialize($workload);
+        $this->logger->debug("[MessageQueue]: workload {$data}.");
         $this->adapter->addJob($workload->getRoute(), $data);
     }
 }

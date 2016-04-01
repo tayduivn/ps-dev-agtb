@@ -134,8 +134,6 @@ class Parallel extends AbstractRunner
         parent::__construct($config, $worker, $lock, $logger);
 
         $this->pid = getmypid();
-
-        $this->registerTicks();
     }
 
     /**
@@ -261,7 +259,8 @@ class Parallel extends AbstractRunner
     }
 
     /**
-     * Registers the process signal listeners.
+     * {@inheritdoc}
+     * Register different listeners for parent and child processes.
      * @param bool $parent
      */
     protected function registerTicks($parent = true)

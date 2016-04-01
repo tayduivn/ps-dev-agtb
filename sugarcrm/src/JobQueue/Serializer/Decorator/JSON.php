@@ -10,31 +10,35 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\JobQueue\Serializer;
+namespace Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator;
 
+use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
 /**
- * Class Serializer
+ * Class JSON
  * @package JobQueue
  */
-class Serializer implements SerializerInterface
+class JSON extends AbstractDecorator
 {
     /**
-     * Serializes data and encodes data to base64.
+     * Apply json_encode().
      * {@inheritdoc}
      */
-    public function serialize(WorkloadInterface $data)
+    public function decorate($data, WorkloadInterface $workload)
     {
-        return base64_encode(serialize($data));
+        return parent::decorate(json_encode($data), $workload);
     }
 
     /**
-     * Decodes data from base64 and unserializes it.
+     * Apply json_decode().
      * {@inheritdoc}
      */
-    public function unserialize($data)
+    public function undecorate($data)
     {
-        return unserialize(base64_decode($data));
+        if (!is_string($data)) {
+            throw new InvalidArgumentException('Invalid data in decorator. String required.');
+        }
+        return json_decode(parent::undecorate($data), true);
     }
 }

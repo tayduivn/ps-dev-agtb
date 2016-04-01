@@ -17,6 +17,11 @@ use Sugarcrm\Sugarcrm\JobQueue\Client\Gearman as GearmanClient;
 use Sugarcrm\Sugarcrm\JobQueue\Client\MessageQueue as MessageQueueClient;
 use Sugarcrm\Sugarcrm\JobQueue\Client\Immediate as ImmediateClient;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Client\PriorityMessageQueue as PriorityMessageQueueClient;
+use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\Base64;
+use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\PHPSerialize;
+use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\PHPSerializeSafe;
+use Sugarcrm\Sugarcrm\JobQueue\Worker\PriorityMessageQueue as PriorityMessageQueueWorker;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\DispatcherInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\Handler;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
@@ -39,7 +44,6 @@ use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\AdapterRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\HandlerRegistry;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
-use Sugarcrm\Sugarcrm\JobQueue\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -58,6 +62,7 @@ class Manager extends AbstractManager
         'runner' => 'Standard',
         'lock' => 'CacheFile',
         'workload' => 'Workload',
+        'serializer' => 'Base',
     );
 
     /**
@@ -69,6 +74,7 @@ class Manager extends AbstractManager
         'runner' => 'OD',
         'lock' => 'Stub',
         'workload' => 'OD',
+        'serializer' => 'Base',
     );
 
     /**
@@ -201,6 +207,11 @@ class Manager extends AbstractManager
     protected $lockStrategy;
 
     /**
+     * @var Manager
+     */
+    protected static $instance;
+
+    /**
      * SugarCRM dependent manager.
      * Load default handlers and adapters.
      * @param LoggerInterface $logger
@@ -215,26 +226,45 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Get client.
-     *
-     * @return ClientInterface
+     * Get instance of Manager.
+     * @return Manager
+     */
+    public static function getInstance()
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * {@inheritdoc}
      * @throws LogicException
      */
-    protected function getClient()
+    public function getClient($config = null)
     {
         if ($this->client) {
             return $this->client;
         }
-        $config = $this->getSystemConfig();
-        $serializer = $this->getSerializer();
+        $config = $this->getSystemConfig($config);
         $config['adapter'] = !empty($config['client']) ? $config['client'] : $config['adapter'];
+        $serializer = $this->getSerializer();
+        $client = null;
 
         switch (strtolower($config['adapter'])) {
+            case 'priority':
+                $client = new PriorityMessageQueueClient(
+                    $config['priority'],
+                    $this->adapterRegistry,
+                    $serializer,
+                    $this->logger
+                );
+                break;
             case 'gearman':
-                $this->client = new GearmanClient($config['gearman'], $serializer, $this->logger);
+                $client = new GearmanClient($config['gearman'], $serializer, $this->logger);
                 break;
             case 'immediate':
-                $this->client = new ImmediateClient(array($this, 'proxyHandler'), $this->logger);
+                $client = new ImmediateClient(array($this, 'proxyHandler'), $this->logger);
                 break;
             // Message queue client.
             case 'amazon_sqs':
@@ -247,29 +277,39 @@ class Manager extends AbstractManager
                         "Cannot create a client, no config for the '{$config['adapter']}' adapter found."
                     );
                 }
-                $this->client = new MessageQueueClient($adapter, $serializer, $this->logger);
+                $client = new MessageQueueClient($adapter, $serializer, $this->logger);
                 break;
         }
-        $this->logger->debug('Instantiate Client: ' . get_class($this->client));
-        return $this->client;
+        if (!$client) {
+            throw new LogicException('Cannot instantiate a client.');
+        }
+        $this->logger->debug('Instantiate Client: ' . get_class($client));
+
+        return $this->client = $client;
     }
 
     /**
-     * Get worker.
-     *
-     * @return WorkerInterface
+     * {@inheritdoc}
      * @throws LogicException
      */
-    protected function getWorker()
+    public function getWorker($config = null)
     {
         if ($this->worker) {
             return $this->worker;
         }
-        $config = $this->getSystemConfig();
+        $config = $this->getSystemConfig($config);
         $serializer = $this->getSerializer();
         $config['adapter'] = !empty($config['worker']) ? $config['worker'] : $config['adapter'];
 
         switch (strtolower($config['adapter'])) {
+            case 'priority':
+                $this->worker = new PriorityMessageQueueWorker(
+                    $config['priority'],
+                    $this->adapterRegistry,
+                    $serializer,
+                    $this->logger
+                );
+                break;
             case 'gearman':
                 $this->worker = new GearmanWorker($config['gearman'], $serializer, $this->logger);
                 break;
@@ -297,16 +337,16 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Get observer.
+     * {@inheritdoc}
      * @return \SplPriorityQueue
      */
-    protected function getObserver()
+    public function getObserver($config = null)
     {
         if ($this->observer) {
             // \SplPriorityQueue extracts elements while walking on the queue
             return clone $this->observer;
         }
-        $config = $this->getSystemConfig();
+        $config = $this->getSystemConfig($config);
         $this->observer = new \SplPriorityQueue();
         $this->observer->setExtractFlags(\SplPriorityQueue::EXTR_DATA);
 
@@ -375,18 +415,16 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Get runner.
-     *
-     * @return RunnerInterface
+     * {@inheritdoc}
      */
-    public function getRunner()
+    public function getRunner($config = null)
     {
         if ($this->runner) {
             return $this->runner;
         }
-        $config = $this->getSystemConfig();
+        $config = $this->getSystemConfig($config);
         $worker = $this->getWorker();
-        $lock = $this->getLockStrategy();
+        $lock = $this->getLock();
         $this->logger->info('Creating worker runner.');
 
         switch (strtolower($config['runner'])) {
@@ -407,13 +445,17 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Get serializer.
-     * @return SerializerInterface
+     * {@inheritdoc}
      */
-    protected function getSerializer()
+    public function getSerializer($config = null)
     {
-        if (!$this->serializer) {
-            $this->serializer = new Serializer();
+        if ($this->serializer) {
+            return $this->serializer;
+        }
+        $config = $this->getSystemConfig($config);
+        switch (strtolower($config['serializer'])) {
+            default:
+                $this->serializer = new PHPSerializeSafe($this->logger, new Base64($this->logger));
         }
         $this->logger->debug('Instantiate Serializer: ' . get_class($this->serializer));
         return $this->serializer;
@@ -421,46 +463,28 @@ class Manager extends AbstractManager
 
     /**
      * Get proper configuration data.
-     * In OD mode internal configuration is used, otherwise module interface.
      * Read config once from SugarConfig, than read from internal cache.
+     * @param mixed $config
      * @return array
      */
-    public function getSystemConfig()
+    public function getSystemConfig($config = null)
     {
         if ($this->systemConfig) {
             return $this->systemConfig;
         }
-        // In OD params are taken from config, otherwise from interface.
-        $od = \SugarConfig::getInstance()->get('job_queue.od');
-        if (!empty($od)) {
+        if ($config) {
+            return $this->systemConfig = $config;
+        }
+        $systemConfig = \SugarConfig::getInstance()->get('job_queue', []);
+        if (!empty($systemConfig['od'])) {
             $this->logger->info('OD mode is enabled. Read system file config.');
-            $config = array_merge(
-                $this->defaultODConfig,
-                \SugarConfig::getInstance()->get('job_queue')
-            );
+            $config = array_merge($this->defaultODConfig, $systemConfig);
         } else {
-            $this->logger->info('Read SchedulersJobs base config. Add adapters, handlers and observers from config.');
-
-            $customAdapters = \SugarConfig::getInstance()->get('job_queue.adapters', array());
-            $adaptersConfig = array();
-            foreach ($customAdapters as $name => $val) {
-                $adaptersConfig += array(
-                    strtolower($name) => \SugarConfig::getInstance()->get('job_queue.' . strtolower($name), array()),
-                );
-            }
+            $this->logger->info('Read SchedulersJobs base config.');
             $config = array_merge(
                 $this->defaultConfig,
-                array(
-                    'handlers' => \SugarConfig::getInstance()->get('job_queue.handlers', array()),
-                    'observers' => \SugarConfig::getInstance()->get('job_queue.observers', array()),
-                    // List of custom adapters.
-                    'adapters' => $customAdapters,
-                    // Default adapter.
-                    'adapter' => \SugarConfig::getInstance()->get('job_queue.adapter', $this->defaultConfig['adapter']),
-                ),
-                // Custom adapters configs.
-                $adaptersConfig,
-                \BeanFactory::getBean('Administration')->getConfigForModule('SchedulersJobs', 'base')
+                \BeanFactory::getBean('Administration')->getConfigForModule('SchedulersJobs', 'base'),
+                $systemConfig
             );
         }
         return $this->systemConfig = $config;
@@ -511,17 +535,14 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Return a specific lock strategy.
-     *
-     * @return LockStrategyInterface
+     * {@inheritdoc}
      */
-    protected function getLockStrategy()
+    public function getLock($config = null)
     {
         if ($this->lockStrategy) {
             return $this->lockStrategy;
         }
-        $config = $this->getSystemConfig();
-
+        $config = $this->getSystemConfig($config);
         switch (strtolower($config['lock'])) {
             case 'cachefile':
                 $this->lockStrategy = new CacheFile();
@@ -593,7 +614,7 @@ class Manager extends AbstractManager
     public function stop()
     {
         // Override lock to kill running managers.
-        $this->getLockStrategy()->setLock(time());
+        $this->getLock()->setLock(time());
         $this->logger->info('Stop the process.');
     }
 
@@ -721,7 +742,7 @@ class Manager extends AbstractManager
     public function registerHandler($name, $class)
     {
         if (!class_exists($class)) {
-            throw new LogicException('Handler should be a class.');
+            throw new LogicException("Handler '{$name}' '{$class}' does not exist.");
         }
         $interfaces = class_implements($class);
         if (!in_array('Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface', $interfaces)) {
@@ -775,5 +796,20 @@ class Manager extends AbstractManager
     {
         $this->logger->info("Register handler '{$name}'.");
         return $this->handlerRegistry->get($name);
+    }
+
+    /**
+     * Try to instantiate a client.
+     * Throws an exception if passed adapter cannot be initialized.
+     * @param string $name Client name.
+     * @param array $config Configuration for the adapter.
+     * @throws \Exception
+     */
+    public function validateClient($name, array $config = [])
+    {
+        $factoryConfig = [];
+        $factoryConfig['client'] = $name;
+        $factoryConfig[$name] = $config;
+        $this->getClient($factoryConfig);
     }
 }

@@ -35,7 +35,7 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $runner->expects($this->any())
             ->method('isWorkProcessActual')
-            ->will($this->onConsecutiveCalls(true, true, false));
+            ->will($this->onConsecutiveCalls(true, false));
 
         $worker->expects($this->exactly(2))->method('work')->will($this->returnValue(false));
         $worker->expects($this->any())->method('returnCode')->will(
@@ -88,7 +88,7 @@ class RunnerTest extends \PHPUnit_Framework_TestCase
 
         $runner = $this->getMock(
             'Sugarcrm\Sugarcrm\JobQueue\Runner\AbstractRunner',
-            array('run', 'shutdownHandler', 'noJobsHandler', 'isWorkProcessActual'),
+            array('run', 'shutdownHandler', 'noJobsHandler', 'isWorkProcessActual', 'registerTicks'),
             array(array(), $worker, $lock, new NullLogger())
         );
 

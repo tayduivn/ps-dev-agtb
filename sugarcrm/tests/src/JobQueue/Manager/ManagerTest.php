@@ -12,19 +12,30 @@
 
 namespace Sugarcrm\SugarcrmTests\JobQueue\Manager;
 
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \DBManager
+     */
+    protected $db;
+
     public function setUp()
     {
         \SugarTestHelper::setUp('current_user', array(true, 1));
+        $this->db = \DBManagerFactory::getInstance();
     }
 
     public function tearDown()
     {
+        unset($GLOBALS['sugar_config']['job_queue']);
+        \SugarConfig::getInstance()->clearCache('job_queue');
+        $this->db->query('DELETE FROM config where category = "SchedulersJobs"');
+        $this->db->commit();
         \SugarTestHelper::tearDown();
     }
 
@@ -194,5 +205,79 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
             );
 
         $manager->addJob($this->getMock('Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface'));
+    }
+
+    /**
+     * Test that JQ follows administration settings and sugar configuration.
+     * Sugar config has the highest priority.
+     */
+    public function testManagerConfig()
+    {
+        $manager = new JQManagerMock(new NullLogger());
+
+        $this->assertEquals([
+            'adapter' => 'adapter1',
+            'runner' => 'runner1',
+            'lock' => 'lock1',
+        ], $manager->getSystemConfig());
+
+        \BeanFactory::getBean('Administration')->saveSetting('SchedulersJobs', 'runner', 'runner2', 'base');
+
+        $this->assertEquals([
+            'adapter' => 'adapter1',
+            'runner' => 'runner2',
+            'lock' => 'lock1',
+        ], $manager->getSystemConfig());
+
+        \SugarConfig::getInstance()->clearCache('job_queue');
+        $GLOBALS['sugar_config']['job_queue'] = [
+            'adapter' => 'adapter3',
+            'lock' => 'lock3',
+        ];
+
+        $this->assertEquals([
+            'adapter' => 'adapter3',
+            'runner' => 'runner2',
+            'lock' => 'lock3',
+        ], $manager->getSystemConfig());
+
+        \SugarConfig::getInstance()->clearCache('job_queue');
+        $GLOBALS['sugar_config']['job_queue'] = [
+            'adapter' => 'adapter3',
+            'od' => true, // Does not read admin settings.
+        ];
+
+        $this->assertEquals([
+            'adapter' => 'adapter3',
+            'runner' => 'runner1',
+            'lock' => 'lock1',
+            'od' => true,
+        ], $manager->getSystemConfig());
+    }
+}
+
+class JQManagerMock extends Manager
+{
+    protected $defaultConfig = [
+        'adapter' => 'adapter1',
+        'runner' => 'runner1',
+        'lock' => 'lock1',
+    ];
+
+    protected $defaultODConfig = [
+        'adapter' => 'adapter1',
+        'runner' => 'runner1',
+        'lock' => 'lock1',
+    ];
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function getSystemConfig()
+    {
+        $this->systemConfig = null;
+        return parent::getSystemConfig();
     }
 }

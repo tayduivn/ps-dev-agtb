@@ -44,34 +44,46 @@ abstract class AbstractManager implements ClientInterface, RunnerInterface
     }
 
     /**
-     * Get client.
+     * Factory method for client.
+     * @param mixed $config
      * @return ClientInterface
      */
-    abstract protected function getClient();
+    abstract public function getClient($config = null);
 
     /**
-     * Get worker.
+     * Factory method for worker.
+     * @param mixed $config
      * @return WorkerInterface
      */
-    abstract protected function getWorker();
+    abstract public function getWorker($config = null);
 
     /**
-     * Get observer.
+     * Factory method for observer.
+     * @param mixed $config
      * @return \SplObjectStorage
      */
-    abstract protected function getObserver();
+    abstract public function getObserver($config = null);
 
     /**
-     * Get runner.
+     * Factory method for runner.
+     * @param mixed $config
      * @return RunnerInterface
      */
-    abstract public function getRunner();
+    abstract public function getRunner($config = null);
 
     /**
-     * Get serializer.
+     * Factory method for serializer.
+     * @param mixed $config
      * @return SerializerInterface
      */
-    abstract protected function getSerializer();
+    abstract public function getSerializer($config = null);
+
+    /**
+     * Return a specific lock strategy.
+     * @param mixed $config
+     * @return LockStrategyInterface
+     */
+    abstract public function getLock($config = null);
 
     /**
      * Return a specific dispatcher by name.
@@ -79,12 +91,6 @@ abstract class AbstractManager implements ClientInterface, RunnerInterface
      * @return callable|null
      */
     abstract protected function getDispatcher($handlerName);
-
-    /**
-     * Return a specific lock strategy.
-     * @return LockStrategyInterface
-     */
-    abstract protected function getLockStrategy();
 
     /**
      * Implementation of 'fail' job status/resolution.

@@ -19,40 +19,32 @@ namespace Sugarcrm\Sugarcrm\JobQueue\Workload;
 class OD extends Workload
 {
     /**
-     * Form a route using the instance key.
+     * Add the instance key.
      * {@inheritdoc}
      */
-    public function setRoute($handlerName)
+    public function __construct($route, $data, array $attributes = array())
     {
-        $this->route = $handlerName . ':' . $this->getInstanceUnique();
+        parent::__construct($route, $data, $attributes);
+        $urlData = parse_url(\SugarConfig::getInstance()->get('site_url'));
+
+        $this->setInstanceKey($urlData['host']);
     }
 
     /**
-     * Add the instance key as a parameter.
-     * {@inheritdoc}
+     * Set instance specific part.
+     * @param string $instanceKey
      */
-    public function initAttributes($data)
+    public function setInstanceKey($instanceKey)
     {
-        $this->attributes = $data;
-        $this->attributes['instanceKey'] = $this->getInstanceUnique();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHandlerName()
-    {
-        return str_replace(':' . $this->getInstanceUnique(), '', $this->route);
+        $this->attributes['instanceKey'] = $instanceKey;
     }
 
     /**
      * Return instance specific part.
-     *
      * @return string
      */
-    protected function getInstanceUnique()
+    public function getInstanceKey()
     {
-        $urlData = parse_url(\SugarConfig::getInstance()->get('site_url'));
-        return $urlData['host'];
+        return $this->attributes['instanceKey'];
     }
 }
