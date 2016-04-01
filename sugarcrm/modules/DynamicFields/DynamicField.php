@@ -140,6 +140,7 @@ class DynamicField {
         $query = "SELECT * FROM fields_meta_data WHERE $where deleted = 0";
 
         $result = $GLOBALS['db']->query ( $query );
+        require_once 'modules/DynamicFields/FieldCases.php';
 
         // retrieve the field definition from the fields_meta_data table
         // using 'encode'=false to fetchByAssoc to prevent any pre-formatting of the base metadata
@@ -185,6 +186,7 @@ class DynamicField {
         }
         $query = "SELECT * FROM fields_meta_data WHERE custom_module='$module' AND name='$fieldName' AND deleted = 0";
         $result = $GLOBALS['db']->query ( $query );
+        require_once 'modules/DynamicFields/FieldCases.php';
         if ( $row = $GLOBALS['db']->fetchByAssoc ( $result ) ) {
             $field = get_widget ( $row ['type'] );
             $field->populateFromRow($row);
@@ -638,6 +640,7 @@ class DynamicField {
 
     public function saveExtendedAttributes($field, $column_fields)
     {
+        require_once 'modules/DynamicFields/FieldCases.php';
         global $beanList;
 
         $to_save = array();
@@ -748,6 +751,7 @@ class DynamicField {
      * @return boolean
      */
     function addField($name,$label='', $type='Text',$max_size='255',$required_option='optional', $default_value='', $ext1='', $ext2='', $ext3='',$audited=0, $mass_update = 0 , $ext4='', $help='',$duplicate_merge=0, $comment=''){
+        require_once 'modules/DynamicFields/FieldCases.php';
         $field = new TemplateField();
         $field->label = $label;
         if(empty($field->label)){
@@ -1032,6 +1036,7 @@ class DynamicField {
     }
 
     function getAllFieldsView($view, $type){
+        require_once 'modules/DynamicFields/FieldCases.php';
          $results = array();
          foreach($this->bean->field_defs as $name=>$data){
             if(empty($data['source']) || $data['source'] != 'custom_fields')

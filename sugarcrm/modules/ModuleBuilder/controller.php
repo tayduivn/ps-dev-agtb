@@ -12,6 +12,8 @@
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 
+require_once 'modules/DynamicFields/FieldCases.php';
+
 class ModuleBuilderController extends SugarController
 {
 
