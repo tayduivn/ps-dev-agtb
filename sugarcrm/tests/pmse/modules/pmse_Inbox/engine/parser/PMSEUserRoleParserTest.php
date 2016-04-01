@@ -30,9 +30,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
 
     public function testParseCriteriaTokenCurrentUserIsAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -82,24 +79,12 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenOwnerIsAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
         
         $evaluatedBeanMock->assigned_user_id = "1";
 
-//        $userBeanMock = $this->getMock('User');
-//
-//        $userBeanMock->expects($this->exactly(1))
-//            ->method('retrieve')
-//            ->with($this->isType('string'));
-////            ->will($this->returnValue($supervisorUserMock));
-//
-//        $userBeanMock->is_admin = 0;
-        
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve'))
@@ -108,9 +93,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
             ->method('retrieve')
             ->with($this->isType('string'));
         $userBeanMock->is_admin = 1;
-        
-//        $currentUserMock = $this->getMock('User');
-//        $currentUserMock->is_admin = 1;
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -132,7 +114,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
             "currentValue": "is_admin"
         }');
 
-//        $this->dataParser->setCurrentUser($currentUserMock);
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
@@ -141,21 +122,12 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenSupervisorIsAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->disableOriginalConstructor()
             ->setMockClassName('leads')
             ->getMock();
 
         $evaluatedBeanMock->assigned_user_id = "1";
-
-        $supervisorUserMock = $this->getMockBuilder('User')
-                ->disableOriginalConstructor()
-                ->setMethods(NULL)
-                ->getMock();
-        $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -164,8 +136,7 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
 
         $userBeanMock->expects($this->exactly(1))
             ->method('retrieve')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($supervisorUserMock));
+            ->with($this->isType('string'));
 
         $userBeanMock->is_admin = 1;
 
@@ -203,25 +174,15 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
         $this->assertEquals($expectedCriteriaToken, $resultCriteriaObject);
     }
-    
+
     public function testParseCriteriaTokenSupervisorNull()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
 
         $evaluatedBeanMock->assigned_user_id = "1";
 
-        $supervisorUserMock = $this->getMockBuilder('User')
-                ->disableOriginalConstructor()
-                ->setMethods(NULL)
-                ->getMock();
-
-        $supervisorUserMock->is_admin=1;
-        
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve'))
@@ -230,9 +191,7 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $userBeanMock->expects($this->exactly(1))
             ->method('retrieve')
             ->with($this->isType('string'))
-            ->will($this->returnValue(null));
-
-        $userBeanMock->is_admin = 1;
+            ->willReturn(null);
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -259,9 +218,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenCurrentUserHasRoleAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -324,9 +280,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenCurrentUserHasRole()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -357,13 +310,14 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query'))
+            ->setMethods(array('query', 'fetchByAssoc'))
             ->getMock();
         $dbHandlerMock->expects($this->exactly(1))
             ->method('query')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($resultObject));
-        $dbHandlerMock->resultObject = $resultObject;
+            ->with($this->isType('string'));
+        $dbHandlerMock->expects($this->any())
+            ->method('fetchByAssoc')
+            ->willReturn(array('id' => 'abc'));
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -392,24 +346,14 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
         $this->assertEquals($expectedCriteriaToken, $resultCriteriaObject);
     }
-    
+
     public function testParseCriteriaTokenOwnerHasRole()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
 
         $evaluatedBeanMock->assigned_user_id = "1";
-
-        $supervisorUserMock = $this->getMockBuilder('User')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
-                ->getMock();
-        
-        $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -428,13 +372,15 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query'))
+            ->setMethods(array('query', 'fetchByAssoc'))
             ->getMock();
         $dbHandlerMock->expects($this->exactly(1))
             ->method('query')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($resultObject));
-        $dbHandlerMock->resultObject = $resultObject;
+            ->with($this->isType('string'));
+
+        $dbHandlerMock->expects($this->any())
+            ->method('fetchByAssoc')
+            ->willReturn(array('id' => 'abc'));
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -466,9 +412,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenOwnerHasRoleIsAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -515,9 +458,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenOwnerHasRoleAdmin()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -581,21 +521,11 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenSupervisorHasRole()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
 
         $evaluatedBeanMock->assigned_user_id = "1";
-
-        $supervisorUserMock = $this->getMockBuilder('User')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
-                ->getMock();
-        $supervisorUserMock->is_admin=1;
-        $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -604,9 +534,8 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
 
         $userBeanMock->expects($this->exactly(1))
             ->method('retrieve')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($supervisorUserMock));
-        
+            ->with($this->isType('string'));
+
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
@@ -617,14 +546,16 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query'))
+            ->setMethods(array('query', 'fetchByAssoc'))
             ->getMock();
         
         $dbHandlerMock->expects($this->exactly(1))
             ->method('query')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($resultObject));
-        $dbHandlerMock->resultObject = $resultObject;
+            ->with($this->isType('string'));
+
+        $dbHandlerMock->expects($this->any())
+            ->method('fetchByAssoc')
+            ->willReturn(array('id' => 'abc'));
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -656,32 +587,21 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenSupervisor()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
 
         $evaluatedBeanMock->assigned_user_id = "1";
 
-        $supervisorUserMock = $this->getMockBuilder('User')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
-                ->getMock();
-        $supervisorUserMock->is_admin = 1;
-        $supervisorUserMock->id="1";
-        
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve'))
                 ->getMock();
 
-        $userBeanMock->expects($this->exactly(1))
+        $userBeanMock->expects($this->any())
             ->method('retrieve')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($supervisorUserMock));
-        
+            ->with($this->isType('string'));
+
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
@@ -699,7 +619,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
             "expType": "USER_ROLE",
             "expLabel": "Supervisor is admin"
         }');
-        $this->dataParser->setCurrentUser($currentUserMock);
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
@@ -708,9 +627,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenCurrentUserHasIdentity()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -767,9 +683,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenOwnerHasIdentity()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -826,9 +739,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenSupervisorHasIdentity()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -885,9 +795,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenOwnerHasIdentityNull()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
@@ -932,9 +839,6 @@ class PMSEUserRoleParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseCriteriaTokenSupervisorHasIdentityNull()
     {
-        $resultObject = new stdClass();
-        $resultObject->num_rows = 1;
-
         $evaluatedBeanMock = $this->getMockBuilder('leadMock')
             ->setMockClassName('leads')
             ->getMock();
