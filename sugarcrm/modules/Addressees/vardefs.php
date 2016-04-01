@@ -55,6 +55,9 @@ $dictionary['Addressee'] = array(
             'rname_link' => 'accept_status',
         ),
     ),
+
+    'acls' => array('SugarACLAddressees' => true),
+
     'relationships' => array(),
     'optimistic_locking' => true,
     'unified_search' => true,
