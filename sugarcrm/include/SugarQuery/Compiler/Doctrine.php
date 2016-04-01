@@ -79,12 +79,16 @@ class SugarQuery_Compiler_Doctrine
             $sql = $conn->getDatabasePlatform()->modifyLimitQuery($sql, $query->limit, $query->offset);
         }
 
-        // inject the SQL back to builder
-        $re = new ReflectionProperty($builder, 'sql');
+        // below is a very dirty hack: Doctrine QueryBuilder doesn't support UNION's,
+        // so we inject pre-built SQL into builder.
+        // another dirty thing is that we're using our own wrapper for QueryBuilder,
+        // so we use parent class reflection here in order to set private properties of
+        // the parent calss
+        $re = new ReflectionProperty(get_parent_class($builder), 'sql');
         $re->setAccessible(true);
         $re->setValue($builder, $sql);
 
-        $re = new ReflectionProperty($builder, 'state');
+        $re = new ReflectionProperty(get_parent_class($builder), 'state');
         $re->setAccessible(true);
         $re->setValue($builder, QueryBuilder::STATE_CLEAN);
 
