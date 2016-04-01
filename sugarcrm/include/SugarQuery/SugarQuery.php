@@ -340,7 +340,11 @@ class SugarQuery
         }
 
         $this->join[$key] = $join;
-        $this->joinTableToKey[$table] = $key;
+
+        if (is_string($table)) {
+            $this->joinTableToKey[$table] = $key;
+        }
+
         return $join;
     }
 
@@ -1070,7 +1074,7 @@ class SugarQuery
         }
 
         $table = $this->join[$alias]->table;
-        if (!isset($dictionary[$table])) {
+        if (!is_string($table) || !isset($dictionary[$table])) {
             return array();
         }
 

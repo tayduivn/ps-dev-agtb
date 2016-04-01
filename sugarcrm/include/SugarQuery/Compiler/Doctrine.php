@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
 
 class SugarQuery_Compiler_Doctrine
 {
@@ -222,8 +222,10 @@ class SugarQuery_Compiler_Doctrine
 
     protected function compileJoin(QueryBuilder $builder, SugarQuery_Builder_Join $join)
     {
-        if ($join->table instanceof SugarQuery) {
-            $table = $this->compileSubQuery($builder, $join->table);
+        if ($join->table instanceof SugarQuery
+            || $join->table instanceof QueryBuilder
+        ) {
+            $table = '(' . $this->compileSubQuery($builder, $join->table) . ')';
         } else {
             $table = $join->table;
         }
@@ -492,7 +494,8 @@ class SugarQuery_Compiler_Doctrine
                     break;
                 default:
                     $sql = $castField . ' ' . $condition->operator . ' ';
-                    if ($condition->values instanceof SugarQuery) {
+                    if ($condition->values instanceof SugarQuery
+                        || $condition->values instanceof QueryBuilder) {
                         $sql .= '(' . $this->compileSubQuery($builder, $condition->values) . ')';
                     } elseif ($condition->field->isFieldCompare()) {
                         $condition->field->field = $condition->field->getFieldCompare();
@@ -514,9 +517,17 @@ class SugarQuery_Compiler_Doctrine
         return $sql;
     }
 
-    protected function compileSet($builder, $set, $fieldDef)
+    /**
+     * Compiles set of values
+     *
+     * @param QueryBuilder $builder
+     * @param SugarQuery|QueryBuilder|array|string $set
+     * @param array $fieldDef Field definition
+     * @return string
+     */
+    protected function compileSet(QueryBuilder $builder, $set, array $fieldDef)
     {
-        if ($set instanceof SugarQuery) {
+        if ($set instanceof SugarQuery || $set instanceof QueryBuilder) {
             return $this->compileSubQuery($builder, $set);
         }
 
@@ -536,23 +547,22 @@ class SugarQuery_Compiler_Doctrine
      * Compiles subquery and returns it as SQL
      *
      * @param QueryBuilder $builder Primary query builder
-     * @param SugarQuery $subQuery Subquery
+     * @param SugarQuery|QueryBuilder $subQuery Subquery
      *
      * @return string
+     * @throws SugarQueryException
      */
-    protected function compileSubQuery(QueryBuilder $builder, SugarQuery $subQuery)
+    protected function compileSubQuery(QueryBuilder $builder, $subQuery)
     {
-        $subBuilder = $this->compile($subQuery);
-
-        $params = $subBuilder->getParameters();
-        foreach ($params as $key => $value) {
-            $builder->createPositionalParameter(
-                $value,
-                $subBuilder->getParameterType($key)
-            );
+        if ($subQuery instanceof SugarQuery) {
+            $subQuery = $this->compile($subQuery);
         }
 
-        return $subBuilder->getSQL();
+        if (!$subQuery instanceof QueryBuilder) {
+            throw new SugarQueryException('Sub-query must be either SugarQuery, or QueryBuilder');
+        }
+
+        return $builder->importSubQuery($subQuery);
     }
 
     protected function compileLike(QueryBuilder $builder, $field, $operator, $values, array $fieldDef)
