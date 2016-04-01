@@ -38,10 +38,10 @@
                 }
             },
             {
-                name: "RedirectToUserCalDavConfigPage",
+                name: "RedirectToHomePage",
                 route: "CalDav",
                 callback: function () {
-                    app.router.goBack();
+                    app.router.redirect('Home');
                 }
             }
         ];
