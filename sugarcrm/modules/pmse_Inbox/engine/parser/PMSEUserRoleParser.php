@@ -213,7 +213,8 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                             $token->expValue . "' AND user_id = '" .
                             $this->currentUser->id . "' AND deleted = 0;";
                         $result = $this->dbHandler->query($get_acl_roles);
-                        $output = $result->num_rows >= 1 ? $token->expValue : "";
+                        $row = $this->dbHandler->fetchByAssoc($result);
+                        $output = !empty($row) ? $token->expValue : "";
                         break;
                     case 'owner':
                         $this->userBean->retrieve($this->evaluatedBean->assigned_user_id);
@@ -226,7 +227,8 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                                 $token->expValue . "' AND user_id = '" .
                                 $this->userBean->id . "' AND deleted = 0;";
                             $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows >= 1 ? $token->expValue : "";
+                            $row = $this->dbHandler->fetchByAssoc($result);
+                            $output = !empty($row) ? $token->expValue : "";
                         } else {
                             // @codeCoverageIgnoreStart
                             $output = '';
@@ -244,7 +246,8 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                                 $token->expValue . "' AND user_id = '" .
                                 $userSup->id . "' AND deleted = 0;";
                             $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows >= 1 ? $token->expValue : "";
+                            $row = $this->dbHandler->fetchByAssoc($result);
+                            $output = !empty($row) ? $token->expValue : "";
                         } else {
                             // @codeCoverageIgnoreStart
                             $output = '';
