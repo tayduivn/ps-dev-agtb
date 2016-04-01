@@ -337,6 +337,24 @@ class Event
     }
 
     /**
+     * Check is event all day or not.
+     *
+     * @return bool
+     */
+    public function isAllDay()
+    {
+        if (!$this->event) {
+            return false;
+        }
+        
+        if ($this->event->DTSTART) {
+            return !$this->event->DTSTART->hasTime();
+        }
+        
+        return false;
+    }
+
+    /**
      * Get state of event
      * @return int
      */

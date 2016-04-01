@@ -14,8 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEWrapper.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
 {
@@ -549,7 +549,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
             $this->project->fetched_row['prj_description'] = $this->project->fetched_row['description'];
 
             //Get related modules for this project
-            $pmseRelatedModule = new PMSERelatedModule();
+            $pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
             $relatedModues = $pmseRelatedModule->getRelatedBeans($this->project->prj_module, 'one-to-many');
             unset($relatedModues['result'][0]);
             $this->project->fetched_row['script_tasks']['add_related_record'] = $relatedModues['result'];
@@ -1241,7 +1241,7 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                     $tmpDefinition = $this->getBean('pmse_BpmEventDefinition', $bean->$primaryField);
                     $this->delete($tmpDefinition);
                     if (!empty($tmpDefinition->fetched_row)) {
-                        $relDepWrapper = new PMSERelatedDependencyWrapper();
+                        $relDepWrapper = ProcessManager\Factory::getPMSEObject('PMSERelatedDependencyWrapper');
                         $relDepWrapper->removeRelatedDependencies($tmpDefinition->fetched_row);
                         $relDepWrapper->removeActiveTimerEvents($tmpDefinition->fetched_row);
                     }

@@ -15,7 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/pmse_Emails_Templates/pmse_Emails_Templates.php');
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_Emails_TemplatesDashlet extends DashletGeneric { 
     public function __construct($id, $def = null)
@@ -30,6 +31,6 @@ class pmse_Emails_TemplatesDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['pmse_Emails_TemplatesDashlet']['searchFields'];
         $this->columns = $dashletData['pmse_Emails_TemplatesDashlet']['columns'];
 
-        $this->seedBean = new pmse_Emails_Templates();        
+        $this->seedBean = ProcessManager\Factory::getPMSEObject('pmse_Emails_Templates');
     }
 }

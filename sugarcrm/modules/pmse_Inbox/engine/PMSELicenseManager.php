@@ -12,10 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/Crypt.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSECaseFlowHandler.php';
-require_once 'modules/pmse_Inbox/engine/PMSEFlowRouter.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * The License Manager class, validates licenses, establish connections to the license server,
@@ -81,7 +80,7 @@ class PMSELicenseManager
         //$this->connectionGateway = new ADAMConnectionGateway();
         $this->amBean = BeanFactory::getBean('pmse_BpmAccessManagement'); //BpmAccessManagement();
         $this->key = '1234567890';
-        $this->crypt = new Crypt();
+        $this->crypt = ProcessManager\Factory::getPMSEObject('Crypt');
         global $db;
         $this->db = isset($GLOBALS["db"]) ? $GLOBALS["db"] : $db;
 
@@ -470,9 +469,9 @@ class PMSELicenseManager
         foreach ($flows['list'] as $flow) {
             $flowData = get_object_vars($flow);
             $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
-            $caseHandler = new PMSECaseFlowHandler();
+            $caseHandler = ProcessManager\Factory::getPMSEObject('PMSECaseFlowHandler');
             $bpmnElement = $caseHandler->retrieveElementByType($flowData['bpmn_type']);
-            $flowRouter = new PMSEFlowRouter();
+            $flowRouter = ProcessManager\Factory::getPMSEObject('PMSEFlowRouter');
             $executionResult = $bpmnElement->run($flowData, $bean);
             $executionResult['flow_action'] = 'UPDATE';
             $executionResult['flow_id'] = $flowData['id'];

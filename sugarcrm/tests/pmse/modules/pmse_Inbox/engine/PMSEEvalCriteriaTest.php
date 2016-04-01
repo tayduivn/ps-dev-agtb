@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
 {
 
@@ -24,7 +27,7 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new PMSEEvalCriteria;
+        $this->object = ProcessManager\Factory::getPMSEObject('PMSEEvalCriteria');
         // The default timezone is set to phoenix because the server could
         // have a different timezone that triggers failures with the tests 
         // already defined values.

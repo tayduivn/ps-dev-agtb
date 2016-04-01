@@ -19,8 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEBusinessRuleConversor.php';
-require_once 'modules/pmse_Inbox/engine/PMSEEvaluator.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEBusinessRuleReader
 {
@@ -56,15 +55,24 @@ class PMSEBusinessRuleReader
 
     /**
      * Constructor
-     * @param type $appData
-     * @param type $global
      */
-    public function __construct($appData = array(), $global = array())
+    public function __construct()
+    {
+        $this->appDataVar = array();
+        $this->globalVar = array();
+        $this->businessRuleConversor = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleConversor');
+        $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
+    }
+
+    /**
+     * Initializing the instance variables
+     * @param array $appData
+     * @param array $global
+     */
+    public function init($appData = array(), $global = array())
     {
         $this->appDataVar = $appData;
         $this->globalVar = $global;
-        $this->businessRuleConversor = new PMSEBusinessRuleConversor();
-        $this->evaluator = new PMSEEvaluator();
     }
 
     /**

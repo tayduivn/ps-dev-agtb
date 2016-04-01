@@ -658,6 +658,9 @@ class CalDavEventCollection extends SugarBean
 
         $object = $this->getParent()->getObject();
         $property = $object->parent->createProperty('EXDATE');
+        if ($child->isAllDay()) {
+            $property['VALUE'] = 'DATE';
+        }
         $property->setDateTime($recurrenceId);
         $object->add($property);
         $this->childEvents = array();

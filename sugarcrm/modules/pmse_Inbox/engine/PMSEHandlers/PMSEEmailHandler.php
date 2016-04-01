@@ -14,9 +14,9 @@ if (!defined('sugarEntry') || !sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandler.php';
 require_once 'include/workflow/alert_utils.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEEmailHandler
 {
@@ -65,10 +65,10 @@ class PMSEEmailHandler
         global $locale, $beanList;
         $this->beanList = $beanList;
         $this->locale = $locale;
-        $this->beanUtils = new PMSEBeanHandler();
+        $this->beanUtils = ProcessManager\Factory::getPMSEObject('PMSEBeanHandler');
         $this->logger = PMSELogger::getInstance();
         $this->admin = new Administration();
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
     }
 
     /**

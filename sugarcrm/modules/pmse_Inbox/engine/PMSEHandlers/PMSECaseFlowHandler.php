@@ -12,9 +12,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSEFieldsUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'include/SugarQuery/SugarQuery.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSECaseFlowHandler
 {
@@ -77,93 +78,7 @@ class PMSECaseFlowHandler
      */
     public function retrievePMSEElement($elementName)
     {
-        $modulePath = 'modules/pmse_Inbox/engine/PMSEElements';
-        switch ($elementName) {
-            case 'PMSEStartEvent':
-                require_once $modulePath . '/PMSEStartEvent.php';
-                return new PMSEStartEvent();
-                break;
-            case 'PMSEEndEvent':
-                require_once $modulePath . '/PMSEEndEvent.php';
-                return new PMSEEndEvent();
-                break;
-            case 'PMSEEndSendMessageEvent':
-                require_once $modulePath . '/PMSEEndSendMessageEvent.php';
-                return new PMSEEndSendMessageEvent();
-                break;
-            case 'PMSETerminateEvent':
-                require_once $modulePath . '/PMSETerminateEvent.php';
-                return new PMSETerminateEvent();
-                break;
-            case 'PMSESendMessageEvent':
-                require_once $modulePath . '/PMSESendMessageEvent.php';
-                return new PMSESendMessageEvent();
-                break;
-            case 'PMSEReceiveMessageEvent':
-                require_once $modulePath . '/PMSEReceiveMessageEvent.php';
-                return new PMSEReceiveMessageEvent();
-                break;
-            case 'PMSETimerEvent':
-                require_once $modulePath . '/PMSETimerEvent.php';
-                return new PMSETimerEvent();
-                break;
-            case 'PMSEUserTask':
-                require_once $modulePath . '/PMSEUserTask.php';
-                return new PMSEUserTask();
-                break;
-            case 'PMSEBusinessRule':
-                require_once $modulePath . '/PMSEBusinessRule.php';
-                return new PMSEBusinessRule();
-                break;
-            case 'PMSEChangeField':
-                require_once $modulePath . '/PMSEChangeField.php';
-                return new PMSEChangeField();
-                break;
-            case 'PMSERoundRobin':
-                require_once $modulePath . '/PMSERoundRobin.php';
-                return new PMSERoundRobin();
-                break;
-            case 'PMSEAssignUser':
-                require_once $modulePath . '/PMSEAssignUser.php';
-                return new PMSEAssignUser();
-                break;
-            case 'PMSEAddRelatedRecord':
-                require_once $modulePath . '/PMSEAddRelatedRecord.php';
-                return new PMSEAddRelatedRecord();
-                break;
-            case 'PMSEConvergingParallelGateway':
-                require_once $modulePath . '/PMSEConvergingParallelGateway.php';
-                return new PMSEConvergingParallelGateway();
-                break;
-            case 'PMSEDivergingParallelGateway':
-                require_once $modulePath . '/PMSEDivergingParallelGateway.php';
-                return new PMSEDivergingParallelGateway();
-                break;
-            case 'PMSEConvergingExclusiveGateway':
-                require_once $modulePath . '/PMSEConvergingExclusiveGateway.php';
-                return new PMSEConvergingExclusiveGateway();
-                break;
-            case 'PMSEDivergingExclusiveGateway':
-                require_once $modulePath . '/PMSEDivergingExclusiveGateway.php';
-                return new PMSEDivergingExclusiveGateway();
-                break;
-            case 'PMSEDivergingInclusiveGateway':
-                require_once $modulePath . '/PMSEDivergingInclusiveGateway.php';
-                return new PMSEDivergingInclusiveGateway();
-                break;
-            case 'PMSEDivergingEventBasedGateway':
-                require_once $modulePath . '/PMSEDivergingEventBasedGateway.php';
-                return new PMSEDivergingEventBasedGateway();
-                break;
-            case 'PMSESequenceFlow':
-                require_once $modulePath . '/PMSESequenceFlow.php';
-                return new PMSESequenceFlow();
-                break;
-            default:
-                require_once $modulePath . '/PMSEElement.php';
-                return new PMSEElement();
-                break;
-        }
+        return ProcessManager\Factory::getElement($elementName);
     }
 
     /**

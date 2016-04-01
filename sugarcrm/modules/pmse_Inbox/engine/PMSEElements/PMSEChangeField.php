@@ -13,7 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEScriptTask.php';
-require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEChangeField extends PMSEScriptTask
 {
@@ -32,8 +34,8 @@ class PMSEChangeField extends PMSEScriptTask
         global $beanList, $current_user;
         $this->beanList = $beanList;
         $this->currentUser = $current_user;
-        $this->evaluator = new PMSEEvaluator();
-        $this->pmseRelatedModule = new PMSERelatedModule();
+        $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
+        $this->pmseRelatedModule = ProcessManager\Factory::getPMSEObject('PMSERelatedModule');
         parent::__construct();
     }
 

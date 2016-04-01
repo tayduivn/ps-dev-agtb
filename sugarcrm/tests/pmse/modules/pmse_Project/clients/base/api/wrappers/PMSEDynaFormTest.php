@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEDynaFormTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -18,7 +21,7 @@ class PMSEDynaFormTest extends Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->adamDynaform = new PMSEDynaForm();
+        $this->adamDynaform = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
     }
 
     /**

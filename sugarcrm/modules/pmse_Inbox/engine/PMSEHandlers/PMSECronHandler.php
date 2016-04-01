@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSECronHandler
 {
@@ -21,7 +21,7 @@ class PMSECronHandler
     
     public function __construct()
     {
-        $this->request = new PMSERequest();
+        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $this->request->setType('cron');
         $this->request->setElements(array());
 

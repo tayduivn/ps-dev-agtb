@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEFormResponseParserTest extends PHPUnit_Framework_TestCase
 {
     protected $dataParser;
@@ -22,7 +25,7 @@ class PMSEFormResponseParserTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->dataParser = new PMSEFormResponseParser();
+        $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEFormResponseParser');
         $this->resultArray = array(
             array(
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',

@@ -138,7 +138,7 @@ $mod_strings = array (
     'LBL_CALENDAR_EVENT_NOT_A_PARENT_OCCURRENCE' => "{0} is not a parent recurrence",
     'LBL_CALENDAR_EVENT_RECURRENCE_MODULE_NOT_SUPPORTED' => "{0} is not recognized as a recurring event module",
 
-    'LBL_CALDAV_USER_CONFIG' => 'CalDAV Sync Settings',
+    'LBL_CALDAV_USER_CONFIG' => 'Calendar Sync Settings',
 );
 
 $mod_list_strings = array(

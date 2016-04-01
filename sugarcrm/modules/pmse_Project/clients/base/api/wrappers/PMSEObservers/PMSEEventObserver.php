@@ -13,8 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObserver.php';
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSERelatedDependencyWrapper.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEEventObserver implements PMSEObserver
 {
@@ -36,7 +37,7 @@ class PMSEEventObserver implements PMSEObserver
      */
     public function __construct()
     {
-        $this->relatedDependency = new PMSERelatedDependencyWrapper();
+        $this->relatedDependency = ProcessManager\Factory::getPMSEObject('PMSERelatedDependencyWrapper');
         $this->logger = PMSELogger::getInstance();
     }
 

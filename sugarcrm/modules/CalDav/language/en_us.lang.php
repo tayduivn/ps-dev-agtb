@@ -47,12 +47,21 @@ $mod_strings = array(
     'LBL_TITLE' => 'CalDav',
 
     'LBL_CALDAV_TAB_TEXT' => 'Email & iCal Sync',
-    'LBL_CALDAV_TITLE' => 'CalDAV Sync Settings',
-    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'CalDAV Sync Settings',
+    'LBL_CALDAV_TITLE' => 'Calendar Sync Settings',
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' => 'Calendar Sync System Settings',
+    'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Calendar Sync Settings',
     'LBL_CALDAV_DEFAULT_MODULE' => 'Default event mapping',
-    'LBL_CALDAV_DEFAULT_MODULE_DESC' => 'Select the default module you would like events to be mapped to.',
-    'LBL_CALDAV_DEFAULT_INTERVAL' => 'Sync',
-    'LBL_CALDAV_DEFAULT_INTERVAL_DESC' => 'Select how far you want to sync back.',
+    'LBL_CALDAV_DEFAULT_MODULE_DESC_ADMIN' => 'Set the default type of record to be used when syncing events ' .
+                                        'created through an external calendar application.',
+    'LBL_CALDAV_DEFAULT_MODULE_DESC' => 'Set the default type of record to be used when syncing events ' .
+        'created through an external calendar application.',
+    'LBL_CALDAV_DEFAULT_INTERVAL' => 'Default sync setting',
+    'LBL_CALDAV_DEFAULT_INTERVAL_DESC_ADMIN' => 'Set the default initial sync setting for your users (this will '.
+        'determine how far back the initial sync will go). After the initial sync, all new or updated events will '.
+        'sync between Sugar and external calendars, regardless of the event’s date or the options selected below.',
+    'LBL_CALDAV_DEFAULT_INTERVAL_DESC' => 'Set the default initial sync setting (this will determine how far ' .
+        'back the initial sync will go). After the initial sync, all new or updated events will sync between Sugar ' .
+        'and external calendars, regardless of the event’s date or the options selected below.',
 
     'LBL_SYNC_SAVE_COUNTER' => 'Save event or module counter',
     'LBL_SYNC_JOB_COUNTER' => 'Counts of ending jobs',

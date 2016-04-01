@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * The access Manager class evaluates and processes the license data in order
@@ -88,7 +88,7 @@ class PMSEAccessManager
      */
     public function __construct()
     {
-        $this->licenseManager = new PMSELicenseManager();
+        $this->licenseManager = ProcessManager\Factory::getPMSEObject('PMSELicenseManager');
         $this->accessManager = BeanFactory::getBean('pmse_BpmAccessManagement'); //new BpmAccessManagement();
         $this->licenseData = array();
         $this->licensePermissions = array();

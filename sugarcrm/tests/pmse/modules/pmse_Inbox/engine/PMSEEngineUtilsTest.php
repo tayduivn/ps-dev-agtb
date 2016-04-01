@@ -10,6 +10,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -23,7 +26,7 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new PMSEEngineUtils;
+        $this->object = ProcessManager\Factory::getPMSEObject('PMSEEngineUtils');
         $GLOBALS['timedate'] = '';
         $_REQUEST['leads_email_widget_id'] = 2;
         $_REQUEST['leads0emailAddress0'] = 'test1@test.com';

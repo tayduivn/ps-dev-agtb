@@ -39,17 +39,25 @@ class PMSEHistoryData
 
     /**
      * Setting log_data object, repeated and lock false too for initialize the object .
-     * @param string $module
      */
-    public function __construct($module)
+    public function __construct()
     {
         $this->log_data = array(
-            'module' => $module,
+            'module' => null,
             'before_data' => array(),
             'after_data' => array()
         );
         $this->repeated = false;
         $this->lock = false;
+    }
+
+    /**
+     * Set the module variable in the log_data array.
+     * @param string $module
+     */
+    public function setModule($module)
+    {
+        $this->log_data['module'] = $module;
     }
 
     /**

@@ -13,11 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'clients/base/api/ModuleApi.php';
-
-require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
-require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectCRUDApi extends ModuleApi
 {
@@ -140,7 +138,7 @@ class PMSEProjectCRUDApi extends ModuleApi
         } else {
             $editDyna = true;
         }
-        $dynaForm = new PMSEDynaForm();
+        $dynaForm = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
         $dynaForm->generateDefaultDynaform($processDefinitionBean->pro_module, $keysArray, $editDyna);
 
     }
@@ -153,7 +151,7 @@ class PMSEProjectCRUDApi extends ModuleApi
 
         $id = $args['picture_duplicateBeanId'];
 
-        $exporter = new PMSEProjectExporter();
+        $exporter = ProcessManager\Factory::getPMSEObject('PMSEProjectExporter');
         $project = $exporter->getProject(array('id' => $id));
 
         $project['project']['name'] =  $args['name'];
@@ -161,7 +159,7 @@ class PMSEProjectCRUDApi extends ModuleApi
         $project['project']['description'] =  $args['description'];
         $project['project']['prj_status'] = $args['prj_status'];
 
-        $importer = new PMSEProjectImporter();
+        $importer = ProcessManager\Factory::getPMSEObject('PMSEProjectImporter');
         $project['_module']['project'] = 'pmse_Project';
 
         // The importation always changes the project status to INACTIVE except when the case is Copy from a Process Definition

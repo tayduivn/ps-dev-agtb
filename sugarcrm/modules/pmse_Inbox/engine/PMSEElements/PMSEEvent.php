@@ -14,6 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEShape.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Description of PMSEEvent
  *
@@ -30,7 +32,7 @@ class PMSEEvent extends PMSEShape
      */
     public function __construct()
     {
-        $this->evaluator = new PMSEEvaluator();
+        $this->evaluator = ProcessManager\Factory::getPMSEObject('PMSEEvaluator');
         $this->definitionBean = BeanFactory::getBean('pmse_BpmEventDefinition');
         parent::__construct();
     }

@@ -15,19 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
 
-$wrapperPath = 'modules/pmse_Project/clients/base/api/wrappers/';
-require_once $wrapperPath . 'PMSEProjectWrapper.php';
-require_once $wrapperPath . 'PMSECrmDataWrapper.php';
-require_once $wrapperPath . 'PMSEActivityDefinitionWrapper.php';
-require_once $wrapperPath . 'PMSEEventDefinitionWrapper.php';
-require_once $wrapperPath . 'PMSEGatewayDefinitionWrapper.php';
-require_once $wrapperPath . 'PMSEDynaForm.php';
-require_once $wrapperPath . 'PMSEObservers/PMSEEventObserver.php';
-require_once $wrapperPath . 'PMSEObservers/PMSEProcessObserver.php';
-
-$enginePath = 'modules/pmse_Inbox/engine/';
-require_once $enginePath . 'PMSEProjectImporter.php';
-require_once $enginePath . 'PMSEProjectExporter.php';
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectApi extends ModuleApi
 {
@@ -63,11 +51,11 @@ class PMSEProjectApi extends ModuleApi
 
     public function __construct()
     {
-        $this->projectWrapper = new PMSEProjectWrapper();
-        $this->crmDataWrapper = new PMSECrmDataWrapper();
-        $this->activityDefinitionWrapper = new PMSEActivityDefinitionWrapper();
-        $this->eventDefinitionWrapper = new PMSEEventDefinitionWrapper();
-        $this->gatewayDefinitionWrapper = new PMSEGatewayDefinitionWrapper();
+        $this->projectWrapper = ProcessManager\Factory::getPMSEObject('PMSEProjectWrapper');
+        $this->crmDataWrapper = ProcessManager\Factory::getPMSEObject('PMSECrmDataWrapper');
+        $this->activityDefinitionWrapper = ProcessManager\Factory::getPMSEObject('PMSEActivityDefinitionWrapper');
+        $this->eventDefinitionWrapper = ProcessManager\Factory::getPMSEObject('PMSEEventDefinitionWrapper');
+        $this->gatewayDefinitionWrapper = ProcessManager\Factory::getPMSEObject('PMSEGatewayDefinitionWrapper');
     }
 
     /**
@@ -297,7 +285,7 @@ class PMSEProjectApi extends ModuleApi
     public function putCrmData($api, $args)
     {
         $this->checkACL($api, $args);
-        $processObserver = new PMSEProcessObserver();
+        $processObserver = ProcessManager\Factory::getPMSEObject('PMSEProcessObserver');
         $this->crmDataWrapper->attach($processObserver);
         return $this->crmDataWrapper->_put($args);
     }
@@ -335,7 +323,7 @@ class PMSEProjectApi extends ModuleApi
     public function putEventDefinition($api, $args)
     {
         $this->checkACL($api, $args);
-        $observer = new PMSEEventObserver();
+        $observer = ProcessManager\Factory::getPMSEObject('PMSEEventObserver');
         $this->eventDefinitionWrapper->attach($observer);
         $this->eventDefinitionWrapper->_put($args);
     }

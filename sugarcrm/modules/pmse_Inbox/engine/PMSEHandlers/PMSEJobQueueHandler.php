@@ -13,8 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSERequest.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Description of PMSEJobQueue
@@ -202,7 +203,7 @@ class PMSEJobQueueHandler
     public function preparePreProcessor()
     {
         // preprocessor required initialization
-        $this->request = new PMSERequest();
+        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $this->request->setType('queue');
         $this->preProcessor = PMSEPreProcessor::getInstance();
     }

@@ -13,7 +13,8 @@
 
 require_once 'tests/SugarTestACLUtilities.php';
 require_once 'include/api/RestService.php';
-require_once 'modules/pmse_Business_Rules/clients/base/api/PMSEBusinessRules.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Unit test class to cover ACL testing for Process Author Apis
@@ -24,7 +25,7 @@ class PMSEBusinessRulesApiAclTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
 
-        $this->PMSEBusinessRules = new PMSEBusinessRules();
+        $this->PMSEBusinessRules = ProcessManager\Factory::getPMSEObject('PMSEBusinessRules');
         $this->api = new RestService();
         $this->api->getRequest()->setRoute(array('acl' => array()));
     }
