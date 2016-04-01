@@ -49,6 +49,5 @@ class pmse_BpmProcessDefinition extends pmse_BpmProcessDefinition_sugar {
 		}
 		return parent::ACLAccess($view, $context);
 	}
-
 }
-?>
+

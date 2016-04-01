@@ -80,6 +80,9 @@ abstract class SugarApi {
             $data['_module'] = $bean->module_name;
         }
 
+        // Handle lock fields application
+        $data['_locked_fields'] = $this->getLockedFields($bean);
+
         return $data;
     }
 
@@ -656,14 +659,31 @@ abstract class SugarApi {
      * @param int $limit List limit passed to API
      * @return int
      */
-    public function checkMaxListLimit($limit) 
+    public function checkMaxListLimit($limit)
     {
         $maxListLimit = SugarConfig::getInstance()->get('max_list_limit');
-                
+
         if ($maxListLimit && ($limit < 1 || $limit > $maxListLimit)) {
             return $maxListLimit;
         }
-        
+
         return $limit;
+    }
+
+    /**
+     * Gets locked fields for a record
+     *
+     * @param \SugarBean $bean SugarBean object
+     * @return array
+     */
+    protected function getLockedFields(\SugarBean $bean)
+    {
+        $return = array();
+        //BEGIN SUGARCRM flav=ent ONLY
+        if (empty($return)) {
+            $return = \PMSEEngineUtils::getLockedFields($bean);
+        }
+        //END SUGARCRM flav=ent ONLY
+        return $return;
     }
 }

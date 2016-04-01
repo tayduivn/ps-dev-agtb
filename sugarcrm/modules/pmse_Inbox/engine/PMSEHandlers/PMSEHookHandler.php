@@ -94,6 +94,8 @@ class PMSEHookHandler
         } else {
             $this->logger->info("Executing locked fields checking for bean module {$bean->module_name}");
             $originalValues = $bean->fetched_row;
+
+            // @TODO Refactor this to use new version of locked field getters
             //Check if the record's module have active PD's
             $q = new SugarQuery();
             $q->select(array('id', 'pro_locked_variables'));
