@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\InvalidArgumentException;
 use Sugarcrm\Sugarcrm\JobQueue\Exception\RuntimeException;
+use Sugarcrm\Sugarcrm\JobQueue\Exception\ExceptionInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\SerializerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
@@ -112,13 +113,20 @@ class MessageQueue implements WorkerInterface
             $this->returnCode = self::RETURN_CODE_NO_JOBS;
             return false;
         }
-        $job = $this->adapter->getJob($message);
-        if (!$job) {
-            $this->logger->error('[MessageQueue]: cannot receive a job by message.');
+        try {
+            $job = $this->adapter->getJob($message);
+            if (!$job) {
+                $this->logger->error('[MessageQueue]: cannot receive a job by message.');
+                return false;
+            }
+            $this->returnCode = self::RETURN_CODE_SUCCESS;
+            $workload = $this->serializer->unserialize($job);
+        } catch (ExceptionInterface $ex) {
+            $this->logger->error('Cannot get workload by message. ' . $ex->getMessage());
+            $this->logger->notice('Resolve the message.');
+            $this->adapter->resolve($message);
             return false;
         }
-        $this->returnCode = self::RETURN_CODE_SUCCESS;
-        $workload = $this->serializer->unserialize($job);
         if (!($workload instanceof WorkloadInterface)) {
             $this->logger->error('[MessageQueue]: invalid workload instance.');
             return false;

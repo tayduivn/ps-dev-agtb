@@ -56,9 +56,10 @@ class Standard extends AbstractRunner
     /**
      * Signal handler function.
      * Process SIGINT and SIGTERM.
+     * Public in order to avoid warning.
      * @param int $signo PCNTL signal.
      */
-    protected function handlePCNTLSignals($signo)
+    public function handlePCNTLSignals($signo)
     {
         $this->logger->debug("Handle signal {$signo}.");
         switch ($signo) {

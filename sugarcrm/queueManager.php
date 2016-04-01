@@ -13,6 +13,7 @@ if (!defined('sugarEntry')) {
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\JobQueue\Helper\ProcessControl;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
@@ -24,6 +25,13 @@ $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
     sugar_die('queueManager.php is CLI only.');
 }
+
+$helper = new ProcessControl('queueManager');
+if ($helper->isServiceLocked()) {
+    sugar_die('JobQueue fails to start. The service is locked.');
+}
+$helper->modifyServiceProcessName();
+
 SugarMetric_Manager::getInstance()->setMetricClass('background')->setTransactionName('cron');
 if (empty($current_language)) {
     $current_language = $sugar_config['default_language'];

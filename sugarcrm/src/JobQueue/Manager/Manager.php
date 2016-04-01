@@ -19,7 +19,6 @@ use Sugarcrm\Sugarcrm\JobQueue\Client\Immediate as ImmediateClient;
 use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Client\PriorityMessageQueue as PriorityMessageQueueClient;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\Base64;
-use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\PHPSerialize;
 use Sugarcrm\Sugarcrm\JobQueue\Serializer\Decorator\PHPSerializeSafe;
 use Sugarcrm\Sugarcrm\JobQueue\Worker\PriorityMessageQueue as PriorityMessageQueueWorker;
 use Sugarcrm\Sugarcrm\JobQueue\Dispatcher\DispatcherInterface;
@@ -226,7 +225,7 @@ class Manager extends AbstractManager
     }
 
     /**
-     * Get instance of Manager.
+     * Get the Manager as service.
      * @return Manager
      */
     public static function getInstance()
@@ -235,6 +234,14 @@ class Manager extends AbstractManager
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -606,16 +613,6 @@ class Manager extends AbstractManager
             $this->logger->debug("Register handler {$params['name']} in worker.");
             $this->getWorker()->registerHandler($workload->getRoute(), array($this, 'proxyHandler'));
         }
-    }
-
-    /**
-     * Kill all the processes started by another instance of manager by invalidating its lock.
-     */
-    public function stop()
-    {
-        // Override lock to kill running managers.
-        $this->getLock()->setLock(time());
-        $this->logger->info('Stop the process.');
     }
 
     /**

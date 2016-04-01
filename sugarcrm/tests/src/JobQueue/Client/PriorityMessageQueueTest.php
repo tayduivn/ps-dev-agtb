@@ -80,13 +80,13 @@ class PriorityMessageQueueTest extends \Sugar_PHPUnit_Framework_TestCase
                 'handlers' => array(
                     'Handler_1',
                     'Handler_2',
-                )
+                ),
             ),
             array(
                 'adapter' => 'mock',
                 'config' => array(),
                 'handlers' => array(
-                    'Handler_2'
+                    'Handler_2',
                 ),
             ),
             array(
