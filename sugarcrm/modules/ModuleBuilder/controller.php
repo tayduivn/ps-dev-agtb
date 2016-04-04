@@ -456,7 +456,11 @@ class ModuleBuilderController extends SugarController
         $modules = $this->request->getValidInputRequest('modules', array('Assert\All' => array(
             'constraints' => 'Assert\ComponentName',
         )));
-        $name = $this->request->getValidInputRequest('name', 'Assert\ComponentName');
+
+        $name = $this->request->getValidInputRequest('name',  array('Assert\Regex' =>
+            array('pattern' => '/^[a-z][a-z0-9_-]*$/i')
+        ));
+
         $author = $_REQUEST ['author'];
         $description = $_REQUEST ['description'];
         ob_clean();
