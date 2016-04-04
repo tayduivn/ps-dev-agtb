@@ -68,6 +68,68 @@ describe('Sugar7.Routes', function() {
                 });
             });
         });
+
+        describe('Forecast Routes', function(){
+
+            beforeEach(function(){
+                sinon.collection.stub(app.metadata, 'getModule', function(){
+                    return {forecast_by: 'RevenueLineItems'};
+                });
+                sinon.collection.stub(app.alert, 'show');
+            });
+
+            it('should not restrict access', function(){
+                sinon.collection.stub(app.user, 'getAcls', function(){
+                    return {Forecasts: {}, RevenueLineItems: {}};
+                });
+                sinon.collection.stub(app.utils, 'checkForecastConfig', function(){
+                    return true;
+                });
+
+                app.router.navigate('Forecasts', {trigger: true});
+
+                expect(app.controller.loadView).toHaveBeenCalled();
+            });
+
+            it('should pop up an alert because of no access to forecasts', function(){
+                sinon.collection.stub(app.user, 'getAcls', function(){
+                    return {Forecasts: {access:'no'}, RevenueLineItems: {}};
+                });
+                sinon.collection.stub(app.utils, 'checkForecastConfig', function(){
+                    return true;
+                });
+
+                app.router.navigate('Forecasts', {trigger: true});
+
+                expect(app.alert.show).toHaveBeenCalled();
+            });
+
+            it('should pop up an alert because of no access to forecast by module', function(){
+                sinon.collection.stub(app.user, 'getAcls', function(){
+                    return {Forecasts: {}, RevenueLineItems: {access:'no'}};
+                });
+                sinon.collection.stub(app.utils, 'checkForecastConfig', function(){
+                    return true;
+                });
+
+                app.router.navigate('Forecasts', {trigger: true});
+
+                expect(app.alert.show).toHaveBeenCalled();
+            });
+
+            it('should pop up an alert because of forecasts not being set up', function(){
+                sinon.collection.stub(app.user, 'getAcls', function(){
+                    return {Forecasts: {}, RevenueLineItems: {}};
+                });
+                sinon.collection.stub(app.utils, 'checkForecastConfig', function(){
+                    return false;
+                });
+
+                app.router.navigate('Forecasts', {trigger: true});
+
+                expect(app.alert.show).toHaveBeenCalled();
+            });
+        });
     });
 
     describe("Before Route Show Wizard Check", function() {

@@ -1288,9 +1288,11 @@ class OracleManager extends DBManager
           }
         } else {
             $columns = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
+
+            if ($action == 'DROP') {
+                $action = 'DROP COLUMN';
+            }
         }
-        if ( $action == 'DROP' )
-            $action = 'DROP COLUMN';
 
         if (is_array($columns)) {
             return $columns;

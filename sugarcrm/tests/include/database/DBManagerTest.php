@@ -3996,7 +3996,7 @@ SQL;
         );
         //BEGIN SUGARCRM flav=ent ONLY
         if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i',$sql);
+            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i', $sql);
         else
             //END SUGARCRM flav=ent ONLY
             $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*column\s*foo/i',$sql);
@@ -4004,16 +4004,52 @@ SQL;
 
     public function testDropColumnSQL()
     {
-        $sql = $this->_db->dropColumnSQL(
-            'contacts',
-            array('foo' => array('name'=>'foo','type'=>'varchar'))
+        $tableName = 'drop_columns_sql_test';
+
+        $id = array(
+            'name' => 'id',
+            'type' => 'id'
         );
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i',$sql);
-        else
-            //END SUGARCRM flav=ent ONLY
-            $this->assertRegExp('/alter\s*table\s*contacts\s*drop\s*column\s*foo/i',$sql);
+
+        $field1 = array(
+            'name' => 'test1',
+            'type' => 'int'
+        );
+
+        $field2 = array(
+            'name' => 'test2',
+            'type' => 'int'
+        );
+
+        $this->createTableParams(
+            $tableName,
+            array(
+                'id' => $id,
+                'test1' => $field1,
+                'test2' => $field2
+            ),
+            array()
+        );
+
+        $this->assertTrue(
+            $this->_db->query(
+                $this->_db->dropColumnSQL($tableName, $field1)
+            )
+        );
+
+        $this->assertTrue(
+            $this->_db->query(
+                $this->_db->dropColumnSQL($tableName, array($field2))
+            )
+        );
+
+        $this->_db->addColumn($tableName, array($field1, $field2));
+
+        $this->assertTrue(
+            $this->_db->query(
+                $this->_db->dropColumnSQL($tableName, array($field1, $field2))
+            )
+        );
     }
 
     public function testMassageValue()

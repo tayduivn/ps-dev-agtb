@@ -26,8 +26,11 @@
             additionalEvents = {};
 
         this.isMultiLink = options.context.has('recLink');
+        var createButtonAcl = _.chain(this.meta.buttons)
+            .findWhere({name: 'main_dropdown'}).result('buttons')
+            .findWhere({name: 'create_button'}).result('acl_action').value();
 
-        if (isBwcEnabled || multiSelect || this.isMultiLink) {
+        if (isBwcEnabled || multiSelect || this.isMultiLink || !app.acl.hasAccess(createButtonAcl, options.module)) {
             buttonsToRemove.push('create_button');
         } else {
             additionalEvents['click [name=create_button]'] = 'createAndSelect';

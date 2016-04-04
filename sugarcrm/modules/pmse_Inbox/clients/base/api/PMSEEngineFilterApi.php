@@ -297,7 +297,7 @@ class PMSEEngineFilterApi extends FilterApi
         } else if ($method == 'selfservice') {
             $teams = array_keys($current_user->get_my_teams());
             $where->queryAnd()
-                ->in('cas_user_id', $teams)
+                ->in('activity_definition.act_assign_team', $teams)
                 ->isNull('cas_start_date')
                 ->equals('activity_definition.act_assignment_method', 'selfservice');
         }

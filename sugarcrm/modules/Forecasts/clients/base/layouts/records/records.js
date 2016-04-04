@@ -44,61 +44,27 @@
     initOptions: undefined,
 
     /**
+     * Are the event already bound to the context and the models?
+     */
+    eventsBound: false,
+
+    /**
      * Overrides the Layout.initialize function and does not call the parent so we can defer initialization
      * until _onceInitSelectedUser is called
      *
      * @override
      */
     initialize: function(options) {
-        // the parent is not called here so we make sure that nothing else renders until after we init the
-        // the forecast module
         this.initOptions = options;
+        this._super('initialize', [options]);
+        this.syncInitData();
 
-        var acls = app.user.getAcls().Forecasts,
-            hasAccess = (!_.has(acls, 'access') || acls.access == 'yes');
-        if (hasAccess) {
-            // check the module we are forecasting by for access
-            var forecastByAcl = app.user.getAcls()[app.metadata.getModule('Forecasts', 'config').forecast_by] || {};
-            if (_.has(forecastByAcl, 'access') && forecastByAcl.access === 'no') {
-                // the user doesn't have access to what is being forecast by
-                this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_RECORDS_ACLS_NO_ACCESS_MSG');
-            } else {
-                // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
-                if (app.utils.checkForecastConfig()) {
-                    // correct config exists, continue with syncInitData
-                    this.syncInitData();
-                } else {
-                    // codeblock this sucka
-                    this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
-                }
-            }
-        } else {
-            this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG');
-        }
     },
 
     /**
      * @override
      */
     initComponents: function() {
-    },
-
-    /**
-     * Blocks forecasts from continuing to load
-     */
-    codeBlockForecasts: function(title, msg) {
-        var alert = app.alert.show('no_access_to_forecasts', {
-            level: 'error',
-            title: app.lang.get(title, 'Forecasts') + ':',
-            messages: [app.lang.get(msg, 'Forecasts')]
-        });
-
-        var $close = alert.getCloseSelector();
-        $close.on('click', function() {
-            $close.off();
-            app.router.navigate('#Home', {trigger: true});
-        });
-        app.accessibility.run($close, 'click');
     },
 
     /**
@@ -115,7 +81,8 @@
     bindDataChange: function() {
         // we need this here to track when the selectedTimeperiod changes and then also move it up to the context
         // so the recordlists can listen for it.
-        if (!_.isUndefined(this.model)) {
+        if (!_.isUndefined(this.model) && this.eventsBound == false) {
+            this.eventsBound = true;
             this.collection.on('reset', function() {
                 // get the first model and set the last commit date
                 var lastCommit = _.first(this.collection.models);
@@ -130,7 +97,7 @@
                 var update = {
                     'selectedUserId': changed.id,
                     'forecastType': app.utils.getForecastType(changed.is_manager, changed.showOpps)
-                }
+                };
                 this.model.set(update);
             }, this);
 
@@ -155,21 +122,21 @@
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
-            
+
             //listen for the worksheets to be dirty/clean
-            this.context.on("forecasts:worksheet:dirty", function(type, isDirty){
+            this.context.on("forecasts:worksheet:dirty", function(type, isDirty) {
                 this.isDirty = isDirty;
                 this.worksheetType = type;
             }, this);
-            
+
             //listen for the worksheet navigation messages
-            this.context.on("forecasts:worksheet:navigationMessage", function(message){
+            this.context.on("forecasts:worksheet:navigationMessage", function(message) {
                 this.navigationMessage = message;
             }, this);
-            
+
             //listen for the user to change
-            this.context.on("forecasts:user:changed", function(selectedUser, context){
-                if(this.isDirty){
+            this.context.on("forecasts:user:changed", function(selectedUser, context) {
+                if (this.isDirty) {
                     app.alert.show('leave_confirmation', {
                         level: 'confirmation',
                         messages: app.lang.get(this.navigationMessage, 'Forecasts').split('<br>'),
@@ -184,7 +151,7 @@
                     app.utils.getSelectedUsersReportees(selectedUser, context);
                 }
             }, this);
-            
+
             //handle timeperiod change events
             this.context.on('forecasts:timeperiod:changed', function(model, startEndDates) {
                 // create an anonymous function to combine the two calls where this is used
@@ -355,8 +322,10 @@
 
         // load the data
         app.view.Layout.prototype.loadData.call(this);
-        // bind the data change
-        this.bindDataChange();
+        if (this.eventsBound === false) {
+            // bind the data change
+            this.bindDataChange();
+        }
         // render everything
         if (!this.disposed) this.render();
     },

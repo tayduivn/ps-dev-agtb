@@ -80,6 +80,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->call->mark_deleted($this->call->id);
         $GLOBALS['current_user'] = $this->currentUser;
+        BeanFactory::setBeanClass('Users');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 

@@ -63,14 +63,12 @@ describe("Forecasts.Layout.Records", function() {
         stubs.push(sinon.stub(app.data, 'getSyncCallbacks', function() {}));
 
         layout = SugarTest.createLayout('base', moduleName, 'records', null, null, true);
-        sinon.spy(layout, 'codeBlockForecasts');
         sinon.stub(layout, 'syncInitData');
     });
 
     afterEach(function() {
         app.user.setPreference('datepref', null);
         app.user.getAcls.restore();
-        layout.codeBlockForecasts.restore();
         layout.syncInitData.restore();
         app.lang.getAppListStrings.restore();
         // restore the local stubs
@@ -110,23 +108,6 @@ describe("Forecasts.Layout.Records", function() {
             layout.initialize({});
 
             expect(layout.syncInitData).toHaveBeenCalled();
-        });
-
-        it('config set incorrectly, should codeblock user', function() {
-            sinon.stub(app.metadata, 'getModule', function() {
-                return {
-                    sales_stage_won: [''],
-                    sales_stage_lost: ['Closed Lost']
-                }
-            });
-            sinon.stub(app.lang, 'get', function() {});
-
-            layout.initialize({});
-
-            expect(layout.codeBlockForecasts).toHaveBeenCalled();
-
-            app.alert.dismissAll();
-            app.lang.get.restore();
         });
     });
 
@@ -239,6 +220,23 @@ describe("Forecasts.Layout.Records", function() {
                 changedOptions.showOpps = false;
                 layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
                 expect(layout.model.get('forecastType')).toEqual('Rollup');
+            });
+        });
+
+        describe('bindDataChange', function() {
+            beforeEach(function() {
+                sinon.stub(layout, 'bindDataChange');
+            });
+            it('is called when eventsBound is false', function() {
+                layout.eventsBound = false;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.bindDataChange).toHaveBeenCalled();
+            });
+
+            it('is not called when eventsBound is true', function() {
+                layout.eventsBound = true;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.bindDataChange).not.toHaveBeenCalled();
             });
         });
     });
