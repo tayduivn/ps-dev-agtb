@@ -59,13 +59,6 @@ class EmailsApi extends ModuleApi
     );
 
     /**
-     * An instance that can be shared across the entire class.
-     *
-     * @var SugarEmailAddress
-     */
-    protected $sugarEmailAddress;
-
-    /**
      * {@inheritdoc}
      */
     public function registerApiRest()
@@ -247,36 +240,6 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * Fixes the arguments for the links email_addresses_from, email_addresses_to, email_addresses_cc, and
-     * email_addresses_bcc to prevent the creation of duplicate email addresses.
-     *
-     * {@inheritdoc}
-     */
-    protected function getRelatedRecordArguments(SugarBean $bean, array $args, $action)
-    {
-        $fixup = array(
-            'email_addresses_from',
-            'email_addresses_to',
-            'email_addresses_cc',
-            'email_addresses_bcc',
-        );
-        $fixedArgs = array();
-
-        foreach ($args as $field => $value) {
-            $fixedArgs[$field] = $value;
-
-            if (!in_array($field, $fixup) || !is_array($value)) {
-                // Let the parent function handle it.
-                continue;
-            }
-
-            $this->fixupRelatedEmailAddressesArgs($fixedArgs[$field]);
-        }
-
-        return parent::getRelatedRecordArguments($bean, $fixedArgs, $action);
-    }
-
-    /**
      * Is the supplied state transition valid?
      *
      * @param string $operation
@@ -375,58 +338,17 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * If any email address in the "create" arguments already exists, then those arguments are moved to the "add"
-     * arguments with the respective IDs.
+     * EmailsApi needs an extended version of {@link RelateRecordApi} that is specific to Emails.
      *
-     * @param array $args
+     * @return EmailsRelateRecordApi
      */
-    protected function fixupRelatedEmailAddressesArgs(array &$args)
+    protected function getRelateRecordApi()
     {
-        if (empty($args['create']) || !is_array($args['create'])) {
-            return;
+        if (!$this->relateRecordApi) {
+            require_once 'modules/Emails/clients/base/api/EmailsRelateRecordApi.php';
+            $this->relateRecordApi = new EmailsRelateRecordApi();
         }
 
-        $sea = $this->getSugarEmailAddress();
-
-        if (empty($args['add'])) {
-            $args['add'] = array();
-        }
-
-        for ($i = 0; $i < count($args['create']); $i++) {
-            $data = $args['create'][$i];
-
-            if (!empty($data['email_address'])) {
-                $guid = $sea->getGuid($data['email_address']);
-
-                if (!empty($guid)) {
-                    // This email address already exists, so just link it instead of creating it.
-                    $args['add'][] = array_merge($data, array('id' => $guid));
-                    unset($args['create'][$i]);
-                }
-            }
-        }
-
-        if (empty($args['add'])) {
-            unset($args['add']);
-        }
-
-        if (empty($args['create'])) {
-            unset($args['create']);
-        }
-    }
-
-    /**
-     * {@link SugarEmailAddress} extends {@link SugarBean}, which has a very expensive constructor. This method allows
-     * us to avoid executing that constructor multiple times.
-     *
-     * @return SugarEmailAddress
-     */
-    protected function getSugarEmailAddress()
-    {
-        if (!$this->sugarEmailAddress) {
-            $this->sugarEmailAddress = new SugarEmailAddress();
-        }
-
-        return $this->sugarEmailAddress;
+        return $this->relateRecordApi;
     }
 }

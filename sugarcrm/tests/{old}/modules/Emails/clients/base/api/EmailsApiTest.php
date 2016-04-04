@@ -208,7 +208,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLinkRelatedRecords()
     {
-        $relateRecordApi = $this->getMockBuilder('RelateRecordApi')
+        $relateRecordApi = $this->getMockBuilder('EmailsRelateRecordApi')
             ->disableOriginalConstructor()
             ->setMethods(array('createRelatedLinks'))
             ->getMock();
@@ -244,7 +244,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUnlinkRelatedRecords()
     {
-        $relateRecordApi = $this->getMockBuilder('RelateRecordApi')
+        $relateRecordApi = $this->getMockBuilder('EmailsRelateRecordApi')
             ->disableOriginalConstructor()
             ->setMethods(array('deleteRelatedLink'))
             ->getMock();
@@ -282,120 +282,5 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         SugarTestReflection::callProtectedMethod($api, 'unlinkRelatedRecords', array($this->service, $email, $args));
-    }
-
-    /**
-     * Create related record arguments for email_addresses_from, email_addresses_to, email_address_cc, and
-     * email_addresses_bcc are moved to the "add" arguments when the email address is a duplicate.
-     *
-     * @covers ::getRelatedRecordArguments
-     */
-    public function testGetRelatedRecordArguments()
-    {
-        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
-        $address3 = 'address-' . create_guid() . '@example.com';
-
-        $email = BeanFactory::newBean('Emails');
-        $args = array(
-            'email_addresses_from' => array(
-                'create' => array(
-                    // Using an existing email address.
-                    array(
-                        'email_address' => $address1->email_address,
-                    ),
-                ),
-            ),
-            'email_addresses_to' => array(
-                'create' => array(
-                    // Creating a new email address.
-                    array(
-                        'email_address' => $address3,
-                    ),
-                    // Using an existing email address.
-                    array(
-                        'email_address' => $address1->email_address,
-                    ),
-                ),
-            ),
-            'email_addresses_cc' => array(
-                'add' => array(
-                    // Using an existing email address.
-                    $address1->id,
-                ),
-                'create' => array(
-                    // Using an existing email address.
-                    array(
-                        'email_address' => $address2->email_address,
-                    ),
-                ),
-            ),
-            'email_addresses_bcc' => array(
-                'add' => array(
-                    // Using an existing email address.
-                    $address2->id,
-                ),
-            ),
-        );
-
-        $expected = array(
-            'email_addresses_from' => array(
-                // Moved to add.
-                array(
-                    'email_address' => $address1->email_address,
-                    'id' => $address1->id,
-                ),
-            ),
-            'email_addresses_to' => array(
-                // Moved to add.
-                array(
-                    'email_address' => $address1->email_address,
-                    'id' => $address1->id,
-                ),
-            ),
-            'email_addresses_cc' => array(
-                // Remained in add.
-                $address1->id,
-                // Moved to add.
-                array(
-                    'email_address' => $address2->email_address,
-                    'id' => $address2->id,
-                ),
-            ),
-            'email_addresses_bcc' => array(
-                // Remained in add.
-                $address2->id,
-            ),
-        );
-        $actual = SugarTestReflection::callProtectedMethod(
-            $this->api,
-            'getRelatedRecordArguments',
-            array($email, $args, 'add')
-        );
-        $this->assertSame($expected, $actual);
-
-        $expected = array(
-            'email_addresses_to' => array(
-                // Remained in create.
-                array(
-                    'email_address' => $address3,
-                ),
-            ),
-        );
-        $actual = SugarTestReflection::callProtectedMethod(
-            $this->api,
-            'getRelatedRecordArguments',
-            array($email, $args, 'create')
-        );
-        $this->assertSame($expected, $actual);
-
-        $actual = SugarTestReflection::callProtectedMethod(
-            $this->api,
-            'getRelatedRecordArguments',
-            array($email, $args, 'delete')
-        );
-        $this->assertEmpty($actual);
-
-        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress($address3);
     }
 }
