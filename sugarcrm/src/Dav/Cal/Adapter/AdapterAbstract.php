@@ -360,7 +360,8 @@ abstract class AdapterAbstract implements AdapterInterface
 
         $rrule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
 
-        if ($rrule) {
+        // we need independent rrule update only when we change event
+        if ($rrule && $previousData) {
             $result[] = array(
                 array(
                     $parentAction ?: 'update',
@@ -387,6 +388,8 @@ abstract class AdapterAbstract implements AdapterInterface
                 ),
                 array_merge(
                     isset($diffStructure['timezone']) ? array('timezone' => $diffStructure['timezone']) : array(),
+                    // we need rrule with all fields only on creation
+                    (!$previousData && $rrule) ? $rrule : array(),
                     $parentChangedFields,
                     isset($customizeParent[1]) ? $customizeParent[1] : array()
                 ),
