@@ -138,10 +138,10 @@ for ($k = 0; $k < sizeof($total_keys); $k++) {
     $pb->clear_product_bundle_note_relationship($product_bundels[$total_keys[$k]]);
 }
 
-$pb = BeanFactory::getBean('ProductBundles');
 $deletedGroups = array();
 if (isset($_POST['delete_table'])) {
     foreach ($_POST['delete_table'] as $todelete) {
+        $pb = BeanFactory::getBean('ProductBundles', $todelete);
         if ($todelete !== '1') {
             $pb->mark_deleted($todelete);
             $deletedGroups[$todelete] = $todelete;
@@ -156,18 +156,20 @@ $pb = BeanFactory::getBean('ProductBundles');
 for ($i = 0; $i < $product_count; $i++) {
 
     if ((isset($_POST['delete'][$i]) && $_POST['delete'][$i] != '1')) {
-        $product = BeanFactory::getBean('Products');
-        $GLOBALS['log']->debug("deleting product id " . $_POST['delete'][$i]);
-        $product->mark_deleted($_POST['delete'][$i]);
-        // delete a comment row
+        $productId = $_POST['delete'][$i];
+        $product = BeanFactory::getBean('Products', $productId);
+        $GLOBALS['log']->debug("deleting product id $productId");
+        $product->mark_deleted($productId);
     } else {
+        // delete a comment row
         if (isset($_POST['comment_delete'][$i]) &&
             $_POST['comment_delete'][$i] != '1' &&
             !isset($_REQUEST['duplicateSave'])
         ) {
-            $product_bundle_note = BeanFactory::getBean('ProductBundleNotes');
-            $GLOBALS['log']->debug("Deleting Product Bundle Note Id: " . $_POST['comment_delete'][$i]);
-            $product_bundle_note->mark_deleted($_POST['comment_delete'][$i]);
+            $productBundleNoteId = $_POST['comment_delete'][$i];
+            $product_bundle_note = BeanFactory::getBean('ProductBundleNotes', $productBundleNoteId);
+            $GLOBALS['log']->debug("Deleting Product Bundle Note Id: $productBundleNoteId");
+            $product_bundle_note->mark_deleted($productBundleNoteId);
         } else {
             // insert/update a product into products table
             if (!empty($_POST['product_name'][$i]) && !empty($_POST['parent_group'][$i])) {
