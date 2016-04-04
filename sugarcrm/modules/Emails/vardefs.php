@@ -514,6 +514,13 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_ATTACHMENTS',
         ),
+        'outbound_email_id' => array(
+            'name' => 'outbound_email_id',
+            'comment' => 'The configuration used to send an email, only used when the role is FROM',
+            'type' => 'id',
+            'required' => false,
+            'vname' => 'LBL_OUTBOUND_EMAIL_ID',
+        ),
         'from' => array(
             'name' => 'from',
             'links' => array(

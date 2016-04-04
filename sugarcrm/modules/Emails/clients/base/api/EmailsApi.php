@@ -43,20 +43,51 @@ class EmailsApi extends ModuleApi
                 'from' => Email::EMAIL_STATE_DRAFT,
                 'to' => array(
                     Email::EMAIL_STATE_DRAFT,
+                    // Schedule the the draft to be sent.
                     Email::EMAIL_STATE_SCHEDULED,
-                    Email::EMAIL_STATE_READY, // Ready To Run
+                    // The draft is ready to be sent.
+                    Email::EMAIL_STATE_READY,
                 ),
             ),
             array(
                 'from' => Email::EMAIL_STATE_SCHEDULED,
                 'to' => array(
-                    Email::EMAIL_STATE_SCHEDULED, // Scheduled Date Modified
-                    Email::EMAIL_STATE_ARCHIVED, // Cancellation
-                    Email::EMAIL_STATE_READY, // Ready To Run
+                    // Allows for the scheduled date to be modified.
+                    Email::EMAIL_STATE_SCHEDULED,
+                    // Cancel a scheduled email.
+                    Email::EMAIL_STATE_ARCHIVED,
+                    // Send the scheduled email immediately.
+                    Email::EMAIL_STATE_READY,
+                ),
+            ),
+            array(
+                'from' => Email::EMAIL_STATE_ARCHIVED,
+                'to' => array(
+                    // Allows for changing teams or the assigned user, etc.
+                    Email::EMAIL_STATE_ARCHIVED,
                 ),
             ),
         ),
     );
+
+    /**
+     * The fields `type` and `status` are disabled on create and update. The field `id` is disabled on create.
+     *
+     * All sender links are disabled on update, as the sender cannot be changed. For emails in the "Draft," "Ready," or
+     * "Scheduled" state, the sender is always the current user. For emails in the "Archived" state, the sender is
+     * immutable.
+     *
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        $this->disabledCreateFields = array_merge($this->disabledCreateFields, array('id', 'type', 'status'));
+        $this->disabledUpdateFields = array_merge(
+            $this->disabledUpdateFields,
+            array('type', 'status'),
+            VardefManager::getLinkFieldsForCollection('Emails', BeanFactory::getObjectName('Emails'), 'from')
+        );
+    }
 
     /**
      * {@inheritdoc}
@@ -84,59 +115,99 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * Prevents the creation of a bean when the state transition is invalid.
+     * Prevents the creation of a bean when the state transition is invalid. Sends the email when the state is "Ready."
+     *
+     * The current user is always used as the sender for emails in the "Draft" or "Ready" states.
      *
      * {@inheritdoc}
      */
-    public function createBean(ServiceBase $api, array $args, array $additionalProperties = array())
+    public function createRecord(ServiceBase $api, $args)
     {
         $this->requireArgs($args, array('state'));
-        $this->ignoreArgs(
-            $args,
-            array(
-                'id',
-                'deleted',
-                'type',
-                'status',
-            )
-        );
 
-        $transition = $this->isValidStateTransition('create', static::STATE_ANY, $args['state']);
-
-        if (!$transition) {
+        if (!$this->isValidStateTransition('create', static::STATE_ANY, $args['state'])) {
             $message = "State transition to {$args['state']} is invalid for creating an email";
             throw new SugarApiExceptionInvalidParameter($message);
         }
 
-        return parent::createBean($api, $args, $additionalProperties);
-    }
+        $isReady = false;
 
-    /**
-     * Prevents the update of a bean when the state transition is invalid.
-     *
-     * {@inheritdoc}
-     */
-    protected function updateBean(SugarBean $bean, ServiceBase $api, $args)
-    {
-        $this->ignoreArgs(
-            $args,
-            array(
-                'deleted',
-                'type',
-                'status',
-            )
-        );
+        if ($args['state'] === Email::EMAIL_STATE_READY) {
+            $isReady = true;
+            $args['state'] = Email::EMAIL_STATE_DRAFT;
+        }
 
-        if (isset($args['state'])) {
-            $transition = $this->isValidStateTransition('update', $bean->state, $args['state']);
+        if ($args['state'] === Email::EMAIL_STATE_DRAFT) {
+            $fromLinks = VardefManager::getLinkFieldsForCollection(
+                'Emails',
+                BeanFactory::getObjectName('Emails'),
+                'from'
+            );
 
-            if (!$transition) {
-                $message = "State transition from {$bean->state} to {$args['state']} is invalid for an email";
-                throw new SugarApiExceptionInvalidParameter($message);
+            // Drop any submitted senders.
+            foreach ($fromLinks as $link) {
+                unset($args[$link]);
+            }
+
+            // Add the current user as the sender.
+            $args['users_from'] = array(
+                'add' => array($GLOBALS['current_user']->id),
+            );
+        }
+
+        $result = parent::createRecord($api, $args);
+
+        if ($isReady) {
+            $loadArgs = array('module' => 'Emails', 'record' => $result['id']);
+            $email = $this->loadBean($api, $loadArgs, 'save', array('source' => 'module_api'));
+
+            try {
+                $this->sendEmail($email);
+                $result = $this->formatBeanAfterSave($api, $args, $email);
+            } catch (Exception $e) {
+                $email->delete();
+                throw $e;
             }
         }
 
-        return parent::updateBean($bean, $api, $args);
+        return $result;
+    }
+
+    /**
+     * Prevents the update of a bean when the state transition is invalid. Sends the email when the state is "Ready."
+     *
+     * {@inheritdoc}
+     */
+    public function updateRecord(ServiceBase $api, $args)
+    {
+        $api->action = 'view';
+        $this->requireArgs($args, array('module', 'record'));
+
+        $bean = $this->loadBean($api, $args, 'save', array('source' => 'module_api'));
+        $api->action = 'save';
+        $isReady = false;
+
+        if (isset($args['state'])) {
+            if (!$this->isValidStateTransition('update', $bean->state, $args['state'])) {
+                $message = "State transition from {$bean->state} to {$args['state']} is invalid for an email";
+                throw new SugarApiExceptionInvalidParameter($message);
+            }
+
+            if ($args['state'] === Email::EMAIL_STATE_READY) {
+                $isReady = true;
+                unset($args['state']);
+            }
+        }
+
+        $result = parent::updateRecord($api, $args);
+
+        if ($isReady) {
+            $email = $this->loadBean($api, $args, 'save', array('source' => 'module_api'));
+            $this->sendEmail($email);
+            $result = $this->formatBeanAfterSave($api, $args, $email);
+        }
+
+        return $result;
     }
 
     /**
@@ -156,17 +227,15 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * The sender cannot be removed. Replace the current sender by linking another existing record or creating a new
-     * related record.
+     * The sender cannot be removed.
      *
      * {@inheritdoc}
      */
     protected function unlinkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
     {
-        $def = $bean->getFieldDefinition('from');
+        $links = VardefManager::getLinkFieldsForCollection($bean->module_dir, $bean->object_name, 'from');
 
-        foreach ($def['links'] as $link) {
-            $linkName = is_array($link) ? $link['name'] : $link;
+        foreach ($links as $linkName) {
             unset($ids[$linkName]);
         }
 
@@ -195,11 +264,9 @@ class EmailsApi extends ModuleApi
         );
 
         foreach (array('from', 'to', 'cc', 'bcc') as $field) {
-            $def = $bean->getFieldDefinition($field);
+            $links = VardefManager::getLinkFieldsForCollection($bean->module_dir, $bean->object_name, $field);
 
-            foreach ($def['links'] as $link) {
-                $linkName = is_array($link) ? $link['name'] : $link;
-
+            foreach ($links as $linkName) {
                 if (!in_array($linkName, $doNotSkip)) {
                     $skip[] = $linkName;
                 }
@@ -249,10 +316,6 @@ class EmailsApi extends ModuleApi
      */
     protected function isValidStateTransition($operation, $fromState, $toState)
     {
-        if ($fromState === $toState) {
-            return true;
-        }
-
         $transitions = $this->validStateTransitions[$operation];
 
         foreach ($transitions as $transition) {
@@ -325,7 +388,7 @@ class EmailsApi extends ModuleApi
         if ($uploaded) {
             $result = rename($source, $destination);
         } elseif (link($source, $destination)) {
-            $result = true; // create a hard link if possible
+            $result = true;
         } else {
             $result = copy($source, $destination);
         }
@@ -335,6 +398,46 @@ class EmailsApi extends ModuleApi
         }
 
         return $result;
+    }
+
+    /**
+     * Send the email.
+     *
+     * The system configuration is used if no configuration is specified on the email. An error will occur if the
+     * application is not configured correctly to send email.
+     *
+     * @param SugarBean $email
+     * @throws SugarApiExceptionError
+     */
+    protected function sendEmail(SugarBean $email)
+    {
+        try {
+            $config = null;
+
+            if (empty($email->outbound_email_id)) {
+                $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+                $email->outbound_email_id = $config->getConfigId();
+            } else {
+                $config = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
+                    $GLOBALS['current_user'],
+                    $email->outbound_email_id
+                );
+            }
+
+            if (empty($config)) {
+                throw new MailerException(
+                    'Could not find a configuration for sending email',
+                    MailerException::InvalidConfiguration
+                );
+            }
+
+            $email->sendEmail($config);
+        } catch (MailerException $e) {
+            //FIXME: Each MailerException code maps to a different SugarApiException.
+            throw new SugarApiExceptionError($e->getUserFriendlyMessage());
+        } catch (Exception $e) {
+            throw new SugarApiExceptionError('Failed to send the email: ' . $e->getMessage());
+        }
     }
 
     /**

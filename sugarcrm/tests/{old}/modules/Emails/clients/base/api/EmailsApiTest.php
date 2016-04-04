@@ -11,6 +11,7 @@
  */
 
 require_once 'modules/Emails/clients/base/api/EmailsApi.php';
+require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 /**
  * @coversDefaultClass EmailsApi
@@ -19,7 +20,8 @@ require_once 'modules/Emails/clients/base/api/EmailsApi.php';
  */
 class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $api;
+    protected static $systemConfiguration;
+    protected static $currentUserConfiguration;
     protected $service;
 
     public static function setUpBeforeClass()
@@ -28,89 +30,30 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
+
+        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
+        static::$systemConfiguration = OutboundEmailConfigurationTestHelper::createSystemOutboundEmailConfiguration();
+        static::$currentUserConfiguration = OutboundEmailConfigurationTestHelper::
+        createSystemOverrideOutboundEmailConfiguration($GLOBALS['current_user']->id);
     }
 
     protected function setUp()
     {
         parent::setUp();
-        $this->api = new EmailsApi();
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    protected function tearDown()
+    public static function tearDownAfterClass()
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
-        parent::tearDown();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
+        parent::tearDownAfterClass();
     }
 
-    public function createProvider()
+    public function cannotMakeInvalidStateChangeProvider()
     {
         return array(
-            array(
-                array(
-                    'name' => 'Sugar Email' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'assigned_user_id' => $GLOBALS['current_user']->id,
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'Sugar Email' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                    'assigned_user_id' => create_guid(),
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'Sugar Email' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_READY,
-                    'assigned_user_id' => $GLOBALS['current_user']->id,
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'Sugar Email' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_SCHEDULED,
-                    'assigned_user_id' => create_guid(),
-                ),
-            ),
-        );
-    }
-
-    public function noStateChangeProvider()
-    {
-        return array(
-            array(
-                array(
-                    'name' => 'SugarEmail' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'assigned_user_id' => create_guid(),
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'SugarEmail' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_SCHEDULED,
-                    'assigned_user_id' => create_guid(),
-                ),
-            ),
-            array(
-                array(
-                    'name' => 'SugarEmail' . mt_rand(),
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                    'assigned_user_id' => create_guid(),
-                ),
-            ),
-        );
-    }
-
-    public function invalidStateTransitionProvider()
-    {
-        return array(
-            array(
-                Email::EMAIL_STATE_ARCHIVED,
-                Email::EMAIL_STATE_READY,
-            ),
             array(
                 Email::EMAIL_STATE_DRAFT,
                 Email::EMAIL_STATE_ARCHIVED,
@@ -119,33 +62,23 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 Email::EMAIL_STATE_SCHEDULED,
                 Email::EMAIL_STATE_DRAFT,
             ),
+            array(
+                Email::EMAIL_STATE_ARCHIVED,
+                Email::EMAIL_STATE_DRAFT,
+            ),
+            array(
+                Email::EMAIL_STATE_ARCHIVED,
+                Email::EMAIL_STATE_READY,
+            ),
+            array(
+                Email::EMAIL_STATE_ARCHIVED,
+                Email::EMAIL_STATE_SCHEDULED,
+            ),
         );
     }
 
     /**
      * @covers ::createRecord
-     * @covers ::createBean
-     * @covers ::isValidStateTransition
-     * @dataProvider createProvider
-     * @param array $args
-     */
-    public function testCreateRecord(array $args)
-    {
-        $args['module'] = 'Emails';
-        $result = $this->api->createRecord($this->service, $args);
-
-        $this->assertNotEmpty($result);
-        $this->assertArrayHasKey('id', $result);
-        SugarTestEmailUtilities::setCreatedEmail($result['id']);
-
-        $this->assertEquals($args['name'], $result['name']);
-        $this->assertEquals($args['state'], $result['state']);
-        $this->assertEquals($args['assigned_user_id'], $result['assigned_user_id']);
-    }
-
-    /**
-     * @covers ::createRecord
-     * @covers ::createBean
      * @covers ::isValidStateTransition
      * @expectedException SugarApiExceptionInvalidParameter
      */
@@ -156,49 +89,51 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'name' => 'Sugar Email' . mt_rand(),
             'state' => 'SomeBogusToState',
         );
-        $this->api->createRecord($this->service, $args);
+        $api = new EmailsApi();
+        $api->createRecord($this->service, $args);
     }
 
     /**
-     * @covers ::updateRecord
-     * @covers ::updateBean
-     * @dataProvider noStateChangeProvider
-     * @param array $args
+     * @expectedException SugarApiExceptionRequestMethodFailure
      */
-    public function testUpdateRecord_NoStateChange(array $args)
+    public function testCreateRecord_NoEmailIsCreatedOnFailureToSend()
     {
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => $args['state']));
+        $before = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
 
-        $args['module'] = 'Emails';
-        $args['record'] = $email->id;
-        $result = $this->api->updateRecord($this->service, $args);
+        $api = $this->getMockBuilder('EmailsApi')
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $api->method('sendEmail')->willThrowException(new SugarApiExceptionRequestMethodFailure());
 
-        $this->assertNotEmpty($result);
-        $this->assertEquals($email->id, $result['id']);
-        $this->assertEquals($args['name'], $result['name']);
-        $this->assertEquals($args['state'], $result['state']);
-        $this->assertEquals($args['assigned_user_id'], $result['assigned_user_id']);
+        $args = array(
+            'module' => 'Emails',
+            'state' => Email::EMAIL_STATE_READY,
+        );
+        $api->createRecord($this->service, $args);
+
+        $after = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
+        $this->assertSame($before['num'], $after['num'], 'A new email should not have been created');
     }
 
     /**
+     * @dataProvider cannotMakeInvalidStateChangeProvider
+     * @expectedException SugarApiExceptionInvalidParameter
      * @covers ::updateRecord
-     * @covers ::updateBean
      * @covers ::isValidStateTransition
-     * @dataProvider invalidStateTransitionProvider
      * @param string $fromState
      * @param string $toState
-     * @expectedException SugarApiExceptionInvalidParameter
      */
-    public function testUpdateRecord_StateTransitionIsInvalid($fromState, $toState)
+    public function testUpdateRecord_CannotMakeInvalidStateChange($fromState, $toState)
     {
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => $fromState));
+        $email = SugarTestEmailUtilities::createEmail(null, array('state' => $fromState));
 
         $args = array(
             'module' => 'Emails',
             'record' => $email->id,
             'state' => $toState,
         );
-        $this->api->updateRecord($this->service, $args);
+        $api = new EmailsApi();
+        $api->updateRecord($this->service, $args);
     }
 
     /**
@@ -282,5 +217,77 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         SugarTestReflection::callProtectedMethod($api, 'unlinkRelatedRecords', array($this->service, $email, $args));
+    }
+
+    public function testSendEmail_UsesSpecifiedConfiguration()
+    {
+        $config = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
+            $GLOBALS['current_user'],
+            static::$currentUserConfiguration->id
+        );
+
+        $email = $this->getMockBuilder('Email')
+            ->disableOriginalConstructor()
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $email->expects($this->once())
+            ->method('sendEmail')
+            ->with($this->equalTo($config));
+        $email->outbound_email_id = static::$currentUserConfiguration->id;
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+    }
+
+    public function testSendEmail_UsesSystemConfiguration()
+    {
+        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+
+        $email = $this->getMockBuilder('Email')
+            ->disableOriginalConstructor()
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $email->expects($this->once())
+            ->method('sendEmail')
+            ->with($this->equalTo($config));
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+    }
+
+    /**
+     * @expectedException SugarApiExceptionError
+     */
+    public function testSendEmail_NoConfiguration()
+    {
+        $email = $this->getMockBuilder('Email')
+            ->disableOriginalConstructor()
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $email->expects($this->never())
+            ->method('sendEmail');
+        $email->outbound_email_id = create_guid();
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+    }
+
+    /**
+     * @expectedException SugarApiExceptionError
+     */
+    public function testSendEmail_UnknownError()
+    {
+        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+
+        $email = $this->getMockBuilder('Email')
+            ->disableOriginalConstructor()
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $email->expects($this->once())
+            ->method('sendEmail')
+            ->willThrowException(new Exception('something happened'));
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
     }
 }

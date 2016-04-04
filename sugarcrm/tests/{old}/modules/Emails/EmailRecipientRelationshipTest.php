@@ -15,7 +15,7 @@ require_once 'modules/Emails/EmailRecipientRelationship.php';
 /**
  * @coversDefaultClass EmailRecipientRelationship
  */
-class EmailRecipientRelationshipTest extends PHPUnit_Framework_TestCase
+class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -31,14 +31,6 @@ class EmailRecipientRelationshipTest extends PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         parent::tearDownAfterClass();
-    }
-
-    public function defaultsToPrimaryAddressProvider()
-    {
-        return array(
-            array(Email::EMAIL_STATE_ARCHIVED),
-            array(Email::EMAIL_STATE_READY),
-        );
     }
 
     /**
@@ -107,8 +99,42 @@ class EmailRecipientRelationshipTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * A new email address is created and it's ID is used for email_address_id when email_address is set in
+     * $additionalFields and email_address_id is not -- and the email address does not already exist.
+     *
+     * @covers ::add
+     * @covers ::getRowToInsert
+     */
+    public function testAdd_EmailAddressIsCreated()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
+        $email = SugarTestEmailUtilities::createEmail();
+        $contact = SugarTestContactUtilities::createContact();
+        $address = 'address-' . create_guid() . '@example.com';
+
+        $additionalFields = array(
+            'email_address' => $address,
+        );
+        $actual = $relationship->add($email, $contact, $additionalFields);
+        $this->assertTrue($actual);
+
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $contact->emailAddress->getGuid($address),
+            'participant_id' => $contact->id,
+            'participant_module' => 'Contacts',
+            'role' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0]);
+    }
+
+    /**
      * The value for email_address_id is retrieved when email_address is set in $additionalFields and email_address_id
-     * is not.
+     * is not -- and the email address already exists.
      *
      * @covers ::add
      * @covers ::getRowToInsert
@@ -181,13 +207,11 @@ class EmailRecipientRelationshipTest extends PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
-     * @dataProvider defaultsToPrimaryAddressProvider
-     * @param string $state
      */
-    public function testAdd_EmailAddressIdDefaultsToPrimaryAddress($state)
+    public function testAdd_EmailAddressIdDefaultsToPrimaryAddress()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => $state));
+        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_ARCHIVED));
         $contact = SugarTestContactUtilities::createContact();
         $address = $contact->emailAddress->getPrimaryAddress($contact);
         $addressId = $contact->emailAddress->getGuid($address);

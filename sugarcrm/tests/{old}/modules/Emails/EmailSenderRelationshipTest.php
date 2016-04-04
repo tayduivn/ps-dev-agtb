@@ -15,7 +15,7 @@ require_once 'modules/Emails/EmailSenderRelationship.php';
 /**
  * @coversDefaultClass EmailSenderRelationship
  */
-class EmailSenderRelationshipTest extends PHPUnit_Framework_TestCase
+class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {

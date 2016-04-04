@@ -25,7 +25,6 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
     /**
      * @covers ::createRecord
-     * @covers ::createBean
      * @covers ::getRelatedRecordArguments
      * @covers ::createRelatedRecords
      * @covers ::getAttachmentSource
@@ -62,7 +61,6 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
     /**
      * @covers ::createRecord
-     * @covers ::createBean
      * @covers ::getRelatedRecordArguments
      * @covers ::createRelatedRecords
      * @covers ::getAttachmentSource
@@ -100,7 +98,6 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
     /**
      * @covers ::updateRecord
-     * @covers ::updateBean
      * @covers ::getRelatedRecordArguments
      * @covers ::createRelatedRecords
      * @covers ::unlinkRelatedRecords

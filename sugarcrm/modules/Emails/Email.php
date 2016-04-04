@@ -3349,4 +3349,162 @@ eoq;
         $dbSearchDateTime = $timedate->asDb($sugarDateTime);
         return $dbSearchDateTime;
     }
+
+    /**
+     * Sends the email.
+     *
+     * @param OutboundEmailConfiguration $config
+     * @throws Exception
+     * @throws MailerException
+     */
+    public function sendEmail(OutboundEmailConfiguration $config)
+    {
+        // Set the email address of the sender to be that of the configuration.
+        if ($this->load_relationship('users_from')) {
+            $this->users_from->add(
+                $GLOBALS['current_user'],
+                array('email_address' => $config->getFrom()->getEmail())
+            );
+        } else {
+            throw new SugarException('Could not find a relationship named: users_from');
+        }
+
+        $this->description = $this->decodeDuringSend(from_html($this->description));
+        $this->description_html = $this->decodeDuringSend(from_html($this->description_html));
+
+        try {
+            $mailer = MailerFactory::getMailer($config);
+            $mailer->setSubject($this->name);
+            $mailer->setHtmlBody($this->description_html);
+            $mailer->setTextBody($this->description);
+
+            // Set up the Reply-To header.
+            $replyTo = $config->getReplyTo();
+
+            if (!empty($replyTo)) {
+                $replyToEmail = $replyTo->getEmail();
+
+                if (!empty($replyToEmail)) {
+                    $mailer->setHeader(
+                        EmailHeaders::ReplyTo,
+                        new EmailIdentity($replyToEmail, $replyTo->getName())
+                    );
+                }
+            }
+
+            // Add recipients.
+            $this->addEmailRecipients($mailer, 'to');
+            $this->addEmailRecipients($mailer, 'cc');
+            $this->addEmailRecipients($mailer, 'bcc');
+
+            // Add attachments.
+            if ($this->load_relationship('attachments')) {
+                $attachments = $this->attachments->getBeans();
+
+                foreach ($attachments as $note) {
+                    $attachment = AttachmentPeer::attachmentFromSugarBean($note);
+                    $mailer->addAttachment($attachment);
+                }
+            }
+
+            // Send the email.
+            $sentMessage = $mailer->send();
+
+            // Archive after sending.
+            $this->state = Email::EMAIL_STATE_ARCHIVED;
+            $this->save();
+
+            //TODO: Push the sent email to the IMAP sent folder.
+        } catch (MailerException $me) {
+            $GLOBALS['log']->error($me->getLogMessage());
+            throw($me);
+        } catch (Exception $e) {
+            $me = new MailerException('Email::sendEmail() failed: ' . $e->getMessage(), MailerException::FailedToSend);
+            $GLOBALS['log']->error($me->getLogMessage());
+            $GLOBALS['log']->info($me->getTraceMessage());
+            $GLOBALS['log']->info($config->toArray(), true);
+            throw($me);
+        }
+    }
+
+    /**
+     * Adds the recipients from the specified role to the mailer.
+     *
+     * Updates the participant rows where the email address was not chosen prior to send-time.
+     *
+     * @param IMailer $mailer
+     * @param string $role Can be "to", "cc", or "bcc".
+     * @return int Number of recipients added.
+     */
+    protected function addEmailRecipients(IMailer $mailer, $role)
+    {
+        static $methodMap = array(
+            'to' => 'addRecipientsTo',
+            'cc' => 'addRecipientsCc',
+            'bcc' => 'addRecipientsBcc',
+        );
+
+        $num = 0;
+        $recipients = $this->getEmailRecipients($role);
+
+        foreach ($recipients['records'] as $recipient) {
+            $bean = BeanFactory::retrieveBean(
+                $recipient['_module'],
+                $recipient['id'],
+                array('disable_row_level_security' => true)
+            );
+
+            // Set the email address of the recipient to the recipient's primary email address.
+            if (empty($recipient['email_address_used'])) {
+                $linkName = $recipient['_link'];
+
+                if ($this->load_relationship($linkName)) {
+                    $primary = $bean->emailAddress->getPrimaryAddress($bean);
+                    $primaryId = $bean->emailAddress->getEmailGUID($primary);
+                    $this->$linkName->add($bean, array('email_address_id' => $primaryId));
+                    $recipient['email_address_used'] = $primary;
+                }
+            }
+
+            // Only include the name if the email address and name don't match.
+            $name = ($bean->name === $recipient['email_address_used']) ? '' : $bean->name;
+            $identity = new EmailIdentity($recipient['email_address_used'], $name);
+
+            try {
+                $method = $methodMap[$role];
+                $mailer->$method($identity);
+                $num++;
+            } catch (MailerException $me) {
+                // Invalid email address. Log it and skip.
+                $GLOBALS['log']->warning($me->getLogMessage());
+            }
+        }
+
+        return $num;
+    }
+
+    /**
+     * Returns recipients with the specified role.
+     *
+     * @param string $role Can be "to", "cc", or "bcc".
+     * @return array
+     */
+    protected function getEmailRecipients($role)
+    {
+        //FIXME: This is a temporary solution.
+        // It will not retrieve all recipients if there are more than five.
+        // It returns data like an API response instead of beans.
+        $service = new RestService();
+        $api = new RelateCollectionApi();
+        $args = array(
+            'module' => $this->module_dir,
+            'record' => $this->id,
+            'collection_name' => $role,
+            'fields' => array(
+                'email_address_used',
+            ),
+        );
+
+        return $api->getCollection($service, $args);
+    }
 } // end class def
