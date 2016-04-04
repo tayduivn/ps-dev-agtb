@@ -328,14 +328,15 @@ FLIST;
 
                 $displayMode = array('displayMode' => 'bpm', 'dyn_uid' => $this->activityRow['act_type']);
                 //INIT CLAIM CASE AND DEFINE DISPLAY MODE
-                $reclaimCaseByUser = false;
-                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
-                    $reclaimCaseByUser = true;
-                }
+                $cat = $caseData['cas_adhoc_type'];
+                $csd = $caseData['cas_start_date'];
+                $cam = $this->activityRow['act_assignment_method'];
+
+                $reclaimCaseByUser = $cat == '' && $csd == '' && $cam == 'selfservice';
 
                 $beanTemplate = $this->displayDataForm($caseData['cas_sugar_module'], $caseData['cas_sugar_object_id'],
                     $displayMode, $reclaimCaseByUser);
-                if (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '') && ($caseData['cas_start_date'] == '') && ($this->activityRow['act_assignment_method'] == 'selfservice')) {
+                if ($cat == '' && $csd == '' && $cam == 'selfservice') {
                     $displayMode = 'detail';
                 }
                 //BUTTON SECTIONS
@@ -344,7 +345,7 @@ FLIST;
                 if ($reclaimCaseByUser) {
                     $this->defs['BPM']['buttons']['claim'] = true;
                     $customButtons = array('claim' => true);
-                } elseif (isset($caseData['cas_adhoc_type']) && ($caseData['cas_adhoc_type'] === '')) {
+                } elseif ($cat == '') {
                     $this->defs['BPM']['buttons']['approve'] = (strtoupper($this->activityRow['act_response_buttons']) == 'APPROVE') ? true : false;
                     $this->defs['BPM']['buttons']['route'] = (strtoupper($this->activityRow['act_response_buttons']) == 'ROUTE') ? true : false;
                 } else {
