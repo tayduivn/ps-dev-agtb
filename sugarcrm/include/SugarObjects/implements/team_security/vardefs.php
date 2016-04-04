@@ -108,9 +108,12 @@ $vardefs = array(
           'name' => 'team_selected_name',
           // Prevent a notice during import.
           'table' => 'teams',
+          // Field is not a 'relationship_info', so needs 'module' & 'id_name' like other relate fields.
+          'module' => 'Teams',
           'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
           // Or db_concat_fields.
           'rname' => 'name',
+          'id_name' => 'team_id',
           'source' => 'non-db',
           // Relate is the only way to export non-db field, link value is replaced in getExportContentFromResult()
           // value doesn't matter but "many" type is filtered by create_export_query().

@@ -3236,7 +3236,7 @@ class HealthCheckScanner
                 if (!$hookFileLocation) {
                     $hookFileLocation = $this->getHookFilePath($hook[3]);
                 }
-                if (!file_exists($hookFileLocation)) {
+                if (!file_exists($hookFileLocation) && !in_array($hookFileLocation, $this->ignoreMissingCustomFiles)) {
                     // putting it as custom since LogicHook checks file_exists
                     $this->updateStatus("badHookFile", $hookfile, $hookFileLocation);
                 }
