@@ -147,33 +147,6 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Rows are not deleted by the right-hand side link.
-     *
-     * @covers ::removeAll
-     */
-    public function testRemoveAll_UsingRhsLink()
-    {
-        $email = SugarTestEmailUtilities::createEmail();
-        $contact = SugarTestContactUtilities::createContact();
-
-        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
-        $relationship->add($email, $contact);
-
-        $link = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getSide'))
-            ->getMock();
-        $link->method('getSide')
-            ->willReturn(REL_RHS);
-
-        $actual = $relationship->removeAll($link);
-        $this->assertTrue($actual);
-
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'The row should not have been removed when using the right-hand side link');
-    }
-
-    /**
      * The value of participant_module is always set to the correct module for senders.
      *
      * @covers ::getRowToInsert
