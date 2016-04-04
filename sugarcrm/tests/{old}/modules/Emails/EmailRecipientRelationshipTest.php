@@ -332,30 +332,58 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Rows are not deleted by the right-hand side link.
+     * Rows deleted by the right-hand side link are replaced by EmailAddresses rows to preserve the email address used
+     * in an email even when the record is deleted.
      *
      * @covers ::removeAll
      */
     public function testRemoveAll()
     {
-        $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
+        $primary = $contact->emailAddress->getPrimaryAddress($contact);
+        $primaryId = $contact->emailAddress->getGuid($primary);
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
+        $email1 = SugarTestEmailUtilities::createEmail();
+        $email1->load_relationship('contacts_to');
+        $email1->contacts_to->add($contact);
+
+        $email2 = SugarTestEmailUtilities::createEmail();
+        $email2->load_relationship('contacts_to');
+        $email2->contacts_to->add($contact, array('email_address' => $primary));
+
+        $email3 = SugarTestEmailUtilities::createEmail();
+        $email3->load_relationship('contacts_to');
+        $email3->contacts_to->add($contact, array('email_address_id' => $address->id));
+
+        $contact->load_relationship('emails_to');
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
-        $relationship->add($email, $contact);
+        $relationship->removeAll($contact->emails_to);
 
-        $link = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getSide'))
-            ->getMock();
-        $link->method('getSide')
-            ->willReturn(REL_RHS);
+        $rows = $this->getRows(array(
+            'email_id' => $email1->id,
+            'role' => 'to',
+        ));
+        $this->assertCount(0, $rows, 'The row should have been removed');
 
-        $actual = $relationship->removeAll($link);
-        $this->assertTrue($actual);
+        $rows = $this->getRows(array(
+            'email_id' => $email2->id,
+            'role' => 'to',
+        ));
+        $row = $rows[0];
+        $this->assertCount(1, $rows, "The row should have been replaced with the contact's primary email address");
+        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
+        $this->assertSame($primaryId, $row['participant_id'], "The row should use the contact's primary email address");
 
-        $rows = $this->getRows(array('email_id' => $email->id));
-        $this->assertCount(1, $rows, 'The row should not have been removed when using the right-hand side link');
+        $rows = $this->getRows(array(
+            'email_id' => $email3->id,
+            'role' => 'to',
+        ));
+        $row = $rows[0];
+        $this->assertCount(1, $rows, "The row should have been replaced with the chosen email address");
+        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
+        $this->assertSame($address->id, $row['participant_id'], 'The row should use the chosen email address');
     }
 
     /**

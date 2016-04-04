@@ -36,24 +36,79 @@ class EmailRecipientRelationship extends M2MRelationship
     }
 
     /**
-     * Can only remove all records using the left-hand side link.
+     * When removing all rows using the right-hand side link, rows where the email_address_id is set are converted to
+     * rows using EmailAddresses as the participant_module. This preserves historical data regarding email participants.
+     * Even if the record ceases to exist, that email will continue to have to record of sending email from or to the
+     * particular email address.
      *
      * {@inheritdoc}
      */
     public function removeAll($link)
     {
         if ($link->getSide() === REL_RHS) {
-            //TODO: Add a new EmailAddresses row for each row removed.
-            // Most likely this is because the rhs bean was deleted.
-            // Find all of the rows where $focus appears for this link.
-            // For each row...
-            // Remove the row.
-            // (If the row is a draft, do we do anything other than remove it?)
-            // If the row has an email_address_id then capture it.
-            // Else call $focus->emailAddress->getPrimaryAddress($focus) and find the ID for that email address.
-            // Load the lhs bean for email_id and load the rhs bean for the captured ID and add(lhs, rhs).
-            // Return true if everything was successful or false.
-            return true;
+            // Most likely the right-hand side bean was deleted.
+            $removeAllResult = true;
+            $rhs = $link->getFocus();
+
+            // Find all rows to remove.
+            $beans = $link->getBeans();
+
+            foreach ($beans as $lhs) {
+                // Get the existing row so you know what email_address_id is.
+                $args = array(
+                    $this->def['join_key_lhs'] => $lhs->id,
+                    $this->def['join_key_rhs'] => $rhs->id
+                );
+                $row = $this->checkExisting($args);
+
+                if (empty($row)) {
+                    $removeAllResult = false;
+                    LoggerManager::getLogger()->error(
+                        "Warning: row did not exist for relationship {$this->name} within " .
+                        "EmailRecipientRelationship->removeAll()  dataToRemove: " . var_export($args, true)
+                    );
+                    continue;
+                }
+
+                // Remove the row.
+                $removeResult = $this->remove($lhs, $rhs);
+                $addResult = true;
+
+                // Replace the row with a new row representing the email address used.
+                if (!empty($row['email_address_id'])) {
+                    $newLink = "email_addresses_{$row['role']}";
+
+                    LoggerManager::getLogger()->debug(
+                        "Replace {$rhs->module_dir}/{$rhs->id} with EmailAddresses/{$row['email_address_id']} for " .
+                        "link {$newLink} on {$lhs->module_dir}/{$lhs->id}"
+                    );
+
+                    if ($lhs->load_relationship($newLink)) {
+                        $address = BeanFactory::retrieveBean(
+                            'EmailAddresses',
+                            $row['email_address_id'],
+                            array('disable_row_level_security' => true)
+                        );
+
+                        if ($lhs->$newLink->add($address) !== true) {
+                            $addResult = false;
+                            LoggerManager::getLogger()->error(
+                                "Warning: failed to replace {$rhs->module_dir}/{$rhs->id} with EmailAddresses/" .
+                                "{$address->id} for link {$newLink} on {$lhs->module_dir}/{$lhs->id} within " .
+                                'EmailRecipientRelationship->removeAll()'
+                            );
+                        }
+                    } else {
+                        $addResult = false;
+                        $lhsClass = get_class($lhs);
+                        LoggerManager::getLogger()->fatal("could not load LHS {$newLink} in {$lhsClass}");
+                    }
+                }
+
+                $removeAllResult = $removeAllResult && $removeResult && $addResult;
+            }
+
+            return $removeAllResult;
         }
 
         return parent::removeAll($link);
@@ -98,12 +153,6 @@ class EmailRecipientRelationship extends M2MRelationship
                 }
             }
         }
-
-        /**
-         * TODO: If participant_module is EmailAddresses and the email address is linked to only one record, then it
-         * should be safe to update participant_module and participant_id to match that record. Unless this is a brand
-         * new person who just happens to have the same email address.
-         */
 
         unset($row['email_address']);
 
