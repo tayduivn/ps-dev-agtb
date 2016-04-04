@@ -40,6 +40,7 @@ $vardefs = array(
 			'dbType' => 'id',
             'duplicate_on_record_copy' => 'always',
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
         'team_set_selected_id' => array(
             'name' => 'team_set_selected_id',
             'vname' => 'LBL_TEAM_SET_SELECTED_ID',
@@ -49,6 +50,7 @@ $vardefs = array(
             'isnull' => true,
             'duplicate_on_record_copy' => 'always',
         ),
+        //END SUGARCRM flav=ent ONLY
 		'team_count' =>
 		array (
 			'name' => 'team_count',
@@ -100,9 +102,12 @@ $vardefs = array(
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',
             'exportable'=>true,
+            //BEGIN SUGARCRM flav=ent ONLY
 			// Until the same control is used for selecting.
 			'fields' => array('team_set_selected_id'),
+            //END SUGARCRM flav=ent ONLY
         ),
+      //BEGIN SUGARCRM flav=ent ONLY
 	  // handled by SugarFieldTeamset
       'team_selected_name' => array(
           'name' => 'team_selected_name',
@@ -128,6 +133,7 @@ $vardefs = array(
           'massupdate' => false,
           'hideacl' => true,
       ),
+      //END SUGARCRM flav=ent ONLY
 		'team_link' =>
 	    array (
 	      'name' => 'team_link',

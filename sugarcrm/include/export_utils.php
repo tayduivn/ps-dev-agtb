@@ -102,10 +102,10 @@ function export($type, $records = null, $members = false, $sample = false)
                 $where .= ' AND ';
             }
             $where .= $focus->getOwnerWhere($current_user->id);
-        //BEGIN SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
         } elseif ($tba->isValidAccess($access)) {
             $focus->addVisibilityStrategy('TeamBasedACLVisibility');
-        //END SUGARCRM flav=ent ONLY
+            //END SUGARCRM flav=ent ONLY
         }
     }
 

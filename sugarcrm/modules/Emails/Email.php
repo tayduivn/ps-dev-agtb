@@ -891,7 +891,8 @@ class Email extends SugarBean {
 			$teamSet = BeanFactory::getBean('TeamSets');
 			$teamIdsArray = (!empty($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
 			$this->team_set_id = $teamSet->addTeams($teamIdsArray);
-			$selectedTeamIdsArray = !empty($_REQUEST['selectedTeam'])
+            //BEGIN SUGARCRM flav=ent ONLY
+            $selectedTeamIdsArray = !empty($_REQUEST['selectedTeam'])
 				? explode(",", $_REQUEST['selectedTeam'])
 				: array();
 			if (!empty($selectedTeamIdsArray)) {
@@ -899,6 +900,7 @@ class Email extends SugarBean {
 			} else {
 				$this->team_set_selected_id = '';
 			}
+            //END SUGARCRM flav=ent ONLY
 
             if ($archived && !empty($request['assignedUser'])) {
                 $this->assigned_user_id = $request['assignedUser'];

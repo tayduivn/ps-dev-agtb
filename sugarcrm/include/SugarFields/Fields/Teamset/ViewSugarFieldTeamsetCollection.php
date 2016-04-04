@@ -18,7 +18,9 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 
 	var $add_user_private_team = true;
+    //BEGIN SUGARCRM flav=ent ONLY
     public $team_set_selected_id;
+    //END SUGARCRM flav=ent ONLY
 	var $team_set_id = null;
 	var $team_id = null;
 	var $type = 'TeamsetCollection';
@@ -110,20 +112,24 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        	if(!empty($this->team_set_id)){
 			        		$this->bean->team_set_id = $this->team_set_id;
 			        	}
+                        //BEGIN SUGARCRM flav=ent ONLY
                         if(!empty($this->team_set_selected_id)){
                             $this->bean->team_set_selected_id = $this->team_set_selected_id;
                         }
+                        //END SUGARCRM flav=ent ONLY
 			        }else if(!empty($_REQUEST['record'])){
 		            	$this->bean->retrieve($_REQUEST['record']);
 			        }
 
                     if (!empty($this->bean->team_set_id)) {
+                        //BEGIN SUGARCRM flav=ent ONLY
                         $selectedTeamIds = array();
                         if (!empty($this->bean->team_set_selected_id)) {
                             $selectedTeamIds = array_map(function ($el) {
                                 return $el['id'];
                             }, TeamSetManager::getTeamsFromSet($this->bean->team_set_selected_id));
                         }
+                        //END SUGARCRM flav=ent ONLY
                         $teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);
                         foreach ($teams as $row) {
                             if (empty($primary) && $this->bean->team_id == $row['id']) {
@@ -133,7 +139,9 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                                         'primary' => array(
                                             'id' => $row['id'],
                                             'name' => $row['display_name'],
-                                            'selected' => in_array($row['id'], $selectedTeamIds)
+                                            //BEGIN SUGARCRM flav=ent ONLY
+                                            'selected' => in_array($row['id'], $selectedTeamIds),
+                                            //END SUGARCRM flav=ent ONLY
                                         )
                                     )
                                 );
@@ -142,7 +150,9 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                                 $secondaries['secondaries'][] = array(
                                     'id' => $row['id'],
                                     'name' => $row['display_name'],
+                                    //BEGIN SUGARCRM flav=ent ONLY
                                     'selected' => in_array($row['id'], $selectedTeamIds)
+                                    //END SUGARCRM flav=ent ONLY
                                 );
                             }
                         } //foreach
@@ -160,13 +170,21 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                         require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                         $teams = SugarFieldTeamset::getTeamsFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
                         $primary_id = SugarFieldTeamset::getPrimaryTeamidFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
+                        //BEGIN SUGARCRM flav=ent ONLY
                         $selectedIds = SugarFieldTeamset::getSelectedTeamIdsFromRequest(
                             $this->bean->{$this->value_name}['role_field'],
                             $_POST
                         );
+                        //END SUGARCRM flav=ent ONLY
                         foreach($teams as $id => $name)
                         {
-                            $value = array('id' => $id, 'name' => $name, 'selected' => in_array($id, $selectedIds));
+                            $value = array(
+                                'id' => $id,
+                                'name' => $name,
+                                //BEGIN SUGARCRM flav=ent ONLY
+                                'selected' => in_array($id, $selectedIds),
+                                //END SUGARCRM flav=ent ONLY
+                            );
                             // getting strings of values is needed because some problems appears when compare '1' and md5 value which begins from '1'
                             if (strval($primary_id) === strval($id))
                             {

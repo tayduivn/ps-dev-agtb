@@ -70,12 +70,14 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         $primary = false;
         $this->bean->{$this->value_name} = array('role_field' => 'team_name');
         if (!empty($this->bean->team_set_id)) {
+            //BEGIN SUGARCRM flav=ent ONLY
             $selectedTeamIds = array();
             if (!empty($this->bean->team_set_selected_id)) {
                 $selectedTeamIds = array_map(function ($el) {
                     return $el['id'];
                 }, TeamSetManager::getTeamsFromSet($this->bean->team_set_selected_id));
             }
+            //END SUGARCRM flav=ent ONLY
             $teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);
             foreach ($teams as $row) {
                 if (empty($primary) && $this->bean->team_id == $row['id']) {
@@ -85,7 +87,9 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
                             'primary' => array(
                                 'id' => $row['id'],
                                 'name' => $row['display_name'],
-                                'selected' => in_array($row['id'], $selectedTeamIds)
+                                //BEGIN SUGARCRM flav=ent ONLY
+                                'selected' => in_array($row['id'], $selectedTeamIds),
+                                //END SUGARCRM flav=ent ONLY
                             )
                         )
                     );
@@ -94,7 +98,9 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
                     $secondaries['secondaries'][] = array(
                         'id' => $row['id'],
                         'name' => $row['display_name'],
-                        'selected' => in_array($row['id'], $selectedTeamIds)
+                        //BEGIN SUGARCRM flav=ent ONLY
+                        'selected' => in_array($row['id'], $selectedTeamIds),
+                        //END SUGARCRM flav=ent ONLY
                     );
                 }
             } //foreach

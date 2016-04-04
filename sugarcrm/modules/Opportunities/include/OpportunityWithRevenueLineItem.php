@@ -409,7 +409,9 @@ EOL;
                 $rli->deleted = $opp->deleted;
                 $rli->team_id = $opp->team_id;
                 $rli->team_set_id = $opp->team_set_id;
+                //BEGIN SUGARCRM flav=ent ONLY
                 $rli->team_set_selected_id = $opp->team_set_selected_id;
+                //END SUGARCRM flav=ent ONLY
                 $rli->save();
 
                 // set the relationship up correctly

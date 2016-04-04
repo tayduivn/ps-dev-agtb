@@ -735,6 +735,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Test replacing and adding selected teams to a set.
      */
@@ -786,4 +787,5 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
         $this->assertEquals($team2->id, $resultTeam[0]['id']);
     }
+    //END SUGARCRM flav=ent ONLY
 }

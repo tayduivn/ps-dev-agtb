@@ -304,7 +304,9 @@ class ImportDuplicateCheck
         $mstr_exclude_array = array(
             'all' => array(
                 'team_set_id',
+                //BEGIN SUGARCRM flav=ent ONLY
                 'team_set_selected_id',
+                //END SUGARCRM flav=ent ONLY
                 'id',
                 'deleted',
             ),

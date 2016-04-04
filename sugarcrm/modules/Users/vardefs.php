@@ -443,6 +443,7 @@ $dictionary['User'] = array(
 			    'audited' => true,
 			    'studio' => 'false',
 			),
+        //BEGIN SUGARCRM flav=ent ONLY
         'team_set_selected_id' => array(
             'name' => 'team_set_selected_id',
             'vname' => 'LBL_TEAM_SET_SELECTED_ID',
@@ -452,6 +453,7 @@ $dictionary['User'] = array(
             'isnull' => true,
             'duplicate_on_record_copy' => 'always',
         ),
+        //END SUGARCRM flav=ent ONLY
 			'team_count' =>
 			array (
 				'name' => 'team_count',
@@ -502,8 +504,10 @@ $dictionary['User'] = array(
                     'wirelesseditview' => false,
                 ),
                 'exportable'=> true,
+                //BEGIN SUGARCRM flav=ent ONLY
                 // Until the same control is used for selecting.
                 'fields' => array('team_set_selected_id'),
+                //END SUGARCRM flav=ent ONLY
 			),
 			'team_link' =>
 		    array (
