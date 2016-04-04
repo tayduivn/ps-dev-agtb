@@ -69,6 +69,16 @@ $dictionary['emails_participants'] = array(
             ),
         ),
         array(
+            'name' => 'idx_emails_participants_unique',
+            'type' => 'unique',
+            'fields' => array(
+                'email_id',
+                'role',
+                'participant_module',
+                'participant_id',
+            )
+        ),
+        array(
             'name' => 'idx_email_address',
             'type' => 'index',
             'fields' => array(
