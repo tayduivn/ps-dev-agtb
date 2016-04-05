@@ -562,7 +562,7 @@ class SugarTestHelper
         SugarCache::$isCacheReset = false;
 
         SugarConfig::getInstance()->clearCache();
-
+        \TimeDate::getInstance()->allow_cache = true;
         return true;
     }
 
