@@ -393,14 +393,14 @@
   //TODO: bring over KB .record-cell styles
 }
 
-.record-edit-link-wrapper {
+.record-edit-link-wrapper, .record-lock-link-wrapper {
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   position: absolute;
   z-index: 0;
-  .record-edit-link {
+  .record-edit-link, .record-lock-link {
     display: none;
     height: 100%;
     width: 100%;
@@ -412,7 +412,7 @@
       border: 1px solid transparent;
       background: none;
     }
-    .fa-pencil {
+    .fa-pencil, .fa-lock {
       left: -7px;
       top: -1px;
       font-size: 10px;
@@ -421,10 +421,31 @@
     }
   }
 }
+.record-lock-link-wrapper {
+  .record-lock-link {
+    &.record-lock-link-on {
+      display: inline-block;
+    }
+  }
+  .btn {
+    &.record-lock-link-on {
+      .fa {
+        display: inline-block;
+      }
+    }
+    .fa {
+      display: none;
+    }
+  }
+}
 .record-cell:not(.edit):hover {
-  .record-edit-link {
+  .record-edit-link, .record-lock-link {
     display: inline-block;
-
+  }
+  .btn {
+    .fa {
+      display: inline-block;
+    }
   }
 }
 .record-cell.edit {
