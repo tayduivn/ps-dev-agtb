@@ -241,8 +241,18 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $criteriaToken->expToken = $assembledTokenString;
         if ($criteriaToken->expSubtype == 'Currency') {
             $value = json_decode($tokenValue);
-            $criteriaToken->expField = $value["currency_id"];
-            $criteriaToken->currentValue = $value["amount"];
+            // in some use cases, value can be numeric instead of array
+            // so need to handle currency_id and amount accordingly
+            if (!empty($value["currency_id"])) {
+                $criteriaToken->expField = $value["currency_id"];
+            } elseif (isset($this->evaluatedBean->currency_id)) {
+                $criteriaToken->expField = $this->evaluatedBean->currency_id;
+            }
+            if (!empty($value["amount"])) {
+                $criteriaToken->currentValue = $value["amount"];
+            } else {
+                $criteriaToken->currentValue = $tokenValue;
+            }
         } else {
             $criteriaToken->currentValue = $tokenValue;
         }
