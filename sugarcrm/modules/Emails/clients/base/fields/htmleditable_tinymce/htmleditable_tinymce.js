@@ -16,7 +16,10 @@
 ({
     extendsFrom: 'Htmleditable_tinymceField',
 
+    // The tinyMCE button object for the signature dropdown
     _signatureBtn: null,
+    // The number of signatures found from the REST response
+    _numSignatures: 0,
 
     /**
      * @inheritdoc
@@ -61,6 +64,32 @@
                 this._handleButtonClick('template');
             }, this)
         });
+
+        // add the events for the editor focus/blur to enable/disable the signature button
+        this._addCustomEditorEvents(editor);
+    },
+
+    /**
+     * Create the focus/blur events for the tinyMCE editor to interact with the signature button
+     *
+     * @param {Object} editor TinyMCE editor
+     * @private
+     */
+    _addCustomEditorEvents: function(editor) {
+        editor.on('focus', _.bind(function(e) {
+            // the user has at least 1 signature
+            if (this._numSignatures > 0) {
+                // enable the signature button
+                this._signatureBtn.disabled(false);
+            }
+        }, this));
+        editor.on('blur', _.bind(function(e) {
+            // the user has at least 1 signature
+            if (this._numSignatures > 0) {
+                // disable the signature button
+                this._signatureBtn.disabled(true);
+            }
+        }, this));
     },
 
     /**
@@ -136,12 +165,8 @@
                 });
             }, this));
 
-            // ensure there is a signature to select
-            if (signatures.length > 0) {
-                // enable the signature button
-                this._signatureBtn.disabled(false);
-            }
-
+            // Set the number of signatures the user has
+            this._numSignatures = signatures.length;
         }
     },
 
