@@ -114,6 +114,35 @@ function get_campaign_mailboxes_with_stored_options() {
 	return $ret;
 }
 
+/**
+ * Gets campaign type
+ * @param string $track
+ * @return string
+ */
+function getCampaignType($track)
+{
+    $db = DBManagerFactory::getInstance();
+    $query = "select c.campaign_type from campaign_trkrs ct, campaigns c where c.id = ct.campaign_id and ct.id = ".
+        $db->quoted($track) . " and ct.deleted = 0 and c.deleted = 0";
+    return $db->getOne($query);
+}
+
+/**
+ * Checks if eamils have been sent for a campaign
+ * @param string $track
+ * @return boolean
+ */
+function hasSentCampaignEmail($track)
+{
+    $db = DBManagerFactory::getInstance();
+    // when a campaign email is sent, a log entry is also created with activity_type = targeted
+    // more_information contains the email address
+    $query = "select count(cl.more_information) from campaign_log cl, campaign_trkrs ct".
+        " where ct.campaign_id = cl.campaign_id and ct.id = ".$db->quoted($track). " and ct.deleted = 0".
+        " and cl.activity_type = 'targeted' and cl.more_information is not null and cl.deleted = 0";
+    return $db->getOne($query) > 0;
+}
+
 function log_campaign_activity($identifier, $activity, $update=true, $clicked_url_key=null) {
 
     $return_array = array();
