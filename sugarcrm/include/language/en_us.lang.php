@@ -8860,6 +8860,8 @@ $app_strings = array (
     'EXCEPTION_SEARCH_RUNTIME_DESC'        => 'A runtime exception occured in SearchEngine. See sugarcrm.log for more details.',
     'EXCEPTION_INVALID_PLATFORM_DESC'      => 'Indicates the platform specified during authenication is unknown. Custom platforms must be added to custom/client/platforms.php',
     'EXCEPTION_FIELD_LOCKED_FOR_EDIT_DESC' => 'A field that is currently locked by a running process cannot be edited.',
+    'EXCEPTION_FIELD_IS_LOCKED_FOR_EDIT'   => '%s is locked by a running process and cannot be edited.',
+    'EXCEPTION_FIELDS_ARE_LOCKED_FOR_EDIT' => '%s are locked by a running process and cannot be edited.',
 
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',

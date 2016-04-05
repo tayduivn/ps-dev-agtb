@@ -386,43 +386,25 @@ class SugarBeanApiHelper
      */
     public function handleLockedFieldEdits(\SugarBean $bean, array $data)
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        // Only validate this for existing records
-        if ($bean->id && !$bean->new_with_id) {
-            // Get our locked field array
-            $lockedFields = \PMSEEngineUtils::getLockedFields($bean);
+        // Set up the error fields collection now
+        $errors = array();
 
-            // Flip the values into keys for use in checking
-            $lockedFields = array_flip($lockedFields);
+        // Get our locked fields for this record if there are any
+        $locked = $bean->isUpdate() ? $bean->getLockedFields() : array();
 
-            // Loop and check if the field is locked for editing
-            foreach (array_keys($data) as $field) {
-                // And if it is, and was changed, throw an exception
-                if (array_key_exists($field, $lockedFields) && $this->lockedFieldHasChanged($field, $bean, $data)) {
-                    $msg = "$field is currently locked for editing by Process Management.";
-                    throw new \SugarApiExceptionFieldEditDisabled($msg);
-                }
+        // Now see if any of the locked fields are being edited
+        foreach ($locked as $field) {
+            if ($bean->lockedFieldHasChanged($field, $data)) {
+                $errors[] = $field;
             }
         }
-        //END SUGARCRM flav=ent ONLY
-    }
 
-    /**
-     * Checks to see if a locked field has changed value
-     * @param string $field The field name to check
-     * @param SugarBean $bean The bean this field is on
-     * @param array $data The submitted data array
-     * @return boolean
-     */
-    protected function lockedFieldHasChanged($field, $bean, $data)
-    {
-        if (isset($bean->field_defs[$field])) {
-            $def = $bean->field_defs[$field];
-            $eval = ProcessManager\Factory::getFieldEvaluator($def);
-            $eval->init($bean, $field, $data);
-            return $eval->hasChanged();
+        // And finally handle the error message if there is one
+        if ($errors) {
+            $message = $bean->getLockedFieldErrorMessage($errors);
+            if (!empty($message)) {
+                throw new \SugarApiExceptionFieldEditDisabled($message);
+            }
         }
-
-        return false;
     }
 }

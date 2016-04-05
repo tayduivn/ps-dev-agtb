@@ -1589,9 +1589,10 @@ class PMSEEngineUtils
     /**
      * Gets locked fields for a record
      * @param \SugarBean $bean SugarBean object
+     * @param bool $encode Flag that is sent to the DBManager to handle encoding
      * @return array
      */
-    public static function getLockedFields(\SugarBean $bean)
+    public static function getLockedFields(\SugarBean $bean, $encode = true)
     {
         // Get our module name since we will need that
         $module = \BeanFactory::getModuleName($bean);
@@ -1632,7 +1633,7 @@ class PMSEEngineUtils
           ->notIn('f.cas_flow_status', array('CLOSED', 'TERMINATED'))
           ->isNotEmpty('pd.pro_locked_variables');
 
-        $rows = $q->execute();
+        $rows = $q->execute('array', $encode);
 
         // Loop our rows and merge the results
         foreach ($rows as $row) {

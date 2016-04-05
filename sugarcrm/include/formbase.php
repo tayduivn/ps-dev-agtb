@@ -19,6 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Check for null or zero for list of values
@@ -51,6 +52,9 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 	}
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
+
+    // Need to handle process management locked fields
+    handleLockedFieldEdits($focus);
 
 	foreach($focus->field_defs as $field=>$def) {
         if ( $field == 'id' && !empty($focus->id) ) {
@@ -556,4 +560,28 @@ function save_from_report($report_id,$parent_id, $module_name, $relationship_att
     }
 }
 
-?>
+/**
+ * Checks a bean for locked fields and if there are any edited, throws an error
+ * @param SugarBean $focus The Sugar Bean object
+ */
+function handleLockedFieldEdits($focus)
+{
+    // Needed to handle process management locked fields, sending a false to the
+    // locked field getter since BWC needs to have the data return set unencoded
+    $locked = $focus->isUpdate() ? $focus->getLockedFields(false) : array();
+
+    $errors = array();
+    foreach ($locked as $field) {
+        if ($focus->lockedFieldHasChanged($field, $_POST)) {
+            $errors[] = $field;
+        }
+    }
+
+    // Handle messaging for this issue if there are errors to handle
+    if ($errors) {
+        $message = $focus->getLockedFieldErrorMessage($errors);
+        if (!empty($message)) {
+            sugar_die($message);
+        }
+    }
+}

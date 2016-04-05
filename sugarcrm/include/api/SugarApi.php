@@ -81,7 +81,7 @@ abstract class SugarApi {
         }
 
         // Handle lock fields application
-        $data['_locked_fields'] = $this->getLockedFields($bean);
+        $data['_locked_fields'] = $bean->getLockedFields();
 
         return $data;
     }
@@ -668,22 +668,5 @@ abstract class SugarApi {
         }
 
         return $limit;
-    }
-
-    /**
-     * Gets locked fields for a record
-     *
-     * @param \SugarBean $bean SugarBean object
-     * @return array
-     */
-    protected function getLockedFields(\SugarBean $bean)
-    {
-        $return = array();
-        //BEGIN SUGARCRM flav=ent ONLY
-        if (empty($return)) {
-            $return = \PMSEEngineUtils::getLockedFields($bean);
-        }
-        //END SUGARCRM flav=ent ONLY
-        return $return;
     }
 }
