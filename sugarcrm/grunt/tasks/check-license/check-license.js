@@ -41,7 +41,7 @@ module.exports = function(grunt) {
         pattern = pattern.replace(/\)/g, '\\)');
 
         var cmdOptions = [
-            '--buffer-size=100k',
+            '--buffer-size=10M',
             '-M',
             // The output will be file names of files that doesnt match the pattern.
             '-L',
@@ -62,12 +62,14 @@ module.exports = function(grunt) {
 
         //Runs the command.
         exec(command, {maxBuffer: 2000 * 1024}, function(error, stdout, stderr) {
-
-            if (error && error.code === 1) {
-                grunt.log.ok('All files have the exact license specified in `sugarcrm/LICENSE`');
-            } else {
+            if (stderr.length != 0) {
+                grunt.log.subhead('Exec error:');
+                grunt.log.error(stderr);
+            } else if (stdout.length != 0) {
                 grunt.log.subhead('Invalid license headers found in:');
                 grunt.log.error(stdout);
+            } else {
+                grunt.log.ok('All files have the exact license specified in `sugarcrm/LICENSE`');
             }
         });
     });
