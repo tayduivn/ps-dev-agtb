@@ -235,6 +235,7 @@ $dictionary['EmailTemplate'] = array(
             'type' => 'enum',
             'required' => false,
             'reportable'=> false,
+            'default'=> 'email',
             'options' => 'emailTemplates_type_list',
             'comment' => 'Type of the email template'
        ),
