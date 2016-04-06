@@ -45,6 +45,15 @@
  * //...
  * </code></pre>
  *
+ * Note that there are two concepts of "intelligence" for this dashlet.
+ *
+ * The intelligence property on the controller `this.intelligent` indicates
+ * if the dashlet is allowed to link to a record.
+ *
+ * The intelligent setting retrieved by `this.settings.get('intelligent')` is
+ * only relevant if the intelligence property `this.intelligent` is true. This
+ * setting indicates if the dashlet is actively linking to a record.
+ *
  * @class View.Views.Base.DashablelistView
  * @alias SUGAR.App.view.views.BaseDashablelistView
  * @extends View.Views.Base.ListView
@@ -119,6 +128,9 @@
 
     /**
      * Flag indicates if dashlet is intelligent.
+     *
+     * If the dashlet is intelligent, it can be linked to a record on the main
+     * context, e.g. on the Record View.
      */
     intelligent: null,
 
@@ -225,10 +237,10 @@
                     link: {
                         name: link,
                         bean: model
-                    },
-                    relate: true
+                    }
                 };
             this.collection = app.data.createBeanCollection(module, null, options);
+            this.collection.setOption('relate', true);
             this.context.set('collection', this.collection);
             this.context.set('link', link);
         } else {
