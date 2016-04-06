@@ -58,9 +58,9 @@ class PMSEEngineFilterApi extends FilterApi
                 'method' => 'filterList',
                 'jsonParams' => array('filter'),
                 'exceptions' => array(
-                    // Thrown in filterList
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
 //                'shortHelp' => 'Returns a list of Processes by user',
@@ -72,9 +72,9 @@ class PMSEEngineFilterApi extends FilterApi
                 'method' => 'filterListAllPA',
                 'jsonParams' => array('filter'),
                 'exceptions' => array(
-                    // Thrown in filterList
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
 //                'shortHelp' => 'Returns a list of Processes by user using filters',
@@ -86,7 +86,8 @@ class PMSEEngineFilterApi extends FilterApi
                 'jsonParams' => array('filter'),
                 'method' => 'filterListCount',
                 'exceptions' => array(
-                    // Thrown in filterListSetup
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     'SugarApiExceptionNotAuthorized',
                 ),
 //                'shortHelp' => 'List of all records in this module',
@@ -97,12 +98,10 @@ class PMSEEngineFilterApi extends FilterApi
                 'pathVars' => array('module', '', 'record'),
                 'method' => 'filterById',
                 'exceptions' => array(
-                    // Thrown in filterById
                     'SugarApiExceptionNotFound',
-                    // Thrown in filterList
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionError',
                 ),
 //                'shortHelp' => 'Filter records for a module by a predefined filter id.',
             ),
