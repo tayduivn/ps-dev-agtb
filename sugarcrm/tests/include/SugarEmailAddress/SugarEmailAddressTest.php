@@ -105,6 +105,7 @@ class SugarEmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
             array('t.-est@test.com', true),
             // bugs: MAR-1894
             array("o'hara@email.com", true),
+            array("用户@例子.广告", true),
         );
     }
 
