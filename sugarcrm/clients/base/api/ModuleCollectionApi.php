@@ -44,6 +44,12 @@ class ModuleCollectionApi extends CollectionApi
                 'method' => 'getCollection',
                 'shortHelp' => 'Lists collection records.',
                 'longHelp' => 'include/api/help/collection_collection_name_get_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'getCollectionCount' => array(
                 'reqType' => 'GET',
@@ -52,6 +58,11 @@ class ModuleCollectionApi extends CollectionApi
                 'method' => 'getCollectionCount',
                 'shortHelp' => 'Counts collection records.',
                 'longHelp' => 'include/api/help/collection_collection_name_count_get_help.html',
+                'exceptions' => array(
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
         );
     }
