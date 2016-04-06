@@ -36,7 +36,11 @@ class StudioModuleFactory
 		{
 			$sm = new StudioModule($module, $seed);
 		}
-        self::$loadedMods[$module] = $sm;
+
+		if ($GLOBALS['mod_strings']) {
+			self::$loadedMods[$module] = $sm;
+		}
+
         return $sm;
 	}
 
