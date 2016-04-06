@@ -340,9 +340,6 @@ UpdaterField.prototype.createHTML = function () {
 
     this.html.appendChild(criteriaContainer);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -391,31 +388,21 @@ UpdaterField.prototype.setValue = function (value) {
  * @return {Boolean}
  */
 UpdaterField.prototype.isValid = function () {
-    var i, valid = true, current, field;
+    var valid = true, i, field, field_valid;
     for (i = 0; i < this.options.length; i += 1) {
         field = this.options[i];
-
-        //TODO: create validation for expressions built with expressionControl.
-        if (!field.isRequired() || field._parent.hasCheckbox && field.isDisabled()) {
-            valid = true;
+        if (field._parent.hasCheckbox && !field.isDisabled() || !field._parent.hasCheckbox) {
+            field_valid = field.isValid();
+            if (!field_valid) {
+                valid = false;
+            }
         } else {
-            valid = field.isValid();
+            field_valid = true;
         }
-
-        if (!valid) {
-            break;
-        }
+        field.decorateValid(field_valid);
     }
-
     if (valid) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        valid = valid && Field.prototype.isValid.call(this);
-    } else {
-        this.visualObject.scrollTop += getRelativePosition(field.getHTML(), this.visualObject).top;
-        this.errorTooltip.setMessage(this.language.LBL_ERROR_ON_FIELDS);
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
+        valid = Field.prototype.isValid.call(this);
     }
     return valid;
 };
@@ -689,6 +676,7 @@ var UpdaterItem = function (settings) {
     this._dirty = false;
     this._allowDisabling = true;
     this._controlContainer = null;
+    this._invalidFieldClass = 'pmse-field-error';
     UpdaterItem.prototype.init.call(this, settings);
 };
 
@@ -801,6 +789,20 @@ UpdaterItem.prototype.isRequired = function () {
 UpdaterItem.prototype.isValid = function () {
     return this._required ? this._value !== '' : true;
 };
+
+/**
+ * Add or remove the invalid field class
+ * @param boolean valid
+ */
+UpdaterItem.prototype.decorateValid = function (valid) {
+    if (this._control) {
+        if (valid) {
+            $(this._control).removeClass(this._invalidFieldClass);
+        } else {
+            $(this._control).addClass(this._invalidFieldClass);
+        }
+    }
+}
 
 UpdaterItem.prototype.clear = function () {
     if (this._control) {
@@ -1895,10 +1897,6 @@ NumberUpdaterItem.prototype.init = function (settings) {
     this.setValue(defaults.value);
 };
 
-NumberUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!this._value.length : true;
-};
-
 NumberUpdaterItem.prototype.isCurrency = function() {
     return this._currency;
 };
@@ -1926,46 +1924,179 @@ NumberUpdaterItem.prototype.setValue = function (value) {
 };
 
 NumberUpdaterItem.prototype.isValid = function () {
-    var isValid = true;
-    var value = this.getValue().slice(0);
-    var i;
-    var prev = null;
-    var currType;
-    var currValue;
-
-    if (value.length < 1) {
-        return false;
-    }
-
-    // TODO: the next validation must be implemented in ExpressionControl based on the kind of result it expects to return.
-
-    // We need to validate that a valid expression is inserted in the control
-    // First, check the syntax
-    for (i = 0; i < value.length; i += 1) {
-        currType = value[i].expType;
-        currValue = value[i].expValue;
-        if (prev === null) {
-            if (currType === 'ARITMETIC' && currValue !== '(') {
-                return false;
-            }
-        } else {
-            if ((currType === 'CONSTANT' || currType === 'VARIABLE' || (currType === 'ARITMETIC' && currValue === '(')) && (prev.expType === 'CONSTANT' || prev.expType === 'VARIABLE' || (prev.expType === 'ARITMETIC' && prev.expValue === ')'))) {
-                return false;
-            } else if ((currType === 'ARITMETIC' && currValue !== '(') && (prev.expType === 'ARITMETIC' && prev.expValue !== '(')) {
-                return false;
-            }
+    var result = this.evaluateExpression(this.getValue());
+    if (result.valid) {
+        if (this.isCurrency() && result.expSubtype.toLowerCase() != 'currency') {
+            return false;
         }
-        prev = value[i];
-    }
-
-    if (currType === 'ARITMETIC' && currValue !== ')') {
+    } else {
         return false;
-    }
-
-    if (!isValid) {
-        return isValid;
     }
     return UpdaterItem.prototype.isValid.call(this);
+};
+
+/**
+ * Utility function to evaluate a value expression
+ *
+ * @param Array an array of tokens that form an expression
+ *
+ * @return Object with the following fields: valid, expType and expSubtype
+ */
+NumberUpdaterItem.prototype.evaluateExpression = function (value) {
+    var result = {valid:false}, exp, val, curr, i, j, c, left, right;
+    if (Array.isArray(value) && value.length > 0) {
+        // first pass to handle the GROUP operators ( and )
+        exp = value.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'GROUP') {
+                // opening bracket
+                if (curr.expValue == '(') {
+                    // search for the matching closing bracket
+                    for (j = i + 1, c = 1; j < exp.length; j++) {
+                        curr = exp[j];
+                        if (curr.expType == 'GROUP') {
+                            // enclosed inner brackets
+                            if (curr.expValue == '(') {
+                                c++;
+                            } else {
+                                c--;
+                                if (c == 0) {
+                                    // found it
+                                    curr = this.evaluateExpression(exp.slice(i + 1, j));
+                                    if (curr.valid) {
+                                        val.push(curr);
+                                        break;
+                                    } else {
+                                        // recursive call failed
+                                        return result;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (j < exp.length) {
+                        i = j;
+                    } else {
+                        // no matching closing bracket found
+                        return result;
+                    }
+                } else {
+                    // closing bracket without a matching opening one
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // second pass to process the multiplicative operators x and /
+        exp = val.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'ARITHMETIC' && (curr.expValue == 'x' || curr.expValue == '/')) {
+                // needs to have a left hand operand
+                if (val.length > 0) {
+                    left = val.pop();
+                    // left hand operand needs to be of a value type
+                    if (left.expType == 'CONSTANT' || left.expType == 'VARIABLE') {
+                        // needs to have a right hand operand
+                        if (i < exp.length - 1) {
+                            right = exp[i + 1];
+                            // right hand operand needs to be of a value type
+                            if (right.expType == 'CONSTANT' || right.expType == 'VARIABLE') {
+                                if (left.expSubtype.toLowerCase() == 'currency') {
+                                    if (right.expSubtype.toLowerCase() == 'currency') {
+                                        if (curr.expValue == 'x') {
+                                            // currency x currency
+                                            return result;
+                                        } else {
+                                            // currency / currency
+                                            curr = left;
+                                            curr.expSubtype = 'number';
+                                        }
+                                    } else {
+                                        // currency x / number
+                                        curr = left;
+                                    }
+                                } else {
+                                    if (right.expSubtype.toLowerCase() == 'currency') {
+                                        if (curr.expValue == 'x') {
+                                            // number x currency
+                                            curr = right;
+                                        } else {
+                                            // number / currency
+                                            return result;
+                                        }
+                                    } else {
+                                        // number x / number
+                                        curr = left;
+                                    }
+                                }
+                                val.push(curr);
+                                i++;
+                            } else {
+                                return result;
+                            }
+                        } else {
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // third pass to process the additive operators + and -
+        exp = val.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'ARITHMETIC' && (curr.expValue == '+' || curr.expValue == '-')) {
+                // needs to have a left hand operand
+                if (val.length > 0) {
+                    left = val.pop();
+                    // left hand operand needs to be of a value type
+                    if (left.expType == 'CONSTANT' || left.expType == 'VARIABLE') {
+                        // needs to have a right hand operand
+                        if (i < exp.length - 1) {
+                            right = exp[i + 1];
+                            // right hand operand needs to be of a value type
+                            if (right.expType == 'CONSTANT' || right.expType == 'VARIABLE') {
+                                // the two operands should be of the same value type
+                                if (left.expSubtype.toLowerCase() != right.expSubtype.toLowerCase()) {
+                                    return result;
+                                }
+                                val.push(left);
+                                i++;
+                            } else {
+                                return result;
+                            }
+                        } else {
+                            return result;
+                        }
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return result;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // should have only one token left
+        if (val.length == 1) {
+            result = val[0];
+            result.valid = true;
+        }
+    }
+    return result;
 };
 
 NumberUpdaterItem.prototype._createControl = function () {

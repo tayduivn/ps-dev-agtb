@@ -74,6 +74,10 @@ class CalDavQueue extends SugarBean
         $bean->save_counter = $saveCounter;
         $bean->status = static::STATUS_QUEUED;
         $bean->data = json_encode($data);
+        if (!$this->set_created_by) {
+            $bean->created_by = $this->created_by;
+            $bean->set_created_by = $this->set_created_by;
+        }
         $bean->save();
         return $bean;
     }

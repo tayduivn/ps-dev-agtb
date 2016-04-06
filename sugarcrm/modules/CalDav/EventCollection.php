@@ -881,9 +881,14 @@ class CalDavEventCollection extends SugarBean
     protected function setRelatedCalendar()
     {
         $calendar = $this->getRelatedCalendar();
-        if (!$calendar && $GLOBALS['current_user'] instanceof User) {
+        if ($this->created_by) {
+            $user = \BeanFactory::getBean('Users', $this->created_by);
+        } else {
+            $user = $GLOBALS['current_user'];
+        }
+        if (!$calendar && $user instanceof User) {
             $userHelper = new UserHelper();
-            $calendar = array_shift($userHelper->getCalendars($GLOBALS['current_user']->user_name));
+            $calendar = array_shift($userHelper->getCalendars($user->user_name));
             $this->setCalendarId($calendar['id']);
             if (isset($this->events_calendar)) {
                 $this->events_calendar->resetLoaded();

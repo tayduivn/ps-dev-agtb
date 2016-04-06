@@ -122,6 +122,10 @@ class Handler
             $collection = \BeanFactory::getBean('CalDavEvents');
             $collection->setParentModuleAndId($bean->module_name, $rootBeanId);
             $collection->event_uid = $rootBeanId;
+            if ($bean->created_by) {
+                $collection->created_by = $bean->created_by;
+                $collection->set_created_by = false;
+            }
             $collection->save();
         }
 
@@ -133,7 +137,12 @@ class Handler
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
 
-                $collection->getQueueObject()->export($preparedData, $saveCounter);
+                $queue = $collection->getQueueObject();
+                if ($bean->created_by) {
+                    $queue->created_by = $bean->created_by;
+                    $queue->set_created_by = false;
+                }
+                $queue->export($preparedData, $saveCounter);
 
                 if ($saveCounter - $collection->getSynchronizationObject()->getJobCounter() == 1) {
                     $this->getManager()->calDavHandler($collection->id);

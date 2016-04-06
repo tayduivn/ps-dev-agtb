@@ -14,6 +14,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 require_once "modules/UpgradeWizard/SugarMerge/MergeUtils.php";
+require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 
 /**
  * Upgrade BWC layouts to Sidecar

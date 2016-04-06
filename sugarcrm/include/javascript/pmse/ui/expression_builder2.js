@@ -2171,6 +2171,9 @@ ExpressionControl.prototype._createBasicConstantPanel = function () {
         basicForm.getItem("btn_string").setVisible(settings === true || !!settings.string);
         basicForm.getItem("btn_number").setVisible(settings === true || !!settings.number);
         basicForm.getItem("btn_boolean").setVisible(settings === true || !!settings.boolean);
+        if (settings !== true && !!settings.number && !settings.string && !settings.boolean) {
+            this._constantPanels.basic.setTitle(App.lang.get('LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC_NUMBER', 'pmse_Project'));
+        }
         settings = settings === true || (settings.string || settings.number || settings.boolean);
         if (settings) {
             this._constantPanel.setVisible(true);
@@ -2225,12 +2228,12 @@ ExpressionControl.prototype._createMainPanel = function () {
             onExpand: this._onExpandPanel()
         });
         if (this._constantSettings) {
-            this._createBasicConstantPanel();
             this._createDateConstantPanel();
             this._createDateTimeConstantPanel();
             this._createTimespanPanel();
             this._createDatespanPanel();
             this._createCurrencyPanel();
+            this._createBasicConstantPanel();
         }
         items.push(this._constantPanel);
         this._constantPanel.setVisible(!!this._constantPanel.getItems().length);
