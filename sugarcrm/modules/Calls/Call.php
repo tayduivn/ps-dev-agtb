@@ -797,7 +797,7 @@ class Call extends SugarBean {
         $this->load_relationship($link_name);
         foreach (array_diff($this->{$link_name}->get(), $invitees) as $id) {
             if ($this->created_by != $id) {
-                $this->{$link_name}->delete($id);
+                $this->{$link_name}->delete($this->id, $id);
             }
         }
         foreach (array_diff($invitees, $this->{$link_name}->get()) as $id) {
