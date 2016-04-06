@@ -224,7 +224,7 @@ class QuotesViewEdit extends ViewEdit
 				foreach ($product_bundle_list as $product_bundle) {
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
                     $add_row[] = "quotesManager.addTable('$product_bundle->id', '$product_bundle->bundle_stage', '" .
-                        js_escape(br2nl($product_bundle->name), true, false) . "', '" .
+                        js_escape(br2nl($product_bundle->name)) . "', '" .
                         format_money($product_bundle->shipping, false) . "' );\n";
 
 					if (is_array($bundle_list)) {
@@ -233,19 +233,13 @@ class QuotesViewEdit extends ViewEdit
 								/* @var $line_item Product */
                                 $tax_class_name = isset($line_item->tax_class) ? $line_item->tax_class : "";
 
-                                $encoded_name = js_escape(br2nl($line_item->name), true, false);
+								$encoded_name = js_escape(br2nl($line_item->name));
 
 								$add_row[] = "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, $significantDigits, $significantDigits) . "','$line_item->product_template_id','$encoded_name'"
 											. ", '".$convert_format($line_item->cost_price, $line_item->currency_id, $line_item->base_rate) . "'"
 											. ", '".$convert_format($line_item->list_price, $line_item->currency_id, $line_item->base_rate) ."'"
-                                            . ", '$line_item->pricing_formula', '', '$line_item->pricing_factor',
-                                            '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num',
-                                            '$product_bundle->id', '$product_bundle->bundle_stage', '"
-                                            . js_escape(br2nl($product_bundle->name), true, false) . "', '"
-                                            . format_number($product_bundle->shipping)."', '"
-                                            . js_escape(br2nl($line_item->description), true, false) . "', '"
-                                            . $line_item->type_id."', '"
-
+											. ", '".$convert_format($line_item->discount_price, $line_item->currency_id, $line_item->base_rate) . "'"
+											. ", '$line_item->pricing_formula', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num', '$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '"
 											. format_number($product_bundle->shipping)."', '".js_escape(br2nl($line_item->description))."', '". $line_item->type_id."'"
 											. ", '".format_number($line_item->discount_amount, $significantDigits, $significantDigits)."'"
 		                                    . ", ".($line_item->discount_select?1:0)
@@ -254,7 +248,7 @@ class QuotesViewEdit extends ViewEdit
 							}
 							else if ($line_item->object_name == "ProductBundleNote") {
 								/* @var $line_item ProductBundleNote */
-                                $encoded_description = js_escape(br2nl($line_item->description), true, false);
+								$encoded_description = js_escape(br2nl($line_item->description));
 								//$encoded_description = html_entity_decode($encoded_description);
 								$add_row[] = "quotesManager.addCommentRow('$line_item->id', '$product_bundle->id', '$encoded_description');\n";
 							}
@@ -282,11 +276,8 @@ class QuotesViewEdit extends ViewEdit
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 							    .", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name',
-                                '$line_item->mft_part_num', 'group_$product_bundle->id',
-                                '$product_bundle->bundle_stage', '"
-                                . js_escape(br2nl($product_bundle->name), true, false) . "', '"
-                                . format_money($product_bundle->shipping, false)
-                                . "', '".js_escape(br2nl($line_item->description), true, false)."', '"
+								'$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)
+							    ."', '".js_escape(br2nl($line_item->description))."', '"
 							    . $line_item->type_id ."','"
 							    . format_number($line_item->discount_amount_usdollar, $significantDigits, $significantDigits, array('convert' => !$line_item->discount_select, 'currency_id' => $curid))."',"
                                 .($line_item->discount_select?1:0)
@@ -294,17 +285,14 @@ class QuotesViewEdit extends ViewEdit
 
 						} //foreach
 						if(empty($product_list)){
-                            $add_row[] = "quotesManager.addTable('group_$product_bundle->id','
-                            $product_bundle->bundle_stage', '" .
-                            js_escape(br2nl($product_bundle->name), true, false) . "' , ' " .
-                            format_money($product_bundle->shipping, false)."');\n";
+								$add_row[] = "quotesManager.addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
 						} //if
                         //bug 39573 - Comments are not duplicated in quotes
                         $bundle_list = $product_bundle->get_product_bundle_line_items();
                         if (is_array($bundle_list)){
                             while (list($key, $line_item) = each ($bundle_list)){
                                 if ($line_item->object_name == "ProductBundleNote"){
-                                    $encoded_description = js_escape(br2nl($line_item->description), true, false);
+                                    $encoded_description = js_escape(br2nl($line_item->description));
                                     $add_row[] = "quotesManager.addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
 
                                 }
