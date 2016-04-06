@@ -234,14 +234,14 @@
 
         options = options || {};
         // custom success handler
-        options.success = _.bind(function(model, data, options) {
+        options.success = _.bind(function(data) {
             // Add Forecasts-specific stuff to the app.user object
             app.user.set(data.initData.userData);
             if (data.initData.forecasts_setup === 0) {
                 // Immediately open the config drawer so user can set up config
                 this.openConfigDrawer();
             } else {
-                this.initForecastsModule(data, options);
+                this.initForecastsModule(data);
             }
         }, this);
 
@@ -269,9 +269,8 @@
      * Process the Forecast Data
      *
      * @param {Object} data contains the data passed back from Forecasts/init endpoint
-     * @param {Object} options
      */
-    initForecastsModule: function(data, options) {
+    initForecastsModule: function(data) {
         var ctx = this.initOptions.context;
         // we watch for the first selectedUser change to actually init the Forecast Module case then we know we have
         // a proper selected user
@@ -363,8 +362,8 @@
         options = app.data.parseOptionsForSync(method, model, options);
 
         // custom success handler
-        options.success = _.bind(function(model, data, options) {
-            if(!this.disposed) {
+        options.success = _.bind(function(data) {
+            if (!this.disposed) {
                 this.collection.reset(data);
             }
         }, this);

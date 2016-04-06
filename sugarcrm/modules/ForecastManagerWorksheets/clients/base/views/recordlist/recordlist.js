@@ -793,7 +793,7 @@
         options = app.data.parseOptionsForSync(method, model, options);
 
         // custom success handler
-        options.success = _.bind(function(model, data, options) {
+        options.success = _.bind(function(data) {
             this.collectionSuccess(data);
         }, this);
 
