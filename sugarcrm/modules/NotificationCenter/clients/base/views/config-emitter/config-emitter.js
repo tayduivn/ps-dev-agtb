@@ -83,6 +83,22 @@
             existingEmitters = this.model.get('config');
         }
 
+        var module;
+        switch (this.meta.emitter) {
+            case 'ApplicationEmitter':
+                module = this.module;
+                break;
+            case 'BeanEmitter':
+                module = this.module;
+                break;
+            default: // Module Emitter case
+                module = this.meta.emitter;
+
+        }
+        additionalText = {
+            singular_module_name: app.lang.getModuleName(module, {plural: false})
+        };
+
         if (existingEmitters) {
             _.each(existingEmitters[this.meta.emitter], function(event, eventName) {
                 var columns = [];
@@ -105,7 +121,11 @@
                         view : 'default'
                     },
                     name: eventName,
-                    label: app.lang.get('LBL_EVENT_' + eventName.toUpperCase() + '_ABOUT', this.meta.emitter),
+                    label: app.lang.get(
+                        'LBL_EVENT_' + eventName.toUpperCase() + '_ABOUT',
+                        this.meta.emitter,
+                        additionalText
+                    ),
                     info: app.lang.get('LBL_EVENT_' + eventName.toUpperCase() + '_MORE_INFO', this.meta.emitter),
                     columns: columns
                 });
