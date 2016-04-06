@@ -57,13 +57,16 @@
             // menu is populated from the _getSignatures() response
             menu: []
         });
-        editor.addButton('sugartemplate', {
-            tooltip: app.lang.get('LBL_TEMPLATE', this.module),
-            icon: 'file-o',
-            onclick: _.bind(function() {
-                this._handleButtonClick('template');
-            }, this)
-        });
+
+        if (app.acl.hasAccess('view', 'EmailTemplates')) {
+            editor.addButton('sugartemplate', {
+                tooltip: app.lang.get('LBL_TEMPLATE', this.module),
+                icon: 'file-o',
+                onclick: _.bind(function() {
+                    this._handleButtonClick('template');
+                }, this)
+            });
+        }
 
         // add the events for the editor focus/blur to enable/disable the signature button
         this._addCustomEditorEvents(editor);

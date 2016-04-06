@@ -311,6 +311,7 @@ $dictionary['EmailTemplate'] = array(
             'relationship_role_column_value' => 'EmailTemplates',
         ),
     ),
+    'acls' => array('SugarACLStatic' => true),
 );
 
 VardefManager::createVardef('EmailTemplates','EmailTemplate', array(
