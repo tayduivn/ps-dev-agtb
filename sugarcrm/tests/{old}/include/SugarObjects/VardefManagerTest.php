@@ -264,5 +264,20 @@ class VardefManagerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @covers ::getLinkFieldsForCollection
+     */
+    public function testGetLinkFieldsForCollection()
+    {
+        $expected = array(
+            'contacts',
+            'leads',
+            'users',
+            'addressees',
+        );
+        $actual = VardefManager::getLinkFieldsForCollection('Meetings', 'Meeting', 'invitees');
+        $this->assertEquals($expected, $actual);
+    }
 }
 

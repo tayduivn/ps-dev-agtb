@@ -876,6 +876,41 @@ class VardefManager{
     }
 
     /**
+     * Returns a list of link names for the collection field.
+     *
+     * @param string $module
+     * @param string $objectName
+     * @param string $collectionName The name of the collection field.
+     * @return array
+     */
+    public static function getLinkFieldsForCollection($module, $objectName, $collectionName)
+    {
+        $cacheKey = "LFC{$module}{$objectName}{$collectionName}";
+        $cacheValue = sugar_cache_retrieve($cacheKey);
+
+        if (!empty($cacheValue)) {
+            return $cacheValue;
+        }
+
+        $links = array();
+
+        if (empty($GLOBALS['dictionary'][$objectName])) {
+            static::loadVardef($module, $objectName, false, array('ignore_rel_calc_fields' => true));
+        }
+
+        if (!empty($GLOBALS['dictionary'][$objectName]['fields'][$collectionName]) &&
+            $GLOBALS['dictionary'][$objectName]['fields'][$collectionName]['type'] === 'collection' &&
+            !empty($GLOBALS['dictionary'][$objectName]['fields'][$collectionName]['links'])
+        ) {
+            foreach ($GLOBALS['dictionary'][$objectName]['fields'][$collectionName]['links'] as $def) {
+                $links[] = is_array($def) ? $def['name'] : $def;
+            }
+        }
+
+        return $links;
+    }
+
+    /**
      * @static
      * @param  $module String name of module.
      * @param  $object String name of module Bean.
