@@ -76,6 +76,8 @@ var Form = function (options) {
 
     this._closeOnClickContext = null;
 
+    this._errorMessage = null;
+
     Form.prototype.initObject.call(this, options);
 };
 
@@ -152,12 +154,29 @@ Form.prototype.initObject = function (options) {
         .setProxy(defaults.proxy)
         .setCallback(defaults.callback)
         .setButtons(defaults.buttons)
+        ._setErrorMessage()
         .setLabelWidth(defaults.labelWidth)
         .setFooterHeight(defaults.footerHeight)
         .setHeaderHeight(defaults.headerHeight)
         .setCloseContainerOnSubmit(defaults.closeContainerOnSubmit)
         .setFooterAlign(defaults.footerAlign);
 };
+
+/**
+ * Sets error message to be shown when validation error happens.
+ * @private
+ */
+Form.prototype._setErrorMessage = function () {
+    var iconSpan = this.createHTMLElement('span');
+    iconSpan.className = 'fa fa-warning';
+    var messageLabel = this.createHTMLElement('span');
+    messageLabel.innerHTML = App.lang.get('LBL_PMSE_FORM_ERROR', 'pmse_Project');
+    this._errorMessage = this.createHTMLElement('div');
+    this._errorMessage.className = 'pmse-form-error pmse-form-error-off';
+    this._errorMessage.appendChild(iconSpan);
+    this._errorMessage.appendChild(messageLabel);
+    return this;
+}
 
 /**
  * Sets the context in which a click action should autoclose the close-on-click elements, like FieldPanels.
@@ -485,6 +504,9 @@ Form.prototype.reset = function () {
 Form.prototype.submit = function () {
     var data;
     if (this.validate()) {
+        $(".pmse-form-error")
+            .removeClass('pmse-form-error-on')
+            .addClass('pmse-form-error-off');
         data = this.getData();
         if (this.proxy) {
             this.proxy.sendData(data, this.callback);
@@ -499,6 +521,9 @@ Form.prototype.submit = function () {
             }
         }
     } else {
+        $(".pmse-form-error")
+            .removeClass('pmse-form-error-off')
+            .addClass('pmse-form-error-on');
         if (this.callback.failed) {
             this.callback.failed();
         }
@@ -616,11 +641,13 @@ Form.prototype.createHTML = function () {
         $(html).find("select, input, textarea").focus(this.onEnterFieldHandler(this.items[i]));
         this.body.appendChild(html);
     }
+    this.footer.appendChild(this._errorMessage);
     for (i = 0; i < this.buttons.length; i += 1) {
         this.footer.appendChild(this.buttons[i].getHTML());
     }
     this.body.style.bottom = (this.footerHeight + 8) + 'px';
     this.footer.style.height = this.footerHeight + 'px';
+    this.footer.style.lineHeight = this.footerHeight + 'px';
     return this.html;
 };
 
