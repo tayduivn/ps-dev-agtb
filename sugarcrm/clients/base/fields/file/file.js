@@ -370,6 +370,14 @@
             if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
                 this.render();
             }
+            // check if other fields want use the name of the file
+            if (!_.isUndefined(this.def.populate_list)) {
+                _.each(this.def.populate_list, function(field) {
+                    if (!this.model.get(field) && app.acl.hasAccessToModel('edit', this.model, field)) {
+                        this.model.set(field, this.model.get(this.name));
+                    }
+                }, this);
+            }
         }, this);
     },
 
