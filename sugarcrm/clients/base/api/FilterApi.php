@@ -26,16 +26,16 @@ class FilterApi extends SugarApi
                 'path' => array('<module>', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
-                'jsonParams' => array('filter', 'filter_id'),
+                'jsonParams' => array('filter'),
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
-                    // Thrown in filterListSetup
+                    // Thrown in getPredefinedFilterById
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionError',
-                    // Thrown in filterList
+                    // Thrown in filterList and filterListSetup
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
+                    // Thrown in filterListSetup, getPredefinedFilterById, and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
@@ -44,16 +44,16 @@ class FilterApi extends SugarApi
                 'path' => array('<module>'),
                 'pathVars' => array('module'),
                 'method' => 'filterList',
-                'jsonParams' => array('filter', 'filter_id'),
+                'jsonParams' => array('filter'),
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
                     // Thrown in getPredefinedFilterById
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionError',
-                    // Thrown in filterList
+                    // Thrown in filterList and filterListSetup
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
+                    // Thrown in filterListSetup, getPredefinedFilterById, and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
@@ -61,7 +61,7 @@ class FilterApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('<module>', 'count'),
                 'pathVars' => array('module', ''),
-                'jsonParams' => array('filter', 'filter_id'),
+                'jsonParams' => array('filter'),
                 'method' => 'getFilterListCount',
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
@@ -69,7 +69,7 @@ class FilterApi extends SugarApi
                     // Thrown in getPredefinedFilterById
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionError',
-                    // Thrown in filterListSetup
+                    // Thrown in filterListSetup and getPredefinedFilterById
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
@@ -84,9 +84,9 @@ class FilterApi extends SugarApi
                     // Thrown in getPredefinedFilterById
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionError',
-                    // Thrown in filterList
+                    // Thrown in filterList and filterListSetup
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
+                    // Thrown in filterListSetup, getPredefinedFilterById, and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
@@ -101,8 +101,10 @@ class FilterApi extends SugarApi
                     // Thrown in getPredefinedFilterById
                     'SugarApiExceptionNotFound',
                     'SugarApiExceptionError',
-                    // Thrown in filterListSetup
+                    // Thrown in filterListSetup and getPredefinedFilterById
                     'SugarApiExceptionNotAuthorized',
+                    // Thrown in filterListSetup
+                    'SugarApiExceptionInvalidParameter'
                 ),
             ),
             'filterModuleCount' => array(
@@ -118,6 +120,7 @@ class FilterApi extends SugarApi
                     'SugarApiExceptionError',
                     // Thrown in filterListSetup
                     'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionInvalidParameter'
                 ),
             ),
             // filterModuleById is deprecated. Please use filterModuleGet and pass a filter_id instead
@@ -129,9 +132,9 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Filter records for a module by a predefined filter id.',
                 'longHelp' => 'include/api/help/module_filter_record_get_help.html',
                 'exceptions' => array(
-                    // Thrown in filterById
+                    // Thrown in filterById and getPredefinedFilterById
                     'SugarApiExceptionNotFound',
-                    // Thrown in filterList
+                    // Thrown in filterList and filterListSetup
                     'SugarApiExceptionInvalidParameter',
                     // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
@@ -299,12 +302,14 @@ class FilterApi extends SugarApi
     /**
      * Retrieve a predefined filter by the given ID
      *
-     * @param ServiceBase $api The API class of the request
-     * @param string $filterId ID of the filter to retrieve
-     * @return array The (possibly empty) filter as an associative array
-     * @throws SugarApiExceptionError if JSON decoding failed or json_decode
-     *   returned something other than an array
-     * @throws SugarApiExceptionNotFound if we cannot find the filter
+     * @param ServiceBase $api The API class of the request.
+     * @param string $filterId ID of the filter to retrieve.
+     * @return array The (possibly empty) filter as an associative array.
+     * @throws SugarApiExceptionError If JSON decoding failed or json_decode
+     *   returned something other than an array.
+     * @throws SugarApiExceptionNotFound If we cannot find the filter.
+     * @throws SugarApiExceptionNotAuthorized If we do not have permission to
+     *   load the filter.
      */
     private function getPredefinedFilterById(ServiceBase $api, $filterId)
     {
@@ -333,6 +338,19 @@ class FilterApi extends SugarApi
         throw new SugarApiExceptionError($jsonErrorMessage);
     }
 
+    /**
+     * Preprocess the args array to set filter options.
+     *
+     * @param ServiceBase $api The REST API object.
+     * @param array $args REST API arguments.
+     * @param string $acl Which type of ACL to check.
+     * @return array An array containing the modified args array, a query object
+     *   with all the filters applied, the modified options array, and a
+     *   SugarBean for the chosen module.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
+     */
     public function filterListSetup(ServiceBase $api, array $args, $acl = 'list')
     {
         $seed = BeanFactory::newBean($args['module']);
@@ -362,12 +380,19 @@ class FilterApi extends SugarApi
         if (empty($args['filter_id'])) {
             $predefinedFilter = array();
         } else {
-            $predefinedFilter = self::getPredefinedFilterById($api, $args['filter_id']);
+            $predefinedFilter = $this->getPredefinedFilterById($api, $args['filter_id']);
             unset($args['filter_id']);
         }
 
-        if (!isset($args['filter']) || !is_array($args['filter'])) {
-            // FIXME TY-933: we need to handle merging filters specified by both a definition and an id
+        // filter must be an array
+        if (isset($args['filter']) && !is_array($args['filter'])) {
+            throw new SugarApiExceptionInvalidParameter('Unexpected filter type ' . gettype($args['filter']) . '.');
+        }
+
+        if (isset($args['filter'])) {
+            $filterDefinition = $args['filter'];
+            $args['filter'] = array_merge($predefinedFilter, $filterDefinition);
+        } else {
             $args['filter'] = $predefinedFilter;
         }
 
@@ -385,6 +410,17 @@ class FilterApi extends SugarApi
         return array($args, $q, $options, $seed);
     }
 
+    /**
+     * Returns the records for the module and filter provided.
+     *
+     * @param ServiceBase $api The REST API object.
+     * @param array $args REST API arguments.
+     * @param string $acl Which type of ACL to check.
+     * @return array The REST response as a PHP array.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
+     */
     public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         if (!empty($args['q'])) {
@@ -415,6 +451,10 @@ class FilterApi extends SugarApi
      * @param array $args
      * @return Object The number of filtered/unfiltered records for the module
      *   provided.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter if any of the parameters are
+     *  invalid.
+     * @throws SugarApiExceptionNotAuthorized if we lack ACL access.
      */
     public function getFilterListCount(ServiceBase $api, array $args)
     {
@@ -441,6 +481,10 @@ class FilterApi extends SugarApi
      * @param array $args
      * @return Object The number of filtered/unfiltered records for the module
      *   provided.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter if any of the parameters are
+     *  invalid.
+     * @throws SugarApiExceptionNotAuthorized if we lack ACL access.
      */
     public function filterListCount(ServiceBase $api, array $args)
     {

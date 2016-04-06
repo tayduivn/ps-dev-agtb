@@ -11,7 +11,7 @@
  */
 -->
 <div class="longHelpTitle">
-    Gets current user's dashbaords.
+    Gets current user's dashboards.
 </div>
 <div class="summary">
 <h2>Summary:</h2>
@@ -19,11 +19,82 @@
 </div>
 <div class="params">
 <h2>Query Parameters:</h2>
-<table>
-    <tr><th>Param</td><th>Description</td><th>Optional</td></tr>
-    <tr><td>offset</td><td>offset</td><td></td>true</tr>
-    <tr><td>limit</td><td>limit</td><td></td>true</tr>
-    <tr><td>order_by</td><td>order by</td><td></td>true</tr>    
+<table class="table table-hover">
+    <tr>
+        <th>Param</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    <tr>
+        <td>
+            filter
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            The filter expression. See the <a href="module_filter_get_help.html">Filter API</a> for more information.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>
+            filter_id
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Identifier for a preexisting filter. If filter is also set, the two
+            filters are joined with an <code>AND</code>.
+        </td>
+        <td>
+            False
+        </td>
+    </tr>
+    <tr>
+        <td>max_num</td>
+        <td>Integer</td>
+        <td>
+            Max number of records that can be returned. Default is 20, unless
+            overruled by your Sugar configuration.
+        </td>
+        <td>False</td>
+    </tr>
+    <tr>
+        <td>offset</td>
+        <td>Integer</td>
+        <td>The number of records to skip over before records are returned. Default is 0.</td>
+        <td>False</td>
+    </tr>
+    <tr>
+        <td>fields</td>
+        <td>String</td>
+        <td>
+            Comma delimited list of fields to return. Each field may be represented either by string, or by map
+            containing field name and additional field parameters (applicable to link and collection fields).
+            The fields <code>id</code> and <code>date_modified</code> will always be returned.
+            For more details on additional field parameters, see
+            <a href="module_record_link_link_name_filter_get_help.html">Relate API</a> and
+            <a href="module_record_collection_collection_name_get_help.html">Collection API</a>.
+        </td>
+        <td>False</td>
+    </tr>
+    <tr>
+        <td>order_by</td>
+        <td>String</td>
+        <td>See <a href="module_filter_get_help.html">Filter API</a>.</td>
+        <td>False</td>
+    </tr>
+    <tr>
+        <td>deleted</td>
+        <td>Boolean</td>
+        <td>Boolean to show deleted records in the result set.</td>
+        <td>False</td>
+    </tr>
 </table>
 </div>
 <div class="input">
@@ -61,5 +132,4 @@
             ]
         }
     </code>
-</code>
 </div>

@@ -37,6 +37,11 @@ class DashboardListApi extends FilterApi
                 'shortHelp' => 'Get dashboards for a module',
                 'longHelp' => 'include/api/help/get_dashboards.html',
                 'cacheEtag' => true,
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'getDashboardsForHome' => array(
                 'reqType' => 'GET',
@@ -45,6 +50,11 @@ class DashboardListApi extends FilterApi
                 'method' => 'getDashboards',
                 'shortHelp' => 'Get dashboards for home',
                 'longHelp' => 'include/api/help/get_dashboards.html',
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
             'getDashboardsForActivities' => array(
                 'reqType' => 'GET',
@@ -54,6 +64,11 @@ class DashboardListApi extends FilterApi
                 'shortHelp' => 'Get dashboards for home',
                 'longHelp' => 'include/api/help/get_dashboards.html',
                 'cacheEtag' => true,
+                'exceptions' => array(
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionNotAuthorized',
+                ),
             ),
         );
     }
@@ -68,6 +83,9 @@ class DashboardListApi extends FilterApi
      * @param ServiceBase $api      The Api Class
      * @param array $args           Service Call Arguments
      * @return mixed
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
      */
     public function getDashboards($api, $args)
     {
