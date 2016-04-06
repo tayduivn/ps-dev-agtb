@@ -50,6 +50,26 @@ class PHPMailerProxy extends PHPMailer
     }
 
     /**
+     * Only performs the pre-send steps when DISABLE_EMAIL_SEND is true.
+     *
+     * {@inheritdoc}
+     */
+    public function send()
+    {
+        if (defined('DISABLE_EMAIL_SEND') && DISABLE_EMAIL_SEND === true) {
+            try {
+                return $this->preSend();
+            } catch (phpmailerException $e) {
+                $this->mailHeader = '';
+                $this->setError($e->getMessage());
+                throw $e;
+            }
+        }
+
+        return parent::send();
+    }
+
+    /**
      * {@inheritdoc}
      *
      * SugarCRM cleans values that appear as HTML in certain cases before inserting that data into the database. When

@@ -45,3 +45,6 @@ $autoLoaderHelper->setBaseDir(SUGAR_BASE_DIR);
 $autoLoaderHelper->setClassMapDirs($classMapDirs);
 
 SugarAutoLoader::$classMap = $autoLoaderHelper->mergeClassMap(SugarAutoLoader::$classMap);
+
+// Disables sending email.
+define('DISABLE_EMAIL_SEND', true);

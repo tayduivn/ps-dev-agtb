@@ -169,6 +169,10 @@ if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false
     define('SHADOW_ENABLED', false);
     define('SHADOW_CHECK', false);
 }
+
+// Disables sending email.
+define('DISABLE_EMAIL_SEND', true);
+
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = false;

@@ -114,10 +114,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $config->setHostname('mycompany.com');
         $config->setLocale($GLOBALS['locale']);
 
-        $phpMailerProxy = $this->getMockBuilder('PHPMailerProxy')
-            ->setMethods(array('postSend'))
-            ->getMock();
-        $phpMailerProxy->expects($this->once())->method('postSend')->willReturn(true);
+        $phpMailerProxy = new PHPMailerProxy();
         $phpMailerProxy->addAddress('foo@bar.com');
         $phpMailerProxy->Body = 'baz';
 
@@ -155,10 +152,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $config->setHostname('mycompany.com');
         $config->setLocale($GLOBALS['locale']);
 
-        $phpMailerProxy = $this->getMockBuilder('PHPMailerProxy')
-            ->setMethods(array('postSend'))
-            ->getMock();
-        $phpMailerProxy->expects($this->once())->method('postSend')->willReturn(true);
+        $phpMailerProxy = new PHPMailerProxy();
         $phpMailerProxy->addAddress('foo@bar.com');
         $phpMailerProxy->Body = 'baz';
 
