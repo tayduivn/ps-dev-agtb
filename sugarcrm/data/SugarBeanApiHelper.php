@@ -230,8 +230,10 @@ class SugarBeanApiHelper
         }
 
         // Ensure that the client isn't trying to edit fields that are locked by
-        // a process
-        $this->handleLockedFieldEdits($bean, $submittedData);
+        // a process, but only if we do not explicitly say not to
+        if (empty($options['skip_locked_fields'])) {
+            $this->handleLockedFieldEdits($bean, $submittedData);
+        }
 
         // Some of the SugarFields require ID's, so lets set it up
         if (empty($bean->id)) {

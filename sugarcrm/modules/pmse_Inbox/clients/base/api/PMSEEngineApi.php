@@ -329,6 +329,8 @@ class PMSEEngineApi extends SugarApi
 
     public function engineRoute($api, $args)
     {
+        // Needed to tell the save process to ignore locked field enforcement
+        $args['skip_locked_fields'] = 1;
         // The handler will call to the preprocessor in this step
         $this->retrieveRequestHandler('direct')->executeRequest($args, false, null, strtoupper($args['frm_action']));
         // return the success request array

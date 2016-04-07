@@ -516,7 +516,9 @@ class PMSECaseFlowHandler
         $preparedFlow['cas_started'] = 0;
         $preparedFlow['cas_finished'] = 0;
         $preparedFlow['cas_delayed'] = 0;
-        $preparedFlow['new_with_id'] = true;
+        // Changed from an explicit true to a programmatic decision
+        // If there is an id but not a create date and create user, then it is new with id
+        $preparedFlow['new_with_id'] = !empty($flowData['id']) && (empty($flowData['date_entered']) && empty($flowData['created_by']));
         //Set these attributes if a related record is being evaluated
         $preparedFlow['rel_process_module'] = isset($flowData['rel_process_module']) ? $flowData['rel_process_module'] : '';
         $preparedFlow['rel_element_relationship'] = isset($flowData['rel_element_relationship']) ? $flowData['rel_element_relationship'] : '';
@@ -548,7 +550,7 @@ class PMSECaseFlowHandler
             $currentThreadIndex = max($currentThreadIndex, (int)$value['cas_thread_index']);
         }
 
-        //create BpmThread record       
+        //create BpmThread record
         $thread->cas_id = $flowData['cas_id'];
         $thread->cas_thread_index = $currentThreadIndex + 1;
         $thread->cas_thread_parent = $parentThreadIndex;
@@ -760,7 +762,7 @@ class PMSECaseFlowHandler
             $formActionBeanObject->frm_last = 1;
         }
 
-        // find a better fix but since the id is no longer required is better 
+        // find a better fix but since the id is no longer required is better
         // pull of that parameter.
         unset($params['id']);
 
@@ -778,7 +780,7 @@ class PMSECaseFlowHandler
         $formActionBeanObject->frm_action = $frmAction;
         $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Approve'?'Approved':$formActionBeanObject->frm_action;
         $formActionBeanObject->frm_action = $formActionBeanObject->frm_action=='Reject'?'Rejected':$formActionBeanObject->frm_action;
-        
+
         $currentDate = new DateTime();
         $formActionBeanObject->frm_date = $currentDate->format('Y-m-d H:i:s');
         global $current_user;
