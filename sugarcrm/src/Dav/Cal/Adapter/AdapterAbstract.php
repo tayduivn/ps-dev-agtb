@@ -320,28 +320,135 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
-     * @param array|false $previousData
+     * Create GUID.
+     * Need to mock result of create_guid in UTs.
+     * @return string
+     */
+    protected function createGroupId()
+    {
+        return create_guid();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
-        $importGroupId = create_guid();
+        $importGroupId = $this->createGroupId();
+        $result = $parentChangedFields = $parentInvites = array();
         $action = 'override';
         if ($previousData) {
             $action = array_shift($previousData);
-            if ($previousData) {
-                $diffStructure = $collection->getDiffStructure(current($previousData));
-                array_walk($diffStructure, function (&$item) use ($importGroupId) {
-                    array_push($item[0], $importGroupId);
-                });
-                return $diffStructure;
+            $previousData = current($previousData);
+        }
+
+        if (!$previousData) {
+            $previousData = '';
+        }
+
+        $diffStructure = $collection->getDiffStructure($previousData);
+        $parentRecurrenceId = $collection->getParent()->getStartDate();
+        $parentAction = null;
+        if (isset($diffStructure['parent'])) {
+            list($parentAction, $parentChangedFields, $parentInvites) = $diffStructure['parent'];
+        }
+
+        $customizeParent = array();
+        if ($parentRecurrenceId && isset($diffStructure['children'][$parentRecurrenceId->asDb()])) {
+            $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
+        }
+
+        $rrule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
+
+        // we need independent rrule update only when we change event
+        if ($rrule && $previousData) {
+            $result[] = array(
+                array(
+                    $parentAction ?: 'update',
+                    $collection->id,
+                    array(),
+                    $collection->getParent()->getStartDate()->asDb(),
+                    null,
+                    $importGroupId,
+                ),
+                $rrule,
+                array(),
+            );
+        }
+
+        if ($parentAction || $customizeParent) {
+            $result[] = array(
+                array(
+                    $parentAction ?: 'update',
+                    $collection->id,
+                    array(),
+                    $collection->getParent()->getStartDate()->asDb(),
+                    null,
+                    $importGroupId,
+                ),
+                array_merge(
+                    isset($diffStructure['timezone']) ? array('timezone' => $diffStructure['timezone']) : array(),
+                    // we need rrule with all fields only on creation
+                    (!$previousData && $rrule) ? $rrule : array(),
+                    $parentChangedFields,
+                    isset($customizeParent[1]) ? $customizeParent[1] : array()
+                ),
+                array_merge(
+                    $parentInvites,
+                    isset($customizeParent[2]) ? $customizeParent[2] : array()
+                ),
+            );
+        }
+
+        $recurrenceIds = array_values($collection->getAllChildrenRecurrenceIds());
+        foreach ($recurrenceIds as $position => $recurrenceId) {
+            $childEvent = $collection->getChild($recurrenceId);
+
+            if ($position === 0) {
+                continue;
+            }
+
+            $childChangeFields = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
+                ? $collection->getEventDiff($childEvent, null)
+                : array();
+            $childChangeInvitees = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
+                ? $collection->getParticipantsDiff($childEvent, null)
+                : array();
+
+            if (isset($diffStructure['children'][$recurrenceId->asDb()])) {
+                $changeChild = $diffStructure['children'][$recurrenceId->asDb()];
+                $result[] = array(
+                    array(
+                        $changeChild[0],
+                        $collection->id,
+                        $collection->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        $position,
+                        $importGroupId,
+                    ),
+                    array_merge($changeChild[1], $childChangeFields),
+                    array_merge($changeChild[2], $childChangeInvitees),
+                );
+            } elseif ($parentAction || $rrule) {
+                $result[] = array(
+                    array(
+                        $rrule ? 'override' : 'update',
+                        $collection->id,
+                        $collection->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        $position,
+                        $importGroupId,
+                    ),
+                    array_merge($parentChangedFields, $childChangeFields),
+                    array_merge($parentInvites, $childChangeInvitees),
+                );
             }
         }
+
         if ($action == 'delete') {
             $sugarChildren = $collection->getSugarChildrenOrder();
             if ($sugarChildren) {
                 $recurrenceIds = $collection->getAllChildrenRecurrenceIds();
-                $result = array();
                 foreach ($sugarChildren as $position => $sugarId) {
                     $recurrenceId = array_shift($recurrenceIds);
                     $result[] = array(
@@ -357,29 +464,22 @@ abstract class AdapterAbstract implements AdapterInterface
                         array(),
                     );
                 }
-                return $result;
             } else {
-                return array(
+                $result[] =  array(
                     array(
-                        array(
-                            $action,
-                            $collection->id,
-                            null,
-                            null,
-                            null,
-                            $importGroupId,
-                        ),
+                        $action,
+                        $collection->id,
                         array(),
-                        array(),
+                        null,
+                        null,
+                        $importGroupId,
                     ),
+                    array(),
+                    array(),
                 );
             }
         }
-        $diffStructure = $collection->getDiffStructure('');
-        array_walk($diffStructure, function (&$item) use ($importGroupId) {
-            array_push($item[0], $importGroupId);
-        });
-        return $diffStructure;
+        return $result;
     }
 
     /**
@@ -406,7 +506,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if ($action == 'delete' && !$bean->deleted) {
             if ($bean->send_invites) {
-                $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+                $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
             }
             return static::DELETE;
         }
@@ -442,7 +542,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+        $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
 
         // setting values
         if (isset($changedFields['title'])) {
@@ -1815,6 +1915,12 @@ abstract class AdapterAbstract implements AdapterInterface
             $value = array_filter($value);
         }
 
+        $inviteesMethodMap = array(
+            'Users' => 'setUserInvitees',
+            'Contacts' => 'setContactInvitees',
+            'Leads' => 'setLeadInvitees',
+            'Addressees' => 'setAddresseeInvitees',
+        );
         $map = new CalDavStatus\AcceptedMap();
         if (isset($value['added'])) {
             foreach ($value['added'] as $k => $invitee) {
@@ -1822,8 +1928,15 @@ abstract class AdapterAbstract implements AdapterInterface
                     'strict_retrieve' => true,
                 ));
                 if ($participant) {
-                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
+                    $existingParticipants = isset($existingLinks[$participant->module_name]) ?
+                        array_keys($existingLinks[$participant->module_name]) : array();
                     $existingLinks[$participant->module_name][$participant->id] = true;
+                    $method = $inviteesMethodMap[$participant->module_name];
+                    if (!method_exists($bean, $method)) {
+                        continue;
+                    }
+                    $bean->$method(array_keys($existingLinks[$participant->module_name]), $existingParticipants);
+                    $bean->set_accept_status($participant, $map->getSugarValue($invitee[3]));
                     $result = true;
                 } else {
                     unset($value['added'][$k]);
@@ -1884,16 +1997,16 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($value['deleted']);
             }
             foreach ($existingLinks as $module => $ids) {
-                $objectName = \BeanFactory::getObjectName($module);
-                if (!$objectName || !method_exists($bean, 'set' . $objectName . 'Invitees')) {
+                $method = $inviteesMethodMap[$module];
+                if (!method_exists($bean, $method)) {
                     continue;
                 }
-                call_user_func_array(array($bean, 'set' . $objectName . 'Invitees'), array(
+                $bean->$method(
                     array_keys($ids),
                     array(
                         0 => true, // trick to delete everybody if $ids is empty
-                    ),
-                ));
+                    )
+                );
             }
         }
 

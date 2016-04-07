@@ -119,11 +119,18 @@ class Meeting extends SugarBean {
     public $send_invites_uid = '';
 
     /**
-     * Helper-field to store invites before linking new ones.
+     * Helper-field to store invites for notification.
      * Is not a sugar-field, is not persisted anywhere.
      * @var null|array
      */
-    public $inviteesBefore = null;
+    public $inviteesNotification = null;
+
+    /**
+     * Helper-field to store invites changes for export.
+     * Is not a sugar-field, is not persisted anywhere.
+     * @var array
+     */
+    public $inviteesChanges = array();
 
     /**
      * Helper-field to store information to change all recurrence or only participants or only parent.
@@ -190,8 +197,8 @@ class Meeting extends SugarBean {
 
         $isUpdate = $this->isUpdate();
 
-        if ($isUpdate && is_null($this->inviteesBefore)) {
-            $this->inviteesBefore = CalendarUtils::getInvitees($this);
+        if ($isUpdate && is_null($this->inviteesNotification)) {
+            $this->inviteesNotification = CalendarUtils::getInvitees($this);
         }
 
         if (isset($this->date_start)) {
@@ -296,8 +303,6 @@ class Meeting extends SugarBean {
 
         $return_id = parent::save($check_notify);
 
-        $this->setUserInvitees($this->users_arr);
-
         if ($this->update_vcal) {
             $assigned_user = BeanFactory::getBean('Users', $this->assigned_user_id);
             vCal::cache_sugar_vcal($assigned_user);
@@ -316,16 +321,13 @@ class Meeting extends SugarBean {
         }
 
         if ($isUpdate) {
-            $inviteesChanges = $this->getParticipantsHelper()->getInviteesDiff(
-                $this->inviteesBefore,
-                CalendarUtils::getInvitees($this)
-            );
-            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $inviteesChanges));
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesChanges));
         } else {
             $this->getCalDavHook()->export($this);
         }
 
-        $this->inviteesBefore = null;
+        $this->inviteesNotification = null;
+        $this->inviteesChanges = array();
 
 		return $return_id;
 	}
@@ -822,7 +824,7 @@ class Meeting extends SugarBean {
 			return parent::get_notification_recipients();
 		}
 
-        $inviteesBefore = $this->inviteesBefore ?: array();
+        $inviteesBefore = $this->inviteesNotification ?: array();
         $inviteesAfter = \CalendarUtils::getInvitees($this);
 
         $mergedInvitees = array();
@@ -932,160 +934,73 @@ class Meeting extends SugarBean {
     }
 
     /**
-     * Stores user invitees
+     * Add or delete invitee from Meeting.
      *
-     * @patam array $userInvitees Array of user invitees ids
-     * @patam array $existingUsers
+     * @param string $link_name
+     * @param array $invitees
+     * @param array $existing
      */
-    public function setUserInvitees($userInvitees, $existingUsers = array())
+    public function upgradeAttachInvitees($link_name, $invitees, $existing)
     {
-    	// if both are empty, don't do anything.  From the App these will always be set [they are set to at least current-user].
-    	// For the api, these sometimes will not be set [linking related records]
-    	if(empty($userInvitees) && empty($existingUsers)) {
-    		return true;
-    	}
-        $this->users_arr = $userInvitees;
-
-        $deleteUsers = array();
-         $this->load_relationship('users');
-         // Get all users for the meeting
-           $q = 'SELECT mu.user_id, mu.accept_status FROM meetings_users mu WHERE mu.meeting_id = \''.$this->id.'\'';
-           $r = $this->db->query($q);
-           $acceptStatusUsers = array();
-        while ($a = $this->db->fetchByAssoc($r)) {
-              if (!in_array($a['user_id'], $userInvitees)) {
-                   $deleteUsers[$a['user_id']] = $a['user_id'];
-              } else {
-                 $acceptStatusUsers[$a['user_id']] = $a['accept_status'];
-              }
-        }
-
-        if (count($deleteUsers) > 0) {
-            $sql = '';
-            foreach ($deleteUsers as $u) {
-                $sql .= ",'" . $u . "'";
+        $this->load_relationship($link_name);
+        foreach (array_diff($this->{$link_name}->get(), $invitees) as $id) {
+            if ($this->created_by != $id) {
+                $this->{$link_name}->delete($this->id, $id);
             }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_users SET deleted = 1 WHERE user_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
         }
-
-        foreach ($userInvitees as $userId) {
-            if (empty($userId) || isset($existingUsers[$userId]) || isset($deleteUsers[$userId])) {
-                continue;
-            }
-            if (!isset($acceptStatusUsers[$userId])) {
-                $this->users->add($userId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_users SET deleted = 0, accept_status = \''.$acceptStatusUsers[$userId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND user_id = \''.$userId.'\'';
-                $this->db->query($qU);
+        foreach (array_diff($invitees, $this->{$link_name}->get()) as $id) {
+            if (!isset($existing[$id])) {
+                $this->{$link_name}->add($id);
             }
         }
     }
 
     /**
-     * Stores contact invitees
+     * Stores user invitees.
      *
-     * @patam array $userInvitees Array of contact invitees ids
-     * @patam array $existingUsers
+     * @param array $userInvitees Array of user invitees ids
+     * @param array $existingUsers
+     *
+     * @return boolean true if no users given.
+     */
+    public function setUserInvitees($userInvitees, $existingUsers = array())
+    {
+        // If both are empty, don't do anything.
+        // From the App these will always be set [they are set to at least current-user].
+        // For the api, these sometimes will not be set [linking related records]
+        if (empty($userInvitees) && empty($existingUsers)) {
+            return true;
+        }
+        $this->users_arr = $userInvitees;
+        $this->upgradeAttachInvitees('users', $userInvitees, $existingUsers);
+    }
+
+    /**
+     * Stores contact invitees.
+     *
+     * @param array $contactInvitees Array of contact invitees ids
+     * @param array $existingContacts
      */
     public function setContactInvitees($contactInvitees, $existingContacts = array())
     {
         $this->contacts_arr = $contactInvitees;
-
-        $deleteContacts = array();
-        $this->load_relationship('contacts');
-        $q = 'SELECT mu.contact_id, mu.accept_status FROM meetings_contacts mu WHERE mu.meeting_id = \''.$this->id.'\'';
-        $r = $this->db->query($q);
-        $acceptStatusContacts = array();
-        while ($a = $this->db->fetchByAssoc($r)) {
-              if (!in_array($a['contact_id'], $contactInvitees)) {
-                   $deleteContacts[$a['contact_id']] = $a['contact_id'];
-              }    else {
-                   $acceptStatusContacts[$a['contact_id']] = $a['accept_status'];
-              }
-        }
-
-        if (count($deleteContacts) > 0) {
-            $sql = '';
-            foreach ($deleteContacts as $u) {
-                    $sql .= ",'" . $u . "'";
-            }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_contacts SET deleted = 1 WHERE contact_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
-        }
-
-        foreach ($contactInvitees as $contactId) {
-            if (empty($contactId) || isset($existingContacts[$contactId]) || isset($deleteContacts[$contactId])) {
-                continue;
-            }
-            if (!isset($acceptStatusContacts[$contactId])) {
-                $this->contacts->add($contactId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_contacts SET deleted = 0, accept_status = \''.$acceptStatusContacts[$contactId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND contact_id = \''.$contactId.'\'';
-                $this->db->query($qU);
-            }
-        }
+        $this->upgradeAttachInvitees('contacts', $contactInvitees, $existingContacts);
     }
 
     /**
-     * Stores lead invitees
+     * Stores lead invitees.
      *
-     * @patam array $userInvitees Array of lead invitees ids
-     * @patam array $existingUsers
+     * @param array $leadInvitees Array of lead invitees ids
+     * @param array $existingLeads
      */
     public function setLeadInvitees($leadInvitees, $existingLeads = array())
     {
         $this->leads_arr = $leadInvitees;
-
-        $deleteLeads = array();
-        $this->load_relationship('leads');
-        $q = 'SELECT mu.lead_id, mu.accept_status FROM meetings_leads mu WHERE mu.meeting_id = \''.$this->id.'\'';
-        $r = $this->db->query($q);
-        $acceptStatusLeads = array();
-        while ($a = $this->db->fetchByAssoc($r)) {
-              if(!in_array($a['lead_id'], $leadInvitees)) {
-                   $deleteLeads[$a['lead_id']] = $a['lead_id'];
-              }    else {
-                   $acceptStatusLeads[$a['lead_id']] = $a['accept_status'];
-              }
-        }
-
-        if (count($deleteLeads) > 0) {
-            $sql = '';
-            foreach($deleteLeads as $u) {
-                    $sql .= ",'" . $u . "'";
-            }
-            $sql = substr($sql, 1);
-            $sql = "UPDATE meetings_leads SET deleted = 1 WHERE lead_id IN ($sql) AND meeting_id = '". $this->id . "'";
-            $this->db->query($sql);
-        }
-
-        foreach ($leadInvitees as $leadId) {
-            if(empty($leadId) || isset($existingLeads[$leadId]) || isset($deleteLeads[$leadId])) {
-                continue;
-            }
-            if(!isset($acceptStatusLeads[$leadId])) {
-                $this->leads->add($leadId);
-            } else {
-                // update query to preserve accept_status
-                $qU  = 'UPDATE meetings_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$leadId].'\' ';
-                $qU .= 'WHERE meeting_id = \''.$this->id.'\' ';
-                $qU .= 'AND lead_id = \''.$leadId.'\'';
-                $this->db->query($qU);
-            }
-        }
+        $this->upgradeAttachInvitees('leads', $leadInvitees, $existingLeads);
     }
 
     /**
-     * Stores addressee invitees
+     * Stores addressee invitees.
      *
      * @param array $addresseeInvitees Array of addressee invitees ids
      * @param array $existingAddressees
@@ -1093,48 +1008,7 @@ class Meeting extends SugarBean {
     public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
     {
         $this->addressees_arr = $addresseeInvitees;
-
-        $deleteAddressees = array();
-        $this->load_relationship('addressees');
-
-        $sql = 'SELECT mu.addressee_id, mu.accept_status FROM meetings_addressees mu';
-        $sql .= ' WHERE mu.meeting_id = ' . $this->db->quoted($this->id);
-        $result = $this->db->query($sql);
-
-        $acceptStatusAddressees = array();
-        while ($a = $this->db->fetchByAssoc($result)) {
-            if (!in_array($a['addressee_id'], $addresseeInvitees)) {
-                $deleteAddressees[$a['addressee_id']] = $a['addressee_id'];
-            } else {
-                $acceptStatusAddressees[$a['addressee_id']] = $a['addressee_id'];
-            }
-        }
-
-        if (count($deleteAddressees) > 0) {
-            $ids = array();
-            foreach ($deleteAddressees as $u) {
-                $ids[] = $this->db->quoted($u);
-            }
-
-            $sql = 'UPDATE meetings_addressees SET deleted = 1';
-            $sql .= ' WHERE addressee_id IN (' . implode(',', $ids) . ') AND meeting_id = ' . $this->db->quoted($this->id);
-            $this->db->query($sql);
-        }
-
-        foreach ($addresseeInvitees as $addresseeId) {
-            if (empty($addresseeId) || isset($existingAddressees[$addresseeId]) || isset($deleteAddressees[$addresseeId])) {
-                continue;
-            }
-            if (!isset($acceptStatusAddressees[$addresseeId])) {
-                $this->leads->add($addresseeId);
-            } else {
-                // update query to preserve accept_status
-                $sql  = 'UPDATE meetings_addressees SET deleted = 0, accept_status = ' . $this->db->quoted($acceptStatusAddressees[$addresseeId]);
-                $sql .= ' WHERE meeting_id = ' . $this->db->quoted($this->id);
-                $sql .= ' AND addressee_id = ' . $this->db->quoted($addresseeId);
-                $this->db->query($sql);
-            }
-        }
+        $this->upgradeAttachInvitees('addressees', $addresseeInvitees, $existingAddressees);
     }
 
     /**

@@ -1453,7 +1453,7 @@ class CalDavEventCollection extends SugarBean
      * @param Structures\Event|null $oldEvent
      * @return array
      */
-    protected function getEventDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
+    public function getEventDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
     {
         $changedFields = array();
         if ($oldEvent) {
@@ -1469,25 +1469,29 @@ class CalDavEventCollection extends SugarBean
             if ($currentEvent->getStatus() != $oldEvent->getStatus()) {
                 $changedFields['status'] = array($currentEvent->getStatus(), $oldEvent->getStatus());
             }
-            if ($currentEvent->getStartDate() != $oldEvent->getStartDate()) {
-                $changedFields['date_start'] =
-                    array($currentEvent->getStartDate()->asDb(), $oldEvent->getStartDate()->asDb());
+
+            $currentStartDate = $currentEvent->getStartDate() ? $currentEvent->getStartDate()->asDb() : null;
+            $oldStartDate = $oldEvent->getStartDate() ? $oldEvent->getStartDate()->asDb() : null;
+
+            if ($currentStartDate != $oldStartDate) {
+                $changedFields['date_start'] = array($currentStartDate, $oldStartDate);
             }
-            if ($currentEvent->getEndDate() != $oldEvent->getEndDate()) {
-                $changedFields['date_end'] =
-                    array($currentEvent->getEndDate()->asDb(), $oldEvent->getEndDate()->asDb());
+
+            $currentEndDate = $currentEvent->getEndDate() ? $currentEvent->getEndDate()->asDb() : null;
+            $oldEndDate = $oldEvent->getEndDate() ? $oldEvent->getEndDate()->asDb() : null;
+
+            if ($currentEndDate != $oldEndDate) {
+                $changedFields['date_end'] = array($currentEndDate, $oldEndDate);
             }
         } else {
-            $changedFields['title'] = array($currentEvent->getTitle());
-            $changedFields['description'] = array($currentEvent->getDescription());
-            $changedFields['location'] = array($currentEvent->getLocation());
-            $changedFields['status'] = array($currentEvent->getStatus());
-            if ($currentEvent->getStartDate()) {
-                $changedFields['date_start'] = array($currentEvent->getStartDate()->asDb());
-            }
-            if ($currentEvent->getEndDate()) {
-                $changedFields['date_end'] = array($currentEvent->getEndDate()->asDb());
-            }
+            $changedFields['title'] = array($currentEvent->getTitle(), null);
+            $changedFields['description'] = array($currentEvent->getDescription(), null);
+            $changedFields['location'] = array($currentEvent->getLocation(), null);
+            $changedFields['status'] = array($currentEvent->getStatus(), null);
+            $currentStartDate = $currentEvent->getStartDate() ? $currentEvent->getStartDate()->asDb() : null;
+            $changedFields['date_start'] = array($currentStartDate, null);
+            $currentEndDate = $currentEvent->getEndDate() ? $currentEvent->getEndDate()->asDb() : null;
+            $changedFields['date_end'] = array($currentEndDate, null);
         }
         return $changedFields;
     }
@@ -1498,7 +1502,7 @@ class CalDavEventCollection extends SugarBean
      * @param Structures\Event|null $oldEvent
      * @return array
      */
-    protected function getParticipantsDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
+    public function getParticipantsDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
     {
         $participantHelper = new ParticipantsHelper();
 
@@ -1611,64 +1615,40 @@ class CalDavEventCollection extends SugarBean
             $oldCollection = null;
         }
 
-        $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
+        if ($oldCollection && $this->getTimeZone() !== $oldCollection->getTimeZone()) {
+            $result['timezone'] = array($this->getTimeZone(), $oldCollection->getTimeZone());
+        } elseif (!$oldCollection && $this->getTimeZone()) {
+            $result['timezone'] = array($this->getTimeZone(), null);
+        }
 
-        $mainParentChanged = $updateAllChildren = false;
-        if (isset($rRuleParams['rrule_action'])) {
-            if ($oldParent) {
-                $oldCustomizedParent = $oldCollection->getChild($oldParent->getStartDate());
-                if ($oldCustomizedParent && $oldCustomizedParent->isCustomized()) {
-                    $oldParent = $oldCustomizedParent;
-                }
-            }
-            $updateAllChildren = true;
+        $rRuleParams = $this->getRRuleDiff($this, $oldCollection);
+        if ($rRuleParams) {
+            $result['rrule'] = $rRuleParams;
         }
 
         $changedFields = $this->getEventDiff($currentParent, $oldParent);
-        $changedFields = array_merge($changedFields, $rRuleParams);
         $invites = $this->getParticipantsDiff($currentParent, $oldParent);
 
         $filter = true;
         if (empty($data)) {
-            $filter = array_filter($changedFields, function ($set) {
-                return !empty($set[0]);
+            $filter = !!array_filter($changedFields, function ($set) {
+                return $set[0];
             });
         }
 
         if ($filter && ($invites || $changedFields)) {
-            if (!$updateAllChildren) {
-                $mainParentChanged = true;
-            }
-            $result[] = array(
-                array(
-                    $data ? 'update' : 'override',
-                    $this->id,
-                    null,
-                    null,
-                    null,
-                ),
+            $result['parent'] = array(
+                $oldParent ? 'update' : 'override',
                 $changedFields,
                 $invites,
             );
         }
 
-        $childrenRecurrenceIds = array_values($this->getAllChildrenRecurrenceIds());
+        $childrenRecurrenceIds = $this->getCustomizedChildrenRecurrenceIds();
         foreach ($childrenRecurrenceIds as $recurrenceId) {
 
-            $oldChild = $oldCollection && !$updateAllChildren ? $oldCollection->getChild($recurrenceId) : null;
+            $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
             $currentChild = $this->getChild($recurrenceId);
-
-            if (!$currentChild) {
-                continue;
-            }
-
-            if ($currentParent->getStartDate() == $currentChild->getRecurrenceID()) {
-                if (!$currentChild->isCustomized()) {
-                    continue;
-                } elseif ($mainParentChanged) {
-                    continue;
-                }
-            }
 
             $changedFields = $this->getEventDiff($currentChild, $oldChild);
             $invites = $this->getParticipantsDiff($currentChild, $oldChild);
@@ -1681,32 +1661,21 @@ class CalDavEventCollection extends SugarBean
             }
 
             if ($filter && ($invites || $changedFields)) {
-                $result[] = array(
-                    array(
-                        $oldChild ? 'update' : 'restore',
-                        $this->id,
-                        $this->getSugarChildrenOrder(),
-                        $recurrenceId->asDb(),
-                        array_search($recurrenceId, $childrenRecurrenceIds),
-                    ),
+                $result['children'][$recurrenceId->asDb()] = array(
+                    $oldChild ? 'update' : 'restore',
                     $changedFields,
                     $invites,
                 );
             }
         }
+
         // looking for events which should be deleted
         $deletedChildrenRecurrenceIds = $this->getDeletedChildrenRecurrenceIds();
         foreach ($deletedChildrenRecurrenceIds as $recurrenceId) {
             $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
             if ($oldChild && !$oldChild->isDeleted()) {
-                $result[] = array(
-                    array(
-                        'delete',
-                        $this->id,
-                        $this->getSugarChildrenOrder(),
-                        $recurrenceId->asDb(),
-                        array_search($recurrenceId, $childrenRecurrenceIds),
-                    ),
+                $result['children'][$recurrenceId->asDb()] = array(
+                    'delete',
                     array(),
                     array(),
                 );
@@ -1721,14 +1690,8 @@ class CalDavEventCollection extends SugarBean
             foreach ($recurrenceIds as $recurrenceId) {
                 $currentChild = $this->getChild($recurrenceId);
                 if ($currentChild && !$currentChild->isCustomized()) {
-                    $result[] = array(
-                        array(
-                            'restore',
-                            $this->id,
-                            $this->getSugarChildrenOrder(),
-                            $recurrenceId->asDb(),
-                            array_search($recurrenceId, $childrenRecurrenceIds),
-                        ),
+                    $result['children'][$recurrenceId->asDb()] = array(
+                        'restore',
                         $this->getEventDiff($currentChild, null),
                         $this->getParticipantsDiff($currentChild, null),
                     );
