@@ -15,6 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
 /**
  * Description of PMSEElementValidator
  *
@@ -265,27 +267,6 @@ class PMSEElementValidator extends PMSEBaseValidator implements PMSEValidate
             $this->logger->debug("Start Event {$bean->id} can not be triggered by PMSE modules.");
             return true;
         }
-    }
-
-    /**
-     * @deprecated
-     * @param type $bean
-     * @return boolean
-     */
-    public function already_triggered($bean, $flowData)
-    {
-        //Validate if start event was already processed
-        foreach ($_SESSION['triggeredFlows'] as $flow) {
-            if ($flowData['pro_id'] == $flow['pro_id'] && $bean->id == $flow['bean']->id) {
-                $this->logger->debug("Start Event {$bean->id} was already triggered in after save hook.");
-                return true;
-            }
-        }
-        $triggeredFlow = array();
-        $triggeredFlow['pro_id'] = $flowData['pro_id'];
-        $triggeredFlow['bean'] = $bean;
-        $_SESSION['triggeredFlows'][] = $triggeredFlow;
-        return false;
     }
 
     /**
