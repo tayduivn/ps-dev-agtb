@@ -391,7 +391,7 @@ class ForecastWorksheet extends SugarBean
     public function copyValues($fields, $seed)
     {
         if ($seed instanceof SugarBean) {
-            $seed = $seed->toArray(true);
+            $seed = $seed->toArray();
         }
 
         foreach ($fields as $field) {
