@@ -55,7 +55,12 @@ class MaxRelatedExpression extends NumericExpression
 			var relField = params[1].evaluate();
 
 			if (typeof(linkField) == "string" && linkField != "") {
-                return this.context.getRelatedField(linkField, 'rollupMax', relField);
+			    var val = this.context.getRelatedField(linkField, 'rollupMax', relField);
+			    if (typeof(val) == "object") {
+			        val = ""
+			    }
+			    
+			    return val
 			} else if (typeof(rel) == "object") {
 			    //Assume we have a Link object that we can delve into.
 			    //This is mostly used for n level dives through relationships.
