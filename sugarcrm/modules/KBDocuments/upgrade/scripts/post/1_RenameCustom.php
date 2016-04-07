@@ -119,6 +119,10 @@ class SugarUpgradeRenameCustom extends UpgradeScript
                 $this->updateLanguageFile($file);
             }
 
+            foreach (glob('custom/Extension/application/Ext/Language/*.php') as $file) {
+                $this->updateLanguageFile($file);
+            }
+
             $langs = SugarConfig::getInstance()->get('languages');
             $lang = SugarConfig::getInstance()->get('default_language');
             $mi = new ModuleInstaller();
@@ -152,11 +156,6 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             sugar_mkdir('custom/Extension/modules/KBContents/Ext/Vardefs', null, true);
             foreach (glob('custom/Extension/modules/KBDocuments/Ext/Vardefs/*.php') as $file) {
                 $this->copyDefs($file, str_replace('/KBDocuments/', '/KBContents/', $file));
-            }
-
-
-            foreach (glob('custom/Extension/application/Ext/Language/*.php') as $file) {
-                $this->updateLanguageFile($file);
             }
 
             $query = "UPDATE fields_meta_data set custom_module = 'KBContents' where custom_module = 'KBDocuments'";
@@ -281,17 +280,19 @@ class SugarUpgradeRenameCustom extends UpgradeScript
      */
     protected function updateLanguageFile($file)
     {
-        $this->upgrader->backupFile($file);
-
         global $app_list_strings;
         // backup global $app_list_strings
         $g_app_list_strings = $app_list_strings;
         $app_list_strings = array();
+        $lang = explode('.', basename($file, '.php'));
+        $lang = array_shift($lang);
         include $file;
 
         $mod_app_list_strings = false;
         $app_list_strings = $this->moveKBDocumentsToKBContents($app_list_strings, $mod_app_list_strings);
+        $app_list_strings = $this->updateDropdown($app_list_strings, $lang, $mod_app_list_strings);
         if ($mod_app_list_strings === true) {
+            $this->upgrader->backupFile($file);
             $this->log("Updating language file {$file} with new KB module");
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
             foreach (array_keys($app_list_strings) as $key) {
@@ -323,5 +324,66 @@ class SugarUpgradeRenameCustom extends UpgradeScript
             }
         }
         return $array;
+    }
+
+    /**
+     * Remove customization for deleted dropdowns migrate labels for changed dropdowns.
+     * @param mixed $app_list_strings Strings to work with.
+     * @param string $lang Language to work with.
+     * @param boolean $changed Flag indicates if there any changes in dropdowns.
+     * @return mixed Updated `app_list_strings`.
+     */
+    protected function updateDropdown($app_list_strings, $lang, &$changed)
+    {
+
+        //Dropdowns to remove.
+        $ddToDelete = array(
+            'kbolddocument_status_dom',
+            'kbolddocument_attachment_option_dom',
+            'kbolddocument_viewing_frequency_dom',
+            'kbolddocument_canned_search',
+            'kbolddocument_date_filter_options',
+        );
+        //Dropdown to migrate labels.
+        $ddMappings = array(
+            'kbdocument_status_dom' => array(
+                'Draft' => 'draft',
+                'Expired' => 'expired',
+                'In Review' => 'in-review',
+                'Published' => 'published',
+            )
+        );
+
+        foreach ($ddToDelete as $dd) {
+            if (isset($app_list_strings[$dd])) {
+                unset($app_list_strings[$dd]);
+                $this->log("Dropdown {$dd} removed");
+                $changed = true;
+            }
+        }
+
+        foreach ($ddMappings as $dd => $map) {
+            if (isset($app_list_strings[$dd])) {
+                $arrays = array(
+                    &$app_list_strings,
+                    &$this->upgrader->state['dropdowns_to_merge'][$lang]['custom'],
+
+                );
+
+                foreach ($arrays as &$arr) {
+                    $result = array();
+                    foreach ($arr[$dd] as $key => $value) {
+                        if (!empty($map[$key])) {
+                            $key = $map[$key];
+                            $changed = true;
+                        }
+                        $result[$key] = $value;
+                    }
+                    $arr[$dd] = $result;
+                }
+                $this->log("Dropdown {$dd} updated for language {$lang}");
+            }
+        }
+        return $app_list_strings;
     }
 }

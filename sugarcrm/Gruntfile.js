@@ -78,6 +78,8 @@ module.exports = function(grunt) {
         'check-license': {
             excludedExtensions: [
                 'json',
+                'swf',
+                'log',
                 // image files
                 'gif',
                 'jpeg',

@@ -226,6 +226,33 @@ describe('Base.View.Dashablelist', function() {
                 expect(view.settings.get('module')).toBe(module);
             });
         });
+
+        describe('when intelligent', function() {
+            var previousContext = {};
+
+            beforeEach(function() {
+                previousContext.module = app.controller.context.get('module');
+                previousContext.layout = app.controller.context.get('layout');
+                app.controller.context.set('module', moduleName);
+                app.controller.context.set('layout', layoutName);
+            });
+
+            afterEach(function() {
+                app.controller.context.set('module', previousContext.module);
+                app.controller.context.set('layout', previousContext.layout);
+            });
+
+            it('should set the context\'s link and the collection\'s relate', function() {
+                var testField = 'test_field';
+                view.settings.set('intelligent', '1');
+                view.settings.set('linked_fields', testField);
+                view.intelligent = '1';
+                view.moduleIsAvailable = false;
+                view.initDashlet();
+                expect(view.context.get('link')).toEqual(testField);
+                expect(view.collection.getOption('relate')).toBeTruthy();
+            });
+        });
     });
 
     describe('configure the dashlet', function() {

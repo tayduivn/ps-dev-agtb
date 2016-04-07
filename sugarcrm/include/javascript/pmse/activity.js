@@ -175,6 +175,12 @@ var AdamActivity = function (options) {
      */
     this.boundaryArray = new jCore.ArrayList();
 
+    /**
+     * App alert key for proxy errors.
+     * @type {string}
+     */
+    this.proxyErrorKey = 'proxy_error';
+
     AdamActivity.prototype.initObject.call(this, options);
 };
 
@@ -2509,6 +2515,14 @@ AdamActivity.prototype.actionFactory = function (type) {
                                        updater_field.setValue(data.act_fields || null);
                                        App.alert.dismiss('upload');
                                        w.html.style.display = 'inline';
+                                   },
+                                   error: function (sugarHttpError) {
+                                       App.alert.dismiss('upload');
+                                       App.alert.show(this.proxyErrorKey, {
+                                           level: "error",
+                                           messages: sugarHttpError.errorThrown + ': ' + sugarHttpError.message
+                                       });
+                                       w.close();
                                    }
                                });
                            }
