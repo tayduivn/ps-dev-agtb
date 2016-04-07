@@ -55,8 +55,11 @@ class CalendarEventsHookManager
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship])) {
-            $invitee = $this->getInviteeInfo($bean, $args);
-            $this->changesInvitees($bean, 'changed', $invitee);
+            $inviteeInfo = $this->getInviteeInfo($bean, $args);
+            if ($inviteeInfo) {
+                $inviteesChanges = array('changed' => array($inviteeInfo['info']));
+                $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
+            }
         }
     }
 
@@ -72,8 +75,11 @@ class CalendarEventsHookManager
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $invitee = $this->getInviteeInfo($bean, $args);
-            $this->changesInvitees($bean, 'added', $invitee);
+            $inviteeInfo = $this->getInviteeInfo($bean, $args);
+            if ($inviteeInfo) {
+                $inviteesChanges = array('added' => array($inviteeInfo['info']));
+                $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
+            }
         }
     }
 
@@ -89,8 +95,12 @@ class CalendarEventsHookManager
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $invitee = $this->getInviteeInfo($bean, $args);
-            $this->changesInvitees($bean, 'deleted', $invitee);
+            $inviteeInfo = $this->getInviteeInfo($bean, $args);
+            if ($inviteeInfo) {
+                $inviteesChanges = array('deleted' => array($inviteeInfo['info']));
+                $updateAction = $inviteeInfo['deleted'] ? 'participant-delete' : 'update';
+                $bean->getCalDavHook()->export($bean, array($updateAction, array(), $inviteesChanges));
+            }
         }
     }
 
@@ -109,34 +119,24 @@ class CalendarEventsHookManager
         if (isset($bean->$link->rows[$args['related_id']])) {
             $acceptStatus = $bean->$link->rows[$args['related_id']]['accept_status'];
         }
-        $inviteeBean = BeanFactory::getBean($args['related_module'], $args['related_id']);
-        $invitee = array(
-            $inviteeBean->module_name,
-            $inviteeBean->id,
-            $inviteeBean->emailAddress->getPrimaryAddress($inviteeBean),
-            $acceptStatus,
-            $GLOBALS['locale']->formatName($inviteeBean),
-        );
+        $inviteeBean = BeanFactory::getBean($args['related_module'], $args['related_id'], array(
+            'strict_retrieve' => true,
+            'deleted' => false,
+        ));
 
-        return $invitee;
-    }
-
-    /**
-     * Send to export invitee or conservation for sent later.
-     *
-     * @param SugarBean|Meeting|Call $bean
-     * @param string $action
-     * @param array $invitee
-     */
-    protected function changesInvitees(SugarBean $bean, $action, array $invitee)
-    {
-        if ($bean->isUpdate()) {
-            $bean->getCalDavHook()->export($bean, array('update', array(), array($action => array($invitee))));
-        } else {
-            if (!isset($bean->inviteesChanges[$action])) {
-                $bean->inviteesChanges[$action] = array();
-            }
-            $bean->inviteesChanges[$action][] = $invitee;
+        if (!$inviteeBean) {
+            return array();
         }
+
+        return array(
+            'deleted' => $inviteeBean->deleted,
+            'info' => array(
+                $inviteeBean->module_name,
+                $inviteeBean->id,
+                $inviteeBean->emailAddress->getPrimaryAddress($inviteeBean),
+                $acceptStatus,
+                $GLOBALS['locale']->formatName($inviteeBean)
+            ),
+        );
     }
 }

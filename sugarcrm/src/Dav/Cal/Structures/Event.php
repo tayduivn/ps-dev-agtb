@@ -820,7 +820,7 @@ class Event
      */
     public function findParticipantsByEmail($email)
     {
-        foreach ($this->participants as $i => $participant) {
+        foreach ($this->getParticipants() as $i => $participant) {
             if ($participant->getEmail() == $email) {
                 return $i;
             }
