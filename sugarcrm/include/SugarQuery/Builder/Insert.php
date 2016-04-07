@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * INSERT query builder
+ *
+ * @deprecated Use DBManager::insert() instead
+ */
 class SugarQuery_Builder_Insert {
 	/**
 	 * Table to do the insert on

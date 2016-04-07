@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * DELETE query builder
+ *
+ * @deprecated Use SugarBean::mark_deleted() instead
+ */
 class SugarQuery_Builder_Delete {
 
 	/**
