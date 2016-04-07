@@ -160,7 +160,6 @@ $beanList['Expressions']  = 'Expression';
 $beanList['Contracts']  = 'Contract';
 $beanList['ContractTypes']  = 'ContractType';
 $beanList['Holidays'] = 'Holiday';
-$beanList['ProjectResources'] = 'ProjectResource';
 $beanList['System'] = 'System';
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -325,7 +324,6 @@ $beanFiles['Expression']  = 'modules/Expressions/Expression.php';
 $beanFiles['System']      = 'modules/Administration/System.php';
 $beanFiles['SessionManager']      = 'modules/Administration/SessionManager.php';
 $beanFiles['ContractType']  = 'modules/ContractTypes/ContractType.php';
-$beanFiles['ProjectResource'] = 'modules/ProjectResources/ProjectResource.php';
 $beanFiles['Holiday'] = 'modules/Holidays/Holiday.php';
 //BEGIN SUGARCRM flav=ent ONLY
 $beanFiles['CustomQuery']= 'modules/CustomQueries/CustomQuery.php';
@@ -647,7 +645,6 @@ $bwcModules = array(
     'ProductBundles',
     'ProductTypes',
     'Project',
-    'ProjectResources',
     'ProjectTask',
     'Quotas',
     'Quotes',

@@ -47,6 +47,7 @@ include("metadata/recordListMetaData.php");
 include("metadata/project_bugsMetaData.php");
 include("metadata/project_casesMetaData.php");
 include("metadata/project_productsMetaData.php");
+include "metadata/project_resourcesMetaData.php";
 include("metadata/projects_accountsMetaData.php");
 include("metadata/projects_contactsMetaData.php");
 include("metadata/projects_opportunitiesMetaData.php");

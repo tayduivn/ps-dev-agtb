@@ -824,7 +824,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 'modules/ProductBundleNotes/clients',
                 'modules/ProductBundles/clients',
                 'modules/Products/clients/base/views/list-headerpane',
-                'modules/ProjectResources/clients',
+                'modules/ProjectResources',
                 'modules/ProjectTask/clents',
                 'modules/Relationships/clients',
                 'modules/RevenueLineItems/clients/base/views/list-headerpane',

@@ -1095,7 +1095,6 @@ expressions in the regex. Regular expressions should not include any delimiters.
 	'Manufacturers'  => 'Manufacturer',
 	'ProductBundleNotes' => 'ProductBundleNote',
 	'ProductBundles'   => 'ProductBundle',
-	'ProjectResources' => 'ProjectResource',
 
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',

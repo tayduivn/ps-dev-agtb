@@ -4292,7 +4292,6 @@ ENDP;
         'ProductBundles',
         'ProductTypes',
         'Project',
-        'ProjectResources',
         'ProjectTask',
         'Quotes',
         'QueryBuilder',
