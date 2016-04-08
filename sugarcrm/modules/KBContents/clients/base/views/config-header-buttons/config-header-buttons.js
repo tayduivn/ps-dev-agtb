@@ -16,23 +16,6 @@
 ({
     extendsFrom: 'ConfigHeaderButtonsView',
 
-    initialize: function(options) {
-        this._super('initialize', [options]);
-
-        // Standard ConfigHeaderButtonsView doesn't use doValidate
-        var model = this.context.get('model');
-        model._save = model.save;
-        model.save = function(key, val, options) {
-            this.doValidate(null, function(isValid){
-                if (isValid) {
-                    model._save(key, val, options)
-                } else {
-                    val.error();
-                }
-            });
-        }
-    },
-
     /**
      * Fix for RS-1284.
      * When we save config, metadata for current user is cleared.
@@ -42,23 +25,36 @@
      * @private
      */
     _saveConfig: function() {
-        var self = this;
-        this.context.get('model').save({}, {
-            success: _.bind(function(model) {
-                app.metadata.sync(function() {
-                    self.showSavedConfirmation();
-                    if (app.drawer) {
-                        app.drawer.close(self.context, self.context.get('model'));
-                    }
-                    if (self.context.parent && self.context.parent.get('module') === self.module) {
-                        self.context.parent.reloadData();
-                    }
-                });
-            }, this),
+        var self = this,
+            url = app.api.buildURL(this.module, 'config'),
+            model = this.context.get('model'),
+            params = {
+                success: _.bind(function(model) {
+                    app.metadata.sync(function() {
+                        self.showSavedConfirmation();
+                        if (self.context.parent && self.context.parent.get('module') === self.module) {
+                            self.context.parent.reloadData();
+                        }
+                        if (app.drawer && app.drawer.count()) {
+                            app.drawer.close(self.context, self.context.get('model'));
+                        } else {
+                            app.router.navigate(self.module, {trigger: true});
+                        }
+                    });
+                }, this),
 
-            error: _.bind(function() {
-                this.getField('save_button').setDisabled(false);
-            }, this)
+                error: _.bind(function() {
+                    self.getField('save_button').setDisabled(false);
+                }, this)
+            };
+
+        // Standard ConfigHeaderButtonsView doesn't use doValidate
+        model.doValidate(null, function(isValid){
+            if (isValid) {
+                app.api.call('create', url, model.attributes, params);
+            } else {
+                params.error();
+            }
         });
     }
 })
