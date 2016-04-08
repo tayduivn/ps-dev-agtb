@@ -13,6 +13,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
+use SugarCache;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface;
@@ -140,7 +141,13 @@ class Handler implements RunnableInterface
             $bean->send_invites_uid = $calDavBean->event_uid;
             $bean->new_with_id = true;
             if ($bean instanceof \Call) {
+                // Because handler is running as daemon script as part of queueManager.php
+                // we can't use cache local store because updates from CalDav settings page
+                // will not update this local store inside daemon, only external storage.
+                $oldValue = SugarCache::instance()->useLocalStore;
+                SugarCache::instance()->useLocalStore = false;
                 $bean->direction = $user->getPreference('caldav_call_direction');
+                SugarCache::instance()->useLocalStore = $oldValue;
             }
             $calDavBean->setBean($bean);
             $calDavBean->save();
