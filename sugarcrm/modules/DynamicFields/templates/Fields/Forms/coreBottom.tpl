@@ -95,7 +95,7 @@
     <input type="hidden" name="group" value="{$vardef.group}">
 {/if}
 
-{if !empty($vardef.options)}
+{if !empty($vardef.options) && !empty($vardef.type) && $vardef.type == 'parent_type'}
     <input type="hidden" name="options" value="{$vardef.options}">
 {/if}
 
