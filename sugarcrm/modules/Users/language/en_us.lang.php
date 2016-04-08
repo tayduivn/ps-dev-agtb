@@ -369,8 +369,11 @@ $mod_strings = array (
 	'LBL_USER'							=> 'Users',
 	'LBL_WORK_PHONE'					=> 'Work Phone',
 	'LBL_YOUR_PUBLISH_URL'				=> 'Publish at my location',
-    'LBL_ICAL_PUB_URL'                  => 'iCal integration URL',
-    'LBL_ICAL_PUB_URL_HELP'             => 'Use this URL to subscribe to the Sugar calendar within iCal.',
+    'LBL_ICAL_PUB_URL'                  => 'iCal Subscription URL',
+    'LBL_ICAL_PUB_URL_HELP'             => 'Use this URL to subscribe to your Sugar calendar within iCal-supported ' .
+                                           'applications. Sugar calendar events are viewable as read-only ' .
+                                           'in external calendar applications and any edits to events ' .
+                                           '(e.g. meetings, calls etc.) can only be made in Sugar.',
 	'LBL_YOUR_QUERY_URL'				=> 'Your Query URL',
 	'LNK_NEW_USER'						=> 'Create New User',
 	'LNK_NEW_PORTAL_USER'				=> 'Create Portal API User',
