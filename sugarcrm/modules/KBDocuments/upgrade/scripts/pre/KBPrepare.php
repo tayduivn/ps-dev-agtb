@@ -25,9 +25,12 @@ class SugarUpgradeKBPrepare extends UpgradeScript
     {
         if (version_compare($this->from_version, '7.7.0', '<')) {
             $this->preCheckMenu();
+            $newpath = !empty($this->manifest['copy_files']['from_dir']) ?
+                $this->context['extract_dir'] . '/' . $this->manifest['copy_files']['from_dir'] :
+                $this->context['source_dir'];
             $script = new PrepareKBDocument(
                 $this->context['source_dir'],
-                $this->context['extract_dir'] . '/' . $this->manifest['copy_files']['from_dir'],
+                $newpath,
                 array($this, 'log')
             );
             if ($script->run()) {
@@ -188,25 +191,28 @@ class PrepareKBDocument
      */
     public function run()
     {
-        $newFiles = array();
-        $oldFiles = array();
-        $tmpFiles = array();
-        foreach ($this->pathsToFindFiles as $path) {
-            $oldFiles = $this->getFiles($this->path . $path, $oldFiles);
-            $newFiles = $this->getFiles($this->newpath . $path, $newFiles);
+
+        if ($this->path != $this->newpath) {
+            $newFiles = array();
+            $oldFiles = array();
+            $tmpFiles = array();
+            foreach ($this->pathsToFindFiles as $path) {
+                $oldFiles = $this->getFiles($this->path . $path, $oldFiles);
+                $newFiles = $this->getFiles($this->newpath . $path, $newFiles);
+            }
+
+            $currentRealPath = realpath($this->path);
+            $newRealPath = realpath($this->newpath);
+
+            foreach ($newFiles as $key => $value) {
+                $tmpFiles[$key] = str_replace($newRealPath, $currentRealPath, $value);
+            }
+
+            $files = array_diff($oldFiles, $tmpFiles);
+            $files[$this->path . '/KBDocumentKBTags'] = $this->path . '/KBDocumentKBTags';
+            $files[$this->path . '/KBDocumentRevisions'] = $this->path . '/KBDocumentRevisions';
+            $this->fileToDelete = $files;
         }
-
-        $currentRealPath = realpath($this->path);
-        $newRealPath = realpath($this->newpath);
-
-        foreach ($newFiles as $key => $value) {
-            $tmpFiles[$key] = str_replace($newRealPath, $currentRealPath, $value);
-        }
-
-        $files = array_diff($oldFiles, $tmpFiles);
-        $files[$this->path . '/KBDocumentKBTags'] = $this->path . '/KBDocumentKBTags';
-        $files[$this->path . '/KBDocumentRevisions'] = $this->path . '/KBDocumentRevisions';
-        $this->fileToDelete = $files;
         if (!$this->prepareTables()) {
             return $this->error("Can't create temporary tables for KB conversion");
         }

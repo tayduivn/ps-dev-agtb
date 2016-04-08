@@ -397,6 +397,10 @@ class Importer
             if(!isset($fieldDef['module']) && $fieldDef['type']=='relate')
                 $fieldDef['module'] = ucfirst($fieldDef['table']);
 
+            if (!isset($fieldDef['module']) && $fieldDef['type']=='enum') {
+                $fieldDef['module'] = $focus->module_name;
+            }
+
             if(isset($fieldDef['custom_type']) && !empty($fieldDef['custom_type']))
                 $fieldDef['type'] = $fieldDef['custom_type'];
 

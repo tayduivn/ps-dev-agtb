@@ -126,7 +126,7 @@ class SugarUpgradeCallsMeetingsCustomEditView extends UpgradeScript
                         // only case in which a save occurs so none of the above
                         // changes will take affect unless the follow change also
                         // takes affect.
-                        if ($field['name'] === 'duration') {
+                        if (!empty($field['name']) && $field['name'] === 'duration') {
                             $this->log("$module Mobile Edit View Upgrade: Found the duration field... replacing it with the updated fieldset def");
                             $rows['panels'][$rowIndex]['fields'][$fieldIndex] = $this->getNewDurationDef();
                             $this->save = true;
