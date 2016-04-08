@@ -585,9 +585,9 @@ class Rome
     {
         static $madeDirs = array();
         if (empty($madeDirs[$build][$path])) {
-            $b_path = $this->buildPath . '/' . $build;
+            $b_path = $this->buildPath . DIRECTORY_SEPARATOR . $build;
             if ($path != '.') {
-                $b_path .= '/' . $path;
+                $b_path .= DIRECTORY_SEPARATOR . $path;
             }
             if (!file_exists($b_path)) {
                 mkdir($b_path, 0755, true);
@@ -628,7 +628,7 @@ class Rome
             if (!empty($this->config['skipDirs'][$e])) {
                 continue;
             }
-            $next = $path . '/' . $e;
+            $next = $path . DIRECTORY_SEPARATOR . $e;
             if (is_dir($next)) {
                 $sugar_path = $this->cleanPath($next);
                 $blackListPath = $this->getBlacklistPath($sugar_path);

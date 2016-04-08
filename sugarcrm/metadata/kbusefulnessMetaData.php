@@ -81,43 +81,16 @@ $dictionary['kbusefulness'] = array(
     ),
 
     'relationships' => array(
-        'usefulness' => array (
+        'kbusefulness' => array (
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
             'lhs_key' => 'id',
             'rhs_module' => 'KBContents',
             'rhs_table' => 'kbcontents',
             'rhs_key' => 'kbarticle_id',
-            'table' => 'kbusefulness',
             'join_key_rhs' => 'kbarticle_id',
             'join_key_lhs' => 'user_id',
             'true_relationship_type' => 'many-to-many',
-            'fields' => array(
-                'id' => array(
-                    'name' => 'id',
-                ),
-                'vote' => array(
-                    'name' => 'vote',
-                ),
-                'ssid' => array(
-                    'name' => 'ssid',
-                ),
-                'kbarticle_id' => array(
-                    'name' => 'kbarticle_id',
-                ),
-                'user_id' => array(
-                    'name' => 'user_id',
-                ),
-                'contact_id' => array(
-                    'name' => 'contact_id',
-                ),
-                'date_modified' => array(
-                    'name' => 'date_modified'
-                ),
-                'zeroflag' => array(
-                    'name' => 'zeroflag',
-                )
-            ),
             'primary_flag_column' => 'zeroflag'
         ),
     )
