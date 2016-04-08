@@ -23,7 +23,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     public static $accounts;
     public static $meetings;
     public static $oldLimit;
-    public static $predefinedFilter;
+    public static $test5AccountFilter;
 
     /** @var FilterApi */
     private $filterApi;
@@ -77,10 +77,11 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         // create a simple predefined filter
-        self::$predefinedFilter = SugarTestFilterUtilities::createUserFilter(
+        self::$test5AccountFilter = SugarTestFilterUtilities::createUserFilter(
             'admin',
-            'TestFilter',
-            json_encode(array(array('name' => 'TEST 5 Account')))
+            'test5AccountFilter',
+            json_encode(array(array('name' => 'TEST 5 Account'))),
+            'test5AccountFilter'
         );
 
         // Clean up any hanging related records
@@ -151,6 +152,23 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
+    /**
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testFilterListSetupStringFilterUnsupported()
+    {
+        // Making $args['filter'] a JSON-encoded string is only supported
+        // on endpoints where 'filter' is a jsonParam. They must be converted
+        // before FilterApi::filterListSetup is called.
+        $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Contacts',
+                'filter' => '[{"id": 1}]'
+            )
+        );
+    }
+
     public function testSimpleFilter()
     {
         $reply = $this->filterApi->filterList(
@@ -184,7 +202,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter_id' => self::$predefinedFilter->id,
+                'filter_id' => self::$test5AccountFilter->id,
                 'fields' => 'id,name'
             )
         );
@@ -212,9 +230,88 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             $this->serviceMock,
             array(
                 'module' => 'Accounts',
-                'filter_id' => self::$predefinedFilter->id,
+                'filter_id' => self::$test5AccountFilter->id,
                 'q' => "some query we don't care about"
             )
+        );
+    }
+
+    /**
+     * Provider for testMergeDefinitionAndId.
+     *
+     * @return array Data for testMergeDefinitionAndId.
+     */
+    public function providerMergeDefinitionAndId()
+    {
+        $test5AccountFilterDef = array(
+            'name' => 'TEST 5 Account'
+        );
+        $nameInFilterDef = array(
+            'name' => array(
+                '$in' => array(
+                    'Test 3 Account',
+                    'Test 4 Account'
+                )
+            )
+        );
+        $idStartsFilterDef = array(
+            'id' => array(
+                '$starts' => 'UNIT-TEST-'
+            )
+        );
+        return array(
+            // check with an empty filter definition
+            array(
+                array(),
+                array($test5AccountFilterDef)
+            ),
+
+            // check with an identical filter
+            array(
+                array($test5AccountFilterDef),
+                array($test5AccountFilterDef, $test5AccountFilterDef)
+            ),
+
+            // check with a more complicated filter
+            // note that since filter definitions have numeric keys,
+            // the filters do not overlap even though they both filter on 'name'
+            array(
+                array($nameInFilterDef, $idStartsFilterDef),
+                array($test5AccountFilterDef, $nameInFilterDef, $idStartsFilterDef)
+            )
+        );
+    }
+
+    /**
+     * @dataProvider providerMergeDefinitionAndId
+     * @param array $filterDefinition Filter definition.
+     * @param array $merged The expected merged array.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
+     */
+    public function testMergeDefinitionAndId($filterDefinition, $merged)
+    {
+        list($args, $q, $options, $seed) = $this->filterApi->filterListSetup(
+            $this->serviceMock,
+            array(
+                'filter_id' => self::$test5AccountFilter->id,
+                'filter' => $filterDefinition,
+                'fields' => 'name,id',
+                'module' => 'Accounts'
+            )
+        );
+        $this->assertEquals($merged, $args['filter'], 'Did not merge filters correctly');
+    }
+
+    /**
+     * Ensure getDefaultLimit works.
+     */
+    public function testGetDefaultLimit()
+    {
+        $this->assertEquals(
+            $this->filterApi->getDefaultLimit(),
+            SugarTestReflection::getProtectedValue($this->filterApi, 'defaultLimit')
         );
     }
 

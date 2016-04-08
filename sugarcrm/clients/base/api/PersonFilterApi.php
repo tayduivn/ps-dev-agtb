@@ -20,22 +20,52 @@ class PersonFilterApi extends FilterApi {
             'UserSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('Users'),
+                'jsonParams' => array('filter'),
                 'pathVars' => array('module_list'),
                 'method' => 'filterList',
                 'shortHelp' => 'Search User records',
-                'longHelp' => 'include/api/help/module_get_help.html',
+                'longHelp' => 'include/api/help/module_filter_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterList and filterListSetup
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionError',
+                )
             ),
             'EmployeeSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('Employees'),
+                'jsonParams' => array('filter'),
                 'pathVars' => array('module_list'),
                 'method' => 'filterList',
                 'shortHelp' => 'Search Employee records',
-                'longHelp' => 'include/api/help/module_get_help.html',
+                'longHelp' => 'include/api/help/module_filter_get_help.html',
+                'exceptions' => array(
+                    // Thrown in filterList and filterListSetup
+                    'SugarApiExceptionInvalidParameter',
+                    // Thrown in filterListSetup and parseArguments
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionError',
+                )
             ),
         );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * If $args['q'] is provided, run a global search instead of filtering.
+     * Also applies default filters depending on what module is passed.
+     *
+     * @param ServiceBase $api The REST API object.
+     * @param array $args REST API arguments.
+     * @param string $acl Which type of ACL to check.
+     * @return array The REST response as a PHP array.
+     * @throws SugarApiExceptionError If retrieving a predefined filter failed.
+     * @throws SugarApiExceptionInvalidParameter If any arguments are invalid.
+     * @throws SugarApiExceptionNotAuthorized If we lack ACL access.
+     */
     public function filterList(ServiceBase $api, array $args, $acl = 'list')
     {
         if (!empty($args['q'])) {
