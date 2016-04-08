@@ -125,8 +125,6 @@ class SugarFieldTeamset extends SugarFieldBase {
         if (!empty($this->fields['team_set_selected_id'])) {
             if (!empty($this->fields['team_set_selected_id']['value'])) {
                 $this->view->team_set_selected_id = $this->fields['team_set_selected_id']['value'];
-            } else {
-                $this->view->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
             }
         }
     	if(!empty($this->fields['team_id']) && !empty($this->fields['team_id']['value'])){
@@ -164,6 +162,15 @@ class SugarFieldTeamset extends SugarFieldBase {
      */
 	function renderEditView(){
 		$this->initialize();
+
+        $request = InputValidation::getService();
+        // GET does not always contain the ID.
+        $record = $request->getValidInputRequest('record', 'Assert\Guid');
+        // Draw the default selected team set in case of creation and skip for edit.
+        if (!$record) {
+            $this->view->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
+            $this->view->setup();
+        }
 
 		//Get the team_arrow_value user preference and set it
 		//This user preference is used to remember whether or not the display of the
