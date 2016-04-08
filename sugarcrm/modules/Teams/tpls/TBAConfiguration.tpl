@@ -29,7 +29,6 @@
         <tr>
             <td>
                 <input title="{$APP.LBL_CANCEL_BUTTON_TITLE}"
-                       onclick="document.location.href='index.php?module=Administration&action=index'"
                        class="button" type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
                 &nbsp;
                 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}"
