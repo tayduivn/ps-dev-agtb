@@ -194,7 +194,7 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actual = $meeting->get_notification_recipients();
         $expected = array($contacts[0]->id, $contacts[1]->id, $GLOBALS['current_user']->id);
-        $this->assertEquals($expected, array_keys($actual));
+        $this->assertEquals($expected, array_keys($actual), '', 0.0, 10, true);
     }
 
     public function testIgnoreOrganizerNotification()
