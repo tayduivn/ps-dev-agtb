@@ -121,33 +121,34 @@ if(trim($admin->settings['mail_smtpserver']) == '' && !$sendMailEnabled) {
     }
 }
 
-$isSugarOnLocalhost = in_array(
-    parse_url($GLOBALS['sugar_config']['site_url'], PHP_URL_HOST),
-    array('localhost', '127.0.0.1')
-);
-if (!empty($GLOBALS['sugar_config']['trigger_server']['url']) && $isSugarOnLocalhost
-        && !in_array(
+if (0) { // CRYS-1567-fix
+    $isSugarOnLocalhost = in_array(
+        parse_url($GLOBALS['sugar_config']['site_url'], PHP_URL_HOST),
+        array('localhost', '127.0.0.1')
+    );
+    if (!empty($GLOBALS['sugar_config']['trigger_server']['url']) && $isSugarOnLocalhost && !in_array(
             parse_url($GLOBALS['sugar_config']['trigger_server']['url'], PHP_URL_HOST),
             array('localhost', '127.0.0.1')
         )
-) {
+    ) {
         displayAdminError(translate('ERR_TRIGGER_SERVER_LOCALHOST', 'Administration'));
-}
-if (!empty($GLOBALS['sugar_config']['websockets']['server']['url']) && $isSugarOnLocalhost
+    }
+    if (!empty($GLOBALS['sugar_config']['websockets']['server']['url']) && $isSugarOnLocalhost
         && !in_array(
             parse_url($GLOBALS['sugar_config']['websockets']['server']['url'], PHP_URL_HOST),
             array('localhost', '127.0.0.1')
         )
-) {
+    ) {
         displayAdminError(translate('ERR_WEB_SOCKET_SERVER_LOCALHOST', 'Administration'));
-}
-if (!empty($GLOBALS['sugar_config']['websockets']['client']['url'])
+    }
+    if (!empty($GLOBALS['sugar_config']['websockets']['client']['url'])
         && in_array(
             parse_url($GLOBALS['sugar_config']['websockets']['client']['url'], PHP_URL_HOST),
             array('localhost', '127.0.0.1')
         )
-) {
+    ) {
         displayAdminError(translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST', 'Administration'));
+    }
 }
 
 if($smtp_error) {
