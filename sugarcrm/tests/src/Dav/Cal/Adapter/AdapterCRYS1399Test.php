@@ -312,12 +312,6 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                             'rrule_byday' => array(null),
                             'rrule_bymonthday' => array(null),
                             'rrule_bysetpos' => array(null),
-                        ),
-                        array(),
-                    ),
-                    array(
-                        array('override', null, array(), '2016-03-01 06:00:00', null, $groupId),
-                        array(
                             'timezone' => array('Europe/Minsk', null),
                             'title' => array('Week Events Change Name For All', null),
                             'date_start' => array('2016-03-01 06:00:00', null),
