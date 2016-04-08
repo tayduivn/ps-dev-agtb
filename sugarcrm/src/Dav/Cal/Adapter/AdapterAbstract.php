@@ -398,6 +398,7 @@ abstract class AdapterAbstract implements AdapterInterface
             \CalendarEvents::$old_assigned_user_id = $GLOBALS['current_user']->id;
         }
 
+        $isChildInRecurringChainSave = $importGroupId && isset(static::$sendingImportGroup[$importGroupId]);
         if ($importGroupId && !isset(static::$sendingImportGroup[$importGroupId])) {
             $bean->send_invites = true;
             $bean->ignoreOrganizerNotification = true;
@@ -406,7 +407,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if ($action == 'delete' && !$bean->deleted) {
             if ($bean->send_invites) {
-                $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+                $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
             }
             return static::DELETE;
         }
@@ -442,7 +443,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        $bean->inviteesBefore = \CalendarUtils::getInvitees($bean);
+        $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
 
         // setting values
         if (isset($changedFields['title'])) {
@@ -487,7 +488,15 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['date_end']);
             }
         }
+
+        if ($isChildInRecurringChainSave) {
+            \Activity::disable();
+        }
         $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override' || $action == 'restore');
+        if ($isChildInRecurringChainSave) {
+            \Activity::enable();
+        }
+
         if ($changes) {
             $isChanged = true;
             if ($action != 'restore') {
@@ -1878,6 +1887,10 @@ abstract class AdapterAbstract implements AdapterInterface
             }
 
             if ($bean->created_by == $GLOBALS['current_user']->id) {
+                // add organizer for a newly created event so that it is reflected in ActivityStream.
+                if (empty($existingLinks)) {
+                    $bean->setUserInvitees(array($bean->created_by));
+                }
                 $bean->set_accept_status($GLOBALS['current_user'], 'accept');
             }
         }

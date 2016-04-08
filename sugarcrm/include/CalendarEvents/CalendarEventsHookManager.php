@@ -45,55 +45,52 @@ class CalendarEventsHookManager
 
     /**
      * CalendarEvents after relationships update hook.
-     *
      * Serve "after_relationship_update" hook handling.
+     *
+     * @param SugarBean|Meeting|Call $bean
+     * @param string $event
+     * @param array $args
      */
     public function afterRelationshipUpdate(SugarBean $bean, $event, $args)
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship])) {
-            $inviteesChanges = array(
-                'changed' => array(
-                    $this->getInviteeInfo($bean, $args),
-                ),
-            );
-            $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
+            $invitee = $this->getInviteeInfo($bean, $args);
+            $this->changesInvitees($bean, 'changed', $invitee);
         }
     }
 
     /**
      * CalendarEvents after relationships add hook.
-     *
      * Serve "after_relationship_add" hook handling.
+     *
+     * @param SugarBean|Meeting|Call $bean
+     * @param string $event
+     * @param array $args
      */
     public function afterRelationshipAdd(SugarBean $bean, $event, $args)
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $inviteesChanges = array(
-                'added' => array(
-                    $this->getInviteeInfo($bean, $args),
-                ),
-            );
-            $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
+            $invitee = $this->getInviteeInfo($bean, $args);
+            $this->changesInvitees($bean, 'added', $invitee);
         }
     }
 
     /**
      * CalendarEvents after relationships delete hook.
-     *
      * Serve "after_relationship_delete" hook handling.
+     *
+     * @param SugarBean|Meeting|Call $bean
+     * @param string $event
+     * @param array $args
      */
     public function afterRelationshipDelete(SugarBean $bean, $event, $args)
     {
         $relationship = $args['relationship'];
         if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $inviteesChanges = array(
-                'deleted' => array(
-                    $this->getInviteeInfo($bean, $args),
-                ),
-            );
-            $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
+            $invitee = $this->getInviteeInfo($bean, $args);
+            $this->changesInvitees($bean, 'deleted', $invitee);
         }
     }
 
@@ -122,5 +119,24 @@ class CalendarEventsHookManager
         );
 
         return $invitee;
+    }
+
+    /**
+     * Send to export invitee or conservation for sent later.
+     *
+     * @param SugarBean|Meeting|Call $bean
+     * @param string $action
+     * @param array $invitee
+     */
+    protected function changesInvitees(SugarBean $bean, $action, array $invitee)
+    {
+        if ($bean->isUpdate()) {
+            $bean->getCalDavHook()->export($bean, array('update', array(), array($action => array($invitee))));
+        } else {
+            if (!isset($bean->inviteesChanges[$action])) {
+                $bean->inviteesChanges[$action] = array();
+            }
+            $bean->inviteesChanges[$action][] = $invitee;
+        }
     }
 }
