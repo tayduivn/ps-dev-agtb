@@ -203,7 +203,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                         }
                         $get_acl_roles = "SELECT acl_roles_users.* FROM acl_roles_users WHERE role_id = '" .
                             $token->expValue . "' AND user_id = '" .
-                            $this->currentUser->id . "' AND deleted = 0;";
+                            $this->currentUser->id . "' AND deleted = 0";
                         $result = $this->dbHandler->query($get_acl_roles);
                         $row = $this->dbHandler->fetchByAssoc($result);
                         $output = !empty($row) ? $token->expValue : '';
@@ -218,7 +218,7 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                             }
                             $get_acl_roles = "SELECT acl_roles_users.* FROM acl_roles_users WHERE role_id = '" .
                                 $token->expValue . "' AND user_id = '" .
-                                $this->userBean->id . "' AND deleted = 0;";
+                                $this->userBean->id . "' AND deleted = 0";
                             $result = $this->dbHandler->query($get_acl_roles);
                             $row = $this->dbHandler->fetchByAssoc($result);
                             $output = !empty($row) ? $token->expValue : '';
