@@ -31,9 +31,7 @@
                     {{/if}}
                 {{/if}}
                     <p style="margin-left: 0;padding-left: 0px;">
-                        <a href="#{{getFieldValue this "show_case_url"}}">{{str "LBL_PMSE_LABEL_PROCESS" this.module}}&nbsp;&nbsp;#&nbsp;&nbsp;{{getFieldValue this "cas_id"}}&nbsp;-&nbsp; {{getFieldValue this "name"}}</a>
-                        <!--<a href="#pmse_Inbox/{{getFieldValue this "id2"}}/layout/show-case/{{getFieldValue this "flow_id"}}">Case&nbsp;&nbsp;#&nbsp;&nbsp;{{getFieldValue this "cas_id"}}&nbsp;-&nbsp; {{getFieldValue this "name"}}</a>-->
-                        <!--{{buildRoute module="pmse_Inbox" id=attributes.id view="show-case" action=attributes.flow_id}}-->
+                        <a href="#{{fieldValue this "show_case_url"}}">{{str "LBL_PMSE_LABEL_PROCESS" this.module}}&nbsp;&nbsp;#&nbsp;&nbsp;{{fieldValue this "cas_id"}}&nbsp;-&nbsp; {{fieldValue this "name"}}</a>
                     </p>
                     {{#if ../overdueBadge}}
                         {{#with ../../overdueBadge}}
@@ -43,21 +41,15 @@
                     <div class="details" style="margin-left: 0;padding-left: 0px;">
                         {{#if attributes.is_assigned}}
                             <a href="#{{buildRoute module="Employees" id=attributes.cas_user_id action="detail"}}">
-                                {{getFieldValue this "cas_user_id_full_name"}}
+                                {{fieldValue this "cas_user_id_full_name"}}
                             </a>
                         {{else}}
                             {{str "LBL_UNASSIGNED" this.module}}
                         {{/if}}
-                        <!--&#44;&nbsp; attributes.record_date //task_name -->
-                        <!--<date class="date">{{relativeTime attributes.overdue}}</date>
                         <date class="date">{{relativeTime attributes.date_due}}</date>-->
-                        <strong>{{getFieldValue this "task_name"}}</strong>
-                        <!--{{#if attributes.act_expected_time}}-->
-                        <!--&#44;&nbsp;-->
-                            <!--{{#if attributes.expected_time_warning}}<date class="label label-important">Overdue</date><date>{{attributes.expected_time}}</date>{{else}} Due Date <date>{{attributes.expected_time}}</date>{{/if}}-->
-                        <!--{{/if}}-->
+                        <strong>{{fieldValue this "task_name"}}</strong>
                                 <br/>
-                        <strong>{{getFieldValue this "pro_title"}}</strong>
+                        <strong>{{fieldValue this "pro_title"}}</strong>
                         {{#if useRelativeTime}}
                             Due
                             {{relativeTime attributes.record_date class='date'}}

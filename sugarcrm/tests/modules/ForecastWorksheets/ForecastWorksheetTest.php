@@ -611,7 +611,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function dataProviderCopyValues()
     {
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->getMock('Opportunity', array('save', 'toArray'));
         $bean->amount = '50.000000';
         return array(
             array(
@@ -645,6 +645,15 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCopyValues($fields, $values)
     {
+        if ($values instanceof SugarBean) {
+            $values->expects($this->once())
+                ->method("toArray")
+                ->with()
+                ->will($this->returnValue(array(
+                    'amount' => '50.000000'
+                )));
+        }
+
         $worksheet = $this->getMockWorksheet();
         $worksheet->copyValues($fields, $values);
         $this->assertEquals('50.000000', $worksheet->likely_case);
