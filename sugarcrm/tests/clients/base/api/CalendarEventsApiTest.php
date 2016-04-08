@@ -573,9 +573,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             array('loadBean', 'generateRecurringCalendarEvents'),
             $calendarEvents
         );
-        $calendarEventsApiMock->expects($this->once())
-            ->method('loadBean')
-            ->will($this->returnValue($meeting));
+        $calendarEventsApiMock->method('loadBean')
+                              ->will($this->returnValue($meeting));
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
@@ -609,9 +608,8 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             array('loadBean', 'generateRecurringCalendarEvents'),
             $calendarEvents
         );
-        $calendarEventsApiMock->expects($this->once())
-            ->method('loadBean')
-            ->will($this->returnValue($meeting));
+        $calendarEventsApiMock->method('loadBean')
+                              ->will($this->returnValue($meeting));
         $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 

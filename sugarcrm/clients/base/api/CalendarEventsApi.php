@@ -100,6 +100,20 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
+    {
+        $currentUpdateChildrenStrategy = $bean->updateChildrenStrategy;
+        parent::saveBean($bean, $api, $args);
+        $bean = $this->loadBean($api, array(
+            'module' => $bean->module_name,
+            'record' => $bean->id,
+        ));
+        $bean->updateChildrenStrategy = $currentUpdateChildrenStrategy;
+    }
+
+    /**
      * Updates either a single event record or a set of recurring events based on all_recurrences flag
      * @param $api
      * @param $args
