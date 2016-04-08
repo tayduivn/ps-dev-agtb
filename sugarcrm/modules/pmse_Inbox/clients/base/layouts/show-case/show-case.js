@@ -379,6 +379,9 @@
                 }, this),
                 onCancel: $.noop
             });
+        } else {
+            // If not valid then switch to Edit Mode
+            this.recordComponent.editClicked();
         }
     },
 
@@ -427,6 +430,9 @@
                 }, this),
                 onCancel: $.noop
             });
+        } else {
+            // If not valid then switch to Edit Mode
+            this.recordComponent.editClicked();
         }
     },
 
@@ -476,6 +482,9 @@
                 }, this),
                 onCancel: $.noop
             });
+        } else {
+            // If not valid then switch to Edit Mode
+            this.recordComponent.editClicked();
         }
     },
 
