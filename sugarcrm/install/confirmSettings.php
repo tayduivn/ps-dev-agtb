@@ -393,24 +393,29 @@ if (!isset($sugar_config['translation_string_prefix']))
 $mod_strings_scheduler = return_module_language($GLOBALS['current_language'], 'Schedulers');
 $error = '';
 
-//Checking if SugarCRM instance installed on localhost.
-$isSugarOnLocalhost = in_array(parse_url($_SESSION['setup_site_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'));
-$warningsLocalhost = array();
-if (!empty($_SESSION['trigger_server_url']) && $isSugarOnLocalhost
-    && !in_array(parse_url($_SESSION['trigger_server_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
-) {
-    $warningsLocalhost[] = translate('ERR_TRIGGER_SERVER_LOCALHOST');
-}
+if (0) {  // CRYS-1567-fix
+    //Checking if SugarCRM instance installed on localhost.
+    $isSugarOnLocalhost = in_array(
+        parse_url($_SESSION['setup_site_url'], PHP_URL_HOST),
+        array('localhost', '127.0.0.1')
+    );
+    $warningsLocalhost = array();
+    if (!empty($_SESSION['trigger_server_url']) && $isSugarOnLocalhost &&
+        !in_array(parse_url($_SESSION['trigger_server_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
+    ) {
+        $warningsLocalhost[] = translate('ERR_TRIGGER_SERVER_LOCALHOST');
+    }
 
-if (!empty($_SESSION['websockets_server_url']) && $isSugarOnLocalhost
-    && !in_array(parse_url($_SESSION['websockets_server_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
-) {
-    $warningsLocalhost[] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST');
-}
-if (!empty($_SESSION['websockets_client_url'])
-    && in_array(parse_url($_SESSION['websockets_client_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
-) {
-    $warningsLocalhost[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST');
+    if (!empty($_SESSION['websockets_server_url']) && $isSugarOnLocalhost
+        && !in_array(parse_url($_SESSION['websockets_server_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
+    ) {
+        $warningsLocalhost[] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST');
+    }
+    if (!empty($_SESSION['websockets_client_url'])
+        && in_array(parse_url($_SESSION['websockets_client_url'], PHP_URL_HOST), array('localhost', '127.0.0.1'))
+    ) {
+        $warningsLocalhost[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST');
+    }
 }
 
 if (!isset($_SERVER['PATH'])) {

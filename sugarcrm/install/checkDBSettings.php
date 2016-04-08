@@ -288,13 +288,15 @@ function checkDBSettings($silent=false) {
             }
         }
 
-    //Test websocket settings
-    $WSErrors = checkWSConfiguration(true);
-    $errors = array_merge($errors, $WSErrors);
+        if (0) { // CRYS-1567-fix
+            //Test websocket settings
+            $WSErrors = checkWSConfiguration(true);
+            $errors = array_merge($errors, $WSErrors);
 
-    //Test trigger server settings
-    $TriggerServerErrors = checkTriggerServerConfiguration(true);
-    $errors = array_merge($errors, $TriggerServerErrors);
+            //Test trigger server settings
+            $TriggerServerErrors = checkTriggerServerConfiguration(true);
+            $errors = array_merge($errors, $TriggerServerErrors);
+        }
 
     installLog("End DB Check Process *************");
 
