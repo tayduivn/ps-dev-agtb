@@ -493,7 +493,30 @@ describe('Notifications', function() {
                 [23, -1, 23],
                 [7, 7, '7+']
             ], function(length, offset, expected) {
-                it('should update favicon badge with the correct unread notifications', function() {
+                it('should update favicon badge with the correct unread notifications ' +
+                    'if notification is added to the collection', function() {
+                    view._bootstrap();
+
+                    var badge = sinon.collection.stub(view.favicon, 'badge');
+                    view.collection.length = length;
+                    view.collection.next_offset = offset;
+                    view.collection.trigger('add');
+
+                    expect(badge).toHaveBeenCalledWith(expected);
+                });
+                it('should update favicon badge with the correct unread notifications ' +
+                    'if notification is removed from the collection', function() {
+                    view._bootstrap();
+
+                    var badge = sinon.collection.stub(view.favicon, 'badge');
+                    view.collection.length = length;
+                    view.collection.next_offset = offset;
+                    view.collection.trigger('remove');
+
+                    expect(badge).toHaveBeenCalledWith(expected);
+                });
+                it('should update favicon badge with the correct unread notifications ' +
+                    'if the collection is reset', function() {
                     view._bootstrap();
 
                     var badge = sinon.collection.stub(view.favicon, 'badge');
