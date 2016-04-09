@@ -15,22 +15,6 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSELogicHook
 {
-    function before_save($bean, $event, $arguments)
-    {
-        if (!$this->isSugarInstalled()) {
-            return true;
-        }
-
-        if (!$this->isExpectedModule($bean)) {
-            return true;
-        }
-        //Define PA Hook Handler
-        $hookHandler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
-        //Define if this is a new record or an updated record
-        $isNewRecord = empty($bean->fetched_row['id']);
-        return $hookHandler->runStartEventBeforeSave($bean, $event, $arguments, array(), $isNewRecord);
-    }
-
     function after_save($bean, $event, $arguments)
     {
         if (!$this->isSugarInstalled()) {

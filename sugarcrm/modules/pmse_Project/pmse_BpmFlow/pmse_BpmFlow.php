@@ -62,6 +62,4 @@ class pmse_BpmFlow extends pmse_BpmFlow_sugar {
 		}
 		return parent::ACLAccess($view, $context);
 	}
-
 }
-?>

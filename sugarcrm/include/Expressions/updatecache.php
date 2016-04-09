@@ -201,7 +201,7 @@ $contents["javascript"] .= ActionFactory::buildActionCache($silent);
 $new_contents = "<?php\n\$FUNCTION_MAP = array(\n";
 $new_contents .= $contents["function_map"];
 $new_contents .= ");\n";
-$new_contents .= "?>";
+
 
 
 create_cache_directory("Expressions/functionmap.php");

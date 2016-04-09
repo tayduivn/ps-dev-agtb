@@ -49,8 +49,20 @@ class EditView
     public $formName = '';
 
     /**
+     * Collection of fields on a record that are locked by a process
+     * @var array
+     */
+    public $lockedFields = array();
+
+    /**
+     * Needed for handling fieldsets that are named after fields
+     * @var array
+     */
+    public $lockedFieldsets = array();
+
+    /**
     * Array of additional tpl vars
-    * 
+    *
     * @var array
     */
     protected $tpl_vars = array();
@@ -83,6 +95,9 @@ class EditView
             $this->createFocus();
         }
 
+        // So we can send down locked status of fields
+        $this->lockedFields = $this->focus->getLockedFields(false);
+
         if (empty($GLOBALS['sugar_config']['showDetailData']))
         {
             $this->showDetailData = false;
@@ -100,6 +115,30 @@ class EditView
 
         $this->defs = $viewdefs[$this->module][$this->view];
         $this->isDuplicate = isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $this->focus->aclAccess('edit');
+        $this->setLockedFieldsets();
+    }
+
+    /**
+     * Sets up the locked fieldsets needed by the view to delegate locked status
+     * to child fields that are named the same as the field set
+     */
+    protected function setLockedFieldsets()
+    {
+        foreach ($this->defs['panels'] as $pIndex => $panel) {
+            foreach ($panel as $rIndex => $row) {
+                foreach ($row as $fIndex => $field) {
+                    $fieldName = is_array($field) && isset($field['name'])
+                                 ? $field['name']
+                                 : $field;
+
+                    if (in_array($fieldName, $this->lockedFields)) {
+                        if (isset($field['type']) && $field['type'] == 'address') {
+                            $this->lockedFieldsets[$fieldName] = 1;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function createFocus()
@@ -237,6 +276,11 @@ class EditView
                     $columnsUsed = 0;
                     foreach ($rowDef as $col => $colDef)
                     {
+                        // The field name is needed for locked field handling and such
+                        $fieldName = is_array($p[$row][$col]) && isset($p[$row][$col]['name'])
+                                     ? $p[$row][$col]['name']
+                                     : $p[$row][$col];
+
                         $panel[$row][$col] = is_array($p[$row][$col])
                             ? array('field' => $p[$row][$col])
                             : array('field' => array('name'=>$p[$row][$col]));
@@ -245,6 +289,19 @@ class EditView
                             (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex']))
                                 ? $p[$row][$col]['tabindex']
                                 : '0';
+
+                        // Set the locked state of this field on the metadata
+                        if (in_array($fieldName, $this->lockedFields)) {
+                            // Combination fields, or fieldsets, have a key that
+                            // is used by the collective template processor, like
+                            // Address fields. This sets locked field data on the
+                            // metadata so that individual field parsers can do
+                            // what they need to with it.
+                            if (isset($panel[$row][$col]['field']['displayParams']['key'])) {
+                                $panel[$row][$col]['field']['displayParams']['lockedFields'] = $this->lockedFields;
+                                $panel[$row][$col]['field']['displayParams']['lockedIcon'] = $this->getLockedFieldIcon();
+                            }
+                        }
 
                         if ($columnsInRows < $maxColumns)
                         {
@@ -384,6 +441,10 @@ class EditView
                 $this->fieldDefs[$name] = (!empty($this->fieldDefs[$name]) && !empty($this->fieldDefs[$name]['value']))
                     ? array_merge($this->focus->field_defs[$name], $this->fieldDefs[$name])
                     : $this->focus->field_defs[$name];
+
+                // Handling for locked fields, added to the vardef array for smarter
+                // handling in the templates
+                $this->fieldDefs[$name]['locked'] = in_array($name, $this->lockedFields) && !isset($this->lockedFieldsets[$name]);
 
                 foreach (array("formula", "default", "comments", "help") as $toEscape)
                 {
@@ -559,6 +620,10 @@ class EditView
         $this->th->ss->assign('gridline',$current_user->getPreference('gridline') == 'on' ? '1' : '0');
         $this->th->ss->assign('tabDefs', isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
         $this->th->ss->assign('VERSION_MARK', getVersionedPath(''));
+
+        // Needed for BWC locked field handling
+        $this->th->ss->assign('lockedIcon', $this->getLockedFieldIcon());
+        $this->th->ss->assign('lockedFields', $this->getLockedFieldsArray());
 
         global $js_custom_version;
         global $sugar_version;
@@ -869,6 +934,40 @@ class EditView
      */
     public function assignVar($name, $value) {
         $this->tpl_vars[$name] = $value;
+    }
+
+    /**
+     * Gets the icon for locked fields in BWC mode
+     * @return string
+     */
+    protected function getLockedFieldIcon()
+    {
+        $label = translate('EXCEPTION_FIELD_LOCKED_FOR_EDIT_DESC');
+        return SugarThemeRegistry::current()->getImage(
+            'lock.png',
+            'border="0" align="absmiddle" title="' . $label . '"',
+            10,
+            10,
+            null,
+            $label
+        );
+    }
+
+    /**
+     * Gets all fields for a bean with a locked attribute attached to it. This is
+     * a key => value pair of $fieldName => $lockedStatus
+     * @return array
+     */
+    protected function getLockedFieldsArray()
+    {
+        $return = array();
+        foreach ($this->fieldDefs as $field) {
+            if (isset($field['name'])) {
+                $return[$field['name']] = in_array($field['name'], $this->lockedFields);
+            }
+        }
+
+        return $return;
     }
 }
 

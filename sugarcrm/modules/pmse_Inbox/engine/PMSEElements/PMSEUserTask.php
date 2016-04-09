@@ -238,8 +238,18 @@ class PMSEUserTask extends PMSEActivity
                 $api = new RestService();
                 $api->user = $current_user;
                 $api->getRequest();
-                $beanPopulate = ApiHelper::getHelper($api, $beanObject)
-                    ->populateFromApi($beanObject, $beanData);
+
+                // See if there is a skip_locked_fields flag
+                $options = array();
+                if (!empty($beanData['skip_locked_fields'])) {
+                    // Add this to the options array for later handling
+                    $options['skip_locked_fields'] = 1;
+
+                    // Remove this from the request args
+                    unset($beanData['skip_locked_fields']);
+                }
+                $helper = ApiHelper::getHelper($api, $beanObject);
+                $beanPopulate = $helper->populateFromApi($beanObject, $beanData, $options);
             } catch (SugarApiExceptionRequestMethodFailure $conflict) {
                 $conflict->setExtraData("record", $beanObject);
                 throw $conflict;

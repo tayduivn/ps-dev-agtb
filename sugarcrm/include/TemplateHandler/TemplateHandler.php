@@ -92,6 +92,9 @@ class TemplateHandler {
         if ($view == "PMSEDetailView"){
             $view = 'EditView';
             $processAutorDefs = true;
+            // This tells the process router to skip enforcement of locked fields
+            // as part of routing or approve/reject
+            $contents .= '<input type="hidden" name="from_process_case" id="from_process_case"value="1" />';
         }
         //Insert validation and quicksearch stuff here
         if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
@@ -602,7 +605,7 @@ class TemplateHandler {
 
         return $js;
     }
-    
+
     /**
      * Get lookup array for QuickSearchDefaults custom class
      * @return array

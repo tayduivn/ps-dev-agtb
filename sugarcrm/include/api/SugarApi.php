@@ -80,6 +80,9 @@ abstract class SugarApi {
             $data['_module'] = $bean->module_name;
         }
 
+        // Handle lock fields application
+        $data['_locked_fields'] = $bean->getLockedFields();
+
         return $data;
     }
 
@@ -656,14 +659,14 @@ abstract class SugarApi {
      * @param int $limit List limit passed to API
      * @return int
      */
-    public function checkMaxListLimit($limit) 
+    public function checkMaxListLimit($limit)
     {
         $maxListLimit = SugarConfig::getInstance()->get('max_list_limit');
-                
+
         if ($maxListLimit && ($limit < 1 || $limit > $maxListLimit)) {
             return $maxListLimit;
         }
-        
+
         return $limit;
     }
 }

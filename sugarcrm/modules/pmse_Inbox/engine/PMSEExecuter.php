@@ -352,7 +352,7 @@ class PMSEExecuter
         $externalAction = '',
         $arguments = array()
     ) {
-        
+
         // Load the bean if the request comes from a RESUME_EXECUTION related origin
         // like for example: a timer event execution.
         if (is_null($bean)) {
@@ -378,7 +378,7 @@ class PMSEExecuter
                 return true;
             }
         }
-        
+
         $preparedData = $this->caseFlowHandler->prepareFlowData($flowData, $createThread);
         $this->logger->debug("Begin process Element {$flowData['bpmn_type']}");
 
@@ -403,7 +403,12 @@ class PMSEExecuter
             $element = $this->retrievePMSEElement('');
             $status = $e->getCode() == 0 ? 'QUEUE' : 'ERROR';
             $preparedData['cas_flow_status'] = $status;
-            $executionData = $element->prepareResponse($preparedData, $status, 'CREATE');
+
+            // Programmatically determine whether to create or update the flow
+            // This used to be hard coded to CREATE which would throw database
+            // errors for id collisions on the flow table
+            $state = $this->getExceptionState($preparedData);
+            $executionData = $element->prepareResponse($preparedData, $status, $state);
             // If the status is put into error then the Inbox record should be updated as well
             if ($status == 'ERROR') {
                 $this->caseFlowHandler->changeCaseStatus($executionData['flow_data']['cas_id'], 'ERROR');
@@ -428,7 +433,7 @@ class PMSEExecuter
                 $this->runEngine($elementData, $createThread, $bean);
             }
         } else {
-            // Quick fix to the 0 output printed by some element, 
+            // Quick fix to the 0 output printed by some element,
             // TODO: Don't remove until the fix to the element is commited
             ob_get_clean();
             return true;
@@ -436,6 +441,22 @@ class PMSEExecuter
         return true;
     }
 
+    /**
+     * Gets a database save state for a flow
+     * @param array $data Flow data array
+     * @return string
+     */
+    protected function getExceptionState($data)
+    {
+        // If the data does not have an id, or if it does not have a date entered AND created by
+        if (empty($data['id']) || (empty($data['date_entered']) && empty($data['created_by']))) {
+            // Then we will need to create the flow
+            return 'CREATE';
+        }
+
+        // Otherwise, update the flow
+        return 'UPDATE';
+    }
     /**
      * It processes an element based in the assumption that should be executed
      * Synchronously or Asynchronously

@@ -27,8 +27,13 @@ require_once 'data/SugarACL.php';
 require_once 'modules/Mailer/MailerFactory.php'; // imports all of the Mailer classes that are needed
 require_once 'include/utils.php';
 require_once 'include/Expressions/Expression/Parser/Parser.php';
+//BEGIN SUGARCRM flav=ent ONLY
+require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+//END SUGARCRM flav=ent ONLY
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,
@@ -8077,5 +8082,84 @@ class SugarBean
     public function getRecordName()
     {
         return isset($this->name) ? trim($this->name) : '';
+    }
+
+    /**
+     * Gets locked fields for a record
+     * @param bool $encode Flag that is sent to the DBManager to handle encoding
+     * @return array
+     */
+    public function getLockedFields($encode = true)
+    {
+        $return = array();
+        //BEGIN SUGARCRM flav=ent ONLY
+        if (empty($return)) {
+            $return = \PMSEEngineUtils::getLockedFields($this, $encode);
+        }
+        //END SUGARCRM flav=ent ONLY
+        return $return;
+    }
+
+    /**
+     * Checks to see if a locked field has changed value
+     * @param string $field The field name to check
+     * @param array $data The submitted data array
+     * @return boolean
+     */
+    public function lockedFieldHasChanged($field, $data)
+    {
+        // If this bean has this field then we can actually try it
+        if (isset($this->field_defs[$field])) {
+            $eval = ProcessManager\Factory::getFieldEvaluator($this->field_defs[$field]);
+            $eval->init($this, $field, $data);
+            return $eval->hasChanged();
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets a locked field error message based on the number of error fields found
+     * @param array $errors Array of error fields
+     * @return string
+     */
+    public function getLockedFieldErrorMessage(array $errors = array())
+    {
+        // Default is an empty string
+        $message = '';
+
+        // Handle assembly of the error message now
+        $count = count($errors);
+        if ($count) {
+            // Single field errors are handled here...
+            if ($count === 1) {
+                $message = sprintf(
+                    translate('EXCEPTION_FIELD_IS_LOCKED_FOR_EDIT'),
+                    $errors[0]
+                );
+            } else {
+                // Multi field errors are handled here...
+                $list = '';
+                for ($i = 0; $i < $count; $i++) {
+                    // Last iteration gets decorated differently
+                    if ($i === $count - 1) {
+                        $list .= 'and ' . $errors[$i];
+                    } else {
+                        if ($i < ($count - 2)) {
+                            $list .= $errors[$i] . ', ';
+                        } else {
+                            $list .= $errors[$i] . ' ';
+                        }
+                    }
+                }
+
+                $message = sprintf(
+                    translate('EXCEPTION_FIELDS_ARE_LOCKED_FOR_EDIT'),
+                    $list
+                );
+            }
+        }
+
+        return $message;
     }
 }
