@@ -166,39 +166,31 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
     }
 
     /**
-     * parser according to the types of users  USER_ADMIN, USER_ROLE and USER_IDENTITY
-     * and in each group there current_user,owner and supervisor
+     * Parser according to the types of users  USER_ADMIN, USER_ROLE and USER_IDENTITY
+     * and in each group there current_user, owner and supervisor
      * @param object $token
      * @return string
      */
     public function parseTokenValue($token)
     {
+        $variableUsers = array(
+            'owner' => isset($this->evaluatedBean) ? $this->evaluatedBean->assigned_user_id : '',
+            'supervisor' => isset($this->currentUser) ? $this->currentUser->reports_to_id : '',
+        );
+
         $output = '';
         switch ($token->expType) {
             case 'USER_ADMIN':
                 switch ($token->expField) {
                     case 'current_user':
-                        $output .= ($this->currentUser->is_admin == 0) ? '' : 'is_admin';
+                        $output = ($this->currentUser->is_admin == 0) ? '' : 'is_admin';
                         break;
                     case 'owner':
-                        $this->userBean->retrieve($this->evaluatedBean->assigned_user_id);
-                        $isAdmin = '';
-                        if (is_null($this->userBean)) {// @codeCoverageIgnoreStart
-                            $isAdmin = '';
-                        } else {// @codeCoverageIgnoreEnd
-                            $isAdmin = ($this->userBean->is_admin == 0) ? '' : 'is_admin';
-                        }
-                        $output .= $isAdmin;
-                        break;
                     case 'supervisor':
-                        $userSup = $this->userBean->retrieve($this->currentUser->reports_to_id);
-                        $isAdmin = '';
-                        if (is_null($userSup)) {
-                            $isAdmin = '';
-                        } else {
-                            $isAdmin = ($userSup->is_admin == 0) ? '' : 'is_admin';
+                        $this->userBean->retrieve($variableUsers[$token->expField]);
+                        if (!is_null($this->userBean)) {
+                            $output = ($this->userBean->is_admin == 0) ? '' : 'is_admin';
                         }
-                        $output .= $isAdmin;
                         break;
                 }
                 break;
@@ -206,49 +198,30 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                 switch ($token->expField) {
                     case 'current_user':
                         if ($token->expValue == 'is_admin') {
-                            $output .= ($this->currentUser->is_admin == 0) ? '' : 'is_admin'; //$this->userBean->is_admin . $operator . '1';
+                            $output = ($this->currentUser->is_admin == 0) ? '' : 'is_admin';
                             break;
                         }
                         $get_acl_roles = "SELECT acl_roles_users.* FROM acl_roles_users WHERE role_id = '" .
                             $token->expValue . "' AND user_id = '" .
-                            $this->currentUser->id . "' AND deleted = 0;";
+                            $this->currentUser->id . "' AND deleted = 0";
                         $result = $this->dbHandler->query($get_acl_roles);
-                        $output = $result->num_rows >= 1 ? $token->expValue : "";
+                        $row = $this->dbHandler->fetchByAssoc($result);
+                        $output = !empty($row) ? $token->expValue : '';
                         break;
                     case 'owner':
-                        $this->userBean->retrieve($this->evaluatedBean->assigned_user_id);
+                    case 'supervisor':
+                        $this->userBean->retrieve($variableUsers[$token->expField]);
                         if (!is_null($this->userBean)) {
                             if ($token->expValue == 'is_admin') {
-                                $output = ($this->userBean->is_admin == 0) ? '' : 'is_admin'; //$this->userBean->is_admin . $operator . '1';
+                                $output = ($this->userBean->is_admin == 0) ? '' : 'is_admin';
                                 break;
                             }
                             $get_acl_roles = "SELECT acl_roles_users.* FROM acl_roles_users WHERE role_id = '" .
                                 $token->expValue . "' AND user_id = '" .
-                                $this->userBean->id . "' AND deleted = 0;";
+                                $this->userBean->id . "' AND deleted = 0";
                             $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows >= 1 ? $token->expValue : "";
-                        } else {
-                            // @codeCoverageIgnoreStart
-                            $output = '';
-                            // @codeCoverageIgnoreEnd
-                        }
-                        break;
-                    case 'supervisor':
-                        $userSup = $this->userBean->retrieve($this->currentUser->reports_to_id);
-                        if (!is_null($userSup)) {
-                            if ($token->expValue == 'is_admin') {
-                                $output = ($userSup->is_admin == 0) ? '' : 'is_admin'; //$userSup->is_admin . $operator . '1';
-                                break;
-                            }
-                            $get_acl_roles = "SELECT acl_roles_users.* FROM acl_roles_users WHERE role_id = '" .
-                                $token->expValue . "' AND user_id = '" .
-                                $userSup->id . "' AND deleted = 0;";
-                            $result = $this->dbHandler->query($get_acl_roles);
-                            $output = $result->num_rows >= 1 ? $token->expValue : "";
-                        } else {
-                            // @codeCoverageIgnoreStart
-                            $output = '';
-                            // @codeCoverageIgnoreEnd
+                            $row = $this->dbHandler->fetchByAssoc($result);
+                            $output = !empty($row) ? $token->expValue : '';
                         }
                         break;
                 }
@@ -259,15 +232,9 @@ class PMSEUserRoleParser implements PMSEDataParserInterface
                         $output = $this->currentUser->id;
                         break;
                     case 'owner':
-                        if (!is_null($this->evaluatedBean->assigned_user_id)) {
-                            $output = $this->evaluatedBean->assigned_user_id;
-                        } else {
-                            $output = 'false';
-                        }
-                        break;
                     case 'supervisor':
-                        if (!is_null($this->currentUser->reports_to_id)) {
-                            $output = $this->currentUser->reports_to_id;
+                        if (!is_null($variableUsers[$token->expField])) {
+                            $output = $variableUsers[$token->expField];
                         } else {
                             $output = 'false';
                         }
