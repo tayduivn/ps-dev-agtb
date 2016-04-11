@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -4336,6 +4337,18 @@ class InboundEmail extends SugarBean {
 					$email->team_set_id = $_REQUEST['team_set_id'];
 				} // if
 			}
+
+            //BEGIN SUGARCRM flav=ent ONLY
+            $email->team_set_selected_id = '';
+            $selectedTeamIdsArray = InputValidation::getService()->getValidInputRequest('selected_team_ids');
+            if (!empty($selectedTeamIdsArray)) {
+                $selectedTeamIdsArray = explode(',', $selectedTeamIdsArray);
+                $selectedTeamIdsArray = array_filter($selectedTeamIdsArray);
+                if (!empty($selectedTeamIdsArray)) {
+                    $email->team_set_selected_id = $this->getTeamSetIdForTeams($selectedTeamIdsArray);
+                }
+            }
+            //END SUGARCRM flav=ent ONLY
 
 	        //Assign Parent Values if set
 	        if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
