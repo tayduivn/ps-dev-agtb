@@ -501,13 +501,18 @@ if(typeof(SUGAR.collection) == "undefined") {
             var team_ids = [];
             var table_element_id = formname + '_' + fieldname + '_table';
             if (document.getElementById(table_element_id)) {
-                var input_elements = YAHOO.util.Selector.query(
-                    'input[type=checkbox]:checked',
+                var inputElements = YAHOO.util.Selector.query(
+                    'input[type=hidden][name^=id_' + fieldname + ']',
                     document.getElementById(table_element_id)
                 );
-                for (var t = 0; t < input_elements.length; t++) {
-                    if (input_elements[t].id.match("selected_" + fieldname + "_collection_") != null) {
-                        team_ids.push(input_elements[t].value);
+                var checkboxes = YAHOO.util.Selector.query(
+                    'input[type=checkbox]',
+                    document.getElementById(table_element_id)
+                );
+                for (var t = 0; t < checkboxes.length; t++) {
+                    if ($(checkboxes[t]).prop('checked')
+                            && checkboxes[t].id.match("selected_" + fieldname + "_collection_") != null) {
+                        team_ids.push(inputElements[t].value);
                     } // if
                 } // for
             } // if
