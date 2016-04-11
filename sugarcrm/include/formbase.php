@@ -18,7 +18,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
  * Check for null or zero for list of values
@@ -52,6 +54,13 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
 
+    // Need to handle process management locked fields unless we are coming from
+    // a PMSE case form
+    $fromCase = InputValidation::getService()->getValidInputRequest('from_process_case');
+    if (empty($fromCase)) {
+        handleLockedFieldEdits($focus);
+    }
+
 	foreach($focus->field_defs as $field=>$def) {
         if ( $field == 'id' && !empty($focus->id) ) {
             // Don't try and overwrite the ID
@@ -65,37 +74,6 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
             $GLOBALS['log']->fatal("Field '$field' does not have a SugarField handler");
         }
 
-/*
-        if(isset($_POST[$prefix.$field])) {
-			if(is_array($_POST[$prefix.$field]) && !empty($focus->field_defs[$field]['isMultiSelect'])) {
-				if($_POST[$prefix.$field][0] === '' && !empty($_POST[$prefix.$field][1]) ) {
-					unset($_POST[$prefix.$field][0]);
-				}
-				$_POST[$prefix.$field] = encodeMultienumValue($_POST[$prefix.$field]);
-			}
-
-			$focus->$field = $_POST[$prefix.$field];
-			/*
-			 * overrides the passed value for booleans.
-			 * this will be fully deprecated when the change to binary booleans is complete.
-			 /
-			if(isset($focus->field_defs[$prefix.$field]) && $focus->field_defs[$prefix.$field]['type'] == 'bool' && isset($focus->field_defs[$prefix.$field]['options'])) {
-				$opts = explode("|", $focus->field_defs[$prefix.$field]['options']);
-				$bool = $_POST[$prefix.$field];
-
-				if(is_int($bool) || ($bool === "0" || $bool === "1" || $bool === "2")) {
-					// 1=on, 2=off
-					$selection = ($_POST[$prefix.$field] == "0") ? 1 : 0;
-				} elseif(is_bool($_POST[$prefix.$field])) {
-					// true=on, false=off
-					$selection = ($_POST[$prefix.$field]) ? 0 : 1;
-				}
-				$focus->$field = $opts[$selection];
-			}
-		} else if(!empty($focus->field_defs[$field]['isMultiSelect']) && !isset($_POST[$prefix.$field]) && isset($_POST[$prefix.$field . '_multiselect'])) {
-			$focus->$field = '';
-		}
-*/
 	}
 
 	foreach($focus->additional_column_fields as $field) {
@@ -556,4 +534,28 @@ function save_from_report($report_id,$parent_id, $module_name, $relationship_att
     }
 }
 
-?>
+/**
+ * Checks a bean for locked fields and if there are any edited, throws an error
+ * @param SugarBean $focus The Sugar Bean object
+ */
+function handleLockedFieldEdits($focus)
+{
+    // Needed to handle process management locked fields, sending a false to the
+    // locked field getter since BWC needs to have the data return set unencoded
+    $locked = $focus->isUpdate() ? $focus->getLockedFields(false) : array();
+
+    $errors = array();
+    foreach ($locked as $field) {
+        if ($focus->lockedFieldHasChanged($field, $_POST)) {
+            $errors[] = $field;
+        }
+    }
+
+    // Handle messaging for this issue if there are errors to handle
+    if ($errors) {
+        $message = $focus->getLockedFieldErrorMessage($errors);
+        if (!empty($message)) {
+            sugar_die($message);
+        }
+    }
+}

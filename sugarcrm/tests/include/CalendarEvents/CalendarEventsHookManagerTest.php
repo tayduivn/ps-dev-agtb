@@ -47,6 +47,7 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->user->id = create_guid();
         $this->user->emailAddress = $emailAddress;
         $this->user->name = 'User' . rand(1000, 1999);
+        $this->user->deleted = 0;
         $this->currentUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->user;
         UserCRYS1579::$currentUser = $this->user;
@@ -187,6 +188,45 @@ class CalendarEventsHookManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $hookManager = new CalendarEventsHookManager();
         $hookManager->afterRelationshipDelete($this->call, 'after_relationship_delete', $this->args);
     }
+
+    /**
+     * Test for situation where User/Contact/Lead deleted from sugar.
+     *
+     * @covers \CalendarEventsHookManager::afterRelationshipDelete
+     */
+    public function testTriggerCalDavExportAfterRelationshipDeleteWithDeletedUser()
+    {
+        $calDavHandler = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', array('export'));
+        $calDavHandler->expects($this->at(0))
+                      ->method('export')
+                      ->with(
+                          $this->anything(),
+                          $this->equalTo(
+                              array(
+                                  'participant-delete',
+                                  array(),
+                                  array(
+                                      'deleted' => array(
+                                          array(
+                                              'Users',
+                                              $this->user->id,
+                                              $this->currentUserPrimaryEmail,
+                                              'none',
+                                              $GLOBALS['locale']->formatName($this->user),
+                                          ),
+                                      ),
+                                  ),
+                              )
+                          )
+                      );
+        CallCRYS1415TestMock::$calDavHandler = $calDavHandler;
+
+        $this->user->mark_deleted($this->user->id);
+        \BeanFactory::unregisterBean($this->user);
+
+        $hookManager = new CalendarEventsHookManager();
+        $hookManager->afterRelationshipDelete($this->call, 'after_relationship_delete', $this->args);
+    }
 }
 
 /**
@@ -218,6 +258,16 @@ class UserCRYS1579 extends User
         $this->id = static::$currentUser->id;
         $this->name = static::$currentUser->name;
         $this->emailAddress = static::$currentUser->emailAddress;
+        $this->deleted = static::$currentUser->deleted;
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mark_deleted($id)
+    {
+        $this->deleted = 1;
+        static::$currentUser->deleted = 1;
     }
 }

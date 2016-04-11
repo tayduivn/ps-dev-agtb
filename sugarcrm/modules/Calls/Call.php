@@ -121,13 +121,6 @@ class Call extends SugarBean {
     public $inviteesNotification = null;
 
     /**
-     * Helper-field to store invites changes for export.
-     * Is not a sugar-field, is not persisted anywhere.
-     * @var array
-     */
-    public $inviteesChanges = array();
-
-    /**
      * Helper-field to store information to change all recurrence or only participants or only parent.
      * Is not a sugar-field, is not persisted anywhere.
      * @var int
@@ -265,13 +258,12 @@ class Call extends SugarBean {
         }
 
         if ($isUpdate) {
-            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, $this->inviteesChanges));
+            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
         } else {
             $this->getCalDavHook()->export($this);
         }
 
         $this->inviteesNotification = null;
-        $this->inviteesChanges = array();
 
         return $return_id;
 	}

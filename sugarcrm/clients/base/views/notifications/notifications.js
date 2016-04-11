@@ -181,19 +181,28 @@
         }
 
         this.favicon = new Favico({animation: 'none'});
-        this.collection.on('reset', function() {
-            var badge = this.collection.length;
-            if (this.collection.next_offset > 0) {
-                badge = badge + '+';
-            }
-            this.favicon.badge(badge);
-        }, this);
+        this.collection.on('add', this._updateFaviconBadge, this);
+        this.collection.on('remove', this._updateFaviconBadge, this);
+        this.collection.on('reset', this._updateFaviconBadge, this);
 
         this.on('render', function(){
             if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
                 this.favicon.reset();
             }
         });
+    },
+
+    /**
+     * Updates Favicon badge after adding, removing or resetting the collection.
+     *
+     * @private
+     */
+    _updateFaviconBadge: function() {
+        var badge = this.collection.length;
+        if (this.collection.next_offset > 0) {
+            badge = badge + '+';
+        }
+        this.favicon.badge(badge);
     },
 
     /**

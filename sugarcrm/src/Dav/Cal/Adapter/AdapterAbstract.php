@@ -77,6 +77,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         }
                     }
                     break;
+                case 'participant-delete':
                 case 'delete':
                     if ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_CURRENT &&
                         $this->getCalendarEvents()->isEventRecurring($bean)
@@ -280,7 +281,26 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['date_end']);
             }
         }
-        $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override', $organizerId);
+        if ($action == 'participant-delete') {
+            $changes =
+                $this->setCalDavInvitees($invitees, $collection->getParent(), $action == 'override', $organizerId);
+
+            $customChildrenIds = $collection->getCustomizedChildrenRecurrenceIds();
+            foreach ($customChildrenIds as $customChildId) {
+                $result =
+                    $this->setCalDavInvitees(
+                        $invitees,
+                        $collection->getChild($customChildId),
+                        $action == 'override',
+                        $organizerId
+                    );
+                if ($result) {
+                    $changes = $result;
+                }
+            }
+        } else {
+            $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override', $organizerId);
+        }
         if ($changes) {
             $isChanged = true;
             $data[2] = $changes;

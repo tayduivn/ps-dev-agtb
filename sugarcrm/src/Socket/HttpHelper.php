@@ -12,15 +12,47 @@
 
 namespace Sugarcrm\Sugarcrm\Socket;
 
+/**
+ * Class HttpHelper extends SugarHttpClient functions and provides convenient
+ * methods to sends JSON requests to server.
+ *
+ * For checking server availability use @see HttpHelper::ping()
+ *
+ * For sending request to server use @see HttpHelper::send()
+ *
+ * Examples:
+ *
+ * <code>
+ * // instantiate helper
+ * $httpHelper = new HttpHelper();
+ *
+ * // checks server availability by url
+ * $httpHelper->ping('http://example.site');
+ *
+ * // sends HTTP request to server
+ * $httpHelper->send(
+ *      'delete',
+ *      'http://example.site/',
+ *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2"}'
+ *      array(
+ *          'X-Auth-Token: auth-token',
+ *          'X-Auth-Version: 1',
+ *      )
+ * );
+ *
+ * </code>
+ *
+ * @package Sugarcrm\Sugarcrm\Socket
+ */
 class HttpHelper extends \SugarHttpClient
 {
     /**
-     * @var bool
+     * @var mixed
      */
-    protected $lastStatus = false;
+    protected $lastResponse = null;
 
     /**
-     * This function checks site availability.
+     * Checks server availability.
      *
      * @param string $url
      * @return bool
@@ -29,51 +61,68 @@ class HttpHelper extends \SugarHttpClient
     {
         $ch = curl_init($url);
 
-        curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
-        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $returnCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
+        return (200 === $returnCode);
+    }
 
-        $this->lastStatus = (200 == $retcode);
+    /**
+     * Performs server request.
+     *
+     * @param string $method (get|post|put|delete)
+     * @param string $url
+     * @param string $args
+     * @param array $headers
+     * @return bool was request performed successfully
+     */
+    public function send($method, $url, $args = '', $headers = array())
+    {
+        $this->last_error = '';
+        $this->lastResponse = null;
+
+        $curlOpts = array(
+            CURLOPT_CUSTOMREQUEST => strtoupper($method),
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Content-Length: ' . strlen($args)),
+        );
+        if ($headers) {
+            $curlOpts[CURLOPT_HTTPHEADER] = array_merge($curlOpts[CURLOPT_HTTPHEADER], $headers);
+        }
+
+        if ($curlOpts[CURLOPT_CUSTOMREQUEST] !== 'POST') {
+            $curlOpts[CURLOPT_POST] = false;
+        }
+
+        if ($args) {
+            $curlOpts[CURLOPT_POSTFIELDS] = $args;
+        }
+
+        $response = $this->callRest($url, $args, $curlOpts);
+        $this->lastResponse = $this->isSuccess() ? json_decode($response, true) : null;
         return $this->isSuccess();
     }
 
     /**
-     * Performs socket server request
-     *
-     * @param string $url
-     * @param string $args
-     * @param array $headers
-     * @return bool|mixed
-     */
-    public function getRemoteData($url, $args = '', $headers = array())
-    {
-        $options = array(
-            CURLOPT_HTTPHEADER => array("Content-Type: application/json")
-        );
-        if ($headers) {
-            $options[CURLOPT_HTTPHEADER] = array_merge($options[CURLOPT_HTTPHEADER], $headers);
-        }
-
-        $response = $this->callRest(
-            $url,
-            $args,
-            $options
-        );
-        $this->lastStatus = ($this->getLastError() === '');
-        return $this->isSuccess() ? json_decode($response, true) : false;
-    }
-
-    /**
-     * Returns last operation status
+     * Returns true if last request doesn't contain any errors.
      *
      * @return bool
      */
     public function isSuccess()
     {
-        return $this->lastStatus;
+        return ($this->last_error === '');
     }
 
+    /**
+     * Returns decoded response's body from last request.
+     *
+     * @return mixed
+     */
+    public function getLastResponse()
+    {
+        return $this->lastResponse;
+    }
 }

@@ -37,41 +37,40 @@ class CurrentUserPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
-        SugarTestHelper::setUp("app_strings");
-        SugarTestHelper::setUp("app_list_strings");
-        SugarTestHelper::setUp("beanFiles");
-        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $contact = new Contact();
-        $contact->id = uniqid('c_');
-        $contact->first_name = 'testfirst';
-        $contact->last_name = 'testlast';
-        $contact->picture = 'testpicture';
-        $contact->portal_active = 1;
-        $contact->portal_name = 'testportal';
-        $contact->new_with_id = true;
-        $contact->disable_custom_fields = true;
-        $contact->save();
+        $this->contact = SugarTestContactUtilities::createContact(
+            '',
+            array(
+                'first_name' => 'testfirst',
+                'last_name' => 'testlast',
+                'picture' => 'testpicture',
+                'portal_active' => 1,
+                'portal_name' => 'testportal',
+                'disable_custom_fields' => true,
+            )
+        );
 
-        $_SESSION['contact_id'] = $contact->id;
-
-        $this->contact = $contact;
+        $_SESSION['contact_id'] = $this->contact->id;
 
         $this->currentUserApi= new CurrentUserPortalApi();
-        $this->currentUserApi->portal_contact = $contact;
+        $this->currentUserApi->portal_contact = $this->contact;
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
     public function tearDown()
     {
-        $this->contact->db->query("DELETE FROM contacts WHERE id = '" . $this->contact->id . "'");
         $this->service = null;
         $this->currentUserApi = null;
+        $this->contact = null;
 
-        unset ($_SESSION['contact_id']);
+        unset($_SESSION['contact_id']);
 
+        SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
 
         parent::tearDown();
@@ -97,7 +96,6 @@ class CurrentUserPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('full_name', $result['current_user']);
         $this->assertArrayHasKey('picture', $result['current_user']);
         $this->assertArrayHasKey('portal_name', $result['current_user']);
-
     }
 
     /**
@@ -151,9 +149,9 @@ class CurrentUserPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('picture', $result['current_user']);
         $this->assertArrayHasKey('portal_name', $result['current_user']);
 
-        foreach($expected as $k => $v) {
+        foreach ($expected as $k => $v) {
             $this->assertArrayHasKey($k, $result['current_user']);
-            $this->assertEquals($v,$result['current_user'][$k]);
+            $this->assertEquals($v, $result['current_user'][$k]);
         }
     }
 

@@ -13,12 +13,12 @@
 namespace Sugarcrm\Sugarcrm\Trigger;
 
 /**
- * Class HttpHelper wraps curl functions and provides
- * methods to set up and delete triggers on trigger server.
+ * Class HttpHelper extends SugarHttpClient functions and provides convenient
+ * methods to sends JSON requests to server.
  *
- * For checking trigger server availability use @see HttpHelper::ping()
+ * For checking server availability use @see HttpHelper::ping()
  *
- * For sending request to trigger server use @see HttpHelper::send()
+ * For sending request to server use @see HttpHelper::send()
  *
  * Examples:
  *
@@ -26,14 +26,14 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  * // instantiate helper
  * $httpHelper = new HttpHelper();
  *
- * // checks trigger server availability by url
- * $httpHelper->ping('http://trigger_server.site');
+ * // checks server availability by url
+ * $httpHelper->ping('http://example.site');
  *
- * // sends HTTP request to trigger server
+ * // sends HTTP request to server
  * $httpHelper->send(
  *      'delete',
- *      'http://trigger_server.site/',
- *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2","id":"c92af13d"}',
+ *      'http://example.site/',
+ *      '{"url":"http://sugar_host.site","token": "20db6fcd-0ce9-4da4-87d1-fae1d563b5a2"}'
  *      array(
  *          'X-Auth-Token: auth-token',
  *          'X-Auth-Version: 1',
@@ -46,9 +46,13 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  */
 class HttpHelper extends \SugarHttpClient
 {
+    /**
+     * @var mixed
+     */
+    protected $lastResponse = null;
 
     /**
-     * Checks trigger server availability.
+     * Checks server availability.
      *
      * @param string $url
      * @return bool
@@ -61,16 +65,16 @@ class HttpHelper extends \SugarHttpClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
-        $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $returnCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return (200 === $retcode);
+        return (200 === $returnCode);
     }
 
     /**
-     * Performs trigger server request.
+     * Performs server request.
      *
-     * @param string $method (post or delete)
+     * @param string $method (get|post|put|delete)
      * @param string $url
      * @param string $args
      * @param array $headers
@@ -78,48 +82,47 @@ class HttpHelper extends \SugarHttpClient
      */
     public function send($method, $url, $args = '', $headers = array())
     {
-        $curl = curl_init($url);
+        $this->last_error = '';
+        $this->lastResponse = null;
 
-        $headers = array_merge($headers, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($args),
-        ));
-
-        $curlOpts = $this->getCurlOpts(array(
+        $curlOpts = array(
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POSTFIELDS => $args,
-        ));
-
-        curl_setopt_array($curl, $curlOpts);
-
-        $this->getLogger()->debug("HTTP client call: $method $url -> " . var_export($args, true));
-        $response = curl_exec($curl);
-
-        // Handle error
-        if ($response === false) {
-            $this->last_error = 'ERROR_REQUEST_FAILED';
-            $curl_errno = curl_errno($curl);
-            $curl_error = curl_error($curl);
-            $this->getLogger()
-                ->error("HTTP client: cURL call failed for $method '$url': error $curl_errno: $curl_error");
-            return false;
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Content-Length: ' . strlen($args)),
+        );
+        if ($headers) {
+            $curlOpts[CURLOPT_HTTPHEADER] = array_merge($curlOpts[CURLOPT_HTTPHEADER], $headers);
         }
 
-        $this->getLogger()->debug("HTTP client response: $response");
-        curl_close($curl);
+        if ($curlOpts[CURLOPT_CUSTOMREQUEST] !== 'POST') {
+            $curlOpts[CURLOPT_POST] = false;
+        }
 
-        return true;
+        if ($args) {
+            $curlOpts[CURLOPT_POSTFIELDS] = $args;
+        }
+
+        $response = $this->callRest($url, $args, $curlOpts);
+        $this->lastResponse = $this->isSuccess() ? json_decode($response, true) : null;
+        return $this->isSuccess();
     }
 
     /**
-     * Factory method for LoggerManager class.
+     * Returns true if last request doesn't contain any errors.
      *
-     * @return \LoggerManager
-     * @codeCoverageIgnore
+     * @return bool
      */
-    protected function getLogger()
+    public function isSuccess()
     {
-        return \LoggerManager::getLogger();
+        return ($this->last_error === '');
+    }
+
+    /**
+     * Returns decoded response's body from last request.
+     *
+     * @return mixed
+     */
+    public function getLastResponse()
+    {
+        return $this->lastResponse;
     }
 }

@@ -251,3 +251,12 @@ class SugarApiExceptionSearchRuntime extends SugarApiExceptionError
     public $errorLabel = 'search_runtime';
     public $messageLabel = 'EXCEPTION_SEARCH_RUNTIME';
 }
+
+/**
+ * Locked field edit attempt exception
+ */
+class SugarApiExceptionFieldEditDisabled extends SugarApiExceptionNotAuthorized
+{
+    public $errorLabel = 'field_locked';
+    public $messageLabel = 'EXCEPTION_FIELD_LOCKED_FOR_EDIT';
+}

@@ -81,7 +81,15 @@ class pmse_InboxViewShowCase extends SugarView
 
             $this->module = $module;
 
-            $metadataFile = $this->getMetaDataFile($readonly ? 'detail' : 'edit');
+            if ($readonly) {
+                $metaDataFileName = 'detail';
+                $metaDataArrayName = 'DetailView';
+            } else {
+                $metaDataFileName = 'edit';
+                $metaDataArrayName = 'EditView';
+            }
+            $metadataFile = $this->getMetaDataFile($metaDataFileName);
+
 
             $viewdefs = '';
 
@@ -89,16 +97,15 @@ class pmse_InboxViewShowCase extends SugarView
                 $this->showVCRControl = !$GLOBALS['sugar_config']['disable_vcr'];
             }
 
-            if (empty($altViewMode)) {
-                $mfile = get_custom_file_if_exists($metadataFile);
-                if (isset($mfile)) {
-                    require $metadataFile;
-                }
-            } else {
-                $dynaformBean = BeanFactory::getBean('pmse_BpmDynaForm');//new BpmDynaForm();
-                $dynaformBean->retrieve_by_string_fields(array('dyn_uid' => $altViewMode['dyn_uid']));
+            $mfile = get_custom_file_if_exists($metadataFile);
+            if (isset($mfile)) {
+                require $metadataFile;
+            }
+
+            if (!empty($altViewMode)) {
+                $viewdefs = array('BpmView' => $viewdefs[$module][$metaDataArrayName]);
                 $this->dyn_uid = $altViewMode['dyn_uid'];
-                $viewdefs = json_decode(html_entity_decode($dynaformBean->dyn_view_defs), true);
+
                 if ($readonly) {
                     $this->setHeaderFootersReadOnly($viewdefs);
                 }

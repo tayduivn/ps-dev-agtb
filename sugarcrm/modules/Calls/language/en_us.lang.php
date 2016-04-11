@@ -201,7 +201,7 @@ To create a {{calls_singular_module}}:
         'the delivery method for each notification. Notifications apply to the users that are assigned to the ' .
         'record-, on a team with belonging to the record,- or invited to a call.',
     // Event remind
-    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about Call',
+    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about {{singular_module_name}}',
     'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',
     'LBL_EVENT_REMINDER_TEXT' => 'You have call "%1$s" at %2$s: %3$s',
     'LBL_EVENT_REMINDER_HTML' => 'You have call <a href="%3$s">%1$s</a> at %2$s.',

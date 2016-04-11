@@ -16,13 +16,6 @@
 
 $pmseHookClassPath = SugarAutoLoader::requireWithCustom('modules/pmse_Inbox/engine/PMSELogicHook.php');
 $pmseHookClassName = SugarAutoLoader::customClass('PMSELogicHook');
-$hook_array['before_save'][] = array(
-    100,
-    'pmse',
-    $pmseHookClassPath,
-    $pmseHookClassName,
-    'before_save'
-);
 $hook_array['after_save'][] = array(
     100,
     'pmse',
