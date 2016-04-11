@@ -500,7 +500,7 @@ class TeamBasedACLConfigurator
     {
         if (!isset(self::$implementationCache[$module])) {
             $bean = BeanFactory::getBean($module);
-            self::$implementationCache[$module] = (bool)$bean->getFieldDefinition('team_set_selected_id');
+            self::$implementationCache[$module] = $bean && (bool)$bean->getFieldDefinition('team_set_selected_id');
         }
         return self::$implementationCache[$module];
     }
