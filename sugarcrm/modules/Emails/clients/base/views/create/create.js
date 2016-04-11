@@ -24,6 +24,9 @@
     ATTACHMENT_FIELD_HEIGHT: 44,
     FIELD_PANEL_BODY_SELECTOR: '.row-fluid.panel_body',
 
+    STATE_DRAFT: 'Draft',
+    STATE_READY: 'Ready',
+
     sendButtonName: 'send_button',
     cancelButtonName: 'cancel_button',
     saveAsDraftButtonName: 'draft_button',
@@ -150,7 +153,7 @@
             subject = caseMacro + ' ' + relatedModel.get('name');
 
         subject = subject.replace(keyMacro, relatedModel.get('case_number'));
-        this.model.set('subject', subject);
+        this.model.set('name', subject);
         if (!this.isFieldPopulated('to_addresses')) {
             // no addresses, attempt to populate from contacts relationship
             var contacts = relatedModel.getRelatedCollection('contacts');
@@ -194,14 +197,6 @@
                 fields: ['name']
             });
         }
-    },
-
-    /**
-     * Enable/disable the page action dropdown menu based on whether email is sendable
-     * @param {boolean} disabled
-     */
-    setMainButtonsDisabled: function(disabled) {
-        this.getField('main_dropdown').setDisabled(disabled);
     },
 
     /**
@@ -379,12 +374,8 @@
      * Save the email as a draft for later sending
      */
     saveAsDraft: function() {
-        this.saveModel(
-            'draft',
-            app.lang.get('LBL_DRAFT_SAVING', this.module),
-            app.lang.get('LBL_DRAFT_SAVED', this.module),
-            app.lang.get('LBL_ERROR_SAVING_DRAFT', this.module)
-        );
+        this.model.set('state', this.STATE_DRAFT);
+        this.save();
     },
 
     /**
@@ -392,12 +383,8 @@
      */
     send: function() {
         var sendEmail = _.bind(function() {
-            this.saveModel(
-                'ready',
-                app.lang.get('LBL_EMAIL_SENDING', this.module),
-                app.lang.get('LBL_EMAIL_SENT', this.module),
-                app.lang.get('LBL_ERROR_SENDING_EMAIL', this.module)
-            );
+            this.model.set('state', this.STATE_READY);
+            this.save();
         }, this);
 
         if (!this.isFieldPopulated('to_addresses') &&
@@ -409,19 +396,19 @@
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'
             });
-        } else if (!this.isFieldPopulated('subject') && !this.isFieldPopulated('html_body')) {
+        } else if (!this.isFieldPopulated('name') && !this.isFieldPopulated('description_html')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module),
                 onConfirm: sendEmail
             });
-        } else if (!this.isFieldPopulated('subject')) {
+        } else if (!this.isFieldPopulated('name')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_SEND_ANYWAYS', this.module),
                 onConfirm: sendEmail
             });
-        } else if (!this.isFieldPopulated('html_body')) {
+        } else if (!this.isFieldPopulated('description_html')) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_NO_BODY_SEND_ANYWAYS', this.module),
@@ -433,44 +420,16 @@
     },
 
     /**
-     * Build the backbone model to be sent to the Mail API with the appropriate status
-     * Also display the appropriate alerts to give user indication of what is happening.
+     * @inheritdoc
      *
-     * @param {string} status (draft or ready)
-     * @param {string} pendingMessage message to display while Mail API is being called
-     * @param {string} successMessage message to display when a successful Mail API response has been received
-     * @param {string} errorMessage message to display when Mail API call fails
+     * Build the appropriate success message based on the state of the email.
      */
-    saveModel: function(status, pendingMessage, successMessage, errorMessage) {
-        var myURL,
-            sendModel = this.initializeSendEmailModel();
+    buildSuccessMessage: function() {
+        var successLabel = (this.model.get('state') === this.STATE_DRAFT) ?
+            'LBL_DRAFT_SAVED' :
+            'LBL_EMAIL_SENT';
 
-        this.setMainButtonsDisabled(true);
-        app.alert.show('mail_call_status', {level: 'process', title: pendingMessage});
-
-        sendModel.set('status', status);
-        myURL = app.api.buildURL('Mail');
-        app.api.call('create', myURL, sendModel, {
-            success: _.bind(function() {
-                app.alert.dismiss('mail_call_status');
-                app.alert.show('mail_call_status', {autoClose: true, level: 'success', messages: successMessage});
-                sendModel.module = this.module;
-                app.drawer.close(this.context, sendModel);
-            }, this),
-            error: function(error) {
-                var msg = {level: 'error'};
-                if (error && _.isString(error.message)) {
-                    msg.messages = error.message;
-                }
-                app.alert.dismiss('mail_call_status');
-                app.alert.show('mail_call_status', msg);
-            },
-            complete: _.bind(function() {
-                if (!this.disposed) {
-                    this.setMainButtonsDisabled(false);
-                }
-            }, this)
-        });
+        return app.lang.get(successLabel, this.module);
     },
 
     /**
@@ -552,14 +511,14 @@
             subject = template.get('subject');
 
             if (subject) {
-                this.model.set('subject', subject);
+                this.model.set('name', subject);
             }
 
             //TODO: May need to move over replaces special characters.
             if (template.get('text_only') === 1) {
-                this.model.set('html_body', template.get('body'));
+                this.model.set('description_html', template.get('body'));
             } else {
-                this.model.set('html_body', template.get('body_html'));
+                this.model.set('description_html', template.get('body_html'));
             }
 
             notes = app.data.createBeanCollection('Notes');
@@ -722,7 +681,7 @@
         var htmlBodyObj;
 
         if (_.isObject(signature) && signature.get('signature_html')) {
-            var emailBody = this.model.get('html_body'),
+            var emailBody = this.model.get('description_html'),
                 signatureOpenTag = '<div class="signature keep">',
                 signatureCloseTag = '</div>',
                 signatureContent = this._formatSignature(signature.get('signature_html'));
@@ -751,7 +710,7 @@
             htmlBodyObj.find('div.signature.remove').remove();
 
             emailBody = htmlBodyObj.html();
-            this.model.set('html_body', emailBody);
+            this.model.set('description_html', emailBody);
 
             return true;
         }
@@ -767,7 +726,7 @@
      * @private
      */
     _insertInEditor: function(content) {
-        var editor = this.getField('html_body').getEditor();
+        var editor = this.getField('description_html').getEditor();
 
         if (!_.isEmpty(content) && !_.isNull(editor)) {
             editor.execCommand(
@@ -780,7 +739,7 @@
         }
 
         // No content for signature found or no editor instance found, return the model html_body
-        return this.model.get('html_body');
+        return this.model.get('description_html');
     },
 
     /**

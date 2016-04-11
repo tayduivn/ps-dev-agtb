@@ -22,26 +22,20 @@ $viewdefs['Emails']['base']['view']['create'] = array(
             ),
         ),
         array(
-            'type' => 'actiondropdown',
-            'name' => 'main_dropdown',
+            'name' => 'draft_button',
+            'type' => 'button',
+            'label' => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
+            'events' => array(
+                'click' => 'button:draft_button:click',
+            ),
+        ),
+        array(
+            'name' => 'send_button',
+            'type' => 'button',
+            'label' => 'LBL_SEND_BUTTON_LABEL',
             'primary' => true,
-            'buttons' => array(
-                array(
-                    'name' => 'send_button',
-                    'type' => 'rowaction',
-                    'label' => 'LBL_SEND_BUTTON_LABEL',
-                    'events' => array(
-                        'click' => 'button:send_button:click',
-                    ),
-                ),
-                array(
-                    'name' => 'draft_button',
-                    'type' => 'rowaction',
-                    'label' => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
-                    'events' => array(
-                        'click' => 'button:draft_button:click',
-                    ),
-                ),
+            'events' => array(
+                'click' => 'button:send_button:click',
             ),
         ),
         array(
@@ -90,13 +84,13 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'subject',
+                    'name' => 'name',
                     'label' => 'LBL_SUBJECT',
                     'span' => 12,
                     'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
-                    'name' => 'html_body',
+                    'name' => 'description_html',
                     'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
                     'span' => 12,

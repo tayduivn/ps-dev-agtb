@@ -77,7 +77,7 @@ describe('Emails.Views.Create', function() {
         });
 
         it('prepopulate on context - call is made to populate them', function() {
-            var dummyPrepopulate = {subject: 'Foo!'};
+            var dummyPrepopulate = {name: 'Foo!'};
 
             sandbox.stub(view, 'notifyConfigurationStatus');
             view.context.set('prepopulate', dummyPrepopulate);
@@ -294,7 +294,7 @@ describe('Emails.Views.Create', function() {
             }, 'fetch() should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+                expect(view.model.get('name')).toEqual('[CASE:100] My Case');
                 expect(relatedCollectionStub.callCount).toBe(1);
             });
         });
@@ -305,7 +305,7 @@ describe('Emails.Views.Create', function() {
 
             view.model.set('to_addresses', toAddresses);
             view._populateForCases(relatedModel);
-            expect(view.model.get('subject')).toEqual('[CASE:100] My Case');
+            expect(view.model.get('name')).toEqual('[CASE:100] My Case');
             expect(view.model.get('to_addresses')).toEqual(toAddresses);
         });
     });
@@ -400,57 +400,11 @@ describe('Emails.Views.Create', function() {
         });
     });
 
-    describe('saveModel', function() {
-        var apiCallStub, alertShowStub, alertDismissStub;
-
-        beforeEach(function() {
-            apiCallStub = sandbox.stub(app.api, 'call', function(method, myURL, model, options) {
-                options.success(model, null, options);
-            });
-            alertShowStub = sandbox.stub(app.alert, 'show');
-            alertDismissStub = sandbox.stub(app.alert, 'dismiss');
-            sandbox.stub(view, 'setMainButtonsDisabled');
-
-            view.model.off('change');
-        });
-
-        it('should call mail api with correctly formatted model', function() {
-            var actualModel,
-                expectedStatus = 'ready',
-                to_addresses = new Backbone.Collection([{id: '1234', email: 'foo@bar.com'}]);
-
-            view.model.set('to_addresses', to_addresses);
-            view.model.set('foo', 'bar');
-            view.saveModel(expectedStatus, 'pending message', 'success message');
-
-            expect(apiCallStub.lastCall.args[0]).toEqual('create');
-            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Mail/);
-
-            actualModel = apiCallStub.lastCall.args[2];
-            expect(actualModel.get('status')).toEqual(expectedStatus); //status set on model
-            expect(actualModel.get('to_addresses')).toEqual(to_addresses); //email formatted correctly
-            expect(actualModel.get('foo')).toEqual('bar'); //any other model attributes passed to api
-
-            to_addresses = undefined;
-        });
-
-        it('should show pending message before call, then after call dismiss that message and show success', function() {
-            var pending = 'pending message',
-                success = 'success message';
-
-            view.saveModel('ready', pending, success);
-
-            expect(alertShowStub.firstCall.args[1].title).toEqual(pending);
-            expect(alertDismissStub.firstCall.args[0]).toEqual(alertShowStub.firstCall.args[0]);
-            expect(alertShowStub.secondCall.args[1].messages).toEqual(success);
-        });
-    });
-
     describe('Send', function() {
-        var saveModelStub, alertShowStub;
+        var saveStub, alertShowStub;
 
         beforeEach(function() {
-            saveModelStub = sandbox.stub(view, 'saveModel');
+            saveStub = sandbox.stub(view, 'save');
             alertShowStub = sandbox.stub(app.alert, 'show');
 
             view.model.off('change');
@@ -458,74 +412,74 @@ describe('Emails.Views.Create', function() {
 
         it('should send email when to, subject and html_body fields are populated', function() {
             view.model.set('to_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
-            expect(saveModelStub.calledOnce).toBe(true);
+            expect(saveStub.calledOnce).toBe(true);
             expect(alertShowStub.called).toBe(false);
         });
 
         it('should send email when cc, subject and html_body fields are populated', function() {
             view.model.set('cc_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
-            expect(saveModelStub.calledOnce).toBe(true);
+            expect(saveStub.calledOnce).toBe(true);
             expect(alertShowStub.called).toBe(false);
         });
 
         it('should send email when bcc, subject and html_body fields are populated', function() {
             view.model.set('bcc_addresses', 'foo@bar.com');
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
-            expect(saveModelStub.calledOnce).toBe(true);
+            expect(saveStub.calledOnce).toBe(true);
             expect(alertShowStub.called).toBe(false);
         });
 
         it('should show error alert when address fields are empty', function() {
-            view.model.set('subject', 'foo');
-            view.model.set('html_body', 'bar');
+            view.model.set('name', 'foo');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
-            expect(saveModelStub.calledOnce).toBe(false);
+            expect(saveStub.calledOnce).toBe(false);
             expect(alertShowStub.called).toBe(true);
         });
 
         it('should show confirmation alert message when subject field is empty', function() {
-            view.model.unset('subject');
-            view.model.set('html_body', 'bar');
+            view.model.unset('name');
+            view.model.set('description_html', 'bar');
 
             view.send();
 
-            expect(saveModelStub.called).toBe(false);
+            expect(saveStub.called).toBe(false);
             expect(alertShowStub.calledOnce).toBe(true);
         });
 
         it('should show confirmation alert message when html_body field is empty', function() {
-            view.model.set('subject', 'foo');
-            view.model.unset('html_body');
+            view.model.set('name', 'foo');
+            view.model.unset('description_html');
 
             view.send();
 
-            expect(saveModelStub.called).toBe(false);
+            expect(saveStub.called).toBe(false);
             expect(alertShowStub.calledOnce).toBe(true);
         });
 
         it('should show confirmation alert message when subject and html_body fields are empty', function() {
-            view.model.unset('subject');
-            view.model.unset('html_body');
+            view.model.unset('name');
+            view.model.unset('description_html');
 
             view.send();
 
-            expect(saveModelStub.called).toBe(false);
+            expect(saveStub.called).toBe(false);
             expect(alertShowStub.calledOnce).toBe(true);
         });
     });
@@ -551,8 +505,8 @@ describe('Emails.Views.Create', function() {
                 expect(createBeanCollectionStub.callCount).toBe(0);
                 expect(insertTemplateAttachmentsStub.callCount).toBe(0);
                 expect(updateEditorWithSignatureStub.callCount).toBe(0);
-                expect(view.model.get('subject')).toBeUndefined();
-                expect(view.model.get('html_body')).toBeUndefined();
+                expect(view.model.get('name')).toBeUndefined();
+                expect(view.model.get('description_html')).toBeUndefined();
             });
 
             it('should not set content of subject when the template does not include a subject', function() {
@@ -566,8 +520,8 @@ describe('Emails.Views.Create', function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBeUndefined();
-                expect(view.model.get('html_body')).toBe(bodyHtml);
+                expect(view.model.get('name')).toBeUndefined();
+                expect(view.model.get('description_html')).toBe(bodyHtml);
             });
 
             it('should set content of editor with html version of template', function() {
@@ -583,8 +537,8 @@ describe('Emails.Views.Create', function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBe(subject);
-                expect(view.model.get('html_body')).toBe(bodyHtml);
+                expect(view.model.get('name')).toBe(subject);
+                expect(view.model.get('description_html')).toBe(bodyHtml);
             });
 
             it('should set content of editor with text only version of template', function() {
@@ -603,8 +557,8 @@ describe('Emails.Views.Create', function() {
                 view.insertTemplate(templateModel);
                 expect(createBeanCollectionStub.callCount).toBe(1);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
-                expect(view.model.get('subject')).toBe(subject);
-                expect(view.model.get('html_body')).toBe(bodyText);
+                expect(view.model.get('name')).toBe(subject);
+                expect(view.model.get('description_html')).toBe(bodyText);
             });
 
             it('should call to insert the signature that was marked as the last one selected', function() {
@@ -633,7 +587,7 @@ describe('Emails.Views.Create', function() {
             view.model.off('change');
 
             sandbox.stub(view, '_insertInEditor', function() {
-                return view.model.get('html_body');
+                return view.model.get('description_html');
             });
         });
 
@@ -744,7 +698,7 @@ describe('Emails.Views.Create', function() {
             beforeEach(function() {
                 sandbox.restore();
                 sandbox.stub(view, '_insertInEditor', function(content) {
-                    return view.model.get('html_body') + content;
+                    return view.model.get('description_html') + content;
                 });
             });
 
@@ -760,11 +714,11 @@ describe('Emails.Views.Create', function() {
                 });
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('html_body', htmlBody);
+                view.model.set('description_html', htmlBody);
                 var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
                 var actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
-                expect(view.model.get('html_body')).toBe(expectedBody);
+                expect(view.model.get('description_html')).toBe(expectedBody);
             });
 
             it('should remove a nested signature from the email body', function() {
@@ -781,11 +735,11 @@ describe('Emails.Views.Create', function() {
                 });
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('html_body', message);
+                view.model.set('description_html', message);
                 var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
                 var actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
-                expect(view.model.get('html_body')).toBe(expectedBody);
+                expect(view.model.get('description_html')).toBe(expectedBody);
             });
 
             it('should remove a signature marked for removal', function() {
@@ -802,11 +756,11 @@ describe('Emails.Views.Create', function() {
                 });
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
-                view.model.set('html_body', message);
+                view.model.set('description_html', message);
                 var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
                 var actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
-                expect(view.model.get('html_body')).toBe(expectedBody);
+                expect(view.model.get('description_html')).toBe(expectedBody);
             });
         });
     });
