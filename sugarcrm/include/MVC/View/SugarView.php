@@ -522,11 +522,12 @@ class SugarView
     {
         global $sugar_config, $timedate;
 
+        $action = $this->request->getValidInputRequest('action');
         if(isset($this->bean->module_dir)){
             echo "<script>var module_sugar_grp1 = '{$this->bean->module_dir}';</script>";
         }
         if(isset($_REQUEST['action'])){
-            echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
+            echo "<script>var action_sugar_grp1 = '{$action}';</script>";
         }
         echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
@@ -601,6 +602,7 @@ EOQ;
     {
         global $locale, $sugar_config, $timedate;
 
+        $action = $this->request->getValidInputRequest('action');
 
         //BEGIN SUGARCRM flav=int ONLY
         //check to see if the script files need to be rebuilt, add needed variables to request array
@@ -627,7 +629,7 @@ EOHTML;
                 $js_vars['module_sugar_grp1'] = $this->bean->module_dir;
             }
             if(isset($_REQUEST['action'])){
-                $js_vars['action_sugar_grp1'] = $_REQUEST['action'];
+                $js_vars['action_sugar_grp1'] = $action;
             }
             echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             // Make sure the necessary cache files are in place

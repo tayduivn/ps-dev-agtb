@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 require_once('include/SugarQueue/SugarJobQueue.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
  class ListCurrency{
 	var $focus = null;
 	var $list = null;
@@ -217,16 +219,22 @@ EOQ;
 		$add = translate('LBL_ADD');
 		$delete = translate('LBL_DELETE');
 		$update = translate('LBL_UPDATE');
+        $module = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName', '');
+        $action = InputValidation::getService()->getValidInputRequest('action');
 
 		$form = $html = "<br><table cellpadding='0' cellspacing='0' border='0'  class='tabForm'><tr><td><tableborder='0' cellspacing='0' cellpadding='0'>";
 		$form .= <<<EOQ
-					<form name='DeleteCurrency' action='index.php' method='post'><input type='hidden' name='action' value='{$_REQUEST['action']}'>
-					<input type='hidden' name='module' value='{$_REQUEST['module']}'><input type='hidden' name='deleteCur' value=''></form>
+					<form name='DeleteCurrency' action='index.php' method='post'>
+                        <input type='hidden' name='action' value='{$action}'>
+		                <input type='hidden' name='module' value='{$module}'>
+		                <input type='hidden' name='deleteCur' value=''>
+                    </form>
 
 					<tr><td><B>$currency</B></td><td><B>ISO 4217</B>&nbsp;</td><td><B>$currency_sym</B></td><td colspan='2'><B>$conv_rate</B></td></tr>
 					<tr><td>$usdollar</td><td>USD</td><td>$</td><td colspan='2'>1</td></tr>
-					<form name="UpdateCurrency" action="index.php" method="post"><input type='hidden' name='action' value='{$_REQUEST['action']}'>
-					<input type='hidden' name='module' value='{$_REQUEST['module']}'>
+					<form name="UpdateCurrency" action="index.php" method="post">
+                        <input type='hidden' name='action' value='{$action}'>
+					    <input type='hidden' name='module' value='{$module}'>
 EOQ;
 		if(isset($this->list ) && !empty($this->list )){
 		foreach ($this->list as $data){
@@ -238,8 +246,8 @@ EOQ;
 					<tr><td></td><td></td><td></td><td></td><td></td><td>&nbsp;<input type='submit' name='Update' value='$update' class='button'></TD></form> </td></tr>
 					<tr><td colspan='3'><br></td></tr>
 					<form name="AddCurrency" action="index.php" method="post">
-					<input type='hidden' name='action' value='{$_REQUEST['action']}'>
-					<input type='hidden' name='module' value='{$_REQUEST['module']}'>
+					<input type='hidden' name='action' value='{$action}'>
+					<input type='hidden' name='module' value='{$module}'>
 					<tr><td><input type = 'text' name='addname' value=''>&nbsp;</td><td><input type = 'text' name='addiso' size='3' maxlength='3' value=''>&nbsp;</td><td><input type = 'text' name='addsymbol' value=''></td><td colspan='2'>&nbsp;<input type ='text' name='addrate'></td><td>&nbsp;<input type='submit' name='Add' value='$add' class='button'></td></tr>
 					</form></table></td></tr></table>
 EOQ;

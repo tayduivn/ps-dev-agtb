@@ -252,7 +252,7 @@ if($install_type == 'patch' || $install_type == 'module')
 
 for( $iii = 0; $iii < $copyCount; $iii++ ){
     if( isset($_REQUEST["copy_" . $iii]) && ($_REQUEST["copy_" . $iii] != "") ){
-        $file_to_copy = $_REQUEST["copy_" . $iii];
+        $file_to_copy = InputValidation::getService()->getValidInputRequest('copy_' . $iii);
         $src_file   = clean_path( "$unzip_dir/$zip_from_dir/$file_to_copy" );
 
         $sugar_home_dir = getCwd();

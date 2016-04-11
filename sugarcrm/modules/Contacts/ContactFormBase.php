@@ -637,35 +637,33 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 }
 
 function handleRedirect($return_id){
-	if(isset($_POST['return_module']) && $_POST['return_module'] != "") {
-		$return_module = urlencode($_POST['return_module']);
-	}
-	else {
-		$return_module = "Contacts";
-	}
+    $return_module = InputValidation::getService()->getValidInputPost(
+        'return_module',
+        'Assert\Mvc\ModuleName',
+        'Contacts'
+    );
+    $return_action = InputValidation::getService()->getValidInputPost(
+        'return_action',
+        '',
+        'DetailView'
+    );
+    $return_id = InputValidation::getService()->getValidInputPost(
+        'return_id',
+        'Assert\Guid',
+        ''
+    );
 
-	if(isset($_POST['return_action']) && $_POST['return_action'] != "") {
-		if($_REQUEST['return_module'] == 'Emails') {
-			$return_action = urlencode($_REQUEST['return_action']);
-		}
-		// if we create a new record "Save", we want to redirect to the DetailView
-		elseif($_REQUEST['action'] == "Save" && $_REQUEST['return_module'] != "Home") {
-			$return_action = 'DetailView';
-		} else {
-			// if we "Cancel", we go back to the list view.
-			$return_action = urlencode($_REQUEST['return_action']);
-		}
-	}
-	else {
-		$return_action = "DetailView";
-	}
+    if ($_REQUEST['return_module'] == 'Emails') {
+        $return_action = InputValidation::getService()->getValidInputRequest('return_action', '');
 
-	if(isset($_POST['return_id']) && $_POST['return_id'] != "") {
-        $return_id = urlencode($_POST['return_id']);
 	}
+    // if we create a new record "Save", we want to redirect to the DetailView
+    elseif ($_REQUEST['action'] == 'Save' && $return_module != 'Home') {
+        $return_action = 'DetailView';
+    }
 
 	//eggsurplus Bug 23816: maintain VCR after an edit/save. If it is a duplicate then don't worry about it. The offset is now worthless.
- 	$redirect_url = "index.php?action=$return_action&module=$return_module&record=$return_id";
+    $redirect_url = "index.php?action=" . urlencode($return_action) . "&module=$return_module&record=$return_id";
  	if(isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
  	    $redirect_url .= "&offset=".$_REQUEST['offset'];
  	}

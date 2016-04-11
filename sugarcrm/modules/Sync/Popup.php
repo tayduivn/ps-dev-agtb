@@ -38,7 +38,7 @@ if (isset ($_GET['check_available'])) {
 		echo '<b>'.translate('LBL_SERVER_AVAILABLE', 'Sync').'</b>';
 		sleep(1);
 		if(isset($_REQUEST['clean_sync'])){
-			echo '<script>document.location.href="index.php?action=Popup&module=Sync&clean_sync='.$_REQUEST['clean_sync'].'"</script>';
+			echo '<script>document.location.href="index.php?action=Popup&module=Sync&clean_sync=' . intval($_REQUEST['clean_sync']) . '"</script>';
 		}
 		else{
 			echo '<script>document.location.href="index.php?action=Popup&module=Sync";</script>';
@@ -89,7 +89,7 @@ if(isset($_SESSION['sync_modules'])){
 	$sync_modules = $_SESSION['sync_modules'];
 }
 if (isset ($_REQUEST['sync_module_index'])) {
-	$sync_module_index = $_REQUEST['sync_module_index'];
+	$sync_module_index = (int) $_REQUEST['sync_module_index'];
 	if ($sync_module_index != -1) {
 		$sync_module = $sync_modules[$sync_module_index]['name'];
 		$module_steps += sizeof($sync_modules[$sync_module_index]['related']);
@@ -406,7 +406,7 @@ foreach($sync_modules as $name=>$val){
 						update_progress_bar($sync_module, $current_step, $module_steps);
 					}
 					if (isset ($_REQUEST['rel_index'])) {
-						$ri = $_REQUEST['rel_index'];
+						$ri = (int) $_REQUEST['rel_index'];
 					} else {
 						$ri = 0;
 					}

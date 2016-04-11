@@ -20,7 +20,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $app_strings;
 ?>
 <br><br>
-<span class='error'><?php if (isset($_REQUEST['error_string'])) echo $_REQUEST['error_string']; ?>
+<span class='error'>
+<?php
+if (isset($_REQUEST['error_string'])) {
+    echo htmlspecialchars($_REQUEST['error_string'], ENT_QUOTES, 'UTF-8');
+}
+?>
 <br><br>
 <?php echo $app_strings['NTC_CLICK_BACK']; ?>
 </span>

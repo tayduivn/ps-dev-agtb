@@ -179,7 +179,7 @@ if($sync_module_index == -1)add_to_msg("Logging Into Server...");
 	   				            add_to_msg('Done Updating User Information<br>');
 					       }//end new sync
 					       destroy_flow_bar('file_update');
-					       echo '<script>document.location.href = "index.php?&action=Popup&module=Sync&sync_module_index=0&new_sync=true&clean_sync='. $_REQUEST['clean_sync'] . '&global_accept_server='. $_REQUEST['global_accept_server'] . '";</script>';
+					       echo '<script>document.location.href = "index.php?&action=Popup&module=Sync&sync_module_index=0&new_sync=true&clean_sync='. intval($_REQUEST['clean_sync']) . '&global_accept_server='. intval($_REQUEST['global_accept_server']) . '";</script>';
 					       die();
 				        }
                 }else{

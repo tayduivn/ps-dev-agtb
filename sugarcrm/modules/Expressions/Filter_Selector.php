@@ -120,12 +120,12 @@ if(isset($exp_meta_array['select_field']) && $exp_meta_array['select_field']===t
 	$xtpl->assign('LHS_FIELD', $exp_object->lhs_field);
 
 	if(isset($_REQUEST['rhs_value']) && $_REQUEST['rhs_value']!='') {
-  		  $exp_object->rhs_value = $_REQUEST['rhs_value'];
+        $exp_object->rhs_value = InputValidation::getService()->getValidInputRequest('rhs_value');
 	//end expression object
 	}
 
 	if(isset($_REQUEST['time_type']) && $_REQUEST['lhs_field']!='') {
-  		  $exp_object->lhs_field = $_REQUEST['lhs_field'];
+        $exp_object->lhs_field = InputValidation::getService()->getValidInputRequest('lhs_field');
 	//end expression object
 	}
 

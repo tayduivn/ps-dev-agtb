@@ -728,8 +728,8 @@ function deleteAllFilters()
 
 <script language="javascript">
 
-var visible_fields = ["<?php echo implode("\",\"",$table_columns);?>"];
-var hidden_fields = ["<?php echo implode("\",\"",$hidden_columns);?>"];
+var visible_fields = ["<?php echo SugarCleaner::cleanHtml(implode('","',$table_columns), false);?>"];
+var hidden_fields = ["<?php echo SugarCleaner::cleanHtml(implode('","',$hidden_columns), false);?>"];
 
 
 document.EditView.onsubmit = fill_form;
@@ -1100,7 +1100,7 @@ function template_form_varchar(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1117,7 +1117,7 @@ function template_form_id(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1134,7 +1134,7 @@ function template_form_date(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1150,7 +1150,7 @@ function template_form_datetimecombo(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1235,7 +1235,7 @@ function template_form_phone(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1274,7 +1274,7 @@ function clear_form_names(form,name0,name1)
 }
 //  End -->
 </script>
-<input readonly name='<?php echo $field['name']; ?>' type="text" value="<?php echo $name; ?>"><input name='<?php echo $field['id_name']; ?>' type="hidden" value='<?php echo $id_name; ?>'>&nbsp;<input title="Change"  type="button" tabindex='1' class="button" value='Change' name=btn1 LANGUAGE=javascript onclick='return window.open("index.php?module=<?php echo $field['module']; ?>&action=Popup&form=EditView&form_submit=false","test","width=600,height=400,resizable=1,scrollbars=1");'>
+<input readonly name='<?php echo $field['name']; ?>' type="text" value="<?php echo SugarCleaner::cleanHtml($name, false); ?>"><input name='<?php echo $field['id_name']; ?>' type="hidden" value='<?php echo SugarCleaner::cleanHtml($id_name, false); ?>'>&nbsp;<input title="Change"  type="button" tabindex='1' class="button" value='Change' name=btn1 LANGUAGE=javascript onclick='return window.open("index.php?module=<?php echo $field['module']; ?>&action=Popup&form=EditView&form_submit=false","test","width=600,height=400,resizable=1,scrollbars=1");'>
 <input title="Clear" onclick="clear_form_names(this.form,'<?php echo $field['id_name']; ?>','<?php echo $field['name']; ?>');" class="button" type="button" name="clear" value=" Clear "/>
 
 <?php
@@ -1310,7 +1310,7 @@ function template_form_email(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 
@@ -1327,7 +1327,7 @@ function template_form_yim(&$field)
 		$val = $_REQUEST[$field['name']];
 	}
 ?>
-<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo $val; ?>">
+<input name="<?php echo $field['name'];?>" type="text" length="<?php echo $field['len']; ?>" value="<?php echo SugarCleaner::cleanHtml($val, false); ?>">
 <?php
 }
 

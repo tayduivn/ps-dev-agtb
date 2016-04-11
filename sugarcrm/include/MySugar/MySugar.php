@@ -779,11 +779,8 @@ class MySugar{
 
 	function changeLayout(){
 		if (isset($_REQUEST['changeLayoutParams']) && $_REQUEST['changeLayoutParams']){
-			echo "var numCols = '" .$_REQUEST['numColumns'] . "';";
-		}
-		else{
-
-
+            echo "var numCols = '" . intval($_REQUEST['numColumns']) . "';";
+        } else {
 			global $current_user;
 
 			if(isset($_REQUEST['selectedPage'])) {
@@ -905,7 +902,7 @@ class MySugar{
 				$pages[$_REQUEST['selectedPage']] = $page;
 			    $current_user->setPreference('pages', $pages, 0, $this->type);
 
-			    echo $_REQUEST['selectedPage'];
+                echo htmlspecialchars($_REQUEST['selectedPage'], ENT_QUOTES, 'UTF-8');
 			}
 			else {
 			    echo '0';
