@@ -64,7 +64,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'type'            => 'sender',
                     'span'            => 12,
                     'css_class'       => 'inherit-width',
-                    'label_css_class' => 'begin-fieldgroup',
                     'endpoint'        => array(
                         'module' => 'OutboundEmailConfiguration',
                         'action' => 'list',
@@ -93,7 +92,6 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'name'            => 'subject',
                     'label'           => 'LBL_SUBJECT',
                     'span'            => 12,
-                    'label_css_class' => 'end-fieldgroup',
                 ),
                 array(
                     'name'          => 'html_body',

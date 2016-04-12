@@ -38,7 +38,15 @@
      * @private
      */
     _render: function() {
+        var $controls;
+
         this._super('_render');
+
+        $controls = this.$('.control-group:not(.hide) .control-label');
+        if ($controls.length) {
+            $controls.last().addClass('end-fieldgroup');
+        }
+
         this.setTitle(app.lang.get('LBL_ARCHIVE_EMAIL', this.module));
     },
 

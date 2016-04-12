@@ -78,7 +78,6 @@ $viewdefs['Emails']['base']['view']['archive-email'] = array(
                     'name' => 'subject',
                     'label' => 'LBL_SUBJECT',
                     'span' => 12,
-                    'label_css_class' => 'end-fieldgroup',
                     'required' => true,
                 ),
                 array(

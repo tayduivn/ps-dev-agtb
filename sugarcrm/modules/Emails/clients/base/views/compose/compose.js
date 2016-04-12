@@ -66,9 +66,17 @@
      * @inheritdoc
      */
     _render: function() {
-        var prepopulateValues;
+        var prepopulateValues,
+            $controls;
 
         this._super('_render');
+
+        $controls = this.$('.control-group:not(.hide) .control-label');
+        if ($controls.length) {
+            $controls.first().addClass('begin-fieldgroup');
+            $controls.last().addClass('end-fieldgroup');
+        }
+        
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }

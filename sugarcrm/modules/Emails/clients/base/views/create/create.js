@@ -64,13 +64,23 @@
      * @inheritdoc
      */
     _render: function() {
+        var $controls,
+            prepopulateValues;
+
         this._super('_render');
+
+        $controls = this.$('.control-group:not(.hide) .control-label');
+        if ($controls.length) {
+            $controls.first().addClass('begin-fieldgroup');
+            $controls.last().addClass('end-fieldgroup');
+        }
+
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
         }
 
         if (this.model.isNotEmpty) {
-            var prepopulateValues = this.context.get('prepopulate');
+            prepopulateValues = this.context.get('prepopulate');
             if (!_.isEmpty(prepopulateValues)) {
                 this.prepopulate(prepopulateValues);
             }
