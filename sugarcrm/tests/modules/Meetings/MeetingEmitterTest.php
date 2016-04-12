@@ -144,7 +144,7 @@ class MeetingEmitterTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * reminder method should meeting method of ReminderEmitter
      *
-     * @covers MeetingEmitter::reminder
+     * @covers MeetingEmitter::__call
      * @dataProvider reminderProvider
      * @param \SugarBean $bean
      * @param \User $user
