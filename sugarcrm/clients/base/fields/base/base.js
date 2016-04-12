@@ -25,6 +25,8 @@
      * to fallback to metadata defined events.
      * This will make sure we merge metadata events with the ones provided by
      * the plugins.
+     *
+     * The Base Field will always clear any tooltips after `render`.
      */
     initialize: function(options) {
 
@@ -42,6 +44,7 @@
          * @property {boolean}
          */
         this.ellipsis = _.isUndefined(this.def.ellipsis) || this.def.ellipsis;
+        this.on('render', app.tooltip.clear);
     },
 
     /**

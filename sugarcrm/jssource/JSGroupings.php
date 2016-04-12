@@ -349,7 +349,7 @@
                 'include/javascript/sugar7/metadata-manager.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/socket.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
-                'include/javascript/sugar7/tooltips.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/tooltip.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/browser-notification.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_grp7.min.js',
@@ -512,4 +512,3 @@
     foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
         require $file;
     }
-

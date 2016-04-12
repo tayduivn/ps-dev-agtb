@@ -205,8 +205,8 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Is Team Based ACL enabled for module, if not set - uses global value.
-     * Does not check implementation.
+     * Is Team Based ACL applied for module, if not set - uses global value.
+     * Does not check implementation and configuration page.
      * @param $module
      * @return bool
      */
@@ -217,9 +217,7 @@ class TeamBasedACLConfigurator
         }
         if (!isset(self::$moduleCache[$module])) {
             $config = self::getConfig();
-            self::$moduleCache[$module] =
-                !in_array($module, $config['disabled_modules'])
-                && !in_array($module, self::$hiddenModules);
+            self::$moduleCache[$module] = !in_array($module, $config['disabled_modules']);
         }
         return self::$moduleCache[$module];
     }
