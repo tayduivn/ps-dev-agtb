@@ -49,9 +49,11 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $ret = $rel->buildJoinSugarQuery($link2, $sq, array('ignoreRole' => true));
 
         /** @var SugarQuery_Builder_Join $ret */
-        $this->assertEquals('revenue_line_items', $ret->on->conditions[0]->field->table);
-        $this->assertEquals('id', $ret->on->conditions[0]->field->field);
-        $this->assertEquals('products.revenuelineitem_id', $ret->on->conditions[0]->values);
+        $condition = $ret->on->conditions[0];
+        $this->assertEquals('revenue_line_items', $condition->field->table);
+        $this->assertEquals('id', $condition->field->field);
+        $this->assertEquals('products', $condition->values->table);
+        $this->assertEquals('revenuelineitem_id', $condition->values->field);
     }
 
     /**

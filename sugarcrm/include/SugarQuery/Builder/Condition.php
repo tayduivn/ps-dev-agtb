@@ -68,11 +68,12 @@ class SugarQuery_Builder_Condition
      */
     public function setValues($values)
     {
-        $this->values = $values;
-        $this->field->verifyCondition($values, $this->query);
         if (is_array($values) && count($values) == 1 && key($values) === '$field') {
-            $this->field->setFieldCompare(current($values));
+            $values = new SugarQuery_Builder_Field(current($values), $this->query);
+        } else {
+            $this->field->verifyCondition($values, $this->query);
         }
+        $this->values = $values;
         return $this;
     }
 

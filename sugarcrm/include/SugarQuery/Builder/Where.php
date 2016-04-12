@@ -74,13 +74,9 @@ abstract class SugarQuery_Builder_Where
      */
     public function equalsField($field1, $field2, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition($this->query);
-        $condition->setOperator('EQUALFIELD')->setField($field1)->setValues($field2);
-        if ($bean instanceof SugarBean) {
-            $condition->setBean($bean);
-        }
-        $this->conditions[] = $condition;
-        return $this;
+        return $this->equals($field1, array(
+            '$field' => $field2,
+        ), $bean);
     }
 
     /**
@@ -114,13 +110,9 @@ abstract class SugarQuery_Builder_Where
      */
     public function notEqualsField($field1, $field2, $bean = false)
     {
-        $condition = new SugarQuery_Builder_Condition($this->query);
-        $condition->setOperator('NOTEQUALFIELD')->setField($field1)->setValues($field2);
-        if ($bean instanceof SugarBean) {
-            $condition->setBean($bean);
-        }
-        $this->conditions[] = $condition;
-        return $this;
+        return $this->notEquals($field1, array(
+            '$field' => $field2,
+        ), $bean);
     }
 
     /**

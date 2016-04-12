@@ -542,8 +542,6 @@ class SugarQuery_Compiler_SQL
                     $sql .= $castedField . ' ' . $condition->operator . ' ';
                     if ($condition->values instanceof SugarQuery) {
                         $sql .= "(" . $condition->values->compileSql($this->sugar_query) . ")";
-                    } elseif ($condition->field->isFieldCompare()) {
-                        $sql .= $this->compileField($condition->field, true);
                     } else {
                         $sql .= $this->prepareValue($condition->values, $condition);
                     }
@@ -710,16 +708,5 @@ class SugarQuery_Compiler_SQL
         $sql .= ' ON ' . $this->buildWhereSql($join->on);
 
         return $sql;
-    }
-
-    /**
-     * Method allows us to mock creation of SugarQuery_Builder_Field_Condition
-     *
-     * @param string $field
-     * @return SugarQuery_Builder_Field_Condition
-     */
-    protected function getFieldCondition($field)
-    {
-        return new SugarQuery_Builder_Field_Condition($field, $this->sugar_query);
     }
 }

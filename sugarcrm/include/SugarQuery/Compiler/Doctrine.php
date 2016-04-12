@@ -486,24 +486,13 @@ class SugarQuery_Compiler_Doctrine
                 case 'DOES NOT END':
                     $sql = $this->compileLike($builder, $field, $condition->operator, $condition->values, $fieldDef);
                     break;
-                case 'EQUALFIELD':
-                    $sql = "{$castField} = " . $this->compileField(
-                        $this->getFieldCondition($condition->values, $condition->query)
-                    );
-                    break;
-                case 'NOTEQUALFIELD':
-                    $sql = "{$castField} != " . $this->compileField(
-                        $this->getFieldCondition($condition->values, $condition->query)
-                    );
-                    break;
                 default:
                     $sql = $castField . ' ' . $condition->operator . ' ';
                     if ($condition->values instanceof SugarQuery
                         || $condition->values instanceof QueryBuilder) {
                         $sql .= '(' . $this->compileSubQuery($builder, $condition->values) . ')';
-                    } elseif ($condition->field->isFieldCompare()) {
-                        $condition->field->field = $condition->field->getFieldCompare();
-                        $sql .= $this->compileField($condition->field);
+                    } elseif ($condition->values instanceof SugarQuery_Builder_Field) {
+                        $sql .= $this->compileField($condition->values);
                     } else {
                         $sql .= $this->bindValue($builder, $condition->values, $fieldDef);
                     }
