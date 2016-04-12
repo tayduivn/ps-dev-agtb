@@ -736,6 +736,13 @@ describe('Base.Fields.Currency', function() {
                 field.hasEditAccess = true;
             });
 
+            it('should not add handlers for base_rate or currency_id when the view action is list', function() {
+                field.view.action = 'list';
+                field.bindDataChange();
+                expect(field.model.on.callCount).toEqual(1);
+                expect(field.model.on.getCall(0).calledWith('change:amount')).toBeTruthy();
+            });
+
             it('should add handlers for base_rate or currency_id', function() {
                 field.bindDataChange();
                 expect(field.model.on.callCount).toEqual(3);

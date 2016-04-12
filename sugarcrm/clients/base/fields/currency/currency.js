@@ -187,7 +187,7 @@
         var baseRateField = this.def.base_rate_field || 'base_rate';
         // if the current_user doesn't have edit access to the field
         // don't add these listeners
-        if (this.hasEditAccess) {
+        if (this.hasEditAccess && this.view.action !== 'list') {
             // if the base rate changes, it should trigger a field re-render
             this.model.on('change:' + baseRateField, function(model, baseRate, options) {
                 // lets actually make sure this really changed before triggering the deferModelChange method.
