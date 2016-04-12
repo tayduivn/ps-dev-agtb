@@ -264,10 +264,25 @@ class pmse_InboxViewShowCase extends SugarView
             ->on()
             ->equalsField('pmse_inbox.pro_id', 'bpmnProcess.id');
 
-        // pmse_inbox fields
-        $fields = array('id','name','cas_id','cas_title');
-        // pmse_bpm_flow fields
-        $fields = array_merge($fields, array('bpmFlow.cas_index','bpmFlow.bpmn_id','bpmFlow.cas_flow_status','bpmFlow.cas_sugar_module','bpmFlow.cas_sugar_object_id','bpmFlow.cas_sugar_action','bpmFlow.cas_adhoc_type','bpmFlow.cas_task_start_date','bpmFlow.cas_delegate_date','bpmFlow.cas_start_date','bpmFlow.cas_due_date'));
+        // Set up the base fields for the select
+        $fields = array(
+            // Processes fields (pmse_inbox)
+            'id', 'cas_id', 'cas_title',
+            // Process Definition Name (pmse_bpmn_process)
+            'bpmnProcess.name',
+        );
+
+        // Now get the flow fields (pmse_bpm_flow)
+        $fields = array_merge(
+            $fields,
+            array(
+                'bpmFlow.cas_index','bpmFlow.bpmn_id','bpmFlow.cas_flow_status',
+                'bpmFlow.cas_sugar_module','bpmFlow.cas_sugar_object_id',
+                'bpmFlow.cas_sugar_action','bpmFlow.cas_adhoc_type',
+                'bpmFlow.cas_task_start_date','bpmFlow.cas_delegate_date',
+                'bpmFlow.cas_start_date','bpmFlow.cas_due_date',
+            )
+        );
 
         $query->select($fields);
         $query->where()->queryAnd()->equals("bpmFlow.cas_id", $cas_id)->equals("bpmFlow.cas_index", $cas_index);
