@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
-
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 
 class PMSEUserTask extends PMSEActivity
@@ -294,12 +294,17 @@ class PMSEUserTask extends PMSEActivity
      */
     public function lockFlowRoute($id)
     {
-        if (isset($_SESSION['locked_flows'])) {
-            if (!ArrayFunctions::in_array_access($id, $_SESSION['locked_flows'])) {
-                $_SESSION['locked_flows'][] = $id;
-            }
-        } else {
-            $_SESSION['locked_flows'] = array($id);
+        $registry = Registry\Registry::getInstance();
+
+        // Simplified logic here... get all locked flows or a default array...
+        $flows = $registry->get('locked_flows', array());
+
+        // If the flow id is not currently in the locked flow arrray, set it...
+        if (!isset($flows[$id])) {
+            $flows[$id] = 1;
         }
+
+        // Reregister the locked_flows, or set it fresh depending on state
+        $registry->set('locked_flows', $flows, true);
     }
 }
