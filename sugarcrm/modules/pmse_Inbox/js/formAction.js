@@ -125,7 +125,7 @@ var getUserSearchURL = function (url, flowId) {
     return url+'/users/'+ flowId + '?filter={%TERM%}&max_num={%PAGESIZE%}&offset={%OFFSET%}';
 };
 
-var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values) {
+var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values, context) {
     var f,
         w,
         combo_users,
@@ -329,28 +329,32 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                         $(w.html).remove();
                         _App.api.call('update', urlIni, attributes, {
                             success: function (response) {
+                                _App.alert.dismiss('upload');
                                 _App.alert.show('pmse_reassign_success', {
                                     autoClose: true,
                                     level: 'success',
                                     messages: translate('LBL_PMSE_ALERT_REASSIGN_SUCCESS', 'pmse_Inbox')
                                 });
+                                w.close();
                                 if (wtype == 'reassign') {
-                                    w.close();
                                     _App.router.redirect('Home');
-                                }
-                                else if (wtype == 'adhoc') {
+                                } else {
                                     if ($('#assigned_user_name').length) {
                                         $("#assigned_user_name").val(cbDate);
-                                        w.close();
-                                    }
-                                    else {
-                                        w.close();
-                                        if (!_App.router.refresh()) {
-                                            window.location.reload();
+                                    } else {
+                                        if (context && context.recordModel) {
+                                            context.recordModel.fetch();
                                         }
                                     }
                                 }
+                            },
+                            error: function (error) {
                                 _App.alert.dismiss('upload');
+                                var message = (error && error.message) ? error.message : 'EXCEPTION_FATAL_ERROR';
+                                _App.alert.show('pmse_reassign_error', {
+                                    level: 'error',
+                                    messages: message
+                                });
                             }
                         });
                     }

@@ -170,7 +170,7 @@ Form.prototype._setErrorMessage = function () {
     var iconSpan = this.createHTMLElement('span');
     iconSpan.className = 'fa fa-warning';
     var messageLabel = this.createHTMLElement('span');
-    messageLabel.innerHTML = App.lang.get('LBL_PMSE_FORM_ERROR', 'pmse_Project');
+    messageLabel.innerHTML = translate('LBL_PMSE_FORM_ERROR');
     this._errorMessage = this.createHTMLElement('div');
     this._errorMessage.className = 'pmse-form-error pmse-form-error-off';
     this._errorMessage.appendChild(iconSpan);
@@ -504,9 +504,6 @@ Form.prototype.reset = function () {
 Form.prototype.submit = function () {
     var data;
     if (this.validate()) {
-        $(".pmse-form-error")
-            .removeClass('pmse-form-error-on')
-            .addClass('pmse-form-error-off');
         data = this.getData();
         if (this.proxy) {
             this.proxy.sendData(data, this.callback);
@@ -521,9 +518,6 @@ Form.prototype.submit = function () {
             }
         }
     } else {
-        $(".pmse-form-error")
-            .removeClass('pmse-form-error-off')
-            .addClass('pmse-form-error-on');
         if (this.callback.failed) {
             this.callback.failed();
         }
@@ -580,6 +574,15 @@ Form.prototype.validate = function () {
         if (this.callback.required) {
             this.callback.required();
         }
+    }
+    if (valid) {
+        $(".pmse-form-error")
+            .removeClass('pmse-form-error-on')
+            .addClass('pmse-form-error-off');
+    } else {
+        $(".pmse-form-error")
+            .removeClass('pmse-form-error-off')
+            .addClass('pmse-form-error-on');
     }
     return valid;
 };
