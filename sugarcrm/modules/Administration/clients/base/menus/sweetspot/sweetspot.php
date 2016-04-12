@@ -37,6 +37,8 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => '#bwc/index.php?module=Teams&action=index',
     ),
+
+    //BEGIN SUGARCRM flav=ent ONLY
     // Team-based Permissions.
     array(
         'label' => 'LBL_TBA_CONFIGURATION',
@@ -45,6 +47,8 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'icon' => 'fa-cogs',
         'route' => '#bwc/index.php?module=Teams&action=tba',
     ),
+    //END SUGARCRM flav=ent ONLY
+    
     // Password Management
     array(
         'label' => 'LBL_MANAGE_PASSWORD_TITLE',
