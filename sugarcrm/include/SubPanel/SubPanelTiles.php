@@ -228,7 +228,13 @@ if(document.DetailView != null &&
                 echo '>' . get_form_header( $thisPanel->get_title(), $max_min, false) . '</div>';
 			}
 
-            echo '<div cookie_name="' . htmlspecialchars($cookie_name, ENT_QUOTES, 'UTF-8') . '" id="subpanel_' . htmlspecialchars($tab, ENT_QUOTES, 'UTF-8') . '" style="display:' . $div_display . '">';
+            printf(
+                '<div cookie_name="%s" id="subpanel_%s" style="display:%s">',
+                htmlspecialchars($cookie_name, ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($tab, ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($div_display, ENT_QUOTES, 'UTF-8')
+            );
+
             echo '<script>document.getElementById(' . json_encode('subpanel_' . $tab) . ').cookie_name=' . json_encode($cookie_name) . ';</script>';
 
             $display_spd = '';

@@ -50,7 +50,7 @@ if(empty($_REQUEST['action']) || empty($_REQUEST['token'])) {
         } else {
             $errmsg = $upg->error;
         }
-        die($errmsg);
+        die(htmlspecialchars($errmsg, ENT_QUOTES, 'UTF-8'));
     }
 	$upg->displayUpgradePage();
 	exit(0);

@@ -209,10 +209,16 @@ echo '	</table>';
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	COMPLETE RENDERING OF THE POPUP
-echo '<input type="hidden" id="sf_returnstatus" name="returnstatus" value="'. $returnArray['status'] .'">';
-echo '<input type="hidden" id="sf_foldersList" name="foldersList" value="'. htmlspecialchars($foldersList) .'">';
-echo '<input type="hidden" id="sf_selectedfoldersList" name="selectedfoldersList" value="'. implode(",", $requestMailBox) .'">';
-echo '<input type="hidden" id="sf_searchField" name="searchField" value="'. $searchField .'">';
+printf('<input type="hidden" id="sf_returnstatus" name="returnstatus" value="%s">', $returnArray['status']);
+printf('<input type="hidden" id="sf_foldersList" name="foldersList" value="%s">', htmlspecialchars($foldersList));
+printf(
+    '<input type="hidden" id="sf_selectedfoldersList" name="selectedfoldersList" value="%s">',
+    htmlspecialchars(implode(',', $requestMailBox), ENT_QUOTES, 'UTF-8')
+);
+printf(
+    '<input type="hidden" id="sf_searchField" name="searchField" value="%s">',
+    htmlspecialchars($searchField, ENT_QUOTES, 'UTF-8')
+);
 
 echo '
 <script type="text/javascript">

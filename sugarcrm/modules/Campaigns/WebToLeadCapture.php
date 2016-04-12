@@ -34,6 +34,16 @@ $users = array(
 	'PUT A RANDOM KEY FROM THE WEBSITE HERE' => array('name'=>'PUT THE USER_NAME HERE', 'pass'=>'PUT THE USER_HASH FOR THE RESPECTIVE USER HERE'),
 );
 
+$redirect = $this->request->getValidInputPost(
+    'redirect',
+    array(
+        'Assert\Url' => array(
+            'protocols' => array('http', 'https'),
+        )
+    ),
+    ''
+);
+
 if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	    //adding the client ip address
 	    $_POST['client_id_address'] = query_client_ip();
@@ -199,16 +209,15 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	  }
 }
 
-if (!empty($_POST['redirect'])) {
+if (!empty($redirect)) {
     if(headers_sent()){
     	echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
-    	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';
+        echo '<form name="redirect" action="' . $redirect . '" method="GET">';
     	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
     	echo '</body></html>';
     }
     else{
-        $request_redirect = $request->getValidInputRequest('redirect');
-    	header("Location: $request_redirect");
+        header("Location: $redirect");
     	die();
     }
 }

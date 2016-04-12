@@ -291,18 +291,18 @@ if ( ( $args['type'] =='published' && is_admin($current_user) )
   ||
 ( $args['type'] == 'my') )
 { ?>
-<td nowrap="nowrap"><a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&delete_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('delete_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_DELETE']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&delete_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_DELETE']; ?></a></td>
+<td nowrap="nowrap"><a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&delete_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('delete_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_DELETE']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&delete_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_DELETE']; ?></a></td>
 <?php } else { ?>
 <td><?php echo SugarThemeRegistry::current()->getImage(blank, "", 1, 1, ".gif", ""); ?></td>
 <?php } ?>
 <?php if ( is_admin($current_user) && $args['type'] == 'published') { ?>
-<td><nobr><a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&publish=no&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('unpublish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_UN_PUBLISH']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&publish=no&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_UN_PUBLISH']; ?></a></nobr></td>
+<td><nobr><a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&publish=no&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('unpublish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_UN_PUBLISH']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&publish=no&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_UN_PUBLISH']; ?></a></nobr></td>
 <?php
 }
 else if ( is_admin($current_user) && $args['type'] == 'my')
 {
 ?>
-<td><nobr><a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&publish=yes&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('publish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_PUBLISH']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo $args['view']; ?>&publish=yes&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_PUBLISH']; ?></a></nobr></td>
+<td><nobr><a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&publish=yes&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo SugarThemeRegistry::current()->getImage('publish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_PUBLISH']);?></a>&nbsp;<a href="index.php?module=Reports&action=index&view=<?php echo htmlspecialchars($args['view'], ENT_QUOTES, 'UTF-8'); ?>&publish=yes&publish_report_id=<?php echo $report->id; ?>" class="listViewTdToolsS1"><?php echo $mod_strings['LBL_PUBLISH']; ?></a></nobr></td>
 <?php } else { ?>
 <td><?php echo SugarThemeRegistry::current()->getImage(blank, "", 1, 1, ".gif", ""); ?></td>
 <?php } ?>

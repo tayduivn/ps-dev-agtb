@@ -254,8 +254,6 @@ $dictionary['emails_beans'] = array('table' => 'emails_beans',
 $dictionary['emails_text'] = array(
 	'table' => 'emails_text',
 	'comment' => 'Large email text fields',
-	'mysqlengine' => 'MyISAM',
-	'engine' => 'MyISAM',
 	'fields' => array(
 		'email_id' => array (
 			'name'			=> 'email_id',
