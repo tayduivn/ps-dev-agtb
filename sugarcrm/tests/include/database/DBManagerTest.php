@@ -4031,13 +4031,13 @@ SQL;
             array()
         );
 
-        $this->assertTrue(
+        $this->assertNotFalse(
             $this->_db->query(
                 $this->_db->dropColumnSQL($tableName, $field1)
             )
         );
 
-        $this->assertTrue(
+        $this->assertNotFalse(
             $this->_db->query(
                 $this->_db->dropColumnSQL($tableName, array($field2))
             )
@@ -4045,7 +4045,7 @@ SQL;
 
         $this->_db->addColumn($tableName, array($field1, $field2));
 
-        $this->assertTrue(
+        $this->assertNotFalse(
             $this->_db->query(
                 $this->_db->dropColumnSQL($tableName, array($field1, $field2))
             )
