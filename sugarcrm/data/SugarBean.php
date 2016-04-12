@@ -594,6 +594,10 @@ class SugarBean
             {
                 $this->optimistic_lock=true;
             }
+
+            if (isset($dictionary[$this->object_name]['importable'])) {
+                $this->importable = isTruthy($dictionary[$this->object_name]['importable']);
+            }
         }
 
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
