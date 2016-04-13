@@ -2604,33 +2604,32 @@ class HealthCheckScanner
             if (!empty($defs)) {
                 $this->updateStatus("hasCustomViewsModDir", $module, $defs);
             }
-        }
 
-        // Check custom extensions which aren't Studio
-        $badExts = array(
-            "ActionViewMap",
-            "ActionFileMap",
-            "ActionReMap",
-            "EntryPointRegistry",
-            "FileAccessControlMap",
-            "WirelessModuleRegistry",
-            "JSGroupings"
-        );
-        $badExts = array_flip($badExts);
-        foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
-            if (isset($badExts[basename($extdir)])) {
-                $extfiles = glob("$extdir/*");
-                foreach ($extfiles as $k => $file) {
-                    if ($this->isEmptyFile($file)) {
-                        unset($extfiles[$k]);
+            // Check custom extensions which aren't Studio
+            $badExts = array(
+                "ActionViewMap",
+                "ActionFileMap",
+                "ActionReMap",
+                "EntryPointRegistry",
+                "FileAccessControlMap",
+                "WirelessModuleRegistry",
+                "JSGroupings"
+            );
+            $badExts = array_flip($badExts);
+            foreach ($this->glob("custom/modules/$module/Ext/*") as $extdir) {
+                if (isset($badExts[basename($extdir)])) {
+                    $extfiles = glob("$extdir/*");
+                    foreach ($extfiles as $k => $file) {
+                        if ($this->isEmptyFile($file)) {
+                            unset($extfiles[$k]);
+                        }
                     }
-                }
-                if (!empty($extfiles)) {
-                    $this->updateStatus("extensionDir", $extdir);
+                    if (!empty($extfiles)) {
+                        $this->updateStatus("extensionDir", $extdir);
+                    }
                 }
             }
         }
-
         // check logic hooks for module
         $this->checkHooks($module, $bwc ? HealthCheckScannerMeta::CUSTOM : HealthCheckScannerMeta::MANUAL, $bwc);
     }
