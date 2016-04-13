@@ -20,18 +20,24 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 class PMSEBeanHandler
 {
     /**
-     *
      * @var PMSELogger
      */
     protected $logger;
 
     /**
-     *
-     * @var PMSEEvalCriteria
+     * @var PMSEEvaluator
      */
     protected $evaluator;
 
+    /**
+     * @var PMSERelatedModule
+     */
     protected $pmseRelatedModule;
+
+    /**
+     * @var PMSEExpressionEvaluator
+     */
+    protected $expressionEvaluator;
 
     /**
      * @codeCoverageIgnore
@@ -416,6 +422,14 @@ class PMSEBeanHandler
         } else {
             $response->value = $dataEval[0];
             $response->type = $value->expSubtype;
+        }
+        if (strtolower($response->type) == 'timespan') {
+            if (!isset($this->expressionEvaluator)) {
+                $this->expressionEvaluator = ProcessManager\Factory::getPMSEObject('PMSEExpressionEvaluator');
+            }
+            $now = new DateTime();
+            $now->add(new DateInterval($this->expressionEvaluator->processDateInterval($response->value)));
+            $response->value = $timedate->asIso($now);
         }
         return $response->value;
     }
