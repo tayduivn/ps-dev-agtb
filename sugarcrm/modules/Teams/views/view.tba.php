@@ -68,6 +68,11 @@ class TeamsViewTBA extends SugarView
 
         // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
         foreach ($actionsList as $name => $category) {
+            $buf = reset($category);
+            if (isset($buf['access']['aclaccess']) && $buf['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
+                unset($actionsList[$name]);
+                continue;
+            }
             $objName = BeanFactory::getObjectName($name);
             VardefManager::loadVardef($name, $objName);
             if (
