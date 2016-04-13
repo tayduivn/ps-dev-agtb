@@ -44,6 +44,8 @@
      */
     initialize: function() {
         this._super('initialize', arguments);
-        this.on('render', app.tooltip.clear);
+        if (app.tooltip) {
+            this.on('render', app.tooltip.clear);
+        }
     }
 })
