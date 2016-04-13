@@ -185,7 +185,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             // PAT-2081 Move Google API library to composer
             'include/google-api-php-client',
             // MACAROON-1125
-            'include/javascript/pmse/business_rules.js'
+            'include/javascript/pmse/business_rules.js',
+            // MACAROON-1328
+            'modules/pmse_Inbox/engine/PMSEAccessManagement.php',
         );
 
         // must be upgrading from between 710 to 722
@@ -277,7 +279,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 $files[] = 'vendor/OneLogin/Saml';
             }
         }
-        
+
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
