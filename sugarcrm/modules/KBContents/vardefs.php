@@ -457,6 +457,15 @@ $dictionary['KBContent'] = array(
             'duplicate_on_record_copy' => 'no',
             'studio' => false,
         ),
+        'tasks' => array(
+            'name' => 'tasks',
+            'type' => 'link',
+            'relationship' => 'kbcontent_tasks',
+            'module' => 'Tasks',
+            'bean_name' => 'Task',
+            'source' => 'non-db',
+            'vname' => 'LBL_TASKS',
+        ),
     ),
     'relationships' => array(
         'kbcontent_notes' => array(
@@ -540,6 +549,17 @@ $dictionary['KBContent'] = array(
             'rhs_table' => 'kbcontents',
             'rhs_key' => 'kbscase_id',
             'relationship_type' => 'one-to-many'
+        ),
+        'kbcontent_tasks' => array(
+            'lhs_module' => 'KBContents',
+            'lhs_table' => 'kbcontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'KBContents'
         ),
     ),
     'indices' => array(
