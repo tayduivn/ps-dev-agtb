@@ -259,6 +259,21 @@ class ModuleApi extends SugarApi {
         $this->moveTemporaryFiles($args, $bean);
         $this->updateBean($bean, $api, $args);
 
+        $this->updateRelatedRecords($api, $bean, $args);
+
+        return $this->getLoadedAndFormattedBean($api, $args);
+    }
+
+    /**
+     * Link and unlink any related records
+     *
+     * @param ServiceBase $api
+     * @param SugarBean $bean
+     * @param array $args API arguments
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    public function updateRelatedRecords($api, $bean, $args)
+    {
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'delete');
         $this->unlinkRelatedRecords($api, $bean, $relateArgs);
 
@@ -268,7 +283,6 @@ class ModuleApi extends SugarApi {
         $relateArgs = $this->getRelatedRecordArguments($bean, $args, 'create');
         $this->createRelatedRecords($api, $bean, $relateArgs);
 
-        return $this->getLoadedAndFormattedBean($api, $args);
     }
 
     public function retrieveRecord($api, $args) {
