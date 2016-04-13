@@ -67,13 +67,20 @@ class TeamBasedACLConfigurator
     );
 
     /**
-     * @var string Fields fallback key.
+     * @var string Fields fallback keys [from => to].
      */
-    protected $fieldFallbackOption = 'ACL_OWNER_READ_WRITE';
+    protected $fieldFallbackOption = array(
+        'ACL_READ_SELECTED_TEAMS_WRITE' => 'ACL_READ_OWNER_WRITE',
+        'ACL_SELECTED_TEAMS_READ_OWNER_WRITE' => 'ACL_OWNER_READ_WRITE',
+        'ACL_SELECTED_TEAMS_READ_WRITE' => 'ACL_OWNER_READ_WRITE',
+    );
+
     /**
-     * @var string Modules fallback key.
+     * @var string Modules fallback [from => to].
      */
-    protected $moduleFallbackOption = 'ACL_ALLOW_OWNER';
+    protected $moduleFallbackOption = array(
+        'ACL_ALLOW_SELECTED_TEAMS' => 'ACL_ALLOW_OWNER',
+    );
 
     /**
      * @var array Affected during fallback actions.
@@ -99,8 +106,8 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Get field fallback option.
-     * @return string
+     * Get field fallback options.
+     * @return array
      */
     public function getFieldFallbackOption()
     {
@@ -108,12 +115,48 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Get module fallback option.
-     * @return string
+     * Get module fallback options.
+     * @return array
      */
     public function getModuleFallbackOption()
     {
         return $this->moduleFallbackOption;
+    }
+
+    /**
+     * Convert fallback arrays to access.
+     * @return array Of field and module accesses.
+     */
+    protected function fallbackAsAccess()
+    {
+        $res = array();
+        foreach ($this->fieldFallbackOption + $this->moduleFallbackOption as $k => $v) {
+            $res[constant($k)] = constant($v);
+        }
+        return $res;
+    }
+
+    /**
+     * Get access to fallback for by access number. Searches in field and module constants.
+     * @param int $access TBA access number.
+     * @return int|false Access number to fallback.
+     */
+    public function getFallbackByAccess($access)
+    {
+        $combArray = $this->fallbackAsAccess();
+        return isset($combArray[$access]) ? $combArray[$access] : false;
+    }
+
+    /**
+     * Get access by fallback access number. Searches in field and module constants.
+     * @param int $access Access number.
+     * @return int|false TBA access.
+     */
+    public function getAccessByFallback($access)
+    {
+        $combArray = $this->fallbackAsAccess();
+        $key = array_search($access, $combArray);
+        return $key !== false ? $combArray[$key] : false;
     }
 
     /**
@@ -347,7 +390,7 @@ class TeamBasedACLConfigurator
                         'access_override'
                     );
                     if (!empty($accessOverride[0]['access_override']) &&
-                        $accessOverride[0]['access_override'] == constant($this->getModuleFallbackOption())
+                        $this->getAccessByFallback($accessOverride[0]['access_override']) !== false
                     ) {
                         $aclRole->setAction(
                             $moduleRow['role'],
@@ -361,7 +404,7 @@ class TeamBasedACLConfigurator
                 foreach ($moduleActions['field'] as $fieldRow) {
                     $roleFields = $aclField->getFields($moduleName, '', $fieldRow['role']);
                     if (!empty($roleFields[$fieldRow['field']]) &&
-                        $roleFields[$fieldRow['field']]['aclaccess'] == constant($this->getFieldFallbackOption())
+                        $this->getAccessByFallback($roleFields[$fieldRow['field']]['aclaccess']) !== false
                     ) {
                         $aclField->setAccessControl(
                             $moduleName,
@@ -433,20 +476,28 @@ class TeamBasedACLConfigurator
             $aclType = BeanFactory::getBean($moduleName)->acltype;
             if (isset($data[$aclType])) {
                 foreach ($data[$aclType] as $moduleRow) {
+                    $fallbackAccess = $this->getFallbackByAccess($moduleRow['access']);
+                    if ($fallbackAccess === false) {
+                        continue;
+                    }
                     $aclRole->setAction(
                         $moduleRow['role'],
                         $moduleRow['action'],
-                        constant($this->getModuleFallbackOption())
+                        $fallbackAccess
                     );
                 }
             }
             if (isset($data['field'])) {
                 foreach ($data['field'] as $fieldRow) {
+                    $fallbackAccess = $this->getFallbackByAccess($fieldRow['access']);
+                    if ($fallbackAccess === false) {
+                        continue;
+                    }
                     $aclField->setAccessControl(
                         $moduleName,
                         $fieldRow['role'],
                         $fieldRow['field'],
-                        constant($this->getFieldFallbackOption())
+                        $fallbackAccess
                     );
                 }
             }

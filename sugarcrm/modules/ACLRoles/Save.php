@@ -52,7 +52,7 @@ if(!empty($_REQUEST['name'])){
             if ($tbaConfigurator->isValidAccess($value) &&
                 !$tbaConfigurator->isEnabledForModule($aclAction->category)
             ) {
-                $value = constant($tbaConfigurator->getModuleFallbackOption());
+                $value = $tbaConfigurator->getFallbackByAccess($value);
             }
             //END SUGARCRM flav=ent ONLY
     		$role->setAction($role->id,$name, $value);
@@ -64,7 +64,7 @@ if(!empty($_REQUEST['name'])){
             if ($tbaConfigurator->isValidAccess($value) &&
                 !$tbaConfigurator->isEnabledForModule($flc_module)
             ) {
-                $value = constant($tbaConfigurator->getFieldFallbackOption());
+                $value = $tbaConfigurator->getFallbackByAccess($value);
             }
             //END SUGARCRM flav=ent ONLY
     		ACLField::setAccessControl($flc_module, $role->id, $name, $value);
