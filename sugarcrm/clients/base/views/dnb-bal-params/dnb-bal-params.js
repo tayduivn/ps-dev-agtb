@@ -34,9 +34,7 @@
         'change [name="dnb_bal_ind_code_type"]': 'modifyIndustryModel',
         'change [name="dnb_bal_cntct_filter"]': 'setBalFilter',
         'shown #dnb_bal_accordian': 'handlePanelShown',
-        'hidden #dnb_bal_accordian': 'handlePanelHidden',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'hidden #dnb_bal_accordian': 'handlePanelHidden'
     },
 
     /**
@@ -712,23 +710,6 @@
             level: 'error',
             messages: msg
         });
-    },
-
-    showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip('show');
-    },
-
-    hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip('hide');
-    },
-
-    unbindDom: function() {
-        // Unbind all tooltips on page
-        this.$('[rel="tooltip"]').each(function() {
-            $(this).tooltip('destroy');
-        });
-        unbindTooltips('[rel="tooltip"]');
-        this._super('unbindDom');
     },
 
     /**

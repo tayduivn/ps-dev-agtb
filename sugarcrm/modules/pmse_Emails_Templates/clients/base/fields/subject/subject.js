@@ -9,12 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    'events': {
+    events: {
         'keyup input[name=name]': 'handleKeyup',
-        "click .btn": "_showVarBook"
+        'click .btn': '_showVarBook'
     },
-    fieldTag: 'input.inherit-width',
 
+    fieldTag: 'input.inherit-width',
 
     _render: function() {
         if (this.view.name === 'record') {

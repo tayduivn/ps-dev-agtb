@@ -17,12 +17,12 @@
 ({
     className: 'alert-wrapper', //override default class
 
-        events: {
-            'click [data-action=cancel]': 'cancelClicked',
-            'click [data-action=confirm]': 'confirmClicked',
-            'click [data-action=close]': 'closeClicked',
-            'click a': 'linkClick'
-        },
+    events: {
+        'click [data-action=cancel]': 'cancelClicked',
+        'click [data-action=confirm]': 'confirmClicked',
+        'click [data-action=close]': 'closeClicked',
+        'click a': 'linkClick'
+    },
 
     LEVEL: {
         PROCESS: 'process',

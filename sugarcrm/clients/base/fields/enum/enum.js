@@ -66,8 +66,11 @@
      */
     _keysOrder: null,
 
-    initialize: function(){
-        this._super("initialize", arguments);
+    /**
+     * @inheritdoc
+     */
+    initialize: function() {
+        this._super('initialize', arguments);
 
         //Reset the availible options based on the user's access and the model's values
         if (_.isString(this.def.options)) {
@@ -80,17 +83,6 @@
                 }
             });
         }
-
-        /**
-         * Property to add or not the `ellipsis_inline` class when rendering the
-         * field in the `list` template. `true` to add the class, `false`
-         * otherwise.
-         *
-         * Defaults to `true`.
-         *
-         * @property {boolean}
-         */
-        this.ellipsis = _.isUndefined(this.def.ellipsis) || this.def.ellipsis;
     },
 
     /**

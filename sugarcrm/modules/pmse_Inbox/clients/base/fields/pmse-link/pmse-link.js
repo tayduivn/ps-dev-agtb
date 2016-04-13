@@ -9,12 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    extendsFrom: 'BaseField',
-
-    initialize: function(options) {
-        this._super('initialize', arguments);
-    },
-
     /**
      * @inheritdoc
      */

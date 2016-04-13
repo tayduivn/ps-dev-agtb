@@ -18,7 +18,7 @@
  */
 ({
     events: {
-        "click .toggle-actions .btn": "toggleView"
+        'click .toggle-actions .btn': 'toggleView'
     },
 
     /**

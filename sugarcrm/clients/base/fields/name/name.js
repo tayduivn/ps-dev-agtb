@@ -16,23 +16,6 @@
 ({
     plugins: ['MetadataEventDriven'],
 
-    /**
-     * @inheritdoc
-     */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-        /**
-         * Property to add or not the `ellipsis_inline` class when rendering the
-         * field in the `list` template. `true` to add the class, `false`
-         * otherwise.
-         *
-         * Defaults to `true`.
-         *
-         * @property {boolean}
-         */
-        this.ellipsis = _.isUndefined(this.def.ellipsis) || this.def.ellipsis;
-    },
-
     _render: function() {
         // FIXME: This will be cleaned up by SC-3478.
         if (this.view.name === 'audit') {
