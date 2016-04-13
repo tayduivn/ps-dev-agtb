@@ -171,10 +171,20 @@
 
             _.each(allTeams, function(team) {
                 if (model === this.view.primaryRecord || _.contains(teamIds, team.id)) {
-                    teams.push(_.extend(app.utils.deepCopy(team), {
-                        checked: (model === this.view.primaryRecord && _.contains(teamIds, team.id) === true),
-                        primary: (primaryTeam && primaryTeam.id === team.id)
-                    }));
+                    var extendedTeam = _.extend(
+                        app.utils.deepCopy(team),
+                        {
+                            checked: (model === this.view.primaryRecord && _.contains(teamIds, team.id) === true),
+                            primary: (primaryTeam && primaryTeam.id === team.id)
+                        }
+                    );
+                    if (this.isTBAEnabled) {
+                        extendedTeam.selected = (
+                            _.contains(teamIds, team.id) === true &&
+                            _.where(model.get(this.name), {id: team.id})[0].selected
+                        );
+                    }
+                    teams.push(extendedTeam);
                 } else {
                     teams.push({
                         checked: false,
