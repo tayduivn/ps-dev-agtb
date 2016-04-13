@@ -19,7 +19,6 @@
     events: {
         'click .remove-row': 'removeClicked'
     },
-    plugins: ['Tooltip'],
 
     /**
      * @inheritdoc

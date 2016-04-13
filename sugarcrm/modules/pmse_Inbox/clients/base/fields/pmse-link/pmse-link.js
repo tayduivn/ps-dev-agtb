@@ -11,11 +11,6 @@
 ({
     extendsFrom: 'BaseField',
 
-    plugins: [
-        'EllipsisInline',
-        'Tooltip'
-    ],
-
     initialize: function(options) {
         this._super('initialize', arguments);
     },

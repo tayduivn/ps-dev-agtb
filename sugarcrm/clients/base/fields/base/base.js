@@ -16,7 +16,7 @@
  * @extends View.Field
  */
 ({
-    plugins: ['EllipsisInline', 'Tooltip', 'MetadataEventDriven'],
+    plugins: ['MetadataEventDriven'],
 
     /**
      * @inheritdoc

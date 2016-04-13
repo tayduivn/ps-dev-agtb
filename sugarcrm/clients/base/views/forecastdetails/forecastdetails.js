@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'EllipsisInline'],
+    plugins: ['Dashlet'],
 
     /**
      * Manager totals for likely_adjusted

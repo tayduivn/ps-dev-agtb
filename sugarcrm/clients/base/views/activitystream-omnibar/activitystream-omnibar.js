@@ -23,7 +23,7 @@
 
     className: 'omnibar',
 
-    plugins: ['DragdropAttachments', 'Taggable', 'Tooltip', 'Pagination'],
+    plugins: ['DragdropAttachments', 'Taggable', 'Pagination'],
 
     initialize: function(options) {
         // regular expression to find all non-breaking spaces

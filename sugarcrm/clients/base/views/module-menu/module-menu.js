@@ -20,7 +20,7 @@
  */
 ({
     tagName: 'span',
-    plugins: ['EllipsisInline'],
+
     events: {
         'click [data-event]': 'handleMenuEvent',
         'click [data-route]': 'handleRouteEvent',

@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-    plugins: ['EllipsisInline'],
     'events': {
         'keyup input[name=name]': 'handleKeyup',
         "click .btn": "_showVarBook"

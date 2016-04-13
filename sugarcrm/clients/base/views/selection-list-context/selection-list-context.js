@@ -25,8 +25,6 @@
         'click .reset_button': 'removeAllPills'
     },
 
-    plugins: ['EllipsisInline'],
-
     /**
      * @inheritdoc
      */

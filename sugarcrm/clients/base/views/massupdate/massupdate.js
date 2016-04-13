@@ -27,7 +27,6 @@
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
     massUpdateViewName: 'massupdate-progress',
     className: 'extend',
-    plugins: ['Tooltip'],
 
     /**
      * Default settings used when none are supplied through metadata.

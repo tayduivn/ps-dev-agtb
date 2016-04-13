@@ -58,7 +58,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'RelativeTime', 'ToggleVisibility', 'Tooltip', 'Pagination'],
+    plugins: ['Dashlet', 'RelativeTime', 'ToggleVisibility', 'Pagination'],
 
     events: {
         'click [data-action=show-more]': 'showMore',

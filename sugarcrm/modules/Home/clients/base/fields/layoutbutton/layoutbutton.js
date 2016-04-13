@@ -17,7 +17,7 @@
     events: {
         'click .btn.layout' : 'layoutClicked'
     },
-    plugins: ['Tooltip'],
+
     extendsFrom: 'ButtonField',
     getFieldElement: function() {
         return this.$el;

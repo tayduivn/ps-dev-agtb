@@ -19,8 +19,6 @@
      */
     events: { 'click a.worksheetManagerLink': 'linkClicked' },
 
-    plugins: ['EllipsisInline'],
-
     /**
      * Holds the user_id for passing into userTemplate
      */

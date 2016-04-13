@@ -42,11 +42,6 @@
      */
     _lastCurrencyId: null,
 
-    plugins: [
-        'EllipsisInline',
-        'Tooltip'
-    ],
-
     /**
      * @inheritdoc
      *

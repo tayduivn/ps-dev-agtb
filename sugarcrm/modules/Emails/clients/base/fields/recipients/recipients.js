@@ -27,7 +27,7 @@
 
     fieldTag: 'input.select2',
 
-    plugins: ['Tooltip', 'DragdropSelect2'],
+    plugins: ['DragdropSelect2'],
 
     /**
      * @override

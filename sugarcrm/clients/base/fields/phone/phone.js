@@ -14,8 +14,6 @@
  * @extends View.Fields.Base.BaseField
  */
 ({
-    plugins: ['EllipsisInline'],
-
     /**
      * @inheritdoc
      *

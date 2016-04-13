@@ -20,11 +20,6 @@
     extendsFrom: 'EnumField',
 
     /**
-     * Plugins
-     */
-    plugins: ['EllipsisInline', 'Tooltip'],
-
-    /**
      * The template for the tooltip
      */
     tooltipTemplate: '',

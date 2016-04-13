@@ -20,7 +20,7 @@
 ({
     fieldTag: 'input.select2',
 
-    plugins: ['EllipsisInline', 'SearchForMore', 'Tooltip'],
+    plugins: ['SearchForMore'],
 
     events: {
         'click button[data-action=addRow]': 'addRow',

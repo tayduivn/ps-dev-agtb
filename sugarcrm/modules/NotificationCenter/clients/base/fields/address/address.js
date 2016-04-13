@@ -17,8 +17,6 @@
 ({
     fieldTag: 'input.select2',
 
-    plugins: ['EllipsisInline'],
-
     events: {
         'click .btn[name=add]': 'addItem',
         'click .btn[name=remove]': 'removeItem'

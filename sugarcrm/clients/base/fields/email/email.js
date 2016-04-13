@@ -21,12 +21,14 @@
         'click  .addEmail':        'addNewAddress',
         'change .newEmail':        'addNewAddress'
     },
+
     _flag2Deco: {
         primary_address: {lbl: "LBL_EMAIL_PRIMARY", cl: "primary"},
         opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
         invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
     },
-    plugins: ['Tooltip', 'ListEditable', 'EmailClientLaunch'],
+
+    plugins: ['ListEditable', 'EmailClientLaunch'],
 
     /**
      * @inheritdoc

@@ -25,8 +25,7 @@
         'Editable',
         'Audit',
         'FindDuplicates',
-        'ToggleMoreLess',
-        'Tooltip'
+        'ToggleMoreLess'
     ],
 
     enableHeaderButtons: true,

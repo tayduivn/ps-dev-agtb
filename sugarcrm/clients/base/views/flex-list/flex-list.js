@@ -23,7 +23,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins, ['Tooltip']);
         this._super('initialize', [options]);
 
         //Store left column fields

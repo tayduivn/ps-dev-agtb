@@ -63,11 +63,6 @@
     /**
      * @inheritdoc
      */
-    plugins: ['EllipsisInline'],
-
-    /**
-     * @inheritdoc
-     */
     events: {
         'click [data-action=toggle]': 'toggleCollapsed'
     },

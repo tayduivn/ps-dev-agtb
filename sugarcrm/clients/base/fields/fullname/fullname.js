@@ -16,8 +16,6 @@
 ({
     extendsFrom: 'FieldsetField',
 
-    plugins: ['EllipsisInline'],
-
     /**
      * Mapping name field name to format initial
      *

@@ -25,7 +25,7 @@
         'click [data-action=delete]': 'deleteFile'
     },
     fileUrl: '',
-    plugins: ['File', 'FieldDuplicate', 'EllipsisInline'],
+    plugins: ['File', 'FieldDuplicate'],
 
     /**
      * @inheritdoc

@@ -15,8 +15,6 @@
         'mouseout [data-action=toggle]': 'toggleMouse'
     },
 
-    plugins: ['Tooltip'],
-
     /**
      * @inheritdoc
      *

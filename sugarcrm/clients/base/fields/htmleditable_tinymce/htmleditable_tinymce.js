@@ -14,7 +14,7 @@
  * @extends View.Fields.Base.BaseField
  */
 ({
-    plugins: ['Tinymce', 'EllipsisInline'],
+    plugins: ['Tinymce'],
 
     fieldSelector: '.htmleditable', //iframe or textarea selector
     _htmleditor: null, // TinyMCE html editor

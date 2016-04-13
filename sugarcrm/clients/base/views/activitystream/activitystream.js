@@ -28,7 +28,7 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['RelativeTime', 'FileDragoff', 'Taggable', 'Tooltip'],
+    plugins: ['RelativeTime', 'FileDragoff', 'Taggable'],
     cacheNamePrefix: "user:avatars:",
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds

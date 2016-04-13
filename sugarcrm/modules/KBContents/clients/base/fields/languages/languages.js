@@ -22,8 +22,6 @@
 
     deletedLanguages: [],
 
-    plugins: ['Tooltip'],
-
     /**
      * @inheritdoc
      */

@@ -17,14 +17,6 @@
     /**
      * @inheritdoc
      */
-    plugins: [
-        'EllipsisInline',
-        'Tooltip'
-    ],
-
-    /**
-     * @inheritdoc
-     */
     fieldTag: 'input[data-type=date]',
 
     /**

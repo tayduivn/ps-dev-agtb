@@ -21,7 +21,9 @@
      */
     direction: 'ltr',
 
-    plugins: ['EllipsisInline'],
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         this._super("initialize", arguments);
         //Generated URL's should not be editable

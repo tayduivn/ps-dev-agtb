@@ -18,7 +18,7 @@
         'shown.bs.tab a[data-toggle="tab"]': 'resize',
     },
 
-    plugins: ['Dashlet', 'Chart', 'EllipsisInline'],
+    plugins: ['Dashlet', 'Chart'],
     className: 'cases-summary-wrapper',
 
     tabData: null,

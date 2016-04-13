@@ -16,8 +16,6 @@
 ({
     fieldTag: 'input.select2',
 
-    plugins: ['EllipsisInline'],
-
     /**
      * HTML tag of the append value checkbox.
      *

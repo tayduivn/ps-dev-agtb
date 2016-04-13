@@ -11,7 +11,7 @@
 ({
     extendsFrom: 'DnbView',
 
-    plugins: ['ErrorDecoration', 'Tooltip'],
+    plugins: ['ErrorDecoration'],
 
     events: {
         'change [name="dnb_bal_sale"]': 'toggleFormControls',

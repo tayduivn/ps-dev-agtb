@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dropdown', 'Tooltip'],
+    plugins: ['Dropdown'],
 
     /**
      * @param {Object} options

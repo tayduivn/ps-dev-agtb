@@ -25,7 +25,7 @@
     'events': {
         'click .btn': 'toggle'
     },
-    plugins: ['Tooltip'],
+
     /**
      * @inheritdoc
      *

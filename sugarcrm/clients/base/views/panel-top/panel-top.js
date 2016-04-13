@@ -37,7 +37,7 @@
         'keydown [data-a11y=toggle]': '_handleKeyClick'
     },
 
-    plugins: ['LinkedModel', 'Tooltip'],
+    plugins: ['LinkedModel'],
 
     /**
      * @inheritdoc

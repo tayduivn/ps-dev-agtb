@@ -15,7 +15,7 @@
  */
 ({
     className: 'table-cell quicksearch-modulelist-wrapper',
-    plugins: ['Dropdown', 'EllipsisInline'],
+    plugins: ['Dropdown'],
     dropdownItemSelector: '[data-action=select-module], [data-action=select-all]',
 
     events: {

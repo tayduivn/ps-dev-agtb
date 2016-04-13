@@ -15,8 +15,9 @@
  */
 ({
     backdropHtml: '<div class="drawer-backdrop"></div>',
-    plugins: ['Tooltip'],
+
     onCloseCallback: null, //callbacks to be called once drawers are closed
+
     scrollTopPositions: [], //stores scroll positions for main and side pane
 
     pixelsFromFooter: 80, //how many pixels from the footer the drawer will drop down to

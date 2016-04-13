@@ -31,7 +31,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dropdown', 'RelativeTime', 'EllipsisInline', 'Tooltip'],
+    plugins: ['Dropdown', 'RelativeTime'],
 
     /**
      * Notifications bean collection.

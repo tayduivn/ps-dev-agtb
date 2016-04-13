@@ -17,8 +17,6 @@
 ({
     className: 'alert-wrapper', //override default class
 
-    plugins: ['Tooltip'],
-
         events: {
             'click [data-action=cancel]': 'cancelClicked',
             'click [data-action=confirm]': 'confirmClicked',

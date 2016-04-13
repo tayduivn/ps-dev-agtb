@@ -20,8 +20,6 @@
 ({
     extendsFrom: 'FieldsetField',
 
-    plugins: ['EllipsisInline'],
-
     detailViewNames: ['record', 'create', 'create-nodupecheck', 'preview', 'pmse-case'],
 
     /**

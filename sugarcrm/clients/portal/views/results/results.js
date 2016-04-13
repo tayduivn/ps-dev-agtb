@@ -9,9 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 ({
-
-    plugins: ['Tooltip'],
-
     sidebarClosed: false,
 
     fallbackFieldTemplate: "detail",

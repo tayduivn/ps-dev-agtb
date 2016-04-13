@@ -14,9 +14,6 @@
  * @extends View.Fields.Base.BaseField
  */
 ({
-
-    plugins: ['Tooltip'],
-
     events: {
         'click [data-action]': 'toggleStatus'
     },

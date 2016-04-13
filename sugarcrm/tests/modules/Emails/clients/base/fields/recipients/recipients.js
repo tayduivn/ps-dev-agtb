@@ -10,7 +10,6 @@ describe("Emails.fields.recipients", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('recipients', 'field', 'base', 'edit', 'Emails');
         SugarTest.loadHandlebarsTemplate('recipients', 'field', 'base', 'select2-selection', 'Emails');
-        SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
 
         context = app.context.getContext({
@@ -27,7 +26,6 @@ describe("Emails.fields.recipients", function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        delete app.plugins.plugins['field']['Tooltip'];
     });
 
     describe('manipulating the value of the field', function() {
@@ -240,10 +238,10 @@ describe("Emails.fields.recipients", function() {
             });
             it("Should return the selection by wrapping the tooltip elements", function() {
                 var recipient = {email: "will@example.com"},
-                    actualPlugin = $(field.formatSelection(recipient)).attr('rel'),
+                    relAttr = $(field.formatSelection(recipient)).attr('rel'),
                     actualTitle = $(field.formatSelection(recipient)).data('title');
 
-                expect(actualPlugin).toBe('tooltip');
+                expect(relAttr).toBe('tooltip');
                 expect(actualTitle).toBe(recipient.email);
             });
         });

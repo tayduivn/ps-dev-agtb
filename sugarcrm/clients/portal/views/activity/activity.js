@@ -21,7 +21,7 @@
         'click [name=show_more_button]': 'showMoreRecords'
     },
 
-    plugins: ['RelativeTime', 'Tooltip'],
+    plugins: ['RelativeTime'],
 
     /**
      * Default settings used for the `RelativeTime` plugin.

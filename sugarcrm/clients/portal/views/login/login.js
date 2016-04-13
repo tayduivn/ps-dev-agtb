@@ -16,7 +16,7 @@
  * @extends View.Views.Base.LoginView
  */
 ({
-    plugins: ['ErrorDecoration', 'Tooltip'],
+    plugins: ['ErrorDecoration'],
 
     events: {
         'click [name=login_button]': 'login',

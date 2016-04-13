@@ -17,7 +17,7 @@
     tagName: "span",
     fieldTag: "a",
 
-    plugins: ['Tooltip', 'MetadataEventDriven'],
+    plugins: ['MetadataEventDriven'],
 
     initialize: function(options) {
         var self = this;

@@ -73,9 +73,7 @@ describe('View.Fields.Base.ParticipantsField', function() {
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'timeline-header.partial');
         SugarTest.loadHandlebarsTemplate('participants', 'field', 'base', 'search-result.partial');
         SugarTest.declareData('base', module, true, false);
-        SugarTest.loadPlugin('EllipsisInline');
         SugarTest.loadPlugin('VirtualCollection');
-        SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
         app.data.declareModelClass('Users', null, 'base', fixture);
         app.data.declareModelClass('Leads', null, 'base', fixture);

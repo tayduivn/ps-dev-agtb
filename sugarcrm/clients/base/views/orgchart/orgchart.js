@@ -20,7 +20,7 @@
         'click .zoom-control': 'zoomChart',
         'click .toggle-control': 'toggleChart'
     },
-    plugins: ['Dashlet', 'Tooltip', 'Chart'],
+    plugins: ['Dashlet', 'Chart'],
 
     // user configurable
     nodetemplate: null,

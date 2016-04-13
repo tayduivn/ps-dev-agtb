@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dropdown', 'Tooltip'],
+    plugins: ['Dropdown'],
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);

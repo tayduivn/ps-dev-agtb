@@ -16,7 +16,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'Tooltip'],
+    plugins: ['Dashlet'],
 
     className: 'forecasts-chart-wrapper',
 

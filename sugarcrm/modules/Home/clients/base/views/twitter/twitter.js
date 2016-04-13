@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'RelativeTime', 'Connector', 'Tooltip'],
+    plugins: ['Dashlet', 'RelativeTime', 'Connector'],
     limit : 20,
     events: {
         'click .connect-twitter': 'onConnectTwitterClick',

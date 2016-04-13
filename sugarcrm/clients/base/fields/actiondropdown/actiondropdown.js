@@ -48,7 +48,6 @@
         'shown.bs.dropdown': '_toggleAria',
         'hidden.bs.dropdown': '_toggleAria'
     },
-    plugins: ['Tooltip'],
 
     /**
      * @inheritdoc

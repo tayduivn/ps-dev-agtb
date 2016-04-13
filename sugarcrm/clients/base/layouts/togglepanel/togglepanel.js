@@ -21,8 +21,6 @@
         "click .toggle-actions .btn": "toggleView"
     },
 
-    plugins: ['Tooltip'],
-
     /**
      * @override
      * @param {Object} opts

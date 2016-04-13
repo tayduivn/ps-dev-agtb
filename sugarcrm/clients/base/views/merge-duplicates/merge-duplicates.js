@@ -16,8 +16,10 @@
  * @extends View.Views.Base.ListView
  */
 ({
-    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline', 'MergeDuplicates'],
     extendsFrom: 'ListView',
+
+    plugins: ['Editable', 'ErrorDecoration', 'MergeDuplicates'],
+
     events: {
         'click [data-mode=preview]' : 'togglePreview',
         'click [data-action=copy]' : 'triggerCopy',

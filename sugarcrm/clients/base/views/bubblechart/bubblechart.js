@@ -14,7 +14,7 @@
  * @extends View.View
  */
 ({
-    plugins: ['Dashlet', 'Tooltip', 'Chart'],
+    plugins: ['Dashlet', 'Chart'],
 
     tooltiptemplate: null,
     params: null,

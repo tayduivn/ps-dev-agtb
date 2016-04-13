@@ -16,7 +16,7 @@
 ({
     extendsFrom: 'ImageField',
 
-    plugins: ['File', 'FieldDuplicate', 'Tooltip'],
+    plugins: ['File', 'FieldDuplicate'],
 
     MAPSIZECLASS: {
         'large': 'label-module-lg',
