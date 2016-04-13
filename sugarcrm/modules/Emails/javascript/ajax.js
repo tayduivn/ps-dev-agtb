@@ -1002,6 +1002,10 @@ AjaxObject.detailView = {
             get = get + "&team_ids=" + teamIdsArray.join(",") + "&primary_team_id=" + SUGAR.collection.prototype.getPrimaryTeamidsFromUI('ImportEditView', 'team_name');
             //var team_id = editView.team_id.value;
         }
+        var selTeamIdsArray = SUGAR.collection.prototype.getSelectedTeamIdsFromUI('ImportEditView', 'team_name');
+        if (selTeamIdsArray != null && selTeamIdsArray.length > 0) {
+            get += "&selected_team_ids=" + selTeamIdsArray.join(",");
+        }
         if (editView.assigned_user_id != null) {
             get = get + "&user_id=" + editView.assigned_user_id.value
             //var user_id = editView.assigned_user_id.value;
