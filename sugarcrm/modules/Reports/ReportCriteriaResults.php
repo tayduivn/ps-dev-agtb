@@ -224,7 +224,8 @@ if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {
 		foreach($expandDivs as $divId) {
 			str_replace(" ", "",$divId);
 			if ($divId != "") {
-				echo "<script>expandCollapseComboSummaryDiv('".$divId."')</script>";
+                echo "<script>expandCollapseComboSummaryDiv('" . htmlspecialchars($divId, ENT_QUOTES, 'UTF-8') . "')
+                    </script>";
 			} // if
 		} // foreach
 	} // if

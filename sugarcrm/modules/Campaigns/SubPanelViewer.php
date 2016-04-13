@@ -13,31 +13,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: SubPanelViewer.php 50894 2009-09-17 06:26:45Z weidong $
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $gridline;
 global $theme;
 global $beanList;
 global $beanFiles;
 
+$module = InputValidation::getService()->getValidInputRequest('module', 'Assert\Mvc\ModuleName', '');
+$record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid', '');
 
-if(empty($_REQUEST['module']))
-{
-	die("'module' was not defined");
+if (empty($module)) {
+    die("'module' was not defined");
 }
 
-if(empty($_REQUEST['record']))
-{
-	die("'record' was not defined");
+if (empty($record)) {
+    die("'record' was not defined");
 }
 
-if(!isset($beanList[$_REQUEST['module']]))
-{
-	die("'".$_REQUEST['module']."' is not defined in \$beanList");
+if (!isset($beanList[$module])) {
+    die("'".$module."' is not defined in \$beanList");
 }
 
 $subpanel = $_REQUEST['subpanel'];
-$record = $_REQUEST['record'];
-$module = $_REQUEST['module'];
-
 
 $image_path = 'themes/'.$theme.'/images/';
 

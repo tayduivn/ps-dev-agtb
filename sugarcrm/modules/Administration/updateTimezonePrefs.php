@@ -118,7 +118,7 @@ while ($row = $db->fetchByAssoc($result)) {
         	echo $mod_strings['LBL_UPDATE_TIMEZONE_ADJUST'].": ";
         if($execute){
 			if(isset($_POST[$row['id'].'adjust'])){
-				echo  $adjustment;
+                    echo SugarCleaner::cleanHtml($adjustment, false);
 			}
 		}else{
 			echo "<select name='{$row['id']}adjust'>";

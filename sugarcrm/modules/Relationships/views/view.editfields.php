@@ -16,8 +16,8 @@ require_once('include/MVC/View/views/view.ajax.php');
 class ViewEditFields extends ViewAjax{
  	
     public function __construct(){
-        $rel = $this->rel = $_REQUEST['rel'];
-        $this->id = $_REQUEST['id'];
+        $rel = $this->rel = $this->request->getValidInputRequest('rel');
+        $this->id = $this->request->getValidInputRequest('id', 'Assert\Guid');
         $this->module = $this->request->getValidInputRequest('rel_module', 'Assert\Mvc\ModuleName');
 
         global $beanList;

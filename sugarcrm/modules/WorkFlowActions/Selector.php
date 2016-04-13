@@ -142,7 +142,7 @@ $form->out("main");
 		$javascript = new javascript();
 		$javascript->setFormName('EditView');
 		$javascript->setSugarBean($temp_module);
-		$javascript->addField($action_object->field, '', '', 'field_'.$_REQUEST['field_num'].'__adv_value');
+		$javascript->addField($action_object->field, '', '', 'field_' . htmlspecialchars($_REQUEST['field_num'], ENT_QUOTES, 'UTF-8') . '__adv_value');
 		$js .= $javascript->getScript(true);
 	}
 	echo $js;

@@ -62,13 +62,22 @@ class ConfiguratorViewAddFontResult extends SugarView {
             }
         }
         if(!$error){
+            $encoding_table = $this->request->getValidInputRequest(
+                'pdf_encoding_table',
+                array(
+                    'Assert\Regex' => array(
+                        'pattern' => '/^[a-z0-9_-]+$/i'
+                    )
+                )
+            );
+            $embedded = (bool) $this->request->getValidInputRequest('pdf_embedded');
             require_once('include/Sugarpdf/FontManager.php');
             $fontManager = new FontManager();
             $error = $fontManager->addFont(
                 $uploadFileNames["pdf_font_file"],
                 $uploadFileNames["pdf_metric_file"],
-                $_REQUEST['pdf_embedded'],
-                $_REQUEST['pdf_encoding_table'],
+                $embedded,
+                $encoding_table,
                 array(),
                 htmlspecialchars_decode($_REQUEST['pdf_cidinfo'], ENT_QUOTES),
                 $_REQUEST['pdf_style_list']
