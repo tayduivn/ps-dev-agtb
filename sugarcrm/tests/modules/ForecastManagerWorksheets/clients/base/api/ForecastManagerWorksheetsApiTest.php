@@ -30,7 +30,7 @@ class ForecastManagerWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::assignQuota
+     * @covers ForecastManagerWorksheet::assignQuota
      */
     public function testAssignQuota()
     {
