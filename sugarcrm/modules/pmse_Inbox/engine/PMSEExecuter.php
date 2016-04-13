@@ -16,6 +16,7 @@ require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEExecuter
 {
@@ -503,11 +504,7 @@ class PMSEExecuter
 
     public function retrievePMSEStartTime()
     {
-        $result = 0;
-        if (isset($_SESSION['pmse_start_time']) && !empty($_SESSION['pmse_start_time'])) {
-            $result = $_SESSION['pmse_start_time'];
-        }
-        return $result;
+        return Registry\Registry::getInstance()->get('pmse_start_time', 0);
     }
 
     public function validateExecutionTime($elementElapsedTime)

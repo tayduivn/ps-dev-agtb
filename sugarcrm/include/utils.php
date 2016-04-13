@@ -1454,7 +1454,8 @@ function is_guid($guid)
 }
 
 /**
- * Create a unique key and keep it in globals so it can be used by make_sugar_config() and other code during install process 
+ * Create a unique key and keep it in globals so it can be used by make_sugar_config()
+ * and other code during install process
  * @return string unique_key
  */
 function get_unique_key()
@@ -2168,7 +2169,7 @@ function xss_check_pattern($pattern, $str)
  * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
  *
  * @deprecated This is now an integral part of the new Validator service and is implemented
- * in \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator. 
+ * in \Sugarcrm\Sugarcrm\Security\Validator\Constraints\LegacyCleanStringValidator.
  */
 function clean_string($value, $filter = "STANDARD", $dieOnBadData = true)
 {
@@ -2248,7 +2249,7 @@ function clean_special_arguments()
 /**
  * cleans the given key in superglobals $_GET, $_POST, $_REQUEST
  * @deprecated Superglobal sanitizing will be completely abandonned. Use the new InputValidation
- * framework in combination with Validator constraints for input validation. 
+ * framework in combination with Validator constraints for input validation.
  */
 function clean_superglobals($key, $filter = 'STANDARD')
 {
@@ -3395,11 +3396,6 @@ function sugar_cleanup($exit = false)
 
     }
     SugarAutoLoader::saveClassMap();
-
-    // Clean PA session arrays
-    if (isset($_SESSION['triggeredFlows'])) {
-        unset($_SESSION['triggeredFlows']);
-    }
 
     if (class_exists('DBManagerFactory', false)) {
         DBManagerFactory::disconnectAll();
@@ -6084,7 +6080,7 @@ function validate_ip($clientIp, $sessionIp)
     if (isset($sugar_config['verify_client_ip']) && !$sugar_config['verify_client_ip']) {
         return true;
     }
-    
+
     $isValidIP = true;
 
     $classCheck = 0;

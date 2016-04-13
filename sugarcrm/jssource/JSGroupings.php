@@ -490,6 +490,8 @@
                 'include/javascript/pmse/ui/decision_table.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/close_list_item.js' => 'include/javascript/pmse.ui.min.js',
                 'include/javascript/pmse/ui/dropdown_selector.js' => 'include/javascript/pmse.ui.min.js',
+                // files under the modules/pmse_Inbox/js/ folder
+                'modules/pmse_Inbox/js/formAction.js' => 'include/javascript/pmse.ui.min.js',
             ),
 
             //Grouping for TBA configuration.

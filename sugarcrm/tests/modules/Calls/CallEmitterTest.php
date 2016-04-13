@@ -144,7 +144,7 @@ class CallEmitterTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * reminder method should call method of ReminderEmitter
      *
-     * @covers CallEmitter::reminder
+     * @covers CallEmitter::__call
      * @dataProvider reminderProvider
      * @param \SugarBean $bean
      * @param \User $user

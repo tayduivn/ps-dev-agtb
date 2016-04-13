@@ -15,7 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEBaseValidator.php';
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEValidate.php';
 
-use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 /**
  * Description of PMSEConcurrencyValidator
@@ -39,7 +40,8 @@ class PMSEConcurrencyValidator extends PMSEBaseValidator implements PMSEValidate
 
         $args = $request->getArguments();
         $flowId = isset($args['idFlow']) ? $args['idFlow'] : (isset($args['flow_id']) ? $args['flow_id'] : '0');
-        if (!isset($_SESSION['locked_flows']) || !ArrayFunctions::in_array_access($flowId, $_SESSION['locked_flows'])) {
+        $flows = Registry\Registry::getInstance()->get('locked_flows', array());
+        if (!isset($flows[$flowId])) {
             $request->validate();
         } else {
             $request->invalidate();

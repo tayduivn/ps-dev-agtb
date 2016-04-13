@@ -15,6 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEPreProcessor
 {
@@ -185,9 +186,6 @@ class PMSEPreProcessor
         if ($request->getExternalAction() == 'TERMINATE_CASE') {
             $this->terminateCaseByBeanAndProcess($request->getBean());
         } else {
-            if (!isset($_SESSION['triggeredFlows'])) {
-                $_SESSION['triggeredFlows'] = array();
-            }
             $flowDataList = $this->getFlowDataList($request);
             foreach ($flowDataList as $flowData) {
                 // Process the flow data and also the bean object data
@@ -211,7 +209,9 @@ class PMSEPreProcessor
                         }
 
                         $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
-                        $_SESSION['pmse_start_time'] = microtime(true);
+
+                        // Set the start time
+                        Registry\Registry::getInstance()->set('pmse_start_time', microtime(true));
 
                         $result = $this->executer->runEngine(
                             $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(),
@@ -441,7 +441,7 @@ class PMSEPreProcessor
                         $request->setArguments($args);
                         break;
                 }
-                
+
                 break;
             case 'hook':
                 $flows = $this->getAllEvents($request->getBean());
@@ -494,7 +494,7 @@ class PMSEPreProcessor
         $bean = BeanFactory::retrieveBean('pmse_BpmFlow', $element['id']);
         return array($bean->toArray());
     }
-    
+
     /**
      *
      * @param type $flowData
@@ -523,7 +523,7 @@ class PMSEPreProcessor
                 $bean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
             }
             if (isset($flowData['cas_id']) && isset($flowData['cas_index'])) {
-                
+
             }
         }
         return $bean;

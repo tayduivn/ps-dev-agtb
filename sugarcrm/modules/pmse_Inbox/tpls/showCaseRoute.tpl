@@ -14,6 +14,7 @@
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam.css'}" rel="stylesheet" />
 <link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/jcore.adam-ui.extend.css'}" rel="stylesheet" />
+<link type="text/css" href="{sugar_getjspath file='modules/pmse_Project/css/pmse.css'}" rel="stylesheet" />
 <!---------------  START WORKFLOW SHOWCASE ------------>
 <form action="index.php?module=pmse_Inbox&action=routeCase" id="EditView" name="EditView" method="POST">
 {sugar_csrf_form_token}
