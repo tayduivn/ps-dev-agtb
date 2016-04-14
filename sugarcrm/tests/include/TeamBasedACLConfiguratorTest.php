@@ -129,8 +129,8 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $aclType = BeanFactory::getBean($module)->acltype;
         $aclField = new ACLField();
         $roleActions = $this->role->getRoleActions($this->role->id);
-        $fallbackField = $this->tbaConfig->getFieldFallbackOption();
-        $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
+        $fallbackFieldAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_SELECTED_TEAMS_READ_WRITE'));
+        $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
 
         $availableFields = ACLField::getAvailableFields($module, false);
         if (!isset($availableFields[$field])) {
@@ -147,11 +147,11 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig->setForModule($module, false);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(constant($fallbackModule), $actualActions[$module][$aclType][$action]['aclaccess']);
+        $this->assertEquals($fallbackModuleAccess, $actualActions[$module][$aclType][$action]['aclaccess']);
 
         $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
         $fieldKeys = array_keys($actualAclFields);
-        $this->assertEquals(constant($fallbackField), $actualAclFields[$fieldKeys[0]]['aclaccess']);
+        $this->assertEquals($fallbackFieldAccess, $actualAclFields[$fieldKeys[0]]['aclaccess']);
 
         // Restore.
         $this->tbaConfig->setForModule($module, true);
@@ -167,11 +167,11 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig->setGlobal(false);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(constant($fallbackModule), $actualActions[$module][$aclType][$action]['aclaccess']);
+        $this->assertEquals($fallbackModuleAccess, $actualActions[$module][$aclType][$action]['aclaccess']);
 
         $actualAclFields = $aclField->getACLFieldsByRole($this->role->id);
         $fieldKeys = array_keys($actualAclFields);
-        $this->assertEquals(constant($fallbackField), $actualAclFields[$fieldKeys[0]]['aclaccess']);
+        $this->assertEquals($fallbackFieldAccess, $actualAclFields[$fieldKeys[0]]['aclaccess']);
 
         // Change the options.
         $actionId = $roleActions[$module][$aclType][$action]['id'];
@@ -206,7 +206,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
         $action = 'view';
         $roleActions = $this->role->getRoleActions($this->role->id);
-        $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
+        $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
 
         $actionId = $roleActions[$this->module]['module'][$action]['id'];
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
@@ -218,7 +218,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig->setGlobal(true);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
-        $this->assertEquals(constant($fallbackModule), $actualActions[$this->module]['module'][$action]['aclaccess']);
+        $this->assertEquals($fallbackModuleAccess, $actualActions[$this->module]['module'][$action]['aclaccess']);
 
     }
 
@@ -231,7 +231,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $action = 'view';
         $extraModule = 'Bugs';
         $roleActions = $this->role->getRoleActions($this->role->id);
-        $fallbackModule = $this->tbaConfig->getModuleFallbackOption();
+        $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
         $this->tbaConfig->setForModule($extraModule, true);
 
         $actionId = $roleActions[$this->module]['module'][$action]['id'];
@@ -245,7 +245,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actualActions = $this->role->getRoleActions($this->role->id);
 
-        $this->assertEquals(constant($fallbackModule), $actualActions[$extraModule]['module'][$action]['aclaccess']);
+        $this->assertEquals($fallbackModuleAccess, $actualActions[$extraModule]['module'][$action]['aclaccess']);
         $this->assertEquals(ACL_ALLOW_SELECTED_TEAMS, $actualActions[$this->module]['module'][$action]['aclaccess']);
     }
 }
