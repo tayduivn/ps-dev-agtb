@@ -135,5 +135,13 @@ class Tracker extends SugarBean
         }
         return false;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModuleName()
+    {
+        return 'Trackers';
+    }
 }
 }
