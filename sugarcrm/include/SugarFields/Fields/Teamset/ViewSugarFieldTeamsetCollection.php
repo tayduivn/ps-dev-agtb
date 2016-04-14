@@ -70,7 +70,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         $this->ss->assign('showSelectButton',$this->showSelectButton);
         $this->ss->assign('APP',$GLOBALS['app_strings']);
         //BEGIN SUGARCRM flav=ent ONLY
-        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isEnabledForModule($this->module_dir));
+        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isAccessibleForModule($this->module_dir));
         //END SUGARCRM flav=ent ONLY
     }
 

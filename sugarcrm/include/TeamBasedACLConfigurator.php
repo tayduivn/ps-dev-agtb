@@ -542,6 +542,7 @@ class TeamBasedACLConfigurator
 
     /**
      * Check if the module implements TBA.
+     * Implementation includes defs and ACL.
      * @param string $module Module name.
      * @return bool
      */
@@ -549,9 +550,21 @@ class TeamBasedACLConfigurator
     {
         if (!isset(self::$implementationCache[$module])) {
             $bean = BeanFactory::getBean($module);
-            self::$implementationCache[$module] = $bean && (bool)$bean->getFieldDefinition('team_set_selected_id');
+            self::$implementationCache[$module] = $bean &&
+                $bean->getFieldDefinition('team_set_selected_id') &&
+                $bean->bean_implements('ACL');
         }
         return self::$implementationCache[$module];
+    }
+
+    /**
+     * Check if the module implements TBA and enabled on admin page.
+     * @param string $module Module name.
+     * @return bool
+     */
+    public static function isAccessibleForModule($module)
+    {
+        return self::isEnabledForModule($module) && self::implementsTBA($module);
     }
 
     /**

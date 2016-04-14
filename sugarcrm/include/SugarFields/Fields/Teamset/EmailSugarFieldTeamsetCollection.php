@@ -123,7 +123,7 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         $this->ss->assign('showSelectButton', $this->showSelectButton);
         $this->ss->assign('APP', $GLOBALS['app_strings']);
         //BEGIN SUGARCRM flav=ent ONLY
-        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isEnabledForModule($this->module_dir));
+        $this->ss->assign('isTBAEnabled', TeamBasedACLConfigurator::isAccessibleForModule($this->module_dir));
         //END SUGARCRM flav=ent ONLY
         $this->ss->assign('CUSTOM_METHOD', $this->customMethod);
         $this->ss->assign("USER_ID", (!empty($this->user_id) ? $this->user_id : ''));

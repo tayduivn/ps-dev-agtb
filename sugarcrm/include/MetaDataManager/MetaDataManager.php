@@ -800,7 +800,7 @@ class MetaDataManager
         $data['filters'] = $this->getModuleFilters($moduleName);
         //BEGIN SUGARCRM flav=ent ONLY
         // Indicate whether Module has Table Based ACLs enabled
-        $data['isTBAEnabled'] = TeamBasedACLConfigurator::isEnabledForModule($moduleName);
+        $data['isTBAEnabled'] = TeamBasedACLConfigurator::isAccessibleForModule($moduleName);
         //END SUGARCRM flav=ent ONLY
         $deps = $this->getModuleDependencies($moduleName);
         if (!empty($deps) && !empty($deps['dependencies'])) {
