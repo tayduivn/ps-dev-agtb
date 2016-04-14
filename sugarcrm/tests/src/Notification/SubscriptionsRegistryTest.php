@@ -196,8 +196,8 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         \BeanFactory::setBeanClass('NotificationCenterSubscriptions');
         NotificationCenterSubscriptionCRYS1301::$beans = array();
         NotificationCenterSubscriptionCRYS1301::$fetchParams = array();
-        NotificationCenterSubscriptionCRYS1301::$fromArrayParams = array();
-        NotificationCenterSubscriptionCRYS1301::$makDeleted = array();
+        NotificationCenterSubscriptionCRYS1301::$savedArrayFields = array();
+        NotificationCenterSubscriptionCRYS1301::$markDeleted = array();
         BeanEventCRYS1301::$currentBean = null;
         \SugarTestReflection::setProtectedValue($this->sugarQuery, 'db', null);
         \SugarTestHelper::tearDown();
@@ -597,89 +597,88 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public static function setGlobalConfigurationProvider()
     {
-        $carrierName1 = 'Carrier' . rand(1000, 1999);
-        $carrierName2 = 'Carrier' . rand(2000, 2999);
-        $carrierName3 = 'Carrier' . rand(3000, 3999);
-        $carrierName4 = 'Carrier' . rand(4000, 4999);
-        $carrierName5 = 'Carrier' . rand(5000, 5999);
-
-
-        $carrierOption1 = array(rand(1000, 1999));
-        $carrierOption2 = array(rand(2000, 2999));
-        $carrierOption3 = array(rand(3000, 3999));
-        $carrierOption4 = array(rand(4000, 4999));
-        $carrierOption5 = array(rand(5000, 5999));
-
-        $beans = array(
-            array(
-                'id' => create_guid(),
-                'type' => 'module',
-                'emitter_module_name' => 'CallsCRYS1301',
-                'filter_name' => 'CallFilterCRYS1301',
-                'carrier_name' => $carrierName1,
-                'carrier_option' => $carrierOption1,
-                'is_suitable' => true,
-            ),
-            array(
-                'id' => create_guid(),
-                'type' => 'module',
-                'emitter_module_name' => 'MeetingsCRYS1301',
-                'filter_name' => 'MeetingFilterCRYS1301',
-                'carrier_name' => $carrierName2,
-                'carrier_option' => $carrierOption2,
-                'is_suitable' => true,
-            ),
-            array(
-                'id' => create_guid(),
-                'type' => 'module',
-                'emitter_module_name' => 'MeetingsCRYS1301',
-                'filter_name' => 'MeetingFilterCRYS1301',
-                'carrier_name' => $carrierName3,
-                'carrier_option' => $carrierOption3,
-                'is_suitable' => true,
-            ),
-            array(
-                'id' => create_guid(),
-                'type' => 'module',
-                'emitter_module_name' => 'MeetingsCRYS1301',
-                'filter_name' => 'NotSupportsFilterCRYS1301',
-                'carrier_name' => $carrierName4,
-                'carrier_option' => $carrierOption4,
-                'is_suitable' => true,
-            ),
-            array(
-                'id' => create_guid(),
-                'type' => 'module',
-                'emitter_module_name' => 'UsersCRYS1301',
-                'filter_name' => 'UserFilterCRYS1301',
-                'carrier_name' => $carrierName4,
-                'carrier_option' => $carrierOption4,
-                'is_suitable' => true,
-            ),
+        $callsCallFilterCarrierBean = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'CallsCRYS1301',
+            'filter_name' => 'CallFilterCRYS1301',
+            'carrier_name' => 'Carrier' . rand(1000, 1999),
+            'carrier_option' => '',
+            'is_suitable' => true,
+        );
+        $meetingsMeetingFilterCarrierBean1 = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'MeetingsCRYS1301',
+            'filter_name' => 'MeetingFilterCRYS1301',
+            'carrier_name' => 'Carrier' . rand(2000, 2999),
+            'carrier_option' => '',
+            'is_suitable' => true,
+        );
+        $meetingsMeetingFilterCarrierBean2 = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'MeetingsCRYS1301',
+            'filter_name' => 'MeetingFilterCRYS1301',
+            'carrier_name' => 'Carrier' . rand(3000, 3999),
+            'carrier_option' => '',
+            'is_suitable' => true,
+        );
+        $meetingsNotSupportsFilterCarrierBean = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'MeetingsCRYS1301',
+            'filter_name' => 'NotSupportsFilterCRYS1301',
+            'carrier_name' => 'Carrier' . rand(4000, 4999),
+            'carrier_option' => '',
+            'is_suitable' => true,
+        );
+        $usersUserFilterCarrierBean = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'UsersCRYS1301',
+            'filter_name' => 'UserFilterCRYS1301',
+            'carrier_name' => 'Carrier' . rand(5000, 5999),
+            'carrier_option' => '',
+            'is_suitable' => true,
+        );
+        $emptyCarrierBean = array(
+            'id' => create_guid(),
+            'type' => 'module',
+            'emitter_module_name' => 'CallsCRYS1301',
+            'filter_name' => 'CallFilterCRYS1301',
+            'carrier_name' => '',
+            'carrier_option' => '',
+            'is_suitable' => true,
         );
 
         return array(
             'setConfigReturnsConfig' => array(
-                'beans' => $beans,
+                'beans' => array(
+                    $meetingsMeetingFilterCarrierBean1,
+                    $meetingsMeetingFilterCarrierBean2,
+                    $meetingsNotSupportsFilterCarrierBean,
+                    $usersUserFilterCarrierBean,
+                ),
                 'carriers' => array(
-                    $carrierName1 => array(
-                        'options' => $carrierOption1,
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
                         'status' => true,
                     ),
-                    $carrierName2 => array(
-                        'options' => $carrierOption2,
+                    $meetingsMeetingFilterCarrierBean1['carrier_name'] => array(
+                        'options' => '',
                         'status' => true,
                     ),
-                    $carrierName3 => array(
-                        'options' => $carrierOption3,
+                    $meetingsMeetingFilterCarrierBean2['carrier_name'] => array(
+                        'options' => '',
                         'status' => true,
                     ),
-                    $carrierName4 => array(
-                        'options' => $carrierOption4,
+                    $meetingsNotSupportsFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
                         'status' => false,
                     ),
-                    $carrierName5 => array(
-                        'options' => $carrierOption5,
+                    $usersUserFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
                         'status' => false,
                     ),
                 ),
@@ -687,9 +686,9 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                     'CallsCRYS1301' => array(
                         'reminder' => array(
                             'CallFilterCRYS1301' => array(
-                                array($carrierName1, $carrierOption1),
-                                array($carrierName4, $carrierOption4),
-                                array($carrierName5, $carrierOption5),
+                                array($callsCallFilterCarrierBean['carrier_name'], ''),
+                                array($meetingsNotSupportsFilterCarrierBean['carrier_name'], ''),
+                                array($usersUserFilterCarrierBean['carrier_name'], ''),
                             ),
                         ),
                     ),
@@ -700,14 +699,14 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     'MeetingsCRYS1301' => array(
                         'reminder' => array(
-                            'MeetingFilterCRYS1301' => array($carrierName1, $carrierOption1),
+                            'MeetingFilterCRYS1301' => array($callsCallFilterCarrierBean['carrier_name'], ''),
                         ),
                     ),
                     'MeetingCRYS1301WithNoReminders' => array(
                         'reminder' => array(
-                            'MeetingFilterCRYS1301' => array($carrierName2),
+                            'MeetingFilterCRYS1301' => array($meetingsMeetingFilterCarrierBean1['carrier_name']),
                             'CallFilterCRYS1301' => array(
-                                array($carrierName3, $carrierOption3),
+                                array($meetingsMeetingFilterCarrierBean2['carrier_name'], ''),
                             ),
                         ),
                     ),
@@ -719,16 +718,155 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                 ),
                 'expectedSaved' => array(
-                    array(
-                        array(
-                            'carrier_name' => $carrierName1,
-                            'carrier_option' => '',
-                        ),
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'carrier_name' => $callsCallFilterCarrierBean['carrier_name'],
+                        'carrier_option' => '',
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
                     ),
                 ),
                 'expectedDeletedId' => array(
-                    array($beans[1]['id']),
-                    array($beans[2]['id']),
+                    array($meetingsMeetingFilterCarrierBean1['id']),
+                    array($meetingsMeetingFilterCarrierBean2['id']),
+                ),
+            ),
+            'existingCarrierEventSelectionIsNotDeletedIfCarrierBecomesDisabled' => array(
+                'beans' => array(
+                    $meetingsMeetingFilterCarrierBean1,
+                ),
+                'carriers' => array(
+                    $meetingsMeetingFilterCarrierBean1['carrier_name'] => array(
+                        'options' => '',
+                        'status' => false,
+                    ),
+                ),
+                'config' => array(
+                    'MeetingsCRYS1301' => array(
+                        'reminder' => array(
+                            'MeetingFilterCRYS1301' => array(
+                                array($meetingsMeetingFilterCarrierBean1['carrier_name'], ''),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(),
+            ),
+            'itIsNotPossibleToSaveCarrierEventForDisabledCarrierIfItWasNotSavedPreviously' => array(
+                'beans' => array(),
+                'carriers' => array(
+                    $meetingsMeetingFilterCarrierBean1['carrier_name'] => array(
+                        'options' => '',
+                        'status' => false,
+                    ),
+                ),
+                'config' => array(
+                    'MeetingsCRYS1301' => array(
+                        'reminder' => array(
+                            'MeetingFilterCRYS1301' => array(
+                                array($meetingsMeetingFilterCarrierBean1['carrier_name'], ''),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(),
+            ),
+            'disabledEventConfigSavesDisabledEventMarkAndDoesNotAffectExistingCarriers' => array(
+                'beans' => array(
+                    $callsCallFilterCarrierBean,
+                ),
+                'carriers' => array(
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
+                        'status' => true,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array('', ''),
+                                array($callsCallFilterCarrierBean['carrier_name'], ''),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(
+                    '' => array(
+                        'carrier_name' => '',
+                        'carrier_option' => '',
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
+                    ),
+                ),
+                'expectedDeletedId' => array(),
+            ),
+            'disabledEventConfigSavesDisabledEventMarkAlongsideOtherEnabledEventCarriers' => array(
+                'beans' => array(),
+                'carriers' => array(
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
+                        'status' => true,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array($callsCallFilterCarrierBean['carrier_name'], ''),
+                                array('', ''),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'carrier_name' => $callsCallFilterCarrierBean['carrier_name'],
+                        'carrier_option' => '',
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
+                    ),
+                    '' => array(
+                        'carrier_name' => '',
+                        'carrier_option' => '',
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
+                    ),
+                ),
+                'expectedDeletedId' => array(),
+            ),
+            'enabledEventConfigDeletesDisabledEventMarkAndDoesNotAffectExistingCarriers' => array(
+                'beans' => array(
+                    $callsCallFilterCarrierBean,
+                    $emptyCarrierBean,
+                ),
+                'carriers' => array(
+                    $callsCallFilterCarrierBean['carrier_name'] => array(
+                        'options' => '',
+                        'status' => true,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array($callsCallFilterCarrierBean['carrier_name'], ''),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(
+                    array($emptyCarrierBean['id']),
                 ),
             ),
         );
@@ -740,11 +878,11 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider setGlobalConfigurationProvider
      * @covers Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry::setGlobalConfiguration
-     * @param array $beans
-     * @param array $carriers
-     * @param array $config
-     * @param array $expectedSaved
-     * @param array $expectedDeletedId
+     * @param array $beans Existing (previously saved) carrier beans.
+     * @param array $carriers All carriers known to the system.
+     * @param array $config Input configuration.
+     * @param array $expectedSaved Information about carrier beans that expected to be saved.
+     * @param array $expectedDeletedId Ids of carrier beans that are expected to be deleted.
      */
     public function testSetGlobalConfiguration($beans, $carriers, $config, $expectedSaved, $expectedDeletedId)
     {
@@ -769,8 +907,11 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->carrierRegistry->method('getCarriers')->willReturn(array_keys($carriers));
 
         $this->subscriptionsRegistry->setGlobalConfiguration($config);
-        $this->assertEquals($expectedSaved, NotificationCenterSubscriptionCRYS1301::$fromArrayParams);
-        $this->assertEquals($expectedDeletedId, NotificationCenterSubscriptionCRYS1301::$makDeleted);
+        foreach ($expectedSaved as $name => $expectedData) {
+            $this->assertArrayHasKey($name, NotificationCenterSubscriptionCRYS1301::$savedArrayFields);
+            $this->assertArraySubset($expectedData, NotificationCenterSubscriptionCRYS1301::$savedArrayFields[$name]);
+        }
+        $this->assertEquals($expectedDeletedId, NotificationCenterSubscriptionCRYS1301::$markDeleted);
     }
 
 
@@ -936,28 +1077,22 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                 ),
                 'expectedSaved' => array(
-                    array(
-                        array(
-                            'carrier_name' => $carrierName4,
-                            'carrier_option' => $carrierOption4,
-                        ),
+                    $carrierName4 => array(
+                        'carrier_name' => $carrierName4,
+                        'carrier_option' => $carrierOption4,
                     ),
-                    array(
-                        array(
-                            'type' => 'module',
-                            'emitter_module_name' => 'CallsCRYS1301',
-                            'event_name' => 'reminder',
-                            'filter_name' => 'CallFilterCRYS1301',
-                            'user_id' => $idUser,
-                            'carrier_name' => $carrierName5,
-                            'carrier_option' => '',
-                        ),
+                    $carrierName5 => array(
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
+                        'user_id' => $idUser,
+                        'carrier_name' => $carrierName5,
+                        'carrier_option' => '',
                     ),
-                    array(
-                        array(
-                            'carrier_name' => $carrierName2,
-                            'carrier_option' => '',
-                        ),
+                    $carrierName2 => array(
+                        'carrier_name' => $carrierName2,
+                        'carrier_option' => '',
                     ),
                 ),
                 'expectedDeletedId' => array(
@@ -967,6 +1102,84 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                     array($beans[5]['id']),
                 ),
             ),
+            'existingCarrierEventSelectionIsNotDeletedIfCarrierBecomesDisabled' => array(
+                'idUser' => $idUser,
+                'beans' => array(
+                    $beans[0],
+                ),
+                'carriers' => array(
+                    $carrierName1 => array(
+                        'options' => $carrierOption1,
+                        'status' => false,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array($carrierName1, $carrierOption1),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(),
+            ),
+            'itIsNotPossibleToSaveCarrierEventForDisabledCarrierIfItWasNotSavedPreviously' => array(
+                'idUser' => $idUser,
+                'beans' => array(),
+                'carriers' => array(
+                    $carrierName1 => array(
+                        'options' => $carrierOption1,
+                        'status' => false,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array($carrierName1, $carrierOption1),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(),
+            ),
+            'disabledEventConfigSavesDisabledEventMarkAndDoesNotAffectExistingCarriers' => array(
+                'idUser' => $idUser,
+                'beans' => array(
+                    $beans[0],
+                ),
+                'carriers' => array(
+                    $carrierName1 => array(
+                        'options' => $carrierOption1,
+                        'status' => true,
+                    ),
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array('', ''),
+                                array($carrierName1, $carrierOption1),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(
+                    '' => array(
+                        'carrier_name' => '',
+                        'carrier_option' => '',
+                        'type' => 'module',
+                        'emitter_module_name' => 'CallsCRYS1301',
+                        'event_name' => 'reminder',
+                        'filter_name' => 'CallFilterCRYS1301',
+                        'user_id' => $idUser,
+                    ),
+                ),
+                'expectedDeletedId' => array(),
+            ),
         );
     }
 
@@ -975,12 +1188,12 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
      *
      * @dataProvider setUserConfigurationProvider
      * @covers Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry::setUserConfiguration
-     * @param string $idUser
-     * @param array $beans
-     * @param array $carriers
-     * @param array $config
-     * @param array $expectedSaved
-     * @param array $expectedDeletedId
+     * @param string $idUser Id of a User that saves configuration.
+     * @param array $beans Existing (previously saved) carrier beans.
+     * @param array $carriers All carriers known to the system.
+     * @param array $config User's input configuration.
+     * @param array $expectedSaved Information about carrier beans that expected to be saved.
+     * @param array $expectedDeletedId Ids of carrier beans that are expected to be deleted.
      */
     public function testSetUserConfiguration($idUser, $beans, $carriers, $config, $expectedSaved, $expectedDeletedId)
     {
@@ -1005,8 +1218,11 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->carrierRegistry->method('getCarriers')->willReturn(array_keys($carriers));
 
         $this->subscriptionsRegistry->setUserConfiguration($idUser, $config);
-        $this->assertEquals($expectedSaved, NotificationCenterSubscriptionCRYS1301::$fromArrayParams);
-        $this->assertEquals($expectedDeletedId, NotificationCenterSubscriptionCRYS1301::$makDeleted);
+        foreach ($expectedSaved as $name => $expectedData) {
+            $this->assertArrayHasKey($name, NotificationCenterSubscriptionCRYS1301::$savedArrayFields);
+            $this->assertArraySubset($expectedData, NotificationCenterSubscriptionCRYS1301::$savedArrayFields[$name]);
+        }
+        $this->assertEquals($expectedDeletedId, NotificationCenterSubscriptionCRYS1301::$markDeleted);
     }
 
     /**
@@ -1774,10 +1990,10 @@ class NotificationCenterSubscriptionCRYS1301 extends \NotificationCenterSubscrip
     public static $fetchParams = array();
 
     /** @var array */
-    public static $fromArrayParams = array();
+    public static $savedArrayFields = array();
 
     /** @var array */
-    public static $makDeleted = array();
+    public static $markDeleted = array();
 
     public $field_defs = array();
 
@@ -1802,18 +2018,9 @@ class NotificationCenterSubscriptionCRYS1301 extends \NotificationCenterSubscrip
     /**
      * {@inheritdoc}
      */
-    public function fromArray()
-    {
-        static::$fromArrayParams[] = func_get_args();
-        return parent::fromArray(func_get_args());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function mark_deleted()
     {
-        static::$makDeleted[] = func_get_args();
+        static::$markDeleted[] = func_get_args();
         return true;
     }
 
@@ -1822,6 +2029,7 @@ class NotificationCenterSubscriptionCRYS1301 extends \NotificationCenterSubscrip
      */
     public function save()
     {
+        static::$savedArrayFields[$this->carrier_name] = get_object_vars($this);
         return true;
     }
 
