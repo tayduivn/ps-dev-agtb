@@ -165,7 +165,7 @@ function send_back_teams(module, form, field, error_message, request_data, form_
 	var passthru_data = Object();
 	
 	if(typeof request_data.call_back_function == 'undefined' && typeof request_data == 'object') {
-		request_data = YAHOO.lang.JSON.parse(request_data.value);
+        request_data = YAHOO.lang.JSON.parse(html_entity_decode(request_data.value));
 	}	
 	
 	if(typeof(request_data.passthru_data) != 'undefined')

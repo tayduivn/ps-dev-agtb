@@ -56,7 +56,12 @@
                     // almost always be the case, except in studio when a login
                     // is simply updating the session id
                     if (redirectUrl) {
-                        app.router.navigate('#bwc/' + redirectUrl, {trigger: true});
+                        //BR-4054: Try and prevent run away login loops
+                        if (redirectUrl.indexOf('&bwcRedirect=1') > -1) {
+                            app.error.handleInvalidClientError();
+                        } else {
+                            app.router.navigate('#bwc/' + redirectUrl + '&bwcRedirect=1', {trigger: true});
+                        }
                     }
                 }
             });
