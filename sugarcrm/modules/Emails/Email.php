@@ -1445,6 +1445,16 @@ class Email extends SugarBean {
             array('polymorphic_id' => $id, 'polymorphic_module' => 'Emails')
         );
 
+        if ($this->load_relationship('attachments')) {
+            $attachments = $this->attachments->get();
+            foreach ($attachments as $attachmentId) {
+                $note = BeanFactory::retrieveBean('Notes', $attachmentId, array('disable_row_level_security' => true));
+                if ($note) {
+                    $note->mark_deleted($attachmentId);
+                }
+            }
+        }
+
         parent::mark_deleted($id);
     }
 

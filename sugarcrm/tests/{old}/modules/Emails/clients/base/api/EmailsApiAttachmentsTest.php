@@ -57,6 +57,9 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $attachments = $this->getRelatedRecords($record['id']);
         $this->assertCount(1, $attachments['records']);
         $this->assertFiles($attachments['records']);
+        foreach ($attachments['records'] as $attachmentRecord) {
+            unlink("upload://{$attachmentRecord['id']}");
+        }
     }
 
     /**
@@ -94,6 +97,80 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $attachments = $this->getRelatedRecords($record['id']);
         $this->assertCount(1, $attachments['records']);
         $this->assertFiles($attachments['records']);
+    }
+
+    /**
+     * @covers ::createRecord
+     * @covers ::deleteRecord
+     * @covers ::getRelatedRecordArguments
+     * @covers ::createRelatedRecords
+     * @covers ::getAttachmentSource
+     * @covers ::setupAttachmentNoteRecord
+     * @covers ::moveOrCopyAttachment
+     */
+    public function testDeleteRecord_WithAttachments()
+    {
+        $uploadId = create_guid();
+        file_put_contents("upload://{$uploadId}", 'test');
+
+        $docId = create_guid();
+        file_put_contents("upload://{$docId}", 'test');
+
+        $args = array(
+            'state' => Email::EMAIL_STATE_DRAFT,
+            'attachments' => array(
+                'create' => array(
+                    array(
+                        '_file' => $uploadId,
+                        'name' => 'aaaaa',
+                        'filename' => 'aaaaa.png',
+                        'file_mime_type' => 'image/png',
+                        'file_source' => Email::EMAIL_ATTACHMENT_UPLOADED,
+                    ),
+                    array(
+                        '_file' => $docId,
+                        'name' => 'bbbbb',
+                        'filename' => 'bbbbb.png',
+                        'file_mime_type' => 'image/png',
+                        'file_source' => Email::EMAIL_ATTACHMENT_DOCUMENT,
+                    ),
+                ),
+            ),
+        );
+
+        $record = $this->createRecord($args);
+        $attachments = $this->getRelatedRecords($record['id']);
+        $this->assertCount(2, $attachments['records'], 'Should have two attachments');
+
+        $uploadedAttachment = '';
+        $documentAttachment = '';
+        foreach ($attachments['records'] as $noteRecord) {
+            if ($noteRecord['file_source'] === Email::EMAIL_ATTACHMENT_UPLOADED) {
+                $uploadedAttachment = $noteRecord['id'];
+            }
+            if ($noteRecord['file_source'] === Email::EMAIL_ATTACHMENT_DOCUMENT) {
+                $documentAttachment = $noteRecord['id'];
+            }
+        }
+        $this->assertNotEmpty($uploadedAttachment, 'Uploaded Attachment Missing');
+        $this->assertNotEmpty($documentAttachment, 'Document Attachment Missing');
+
+        $this->assertFileExists("upload://{$uploadedAttachment}", 'The Uploaded attachment file should exist');
+        $this->assertFileExists("upload://{$documentAttachment}", 'The Document attachment file should exist');
+
+        $this->deleteRecord($record['id'], $args);
+
+        $noteUploaded  = BeanFactory::retrieveBean('Notes', $uploadedAttachment, array(), false);
+        $noteDocument  = BeanFactory::retrieveBean('Notes', $documentAttachment, array(), false);
+
+        $this->assertEquals(1, $noteUploaded->deleted, 'Uploaded Attachment - Note Object not deleted');
+        $this->assertEquals(1, $noteDocument->deleted, 'Document Attachment - Note Object not deleted');
+
+        $this->assertFileNotExists("upload://{$uploadedAttachment}", 'The Uploaded attachment file should not exist');
+        $this->assertFileNotExists("upload://{$documentAttachment}", 'The Document attachment file should not exist');
+
+        unlink("upload://{$uploadId}");
+        unlink("upload://{$docId}");
     }
 
     /**
@@ -158,6 +235,8 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
             return $attachment['id'] === $attachment2->id;
         });
         $this->assertCount(0, $found, "{$attachment2->id} should have been removed");
+
+        unlink("upload://{$templateId}");
     }
 
     /**

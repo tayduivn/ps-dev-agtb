@@ -71,6 +71,21 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Delete an existing Emails record through {@link EmailsApi::deleteRecord()}.
+     *
+     * @param string $id The ID of the record to delete.
+     * @param array $args
+     * @return array The API response from deleting the Emails record.
+     */
+    protected function deleteRecord($id, array $args)
+    {
+        $args['module'] = 'Emails';
+        $args['record'] = $id;
+        $api = new EmailsApi();
+        return $api->deleteRecord($this->service, $args);
+    }
+
+    /**
      * Returns the right-hand side module name for the specified link on Emails.
      *
      * @param string $link
