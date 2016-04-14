@@ -10,31 +10,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 global $app_list_strings;
 global $beanList;
 global $theme;
 
 require_once('include/workflow/workflow_utils.php');
 
-	
-	if(!empty($_REQUEST['target_module']) && $_REQUEST['target_module']!=""){
-		$target_module = $_REQUEST['target_module'];
-	} else {
-		sugar_die("Target_module required");
-	}
+    $target_module = InputValidation::getService()->getValidInputRequest('target_module', 'Assert\Mvc\ModuleName', '');
 
-	if(!empty($_REQUEST['iframe_type']) && $_REQUEST['iframe_type']!=""){
-		$iframe_type = $_REQUEST['iframe_type'];
-	} else {
-		$iframe_type = "";	
-	}		
-	
-	if(!empty($_REQUEST['base_module']) && $_REQUEST['base_module']!=""){
-		$base_module = $_REQUEST['base_module'];
-	} else {
-		$base_module = "";	
-	}		
+    if (!$target_module) {
+        sugar_die("Target_module required");
+    }
 
+    $iframe_type = InputValidation::getService()->getValidInputRequest('iframe_type', null, '');
+    $base_module = InputValidation::getService()->getValidInputRequest('base_module', 'Assert\Mvc\ModuleName', '');
 
 //iframe_type/////////////////////////////////////
 //rel_mod

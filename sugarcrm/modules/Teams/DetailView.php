@@ -97,7 +97,11 @@ require_once('include/SubPanel/SubPanelTiles.php');
 $subpanel = new SubPanelTiles($focus, 'Teams');
 echo $subpanel->display();
 
-$error_message = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+$error_message = '';
+if (!empty($_REQUEST['message'])) {
+	$error_message = SugarCleaner::cleanHtml($_REQUEST['message'], false);
+}
+
 if(!empty($error_message))
 {
    if($error_message == 'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM')

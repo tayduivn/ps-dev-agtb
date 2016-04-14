@@ -61,10 +61,14 @@
      * Displays the Forecast warning confirm alert
      */
     displayWarningAlert: function() {
+        var opportunity = this.model.get('opps_view_by') === 'Opportunities';
+        var message = opportunity ? app.lang.get('LBL_OPPS_CONFIG_ALERT_TO_OPPS', 'Opportunities') :
+            app.lang.get('LBL_OPPS_CONFIG_ALERT', 'Opportunities');
+
         app.alert.show('forecast-warning', {
             level: 'confirmation',
             title: app.lang.get('LBL_WARNING'),
-            messages: app.lang.get('LBL_OPPS_CONFIG_ALERT', 'Opportunities'),
+            messages: message,
             onConfirm: _.bind(function() {
                 this._super('saveConfig');
             }, this),

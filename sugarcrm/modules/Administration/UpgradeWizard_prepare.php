@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: UpgradeWizard_prepare.php 55665 2010-03-29 23:55:22Z dwheeler $
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 require_once 'modules/Administration/UpgradeWizardCommon.php';
 require_once 'include/SugarSmarty/plugins/function.sugar_csrf_form_token.php';
@@ -32,12 +33,26 @@ if(!file_exists($base_tmp_upgrade_dir)) {
     mkdir($base_tmp_upgrade_dir, 0755, true);
 }
 $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );
-$install_file   = hashToFile($_REQUEST['install_file']);
+$filename = InputValidation::getService()->getValidInputRequest('install_file');
+$install_file   = hashToFile($filename);
 $hidden_fields = "";
 $new_lang_name = "";
 $new_lang_desc = "";
 
-$mode           = $_REQUEST['mode'];
+$mode = InputValidation::getService()->getValidInputRequest(
+    'mode',
+    array(
+        'Assert\Choice' => array(
+            'choices' => array(
+                'Install',
+                'Uninstall',
+                'Disable',
+                'Enable'
+            )
+        )
+    ),
+    ''
+);
 $hidden_fields .= "<input type=hidden name=\"mode\" value=\"$mode\"/>";
 $hidden_fields .= smarty_function_sugar_csrf_form_token(array(), $smarty);
 

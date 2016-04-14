@@ -77,70 +77,14 @@ class PMSEProjectCRUDApi extends ModuleApi
         return array('id'=>$bean->id);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
     {
         parent::saveBean($bean, $api, $args);
 
-        $projectBean = $bean;
-        $id = $projectBean->id;
-
-        //Create a Diagram row
-        $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')->retrieve_by_string_fields(array('prj_id'=>$id));
-        if (empty($diagramBean)) {
-            $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
-            $diagramBean->dia_uid = PMSEEngineUtils::generateUniqueID();
-        }
-        $diagramBean->name = $projectBean->name;
-        $diagramBean->description = $projectBean->description;
-        $diagramBean->assigned_user_id = $projectBean->assigned_user_id;
-        $diagramBean->prj_id = $id;
-        $dia_id = $diagramBean->save();
-
-        //Create a Process row
-        $processBean = BeanFactory::getBean('pmse_BpmnProcess')->retrieve_by_string_fields(array('prj_id'=>$id));
-        if (empty($processBean)) {
-            $processBean = BeanFactory::newBean('pmse_BpmnProcess');
-            $processBean->pro_uid = PMSEEngineUtils::generateUniqueID();
-        }
-        $processBean->name = $projectBean->name;
-        $processBean->description = $projectBean->description;
-        $processBean->assigned_user_id = $projectBean->assigned_user_id;
-        $processBean->prj_id = $id;
-        $processBean->dia_id = $dia_id;
-        $pro_id = $processBean->save();
-
-        //Create a ProcessDefinition row
-        $processDefinitionBean = BeanFactory::getBean('pmse_BpmProcessDefinition')->retrieve_by_string_fields(array('prj_id'=>$id));
-        if (empty($processDefinitionBean)) {
-            $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
-            $processDefinitionBean->id = $pro_id;
-            $processDefinitionBean->new_with_id = true;
-        }
-        $processDefinitionBean->prj_id = $id;
-        $processDefinitionBean->pro_module = $projectBean->prj_module;
-        $processDefinitionBean->pro_status = $projectBean->prj_status;
-        $processDefinitionBean->assigned_user_id = $projectBean->assigned_user_id;
-        $processDefinitionBean->save();
-
-        $relDepStatus = $projectBean->prj_status=='ACTIVE'?'INACTIVE':'ACTIVE';
-        while(
-            $relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
-            ->retrieve_by_string_fields(array('pro_id'=>$pro_id, 'pro_status'=>$relDepStatus))
-        ) {
-            $relatedDepBean->pro_status = $projectBean->prj_status;
-            $relatedDepBean->save();
-        }
-
-        $keysArray = array('prj_id' => $id, 'pro_id' => $pro_id);
-        $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')->retrieve_by_string_fields(array('prj_id'=>$id, 'pro_id'=>$pro_id, 'name'=>'Default'));
-        if (empty($dynaF)) {
-            $editDyna = false;
-        } else {
-            $editDyna = true;
-        }
-        $dynaForm = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
-        $dynaForm->generateDefaultDynaform($processDefinitionBean->pro_module, $keysArray, $editDyna);
-
+        $bean->saveRelatedBeans();
     }
 
 

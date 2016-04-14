@@ -727,7 +727,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers assignQuota
+     * @covers ForecastManagerWorksheet::assignQuota
      */
     public function testAssignQuotaReturnFalseWhenUserIsNotManager()
     {
@@ -746,7 +746,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers assignQuota
+     * @covers ForecastManagerWorksheet::assignQuota
      */
     public function testAssignQuota()
     {
@@ -849,7 +849,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::_assignQuota
+     * @covers ForecastManagerWorksheet::_assignQuota
      */
     public function test_AssignQuotaDoesNotUseActivityStreams()
     {
@@ -932,7 +932,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProvider_assignQuota
-     * @covers ::_assignQuota
+     * @covers ForecastManagerWorksheet::_assignQuota
      * @param string $current_quota
      * @param string $new_quota
      * @param array $expectedActivityMessage

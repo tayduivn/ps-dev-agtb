@@ -44,7 +44,10 @@
          * @property {boolean}
          */
         this.ellipsis = _.isUndefined(this.def.ellipsis) || this.def.ellipsis;
-        this.on('render', app.tooltip.clear);
+
+        if (app.tooltip) {
+            this.on('render', app.tooltip.clear);
+        }
     },
 
     /**

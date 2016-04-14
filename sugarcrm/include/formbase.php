@@ -174,7 +174,8 @@ function getGetToForm($ignore='', $usePostAsAuthority = false)
 	    if(is_array($value)) continue;
 		if($key != $ignore){
 			if(!$usePostAsAuthority || !isset($_POST[$key])){
-				$fields.= "<input type='hidden' name='$key' value='$value'>";
+                $fields .= "<input type='hidden' name='$key' value='" .
+                    htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "'>";
 			}
 		}
 	}

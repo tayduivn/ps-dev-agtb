@@ -185,8 +185,11 @@ class MergeRecord extends SugarBean {
             $searchTypeString=$key.'SearchType';
 
             if (isset($search_params[$searchFieldString]) ) {
-                $returnString .= "<input type='hidden' name='$searchFieldString' value='{$search_params[$searchFieldString]}' />\n";
-                $returnString .= "<input type='hidden' name='$searchTypeString' value='{$search_params[$searchTypeString]}' />\n";
+                $searchFieldStringValue = SugarCleaner::cleanHtml($search_params[$searchFieldString], false);
+                $searchTypeStringValue = SugarCleaner::cleanHtml($search_params[$searchTypeString], false);
+
+                $returnString .= "<input type='hidden' name='$searchFieldString' value='{$searchFieldStringValue}'/>\n";
+                $returnString .= "<input type='hidden' name='$searchTypeString' value='{$searchTypeStringValue}' />\n";
             }
         }
 

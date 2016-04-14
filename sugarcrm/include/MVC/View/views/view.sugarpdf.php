@@ -32,12 +32,16 @@ class ViewSugarpdf extends SugarView{
     
     public function __construct()
     {
-         parent::__construct();
-         if (isset($_REQUEST["sugarpdf"]))
-         	$this->sugarpdf = $_REQUEST["sugarpdf"];
-         else 
-        	header('Location:index.php?module='.$_REQUEST['module'].'&action=DetailView&record='.$_REQUEST['record']);
-     }
+        parent::__construct();
+
+        if (isset($_REQUEST["sugarpdf"])) {
+            $this->sugarpdf = $this->request->getValidInputRequest('sugarpdf', 'Assert\ComponentName');
+        } else {
+            $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
+            $record = $this->request->getValidInputRequest('record', 'Assert\Guid');
+            header('Location:index.php?module=' . $module . '&action=DetailView&record=' . $record);
+        }
+    }
      
      function preDisplay(){
          $this->sugarpdfBean = SugarpdfFactory::loadSugarpdf($this->sugarpdf, $this->module, $this->bean, $this->view_object_map);

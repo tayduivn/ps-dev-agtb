@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 require_once('modules/Leads/LeadFormBase.php');
 
 global $app_strings, $app_list_strings;
@@ -29,6 +31,17 @@ $users = array(
 if(SugarAutoLoader::fileExists('leadCapture_override.php')){
 	include('leadCapture_override.php');
 }
+
+$redirect = InputValidation::getService()->getValidInputPost(
+    'redirect',
+    array(
+        'Assert\Url' => array(
+            'protocols' => array('http', 'https'),
+        )
+    ),
+    ''
+);
+
 if (!empty($_POST['user']) && !empty($users[$_POST['user']])) {
 
     $current_user = BeanFactory::getBean('Users');
@@ -59,11 +72,10 @@ if (!empty($_POST['user']) && !empty($users[$_POST['user']])) {
 
 		$return_val = $leadForm->handleSave($prefix, false, true);
 
-		if(isset($_POST['redirect']) && !empty($_POST['redirect'])){
-
-			//header("Location: ".$_POST['redirect']);
+        if (!empty($redirect)) {
+            //header("Location: ".$redirect);
 			echo '<html ' . get_language_header() .'><head><title>SugarCRM</title></head><body>';
-			echo '<form name="redirect" action="' .$_POST['redirect']. '" method="POST">';
+            echo '<form name="redirect" action="' .$redirect. '" method="POST">';
 
 			foreach($_POST as $param => $value) {
 
@@ -89,9 +101,9 @@ if (!empty($_POST['user']) && !empty($users[$_POST['user']])) {
 }
 
 echo "We're sorry, the server is currently unavailable, please try again later.";
-if (!empty($_POST['redirect'])) {
+if (!empty($redirect)) {
 	echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
-	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="POST">';
+    echo '<form name="redirect" action="' .$redirect. '" method="POST">';
 	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
 	echo '</body></html>';
 }

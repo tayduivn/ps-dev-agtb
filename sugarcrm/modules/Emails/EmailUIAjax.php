@@ -1272,7 +1272,7 @@ eoq;
         }
 
         $oe = new OutboundEmail();
-        $oe->id = $_REQUEST['mail_id'];
+        $oe->id = InputValidation::getService()->getValidInputRequest('mail_id', 'Assert\Guid', '');
         $oe->retrieve($oe->id);
         $oe->name = $_REQUEST['mail_name'];
         $type = empty($_REQUEST['type']) ? 'user' : $_REQUEST['type'];

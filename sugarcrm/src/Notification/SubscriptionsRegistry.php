@@ -335,7 +335,6 @@ class SubscriptionsRegistry
     {
         $beans = $this->getBeans($this->getSugarQuery($userId));
         $beans = $this->removeBeansWithDisabledCarrier($beans);
-        $config = $this->removeConfigsWithDisabledCarrier($config);
 
         $tree = $this->getTree();
         foreach ($tree as $emitter => $emitterConfig) {
@@ -347,6 +346,10 @@ class SubscriptionsRegistry
                         $carriers = array();
                         if ($config[$emitter][$event][$filter] !== self::CARRIER_VALUE_DEFAULT) {
                             $carriers = $this->filterCarriers($config[$emitter][$event][$filter]);
+                            // ['', ''] is a mark that denotes a disabled event - it should be saved if is present.
+                            if (in_array(array('', ''), $config[$emitter][$event][$filter])) {
+                                $carriers[] = array('', '');
+                            }
                         }
 
                         if ($delCarrierOption) {
@@ -372,46 +375,16 @@ class SubscriptionsRegistry
     /**
      * Filter NotificationCenterSubscription beans, remove beans with disabled carriers.
      *
-     * @param \NotificationCenterSubscription[] $beans list of beans.
-     * @return array filtered list of beans.
+     * @param \NotificationCenterSubscription[] $beans List of beans.
+     * @return array List of original beans, but without beans that represent disabled carriers.
      */
     protected function removeBeansWithDisabledCarrier($beans)
     {
-        $enabledCarrier = $this->getEnabledCarriers();
-        return array_filter($beans, function ($bean) use ($enabledCarrier) {
-            return in_array($bean->carrier_name, $enabledCarrier);
-        });
-    }
+        $disabledCarriers = array_diff($this->getCarrierRegistry()->getCarriers(), $this->getEnabledCarriers());
 
-    /**
-     * Filter configuration array, remove configs with disabled carrier.
-     *
-     * @param array $config configuration for saving.
-     * @return array
-     */
-    protected function removeConfigsWithDisabledCarrier($config)
-    {
-        $normalized = array();
-        $enabledCarrier = $this->getEnabledCarriers();
-        foreach ($config as $emitter => $emitterConfig) {
-            $normalized[$emitter] = array();
-            foreach ($emitterConfig as $event => $eventConfig) {
-                $normalized[$emitter][$event] = array();
-                foreach ($eventConfig as $filter => $carriers) {
-                    if ($carriers === self::CARRIER_VALUE_DEFAULT) {
-                        $normalized[$emitter][$event][$filter] = $carriers;
-                    } else {
-                        $normalized[$emitter][$event][$filter] = array_filter(
-                            $carriers,
-                            function ($carrier) use ($enabledCarrier) {
-                                return in_array($carrier[0], $enabledCarrier);
-                            }
-                        );
-                    }
-                }
-            }
-        }
-        return $normalized;
+        return array_filter($beans, function ($bean) use ($disabledCarriers) {
+            return !in_array($bean->carrier_name, $disabledCarriers);
+        });
     }
 
     /**
@@ -448,20 +421,21 @@ class SubscriptionsRegistry
     }
 
     /**
-     * Filters carriers
+     * Filter carriers to output only carriers that are known to the system and are enabled.
      *
-     * @param array $carriers
-     * @return array
+     * @param array $carriers Carriers to be filtered.
+     * @return array Carriers that are known to the system and are enabled.
      */
     protected function filterCarriers($carriers)
     {
-        $availableCarriers = $this->getCarrierRegistry()->getCarriers();
+        $availableAndEnabledCarriers = $this->getEnabledCarriers();
+
         $filtered = array();
 
         if (is_array($carriers)) {
             foreach ($carriers as $item) {
                 if (is_array($item) && count($item) > 0) {
-                    if (in_array($item[0], $availableCarriers)) {
+                    if (in_array($item[0], $availableAndEnabledCarriers)) {
                         $filtered[] = $item;
                     }
                 }

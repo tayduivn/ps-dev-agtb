@@ -13,6 +13,8 @@
 
 require_once('include/DetailView/DetailView2.php');
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
 class ViewMetadata extends SugarView{
 	var $type ='detail';
 	var $dv;
@@ -42,7 +44,8 @@ class ViewMetadata extends SugarView{
  	 function displayTextBoxes($values, $attr=''){
  		echo "<div $attr style='overflow:auto;float:left;width:400px;height:200px' >";
 		foreach($values as $value){
-			$postvalue = !empty($_POST[$value])? $_POST[$value]: '';
+            $postvalue = InputValidation::getService()->getValidInputRequest($value, null, '');
+            $postvalue = SugarCleaner::cleanHtml($postvalue, false);
 			echo "<div style='padding:2px;width:150px;float:left'>$value</div>  <input type='text' name='$value' value='$postvalue'> ";
 		}
 		echo "</div>";
@@ -58,7 +61,8 @@ class ViewMetadata extends SugarView{
  	}
  	
  	function display(){
- 		$do = !empty($_REQUEST['do'])?$_REQUEST['do']:'';
+        $do = InputValidation::getService()->getValidInputRequest('do', null, '');
+        $do = SugarCleaner::cleanHtml($do, false);
  		echo "<form method='post'>";
  		echo "<div><h2>I want to learn about ";
  		

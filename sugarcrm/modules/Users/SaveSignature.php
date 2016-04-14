@@ -20,7 +20,8 @@ if(isset($_REQUEST['record']) && !empty($_REQUEST['record'])) {
 	$us->new_with_id = true;
 }
 
-$us->name = $_REQUEST['name'];
+$name = htmlspecialchars_decode($_REQUEST['name'], ENT_QUOTES);
+$us->name = SugarCleaner::cleanHtml($name, false);
 $us->signature = strip_tags(br2nl(from_html($_REQUEST['description'])));
 $us->signature_html = $_REQUEST['description'];
 if(empty($us->user_id) && isset($_REQUEST['the_user_id'])){

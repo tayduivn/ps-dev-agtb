@@ -24,6 +24,11 @@ require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 class PMSEEngineUtils
 {
     /**
+     * Cache key for the list of modules that are engaged in active processes
+     */
+    const MODULES_WHITELIST_CACHE_KEY = 'pmse_logic_hook_modules_whitelist';
+
+    /**
      * Lists of Process Author supported module names keyed to the module type (target vs related)
      * @var array
      */
@@ -1658,5 +1663,46 @@ class PMSEEngineUtils
         }
 
         return $ret;
+    }
+
+    /**
+     * Check whether the bean's module is engaged in active processes
+     *
+     * @param SugarBean $bean
+     * @return bool
+     */
+    public static function hasActiveProcesses(SugarBean $bean)
+    {
+        $whitelist = SugarCache::instance()->{static::MODULES_WHITELIST_CACHE_KEY};
+        if (!is_array($whitelist)) {
+            $fields = array('evn_module', 'rel_element_module');
+            $queries = array();
+            foreach ($fields as $field) {
+                $queries[] = "(SELECT $field AS module "
+                    . "FROM pmse_bpm_related_dependency "
+                    . "WHERE deleted = 0 AND pro_status != 'INACTIVE')\n";
+            }
+            $query = implode("UNION\n", $queries);
+
+            $whitelist = array();
+            $result = $bean->db->query($query);
+            while ($row = $bean->db->fetchByAssoc($result)) {
+                if ($row['module']) {
+                    $whitelist[] = $row['module'];
+                }
+            }
+
+            SugarCache::instance()->{static::MODULES_WHITELIST_CACHE_KEY} = $whitelist;
+        }
+
+        return in_array($bean->getModuleName(), $whitelist);
+    }
+
+    /**
+     * Resets cache of modules that are engaged in active processes
+     */
+    public static function resetActiveProcessesModulesCache()
+    {
+        unset(SugarCache::instance()->{static::MODULES_WHITELIST_CACHE_KEY});
     }
 }
