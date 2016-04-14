@@ -48,6 +48,7 @@ $dictionary['UserSignature'] = array(
             'name' => 'is_default',
             'vname' => 'LBL_DEFAULT_SIGNATURE',
             'type' => 'bool',
+            'sortable' => false,
             'source' => 'non-db',
         ),
     ),
