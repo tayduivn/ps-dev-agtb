@@ -1283,7 +1283,9 @@ function renderProject (prjCode) {
     $("#adam_toolbar span[type=draggable]").draggable(
         {
             revert: "invalid",
-            helper: function () { return $(this).clone().appendTo('body').css('zIndex', 5).show(); },
+            helper: function() {
+                return $(this).clone().removeAttr('rel').css('zIndex', 5).show().appendTo('body');
+            },
             cursor: "move"
         }
     );
@@ -1414,31 +1416,6 @@ function renderProject (prjCode) {
             project.init();
         }
     });
-
-    App.utils.tooltip.initialize($("#AdamEventLead"));
-    App.utils.tooltip.initialize($("#AdamEventOpportunity"));
-    App.utils.tooltip.initialize($("#AdamEventDocument"));
-    App.utils.tooltip.initialize($("#AdamEventOtherModule"));
-
-    App.utils.tooltip.initialize($("#AdamEventTimer"));
-    App.utils.tooltip.initialize($("#AdamEventReceiveMessage"));
-    App.utils.tooltip.initialize($("#AdamEventMessage"));
-
-    App.utils.tooltip.initialize($("#AdamUserTask"));
-    App.utils.tooltip.initialize($("#AdamScriptTask"));
-
-    App.utils.tooltip.initialize($("#AdamGatewayExclusive"));
-    App.utils.tooltip.initialize($("#AdamGatewayParallel"));
-
-    App.utils.tooltip.initialize($("#AdamEventEnd"));
-
-    App.utils.tooltip.initialize($("#AdamTextAnnotation"));
-
-    App.utils.tooltip.initialize($("#ButtonUndo"));
-    App.utils.tooltip.initialize($("#ButtonRedo"));
-    App.utils.tooltip.initialize($("#ButtonSave"));
-
-    /*App.utils.tooltip.initialize($('.btn-close-designer'));*/
 }
 
 listPanelError.appendTo("#div-bpmn-error");
