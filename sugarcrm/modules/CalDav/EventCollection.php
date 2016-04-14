@@ -1486,14 +1486,14 @@ class CalDavEventCollection extends SugarBean
                 $changedFields['date_end'] = array($currentEndDate, $oldEndDate);
             }
         } else {
-            $changedFields['title'] = array($currentEvent->getTitle(), null);
-            $changedFields['description'] = array($currentEvent->getDescription(), null);
-            $changedFields['location'] = array($currentEvent->getLocation(), null);
-            $changedFields['status'] = array($currentEvent->getStatus(), null);
+            $changedFields['title'] = array($currentEvent->getTitle());
+            $changedFields['description'] = array($currentEvent->getDescription());
+            $changedFields['location'] = array($currentEvent->getLocation());
+            $changedFields['status'] = array($currentEvent->getStatus());
             $currentStartDate = $currentEvent->getStartDate() ? $currentEvent->getStartDate()->asDb() : null;
-            $changedFields['date_start'] = array($currentStartDate, null);
+            $changedFields['date_start'] = array($currentStartDate);
             $currentEndDate = $currentEvent->getEndDate() ? $currentEvent->getEndDate()->asDb() : null;
-            $changedFields['date_end'] = array($currentEndDate, null);
+            $changedFields['date_end'] = array($currentEndDate);
         }
         return $changedFields;
     }
