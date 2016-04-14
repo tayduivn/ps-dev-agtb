@@ -11,6 +11,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
+
+use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_Project_sugar extends Basic
 {
@@ -70,6 +73,68 @@ class pmse_Project_sugar extends Basic
         return false;
     }
 
-}
+    /**
+     * Save related beans so that data is consistent between tables
+     */
+    public function saveRelatedBeans()
+    {
+        //Create a Diagram row
+        $diagramBean =  BeanFactory::getBean('pmse_BpmnDiagram')
+            ->retrieve_by_string_fields(array('prj_id' => $this->id));
 
-?>
+        if (empty($diagramBean)) {
+            $diagramBean = BeanFactory::newBean('pmse_BpmnDiagram');
+            $diagramBean->dia_uid = PMSEEngineUtils::generateUniqueID();
+        }
+        $diagramBean->name = $this->name;
+        $diagramBean->description = $this->description;
+        $diagramBean->assigned_user_id = $this->assigned_user_id;
+        $diagramBean->prj_id = $this->id;
+        $dia_id = $diagramBean->save();
+
+        //Create a Process row
+        $processBean = BeanFactory::getBean('pmse_BpmnProcess')
+            ->retrieve_by_string_fields(array('prj_id' => $this->id));
+
+        if (empty($processBean)) {
+            $processBean = BeanFactory::newBean('pmse_BpmnProcess');
+            $processBean->pro_uid = PMSEEngineUtils::generateUniqueID();
+        }
+        $processBean->name = $this->name;
+        $processBean->description = $this->description;
+        $processBean->assigned_user_id = $this->assigned_user_id;
+        $processBean->prj_id = $this->id;
+        $processBean->dia_id = $dia_id;
+        $pro_id = $processBean->save();
+
+        //Create a ProcessDefinition row
+        $processDefinitionBean = BeanFactory::getBean('pmse_BpmProcessDefinition')
+            ->retrieve_by_string_fields(array('prj_id' => $this->id));
+
+        if (empty($processDefinitionBean)) {
+            $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
+            $processDefinitionBean->id = $pro_id;
+            $processDefinitionBean->new_with_id = true;
+        }
+        $processDefinitionBean->prj_id = $this->id;
+        $processDefinitionBean->pro_module = $this->prj_module;
+        $processDefinitionBean->pro_status = $this->prj_status;
+        $processDefinitionBean->assigned_user_id = $this->assigned_user_id;
+        $processDefinitionBean->save();
+
+        $relDepStatus = $this->prj_status == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        while ($relatedDepBean = BeanFactory::getBean('pmse_BpmRelatedDependency')
+            ->retrieve_by_string_fields(array('pro_id'=>$pro_id, 'pro_status'=>$relDepStatus))
+        ) {
+            $relatedDepBean->pro_status = $this->prj_status;
+            $relatedDepBean->save();
+        }
+
+        $keysArray = array('prj_id' => $this->id, 'pro_id' => $pro_id);
+        $dynaF = BeanFactory::getBean('pmse_BpmDynaForm')
+            ->retrieve_by_string_fields(array('prj_id' => $this->id, 'pro_id' => $pro_id, 'name' => 'Default'));
+        $editDyna = !empty($dynaF);
+        $dynaForm = ProcessManager\Factory::getPMSEObject('PMSEDynaForm');
+        $dynaForm->generateDefaultDynaform($processDefinitionBean->pro_module, $keysArray, $editDyna);
+    }
+}
