@@ -72,18 +72,8 @@ class SetOptionsAction extends AbstractAction{
 
                     empty = (_.size(keys) === 0 || _.size(keys) === 1) && (keys[0] == undefined || keys[0] === '');
 
-					if (_.isString(labels)) {
-					    field.items = _.pick(App.lang.getAppListStrings(labels), keys);
-					    var items = {};
-					    _.each (_.values(keys), function(value) {
-					        if (value in field.items) {
-					            items[_.indexOf(keys, value)] = {id: value, text: field.items[value]};
-					        }
-					    });
-					    if (!_.isEmpty(items)) {
-					        field.items = items;
-					    }
-					}
+					if (_.isString(labels))
+						field.items = _.pick(App.lang.getAppListStrings(labels), keys);
 					else
 						field.items = _.object(keys, labels);
 
