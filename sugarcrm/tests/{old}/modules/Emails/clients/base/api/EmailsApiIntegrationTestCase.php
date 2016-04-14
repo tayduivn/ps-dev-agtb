@@ -148,9 +148,10 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function assertRecords(array $expected, array $collection, $message = '')
     {
-        // Testing for _acl is unnecessary.
+        // Testing for these attributes is unnecessary.
         foreach ($collection['records'] as &$record) {
             unset($record['_acl']);
+            unset($record['_locked_fields']);
         }
 
         /**
