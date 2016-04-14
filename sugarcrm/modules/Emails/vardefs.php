@@ -516,10 +516,13 @@ $dictionary['Email'] = array(
         ),
         'outbound_email_id' => array(
             'name' => 'outbound_email_id',
-            'comment' => 'The configuration used to send an email, only used when the role is FROM',
-            'type' => 'id',
+            'comment' => 'The configuration used to send an email, only used for emails sent using SugarCRM',
+            'type' => 'enum',
+            'dbType' => 'id',
             'required' => false,
             'vname' => 'LBL_OUTBOUND_EMAIL_ID',
+            'function' => 'getOutboundEmailDropdown',
+            'function_bean' => 'Emails',
         ),
         'from' => array(
             'name' => 'from',

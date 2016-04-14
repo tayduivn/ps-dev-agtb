@@ -13,6 +13,7 @@
 class OutboundEmailConfigurationTestHelper
 {
     private static $existingConfigurations = array();
+    private static $existingAllowDefaultOutbound = null;
     private static $systemConfiguration;
 
     public static function setUp()
@@ -24,9 +25,10 @@ class OutboundEmailConfigurationTestHelper
     public static function tearDown()
     {
         self::restoreExistingConfigurations();
+        static::restoreAllowDefaultOutbound();
         static::$systemConfiguration = null;
 
-        $oe = new OutboundEmail();
+        $oe = BeanFactory::newBean('OutboundEmail');
         $oe->resetSystemMailerCache();
     }
 
@@ -206,5 +208,39 @@ class OutboundEmailConfigurationTestHelper
 
         $sql = "DELETE FROM inbound_email";
         $GLOBALS["db"]->query($sql);
+    }
+
+    /**
+     * Sets the notify_allow_default_outbound admin setting, which determines which configurations can be used by the
+     * current user.
+     *
+     * @param int $allow 0, 1, or 2
+     */
+    public static function setAllowDefaultOutbound($allow)
+    {
+        $admin = BeanFactory::getBean('Administration');
+
+        if (is_null(static::$existingAllowDefaultOutbound)) {
+            $admin->retrieveSettings('', true);
+
+            if (isset($admin->settings['notify_allow_default_outbound'])) {
+                static::$existingAllowDefaultOutbound = $admin->settings['notify_allow_default_outbound'];
+            } else {
+                static::$existingAllowDefaultOutbound = 0;
+            }
+        }
+
+        $admin->saveSetting('notify', 'allow_default_outbound', $allow);
+    }
+
+    /**
+     * Restores the notify_allow_default_outbound admin setting to its value prior to running tests.
+     */
+    public static function restoreAllowDefaultOutbound()
+    {
+        if (!is_null(static::$existingAllowDefaultOutbound)) {
+            $admin = BeanFactory::getBean('Administration');
+            $admin->saveSetting('notify', 'allow_default_outbound', static::$existingAllowDefaultOutbound);
+        }
     }
 }

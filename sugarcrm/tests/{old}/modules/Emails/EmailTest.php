@@ -14,6 +14,8 @@ require_once "tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfig
 
 /**
  * Test cases for Bug 30591
+ *
+ * @coversDefaultClass Email
  */
 class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -200,6 +202,28 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
 
+    }
+
+    /**
+     * @covers ::getOutboundEmailDropdown
+     */
+    public function testGetOutboundEmailDropdown()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+
+        SugarTestHelper::setUp('current_user');
+        $systemConfig = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
+        $userConfigs = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
+
+        $email = new Email();
+        $options = $email->getOutboundEmailDropdown();
+        $optionKeys = array_keys($options);
+
+        $this->assertCount(3, $options, 'There should be three options');
+        $this->assertSame($systemConfig->id, $optionKeys[0], 'The system configuration should be the first option');
+
+        OutboundEmailConfigurationTestHelper::tearDown();
     }
 }
 

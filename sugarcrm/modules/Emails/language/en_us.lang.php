@@ -120,6 +120,7 @@ $mod_strings = array(
     'LBL_ATTACHMENTS_SUBPANEL_TITLE' => 'Attachments',
     'LBL_OPENS' => 'Opens',
     'LBL_OPPORTUNITY_SUBPANEL_TITLE' => 'Opportunities',
+    'LBL_OUTBOUND_EMAIL_ID' => 'Outbound Email ID',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_PROJECT_TASK_SUBPANEL_TITLE' => 'Project Tasks',
     'LBL_RAW' => 'Raw Email',

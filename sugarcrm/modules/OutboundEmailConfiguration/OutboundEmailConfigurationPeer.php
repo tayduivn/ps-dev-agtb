@@ -74,8 +74,18 @@ class OutboundEmailConfigurationPeer
 
         $configurations["from_email"]    = $systemDefaultInfo["email"];
         $configurations["from_name"]     = $systemDefaultInfo["name"];
-        $configurations["display_name"]  = "{$systemDefaultInfo['name']} ({$systemDefaultInfo['email']}) - [" . $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] . "]";
         $configurations["personal"]      = false;
+
+        $displayName = translate('LBL_OUTBOUND_EMAIL_CONFIGURATION_DISPLAY_NAME', 'OutboundEmailConfiguration');
+        $displayName = string_format(
+            $displayName,
+            array(
+                $systemDefaultInfo['name'],
+                $systemDefaultInfo['email'],
+                translate('LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION', 'OutboundEmailConfiguration'),
+            )
+        );
+        $configurations['display_name'] = $displayName;
 
         $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration(
             $systemUser,
@@ -322,11 +332,22 @@ class OutboundEmailConfigurationPeer
                 $configurations["inbox_id"]      = $inbox_id;
                 $configurations["from_email"]    = $addr;
                 $configurations["from_name"]     = $name;
-                if ($isAllowedGroup) {
-                    $configurations["display_name"]  = "{$name} ({$addr}) - [" . $app_strings['LBL_GROUP_EMAIL_ACCOUNT_CONFIGURATION'] . "]";
-                } else {
-                    $configurations["display_name"]  = "{$name} ({$addr}) - [" . $app_strings['LBL_USER_OUTBOUND_EMAIL_ACCOUNT_CONFIGURATION'] . "]";
-                }
+                $label = $isAllowedGroup ?
+                    'LBL_GROUP_EMAIL_ACCOUNT_CONFIGURATION' :
+                    'LBL_USER_OUTBOUND_EMAIL_ACCOUNT_CONFIGURATION';
+                $displayName = translate(
+                    'LBL_OUTBOUND_EMAIL_CONFIGURATION_DISPLAY_NAME',
+                    'OutboundEmailConfiguration'
+                );
+                $displayName = string_format(
+                    $displayName,
+                    array(
+                        $name,
+                        $addr,
+                        translate($label, 'OutboundEmailConfiguration'),
+                    )
+                );
+                $configurations['display_name'] = $displayName;
                 $configurations["personal"]      = (bool)($ie->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
                     $storedOptions["reply_to_addr"] :
@@ -388,7 +409,22 @@ class OutboundEmailConfigurationPeer
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
-        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? $app_strings['LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] : $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION']) . "]";
+        $label = $personal ?
+            'LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION' :
+            'LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION';
+        $displayName = translate(
+            'LBL_OUTBOUND_EMAIL_CONFIGURATION_DISPLAY_NAME',
+            'OutboundEmailConfiguration'
+        );
+        $displayName = string_format(
+            $displayName,
+            array(
+                $ret['name'],
+                $ret['email'],
+                translate($label, 'OutboundEmailConfiguration'),
+            )
+        );
+        $configurations['display_name'] = $displayName;
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
@@ -479,7 +515,22 @@ class OutboundEmailConfigurationPeer
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
-        $configurations["display_name"]  = "{$ret['name']} ({$ret['email']}) - [" . ($personal ? $app_strings['LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION'] : $app_strings['LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION']) . "]";
+        $label = $personal ?
+            'LBL_USER_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION' :
+            'LBL_SYSTEM_DEFAULT_OUTBOUND_EMAIL_CONFIGURATION';
+        $displayName = translate(
+            'LBL_OUTBOUND_EMAIL_CONFIGURATION_DISPLAY_NAME',
+            'OutboundEmailConfiguration'
+        );
+        $displayName = string_format(
+            $displayName,
+            array(
+                $ret['name'],
+                $ret['email'],
+                translate($label, 'OutboundEmailConfiguration'),
+            )
+        );
+        $configurations['display_name'] = $displayName;
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;

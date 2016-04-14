@@ -53,15 +53,11 @@ $viewdefs['Emails']['base']['view']['create'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'email_config',
+                    'name' => 'outbound_email_id',
                     'label' => 'LBL_FROM',
-                    'type' => 'sender',
                     'span' => 12,
                     'css_class' => 'inherit-width',
-                    'endpoint' => array(
-                        'module' => 'OutboundEmailConfiguration',
-                        'action' => 'list',
-                    )
+                    'searchBarThreshold' => -1,
                 ),
                 array(
                     'name' => 'to_addresses',

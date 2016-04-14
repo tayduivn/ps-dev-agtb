@@ -3507,4 +3507,33 @@ eoq;
 
         return $api->getCollection($service, $args);
     }
+
+    /**
+     * Returns the outbound email configurations that the current user can use.
+     *
+     * This method is used by the Emails/enum/outbound_email_id REST API endpoint. If the current user is allowed to use
+     * the system configuration, then that configuration is treated as the default and forced to the beginning of the
+     * returned array. An enum field in the UI will use the first configuration as the default choice.
+     *
+     * @return array
+     */
+    public function getOutboundEmailDropdown()
+    {
+        $options = array();
+        $configs = OutboundEmailConfigurationPeer::listValidMailConfigurations($GLOBALS['current_user']);
+
+        foreach ($configs as $config) {
+            $inboxId = $config->getInboxId();
+            $id = is_null($inboxId) ? $config->getConfigId() : $inboxId;
+
+            if ($config->getConfigType() === 'system') {
+                // Force this element to the beginning of the array.
+                $options = array($id => $config->getDisplayName()) + $options;
+            } else {
+                $options[$id] = $config->getDisplayName();
+            }
+        }
+
+        return $options;
+    }
 } // end class def
