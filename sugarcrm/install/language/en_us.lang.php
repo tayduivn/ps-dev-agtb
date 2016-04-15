@@ -603,7 +603,9 @@ $mod_strings = array(
     'LBL_FTS_TYPE'     => 'Search Engine Type',
     'LBL_FTS_HELP'      => 'To enable full-text searching, enter the Host and Port where the search engine is hosted. Sugar includes built-in support for the elasticsearch engine.',
     'LBL_FTS_REQUIRED'    => 'Elastic Search is required.',
-    'LBL_FTS_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
+    'LBL_FTS_CONN_ERROR'    => 'Unable to connect to Full Text Search server, please verify your settings.',
+    'LBL_FTS_NO_VERSION_AVAILABLE'    => 'No full text search server version available, please verify your settings.',
+    'LBL_FTS_UNSUPPORTED_VERSION'    => 'Unsupported version of Elastic search detected. Please use versions: %s',
 
     'LBL_PATCHES_TITLE'     => 'Install Latest Patches',
     'LBL_MODULE_TITLE'      => 'Install Language Packs',
