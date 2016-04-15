@@ -12,6 +12,7 @@
 
 $dictionary['Addressee'] = array(
     'table' => 'addressees',
+    'reassignable' => false,
     'audited' => true,
     'activity_enabled' => false,
     'duplicate_merge' => true,
