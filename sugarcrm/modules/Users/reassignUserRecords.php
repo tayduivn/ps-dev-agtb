@@ -276,11 +276,21 @@ else if(!isset($_GET['execute'])){
 			$tousername = $row['user_name'];
 	}
 	//rrs bug: 31056 - instead of setting the team_id let's set the team_set_id and set the team_id as the primary
-    $teams = SugarFieldTeamset::getTeamsFromRequest('team_name');
+    $sugarFieldTeamSet = new SugarFieldTeamset('Teamset');
+    $teams = $sugarFieldTeamSet->getTeamsFromRequest('team_name');
 	$team_ids = array_keys($teams);
     $team_id = SugarFieldTeamset::getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
 	$teamSet = BeanFactory::getBean('TeamSets');
 	$team_set_id = $teamSet->addTeams($team_ids);
+    $teamSetSelectedId = null;
+
+    $tbaConfigurator = new TeamBasedACLConfigurator();
+    if ($tbaConfigurator->isEnabledGlobally()) {
+        $selectedIds = $sugarFieldTeamSet->getSelectedTeamIdsFromRequest('team_name', $_REQUEST);
+        if (!empty($selectedIds)) {
+            $teamSetSelectedId = $teamSet->addTeams($selectedIds);
+        }
+    }
 
 	$toteamname = TeamSetManager::getCommaDelimitedTeams($team_set_id,$team_id,true);
     echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
@@ -332,6 +342,9 @@ else if(!isset($_GET['execute'])){
         {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
+        if ($teamSetSelectedId && $tbaConfigurator->isEnabledForModule($module)) {
+            $q_set .= ", team_set_selected_id = '{$teamSetSelectedId}' ";
+        }
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = ".$db->quoted($fromuser);
 
