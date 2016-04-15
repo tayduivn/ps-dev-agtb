@@ -92,6 +92,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
         }
 
         $sut = new Hash(new Native());
+        $sut->setAllowLegacy(true);
         $this->assertEquals($expected, $sut->verify($password, $hash));
     }
 
