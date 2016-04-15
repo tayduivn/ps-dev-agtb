@@ -200,9 +200,13 @@
     destroyTinyMCEEditor: function() {
         // Clean up existing TinyMCE editor
         if(!_.isNull(this._htmleditor)){
-            this._saveEditor(true);
-            this._htmleditor.remove();
-            this._htmleditor.destroy();
+            try {
+                // A known issue with Firefox and TinyMCE produces a NS_ERROR_UNEXPECTED Exception
+                this._saveEditor(true);
+                this._htmleditor.remove();
+                this._htmleditor.destroy();
+            } catch (e) {
+            }
             this._htmleditor = null;
         }
     },
