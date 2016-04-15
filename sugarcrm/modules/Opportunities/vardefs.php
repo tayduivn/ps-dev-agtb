@@ -194,7 +194,16 @@ $dictionary['Opportunity'] = array(
             'name' => 'date_closed_timestamp',
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'ulong',
-            'studio' => false,
+            'studio' => array(
+                'formula' => true,
+                'related' => true,
+                'recordview' => false,
+                'listview' => false,
+                'detailview' => false,
+                'searchview' => false,
+                'createview' => false,
+                'editField' => false
+            ),
             'reportable' => false,
             'workflow' => false,
             'massupdate' => false,

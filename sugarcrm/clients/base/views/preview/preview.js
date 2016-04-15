@@ -15,7 +15,6 @@
  */
 ({
     extendsFrom: 'RecordView',
-
     plugins: ['ToggleMoreLess', 'Editable', 'ErrorDecoration', 'SugarLogic'],
     fallbackFieldTemplate: 'detail',
     /**
@@ -159,6 +158,11 @@
         if (this.layout) {
             this.layout.on('preview:pagination:fire', this.switchPreview, this);
         }
+
+        // FIXME: remove as part of SC-5480
+        this.before('sugarlogic:initialize', function() {
+            return false;
+        }, this);
     },
 
     /**
@@ -315,6 +319,11 @@
                 this.layout.hideNextPrevious = true;
                 this.layout.trigger('preview:pagination:update');
             } else {
+                // FIXME: remove as part of SC-5480
+                // init sugarlogic for the module that is being used on the model that is being previewed
+                if (_.isFunction(this.initSugarLogic)) {
+                    this.initSugarLogic(this.model.module);
+                }
                 // If we aren't on activitystream, then just render
                 this.render();
             }

@@ -48,6 +48,9 @@
          * needed.
          */
         _onShow: function(event) {
+            if (event.namespace !== 'bs.tooltip') {
+                return;
+            }
             var target = event.target;
             var $target = $(target);
             var showTooltip = ($target.attr('rel') === 'tooltip' || target.offsetWidth < target.scrollWidth);
@@ -65,6 +68,9 @@
          * upgrade to latest version of the tooltip library.
          */
         _saveTip: function(event) {
+            if (event.namespace !== 'bs.tooltip') {
+                return;
+            }
             var $target = $(event.target);
             this._$currentTip = $target.data('bs.tooltip').tip();
         },

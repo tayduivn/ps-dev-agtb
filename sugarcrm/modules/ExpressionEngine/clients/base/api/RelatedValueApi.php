@@ -130,7 +130,7 @@ class RelatedValueApi extends SugarApi
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
                         $sum = 0;
                         $count = 0;
-                        $min = '';
+                        $min = false;
                         $max = false;
                         $values = array();
                         if (!empty($relBeans)) {

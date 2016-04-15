@@ -487,7 +487,7 @@ describe('Base.Email', function() {
             expect(field.decorateRequired).toHaveBeenCalled();
         });
 
-        it('field will remove the required placeholder after add has been called', function() {
+        xit('field will remove the required placeholder after add has been called', function() {
             // since it rendered with one, we need to remove it first
             field.$('.removeEmail').first().click();
             var $el = field._getNewEmailField();
