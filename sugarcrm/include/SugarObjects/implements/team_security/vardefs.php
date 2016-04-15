@@ -113,7 +113,8 @@ $vardefs = array(
           'vname' => 'LBL_TEAM_SET_SELECTED_TEAMS',
           // Or db_concat_fields.
           'rname' => 'name',
-          'id_name' => 'team_id',
+          // Readable representation for export.
+          'id_name' => 'team_set_selected_id',
           'source' => 'non-db',
           // Relate is the only way to export non-db field, link value is replaced in getExportContentFromResult()
           // value doesn't matter but "many" type is filtered by create_export_query().

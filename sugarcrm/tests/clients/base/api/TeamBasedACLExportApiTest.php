@@ -42,6 +42,11 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected $teamSetUserIn;
 
     /**
+     * @var Team
+     */
+    protected $teamUserIn;
+
+    /**
      * @var TeamSet
      */
     protected $teamSetUserNot;
@@ -72,11 +77,11 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->recordList = new RecordListApi();
         $tbaConfigurator = new TeamBasedACLConfigurator();
 
-        $teamUserIn = SugarTestTeamUtilities::createAnonymousTeam();
-        $teamUserIn->add_user_to_team($GLOBALS['current_user']->id);
+        $this->teamUserIn = SugarTestTeamUtilities::createAnonymousTeam();
+        $this->teamUserIn->add_user_to_team($GLOBALS['current_user']->id);
 
         $this->teamSetUserIn = BeanFactory::getBean('TeamSets');
-        $this->teamSetUserIn->addTeams(array($teamUserIn->id));
+        $this->teamSetUserIn->addTeams(array($this->teamUserIn->id));
 
         $teamUserNot = SugarTestTeamUtilities::createAnonymousTeam();
 
@@ -142,6 +147,34 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertContains($this->beanTBA->id, $result);
         $this->assertNotContains($this->beanNotTBA->id, $result);
+
+        $this->assertContains($this->teamSetUserIn->id, $result);
+        $this->assertContains($this->teamUserIn->name, $result);
     }
 
+    /**
+     * Test that empty team selected id is not filled with Global during export.
+     * Even if TBA is off the selected team set should be exported.
+     */
+    public function testExportEmptyTeamSetSelected()
+    {
+        $tbaConfigurator = new TeamBasedACLConfigurator();
+        $tbaConfigurator->setForModule($this->module, false);
+
+        $this->beanTBA->team_set_selected_id = '';
+        $this->beanTBA->save();
+
+        $listData = $this->recordList->recordListCreate(
+            SugarTestRestUtilities::getRestServiceMock(),
+            array('module' => $this->module, 'records' => array($this->beanTBA->id))
+        );
+
+        $csvString = $this->api->export(
+            SugarTestRestUtilities::getRestServiceMock(),
+            array('module' => 'Accounts', 'record_list_id' => $listData['id'])
+        );
+        $actualGlobalTeam = substr_count($csvString, 'Global');
+
+        $this->assertEquals(1, $actualGlobalTeam);
+    }
 }
