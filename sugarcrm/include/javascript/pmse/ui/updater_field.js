@@ -764,7 +764,7 @@ UpdaterItem.prototype.setLabel = function (label) {
     if (this._dom.labelText) {
         this._dom.labelText.textContent = label;
         this._dom.labelText.setAttribute('data-original-title', label);
-        this._parent.setTooltip(this._dom.labelText);
+        App.utils.tooltip.initialize([this._dom.labelText]);
     }
     return this;
 };
@@ -891,7 +891,7 @@ UpdaterItem.prototype._createConfigButton = function () {
     button.setAttribute('rel', 'tooltip');
     button.setAttribute('data-placement', 'right');
     button.setAttribute('data-original-title', App.lang.get('LBL_SUGAR_FIELD_SELECTOR', 'pmse_Emails_Templates'));
-    this._parent.setTooltip(button);
+    App.utils.tooltip.initialize([button]);
     this._configButton = button;
     return this._configButton;
 };
@@ -1457,10 +1457,7 @@ TeamUpdaterItem.prototype._addButtonsToLine = function (line) {
     line.appendChild(removeButton);
     line.appendChild(addButton);
     $(line).addClass('adam-line-filled');
-    this._parent.setTooltip(primaryButton);
-    this._parent.setTooltip(addButton);
-    this._parent.setTooltip(removeButton);
-    this._parent.setTooltip(lockButton);
+    App.utils.tooltip.initialize([primaryButton, addButton, removeButton, lockButton]);
     return this._updateTeamSelection();
 };
 
@@ -1488,7 +1485,7 @@ TeamUpdaterItem.prototype._updateTeamActionsVisibility = function () {
         $(this._control).find('.adam-team-action[name=remove]').first().css('visibility', 'hidden');
     }
     $(this._control).find('.adam-team-updater-line').last().append(this._addButton);
-    this._parent.setTooltip(this._addButton);
+    App.utils.tooltip.initialize([this._addButton]);
     return this;
 };
 
