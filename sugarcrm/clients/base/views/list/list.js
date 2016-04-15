@@ -54,11 +54,14 @@
         var listViewMeta = app.metadata.getView(options.module, 'list') || {};
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, options.meta || {});
+        // FIXME: SC-5622 we shouldn't manipulate metadata this way.
         options.meta.type = options.meta.type || 'list';
         options.meta.action = 'list';
         options = this.parseFieldMetadata(options);
 
         app.view.View.prototype.initialize.call(this, options);
+
+        this.viewName = 'list';
 
         //Set the context to load the field list from the record metadata.
         this.context.set('dataView', this.dataViewName);
