@@ -111,17 +111,18 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
     });
 
     it('Toggled folder should load children leafs.', function() {
-        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeaf');
+        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeafs');
         view.collection = new app.NestedSetCollection(treeData);
 
         view.folderToggled({open: {}, id: '1'}, sandbox.stub());
         // The demo model with ID 1 has two children.
-        expect(loadLeafStub).toHaveBeenCalledTwice();
+        // But we expect all children data to be loaded in single request.
+        expect(loadLeafStub).toHaveBeenCalledOnce();
     });
 
     it('Click on folder should call leaf loading.', function() {
         view.render();
-        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeaf');
+        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeafs');
         view.leafClicked({type: 'document'});
         expect(loadLeafStub).not.toHaveBeenCalled();
 
@@ -130,7 +131,7 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
     });
 
     it('Open current parent should load a leaf.', function() {
-        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeaf');
+        var loadLeafStub = sandbox.stub(view, 'loadAdditionalLeafs');
         view.extraModule.field = 'id';
 
         view.openCurrentParent();
