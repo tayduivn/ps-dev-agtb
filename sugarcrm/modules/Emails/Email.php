@@ -273,11 +273,17 @@ class Email extends SugarBean {
             foreach ($exAddr as $addr) {
                 $name = '';
                 $addr = str_replace($dirty, $clean, $addr);
-                if ((strpos($addr, "<") === false) && (strpos($addr, ">") === false)) {
+                $lbpos = strrpos($addr, "<");
+                if ($lbpos === false) {
+                    $rbpos = strrpos($addr, ">");
+                } else {
+                    $rbpos = strpos($addr, ">", $lbpos);
+                }
+                if (($lbpos === false) && ($rbpos === false)) {
                     $address = $addr;
                 } else {
-                    $address = substr($addr, strpos($addr, "<") + 1, strpos($addr, ">") - 1 - strpos($addr, "<"));
-                    $name    = substr($addr, 0, strpos($addr, "<"));
+                    $address = substr($addr, $lbpos + 1, $rbpos - 1 - $lbpos);
+                    $name = substr($addr, 0, $lbpos);
                 }
                 $addrTemp            = array();
                 $addrTemp['email']   = trim($address);
@@ -312,15 +318,18 @@ class Email extends SugarBean {
 		$dirty = array("&lt;", "&gt;");
 
 		foreach($exAddr as $addr) {
-			$name = '';
-
-			$addr = str_replace($dirty, $clean, $addr);
-
-			if(strpos($addr, "<") && strpos($addr, ">")) {
-				$address = substr($addr, strpos($addr, "<") + 1, strpos($addr, ">") - 1 - strpos($addr, "<"));
-			} else {
-				$address = $addr;
-			}
+            $addr = str_replace($dirty, $clean, $addr);
+            $lbpos = strrpos($addr, "<");
+            if ($lbpos === false) {
+                $rbpos = strrpos($addr, ">");
+            } else {
+                $rbpos = strpos($addr, ">", $lbpos);
+            }
+            if (($lbpos === false) && ($rbpos === false)) {
+                $address = $addr;
+            } else {
+                $address = substr($addr, $lbpos + 1, $rbpos - 1 - $lbpos);
+            }
 
 			$ret[] = trim($address);
 		}

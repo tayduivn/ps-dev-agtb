@@ -97,6 +97,43 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(0, $actual, 'An empty array should have been returned.');
     }
 
+    /**
+     * @dataProvider dataProviderEmailAddressParsing
+     * @param string $fullEmailAddress
+     * @param string $expDisplayName
+     * @param string $expEmailAddress
+     */
+    public function testEmail2ParseEmailAddresses($fullEmailAddress, $expDisplayName, $expEmailAddress)
+    {
+        $result = $this->email->email2ParseAddresses($fullEmailAddress);
+        $this->assertEquals($expDisplayName, $result[0]['display'], 'Unexpected Email Display Name');
+        $this->assertEquals($expEmailAddress, $result[0]['email'], 'Unexpected Email Address');
+    }
+
+    /**
+     * @dataProvider dataProviderEmailAddressParsing
+     * @param string $fullEmailAddress
+     * @param string $expDisplayName Not used in this test.
+     * @param string $expEmailAddress
+     */
+    public function testEmail2ParseEmailAddressesAddressOnly($fullEmailAddress, $expDisplayName, $expEmailAddress)
+    {
+        $result = $this->email->email2ParseAddressesForAddressesOnly($fullEmailAddress);
+        $this->assertEquals($expEmailAddress, $result[0], 'Unexpected Email Address');
+    }
+
+    public function dataProviderEmailAddressParsing()
+    {
+        return array(
+            array(htmlspecialchars('John Doe<john@doe.com>'), 'John Doe', 'john@doe.com'),
+            array(htmlspecialchars('Jo<hn Doe<john@doe.com>'), 'Jo<hn Doe', 'john@doe.com'),
+            array(htmlspecialchars('Jo>hn Doe<john@doe.com>'), 'Jo>hn Doe', 'john@doe.com'),
+            array(htmlspecialchars('Jo>h<n Doe<john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'),
+            array(htmlspecialchars('Jo>h<n Doe  <john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'),
+            array(htmlspecialchars("Jo'h<n D\"oe  <john@doe.com>"), "Jo'h<n D\"oe", 'john@doe.com'),
+        );
+    }
+
 	public function testDecodeDuringSend()
 	{
 		$testString = 'Replace sugarLessThan and sugarGreaterThan with &lt; and &gt;';
