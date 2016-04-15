@@ -74,6 +74,19 @@ describe('Sugar.Tooltip', function() {
             app.tooltip.clear();
             expect($('.tooltip').length).toBe(0);
         });
+
+        it('should not prevent default event on JSTree elements', function() {
+            var $el = $('<input rel="add"/>').appendTo('body');
+            var event = {
+                preventDefault: function() {console.log(1111)},
+                namespace: 'bs.tooltip',
+                target: $el
+            };
+
+            var eventStub = sinon.collection.stub(event, 'preventDefault');
+            app.tooltip._onShow(event);
+            expect(eventStub).not.toHaveBeenCalled();
+        });
     });
 
     describe('non-touch devices ellipsis', function() {
