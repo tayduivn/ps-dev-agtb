@@ -15,12 +15,12 @@
 require_once("modules/ForecastManagerWorksheets/clients/base/api/ForecastManagerWorksheetsApi.php");
 
 /***
- * @coversDefaultClass ForecastManagerWorksheetsApi
+ * @covers ForecastManagerWorksheetsApi
  */
 class ForecastManagerWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::getBean
+     * @covers ForecastManagerWorksheetsApi::getBean
      */
     public function testGetBean()
     {
