@@ -377,6 +377,7 @@ class CalendarUtils
             $clone->recurring_source = "Sugar";
             $clone->repeat_parent_id = $id;
             $clone->repeat_root_id = null;
+            $clone->recurrence_id = null;
             $clone->update_vcal = false;
             $clone->send_invites = false;
             $clone->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;

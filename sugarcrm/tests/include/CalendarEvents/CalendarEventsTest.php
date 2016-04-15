@@ -95,6 +95,8 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
         $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
 
+        $this->assertEquals($meeting->date_start, '2015-01-01 12:00:00');
+        $this->assertEquals('', $meeting->recurrence_id);
         $this->assertEquals(0, (int) $meeting->duration_hours, "Expected Duration of Zero Hours");
         $this->assertEquals(0, (int) $meeting->duration_minutes, "Expected Duration of Zero Minutes");
         $this->assertEquals($datetimeStart->asDb(), $datetimeEnd->asDb(), "Expected End Datetime = Start DateTime");
@@ -116,8 +118,40 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
         $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
         $meetingInterval = date_diff ($datetimeStart, $datetimeEnd);
 
+        $this->assertEquals($meeting->date_start, '2015-01-01 12:00:00');
+        $this->assertEquals('', $meeting->recurrence_id);
         $this->assertEquals(1, $meetingInterval->h, "Incorrect Duration Hours - Non Recurring Meeting");
         $this->assertEquals(30, $meetingInterval->i, "Incorrect Duration Minutes - Non Recurring Meeting");
+    }
+
+    /**
+     * Test for setting dates for recurring meeting.
+     * Checks date_start, recurrence_id and date_end.
+     *
+     * @covers \CalendarEvents::setStartAndEndDateTime
+     */
+    public function testCalendarEvents_RecurringMeeting_SetStartAndEndDate_OK()
+    {
+        $format = TimeDate::DB_DATETIME_FORMAT;
+        $timezone = new DateTimeZone('UTC');
+
+        $sugarDateTime = SugarDateTime::createFromFormat($format, '2015-01-01 12:00:00', $timezone);
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meeting->repeat_type = 'Daily';
+        $meeting->repeat_count = 3;
+        $meeting->duration_hours = 1;
+        $meeting->duration_minutes = 30;
+        $this->calendarEventsService->setStartAndEndDateTime($meeting, $sugarDateTime);
+
+        $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
+        $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
+        $meetingInterval = date_diff($datetimeStart, $datetimeEnd);
+
+        $this->assertEquals($meeting->date_start, '2015-01-01 12:00:00');
+        $this->assertEquals($meeting->date_start, $meeting->recurrence_id);
+        $this->assertEquals(1, $meetingInterval->h, "Incorrect Duration Hours - Recurring Meeting");
+        $this->assertEquals(30, $meetingInterval->i, "Incorrect Duration Minutes - Recurring Meeting");
     }
 
     public function testCalendarEvents_SaveRecurringEvents_EventsSaved()

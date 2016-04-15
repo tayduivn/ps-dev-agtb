@@ -18,6 +18,7 @@ class CalDavQueue extends SugarBean
 
     const STATUS_QUEUED = 'queued';
     const STATUS_COMPLETED = 'completed';
+    const STATUS_CONFLICT = 'conflict';
 
     public $new_schema = true;
     public $module_dir = 'CalDav';

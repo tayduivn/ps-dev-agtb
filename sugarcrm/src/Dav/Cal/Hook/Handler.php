@@ -104,7 +104,10 @@ class Handler
             return false;
         }
 
-        $preparedDataSet = $adapter->prepareForExport($bean, $previousData);
+        $preparedDataSet = $conflictSolver ?
+            $adapter->prepareForRebuild($bean, $previousData) :
+            $adapter->prepareForExport($bean, $previousData);
+        
         if (!$preparedDataSet) {
             return false;
         }
@@ -135,6 +138,7 @@ class Handler
                 $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
                 if ($conflictSolver) {
                     $collection->getSynchronizationObject()->setConflictCounter(true);
+                    $conflictSolver = false;
                 }
 
                 $queue = $collection->getQueueObject();
