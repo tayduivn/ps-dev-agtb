@@ -102,7 +102,6 @@ Modal.prototype.show = function (child) {
     document.body.appendChild(this.html);
     this.setVisible(true);
     if (!this.loaded) {
-        this.attachListeners();
         this.loaded = true;
     }
 };
@@ -116,30 +115,5 @@ Modal.prototype.hide = function () {
         parentElement = this.html.parentElement;
         parentElement.removeChild(this.html);
         this.setVisible(false);
-    }
-};
-
-/**
- * Initializes the modal listeners
- */
-Modal.prototype.attachListeners = function () {
-    var self = this;
-    if (this.html) {
-        $(this.html)
-            .click(function (e) {
-                e.stopPropagation();
-                if (self.clickHander) {
-                    self.clickHander();
-                }
-            })
-            .mouseover(function (e) {
-                e.stopPropagation();
-            })
-            .mouseout(function (e) {
-                e.stopPropagation();
-            })
-            .mousedown(function (e) {
-                e.stopPropagation();
-            });
     }
 };
