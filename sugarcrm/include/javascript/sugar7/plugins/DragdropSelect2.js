@@ -201,7 +201,7 @@
                         }
 
                         self.$(selectedClassSelector).each(function() {
-                            $(this).find('[data-id]').clone().appendTo($helper);
+                            $(this).find('[data-id]').clone().removeAttr('rel').appendTo($helper);
                         });
 
                         return $helper.get(0);
