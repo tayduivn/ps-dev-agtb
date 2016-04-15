@@ -25,7 +25,7 @@ class SugarUpgradeUpdateTBAConstant extends UpgradeScript
         if (version_compare($this->from_version, '7.8.0.0.RC.1', '==')
                 && version_compare($this->to_version, '7.8.0.0.RC.3', '==')) {
             $this->db->query(
-                "UPDATE acl_roles_actions SET access_override = 78 WHERE access_override = 72;"
+                "UPDATE acl_roles_actions SET access_override = 78 WHERE access_override = 72"
             );
         }
         return;
