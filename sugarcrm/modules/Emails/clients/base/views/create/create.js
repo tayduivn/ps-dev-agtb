@@ -37,7 +37,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
-            'click [data-toggle-field]': '_handleSenderOptionClick'
+            'click [data-toggle-field]': '_handleRecipientOptionClick'
         });
         this.context.on('tinymce:upload_attachment:clicked', this.launchFilePicker, this);
         this.context.on('tinymce:sugardoc_attachment:clicked', this.launchDocumentDrawer, this);
@@ -84,7 +84,7 @@
             if (!_.isEmpty(prepopulateValues)) {
                 this.prepopulate(prepopulateValues);
             }
-            this.addSenderOptions();
+            this._addRecipientOptions();
 
             if (this.model.isNew()) {
                 this._updateEditorWithSignature(this._lastSelectedSignature);
@@ -164,7 +164,7 @@
 
         subject = subject.replace(keyMacro, relatedModel.get('case_number'));
         this.model.set('name', subject);
-        if (!this.isFieldPopulated('to_addresses')) {
+        if (!this.isFieldPopulated('to')) {
             // no addresses, attempt to populate from contacts relationship
             var contacts = relatedModel.getRelatedCollection('contacts');
 
@@ -175,7 +175,7 @@
                         return {bean: model};
                     }, this);
 
-                    this.model.set('to_addresses', toAddresses);
+                    this.model.set('to', toAddresses);
                 }, this),
                 fields: ['id', 'full_name', 'email']
             });
@@ -213,10 +213,10 @@
      * Add Cc/Bcc toggle buttons
      * Initialize whether to show/hide fields and toggle show/hide buttons appropriately
      */
-    addSenderOptions: function() {
-        this._renderSenderOptions('to_addresses');
-        this._initSenderOption('cc_addresses');
-        this._initSenderOption('bcc_addresses');
+    _addRecipientOptions: function() {
+        this._renderRecipientOptions('to');
+        this._initRecipientOption('cc');
+        this._initRecipientOption('bcc');
     },
 
     /**
@@ -225,16 +225,16 @@
      * @param {string} container Name of field that will contain the sender option buttons
      * @private
      */
-    _renderSenderOptions: function(container) {
+    _renderRecipientOptions: function(container) {
         var field = this.getField(container),
             $panelBody,
-            senderOptionTemplate;
+            recipientOptionTemplate;
 
         if (field) {
             $panelBody = field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR);
-            senderOptionTemplate = app.template.getView('compose-senderoptions', this.module);
+            recipientOptionTemplate = app.template.getView('create.recipient-options', this.module);
 
-            $(senderOptionTemplate({'module' : this.module}))
+            $(recipientOptionTemplate({'module' : this.module}))
                 .insertAfter($panelBody.find('div span.normal'));
         }
     },
@@ -246,9 +246,9 @@
      * @param {string} fieldName Name of the field to initialize active state on
      * @private
      */
-    _initSenderOption: function(fieldName) {
+    _initRecipientOption: function(fieldName) {
         var fieldValue = this.model.get(fieldName) || [];
-        this.toggleSenderOption(fieldName, (fieldValue.length > 0));
+        this.toggleRecipientOption(fieldName, (fieldValue.length > 0));
     },
 
     /**
@@ -258,7 +258,7 @@
      * @param {string} fieldName Name of the field to toggle
      * @param {boolean} [active] Whether toggle button active and field shown
      */
-    toggleSenderOption: function(fieldName, active) {
+    toggleRecipientOption: function(fieldName, active) {
         var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]',
             $toggleButton = this.$(toggleButtonSelector);
 
@@ -277,11 +277,11 @@
      * @param {Event} event click event
      * @private
      */
-    _handleSenderOptionClick: function(event) {
+    _handleRecipientOptionClick: function(event) {
         var $toggleButton = $(event.currentTarget),
             fieldName = $toggleButton.data('toggle-field');
 
-        this.toggleSenderOption(fieldName);
+        this.toggleRecipientOption(fieldName);
         this.resizeEditor();
     },
 
@@ -397,11 +397,11 @@
             this.save();
         }, this);
 
-        if (!this.isFieldPopulated('to_addresses') &&
-            !this.isFieldPopulated('cc_addresses') &&
-            !this.isFieldPopulated('bcc_addresses')
+        if (!this.isFieldPopulated('to') &&
+            !this.isFieldPopulated('cc') &&
+            !this.isFieldPopulated('bcc')
         ) {
-            this.model.trigger('error:validation:to_addresses');
+            this.model.trigger('error:validation:to');
             app.alert.show('send_error', {
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'

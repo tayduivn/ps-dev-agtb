@@ -12,7 +12,7 @@ describe('Emails.Views.Create', function() {
         app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop };
 
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('compose-senderoptions', 'view', 'base', 'compose-senderoptions', moduleName);
+        SugarTest.loadHandlebarsTemplate('create', 'view', 'base', 'recipient-options', moduleName);
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
 
@@ -135,12 +135,12 @@ describe('Emails.Views.Create', function() {
             });
         });
 
-        it('Should trigger recipient add on context if to_addresses, cc_addresses, or bcc_addresses value is passed in.', function() {
+        it('Should trigger recipient add on context if to_addresses, cc, or bcc value is passed in.', function() {
             runs(function() {
                 view.prepopulate({
-                    to_addresses: [{email: 'to@foo.com'}, {email: 'too@foo.com'}],
-                    cc_addresses: [{email: 'cc@foo.com'}],
-                    bcc_addresses: [{email: 'bcc@foo.com'}]
+                    to: [{email: 'to@foo.com'}, {email: 'too@foo.com'}],
+                    cc: [{email: 'cc@foo.com'}],
+                    bcc: [{email: 'bcc@foo.com'}]
                 });
             });
 
@@ -303,26 +303,26 @@ describe('Emails.Views.Create', function() {
             var contact = app.data.createBean('Contacts'),
                 toAddresses = [{bean: contact}];
 
-            view.model.set('to_addresses', toAddresses);
+            view.model.set('to', toAddresses);
             view._populateForCases(relatedModel);
             expect(view.model.get('name')).toEqual('[CASE:100] My Case');
-            expect(view.model.get('to_addresses')).toEqual(toAddresses);
+            expect(view.model.get('to')).toEqual(toAddresses);
         });
     });
 
-    describe('Sender Options', function() {
+    describe('Recipient Options', function() {
         var toggleFieldVisibilitySpy,
-            isSenderOptionButtonActive;
+            isRecipientOptionButtonActive;
 
         beforeEach(function() {
             toggleFieldVisibilitySpy = sandbox.spy(view, '_toggleFieldVisibility');
-            sandbox.stub(view, '_renderSenderOptions', function() {
-                var template = app.template.getView('compose-senderoptions', view.module);
+            sandbox.stub(view, '_renderRecipientOptions', function() {
+                var template = app.template.getView('create.recipient-options', view.module);
                 view.$el.append(template({'module' : view.module}));
             });
         });
 
-        isSenderOptionButtonActive = function(fieldName) {
+        isRecipientOptionButtonActive = function(fieldName) {
             var selector = '[data-toggle-field="' + fieldName + '"]';
             return view.$(selector).hasClass('active');
         };
@@ -330,73 +330,73 @@ describe('Emails.Views.Create', function() {
         using('CC/BCC values',
             [
                 [
-                    {cc_addresses: [], bcc_addresses: []},
+                    {cc: [], bcc: []},
                     {ccActive: false, bccActive: false}
                 ],
                 [
-                    {cc_addresses: ['foo@bar.com'], bcc_addresses: []},
+                    {cc: ['foo@bar.com'], bcc: []},
                     {ccActive: true, bccActive: false}
                 ],
                 [
-                    {cc_addresses: [], bcc_addresses: ['foo@bar.com']},
+                    {cc: [], bcc: ['foo@bar.com']},
                     {ccActive: false, bccActive: true}
                 ],
                 [
-                    {cc_addresses: ['foo@bar.com'], bcc_addresses: ['bar@foo.com']},
+                    {cc: ['foo@bar.com'], bcc: ['bar@foo.com']},
                     {ccActive: true, bccActive: true}
                 ]
             ],
             function(value, result) {
-                it('should add sender options on render and initialize cc/bcc fields appropriately', function() {
+                it('should add recipient options on render and initialize cc/bcc fields appropriately', function() {
                     view.model.set(value);
                     view._render();
 
                     // check buttons
-                    expect(isSenderOptionButtonActive('cc_addresses')).toBe(result.ccActive);
-                    expect(isSenderOptionButtonActive('bcc_addresses')).toBe(result.bccActive);
+                    expect(isRecipientOptionButtonActive('cc')).toBe(result.ccActive);
+                    expect(isRecipientOptionButtonActive('bcc')).toBe(result.bccActive);
 
                     // check field visibility
-                    expect(toggleFieldVisibilitySpy.firstCall.args).toEqual(['cc_addresses', result.ccActive]);
-                    expect(toggleFieldVisibilitySpy.secondCall.args).toEqual(['bcc_addresses', result.bccActive]);
+                    expect(toggleFieldVisibilitySpy.firstCall.args).toEqual(['cc', result.ccActive]);
+                    expect(toggleFieldVisibilitySpy.secondCall.args).toEqual(['bcc', result.bccActive]);
                 });
             }
         );
 
-        it('should toggle sender option between active/inactive state when active flag not specified', function() {
-            var fieldName = 'cc_addresses';
+        it('should toggle recipient option between active/inactive state when active flag not specified', function() {
+            var fieldName = 'cc';
             view._render();
-            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
-            view.toggleSenderOption(fieldName);
-            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
-            view.toggleSenderOption(fieldName);
-            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
+            view.toggleRecipientOption(fieldName);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
+            view.toggleRecipientOption(fieldName);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
         });
 
-        it('should set sender option to active when active flag is true', function() {
-            var fieldName = 'cc_addresses';
+        it('should set recipient option to active when active flag is true', function() {
+            var fieldName = 'cc';
             view._render();
-            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
-            view.toggleSenderOption(fieldName, true);
-            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
-            view.toggleSenderOption(fieldName, true);
-            expect(isSenderOptionButtonActive(fieldName)).toBe(true);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
+            view.toggleRecipientOption(fieldName, true);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
+            view.toggleRecipientOption(fieldName, true);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
         });
 
-        it('should set sender option to inactive when active flag is false', function() {
-            var fieldName = 'cc_addresses';
+        it('should set recipient option to inactive when active flag is false', function() {
+            var fieldName = 'cc';
             view._render();
-            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
-            view.toggleSenderOption(fieldName, false);
-            expect(isSenderOptionButtonActive(fieldName)).toBe(false);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
+            view.toggleRecipientOption(fieldName, false);
+            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
         });
 
-        it('should toggle sender option between active/inactive state when cc/bcc buttons clicked', function() {
+        it('should toggle recipient option between active/inactive state when cc/bcc buttons clicked', function() {
             view._render();
-            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(false);
-            view.$('[data-toggle-field="bcc_addresses"]').click();
-            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(true);
-            view.$('[data-toggle-field="bcc_addresses"]').click();
-            expect(isSenderOptionButtonActive('bcc_addresses')).toBe(false);
+            expect(isRecipientOptionButtonActive('bcc')).toBe(false);
+            view.$('[data-toggle-field="bcc"]').click();
+            expect(isRecipientOptionButtonActive('bcc')).toBe(true);
+            view.$('[data-toggle-field="bcc"]').click();
+            expect(isRecipientOptionButtonActive('bcc')).toBe(false);
         });
     });
 
@@ -411,7 +411,7 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when to, subject and html_body fields are populated', function() {
-            view.model.set('to_addresses', 'foo@bar.com');
+            view.model.set('to', 'foo@bar.com');
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
@@ -422,7 +422,7 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when cc, subject and html_body fields are populated', function() {
-            view.model.set('cc_addresses', 'foo@bar.com');
+            view.model.set('cc', 'foo@bar.com');
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
@@ -433,7 +433,7 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when bcc, subject and html_body fields are populated', function() {
-            view.model.set('bcc_addresses', 'foo@bar.com');
+            view.model.set('bcc', 'foo@bar.com');
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
