@@ -160,16 +160,24 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                         require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
                         $teams = SugarFieldTeamset::getTeamsFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
                         $primary_id = SugarFieldTeamset::getPrimaryTeamidFromRequest($this->bean->{$this->value_name}['role_field'], $_POST);
+                        $selectedIds = SugarFieldTeamset::getSelectedTeamIdsFromRequest(
+                            $this->bean->{$this->value_name}['role_field'],
+                            $_POST
+                        );
                         foreach($teams as $id => $name)
                         {
+                            $value = array('id' => $id, 'name' => $name, 'selected' => in_array($id, $selectedIds));
                             // getting strings of values is needed because some problems appears when compare '1' and md5 value which begins from '1'
                             if (strval($primary_id) === strval($id))
                             {
-                                $this->bean->{$this->value_name}=array_merge($this->bean->{$this->value_name}, array('primary'=>array('id'=>$id, 'name'=>$name)));
+                                $this->bean->{$this->value_name} = array_merge(
+                                    $this->bean->{$this->value_name},
+                                    array('primary' => $value)
+                                );
                             }
                             else
                             {
-                                $secondaries['secondaries'][]=array('id'=>$id, 'name'=>$name);
+                                $secondaries['secondaries'][] = $value;
                             }
                         }
                     }
