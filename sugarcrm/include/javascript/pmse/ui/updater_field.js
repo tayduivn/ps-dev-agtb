@@ -1962,15 +1962,18 @@ NumberUpdaterItem.prototype.setValue = function (value) {
 };
 
 NumberUpdaterItem.prototype.isValid = function () {
-    var result = this.evaluateExpression(this.getValue());
-    if (result.valid) {
-        if (this.isCurrency() && result.expSubtype.toLowerCase() != 'currency') {
-            return false;
+    var valid = UpdaterItem.prototype.isValid.call(this);
+    if (valid && Array.isArray(this._value) && this._value.length > 0) {
+        var result = this.evaluateExpression(this._value);
+        if (result.valid) {
+            if (this.isCurrency() && result.expSubtype.toLowerCase() != 'currency') {
+                valid = false;
+            }
+        } else {
+            valid = false;
         }
-    } else {
-        return false;
     }
-    return UpdaterItem.prototype.isValid.call(this);
+    return valid;
 };
 
 /**
