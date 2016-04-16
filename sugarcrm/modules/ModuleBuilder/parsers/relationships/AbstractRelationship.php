@@ -633,20 +633,43 @@ class AbstractRelationship
 
         // now construct section 3, the fields in the join table
 
-        $properties [ 'fields' ] [] = array ( 'name' => 'id' , 'type' => 'varchar' , 'len' => 36 ) ;
-        $properties [ 'fields' ] [] = array ( 'name' => 'date_modified' , 'type' => 'datetime' ) ;
-        $properties [ 'fields' ] [] = array ( 'name' => 'deleted' , 'type' => 'bool' , 'len' => '1' , 'default' => '0' , 'required' => true ) ;
-        $properties [ 'fields' ] [] = array ( 'name' => $rel_properties [ 'join_key_lhs' ] , 'type' => 'varchar' , 'len' => 36 ) ;
-        $properties [ 'fields' ] [] = array ( 'name' => $rel_properties [ 'join_key_rhs' ] , 'type' => 'varchar' , 'len' => 36 ) ;
+        $properties['fields']['id'] = array(
+            'name' => 'id',
+            'type' => 'id',
+        );
+        $properties['fields']['date_modified'] = array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        );
+        $properties['fields']['deleted'] = array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'default' => 0,
+        );
+        $properties['fields'][$rel_properties['join_key_lhs']] = array(
+            'name' => $rel_properties['join_key_lhs'],
+            'type' => 'id',
+        );
+        $properties['fields'][$rel_properties['join_key_rhs']] = array(
+            'name' => $rel_properties['join_key_rhs'],
+            'type' => 'id',
+        );
+
         if (strtolower ( $lhs_module ) == 'documents' || strtolower ( $rhs_module ) == 'documents' )
         {
-            $properties [ 'fields' ] [] = array ( 'name' => 'document_revision_id' , 'type' => 'varchar' , 'len' => '36' ) ;
+            $properties['fields']['document_revision_id'] = array(
+                'name' => 'document_revision_id',
+                'type' => 'id',
+            );
         }
         // if we have an extended relationship condition, then add in the corresponding relationship_role_column to the relationship (join) table
         // for now this is restricted to extended relationships that can be specified by a varchar
         if (isset ( $this->definition [ 'relationship_role_column_value' ] ))
         {
-            $properties [ 'fields' ] [] = array ( 'name' => $this->definition [ 'relationship_role_column' ] , 'type' => 'varchar' ) ;
+            $properties['fields'][$this->definition['relationship_role_column_value']] = array(
+                'name' => $this->definition['relationship_role_column_value'],
+                'type' => 'varchar',
+            );
         }
 
         // finally, wrap up with section 4, the indices on the join table
