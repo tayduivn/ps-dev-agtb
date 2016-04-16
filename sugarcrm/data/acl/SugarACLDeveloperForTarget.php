@@ -57,6 +57,11 @@ class SugarACLDeveloperForTarget extends SugarACLStrategy
         }
 
         if (empty($context['bean'])) {
+
+            if ($current_user->isAdmin()) {
+                return true;
+            }
+
             $dev_mods = $current_user->getDeveloperModules();
             if (count($dev_mods)) {
                 $sup_mods = PMSEEngineUtils::getSupportedModules();

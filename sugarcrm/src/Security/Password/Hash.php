@@ -43,7 +43,7 @@ class Hash
      *
      * @var boolean
      */
-    protected $allowLegacy = true;
+    protected $allowLegacy = false;
 
     /**
      * Enable/disable backend rehash check
@@ -105,7 +105,7 @@ class Hash
 
             self::$instance = $instance = new self(self::getHashBackend($backend, $algo, $options));
 
-            $instance->setAllowLegacy($config->get('passwordHash.allowLegacy', true));
+            $instance->setAllowLegacy($config->get('passwordHash.allowLegacy', false));
             $instance->setRehash($config->get('passwordHash.rehash', true));
         }
         return self::$instance;

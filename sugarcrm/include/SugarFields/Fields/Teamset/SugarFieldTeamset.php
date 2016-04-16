@@ -543,7 +543,7 @@ class SugarFieldTeamset extends SugarFieldBase {
      * @param array $vars       array of REQUEST params to look at
      * @return array            array of Team-Based selected team ids or empty array
      */
-    public function getSelectedTeamIdsFromRequest($field, $vars)
+    public static function getSelectedTeamIdsFromRequest($field, $vars)
     {
         $selectedTeamIds = array();
         foreach (array_keys($vars) as $key) {
