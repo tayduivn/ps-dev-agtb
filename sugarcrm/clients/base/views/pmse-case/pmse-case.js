@@ -252,14 +252,14 @@
         var value = this.model.attributes;
         value.moduleName = this.case.flow.cas_sugar_module;
         value.beanId = this.case.flow.cas_sugar_object_id;
-        adhocForm(this.case.flow.cas_id, this.case.flow.cas_index, this.case.flowId, this.case.inboxId,this.case.title.activity,value);
+        showForm(this.case.flow.cas_id, this.case.flow.cas_index, this.case.flowId, this.case.inboxId, this.case.title.activity, value, 'adhoc', this.model);
     },
 
     caseReassign: function () {
         var value = this.model.attributes;
         value.moduleName = this.case.flow.cas_sugar_module;
         value.beanId = this.case.flow.cas_sugar_object_id;
-        reassignForm(this.case.flow.cas_id, this.case.flow.cas_index, this.case.flowId, this.case.inboxId,this.case.title.activity,value);
+        showForm(this.case.flow.cas_id, this.case.flow.cas_index, this.case.flowId, this.case.inboxId, this.case.title.activity, value, 'reassign', this.model);
     },
 
 

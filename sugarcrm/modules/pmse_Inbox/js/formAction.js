@@ -64,11 +64,11 @@ var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, valu
     showForm(casId, casIndex, flowId, pmseInboxId, taskName, values, 'reassign');
 };
 
-var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, type)
+var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, type, model)
 {
     var formView = _App.controller.layout.getComponent("bwc"),
         openModal = function () {
-            showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values);
+            showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values, model);
         };
 
     if (!_.isUndefined(formView) && formView.hasUnsavedChanges()) {
@@ -120,7 +120,7 @@ var claim_case = function(cas_id, cas_index, full_name, idInbox){
         }
     });
 };
-var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values) {
+var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values, model) {
     var f,
         w,
         combo_users,
@@ -320,28 +320,32 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                         $(w.html).remove();
                         _App.api.call('update', urlIni, attributes, {
                             success: function (response) {
+                                _App.alert.dismiss('upload');
                                 _App.alert.show('pmse_reassign_success', {
                                     autoClose: true,
                                     level: 'success',
                                     messages: translate('LBL_PMSE_ALERT_REASSIGN_SUCCESS', 'pmse_Inbox')
                                 });
+                                w.close();
                                 if (wtype == 'reassign') {
-                                    w.close();
                                     _App.router.redirect('Home');
-                                }
-                                else if (wtype == 'adhoc') {
+                                } else {
                                     if ($('#assigned_user_name').length) {
                                         $("#assigned_user_name").val(cbDate);
-                                        w.close();
-                                    }
-                                    else {
-                                        w.close();
-                                        if (!_App.router.refresh()) {
-                                            window.location.reload();
+                                    } else {
+                                        if (model) {
+                                            model.fetch();
                                         }
                                     }
                                 }
+                            },
+                            error: function (error) {
                                 _App.alert.dismiss('upload');
+                                var message = (error && error.message) ? error.message : 'EXCEPTION_FATAL_ERROR';
+                                _App.alert.show('pmse_reassign_error', {
+                                    level: 'error',
+                                    messages: message
+                                });
                             }
                         });
                     }
