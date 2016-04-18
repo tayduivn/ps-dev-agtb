@@ -12,6 +12,8 @@
  * @class View.Layouts.Base.Emails.ComposeAddressbookLayout
  * @alias SUGAR.App.view.layouts.BaseEmailsComposeAddressbookLayout
  * @extends View.Layout
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     /**

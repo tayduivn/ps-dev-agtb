@@ -12,6 +12,8 @@
  * @class View.Views.Base.Emails.ComposeAddressbookRecipientscontainerView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookRecipientscontainerView
  * @extends View.Views.Base.RecordView
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     extendsFrom:         "RecordView",

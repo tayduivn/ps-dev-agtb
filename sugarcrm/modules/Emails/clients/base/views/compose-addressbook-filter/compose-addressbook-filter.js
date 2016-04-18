@@ -12,6 +12,8 @@
  * @class View.Views.Base.Emails.ComposeAddressbookFilterView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookFilterView
  * @extends View.View
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     _moduleFilterList: [],

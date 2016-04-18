@@ -12,6 +12,8 @@
  * @class View.Views.Base.Emails.ComposeAddressbookHeaderpaneView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookHeaderpaneView
  * @extends View.Views.Base.HeaderpaneView
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     extendsFrom: "HeaderpaneView",

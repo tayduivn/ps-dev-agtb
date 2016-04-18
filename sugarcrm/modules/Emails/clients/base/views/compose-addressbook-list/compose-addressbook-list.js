@@ -12,6 +12,8 @@
  * @class View.Views.Base.Emails.ComposeAddressbookListView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookListView
  * @extends View.Views.Base.FlexListView
+ *
+ * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     extendsFrom: 'FlexListView',
