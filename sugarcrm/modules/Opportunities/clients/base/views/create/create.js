@@ -112,6 +112,16 @@
             this.listContext = this.context.parent || this.context;
             this.originalSuccess = options.success;
 
+            if (app.metadata.getModule(this.module).isTBAEnabled === true) {
+                // make sure new RLIs inherit opportunity's teamset and selected teams
+                var addedRLIs = this.createdModel.get('revenuelineitems') || false;
+                if (addedRLIs && addedRLIs.create && addedRLIs.create.length) {
+                    _.each(addedRLIs.create, function (data) {
+                        data.team_name = this.createdModel.get('team_name');
+                    }, this);
+                }
+            }
+
             var success = _.bind(function(model) {
                 this.originalSuccess(model);
                 this._checkForRevenueLineItems(model, options);
