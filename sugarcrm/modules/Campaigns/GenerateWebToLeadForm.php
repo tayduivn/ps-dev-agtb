@@ -79,11 +79,20 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
 	$sfh = new SugarFieldHandler();
 	$sf = $sfh->getSugarField('Teamset', true);
 	
-	$teamIds = $sf->getTeamsFromRequest('team_name');
+    $teams = $sf->getTeamsFromRequest('team_name');
+    $teams_selected = $sf->getSelectedTeamIdsFromRequest('team_name', $_POST);
 	$web_team_user = $sf->getPrimaryTeamIdFromRequest('team_name', $_POST);
 	
 	$teamSet = BeanFactory::getBean('TeamSets');
-	$web_team_set_id_user = $teamSet->addTeams($teamIds);
+    $web_team_set_id_user = $teamSet->addTeams(array_keys($teams));
+
+    if (!empty($teams_selected)) {
+        $teamSetSelected = BeanFactory::getBean('TeamSets');
+        if (!empty($teamSetSelected)) {
+            $web_team_set_selected_id = $teamSetSelected->addTeams($teams_selected);
+        }
+    }
+
 	require_once('modules/Teams/TeamSetManager.php');
 	TeamSetManager::add($web_team_set_id_user, 'leads');
 }
@@ -500,6 +509,11 @@ if(!empty($web_team_user)){
 }
 if(!empty($web_team_set_id_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='team_set_id' name='team_set_id' value='$web_team_set_id_user'></td></tr>";
+}
+if (!empty($web_team_set_selected_id)) {
+    $Web_To_Lead_Form_html .= "<tr><td style='display: none'>
+        <input type='hidden' id='team_set_selected_id' name='team_set_selected_id' value='$web_team_set_selected_id'>
+    </td></tr>";
 }
 $req_fields='';
 if(isset($required_fields) && $required_fields != null ){
