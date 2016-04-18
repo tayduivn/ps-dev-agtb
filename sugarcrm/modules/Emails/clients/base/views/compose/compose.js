@@ -76,10 +76,8 @@
             $controls.first().addClass('begin-fieldgroup');
             $controls.last().addClass('end-fieldgroup');
         }
-        
-        if (this.createMode) {
-            this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
-        }
+
+        this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
 
         prepopulateValues = this.context.get('prepopulate');
         if (!_.isEmpty(prepopulateValues)) {
