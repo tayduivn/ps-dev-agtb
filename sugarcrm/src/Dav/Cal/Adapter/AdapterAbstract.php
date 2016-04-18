@@ -90,11 +90,28 @@ abstract class AdapterAbstract implements AdapterInterface
 
         switch ($action) {
             case 'override' :
-                $changedFields = $this->getBeanDataAsArray($bean);
-                if (!$changedFields['repeat_type'][0]) {
+                if ($changedFields) {
+                    $changedFields = $this->getFieldsDiff($changedFields, false);
+                } else {
+                    $changedFields = $this->getBeanDataAsArray($bean);
+                }
+
+                if (isset($changedFields['repeat_type']) && !$changedFields['repeat_type'][0]) {
                     $changedFields['repeat_interval'][0] = null;
                 }
-                $changedInvitees = $participantsHelper->getInviteesDiff(array(), \CalendarUtils::getInvitees($bean));
+
+                if ($changedInvitees) {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        $changedInvitees,
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                } else {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        array(),
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                }
+
                 break;
             case 'update' :
                 $changedFields = $this->getFieldsDiff($changedFields);
@@ -682,7 +699,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if (isset($diff[1])) {
                 continue;
             }
-            if ($diff[0] === null) {
+            if (!$diff[0]) {
                 unset($importFields[$field]);
             }
         }
@@ -787,7 +804,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if (count($diff) > 1) {
                 continue;
             }
-            if ($diff[0] === null) {
+            if (!$diff[0]) {
                 unset($exportFields[$field]);
             }
         }
@@ -1037,14 +1054,14 @@ abstract class AdapterAbstract implements AdapterInterface
      * @param array $changedFields
      * @return mixed
      */
-    protected function getFieldsDiff($changedFields)
+    protected function getFieldsDiff($changedFields, $addBefore = true)
     {
         $dataDiff = array();
         foreach ($changedFields as $field => $fieldValues) {
             $dataDiff[$field] = array(
                 0 => $fieldValues['after'],
             );
-            if (array_key_exists('before', $fieldValues)) {
+            if ($addBefore && array_key_exists('before', $fieldValues)) {
                 $dataDiff[$field][1] = $fieldValues['before'];
             }
         }
