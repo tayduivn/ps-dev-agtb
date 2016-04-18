@@ -12,7 +12,7 @@
  */
 
 /**
- * @coversDefaultClass ForecastWorksheets
+ * @covers ForecastWorksheets
  */
 class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -43,7 +43,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      *
      * @dataProvider constructProvider
-     * @covers ::__construct
+     * @covers Forecast::__construct
      * @param $customCurrency
      * @param $symbol
      * @param $baseRate
@@ -77,7 +77,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::get_summary_text
+     * @covers Forecast::get_summary_text
      */
     public function testGet_summary_text()
     {
@@ -91,7 +91,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::retrieve
+     * @covers Forecast::retrieve
      */
     public function testRetrieve()
     {
@@ -105,7 +105,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider calculatePipelineDataProvider
-     * @covers ::calculatePipelineData
+     * @covers Forecast::calculatePipelineData
      * @param $likely_case
      * @param $opp_count
      * @param $closedAmount
@@ -141,7 +141,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::is_authenticated
+     * @covers Forecast::is_authenticated
      */
     public function testIs_authenticated()
     {
@@ -156,7 +156,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::list_view_parse_additional_sections
+     * @covers Forecast::list_view_parse_additional_sections
      */
     public function testList_view_parse_additional_sections()
     {
@@ -172,7 +172,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider create_new_list_queryProvider
-     * @covers ::create_new_list_query
+     * @covers Forecast::create_new_list_query
      * @param $orderby
      * @param $where
      * @param $returnArray
@@ -212,7 +212,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider get_list_view_arrayProvider
-     * @covers ::get_list_view_array
+     * @covers Forecast::get_list_view_array
      * @param $likely_case
      * @param $best_case
      * @param $worst_case
@@ -243,7 +243,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getForecastForUserProvider
-     * @covers ::getForecastForUser
+     * @covers Forecast::getForecastForUser
      * @param $user
      * @param $where
      * @param $timeperiod
@@ -293,7 +293,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider bean_implementsProvider
-     * @covers ::bean_implements
+     * @covers Forecast::bean_implements
      * @param $implements
      * @param $expected
      */
@@ -317,7 +317,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getCommitStageDropdown
+     * @covers Forecast::getCommitStageDropdown
      */
     public function testGetCommitStageDropdown()
     {
@@ -334,7 +334,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getSettings();
+     * @covers Forecast::getSettings();
      */
     public function testGetSettings()
     {
