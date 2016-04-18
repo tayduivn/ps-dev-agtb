@@ -18,6 +18,53 @@
     plugins: ['EmailClientLaunch'],
 
     /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        if (this.context && this.context.has('model')) {
+            // call updateEmailLinks if the user changes something on the context model
+            // so if user changes the email address we make sure we've got the latest
+            // email address in the quick Compose Email link
+            this.context.get('model').on('change', this.updateEmailLinks, this);
+        }
+
+        app.routing.before('route', this._beforeRouteChanged, this);
+        app.router.on('route', this._routeChanged, this);
+    },
+
+    /**
+     * Before we navigate to a different page, we need to remove the
+     * change event listener we added on the context model
+     *
+     * @protected
+     */
+    _beforeRouteChanged: function() {
+        if (this.context && this.context.has('model')) {
+            // route is about to change, need to remove previous
+            // listeners before model gets changed
+            this.context.get('model').off('change', null, this);
+        }
+    },
+
+    /**
+     * After the route has changed, we need to re-add the model listener
+     * on the new context model. This also calls updateEmailLinks to blank
+     * out any existing email on the current quickcreate link; e.g. re-set the
+     * quick Compose Email link back to "mailto:"
+     *
+     * @protected
+     */
+    _routeChanged: function() {
+        if (this.context && this.context.has('model')) {
+            // route has changed, most likely a new model, need to add new listeners
+            this.context.get('model').on('change', this.updateEmailLinks, this);
+        }
+        this.updateEmailLinks();
+    },
+
+    /**
      * Used by EmailClientLaunch as a hook point to retrieve email options that are specific to a view/field
      * In this case we are using it to retrieve the parent model to make this email compose launching
      * context aware - prepopulating the to address with the given model and the parent relate field
@@ -41,5 +88,17 @@
         }
 
         return emailOptions;
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        // remove context model change listeners if they exist
+        this._beforeRouteChanged();
+        app.routing.offBefore('route', this.beforeRouteChanged, this);
+        app.router.off('route', this.routeChanged, this);
+
+        this._super('_dispose');
     }
 })

@@ -21,13 +21,115 @@ describe("Emails.Fields.Quickcreate", function() {
             module: 'Emails',
             loadFromModule: true
         });
+        sinon.collection.stub(field, '_super', function() {});
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         field.dispose();
         app.cache.cutAll();
         app.view.reset();
         field = null;
+    });
+
+    describe('initialize', function() {
+        var ctxModel,
+            onSpy,
+            offSpy;
+
+        beforeEach(function() {
+            onSpy = sinon.collection.spy();
+            offSpy = sinon.collection.spy();
+            sinon.collection.spy(app.routing, 'before');
+            sinon.collection.spy(app.router, 'on');
+
+            ctxModel = {
+                on: onSpy,
+                off: offSpy
+            };
+
+            field.context.set('model', ctxModel);
+        });
+
+        it('should set an on change listener on the context model', function() {
+            field.initialize({});
+
+            expect(onSpy).toHaveBeenCalled();
+        });
+
+        it('should set a listener on before route changes', function() {
+            field.initialize({});
+
+            expect(app.routing.before).toHaveBeenCalled();
+        });
+
+        it('should set a listener on after route changed', function() {
+            field.initialize({});
+
+            expect(app.router.on).toHaveBeenCalled();
+        });
+    });
+
+    describe('_beforeRouteChanged', function() {
+        var ctxModel,
+            offSpy;
+
+        beforeEach(function() {
+            offSpy = sinon.collection.spy();
+            ctxModel = {
+                off: offSpy
+            };
+        });
+
+        it('should do nothing if model does not exist on context', function() {
+            field.context.unset('model');
+            field._beforeRouteChanged();
+
+            expect(offSpy).not.toHaveBeenCalled();
+        });
+
+        it('should remove change event listener if model exists on context', function() {
+            field.context.set('model', ctxModel);
+            field._beforeRouteChanged();
+
+            expect(offSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('_routeChanged', function() {
+        var ctxModel,
+            onSpy,
+            offSpy;
+
+        beforeEach(function() {
+            onSpy = sinon.collection.spy();
+            offSpy = sinon.collection.spy();
+            sinon.collection.stub(field, 'updateEmailLinks', function() {});
+            ctxModel = {
+                on: onSpy,
+                off: offSpy
+            };
+        });
+
+        it('should do nothing if model does not exist on context', function() {
+            field.context.unset('model');
+            field._routeChanged();
+
+            expect(onSpy).not.toHaveBeenCalled();
+        });
+
+        it('should remove change event listener if model exists on context', function() {
+            field.context.set('model', ctxModel);
+            field._routeChanged();
+
+            expect(onSpy).toHaveBeenCalled();
+        });
+
+        it('should call updateEmailLinks any time the route changes', function() {
+            field._routeChanged();
+
+            expect(field.updateEmailLinks).toHaveBeenCalled();
+        });
     });
 
     describe("_retrieveEmailOptionsFromLink", function() {
@@ -90,4 +192,37 @@ describe("Emails.Fields.Quickcreate", function() {
         });
     });
 
+    describe('_dispose', function() {
+        var ctxModel,
+            offSpy;
+
+        beforeEach(function() {
+            offSpy = sinon.collection.spy();
+            sinon.collection.spy(app.routing, 'offBefore');
+            sinon.collection.spy(app.router, 'off');
+            ctxModel = {
+                off: offSpy
+            };
+
+            field.context.set('model', ctxModel);
+        });
+
+        it('should remove the change listener on the context model', function() {
+            field._dispose();
+
+            expect(offSpy).toHaveBeenCalled();
+        });
+
+        it('should remove the listener on before route changes', function() {
+            field._dispose();
+
+            expect(app.routing.offBefore).toHaveBeenCalled();
+        });
+
+        it('should remove the listener on after route changed', function() {
+            field._dispose();
+
+            expect(app.router.off).toHaveBeenCalled();
+        });
+    });
 });
