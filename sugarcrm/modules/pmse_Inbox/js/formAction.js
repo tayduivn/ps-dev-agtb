@@ -332,6 +332,10 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                                 } else {
                                     if ($('#assigned_user_name').length) {
                                         $("#assigned_user_name").val(cbDate);
+                                        var formView = _App.controller.layout.getComponent('bwc');
+                                        if (!_.isUndefined(formView)) {
+                                            formView.revertBwcModel();
+                                        }
                                     } else {
                                         if (model) {
                                             model.fetch();
