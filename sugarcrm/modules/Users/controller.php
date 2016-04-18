@@ -77,7 +77,6 @@ class UsersController extends SugarController
         {
             $u = BeanFactory::getBean('Users', $_REQUEST['record']);
             $u->status = 'Inactive';
-            $u->deleted = 1;
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
@@ -90,7 +89,7 @@ class UsersController extends SugarController
             $eapm = BeanFactory::getBean('EAPM');
             $eapm->delete_user_accounts($_REQUEST['record']);
             $GLOBALS['log']->info("Removing user's External Accounts");
-
+            $u->mark_deleted($u->id);
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
             }
