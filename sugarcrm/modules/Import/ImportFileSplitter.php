@@ -101,6 +101,7 @@ class ImportFileSplitter
         $fileName = str_replace('://', '/', $this->_sourceFile) . '-' . $filecount;
         $fw = sugar_fopen($fileName, 'w');
         $count = 0;
+        $rows = '';
         // skip first row if we have a header row
         if ( $has_header && $importFile->getNextRow() ) {
             // mark as duplicate to stick header row in the dupes file
@@ -111,25 +112,19 @@ class ImportFileSplitter
         while ($row = $importFile->getNextRow(false)) {
             // after $this->_recordThreshold rows, close this import file and goto the next one
             if ( $count >= $this->_recordThreshold ) {
+                fwrite($fw, $rows);
+                $rows = '';
                 fclose($fw);
                 $filecount++;
                 $fileName = str_replace('://', '/', $this->_sourceFile) . '-' . $filecount;
                 $fw = sugar_fopen($fileName, 'w');
                 $count = 0;
             }
-            // Bug 25119: Trim the enclosure string to remove any blank spaces that may have been added.
-            $enclosure = trim($enclosure);
-			if(!empty($enclosure)) {
-				foreach($row as $key => $v){
-					$row[$key] = str_replace($enclosure, $enclosure.$enclosure, $v);
-				}
-			}
-            $line = $enclosure.implode($enclosure.$delimiter.$enclosure, $row).$enclosure.PHP_EOL;
-			//Would normally use fputcsv() here. But when enclosure character is used and the field value doesn't include delimiter, enclosure, escape character, "\n", "\r", "\t", or " ", php default function 'fputcsv' will not use enclosure for this string.
-			 fputs($fw, $line);
+            $rows .= $row;
             $count++;
         }
 
+        fwrite($fw, $rows);
         fclose($fw);
         $this->_fileCount   = $filecount;
         $this->_recordCount = ($filecount * $this->_recordThreshold) + $count;
