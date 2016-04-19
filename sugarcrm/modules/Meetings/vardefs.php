@@ -622,6 +622,14 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'source' => 'non-db',
         'reportable' => false
     ),
+        'kbcontents_parent' => array(
+            'name' => 'kbcontents_parent',
+            'type' => 'link',
+            'relationship' => 'kbcontent_meetings',
+            'source' => 'non-db',
+            'vname' => 'LBL_KBDOCUMENTS',
+            'reportable' => false,
+        ),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>

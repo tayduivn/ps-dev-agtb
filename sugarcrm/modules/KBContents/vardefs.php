@@ -450,6 +450,24 @@ $dictionary['KBContent'] = array(
             'reportable' => false,
             'side' => 'right'
         ),
+        'calls' => array(
+            'name' => 'calls',
+            'type' => 'link',
+            'relationship' => 'kbcontent_calls',
+            'module' => 'Calls',
+            'bean_name' => 'Call',
+            'source' => 'non-db',
+            'vname' => 'LBL_CALLS',
+        ),
+        'meetings' => array(
+            'name' => 'meetings',
+            'type' => 'link',
+            'relationship' => 'kbcontent_meetings',
+            'module' => 'Meetings',
+            'bean_name' => 'Meeting',
+            'source' => 'non-db',
+            'vname' => 'LBL_MEETINGS',
+        ),
         'usefulness_user_vote' => array(
             'name' => 'usefulness_user_vote',
             'type' => 'smallint',
@@ -540,6 +558,28 @@ $dictionary['KBContent'] = array(
             'rhs_table' => 'kbcontents',
             'rhs_key' => 'kbsapprover_id',
             'relationship_type' => 'one-to-many'
+        ),
+        'kbcontent_calls' => array(
+            'lhs_module' => 'KBContents',
+            'lhs_table' => 'kbcontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'KBContents',
+        ),
+        'kbcontent_meetings' => array(
+            'lhs_module' => 'KBContents',
+            'lhs_table' => 'kbcontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'KBContents',
         ),
         'relcases_kbcontents' => array (
             'lhs_module' => 'Cases',
