@@ -113,7 +113,6 @@
         this.recordModel.getLockedFields = function() {
             return [];
         };
-
         // Get the current module specific record layout and view
         var origRecordLayout = app.metadata.getLayout(this.recordModule, 'record');
         var origRecordView = app.metadata.getView(this.recordModule, 'record');

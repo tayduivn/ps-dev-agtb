@@ -779,5 +779,11 @@
                 }
             }
         });
-    }
+    },
+
+    /**
+     * We don't want the locked fields warning on create
+     * @override
+     */
+    warnLockedFields: _.noop
 })

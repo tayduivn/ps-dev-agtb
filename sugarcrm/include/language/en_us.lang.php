@@ -11853,6 +11853,13 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PRO_ENABLE' => 'Updating',
     'LBL_PRO_DISABLE' => 'Updating',
     'LBL_PA_PRODEF_HAS_PENDING_PROCESSES' => 'This Process Definition cannot be deleted because it has pending processes running.',
+
+    // Locked Fields
+    // @codingStandardsIgnoreStart
+    'LBL_LOCKED_FIELD_INLINE_EDIT' => '{{link}} is participating in a process and may contain some locked fields. To edit the record, click here {{link}}.',
+    'LBL_LOCKED_FIELD_RECORD_VIEW_TOOLTIP' => 'This field is locked because it is involved in a running process.',
+    'LBL_LOCKED_FIELD_RECORD_VIEW_WARNING' => 'This record is participating in a process and may contain some locked fields.',
+    // @codingStandardsIgnoreEnd
 //END SUGARCRM flav=ent ONLY
 
     //Tag Strings

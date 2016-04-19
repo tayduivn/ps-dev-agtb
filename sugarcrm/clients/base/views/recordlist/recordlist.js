@@ -536,6 +536,35 @@
      * @param {Backbone.Model} model Selected row's model.
      */
     editClicked: function(model, field) {
+        // If a field is locked, we don't allow inline editing. Instead show an alert that links
+        // to the record view in edit mode to make changes there.
+        if (!_.isEmpty(model.getLockedFields())) {
+            var route = app.router.buildRoute(model.module, model.id, 'edit');
+            var recordName = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
+            var message = app.lang.get(
+                'LBL_LOCKED_FIELD_INLINE_EDIT',
+                model.module,
+                {link: new Handlebars.SafeString('<a href="javascript:void(0);">' + recordName + '</a>')}
+            );
+            app.alert.show('locked_field_inline_edit', {
+                level: 'warning',
+                messages: message,
+                autoClose: false,
+                onLinkClick: function() {
+                    app.alert.dismiss('locked_field_inline_edit');
+                    app.controller.loadView({
+                        layout: 'record',
+                        module: model.module,
+                        modelId: model.id,
+                        action: 'edit',
+                        lockedFieldsWarning: false
+                    });
+                    app.router.navigate(route, {trigger: false});
+                }
+            });
+            return;
+        }
+
         if (field.def.full_form) {
             var parentModel = this.context.parent.get('model');
             var link = this.context.get('link');
