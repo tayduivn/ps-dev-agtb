@@ -5,6 +5,7 @@ describe("Base.Field.Base", function() {
         app = SugarTest.app;
         app.view.Field.prototype._renderHtml = function() {};
         sinonSandbox = sinon.sandbox.create();
+        app.start();
     });
 
     afterEach(function() {
