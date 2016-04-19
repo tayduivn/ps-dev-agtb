@@ -52,7 +52,7 @@
                                 {{#each this}}
                                     {{#if ../../labels}}
                                         {{#unless dismiss_label}}
-                                            <div class="control-label span{{labelSpan}}">
+                                            <div class="control-label span{{labelSpan}} {{label_css_class}}">
                                                 <div class="control-label-background span{{labelSpan}}">
                                                     <label class="tright record-label" data-name="{{name}}">{{str label ../../../../../../../view.module}}</label>
                                                 </div>

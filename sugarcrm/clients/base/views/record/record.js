@@ -93,6 +93,19 @@
         //Adding the favorite and follow fields.
         this.context.addFields(this._getDataFields());
 
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field) {
+                if (field.label_css_class) {
+                    app.logger.warn('Warning: metadata property "label_css_class" found on field with name "' +
+                        field.name + '" is deprecated since 7.9.0 and will be removed in 7.10.0.');
+                }
+                if (field.cell_css_class) {
+                    app.logger.warn('Warning: metadata property "cell_css_class" found on field with name "' +
+                        field.name + '" is deprecated since 7.9.0 and will be removed in 7.10.0.');
+                }
+            }, this);
+        }, this);
+
         /**
          * An array of the {@link #alerts alert} names in this view.
          *
