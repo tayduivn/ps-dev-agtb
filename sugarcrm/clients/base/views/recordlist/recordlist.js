@@ -386,40 +386,6 @@
     },
 
     /**
-     * Set the position of scrollable panel
-     * at the left border of the focused element.
-     *
-     * @param {number} left Left position of the focused element.
-     * @deprecated 7.7 and will be removed in 7.8.
-     */
-    setScrollAtLeftBorder: function(left) {
-        var $scrollPanel = this.$('.flex-list-view-content'),
-            leftBorderPosition = this._getBordersPosition().left,
-            scrollLeft = $scrollPanel.scrollLeft();
-
-        left += scrollLeft - leftBorderPosition;
-        $scrollPanel.scrollLeft(left);
-        app.logger.warn('"setScrollAtLeftBorder" method is deprecated and will be removed in 7.8');
-    },
-
-    /**
-     * Set the position of scrollable panel
-     * at the right border of the focused element.
-     *
-     * @param {number} right Right position of the focused element.
-     * @deprecated 7.7 and will be removed in 7.8.
-     */
-    setScrollAtRightBorder: function(right) {
-        var $scrollPanel = this.$('.flex-list-view-content'),
-            rightBorderPosition = this._getBordersPosition().right,
-            scrollLeft = $scrollPanel.scrollLeft();
-
-        right += scrollLeft - rightBorderPosition;
-        $scrollPanel.scrollLeft(right);
-        app.logger.warn('"setScrollAtRightBorder" method is deprecated and will be removed in 7.8');
-    },
-
-    /**
      * Delete the model once the user confirms the action
      */
     deleteModel: function() {

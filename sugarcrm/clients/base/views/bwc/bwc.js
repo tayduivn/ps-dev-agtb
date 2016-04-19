@@ -581,43 +581,6 @@
     },
 
     /**
-     * Before routing event handling on BWC views.
-     *
-     * This will track all url changes during the BWC redirect process. It
-     * calls {@link #unbindDom} on all route changes, unless the new url
-     * requested is the same as the previous one with only the `bwcFrame=1`
-     * difference in the URL.
-     * When the latter happens, it just means that we are cleaning up the link,
-     * but there is no actual reload of the iFrame, so we can't remove the
-     * events.
-     *
-     * The {@link #_setCurrentUrl} method is setting the {@link #_currentUrl}
-     * as the one set in the parent window as hash. This means that there is no
-     * real reload of the view, just hash update to keep it in sync.
-     *
-     * The custom route `route: "bwc/*url"` is ignoring the reload of the view
-     * based on the same logic used here.
-     *
-     * @deprecated since 7.7, will be removed in 7.8.
-     *
-     * @param {Object} route Route object being passed from
-     *   {@link Core.Routing#beforeRoute}.
-     */
-    beforeRoute: function(route) {
-
-        app.log.warn('`app.bwc.beforeRoute()` is deprecated since 7.7. This method will be removed in 7.8.');
-
-        var bwcUrl = route && route.args && route.args[0];
-
-        if (bwcUrl && this._currentUrl.replace('#bwc/', '') === bwcUrl) {
-            // update hash link only
-            return;
-        }
-
-        this.unbindDom();
-    },
-
-    /**
      * @inheritdoc
      */
     _dispose: function() {

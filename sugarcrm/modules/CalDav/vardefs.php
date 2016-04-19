@@ -179,6 +179,7 @@ $dictionary['CalDavEventCollection'] = array(
 
 $dictionary['CalDavCalendar'] = array(
     'table' => 'caldav_calendars',
+    'reassignable' => false,
     'comment' => 'This table used for store calendars',
     'full_text_search' => false,
     'audited' => false,
@@ -340,6 +341,7 @@ $dictionary['CalDavChange'] = array(
 
 $dictionary['CalDavScheduling'] = array(
     'table' => 'caldav_scheduling',
+    'reassignable' => false,
     'comment' => 'Scheduling objects for caldav',
     'full_text_search' => false,
     'audited' => false,

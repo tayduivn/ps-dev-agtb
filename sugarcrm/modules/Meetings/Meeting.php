@@ -184,7 +184,7 @@ class Meeting extends SugarBean {
 	}
 
     // save date_end by calculating user input
-    function save($check_notify = false)
+    public function save($check_notify = false, $options = array())
     {
         global $timedate, $current_user;
 
@@ -313,10 +313,12 @@ class Meeting extends SugarBean {
             $this->set_accept_status($organizer, 'accept');
         }
 
-        if ($isUpdate) {
-            $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
-        } else {
-            $this->getCalDavHook()->export($this);
+        if (empty($options['disableCalDavHook'])) {
+            if ($isUpdate) {
+                $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
+            } else {
+                $this->getCalDavHook()->export($this);
+            }
         }
 
         $this->inviteesNotification = null;

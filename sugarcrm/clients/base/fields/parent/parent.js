@@ -148,22 +148,6 @@
     },
 
     /**
-     * Enables or disables the module dropdown according to acls.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.8.
-     * @param {string} action The acl action.
-     * @param {string} module the module to check access.
-     */
-    checkAcl: function(action, module) {
-        app.logger.warn('checkAcl is deprecated, it will be removed in 7.8');
-        if(app.acl.hasAccess(action, module) === false) {
-            this.$(this.typeFieldTag).select2("disable");
-        } else {
-            this.$(this.typeFieldTag).select2("enable");
-        }
-    },
-
-    /**
      * Filters the module list according to list acls.
      *
      * @param {Object} A hash of module names matching with their label.
