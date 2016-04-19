@@ -94,7 +94,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -105,7 +105,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -122,7 +122,7 @@ describe("Drawer Layout", function() {
             var triggerStub = sinonSandbox.stub(app, "trigger", $.noop());
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -137,7 +137,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -147,7 +147,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -165,7 +165,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -221,14 +221,14 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -256,7 +256,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -325,7 +325,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -347,14 +347,14 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -376,7 +376,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -404,14 +404,14 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -437,7 +437,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -457,14 +457,14 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
             });
             drawer.open({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -486,7 +486,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -517,7 +517,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    "type": "foo",
+                    "name": "foo",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -528,7 +528,7 @@ describe("Drawer Layout", function() {
 
             drawer.load({
                 layout: {
-                    "type": "bar",
+                    "name": "bar",
                     "components":[{"view":"record"}]
                 },
                 context: {create: true}
@@ -543,7 +543,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -555,7 +555,7 @@ describe("Drawer Layout", function() {
 
             drawer.load({
                 layout: {
-                    type: 'bar',
+                    name: 'bar',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -601,7 +601,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -612,7 +612,7 @@ describe("Drawer Layout", function() {
 
             drawer.reset({
                 layout: {
-                    type: 'bar',
+                    name: 'bar',
                     components: [{view: 'record'}]
                 },
                 context: {create: true}
@@ -896,7 +896,7 @@ describe("Drawer Layout", function() {
         it('Should return the currently opened drawer layout', function() {
             drawer.open({
                 layout: {
-                    type: 'foo',
+                    name: 'foo',
                     components:[{view: 'record'}]
                 },
                 context: {create: true}
@@ -904,7 +904,7 @@ describe("Drawer Layout", function() {
 
             drawer.open({
                 layout: {
-                    type: 'bar',
+                    name: 'bar',
                     components:[{view: 'record'}]
                 },
                 context: {create: true}

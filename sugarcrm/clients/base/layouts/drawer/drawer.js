@@ -636,7 +636,7 @@
         // context on the layout never gets set. Adding check to make
         // sure there actually is a context to use on the layout
         if (layout.context) {
-            app.trigger('app:view:change', layout.options.type, layout.context.attributes);
+            app.trigger('app:view:change', layout.options.name, layout.context.attributes);
         }
 
         this._enterState(this.STATES.IDLE);
@@ -654,7 +654,7 @@
 
         layout = _.last(this._components);
         if (layout) { // still have layouts in the drawer
-            app.trigger("app:view:change", layout.options.type, layout.context.attributes);
+            app.trigger("app:view:change", layout.options.name, layout.context.attributes);
         } else { //we've returned to base layout
             app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
         }

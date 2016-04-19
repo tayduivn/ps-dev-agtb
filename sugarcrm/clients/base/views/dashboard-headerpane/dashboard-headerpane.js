@@ -29,8 +29,8 @@
     },
     initialize: function(options) {
         if(options.context.parent) {
-            options.meta = app.metadata.getView(options.context.parent.get("module"), options.type);
-            options.template = app.template.getView(options.type);
+            options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
+            options.template = app.template.getView(options.name);
         }
         this._super("initialize", [options]);
         this.context.set('dataView', '');
