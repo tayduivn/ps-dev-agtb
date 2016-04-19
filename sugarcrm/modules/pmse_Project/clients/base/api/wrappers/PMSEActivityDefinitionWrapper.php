@@ -137,6 +137,28 @@ class PMSEActivityDefinitionWrapper
                     $this->activityDefinition->fetched_row['act_related_modules'] = $this->getRelatedModules($args['module'],
                         json_decode(base64_decode($this->activityDefinition->fetched_row['act_related_modules']))); //json_decode(base64_decode($this->activityDefinition->fetched_row['act_related_modules']));
                 }
+                if (!empty($this->activityDefinition->fetched_row['act_fields'])) {
+                    $act_fields = json_decode($this->activityDefinition->fetched_row['act_fields']);
+                    $needs_save = false;
+                    foreach ($act_fields as &$act_field) {
+                        if ($act_field->type == 'team_list') {
+                            $needs_save = true;
+                            $value = [];
+                            foreach ($act_field->value as $team_id) {
+                                $team_bean = BeanFactory::getBean('Teams', $team_id);
+                                $team = new stdClass();
+                                $team->id = $team_id;
+                                $team->valid = isset($team_bean->id);
+                                $value[] = $team;
+                            }
+                            $act_field->value = $value;
+                        }
+                    }
+                    unset($act_field);
+                    if ($needs_save) {
+                        $this->activityDefinition->fetched_row['act_fields'] = json_encode($act_fields);
+                    }
+                }
                 $result = array_merge($result, $this->activityDefinition->fetched_row);
             }
         }

@@ -787,7 +787,22 @@ UpdaterItem.prototype.isRequired = function () {
 
 
 UpdaterItem.prototype.isValid = function () {
-    return this._required ? this._value !== '' : true;
+    var valid = true;
+    if (this.isRequired()) {
+        switch (typeof(this._value)) {
+            case 'boolean':
+            case 'number':
+                break;
+            case 'object':
+                if (Array.isArray(this._value)) {
+                    valid = this._value.length > 0;
+                    break;
+                }
+            default:
+                valid = this._value ? true : false;
+        }
+    }
+    return valid;
 };
 
 /**
@@ -1130,7 +1145,22 @@ TeamUpdaterItem.prototype.enableAppendOption = function () {
 };
 
 TeamUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!this._value.length : true;
+    var valid = UpdaterItem.prototype.isValid.call(this), i;
+    if (valid && Array.isArray(this._value)) {
+        for (i = 0; i < this._value.length; i++) {
+            if (!this._value[i].valid) {
+                valid = false;
+                break;
+            }
+        }
+    }
+    return valid;
+};
+
+TeamUpdaterItem.prototype.decorateValid = function (valid) {
+    if (valid || this._value.length == 0) {
+        UpdaterItem.prototype.decorateValid.call(this, valid);
+    }
 };
 
 TeamUpdaterItem.prototype.setSelectedTeams = function (teams) {
@@ -1222,7 +1252,7 @@ TeamUpdaterItem.prototype._setValueToControl = function (value) {
 };
 
 TeamUpdaterItem.prototype._getValueFromControl = function () {
-    var value = [], that = this;
+    var value = [], that = this, i, found;
     this._primaryTeam = null;
     this._selectedTeams = [];
     jQuery(this._control).find('.adam-team-updater-line').each(function () {
@@ -1230,8 +1260,15 @@ TeamUpdaterItem.prototype._getValueFromControl = function () {
             data = input.select2('data');
 
         if (data !== null) {
-            if (value.indexOf(data.id) < 0) {
-                value.push(data.id);    
+            found = false;
+            for (i = 0; i < value.length; i++) {
+                if (value[i].id == data.id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                value.push({id:data.id, valid:!input.hasClass(that._invalidFieldClass)});
             }
             if (jQuery(this).find('.adam-team-action.active[name=primary]').length) {
                 that._primaryTeam = data.id;
@@ -1336,7 +1373,7 @@ TeamUpdaterItem.prototype._openSearchMore = function (select) {
 };
 
 TeamUpdaterItem.prototype._addNewInputLine = function (value) {
-    var select, div, dropdownHTML, additionalList, listItem, tpl, $select;
+    var select, div, dropdownHTML, additionalList, listItem, tpl, $select, that = this;
 
     if (!this._control) {
         return this;
@@ -1357,7 +1394,15 @@ TeamUpdaterItem.prototype._addNewInputLine = function (value) {
     });
 
     if (value) {
-        $select.select2("val", value, false);
+        $select.select2("val", value.id, false);
+        if (value.valid) {
+            $(select).removeClass(this._invalidFieldClass);
+        } else {
+            $(select).addClass(this._invalidFieldClass);
+        }
+        $select.on('change', function (e) {
+            $(select).removeClass(that._invalidFieldClass);
+        });
     }
 
     this._addButtonsToLine(div);
@@ -1551,10 +1596,14 @@ TeamUpdaterItem.prototype.isAppendMode = function () {
 };
 
 TeamUpdaterItem.prototype.getData = function () {
+    var value = [], i;
+    for (i = 0; i < this._value.length; i++) {
+        value.push(this._value[i].id);
+    }
     return {
         name: this._label,
         field: this._name,
-        value: this._value,
+        value: value,
         primary: this._primaryTeam,
         selected_teams: this._disabledTeamSelection ? [] : this._selectedTeams,
         append: this.isAppendMode(),
@@ -1727,10 +1776,6 @@ DateUpdaterItem.prototype.init = function (settings) {
     this.setValue(defaults.value);
 };
 
-DateUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!this._value.length : true;
-};
-
 DateUpdaterItem.prototype._setValueToControl = function (value) {
     var friendlyValue = "", i, dateFormat, timeFormat;
     value.forEach(function(value, index, arr) {
@@ -1805,13 +1850,6 @@ var CheckboxUpdaterItem = function (settings) {
 CheckboxUpdaterItem.prototype = new UpdaterItem();
 CheckboxUpdaterItem.prototype.constructor = CheckboxUpdaterItem;
 CheckboxUpdaterItem.prototype.type = "CheckboxUpdaterItem";
-
-CheckboxUpdaterItem.prototype.isValid = function () {
-    // In contrast to the other UpdaterItem classes, it doesn't make sense to apply a validation method to a checkbox,
-    // since if it is checked its value will be TRUE, otherwise its value will be FALSE. Those are all the values that
-    // the checkbox can take, therefore, in CHECKED state or UNCHECKED state it always will meet the Required Field validation.
-    return true;
-};
 
 CheckboxUpdaterItem.prototype.setValue = function (value) {
     if (this._control) {
@@ -2631,10 +2669,6 @@ MultiselectUpdaterItem.prototype.init = function (settings) {
         .setValueField(defaults.valueField)
         .setOptions(defaults.options)
         .setValue(defaults.value);
-};
-
-MultiselectUpdaterItem.prototype.isValid = function () {
-    return this._required ? !!this._value.length : true;
 };
 
 MultiselectUpdaterItem.prototype.clear = function () {
