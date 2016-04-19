@@ -12,6 +12,8 @@
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'clients/base/api/ModuleApi.php';
+
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\ProcessManager;
@@ -281,6 +283,10 @@ class PMSEUserTask extends PMSEActivity
             }
 
             PMSEEngineUtils::saveAssociatedBean($beanObject);
+
+            // Now deal with the related records
+            $moduleApi = new ModuleApi();
+            $moduleApi->updateRelatedRecords($api, $beanObject, $beanData);
         }
 
         $fields['log_data'] = $historyData->getLog();
