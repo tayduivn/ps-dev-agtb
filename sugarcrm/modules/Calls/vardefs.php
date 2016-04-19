@@ -552,6 +552,14 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'source' => 'non-db',
         'reportable' => false
     ),
+        'kbcontents_parent' => array(
+            'name' => 'kbcontents_parent',
+            'type' => 'link',
+            'relationship' => 'kbcontent_calls',
+            'source' => 'non-db',
+            'vname' => 'LBL_KBDOCUMENTS',
+            'reportable' => false,
+        ),
 ),
 'indices' => array (
 	array(
