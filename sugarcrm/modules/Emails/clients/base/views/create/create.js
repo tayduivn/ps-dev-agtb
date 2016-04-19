@@ -17,8 +17,6 @@
     extendsFrom: 'CreateView',
 
     _lastSelectedSignature: null,
-    ATTACH_TYPE_SUGAR_DOCUMENT: 'document',
-    ATTACH_TYPE_TEMPLATE: 'template',
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
     ATTACHMENT_FIELD_HEIGHT: 44,
@@ -39,12 +37,10 @@
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleRecipientOptionClick'
         });
-        this.context.on('tinymce:upload_attachment:clicked', this.launchFilePicker, this);
-        this.context.on('tinymce:sugardoc_attachment:clicked', this.launchDocumentDrawer, this);
         this.context.on('tinymce:selected_signature:clicked', this._updateEditorWithSignature, this);
-        this.context.on('tinymce:template:clicked', this.launchTemplateDrawer, this);
-        this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
+        this.context.on('tinymce:template:clicked', this._launchTemplateDrawer, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
+        this.model.on('change:attachments', this._setAttachmentVisibility, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
         app.drawer.on('drawer:resize', this.resizeEditor, this);
 
@@ -87,6 +83,8 @@
             if (this.model.isNew()) {
                 this._updateEditorWithSignature(this._lastSelectedSignature);
             }
+
+            this._setAttachmentVisibility();
         }
 
         this.notifyConfigurationStatus();
@@ -298,21 +296,6 @@
     },
 
     /**
-     * Get the attachments from the model and format for the API
-     *
-     * @return {Array} array of attachments or empty array if none found
-     */
-    getAttachmentsForApi: function() {
-        var attachments = this.model.get('attachments') || [];
-
-        if (!_.isArray(attachments)) {
-            attachments = [attachments];
-        }
-
-        return attachments;
-    },
-
-    /**
      * Get the individual related object fields from the model and format for the API
      *
      * @return {Object} API related argument as array with appropriate fields set
@@ -371,7 +354,6 @@
      */
     initializeSendEmailModel: function() {
         var sendModel = new Backbone.Model(_.extend({}, this.model.attributes, {
-            attachments: this.getAttachmentsForApi(),
             related: this.getRelatedForApi(),
             teams: this.getTeamsForApi()
         }));
@@ -459,14 +441,14 @@
      * Open the drawer with the EmailTemplates selection list layout. The callback should take the data passed to it
      * and replace the existing editor contents with the selected template.
      */
-    launchTemplateDrawer: function() {
+    _launchTemplateDrawer: function() {
         app.drawer.open({
                 layout: 'selection-list',
                 context: {
                     module: 'EmailTemplates'
                 }
             },
-            _.bind(this.templateDrawerCallback, this)
+            _.bind(this._templateDrawerCallback, this)
         );
     },
 
@@ -476,11 +458,11 @@
      *
      * @param {Data.Bean} model
      */
-    templateDrawerCallback: function(model) {
+    _templateDrawerCallback: function(model) {
         if (model) {
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
-                success: _.bind(this.confirmTemplate, this),
+                success: _.bind(this._confirmTemplate, this),
                 error: _.bind(function(error) {
                     this._showServerError(error);
                 }, this)
@@ -494,7 +476,7 @@
      *
      * @param {Data.Bean} template
      */
-    confirmTemplate: function(template) {
+    _confirmTemplate: function(template) {
         //if view is already disposed, bail out
         if (this.disposed === true) {
             return;
@@ -502,7 +484,7 @@
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
-            onConfirm: _.bind(this.insertTemplate, this, template)
+            onConfirm: _.bind(this._insertTemplate, this, template)
         });
     },
 
@@ -511,9 +493,8 @@
      *
      * @param {Data.Bean} template
      */
-    insertTemplate: function(template) {
-        var subject,
-            notes;
+    _insertTemplate: function(template) {
+        var subject;
 
         if (_.isObject(template)) {
             subject = template.get('subject');
@@ -529,25 +510,7 @@
                 this.model.set('description_html', template.get('body_html'));
             }
 
-            notes = app.data.createBeanCollection('Notes');
-
-            notes.fetch({
-                'filter': {
-                    'filter': [
-                        //FIXME: email_type should be EmailTemplates
-                        {'email_id': {'$equals': template.id}}
-                    ]
-                },
-                success: _.bind(function(data) {
-                    if (this.disposed === true) return; //if view is already disposed, bail out
-                    if (!_.isEmpty(data.models)) {
-                        this.insertTemplateAttachments(data.models);
-                    }
-                }, this),
-                error: _.bind(function(error) {
-                    this._showServerError(error);
-                }, this)
-            });
+            this.trigger('email_attachments:template:add', template);
 
             // currently adds the html signature even when the template is text-only
             this._updateEditorWithSignature(this._lastSelectedSignature);
@@ -555,85 +518,22 @@
     },
 
     /**
-     * Inserts attachments associated with the template by triggering an "add" event for each attachment to add to the
-     * attachments field.
-     *
-     * @param {Array} attachments
-     */
-    insertTemplateAttachments: function(attachments) {
-        this.context.trigger('attachments:remove-by-tag', 'template');
-        _.each(attachments, function(attachment) {
-            var filename = attachment.get('filename');
-            this.context.trigger('attachment:add', {
-                id: attachment.id,
-                name: filename,
-                nameForDisplay: filename,
-                tag: 'template',
-                type: this.ATTACH_TYPE_TEMPLATE
-            });
-        }, this);
-    },
-
-    /**
-     * Launch the file upload picker on the attachments field.
-     */
-    launchFilePicker: function() {
-        this.context.trigger('attachment:filepicker:launch');
-    },
-
-    /**
-     * Open the drawer with the SugarDocuments attachment selection list layout. The callback should take the data
-     * passed to it and add the document as an attachment.
-     */
-    launchDocumentDrawer: function() {
-        app.drawer.open({
-                layout: 'selection-list',
-                context: {module: 'Documents'}
-            },
-            _.bind(this.documentDrawerCallback, this)
-        );
-    },
-
-    /**
-     * Fetches the selected SugarDocument using its ID and triggers an "add" event to add the attachment to the
-     * attachments field.
-     *
-     * @param {Data.Bean} model
-     */
-    documentDrawerCallback: function(model) {
-        if (model) {
-            var sugarDocument = app.data.createBean('Documents', { id: model.id });
-            sugarDocument.fetch({
-                success: _.bind(function(model) {
-                    if (this.disposed === true) return; //if view is already disposed, bail out
-                    this.context.trigger('attachment:add', {
-                        id: model.id,
-                        name: model.get('filename'),
-                        nameForDisplay: model.get('filename'),
-                        type: this.ATTACH_TYPE_SUGAR_DOCUMENT
-                    });
-                }, this),
-                error: _.bind(function(error) {
-                    this._showServerError(error);
-                }, this)
-            });
-        }
-    },
-
-    /**
      * Hide attachment field row if no attachments, show when added
-     *
-     * @param {Array} attachments
      */
-    toggleAttachmentVisibility: function(attachments) {
-        var $row = this.$('.attachments').closest('.row-fluid');
-        if (attachments.length > 0) {
-            $row.removeClass('hidden');
-            $row.addClass('single');
-        } else {
+    _setAttachmentVisibility: function() {
+        var field = this.getField('attachments');
+        var $el = field.getFieldElement();
+        var $row = $el.closest('.row-fluid');
+        var attachments = this.model.get('attachments');
+
+        if (_.isEmpty(attachments)) {
             $row.addClass('hidden');
             $row.removeClass('single');
+        } else {
+            $row.removeClass('hidden');
+            $row.addClass('single');
         }
+
         this.resizeEditor();
     },
 

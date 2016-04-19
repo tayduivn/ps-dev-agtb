@@ -96,7 +96,7 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                 ),
                 array(
                     'name' => 'attachments',
-                    'type' => 'attachments',
+                    'type' => 'email-attachments',
                     'dismiss_label' => true,
                 ),
             ),

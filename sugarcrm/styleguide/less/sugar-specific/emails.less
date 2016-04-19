@@ -70,13 +70,19 @@
       }
     }
   }
-  div[data-type="attachments"].controls {
+  div[data-type="email-attachments"].controls {
     input[type="file"] {
       display: none;
     }
-    .select2-search-field input {
-      padding: 0;
-      min-height: 26px;
+    .select2-container {
+      .select2-choices {
+        padding-left: 0;
+        border: none;
+      }
+      .select2-search-field input {
+        padding: 0;
+        min-height: 26px;
+      }
     }
   }
 }

@@ -34,12 +34,12 @@
             menu: [{
                 text: app.lang.get('LBL_ATTACH_FROM_LOCAL', this.module),
                 onclick: _.bind(function() {
-                    this._handleButtonClick('upload_attachment');
+                    this.view.trigger('email_attachments:file:pick');
                 }, this)
             }, {
                 text: app.lang.get('LBL_ATTACH_SUGAR_DOC', this.module),
                 onclick: _.bind(function() {
-                    this._handleButtonClick('sugardoc_attachment');
+                    this.view.trigger('email_attachments:document:pick');
                 }, this)
             }]
         });
