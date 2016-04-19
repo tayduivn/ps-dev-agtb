@@ -293,6 +293,13 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PROJECTS',
         ),
+        'kbcontents' => array(
+            'name' => 'kbcontents',
+            'type' => 'link',
+            'relationship' => 'kbcontent_tasks',
+            'source' => 'non-db',
+            'vname' => 'LBL_KBDOCUMENTS',
+        ),
     ),
     'relationships' => array(
         'tasks_notes' => array(
