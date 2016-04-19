@@ -12,7 +12,7 @@
  */
 
 $viewdefs['base']['layout']['preview'] = array(
-    'components' => array(
+    'init_components' => array(
         array(
             'view' => 'preview-header',
         ),

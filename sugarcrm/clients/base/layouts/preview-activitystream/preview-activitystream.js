@@ -16,33 +16,39 @@
 ({
     extendsFrom: 'ActivitystreamLayout',
 
-    _previewOpened: false, //is the preview pane open?
-
     /**
-     * Fetch and render activities when 'preview:render' event has been fired.
+     * @inheritdoc
      */
     initialize: function(options) {
-        this._super("initialize", [options]);
-        app.events.on("preview:render", this.fetchActivities, this);
-        app.events.on('preview:open', function() {
-            this._previewOpened = true;
-        }, this);
+        this._super('initialize', [options]);
+
+        /**
+         * The instance of the {@link Core.Context preview layout context}.
+         * @type {Core.Context}
+         */
+        this._previewContext = this.context.parent;
+
         app.events.on('preview:close', function() {
-            this._previewOpened = false;
             this.disposeAllActivities();
         }, this);
     },
 
     /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this.fetchActivities(this._previewContext.get('model'), this._previewContext.get('collection'));
+        this._super('_render');
+    },
+
+    /**
      * Fetch and render activities.
      *
-     * @param model
-     * @param collection
-     * @param fetch
-     * @param previewId
-     * @param {boolean} showActivities
+     * @param {Data.Bean} model The {@link Data.Bean model} being previewed.
+     * @param {Data.BeanCollection} collection The
+     *   {@link Data.BeanCollection collection} of preview models.
      */
-    fetchActivities: function(model, collection, fetch, previewId, showActivities) {
+    fetchActivities: function(model, collection) {
         if (app.metadata.getModule(model.module).isBwcEnabled) {
             // don't fetch activities for BWC modules
             return;
@@ -51,22 +57,20 @@
         this.collection.dataFetched = false;
         this.$el.hide();
 
-        showActivities = _.isUndefined(showActivities) ? true : showActivities;
-        if (showActivities) {
-            this.collection.reset();
-            this.collection.resetPagination();
-            this.collection.setOption('endpoint', function(method, collection, options, callbacks) {
-                var url = app.api.buildURL(model.module, null, {id: model.get('id'), link: 'activities'}, options.params);
+        this.collection.reset();
+        this.collection.resetPagination();
+        this.collection.setOption('endpoint', function(method, collection, options, callbacks) {
+            var url = app.api.buildURL(model.module, null, {id: model.get('id'), link: 'activities'}, options.params);
 
-                return app.api.call('read', url, null, callbacks);
-            });
-            this.collection.fetch({
-                /*
-                 * Render activity stream
-                 */
-                success: _.bind(this.renderActivities, this)
-            });
-        }
+            return app.api.call('read', url, null, callbacks);
+        });
+        this.collection.fetch({
+            /*
+             * Render activity stream
+             */
+            showAlerts: true,
+            success: _.bind(this.renderActivities, this)
+        });
     },
 
     /**
@@ -79,20 +83,11 @@
             return;
         }
 
-        if (this._previewOpened) {
-            if (collection.length === 0) {
-                this.$el.hide();
-            } else {
-                this.$el.show();
-                collection.each(function(activity) {
-                    self.renderPost(activity, true);
-                });
-            }
-        } else {
-            //FIXME: MAR-2798 prevent the possibility of an infinite loop
-            _.delay(function(){
-                self.renderActivities(collection);
-            }, 500);
+        if (collection.length) {
+            collection.each(function(activity) {
+                self.renderPost(activity, true);
+            });
+            this.$el.show();
         }
     },
 
@@ -112,7 +107,7 @@
     loadData: function() {},
 
     /**
-     * No need to bind events here because this activity stream is readonly.
+     * @inheritdoc
      */
     bindDataChange: function() {
         this.collection.on('add', function(activity) {
@@ -120,5 +115,15 @@
                 this.renderPost(activity, true);
             }
         }, this);
+
+        this._previewContext.on('change:model', this.render, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    unbind: function() {
+        this._previewContext.off('change:model', this.render, this);
+        this._super('unbind');
     }
 })
