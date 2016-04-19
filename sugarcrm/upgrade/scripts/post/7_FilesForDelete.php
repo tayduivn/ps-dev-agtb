@@ -359,6 +359,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/views/pmse-case/businesscard.hbs';
             $files[] = 'clients/base/views/pmse-case/headerpane.hbs';
             $files[] = 'clients/base/views/pmse-case/tabspanels.hbs';
+            $files[] = 'clients/base/layouts/create-actions';
+            $files[] = 'clients/base/views/create-actions';
         }
 
         $this->fileToDelete($files);

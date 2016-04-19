@@ -108,23 +108,5 @@
     show: function() {
         this._super('show');
         this.resize();
-    },
-
-    /**
-     * Shows the megamenu
-     * @deprecated since 7.7 and will be removed in 7.8, use {@link #show}.
-     */
-    showMenu: function () {
-        app.logger.warn('showMenu is deprecated, please use show instead.');
-        this.show();
-    },
-
-    /**
-     * Hides the megamenu
-     * @deprecated since 7.7 and will be removed in 7.8, use {@link #hide}.
-     */
-    hideMenu: function () {
-        app.logger.warn('hideMenu is deprecated, please use hide instead.');
-        this.hide();
     }
 })
