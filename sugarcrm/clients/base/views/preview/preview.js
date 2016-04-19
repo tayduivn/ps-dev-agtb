@@ -243,7 +243,8 @@
      * @private
      */
     _renderPreview: function(model, collection, fetch, previewId) {
-        app.logger.warn('`Base.PreviewView#_renderPreview` has been deprecated since 7.8.0 and will be removed in 7.10.0.');
+        app.logger.warn('`Base.PreviewView#_renderPreview` has been deprecated since 7.8.0 and' +
+            'will be removed in 7.10.0.');
 
         var self = this;
 
@@ -309,7 +310,8 @@
      * @param collection Collection of related objects to the current model
      */
     renderPreview: function(model, newCollection) {
-        app.logger.warn('`Base.PreviewView#renderPreview` has been deprecated since 7.8.0 and will be removed in 7.10.0.');
+        app.logger.warn('`Base.PreviewView#renderPreview` has been deprecated since 7.8.0 and' +
+            'will be removed in 7.10.0.');
 
         if(newCollection) {
             this.collection.reset(newCollection.models);
@@ -401,7 +403,8 @@
      * @deprecated Deprecated since 7.8.0. Will be removed in 7.10.0.
      */
     closePreview: function() {
-        app.logger.warn('`Base.PreviewView#closePreview` has been deprecated since 7.8.0 and will be removed in 7.10.0.');
+        app.logger.warn('`Base.PreviewView#closePreview` has been deprecated since 7.8.0 and' +
+            ' will be removed in 7.10.0.');
 
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             this.switching = false;

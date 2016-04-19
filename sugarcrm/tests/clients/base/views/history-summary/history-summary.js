@@ -46,50 +46,6 @@ describe('Base.View.HistorySummary', function() {
         });
     });
 
-    describe('loadData()', function() {
-        it('should call collection.fetch', function() {
-            view.loadData({});
-            expect(view.collection.fetch).toHaveBeenCalled();
-        });
-    });
-
-    describe('_setOrderBy()', function() {
-        var orderBy,
-            loadDataStub,
-            opts;
-
-        beforeEach(function() {
-            orderBy = {
-                direction: 'asc',
-                field: 'name'
-            };
-            view.orderBy = orderBy;
-            opts = {};
-        });
-
-        afterEach(function() {
-            loadDataStub.restore();
-            view.orderBy = null;
-            opts = null;
-        });
-
-        it('should set options.orderBy properly', function() {
-            loadDataStub = sinon.stub(view, 'loadData', function(options) {
-                return options;
-            });
-            view._setOrderBy(opts);
-            expect(opts.orderBy).toBeDefined();
-            expect(opts.orderBy).toEqual(orderBy);
-        });
-
-        it('should set options.orderBy & call loadData with proper orderBy', function() {
-            view._setOrderBy(opts);
-            expect(view.collection.fetch).toHaveBeenCalledWith({
-                orderBy: orderBy
-            });
-        });
-    });
-
     describe('_renderField()', function() {
         var field,
             superStub,

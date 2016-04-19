@@ -1,6 +1,7 @@
-describe("Base.Layouts.PreviewActivityStream", function() {
-    var layout,
-        app;
+describe('Base.Layouts.PreviewActivityStream', function() {
+    var layout;
+    var app;
+    var module = 'Contacts';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -14,7 +15,15 @@ describe("Base.Layouts.PreviewActivityStream", function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
-        layout = SugarTest.createLayout('base', 'Contacts', 'preview-activitystream');
+        var ctx = app.context.getContext({
+            forceNew: true,
+            module: 'Activities'
+        });
+        ctx.prepare();
+        // This is the preview context created by the preview.js layout.
+        ctx.parent = app.context.getContext({module: module});
+
+        layout = SugarTest.createLayout('base', module, 'preview-activitystream', null, ctx);
     });
 
     afterEach(function() {
@@ -48,25 +57,9 @@ describe("Base.Layouts.PreviewActivityStream", function() {
             expect(collectionStub.calledOnce).toBe(true);
             collectionStub.restore();
         });
-
-        it('Should not fetch activities when showActivities is set to false', function() {
-            var collectionStub = sinon.stub(layout.collection, 'fetch');
-            layout.fetchActivities(new Backbone.Model(), null, null, null, false);
-            expect(collectionStub.called).toBe(false);
-            collectionStub.restore();
-        });
     });
 
     describe('renderActivities()', function() {
-        beforeEach(function() {
-            layout._previewOpened = true;
-        });
-
-        afterEach(function() {
-            layout._previewOpened = false;
-        });
-
-
         it('Should render two activities when the collection size is two but add event', function() {
             var renderPostStub = sinon.stub(layout, 'renderPost');
 
@@ -92,46 +85,6 @@ describe("Base.Layouts.PreviewActivityStream", function() {
             layout.renderActivities(layout.collection);
 
             expect(renderPostStub.called).toBe(false);
-            renderPostStub.restore();
-        });
-
-        //FIXME: MAR-2798 rewrite this to not cause an infinite loop
-        xit('Should show activities when the collection is not empty', function() {
-            var renderPostStub = sinon.stub(layout, 'renderPost');
-
-            layout.collection.add(new Backbone.Model());
-            layout.renderActivities(layout.collection);
-
-            expect(layout.$el.css('display')).not.toBe('none');
-            renderPostStub.restore();
-        });
-
-        it('Should hide activities when the collection is empty', function() {
-            var renderPostStub = sinon.stub(layout, 'renderPost');
-
-            layout.renderActivities(layout.collection);
-
-            expect(layout.$el.css('display')).toBe('none');
-            renderPostStub.restore();
-        });
-
-        //FIXME: MAR-2798 rewrite this to be compliant with new `_.delay` test changes
-        xit('Should not render any posts until the preview pane has been opened', function() {
-            var renderPostStub = sinon.stub(layout, 'renderPost'),
-                fakeTimer = sinon.useFakeTimers();
-
-            layout._previewOpened = false;
-            layout.collection.reset(new Backbone.Model());
-            layout.renderActivities(layout.collection);
-
-            expect(renderPostStub.called).toBe(false);
-
-            layout._previewOpened = true;
-            fakeTimer.tick(501);
-
-            expect(renderPostStub.called).toBe(true);
-
-            fakeTimer.restore();
             renderPostStub.restore();
         });
     });
