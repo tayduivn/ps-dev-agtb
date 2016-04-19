@@ -15,6 +15,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'data/BeanFactory.php';
 require_once 'clients/base/api/vCardApi.php';
 
+require_once 'modules/pmse_Inbox/engine/PMSEProjectImporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSEProjectExporter.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectImportExportApi extends vCardApi
@@ -63,7 +67,11 @@ class PMSEProjectImportExportApi extends vCardApi
             $seed = BeanFactory::newBean($args['module']);
 
             if (!$seed->ACLAccess($acl)) {
-                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                    'No access to view/edit records for module: ' . $args['module']
+                );
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         }
     }
@@ -75,12 +83,20 @@ class PMSEProjectImportExportApi extends vCardApi
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
             if (!array_key_exists($fieldName, $args)) {
-                throw new SugarApiExceptionMissingParameter('Missing parameter: ' . $fieldName);
+                $sugarApiExceptionMissingParameter = new SugarApiExceptionMissingParameter(
+                    'Missing parameter: ' . $fieldName
+                );
+                PMSELogger::getInstance()->alert($sugarApiExceptionMissingParameter->getMessage());
+                throw $sugarApiExceptionMissingParameter;
             }
         }
         
         if (PMSEEngineUtils::isExportDisabled($args['module'])) {
-            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
+            $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                $GLOBALS['app_strings']['ERR_EXPORT_DISABLED']
+            );
+            PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+            throw $sugarApiExceptionNotAuthorized;
         }
 
         return $projectBean->exportProject($args['record'], $api);
@@ -93,7 +109,9 @@ class PMSEProjectImportExportApi extends vCardApi
 
         $bean = BeanFactory::getBean($args['module']);
         if (!$bean->ACLAccess('save') || !$bean->ACLAccess('import')) {
-            throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+            $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+            PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+            throw $sugarApiExceptionNotAuthorized;
         }
 
         if (isset($_FILES) && count($_FILES) === 1) {
@@ -111,16 +129,25 @@ class PMSEProjectImportExportApi extends vCardApi
                     try {
                         $data = $importerObject->importProject($_FILES[$first_key]['tmp_name']);
                     } catch (SugarApiExceptionNotAuthorized $e) {
-                        throw new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
+                        $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('ERROR_UPLOAD_ACCESS_PD');
+                        PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                        throw $sugarApiExceptionNotAuthorized;
                     }
                     $results = array('project_import' => $data);
                 } else  {
-                    throw new SugarApiExceptionRequestMethodFailure('ERROR_UPLOAD_FAILED');
+                    $sugarApiExceptionRequestMethodFailure = new SugarApiExceptionRequestMethodFailure(
+                        'ERROR_UPLOAD_FAILED'
+                    );
+                    PMSELogger::getInstance()->alert($sugarApiExceptionRequestMethodFailure->getMessage());
+                    throw $sugarApiExceptionRequestMethodFailure;
                 }
                 return $results;
             }
         } else {
-            throw new SugarApiExceptionMissingParameter('ERROR_UPLOAD_FAILED');
+            $sugarApiExceptionMissingParameter = new SugarApiExceptionMissingParameter('ERROR_UPLOAD_FAILED');
+            PMSELogger::getInstance()->alert($sugarApiExceptionMissingParameter->getMessage());
+            throw $sugarApiExceptionMissingParameter;
         }
     }
 }
+

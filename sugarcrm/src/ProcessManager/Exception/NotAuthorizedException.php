@@ -13,10 +13,9 @@
 namespace Sugarcrm\Sugarcrm\ProcessManager\Exception;
 
 /**
- * Class RuntimeException
+ * Class NotAuthorizedException
  * @package ProcessManager
  */
-class RuntimeException extends BaseException implements ExceptionInterface
+class NotAuthorizedException extends BaseException implements ExceptionInterface
 {
 }
-

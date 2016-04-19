@@ -13,7 +13,7 @@
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'clients/base/api/ModuleApi.php';
-
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\ProcessManager;
@@ -202,13 +202,19 @@ class PMSEUserTask extends PMSEActivity
         }
         //modified_by_name => Current
         if (!isset($moduleName) || $moduleName == '') {
-            throw new SugarApiExceptionMissingParameter('Error: Missing argument moduleName.');
+            $sugarApiExceptionMissingParameter = new SugarApiExceptionMissingParameter(
+                'Error: Missing argument moduleName.'
+            );
+            PMSELogger::getInstance()->alert($sugarApiExceptionMissingParameter->getMessage());
+            throw $sugarApiExceptionMissingParameter;
         }
 
         //If Process is Completed break...
         $bpmI = PMSEEngineUtils::getBPMInboxStatus($bpmInboxId);
         if ($bpmI === false) {
-            throw new SugarApiExceptionEditConflict('Error: Process status complete.');
+            $sugarApiExceptionEditConflict = new SugarApiExceptionEditConflict('Error: Process status complete.');
+            PMSELogger::getInstance()->alert($sugarApiExceptionEditConflict->getMessage());
+            throw $sugarApiExceptionEditConflict;
         }
 
         $beanObject = BeanFactory::getBean($moduleName, $moduleId);
@@ -270,9 +276,11 @@ class PMSEUserTask extends PMSEActivity
                     if ($field != null) {
                         // validate submitted data
                         if (!$field->apiValidate($beanObject, $fields, $fieldName, $properties)) {
-                            throw new SugarApiExceptionInvalidParameter(
+                            $sugarApiExceptionInvalidParameter = new SugarApiExceptionInvalidParameter(
                                 'Invalid field value: ' . $fieldName . ' in module: ' . $beanObject->module_name
                             );
+                            PMSELogger::getInstance()->alert($sugarApiExceptionInvalidParameter->getMessage());
+                            throw $sugarApiExceptionInvalidParameter;
                         }
                         $historyData->verifyRepeated($beanObject->$fieldName, $fields[$fieldName]);
                         $historyData->savePredata($fieldName, $beanObject->$fieldName);

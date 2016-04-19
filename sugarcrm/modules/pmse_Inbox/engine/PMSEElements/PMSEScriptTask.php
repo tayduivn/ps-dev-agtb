@@ -14,6 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEActivity.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSEScriptTask extends PMSEActivity
 {
     /**
@@ -95,7 +97,11 @@ class PMSEScriptTask extends PMSEActivity
                     $date = $this->timeDate->fromIso($value);
                 }
                 if (!($date instanceof SugarDateTime)) {
-                    throw new Exception("Cannot convert '{$value}' to SugarDateTime.", 1);
+                    throw ProcessManager\Factory::getException(
+                        'DateTime',
+                        "Cannot convert '{$value}' to SugarDateTime.",
+                        1
+                    );
                 }
                 $result = $date->asDbDate();
                 break;
@@ -105,7 +111,11 @@ class PMSEScriptTask extends PMSEActivity
                     $date = $this->timeDate->fromString($value);
                 }
                 if (!($date instanceof SugarDateTime)) {
-                    throw new Exception("Cannot convert '{$value}' to SugarDateTime.", 1);
+                    throw ProcessManager\Factory::getException(
+                        'DateTime',
+                        "Cannot convert '{$value}' to SugarDateTime.",
+                        1
+                    );
                 }
                 $result = $date->asDb();
                 break;

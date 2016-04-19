@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'clients/base/api/FilterApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 class PMSEEngineFilterApi extends FilterApi
 {
@@ -137,7 +138,11 @@ class PMSEEngineFilterApi extends FilterApi
         $seed = BeanFactory::newBean('pmse_BpmFlow');
 
         if (!$seed->ACLAccess($acl)) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . translate('LBL_MODULE_NAME', $args['module']));
+            $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                'No access to view records for module: ' . translate('LBL_MODULE_NAME', $args['module'])
+            );
+            PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+            throw $sugarApiExceptionNotAuthorized;
         }
 
         $options = $this->parseArguments($api, $args, $seed);
@@ -212,7 +217,11 @@ class PMSEEngineFilterApi extends FilterApi
         foreach ($filters as $filterDef) {
             foreach ($filterDef as $filter => $expression) {
                 if (!self::isSupportedPAFilter($filter, $q)) {
-                    throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_FILTER');
+                    $sugarApiExceptionInvalidParameter = new SugarApiExceptionInvalidParameter(
+                        'ERROR_PA_FILTER_UNSUPPORTED_FILTER'
+                    );
+                    PMSELogger::getInstance()->alert($sugarApiExceptionInvalidParameter->getMessage());
+                    throw $sugarApiExceptionInvalidParameter;
                 }
                 self::processFilterPA($filter, $expression, $where, $q);
             }
@@ -394,7 +403,11 @@ class PMSEEngineFilterApi extends FilterApi
         if (in_array($operator, self::$supportedOperators)) {
             return array($operator, $expression[$operator]);
         } else {
-            throw new SugarApiExceptionInvalidParameter('ERROR_PA_FILTER_UNSUPPORTED_OPERATOR');
+            $sugarApiExceptionInvalidParameter = new SugarApiExceptionInvalidParameter(
+                'ERROR_PA_FILTER_UNSUPPORTED_OPERATOR'
+            );
+            PMSELogger::getInstance()->alert($sugarApiExceptionInvalidParameter->getMessage());
+            throw $sugarApiExceptionInvalidParameter;
         }
 
     }

@@ -13,10 +13,9 @@
 namespace Sugarcrm\Sugarcrm\ProcessManager\Exception;
 
 /**
- * Class RuntimeException
+ * Class DateTimeException
  * @package ProcessManager
  */
-class RuntimeException extends BaseException implements ExceptionInterface
+class DateTimeException extends BaseException implements ExceptionInterface
 {
 }
-

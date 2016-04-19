@@ -110,7 +110,11 @@ class PMSECasesListApi extends FilterApi
         $user = $current_user;
         if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
             if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
-                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                    'No access to view/edit records for module: ' . $args['module']
+                );
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         }
     }

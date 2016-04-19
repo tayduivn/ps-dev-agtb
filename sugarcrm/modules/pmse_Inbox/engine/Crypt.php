@@ -14,6 +14,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Helps to encode and encrypt elements that corresponding to the license management module
  *
@@ -155,7 +157,10 @@ class Crypt
 
         if ($part != 2) {
             // @codeCoverageIgnoreStart
-            throw new Exception(translate('LBL_PMSE_CRYPT_ERROR_LICENSENOTVALID', $this->moduleName));
+            throw ProcessManager\Factory::getException(
+                'NotAuthorized',
+                translate('LBL_PMSE_CRYPT_ERROR_LICENSENOTVALID', $this->moduleName)
+            );
             // @codeCoverageIgnoreEnd
         } else {
             $data = base64_decode($encrypted);
@@ -181,7 +186,10 @@ class Crypt
 
             $text = str_replace('-', '', $text);
             if (strlen($text) % 4 != 0 || strlen($text) > 28) {
-                throw new Exception(translate('LBL_PMSE_CRYPT_ERROR_ACLENGTHINVALID', $this->moduleName));
+                throw ProcessManager\Factory::getException(
+                    'InvalidData',
+                    translate('LBL_PMSE_CRYPT_ERROR_ACLENGTHINVALID', $this->moduleName)
+                );
             }
 
             $output = '';
@@ -201,15 +209,20 @@ class Crypt
             $parts = explode('-', $output);
             if (count($parts) != 3) {
                 // @codeCoverageIgnoreStart
-                throw new Exception(translate('LBL_PMSE_CRYPT_ERROR_ACLENGTHINVALID', $this->moduleName));
+                throw ProcessManager\Factory::getException(
+                    'InvalidData',
+                    translate('LBL_PMSE_CRYPT_ERROR_ACLENGTHINVALID', $this->moduleName)
+                );
                 // @codeCoverageIgnoreEnd
             }
 
             $serverCode = substr($parts[2], 0, 2);
             if (!in_array($serverCode, $this->validServerCode)) {
                 // @codeCoverageIgnoreStart
-                throw new Exception(sprintf(translate('LBL_PMSE_CRYPT_ERROR_ACSERVERINVALID', $this->moduleName),
-                        $serverCode));
+                throw ProcessManager\Factory::getException(
+                    'InvalidData',
+                    sprintf(translate('LBL_PMSE_CRYPT_ERROR_ACSERVERINVALID', $this->moduleName), $serverCode)
+                );
                 // @codeCoverageIgnoreEnd
             }
 
