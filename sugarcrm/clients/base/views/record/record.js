@@ -93,6 +93,7 @@
         //Adding the favorite and follow fields.
         this.context.addFields(this._getDataFields());
 
+        // FIXME: SC-5650 will handle removing these deprecation warnings in 7.10+
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 if (field.label_css_class) {
