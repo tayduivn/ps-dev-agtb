@@ -57,17 +57,17 @@
     initialize: function(options) {
         app.plugins.attach(this, 'view');
 
-        options || (options = {});
-        options.confirm || (options.confirm = {});
-        options.cancel || (options.cancel = {});
+        this.options = options || {};
+        this.options.confirm || (this.options.confirm = {});
+        this.options.cancel || (this.options.cancel = {});
 
-        this.onConfirm = options.onConfirm || options.confirm.callback;
-        this.confirmLabel = options.confirm.label || 'LBL_CONFIRM_BUTTON_LABEL';
-        this.onCancel = options.onCancel || options.cancel.callback;
-        this.cancelLabel = options.cancel.label || 'LBL_CANCEL_BUTTON_LABEL';
-        this.onLinkClick = options.onLinkClick;
-        this.onClose = options.onClose;
-        this.templateOptions = options.templateOptions;
+        this.onConfirm = this.options.onConfirm || this.options.confirm.callback;
+        this.confirmLabel = this.options.confirm.label || 'LBL_CONFIRM_BUTTON_LABEL';
+        this.onCancel = this.options.onCancel || this.options.cancel.callback;
+        this.cancelLabel = this.options.cancel.label || 'LBL_CANCEL_BUTTON_LABEL';
+        this.onLinkClick = this.options.onLinkClick;
+        this.onClose = this.options.onClose;
+        this.templateOptions = this.options.templateOptions;
         this.name = 'alert';
     },
 

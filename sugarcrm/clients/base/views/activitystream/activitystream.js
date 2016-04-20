@@ -52,7 +52,6 @@
     ],
 
     initialize: function(options) {
-        this.opts = {params: {}};
         this.readonly = !!options.readonly;
         this.nopreview = !!options.nopreview;
 
@@ -762,6 +761,5 @@
         this.$(this._attachImageSelector).off('error');
         app.view.View.prototype._dispose.call(this);
         this.commentsCollection = null;
-        this.opts = null;
     }
 })

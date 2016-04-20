@@ -906,8 +906,8 @@
         }
 
         // custom success handler
-        options.success = _.bind(function(model, data, options) {
-            if(!this.disposed) {
+        options.success = _.bind(function(data) {
+            if (!this.disposed) {
                 this.collection.reset(data);
             }
         }, this);

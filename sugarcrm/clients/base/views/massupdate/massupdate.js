@@ -496,26 +496,27 @@
                                     if (_.isFunction(options.success)) {
                                         //setting data to null since backbone reset will add the data object to the collection
                                         //using the respoonse as options for callback
-                                        options.success(model, null, response);
+                                        options.status = response.status;
+                                        options.success();
                                     }
                                 } else {
                                     model.fetch(options);
                                 }
                             },
-                            error: function(xhr, status, error) {
+                            error: function(xhr) {
                                 model.attempt++;
                                 model.trigger('massupdate:fail');
                                 if (model.attempt <= model.maxAllowAttempt) {
                                     model.fetch(options);
                                 } else if (_.isFunction(options.error)) {
                                     model.trigger('massupdate:end');
-                                    options.error(xhr, status, error);
+                                    options.error(xhr);
                                 }
                             },
-                            complete: function(xhr, status) {
+                            complete: function(xhr) {
                                 model.trigger('massupdate:always');
                                 if (_.isFunction(options.complete)) {
-                                    options.complete(xhr, status);
+                                    options.complete(xhr);
                                 }
                             }
                     };

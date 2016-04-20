@@ -102,63 +102,57 @@
             {
                 name: "bwc",
                 route: "bwc/*url",
-                callback: function(url) {
-                    app.logger.debug("BWC: " + url);
+                callback: function(url, params) {
+                    var bwcUrl = _.isEmpty(params) ? url : url + '?' + params;
+                    app.logger.debug("BWC: " + bwcUrl);
 
                     var frame = $('#bwc-frame');
                     if (frame.length === 1 &&
-                        app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === url
+                        app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === bwcUrl
                     ) {
                         // update hash link only
                         return;
                     }
 
-                    // if only index.php is given, redirect to Home
-                    if (url === 'index.php') {
+                    if (bwcUrl === 'index.php') {
                         app.router.navigate('#Home', {trigger: true});
                         return;
                     }
-                    var params = {
+                    var options = {
                         layout: 'bwc',
-                        url: url
+                        url: bwcUrl
                     };
-                    var module = /module=([^&]*)/.exec(url);
+                    var module = /module=([^&]*)/.exec(bwcUrl);
 
                     if (!_.isNull(module) && !_.isEmpty(module[1])) {
-                        params.module = module[1];
+                        options.module = module[1];
                         // on BWC import we want to try and take the import module as the module
                         if (module[1] === 'Import') {
-                            module = /import_module=([^&]*)/.exec(url);
+                            module = /import_module=([^&]*)/.exec(bwcUrl);
                             if (!_.isNull(module) && !_.isEmpty(module[1])) {
-                                params.module = module[1];
+                                options.module = module[1];
                             }
                         }
                     }
 
-                    app.controller.loadView(params);
+                    app.controller.loadView(options);
                 }
             },
             {
                 name: 'search',
-                route: 'search(/)(:searchTermAndParams)',
-                callback: function(searchTermAndParams) {
-                    var searchTerm = '';
+                route: 'search(/)(:term)',
+                callback: function(term, urlParams) {
+                    var searchTerm = term ? term : '';
                     var params = {modules: [], tags: []};
-                    if (searchTermAndParams) {
-                        // For search, we may have query params for the module list
-                        var uriSplit = searchTermAndParams.split('?');
-                        searchTerm = decodeURIComponent(uriSplit[0]);
 
-                        // We have parameters. Parse them.
-                        if (uriSplit.length > 1) {
-                            var paramsArray = uriSplit[1].split('&');
-                            _.each(paramsArray, function(paramPair) {
-                                var keyValueArray = paramPair.split('=');
-                                if (keyValueArray.length > 1) {
-                                    params[keyValueArray[0]] = keyValueArray[1].split(',');
-                                }
-                            });
-                        }
+                    if (urlParams) {
+                        var paramsArray = urlParams.split('&');
+                        _.each(paramsArray, function(paramPair) {
+                            var keyValueArray = paramPair.split('=');
+                            if (keyValueArray.length > 1) {
+                                params[keyValueArray[0]] = keyValueArray[1].split(',');
+                            }
+                        });
                     }
 
                     var appContext = app.controller.context;

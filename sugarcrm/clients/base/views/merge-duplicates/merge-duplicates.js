@@ -1492,10 +1492,10 @@
                             model.view.mergeStat.total = model.view.mergeStat.total + options.chunk.ids.length;
                             options.queueSuccess();
                             if (_.isFunction(options.success)) {
-                                options.success(model, data, response);
+                                options.success(data);
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function(xhr) {
                             model.attempt = model.attempt + 1;
                             model.view.mergeProgressModel.trigger('massupdate:item:attempt', model);
                             if (model.attempt <= (model.view._settings.merge_relate_max_attempt)) {
@@ -1506,9 +1506,9 @@
                                 model.view.mergeProgressModel.trigger('massupdate:item:fail', model);
                             }
                         },
-                        complete: function(xhr, status) {
+                        complete: function(xhr) {
                             if (_.isFunction(options.complete)) {
-                                options.complete(xhr, status);
+                                options.complete(xhr);
                             }
                         }
                     };

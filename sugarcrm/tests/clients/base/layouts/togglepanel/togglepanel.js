@@ -26,7 +26,6 @@ describe("Base.Layout.Togglepanel", function () {
         app.view.reset();
         Handlebars.templates = {};
         layout.dispose();
-        layout.context = null;
         layout = null;
     });
 
@@ -51,11 +50,13 @@ describe("Base.Layout.Togglepanel", function () {
         it("should initialize", function () {
             var processToggleSpy = sinon.stub(layout, 'processToggles', function () {
             });
-            layout.initialize(layout.options);
+            var options = {};
+            layout.initialize(options);
             expect(layout.componentsList).toEqual({});
             expect(processToggleSpy).toHaveBeenCalled();
         });
         it("should process toggles", function () {
+            var options = {};
             var meta = {
                 'availableToggles': [
                     {
@@ -89,8 +90,8 @@ describe("Base.Layout.Togglepanel", function () {
                     }
                 }
             }
-            layout.options.meta = meta;
-            layout.processToggles();
+            options.meta = meta;
+            layout.initialize(options);
             expect(layout.toggles).toEqual([
                 {
                     class: 'icon1',

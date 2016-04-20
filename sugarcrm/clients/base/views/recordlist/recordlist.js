@@ -48,7 +48,7 @@
      */
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
-        var recordListMeta = this._initializeMetadata(options.context);
+        var recordListMeta = this._initializeMetadata(options);
         //Allows sub-views to override and use different view metadata if desired
         options.meta = this._filterMeta(_.extend({}, recordListMeta, options.meta || {}), options);
         this._super("initialize", [options]);

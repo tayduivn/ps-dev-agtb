@@ -22,7 +22,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.options.def.events = _.extend({}, this.options.def.events, {
+        options.def.events = _.extend({}, options.def.events, {
             'click .rowaction': 'rowActionSelect'
         });
         this._super('initialize', [options]);

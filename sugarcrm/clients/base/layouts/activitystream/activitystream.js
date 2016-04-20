@@ -17,10 +17,8 @@
     className: "block filtered activitystream-layout",
 
     initialize: function(opts) {
-        this.opts = opts;
         this.renderedActivities = {};
-
-        app.view.Layout.prototype.initialize.call(this, opts);
+        this._super('initialize', [opts]);
 
         this.setCollectionOptions();
         this.exposeDataTransfer();

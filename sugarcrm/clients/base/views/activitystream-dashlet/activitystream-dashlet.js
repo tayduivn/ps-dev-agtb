@@ -37,7 +37,6 @@
     omnibarView: null,
 
     initialize: function(opts) {
-        this.opts = opts;
         this.renderedActivities = {};
 
         var moduleMeta = app.metadata.getModule(opts.context.parent.get('module'));

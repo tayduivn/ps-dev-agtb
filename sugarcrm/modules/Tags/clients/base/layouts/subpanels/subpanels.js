@@ -19,7 +19,7 @@
      */
     initialize: function(options) {
         // Create dynamic subpanel metadata
-        var dSubpanels = app.utils.getDynamicSubpanelMetadata(this.options.module);
+        var dSubpanels = app.utils.getDynamicSubpanelMetadata(options.module);
 
         if (dSubpanels.components) {
             _.each(dSubpanels.components, function(sub) {

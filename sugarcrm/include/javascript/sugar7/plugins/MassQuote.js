@@ -95,7 +95,7 @@
                     var url = app.api.buildURL(this.context.get('module'), 'multi-quote');
 
                     // custom success handler
-                    options.success = _.bind(function(model, data, options) {
+                    options.success = _.bind(function(data) {
                         app.alert.dismiss('info_quote');
                         app.router.navigate(app.bwc.buildRoute('Quotes', data.id, 'EditView', {
                             return_module: this.context.parent.get('module'),

@@ -31,8 +31,8 @@
         app.controller.context.prepare(true);
 
         // Attach the metadata to the view
-        this.options.meta = this._metadata.modules[this.options.module].views[this.options.type].meta;
-        app.view.View.prototype.initialize.call(this, options);
+        options.meta = this._metadata.modules[options.module].views[options.type].meta;
+        this._super('initialize', [options]);
     },
     _render: function() {
         if(this.context.get('errorType')) {

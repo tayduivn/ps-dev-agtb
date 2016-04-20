@@ -59,13 +59,16 @@
     /**
      * When parent recordlist's initialize is invoked (above), this will get called
      * and populate our the list's meta with the proper view subpanel metadata.
+     *
+     * @private
+     * @param {Object} options
      * @return {Object} The view metadata for this module's subpanel.
      */
-    _initializeMetadata: function() {
+    _initializeMetadata: function(options) {
         return  _.extend({},
             app.metadata.getView(null, 'subpanel-list', true),
-            app.metadata.getView(this.options.module, 'record-list', true),
-            app.metadata.getView(this.options.module, 'subpanel-list', true)
+            app.metadata.getView(options.module, 'record-list', true),
+            app.metadata.getView(options.module, 'subpanel-list', true)
         );
     },
 
