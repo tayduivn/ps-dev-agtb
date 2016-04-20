@@ -15,6 +15,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEIntermediateEvent.php';
 require_once 'modules/pmse_Inbox/engine/PMSEExceptions/PMSEElementException.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSETimerEvent extends PMSEIntermediateEvent
 {
     /**
@@ -83,7 +85,11 @@ class PMSETimerEvent extends PMSEIntermediateEvent
                         $date = TimeDate::getInstance()->fromString($dueDate);
                     }
                     if (!($date instanceof SugarDateTime)) {
-                        throw new Exception("TimerEvent: Cannot convert '{$dueDate}' to SugarDateTime.", 1);
+                        throw ProcessManager\Factory::getException(
+                            'DateTime',
+                            "TimerEvent: Cannot convert '{$dueDate}' to SugarDateTime.",
+                            1
+                        );
                     }
                 }
                 $dateDB = $date->asDb();

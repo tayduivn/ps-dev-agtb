@@ -87,7 +87,7 @@
      * `{custom/,}clients/{platform}/view/massupdate/massupdate.php`
      */
     initialize: function(options) {
-        var genericMeta = _.omit(app.metadata.getView(null, options.type), 'panels');
+        var genericMeta = _.omit(app.metadata.getView(null, options.name), 'panels');
         options.meta = _.extend(
             {},
             genericMeta,

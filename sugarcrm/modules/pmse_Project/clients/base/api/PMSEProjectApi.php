@@ -15,6 +15,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/ModuleApi.php';
 require_once 'data/BeanFactory.php';
 
+$wrapperPath = 'modules/pmse_Project/clients/base/api/wrappers/';
+require_once $wrapperPath . 'PMSEProjectWrapper.php';
+require_once $wrapperPath . 'PMSECrmDataWrapper.php';
+require_once $wrapperPath . 'PMSEActivityDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEEventDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEGatewayDefinitionWrapper.php';
+require_once $wrapperPath . 'PMSEDynaForm.php';
+require_once $wrapperPath . 'PMSEObservers/PMSEEventObserver.php';
+require_once $wrapperPath . 'PMSEObservers/PMSEProcessObserver.php';
+
+$enginePath = 'modules/pmse_Inbox/engine/';
+require_once $enginePath . 'PMSEProjectImporter.php';
+require_once $enginePath . 'PMSEProjectExporter.php';
+require_once $enginePath . 'PMSELogger.php';
+
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEProjectApi extends ModuleApi
@@ -187,7 +202,11 @@ class PMSEProjectApi extends ModuleApi
             $seed = BeanFactory::newBean($args['module']);
 
             if (!$seed->ACLAccess($acl)) {
-                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                    'No access to view/edit records for module: ' . $args['module']
+                );
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         }
     }

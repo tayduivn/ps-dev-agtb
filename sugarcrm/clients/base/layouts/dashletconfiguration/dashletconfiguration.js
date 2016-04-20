@@ -22,7 +22,7 @@
     ],
 
     initialize: function(options) {
-        var meta = app.metadata.getLayout(options.module, options.type),
+        var meta = app.metadata.getLayout(options.module, options.name),
             main_panel;
 
         _.each(meta.components, function(component) {

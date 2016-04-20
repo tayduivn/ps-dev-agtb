@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -12,30 +10,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\Sugarcrm\ProcessManager\Exception;
 
 /**
- * Define a custom exception class
+ * Class BaseException
+ * @package ProcessManager
  */
-class PMSEExpressionEvaluationException extends Exception
+class BaseException extends \Exception
 {
-    protected $expressionArray;
-    // Redefine the exception so message isn't optional
-    public function __construct($message, $expressionArray, $code = 0, Exception $previous = null)
+
+    public function __construct($message = null, $code = 0, Exception $previous = null)
     {
-        // make sure everything is assigned properly
-        $this->expressionArray = $expressionArray;
         parent::__construct($message, $code, $previous);
         $this->logMessage();
-    }
-
-    public function getExpressionArray () {
-        return $this->expressionArray;
-    }
-
-    // custom string representation of object
-    public function __toString()
-    {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 
     public function logMessage()
@@ -46,6 +33,6 @@ class PMSEExpressionEvaluationException extends Exception
         $logMessage = get_class($this) . ' : ' . $this->message;
 
         // Log it
-        PMSELogger::getInstance()->alert($logMessage);
+        \PMSELogger::getInstance()->alert($logMessage);
     }
 }

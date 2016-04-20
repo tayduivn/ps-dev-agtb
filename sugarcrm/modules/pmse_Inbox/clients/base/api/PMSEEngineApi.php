@@ -17,6 +17,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once 'include/api/SugarApi.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 
@@ -231,7 +232,11 @@ class PMSEEngineApi extends SugarApi
         $user = $current_user;
         if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
             if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
-                throw new SugarApiExceptionNotAuthorized('No access to view/edit records for module: ' . $args['module']);
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
+                    'No access to view/edit records for module: ' . $args['module']
+                );
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         }
     }
@@ -1131,7 +1136,9 @@ class PMSEEngineApi extends SugarApi
                 || $activity->act_assignment_method == 'static'
                 || $activity->act_assignment_method == 'balanced'
             ) {
-                throw new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED', null, null, 403);
+                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
+                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
+                throw $sugarApiExceptionNotAuthorized;
             }
         }
 

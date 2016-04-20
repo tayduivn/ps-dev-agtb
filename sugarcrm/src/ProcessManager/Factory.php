@@ -70,6 +70,11 @@ class Factory
         'pmse_Project/clients/base/api/wrappers/PMSEObservers/'
     ];
 
+    /*
+     * default exception type
+     */
+    protected static $defaultExceptionType = 'Base';
+
     /**
      * Gets an array of assembled paths for include.
      * @return array
@@ -255,32 +260,41 @@ class Factory
 
     /**
      * Gets a Process Manager exception object
-     * @param string $type The type of object to get
+     * @param string $type The type of Exception to get
      * @param string $message The exception message to throw and log
-     * @return ExceptionInterface
+     * @param int $code The exception code
+     * @param Exception $previous The previous exception (used for chaining)
+     * @return Exception
      */
-    public static function getException($type = '', $message = '')
+    public static function getException($type = '', $message = '', $code = 0, $previousException = null)
     {
-        // Since we need to log our exceptions, let's get the logger
-        require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-
-        // Type will determine what class to load
-        if ($type === '') {
-            $class = '\\Exception';
-        } else {
-            $class = 'Sugarcrm\\Sugarcrm\\ProcessManager\\Exception\\' . ucfirst(strtolower($type)) . 'Exception';
+        if (empty($type)) {
+            $type = static::$defaultExceptionType;
         }
+
+        $exceptionClassName = ucfirst(strtolower($type)) . 'Exception';
+        $defaultClassName = static::$defaultExceptionType . 'Exception';
 
         // Handle the message now
         if (empty($message)) {
             $message = 'An unknown Process Manager exception had occurred';
         }
 
-        // Create the exception object
-        $obj = new $class($message);
+        // Get the exception namespace root
+        $nsRoot = 'Sugarcrm\\Sugarcrm\\ProcessManager\\Exception\\';
 
-        // Log it
-        \PMSELogger::getInstance()->alert($message);
+        // Get the full class name for this exception, getting the custom class if found
+        $exceptionClass = \SugarAutoLoader::customClass($nsRoot . $exceptionClassName);
+
+        // Get the full default class name, getting the custom class if found
+        $defaultClass = \SugarAutoLoader::customClass($nsRoot . $defaultClassName);
+
+        // Set the class name to load based on availability of the class. If the type class exists,
+        // use it, otherwise fallback to the default class
+        $class = class_exists($exceptionClass) ? $exceptionClass : $defaultClass;
+
+        // Create the exception object
+        $obj = new $class($message, $code, $previousException);
 
         // Return it
         return $obj;

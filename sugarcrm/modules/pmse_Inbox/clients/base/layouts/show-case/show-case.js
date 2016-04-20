@@ -219,9 +219,9 @@
     _delegateEvents: function() {
         this.recordContext.on('case:cancel', this.cancelCase, this);
         this.recordContext.on('case:claim', this.caseClaim, this);
-        this.recordContext.on('case:approve', this.caseApprove, this);
-        this.recordContext.on('case:reject', this.caseReject, this);
-        this.recordContext.on('case:route', this.caseRoute, this);
+        this.recordContext.on('case:approve', _.bind(this.caseAction, this, 'Approve'));
+        this.recordContext.on('case:reject', _.bind(this.caseAction, this, 'Reject'));
+        this.recordContext.on('case:route', _.bind(this.caseAction, this, 'Route'));
         this.recordContext.on('case:history', this.caseHistory, this);
         this.recordContext.on('case:status', this.caseStatus, this);
         this.recordContext.on('case:add:notes', this.caseAddNotes, this);
@@ -264,32 +264,12 @@
     },
 
     /**
-     * Validate the model when trying to approve the case
+     * Validate the model when trying to approve/reject/route the case
      */
-    caseApprove: function () {
+    caseAction: function (action) {
         this.recordModel.doValidate(
             this.recordComponent.getFields(this.recordModule, this.recordModel),
-            _.bind(this.validationCompleteApprove, this)
-        );
-    },
-
-    /**
-     * Validate the model when trying to reject the case
-     */
-    caseReject: function () {
-        this.recordModel.doValidate(
-            this.recordComponent.getFields(this.recordModule, this.recordModel),
-            _.bind(this.validationCompleteReject, this)
-        );
-    },
-
-    /**
-     * Validate the model when trying to re-route the case
-     */
-    caseRoute: function () {
-        this.recordModel.doValidate(
-            this.recordComponent.getFields(this.recordModule, this.recordModel),
-            _.bind(this.validationCompleteRoute, this)
+            _.bind(this.validationComplete, this, action)
         );
     },
 
@@ -337,143 +317,68 @@
     /**
      * If validation is valid, save the model and approve the case
      *
-     * @param {boolean} isValid
+     * @param {string} action Either Approve, Reject or Route
+     * @param {boolean} isValid `true` if valid, false if validation failed
      */
-    validationCompleteApprove: function (isValid) {
-        if (isValid) {
-            app.alert.show('confirm_approve', {
-                level: 'confirmation',
-                messages: app.lang.get('LBL_PA_PROCESS_APPROVE_QUESTION', 'pmse_Inbox'),
-                onConfirm: _.bind(function () {
-                    app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-                    var value = this.recordModel.attributes;
-                    value.frm_action = 'Approve';
-                    value.idFlow = this.case.flowId;
-                    value.idInbox = this.case.inboxId;
-                    value.cas_id = this.case.flow.cas_id;
-                    value.cas_index = this.case.flow.cas_index;
-                    value.moduleName = this.case.flow.cas_sugar_module;
-                    value.beanId = this.case.flow.cas_sugar_object_id;
-                    value.taskName = this.case.title.activity;
-                    var self = this;
-                    var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
-                    app.api.call('update', pmseInboxUrl, value, {
-                        success: function () {
-                            app.alert.show('success_approve', {
-                                level: 'success',
-                                messages: app.lang.get('LBL_PA_PROCESS_APPROVED_SUCCESS', 'pmse_Inbox'),
-                                autoClose: true
-                            });
-                            self.recordModel.setSyncedAttributes(self.recordModel.attributes);
-                            self.redirectCase();
-                        },
-                        error: function(error) {
-                            app.alert.dismiss('upload');
-                            var message = (error && error.message) ? error.message : 'EXCEPTION_FATAL_ERROR';
-                            app.alert.show('error_approve', {
-                                level: 'error',
-                                messages: message
-                            });
-                        }
-                    });
-                }, this),
-                onCancel: $.noop
-            });
-        } else {
-            // If not valid then switch to Edit Mode
-            this.recordComponent.editClicked();
-        }
-    },
+    validationComplete: function (action, isValid) {
+        var buttonLangStrings = {
+            'Approve': {
+                confirm: 'LBL_PA_PROCESS_APPROVE_QUESTION',
+                success: 'LBL_PA_PROCESS_APPROVED_SUCCESS'
+            },
+            'Reject': {
+                confirm: 'LBL_PA_PROCESS_REJECT_QUESTION',
+                success: 'LBL_PA_PROCESS_REJECTED_SUCCESS'
+            },
+            'Route': {
+                confirm: 'LBL_PA_PROCESS_ROUTE_QUESTION',
+                success: 'LBL_PA_PROCESS_ROUTED_SUCCESS'
+            }
+        };
 
-    /**
-     * If validation is valid, save the model but reject the case
-     *
-     * @param {boolean} isValid
-     */
-    validationCompleteReject: function (isValid) {
         if (isValid) {
-            app.alert.show('confirm_reject', {
+            app.alert.show('confirm_save_process', {
                 level: 'confirmation',
-                messages: app.lang.get('LBL_PA_PROCESS_REJECT_QUESTION', 'pmse_Inbox'),
+                messages: app.lang.get(buttonLangStrings[action].confirm, 'pmse_Inbox'),
                 onConfirm: _.bind(function () {
-                    app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
-                    var value = this.recordModel.attributes;
-                    value.frm_action = 'Reject';
-                    value.idFlow = this.case.flowId;
-                    value.idInbox = this.case.inboxId;
-                    value.cas_id = this.case.flow.cas_id;
-                    value.cas_index = this.case.flow.cas_index;
-                    value.moduleName = this.case.flow.cas_sugar_module;
-                    value.beanId = this.case.flow.cas_sugar_object_id;
-                    value.taskName = this.case.title.activity;
-                    var self = this;
-                    var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
-                    app.api.call('update', pmseInboxUrl, value, {
-                        success: function () {
-                            app.alert.show('success_reject', {
-                                level: 'success',
-                                messages: app.lang.get('LBL_PA_PROCESS_REJECTED_SUCCESS', 'pmse_Inbox'),
-                                autoClose: true
-                            });
-                            self.recordModel.setSyncedAttributes(self.recordModel.attributes);
-                            self.redirectCase();
-                        },
-                        error: function(error) {
-                            app.alert.dismiss('upload');
-                            var message = (error && error.message) ? error.message : 'EXCEPTION_FATAL_ERROR';
-                            app.alert.show('error_reject', {
-                                level: 'error',
-                                messages: message
-                            });
-                        }
+                    app.alert.show('upload', {
+                        level: 'process',
+                        title: app.lang.get('LBL_LOADING'),
+                        autoclose: false
                     });
-                }, this),
-                onCancel: $.noop
-            });
-        } else {
-            // If not valid then switch to Edit Mode
-            this.recordComponent.editClicked();
-        }
-    },
+                    var data = app.data.getEditableFields(this.recordModel);
+                    data = _.extend(data, {
+                        frm_action: action,
+                        idFlow: this.case.flowId,
+                        idInbox: this.case.inboxId,
+                        cas_id: this.case.flow.cas_id,
+                        cas_index: this.case.flow.cas_index,
+                        moduleName: this.case.flow.cas_sugar_module,
+                        beanId: this.case.flow.cas_sugar_object_id,
+                        taskName: this.case.title.activity
+                    });
 
-    /**
-     * If validation is valid, save the model and route the case
-     *
-     * @param {boolean} isValid
-     */
-    validationCompleteRoute: function (isValid) {
-        if (isValid) {
-            app.alert.show('confirm_route', {
-                level: 'confirmation',
-                messages: app.lang.get('LBL_PA_PROCESS_ROUTE_QUESTION', 'pmse_Inbox'),
-                onConfirm: _.bind(function () {
-                    var value = this.recordModel.attributes;
-                    value.frm_action = 'Route';
-                    value.idFlow = this.case.flowId;
-                    value.idInbox = this.case.inboxId;
-                    value.cas_id = this.case.flow.cas_id;
-                    value.cas_index = this.case.flow.cas_index;
-                    value.moduleName = this.case.flow.cas_sugar_module;
-                    value.beanId = this.case.flow.cas_sugar_object_id;
-                    value.taskName = this.case.title.activity;
-                    if (this.case.taskContinue) {
-                        value.taskContinue = true;
+                    if (action === 'Route' && this.case.taskContinue) {
+                        data.taskContinue = true;
                     }
+
                     var self = this;
                     var pmseInboxUrl = app.api.buildURL('pmse_Inbox/engine_route', '', {}, {});
-                    app.api.call('update', pmseInboxUrl, value, {
+
+                    app.api.call('update', pmseInboxUrl, data, {
                         success: function () {
-                            app.alert.show('success_route', {
+                            app.alert.show('success_save_process', {
                                 level: 'success',
-                                messages: app.lang.get('LBL_PA_PROCESS_ROUTED_SUCCESS', 'pmse_Inbox'),
+                                messages: app.lang.get(buttonLangStrings[action].success, 'pmse_Inbox'),
                                 autoClose: true
                             });
+                            self.recordModel.setSyncedAttributes(data);
                             self.redirectCase();
                         },
                         error: function(error) {
                             app.alert.dismiss('upload');
                             var message = (error && error.message) ? error.message : 'EXCEPTION_FATAL_ERROR';
-                            app.alert.show('error_route', {
+                            app.alert.show('error_save_process', {
                                 level: 'error',
                                 messages: message
                             });
