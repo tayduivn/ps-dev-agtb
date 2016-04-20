@@ -22,27 +22,11 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Schedule;
 class ServerHelper
 {
     /**
-     * Get object to manage callendar props
-     * @return Cal\CalendarPropManager
-     */
-    protected function getCalendarManager()
-    {
-        return new Cal\CalendarPropManager();
-    }
-
-    /**
      * Setup DAV Server
      * @return DAV\Server
      */
     public function setUp()
     {
-        $addressClass = 'Sugarcrm\\Sugarcrm\\Dav\\Cal\\Property\\CalAddress';
-
-        $calendarManager = $this->getCalendarManager();
-        $calendarManager->setPropertyMapHandler('ATTENDEE', $addressClass);
-        $calendarManager->setPropertyMapHandler('ORGANIZER', $addressClass);
-        $calendarManager->setValueMapHandler('CAL-ADDRESS', $addressClass);
-
         $principalManager = new Principal\Manager();
         $searchModules = $principalManager->getModulesForSearch();
 

@@ -17,17 +17,17 @@ use Sabre\VObject\Component\VCalendar;
 
 /**
  * Manage VCalendar properties and types classes
- * Class CalendarPropManager
+ * Class CalendarManager
  * @package Sugarcrm\Sugarcrm\Dav\Cal
  */
-class CalendarPropManager
+class CalendarManager
 {
     /**
      * Set class handler name for VCalendar properties
      * @param string $property
      * @param string $value
      */
-    public function setPropertyMapHandler($property, $value)
+    public static function setPropertyMapHandler($property, $value)
     {
         if ($property && $value) {
             VCalendar::$propertyMap[$property] = $value;
@@ -39,10 +39,21 @@ class CalendarPropManager
      * @param string $property
      * @param string $value
      */
-    public function setValueMapHandler($property, $value)
+    public static function setValueMapHandler($property, $value)
     {
         if ($property && $value) {
             VCalendar::$valueMap[$property] = $value;
         }
+    }
+
+    /**
+     * Init method to setup classes.
+     */
+    public static function init()
+    {
+        $addressClass = 'Sugarcrm\Sugarcrm\Dav\Cal\Property\CalAddress';
+        static::setPropertyMapHandler('ATTENDEE', $addressClass);
+        static::setPropertyMapHandler('ORGANIZER', $addressClass);
+        static::setValueMapHandler('CAL-ADDRESS', $addressClass);
     }
 }

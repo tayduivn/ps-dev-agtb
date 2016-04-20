@@ -143,6 +143,14 @@ class Plugin extends DavSchedulePlugin
                     array($iTipMessage->sender)
                 );
             }
+            if ($newObject->VEVENT->ATTENDEE) {
+                foreach ($newObject->VEVENT->ATTENDEE as $attendee) {
+                    if ($attendee['RSVP'] && $attendee['PARTSTAT'] && $attendee['PARTSTAT'] != 'NEEDS-ACTION') {
+                        unset($attendee['RSVP']);
+                    }
+                }
+            }
+            
             $objectNode->put($newObject->serialize());
         }
         $iTipMessage->scheduleStatus = '1.2;Message delivered locally';
