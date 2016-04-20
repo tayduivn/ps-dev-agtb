@@ -388,6 +388,8 @@
             this.trigger('filter:create:open', filter);
             this.layout.trigger('filter:toggle:savestate', true);
         } else {
+            // FIXME: TY-1457 should improve this
+            this.context.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }
 
