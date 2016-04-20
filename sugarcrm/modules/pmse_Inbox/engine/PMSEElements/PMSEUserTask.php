@@ -25,6 +25,11 @@ class PMSEUserTask extends PMSEActivity
 
     protected $engineFields;
 
+    /**
+     * @var array List of calendar type modules
+     */
+    protected $calendarModules = array('Calls', 'Meetings');
+
     public function __construct()
     {
         $this->engineFields = array(
@@ -218,6 +223,17 @@ class PMSEUserTask extends PMSEActivity
         }
 
         $beanObject = BeanFactory::getBean($moduleName, $moduleId);
+
+        if (in_array($moduleName, $this->calendarModules)) {
+            $isCalendarModule = true;
+        } else {
+            $isCalendarModule = false;
+        }
+        if ($isCalendarModule) {
+            $calendarEvents = new CalendarEvents();
+            $wasRecurring = $calendarEvents->isEventRecurring($beanObject);
+        }
+
         $historyData = ProcessManager\Factory::getPMSEObject('PMSEHistoryData');
         $historyData->setModule($moduleName);
 
@@ -295,6 +311,11 @@ class PMSEUserTask extends PMSEActivity
             // Now deal with the related records
             $moduleApi = new ModuleApi();
             $moduleApi->updateRelatedRecords($api, $beanObject, $beanData);
+
+            // if switching from non recurring to recurring, need to save recurring events
+            if ($isCalendarModule && !$wasRecurring && $calendarEvents->isEventRecurring($beanObject)) {
+                $calendarEvents->saveRecurringEvents($beanObject);
+            }
         }
 
         $fields['log_data'] = $historyData->getLog();
