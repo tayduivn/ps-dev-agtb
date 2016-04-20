@@ -5148,6 +5148,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
 
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
     'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
+    'LBL_TINYMCE_TARGET_SAME' => 'Same window',
+    'LBL_TINYMCE_TARGET_NEW' => 'New window',
 );
 
 $app_list_strings['activity_user_options'] = array (

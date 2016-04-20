@@ -140,6 +140,19 @@
             toolbar: 'code | bold italic underline strikethrough | bullist numlist | ' +
                      'alignleft aligncenter alignright alignjustify | forecolor backcolor | fontsizeselect',
 
+            // Sets the text of the Target element of the link plugin. To disable
+            // this completely, set target_list: false
+            target_list: [
+                {
+                    text: app.lang.getAppString('LBL_TINYMCE_TARGET_SAME'),
+                    value: ''
+                },
+                {
+                    text: app.lang.getAppString('LBL_TINYMCE_TARGET_NEW'),
+                    value: '_blank'
+                }
+            ],
+
             // Output options
             entity_encoding: 'raw',
 
