@@ -60,7 +60,7 @@
      */
     _updateEmailOptions: function(parentModel) {
         if (this.def.set_recipient_to_parent) {
-            this.addEmailOptions({to_addresses: [{bean: parentModel}]});
+            this.addEmailOptions({to: [{bean: parentModel}]});
         }
 
         if (this.def.set_related_to_parent) {

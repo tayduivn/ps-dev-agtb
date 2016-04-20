@@ -126,7 +126,12 @@
                 switch (fieldName) {
                     case 'related':
                         self._populateForModules(value);
-                        self.populateRelated(value);
+                        self._populateRelated(value);
+                        break;
+                    case 'to':
+                    case 'cc':
+                    case 'bcc':
+                        self.model.get(fieldName).add(value);
                         break;
                     default:
                         self.model.set(fieldName, value);
@@ -167,11 +172,9 @@
             contacts.fetch({
                 relate: true,
                 success: _.bind(function(data) {
-                    var toAddresses = _.map(data.models, function(model) {
-                        return {bean: model};
-                    }, this);
-
-                    this.model.set('to', toAddresses);
+                    if (data.models && data.models.length > 0) {
+                        this.model.get('to').add(data.models);
+                    }
                 }, this),
                 fields: ['id', 'full_name', 'email']
             });
@@ -183,9 +186,15 @@
      *
      * @param {Data.Bean} relatedModel
      */
-    populateRelated: function(relatedModel) {
+    _populateRelated: function(relatedModel) {
         var setParent = _.bind(function(model) {
-            var parentNameField = this.getField('parent_name');
+            var parentNameField;
+
+            if (this.disposed) {
+                return;
+            }
+
+            parentNameField = this.getField('parent_name');
             if (model.module && parentNameField.isAvailableParentType(model.module)) {
                 model.value = model.get('name');
                 parentNameField.setValue(model);

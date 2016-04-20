@@ -552,12 +552,12 @@
      * Retrieve link specific email options for launching the email client
      * Builds upon emailOptions on this
      *
-     * @param $link
+     * @param {jQuery} $link
      * @private
      */
     _retrieveEmailOptionsFromLink: function($link) {
         return {
-            to_addresses: [
+            to: [
                 {
                     email: $link.data('email-to'),
                     bean: this.emailOptions.related

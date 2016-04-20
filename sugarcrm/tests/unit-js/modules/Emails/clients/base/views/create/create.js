@@ -118,11 +118,11 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('prepopulate', function() {
-        var populateRelatedStub, modelSetStub, populateForModulesStub, flag;
+        var populateRelatedStub, modelSetStub, populateForModulesStub, flag, mockCollection;
 
         beforeEach(function() {
             flag = false;
-            populateRelatedStub = sandbox.stub(view, 'populateRelated', function() {
+            populateRelatedStub = sandbox.stub(view, '_populateRelated', function() {
                 flag = true;
             });
 
@@ -130,37 +130,31 @@ describe('Emails.Views.Create', function() {
                 flag = true;
             });
 
+            mockCollection = {add: sandbox.stub()};
+            view.model.set({to: mockCollection, cc: mockCollection, bcc: mockCollection});
+
             modelSetStub = sandbox.stub(view.model, 'set', function() {
                 flag = true;
             });
         });
 
-        it('Should trigger recipient add on context if to_addresses, cc, or bcc value is passed in.', function() {
-            runs(function() {
-                view.prepopulate({
-                    to: [{email: 'to@foo.com'}, {email: 'too@foo.com'}],
-                    cc: [{email: 'cc@foo.com'}],
-                    bcc: [{email: 'bcc@foo.com'}]
-                });
+        it('Should trigger recipient add on context if to, cc, or bcc value is passed in.', function() {
+            view.prepopulate({
+                to: [{email: 'to@foo.com'}, {email: 'too@foo.com'}],
+                cc: [{email: 'cc@foo.com'}],
+                bcc: [{email: 'bcc@foo.com'}]
             });
-
-            waitsFor(function() {
-                return flag;
-            }, 'model.set() should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(modelSetStub.callCount).toBe(3); // once for each recipient type passed in
-            });
+            expect(mockCollection.add.callCount).toBe(3); // once for each recipient type passed in
         });
 
-        it('should call populateRelated if related value passed', function() {
+        it('should call _populateRelated if related value passed', function() {
             runs(function() {
                 view.prepopulate({related: {id: '123'}});
             });
 
             waitsFor(function() {
                 return flag;
-            }, 'populateRelated() should have been called but timeout expired', 1000);
+            }, '_populateRelated() should have been called but timeout expired', 1000);
 
             runs(function() {
                 expect(populateRelatedStub.callCount).toBe(1);
@@ -183,7 +177,7 @@ describe('Emails.Views.Create', function() {
         });
     });
 
-    describe('populateRelated', function() {
+    describe('_populateRelated', function() {
         var relatedModel, fetchedModel, parentId, parentValue, inputValues, fetchedValues;
 
         beforeEach(function() {
@@ -220,52 +214,57 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should set the parent_name field with id and name on the relatedModel passed in', function() {
-            view.populateRelated(relatedModel);
+            view._populateRelated(relatedModel);
             expect(parentId).toEqual(inputValues.id);
             expect(parentValue).toEqual(inputValues.name);
         });
 
         it('should set the parent_name field with id and name on the fetched model when no name on the relatedModel passed in', function() {
             relatedModel.unset('name');
-            view.populateRelated(relatedModel);
+            view._populateRelated(relatedModel);
             expect(parentId).toEqual(fetchedValues.id);
             expect(parentValue).toEqual(fetchedValues.name);
         });
 
         it('should not set the parent_name field at all if no id on related Model', function() {
             relatedModel.unset('id');
-            view.populateRelated(relatedModel);
+            view._populateRelated(relatedModel);
             expect(parentId).toBeUndefined();
             expect(parentValue).toBeUndefined();
         });
     });
 
     describe('populateForCases', function() {
-        var flag,
+        var configStub,
+            caseSubjectMacro = '[CASE:%1]',
             relatedModel,
-            inputValues,
-            sandbox = sinon.sandbox.create(),
-            configStub,
-            caseSubjectMacro = '[CASE:%1]';
-
+            contacts;
 
         beforeEach(function() {
-            flag = false;
+            var relatedCollection;
+
             configStub = sandbox.stub(app.metadata, 'getConfig', function() {
                 return {
                     'inboundEmailCaseSubjectMacro': caseSubjectMacro
                 };
             });
 
-            inputValues = {
+            view.model.set('to', new app.data.createMixedBeanCollection());
+
+            relatedModel = app.data.createBean('Cases', {
                 id: '123',
                 case_number: '100',
                 name: 'My Case'
-            };
+            });
 
-            relatedModel = app.data.createBean('Cases', inputValues);
-            sandbox.stub(relatedModel, 'fetch', function(params) {
-                params.success(relatedModel);
+            relatedCollection = app.data.createBeanCollection('Contacts');
+            contacts = [];
+            sandbox.stub(relatedCollection, 'fetch', function(params) {
+                params.success({models: contacts});
+            });
+
+            sandbox.stub(relatedModel, 'getRelatedCollection', function() {
+                return relatedCollection;
             });
         });
 
@@ -274,39 +273,20 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should populate only the subject and when cases does not have any related contacts', function() {
-            var tmpModel = new Backbone.Model(),
-                relatedCollectionStub;
-
-            relatedModel.getRelatedCollection = function() {
-                return tmpModel;
-            };
-
-            relatedCollectionStub = sandbox.stub(tmpModel, 'fetch', function() {
-                flag = true;
-            });
-
-            runs(function() {
-                view._populateForCases(relatedModel);
-            });
-
-            waitsFor(function() {
-                return flag;
-            }, 'fetch() should have been called but timeout expired', 1000);
-
-            runs(function() {
-                expect(view.model.get('name')).toEqual('[CASE:100] My Case');
-                expect(relatedCollectionStub.callCount).toBe(1);
-            });
+            view._populateForCases(relatedModel);
+            expect(view.model.get('name')).toEqual('[CASE:100] My Case');
+            expect(view.model.get('to').length).toBe(0);
         });
 
         it('should populate both the subject and "to" field when cases has related contacts', function() {
-            var contact = app.data.createBean('Contacts'),
-                toAddresses = [{bean: contact}];
+            contacts = [
+                app.data.createBean('Contacts', {email: 'abc@foo.com'}),
+                app.data.createBean('Contacts', {email: 'def@foo.com'})
+            ];
 
-            view.model.set('to', toAddresses);
             view._populateForCases(relatedModel);
             expect(view.model.get('name')).toEqual('[CASE:100] My Case');
-            expect(view.model.get('to')).toEqual(toAddresses);
+            expect(view.model.get('to').length).toEqual(2);
         });
     });
 

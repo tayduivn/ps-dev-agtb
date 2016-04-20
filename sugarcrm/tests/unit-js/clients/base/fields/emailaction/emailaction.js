@@ -48,7 +48,7 @@ describe('Base.Field.Emailaction', function() {
 
     it('should initialize email options to have to addresses when set_recipient_to_parent set', function() {
         field = createField({set_recipient_to_parent: true});
-        expect(field.emailOptions.to_addresses).not.toBeUndefined();
+        expect(field.emailOptions.to).not.toBeUndefined();
     });
 
     it('should initialize email options to have related bean when set_related_to_parent set', function() {
@@ -63,11 +63,11 @@ describe('Base.Field.Emailaction', function() {
         parentModel.set('name', initName);
         field = createField({set_recipient_to_parent: true, set_related_to_parent: true});
         expect(field.emailOptions.related.get('name')).toEqual(initName);
-        expect(field.emailOptions.to_addresses[0].bean.get('name')).toEqual(initName);
+        expect(field.emailOptions.to[0].bean.get('name')).toEqual(initName);
 
         parentModel.set('name', changeName);
         expect(field.emailOptions.related.get('name')).toEqual(changeName);
-        expect(field.emailOptions.to_addresses[0].bean.get('name')).toEqual(changeName);
+        expect(field.emailOptions.to[0].bean.get('name')).toEqual(changeName);
     });
 
     it('should render after updating email options if the parent model changes', function() {

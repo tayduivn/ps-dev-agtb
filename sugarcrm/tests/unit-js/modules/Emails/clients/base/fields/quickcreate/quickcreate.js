@@ -145,7 +145,7 @@ describe("Emails.Fields.Quickcreate", function() {
             result = field._retrieveEmailOptionsFromLink();
 
             expect(result).toEqual({
-                to_addresses: [{bean: bean}],
+                to: [{bean: bean}],
                 related: bean
             });
         });
@@ -165,7 +165,7 @@ describe("Emails.Fields.Quickcreate", function() {
             result = field._retrieveEmailOptionsFromLink();
 
             expect(result).toEqual({
-                to_addresses: [{bean: bean}],
+                to: [{bean: bean}],
                 related: bean
             });
         });

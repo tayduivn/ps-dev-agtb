@@ -39,7 +39,7 @@
                 var module = 'Emails';
 
                 //clean the recipient fields before handing off to email compose
-                _.each(['to_addresses', 'cc_addresses', 'bcc_addresses'], function(recipientType) {
+                _.each(['to', 'cc', 'bcc'], function(recipientType) {
                     if (options[recipientType]) {
                         options[recipientType] = this._retrieveValidRecipients(options[recipientType]);
                     }
@@ -70,26 +70,28 @@
              * Strips out any recipients that don't have an email address
              * Picks out primary or first valid address if only bean is specified
              *
-             * @param recipients
-             * @returns {Array}
+             * @param {Array|Object} recipients
+             * @return {Array}
              * @private
              */
             _retrieveValidRecipients: function(recipients) {
-                var validRecipients = [],
-                    email;
+                var validRecipients = [];
 
                 recipients = _.isArray(recipients) ? recipients : [recipients];
                 _.each(recipients, function(recipient) {
-                    if (recipient.bean && _.isUndefined(recipient.email)) {
-                        //attempt to pull primary (if valid) or first valid email on bean
-                        email = this._retrieveEmailAddressFromModel(recipient.bean);
+                    var validRecipient, module;
 
-                        //only push the recipient if the bean has a valid email to send to
-                        if (email) {
-                            validRecipients.push(_.extend({email: email}, recipient));
-                        }
+                    if (recipient.bean) {
+                        validRecipient = recipient.bean.clone();
+                        validRecipient.set('email', recipient.email ||
+                            app.utils.getPrimaryEmailAddress(recipient.bean));
                     } else {
-                        validRecipients.push(recipient);
+                        module = recipient.module || 'EmailAddresses';
+                        validRecipient = app.data.createBean(module, recipient);
+                    }
+                    //only push the recipient if we have a valid email to send to
+                    if (validRecipient.get('email')) {
+                        validRecipients.push(validRecipient);
                     }
                 }, this);
 
@@ -159,19 +161,19 @@
              * Build a mailto: url using the given options
              *
              * @param {Object} [options] Optional email field values to pass to the email client
-             *   Accepted attributes: to_addresses (array), cc_addresses (array), bcc_addresses (array), subject, html_body
+             *   Accepted attributes: to (array), cc (array), bcc (array), subject, html_body
              */
             _buildMailToURL: function(options) {
                 var mailToUrl = 'mailto:',
                     formattedOptions = {},
                     queryParams = [];
 
-                if (options.to_addresses) {
-                    mailToUrl += this._formatRecipientsToString(options.to_addresses);
+                if (options.to) {
+                    mailToUrl += this._formatRecipientsToString(options.to);
                 }
 
-                formattedOptions.cc = this._formatRecipientsToString(options.cc_addresses);
-                formattedOptions.bcc = this._formatRecipientsToString(options.bcc_addresses);
+                formattedOptions.cc = this._formatRecipientsToString(options.cc);
+                formattedOptions.bcc = this._formatRecipientsToString(options.bcc);
                 formattedOptions.subject = options.subject;
                 formattedOptions.body = options.text_body;
 
@@ -217,7 +219,7 @@
                         //recipient could be an object with bean that may contain an email address
                         } else if (recipient.bean) {
                             //attempt to pull primary (if valid) or first valid email on bean
-                            email = this._retrieveEmailAddressFromModel(recipient.bean);
+                            email = app.utils.getPrimaryEmailAddress(recipient.bean);
                             if (email) {
                                 emails.push(email);
                             }
@@ -228,36 +230,6 @@
                 }
 
                 return emails.join(emailDelim);
-            },
-
-            /**
-             * Pick an email address off the model
-             * Will attempt to grab the primary first
-             * Will grab first valid email address in the list if primary is opt-out or invalid
-             *
-             * @param model
-             * @returns {string}
-             * @private
-             */
-            _retrieveEmailAddressFromModel: function(model) {
-                var emails = model.get('email');
-                if (_.isUndefined(emails)) {
-                    // need to include fallback, since in a 6.7 where a module is modified using Studio, we have 'email1' in custom files
-                    return model.get('email1');
-                }
-                var email,
-                    isValidEmail = function(email) {
-                        return (!_.isUndefined(email) &&
-                            !_.isEmpty(email.email_address) &&
-                            email.opt_out !== true &&
-                            email.invalid_email !== true);
-                    },
-                    isValidPrimaryEmail = function(email) {
-                        return isValidEmail(email) && email.primary_address;
-                    };
-
-                email = _.find(emails, isValidPrimaryEmail) || _.find(emails, isValidEmail) || {};
-                return email.email_address;
             },
 
             /**

@@ -97,9 +97,9 @@
             bodyHtml = this.shareTplBodyHtml(shareParams);
 
         this.addEmailOptions({
-            subject: subject,
-            html_body: bodyHtml || body,
-            text_body: body
+            name: subject,
+            description_html: bodyHtml || body,
+            description: body
         });
     },
 

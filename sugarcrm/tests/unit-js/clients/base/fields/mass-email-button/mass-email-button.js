@@ -51,8 +51,29 @@ describe('Base.Fields.MassEmailButton', function() {
     it('should add recipients to mailto for external mail client', function() {
         var email1 = 'foo1@bar.com',
             email2 = 'foo2@bar.com',
-            bean1 = app.data.createBean(module, {email: [{email_address: email1}]}),
-            bean2 = app.data.createBean(module, {email: [{email_address: email2}]});
+            bean1,
+            bean2;
+
+        bean1 = app.data.createBean(module, {
+            email: [
+                {
+                    email_address: email1,
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }
+            ]
+        });
+        bean2 = app.data.createBean(module, {
+            email: [
+                {
+                    email_address: email2,
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }
+            ]
+        });
 
         sandbox.stub(field, 'useSugarEmailClient', function() {
             return false;
@@ -65,9 +86,30 @@ describe('Base.Fields.MassEmailButton', function() {
     it('should add recipients to mailto for internal mail client', function() {
         var email1 = 'foo1@bar.com',
             email2 = 'foo2@bar.com',
-            bean1 = app.data.createBean(module, {email: [{email_address: email1}]}),
-            bean2 = app.data.createBean(module, {email: [{email_address: email2}]}),
+            bean1,
+            bean2,
             drawerOpenOptions;
+
+        bean1 = app.data.createBean(module, {
+            email: [
+                {
+                    email_address: email1,
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }
+            ]
+        });
+        bean2 = app.data.createBean(module, {
+            email: [
+                {
+                    email_address: email2,
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }
+            ]
+        });
 
         app.drawer = {
             open: sandbox.stub()
@@ -79,10 +121,9 @@ describe('Base.Fields.MassEmailButton', function() {
         massCollection.add(bean2);
         field.$('a').click();
         drawerOpenOptions = app.drawer.open.lastCall.args[0];
-        expect(drawerOpenOptions.context.prepopulate.to_addresses).toEqual([
-            {bean: bean1, email: 'foo1@bar.com'},
-            {bean: bean2, email: 'foo2@bar.com'}
-        ]);
+        expect(drawerOpenOptions.context.prepopulate.to.length).toEqual(2);
+        expect(drawerOpenOptions.context.prepopulate.to[0].get('email')).toEqual(email1);
+        expect(drawerOpenOptions.context.prepopulate.to[1].get('email')).toEqual(email2);
         app.drawer = null;
     });
 });

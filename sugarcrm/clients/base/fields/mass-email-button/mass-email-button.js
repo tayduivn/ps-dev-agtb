@@ -59,18 +59,18 @@
 
     /**
      * Map mass collection models to the appropriate format
-     * required to prepopulate the to_addresses on email compose
+     * required to prepopulate the to on email compose
      *
      * @return {Object} options to prepopulate on the email compose
      * @private
      */
     _retrieveEmailOptionsFromLink: function() {
         var massCollection = this.context.get('mass_collection'),
-            toAddresses = _.map(massCollection.models, function(model) {
+            to = _.map(massCollection.models, function(model) {
                 return {bean: model};
             }, this);
         return {
-            to_addresses: toAddresses
+            to: to
         };
     }
 })

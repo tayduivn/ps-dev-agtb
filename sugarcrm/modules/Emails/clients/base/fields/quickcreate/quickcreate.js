@@ -69,7 +69,7 @@
      * In this case we are using it to retrieve the parent model to make this email compose launching
      * context aware - prepopulating the to address with the given model and the parent relate field
      *
-     * @returns {Object}
+     * @return {Object}
      * @private
      */
     _retrieveEmailOptionsFromLink: function() {
@@ -82,7 +82,7 @@
             // if parentModel does not have email, it will be ignored as a To recipient
             // if parentModel's module is not an available module to relate, it will also be ignored
             emailOptions = {
-                to_addresses: [{bean: parentModel}],
+                to: [{bean: parentModel}],
                 related: parentModel
             };
         }

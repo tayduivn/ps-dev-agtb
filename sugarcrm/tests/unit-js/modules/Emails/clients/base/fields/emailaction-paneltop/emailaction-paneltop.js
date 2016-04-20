@@ -51,12 +51,12 @@ describe('Emails.Fields.EmailactionPaneltop', function() {
                 var actual;
 
                 field.emailOptions = {
-                    to_addresses: [bean.toJSON()],
+                    to: [bean.toJSON()],
                     related: bean
                 };
 
                 actual = field._retrieveEmailOptions($el);
-                expect(actual.to_addresses).toBeDefined();
+                expect(actual.to).toBeDefined();
                 expect(actual.related).toBeDefined();
             });
 

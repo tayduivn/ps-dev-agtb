@@ -42,9 +42,9 @@ describe('Base.Field.Shareaction', function() {
 
     it('should set up email options with subject, html body, and text body', function() {
         field = SugarTest.createField('base', 'shareaction', 'shareaction', 'edit');
-        expect(field.emailOptions.subject).toContain('TPL_RECORD_SHARE_SUBJECT');
-        expect(field.emailOptions.html_body).toContain('TPL_RECORD_SHARE_BODY');
-        expect(field.emailOptions.text_body).toContain('TPL_RECORD_SHARE_BODY');
+        expect(field.emailOptions.name).toContain('TPL_RECORD_SHARE_SUBJECT');
+        expect(field.emailOptions.description_html).toContain('TPL_RECORD_SHARE_BODY');
+        expect(field.emailOptions.description).toContain('TPL_RECORD_SHARE_BODY');
     });
 
     it('should retrieve the appropriate name for the share parameters', function() {
