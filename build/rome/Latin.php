@@ -70,13 +70,14 @@ class Latin
                         if (strpos($fileInfo->getFilename(), $lang . '.') !== false) {
                             $path = $fileInfo->getPathname();
                             $path = realpath($path);
-                            $path = str_replace($this->baseDir . '/', '', $path);
+                            $path = str_replace($this->baseDir . DIRECTORY_SEPARATOR, '', $path);
                             $this->rome->setOnlyBuild($flav);
                             $this->rome->setStartPath($this->startPath);
-                            $lpath = str_replace("$lang.", 'en_us.', $this->rome->cleanPath("{$this->baseDir}/$path"));
+                            $cleanedPath = $this->rome->cleanPath($this->baseDir . DIRECTORY_SEPARATOR . $path);
+                            $lpath = str_replace("$lang.", 'en_us.', $cleanedPath);
                             $en_usPath = "{$this->rome->buildPath}/$flav/$lpath";
                             if (file_exists($en_usPath)) {
-                                $this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
+                                $this->rome->buildFile($this->baseDir . DIRECTORY_SEPARATOR . $path, $this->startPath);
                             }
                         }
                         if (!empty($sugar_config['languages'][$lang])) {
