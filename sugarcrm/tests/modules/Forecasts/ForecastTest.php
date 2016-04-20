@@ -12,7 +12,7 @@
  */
 
 /**
- * @covers ForecastWorksheets
+ * @covers Forecast
  */
 class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 {
