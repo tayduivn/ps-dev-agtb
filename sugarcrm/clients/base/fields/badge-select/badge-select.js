@@ -80,13 +80,9 @@
      * @return {string} the formatted value based on view name.
      */
     format: function(value) {
-        if (!value || this.action === 'edit') {
-            return value;
-        }
-
         this.statusClass = this.styleLabel(value);
 
-        return this.items[value] || value;
+        return value;
     },
 
     /**
