@@ -13,5 +13,7 @@
     'include/javascript/sugar7/socket.js',
     'clients/base/views/notifications/notifications.js',
     'modules/NotificationCenter/clients/**/*.js',
-    'modules/CalDav/clients/**/*.js'
+    'modules/CalDav/clients/**/*.js',
+    'modules/TriggerServer/clients/**/*.js',
+    'modules/WebSockets/clients/**/*.js'
 ]

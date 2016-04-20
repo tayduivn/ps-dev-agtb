@@ -30,7 +30,7 @@ class CarrierSugarHook extends SugarApi
      */
     public function hook(\Notifications $bean, $event, $arguments)
     {
-        if (!$arguments['isUpdate']) {
+        if (!$arguments['isUpdate'] || isset($arguments['dataChanges']['is_read'])) {
             $this->send($bean);
         }
     }

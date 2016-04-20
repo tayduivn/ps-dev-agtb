@@ -358,7 +358,14 @@
         if (this.collection) {
             while (this._buffer.length) {
                 var arr = this._buffer.shift();
-                this.collection.add(app.data.createBean(arr._module, arr));
+                if (arr.is_read) {
+                    var model = this.collection.get(arr.id);
+                    if (model) {
+                        this.collection.remove(model);
+                    }
+                } else {
+                    this.collection.add(app.data.createBean(arr._module, arr));
+                }
             }
             this.reRender();
         }

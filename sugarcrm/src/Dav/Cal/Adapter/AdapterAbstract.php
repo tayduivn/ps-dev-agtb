@@ -90,11 +90,28 @@ abstract class AdapterAbstract implements AdapterInterface
 
         switch ($action) {
             case 'override' :
-                $changedFields = $this->getBeanDataAsArray($bean);
-                if (!$changedFields['repeat_type'][0]) {
+                if ($changedFields) {
+                    $changedFields = $this->getFieldsDiff($changedFields, false);
+                } else {
+                    $changedFields = $this->getBeanDataAsArray($bean);
+                }
+
+                if (isset($changedFields['repeat_type']) && !$changedFields['repeat_type'][0]) {
                     $changedFields['repeat_interval'][0] = null;
                 }
-                $changedInvitees = $participantsHelper->getInviteesDiff(array(), \CalendarUtils::getInvitees($bean));
+
+                if ($changedInvitees) {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        $changedInvitees,
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                } else {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        array(),
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                }
+
                 break;
             case 'update' :
                 $changedFields = $this->getFieldsDiff($changedFields);
@@ -340,28 +357,135 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
-     * @param array|false $previousData
+     * Create GUID.
+     * Need to mock result of create_guid in UTs.
+     * @return string
+     */
+    protected function createGroupId()
+    {
+        return create_guid();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
-        $importGroupId = create_guid();
+        $importGroupId = $this->createGroupId();
+        $result = $parentChangedFields = $parentInvites = array();
         $action = 'override';
         if ($previousData) {
             $action = array_shift($previousData);
-            if ($previousData) {
-                $diffStructure = $collection->getDiffStructure(current($previousData));
-                array_walk($diffStructure, function (&$item) use ($importGroupId) {
-                    array_push($item[0], $importGroupId);
-                });
-                return $diffStructure;
+            $previousData = current($previousData);
+        }
+
+        if (!$previousData) {
+            $previousData = '';
+        }
+
+        $diffStructure = $collection->getDiffStructure($previousData);
+        $parentRecurrenceId = $collection->getParent()->getStartDate();
+        $parentAction = null;
+        if (isset($diffStructure['parent'])) {
+            list($parentAction, $parentChangedFields, $parentInvites) = $diffStructure['parent'];
+        }
+
+        $customizeParent = array();
+        if ($parentRecurrenceId && isset($diffStructure['children'][$parentRecurrenceId->asDb()])) {
+            $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
+        }
+
+        $rrule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
+
+        // we need independent rrule update only when we change event
+        if ($rrule && $previousData) {
+            $result[] = array(
+                array(
+                    $parentAction ?: 'update',
+                    $collection->id,
+                    array(),
+                    $collection->getParent()->getStartDate()->asDb(),
+                    null,
+                    $importGroupId,
+                ),
+                $rrule,
+                array(),
+            );
+        }
+
+        if ($parentAction || $customizeParent) {
+            $result[] = array(
+                array(
+                    $parentAction ?: 'update',
+                    $collection->id,
+                    array(),
+                    $collection->getParent()->getStartDate()->asDb(),
+                    null,
+                    $importGroupId,
+                ),
+                array_merge(
+                    isset($diffStructure['timezone']) ? array('timezone' => $diffStructure['timezone']) : array(),
+                    // we need rrule with all fields only on creation
+                    (!$previousData && $rrule) ? $rrule : array(),
+                    $parentChangedFields,
+                    isset($customizeParent[1]) ? $customizeParent[1] : array()
+                ),
+                array_merge(
+                    $parentInvites,
+                    isset($customizeParent[2]) ? $customizeParent[2] : array()
+                ),
+            );
+        }
+
+        $recurrenceIds = array_values($collection->getAllChildrenRecurrenceIds());
+        foreach ($recurrenceIds as $position => $recurrenceId) {
+            $childEvent = $collection->getChild($recurrenceId);
+
+            if ($position === 0) {
+                continue;
+            }
+
+            $childChangeFields = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
+                ? $collection->getEventDiff($childEvent, null)
+                : array();
+            $childChangeInvitees = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
+                ? $collection->getParticipantsDiff($childEvent, null)
+                : array();
+
+            if (isset($diffStructure['children'][$recurrenceId->asDb()])) {
+                $changeChild = $diffStructure['children'][$recurrenceId->asDb()];
+                $result[] = array(
+                    array(
+                        $changeChild[0],
+                        $collection->id,
+                        $collection->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        $position,
+                        $importGroupId,
+                    ),
+                    array_merge($changeChild[1], $childChangeFields),
+                    array_merge($changeChild[2], $childChangeInvitees),
+                );
+            } elseif ($parentAction || $rrule) {
+                $result[] = array(
+                    array(
+                        $rrule ? 'override' : 'update',
+                        $collection->id,
+                        $collection->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        $position,
+                        $importGroupId,
+                    ),
+                    array_merge($parentChangedFields, $childChangeFields),
+                    array_merge($parentInvites, $childChangeInvitees),
+                );
             }
         }
+
         if ($action == 'delete') {
             $sugarChildren = $collection->getSugarChildrenOrder();
             if ($sugarChildren) {
                 $recurrenceIds = $collection->getAllChildrenRecurrenceIds();
-                $result = array();
                 foreach ($sugarChildren as $position => $sugarId) {
                     $recurrenceId = array_shift($recurrenceIds);
                     $result[] = array(
@@ -377,29 +501,22 @@ abstract class AdapterAbstract implements AdapterInterface
                         array(),
                     );
                 }
-                return $result;
             } else {
-                return array(
+                $result[] =  array(
                     array(
-                        array(
-                            $action,
-                            $collection->id,
-                            null,
-                            null,
-                            null,
-                            $importGroupId,
-                        ),
+                        $action,
+                        $collection->id,
                         array(),
-                        array(),
+                        null,
+                        null,
+                        $importGroupId,
                     ),
+                    array(),
+                    array(),
                 );
             }
         }
-        $diffStructure = $collection->getDiffStructure('');
-        array_walk($diffStructure, function (&$item) use ($importGroupId) {
-            array_push($item[0], $importGroupId);
-        });
-        return $diffStructure;
+        return $result;
     }
 
     /**
@@ -582,7 +699,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if (isset($diff[1])) {
                 continue;
             }
-            if ($diff[0] === null) {
+            if (!$diff[0]) {
                 unset($importFields[$field]);
             }
         }
@@ -687,7 +804,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if (count($diff) > 1) {
                 continue;
             }
-            if ($diff[0] === null) {
+            if (!$diff[0]) {
                 unset($exportFields[$field]);
             }
         }
@@ -937,14 +1054,14 @@ abstract class AdapterAbstract implements AdapterInterface
      * @param array $changedFields
      * @return mixed
      */
-    protected function getFieldsDiff($changedFields)
+    protected function getFieldsDiff($changedFields, $addBefore = true)
     {
         $dataDiff = array();
         foreach ($changedFields as $field => $fieldValues) {
             $dataDiff[$field] = array(
                 0 => $fieldValues['after'],
             );
-            if (array_key_exists('before', $fieldValues)) {
+            if ($addBefore && array_key_exists('before', $fieldValues)) {
                 $dataDiff[$field][1] = $fieldValues['before'];
             }
         }

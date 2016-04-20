@@ -1,5 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -36,8 +37,22 @@ function checkWSConfiguration($silent = false)
     global $mod_strings;
     $errors = array();
 
-    $serverUrl = (isset($_SESSION['websockets_server_url'])) ? trim($_SESSION['websockets_server_url']) : ''; 
-    $clientUrl = (isset($_SESSION['websockets_client_url'])) ? trim($_SESSION['websockets_client_url']) : '';
+    if (!empty($_SESSION['websockets_server_protocol']) && !empty($_SESSION['websockets_server_port'])
+        && !empty($_SESSION['websockets_server_host'])) {
+        $serverUrl = $_SESSION['websockets_server_url']
+            = $_SESSION['websockets_server_protocol'] . '://' . trim($_SESSION['websockets_server_host']) . ':'
+            . $_SESSION['websockets_server_port'];
+    } else {
+        $serverUrl = $_SESSION['websockets_server_url'] = '';
+    }
+    if (!empty($_SESSION['websockets_client_protocol']) && !empty($_SESSION['websockets_client_port'])
+        && !empty($_SESSION['websockets_client_host'])) {
+        $clientUrl = $_SESSION['websockets_client_url']
+            = $_SESSION['websockets_client_protocol'] . '://' . trim($_SESSION['websockets_client_host']) . ':'
+            . $_SESSION['websockets_client_port'];
+    } else {
+        $clientUrl = $_SESSION['websockets_client_url'] = '';
+    }
 
     if (!empty($serverUrl) || !empty($clientUrl)) {
         if (empty($clientUrl)) {
@@ -92,7 +107,14 @@ function checkTriggerServerConfiguration($silent = false)
     global $mod_strings;
     $errors = array();
 
-    $triggerServerUrl = (isset($_SESSION['trigger_server_url'])) ? trim($_SESSION['trigger_server_url']) : '';
+    if (!empty($_SESSION['trigger_server_protocol']) && !empty($_SESSION['trigger_server_host'])
+        && !empty($_SESSION['trigger_server_port'])) {
+        $triggerServerUrl = $_SESSION['trigger_server_url']
+            = $_SESSION['trigger_server_protocol'] . '://' . trim($_SESSION['trigger_server_host']) . ':'
+            . $_SESSION['trigger_server_port'];
+    } else {
+        $triggerServerUrl = $_SESSION['trigger_server_url'] = '';
+    }
 
     if(!empty($triggerServerUrl)) {
         if (!filter_var($triggerServerUrl, FILTER_VALIDATE_URL)) {
@@ -355,13 +377,41 @@ function copyInputsIntoSession(){
             if (isset($_REQUEST['websockets_client_url'])) {
                 $_SESSION['websockets_client_url'] = $_REQUEST['websockets_client_url'];
             }
+            if (isset($_REQUEST['websockets_client_protocol'])) {
+                $_SESSION['websockets_client_protocol'] = $_REQUEST['websockets_client_protocol'];
+            }
+            if (isset($_REQUEST['websockets_client_host'])) {
+                $_SESSION['websockets_client_host'] = $_REQUEST['websockets_client_host'];
+            }
+            if (isset($_REQUEST['websockets_client_port'])) {
+                $_SESSION['websockets_client_port'] = $_REQUEST['websockets_client_port'];
+            }
+
             if (isset($_REQUEST['websockets_server_url'])) {
                 $_SESSION['websockets_server_url'] = $_REQUEST['websockets_server_url'];
+            }
+            if (isset($_REQUEST['websockets_server_protocol'])) {
+                $_SESSION['websockets_server_protocol'] = $_REQUEST['websockets_server_protocol'];
+            }
+            if (isset($_REQUEST['websockets_server_host'])) {
+                $_SESSION['websockets_server_host'] = $_REQUEST['websockets_server_host'];
+            }
+            if (isset($_REQUEST['websockets_server_port'])) {
+                $_SESSION['websockets_server_port'] = $_REQUEST['websockets_server_port'];
             }
 
             //Trigger server config
             if (isset($_REQUEST['trigger_server_url'])) {
                 $_SESSION['trigger_server_url'] = $_REQUEST['trigger_server_url'];
+            }
+            if (isset($_REQUEST['trigger_server_protocol'])) {
+                $_SESSION['trigger_server_protocol'] = $_REQUEST['trigger_server_protocol'];
+            }
+            if (isset($_REQUEST['trigger_server_host'])) {
+                $_SESSION['trigger_server_host'] = $_REQUEST['trigger_server_host'];
+            }
+            if (isset($_REQUEST['trigger_server_port'])) {
+                $_SESSION['trigger_server_port'] = $_REQUEST['trigger_server_port'];
             }
 
             //FTS Support

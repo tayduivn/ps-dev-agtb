@@ -123,21 +123,12 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'update',
-                            null,
+                            array('title' => array('Custom Event 1', 'Custom Event')),
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
                         ),
-                        array(
-                            'title' => array(
-                                'Custom Event 1',
-                                'Custom Event',
-                            ),
-                        ),
-                        array(),
                     ),
                 ),
             ),
@@ -227,51 +218,19 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
-                            'update',
-                            null,
-                            array(),
-                            '2016-01-12 16:00:00',
-                            1,
-                        ),
-                        array(
-                            'title' => array(
-                                'Custom Event',
-                                'Custom Event 1',
-                            ),
-                        ),
-                        array(),
-                    ),
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'restore',
-                            null,
+                            array(
+                                'title' => array('Custom Event'),
+                                'description' => array(null),
+                                'location' => array(null),
+                                'status' => array(null),
+                                'date_start' => array('2016-01-12 16:00:00'),
+                                'date_end' => array('2016-01-12 17:00:00'),
+                            ),
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
                         ),
-                        array(
-                            'title' => array(
-                                'Custom Event',
-                            ),
-                            'description' => array(
-                                null,
-                            ),
-                            'location' => array(
-                                null,
-                            ),
-                            'status' => array(
-                                null,
-                            ),
-                            'date_start' => array(
-                                '2016-01-12 16:00:00',
-                            ),
-                            'date_end' => array(
-                                '2016-01-12 17:00:00',
-                            ),
-                        ),
-                        array(),
                     ),
                 ),
             ),
@@ -350,16 +309,12 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'delete',
-                            null,
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
+                            array(),
                         ),
-                        array(),
-                        array(),
                     ),
                 ),
             ),
@@ -438,65 +393,19 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'restore',
-                            null,
+                            array(
+                                'title' => array('Custom Event'),
+                                'description' => array(null),
+                                'location' => array(null),
+                                'status' => array(null),
+                                'date_start' => array('2016-01-12 16:00:00'),
+                                'date_end' => array('2016-01-12 17:00:00'),
+                            ),
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
                         ),
-                        array(
-                            'title' => array(
-                                'Custom Event',
-                            ),
-                            'description' => array(
-                                null,
-                            ),
-                            'location' => array(
-                                null,
-                            ),
-                            'status' => array(
-                                null,
-                            ),
-                            'date_start' => array(
-                                '2016-01-12 16:00:00',
-                            ),
-                            'date_end' => array(
-                                '2016-01-12 17:00:00',
-                            ),
-                        ),
-                        array(),
-                    ),
-                    array(
-                        array(
-                            'restore',
-                            null,
-                            array(),
-                            '2016-01-12 16:00:00',
-                            1,
-                        ),
-                        array(
-                            'title' => array(
-                                'Custom Event',
-                            ),
-                            'description' => array(
-                                null,
-                            ),
-                            'location' => array(
-                                null,
-                            ),
-                            'status' => array(
-                                null,
-                            ),
-                            'date_start' => array(
-                                '2016-01-12 16:00:00',
-                            ),
-                            'date_end' => array(
-                                '2016-01-12 17:00:00',
-                            ),
-                        ),
-                        array(),
                     ),
                 ),
             ),
@@ -587,16 +496,12 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'delete',
-                            null,
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
+                            array(),
                         ),
-                        array(),
-                        array(),
                     ),
                 ),
             ),
@@ -687,35 +592,19 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     END:VCALENDAR
                 ',
                 'expected' => array(
-                    array(
-                        array(
+                    'children' => array(
+                        '2016-01-12 16:00:00' => array(
                             'restore',
-                            null,
+                            array(
+                                'title' => array('Custom Event 1'),
+                                'description' => array(null),
+                                'location' => array(null),
+                                'status' => array(null),
+                                'date_start' => array('2016-01-12 16:00:00'),
+                                'date_end' => array('2016-01-12 17:00:00'),
+                            ),
                             array(),
-                            '2016-01-12 16:00:00',
-                            1,
                         ),
-                        array(
-                            'title' => array(
-                                'Custom Event 1',
-                            ),
-                            'description' => array(
-                                null,
-                            ),
-                            'location' => array(
-                                null,
-                            ),
-                            'status' => array(
-                                null,
-                            ),
-                            'date_start' => array(
-                                '2016-01-12 16:00:00',
-                            ),
-                            'date_end' => array(
-                                '2016-01-12 17:00:00',
-                            ),
-                        ),
-                        array(),
                     ),
                 ),
             ),

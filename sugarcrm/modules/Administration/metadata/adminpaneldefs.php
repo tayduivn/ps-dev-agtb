@@ -110,8 +110,8 @@ if(SugarOAuthServer::enabled()) {
 }
 
 if (0) { // CRYS-1567-fix
-    $admin_option_defs['Administration']['websockets'] = array('Administration', 'LBL_WEB_SOCKET_CONFIGURATION', 'LBL_WEB_SOCKET_CONFIGURATION_DESC', './index.php?module=Administration&action=websockets');
-    $admin_option_defs['Administration']['trigger_server'] = array('Administration', 'LBL_TRIGGER_SERVER_CONFIGURATION', 'LBL_TRIGGER_SERVER_CONFIGURATION_DESC', './index.php?module=Administration&action=TriggerServer');
+    $admin_option_defs['Administration']['websockets'] = array('Administration', 'LBL_WEB_SOCKET_CONFIGURATION', 'LBL_WEB_SOCKET_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("WebSockets/config", {trigger: true});');
+    $admin_option_defs['Administration']['triggerserver'] = array('Administration', 'LBL_TRIGGER_SERVER_CONFIGURATION', 'LBL_TRIGGER_SERVER_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("TriggerServer/config", {trigger: true});');
 }
 $admin_option_defs['Notifications']['config-default'] = array('Administration', 'LBL_NOTIFICATIONS_CONFIGURATION', 'LBL_NOTIFICATIONS_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("NotificationCenter/config/default", {trigger: true});');
 
