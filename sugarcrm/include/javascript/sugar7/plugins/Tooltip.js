@@ -28,8 +28,15 @@
             /**
              * Initialize tooltips on render and destroy tooltip before render for views and fields.
              * Initialize tooltips on initialize for layouts.
+             *
+             * @deprecated `Tooltip` plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
-            onAttach: $.noop,
+            onAttach: function() {
+                app.logger.warn('Tooltip#onAttach: The `Tooltip` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+            },
 
             /**
              * Destroy tooltips on dispose.
@@ -38,25 +45,46 @@
 
             /**
              * Create all tooltips in this component.
+             *
+             * @deprecated `Tooltip` plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
             initializeAllPluginTooltips: function() {
+                app.logger.warn('Tooltip#initializeAllPluginTooltips: The `Tooltip` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 this.removePluginTooltips();
                 this.addPluginTooltips();
             },
 
             /**
              * Destroy all tooltips that have been created in this component.
+             *
+             * @deprecated `Tooltip` plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
             destroyAllPluginTooltips: function() {
+                app.logger.warn('Tooltip#destroyAllPluginTooltips: The `Tooltip` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 this.removePluginTooltips();
                 this._$pluginTooltips = null;
             },
 
             /**
              * Create tooltips within a given element.
+             *
+             * @deprecated `Tooltip` plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              * @param {jQuery} $element (optional)
              */
             addPluginTooltips: function($element) {
+                app.logger.warn('Tooltip#addPluginTooltips: The `Tooltip` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 var $tooltips = this._getPluginTooltips($element);
                 if ($tooltips.length > 0) {
                     this._$pluginTooltips = (this._$pluginTooltips || $()).add(app.utils.tooltip.initialize($tooltips));
@@ -76,9 +104,16 @@
 
             /**
              * Destroy tooltips within a given element.
+             *
+             * @deprecated `Tooltip` plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              * @param {jQuery} $element (optional)
              */
             removePluginTooltips: function($element) {
+                app.logger.warn('Tooltip#removePluginTooltips: The `Tooltip` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 var $tooltips;
                 if ($element) {
                     $tooltips = this._getPluginTooltips($element);

@@ -20,18 +20,32 @@
 
             /**
              * Initialize tooltips on render and destroy tooltip before render.
+             *
+             * @deprecated EllipsisInline plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
-            onAttach: $.noop,
+            onAttach: function() {
+                app.logger.warn('EllipsisInline#onAttach: The `EllipsisInline` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+            },
 
             /**
-             * Destory all tooltips on dispose.
+             * Destroy all tooltips on dispose.
              */
             onDetach: $.noop,
 
             /**
              * Create tooltips for all elements that have `ellipsis_inline` class.
+             *
+             * @deprecated EllipsisInline plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
             initializeEllipsisTooltips: function() {
+                app.logger.warn('EllipsisInline#initializeEllipsisTooltips: The `EllipsisInline` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 var self = this;
                 if (this._$ellipsisTooltips) {
                     app.utils.tooltip.destroy(this._$ellipsisTooltips);
@@ -44,8 +58,15 @@
 
             /**
              * Destroy all tooltips that have been created.
+             *
+             * @deprecated EllipsisInline plugin has been deprecated since 7.8.0
+             *   and will be removed in 7.9.0.
              */
             destroyEllipsisTooltips: function() {
+                app.logger.warn('EllipsisInline#destroyEllipsisTooltips: The `EllipsisInline` plugin has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0. Please remove this plugin from the ' +
+                    'following component: ' + this.toString());
+
                 if (this._$ellipsisTooltips) {
                     app.utils.tooltip.destroy(this._$ellipsisTooltips);
                 }
