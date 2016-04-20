@@ -31,6 +31,34 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
     public $getLastResponseCallCount = 0;
 
+    /** @var \Sugarcrm\Sugarcrm\Socket\HttpHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $httpHelper;
+
+    /** @var Client|\PHPUnit_Framework_MockObject_MockObject */
+    protected $client;
+
+    /** @var \SugarConfig|\PHPUnit_Framework_MockObject_MockObject */
+    protected $config;
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->httpHelper = $this->getMock('Sugarcrm\Sugarcrm\Socket\HttpHelper');
+
+        $this->client = $this->getMock(
+            'Sugarcrm\Sugarcrm\Socket\Client',
+            array('getHttpHelper', 'getSugarConfig')
+        );
+        $this->config = $this->getMock('SugarConfig');
+
+        $this->client->method('getHttpHelper')->willReturn($this->httpHelper);
+        $this->client->method('getSugarConfig')->willReturn($this->config);
+    }
+
     /**
      * Data provider for testRecipient().
      *
@@ -423,11 +451,6 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
                 return false;
             });
 
-//        $httpHelper->method('getLastResponse')->willReturnMap(array(
-//            array($balancerResponse),
-//            array('invalid response data')
-//        ));
-
         /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
         $client = $this->getMock('Sugarcrm\Sugarcrm\Socket\Client', array('getHttpHelper'));
         $client->expects($this->once())->method('getHttpHelper')->willReturn($httpHelper);
@@ -677,7 +700,6 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $client->send($message);
     }
-
 
     /**
      * Tests getInstance() factory method.
@@ -948,45 +970,59 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Tests correct socket server url transfer to httpHelper.
+     * Data provider for test testWebSocketServerUrl.
+     *
+     * @see testWebSocketServerUrl
+     * @return array
      */
-    public function testWebSocketServerUrl()
+    public function webSocketServerUrlProvider()
     {
-        $serverUrl = 'http://server.dummy';
-
-        $httpHelper = $this->getMock('Sugarcrm\Sugarcrm\Socket\HttpHelper');
-        $httpHelper->expects($this->once())
-            ->method('send')
-            ->with(
-                $this->anything(),
-                $this->equalTo($serverUrl . '/forward'),
-                $this->anything(),
-                $this->anything()
-            );
-
-        $config = $this->getMock('SugarConfig');
-        $config->method('get')->willReturnMap(array(
-            array('websockets.server.url', null, $serverUrl),
-            array('site_url', null, SocketClientTest::SITE_URL),
-
-        ));
-
-        $adminBean = $this->getMockBuilder('Administration')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $adminBean->method('getConfigForModule')->willReturnMap(array(
-            array('auth', 'base', true, array('external_token_socket' => static::TOKEN)),
-        ));
-
-        /* @var $client \PHPUnit_Framework_MockObject_MockObject|Client */
-        $client = $this->getMock(
-            'Sugarcrm\Sugarcrm\Socket\Client',
-            array('getHttpHelper', 'getSugarConfig', 'getAdministrationBean')
+        return array(
+            'serverUrlWithoutPortWithSlash' => array(
+                'serverUrl' => 'http://server.dummy/',
+                'expectedUrl' => 'http://server.dummy/forward',
+            ),
+            'serverUrlWithoutPortWithoutSlash' => array(
+                'serverUrl' => 'http://server.dummy',
+                'expectedUrl' => 'http://server.dummy/forward',
+            ),
+            'serverUrlWithPortAndWithSlash' => array(
+                'serverUrl' => 'http://server.dummy:2999/',
+                'expectedUrl' => 'http://server.dummy:2999/forward',
+            ),
+            'serverUrlWithPortAndWithoutSlash' => array(
+                'serverUrl' => 'http://server.dummy:2999',
+                'expectedUrl' => 'http://server.dummy:2999/forward',
+            ),
+            'serverUrlWithPortAndWithPathAndWithSlash' => array(
+                'serverUrl' => 'http://server.dummy:2999/test/',
+                'expectedUrl' => 'http://server.dummy:2999/test/forward',
+            ),
+            'serverUrlWithPortAndWithPathAndWithoutSlash' => array(
+                'serverUrl' => 'http://server.dummy:2999/test',
+                'expectedUrl' => 'http://server.dummy:2999/test/forward',
+            ),
         );
-        $client->method('getAdministrationBean')->willReturn($adminBean);
-        $client->method('getHttpHelper')->willReturn($httpHelper);
-        $client->method('getSugarConfig')->willReturn($config);
+    }
 
-        $client->send('test');
+    /**
+     * Tests correct socket server url transfer to httpHelper.
+     *
+     * @dataProvider webSocketServerUrlProvider
+     * @param string $serverUrl
+     * @param string $expectedUrl
+     */
+    public function testWebSocketServerUrl($serverUrl, $expectedUrl)
+    {
+        $this->config->method('get')
+            ->willReturnMap(array(
+                array('websockets.server.url', null, $serverUrl),
+                array('site_url', null, SocketClientTest::SITE_URL),
+            ));
+        $this->httpHelper->expects($this->once())
+            ->method('send')
+            ->with($this->anything(), $this->equalTo($expectedUrl), $this->anything(), $this->anything());
+
+        $this->client->send('test');
     }
 }

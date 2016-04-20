@@ -223,9 +223,23 @@ class Client
             )
         );
         $client = $this->getHttpHelper();
-        $url = $this->getSugarConfig()->get('websockets.server.url') . '/forward';
+        $url = $this->getUrl() . 'forward';
 
         return $client->send('post', $url, $params, $this->makeHeaders());
+    }
+
+    /**
+     * Return WebSocket server url.
+     *
+     * @return string WebSocket server url.
+     */
+    protected function getUrl()
+    {
+        $serverUrl = $this->getSugarConfig()->get('websockets.server.url');
+        if ($serverUrl && '/' != $serverUrl[strlen($serverUrl) - 1]) {
+            $serverUrl .= '/';
+        }
+        return $serverUrl;
     }
 
     /**

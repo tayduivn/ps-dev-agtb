@@ -75,9 +75,9 @@ namespace Sugarcrm\Sugarcrm\Trigger;
  */
 class Client
 {
-    const POST_URI = '/';
-    const DELETE_URI = '/';
-    const DELETE_BY_TAGS_URI = '/by_tags';
+    const POST_URI = '';
+    const DELETE_URI = '';
+    const DELETE_BY_TAGS_URI = 'by_tags';
     const POST_METHOD = 'post';
     const DELETE_METHOD = 'delete';
     const DELETE_BY_TAGS_METHOD = 'delete';
@@ -189,10 +189,23 @@ class Client
         }
 
         $client = $this->getHttpHelper();
-        $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
-        $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::POST_URI;
+        $triggerServerUrl = $this->getUrl() . static::POST_URI;
 
         return $client->send(static::POST_METHOD, $triggerServerUrl, json_encode($params), $this->makeHeaders());
+    }
+
+    /**
+     * Return trigger server url.
+     *
+     * @return string trigger server url.
+     */
+    protected function getUrl()
+    {
+        $serverUrl = $this->getSugarConfig()->get('trigger_server.url');
+        if ($serverUrl && '/' != $serverUrl[strlen($serverUrl) - 1]) {
+            $serverUrl .= '/';
+        }
+        return $serverUrl;
     }
 
     /**
@@ -214,8 +227,7 @@ class Client
         );
 
         $client = $this->getHttpHelper();
-        $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
-        $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::DELETE_URI;
+        $triggerServerUrl = $this->getUrl() . static::DELETE_URI;
 
         return $client->send(static::DELETE_METHOD, $triggerServerUrl, json_encode($params), $this->makeHeaders());
     }
@@ -242,8 +254,7 @@ class Client
         );
 
         $client = $this->getHttpHelper();
-        $triggerServerUrl = $this->getSugarConfig()->get('trigger_server.url');
-        $triggerServerUrl = rtrim($triggerServerUrl, '/') . static::DELETE_BY_TAGS_URI;
+        $triggerServerUrl = $this->getUrl() . static::DELETE_BY_TAGS_URI;
 
         return $client->send(
             static::DELETE_BY_TAGS_METHOD,
