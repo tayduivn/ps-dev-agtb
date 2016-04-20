@@ -118,6 +118,33 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Empty selected set should not affect team_set_id.
+     */
+    public function testEmptySelectedSet()
+    {
+        // For some reason team set handler always set a default value in tpl.
+        // As a result the super global REQUEST have the construction below.
+        // Maybe for setting a real default value which depends on teams in SugarFieldTeamset::importSanitaze().
+        $_REQUEST['default_value_team_name'] = 'default_value_team_name';
+        $_REQUEST['default_value_team_selected_name'] = 'default_value_team_selected_name';
+
+        $importedRecordId = $this->prepareImporter(array(
+            // Matched to "team_set_id".
+            'team_name' => TeamSetManager::getCommaDelimitedTeams($this->teamSet->id),
+            // Matched to "team_set_selected_id".
+            'team_selected_name' => '',
+        ));
+        $this->importer->import();
+        $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
+
+        unset($_REQUEST['default_value_team_name']);
+        unset($_REQUEST['default_value_team_selected_name']);
+
+        $this->assertEquals($this->teamSet->id, $importedBean->team_set_id);
+        $this->assertEquals(null, $importedBean->team_set_selected_id);
+    }
+
+    /**
      * Setup importer with source.
      * @param array $nameValue
      * @return string Id of future record.

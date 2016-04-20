@@ -678,7 +678,8 @@ class SugarFieldTeamset extends SugarFieldBase {
                 $selectedTeamSet = Team::$nameTeamsetMapping[$vardef['name']];
                 $focus->$selectedTeamSet = $teamSet->addTeams($team_ids);
             }
-		} else {
+            // Set default team only for team_set_id.
+        } elseif ($vardef['name'] == $this->field_name) {
             $focus->setDefaultTeam();
         }
     }
