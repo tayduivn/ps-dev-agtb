@@ -87,6 +87,20 @@ describe('Sugar.Tooltip', function() {
             app.tooltip._onShow(event);
             expect(eventStub).not.toHaveBeenCalled();
         });
+        
+        it('should not display a tooltip if the `show` event namespace is not `bs.tooltip`', function() {
+            $el.trigger($.Event('show'));
+            expect($('.tooltip').length).toBe(0);
+        });
+
+        it('should not update the current tooltip if the `shown` event namespace is not `bs.tooltip`', function() {
+            $el.trigger('mouseenter');
+            expect($('.tooltip').length).toBe(1);
+            var expectedCurrentTip = app.tooltip._$currentTip;
+
+            $el.trigger($.Event('shown'));
+            expect(app.tooltip._$currentTip).toEqual(expectedCurrentTip);
+        });
     });
 
     describe('non-touch devices ellipsis', function() {
