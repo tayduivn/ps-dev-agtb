@@ -22,16 +22,16 @@ class KBContentsUsefulnessApi extends ModuleApi
                 'path' => array('KBContents', '?', 'useful'),
                 'pathVars' => array('module', 'record', 'useful'),
                 'method' => 'voteUseful',
-                'shortHelp' => 'This method votes a record of the specified type as a useful',
-                'longHelp' => 'include/api/help/module_get_help.html',
+                'shortHelp' => 'This method votes a record of the specified type as useful',
+                'longHelp' => 'include/api/help/kb_vote_put_help.html',
             ),
             'notuseful' => array(
                 'reqType' => 'PUT',
                 'path' => array('KBContents', '?', 'notuseful'),
                 'pathVars' => array('module', 'record', 'notuseful'),
                 'method' => 'voteNotUseful',
-                'shortHelp' => 'This method votes a record of the specified type as a not useful',
-                'longHelp' => 'include/api/help/module_get_help.html',
+                'shortHelp' => 'This method votes a record of the specified type as not useful',
+                'longHelp' => 'include/api/help/kb_vote_put_help.html',
             ),
         );
     }
