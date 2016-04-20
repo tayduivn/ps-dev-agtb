@@ -75,19 +75,6 @@ describe('Sugar.Tooltip', function() {
             expect($('.tooltip').length).toBe(0);
         });
 
-        it('should not prevent default event on JSTree elements', function() {
-            var $el = $('<input rel="add"/>').appendTo('body');
-            var event = {
-                preventDefault: function() {console.log(1111)},
-                namespace: 'bs.tooltip',
-                target: $el
-            };
-
-            var eventStub = sinon.collection.stub(event, 'preventDefault');
-            app.tooltip._onShow(event);
-            expect(eventStub).not.toHaveBeenCalled();
-        });
-        
         it('should not display a tooltip if the `show` event namespace is not `bs.tooltip`', function() {
             $el.trigger($.Event('show'));
             expect($('.tooltip').length).toBe(0);
