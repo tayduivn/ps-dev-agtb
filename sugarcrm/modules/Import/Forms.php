@@ -117,6 +117,7 @@ function getControl(
     $date_format = $timedate->get_cal_date_format();
     $ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
  	$ss->assign('TIME_FORMAT', $time_format);
+    $ss->assign('module', $module);
     $time_separator = ":";
     $match = array();
     if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {
