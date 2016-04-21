@@ -64,7 +64,6 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'type' => 'email-recipients',
                     'label' => 'LBL_TO_ADDRS',
                     'span' => 12,
-                    'required' => true,
                 ),
                 array(
                     'name' => 'cc',
