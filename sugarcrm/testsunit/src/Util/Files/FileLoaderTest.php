@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 /**
  *
  * FileLoader unit tests
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Files\FileLoader
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Files\FileLoader
  *
  */
 class FileLoaderTest extends \PHPUnit_Framework_TestCase
