@@ -44,9 +44,63 @@ abstract class AbstractEvaluator
      */
     public function init(\SugarBean $bean, $name, array $data)
     {
+        $this->setBean($bean);
+        $this->setName($name);
+        $this->setData($data);
+    }
+
+    /**
+     * Sets a bean onto this object
+     * @param SugarBean $bean The bean being used for evaluation
+     */
+    public function setBean(\SugarBean $bean)
+    {
         $this->bean = $bean;
+    }
+
+    /**
+     * Gets the bean that is set on this object
+     * @return SugarBean
+     */
+    public function getBean()
+    {
+        return $this->bean;
+    }
+
+    /**
+     * Sets the name of the field used for evaluation onto this object
+     * @param string $name Name of the field being evaluated
+     */
+    public function setName($name)
+    {
         $this->name = $name;
+    }
+
+    /**
+     * Gets the name of the field used for evaluation
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Sets the data used for evaluations on this object
+     * @param array $data Data used in various functions
+     */
+    public function setData(array $data)
+    {
         $this->data = $data;
+    }
+
+    /**
+     * Returns the data used for evaluations on this object
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**
