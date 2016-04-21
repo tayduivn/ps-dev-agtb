@@ -195,9 +195,12 @@
             case 'folder':
                 if (this.$el.find('[data-id=' + data.id +']').hasClass('jstree-closed')) {
                     this.openNode(data.id);
+                    data.open = true;
                 } else {
                     this.closeNode(data.id);
+                    data.open = false;
                 }
+                this.folderToggled(data);
                 break;
         }
     },
@@ -208,20 +211,28 @@
      */
     treeLoaded: function() {
         var self = this;
-        async.forEach(
-            this.collection.models,
-            function(model, callback) {
-                self.loadAdditionalLeaf(model.id, callback);
-            },
-            function() {
-                if (self.useStates) {
-                    self.loadJSTreeState();
-                } else {
-                    self.openCurrentParent();
-                }
+        this.bulkLoadLeafs(this.collection.models, function() {
+            if (self.useStates) {
+                self.loadJSTreeState();
+            } else {
+                self.openCurrentParent();
             }
-        );
+        });
         return true;
+    },
+
+    /**
+     * Loads leafs for all models (nodes) using single request.
+     *
+     * @param {Array} models Array of models (categories) which additional leafs will be loaded for.
+     * @param {Function} callback Callback function that will be run after leafs loaded.
+     */
+    bulkLoadLeafs: function(models, callback) {
+        var ids = _.map(models, function(model) {
+            return model.id;
+        });
+
+        this.loadAdditionalLeafs(ids, callback);
     },
 
     /**
@@ -238,7 +249,8 @@
             currentModel = currentContext.get('model'),
             id = currentModel.get(this.extraModule.field),
             self = this;
-        this.loadAdditionalLeaf(id, function() {
+
+        this.loadAdditionalLeafs([id], function() {
             if (self.disposed) {
                 return;
             }
@@ -290,23 +302,20 @@
      * @return {Boolean} Always returns `true`.
      */
     stateLoaded: function(data) {
-        var originalUseState = this.useStates,
-            self = this;
-        async.forEach(
-            data.open,
-            function(value, callback) {
-                self.useStates = false;
-                value.open = true;
-                self.folderToggled(value, callback);
-            },
-            function() {
-                _.each(data.open, function(value) {
-                    self.openNode(value.id);
-                });
-                self.useStates = originalUseState;
-                self.trigger('stateLoaded', false);
-            }
-        );
+        var self = this;
+
+        var models = _.reduce(data.open, function(memo, value) {
+            var model = self.collection.getChild(value.id);
+            return _.extend(memo, model.children.models);
+        }, []);
+
+        this.bulkLoadLeafs(models, function() {
+            _.each(data.open, function(value) {
+                self.openNode(value.id);
+            });
+            self.trigger('stateLoaded', false);
+        });
+
         return true;
     },
 
@@ -323,26 +332,19 @@
         if (data.open) {
             var model = this.collection.getChild(data.id),
                 items = [];
-            //isModelUndefined = _.isUndefined(model) || _.isUndefined(model.id);
-            //if (!isModelUndefined) {
+
             if (model.id) {
                 items = model.children.models;
                 if (items.length !== 0) {
                     triggeredCallback = true;
-                    async.forEach(
-                        items,
-                        function(item, c) {
-                            self.loadAdditionalLeaf(item.id, c);
-                        },
-                        function() {
-                            if (_.isFunction(callback)) {
-                                callback.call();
-                                return false;
-                            } else if (self.useStates) {
-                                self.saveJSTreeState();
-                            }
+                    this.bulkLoadLeafs(items, function() {
+                        if (_.isFunction(callback)) {
+                            callback.call();
+                            return false;
+                        } else if (self.useStates) {
+                            self.saveJSTreeState();
                         }
-                    );
+                    });
                 }
             }
         }
@@ -371,20 +373,67 @@
             }
             return;
         }
-        this.loadAdditionalLeaf(data.id);
+        this.loadAdditionalLeafs([data.id]);
     },
 
     /**
      * Load extra data for tree.
-     * @param {String} id Id of a leaf to load data in.
-     * @param {Function} callback Async callback to use with async.js
+     *
+     * @param {Array} ids Ids of tree nodes to load data in.
+     * @param {Function} callback Callback funct
      */
-    loadAdditionalLeaf: function(id, callback) {
-        var collection = app.data.createBeanCollection(this.extraModule.module),
-            self = this;
+    loadAdditionalLeafs: function(ids, callback) {
+        var self = this;
+
+        if (ids.length === 0) {
+            if (_.isFunction(callback)) {
+                callback.call();
+            }
+            return;
+        }
+
+        var processedIds = _.filter(ids, function(id) {
+            return self.addLeafFromCache(id, callback);
+        });
+        if (processedIds.length === ids.length) {
+            return;
+        }
+
+        var collection = this.createCollection();
+        collection.filterDef = [{}];
+        collection.filterDef[0][this.extraModule.field] = {$in: ids};
+        collection.filterDef[0]['status'] = {$equals: 'published'};
+        collection.filterDef[0]['active_rev'] = {$equals: 1};
+
+        collection.fetch({
+            success: function(data) {
+                var groupedModels = _.groupBy(data.models, function(model) {
+                    return model.get('category_id');
+                });
+
+                _.each(ids, function(id) {
+                    self.addLeafs(groupedModels[id] || [], id);
+                });
+
+                if (_.isFunction(callback)) {
+                    callback.call();
+                }
+            }
+        });
+    },
+
+    /**
+     * Tries to find loaded leaf in cache and adds it to the tree.
+     *
+     * @param {String} id Leaf id.
+     * @param {Function} callback Callback function that will be executed after trying to adding leafs from cache.
+     * @return {boolean} Returns true if leaf was added from cache, otherwise - false.
+     */
+    addLeafFromCache: function(id, callback) {
         if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id].timestamp < Date.now() - this.cacheLifetime) {
             delete this.loadedLeafs[id];
         }
+
         if (_.isEmpty(this.extraModule)
             || id === undefined
             || _.isEmpty(id)
@@ -398,8 +447,20 @@
             if (_.isFunction(callback)) {
                 callback.call();
             }
-            return;
+            return true;
         }
+
+        return false;
+    },
+
+    /**
+     * Creates bean collection with predefined options.
+     *
+     * @return {Object} Bean Collection.
+     */
+    createCollection: function() {
+        var collection = app.data.createBeanCollection(this.extraModule.module);
+
         collection.options = {
             params: {
                 order_by: 'date_entered:desc'
@@ -410,21 +471,7 @@
             ]
         };
 
-        collection.filterDef = [{}];
-        collection.filterDef[0][this.extraModule.field] = {$equals: id};
-        collection.filterDef[0]['status'] = {$equals: 'published'};
-        collection.filterDef[0]['active_rev'] = {$equals: 1};
-        collection.fetch({
-            success: function(data) {
-                self.addLeafs(data.models || [], id);
-                if (_.isFunction(callback)) {
-                    _.defer(function(f) {
-                        f.call();
-                    }, callback);
-
-                }
-            }
-        });
+        return collection;
     },
 
     /**
@@ -493,21 +540,19 @@
      * @param {String} id ID of category leaf to insert documents in.
      */
     addLeafs: function(models, id) {
-        if (models.length !== 0) {
-            this.removeChildrens(id, 'document');
-            _.each(models, function(value) {
-                var insData = {
-                    id: value.id,
-                    name: value.get('name'),
-                    isViewable: app.acl.hasAccessToModel('view', value)
-                };
-                this.insertNode(insData, id, 'document');
-            }, this);
-            this.loadedLeafs[id] = {
-                timestamp: Date.now(),
-                models: models
+        this.removeChildrens(id, 'document');
+        _.each(models, function(value) {
+            var insData = {
+                id: value.id,
+                name: value.get('name'),
+                isViewable: app.acl.hasAccessToModel('view', value)
             };
-        }
+            this.insertNode(insData, id, 'document');
+        }, this);
+        this.loadedLeafs[id] = {
+            timestamp: Date.now(),
+            models: models
+        };
     },
 
     /**
