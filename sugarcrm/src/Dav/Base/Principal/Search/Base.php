@@ -63,12 +63,11 @@ abstract class Base implements SearchInterface
         $focus = $this->getBean();
         $principals = array();
 
-        if ($focus->load_relationship('email_addresses_primary')) {
-
+        if ($focus->load_relationship('email_addresses')) {
             $usersQuery = $this->getSugarQuery();
             $usersQuery->from($focus);
 
-            $focus->email_addresses_primary->buildJoinSugarQuery($usersQuery, array('joinType' => 'LEFT'));
+            $focus->email_addresses->buildJoinSugarQuery($usersQuery, array('joinType' => 'LEFT'));
             $usersQuery->select()->addField('email_addresses.email_address', array('alias' => 'email1'));
 
             $beans = $focus->fetchFromQuery($usersQuery);
@@ -118,7 +117,6 @@ abstract class Base implements SearchInterface
             switch ($property) {
                 case '{DAV:}displayname':
                     $explodeName = explode(' ', $value);
-
                     foreach ($explodeName as $part) {
                         if ($part) {
                             $conditionExists = true;
@@ -130,9 +128,9 @@ abstract class Base implements SearchInterface
                     }
                     break;
                 case '{http://sabredav.org/ns}email-address':
-                    if ($focus->load_relationship('email_addresses_primary')) {
+                    if ($focus->load_relationship('email_addresses')) {
                         $conditionExists = true;
-                        $focus->email_addresses_primary->buildJoinSugarQuery(
+                        $focus->email_addresses->buildJoinSugarQuery(
                             $query,
                             array('joinType' => ($test == 'allof' ? 'INNER' : 'LEFT'))
                         );

@@ -289,17 +289,16 @@ class Event
             return false;
         }
 
-        $foundIndex = $this->findParticipantsByEmail($participant->getEmail());
-        if ($foundIndex != - 1) {
+        $foundParticipant = $this->getParticipantByBean($participant->getBeanName(), $participant->getBeanId());
+        if ($foundParticipant) {
             $isChanged = false;
-            $found = $this->participants[$foundIndex];
-            $isChanged |= $found->setStatus($participant->getStatus());
-            $isChanged |= $found->setDisplayName($participant->getDisplayName());
-            $isChanged |= $found->setBeanName($participant->getBeanName());
-            $isChanged |= $found->setRole($participant->getRole());
+            $isChanged |= $foundParticipant->setStatus($participant->getStatus());
+            $isChanged |= $foundParticipant->setDisplayName($participant->getDisplayName());
+            $isChanged |= $foundParticipant->setBeanName($participant->getBeanName());
+            $isChanged |= $foundParticipant->setRole($participant->getRole());
 
-            $found->setBeanId($participant->getBeanId());
-            $found->setType($type);
+            $foundParticipant->setBeanId($participant->getBeanId());
+            $foundParticipant->setType($type);
             if ($isChanged) {
                 $this->setCustomized();
                 return true;
@@ -871,6 +870,24 @@ class Event
 
         $this->logger->notice("CalDav: Participant with '$email' email was not found for this event");
         return - 1;
+    }
+
+    /**
+     * Find participant by bean name and id.
+     *
+     * @param string $beanName
+     * @param string $beanId
+     * @return Participant
+     */
+    public function getParticipantByBean($beanName, $beanId)
+    {
+        foreach ($this->getParticipants() as $i => $participant) {
+            if ($participant->getBeanName() == $beanName && $participant->getBeanId() == $beanId) {
+                return $participant;
+            }
+        }
+
+        return null;
     }
 
     /**
