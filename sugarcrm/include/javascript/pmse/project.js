@@ -229,7 +229,7 @@ AdamProject.prototype.load = function (id, callback) {
 //            console.log(success);
             if (callback && callback.success) {
                 callback.success.call(this, data);
-            }    
+            }
             if (canvas){
                 canvas.bpmnValidation();
                 //jQuery(".pane.ui-layout-center").append(countErrors);
@@ -239,7 +239,7 @@ AdamProject.prototype.load = function (id, callback) {
             //TODO Process HERE error at loading project
         }
         /*if (canvas) {
-            
+
             console.log(1);
         }*/
     });
@@ -364,26 +364,33 @@ AdamProject.prototype.loadProject = function (response) {
  * @private
  */
 AdamProject.prototype.addElement = function (element) {
-    var object,
+    var obj,
         pk_name,
         list,
         i,
-        pasteElement;
-    if (element.relatedElements.length > 0) {
-        for (i = 0; i < element.relatedElements.length; i += 1) {
-            pasteElement = element.relatedElements[i];
-            list = this.getUpdateList(pasteElement.type);
-            object = pasteElement.getDBObject();
-            object.action = "CREATE";
-            list[pasteElement.id] = object;
+        currentElement,
+        elements = element.relatedElements.length > 0 ? element.relatedElements : [element];
+
+    for (i = 0; i < elements.length; i += 1) {
+        currentElement = elements[i];
+        list = this.getUpdateList(currentElement.type);
+
+        // Handle remove cases here
+        if (list[currentElement.id] && list[currentElement.id].action === 'REMOVE') {
+            delete list[currentElement.id];
+            continue;
         }
-    } else {
-        pk_name = this.formatProperty(element.type, 'uid');
-        list = this.getUpdateList(element.type);
-        element.relatedObject[pk_name] = element.id;
-        object = element.relatedObject.getDBObject();
-        object.action = "CREATE";
-        list[element.id] = object;
+
+        // Handle fetching of the proper object
+        if (currentElement instanceof jCore.JCoreObject) {
+            obj = currentElement.getDBObject();
+        } else {
+            pk_name = this.formatProperty(currentElement.type, 'uid');
+            currentElement.relatedObject[pk_name] = currentElement.id;
+            obj = currentElement.relatedObject.getDBObject();
+        }
+        obj.action = 'CREATE';
+        list[currentElement.id] = obj;
     }
     this.isDirty = true;
     this.updateToolbar();
@@ -1075,7 +1082,8 @@ AdamProject.prototype.loadFlow = function (conn) {
         flo_type : conn.flo_type,
         name : conn.flo_name,
         flo_condition : conn.flo_condition,
-        flo_state : conn.flo_state
+        flo_state : conn.flo_state,
+        flo_uid: conn.flo_uid
     });
 
     connection.setSrcDecorator(new jCore.ConnectionDecorator({
@@ -1776,7 +1784,7 @@ AdamProject.prototype.addMetadata = function (metadataName, config, replaceIfExi
             meta.dataURL = config.dataURL;
             meta.dataRoot = config.dataRoot;
             proxy = new SugarProxy();
-            proxy.url = config.dataURL; 
+            proxy.url = config.dataURL;
             proxy.getData(null, {
                 success: function (data) {
                     meta.data = config.dataRoot ? data[config.dataRoot] : data;
@@ -1788,13 +1796,13 @@ AdamProject.prototype.addMetadata = function (metadataName, config, replaceIfExi
             return;
         } else if (config.data) {
             meta.data = config.data
-        }    
+        }
     }
 
     if (typeof config.success === "function") {
         config.success(this._metadata[metadataName].data);
     }
-    
+
     return this;
 };
 

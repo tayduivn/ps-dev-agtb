@@ -1464,7 +1464,9 @@ AdamCanvas.prototype.getDiagramTree = function () {
 
 AdamCanvas.prototype.addConnection = function (conn) {
     jCore.Canvas.prototype.addConnection.call(this, conn);
-    if (conn.flo_state) {
+    // Only disconnect and reconnect if we are not coming from an undo action
+    // Otherwise, the lines will redraw from the *last* last state of the line
+    if (conn.flo_state && conn.inUndo !== true) {
         conn.disconnect(true).connect({
             algorithm: 'user',
             points: conn.flo_state
