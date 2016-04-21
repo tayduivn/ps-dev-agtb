@@ -754,7 +754,7 @@
              * Check the value to see if it's a percentage, if it is, then adjust the value
              *
              * @param {String} value The value we are parsing.
-             * @param {Integer} (decimals) How far to round to.
+             * @param {number} (decimals) How far to round to.
              * @return {*}
              */
             _fieldParsePercentage: function(value, decimals) {

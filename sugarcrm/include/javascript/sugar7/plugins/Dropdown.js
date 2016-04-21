@@ -122,7 +122,7 @@
              * key that was pressed, and applies focus to that item.
              *
              * @param {String} key The key that was pressed.
-             * @param {Integer} index The index of the presently focused item.
+             * @param {number} index The index of the presently focused item.
              * @param {jQuery} $items The items in the submenu.
              * @private
              */

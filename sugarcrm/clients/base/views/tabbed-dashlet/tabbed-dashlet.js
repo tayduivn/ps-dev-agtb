@@ -328,7 +328,7 @@
     /**
      * Retrieves collection options for a specific tab.
      *
-     * @param {Integer} index Tab index.
+     * @param {number} index Tab index.
      * @return {Object} Collection options.
      * @protected
      */
@@ -354,7 +354,7 @@
     /**
      * Retrieves collection filters for a specific tab.
      *
-     * @param {Integer} index Tab index.
+     * @param {number} index Tab index.
      * @return {Array} Collection filters.
      * @protected
      */
@@ -396,7 +396,7 @@
     /**
      * Override this method to provide custom filters.
      *
-     * @param {Integer} index Tab index.
+     * @param {number} index Tab index.
      * @return {Array} Custom filters.
      * @template
      * @protected
