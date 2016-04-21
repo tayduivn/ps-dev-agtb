@@ -15,7 +15,7 @@ namespace Sugarcrm\Sugarcrm\Dbal\Platforms;
 use Doctrine\DBAL\Platforms\DB2Platform;
 
 /**
- * @link https://github.com/doctrine/dbal/commit/e64c76d
+ * Temporary implementation of IBM DB2 platform for fixing Doctrine DBAL issues
  */
 class IbmDb2Platform extends DB2Platform
 {
