@@ -212,7 +212,7 @@ var resources = new Array();
 						<input type='hidden' name="duration_unit_hidden_{$TASK->project_task_id}" id="duration_unit_hidden_{$TASK->project_task_id}" value="{$TASK->duration_unit}">
 						<select  {if !$CANEDIT || !$taskEditAccess}disabled{/if} style='border:0' name=duration_unit_{$TASK->project_task_id} id=duration_unit_{$TASK->project_task_id} onChange="SUGAR.grid.changeDurationUnits('{$TASK->project_task_id}')">
 							{foreach from=$DURATION_UNITS item="DURATION_UNIT" key="DURATION_UNIT_KEY"}
-								{if $DURATION_UNIT == $TASK->duration_unit}
+								{if $DURATION_UNIT_KEY == $TASK->duration_unit}
 									<option value="{$DURATION_UNIT_KEY}" selected>{$DURATION_UNIT}</option>
 								{else}
 									<option value="{$DURATION_UNIT_KEY}">{$DURATION_UNIT}</option>
