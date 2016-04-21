@@ -535,7 +535,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 array(
                     $parentAction ?: 'update',
                     $collection->id,
-                    array(),
+                    null,
                     $collection->getParent()->getStartDate()->asDb(),
                     null,
                     $importGroupId,
@@ -550,7 +550,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 array(
                     $parentAction ?: 'update',
                     $collection->id,
-                    array(),
+                    null,
                     $collection->getParent()->getStartDate()->asDb(),
                     null,
                     $importGroupId,
@@ -570,6 +570,8 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         $recurrenceIds = array_values($collection->getAllChildrenRecurrenceIds());
+        $sugarChildren = $collection->getSugarChildrenOrder();
+
         foreach ($recurrenceIds as $position => $recurrenceId) {
             $childEvent = $collection->getChild($recurrenceId);
 
@@ -584,13 +586,19 @@ abstract class AdapterAbstract implements AdapterInterface
                 ? $collection->getParticipantsDiff($childEvent, null)
                 : array();
 
+            $sugarId = null;
+
+            if ($sugarChildren && isset($sugarChildren[$position])) {
+                $sugarId = $sugarChildren[$position];
+            }
+
             if (isset($diffStructure['children'][$recurrenceId->asDb()])) {
                 $changeChild = $diffStructure['children'][$recurrenceId->asDb()];
                 $result[] = array(
                     array(
                         $changeChild[0],
                         $collection->id,
-                        $collection->getSugarChildrenOrder(),
+                        $sugarId,
                         $recurrenceId->asDb(),
                         $position,
                         $importGroupId,
@@ -603,7 +611,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     array(
                         'override',
                         $collection->id,
-                        $collection->getSugarChildrenOrder(),
+                        $sugarId,
                         $recurrenceId->asDb(),
                         $position,
                         $importGroupId,
@@ -616,7 +624,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     array(
                         'update',
                         $collection->id,
-                        $collection->getSugarChildrenOrder(),
+                        $sugarId,
                         $recurrenceId->asDb(),
                         $position,
                         $importGroupId,
@@ -637,7 +645,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         array(
                             $action,
                             $collection->id,
-                            $sugarChildren,
+                            $sugarId,
                             $recurrenceId->asDb(),
                             $position,
                             $importGroupId,
@@ -651,7 +659,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     array(
                         $action,
                         $collection->id,
-                        array(),
+                        null,
                         null,
                         null,
                         $importGroupId,
@@ -672,7 +680,7 @@ abstract class AdapterAbstract implements AdapterInterface
         /**@var \Meeting $bean*/
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
-        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $importGroupId) = $beanData;
+        list($action, $beanId, $sugarId, $recurrenceId, $recurrenceIndex, $importGroupId) = $beanData;
 
         $this->logger->debug("CalDav: Running import for {$bean->module_name}($beanId). Recurrence id = $recurrenceId");
 
@@ -815,13 +823,19 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         if (!$importData) {
             $sugarOrder = $collection->getSugarChildrenOrder();
+            $sugarId = null;
+            $childIndex = array_search($exportData[0][2], $sugarOrder);
+
+            if ($sugarOrder && isset($sugarOrder[$childIndex])) {
+                $sugarId = $sugarOrder[$childIndex];
+            }
             $importData = array(
                 array(
                     'update',
                     $collection->id,
-                    $sugarOrder ? : null,
+                    $sugarId,
                     null,
-                    $sugarOrder ? array_search($exportData[0][2], $sugarOrder) : null,
+                    $childIndex ? $childIndex : null,
                 ),
                 array(),
                 array(),
@@ -831,8 +845,7 @@ abstract class AdapterAbstract implements AdapterInterface
         list($importBean, $importFields, $importInvitees) = $importData;
 
         if (!empty($importBean[2])) {
-            $childIndex = array_search($exportBean[2], $importBean[2]);
-            if ($childIndex !== $importBean[4]) {
+            if ($importBean[2] != $exportBean[2]) {
                 return false;
             }
         }
@@ -1291,23 +1304,25 @@ abstract class AdapterAbstract implements AdapterInterface
     public function getBeanForImport(\SugarBean $bean, \CalDavEventCollection $calDavBean, $importData)
     {
         list($beanData, $changedFields, $invitees) = $importData;
-        list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex) = $beanData;
+        list($action, $beanId, $sugarId, $recurrenceId, $recurrenceIndex) = $beanData;
 
         if (is_null($recurrenceIndex)) {
             return $bean;
         }
 
-        $childrenIds = $calDavBean->getSugarChildrenOrder() ? : $childEventsId;
+        $childrenIds = $calDavBean->getSugarChildrenOrder();
+        $sugarId = isset($childrenIds[$recurrenceIndex]) ? $childrenIds[$recurrenceIndex] : $sugarId;
 
-        if (isset($childrenIds[$recurrenceIndex])) {
-            $beanForImport = \BeanFactory::getBean($bean->module_name, $childrenIds[$recurrenceIndex], array(
+
+        if ($sugarId) {
+            $beanForImport = \BeanFactory::getBean($bean->module_name, $sugarId, array(
                 'strict_retrieve' => true,
                 'deleted' => false,
             ));
 
             if (!$beanForImport) {
                 $beanForImport = clone $bean;
-                $beanForImport->id = $childrenIds[$recurrenceIndex];
+                $beanForImport->id = $sugarId;
                 $beanForImport->new_with_id = true;
                 $beanForImport->repeat_root_id = $bean->id;
                 $beanForImport->repeat_parent_id = $bean->id;
