@@ -1347,6 +1347,11 @@ class CalDavEventCollection extends SugarBean
                     $exportData[0][3] = null;
                     $adapter->export($exportData, $collection);
                 }
+                $event = $collection->getParent();
+                global $sugar_config;
+                if ($event->getUrl() == $sugar_config['site_url'] . '/#' . $bean->module_name . '/' . $bean->id) {
+                    $event->setUrl(null);
+                }
                 $vCalendarEvent = $collection->getVCalendar();
                 if (!empty($bean->send_invites_uid)) {
                     $vCalendarEvent->getBaseComponent()->UID->setValue($bean->send_invites_uid);
