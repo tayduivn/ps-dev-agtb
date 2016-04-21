@@ -238,7 +238,7 @@
              * @param {Object} [values]
              */
             showForm: function (casId, casIndex, wtype, flowId, pmseInboxId, taskName, values) {
-                showModalWindow(casId, casIndex, wtype, flowId, pmseInboxId, taskName, values, this);
+                showModalWindow(casId, casIndex, wtype, flowId, pmseInboxId, taskName, values, this.recordModel);
             }
         });
     });

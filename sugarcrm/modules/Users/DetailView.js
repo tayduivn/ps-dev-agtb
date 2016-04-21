@@ -57,7 +57,7 @@ function set_return_user_and_save(popup_reply_data)
 		}
 		else
 		{
-			query_array.push("record[]="+name_to_value_array[the_key]);
+            query_array.push("records[]="+name_to_value_array[the_key]);
 		}
 	}
 	query_array.push('user_id='+get_user_id(form_name));

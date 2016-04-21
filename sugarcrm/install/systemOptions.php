@@ -14,10 +14,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
-if(!isset($_SESSION['setup_db_type']) || $_SESSION['setup_db_type'] ==''){
- $_SESSION['setup_db_type'] = 'mysql';
-}
-$setup_db_type = $_SESSION['setup_db_type'];
 
 $errs = '';
 if(isset($validation_errors)) {
@@ -36,6 +32,18 @@ if(isset($validation_errors)) {
 }
 
 $drivers = DBManagerFactory::getDbDrivers();
+
+$setup_db_type = 'mysql';
+if (!empty($_SESSION['setup_db_type'])) {
+    $setup_db_type = $_SESSION['setup_db_type'];
+}
+if (count($drivers) && !array_key_exists($setup_db_type, $drivers)) {
+    $driverKeys = array_keys($drivers);
+    $setup_db_type = $driverKeys[0];
+}
+$disabledNextButton = count($drivers) ? '' : ' disabled="disabled"';
+$_SESSION['setup_db_type'] = $setup_db_type;
+
 foreach(array_keys($drivers) as $dname) {
     $checked[$dname] = '';
 }
@@ -114,7 +122,7 @@ $out.=<<<EOQ
             <input class="button" type="button" value="{$mod_strings['LBL_BACK']}" id="button_back_systemOptions" onclick="document.getElementById('form').submit();" />
             <input type="hidden" name="goto" value="{$mod_strings['LBL_BACK']}" />
          </td>
-         <td><input class="button" type="submit" id="button_next2" name="goto" value="{$mod_strings['LBL_NEXT']}" /></td>
+         <td><input class="button" type="submit" id="button_next2" name="goto" value="{$mod_strings['LBL_NEXT']}"{$disabledNextButton} /></td>
        </tr>
      </table>
 </td>
