@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 
-use Sabre\VObject\Property\ICalendar\CalAddress;
+use Sugarcrm\Sugarcrm\Dav\Cal\Property\CalAddress;
 use Sabre\VObject\Component\VCalendar;
 
 /**

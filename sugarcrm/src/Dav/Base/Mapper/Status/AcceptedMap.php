@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status;
 
 class AcceptedMap extends MapBase
 {
+    protected $defaultCalDavValue = 'NEEDS-ACTION';
+
     protected $map = array(
         'NEEDS-ACTION' => array('none'),
         'ACCEPTED'     => array('accept'),

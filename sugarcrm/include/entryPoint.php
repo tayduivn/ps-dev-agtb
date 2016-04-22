@@ -12,6 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Dav\Cal\CalendarManager;
 
 /**
  * Known Entry Points as of 4.5
@@ -135,6 +136,9 @@ SugarAutoLoader::init();
 // Initialize InputValdation service as soon as possible. Up to this point
 // it is expected that no code has altered any input superglobals.
 InputValidation::initService();
+
+//Initialize CalDav
+CalendarManager::init();
 
 // Check to see if custom utils exist and load them too
 // not doing it in utils since autoloader is not loaded there yet

@@ -150,6 +150,7 @@ class Handler implements RunnableInterface
                 SugarCache::instance()->useLocalStore = $oldValue;
             }
             $calDavBean->setBean($bean);
+            $calDavBean->doLocalDelivery = false;
             $calDavBean->save();
         }
 

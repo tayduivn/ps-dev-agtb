@@ -126,6 +126,7 @@ class Handler
                 $collection->created_by = $bean->created_by;
                 $collection->set_created_by = false;
             }
+            $collection->doLocalDelivery = false;
             $collection->save();
         }
 

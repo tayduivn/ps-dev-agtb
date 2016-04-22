@@ -15,7 +15,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Component\VEvent;
 use Sabre\VObject\Property\ICalendar;
-use Sabre\VObject\Property\ICalendar\CalAddress;
+use Sugarcrm\Sugarcrm\Dav\Cal\Property\CalAddress;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 
 class Event
