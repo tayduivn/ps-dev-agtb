@@ -80,11 +80,11 @@ class Handler implements RunnableInterface
             $conflictCounter = $calDavBean->getSynchronizationObject()->getConflictCounter();
             if ($conflictCounter && $queueItem->save_counter < $conflictCounter) {
                 $calDavBean->getSynchronizationObject()->setJobCounter();
-                $queueItem->status = \CalDavQueue::STATUS_COMPLETED;
+                $queueItem->status = \CalDavQueue::STATUS_CONFLICT;
                 $queueItem->save();
                 continue;
             }
-
+            $queueItem->status = \CalDavQueue::STATUS_COMPLETED;
             try {
                 switch ($queueItem->action) {
                     case \CalDavQueue::ACTION_IMPORT:
@@ -94,7 +94,6 @@ class Handler implements RunnableInterface
                         $this->export($calDavBean, $queueItem);
                         break;
                     default:
-                        $queueItem->status = \CalDavQueue::STATUS_COMPLETED;
                         $queueItem->save();
                         continue;
                 }
@@ -106,11 +105,11 @@ class Handler implements RunnableInterface
                 } elseif ($this->listener instanceof ImportListener) {
                     $this->hookHandler->getImportNotifier()->detach($this->listener);
                 }
+                $queueItem->status = \CalDavQueue::STATUS_CONFLICT;
                 $this->hookHandler->export($calDavBean->getBean(), false, true);
             }
 
             $calDavBean->getSynchronizationObject()->setJobCounter();
-            $queueItem->status = \CalDavQueue::STATUS_COMPLETED;
             $queueItem->save();
             $calDavBean->retrieve(-1, true, false);
         }

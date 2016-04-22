@@ -88,6 +88,29 @@ class CalendarEvents
     }
 
     /**
+     * Build array with recurring parameters.
+     *
+     * @param SugarBean $parentBean
+     * @return array
+     */
+    public function buildParamsForRecurring(SugarBean $parentBean)
+    {
+        $params = array();
+        $params['type'] = $parentBean->repeat_type;
+        $params['interval'] = $parentBean->repeat_interval;
+        $params['count'] = $parentBean->repeat_count;
+        $params['until'] = $this->formatDateTime('datetime', $parentBean->repeat_until, 'user');
+        $params['dow'] = $parentBean->repeat_dow;
+
+        $params['selector'] = isset($parentBean->repeat_selector) ? $parentBean->repeat_selector : '';
+        $params['days'] = isset($parentBean->repeat_days) ? $parentBean->repeat_days : '';
+        $params['ordinal'] = isset($parentBean->repeat_ordinal) ? $parentBean->repeat_ordinal : '';
+        $params['unit'] = isset($parentBean->repeat_unit) ? $parentBean->repeat_unit : '';
+
+        return $params;
+    }
+
+    /**
      * @param SugarBean $parentBean
      * @return array events saved
      * @throws SugarException
@@ -108,17 +131,7 @@ class CalendarEvents
 
         $dateStart = $this->formatDateTime('datetime', $parentBean->date_start, 'user');
 
-        $params = array();
-        $params['type'] = $parentBean->repeat_type;
-        $params['interval'] = $parentBean->repeat_interval;
-        $params['count'] = $parentBean->repeat_count;
-        $params['until'] = $this->formatDateTime('datetime', $parentBean->repeat_until, 'user');
-        $params['dow'] = $parentBean->repeat_dow;
-
-        $params['selector'] = isset($parentBean->repeat_selector) ? $parentBean->repeat_selector : '';
-        $params['days'] = isset($parentBean->repeat_days) ? $parentBean->repeat_days : '';
-        $params['ordinal'] = isset($parentBean->repeat_ordinal) ? $parentBean->repeat_ordinal : '';
-        $params['unit'] = isset($parentBean->repeat_unit) ? $parentBean->repeat_unit : '';
+        $params = $this->buildParamsForRecurring($parentBean);
 
         $repeatDateTimeArray = $this->buildRecurringSequence($dateStart, $params);
 
@@ -831,6 +844,12 @@ class CalendarEvents
             $dtm->modify("+{$bean->duration_minutes} mins");
         }
         $bean->date_end = $dtm->asDb();
+
+        if (!$this->isEventRecurring($bean)) {
+            $bean->recurrence_id = '';
+        } elseif (!$bean->recurrence_id) {
+            $bean->recurrence_id = $bean->date_start;
+        }
     }
 
     /**

@@ -586,6 +586,17 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'reportable' => false,
         'studio' => 'false',
     ),
+    'recurrence_id' => array(
+        'name' => 'recurrence_id',
+        'vname' => 'LBL_CALENDAR_RECURRENCE_ID',
+        'type' => 'datetime',
+        'dbType' => 'datetime',
+        'comment' => 'Recurrence ID of call. Original call start date',
+        'importable' => 'required',
+        'massupdate' => false,
+        'reportable' => false,
+        'studio' => 'false',
+    ),
   'recurring_source' =>
   array(
     'name' => 'recurring_source',
@@ -672,6 +683,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'name' => 'idx_calls_date_start',
         'type' => 'index',
         'fields' => array('date_start'),
+    ),
+    array(
+        'name' => 'idx_calls_recurrence_id',
+        'type' => 'index',
+        'fields' => array('recurrence_id'),
     ),
     array(
         'name' => 'idx_calls_date_start_end_del',

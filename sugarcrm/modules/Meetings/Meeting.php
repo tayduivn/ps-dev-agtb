@@ -145,6 +145,12 @@ class Meeting extends SugarBean {
     public $repeat_root_id = null;
 
     /**
+     * Recurrence id. Original start date of event.
+     * @var string
+     */
+    public $recurrence_id = null;
+
+    /**
      * Flag whether or not to ignore sending notification organizer.
      * @var boolean
      */

@@ -43,6 +43,29 @@ class Calls extends AdapterAbstract
     }
 
     /**
+     * Location should be ignored for Calls.
+     * @inheritDoc
+     */
+    public function prepareForRebuild(\SugarBean $bean, $previousData = false)
+    {
+        $data = parent::prepareForRebuild($bean, $previousData);
+        if ($data) {
+            foreach ($data as &$item) {
+                if (isset($item[1]['location'])) {
+                    unset($item[1]['location']);
+                    if (!$item[1] && !$item[2]) {
+                        $item = null;
+                    }
+                }
+            }
+            unset($item);
+            $data = array_filter($data);
+        }
+
+        return $data;
+    }
+
+    /**
      * @inheritDoc
      */
     public function export(&$data, \CalDavEventCollection $collection)

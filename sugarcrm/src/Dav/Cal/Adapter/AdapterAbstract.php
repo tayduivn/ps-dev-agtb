@@ -38,6 +38,87 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function prepareForExport(\SugarBean $bean, $previousData = false)
     {
+        return array($this->prepareBeanForExport($bean, $previousData));
+    }
+
+    /**
+     * @inheritDoc
+     * @return array
+     */
+    public function prepareForRebuild(\SugarBean $bean, $previousData = false)
+    {
+        $calendarEvents = $this->getCalendarEvents();
+        $exportDataSet = array();
+
+        $isRecurring = $calendarEvents->isEventRecurring($bean);
+        $exportDataSet[] = $this->prepareBeanForExport($bean, array('rebuild'));
+
+        if ($isRecurring) {
+            $dateStart = $calendarEvents->formatDateTime('datetime', $bean->date_start, 'user');
+            $params = $calendarEvents->buildParamsForRecurring($bean);
+            $repeatDateTimeArray = $calendarEvents->buildRecurringSequence($dateStart, $params);
+
+            array_shift($repeatDateTimeArray);
+            array_walk($repeatDateTimeArray, function (&$value) use ($calendarEvents) {
+                $value = $calendarEvents->formatDateTime('datetime', $value, 'db');
+            });
+
+            $recurringChildrenQuery = $this->getSugarQuery();
+            $recurringChildrenQuery->select(array('id'));
+            $recurringChildrenQuery->from($bean);
+            $recurringChildrenQuery->where()->equals('repeat_parent_id', $bean->id);
+            $recurringChildrenQuery->orderBy('recurrence_id', 'ASC');
+            $recurringChildren = $bean->fetchFromQuery($recurringChildrenQuery);
+
+            $sugarChildren = array();
+            foreach ($recurringChildren as $child) {
+                $sugarChildren[$child->recurrence_id] = $child;
+            }
+
+            $deletedChildren = array();
+            foreach ($repeatDateTimeArray as $recurrenceId) {
+                if (!isset($sugarChildren[$recurrenceId])) {
+                    $child = clone $bean;
+                    $child->id = create_guid();
+                    $child->new_with_id = true;
+                    $child->date_start = $recurrenceId;
+                    $child->recurrence_id = $recurrenceId;
+                    $child->repeat_root_id = $bean->id;
+                    $child->repeat_parent_id = $bean->id;
+                    $child->fetched_row = false;
+                    $child->send_invites = false;
+                    $child->update_vcal = false;
+                    $child->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
+                    $calendarEvents->setStartAndEndDateTime(
+                        $child,
+                        $calendarEvents->getSugarDateTime('datetime', $child->date_start)
+                    );
+                    $deletedChildren[] = $child;
+                } else {
+                    $child = $sugarChildren[$recurrenceId];
+                }
+                $exportDataSet[] = $this->prepareBeanForExport($child);
+            }
+
+            /** @var \SugarBean $child */
+            foreach ($deletedChildren as $child) {
+                $exportDataSet[] = $this->prepareBeanForExport($child, array('delete'));
+            }
+        }
+
+        return $exportDataSet;
+    }
+
+    /**
+     * Prepare only one bean for export.
+     *
+     * @param \Call|\Meeting|\SugarBean $bean
+     * @param mixed|false $previousData
+     *
+     * @return array
+     */
+    protected function prepareBeanForExport(\SugarBean $bean, $previousData = false)
+    {
         $changedFields = array();
         $changedInvitees = array();
         $action = 'override';
@@ -60,6 +141,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if (!$rootBeanId) {
             switch ($action) {
+                case 'rebuild':
                 case 'override':
                     if ($bean->repeat_type) {
                         $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
@@ -89,6 +171,7 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         switch ($action) {
+            case 'rebuild':
             case 'override' :
                 if ($changedFields) {
                     $changedFields = $this->getFieldsDiff($changedFields, false);
@@ -145,7 +228,7 @@ abstract class AdapterAbstract implements AdapterInterface
         );
 
         if ($action == 'delete') {
-            return array(array($beanData, array(), array()));
+            return array($beanData, array(), array());
         }
 
         $changedFieldsFilter = array(
@@ -180,7 +263,7 @@ abstract class AdapterAbstract implements AdapterInterface
             return false;
         }
 
-        return array(array($beanData, $changedFields, $changedInvitees));
+        return array($beanData, $changedFields, $changedInvitees);
     }
     /**
      * @inheritDoc
@@ -303,9 +386,10 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['date_end']);
             }
         }
+        $participantOverride = $action == 'override' || $action == 'rebuild';
         if ($action == 'participant-delete') {
             $changes =
-                $this->setCalDavInvitees($invitees, $collection->getParent(), $action == 'override', $organizerId);
+                $this->setCalDavInvitees($invitees, $collection->getParent(), $participantOverride, $organizerId);
 
             $customChildrenIds = $collection->getCustomizedChildrenRecurrenceIds();
             foreach ($customChildrenIds as $customChildId) {
@@ -313,7 +397,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     $this->setCalDavInvitees(
                         $invitees,
                         $collection->getChild($customChildId),
-                        $action == 'override',
+                        $participantOverride,
                         $organizerId
                     );
                 if ($result) {
@@ -321,7 +405,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
         } else {
-            $changes = $this->setCalDavInvitees($invitees, $event, $action == 'override', $organizerId);
+            $changes = $this->setCalDavInvitees($invitees, $event, $participantOverride, $organizerId);
         }
         if ($changes) {
             $isChanged = true;
@@ -336,13 +420,17 @@ abstract class AdapterAbstract implements AdapterInterface
                     $collectionChildrenCount = count($collection->getAllChildrenRecurrenceIds());
                     $sugarChildrenCount = count($collection->getSugarChildrenOrder());
                     if (!empty($recurringParam['repeat_type']) &&
-                        ($action == 'override' ||
-                            ($action == 'update' && $collectionChildrenCount != $sugarChildrenCount)
-                        )
+                        ($action == 'override' || $action == 'rebuild' ||
+                            ($action == 'update' && $collectionChildrenCount != $sugarChildrenCount))
                     ) {
                         $collection->setSugarChildrenOrder(array($beanId));
                     }
                 } else {
+                    if ($action == 'rebuild') {
+                        $collection->resetChildrenChanges();
+                        $collection->setSugarChildrenOrder(array($beanId));
+                        $isChanged = true;
+                    }
                     $data[0][3] = null;
                     foreach (RecurringHelper::$recurringFieldList as $recurringFieldName) {
                         unset($data[1][$recurringFieldName]);
@@ -1133,6 +1221,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 $beanForImport->new_with_id = true;
                 $beanForImport->repeat_root_id = $bean->id;
                 $beanForImport->repeat_parent_id = $bean->id;
+                $beanForImport->recurrence_id = $recurrenceId;
                 $beanForImport->fetched_row = false;
                 $beanForImport->send_invites = false;
                 $beanForImport->update_vcal = false;
@@ -2134,5 +2223,15 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function getSugarTimeDate()
     {
         return new \TimeDate();
+    }
+
+    /**
+     * Get SugarQuery instance.
+     *
+     * @return \SugarQuery
+     */
+    protected function getSugarQuery()
+    {
+        return new \SugarQuery();
     }
 }

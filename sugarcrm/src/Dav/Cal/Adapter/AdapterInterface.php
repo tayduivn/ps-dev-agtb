@@ -48,6 +48,15 @@ interface AdapterInterface
     public function prepareForExport(\SugarBean $bean, $previousData = false);
 
     /**
+     * Prepare bean for export with full rebuild. All children will be pass to export.
+     *
+     * @param \SugarBean $bean
+     * @param mixed|false $previousData in case of false full export should be processed
+     * @return mixed|false returns data for export or false if required things weren't changed and nothing to export
+     */
+    public function prepareForRebuild(\SugarBean $bean, $previousData = false);
+
+    /**
      * @param mixed $data should be updated for verifyImportAfterExport
      * @param \CalDavEventCollection $collection
      * @return AdapterInterface::NOTHING|AdapterInterface::SAVE|AdapterInterface::DELETE|AdapterInterface::RESTORE next action
