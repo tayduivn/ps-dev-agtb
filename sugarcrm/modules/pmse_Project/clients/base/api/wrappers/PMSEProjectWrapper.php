@@ -868,6 +868,42 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
         return $errorFields;
     }
 
+    /**
+     * Deletes flows that might have not gotten a flo_id properly set. This is
+     * controlled by sugar config.
+     * @param array $entityData Data specific to a flow
+     * @param array $element Flow data for a specific flow
+     */
+    protected function deleteImproperFlows(array $entityData, array $element)
+    {
+        global $sugar_config;
+
+        // If there is an explicit setting telling the app to do this... then do this
+        if (!empty($sugar_config['pmse_settings_default']['delete_improper_flows'])) {
+            // Grab the flow bean
+            $bean = $this->getBean($entityData['bean_object']);
+
+            // Get all of the flow rows that have matching start and end data but no
+            // flo_id field data set
+            $q = new \SugarQuery();
+            $q->select('id');
+            $q->from($bean);
+            $q->where()
+              ->equals('flo_element_origin', $element['flo_element_origin'])
+              ->equals('flo_element_origin_type', $element['flo_element_origin_type'])
+              ->equals('flo_element_dest', $element['flo_element_dest'])
+              ->equals('flo_element_dest_type', $element['flo_element_dest_type'])
+              ->isEmpty($entityData['uid_field']);
+
+            // Loop over the result and set from it
+            $rows = $q->execute();
+            foreach ($rows as $row) {
+                $bean->retrieve($row['id']);
+                $this->delete($bean);
+            }
+        }
+    }
+
     public function updateDiagram($diagramArray, $keysArray)
     {
         $this->initWrapper();
@@ -903,6 +939,16 @@ class PMSEProjectWrapper extends PMSEWrapper implements PMSEObservable
                         }
                     }
                     if ($type == 'flows') {
+                        // Handle the case where flows are sent without an ID as a create
+                        $noID = isset($entityData['uid_field']) && empty($element[$entityData['uid_field']]);
+                        $isCreate = !empty($element['action']) && strtolower($element['action']) === 'create';
+                        if ($isCreate && $noID) {
+                            // Handle deleting of bad data if that setting is set
+                            $this->deleteImproperFlows($entityData, $element);
+
+                            // Continue at this point, since there is nothing to do
+                            continue;
+                        }
 
                         // If process flow already exists then this is not a create operation.
                         // It should be treated as an update.

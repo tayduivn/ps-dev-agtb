@@ -391,20 +391,76 @@ class PMSEWrapper
      */
     public function delete($bean)
     {
-        $isDeleted = false;
-        $primaryKeysArray = $this->getPrimaryFieldName($bean); // needed to obtain the current id defined in the field definition
-        $primaryKeysArray = is_array($primaryKeysArray) ? $primaryKeysArray : array($primaryKeysArray);
-        $deleteCondition = "";
-        foreach ($primaryKeysArray as $key) {
-            $deleteCondition .= " AND " . $key . "='" . $bean->$key . "'";
+        // Gets the query to run, if there is one
+        $query = $this->getDeleteQuery($bean);
+
+        // If there is a query, run it and return the result
+        return $query && $bean->db->query($query, true, "Error marking record deleted: ");
+    }
+
+    /**
+     * Gets a delete query to run on a process bean
+     * @param SugarBean $bean
+     * @return string
+     */
+    protected function getDeleteQuery(\SugarBean $bean)
+    {
+        $return = '';
+
+        // Used to build the query as well
+        $keys = $this->getPrimaryKeysArray($bean);
+
+        // Used to build the query
+        $condition = $this->buildConditionFromKeys($bean, $keys);
+
+        // If we actually have a condition, use it
+        if ($condition != '') {
+            $return = "DELETE FROM $bean->table_name where $condition";
         }
 
-        if ($deleteCondition != '') {
-            $query = "DELETE FROM $bean->table_name where 1=1 $deleteCondition";
-            if ($bean->db->query($query, true, "Error marking record deleted: ")) {
-                $isDeleted = true;
+        return $return;
+    }
+
+    /**
+     * Builds a condition for a query from the primary keys of a bean
+     * @param SugarBean $bean
+     * @param array $keys The primary keys array
+     * @return string
+     */
+    protected function buildConditionFromKeys(\SugarBean $bean, array $keys)
+    {
+        // Default the return
+        $condition = '';
+
+        // Loop the keys and create  query
+        foreach ($keys as $key) {
+            // Primary keys shouldn't be empty, so this is a safe check
+            if (!empty($bean->$key)) {
+                // If the condition already has something added to it, glue it
+                // with an AND
+                if (!empty($condition)) {
+                    $condition .= " AND";
+                }
+
+                // Append the actual condition now
+                $condition .= " $key = " . $bean->db->quoted($bean->$key);
             }
         }
-        return $isDeleted;
+
+        return $condition;
+    }
+
+    /**
+     * Gets the primary keys array in a processable format
+     * @param SugarBean $bean
+     * @return array
+     */
+    protected function getPrimaryKeysArray(\SugarBean $bean)
+    {
+        // needed to obtain the current id defined in the field definition
+        $keys = $this->getPrimaryFieldName($bean);
+
+        // Dress up the response
+        return is_array($keys) ? $keys : array($keys);
     }
 }
