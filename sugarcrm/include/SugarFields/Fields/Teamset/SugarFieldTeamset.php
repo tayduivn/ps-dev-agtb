@@ -122,11 +122,13 @@ class SugarFieldTeamset extends SugarFieldBase {
 				$this->view->team_set_id = $GLOBALS['current_user']->team_set_id;
 			}
 		}
+        //BEGIN SUGARCRM flav=ent ONLY
         if (!empty($this->fields['team_set_selected_id'])) {
             if (!empty($this->fields['team_set_selected_id']['value'])) {
                 $this->view->team_set_selected_id = $this->fields['team_set_selected_id']['value'];
             }
         }
+        //END SUGARCRM flav=ent ONLY
     	if(!empty($this->fields['team_id']) && !empty($this->fields['team_id']['value'])){
 			$this->view->team_id = $this->fields['team_id']['value'];
 			$this->view->add_user_private_team = false;
@@ -291,8 +293,10 @@ class SugarFieldTeamset extends SugarFieldBase {
                 $teams = self::getTeamsFromRequest($this->field_name, $_POST);
                 if (empty($teams))
                 {
+                    //BEGIN SUGARCRM flav=ent ONLY
                     $this->view->team_set_selected_id = !empty($GLOBALS['current_user']->team_set_selected_id) ?
                         $GLOBALS['current_user']->team_set_selected_id : '';
+                    //END SUGARCRM flav=ent ONLY
                     $this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
                     $this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
                 }
@@ -370,8 +374,10 @@ class SugarFieldTeamset extends SugarFieldBase {
         $this->request = InputValidation::getService();
         $this->view->module_dir = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
 
+        //BEGIN SUGARCRM flav=ent ONLY
         $this->view->team_set_selected_id = !empty($GLOBALS['current_user']->team_set_selected_id) ?
             $GLOBALS['current_user']->team_set_selected_id : '';
+        //END SUGARCRM flav=ent ONLY
 		$this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
 		$this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
 
@@ -536,6 +542,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         return '';
 	}
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Given the REQUEST, return the Team-Based selected team ids, if none found, then return array()
      *
@@ -560,6 +567,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         }
         return $selectedTeamIds;
     }
+    //END SUGARCRM flav=ent ONLY
 
 	/**
 	 * Given the bean and the REQUEST attempt to save the selected team ids to the bean
@@ -585,6 +593,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	    }
 
         $additionalValues = array();
+        //BEGIN SUGARCRM flav=ent ONLY
         if (!empty($team_ids)) {
             $selectedTeamIds = $this->getSelectedTeamIdsFromRequest($field, $params);
             if (!empty($selectedTeamIds)) {
@@ -593,6 +602,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                 $bean->team_set_selected_id = '';
             }
         }
+        //END SUGARCRM flav=ent ONLY
 
 		if(!empty($team_ids)){
 	        $bean->load_relationship('teams');
@@ -712,9 +722,11 @@ class SugarFieldTeamset extends SugarFieldBase {
             return;
         }
 
+        //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = array_map(function ($el) {
             return $el['id'];
         }, TeamSetManager::getTeamsFromSet($bean->team_set_selected_id));
+        //END SUGARCRM flav=ent ONLY
 
         if (empty($bean->teamList)) {
             $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
@@ -734,12 +746,16 @@ class SugarFieldTeamset extends SugarFieldBase {
             } else {
                 $teamList[$idx]['primary'] = false;
             }
+            //BEGIN SUGARCRM flav=ent ONLY
             $teamList[$idx]['selected'] = in_array($team['id'], $selectedTeamIds) ? true : false;
+            //END SUGARCRM flav=ent ONLY
         }
         $data[$fieldName] = $teamList;
 
         // These are just confusing to people on the other side of the API
+        //BEGIN SUGARCRM flav=ent ONLY
         unset($data['team_set_selected_id']);
+        //END SUGARCRM flav=ent ONLY
         unset($data['team_set_id']);
         unset($data['team_id']);
     }
@@ -756,7 +772,9 @@ class SugarFieldTeamset extends SugarFieldBase {
         $teamList = $params[$fieldName];
         $ret = $this->fixupTeamList($teamList);
         $teamIds = $ret['teamIds'];
+        //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = $ret['selectedTeamIds'];
+        //END SUGARCRM flav=ent ONLY
         $primaryTeamId = $ret['primaryTeamId'];
 
         if ( count($teamIds) == 0 ) {
@@ -776,6 +794,7 @@ class SugarFieldTeamset extends SugarFieldBase {
             $bean->teams->replace($teamIds, array(), false);
         }
 
+        //BEGIN SUGARCRM flav=ent ONLY
         // Handle MassUpdate "replace". (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
             $teamSet = BeanFactory::getBean('TeamSets');
@@ -783,6 +802,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         } else {
             $bean->team_set_selected_id = '';
         }
+        //END SUGARCRM flav=ent ONLY
     }
 
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
@@ -795,7 +815,9 @@ class SugarFieldTeamset extends SugarFieldBase {
         $ret = $this->fixupTeamList($teamList);
         $teamIds = $ret['teamIds'];
         $primaryTeamId = $ret['primaryTeamId'];
+        //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = $ret['selectedTeamIds'];
+        //END SUGARCRM flav=ent ONLY
 
         if (isset($primaryTeamId)) {
             $bean->team_id = $primaryTeamId;
@@ -803,6 +825,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         $bean->load_relationship('teams');
         $bean->teams->add($teamIds, array(), false);
 
+        //BEGIN SUGARCRM flav=ent ONLY
         // Handle "add" case. (see MassUpdateApi::handleTypeAdjustments())
         if (!empty($selectedTeamIds)) {
             $teamSet = BeanFactory::getBean('TeamSets');
@@ -811,6 +834,7 @@ class SugarFieldTeamset extends SugarFieldBase {
                 array_merge($currentSelectedIds, $selectedTeamIds)
             ));
         }
+        //END SUGARCRM flav=ent ONLY
     }
 
     protected function fixupTeamList($teamList)
@@ -820,22 +844,28 @@ class SugarFieldTeamset extends SugarFieldBase {
             $teamList = array();
         }
         $teamIds = array();
+        //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = array();
+        //END SUGARCRM flav=ent ONLY
         foreach ( $teamList as $idx => $team ) {
             //For empty array
             if (!isset($team['id'])) { continue; }
             if (isset($team['primary']) && $team['primary'] == true) {
                 $primaryTeamId = $team['id'];
             }
+            //BEGIN SUGARCRM flav=ent ONLY
             if (!empty($team['selected'])) {
                 $selectedTeamIds[] = $team['id'];
             }
+            //END SUGARCRM flav=ent ONLY
             $teamIds[] = $team['id'];
         }
 
         return array(
             'teamIds' => $teamIds,
+            //BEGIN SUGARCRM flav=ent ONLY
             'selectedTeamIds' => $selectedTeamIds,
+            //END SUGARCRM flav=ent ONLY
             'primaryTeamId' => $primaryTeamId,
         );
     }

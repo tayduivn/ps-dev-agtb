@@ -116,7 +116,9 @@ class SavedReport extends SugarBean
 		$this->module = $module;
 		$this->is_published = $is_published;
 		$this->chart_type = $chart_type;
+        //BEGIN SUGARCRM flav=ent ONLY
         $this->team_set_selected_id = $teamSetSelectedId;
+        //END SUGARCRM flav=ent ONLY
 
 		$this->save();
 		return $result;

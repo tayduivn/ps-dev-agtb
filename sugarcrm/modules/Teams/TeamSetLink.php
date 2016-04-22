@@ -31,11 +31,13 @@ class TeamSetLink extends Link2 {
 	 * maintain an internal array of team_ids we are going to save
 	 */
     protected $_teamList;
+    //BEGIN SUGARCRM flav=ent ONLY
     /*
      * maintain an internal array of selected team_ids we are going to save
      * (list of teams with team based acls enabled)
      */
     protected $_selectedTeamList;
+    //END SUGARCRM flav=ent ONLY
 	/*
 	 * Whether this data has been committed to the database or not.
 	 */
@@ -190,10 +192,12 @@ class TeamSetLink extends Link2 {
                 if (!empty($this->_teamList)) {
                     $this->focus->team_set_id = $this->_teamSet->addTeams($this->_teamList);
                 }
+                //BEGIN SUGARCRM flav=ent ONLY
                 // If Team based ACLs have been enabled on any team then set the correct team set id on the bean
                 if (!empty($this->_selectedTeamList)) {
                     $this->focus->team_set_selected_id = $this->_teamSet->addTeams($this->_selectedTeamList);
                 }
+                //END SUGARCRM flav=ent ONLY
             }//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
 
             //if this bean already exists in the database, and is not new with id
@@ -206,10 +210,12 @@ class TeamSetLink extends Link2 {
 
             if ($runUpdate) {
                 $updatesArr[] = "team_set_id = " . $GLOBALS['db']->quoted($this->focus->team_set_id);
+                //BEGIN SUGARCRM flav=ent ONLY
                 // If Team based ACLs are enabled on any team then add that to the update as well
                 if (!empty($this->_selectedTeamList)) {
                     $updatesArr[] .= "team_set_selected_id = " . $GLOBALS['db']->quoted($this->focus->team_set_selected_id);
                 }
+                //END SUGARCRM flav=ent ONLY
                 $update_query = implode(", ", $updatesArr);
                 $GLOBALS['db']->query("UPDATE {$this->focus->table_name} SET $update_query WHERE id = '{$this->focus->id}'");
             }
@@ -235,9 +241,11 @@ class TeamSetLink extends Link2 {
 	 */
 	public function replace($rel_keys, $additional_values=array(), $save = true){
             $this->_teamList = $rel_keys;
+            //BEGIN SUGARCRM flav=ent ONLY
             if (!empty($additional_values['selected_teams'])) {
                 $this->_selectedTeamList = $additional_values['selected_teams'];
             }
+            //END SUGARCRM flav=ent ONLY
             $this->_saved = false; //bug 48733 - "New team added during merge duplicate is not saved"
             if ($save) {
                 $this->save();
@@ -301,6 +309,7 @@ class TeamSetLink extends Link2 {
                 $this->_teamList = array_merge($this->_teamList, $rel_keys);
             }
 
+            //BEGIN SUGARCRM flav=ent ONLY
             // If Team based ACLs are enabled on any team
             if (!empty($additional_values['selected_teams'])) {
                 if (empty($this->_selectedTeamList)) {
@@ -317,6 +326,7 @@ class TeamSetLink extends Link2 {
                     $this->_selectedTeamList = array_merge($this->_selectedTeamList, $additional_values['selected_teams']);
                 }
             }
+            //END SUGARCRM flav=ent ONLY
 
             if ($save) {
                 $this->save();
