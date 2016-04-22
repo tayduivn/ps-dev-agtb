@@ -175,6 +175,56 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 ),
                 'groupId' => $groupId,
             ),
+            'Deleted invitess with custom child' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('DeletedInviteesWithCustomDeleted.before'),
+                'after' => static::getSourceIcsFile('DeletedInviteesWithCustomDeleted.after'),
+                'expected' => array(
+                    array(
+                        array(
+                            'update',
+                            null,
+                            array(),
+                            '2016-04-27 06:00:00',
+                            null,
+                            $groupId,
+                        ),
+                        array(),
+                        array(
+                            'deleted' =>
+                                array(
+                                    array(
+                                        'Addressees',
+                                        $addressees['test_1@test.com']['beanId'],
+                                        'test_1@test.com',
+                                    ),
+                                ),
+                        ),
+                    ),
+                    array(
+                        array(
+                            'update',
+                            null,
+                            array(),
+                            '2016-04-29 06:00:00',
+                            2,
+                            $groupId,
+                        ),
+                        array(),
+                        array(
+                            'deleted' =>
+                                array(
+                                    array(
+                                        'Addressees',
+                                        $addressees['test_1@test.com']['beanId'],
+                                        'test_1@test.com',
+                                    ),
+                                ),
+                        ),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
             'Added invitees' => array(
                 'participants_links' => $participants_links,
                 'before' => static::getSourceIcsFile('AddedInvitees.before'),

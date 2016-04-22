@@ -466,10 +466,23 @@ abstract class AdapterAbstract implements AdapterInterface
                     array_merge($changeChild[1], $childChangeFields),
                     array_merge($changeChild[2], $childChangeInvitees),
                 );
-            } elseif ($parentAction || $rrule) {
+            } elseif ($childEvent && $rrule) {
                 $result[] = array(
                     array(
-                        $rrule ? 'override' : 'update',
+                        'override',
+                        $collection->id,
+                        $collection->getSugarChildrenOrder(),
+                        $recurrenceId->asDb(),
+                        $position,
+                        $importGroupId,
+                    ),
+                    array_merge($parentChangedFields, $childChangeFields),
+                    array_merge($parentInvites, $childChangeInvitees),
+                );
+            } elseif ($childEvent && !$childEvent->isCustomized() && $parentAction) {
+                $result[] = array(
+                    array(
+                        'update',
                         $collection->id,
                         $collection->getSugarChildrenOrder(),
                         $recurrenceId->asDb(),
