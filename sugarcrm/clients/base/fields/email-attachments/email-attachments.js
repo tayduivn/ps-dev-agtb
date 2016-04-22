@@ -163,8 +163,12 @@
         });
 
         $el.on('select2-removed', _.bind(function(event) {
-            var attachments = this._attachments.where({_file: event.val});
-            var add = this._prepareAttachmentsForRemoval(attachments);
+            var add = this._attachments.reject(function(attachment) {
+                return attachment.get('_file') === event.val;
+            });
+            var remove = this._attachments.where({_file: event.val});
+
+            add = add.concat(this._prepareAttachmentsForRemoval(remove));
             this._attachments.reset(add, {merge: true});
         }, this));
     },

@@ -594,6 +594,70 @@ describe('Base.EmailAttachments', function() {
                 field.$(field.fieldTag).trigger(event);
                 expect(field._attachments.length).toBe(0);
             });
+
+            it('should remove only the specified attachment', function() {
+                var create = new Backbone.Model({
+                    _action: 'create',
+                    _url: null,
+                    _file: id,
+                    name: 'quote.pdf',
+                    filename: 'quote.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_source: 'Uploaded'
+                });
+                var existing = new Backbone.Model({
+                    _url: 'url/to/download/file',
+                    _file: _.uniqueId(),
+                    name: 'quote.pdf',
+                    filename: 'quote.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_source: 'Uploaded'
+                });
+                var attachment;
+
+                field._attachments.add([create, existing]);
+                expect(field._attachments.length).toBe(2);
+
+                field.$(field.fieldTag).trigger(event);
+                expect(field._attachments.length).toBe(1);
+
+                attachment = field._attachments.at(0);
+                expect(attachment.get('_file')).toBe(existing.get('_file'));
+            });
+
+            it('should unlink only the specified attachment', function() {
+                var create = new Backbone.Model({
+                    _action: 'create',
+                    _url: null,
+                    _file: _.uniqueId(),
+                    name: 'quote.pdf',
+                    filename: 'quote.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_source: 'Uploaded'
+                });
+                var existing = new Backbone.Model({
+                    _url: 'url/to/download/file',
+                    _file: id,
+                    name: 'quote.pdf',
+                    filename: 'quote.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_source: 'Uploaded'
+                });
+                var attachment;
+
+                field._attachments.add([create, existing]);
+                expect(field._attachments.length).toBe(2);
+
+                field.$(field.fieldTag).trigger(event);
+                expect(field._attachments.length).toBe(2);
+
+                attachment = field._attachments.at(0);
+                expect(attachment.get('_file')).toBe(create.get('_file'));
+
+                attachment = field._attachments.at(1);
+                expect(attachment.get('_file')).toBe(id);
+                expect(attachment.get('_action')).toBe('delete');
+            });
         });
     });
 });
