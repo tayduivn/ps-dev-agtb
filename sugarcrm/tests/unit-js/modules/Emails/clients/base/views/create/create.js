@@ -70,6 +70,7 @@ describe('Emails.Views.Create', function() {
         });
 
         it('No prepopulate on context - title should be set no fields pre-populated', function() {
+            sandbox.stub(view, '_setAttachmentVisibility');
             sandbox.stub(view, 'notifyConfigurationStatus');
             view._render();
             expect(setTitleStub).toHaveBeenCalled();
@@ -79,6 +80,7 @@ describe('Emails.Views.Create', function() {
         it('prepopulate on context - call is made to populate them', function() {
             var dummyPrepopulate = {name: 'Foo!'};
 
+            sandbox.stub(view, '_setAttachmentVisibility');
             sandbox.stub(view, 'notifyConfigurationStatus');
             view.context.set('prepopulate', dummyPrepopulate);
             view._render();
@@ -89,6 +91,7 @@ describe('Emails.Views.Create', function() {
         it('No email client preference error - should not disable the send button or alert user', function() {
             var alertShowStub = sandbox.stub(app.alert, 'show');
 
+            sandbox.stub(view, '_setAttachmentVisibility');
             sandbox.stub(app.user, 'getPreference')
                 .withArgs('email_client_preference')
                 .returns({type: 'sugar'});
@@ -103,6 +106,7 @@ describe('Emails.Views.Create', function() {
                 sendField = {setDisabled: $.noop},
                 spyOnField = sandbox.spy(sendField, 'setDisabled');
 
+            sandbox.stub(view, '_setAttachmentVisibility');
             sandbox.stub(app.user, 'getPreference')
                 .withArgs('email_client_preference')
                 .returns({type: 'sugar', error: {code: 101, message: 'LBL_EMAIL_INVALID_USER_CONFIGURATION'}});
@@ -300,6 +304,7 @@ describe('Emails.Views.Create', function() {
                 var template = app.template.getView('create.recipient-options', view.module);
                 view.$el.append(template({'module' : view.module}));
             });
+            sandbox.stub(view, '_setAttachmentVisibility');
         });
 
         isRecipientOptionButtonActive = function(fieldName) {
@@ -466,24 +471,18 @@ describe('Emails.Views.Create', function() {
 
     describe('insert templates', function() {
         describe('replacing templates', function() {
-            var insertTemplateAttachmentsStub,
-                createBeanCollectionStub,
+            var createBeanCollectionStub,
                 updateEditorWithSignatureStub;
 
             beforeEach(function() {
-                insertTemplateAttachmentsStub = sandbox.stub(view, 'insertTemplateAttachments');
-                createBeanCollectionStub = sandbox.stub(app.data, 'createBeanCollection', function() {
-                    return {fetch: $.noop};
-                });
+                sandbox.spy(view, 'trigger');
                 updateEditorWithSignatureStub = sandbox.stub(view, '_updateEditorWithSignature');
-
                 view.model.off('change');
             });
 
             it('should not populate editor if template parameter is not an object', function() {
-                view.insertTemplate(null);
-                expect(createBeanCollectionStub.callCount).toBe(0);
-                expect(insertTemplateAttachmentsStub.callCount).toBe(0);
+                view._insertTemplate(null);
+                expect(view.trigger).not.toHaveBeenCalledWith('email_attachments:template:add', null);
                 expect(updateEditorWithSignatureStub.callCount).toBe(0);
                 expect(view.model.get('name')).toBeUndefined();
                 expect(view.model.get('description_html')).toBeUndefined();
@@ -497,8 +496,8 @@ describe('Emails.Views.Create', function() {
                         body_html: bodyHtml
                     });
 
-                view.insertTemplate(templateModel);
-                expect(createBeanCollectionStub.callCount).toBe(1);
+                view._insertTemplate(templateModel);
+                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBeUndefined();
                 expect(view.model.get('description_html')).toBe(bodyHtml);
@@ -514,8 +513,8 @@ describe('Emails.Views.Create', function() {
                         body_html: bodyHtml
                     });
 
-                view.insertTemplate(templateModel);
-                expect(createBeanCollectionStub.callCount).toBe(1);
+                view._insertTemplate(templateModel);
+                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBe(subject);
                 expect(view.model.get('description_html')).toBe(bodyHtml);
@@ -534,8 +533,8 @@ describe('Emails.Views.Create', function() {
                         text_only: 1
                     });
 
-                view.insertTemplate(templateModel);
-                expect(createBeanCollectionStub.callCount).toBe(1);
+                view._insertTemplate(templateModel);
+                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
                 expect(updateEditorWithSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBe(subject);
                 expect(view.model.get('description_html')).toBe(bodyText);
@@ -553,7 +552,8 @@ describe('Emails.Views.Create', function() {
 
                 view._lastSelectedSignature = signature;
 
-                view.insertTemplate(templateModel);
+                view._insertTemplate(templateModel);
+                expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
                 expect(updateEditorWithSignatureStub).toHaveBeenCalledWith(signature);
             });
         });
@@ -670,8 +670,7 @@ describe('Emails.Views.Create', function() {
         });
 
         describe('insert a signature', function() {
-            var htmlBody = 'my message body is rockin\'',
-                signatureTagBegin = '<div class="signature">',
+            var signatureTagBegin = '<div class="signature">',
                 signatureTagEnd = '</div>',
                 signature;
 
@@ -748,24 +747,6 @@ describe('Emails.Views.Create', function() {
     describe('InitializeSendEmailModel', function() {
         beforeEach(function() {
             view.model.off('change');
-        });
-
-        it('should populate the send model attachments correctly', function() {
-            var sendModel,
-                attachment1 = {id: '123', type: 'upload'},
-                attachment2 = {id: '456', type: 'document'},
-                attachment3 = {id: '789', type: 'template'};
-
-            view.model.set('attachments', [attachment1, attachment2, attachment3]);
-            sendModel = view.initializeSendEmailModel();
-            expect(sendModel.get('attachments')).toEqual([attachment1, attachment2, attachment3]);
-        });
-
-        it('should populate the send model attachments/documents as empty when attachments not set', function() {
-            var sendModel;
-            view.model.unset('attachments');
-            sendModel = view.initializeSendEmailModel();
-            expect(sendModel.get('attachments')).toEqual([]);
         });
 
         it('should populate the related field according to how the Mail API expects it', function() {
