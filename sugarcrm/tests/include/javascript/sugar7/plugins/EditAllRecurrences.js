@@ -50,7 +50,7 @@ describe('Plugins.EditAllRecurrences', function() {
         view.allRecurrencesMode = false;
         view.context.trigger('all_recurrences:edit');
         expect(navigateStub.callCount).toEqual(1);
-        expect(navigateStub.lastCall.args[0]).toEqual('#Meetings/123/edit/all-recurrences');
+        expect(navigateStub.lastCall.args[0]).toEqual('#Meetings/123/edit/all_recurrences');
     });
 
     it('should init all recurrence mode to false if not coming from all_recurrence route', function() {

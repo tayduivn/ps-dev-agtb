@@ -181,7 +181,7 @@
              * @param {String} parentId
              */
             editAllRecurrencesFromParent: function(parentId) {
-                var route = app.router.buildRoute(this.module, parentId, 'edit/all-recurrences');
+                var route = app.router.buildRoute(this.module, parentId, 'edit/all_recurrences');
                 app.router.navigate('#' + route, {trigger: true});
             },
 
