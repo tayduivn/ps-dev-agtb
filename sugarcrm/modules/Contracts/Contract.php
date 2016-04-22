@@ -102,34 +102,40 @@ class Contract extends SugarBean
 
     function save($check_notify = false)
     {
+        /** @var TimeDate $timedate */
         global $timedate;
+
+        $isCronWorkFlow = !empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"] == "Yes";
+        $isCronWorkFlow = $isCronWorkFlow && !empty($_SESSION["workflow_id_cron"]) && ArrayFunctions::in_array_access(
+            CONTRACT_BUILT_IN_WORKFLOW_ID,
+            $_SESSION["workflow_id_cron"]
+        );
+
         //decimals cant be null in sql server
-        if (!empty($this->expiration_notice)) {
-            if (!empty($_SESSION["workflow_cron"])
-                && $_SESSION["workflow_cron"] == "Yes"
-                && !empty($_SESSION["workflow_id_cron"])
-                && ArrayFunctions::in_array_access(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
-            ) {
+        if ($this->expiration_notice) {
+            /*
+             * Convert expiration notice date to DB format.
+             * to_db returns empty string for dates in DB format
+             */
+            $expNotice = $timedate->to_db($this->expiration_notice) ?: $this->expiration_notice;
+
+            // The workflow scheduler will be created when expiration notice date will change.
+            if ($isCronWorkFlow) {
                 $this->special_notification = true;
                 $check_notify = true;
-            } elseif (empty($this->fetched_row)
-                || (!empty($this->fetched_row)
-                    && $this->expiration_notice != $timedate->to_display_date_time(
-                        $this->fetched_row['expiration_notice']
-                    ))
-            ) {
-                //only when expiration_notice changes, the workflow_schedular should be created.
+            } elseif ($expNotice != $this->fetched_row['expiration_notice']) {
                 require_once("include/workflow/time_utils.php");
                 $time_array['time_int'] = '0';
                 $time_array['time_int_type'] = 'datetime';
                 $time_array['target_field'] = 'expiration_notice';
-                //check if it is update, then save();
                 check_for_schedule($this, CONTRACT_BUILT_IN_WORKFLOW_ID, $time_array);
             }
         }
+
         if ($this->total_contract_value == '') {
             $this->total_contract_value = 0;
         }
+
         if ($this->total_contract_value_usdollar == '') {
             $this->total_contract_value_usdollar = 0;
         }
@@ -142,13 +148,11 @@ class Contract extends SugarBean
 
         $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);
-        if (!empty($_SESSION["workflow_cron"])
-            && $_SESSION["workflow_cron"] == "Yes"
-            && !empty($_SESSION["workflow_id_cron"])
-            && ArrayFunctions::in_array_access(CONTRACT_BUILT_IN_WORKFLOW_ID, $_SESSION["workflow_id_cron"])
-        ) {
+        
+        if ($this->expiration_notice && $isCronWorkFlow) {
             $this->special_notification = false;
         }
+
         return $return_id;
     }
 

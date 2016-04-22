@@ -26,6 +26,8 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\File;
  */
 class FileLoader
 {
+    protected static $sugarBaseDirs = array();
+
     /**
      * Validate given file name. Whenever insecure input variables are used
      * to construct file paths it is recommended to use this methods to
@@ -50,7 +52,7 @@ class FileLoader
         // add upload directory to the allowed list
         if ($upload) {
             $uploadDir = ini_get('upload_tmp_dir');
-            $baseDirs[] = $uploadDir ? $uploadDir : sys_get_temp_dir();
+            $baseDirs[] = self::getRealPath($uploadDir ? $uploadDir : sys_get_temp_dir());
         }
 
         $constraint = new File(array('baseDirs' => $baseDirs));
@@ -105,10 +107,31 @@ class FileLoader
      */
     public static function getBaseDirs()
     {
-        $baseDirs = array(SUGAR_BASE_DIR);
-        if (defined('SHADOW_INSTANCE_DIR')) {
-            $baseDirs[] = SHADOW_INSTANCE_DIR;
+        if (empty(self::$sugarBaseDirs)) {
+            self::$sugarBaseDirs = array(SUGAR_BASE_DIR);
+            if (defined('SHADOW_INSTANCE_DIR')) {
+                self::$sugarBaseDirs[] = SHADOW_INSTANCE_DIR;
+            }
+
+            foreach (self::$sugarBaseDirs as $key => $dir) {
+                self::$sugarBaseDirs[$key] = self::getRealPath($dir);
+            }
         }
-        return $baseDirs;
+        return self::$sugarBaseDirs;
     }
+
+    /**
+     * to validate and get real path
+     * @param $path
+     * @return string, normalized path
+     */
+    protected static function getRealPath($path)
+    {
+        $realpath = realpath($path);
+        if (!$realpath) {
+            throw new \RuntimeException("path: $path doesn't exist!");
+        }
+        return $realpath;
+    }
+
 }

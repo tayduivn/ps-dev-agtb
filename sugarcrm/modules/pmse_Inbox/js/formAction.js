@@ -64,11 +64,11 @@ var reassignForm = function(casId, casIndex, flowId, pmseInboxId, taskName, valu
     showForm(casId, casIndex, flowId, pmseInboxId, taskName, values, 'reassign');
 };
 
-var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, type)
+var showForm = function(casId, casIndex, flowId, pmseInboxId, taskName, values, type, model)
 {
     var formView = _App.controller.layout.getComponent("bwc"),
         openModal = function () {
-            showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values);
+            showModalWindow(casId, casIndex, type, flowId, pmseInboxId, taskName, values, model);
         };
 
     if (!_.isUndefined(formView) && formView.hasUnsavedChanges()) {
@@ -125,7 +125,7 @@ var getUserSearchURL = function (url, flowId) {
     return url+'/users/'+ flowId + '?filter={%TERM%}&max_num={%PAGESIZE%}&offset={%OFFSET%}';
 };
 
-var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values, context) {
+var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,taskName,values, model) {
     var f,
         w,
         combo_users,
@@ -341,9 +341,13 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                                 } else {
                                     if ($('#assigned_user_name').length) {
                                         $("#assigned_user_name").val(cbDate);
+                                        var formView = _App.controller.layout.getComponent('bwc');
+                                        if (!_.isUndefined(formView)) {
+                                            formView.revertBwcModel();
+                                        }
                                     } else {
-                                        if (context && context.recordModel) {
-                                            context.recordModel.fetch();
+                                        if (model) {
+                                            model.fetch();
                                         }
                                     }
                                 }

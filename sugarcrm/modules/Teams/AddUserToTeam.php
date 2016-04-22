@@ -10,41 +10,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
 
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-
-
-
-global $mod_strings;
 global $current_user;
 
-
-if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
-
-$focus = BeanFactory::getBean('Teams');
-
-if(!isset($_REQUEST['record']) || !isset($_REQUEST['user_id'])) {
-	sugar_die($mod_strings['ERR_ADD_RECORD']);
+if (!$current_user->isAdminForModule('Users')) {
+    sugar_die("Unauthorized access to administration.");
 }
-else {
-	$record = $_REQUEST['record'];
-	$user_id = $_REQUEST['user_id'];
-	if(is_array($record)){
-		foreach($record as $id){
-			$focus->retrieve($id);
-			$focus->add_user_to_team($user_id);
-		}
-	}
-	else{
-		$focus->retrieve($record);
-		$focus->add_user_to_team($user_id);
-	}
+
+$request = InputValidation::getService();
+
+$record = $request->getValidInputRequest('record', 'Assert\Guid');
+$user_id = $request->getValidInputRequest('user_id', 'Assert\Guid');
+$records = $request->getValidInputRequest(
+    'records',
+    array('Assert\All' => array('constraints' => 'Assert\Guid'))
+);
+
+if ((empty($record) && empty($records)) || empty($user_id)) {
+    global $mod_strings;
+
+    sugar_die($mod_strings['ERR_ADD_RECORD']);
+} else {
+    $focus = BeanFactory::getBean('Teams');
+
+    if (!is_array($records)) {
+        $records = array();
+    }
+
+    if (!empty($record)) {
+        $records[] = $record;
+    }
+
+    foreach ($records as $id) {
+        $focus->retrieve($id);
+        $focus->add_user_to_team($user_id);
+    }
 }
+
 header("Location: index.php?module={$_REQUEST['return_module']}&action={$_REQUEST['return_action']}&record={$_REQUEST['return_id']}");
-?>
