@@ -612,7 +612,7 @@
         file = new Backbone.Model({
             _action: 'create',
             _url: null,
-            _file: doc.get('id'),
+            _file: doc.get('document_revision_id'),
             name: doc.get('filename'),
             filename: doc.get('filename'),
             file_mime_type: doc.get('file_mime_type'),

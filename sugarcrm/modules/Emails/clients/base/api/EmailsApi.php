@@ -332,7 +332,8 @@ class EmailsApi extends ModuleApi
     /**
      * Returns the qualified upload source file if the attachment record is valid or null.
      *
-     * An attachment record is valid if an attachment file is specified and it exists in the upload directory.
+     * An attachment record is valid if an attachment file is specified and it exists in the upload or upload/tmp
+     * directory.
      *
      * @param array $record
      * @return null|string
@@ -341,10 +342,13 @@ class EmailsApi extends ModuleApi
     {
         if (!empty($record['_file'])) {
             $guid = preg_replace('/[^a-z0-9\-]/', '', $record['_file']);
-            $source = "upload://{$guid}";
 
-            if (file_exists($source)) {
-                return $source;
+            foreach (array('', 'tmp/') as $loc) {
+                $source = "upload://{$loc}{$guid}";
+
+                if (file_exists($source)) {
+                    return $source;
+                }
             }
         }
 

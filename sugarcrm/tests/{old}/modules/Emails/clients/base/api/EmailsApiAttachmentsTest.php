@@ -34,7 +34,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
     public function testCreateRecord_WithAttachmentsUsingAnUploadedFile()
     {
         $uploadId = create_guid();
-        file_put_contents("upload://{$uploadId}", 'test');
+        file_put_contents("upload://tmp/{$uploadId}", 'test');
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
@@ -52,7 +52,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         );
         $record = $this->createRecord($args);
 
-        $this->assertFileNotExists("upload://{$uploadId}", 'The file should have been moved');
+        $this->assertFileNotExists("upload://tmp/{$uploadId}", 'The file should have been moved');
 
         $attachments = $this->getRelatedRecords($record['id']);
         $this->assertCount(1, $attachments['records']);
@@ -72,15 +72,15 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
      */
     public function testCreateRecord_WithAttachmentsUsingAnExistingFile()
     {
-        $docId = create_guid();
-        file_put_contents("upload://{$docId}", 'test');
+        $docRevisionId = create_guid();
+        file_put_contents("upload://{$docRevisionId}", 'test');
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
             'attachments' => array(
                 'create' => array(
                     array(
-                        '_file' => $docId,
+                        '_file' => $docRevisionId,
                         'name' => 'aaaaa',
                         'filename' => 'aaaaa.png',
                         'file_mime_type' => 'image/png',
@@ -91,8 +91,8 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         );
         $record = $this->createRecord($args);
 
-        $this->assertFileExists("upload://{$docId}", 'The document file should remain');
-        unlink("upload://{$docId}");
+        $this->assertFileExists("upload://{$docRevisionId}", 'The document file should remain');
+        unlink("upload://{$docRevisionId}");
 
         $attachments = $this->getRelatedRecords($record['id']);
         $this->assertCount(1, $attachments['records']);
@@ -185,7 +185,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
     public function testUpdateRecord_CreateAndRemoveAttachments()
     {
         $uploadId = create_guid();
-        file_put_contents("upload://{$uploadId}", 'test');
+        file_put_contents("upload://tmp/{$uploadId}", 'test');
 
         $templateId = create_guid();
         file_put_contents("upload://{$templateId}", 'test');

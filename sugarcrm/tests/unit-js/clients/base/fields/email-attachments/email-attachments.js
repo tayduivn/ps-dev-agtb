@@ -336,6 +336,7 @@ describe('Base.EmailAttachments', function() {
                     expect(placeholder.get('name')).toBe('Contract');
 
                     doc.set({
+                        document_revision_id: _.uniqueId(),
                         filename: 'Contract.pdf',
                         file_mime_type: 'application/pdf'
                     });
@@ -350,7 +351,7 @@ describe('Base.EmailAttachments', function() {
                 attachment = field._attachments.at(0);
                 expect(attachment.get('_action')).toBe('create');
                 expect(attachment.get('_url')).toBeNull();
-                expect(attachment.get('_file')).toBe(doc.get('id'));
+                expect(attachment.get('_file')).toBe(doc.get('document_revision_id'));
                 expect(attachment.get('name')).toBe('Contract.pdf');
                 expect(attachment.get('filename')).toBe('Contract.pdf');
                 expect(attachment.get('file_mime_type')).toBe('application/pdf');

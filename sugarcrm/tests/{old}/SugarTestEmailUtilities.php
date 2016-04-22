@@ -80,10 +80,13 @@ class SugarTestEmailUtilities
         $result = $GLOBALS['db']->query("SELECT id FROM notes WHERE email_id IN ('" . implode("','", $emailIds) . "')");
 
         while ($result && $row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $file = "upload://{$row['id']}";
+            foreach (array('', 'tmp/') as $loc) {
+                $file = "upload://{$loc}{$row['id']}";
 
-            if (file_exists($file)) {
-                unlink($file);
+                if (file_exists($file)) {
+                    unlink($file);
+                    continue;
+                }
             }
         }
 
