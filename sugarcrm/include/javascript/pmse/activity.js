@@ -2542,12 +2542,13 @@ AdamActivity.prototype.actionFactory = function (type) {
             };
             break;
         case 'BUSINESS_RULE':
-            combo_business = new ComboboxField({
+            combo_business = new SearchableCombobox({
                 label: translate('LBL_PMSE_LABEL_RULE'),
                 name: 'act_fields',
                 submit: true,
+                placeholder: translate('LBL_PMSE_FORM_OPTION_SELECT'),
                 proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/rulesets/' + adamUID,
+                    url: 'pmse_Project/CrmData/rulesets/' + adamUID + '?order_by=name',
                     uid: adamUID,
                     callback: null
                 })
@@ -2569,13 +2570,11 @@ AdamActivity.prototype.actionFactory = function (type) {
             windowTitle = translate('LBL_PMSE_FORM_TITLE_BUSINESS_RULE') + ': ' + this.getName();
             callback = {
                 'loaded': function (data) {
-                    var aRules = [{'text': translate('LBL_PMSE_FORM_OPTION_SELECT'), 'value': '', 'selected': true}];
                     root.canvas.emptyCurrentSelection();
                     combo_business.proxy.getData(null,{
                         success: function(rules) {
                             if (rules && rules.success) {
-                                aRules = aRules.concat(rules.result);
-                                combo_business.setOptions(aRules);
+                                combo_business.setOptions(rules.result);
                                 if (data && data.act_fields) {
                                     combo_business.setValue(data.act_fields || '');
                                 }
