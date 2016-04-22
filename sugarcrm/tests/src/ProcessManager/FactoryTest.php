@@ -64,7 +64,10 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetPMSEObjectThrowsException($name)
     {
-        $this->setExpectedException(PME\RuntimeException::class);
+        // the ::class syntax below is new in php 5.5 and will fail 5.4 lint check
+        // for now we have to hard code the class name until we drop 5.4 support
+        // $this->setExpectedException(PME\RuntimeException::class);
+        $this->setExpectedException('Sugarcrm\Sugarcrm\ProcessManager\Exception\RuntimeException');
         $obj = ProcessManager\Factory::getPMSEObject($name);
     }
 
@@ -143,6 +146,10 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
             ],
             [
                 'name' => 'PMSEActivity',
+                'instances' => ['PMSEActivity', 'PMSERunnable'],
+            ],
+            [
+                'name' => 'Activity',
                 'instances' => ['PMSEActivity', 'PMSERunnable'],
             ],
         ];
