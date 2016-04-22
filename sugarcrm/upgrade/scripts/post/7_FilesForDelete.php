@@ -511,6 +511,11 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'upgrade/scripts/post/7_FixCallsMeetingsReminderSelection.php';
             $files[] = 'vendor/sabre';
         }
+
+        if (version_compare($this->from_version, '7.9', '<')) {
+            $files[] = 'sidecar/src/utils/file.js';
+        }
+
         $this->fileToDelete($files);
     }
 
