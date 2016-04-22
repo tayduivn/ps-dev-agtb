@@ -686,6 +686,27 @@ EOL;
         if (!empty($this->reportchange['show'])) {
             create_default_reports(false, $this->reportchange['show']);
         }
+
+        if (!empty($this->reportchange['redefine'])) {
+            $default_reports_mapped = array();
+
+            $default_reports = get_default_reports();
+            foreach ($default_reports as $row) {
+                $default_reports_mapped[$row[1]] = $row;
+            }
+
+            foreach ($this->reportchange['redefine'] as $key => $value) {
+                if (empty($value) && isset($default_reports_mapped[$key])) {
+                    $value = $default_reports_mapped[$key][2];
+                }
+
+                $db->query('UPDATE saved_reports SET content = ' .
+                    $db->quoted($value) .
+                    ' WHERE name = ' .
+                    $db->quoted($key) .
+                    ' AND date_entered = date_modified');
+            }
+        }
     }
 
     abstract public function doDataConvert();

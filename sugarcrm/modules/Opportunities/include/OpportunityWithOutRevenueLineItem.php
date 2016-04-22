@@ -112,7 +112,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      */
     protected $reportchange = array(
         'show' => array('Current Quarter Forecast', 'Detailed Forecast'),
-        'hide' => array()
+        'hide' => array(),
+        'redefine' => array(
+            'Opportunities Won By Lead Source' => '',
+            'Pipeline By Type By Team' => '',
+            'Pipeline By Team By User' => '',
+        )
     );
 
     /**
