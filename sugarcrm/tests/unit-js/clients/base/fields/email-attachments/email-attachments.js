@@ -471,8 +471,8 @@ describe('Base.EmailAttachments', function() {
                 notes = app.data.createBeanCollection('Notes');
                 sandbox.stub(app.data, 'createBeanCollection').withArgs('Notes').returns(notes);
                 sandbox.stub(notes, 'fetch', function(options) {
-                    var placeholder;
-
+                    // No placeholder attachment.
+                    expect(field._attachments.length).toBe(7);
                     expect(options.filter).toEqual({
                         filter: [{
                             email_id: {
@@ -480,11 +480,6 @@ describe('Base.EmailAttachments', function() {
                             }
                         }]
                     });
-
-                    expect(field._attachments.length).toBe(8);
-                    placeholder = field._attachments.at(field._attachments.length - 1);
-                    expect(placeholder.get('_action')).toBe('placeholder');
-                    expect(placeholder.get('name')).toBe(template.get('name'));
 
                     notes.add(templateAttachments);
 

@@ -637,15 +637,12 @@
         var def;
         var notes = app.data.createBeanCollection('Notes');
         var placeholder;
-        var placeholderName;
 
         if (this.disposed === true) {
             return;
         }
 
-        placeholderName = app.utils.getRecordName(template) || app.lang.getModuleName(template.module);
-        placeholder = this._addPlaceholderAttachment(placeholderName);
-
+        placeholder = this._placeholders++;
         def = [{
             //FIXME: email_type should be EmailTemplates
             email_id: {
@@ -820,8 +817,10 @@
         });
         var request;
 
-        this._attachments.remove(attachment);
-        this._smartRender();
+        if (attachment.length > 0) {
+            this._attachments.remove(attachment);
+            this._smartRender();
+        }
 
         // Abort the request if it is still active.
         request = this._requests[placeholder];
