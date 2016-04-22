@@ -50,5 +50,13 @@ EOQ;
 	 */
 	function toString() {
 	}
+
+    /**
+     * Return param count to prevent errors.
+     */
+    public static function getParamCount()
+    {
+        return 1;
+    }
 }
 ?>
