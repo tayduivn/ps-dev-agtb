@@ -152,7 +152,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     }
 
     /**
-     * @covers SidecarListLayoutMetaDataParser::addField()
+     * @covers SidecarListLayoutMetaDataParser::addField
      */
     public function testAddFieldAddsToEndOfPanel()
     {
@@ -200,7 +200,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     }
 
     /**
-     * @covers SidecarListLayoutMetaDataParser::addField()
+     * @covers SidecarListLayoutMetaDataParser::addField
      */
     public function testAddFieldToStartOfPanel()
     {
@@ -248,7 +248,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     }
 
     /**
-     * @covers SidecarListLayoutMetaDataParser::addField()
+     * @covers SidecarListLayoutMetaDataParser::addField
      */
     public function testAddFieldAddsToMiddleOfPanel()
     {
@@ -301,7 +301,7 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
     }
 
     /**
-     * @covers SidecarListLayoutMetaDataParser::resetPanelFields()
+     * @covers SidecarListLayoutMetaDataParser::resetPanelFields
      */
     public function testResetPanelFieldsRemovesAllFields()
     {

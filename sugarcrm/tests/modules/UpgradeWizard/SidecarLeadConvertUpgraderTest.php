@@ -40,7 +40,7 @@ class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SidecarLeadConvertMetaDataUpgrader::convertSingleModuleDef()
+     * @covers SidecarLeadConvertMetaDataUpgrader::convertSingleModuleDef
      */
     public function testConvertSingleModuleDef_OnlyRequiredAndCopyDataSettingsCarriedOver()
     {
@@ -72,7 +72,7 @@ class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade()
+     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade
      */
     public function testUpgrade_ModuleOrderIsEnforced()
     {
@@ -113,7 +113,7 @@ class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade()
+     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade
      */
     public function testUpgrade_AccountIsRequiredWhenOpportunityIsIncluded()
     {
@@ -142,7 +142,7 @@ class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade()
+     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade
      */
     public function testUpgrade_ModulesInBwcOrExcludeListShouldNotBeIncluded()
     {
@@ -187,7 +187,7 @@ class SidecarLeadConvertUpgraderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade()
+     * @covers SidecarLeadConvertMetaDataUpgrader::upgrade
      */
     public function testUpgrade_AccountCanBeOptionalWhenOpportunityIsNotIncluded()
     {
