@@ -334,7 +334,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Forecast::getSettings();
+     * @covers Forecast::getSettings
      */
     public function testGetSettings()
     {
