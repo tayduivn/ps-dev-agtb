@@ -502,9 +502,9 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
         $builder = $query->compile();
 
         $this->assertEquals(
-            '(SELECT accounts.name FROM accounts WHERE accounts.industry = ?)'
-            . ' UNION ALL '
-            . '(SELECT accounts.name FROM accounts WHERE accounts.account_type = ?)'
+            'SELECT accounts.name FROM accounts WHERE accounts.industry = ?'
+            . ' UNION ALL'
+            . ' SELECT accounts.name FROM accounts WHERE accounts.account_type = ?'
             . ' ORDER BY name ASC',
             $builder->getSQL()
         );

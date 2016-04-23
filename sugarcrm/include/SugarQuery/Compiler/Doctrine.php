@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 
 /**
  * Compiler of SugarQuery to Doctrine query builder
@@ -71,7 +72,18 @@ class SugarQuery_Compiler_Doctrine
                 }
             }
 
-            $sql .= '(' . $this->compileSubQuery($builder, $union['query']) . ')';
+            $sql .= $this->compileSubQuery($builder, $union['query']);
+        }
+
+        $hasLimit = $query->limit !== null || $query->offset !== null;
+        $hasOrderBy = count($query->order_by) > 0;
+        $platform = $this->db->getConnection()->getDatabasePlatform();
+
+        // in case of a UNION query with LIMIT and ORDER BY, wrap the UNIONs in a sub-query
+        // in order to let Doctrine DBAL apply the LIMIT
+        // @link https://github.com/doctrine/dbal/issues/2374
+        if ($hasLimit && $hasOrderBy && $platform instanceof SQLServerPlatform) {
+            $sql = 'SELECT * FROM (' . $sql . ') union_tmp';
         }
 
         $this->compileOrderBy($builder, $query, false);
@@ -80,10 +92,8 @@ class SugarQuery_Compiler_Doctrine
         $sql = str_replace('SELECT  FROM ', $sql, $builder->getSQL());
 
         // manually apply LIMIT to the resulting SQL
-        if ($query->limit !== null || $query->offset !== null) {
-            $sql = $this->db->getConnection()
-                ->getDatabasePlatform()
-                ->modifyLimitQuery($sql, $query->limit, $query->offset);
+        if ($hasLimit) {
+            $sql = $platform->modifyLimitQuery($sql, $query->limit, $query->offset);
         }
 
         // below is a very dirty hack: Doctrine QueryBuilder doesn't support UNION's,
