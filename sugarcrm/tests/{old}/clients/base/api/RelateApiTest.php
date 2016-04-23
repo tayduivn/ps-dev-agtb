@@ -317,10 +317,8 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
                 'order_by' => 'opportunity_role:DESC'
             )
         );
-        $test = 'AND team_memberships.deleted = 0
-  GROUP BY tst.team_set_id
-) contacts_tf ON contacts_tf.team_set_id = contacts.team_set_id';
-        $this->assertContains($test, $q->compile()->getSQL(), "Should have team security join applied");
+
+        $this->assertArrayHasKey('contacts_tf', $q->join, 'Should have team security join applied');
     }
 }
 
