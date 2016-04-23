@@ -332,11 +332,19 @@ class SugarQuery_Compiler_Doctrine
      */
     protected function applyOrderByStability(SugarQuery $query, array $orderBy)
     {
-        if (count($orderBy) > 0) {
-            $uniqueCol = new SugarQuery_Builder_Orderby($query);
-            $uniqueCol->addField('id');
-            $orderBy[] = $uniqueCol;
+        if (count($orderBy) == 0) {
+            return $orderBy;
         }
+
+        foreach ($orderBy as $column) {
+            if ($column->column->field == 'id') {
+                return $orderBy;
+            }
+        }
+
+        $uniqueCol = new SugarQuery_Builder_Orderby($query);
+        $uniqueCol->addField('id');
+        $orderBy[] = $uniqueCol;
 
         return $orderBy;
     }
