@@ -98,6 +98,7 @@ class SugarUpgradeCheckComposerConfig extends UpgradeScript
         '7.6.2.0' => 'af617767509def89c0e1dea33c176a0c',
         '7.6.2.1' => 'af617767509def89c0e1dea33c176a0c',
         '7.6.3.0' => '08fb3af46af5f2d1f1c2042c3113763a',
+        '7.6.3.1' => '08fb3af46af5f2d1f1c2042c3113763a',
     );
 
     /**
