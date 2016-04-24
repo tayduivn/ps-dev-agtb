@@ -20,7 +20,7 @@
      * @inheritdoc
      */
     format: function(value) {
-        if (_.isEmpty(value)) {
+        if (_.isEmpty(value) && this.action !== 'edit') {
             // the subject line is empty, show (no subject) instead of blank
             return app.lang.get('LBL_NO_SUBJECT', this.module);
         }
