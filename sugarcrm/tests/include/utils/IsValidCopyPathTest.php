@@ -13,7 +13,8 @@
 require_once 'include/utils/file_utils.php';
 
 /**
- * @covers isValidCopyPath
+ * Can't use 'covers' on functions.
+ * covers isValidCopyPath
  */
 class IsValidCopyPathTest extends Sugar_PHPUnit_Framework_TestCase
 {
