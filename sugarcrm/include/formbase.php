@@ -106,7 +106,10 @@ function populateFromPostACL(SugarBean $focus)
 
     $defaultBean = BeanFactory::getBean($focus->module_name, $beanId, array('use_cache' => false));
     $defaultBean->fill_in_additional_detail_fields();
-    $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;
+
+    if (empty($defaultBean->assigned_user_id)) {
+        $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;
+    }
 
     foreach (array_keys($focus->field_defs) as $field) {
         $fieldAccess = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $isOwner);
