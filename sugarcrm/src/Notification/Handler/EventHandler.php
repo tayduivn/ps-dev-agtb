@@ -39,6 +39,7 @@ class EventHandler extends BaseHandler
      */
     protected function initialize(EventInterface $event)
     {
+        $this->logger->debug("NC: run EventHandler for {$this->event} event");
         $this->event = $event;
     }
 
@@ -81,6 +82,7 @@ class EventHandler extends BaseHandler
 
         $manager = $this->getJobQueueManager();
         foreach ($carriers as $carrierName => $carrierRow) {
+            $this->logger->debug("NC: creating NotificationCarrierBulkMessage job for {$this->event}, $carrierName");
             $manager->NotificationCarrierBulkMessage(null, $this->event, $carrierName, $carrierRow['data']);
         }
         return \SchedulersJob::JOB_SUCCESS;

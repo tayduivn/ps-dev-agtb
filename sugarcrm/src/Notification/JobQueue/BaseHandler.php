@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class BaseHandler
@@ -20,12 +21,18 @@ use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
  */
 abstract class BaseHandler implements RunnableInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
 
     /**
      * Unserialize all function arguments for next throwing to method initialize.
      */
     public function __construct()
     {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+
         if (!method_exists($this, 'initialize')) {
             throw new \Exception("Initialize method is not implemented");
         }
@@ -69,6 +76,10 @@ abstract class BaseHandler implements RunnableInterface
         } else {
             $user = \BeanFactory::getBean('Users', $userId);
         }
+
+        $this->logger->debug(
+            "NC: Changing system current user from User({$GLOBALS['current_user']->id}) to User({$user->id})"
+        );
 
         $GLOBALS['current_user'] = $user;
     }

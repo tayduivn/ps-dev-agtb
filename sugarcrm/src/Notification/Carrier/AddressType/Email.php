@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\Carrier\AddressType;
 
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+
 /**
  * Help carriers to get e-mail from user.
  *
@@ -20,6 +22,18 @@ namespace Sugarcrm\Sugarcrm\Notification\Carrier\AddressType;
  */
 class Email implements AddressTypeInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
 
     /**
      * Checks received user and returns e-mails values for delivery.
@@ -36,6 +50,7 @@ class Email implements AddressTypeInterface
                 $options[] = $row['email_address'];
             }
         }
+        $this->logger->debug("NC: For User({$user->id}) the following emails are found: " . var_export($options, true));
         return $options;
     }
 
@@ -54,6 +69,7 @@ class Email implements AddressTypeInterface
         } elseif ($list) {
             return $list[0];
         }
+        $this->logger->notice("NC: No email for User({$user->id}) and option = $option found");
         return null;
     }
 

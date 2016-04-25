@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Emitter\Reminder;
 
 use Sugarcrm\Sugarcrm\Notification\EmitterInterface;
 use Sugarcrm\Sugarcrm\Notification\Dispatcher;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class Emitter
@@ -22,6 +23,19 @@ use Sugarcrm\Sugarcrm\Notification\Dispatcher;
  */
 class Emitter implements EmitterInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
     /**
      * Get an Event by a given string.
      *
@@ -66,9 +80,14 @@ class Emitter implements EmitterInterface
     {
         $event = $this->getEventPrototypeByString('reminder');
 
+        $this->logger->debug(
+            "NC: Reminder Emitter: setting bean $bean->module_name({$bean->id})' and User({$user->id}) for $event event"
+        );
+
         $event->setBean($bean)
             ->setUser($user);
 
+        $this->logger->debug("NC: Reminder Emitter: dispatching $event event");
         $this->getDispatcher()->dispatch($event);
     }
 

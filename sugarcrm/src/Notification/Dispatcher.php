@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\JobQueue\Manager;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * When event has been triggered it should be dispatched to Job Queue.
@@ -24,6 +25,19 @@ use Sugarcrm\Sugarcrm\Notification\JobQueue\Manager;
 class Dispatcher
 {
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * Receives event and schedules task in job queue to process it.
      *
      * @param EventInterface $event event for processing.
@@ -31,6 +45,7 @@ class Dispatcher
     public function dispatch(EventInterface $event)
     {
         $manager = $this->getJobQueueManager();
+        $this->logger->debug("NC: Dispatcher dispatches $event event");
         $manager->NotificationEvent(null, $event);
     }
 

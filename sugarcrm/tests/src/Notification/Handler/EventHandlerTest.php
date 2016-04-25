@@ -60,9 +60,9 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'getJobQueueManager',
                 'getUser',
             ),
-            array(),
+            array(null, array(null, serialize($this->event))),
             '',
-            false
+            true
         );
 
         $this->handler->method('getSubscriptionsRegistry')->willReturn($this->subscriptionsRegistry);

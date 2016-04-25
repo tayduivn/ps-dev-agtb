@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class EmitterRegistry.
@@ -22,7 +23,6 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\BeanEmitterInterface;
  */
 class EmitterRegistry
 {
-
     /**
      * Path to file in which store cached dictionary array
      */
@@ -42,6 +42,19 @@ class EmitterRegistry
      * Full path to EmitterInterface with nameSpace
      */
     const EMITTER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\EmitterInterface';
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
 
     /**
      * Get object of EmitterRegistry, customized if it's present.
@@ -86,6 +99,8 @@ class EmitterRegistry
             \SugarAutoLoader::load($emitters[$moduleName]['path']);
             $class = $emitters[$moduleName]['class'];
 
+            $this->logger->debug("NC: Emitter registry instantiates '$class' emitter");
+
             if (in_array(static::BEAN_EMITTER_INTERFACE, class_implements($class))) {
                 return new $class($this->getBeanEmitter());
             } else {
@@ -93,6 +108,7 @@ class EmitterRegistry
             }
 
         } else {
+            $this->logger->notice("NC: No emitter found for $moduleName");
             return null;
         }
     }
@@ -103,7 +119,9 @@ class EmitterRegistry
      */
     public function getModuleEmitters()
     {
-        return array_keys($this->getDictionary());
+        $emitters = array_keys($this->getDictionary());
+        $this->logger->debug('NC: All found Emitters are: ' . var_export($emitters, true));
+        return $emitters;
     }
 
     /**
@@ -120,6 +138,10 @@ class EmitterRegistry
      */
     protected function scan()
     {
+        $this->logger->debug(
+            "NC: Emitter registry builds dictionary with module-level emitters class names and path to it"
+        );
+
         $dictionary = array();
         foreach ($GLOBALS['moduleList'] as $module) {
             if (!array_key_exists($module, $GLOBALS['beanList'])) {
@@ -130,8 +152,13 @@ class EmitterRegistry
 
             $path = 'modules/' . $module . '/Emitter.php';
             $class = $GLOBALS['beanList'][$module] . 'Emitter';
+
+            $this->logger->debug("NC: Emitter registry scan looks for $module module's Emitter");
+
             \SugarAutoLoader::load($path);
             if ($this->isEmitterClass($class)) {
+                $this->logger->debug("NC: Emitter $class was found in '$path' path");
+
                 $moduleEmitters[] = array(
                     'path' => $path,
                     'class' => $class,
@@ -143,6 +170,7 @@ class EmitterRegistry
                 \SugarAutoLoader::load($customPath);
                 $customClass = $this->customClass($class);
                 if ($this->isEmitterClass($customClass)) {
+                    $this->logger->debug("NC: Custom Emitter $customClass was found in '$customPath' path");
                     $moduleEmitters[] = array(
                         'path' => $customPath,
                         'class' => $customClass,
@@ -181,6 +209,7 @@ class EmitterRegistry
     {
         $data = $this->getCache();
         if (is_null($data)) {
+            $this->logger->debug("NC: Emitter registry: no cache found, proceed to scanning files");
             $data = $this->scan();
             $this->setCache($data);
         }
@@ -198,6 +227,8 @@ class EmitterRegistry
     protected function getCache()
     {
         $path = sugar_cached(static::CACHE_FILE);
+        $this->logger->debug("NC: Emitter registry tries to get emitters data from cache $path file");
+
         if (\SugarAutoLoader::fileExists($path)) {
             include($path);
         }
@@ -216,6 +247,10 @@ class EmitterRegistry
      */
     protected function setCache($data)
     {
+        $this->logger->info(
+            'NC: Emitter registry sets cache file ' . static::CACHE_FILE . ' with data: '
+            . var_export($data, true)
+        );
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
     }

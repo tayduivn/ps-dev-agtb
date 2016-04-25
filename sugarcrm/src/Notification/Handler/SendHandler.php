@@ -64,6 +64,8 @@ class SendHandler extends BaseHandler
      */
     protected function initialize($carrier, $transportValue, array $message)
     {
+        $this->logger->debug("NC: run SendHandler for {$this->carrierName} carrier");
+
         $this->carrierName = $carrier;
         $this->transportValue = $transportValue;
         $this->message = $message;
@@ -79,8 +81,10 @@ class SendHandler extends BaseHandler
         $result = $carrier->getTransport()->send($this->transportValue, $this->message);
 
         if ($result === true) {
+            $this->logger->debug("NC: SendHandler run successfully");
             return \SchedulersJob::JOB_SUCCESS;
         } else {
+            $this->logger->debug("NC: SendHandler run failed");
             return \SchedulersJob::JOB_FAILURE;
         }
     }
