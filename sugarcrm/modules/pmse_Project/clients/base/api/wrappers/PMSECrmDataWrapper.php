@@ -663,6 +663,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         $filter = isset($args['filter']) ? $args['filter'] : '';
         $type = isset($args['call_type']) ? $args['call_type'] : '';
         $baseModule = isset($args['base_module']) ? $args['base_module'] : '';
+        $orderBy = isset($args['order_by']) ? $args['order_by'] : '';
 
         $outputType = 0;
         switch ($data) {
@@ -723,7 +724,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $outputType = 1;
                 break;
             case 'rulesets':
-                $output = $this->retrieveRuleSets($filter);
+                $output = $this->retrieveRuleSets($filter, $orderBy);
                 break;
             case 'businessrules':
                 $output = $this->retrieveBusinessRules($filter);
@@ -1793,7 +1794,7 @@ class PMSECrmDataWrapper implements PMSEObservable
      * @param $filter
      * @return object
      */
-    public function retrieveRuleSets($filter)
+    public function retrieveRuleSets($filter, $orderBy = 'name')
     {
         $processDefinitionBean = $this->getProcessDefinition();
         $projectBean = $this->getProjectBean();
@@ -1807,7 +1808,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $newModuleFilter = array_search($processDefinitionBean->pro_module, $this->beanList);
             }
             $where = 'pmse_business_rules.rst_module=\'' . $newModuleFilter . '\'';
-            $ruleSetList = $ruleSetBean->get_full_list('', $where);
+            $ruleSetList = $ruleSetBean->get_full_list($orderBy, $where);
 
             if (is_array($ruleSetList)) {
                 foreach ($ruleSetList as $key => $ruleset) {
