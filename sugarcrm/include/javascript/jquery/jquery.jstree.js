@@ -1298,7 +1298,7 @@
 					h2 = obj.css("position","relative").append(
 					$("<input />", { 
 						"value" : t,
-						'rel' : mode || 'add',
+                        'data-mode': mode || 'add',
 						"class" : "jstree-rename-input",
 						// "size" : t.length,
 						"css" : {
@@ -1315,7 +1315,7 @@
 						"blur" : $.proxy(function () {
 							var i = obj.children(".jstree-rename-input"),
 								v = i.val();
-							if ($(i).attr('rel') === 'delete') {
+                            if ($(i).attr('data-mode') === 'delete') {
 								this.remove(obj);
 								return false;
 							}
@@ -1330,7 +1330,7 @@
 						"keyup" : function (event) {
 							var key = event.keyCode || event.which;
 							if(key == 27) {
-								$(this).attr('rel') === 'add' ? $(this).attr('rel', 'delete') : this.value = t;
+                                $(this).attr('data-mode') === 'add' ? $(this).attr('data-mode', 'delete') : this.value = t;
 								this.blur();
 								return;
 							}

@@ -66,6 +66,13 @@
              * @param {View.Component} component The component this plugin is attached to.
              */
             onDetach: function(component) {
+                // Disabling all existing tooltips for input
+                if (!_.isEmpty(this.$treeContainer)) {
+                    _.each(this.$treeContainer.find('input'), _.bind(function(input) {
+                        this._disableTooltip($(input));
+                    }, this));
+                }
+
                 if (!_.isEmpty(this.jsTree)) {
                     this.jsTree.off();
                 }
@@ -74,6 +81,7 @@
                     this.onNestedSetSyncComplete,
                     this
                 );
+
             },
 
             /**
@@ -695,7 +703,7 @@
                 obj.append(clonedElement);
 
                 this._toggleAddNodeButton(obj, true);
-                this._toggleTooltip(obj, true);
+                this._enableTooltip(clonedElement);
 
                 clonedElement.width(Math.min(h1.text("pW" + clonedElement[0].value).width(), w))[0].select();
 
@@ -703,8 +711,8 @@
                     .on('keydown', function(event) {
                         var key = event.which;
                         if (key === 27) {
-                            $(this).attr('rel') === 'add' ? $(this).attr('rel', 'delete') : this.value = t;
-                            el.attr('rel') === 'add' ? el.attr('rel', 'delete') : el.value = t;
+                            $(this).attr('data-mode') === 'add' ? $(this).attr('data-mode', 'delete') : this.value = t;
+                            el.attr('data-mode') === 'add' ? el.attr('data-mode', 'delete') : el.value = t;
                         }
                         if (key === 27 || key === 13 || key === 37 || key === 38 || key === 39 || key === 40 ||
                             key === 32) {
@@ -723,7 +731,7 @@
                             }
                         }
                         if (key === 27 || key === 13) {
-                            self._toggleTooltip(obj, false);
+                            self._disableTooltip(clonedElement);
                             event.preventDefault();
                             self._blur($(this), el);
                         }
@@ -1075,33 +1083,47 @@
             },
 
             /**
+             * Enables tooltip on input element
              *
-             * @param {Object} node JSTree node object.
-             * @param {Boolean} show
+             * Note: We are enabling tooltip for focus event only.
+             * That's why we need to call stopPropagation() on hover event for tooltip
+             *
+             * @param {jQuery} input Input element for JSTree node
              * @private
              */
-            _toggleTooltip: function(node, show) {
-                var input = node.children('input.jstree-rename-input:visible');
-                if (show) {
-                    input
-                        .tooltip({
-                            title: app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'),
-                            container: 'body',
-                            trigger: 'focus',
-                            delay: { show: 200, hide: 100 }
-                        })
-                        .tooltip('show');
-                } else {
-                    /*
-                     [RS-1063]
-                     This is the known bug of an old version of the Bootstrap Tooltip.
-                     (see https://github.com/twbs/bootstrap/issues/10740)
-                     Next line (in combination with .find('..:visible') above) is a fix for current version
-                     */
-                    input.data('bs.tooltip').$tip.remove();
-                    input
-                        .tooltip('destroy');
+            _enableTooltip: function(input) {
+                input.on('hover', function(e) {
+                    e.stopPropagation();
+                });
+
+                input.attr('rel', 'tooltip');
+                input.attr('title', app.lang.get('LBL_CREATE_CATEGORY_PLACEHOLDER', 'KBContents'));
+                input.tooltip({
+                    container: 'body',
+                    trigger: 'focus',
+                    delay: {show: 200, hide: 100}
+                }).tooltip('show');
+            },
+
+            /**
+             * Disable tooltip on input element
+             *
+             * @param {jQuery} input Input element for JSTree node
+             * @private
+             */
+            _disableTooltip: function(input) {
+                if (!input.data('bs.tooltip')) {
+                    return;
                 }
+
+                /*
+                 [RS-1063]
+                 This is the known bug of an old version of the Bootstrap Tooltip.
+                 (see https://github.com/twbs/bootstrap/issues/10740)
+                 Next line (in combination with .find('..:visible') above) is a fix for current version
+                 */
+                input.data('bs.tooltip').$tip.remove();
+                input.tooltip('destroy');
             }
         });
     });

@@ -53,12 +53,7 @@
             }
             var target = event.target;
             var $target = $(target);
-
-            // rel="add" requires tooltip because it's used in JSTree inputs (see JSTree.js).
-            // rel for such inputs can't be changed to `tooltip`, because it's used internally in jquery.jstree.js
-            var relWithTooltip = ['tooltip', 'add'];
-            var showTooltip = ($.inArray($target.attr('rel'), relWithTooltip) !== -1 ||
-            target.offsetWidth < target.scrollWidth);
+            var showTooltip = ($target.attr('rel') === 'tooltip' || target.offsetWidth < target.scrollWidth);
 
             if (!showTooltip) {
                 event.preventDefault();

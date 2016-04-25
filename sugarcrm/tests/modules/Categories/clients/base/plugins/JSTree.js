@@ -4,7 +4,7 @@ describe('Plugins.JSTree', function() {
             category_root: '0',
             module_root: module
         },
-        app, field, renderTreeStub, sinonSandbox, treeData;
+        app, field, renderTreeStub, sinonSandbox, treeData, $fixture;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -40,6 +40,8 @@ describe('Plugins.JSTree', function() {
 
         field = SugarTest.createField('base', 'nestedset', 'nestedset', 'edit', fieldDef, module, null, null, true);
         renderTreeStub = sinonSandbox.stub(field, '_renderTree');
+
+        $fixture = $('<div id="Tree.Fixture">').appendTo('body');
     });
 
     afterEach(function() {
@@ -52,6 +54,7 @@ describe('Plugins.JSTree', function() {
         delete app.plugins.plugins['field']['JSTree'];
         delete app.plugins.plugins['field']['NestedSetCollection'];
         sinonSandbox.restore();
+        $fixture.remove();
     });
 
     it('Tree add node.', function() {
@@ -180,6 +183,49 @@ describe('Plugins.JSTree', function() {
         };
         field._createHandler(null, jsTreeData);
         expect(appendStub).toHaveBeenCalled();
+    });
+
+    it('Input should have tooltip when focused', function() {
+        sinonSandbox.stub(Modernizr, 'touch', false);
+        app.tooltip.init();
+
+        field.$treeContainer = $fixture;
+        field.$noData = $('<div />');
+        field.jsTreeSettings = {
+            plugins: []
+        };
+
+        $fixture.jstree = function() {};
+        var jsTreeStub = sinonSandbox.stub($fixture, 'jstree');
+
+        var jsTree = $('<div />');
+        jsTreeStub.returns(jsTree);
+
+        field.createTree(treeData, $fixture);
+
+        var data = {
+            obj: $('<div />'),
+            h1: $('<h1 />'),
+            h2: $('<h2 />')
+        };
+        $('<input />').appendTo(data.obj);
+        data.obj.appendTo($fixture);
+
+        jsTree.trigger('show_input.jstree', data);
+
+        var $inputs = $(_.filter($(data.obj).find('input'), function(input) {
+            return $(input).css('display') !== 'none';
+        }));
+
+        $inputs.trigger('focus');
+
+        expect($inputs.data('bs.tooltip')).toBeDefined('Tooltip data has not been created');
+        expect($('.tooltip').length).toBe($inputs.length, 'Tooltip has not been shown');
+
+        // Removing component must remove tooltips and it's data
+        field.onDetach();
+        expect($inputs.data('bs.tooltip')).not.toBeDefined('Tooltip data has not been removed');
+        expect($('.tooltip').length).toBe(0, 'Tooltip has not been hidden when field removed');
     });
 
     describe('Select Node Handler test.', function() {
