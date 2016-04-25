@@ -762,8 +762,8 @@
              * Returns the first valid email address associated with the model
              * or an empty string if none exist.
              *
-             * An email address is considered valid if its `invalid_email` and
-             * `opt_out` properties are `false`. The email address with `true`
+             * An email address is considered valid if its `invalid_email`
+             * property is `false`. The email address with `true`
              * for the `primary_address` property is tested first.
              *
              * This method is implemented to simulate the server-side method
@@ -773,12 +773,8 @@
              * @return {string}
              */
             getPrimaryEmailAddress: function(model) {
-                return app.utils.getEmailAddress(model, {
-                        primary_address: true,
-                        invalid_email: false,
-                        opt_out: false
-                    }) ||
-                    app.utils.getEmailAddress(model, {invalid_email: false, opt_out: false});
+                return app.utils.getEmailAddress(model, {primary_address: true, invalid_email: false}) ||
+                    app.utils.getEmailAddress(model, {invalid_email: false});
             },
 
             /**
