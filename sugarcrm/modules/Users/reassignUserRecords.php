@@ -284,6 +284,7 @@ else if(!isset($_GET['execute'])){
 	$team_set_id = $teamSet->addTeams($team_ids);
     $teamSetSelectedId = null;
 
+    //BEGIN SUGARCRM flav=ent ONLY
     $tbaConfigurator = new TeamBasedACLConfigurator();
     if ($tbaConfigurator->isEnabledGlobally()) {
         $selectedIds = $sugarFieldTeamSet->getSelectedTeamIdsFromRequest('team_name', $_REQUEST);
@@ -291,6 +292,7 @@ else if(!isset($_GET['execute'])){
             $teamSetSelectedId = $teamSet->addTeams($selectedIds);
         }
     }
+    //END SUGARCRM flav=ent ONLY
 
 	$toteamname = TeamSetManager::getCommaDelimitedTeams($team_set_id,$team_id,true);
     echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
@@ -342,9 +344,11 @@ else if(!isset($_GET['execute'])){
         {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
+        //BEGIN SUGARCRM flav=ent ONLY
         if ($teamSetSelectedId && $tbaConfigurator->isEnabledForModule($module)) {
             $q_set .= ", team_set_selected_id = '{$teamSetSelectedId}' ";
         }
+        //END SUGARCRM flav=ent ONLY
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = ".$db->quoted($fromuser);
 
