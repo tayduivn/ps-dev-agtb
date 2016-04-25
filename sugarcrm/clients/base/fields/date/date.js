@@ -391,6 +391,10 @@
      * @inheritdoc
      */
     _render: function() {
+        if (this._hasDatePicker) {
+            this.$(this.fieldTag).datepicker('hide');
+        }
+
         this._super('_render');
 
         if (this.tplName !== 'edit' && this.tplName !== 'massupdate') {
