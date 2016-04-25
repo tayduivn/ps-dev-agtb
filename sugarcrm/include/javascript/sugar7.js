@@ -103,6 +103,7 @@
                 name: "bwc",
                 route: "bwc/*url",
                 callback: function(url, params) {
+                    url = url || '';
                     var bwcUrl = _.isEmpty(params) ? url : url + '?' + params;
                     app.logger.debug("BWC: " + bwcUrl);
 
