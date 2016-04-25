@@ -90,6 +90,13 @@ class WorkFlowAction extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function WorkflowAction()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

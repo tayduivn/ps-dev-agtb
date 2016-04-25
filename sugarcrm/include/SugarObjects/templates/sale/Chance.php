@@ -21,4 +21,19 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarObjects/templates/basic/Basic.php');
 class Chance extends Basic
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Chance()
+    {
+        self::__construct();
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }

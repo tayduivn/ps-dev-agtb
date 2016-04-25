@@ -45,6 +45,13 @@ class EmailUI {
      */
     protected $request;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function EmailUI()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		global $sugar_config;

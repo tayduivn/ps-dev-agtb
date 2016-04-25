@@ -83,6 +83,13 @@ class EmailTemplate extends SugarBean {
 
     protected $storedVariables = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function EmailTemplate()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

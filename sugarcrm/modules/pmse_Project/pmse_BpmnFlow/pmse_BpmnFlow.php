@@ -20,6 +20,13 @@ require_once 'modules/pmse_Project/pmse_BpmnFlow/pmse_BpmnFlow_sugar.php';
 
 class pmse_BpmnFlow extends pmse_BpmnFlow_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnFlow()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

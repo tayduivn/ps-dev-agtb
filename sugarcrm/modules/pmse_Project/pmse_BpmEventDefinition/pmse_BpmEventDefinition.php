@@ -20,6 +20,14 @@ require_once 'modules/pmse_Project/pmse_BpmEventDefinition/pmse_BpmEventDefiniti
 
 class pmse_BpmEventDefinition extends pmse_BpmEventDefinition_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmEventDefinition()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

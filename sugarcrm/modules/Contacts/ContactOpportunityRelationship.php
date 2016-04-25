@@ -44,6 +44,13 @@ class ContactOpportunityRelationship extends SugarBean {
       , 'deleted'=>array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required'=>true)
       );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ContactOpportunityRelationship()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		$this->db = DBManagerFactory::getInstance();

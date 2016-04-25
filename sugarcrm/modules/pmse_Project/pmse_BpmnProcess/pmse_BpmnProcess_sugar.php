@@ -47,6 +47,14 @@ class pmse_BpmnProcess_sugar extends Basic {
     var $pro_is_closed;
     var $pro_is_subprocess;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnProcess_sugar()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

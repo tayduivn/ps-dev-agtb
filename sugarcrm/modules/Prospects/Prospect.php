@@ -73,6 +73,13 @@ class Prospect extends Person {
     // This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name');
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Prospect()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

@@ -42,6 +42,13 @@ class Holiday extends SugarBean {
 	var $module_dir = 'Holidays';
 	var $new_schema = true;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Holiday()
+    {
+        self::__construct();
+    }
 
 	public function __construct()
 	{

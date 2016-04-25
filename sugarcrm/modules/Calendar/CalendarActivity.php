@@ -20,6 +20,13 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function CalendarActivity($args)
+    {
+        self::__construct($args);
+    }
 
 	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot

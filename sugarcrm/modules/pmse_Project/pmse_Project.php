@@ -16,6 +16,13 @@ require_once 'modules/pmse_Project/pmse_Project_sugar.php';
 
 class pmse_Project extends pmse_Project_sugar
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_Project()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

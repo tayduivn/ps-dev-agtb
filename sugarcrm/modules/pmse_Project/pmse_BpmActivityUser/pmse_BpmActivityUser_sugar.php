@@ -44,6 +44,13 @@ class pmse_BpmActivityUser_sugar extends Basic {
     var $act_user_id;
     var $act_group_id;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmActivityUser_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

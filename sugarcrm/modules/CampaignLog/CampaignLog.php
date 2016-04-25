@@ -33,6 +33,13 @@ class CampaignLog extends SugarBean {
     var $more_information;
     var $marketing_id;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function CampaignLog()
+    {
+        self::__construct();
+    }
 
     public function __construct() {
         global $sugar_config;

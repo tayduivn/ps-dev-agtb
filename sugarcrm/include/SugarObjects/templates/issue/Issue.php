@@ -11,4 +11,20 @@
  */
 require_once('include/SugarObjects/templates/basic/Basic.php');
 class Issue extends Basic{
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Issue()
+    {
+        self::__construct();
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }

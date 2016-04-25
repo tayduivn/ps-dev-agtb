@@ -45,7 +45,13 @@ class pmse_BpmnExtension_sugar extends Basic {
     var $ext_element_type;
     var $ext_extension;
 
-
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnExtension_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

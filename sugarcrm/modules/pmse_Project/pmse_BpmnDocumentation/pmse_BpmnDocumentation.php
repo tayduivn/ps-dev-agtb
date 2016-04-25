@@ -20,6 +20,14 @@ require_once 'modules/pmse_Project/pmse_BpmnDocumentation/pmse_BpmnDocumentation
 
 class pmse_BpmnDocumentation extends pmse_BpmnDocumentation_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnDocumentation()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

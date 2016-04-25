@@ -66,6 +66,13 @@ class pmse_BpmFlow_sugar extends Basic {
     var $cas_finished;
     var $cas_delayed;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmFlow_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

@@ -20,6 +20,14 @@ require_once 'modules/pmse_Project/pmse_BpmRelatedDependency/pmse_BpmRelatedDepe
 
 class pmse_BpmRelatedDependency extends pmse_BpmRelatedDependency_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmRelatedDependency()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

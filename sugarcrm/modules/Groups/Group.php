@@ -20,6 +20,13 @@ class Group extends User {
 	var $default_team;
 	var $importable = false;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Group()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

@@ -20,6 +20,13 @@ require_once 'modules/pmse_Project/pmse_BpmnArtifact/pmse_BpmnArtifact_sugar.php
 
 class pmse_BpmnArtifact extends pmse_BpmnArtifact_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnArtifact()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

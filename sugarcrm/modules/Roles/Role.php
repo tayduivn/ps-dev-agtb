@@ -43,6 +43,13 @@ class Role extends SugarBean {
 	var $module_dir = 'Roles';
 	var $new_schema = true;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Role()
+    {
+        self::__construct();
+    }
 
 	public function __construct()
 	{

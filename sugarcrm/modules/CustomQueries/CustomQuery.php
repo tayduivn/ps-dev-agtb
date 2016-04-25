@@ -62,6 +62,13 @@ class CustomQuery extends SugarBean {
      */
     protected $db_slave;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function CustomQuery()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

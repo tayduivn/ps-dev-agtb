@@ -20,6 +20,13 @@ require_once 'modules/pmse_Project/pmse_BpmProcessDefinition/pmse_BpmProcessDefi
 
 class pmse_BpmProcessDefinition extends pmse_BpmProcessDefinition_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmProcessDefinition()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

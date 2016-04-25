@@ -89,6 +89,14 @@ class ProductTemplate extends SugarBean {
 		,"type"
 	);
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ProductTemplate()
+    {
+        self::__construct();
+    }
+
 	public function __construct() {
 		parent::__construct();
 		$this->disable_row_level_security =true;

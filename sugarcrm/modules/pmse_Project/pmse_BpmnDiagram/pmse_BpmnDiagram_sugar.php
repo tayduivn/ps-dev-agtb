@@ -43,6 +43,13 @@ class pmse_BpmnDiagram_sugar extends Basic {
     var $prj_id;
     var $dia_is_closable;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnDiagram_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

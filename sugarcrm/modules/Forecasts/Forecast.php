@@ -69,6 +69,14 @@ class Forecast extends SugarBean
      */
     public static $settings = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Forecast()
+    {
+        self::__construct();
+    }
+
 	public function __construct()
 	{
 		global $current_user;

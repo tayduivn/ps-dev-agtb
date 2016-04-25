@@ -148,6 +148,13 @@ class Product extends SugarBean
         'list_price',
     );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Product()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

@@ -45,6 +45,14 @@ class vCal extends SugarBean {
     const TAB = "\t";
     const CHARSPERLINE = 75;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function vCal()
+    {
+        self::__construct();
+    }
+
 	public function __construct()
 	{
 

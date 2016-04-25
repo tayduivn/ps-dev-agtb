@@ -137,6 +137,14 @@ class InboundEmail extends SugarBean {
 	public $imagePrefix;
 	protected $module_key = 'InboundEmail';
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function InboundEmail()
+    {
+        self::__construct();
+    }
+
 	/**
 	 * Sole constructor
 	 */

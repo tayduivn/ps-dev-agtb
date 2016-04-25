@@ -59,6 +59,13 @@ class TimePeriod extends SugarBean
 
     public $new_schema = true;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function TimePeriod()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

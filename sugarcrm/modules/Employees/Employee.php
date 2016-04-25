@@ -78,6 +78,13 @@ class Employee extends Person {
 
 	var $new_schema = true;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Employee()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();
