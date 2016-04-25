@@ -25,7 +25,7 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'vname' => 'LBL_JOB_URL',
 			'type' => 'varchar',
 			'len' => '255',
-			'required' => false,
+            'required' => true,
 			'reportable' => false,
 			'source' => 'non-db',
 			'dependency' => 'equal($job_function, "url::")'
