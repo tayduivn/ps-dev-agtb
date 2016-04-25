@@ -54,6 +54,27 @@ class ServerHelper
         $server = new DAV\Server($tree);
         $server->setBaseUri($server->getBaseUri());
 
+        $cfg = new \Configurator();
+        $calDavSupportedClients = isset($cfg->config['caldav_supported_clients'])
+            ? $cfg->config['caldav_supported_clients'] : array();
+
+        $validatorClass = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Cal\Agent\Validator');
+        $clientClass = \SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Cal\Agent\Client');
+
+        /** @var Cal\Agent\Client $client */
+        $client = new $clientClass();
+        if (isset($calDavSupportedClients['regexp'])) {
+            $client->setParsePatterns($calDavSupportedClients['regexp']);
+        }
+        /** @var Cal\Agent\Validator $validator */
+        $validator = new $validatorClass();
+        if (isset($calDavSupportedClients['clients'])) {
+            $validator->setSupportedClients($calDavSupportedClients['clients']);
+        }
+
+        $agentPlugin = new Cal\Agent\Plugin($validator, $client);
+        $server->addPlugin($agentPlugin);
+
         $authPlugin = new DAV\Auth\Plugin($authBackend, 'SugarCRM DAV Server');
         $server->addPlugin($authPlugin);
 
