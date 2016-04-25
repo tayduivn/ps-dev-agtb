@@ -182,6 +182,46 @@ describe('Plugins.JSTree', function() {
         expect(appendStub).toHaveBeenCalled();
     });
 
+    it('Proper tree node should be removed even if after Confirm another node clicked.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+
+        sinonSandbox.stub(field, '_toggleVisibility');
+
+        var alertStub = sinonSandbox.stub(app.alert, 'show');
+
+        var id = 1;
+        var model = field.collection.getChild(id);
+        var destroyStub = sinonSandbox.stub(model, 'destroy');
+
+        var obj = {
+            data: function(arg) {
+                return id;
+            }
+        };
+
+        // emulates that other element has been chosen after Confirm clicked
+        field.is_selected = function() {
+            return false;
+        };
+
+        sinonSandbox.mock(field).expects('remove').once().withArgs(obj);
+
+        // loading context menu and click on Delete
+        var menuObj = field._loadContextMenu({showMenu: true, acl: {}});
+        menuObj.delete.action.call(field, obj);
+
+        // emulating clicking confirm button
+        var callOptions = alertStub.args[0][1];
+        callOptions.onConfirm();
+
+        // emulating successful model delete
+        var destroyOptions = destroyStub.args[0][0];
+        destroyOptions.success();
+
+        expect(alertStub).toHaveBeenCalled();
+        expect(destroyStub).toHaveBeenCalled();
+    });
+
     describe('Select Node Handler test.', function() {
         var jsTreeData;
         beforeEach(function() {
