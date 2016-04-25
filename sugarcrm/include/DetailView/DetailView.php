@@ -271,8 +271,9 @@ class DetailView extends ListView {
 
 				if ($row_count != 0) {
 		    		$resume_URL  = $this->base_URL.$current_offset."&InDetailNav=1";
-	    			//$resume_link = "<a href=\"$resume_URL\" >".$this->local_app_strings['LNK_RESUME']."&nbsp;</a>";
-					$resume_link = "<button type='button' class='button' title='$this->local_app_strings['LNK_RESUME']' onClick='location.href=\"$resume_URL\";'>".$this->local_app_strings['LNK_RESUME']."</button>";
+                    $resume_link = "<button type='button' class='button' title='"
+                        . $this->local_app_strings['LNK_RESUME'] . "' onClick='location.href=\"$resume_URL\";'>"
+                        . $this->local_app_strings['LNK_RESUME'] . '</button>';
 
 	    			$html_text .= "&nbsp;&nbsp;".$resume_link;
 				}
