@@ -77,6 +77,23 @@ class UserSignature extends Basic
     }
 
     /**
+     * @inheritdoc
+     */
+    public function mark_deleted($id)
+    {
+        global $current_user;
+
+        parent::mark_deleted($id);
+        $defaultSignature = $current_user->getPreference('signature_default');
+
+        if ($this->id === $defaultSignature) {
+            // the signature that was deleted is the users default signature
+            $current_user->setPreference('signature_default', '');
+            $current_user->save();
+        }
+    }
+
+    /**
      * Update the user preference based on the is_default flag.
      *
      * If this signature is default, but is not in the user preference, set it.
