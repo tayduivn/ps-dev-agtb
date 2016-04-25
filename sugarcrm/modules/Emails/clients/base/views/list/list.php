@@ -27,7 +27,8 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                     'default' => true,
                     'link' => 'true',
                     'readonly' => true,
-),
+                    'related_fields' => array('attachments'),
+                ),
                 array(
                     'name' => 'state',
                     'label' => 'LBL_LIST_STATUS',

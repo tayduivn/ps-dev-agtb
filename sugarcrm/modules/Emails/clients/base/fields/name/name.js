@@ -17,6 +17,24 @@
     extendsFrom: 'BaseNameField',
 
     /**
+     * If the model has attachments or not
+     */
+    hasAttachments: false,
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        var attachments;
+        this._super('initialize', [options]);
+
+        attachments = this.model.get('attachments');
+        if (attachments && attachments.records && attachments.records.length) {
+            this.hasAttachments = true;
+        }
+    },
+
+    /**
      * @inheritdoc
      */
     format: function(value) {
