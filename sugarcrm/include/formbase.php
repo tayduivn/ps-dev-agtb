@@ -104,7 +104,7 @@ function populateFromPostACL(SugarBean $focus)
         $beanId = $focus->id;
     }
 
-    $defaultBean = BeanFactory::getBean($focus->module_name, $beanId);
+    $defaultBean = BeanFactory::getBean($focus->module_name, $beanId, array('use_cache' => false));
     $defaultBean->fill_in_additional_detail_fields();
     $defaultBean->assigned_user_id = $GLOBALS['current_user']->id;
 
