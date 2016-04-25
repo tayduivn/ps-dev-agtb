@@ -840,7 +840,7 @@ eoq;
         $ieId = $request->getValidInputRequest('ieId', 'Assert\Guid');
         $mbox = $request->getValidInputRequest('mbox', 'Assert\Guid');
 
-        if(!empty($uid) && !empty($ieId)) {
+        if (!empty($exUids) && !empty($ieId)) {
 
             $out = array();
             foreach($exUids as $k => $uid) {
