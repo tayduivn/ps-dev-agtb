@@ -427,8 +427,8 @@ abstract class OpportunitySetup
         );
 
         // load the Dropdown parser so it can easily be saved
-        SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
-        $dd_parser = new ParserDropDown();
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/ParserFactory.php');
+        $dd_parser = ParserFactory::getParser('dropdown');
 
         foreach ($all_languages as $current_lang => $current_lang_name) {
             // get the default app_list_strings and the default language for Revenue Line Items

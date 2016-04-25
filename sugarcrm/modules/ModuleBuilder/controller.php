@@ -736,7 +736,7 @@ class ModuleBuilderController extends SugarController
 
     public function action_SaveDropDown()
     {
-        $parser = new ParserDropDown ();
+        $parser = ParserFactory::getParser('dropdown');
         $parser->saveDropDown($_REQUEST);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_LABELS);
         MetaDataManager::refreshSectionCache(MetaDataManager::MM_ORDEREDLABELS);

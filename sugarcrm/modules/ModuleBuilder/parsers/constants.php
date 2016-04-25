@@ -57,6 +57,7 @@ define('MB_PORTAL', 'portal');
 define('MB_RECORDVIEW', 'recordview');
 define('MB_FILTERVIEW', 'filter');
 define('MB_BWCFILTERVIEW', 'searchfields');
+define('MB_DROPDOWN', 'dropdown');
 
 class MBConstants
 {

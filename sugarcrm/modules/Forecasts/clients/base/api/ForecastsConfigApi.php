@@ -110,8 +110,8 @@ class ForecastsConfigApi extends ConfigModuleApi
                 'skip_sync' => true,
             );
             $_REQUEST['view_package'] = 'studio';
-            require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
-            $parser = new ParserDropDown();
+            require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
+            $parser = ParserFactory::getParser('dropdown');
             $parser->saveDropDown($_args);
             unset($args['show_custom_buckets_options']);
         }
