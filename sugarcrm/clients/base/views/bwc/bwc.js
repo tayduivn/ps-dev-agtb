@@ -229,6 +229,11 @@
         var action = this.actionRegex.exec(contentWindow.location.search);
         action = (_.isArray(action)) ? action[1].toLowerCase() : null;
 
+        var EditViewGrid = contentWindow.document.getElementById('EditViewGrid');
+        if (EditViewGrid) {
+            contentWindow.EditView = EditViewGrid;
+        }
+
         //once edit page is entered, the page is navigated without action query string.
         //Therefore, if current page contains 'EditView' form, bind the action as 'editview'.
         if (contentWindow.EditView) {
