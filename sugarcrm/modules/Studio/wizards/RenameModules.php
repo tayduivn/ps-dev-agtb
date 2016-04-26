@@ -227,31 +227,31 @@ class RenameModules
      */
     private function renameCustomModules()
     {
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
         foreach ($this->changedModules as $moduleName => $module) {
             $_REQUEST['view_package'] = 'studio';
-            SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
             $parserDropDown = new ParserDropDown();
-
-            $singularName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['singular']);
-            $params = array(
-                'dropdown_name' => 'moduleListSingular',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $singularName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
-
-            $pluralName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['plural']);
-            $params = array(
-                'dropdown_name' => 'moduleList',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $pluralName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
+            $parserDropDown->saveDropDown($this->getParserDropDownParams($moduleName, $module['singular'], 'singular'));
+            $parserDropDown->saveDropDown($this->getParserDropDownParams($moduleName, $module['plural'], 'plural'));
         }
+    }
+
+    /**
+     * Creates params for parserDropDown's saveDropDown() func based on
+     * module's name, module's label and label's type (singular / plural)
+     */
+    private function getParserDropDownParams($moduleName, $label, $type)
+    {
+        $label = str_replace(array("'", '"'), array('&#039;', '&quot;'), $label);
+        $dropdownName = $type == 'singular' ? 'moduleListSingular' : 'moduleList';
+        $params = array(
+            'dropdown_name' => $dropdownName,
+            'dropdown_lang' => $this->selectedLanguage,
+            'list_value' => '[["' . $moduleName . '","' . $label . '"]]',
+            'use_push' => false,
+            'skipSaveExemptDropdowns' => true
+        );
+        return $params;
     }
 
     /**
