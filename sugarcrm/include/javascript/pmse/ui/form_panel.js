@@ -11,8 +11,11 @@
 //FormPanel
 var FormPanel = function (settings) {
     CollapsiblePanel.call(this, settings);
+    this._expressionControl = null;
     this._htmlSubmit = null;
     this._submitCaption = null;
+    this._htmlClose = null;
+    this._closeCaption = null;
     this._htmlFooter = null;
     this._dependencyMap = null;
     this._submitVisible = null;
@@ -28,6 +31,7 @@ FormPanel.prototype.type = "FormPanel";
 FormPanel.prototype.init = function (settings) {
     var defaults = {
         submitCaption: translate("LBL_PMSE_FORMPANEL_SUBMIT"),
+        closeCaption: translate('LBL_PMSE_FORMPANEL_CLOSE'),
         items: [],
         submitVisible: true,
         onSubmit: null,
@@ -42,7 +46,12 @@ FormPanel.prototype.init = function (settings) {
     this.setForegroundAppendTo(defaults.foregroundAppendTo)
         .setItems(defaults.items)
         .setSubmitCaption(defaults.submitCaption)
+        .setCloseCaption(defaults.closeCaption)
         .setOnSubmitHandler(defaults.onSubmit);
+
+    if (defaults.expressionControl) {
+        this._expressionControl = defaults.expressionControl;
+    }
 };
 
 FormPanel.prototype.setForegroundAppendTo = function (appendTo) {
@@ -135,6 +144,17 @@ FormPanel.prototype.setSubmitCaption = function (caption) {
     this._submitCaption = caption;
     if (this._htmlSubmit) {
         this._htmlSubmit.textContent = caption;
+    }
+    return this;
+};
+
+FormPanel.prototype.setCloseCaption = function(caption) {
+    if (typeof caption !== 'string') {
+        throw new Error('setCloseCaption(): The parameter must be a string.');
+    }
+    this._closeCaption = caption;
+    if (this._htmlClose) {
+        this._htmlClose.textContent = caption;
     }
     return this;
 };
@@ -311,7 +331,7 @@ FormPanel.prototype._attachListeners = function () {
 };
 
 FormPanel.prototype.createHTML = function () {
-    var button, footer;
+    var footer, button, close, self = this;
     if (!this.html) {
         CollapsiblePanel.prototype.createHTML.call(this);
         footer = this.createHTMLElement("div");
@@ -319,11 +339,21 @@ FormPanel.prototype.createHTML = function () {
         button = this.createHTMLElement("button");
         button.className = 'adam form-panel-submit btn btn-mini';
         footer.appendChild(button);
+        close = this.createHTMLElement('span');
+        close.className = 'adam form-panel-close btn btn-mini';
+        footer.appendChild(close);
         this._htmlBody.appendChild(footer);
         this._htmlSubmit = button;
+        this._htmlClose = close;
         this._htmlFooter = footer;
         this.setSubmitCaption(this._submitCaption);
+        this.setCloseCaption(this._closeCaption);
         this._attachListeners();
+        jQuery(this._htmlClose).on('click', function() {
+            if (self._expressionControl instanceof ExpressionControl) {
+                self._expressionControl._closeParentPanels();
+            }
+        });
 
         if (this._submitVisible) {
             this.showSubmit();

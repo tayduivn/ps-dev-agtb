@@ -60,6 +60,7 @@ CriteriaField.prototype.init = function(settings) {
     });
 
     this._panel = new ExpressionControl({
+        parent: this,
         itemContainer: this.controlObject,
         owner: this.controlObject,
         dateFormat: defaults.dateFormat,

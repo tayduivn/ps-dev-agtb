@@ -836,6 +836,22 @@ a.adam-tooltip-error-off {
   white-space: normal;
 }
 
+.adam.field-panel-button-group > .btn-close {
+  float: right;
+}
+
+.adam.form-panel-submit {
+  float: right;
+  background-color: #176de5;
+  background-image: linear-gradient(to bottom, #176de5, #176de5);
+  background-repeat: repeat-x;
+  color: white;
+}
+
+.adam.form-panel-close {
+  float: right;
+}
+
 .adam.list-panel {
   display: inline-block;
   overflow: auto;

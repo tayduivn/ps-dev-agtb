@@ -335,7 +335,8 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_TEXT' => 'is not',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL_DATE' => 'not equal to',
 
-    'LBL_PMSE_FORMPANEL_SUBMIT' => 'Submit',
+    'LBL_PMSE_FORMPANEL_SUBMIT' => 'Add',
+    'LBL_PMSE_FORMPANEL_CLOSE' => 'Close',
 
     'LBL_PMSE_EMAILPICKER_TEAMS' => 'Teams',
     'LBL_PMSE_EMAILPICKER_USER_CREATED' => 'User in %MODULE% who created the record',

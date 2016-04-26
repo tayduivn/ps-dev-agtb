@@ -40,6 +40,7 @@ var ExpressionControl = function (settings) {
     this._itemValueWildcard = '%VALUE%';
     this._currencies = [];
     this._preferredCurrency = null;
+    this._parent = null;
     this.onOpen = null;
     this.onClose = null;
     ExpressionControl.prototype.init.call(this, settings);
@@ -288,6 +289,10 @@ ExpressionControl.prototype.init = function(settings) {
         this.showExpressionVisualizer();
     } else {
         this.hideExpressionVisualizer();
+    }
+
+    if (defaults.parent) {
+        this._parent = defaults.parent;
     }
 };
 
@@ -1057,18 +1062,30 @@ ExpressionControl.prototype._getOperatorType = function(operator) {
     return null;
 };
 
+ExpressionControl.prototype._closeParentPanels = function() {
+    if (this._parent instanceof CriteriaField) {
+        this._parent.closePanel();
+    } else if (this._parent instanceof UpdaterField) {
+        this._parent.closePanels();
+    }
+};
+
 ExpressionControl.prototype._onPanelValueGeneration = function () {
     var that = this;
     return function (panel, subpanel, data) {
-        var itemData = {}, valueType, value, aux, parent = subpanel.getParent() || {}, label, valueField;
+        var itemData, valueType, value, aux, parent = subpanel.getParent() || {}, label, valueField;
         if (parent.id !== 'variables-list') {
             switch (subpanel.id) {
                 case "button-panel-operators":
-                    itemData = {
-                        expType: that._getOperatorType(data.value),
-                        expLabel: data.value,
-                        expValue: data.value
-                    };
+                    if (data.value == 'x') {
+                        that._closeParentPanels();
+                    } else {
+                        itemData = {
+                            expType: that._getOperatorType(data.value),
+                            expLabel: data.value,
+                            expValue: data.value
+                        };
+                    }
                     break;
                 case "form-response-evaluation":
                     itemData = {
@@ -1093,7 +1110,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                     }
                     valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
                     var op = subpanel.getItem('operator').getSelectedText();
-                    label = subpanel.getItem('field').getSelectedText() + ' ' + op + ' ';
+                    label = subpanel.getItem('module').getSelectedData().module_label + ': ' +
+                        subpanel.getItem('field').getSelectedText() + ' ' +
+                        op + ' ';
 
                     if (op != 'changes') {
                         switch (aux[1]) {
@@ -1262,7 +1281,9 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
         if (subpanel instanceof FormPanel) {
             subpanel.reset();
         }
-        that._itemContainer.addItem(that._createItem(itemData));
+        if (itemData) {
+            that._itemContainer.addItem(that._createItem(itemData));
+        }
     };
 };
 
@@ -1456,6 +1477,7 @@ ExpressionControl.prototype._createModulePanel = function () {
     var currentVal, currentMod;
     if (!this._evaluationPanels.module) {
         this._evaluationPanels.module = new FormPanel({
+            expressionControl: this,
             id: "form-module-field-evaluation",
             title: translate("LBL_PMSE_EXPCONTROL_MODULE_FIELD_EVALUATION_TITLE"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -1674,6 +1696,7 @@ ExpressionControl.prototype._createFormResponsePanel = function () {
     var formField, settings;
     if (!this._evaluationPanels.formResponse) {
         this._evaluationPanels.formResponse = new FormPanel({
+            expressionControl: this,
             id: "form-response-evaluation",
             title: translate("LBL_PMSE_EXPCONTROL_FORM_RESPONSE_EVALUATION_TITLE"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -1727,6 +1750,7 @@ ExpressionControl.prototype._createBusinessRulePanel = function () {
     var rulesField, settings = this._evaluationSettings.businessRule;
     if (!this._evaluationPanels.businessRule) {
         this._evaluationPanels.businessRule = new FormPanel({
+            expressionControl: this,
             id: "form-business-rule-evaluation",
             type: "form",
             title: translate("LBL_PMSE_EXPCONTROL_BUSINESS_RULES_EVALUATION_TITLE"),
@@ -1771,6 +1795,7 @@ ExpressionControl.prototype._createUserPanel = function () {
     var userField, settings = this._evaluationSettings.user;
     if (!this._evaluationPanels.user) {
         this._evaluationPanels.user = new FormPanel({
+            expressionControl: this,
             id: "form-user-evaluation",
             type: "form",
             title: translate("LBL_PMSE_EXPCONTROL_USER_EVALUATION_TITLE"),
@@ -1944,6 +1969,7 @@ ExpressionControl.prototype._createDateConstantPanel = function() {
     var settings = this._constantSettings.date;
     if (!this._constantPanels.date) {
         this._constantPanels.date = new FormPanel({
+            expressionControl: this,
             id: "form-constant-date",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATE"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -1976,6 +2002,7 @@ ExpressionControl.prototype._createDateTimeConstantPanel = function() {
     var settings = this._constantSettings.datetime;
     if (!this._constantPanels.datetime) {
         this._constantPanels.datetime = new FormPanel({
+            expressionControl: this,
             id: "form-constant-datetime",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_FIXED_DATETIME"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -2008,6 +2035,7 @@ ExpressionControl.prototype._createTimespanPanel = function() {
     var settings = this._constantSettings.timespan;
     if (!this._constantPanels.timespan) {
         this._constantPanels.timespan = new FormPanel({
+            expressionControl: this,
             id: "form-constant-timespan",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -2065,6 +2093,7 @@ ExpressionControl.prototype._createDatespanPanel = function() {
     var settings = this._constantSettings.datespan;
     if (!this._constantPanels.datespan) {
         this._constantPanels.datespan = new FormPanel({
+            expressionControl: this,
             id: "form-constant-datespan",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_TIMESPAN_TITLE"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),
@@ -2116,6 +2145,7 @@ ExpressionControl.prototype._createCurrencyPanel = function() {
     var settings = this._constantSettings.currency;
     if (!this._constantPanels.currency) {
         this._constantPanels.currency = new FormPanel({
+            expressionControl: this,
             id: "form-constant-currency",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_CURRENCY"),
             items: [
@@ -2182,6 +2212,7 @@ ExpressionControl.prototype._createBasicConstantPanel = function () {
             form.submit();
         };
         this._constantPanels.basic = new FormPanel({
+            expressionControl: this,
             id: "form-constant-basic",
             title: translate("LBL_PMSE_EXPCONTROL_CONSTANTS_BASIC"),
             foregroundAppendTo: this._panel._getUsableAppendTo(),

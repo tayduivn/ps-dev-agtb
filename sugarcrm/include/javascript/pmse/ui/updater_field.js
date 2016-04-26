@@ -648,6 +648,7 @@ UpdaterField.prototype.openPanelOnItem = function (field) {
     } else {
         if (!this._datePanel) {
             this._datePanel = new ExpressionControl({
+                parent: this,
                 className: "updateritem-panel",
                 onChange: this._onValueGenerationHandler(PROJECT_MODULE),
                 appendTo: (this.parent && this.parent.parent && this.parent.parent.html) || null,
