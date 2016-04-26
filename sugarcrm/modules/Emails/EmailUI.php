@@ -462,9 +462,21 @@ eoq;
         $ie1->disable_row_level_security = true;
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $ie1->team_set_selected_id = $current_user->team_set_selected_id;
+        //END SUGARCRM flav=ent ONLY
+        // need this bean to generate correct teamset field
+        $emailsBean = BeanFactory::getBean('Emails');
+        $emailsBean->disable_row_level_security = true;
+        $emailsBean->team_id = $ie1->team_id;
+        $emailsBean->team_set_id = $ie1->team_set_id;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $emailsBean->team_set_selected_id = $ie1->team_set_selected_id;
+        //END SUGARCRM flav=ent ONLY
 
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
-		$teamSetField = new EmailSugarFieldTeamsetCollection($ie1, $ie1->field_defs, '', 'composeEmailForm');
+        $teamSetField
+            = new EmailSugarFieldTeamsetCollection($emailsBean, $emailsBean->field_defs, '', 'composeEmailForm');
 		$code1 = $teamSetField->get_code();
 		$sqs_objects1 = $teamSetField->createQuickSearchCode(true);
 		$this->smarty->assign('teamsdata', json_encode($code1 . $sqs_objects1));
