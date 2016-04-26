@@ -85,8 +85,6 @@ describe("Base.View.Preview", function() {
         });
 
         it("should detect if at least one of the panels is hidden", function(){
-            expect(preview.hiddenPanelExists).toBe(false);
-            preview._previewifyMetadata(meta);
             expect(preview.hiddenPanelExists).toBe(true);
             meta.panels[2].hide = false;
             preview._previewifyMetadata(meta);
@@ -163,22 +161,6 @@ describe("Base.View.Preview", function() {
             preview.renderPreview(dummyModel, dummyCollection);
             expect(openPreviewFired).toBe(true);
             expect(listPreviewDecorateFired).toBe(true);
-        });
-        it("should be called on 'preview:render' event", function(){
-            var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
-            var dummyCollection = {};
-            dummyCollection.models = [dummyModel];
-            var renderPreviewStub = sinon.collection.stub(preview, 'renderPreview', function(model, collection) {
-               expect(model).toEqual(dummyModel);
-               expect(collection).toEqual(dummyCollection);
-            });
-            app.drawer = {  // Not defined, drawer is a Sugar7 plug-in but only not really relevant to this test.
-                isActive: function(){
-                    return true;
-                }
-            };
-            app.events.trigger("preview:render", dummyModel, dummyCollection, false);
-            expect(renderPreviewStub).toHaveBeenCalled();
         });
     });
 

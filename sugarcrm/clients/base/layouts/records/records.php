@@ -99,8 +99,9 @@ $viewdefs['base']['layout']['records'] = array(
                             'components' => array(
                                 array(
                                     'layout' => array(
-                                        // FIXME MAR-2834 should fix inheriting components
-                                        'components' => array(
+                                        // FIXME SC-5042 will allow us to avoid duplicating metadata
+                                        // that is already in the `preview` layout metadata file.
+                                        'init_components' => array(
                                             array(
                                                 'view' => 'preview-header',
                                             ),

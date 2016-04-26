@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['layout']['history-summary-preview'] = array(
-    'components' => array(
+    'type' => 'preview',
+    'init_components' => array(
         array(
             'view' => 'history-summary-preview-header',
         ),

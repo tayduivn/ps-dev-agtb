@@ -39,7 +39,17 @@
         this.action = 'detail';
         this._delegateEvents();
         this.delegateButtonEvents();
-        this.collection = app.data.createBeanCollection(this.module);
+
+        // Use preview view if available, otherwise fallback to record view
+        var viewName = 'preview';
+        var previewMeta = app.metadata.getView(this.module, 'preview');
+        var recordMeta = app.metadata.getView(this.module, 'record');
+
+        if (_.isEmpty(previewMeta) || _.isEmpty(previewMeta.panels)) {
+            viewName = 'record';
+        }
+        this.context.set('dataView', viewName);
+        this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
 
         /**
          * An array of the {@link #alerts alert} names in this view.
@@ -148,9 +158,7 @@
      * @private
      */
     _delegateEvents: function() {
-        app.events.on('preview:render', this._renderPreview, this);
         app.events.on('preview:collection:change', this.updateCollection, this);
-        app.events.on('preview:close', this.closePreview, this);
 
         // TODO: Remove when pagination on activity streams is fixed.
         app.events.on('preview:module:update', this.updatePreviewModule, this);
@@ -158,11 +166,6 @@
         if (this.layout) {
             this.layout.on('preview:pagination:fire', this.switchPreview, this);
         }
-
-        // FIXME: remove as part of SC-5480
-        this.before('sugarlogic:initialize', function() {
-            return false;
-        }, this);
     },
 
     /**
@@ -230,6 +233,8 @@
 
     /**
      * Renders the preview dialog with the data from the current model and collection.
+     *
+     * @deprecated Deprecated since 7.8.0. Will be removed in 7.10.0.
      * @param model Model for the object to preview
      * @param collection Collection of related objects to the current model
      * @param {Boolean} fetch Optional Indicates if model needs to be synched with server to populate with latest data
@@ -238,6 +243,9 @@
      * @private
      */
     _renderPreview: function(model, collection, fetch, previewId) {
+        app.logger.warn('`Base.PreviewView#_renderPreview` has been deprecated since 7.8.0 and' +
+            'will be removed in 7.10.0.');
+
         var self = this;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
@@ -296,10 +304,15 @@
     },
     /**
      * Renders the preview dialog with the data from the current model and collection
+     *
+     * @deprecated Deprecated since 7.8.0. Will be removed in 7.10.0.
      * @param model Model for the object to preview
      * @param collection Collection of related objects to the current model
      */
     renderPreview: function(model, newCollection) {
+        app.logger.warn('`Base.PreviewView#renderPreview` has been deprecated since 7.8.0 and' +
+            'will be removed in 7.10.0.');
+
         if(newCollection) {
             this.collection.reset(newCollection.models);
         }
@@ -319,11 +332,6 @@
                 this.layout.hideNextPrevious = true;
                 this.layout.trigger('preview:pagination:update');
             } else {
-                // FIXME: remove as part of SC-5480
-                // init sugarlogic for the module that is being used on the model that is being previewed
-                if (_.isFunction(this.initSugarLogic)) {
-                    this.initSugarLogic(this.model.module);
-                }
                 // If we aren't on activitystream, then just render
                 this.render();
             }
@@ -391,7 +399,13 @@
         }
     },
 
+    /**
+     * @deprecated Deprecated since 7.8.0. Will be removed in 7.10.0.
+     */
     closePreview: function() {
+        app.logger.warn('`Base.PreviewView#closePreview` has been deprecated since 7.8.0 and' +
+            ' will be removed in 7.10.0.');
+
         if(_.isUndefined(app.drawer) || app.drawer.isActive(this.$el)){
             this.switching = false;
             delete this.model;
@@ -412,6 +426,15 @@
                 }
             }, this);
         }
+        // When the preview layout sets the new model in the context, the view
+        // needs to switch the model and render for the fields to listen to the new
+        // model changes.
+        // Since the layout calls loadData, the fields will rerender when the data comes back
+        // from the sever.
+        this.context.on('change:model', function(ctx, model) {
+            this.switchModel(model);
+            this.render();
+        }, this);
     },
 
     /**

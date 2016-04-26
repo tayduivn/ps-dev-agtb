@@ -55,7 +55,7 @@
 
         this.setActivityModulesToFetch();
 
-        var HistoryCollection = app.BeanCollection.extend({
+        var HistoryCollection = app.MixedBeanCollection.extend({
             module: 'history',
             activityModules: this.activityModules,
             buildURL: _.bind(function(params) {
@@ -128,19 +128,6 @@
      */
     setActivityModulesToFetch: function() {
         this.activityModules = this.allActivityModules;
-    },
-
-    /**
-     * @inheritdoc
-     * @override
-     *
-     * Overridden to use the collection's fetch, not the context
-     */
-    loadData: function(options) {
-        if (this.collection.dataFetched) {
-            return;
-        }
-        this.collection.fetch(options);
     },
 
     /***
@@ -223,24 +210,6 @@
         this.collection.each(function(model) {
             model.module = model.get('_module');
         });
-    },
-
-    /**
-     * @inheritdoc
-     * @override
-     *
-     * Overriding to fetch using the collection, not the context
-     */
-    _setOrderBy: function(options) {
-        if (this.orderByLastStateKey) {
-            app.user.lastState.set(this.orderByLastStateKey, this.orderBy);
-        }
-
-        options.orderBy = this.orderBy;
-
-        this.collection.dataFetched = false;
-        this.collection.skipFetch = false;
-        this.loadData(options);
     },
 
     /**
