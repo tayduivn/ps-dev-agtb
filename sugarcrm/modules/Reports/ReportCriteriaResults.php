@@ -175,21 +175,6 @@ else if (isset($_REQUEST['record'])){
 	}
 }
 
-if(! empty($_REQUEST['to_pdf'])){
-    if (isset($args['reporter']))
-        template_handle_pdf($args['reporter']);
-	return;
-} // if
-if(! empty($_REQUEST['to_csv'])){
-    //check to see if exporting is allowed
-    if(!hasExportAccess($args)){
-        //die if one of the above conditions has been met
-        sugar_die($mod_strings['LBL_NO_EXPORT_ACCESS']);
-    }
-	template_handle_export($args['reporter']);
-	return;
-} // if
-
 // create report obj with the seed
 $args['list_nav'] = '';
 $args['upper_left'] = '';
@@ -213,16 +198,34 @@ $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&C
 echo getClassicModuleTitle("Reports", $params, true, '', $createURL);
 
 // show report interface
-if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {
-	checkSavedReportACL($args['reporter'],$args);
-	if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
-		reportResults($args['reporter'],$args);
-	else
-		reportCriteriaWithResult($args['reporter'],$args);
-	if (!empty($_REQUEST['expanded_combo_summary_divs'])) {
-		$expandDivs = explode(" ",$_REQUEST['expanded_combo_summary_divs']);
-		foreach($expandDivs as $divId) {
-			str_replace(" ", "",$divId);
+if (isset($_REQUEST['page']) && $_REQUEST['page'] == 'report') {
+    checkSavedReportACL($args['reporter'], $args);
+
+    if (!empty($_REQUEST['to_pdf'])) {
+        if (isset($args['reporter'])) {
+            template_handle_pdf($args['reporter']);
+        }
+        return;
+    }
+
+    if (!empty($_REQUEST['to_csv'])) {
+        if (!hasExportAccess($args)) {
+            sugar_die($mod_strings['LBL_NO_EXPORT_ACCESS']);
+        }
+        template_handle_export($args['reporter']);
+        return;
+    }
+
+    if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
+        reportResults($args['reporter'], $args);
+    } else {
+        reportCriteriaWithResult($args['reporter'], $args);
+    }
+
+    if (!empty($_REQUEST['expanded_combo_summary_divs'])) {
+        $expandDivs = explode(' ', $_REQUEST['expanded_combo_summary_divs']);
+        foreach ($expandDivs as $divId) {
+            str_replace(' ', '', $divId);
 			if ($divId != "") {
                 echo "<script>expandCollapseComboSummaryDiv('" . htmlspecialchars($divId, ENT_QUOTES, 'UTF-8') . "')
                     </script>";
