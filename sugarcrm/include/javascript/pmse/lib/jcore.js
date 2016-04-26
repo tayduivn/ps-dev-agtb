@@ -17510,5 +17510,3 @@ var jCore = (function ($, window) {
     };
 
 }(jQuery, window));
-
-//@ sourceURL=pmse.jcore.js
