@@ -460,6 +460,10 @@
      * @inheritdoc
      */
     _render: function() {
+        if (this._hasTimePicker) {
+            this.$(this.secondaryFieldTag).timepicker('hide');
+        }
+
         this._super('_render');
 
         if (this._inDetailMode()) {
