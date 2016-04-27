@@ -97,7 +97,12 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
                     var panelNumber = panelLabel.substring(panelLabelNoID.length) ;
 					var panelDisplay = SUGAR.language.get('ModuleBuilder', 'LBL_NEW_PANEL') + ' ' + panelNumber ;
 					document.getElementById("le_panelname_"+srcEl.id).childNodes[0].nodeValue =  panelDisplay ;
-					var params = { module: 'ModuleBuilder' , action: 'saveProperty', view_module: view_module }
+                    var params = {
+                        module: 'ModuleBuilder' ,
+                        action: 'saveProperty',
+                        view_module: view_module,
+                        csrf_token: SUGAR.csrf.form_token
+                    };
 					if (document.getElementById('prepareForSave').view_package)
 					{
 					   params ['view_package'] = document.getElementById('prepareForSave').view_package.value ;
