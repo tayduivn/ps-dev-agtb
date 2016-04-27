@@ -195,7 +195,8 @@ describe('Plugins.JSTree', function() {
             plugins: []
         };
 
-        $fixture.jstree = function() {};
+        $fixture.jstree = function () {
+        };
         var jsTreeStub = sinonSandbox.stub($fixture, 'jstree');
 
         var jsTree = $('<div />');
@@ -213,7 +214,7 @@ describe('Plugins.JSTree', function() {
 
         jsTree.trigger('show_input.jstree', data);
 
-        var $inputs = $(_.filter($(data.obj).find('input'), function(input) {
+        var $inputs = $(_.filter($(data.obj).find('input'), function (input) {
             return $(input).css('display') !== 'none';
         }));
 
@@ -226,6 +227,46 @@ describe('Plugins.JSTree', function() {
         field.onDetach();
         expect($inputs.data('bs.tooltip')).not.toBeDefined('Tooltip data has not been removed');
         expect($('.tooltip').length).toBe(0, 'Tooltip has not been hidden when field removed');
+    });
+
+    it('Proper tree node should be removed even if after Confirm another node clicked.', function() {
+        field.collection = new app.NestedSetCollection(treeData);
+
+        sinonSandbox.stub(field, '_toggleVisibility');
+
+        var alertStub = sinonSandbox.stub(app.alert, 'show');
+
+        var id = 1;
+        var model = field.collection.getChild(id);
+        var destroyStub = sinonSandbox.stub(model, 'destroy');
+
+        var obj = {
+            data: function(arg) {
+                return id;
+            }
+        };
+
+        // emulates that other element has been chosen after Confirm clicked
+        field.is_selected = function() {
+            return false;
+        };
+
+        sinonSandbox.mock(field).expects('remove').once().withArgs(obj);
+
+        // loading context menu and click on Delete
+        var menuObj = field._loadContextMenu({showMenu: true, acl: {}});
+        menuObj.delete.action.call(field, obj);
+
+        // emulating clicking confirm button
+        var callOptions = alertStub.args[0][1];
+        callOptions.onConfirm();
+
+        // emulating successful model delete
+        var destroyOptions = destroyStub.args[0][0];
+        destroyOptions.success();
+
+        expect(alertStub).toHaveBeenCalled();
+        expect(destroyStub).toHaveBeenCalled();
     });
 
     describe('Select Node Handler test.', function() {

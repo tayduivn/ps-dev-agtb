@@ -11,14 +11,6 @@
  */
 -->
 <!-- BEGIN: main -->
-<script type="text/javascript" src="include/workflow/jutils.js?v={VERSION_MARK}"></script>
-<script>
-function get_popup(workflow_id, id, action, plugin_action, plugin_module, width, height){
-	
-	window.open('index.php?module=WorkFlowActionShells&action=' + action +'&sugar_body_only=true&workflow_id=' + workflow_id + '&record=' + id + '&plugin_module=' + plugin_module +'&plugin_action='+ plugin_action +'','new','width=' + width + ',height='+ height +',resizable=1,scrollbars=1');
-	
-}	
-</script>
 <table cellpadding="0" cellspacing="0" width="100%" border="0" class="list view">
 	<tr height="20" >
 	<td scope="col" width="7%" >{MOD.LBL_DETAILS}</td>
@@ -40,8 +32,14 @@ function get_popup(workflow_id, id, action, plugin_action, plugin_module, width,
 
 </tr>
 <span><tr><td colspan="5">{ACTION.DETAILS_TABLE}</td></tr></span>
-
 <!-- END: row -->
+
+<script type="text/javascript" src="include/workflow/jutils.js?v={VERSION_MARK}"></script>
+<script>
+    function get_popup(workflow_id, id, action, plugin_action, plugin_module, width, height){
+        window.open('index.php?module=WorkFlowActionShells&action=' + action +'&sugar_body_only=true&workflow_id=' + workflow_id + '&record=' + id + '&plugin_module=' + plugin_module +'&plugin_action='+ plugin_action +'','new','width=' + width + ',height='+ height +',resizable=1,scrollbars=1');
+    }
+</script>
 
 </table>
 <!-- END: main -->

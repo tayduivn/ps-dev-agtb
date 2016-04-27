@@ -810,14 +810,17 @@ class RenameModules
             array('name' => 'LNK_###MODULE_SINGULAR###_LIST', 'type' => 'plural'),
             array('name' => 'LNK_###MODULE_SINGULAR###_REPORTS', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_VCARD', 'type' => 'singular'),
-            array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
+            array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'singular'),
             array('name' => 'MSG_SHOW_DUPLICATES', 'type' => 'singular'),
             array('name' => 'LBL_SAVE_###MODULE_SINGULAR###', 'type' => 'singular'),
-            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
+            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'plural'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LNK_###MODULE_SINGULAR###_PROCESS_MANAGEMENT', 'type' => 'singular'), //PA title
             array('name' => 'LNK_###MODULE_SINGULAR###_UNATTENDED_PROCESSES', 'type' => 'plural'), //PA title
             array('name' => 'LBL_###MODULE_PLURAL###_SUBPANEL_TITLE', 'type' => 'plural'),
+            array('name' => 'LBL_IMPORT', 'type' => 'plural'),
+            array('name' => 'LBL_IMPORT_VCARDTEXT', 'type' => 'singular'),
+            array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural'),
         );
 
         $replacedLabels = array();
