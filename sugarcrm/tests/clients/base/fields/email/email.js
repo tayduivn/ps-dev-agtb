@@ -1,6 +1,7 @@
 describe('Base.Email', function() {
 
     var app, field, model, mock_addr;
+    var module = 'Accounts';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -22,15 +23,19 @@ describe('Base.Email', function() {
             }
         ];
 
-        field = SugarTest.createField("base","email", "email", "edit", undefined, undefined, new Backbone.Model({
-            email: app.utils.deepCopy(mock_addr)
-        }));
-        model = field.model;
+        model = app.data.createBean(module, {email: app.utils.deepCopy(mock_addr)});
+        model.fields = {
+            email1: {
+                required: true
+            }
+        };
+        field = SugarTest.createField("base","email", "email", "edit", undefined, undefined, model);
 
         field.render();
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         SugarTest.testMetadata.dispose();
@@ -446,51 +451,31 @@ describe('Base.Email', function() {
     });
 
     describe('when required', function() {
-        var sandbox = sinon.sandbox.create();
-        beforeEach(function() {
-            model = new Backbone.Model();
-            model.fields = {
-                email1: {
-                    required: true
-                }
-            };
-            model.set('email', [{
-                    email_address: 'test1@test.com',
-                    primary_address: true
-                }]
-            );
-            field = SugarTest.createField('base', 'email', 'email', 'edit', undefined, undefined, model);
-            model = field.model;
-
-            field.render();
-        });
-
-        afterEach(function() {
-            field = null;
-            sandbox.restore();
-        });
-
         it('field def will have required as true', function() {
             expect(field.def.required).toBeTruthy();
         });
 
-        it('field will call decorateRequired when all addresses are removed', function() {
-            sandbox.stub(field, 'decorateRequired', function() {
-            });
+        it('should add the placeholder when all addresses are removed', function() {
+            sinon.collection.stub(field, 'decorateRequired');
 
-            // find the first remove button
-            var el = field.$('.removeEmail').first();
-            // click it
-            el.click();
+            // Remove the two email addresses.
+            field.$('.removeEmail').first().click();
+            field.$('.removeEmail').first().click();
 
-            // this should have been called
-            expect(field.decorateRequired).toHaveBeenCalled();
+            expect(field.decorateRequired).toHaveBeenCalledOnce();
         });
 
-        xit('field will remove the required placeholder after add has been called', function() {
-            // since it rendered with one, we need to remove it first
-            field.$('.removeEmail').first().click();
+        it('field will remove the required placeholder after add has been called', function() {
+            // FIXME: The placeholder should not be there because we already
+            // have 2 email addresses created with the field. We remove it here
+            // for the test, but it needs to be done in the code.
             var $el = field._getNewEmailField();
+            var label = app.lang.get('LBL_REQUIRED_FIELD', this.module);
+            $el.prop('placeholder', $el.prop('placeholder').replace('(' + label + ') ', ''));
+
+            // Remove the 2 email adresses to display to add the placeholder.
+            field.$('.removeEmail').first().click();
+            field.$('.removeEmail').first().click();
             // make sure we have the LBL_REQUIRED_FIELD in the placeholder
             expect($el.prop('placeholder')).toContain('LBL_REQUIRED_FIELD');
             // set the value and add it
