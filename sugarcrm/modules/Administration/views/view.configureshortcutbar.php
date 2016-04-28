@@ -80,13 +80,14 @@ class ViewConfigureshortcutbar extends SugarView
 
         $quickCreateModules = $this->getQuickCreateModules();
         $request = InputValidation::getService();
-        $enabled_modules = $request->getValidInputRequest('enabled_modules', array(
-            'Assert\JSON' => array('htmlDecode' => true)
-        ));
 
         //If save is set, save then let the user know if the save worked.
-        if (!empty($enabled_modules)) {
+        if (!empty($_REQUEST['enabled_modules'])) {
             // get the enabled
+            $enabled_modules = $request->getValidInputRequest('enabled_modules', array(
+                'Assert\JSON' => array('htmlDecode' => true)
+            ));
+
             $enabledModules = array_flip($enabled_modules);
 
             $successful = $this->saveChangesToQuickCreateMetadata(
