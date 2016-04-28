@@ -334,6 +334,7 @@ class HealthCheckScannerMeta
         434 => array(
             'report' => 'arraySessionUsage',
             'bucket' => self::CUSTOM,
+            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Found_Usage_of_Array_Functions_on__SESSION_in_Files/index.html',
         ),
         435 => array(
             'report' => 'deprecatedCodeSugarSession',
