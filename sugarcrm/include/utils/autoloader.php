@@ -358,16 +358,15 @@ class SugarAutoLoader
         // work around for PHP 5.3.0 - 5.3.2 https://bugs.php.net/50731
         $class = ltrim($class, '\\');
 
-        $uclass = ucfirst($class);
         if (!empty(self::$noAutoLoad[$class])) {
             return false;
         }
 
         // try known classes
-        if (isset(self::$classMap[$uclass])) {
-            if (self::$classMap[$uclass]) {
+        if (isset(self::$classMap[$class])) {
+            if (self::$classMap[$class]) {
                 // No need for a file_exists, if it is in the map we have found it before
-                require_once self::$classMap[$uclass];
+                require_once self::$classMap[$class];
                 return true;
             }
             return false;
@@ -414,7 +413,7 @@ class SugarAutoLoader
 		foreach(self::$prefixMap as $prefix => $dir) {
 		    if(strncasecmp($prefix, $class, strlen($prefix)) === 0) {
 		        if($file = self::requireWithCustom("{$dir}$class_file.php")) {
-		            self::$classMap[$uclass] = $file;
+                    self::$classMap[$class] = $file;
 		            self::$classMapDirty = true;
 		            return true;
 		        } else {
@@ -426,24 +425,24 @@ class SugarAutoLoader
 		// Special cases
 		// Special case because lookup goes to $_REQUEST['module']
 		if($file = self::getFilenameForViewClass($class)) {
-			self::$classMap[$uclass] = $file;
+            self::$classMap[$class] = $file;
 			self::$classMapDirty = true;
 			return true;
 		}
 		// Special case because widget name can be lowercased
 		if($file = self::getFilenameForSugarWidget($class)) {
-			self::$classMap[$uclass] = $file;
+            self::$classMap[$class] = $file;
 			self::$classMapDirty = true;
 			return true;
 		}
 		// Special case because it checks by ending in Layout
 		if($file = self::getFilenameForLayoutClass($class)) {
-			self::$classMap[$uclass] = $file;
+            self::$classMap[$class] = $file;
 			self::$classMapDirty = true;
 			return true;
 		}
         if($file = self::getFilenameForExpressionClass($class)) {
-            self::$classMap[$uclass] = $file;
+            self::$classMap[$class] = $file;
             self::$classMapDirty = true;
             return true;
         }
@@ -452,7 +451,7 @@ class SugarAutoLoader
 		foreach(self::$dirMap as $dir) {
 		    // include/Class.php
 		    if($file = self::requireWithCustom("{$dir}$class_file.php")) {
-		        self::$classMap[$uclass] = $file;
+                self::$classMap[$class] = $file;
 		        self::$classMapDirty = true;
 		        return true;
 		    }
@@ -460,19 +459,19 @@ class SugarAutoLoader
 		    // Note here we don't use $class_file since using path twice would not make sense:
 		    // Foo/Bar/Foo/Bar.php vs. Foo_Bar/Foo_Bar.php
 			if($file = self::requireWithCustom("{$dir}$class/$class.php")) {
-		        self::$classMap[$uclass] = $file;
+                self::$classMap[$class] = $file;
 		        self::$classMapDirty = true;
 		        return true;
 		    }
 		    // try include/Foo_Bar.php as a last resort
 			if($file = self::requireWithCustom("{$dir}$class.php")) {
-		        self::$classMap[$uclass] = $file;
+                self::$classMap[$class] = $file;
 		        self::$classMapDirty = true;
 		        return true;
 		    }
 		}
 
-        self::$classMap[$uclass] = false;
+        self::$classMap[$class] = false;
         self::$classMapDirty = true;
         return false;
 	}
