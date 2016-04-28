@@ -214,7 +214,7 @@ FILE;
     }
 
     /**
-     * @covers forecastsInitialization
+     * @covers ForecastsApi::forecastsInitialization
      */
     public function testForecastsInitialization()
     {
