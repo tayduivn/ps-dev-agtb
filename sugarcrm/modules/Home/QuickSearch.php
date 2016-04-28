@@ -263,7 +263,7 @@ class quicksearchQuery
     {
         global $sugar_config;
 
-        $app_list_strings = null;
+        $app_list_strings = isset($GLOBALS['app_list_strings']) ? $GLOBALS['app_list_strings'] : null;
         $data['totalCount'] = count($results);
         $data['fields']     = array();
 

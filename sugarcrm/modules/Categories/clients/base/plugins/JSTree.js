@@ -438,7 +438,7 @@
                                     self.warnDelete({
                                         model: bean,
                                         success: _.bind(function() {
-                                            this.remove(this.is_selected(obj) ? obj : null);
+                                            this.remove(obj);
                                             self._toggleVisibility(self.collection.length === 0);
                                         }, this)
                                     });
