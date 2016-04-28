@@ -1,5 +1,6 @@
 describe('Base.Field.Duration', function() {
     var app, field, data;
+    var sandbox;
 
     beforeEach(function () {
         app = SugarTest.app;
@@ -8,7 +9,8 @@ describe('Base.Field.Duration', function() {
         SugarTest.testMetadata.set();
         data = field.model.get(field.name);
 
-        sinon.stub(app.user, 'getPreference')
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.user, 'getPreference')
             .withArgs('datepref')
             .returns('m/d/Y')
             .withArgs('timepref')
@@ -25,12 +27,28 @@ describe('Base.Field.Duration', function() {
     });
 
     afterEach(function() {
-        app.user.getPreference.restore();
+        sandbox.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+    });
+
+    describe('render', function() {
+        it('should hide any open date or time pickers', function() {
+            var picker = sandbox.spy();
+            var $ = sandbox.stub().returns({
+                datepicker: picker,
+                timepicker: picker
+            });
+            sandbox.stub(field.view, 'getField').returns({$: $});
+
+            field.render();
+
+            expect(picker).toHaveBeenCalledWith('hide');
+            expect(picker.callCount).toBe(4);
+        });
     });
 
     describe('format()', function() {
