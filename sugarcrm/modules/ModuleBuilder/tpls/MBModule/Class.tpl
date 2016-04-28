@@ -32,6 +32,22 @@ class {{$class.name}}_sugar extends {{$class.extends}} {
     public $disable_row_level_security = true;
     {{/if}}
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function {{$class.name}}_sugar()
+    {
+        self::__construct();
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
 {{if $class.acl}}
     public function bean_implements($interface){
         switch($interface){
