@@ -93,7 +93,7 @@ else {
         $id = $request->getValidInputRequest('id', 'Assert\Guid');
         $local_location = sugar_cached("modules/Emails/{$ieId}/attachments/{$id}");
     } elseif(isset($_REQUEST['isTempFile']) && $file_type == "import") {
-        $tempName = $request->getValidInputRequest('tempName', 'Assert\Guid');
+        $tempName = $request->getValidInputRequest('tempName');
         $local_location = "upload://import/{$tempName}";
     } else if ($file_type == 'notes') {
         $note = BeanFactory::newBean('Notes');
