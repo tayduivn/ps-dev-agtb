@@ -154,12 +154,29 @@ class WebSocketsApi extends SugarApi
         }
 
         $cfg = $this->getConfigurator();
+        if (!array_key_exists('websockets', $cfg->config)) {
+            $cfg->config['websockets'] = array(
+                'server' => array('url' => ''),
+                'client' => array('url' => '', 'isBalancer' => ''),
+            );
+        }
+
+        if ((empty($values['server_url']) && empty($values['client_url'])) ||
+            ($cfg->config['websockets']['server']['url'] != $values['server_url']) ||
+            ($cfg->config['websockets']['client']['url'] != $values['client_url'])
+        ) {
+            $this->getWebSocketsClient()
+                ->recipient(SugarSocketClient::RECIPIENT_ALL)
+                ->send('close');
+        }
+
         $cfg->config['websockets']['server']['url'] = $values['server_url'];
         $cfg->config['websockets']['client']['url'] = $values['client_url'];
         $cfg->config['websockets']['client']['isBalancer'] = $values['client_is_balancer'];
 
-        // set new config values
+        // set new config values and clean cache
         $cfg->handleOverride();
+        MetaDataManager::clearAPICache();
 
         return $this->configGet($api, $args);
     }

@@ -25,12 +25,16 @@
     _saveConfig: function () {
         app.alert.dismiss('websockets_confirmation');
 
-        this.context.get('model').isNew = function () {
-            return false
+        var model = this.context.get('model');
+
+        model.isNew = function() {
+            return false;
         };
-        this.context.get('model').save({}, {
+        var url = app.api.buildURL(this.module, 'config');
+        app.api.call('update', url, model.attributes, {
             // getting the fresh model with correct config settings passed in as the param
-            success: _.bind(function (model) {
+            success: _.bind(function() {
+                app.events.trigger('app:notifications:socket:config:changed');
                 // If we're inside a drawer - refresh
                 if (app.drawer) {
                     this.showSavedConfirmation();
@@ -39,7 +43,7 @@
                     app.sync();
                 }
             }, this),
-            error: _.bind(function (error) {
+            error: _.bind(function(error) {
                 this.getField('save_button').setDisabled(false);
                 app.alert.show('websockets_confirmation', {
                     level: 'error',
