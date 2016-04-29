@@ -264,22 +264,22 @@ describe("Sugar7 utils", function() {
             [[combos.primary_valid, combos.bad], combos.primary_valid.email_address],
             [[combos.primary_invalid, combos.valid], combos.valid.email_address],
             [[combos.primary_invalid, combos.invalid], ''],
-            [[combos.primary_invalid, combos.opted_out], ''],
+            [[combos.primary_invalid, combos.opted_out], combos.opted_out.email_address],
             [[combos.primary_invalid, combos.bad], ''],
-            [[combos.primary_opted_out, combos.valid], combos.valid.email_address],
-            [[combos.primary_opted_out, combos.invalid], ''],
-            [[combos.primary_opted_out, combos.opted_out], ''],
-            [[combos.primary_opted_out, combos.bad], ''],
+            [[combos.primary_opted_out, combos.valid], combos.primary_opted_out.email_address],
+            [[combos.primary_opted_out, combos.invalid], combos.primary_opted_out.email_address],
+            [[combos.primary_opted_out, combos.opted_out], combos.primary_opted_out.email_address],
+            [[combos.primary_opted_out, combos.bad], combos.primary_opted_out.email_address],
             [[combos.primary_bad, combos.valid], combos.valid.email_address],
             [[combos.primary_bad, combos.invalid], ''],
-            [[combos.primary_bad, combos.opted_out], ''],
+            [[combos.primary_bad, combos.opted_out], combos.opted_out.email_address],
             [[combos.primary_bad, combos.bad], ''],
             [[combos.valid, combos.invalid], combos.valid.email_address],
             [[combos.valid, combos.opted_out], combos.valid.email_address],
             [[combos.valid, combos.bad], combos.valid.email_address],
-            [[combos.invalid, combos.opted_out], ''],
+            [[combos.invalid, combos.opted_out], combos.opted_out.email_address],
             [[combos.invalid, combos.bad], ''],
-            [[combos.opted_out, combos.bad], '']
+            [[combos.opted_out, combos.bad], combos.opted_out.email_address]
         ], function(emails, expected) {
             it('should return ' + expected, function() {
                 model.set('email', emails);
