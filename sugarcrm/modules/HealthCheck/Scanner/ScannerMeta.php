@@ -443,7 +443,7 @@ class HealthCheckScannerMeta
         542 => array(
             'report' => 'invalidPAFieldUse',
             'bucket' => self::MANUAL,
-            //'kb'     => '',
+            'kb'     => 'https://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Invalid_Process_Author_Field_Use/',
         ),
 
         // Bucket G
