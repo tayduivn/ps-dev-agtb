@@ -9,8 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$module_name = 'pmse_Emails_Templates';
-$viewdefs[$module_name ]['base']['view']['create'] = array(
+
+$viewdefs['pmse_Emails_Templates']['base']['view']['create'] = array(
     'template' => 'record',
     'buttons' => array(
         array(
@@ -38,6 +38,34 @@ $viewdefs[$module_name ]['base']['view']['create'] = array(
             'primary' => true,
             'switch_on_click' => true,
             'showOn' => 'create',
+            'buttons' => array(
+                array(
+                    'type'   => 'rowaction',
+                    'name'   => 'save_open_emailstemplates',
+                    'label'  => 'LBL_PMSE_SAVE_DESIGN_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_open_emailstemplates:click',
+                    ),
+                ),
+                array(
+                    'type'  => 'rowaction',
+                    'name'  => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'events' => array(
+                        'click' => 'button:save_button:click',
+                    ),
+                ),
+            ),
+        ),
+        // @TODO: Remove this entire array, and reset the showOn property in the
+        // above array to ['create', 'select'] once SC implements support for
+        // array values in showOn, scheduled for SC-5667.
+        array(
+            'type'    => 'actiondropdown',
+            'name'    => 'dupecheck_dropdown',
+            'primary' => true,
+            'switch_on_click' => true,
+            'showOn' => 'select',
             'buttons' => array(
                 array(
                     'type'   => 'rowaction',
