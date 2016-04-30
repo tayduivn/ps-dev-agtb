@@ -267,6 +267,29 @@
     },
 
     /**
+     * Forces the date and time pickers to close in the event that they remain
+     * opened when the field is re-rendered.
+     *
+     * @inheritdoc
+     */
+    _render: function() {
+        var start = this.view.getField('date_start');
+        var end = this.view.getField('date_end');
+
+        if (start) {
+            start.$(start.fieldTag).datepicker('hide');
+            start.$(start.secondaryFieldTag).timepicker('hide');
+        }
+
+        if (end) {
+            end.$(end.fieldTag).datepicker('hide');
+            end.$(end.secondaryFieldTag).timepicker('hide');
+        }
+
+        return this._super('_render');
+    },
+
+    /**
      * Special case for duration fields on preview view
      *
      * @inheritdoc

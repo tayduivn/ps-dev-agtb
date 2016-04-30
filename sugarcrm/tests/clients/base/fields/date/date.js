@@ -176,6 +176,25 @@ describe('Base.Field.Date', function() {
                 expect(field.$(field.fieldTag).data('datepicker')).toBeUndefined();
             });
 
+            it('should hide the open datepicker', function() {
+                var $date;
+                var spy = sinon.collection.spy();
+
+                field.render();
+
+                $date = field.$(field.fieldTag);
+                $date.datepicker('show');
+                $date.datepicker().on('hide', spy);
+
+                // This will cause the field to be rendered in detail mode.
+                // This simulates the scenario where the datepicker has been
+                // shown and the field is re-rendered without the datepicker
+                // losing focus.
+                field.setMode('detail');
+
+                expect(spy).toHaveBeenCalled();
+            });
+
             it('should update field value when date value changes through date picker', function() {
                 field.render();
 

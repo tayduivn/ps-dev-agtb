@@ -238,6 +238,38 @@ describe('Base.Field.DateTimeCombo', function() {
                 expect(field.$(field.secondaryFieldTag).data('timepicker-settings')).toBeUndefined();
             });
 
+            it('should hide the open date and time pickers', function() {
+                var $date;
+                var $time;
+                var spy = sinon.collection.spy();
+
+                field.render();
+
+                // Must append the field to the DOM so that timepicker will
+                // work.
+                $(document.body).append(field.$el);
+
+                $date = field.$(field.fieldTag);
+                $date.datepicker('show');
+                $date.datepicker().on('hide', spy);
+
+                $time = field.$(field.secondaryFieldTag);
+                $time.timepicker('show');
+                $time.timepicker().on('hideTimepicker', spy);
+
+                // This will cause the field to be rendered in detail mode.
+                // This simulates the scenario where the date and time pickers
+                // have been shown and the field is re-rendered without the
+                // date or time picker losing focus. In reality, only one of
+                // the two pickers will be open at a time.
+                field.setMode('detail');
+
+                expect(spy.callCount).toBe(2);
+
+                // Explicitly remove the field from the DOM.
+                field.$el.remove();
+            });
+
             it('should update date value when time value changes', function() {
                 var now = new Date('Sun Jan 15 1984 19:20:42'),
                     clock = sinon.useFakeTimers(now.getTime(), 'Date');
