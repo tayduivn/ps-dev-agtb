@@ -112,7 +112,7 @@
                         ]
                     }
                 }
-            ], this.context.parent);
+            ], this.context);
             previewLayout.loadData();
             previewLayout.render();
         }
