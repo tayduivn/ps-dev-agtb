@@ -93,7 +93,7 @@ class PMSEChangeField extends PMSEScriptTask
      * $response['route_action'] = 'ROUTE'; //The action that should process the Router
      * $response['flow_action'] = 'CREATE'; //The record action that should process the router
      * $response['flow_data'] = $flowData; //The current flowData
-     * $response['flow_filters'] = array('first_id', 'second_id'); 
+     * $response['flow_filters'] = array('first_id', 'second_id');
      * //This attribute is used to filter the execution of the following elements
      * $response['flow_id'] = $flowData['id']; // The flowData id if present
      *
@@ -114,7 +114,7 @@ class PMSEChangeField extends PMSEScriptTask
                 $flowAction = 'CREATE';
                 break;
         }
-        
+
         $isRelated = false;
         $bpmnElement = $this->retrieveDefinitionData($flowData['bpmn_id']);
         $act_field_module = $bpmnElement['act_field_module'];
@@ -162,9 +162,11 @@ class PMSEChangeField extends PMSEScriptTask
                                 $historyData->savePredata($field->field, $bean->{$field->field});
                                 $newValue = '';
                                 if (is_array($field->value)) {
+                                    // Handle regular evaluation of values
                                     $newValue = $this->beanHandler->processValueExpression($field->value, $bean);
-                                    $newValue = $this->getDBDate($field, $newValue);
 
+                                    // Handle special field type processing
+                                    $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
                                 } else {
                                     if ($field->field == 'assigned_user_id') {
                                         $field->value = $this->getCustomUser($field->value, $beanModule);
@@ -275,12 +277,8 @@ class PMSEChangeField extends PMSEScriptTask
      */
     public function handleFieldTypeProcessing($value, $field, $bean)
     {
-        $fieldType = '';
-
-        if (!empty($bean->field_name_map[$field->field]['type'])) {
-            $fieldType = $bean->field_name_map[$field->field]['type'];
-        }
-        switch (strtolower($fieldType)) {
+        // Handle certain fields that require special handling
+        switch (strtolower($field->type)) {
             case 'currency':
                 // For currency fields, the return value is a json encoded string. So need to json_decode.
                 $currencyFields = json_decode($value);
@@ -290,7 +288,13 @@ class PMSEChangeField extends PMSEScriptTask
                     $value = $currencyFields->expValue;
                 }
                 break;
+
+            case 'datetime':
+            case 'date':
+                $value = $this->getDBDate($field, $value);
+                break;
         }
+
         return $value;
     }
 }
