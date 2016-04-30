@@ -20,5 +20,5 @@
 <input type="hidden" name="raction" value="execute"/>
 <textarea name="sql" rows="24" cols="150" id="repairsql">{$qry_str}</textarea>
 <br/>
-<input type="button" class="button" value="{$MOD.LBL_REPAIR_DATABASE_EXECUTE}" onClick="document.RepairDatabaseForm.submit();"/> 
+<input type="button" class="button" value="{$MOD.LBL_REPAIR_DATABASE_EXECUTE}" onClick="document.RepairDatabaseForm.raction.value='execute'; document.RepairDatabaseForm.submit();"/>
 <input type="button" class="button" value="{$MOD.LBL_REPAIR_DATABASE_EXPORT}" onClick="document.RepairDatabaseForm.raction.value='export'; document.RepairDatabaseForm.submit();"/>

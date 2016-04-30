@@ -661,6 +661,12 @@ class FilterApi extends SugarApi
         $rcOptions = $this->getRelatedCollectionOptions($beans, $fields);
         $rcBeans = $this->runRelateCollectionQuery($beans, $rcOptions);
 
+        // 'Cause last_viewed_date is an alias (not a real field), we need to
+        // temporarily store its values and append it later to each recently
+        // viewed record
+        $lastViewedDates = array();
+        $db = DBManagerFactory::getInstance();
+
         $i = $distinctCompensation;
         foreach ($beans as $bean_id => $bean) {
             if ($i == $options['limit']) {
@@ -671,6 +677,10 @@ class FilterApi extends SugarApi
                 continue;
             }
             $i++;
+
+            if (isset($rows[$bean_id]['last_viewed_date'])) {
+                $lastViewedDates[$bean_id] = $db->fromConvert($rows[$bean_id]['last_viewed_date'], 'datetime');
+            }
 
             $this->populateRelatedFields($bean, $rows[$bean_id]);
         }
@@ -689,6 +699,17 @@ class FilterApi extends SugarApi
         }
 
         $data['records'] = $this->formatBeans($api, $args, $beans, $options);
+
+        if (!empty($lastViewedDates) && !empty($data['records'])) {
+            global $timedate;
+
+            // Append _last_viewed_date to each recently viewed record
+            foreach ($data['records'] as &$record) {
+                if (isset($lastViewedDates[$record['id']])) {
+                    $record['_last_viewed_date'] = $timedate->asIso($timedate->fromDb($lastViewedDates[$record['id']]));
+                }
+            }
+        }
 
         return $data;
     }
@@ -1101,6 +1122,7 @@ class FilterApi extends SugarApi
             $q->orderByRaw('tracker.track_max', 'DESC');
         }
         $q->distinct(false);
+        $q->select()->fieldRaw('tracker.track_max', 'last_viewed_date');
     }
 
     /**
