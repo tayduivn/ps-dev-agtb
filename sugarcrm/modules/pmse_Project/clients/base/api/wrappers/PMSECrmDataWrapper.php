@@ -16,6 +16,7 @@ require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEDynaForm.php';
 require_once 'modules/pmse_Project/clients/base/api/wrappers/PMSEObservers/PMSEObservable.php';
 require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSERelatedModule.php';
+require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 /**
  * Class PMSEWrapperCrmData
@@ -159,6 +160,12 @@ class PMSECrmDataWrapper implements PMSEObservable
 
     /**
      *
+     * @var PMSELogger
+     */
+    protected $logger;
+
+    /**
+     *
      * @global type $beanList
      * @global type $db
      * @codeCoverageIgnore
@@ -190,6 +197,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         $this->beanList = $beanList;
         $this->observers = array();
         $this->db = $db;
+
+        $this->logger = PMSELogger::getInstance();
     }
 
     /**
@@ -1337,6 +1346,9 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $args['data']['filter'] = $args['filter'];
                 $output = $this->clearAccordingProcessDefinitions($args['data']);
                 break;
+            case 'clearEventCriteria':
+                $output = $this->clearEventCriteria($filter);
+                break;
             default:
                 $output = $this->invalidRequest();
         }
@@ -2293,5 +2305,35 @@ class PMSECrmDataWrapper implements PMSEObservable
         }
         $result['result'] = $arr;
         return $result;
+    }
+
+    /**
+     * Clear event criteria (evn_criteria) from the database table
+     * @param event id (evn_uid)
+     */
+    public function clearEventCriteria($eventUid)
+    {
+        $res = new stdClass();
+        $res->success = false;
+
+        if (empty($eventUid)) {
+            return $res;
+        };
+
+        $q = $this->sugarQueryObject;
+        $q->select(array('id'));
+        $q->from(BeanFactory::getBean('pmse_BpmnEvent'));
+        $q->where()->equals('evn_uid', $eventUid);
+        $result = $q->execute();
+
+        if (is_array($result)) {
+            $eventDefinitionId = $result[0]['id'];
+            $sql = "UPDATE pmse_bpm_event_definition
+                    SET evn_criteria = ''
+                    WHERE id = " . $this->db->quoted($eventDefinitionId);
+            $res->success = (bool) $this->db->Query($sql);
+        }
+
+        return $res;
     }
 }

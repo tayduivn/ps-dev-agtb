@@ -624,16 +624,40 @@ AdamEvent.prototype._getActionHandler = function (definition) {
         switch (definition.evn_type) {
             case 'START':
                 cfg.message = definition.evn_message;
-            case 'INTERMEDIATE':
             case 'END':
             case 'BOUNDARY':
                 cfg.evn_marker = definition.evn_marker;
                 cfg.evn_behavior = definition.evn_behavior;
+                self.updateEventMarker(cfg);
                 break;
+            case 'INTERMEDIATE':
+                // Clear the event criteria when the user switches action on an INTERMEDIATE event
+                // Makes use of the evn_uid field to identity the event.
+                App.alert.show(
+                    'change_script_type_confirmation',
+                    {
+                        level: 'confirmation',
+                        messages: translate('LBL_PMSE_CHANGE_ACTION_TYPE_CONFIRMATION'),
+                        onConfirm: function() {
+                            cfg.evn_marker = definition.evn_marker;
+                            cfg.evn_behavior = definition.evn_behavior;
+                            var proxy = new SugarProxy({
+                                url: 'pmse_Project/CrmData/clearEventCriteria/' + self.id,
+                                uid: self.id,
+                                callback: null
+                            });
+                            proxy.sendData(null, {
+                                success: function() {
+                                    self.updateEventMarker(cfg);
+                                }
+                            });
+                        }
+                    });
+                break;
+
             default:
                 throw new Error("_getActionHandler(): Invalid definition evn_type.");
         }
-        self.updateEventMarker(cfg);
     };
 };
 
