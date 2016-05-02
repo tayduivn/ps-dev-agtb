@@ -92,14 +92,19 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array(
-                SUGAR_BASE_DIR . '/modules/Accounts/vardefs.php',
-                array(SUGAR_BASE_DIR),
-                SUGAR_BASE_DIR . '/modules/Accounts/vardefs.php',
+                __DIR__ . '/Fixtures/basedir1/exists.txt',
+                array(
+                    __DIR__ . '/Fixtures/basedir1',
+                ),
+                __DIR__ . '/Fixtures/basedir1/exists.txt',
             ),
             array(
-                '/etc/passwd',
-                array('/etc', '/foobar'),
-                '/etc/passwd',
+                __DIR__ . '/Fixtures/basedir2/exists.txt',
+                array(
+                    __DIR__ . '/Fixtures/basedir1',
+                    __DIR__ . '/Fixtures/basedir2',
+                ),
+                __DIR__ . '/Fixtures/basedir2/exists.txt',
             ),
         );
     }
@@ -128,20 +133,27 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     {
         return array(
             array(
-                'modules/Foobar/vardefs.php',
-                array(SUGAR_BASE_DIR),
+                'doesnotexist.php',
+                array(
+                    __DIR__ . '/Fixtures/basedir1',
+                ),
                 File::ERROR_FILE_NOT_FOUND,
                 'file not found',
             ),
             array(
                 'modules/Accounts/vardefs.php' . chr(0) . '.gif',
-                array(SUGAR_BASE_DIR),
+                array(
+                    __DIR__ . '/Fixtures/basedir1',
+                    __DIR__ . '/Fixtures/basedir2',
+                ),
                 File::ERROR_NULL_BYTES,
                 'null bytes detected',
             ),
             array(
-                '/etc/passwd',
-                array(SUGAR_BASE_DIR),
+                __DIR__ . '/Fixtures/basedir1/exists2.txt',
+                array(
+                    __DIR__ . '/Fixtures/basedir2',
+                ),
                 File::ERROR_OUTSIDE_BASEDIR,
                 'file outside basedir',
             ),
