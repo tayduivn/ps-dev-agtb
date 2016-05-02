@@ -18,7 +18,7 @@ class ModuleApi extends SugarApi {
 
     /** @var RelateRecordApi */
     protected $relateRecordApi;
-    private $aclCheckOptions = array('source' => 'module_api');
+    protected $aclCheckOptions = array('source' => 'module_api');
 
     /**
      * A list of fields for which we disallow update through updateRecord
