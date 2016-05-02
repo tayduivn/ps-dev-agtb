@@ -1082,9 +1082,9 @@ function add_error_style(formname, input, txt, flash) {
  */
 function clear_all_errors() {
     for(var wp = 0; wp < inputsWithErrors.length; wp++) {
-        if(typeof(inputsWithErrors[wp]) !='undefined' && typeof inputsWithErrors[wp].parentNode != 'undefined' && 
+        if (typeof(inputsWithErrors[wp]) != 'undefined' && typeof inputsWithErrors[wp].parentNode != 'undefined' &&
             inputsWithErrors[wp].parentNode != null) {
-            if (inputsWithErrors[wp].parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
+            if (inputsWithErrors[wp].parentNode.className.indexOf('x-form-field-wrap') != -1) {
                 inputsWithErrors[wp].parentNode.parentNode.removeChild(
                     inputsWithErrors[wp].parentNode.parentNode.lastChild
                 );
