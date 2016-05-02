@@ -38,16 +38,16 @@
      * @override Overriding so we can set this.image_preview_url for the
      * Process Definition image
      */
-    renderPreview: function (model, newCollection) {
-        if (model) {
+    _render: function() {
+        if (this.model) {
             var pmseInboxUrl = app.api.buildFileURL({
                 module: 'pmse_Project',
-                id: model.get('id'),
+                id: this.model.get('id'),
                 field: 'id'
             }, {cleanCache: true});
             this.image_preview_url = pmseInboxUrl;
         }
 
-        this._super('renderPreview', [model, newCollection]);
+        this._super('_render');
     }
-})
+});
