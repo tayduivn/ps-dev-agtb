@@ -275,6 +275,13 @@ class KBContent extends SugarBean {
                     $this->kbsapprover_id = $user->id;
                     break;
             }
+            switch ($dataChanges['status']['before']) {
+                case self::ST_PUBLISHED:
+                    if (!in_array($dataChanges['status']['after'], array(self::ST_APPROVED, self::ST_EXPIRED))) {
+                        $this->active_date = '';
+                    }
+                    break;
+            }
         }
 
         $this->checkActiveRev();
