@@ -14,8 +14,12 @@
     {{#each model.primaryFields}}
         {{#notEq type 'avatar'}}<h3>{{/notEq}}
         {{#if highlighted}}
-            {{#if link}}
-                <span><a href="#{{buildRoute model=../../../model}}">{{value}}</a></span>
+            {{#if ../../model.viewAccess}}
+                {{#if link}}
+                    <span><a href="#{{buildRoute model=../../../../model}}">{{value}}</a></span>
+                {{else}}
+                    <span>{{value}}</span>
+                {{/if}}
             {{else}}
                 <span>{{value}}</span>
             {{/if}}

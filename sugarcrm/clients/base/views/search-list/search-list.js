@@ -71,6 +71,7 @@
 
             model.primaryFields = gsUtils.highlightFields(model, moduleMeta.primaryFields);
             model.secondaryFields = gsUtils.highlightFields(model, moduleMeta.secondaryFields, true);
+            model.viewAccess = app.acl.hasAccessToModel('view', model);
 
             this._rejectEmptyFields(model, model.primaryFields);
             this._rejectEmptyFields(model, model.secondaryFields);
