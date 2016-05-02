@@ -54,9 +54,10 @@ gulp.task('karma', function(done) {
         karmaOptions.singleRun = false;
     }
 
-    return karma.start(karmaOptions, function() {
-        // wrapping this in a function avoids showing an unwanted stack trace.
-        // https://stackoverflow.com/questions/26614738/issue-running-karma-task-from-gulp
-        done();
+    return karma.start(karmaOptions, function(exitStatus) {
+        // Karma's return status is not compatible with gulp's streams
+        // See: http://stackoverflow.com/questions/26614738/issue-running-karma-task-from-gulp
+        // or: https://github.com/gulpjs/gulp/issues/587 for more information
+        done(exitStatus ? 'There are failing unit tests' : undefined);
     });
 });
