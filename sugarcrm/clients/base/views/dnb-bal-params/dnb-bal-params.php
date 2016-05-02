@@ -1418,7 +1418,9 @@ $viewdefs['base']['view']['dnb-bal-params'] = array(
             'modelKey' => 'balFilter',
             'multiple' => false,
             'lookup' => array(
-                'prem' => 'IncludeContactsOnlyWithDirectEmailOrDirectPhone'
+                'prem' => 'IncludeContactsOnlyWithDirectEmailOrDirectPhone',
+                'email' => 'IncludeContactsOnlyWithDirectEmail',
+                'phone' => 'IncludeContactsOnlyWithDirectPhone'
             )
         ),
     ),
