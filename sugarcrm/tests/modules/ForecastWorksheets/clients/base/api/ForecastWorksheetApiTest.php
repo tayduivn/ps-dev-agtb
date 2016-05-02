@@ -17,12 +17,12 @@ require_once('include/api/RestService.php');
 /**
  * Class ForecastWorksheetsApiTest
  *
- * @coversDefaultClass ForecastWorksheetsApi
+ * @covers ForecastWorksheetsApi
  */
 class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::getClass
+     * @covers ForecastWorksheetsApi::getClass
      */
     public function testGetClass()
     {
@@ -33,7 +33,7 @@ class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getClass
+     * @covers ForecastWorksheetsApi::getClass
      */
     public function testGetClassReturnsCustomClass()
     {
@@ -53,7 +53,7 @@ FILE;
     }
 
     /**
-     * @covers ::forecastWorksheetSave
+     * @covers ForecastWorksheetsApi::forecastWorksheetSave
      */
     public function testForecastWorksheetSave()
     {
