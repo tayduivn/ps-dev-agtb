@@ -18,7 +18,7 @@ require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
  *
  * @group forecastapi
  * @group forecasts
- * @coversDefaultClass ::ForecastChartApi
+ * @covers ForecastsChartApi
  */
 class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -30,7 +30,7 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @param string $_file
      * @param string $_klass
-     * @covers ::getClass
+     * @covers ForecastsChartApi::getClass
      * @dataProvider dataProviderGetClass
      */
     public function testGetClass($_file, $_klass)
@@ -42,7 +42,7 @@ class ForecastsChartApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @param string $_file
      * @param string $_klass
-     * @covers ::getClass
+     * @covers ForecastsChartApi::getClass
      * @dataProvider dataProviderGetClass
      */
     public function testGetClassReturnsCustomClass($_file, $_klass)
@@ -64,7 +64,7 @@ FILE;
      * @param string $_klass
      * @param int $display_manager
      * @param int $manager_total
-     * @covers ::chart
+     * @covers ForecastsChartApi::chart
      * @dataProvider dataProviderChart
      */
     public function testChart($_file, $_klass, $display_manager, $manager_total)
