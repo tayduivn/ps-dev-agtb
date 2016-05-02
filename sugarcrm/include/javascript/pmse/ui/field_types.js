@@ -1290,6 +1290,7 @@ var SearchableCombobox = function (options, parent) {
     this._searchDelay = null;
     this._searchMore = null;
     this._searchMoreList = null;
+    this._isValid = true;
     SearchableCombobox.prototype.initObject.call(this, options, parent);
 };
 
@@ -1309,7 +1310,8 @@ SearchableCombobox.prototype.initObject = function (options, parent) {
         searchLabel: "text",
         searchValue: "value",
         searchDelay: 1500,
-        searchMore: false
+        searchMore: false,
+        isValid: true
     };
 
     $.extend(true, defaults, options);
@@ -1323,13 +1325,28 @@ SearchableCombobox.prototype.initObject = function (options, parent) {
         .setSearchValue(defaults.searchValue)
         .setSearchLabel(defaults.searchLabel)
         .setSearchURL(defaults.searchURL)
-        .setOptions(defaults.options);
+        .setOptions(defaults.options)
+        .setValid(defaults.isValid);
 
     if (defaults.searchMore) {
         this.enableSearchMore(defaults.searchMore);
     } else {
         this.disableSearchMore();
     }
+};
+
+SearchableCombobox.prototype.isValid = function() {
+    return this.disabled || this._isValid;
+};
+
+SearchableCombobox.prototype.setValid = function(valid) {
+    this._isValid = valid ? true : false;
+    this.decorateValid();
+    return this;
+};
+
+SearchableCombobox.prototype.decorateValid = function() {
+    $(this.controlObject).toggleClass(this._invalidFieldClass, !this.isValid());
 };
 
 SearchableCombobox.prototype._createSearchMoreOption = function () {
@@ -1550,6 +1567,7 @@ SearchableCombobox.prototype.disable = function () {
     }
     this.setRequired(false);
     this.disabled = true;
+    this.decorateValid();
     return this;
 };
 
@@ -1562,6 +1580,7 @@ SearchableCombobox.prototype.enable = function () {
         this.setRequired(this.oldRequiredValue);
     }
     this.disabled = false;
+    this.decorateValid();
     return this;
 };
 

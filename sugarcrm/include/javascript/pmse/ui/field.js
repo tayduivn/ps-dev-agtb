@@ -89,6 +89,8 @@ var Field = function (options, parent) {
 
     this.disabled = null;
 
+    this._invalidFieldClass = 'pmse-field-error';
+
     Field.prototype.initObject.call(this, options, parent);
 };
 Field.prototype = new Element();
