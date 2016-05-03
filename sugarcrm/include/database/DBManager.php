@@ -2628,7 +2628,7 @@ protected function checkQuery($sql, $object_name = false)
         } elseif ($typeClass == 'int') {
             return \PDO::PARAM_INT;
         }
-        return null;
+        return \PDO::PARAM_STR;
     }
 
 	/**

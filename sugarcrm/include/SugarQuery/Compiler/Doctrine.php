@@ -12,6 +12,9 @@
 
 use Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder;
 
+/**
+ * Compiler of SugarQuery to Doctrine query builder
+ */
 class SugarQuery_Compiler_Doctrine
 {
     /**
@@ -19,6 +22,11 @@ class SugarQuery_Compiler_Doctrine
      */
     protected $db;
 
+    /**
+     * Constructor
+     *
+     * @param DBManager $db Database connection
+     */
     public function __construct(DBManager $db)
     {
         $this->db = $db;
@@ -27,35 +35,32 @@ class SugarQuery_Compiler_Doctrine
     /**
      * Build out the Query in SQL
      *
-     * @param SugarQuery $query
+     * @param SugarQuery $query The query being compiled
      * @return QueryBuilder
      */
     public function compile(SugarQuery $query)
     {
+        $builder = $this->db->getConnection()
+            ->createQueryBuilder();
+
         if ($query->union instanceof SugarQuery_Builder_Union) {
-            return $this->compileUnionQuery($query);
+            return $this->compileUnionQuery($builder, $query);
         }
 
-        return $this->compileSelectQuery($query);
+        return $this->compileSelectQuery($builder, $query);
     }
 
     /**
      * Build out the Query in SQL
      *
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      * @return QueryBuilder
      * @throws SugarQueryException
      */
-    protected function compileUnionQuery(SugarQuery $query)
+    protected function compileUnionQuery(QueryBuilder $builder, SugarQuery $query)
     {
         $unions = $query->union->getQueries();
-
-        if (count($unions) == 0) {
-            throw new SugarQueryException('The UNION query does not contain sub-queries');
-        }
-
-        $conn = $this->db->getConnection();
-        $builder = $conn->createQueryBuilder();
 
         $sql = '';
         foreach ($unions as $i => $union) {
@@ -72,18 +77,20 @@ class SugarQuery_Compiler_Doctrine
         $this->compileOrderBy($builder, $query, false);
 
         // combine manually built SELECT with the ORDER BY built by builder
-        $sql = str_replace('SELECT  FROM  ', $sql, $builder->getSQL());
+        $sql = str_replace('SELECT  FROM ', $sql, $builder->getSQL());
 
         // manually apply LIMIT to the resulting SQL
         if ($query->limit !== null || $query->offset !== null) {
-            $sql = $conn->getDatabasePlatform()->modifyLimitQuery($sql, $query->limit, $query->offset);
+            $sql = $this->db->getConnection()
+                ->getDatabasePlatform()
+                ->modifyLimitQuery($sql, $query->limit, $query->offset);
         }
 
         // below is a very dirty hack: Doctrine QueryBuilder doesn't support UNION's,
         // so we inject pre-built SQL into builder.
         // another dirty thing is that we're using our own wrapper for QueryBuilder,
         // so we use parent class reflection here in order to set private properties of
-        // the parent calss
+        // the parent class
         $re = new ReflectionProperty(get_parent_class($builder), 'sql');
         $re->setAccessible(true);
         $re->setValue($builder, $sql);
@@ -98,15 +105,12 @@ class SugarQuery_Compiler_Doctrine
     /**
      * Build out the Query in SQL
      *
-     * @param SugarQuery $query
-     *
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      * @return QueryBuilder
      */
-    protected function compileSelectQuery(SugarQuery $query)
+    protected function compileSelectQuery(QueryBuilder $builder, SugarQuery $query)
     {
-        $builder = $this->db->getConnection()
-            ->createQueryBuilder();
-
         $query->ensureGroupByFields();
         $this->compileSelect($builder, $query);
         $this->compileFrom($builder, $query);
@@ -123,8 +127,8 @@ class SugarQuery_Compiler_Doctrine
     /**
      * Create a select statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileSelect(QueryBuilder $builder, SugarQuery $query)
     {
@@ -136,9 +140,6 @@ class SugarQuery_Compiler_Doctrine
         $select = $query->select;
 
         $columns = array();
-        if ($select->getCountQuery()) {
-            $columns[] = 'count(0) AS record_count';
-        }
 
         foreach ($select->select as $field) {
             if ($field->isNonDb()) {
@@ -155,20 +156,26 @@ class SugarQuery_Compiler_Doctrine
             $columns[0] = 'DISTINCT ' . $columns[0];
         }
 
+        if ($select->getCountQuery()) {
+            $columns[] = 'COUNT(0) AS record_count';
+        }
+
         $builder->select($columns);
     }
 
     /**
      * Create a from statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
+     *
+     * @throws SugarQueryException
      */
     protected function compileFrom(QueryBuilder $builder, SugarQuery $query)
     {
         $bean = $query->getFromBean();
         if (!$bean) {
-            return;
+            throw new SugarQueryException('The primary bean is not specified');
         }
 
         $alias = $query->getFromAlias();
@@ -184,46 +191,24 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Creates join syntax for the query
+     * Compile JOIN statements
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileJoins(QueryBuilder $builder, SugarQuery $query)
     {
-        foreach ($this->sortJoins($query->join) as $join) {
+        foreach ($query->join as $join) {
             $this->compileJoin($builder, $join);
         }
     }
 
     /**
-     * @param SugarQuery_Builder_Join[] $joins
-     * @return SugarQuery_Builder_Join[]
+     * Compile single JOIN expression
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery_Builder_Join $join Join specification
      */
-    protected function sortJoins(array $joins)
-    {
-        $sorted = array();
-        foreach ($joins as $name => $join) {
-            if (isset($sorted[$name])) {
-                continue;
-            }
-
-            // If there is a relationship table alias, we need to build the join
-            // part before the join alias is referenced or there will be sadness
-            // in SQLland
-            if (isset($join->relationshipTableAlias)) {
-                $alias = $join->relationshipTableAlias;
-                if (isset($joins[$alias]) && !isset($sorted[$alias])) {
-                    $sorted[$alias] = $joins[$alias];
-                }
-            }
-
-            $sorted[$name] = $join;
-        }
-
-        return $sorted;
-    }
-
     protected function compileJoin(QueryBuilder $builder, SugarQuery_Builder_Join $join)
     {
         if ($join->table instanceof SugarQuery
@@ -246,9 +231,6 @@ class SugarQuery_Compiler_Doctrine
             case 'left':
                 $builder->leftJoin($fromAlias, $table, $alias, $condition);
                 break;
-            case 'right':
-                $builder->rightJoin($fromAlias, $table, $alias, $condition);
-                break;
             default:
                 $builder->join($fromAlias, $table, $alias, $condition);
                 break;
@@ -256,8 +238,10 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * Compile WHERE statement
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileWhere(QueryBuilder $builder, SugarQuery $query)
     {
@@ -271,16 +255,18 @@ class SugarQuery_Compiler_Doctrine
             $where = $query->where;
         }
 
-        $builder->where(
-            $this->compileExpression($builder, $where)
-        );
+        if ($where) {
+            $builder->where(
+                $this->compileExpression($builder, $where)
+            );
+        }
     }
 
     /**
-     * Create a GroupBy statement
+     * Compile GROUP BY statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileGroupBy(QueryBuilder $builder, SugarQuery $query)
     {
@@ -296,10 +282,10 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Create a Having statement
+     * Compile HAVING statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileHaving(QueryBuilder $builder, SugarQuery $query)
     {
@@ -311,11 +297,11 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Create an Order By Statement
+     * Compile ORDER BY statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
-     * @param bool $applyOrderStability
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
+     * @param bool $applyOrderStability Whether order stability should be applied the the SQL
      */
     protected function compileOrderBy(QueryBuilder $builder, SugarQuery $query, $applyOrderStability)
     {
@@ -340,7 +326,7 @@ class SugarQuery_Compiler_Doctrine
      * Add additional column to `ORDER BY` clause for order stability, defaults
      * to using the `id` column.
      *
-     * @param SugarQuery $query
+     * @param SugarQuery $query The query being compiled
      * @param SugarQuery_Builder_Orderby[] $orderBy List of already existing `ORDER BY` defs
      * @return SugarQuery_Builder_Orderby[]
      */
@@ -356,10 +342,10 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Compile LIMIT Statement
+     * Compile LIMIT statement
      *
-     * @param QueryBuilder $builder
-     * @param SugarQuery $query
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery $query The query being compiled
      */
     protected function compileLimit(QueryBuilder $builder, SugarQuery $query)
     {
@@ -372,30 +358,28 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * @param $field
+     * Compile field expression
+     *
+     * @param SugarQuery_Builder_Field $field Field specification
      * @return string
      */
     protected function compileField(SugarQuery_Builder_Field $field)
     {
         if ($field instanceof SugarQuery_Builder_Field_Raw) {
-            if (!empty($field->alias)) {
-                return "{$field->field} {$field->alias}";
+            $sql = $field->field;
+        } else {
+            if ($field->isNonDb()) {
+                return '';
+            }
+
+            if ($field->table && !strstr($field->field, '.')) {
+                $sql = $field->table . '.' . $field->field;
             } else {
-                return $field->field;
+                $sql = $field->field;
             }
         }
 
-        if ($field->isNonDb()) {
-            return '';
-        }
-
-        if ($field->table) {
-            $sql = $field->table . '.' . $field->field;
-        } else {
-            $sql = $field->field;
-        }
-
-        if (!empty($field->alias)) {
+        if ($field->alias && strcmp($field->alias, $field->field) != 0) {
             $sql .= ' ' . $field->alias;
         }
 
@@ -405,19 +389,18 @@ class SugarQuery_Compiler_Doctrine
     /**
      * Build the Where Statement using arrays, to keep it nice and clean
      *
-     * @param QueryBuilder $builder
+     * @param QueryBuilder $builder Query builder
      * @param SugarQuery_Builder_Where $expression
-     *
-     * @return array
+     * @return string|\Doctrine\DBAL\Query\Expression\CompositeExpression
      */
     protected function compileExpression(QueryBuilder $builder, SugarQuery_Builder_Where $expression)
     {
-        $sql = array();
+        $expressions = array();
 
         if (!empty($expression->raw)) {
             $compiledField = $this->compileField($expression->raw);
             if (!empty($compiledField)) {
-                $sql[] = $compiledField;
+                $expressions[] = $compiledField;
             }
         }
 
@@ -425,22 +408,31 @@ class SugarQuery_Compiler_Doctrine
             if ($condition instanceof SugarQuery_Builder_Where) {
                 $compiledField = $this->compileExpression($builder, $condition);
                 if (count($compiledField) > 0) {
-                    $sql[] = $compiledField;
+                    $expressions[] = $compiledField;
                 }
             } elseif ($condition instanceof SugarQuery_Builder_Condition) {
                 $compiledField = $this->compileCondition($builder, $condition);
                 if (!empty($compiledField)) {
-                    $sql[] = $compiledField;
+                    $expressions[] = $compiledField;
                 }
-            } elseif (is_array($condition) && !empty($condition)) {
-                $sql[] = join(' ', $condition);
             }
         }
 
+        if (count($expressions) == 1) {
+            return current($expressions);
+        }
+
         $method = strtolower($expression->operator()) . 'X';
-        return call_user_func_array(array($builder->expr(), $method), $sql);
+        return call_user_func_array(array($builder->expr(), $method), $expressions);
     }
 
+    /**
+     * Compile condition
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param SugarQuery_Builder_Condition $condition Condition
+     * @return string|null
+     */
     protected function compileCondition(QueryBuilder $builder, SugarQuery_Builder_Condition $condition)
     {
         global $current_user;
@@ -448,7 +440,7 @@ class SugarQuery_Compiler_Doctrine
         $field = $this->compileField($condition->field);
 
         if (empty($field)) {
-            return false;
+            return null;
         }
 
         if (!empty($condition->field->def['type']) && $this->db->isTextType($condition->field->def['type'])) {
@@ -467,11 +459,8 @@ class SugarQuery_Compiler_Doctrine
             $fieldDef = $condition->field->def;
             switch ($condition->operator) {
                 case 'IN':
-                    $sql = $castField . ' IN (' . $this->compileSet($builder, $condition->values, $fieldDef) . ')';
-                    break;
                 case 'NOT IN':
-                    $sql = $field . ' IS NULL OR '
-                        . $castField . ' NOT IN (' . $this->compileSet($builder, $condition->values, $fieldDef) . ')';
+                    $sql =  $this->compileIn($builder, $castField, $condition->operator, $condition->values, $fieldDef);
                     break;
                 case 'BETWEEN':
                     $min = $this->bindValue($builder, $condition->values['min'], $fieldDef);
@@ -484,7 +473,13 @@ class SugarQuery_Compiler_Doctrine
                 case 'DOES NOT CONTAIN':
                 case 'ENDS':
                 case 'DOES NOT END':
-                    $sql = $this->compileLike($builder, $field, $condition->operator, $condition->values, $fieldDef);
+                    $sql = $this->compileContains(
+                        $builder,
+                        $field,
+                        $condition->operator,
+                        $condition->values,
+                        $fieldDef
+                    );
                     break;
                 default:
                     $sql = $castField . ' ' . $condition->operator . ' ';
@@ -511,9 +506,31 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Compiles set of values
+     * Compile (NOT)? IN expression
      *
-     * @param QueryBuilder $builder
+     * @param QueryBuilder $builder Query builder
+     * @param string $field Field expression
+     * @param string $operator Internal SugarQuery operator
+     * @param SugarQuery|QueryBuilder|array|string $set
+     * @param array $fieldDef Field definition
+     * @return string
+     */
+    protected function compileIn(QueryBuilder $builder, $field, $operator, $set, array $fieldDef)
+    {
+        $sql = $field . ' ' . $operator . ' (' . $this->compileSet($builder, $set, $fieldDef) . ')';
+
+        $isNegative = strpos($operator, 'NOT') !== false;
+        if ($isNegative) {
+            $sql = $this->isNullOr($field, $sql);
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Compile set of values
+     *
+     * @param QueryBuilder $builder Query builder
      * @param SugarQuery|QueryBuilder|array|string $set
      * @param array $fieldDef Field definition
      * @return string
@@ -537,11 +554,10 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Compiles subquery and returns it as SQL
+     * Compile subquery and return it as SQL
      *
      * @param QueryBuilder $builder Primary query builder
      * @param SugarQuery|QueryBuilder $subQuery Subquery
-     *
      * @return string
      * @throws SugarQueryException
      */
@@ -551,15 +567,22 @@ class SugarQuery_Compiler_Doctrine
             $subQuery = $this->compile($subQuery);
         }
 
-        if (!$subQuery instanceof QueryBuilder) {
-            throw new SugarQueryException('Sub-query must be either SugarQuery, or QueryBuilder');
-        }
-
         return $builder->importSubQuery($subQuery);
     }
 
-    protected function compileLike(QueryBuilder $builder, $field, $operator, $values, array $fieldDef)
+    /**
+     * Compile "contains" expression
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $field Field expression
+     * @param string $operator Internal SugarQuery operator
+     * @param string|array $values Value or values to look for
+     * @param array $fieldDef Field definition
+     * @return string
+     */
+    protected function compileContains(QueryBuilder $builder, $field, $operator, $values, array $fieldDef)
     {
+        $format = null;
         switch ($operator) {
             case 'STARTS':
             case 'DOES NOT START':
@@ -573,63 +596,88 @@ class SugarQuery_Compiler_Doctrine
             case 'DOES NOT END':
                 $format = '%%%s';
                 break;
-            default:
-                $format = null;
-                break;
         }
 
         $isNegation = strpos($operator, 'NOT') !== false;
         if ($isNegation) {
-            $comparator = 'NOT LIKE';
             $chainWith = 'AND';
         } else {
-            $comparator = 'LIKE';
             $chainWith = 'OR';
         }
 
-        if ($this->db->supports('case_insensitive')) {
-            $field = "UPPER($field)";
+        if (!is_array($values)) {
+            $values = array($values);
         }
 
-        $sql = '';
-        if ($isNegation) {
-            $sql .= $field . ' IS NULL OR ';
-        }
-
-        if (is_array($values)) {
-            $conditions = array();
-            foreach ($values as $value) {
-                $conditions[] = $this->compilePattern($builder, $field, $comparator, $format, $value, $fieldDef);
-            }
-            $sql .= implode(' ' . $chainWith . ' ', $conditions);
+        if (!$this->isCollationCaseSensitive()) {
+            $expr = $field;
         } else {
-            $sql .= $this->compilePattern($builder, $field, $comparator, $format, $values, $fieldDef);
+            $expr = 'UPPER(' . $field . ')';
+        }
+
+        $conditions = array();
+        foreach ($values as $value) {
+            $conditions[] = $this->compileLike($builder, $expr, $isNegation, $format, $value, $fieldDef);
+        }
+
+        $sql = implode(' ' . $chainWith . ' ', $conditions);
+
+        if ($isNegation) {
+            if (count($conditions) > 0) {
+                $sql = '(' . $sql . ')';
+            }
+            $sql = $this->isNullOr($field, $sql);
         }
 
         return $sql;
     }
 
-    protected function compilePattern(
+    /**
+     * Compiles LIKE expression
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $field Field expression
+     * @param boolean $isNegative Whether the expression needs to be negative
+     * @param string $format Wildcard placement format
+     * @param string $value Value to compare with
+     * @param array $fieldDef Field definition
+     * @return string
+     */
+    protected function compileLike(
         QueryBuilder $builder,
         $field,
-        $comparator,
+        $isNegative,
         $format,
         $value,
-        array $fieldDef = null
+        array $fieldDef
     ) {
-        if ($this->db->supports('case_insensitive')) {
+        if ($this->isCollationCaseSensitive()) {
             $value = strtoupper($value);
         }
 
-        $escape = '!';
-        $pattern = sprintf($format, str_replace(
-            array($escape,           '_',           '%'),
-            array($escape . $escape, $escape . '_', $escape . '%'),
-            $value
-        ));
+        $esc = '!';
+        $shouldEscape = strpbrk($value, '%_') !== false;
+        if ($shouldEscape) {
+            $value = str_replace(
+                array($esc,        '_',        '%'),
+                array($esc . $esc, $esc . '_', $esc . '%'),
+                $value
+            );
+        }
 
-        return $field . ' ' . $comparator . ' ' . $this->bindValue($builder, $pattern, $fieldDef)
-            . ' ESCAPE \'' . $escape . '\'';
+        $value = sprintf($format, $value);
+        $sql = $field . ($isNegative ? ' NOT' : '') . ' LIKE ' . $this->bindValue($builder, $value, $fieldDef);
+
+        if ($shouldEscape) {
+            $sql .= ' ESCAPE \'' . $esc . '\'';
+        }
+
+        return $sql;
+    }
+
+    protected function isNullOr($field, $sql)
+    {
+        return $field . ' IS NULL OR ' . $sql;
     }
 
     /**
@@ -646,14 +694,12 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Method allows us to mock creation of SugarQuery_Builder_Field_Condition
+     * Checks whether the DB collation is case sensitive, assuming all tables and fields use the same collation
      *
-     * @param string $field
-     * @param SugarQuery $query
-     * @return SugarQuery_Builder_Field_Condition
+     * @return boolean
      */
-    protected function getFieldCondition($field, SugarQuery $query)
+    protected function isCollationCaseSensitive()
     {
-        return new SugarQuery_Builder_Field_Condition($field, $query);
+        return $this->db->supports('case_insensitive');
     }
 }

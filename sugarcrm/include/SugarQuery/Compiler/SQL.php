@@ -347,7 +347,13 @@ class SugarQuery_Compiler_SQL
         if ($field->isNonDb()) {
             return '';
         }
-        $sql = "{$field->table}.{$field->field}";
+
+        if ($field->table && !strstr($field->field, '.')) {
+            $sql = $field->table . '.' . $field->field;
+        } else {
+            $sql = $field->field;
+        }
+
         $sql .= !empty($field->alias) ? " {$field->alias}" : "";
         return  $sql;
     }
