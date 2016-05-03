@@ -87,6 +87,23 @@ class User extends Person {
     );
 
     /**
+     * These modules don't take kindly to the studio trying to play about with them.
+     *
+     * @var array
+     */
+    protected static $ignoredModuleList = array(
+        'iFrames',
+        'Feeds',
+        'Home',
+        'Dashboard',
+        'Calendar',
+        'Activities',
+        'Reports',
+        'UpgradeHistory',
+        'pmse_Inbox',
+    );
+
+    /**
      * @param $userName
      * @return bool
      */
@@ -1763,10 +1780,6 @@ EOQ;
             return $myModules;
         }
 
-        // These modules don't take kindly to the studio trying to play about with them.
-        static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports', 'UpgradeHistory');
-
-
         $actions = ACLAction::getUserActions($this->id);
 
         foreach ($beanList as $module=>$val) {
@@ -1776,7 +1789,8 @@ EOQ;
                 // Already have the module in the list
                 continue;
             }
-            if (in_array($module,$ignoredModuleList)) {
+
+            if (in_array($module, static::$ignoredModuleList)) {
                 // You can't develop on these modules.
                 continue;
             }

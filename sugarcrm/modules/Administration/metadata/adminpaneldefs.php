@@ -213,7 +213,7 @@ $admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',fal
 
 //BEGIN SUGARCRM flav=ent ONLY
 $admin_option_defs = array(
-    'pmse_Inbox' => array(
+    'pmse_Project' => array(
         'Settings' => array(
             'Settings',
             'LBL_PMSE_ADMIN_TITLE_SETTINGS',
