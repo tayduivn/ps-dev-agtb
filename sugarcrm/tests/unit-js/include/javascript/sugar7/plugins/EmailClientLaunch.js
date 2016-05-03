@@ -113,7 +113,7 @@ describe('EmailClientLaunch Plugin', function() {
         it('should not return bean recipients that do not have a valid email address', function() {
             var emails = [
                     {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
-                    {email_address: 'foo2@bar.com', primary_address: true, invalid_email: false, opt_out: true}
+                    {email_address: 'foo2@bar.com', primary_address: true, invalid_email: true, opt_out: true}
                 ],
                 bean = new Backbone.Model({email: emails}),
                 recipients = [{bean: bean}],
