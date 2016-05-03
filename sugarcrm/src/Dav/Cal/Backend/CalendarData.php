@@ -445,6 +445,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function deleteCalendarObject($calendarId, $objectUri)
     {
+        set_time_limit(0); // Required to prevent inadvertent timeouts for large recurring series
+
         $this->logger->debug(
             "CalDav: Incoming data. deleteCalendarObject Calendar ID = $calendarId, Object URI = $objectUri"
         );
