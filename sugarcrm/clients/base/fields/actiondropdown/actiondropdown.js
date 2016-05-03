@@ -389,7 +389,9 @@
      */
     _dispose: function() {
         _.each(this.fields, function(field) {
-            field.$el.off('click.' + this.cid);
+            if (!field.disposed) {
+                field.$el.off('click.' + this.cid);
+            }
         }, this);
         this.defaultActionBtn = null;
         this.dropdownFields = null;
