@@ -854,7 +854,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
 
         if ($execute_count > 0) {
-            $this->assertEquals($sql, $sq->compileSql());
+            $this->assertEquals($sql, $sq);
         }
     }
 

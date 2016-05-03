@@ -96,7 +96,6 @@ class PMSEProcessObserver implements PMSEObserver
     /**
      *
      * @param PMSEObservable $subject
-     * @return type
      */
     public function update($subject)
     {
@@ -118,9 +117,6 @@ class PMSEProcessObserver implements PMSEObserver
             $this->sugarQuery->where()->queryAnd()
                 ->addRaw("pro_id='{$processDefinitionData['id']}' AND prj_id='{$processDefinitionData['prj_id']}' AND deleted=0");
 
-            $result = $this->sugarQuery->compileSql();
-            $this->logger->debug("Retrieve dependencies query: {$result}");
-
             $rows = $this->sugarQuery->execute();
             foreach ($rows as $row) {
                 $bean = $this->getRelatedDependencyBean($row['id']);
@@ -137,7 +133,6 @@ class PMSEProcessObserver implements PMSEObserver
             $depNumber = count($rows);
             $this->logger->debug("Updating {$depNumber} dependencies");
         }
-        return $result;
     }
     
     /**

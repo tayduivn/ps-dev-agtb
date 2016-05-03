@@ -166,7 +166,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql'))
+                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -217,7 +217,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql'))
+                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -433,7 +433,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'compileSql', 'equals'))
+                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'equals'))
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->atLeastOnce())

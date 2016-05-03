@@ -469,11 +469,11 @@ class PMSEPreProcessor
         $q->select($fields);
         $q->from($flow);
         $q->where()->queryAnd()->addRaw("pmse_bpm_flow.cas_id=$casId AND pmse_bpm_flow.cas_flow_status='ERROR'");
-        $query = $q->compileSql();
         $start = microtime(true);
         $result = $q->execute();
         $time = (microtime(true) - $start) * 1000;
-        $this->logger->debug('Query in order to retrieve all valid start and receive message events: ' . $query . ' \n in ' . $time . ' milliseconds');
+        $this->logger->debug('Query in order to retrieve all valid start and receive message events in '
+            . $time . ' milliseconds');
         return $result;
     }
 

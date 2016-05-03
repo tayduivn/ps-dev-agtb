@@ -366,10 +366,6 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
         $sq->orderBy('full_name', 'DESC');
 
-        $sql = $sq->compileSql();
-
-        $this->assertContains("ORDER BY contacts.{$contact->field_defs['full_name']['sort_on']} DESC", $sql);
-
         $result = $sq->execute();
 
         $expected = array('Bad-Sauce', 'Awesome-Sauce');
@@ -445,30 +441,6 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
             'The Name Did Not Match'
         );
         $this->assertEquals($result[0]['id'], $account_id, 'The ID Did Not Match');
-    }
-
-    public function testSelectHasRawFieldWithFromAfterSelect()
-    {
-        $sq = new SugarQuery();
-        $sq->select(array('id'))
-            ->fieldRaw('min(my_int_field)', 'int_field');
-        $sq->from(BeanFactory::getBean('Notes'));
-
-        $sql = $sq->compileSql();
-
-        $this->assertContains('min(my_int_field)', $sql);
-    }
-
-    public function testSelectHasRawFieldWithFromBeforeSelect()
-    {
-        $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean('Notes'));
-        $sq->select(array('id'))
-            ->fieldRaw('min(my_int_field)', 'int_field');
-
-        $sql = $sq->compileSql();
-
-        $this->assertContains('min(my_int_field)', $sql);
     }
 
     public function testSelectDbConcatField()

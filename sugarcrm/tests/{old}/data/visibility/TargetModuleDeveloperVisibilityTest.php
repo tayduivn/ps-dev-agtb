@@ -62,7 +62,7 @@ class TargetModuleDeveloperVisibilityTest extends Sugar_PHPUnit_Framework_TestCa
             });
             $this->assertEmpty($inWhere);
         } else {
-            $this->assertContains($queryFrag, $sq->compileSql());
+            $this->assertContains($queryFrag, $sq->compile()->getSQL());
         }
 
     }

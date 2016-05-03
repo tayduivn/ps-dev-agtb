@@ -313,9 +313,9 @@ class QueueManager
         $success = true;
         $processed = 0;
 
-        $sql = $this->generateQueryModuleFromQueue($this->getNewBean($module));
-        $result = $this->db->query($sql);
-        while ($row = $this->db->fetchByAssoc($result)) {
+        $query = $this->generateQueryModuleFromQueue($this->getNewBean($module));
+        $data = $query->execute();
+        foreach ($data as $row) {
             $this->processQueryRow($module, $row);
             $processed++;
         }
@@ -476,7 +476,7 @@ class QueueManager
         );
         $sq->select($additionalFields);
 
-        return $sq->compileSql();
+        return $sq;
     }
 
     /**

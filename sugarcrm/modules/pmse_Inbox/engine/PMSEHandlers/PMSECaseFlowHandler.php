@@ -711,7 +711,6 @@ class PMSECaseFlowHandler
             ->queryAnd()
             ->addRaw('cas_id=' . $flowData['cas_id']);
 
-        $raw = $sugarQueryObject->compileSql();
         $rows = $sugarQueryObject->execute();
 
         foreach ($rows as $value) {

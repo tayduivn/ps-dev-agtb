@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -32,7 +31,7 @@ class SugarUpgradeLockedFieldsToRelateCollectionTest extends UpgradeTestCase
 
         // All we really want to do is ensure the query has our relevant join clause
         // correctly set
-        $sql = $q->compileSql();
+        $sql = $q->compile()->getSQL();
 
         // Handle the test
         $this->assertContains('flow.pro_id = pd.id', $sql);

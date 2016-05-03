@@ -115,15 +115,6 @@ class SugarQuery
     public $customJoined = false;
 
     /**
-     * Prepared statement data
-     * @var array
-     */
-    public $data = array();
-
-    protected $dataItems = array();
-    protected $dataSegment;
-
-    /**
      * Whether the query should skip deleted records
      *
      * @var bool
@@ -344,31 +335,6 @@ class SugarQuery
         if (is_string($table)) {
             $this->joinTableToKey[$table] = $key;
         }
-
-        return $join;
-    }
-
-    /**
-     * Add a raw [straight SQL] join object to this query
-     *
-     * @param string $sql
-     * @param array $options
-     *
-     * @return SugarQuery_Builder_Join
-     *
-     * @deprecated Use SugarQuery::joinTable() instead
-     */
-    public function joinRaw($sql, $options = array())
-    {
-        $join = new SugarQuery_Builder_Join();
-        $join->query = $this;
-        $join->addRaw($sql);
-        if (isset($options['alias']) && !empty($options['alias'])) {
-            $this->join[$options['alias']] = $join;
-        } else {
-            $this->join[md5($sql)] = $join;
-        }
-
 
         return $join;
     }
@@ -614,27 +580,6 @@ class SugarQuery
                 } //end if (empty($groupByCols[$selectField->field]))
             } //end foreach ($this->select->select as $selectField)
         }//end if(!empty($this->group_by)){
-    }
-
-
-    /**
-     * Compile this SugarQuery into a standard SQL-92 Query string
-     * @return string
-     *
-     * @deprecated Use SugarQuery::execute() to execute the query
-     */
-    public function compileSql(SugarQuery $parent = null)
-    {
-        $compiler = new SugarQuery_Compiler();
-        $this->data = $this->dataItems = array();
-
-        $this->ensureGroupByFields();
-
-        $sql = $compiler->compile($this, $this->db);
-        if($parent) {
-            $parent->addData($this->data);
-        }
-        return $sql;
     }
 
     /**
@@ -1158,41 +1103,6 @@ class SugarQuery
                     ->on()->equalsField($joinAlias . '.id_c', $fromAlias . '.id');
             }
         }
-    }
-
-    public function startData($segment)
-    {
-        $this->dataSegment = $segment;
-    }
-
-    public function endData()
-    {
-        $this->dataSegment = '';
-    }
-
-    public function addData($item)
-    {
-        if(is_array($item)) {
-            if(isset($this->dataItems[$this->dataSegment])) {
-                $this->dataItems[$this->dataSegment] = array_merge($this->dataItems[$this->dataSegment], $item);
-            } else {
-                $this->dataItems[$this->dataSegment] = $item;
-            }
-        } else {
-            if(isset($this->dataItems[$this->dataSegment])) {
-                $this->dataItems[$this->dataSegment][] = $item;
-            } else {
-                $this->dataItems[$this->dataSegment] = array($item);
-            }
-        }
-    }
-
-    public function getData($segment)
-    {
-        if(!isset($this->dataItems[$segment])) {
-            return array();
-        }
-        return $this->dataItems[$segment];
     }
 
     /**

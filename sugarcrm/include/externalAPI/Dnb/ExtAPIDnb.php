@@ -583,7 +583,6 @@ class ExtAPIDnb extends ExternalAPIBase
         $where->in($columnName, $recordIds);
         $where = $where->queryAnd();
         $where->equals('deleted', 0);
-        $q->compileSql();
         $queryResults = $q->execute();
         return json_encode($queryResults);
     }

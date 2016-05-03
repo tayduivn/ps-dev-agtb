@@ -81,7 +81,7 @@ class PMSEProcessObserverTest extends PHPUnit_Framework_TestCase
         
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'execute', 'compileSql', 'addRaw'))
+                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'execute', 'addRaw'))
                 ->getMock();
         
         $sugarQueryMock->expects($this->any())

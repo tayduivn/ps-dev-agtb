@@ -132,7 +132,7 @@ class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             array($this->service, $seed, $tp, 'likely_case', 'user')
         );
         /* @var $sq SugarQuery */
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
 
         $this->assertContains('likely_case', $sql);
     }
@@ -172,7 +172,7 @@ class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
             array($this->service, $seed, $tp, 'likely_case', 'group')
         );
         /* @var $sq SugarQuery */
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
 
         $this->assertContains("('test','1','2')", $sql);
     }

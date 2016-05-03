@@ -352,7 +352,6 @@ class PMSECaseWrapper //extends FilterApi
 //        $data['records'] = $idRows;
         $data['options'] = $options;
         $data['args'] = $args;
-        $data['sql'] = $q->compileSql();
         //$data['expected'] = $expected;
 
         return $data;

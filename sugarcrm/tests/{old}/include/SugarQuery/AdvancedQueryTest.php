@@ -259,14 +259,14 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $this->assertContains('count', $sqCount->compileSql());
+        $this->assertContains('count', $sqCount->compile()->getSQL());
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->select(array('name', 'account_type'));
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $sql = $sqCount->compileSql();
-        $this->assertContains('count(0)', $sql);
+        $sql = $sqCount->compile()->getSQL();
+        $this->assertContains('COUNT(0)', $sql);
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
 
@@ -277,14 +277,14 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $this->assertContains('count', $sqCount->compileSql());
+        $this->assertContains('count', $sqCount->compile()->getSQL());
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
         $sqCount->select(array('name', 'account_type'));
         $sqCount->from(BeanFactory::newBean('Accounts'));
-        $sql = $sqCount->compileSql();
-        $this->assertContains('count(0)', $sql);
+        $sql = $sqCount->compile()->getSQL();
+        $this->assertContains('COUNT(0)', $sql);
         $this->assertContains('name', $sql);
         $this->assertContains('account_type', $sql);
         $this->assertContains('GROUP BY', $sql);
@@ -298,7 +298,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->equals("noWhere", "nonYaBusiness");
         $sq->orderBy('yesIAmCertainlyAField');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
 
         $this->assertNotContains("yesIAmCertainlyAField", $sql);
         $this->assertNotContains("noWhere", $sql);
@@ -308,19 +308,10 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUniqueAliases()
     {
         $sq = new SugarQuery();
-        $sq->select(array('*', 'date_modified'));
-        $sq->from(BeanFactory::getBean('Contacts'));
-        $sq->where()->equals("id","2");
-        $sql = $sq->compileSql();
-        $count = substr_count($sql, 'date_modified');
-        // count the alias as well
-        $this->assertEquals(2, $count);
-
-        $sq = new SugarQuery();
         $sq->select(array('*', array('id', 'superAwesomeField')));
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->equals("id", "2");
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertcontains('id superAwesomeField', $sql);
     }
 
@@ -339,11 +330,11 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from($contact);
         $sq->limit(0,1);
 
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         // ensure the query looks good
         $this->assertContains("contacts_cstm.bigname_c", $sql);
         $this->assertContains("_cstm.bigname_c report_to_bigname", $sql);
-        $this->assertContains("LEFT JOIN contacts_cstm ON contacts_cstm.id_c = contacts.id", $sql);
+        $this->assertContains('LEFT JOIN contacts_cstm contacts_cstm ON contacts_cstm.id_c = contacts.id', $sql);
         $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\w+)_cstm ON jt\1_cstm.id_c = jt\1\.id/', $sql);
     }
 
@@ -360,20 +351,20 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('first_name','Awesome');
-        $this->assertRegExp('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
 
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('contacts.last_name','Awesome');
-        $this->assertRegExp('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
 
         // with related in name
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sql);
         $this->assertNotContains('contacts.account_name', $sql);
 
@@ -382,7 +373,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
 
         // self-link
         $acc = BeanFactory::getBean('Accounts');
@@ -390,7 +381,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "name"));
         $sq->from($acc);
         $sq->where()->equals('parent_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
 
         // custom field
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
@@ -404,27 +395,27 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('bigname_c','Chuck Norris');
-        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compile()->getSQL());
 
         // related custom field
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('report_to_bigname','Chuck Norris');
-        $this->assertRegExp('/WHERE.*jt\w+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compile()->getSQL());
 
         // compare fields
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equalsField('bigname_c','report_to_bigname');
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\w+_cstm.bigname_c/s', $sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\w+_cstm.bigname_c/s', $sq->compile()->getSQL());
 
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", 'report_to_bigname'));
         $sq->from($contact);
         $sq->where()->notEqualsField('bigname_c','report_to_bigname');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/s', $sql);
         $this->assertContains("SELECT  contacts.id id, contacts.last_name last_name, jt0_reports_to_link_cstm.bigname_c report_to_bigname", $sql);
     }
@@ -440,7 +431,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
         $sq->where()->equals('sync_contact',1);
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertContains("id IS NOT NULL", $sql);
 
@@ -457,7 +448,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
         $sq->where()->equals('email_and_name1','Awesome');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertNotContains("email_and_name1 = 'Awesome'", $sql);
 
@@ -475,28 +466,28 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name");
-        $this->assertRegExp('/.*ORDER BY jt\w+.name DESC.*/s', $sq->compileSql());
+        $this->assertRegExp('/.*ORDER BY jt\w+.name DESC.*/s', $sq->compile()->getSQL());
 
         // by custom field too
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
-        $this->assertRegExp('/ORDER BY jt\w+.name DESC,contacts.last_name ASC/s', $sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.name DESC, contacts.last_name ASC/s', $sq->compile()->getSQL());
 
         // by related custom field
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("report_to_bigname");
-        $this->assertRegExp('/ORDER BY jt\w+.last_name DESC/s', $sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.last_name DESC/s', $sq->compile()->getSQL());
 
         // skip bad one
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("portal_password1")->orderBy("account_name", "asc");
-        $this->assertRegExp('/ORDER BY jt\w+.name asc/s', $sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.name asc/s', $sq->compile()->getSQL());
     }
 
     public function testOrderByRaw()
@@ -505,7 +496,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->orderByRaw("last_name+1", 'DESC');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertContains("ORDER BY last_name+1 DESC", $sql);
     }
 
@@ -515,7 +506,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from(BeanFactory::getBean("Contacts"));
         $sq->groupByRaw("last_name is awesome");
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertContains("GROUP BY last_name is awesome", $sql);
     }
 
@@ -525,7 +516,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from(BeanFactory::getBean("Contacts"));
         $sq->havingRaw("last_name > 55");
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertContains("HAVING last_name > 55", $sql);
     }
 
@@ -537,13 +528,15 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $accounts = $sq->join('accounts');
         $opportunities = $accounts->join('opportunities');
         $opportunities->join('contacts');
-        $sql = $sq->compileSql();
+        $sql = $sq->compile()->getSQL();
         $this->assertRegExp('/INNER JOIN contacts jt(\w+) ON /s', $sql);
         $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /s', $sql);
     }
 
     public function testSetJoinOn()
     {
+        $this->markTestIncomplete('[BR-3907] Testing SQL doesn\'t work with prepared statements');
+
         $sq = new SugarQuery();
         $sq->select(array("id","last_name", "opportunity_role"));
         $sq->from(BeanFactory::getBean('Contacts'));

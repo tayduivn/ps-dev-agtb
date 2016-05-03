@@ -187,11 +187,11 @@ class SugarFieldFloatTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertFalse($ret);
         if (!is_array($value)) {
-            $this->assertContains('(ROUND(unit_test, 2) ' . $query_op . ' ' . $value . ')', $q->compileSql());
+            $this->assertContains('(ROUND(unit_test, 2) ' . $query_op . ' ' . $value . ')', $q->compile()->getSQL());
         } else {
             $this->assertContains(
                 '(ROUND(unit_test, 2) ' . $query_op . ' ' . $value[0] . ' AND ' . $value[1] . ')',
-                $q->compileSql()
+                $q->compile()->getSQL()
             );
         }
     }

@@ -225,7 +225,6 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
                     'equalsField',
                     'queryAnd',
                     'addRaw',
-                    'compileSql',
                     'execute',
                 )
             )

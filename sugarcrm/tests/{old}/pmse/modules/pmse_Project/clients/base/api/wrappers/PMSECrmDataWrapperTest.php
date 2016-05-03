@@ -240,7 +240,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
             ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(
-                array('select', 'from', 'joinTable', 'on', 'equalsField', 'where', 'compileSql', 'execute', 'equals')
+                array('select', 'from', 'joinTable', 'on', 'equalsField', 'where', 'execute', 'equals')
             )
             ->getMock();
         $this->sugarQueryMock->expects($this->any())

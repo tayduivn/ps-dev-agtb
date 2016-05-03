@@ -96,7 +96,7 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $queryShouldBe = "SELECT  * FROM contacts WHERE contacts.deleted = 0 AND  ( contacts.id = '1' )";
 
-        $this->assertEquals($queryShouldBe, $query->compileSql(), "The query does not match");
+        $this->assertEquals($queryShouldBe, $query, "The query does not match");
         unset($_SESSION);
         unset($contact);
         unset($query);
