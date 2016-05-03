@@ -167,6 +167,7 @@ function getGroupByInfo($groupByArray, $summary_columns_array) {
 	$gpByInfoArray = array();
 	for ($i = 0 ; $i < count($summary_columns_array) ; $i++) {
 		if (($summary_columns_array[$i]['name'] == $groupByArray['name']) && 
+            $summary_columns_array[$i]['label'] == $groupByArray['label'] &&
 			($summary_columns_array[$i]['table_key'] == $groupByArray['table_key'])) {
 				
 			$gpByInfoArray = $groupByArray;
@@ -177,6 +178,18 @@ function getGroupByInfo($groupByArray, $summary_columns_array) {
 	} // for
 	return $gpByInfoArray;
 } // fn
+
+/**
+ * Creates a unique key for a groupBy column
+ * @param array $groupByArray
+ * @return string
+ */
+function getGroupByKey($groupByArray)
+{
+    // name+table_key may not be unique for some groupby columns, eg, 'Quarter: Modified Date'
+    // and 'Month: Modified Date' both have the same 'name' and 'table_key'
+    return $groupByArray['name'].'#'.$groupByArray['table_key'].'#'.$groupByArray['label'];
+}
 
 function replaceHeaderRowdataWithSummaryColumns(&$header_row, $summary_columns_array, &$reporter) {
 	$count = 0;
@@ -255,7 +268,7 @@ function template_summary_list_view(&$reporter,&$args) {
 	$groupByIndexInHeaderRow = array();
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
 		$groupByColumnInfo = getGroupByInfo($group_def_array[$i], $summary_columns_array);
-		$groupByIndexInHeaderRow[$group_def_array[$i]['name'] . "#" . $group_def_array[$i]['table_key']] = $groupByColumnInfo;
+        $groupByIndexInHeaderRow[getGroupByKey($group_def_array[$i])] = $groupByColumnInfo;
 	} // for
 	$reporter->group_defs_Info = $groupByIndexInHeaderRow;
 	$reporter->addedColumns = $addedColumns;
@@ -306,10 +319,10 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 	$group_def_array = $reporter->report_def['group_defs'];
 	$summary_columns_array = $reporter->report_def['summary_columns'];
 	$attributeInfo = $group_def_array[1];
-	$key2 = $reporter->group_defs_Info[$attributeInfo['name']. "#" .$attributeInfo['table_key']]['index'];
+    $key2 = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['index'];
 
 	$attributeInfo = $group_def_array[2];
-	$key3 = $reporter->group_defs_Info[$attributeInfo['name']. "#" .$attributeInfo['table_key']]['index'];
+    $key3 = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['index'];
 	
 	$count = 0;
 	while (( $row = $reporter->get_summary_next_row()) != 0 ) {
@@ -331,7 +344,7 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 	$headerRowIndexExceptGpBy = array();
 	
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
-		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']. "#" .$group_def_array[$i]['table_key']]['index'];
+        $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$i])]['index'];
 		$groupByIndexInHeaderRow[] = $key;
 	} // for
 	
@@ -363,8 +376,8 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 		
 		$groupBy2ndColumnValue = "";
 		for ($j = 0 ; $j < count($group_def_array) ; $j++) {
-			$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name']. "#" .$group_def_array[$j]['table_key']]['label'];
-			$key = $reporter->group_defs_Info[$group_def_array[$j]['name']. "#" .$group_def_array[$j]['table_key']]['index'];
+            $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($group_def_array[$j])]['label'];
+            $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$j])]['index'];
 			if ($j == 0) {
 				$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
 			} else if ($j == 1) {
@@ -701,7 +714,7 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 		}
 	} // for
 	$attributeInfo = $group_def_array[0];
-	$groupByColumnLabel = $reporter->group_defs_Info[$attributeInfo['name']."#".$attributeInfo['table_key']]['label'];
+    $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['label'];
 	$grandTotal[$groupByColumnLabel] = "Grand Total";
 	if (($reporter->addedColumns > 0) && !empty($legend)) {
 		$newLegend = array();
@@ -709,13 +722,7 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 			$newLegend[] = $legend[$i];
 		} // for
 		$legend = $newLegend;
-	}	
-	//_pp($grandTotal);
-	//$rowsAndColumnsData[] = $grandTotal;
-	//_pp($headerColumnNameArray[0]);
-	//_ppd($rowsAndColumnsData);
-	//_ppd($columnData);
-	//return $columnData;
+    }
 } // fn
 
 function getSummaryColumnLableToNameArray($summary_columns_array) {
@@ -735,7 +742,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	$summary_columns_array = $reporter->report_def['summary_columns'];
 	$group_def_array = $reporter->report_def['group_defs'];
 	$attributeInfo = $group_def_array[$groupByIndex];
-	$key = $reporter->group_defs_Info[$attributeInfo['name']."#".$attributeInfo['table_key']]['index'];
+    $key = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['index'];
 	$count = 0;
 	while (( $row = $reporter->get_summary_next_row()) != 0 ) {
 		$rowArray[] = $row;
@@ -744,16 +751,16 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 			$columnData[$count++] = $rowData;
 		}
 	} // while
-	$previousRow = array();
-	$count = 0;
-	$countIndex = 0;
+    $previousRow = array();
+    $count = 0;
+    $countIndex = 0;
 	
 	// to find header row index except group by
 	$groupByIndexInHeaderRow = array();
 	$headerRowIndexExceptGpBy = array();
 	
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
-		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
+        $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$i])]['index'];
 		$groupByIndexInHeaderRow[] = $key;
 	} // for
 	
@@ -768,44 +775,42 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 	if (count($rowArray) <= 0) {
 		return array();
 	} // if
-	// generate rows and columns data in tree structure
-	for ($i = 0 ; $i < count($rowArray) ; $i++) {
-		$row = $rowArray[$i];
-		$changeGroupHappend = false;
-		//_pp(whereToStartGroupByRow($reporter, $i, $header_row, $previousRow, $row));
-		$whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
-		if ($whereToStartGroupByRow === -1) {
-			$rowsAndColumnsData[$count] = array();
-			$changeGroupHappend = true;
-			$countIndex = $count;
-		}
-		else
-		{
-			$countIndex = $whereToStartGroupByRow;
-		}
-		
-		for ($j = 0 ; $j < count($group_def_array) ; $j++) {
-			$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[$j]['name']."#".$group_def_array[$j]['table_key']]['label'];
-			$key = $reporter->group_defs_Info[$group_def_array[$j]['name']."#".$group_def_array[$j]['table_key']]['index'];
-			if ($j == 0) {
-				$rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
-			} else {
-				if (!array_key_exists($row['cells'][$key], $rowsAndColumnsData[$countIndex])) {
-					$rowsAndColumnsData[$countIndex][$row['cells'][$key]] = array();
-					for ($k = 0 ; $k < count($headerRowIndexExceptGpBy) ; $k++) {
-						$indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
-						$rowsAndColumnsData[$countIndex][$row['cells'][$key]][$header_row[$indexOfHeaderRow]] = $row['cells'][$indexOfHeaderRow];
-					} // for
-				}
-			} // else
-		} // for
-		
-		
-		if ($changeGroupHappend) {
-			$count++;
-		} // if
-		$previousRow = $row;
-	} // for
+    // generate rows and columns data in tree structure
+    for ($i = 0; $i < count($rowArray); $i++) {
+        $row = $rowArray[$i];
+        $changeGroupHappend = false;
+
+        $whereToStartGroupByRow = whereToStartGroupByRow($reporter, $i, $rowsAndColumnsData, $row);
+        if ($whereToStartGroupByRow === -1) {
+            $rowsAndColumnsData[$count] = array();
+            $changeGroupHappend = true;
+            $countIndex = $count;
+        } else {
+            $countIndex = $whereToStartGroupByRow;
+        }
+
+        for ($j = 0; $j < count($group_def_array); $j++) {
+            $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($group_def_array[$j])]['label'];
+            $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$j])]['index'];
+            if ($j == 0) {
+                $rowsAndColumnsData[$countIndex][$groupByColumnLabel] = $row['cells'][$key];
+            } else {
+                if (!array_key_exists($row['cells'][$key], $rowsAndColumnsData[$countIndex])) {
+                    $rowsAndColumnsData[$countIndex][$row['cells'][$key]] = array();
+                    for ($k = 0; $k < count($headerRowIndexExceptGpBy); $k++) {
+                        $indexOfHeaderRow = $headerRowIndexExceptGpBy[$k];
+                        $rowsAndColumnsData[$countIndex][$row['cells'][$key]][$header_row[$indexOfHeaderRow]] =
+                            $row['cells'][$indexOfHeaderRow];
+                    } // for
+                }
+            } // else
+        } // for
+
+        if ($changeGroupHappend) {
+            $count++;
+        } // if
+        $previousRow = $row;
+    } // for
 	// generates row level summation and grand total
 	$grandTotal = array();
 	$grandTotal['Total'] = array();
@@ -972,7 +977,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 		} // for
 	} // if
 	
-	$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[0]['name']."#".$group_def_array[0]['table_key']]['label'];
+    $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($group_def_array[0])]['label'];
 
 	$grandTotal[$groupByColumnLabel] = "Grand Total";
 	$rowsAndColumnsData[] = $grandTotal;
@@ -983,11 +988,6 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 		} // for
 		$legend = $newLegend;
 	}
-	//_pp($grandTotal);	
-	//_pp($headerColumnNameArray[0]);
-	//_ppd($rowsAndColumnsData);
-	//_ppd($columnData);
-	//return $columnData;
 } // fn
 
 function getHeaderColumnNamesForMatrix($reporter, $header_row, $columnDataFor2ndGroup) {
@@ -1008,7 +1008,7 @@ function getColumnNamesForMatrix($reporter, $header_row, $columnDataFor2ndGroup)
 	$group_def_array = $reporter->report_def['group_defs'];
 	$summary_columns_array = $reporter->report_def['summary_columns'];
 
-	$groupByColumnLabel = $reporter->group_defs_Info[$group_def_array[0]['name']."#".$group_def_array[0]['table_key']]['label'];
+    $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($group_def_array[0])]['label'];
 	$columnNameArray[] = $groupByColumnLabel;
 	
 	for ($i = 0 ; $i < count($columnDataFor2ndGroup) ; $i++) {
@@ -1026,7 +1026,7 @@ function whereToStartGroupByRow(&$reporter, $count, $rowsAndColumnsData, $row) {
 	$group_def_array = $reporter->report_def['group_defs'];
 
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
-		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
+        $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$i])]['index'];
 		for ($j = 0 ; $j < count($rowsAndColumnsData) ; $j++)
 		{
 			if (isset($rowsAndColumnsData[$j][$group_def_array[$i]['label']]) && $rowsAndColumnsData[$j][$group_def_array[$i]['label']] == $row['cells'][$key])
@@ -1056,7 +1056,7 @@ function whereToStartGroupByRowSummaryCombo($reporter, $count, $previous_row, $r
     $group_def_array = $reporter->report_def['group_defs'];
 
     for ($i = 0; $i < count($group_def_array); $i++) {
-        $key = $reporter->group_defs_Info[$group_def_array[$i]['name'] . "#" . $group_def_array[$i]['table_key']]['index'];
+        $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$i])]['index'];
 
         if ($previous_row['cells'][$key] != $row['cells'][$key]) {
             $toStart = $i;
@@ -1106,8 +1106,8 @@ function incrementCountForRowId(&$rowIdToCountArray, $rowId) {
 function getGroupByColumnName(&$reporter, $index, $header_row, $row) {
 	$group_def_array = $reporter->report_def['group_defs'];
 	$attributeInfo = $group_def_array[$index];
-	$key = $reporter->group_defs_Info[$attributeInfo['name']."#".$attributeInfo['table_key']]['index'];
-	$groupByColumnLabel = $reporter->group_defs_Info[$attributeInfo['name']."#".$attributeInfo['table_key']]['label'];
+    $key = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['index'];
+    $groupByColumnLabel = $reporter->group_defs_Info[getGroupByKey($attributeInfo)]['label'];
 	$columnValues = "";
 	if ($index == (count($group_def_array) - 1)) {
 		$columnValues = getColumnsInfoFromHeaderExceptGroupBy($reporter, $header_row, $row);
@@ -1148,7 +1148,7 @@ function getColumnsInfoFromHeaderExceptGroupBy(&$reporter, $header_row, $row) {
 	$group_def_array = $reporter->report_def['group_defs'];
 	$columnValues = "";
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
-		$key = $reporter->group_defs_Info[$group_def_array[$i]['name']."#".$group_def_array[$i]['table_key']]['index'];
+        $key = $reporter->group_defs_Info[getGroupByKey($group_def_array[$i])]['index'];
 		$groupByIndexInHeaderRow[] = $key;
 	} // for
 	$count = 0;
@@ -1185,7 +1185,7 @@ function template_summary_combo_view(&$reporter,&$args) {
 	$groupByIndexInHeaderRow = array();
 	for ($i = 0 ; $i < count($group_def_array) ; $i++) {
 		$groupByColumnLabel = getGroupByInfo($group_def_array[$i], $summary_columns_array);
-		$groupByIndexInHeaderRow[$group_def_array[$i]['name']. "#" . $group_def_array[$i]['table_key']] = $groupByColumnLabel;
+        $groupByIndexInHeaderRow[getGroupByKey($group_def_array[$i])] = $groupByColumnLabel;
 	} // for
 	$reporter->group_defs_Info = $groupByIndexInHeaderRow;
 	//_ppd($reporter->report_def);
