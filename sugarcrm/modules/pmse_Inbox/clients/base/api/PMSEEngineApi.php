@@ -1174,7 +1174,7 @@ class PMSEEngineApi extends SugarApi
                 ->queryAnd()
                 ->equals('cas_id', $flow->cas_id)
                 ->equals('cas_index', $flow->cas_previous);
-            $result = $q->execute("array");
+            $result = $q->execute();
             if ($result[0]['cas_adhoc_type'] == 'ROUND_TRIP') {
                 $listButtons = array('link_cancel', 'route', 'edit');
             } else {

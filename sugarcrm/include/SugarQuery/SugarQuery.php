@@ -353,6 +353,8 @@ class SugarQuery
      * @param array $options
      *
      * @return SugarQuery_Builder_Join
+     *
+     * @deprecated Use SugarQuery::joinTable() instead
      */
     public function joinRaw($sql, $options = array())
     {
@@ -571,6 +573,8 @@ class SugarQuery
     /**
      * Compile this SugarQuery into a standard SQL-92 Query string
      * @return string
+     *
+     * @deprecated Use SugarQuery::execute() to execute the query
      */
     public function compileSql(SugarQuery $parent = null)
     {
@@ -593,9 +597,11 @@ class SugarQuery
     /**
      * Execute this query and return it as a raw string, db object json, or array
      *
-     * @param string $type
+     * @param string $type The type of the returned value. Deprecated, will be always considered 'array'
+     * @param bool $encode Whether the returned value should be HTML-encoded.
+     *                     Deprecated, will be determined based on ENTRY_POINT_TYPE
      *
-     * @return array|dbObject|string
+     * @return array|resource|object|string
      */
     public function execute($type = "array", $encode = true)
     {

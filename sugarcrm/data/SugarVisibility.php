@@ -54,6 +54,8 @@ abstract class SugarVisibility
      * Add visibility clauses to the FROM part of the query
      * @param string $query
      * @return string
+     *
+     * @deprecated Use SugarQuery and SugarVisibility::addVisibilityQuery() instead
      */
     public function addVisibilityFrom(&$query)
     {
@@ -64,6 +66,8 @@ abstract class SugarVisibility
      * Add visibility clauses to the WHERE part of the query
      * @param string $query
      * @return string
+     *
+     * @deprecated Use SugarQuery and SugarVisibility::addVisibilityQuery() instead
      */
     public function addVisibilityWhere(&$query)
     {
@@ -74,6 +78,8 @@ abstract class SugarVisibility
      * Add visibility clauses to the FROM part of SugarQuery
      * @param SugarQuery $query
      * @return SugarQuery
+     *
+     * @deprecated Implement SugarVisibility::addVisibilityQuery() instead
      */
     public function addVisibilityFromQuery(SugarQuery $query)
     {
@@ -84,12 +90,24 @@ abstract class SugarVisibility
      * Add visibility clauses to the WHERE part of SugarQuery
      * @param SugarQuery $query
      * @return SugarQuery
+     *
+     * @deprecated Implement SugarVisibility::addVisibilityQuery() instead
      */
     public function addVisibilityWhereQuery(SugarQuery $query)
     {
         return $query;
     }
 
+    /**
+     * Add visibility to SugarQuery
+     *
+     * @param SugarQuery $query
+     */
+    public function addVisibilityQuery(SugarQuery $query)
+    {
+        $this->addVisibilityFromQuery($query);
+        $this->addVisibilityWhereQuery($query);
+    }
 
     /**
      * Get visibility option
