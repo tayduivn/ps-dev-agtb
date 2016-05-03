@@ -213,7 +213,7 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'vname' => 'description',
             'source' => 'non-db',
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array('enabled' => true, 'searchable' => true, 'type' => 'text'),
         ),
         'date_sent' => array(
             'name' => 'date_sent',
