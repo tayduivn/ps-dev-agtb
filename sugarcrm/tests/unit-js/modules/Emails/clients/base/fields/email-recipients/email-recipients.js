@@ -9,7 +9,6 @@ describe('Emails.fields.email-recipients', function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'edit', 'Emails');
         SugarTest.loadHandlebarsTemplate('email-recipients', 'field', 'base', 'select2-selection', 'Emails');
-        SugarTest.loadPlugin('Tooltip');
         SugarTest.testMetadata.set();
 
         context = app.context.getContext({
@@ -37,7 +36,6 @@ describe('Emails.fields.email-recipients', function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        delete app.plugins.plugins['field']['Tooltip'];
     });
 
     describe('manipulating the value of the field', function() {
