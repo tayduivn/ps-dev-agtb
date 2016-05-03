@@ -102,6 +102,11 @@ class HelpApi extends SugarApi
 
         // Sort the endpoint list
         usort($endpointList,array('HelpApi','cmpEndpoints'));
+        $endpointListAssoc = array();
+        foreach ($endpointList as $endpoint) {
+            $endpointListAssoc[self::getEndPointKey($endpoint)] = $endpoint;
+        }
+        $endpointList = $endpointListAssoc;
 
         $this->ensureClientFiles();
         $jsfiles = $this->clientFiles;
@@ -111,6 +116,11 @@ class HelpApi extends SugarApi
 
         $api->setHeader('Content-Type', 'text/html');
         return $endpointHtml;
+    }
+
+    public static function getEndPointKey($endpoint)
+    {
+        return md5($endpoint['reqType'] . ' ' . $endpoint['fullPath']);
     }
     
     /**
