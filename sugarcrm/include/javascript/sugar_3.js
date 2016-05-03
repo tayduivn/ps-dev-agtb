@@ -1082,13 +1082,15 @@ function add_error_style(formname, input, txt, flash) {
  */
 function clear_all_errors() {
     for(var wp = 0; wp < inputsWithErrors.length; wp++) {
-        if(typeof(inputsWithErrors[wp]) !='undefined' && typeof inputsWithErrors[wp].parentNode != 'undefined' && inputsWithErrors[wp].parentNode != null) {
-            if ( inputsWithErrors[wp].parentNode.className.indexOf('x-form-field-wrap') != -1 )
-            {
-                inputsWithErrors[wp].parentNode.parentNode.removeChild(inputsWithErrors[wp].parentNode.parentNode.lastChild);
-            }
-            else
-            {
+        if (typeof(inputsWithErrors[wp]) != 'undefined' && typeof inputsWithErrors[wp].parentNode != 'undefined' &&
+            inputsWithErrors[wp].parentNode != null) {
+            if (inputsWithErrors[wp].parentNode.className.indexOf('x-form-field-wrap') != -1) {
+                inputsWithErrors[wp].parentNode.parentNode.removeChild(
+                    inputsWithErrors[wp].parentNode.parentNode.lastChild
+                );
+            } else if ($(inputsWithErrors[wp].parentNode.lastChild).hasClass('validation-message')) {
+                // removeChild(parentNode.lastChild) can remove actual input fields unless we check to
+                // make sure we're only removing those nodes with the 'validation-message' class
                 inputsWithErrors[wp].parentNode.removeChild(inputsWithErrors[wp].parentNode.lastChild);
             }
         }
