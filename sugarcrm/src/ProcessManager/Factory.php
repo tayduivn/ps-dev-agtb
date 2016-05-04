@@ -230,6 +230,8 @@ class Factory
         // Default element class name
         if (empty($name)) {
             $name = 'PMSEElement';
+        } elseif (substr($name, 0, 4) !== 'PMSE') {
+            $name = 'PMSE' . $name;
         }
 
         // Default return value
