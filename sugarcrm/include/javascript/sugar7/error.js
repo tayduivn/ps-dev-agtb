@@ -15,10 +15,17 @@
     app.error = _.extend(app.error);
 
     function backToLogin(bDismiss) {
-        if(bDismiss) app.alert.dismissAll();
+        if (bDismiss) {
+            app.alert.dismissAll();
+        }
+
         if (app.api.isAuthenticated()) {
             app.api.resetAuth();
         }
+
+        // trigger app:logout event to clear any existing data
+        app.trigger('app:logout');
+
         app.router.login();
     }
 
