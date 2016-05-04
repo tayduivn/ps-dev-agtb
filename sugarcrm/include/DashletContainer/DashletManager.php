@@ -79,22 +79,20 @@ class DashletManager
 	 * Returns an instance of a Dashlet based on the provided DashletID
 	 * @param GUID $dashletID - ID of Dashlet to be instantiated
 	 * @param GUID $subpanelDefID - ID from the definiiton
-	 * @param Object $focusBean - the bean used to generate the dashlet (optional)
 	 * @return Dashlet
 	 */
 
-	public static function getDashlet(
-	    $dashletID,
-	    $options = array(),
-	    $focusBean = null
-	    )
-	{
+    public static function getDashlet(
+        $dashletID,
+        $options = array()
+    ) {
 	    DashletManager::_loadCache();
 	    require_once(DashletManager::$dashletCache[$dashletID]['file']);
         if(empty($options)){
             $options = (isset(DashletManager::$dashletCache[$dashletID]['options'])) ? DashletManager::$dashletCache[$dashletID]['options'] : array();
         }
-        $dashlet = DashletManager::{$dashletCache[$dashletID]['class']}(rand(0, 100000), $options);
+        $dashletClassName = DashletManager::$dashletCache[$dashletID]['class'];
+        $dashlet = new $dashletClassName(rand(0, 100000), $options);
 
         return $dashlet;
 	}
