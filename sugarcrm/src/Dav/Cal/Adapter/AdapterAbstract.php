@@ -49,6 +49,7 @@ abstract class AdapterAbstract implements AdapterInterface
         'date_end' => true,
         'status' => true,
         'repeat_parent_id' => true,
+        'reminder_time' => true,
     );
 
     /**
@@ -404,6 +405,12 @@ abstract class AdapterAbstract implements AdapterInterface
         if (isset($changedFields['date_end']) && $this->setCalDavEndDate($changedFields['date_end'][0], $event)) {
             $isChanged = true;
         }
+        if (isset($changedFields['reminder_time']) &&
+            $this->setCalDavReminder($changedFields['reminder_time'][0], $event)
+        ) {
+            $isChanged = true;
+        }
+
         $participantOverride = $action == 'override' || $action == 'rebuild';
         if ($action == 'participant-delete') {
             $changes =
@@ -476,12 +483,29 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * Gets first reminder and returns it value in seconds if it suitable.
+     *
+     * @param Event $event
+     *
+     * @return array value in array representation
+     */
+    protected function getSuitableReminderValue(Event $event)
+    {
+        $reminders = $event->getReminders();
+        if ($reminders && $reminders[0]->getTrigger() <= 0) {
+            return array(abs($reminders[0]->getTrigger()));
+        }
+
+        return array(null);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function prepareForImport(\CalDavEventCollection $collection, $previousData = false)
     {
         $importGroupId = $this->createGroupId();
-        $result = $parentChangedFields = $parentInvites = array();
+        $result = $parentChangedFields = $parentInvites = $parentReminders = array();
         $action = 'override';
         if ($previousData) {
             $action = array_shift($previousData);
@@ -537,7 +561,7 @@ abstract class AdapterAbstract implements AdapterInterface
         $parentRecurrenceId = $collection->getParent()->getStartDate();
         $parentAction = null;
         if (isset($diffStructure['parent'])) {
-            list($parentAction, $parentChangedFields, $parentInvites) = $diffStructure['parent'];
+            list($parentAction, $parentChangedFields, $parentInvites, $parentReminders) = $diffStructure['parent'];
         }
 
         $customizeParent = array();
@@ -590,7 +614,7 @@ abstract class AdapterAbstract implements AdapterInterface
         $currentUntilDate = $currentRRule ? $currentRRule->getUntil() : null;
 
         $needParentOverride = $changedRRule || (isset($parentChangedFields['date_start']) && $currentUntilDate);
-
+        $reminderValue = null;
         if ($parentAction || $customizeParent) {
             if ($needParentOverride) {
                 if ($customizeParent) {
@@ -601,6 +625,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
                 $parentChangedFields = $collection->getEventDiff($overriddenParent);
                 $parentInvites = $collection->getParticipantsDiff($overriddenParent);
+                $parentReminders = $collection->getRemindersDiff($overriddenParent);
                 $actionForParent = 'override';
             } elseif ($customizeParent) {
                 $actionForParent = $customizeParent[0];
@@ -608,6 +633,14 @@ abstract class AdapterAbstract implements AdapterInterface
                 $actionForParent = $parentAction;
             }
 
+            if (!empty($customizeParent[3]) && ($customParent = $collection->getChild($parentRecurrenceId))) {
+                $reminderValue = $this->getSuitableReminderValue($customParent);
+            } elseif ($parentReminders) {
+                $reminderValue = $this->getSuitableReminderValue($collection->getParent());
+            }
+            if (!is_null($reminderValue)) {
+                $parentChangedFields['reminder_time'] = $reminderValue;
+            }
             $result[] = array(
                 array(
                     $actionForParent,
@@ -643,10 +676,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 continue;
             }
 
-            $childChangeFields = $childChangeInvitees = array();
+            $childChangeReminders = $childChangeFields = $childChangeInvitees = array();
             if ($childEvent && ($needChildrenOverride || $parentAction)) {
                 $childChangeFields = $collection->getEventDiff($childEvent, null);
                 $childChangeInvitees = $collection->getParticipantsDiff($childEvent, null);
+                $childChangeReminders = $collection->getRemindersDiff($childEvent, null);
             }
 
             $sugarId = null;
@@ -662,7 +696,15 @@ abstract class AdapterAbstract implements AdapterInterface
                 $changedChild = $diffStructure['virtual'][$recurrenceId->asDb()];
             }
 
+            $reminderValue = null;
+            if (($childChangeReminders || !empty($changedChild[3])) && $childEvent) {
+                $reminderValue = $this->getSuitableReminderValue($childEvent);
+            }
+
             if ($changedChild && !$needChildrenOverride) {
+                if (!is_null($reminderValue)) {
+                    $changedChild[1]['reminder_time'] = $reminderValue;
+                }
                 $result[] = array(
                     array(
                         $changedChild[0],
@@ -676,6 +718,9 @@ abstract class AdapterAbstract implements AdapterInterface
                     $changedChild[2],
                 );
             } elseif ($childEvent && ($needChildrenOverride || !$childEvent->isCustomized() && $parentAction)) {
+                if (!is_null($reminderValue)) {
+                    $childChangeFields['reminder_time'] = $reminderValue;
+                }
                 $result[] = array(
                     array(
                         'override',
@@ -781,6 +826,11 @@ abstract class AdapterAbstract implements AdapterInterface
             $isChanged = true;
         }
         if (isset($changedFields['date_end']) && $this->setBeanEndDate($changedFields['date_end'][0], $bean)) {
+            $isChanged = true;
+        }
+        if (isset($changedFields['reminder_time']) &&
+            $this->setBeanReminder($changedFields['reminder_time'][0], $bean)
+        ) {
             $isChanged = true;
         }
 
@@ -982,6 +1032,12 @@ abstract class AdapterAbstract implements AdapterInterface
 
         $this->filterFieldsOnVerify($exportFields, $importFields);
 
+        if (!isset($importFields['reminder_time']) && isset($exportFields['reminder_time']) &&
+            $exportFields['reminder_time'][0] == - 1
+        ) {
+            unset($exportFields['reminder_time']);
+        }
+
         foreach ($exportFields as $field => $diff) {
             if (count($diff) > 1) {
                 continue;
@@ -1004,6 +1060,7 @@ abstract class AdapterAbstract implements AdapterInterface
             if (in_array($key, RecurringHelper::$rruleFieldList)) {
                 continue;
             }
+
             switch ($key) {
                 case 'title':
                     if ($value[0] != $bean->name) {
@@ -1115,6 +1172,15 @@ abstract class AdapterAbstract implements AdapterInterface
                 == $importFields['date_end'][0]) {
                 unset($exportFields['date_end']);
                 unset($importFields['date_end']);
+            }
+        }
+
+        if (isset($exportFields['reminder_time']) && isset($importFields['reminder_time'])) {
+            if (($exportFields['reminder_time'][0] == $importFields['reminder_time'][0]) ||
+                ($exportFields['reminder_time'][0] == - 1 && $importFields['reminder_time'][0] == 0)
+            ) {
+                unset($exportFields['reminder_time']);
+                unset($importFields['reminder_time']);
             }
         }
 
@@ -1610,6 +1676,32 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
+     * Sets provided reminder to specified event.
+     *
+     * @param array $value
+     * @param Event $event
+     *
+     * @return bool
+     */
+    protected function setCalDavReminder($value, Event $event)
+    {
+        if (!$value) {
+            return false;
+        }
+
+        if ($value == -1) {
+            return $event->deleteAllReminders();
+        }
+
+        $reminders = $event->getReminders();
+        if ($reminders && $reminders[0]->getTrigger() <= 0) {
+            return $event->setReminder($reminders[0], 0 - $value);
+        }
+
+        return $event->addReminder(0 - $value, 'DISPLAY');
+    }
+
+    /**
      * Sets provided invitees to specified event.
      *
      * @param array $value
@@ -2079,6 +2171,44 @@ abstract class AdapterAbstract implements AdapterInterface
 
         if ($this->getRecurringHelper()->arrayToBean($value, $bean)) {
             $this->setRecurrenceChildrenOrder($bean);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * It finds the first supported reminder from iCal array and sets it.
+     *
+     * @param int $reminder_time
+     * @param \SugarBean $bean
+     *
+     * @return bool
+     */
+    protected function setBeanReminder($reminder_time, \SugarBean $bean)
+    {
+        if (is_null($reminder_time) && $bean->reminder_time != - 1) {
+            $bean->reminder_time = - 1;
+
+            return true;
+        }
+
+        $appListStrings = \return_app_list_strings_language($GLOBALS['current_language']);
+        if (!isset($appListStrings['reminder_time_options'])) {
+            return false;
+        }
+
+        $values = array_keys($appListStrings['reminder_time_options']);
+        krsort($values);
+        $suitableValue = array_shift($values);
+        foreach ($values as $value) {
+            if ($reminder_time <= $value) {
+                $suitableValue = $value;
+            }
+        }
+
+        if ($bean->reminder_time != $suitableValue) {
+            $bean->reminder_time = $suitableValue;
             return true;
         }
 

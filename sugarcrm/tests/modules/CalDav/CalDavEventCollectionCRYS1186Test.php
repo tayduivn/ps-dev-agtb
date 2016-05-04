@@ -128,6 +128,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                             'update',
                             array('title' => array('Custom Event 1', 'Custom Event')),
                             array(),
+                            array(),
                         ),
                     ),
                 ),
@@ -230,6 +231,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                                 'date_end' => array('2016-01-12 17:00:00'),
                             ),
                             array(),
+                            array(),
                         ),
                     ),
                 ),
@@ -312,6 +314,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     'children' => array(
                         '2016-01-12 16:00:00' => array(
                             'delete',
+                            array(),
                             array(),
                             array(),
                         ),
@@ -404,6 +407,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                                 'date_start' => array('2016-01-12 16:00:00'),
                                 'date_end' => array('2016-01-12 17:00:00'),
                             ),
+                            array(),
                             array(),
                         ),
                     ),
@@ -499,6 +503,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                     'children' => array(
                         '2016-01-12 16:00:00' => array(
                             'delete',
+                            array(),
                             array(),
                             array(),
                         ),
@@ -603,6 +608,7 @@ class CalDavEventCollectionCRYS1186Test extends \Sugar_PHPUnit_Framework_TestCas
                                 'date_start' => array('2016-01-12 16:00:00'),
                                 'date_end' => array('2016-01-12 17:00:00'),
                             ),
+                            array(),
                             array(),
                         ),
                     ),

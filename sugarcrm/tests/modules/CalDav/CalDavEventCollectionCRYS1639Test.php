@@ -123,6 +123,7 @@ class CalDavEventCollectionCRYS1639Test extends \Sugar_PHPUnit_Framework_TestCas
                             'delete',
                             array(),
                             array(),
+                            array(),
                         ),
                     ),
                 ),

@@ -54,6 +54,15 @@ class Reminder
      */
     protected function setStringProperty($propertyName, $value)
     {
+        if (!$value) {
+            if ($this->reminder->$propertyName) {
+                $this->reminder->remove($propertyName);
+
+                return true;
+            }
+
+            return false;
+        }
 
         if (!$this->reminder->$propertyName) {
             $prop = $this->reminder->parent->parent->createProperty($propertyName, $value);
@@ -69,6 +78,20 @@ class Reminder
         }
 
         return false;
+    }
+
+    /**
+     * Checks that the reminders are the same.
+     *
+     * @param Reminder $reminder Reminder to compare
+     *
+     * @return bool
+     */
+    public function isEqualTo(Reminder $reminder)
+    {
+        return
+            $this->getTrigger() == $reminder->getTrigger() &&
+            $this->getAction() == $reminder->getAction();
     }
 
     /**
@@ -91,6 +114,16 @@ class Reminder
         }
 
         return null;
+    }
+
+    /**
+     * Get reminder UID.
+     *
+     * @return null|string
+     */
+    public function getUID()
+    {
+        return $this->getStringProperty('UID');
     }
 
     /**
@@ -129,19 +162,31 @@ class Reminder
      */
     public function setTrigger($value)
     {
-        $duration = $this->dateTimeHelper->secondsToDuration(0 - $value);
+        $duration = $this->dateTimeHelper->secondsToDuration($value);
 
         if (!$this->reminder->TRIGGER) {
             $this->reminder->add($this->reminder->parent->parent->createProperty('TRIGGER', $duration));
             return true;
         }
 
-        if ($this->getDuration() != $duration) {
+        if ($this->getTrigger() != $value) {
             $this->reminder->TRIGGER->setValue($duration);
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Sets reminder UID.
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function setUID($value)
+    {
+        return $this->setStringProperty('UID', $value);
     }
 
     /**
