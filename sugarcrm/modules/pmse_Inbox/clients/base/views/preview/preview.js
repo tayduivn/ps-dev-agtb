@@ -36,73 +36,22 @@
 
     /**
      * Renders the preview dialog with the data from the current model and collection.
-     * @param model Model for the object to preview
-     * @param collection Collection of related objects to the current model
-     * @param {Boolean} fetch Optional Indicates if model needs to be synched with server to populate with latest data
-     * @param {Number|String} previewId Optional identifier use to determine event origin. If event origin is not the same
-     * but the model id is the same, preview should still render the same model.
-     *
-     * @override we load the preview image of the process design instead of the usual fields from the record
-     * @private
      */
-    _renderPreview: function(model, collection, fetch, previewId){
+    _render: function() {
         var self = this;
 
-        // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
-        if(app.drawer && !app.drawer.isActive(this.$el)){
-            return;  //This preview isn't on the active layout
+        //only use id2 if it's available
+        if (this.model.get('id2')) {
+            this.model.set('id', this.model.get('id2'));
         }
 
-        // Close preview if we are already displaying this model
-        if(this.model && model && (this.model.get("id") == model.get("id") && previewId == this.previewId)) {
-            // Remove the decoration of the highlighted row
-            app.events.trigger("list:preview:decorate", false);
-            // Close the preview panel
-            app.events.trigger('preview:close');
-            return;
-        }
+        var pmseInboxUrl = app.api.buildFileURL({
+            module: 'pmse_Inbox',
+            id: self.model.get('cas_id') || (self.model.collection.get(self.model)).get('cas_id'),
+            field: 'id'
+        }, {cleanCache: true});
+        this.image_preview_url = pmseInboxUrl;
 
-        if (app.metadata.getModule(model.module).isBwcEnabled) {
-            // if module is in BWC mode, just return
-            return;
-        }
-
-        if (model) {
-            // Use preview view if available, otherwise fallback to record view
-            var viewName = 'preview',
-                previewMeta = app.metadata.getView(model.module, 'preview'),
-                recordMeta = app.metadata.getView(model.module, 'record');
-            if (_.isEmpty(previewMeta) || _.isEmpty(previewMeta.panels)) {
-                viewName = 'record';
-            }
-            this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
-
-            //only use id2 if it's available
-            if (model.get('id2')) {
-                model.set('id', model.get('id2'));
-            }
-            if (fetch) {
-                model.fetch({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    success: function(model) {
-                        self.renderPreview(model, collection);
-                    },
-                    //The view parameter is used at the server end to construct field list
-                    view: viewName
-                });
-            } else {
-                this.renderPreview(model, collection);
-            }
-
-            var pmseInboxUrl = app.api.buildFileURL({
-                module: 'pmse_Inbox',
-                id: model.get('cas_id') || (self.collection.get(model)).get('cas_id'),
-                field: 'id'
-            }, {cleanCache: true});
-            this.image_preview_url = pmseInboxUrl;
-        }
-
-        this.previewId = previewId;
+        this._super('_render');
     }
-})
+});
