@@ -104,15 +104,15 @@ class SummaryWithDetailsReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     private function getDummyGroupDefsInfo()
     {
-        return array(
-            'user_name#Opportunities:assigned_user_link' => array(
+        $grpDefs =  array(
+            array(
                 'name' => 'user_name',
                 'label' => 'User Name',
                 'table_key' => 'Opportunities:assigned_user_link',
                 'type' => 'user_name',
                 'index' => 0
             ),
-            'sales_stage#self' => array(
+            array(
                 'name' => 'sales_stage',
                 'label' => 'Sales Stage',
                 'table_key' => 'self',
@@ -120,6 +120,8 @@ class SummaryWithDetailsReportTest extends Sugar_PHPUnit_Framework_TestCase
                 'index' => 1
             ),
         );
+        $grpKeys = array_map('getGroupByKey', $grpDefs);
+        return array_combine($grpKeys, $grpDefs);
     }
 
     private function getData()
