@@ -222,6 +222,16 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $return_fields[] = $name;
 
         }
+        if ($module_name == 'Contacts') {
+            global $current_language;
+            if (!in_array("preferred_language", $name_value_list)) {
+                $seed->preferred_language = $current_language;
+            } else {
+                if (empty($name_value_list["preferred_language"])) {
+                    $seed->preferred_language = $current_language;
+                }
+            }
+        }
         if (!self::$helperObject->checkACLAccess($seed, 'Save', $error, 'no_access') || ($seed->deleted == 1  && !self::$helperObject->checkACLAccess($seed, 'Delete', $error, 'no_access'))) {
             $GLOBALS['log']->info('End: SugarWebServiceImpl->set_entry');
             return;
