@@ -30,4 +30,10 @@ class ComponentName extends Constraint
     );
 
     public $message = 'Component name violation: %msg%';
+
+    /**
+     * Are sql reserved words allowed?
+     * @var bool
+     */
+    public $allowReservedSqlKeywords = true;
 }
