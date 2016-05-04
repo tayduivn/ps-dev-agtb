@@ -15,7 +15,7 @@ require_once 'modules/Forecasts/clients/base/api/ForecastsApi.php';
 
 /***
  * Used to test Forecast Module endpoints
- * @coversDefaultClass ForecastsApi
+ * @covers ForecastsApi
  */
 class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -84,7 +84,7 @@ class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @group testGetLocaleFormattedName
      * @group forecastapi
      * @group forecasts
-     * @covers ::getReportees
+     * @covers ForecastsApi::getReportees
      */
     public function testGetLocaleFormattedNameReporteesEndpoint()
     {
@@ -108,7 +108,7 @@ class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecastapi
      * @group forecasts
-     * @covers ::getReportees
+     * @covers ForecastsApi::getReportees
      */
     public function testReportees()
     {
@@ -144,7 +144,7 @@ class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @group forecastapi
      * @group forecasts
-     * @covers ::getReportees
+     * @covers ForecastsApi::getReportees
      */
     public function testDeletedReportees()
     {
