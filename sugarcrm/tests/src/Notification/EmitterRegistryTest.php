@@ -364,7 +364,6 @@ class {$className} {$implement}
      */
     protected static function saveBeanEmitter($beanName, $emitterFolder)
     {
-
         $classCode = "<?php
 use Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter as BeanEmitter;
 

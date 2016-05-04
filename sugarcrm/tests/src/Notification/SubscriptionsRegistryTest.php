@@ -1896,7 +1896,6 @@ class {$className} implements Sugarcrm\\Sugarcrm\\Notification\\EmitterInterface
      */
     protected static function saveBeanEmitter($beanName, $emitterFolder)
     {
-
         $classCode = "<?php
 use Sugarcrm\\Sugarcrm\\Notification\\Emitter\\Bean\\Emitter as BeanEmitter;
 
@@ -1962,8 +1961,7 @@ class {$beanName}Emitter implements Sugarcrm\\Sugarcrm\\Notification\\Emitter\\B
      */
     public static function saveBean($module, $beanName, $extendsFrom)
     {
-        $classCode = "
-        <?php
+        $classCode = "<?php
 
         class {$beanName} extends {$extendsFrom}
         {
