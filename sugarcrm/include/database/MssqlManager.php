@@ -1393,11 +1393,12 @@ class MssqlManager extends DBManager
                         LoggerManager::getLogger()->error("Can't add identity to table $tablename where identity already exists.");
                         unset($def['auto_increment']);
                     }
-                    $columns[] = 'ADD ' . $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, false);
+                    $columns[] = (count($columns) == 0 ? 'ADD ' : '')
+                        . $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, false);
                     break;
 
                 case 'drop':
-                    $columns[] = 'DROP COLUMN ' . $def['name'];
+                    $columns[] = (count($columns) == 0 ? 'DROP COLUMN ' : 'COLUMN ') . $def['name'];
                     break;
 
                 case 'modify':
