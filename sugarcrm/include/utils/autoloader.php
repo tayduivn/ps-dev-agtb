@@ -191,6 +191,7 @@ class SugarAutoLoader
         'autoload_namespaces' => 'vendor/composer/autoload_namespaces.php',
         'autoload_psr4' => 'vendor/composer/autoload_psr4.php',
         'autoload_classmap' => 'vendor/composer/autoload_classmap.php',
+        'autoload_files' => 'vendor/composer/autoload_files.php',
     );
     protected static $baseDirs;
     protected static $ds = DIRECTORY_SEPARATOR;
@@ -248,6 +249,9 @@ class SugarAutoLoader
 
         // Register ourself (prepend)
         self::registerAutoload(true);
+
+        // Load files
+        self::loadFiles();
 
         // Load extensions
         self::loadExts();
@@ -1196,6 +1200,17 @@ class SugarAutoLoader
 	    include "ModuleInstall/extensions.php";
 	    self::$extensions = $extensions;
 	}
+
+    /**
+     * Load files
+     */
+    protected static function loadFiles()
+    {
+        $files = self::getIncludeReturn(self::$composerPaths['autoload_files']);
+        foreach ($files as $file) {
+            require $file;
+        }
+    }
 
 	/**
 	 * Add filename to list of existing files
