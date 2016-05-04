@@ -225,7 +225,11 @@ class RelatedValueApi extends SugarApi
                     $ret[$link][$type][$rField] = '0';
 
                     if ($focus->load_relationship($link)) {
-                        $condition_values = Parser::evaluate($rfDef['condition_expr'])->evaluate();
+                        if (preg_match('/^[a-zA-Z0-9_\-$]+\(.*\)$/', $rfDef['condition_expr'])) {
+                            $condition_values = Parser::evaluate($rfDef['condition_expr'])->evaluate();
+                        } else {
+                            $condition_values = array($rfDef['condition_expr']);
+                        }
                         $toRate = isset($focus->base_rate) ? $focus->base_rate : null;
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
                         $sum = '0';
