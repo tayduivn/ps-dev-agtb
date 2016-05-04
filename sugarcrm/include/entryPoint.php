@@ -116,10 +116,6 @@ if (!empty($sugar_config['xhprof_config']))
 // make sure SugarConfig object is available
 require_once 'include/SugarObjects/SugarConfig.php';
 
-// Compatibility library with PHP 5.5's simplified password hashing API
-// This can be removed when SugarCRM's minimum PHP version is 5.5
-require_once 'vendor/ircmaxell/password-compat/lib/password.php';
-
 require_once('include/utils.php');
 register_shutdown_function('sugar_cleanup');
 
