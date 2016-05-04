@@ -219,7 +219,15 @@ class SugarBean
     */
     var $module_dir = '';
     var $module_name = '';
+
+    /**
+     * Stores bean field definitions
+     *
+     * @var array
+     * @deprecated Use $field_defs instead
+     */
     var $field_name_map;
+
     var $field_defs;
     var $custom_fields;
     var $column_fields = array();
@@ -711,8 +719,7 @@ class SugarBean
      */
     public function addVisibilityQuery($query, $options = null)
     {
-        $query = $this->loadVisibility()->addVisibilityFromQuery($query, $options);
-        $query = $this->loadVisibility()->addVisibilityWhereQuery($query, $options);
+        $this->loadVisibility()->addVisibilityQuery($query, $options);
         return $query;
     }
 

@@ -44,6 +44,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         'tabledictionary' => array("section" => '', "extdir" => "TableDictionary", "file" => "tabledictionary.ext.php", "module" => "application"),
 
         "sidecar" => array("section"=>'sidecar', 'extdir' => 'clients/__PH_PLATFORM__/__PH_TYPE__/__PH_SUBTYPE__', 'file' => '__PH_SUBTYPE__.ext.php'),
+
+        // Extention framework support for console commands
+        'console' => array(
+            'section' => 'console',
+            'extdir' => 'Console',
+            'file' => 'console.ext.php',
+            'module' => 'application'
+        ),
 );
 if(SugarAutoLoader::existing("custom/application/Ext/Extensions/extensions.ext.php")) {
     include("custom/application/Ext/Extensions/extensions.ext.php");
