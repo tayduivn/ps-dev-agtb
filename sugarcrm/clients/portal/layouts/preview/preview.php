@@ -12,7 +12,7 @@
  */
 
 $viewdefs['portal']['layout']['preview'] = array(
-    'components' =>
+    'init_components' =>
     array(
         array(
             'view' => 'preview-header',
