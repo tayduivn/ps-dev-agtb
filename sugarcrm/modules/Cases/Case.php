@@ -80,6 +80,13 @@ class aCase extends Basic
         'email_id'=>'emails',
     );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function aCase()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

@@ -45,6 +45,13 @@ class pmse_BpmDynaForm_sugar extends Basic {
     var $dyn_module;
     var $dyn_view_defs;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmDynaForm_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

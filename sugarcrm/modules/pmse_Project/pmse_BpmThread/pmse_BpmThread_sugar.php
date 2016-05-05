@@ -47,6 +47,13 @@ class pmse_BpmThread_sugar extends Basic {
     var $cas_thread_tokens;
     var $cas_thread_passes;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmThread_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

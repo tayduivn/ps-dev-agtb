@@ -22,6 +22,13 @@ class FieldViewer{
         'date_entered', 'date_modified'
     );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function FieldViewer()
+    {
+        self::__construct();
+    }
 
     public function __construct() {
 		$this->ss = new Sugar_Smarty();

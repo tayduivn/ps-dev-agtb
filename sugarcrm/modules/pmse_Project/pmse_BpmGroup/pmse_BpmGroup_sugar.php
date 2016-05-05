@@ -42,6 +42,13 @@ class pmse_BpmGroup_sugar extends Basic {
     var $grp_uid;
     var $grp_parent_group;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmGroup_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

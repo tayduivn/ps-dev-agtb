@@ -62,6 +62,13 @@ class Task extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_phone', 'contact_email', 'parent_name');
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Task()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

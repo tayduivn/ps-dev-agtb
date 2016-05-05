@@ -88,6 +88,13 @@ class Meeting extends SugarBean {
 
 	public $send_invites = false;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Meeting()
+    {
+        self::__construct();
+    }
 
 	/**
 	 * sole constructor

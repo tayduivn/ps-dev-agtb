@@ -48,6 +48,13 @@ class pmse_BpmnParticipant_sugar extends Basic {
     var $par_num_participants;
     var $par_is_horizontal;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnParticipant_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

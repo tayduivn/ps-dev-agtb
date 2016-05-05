@@ -40,6 +40,13 @@ class SugarEmailAddress extends SugarBean
      */
     public $fetchedAddresses = null;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarEmailAddress()
+    {
+        self::__construct();
+    }
 
     public function __construct() {
         parent::__construct();

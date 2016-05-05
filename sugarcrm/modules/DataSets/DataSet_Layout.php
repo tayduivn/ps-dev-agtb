@@ -79,6 +79,13 @@ class DataSet_Layout extends SugarBean {
         ,"start_axis" => "x"
         );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function DataSet_Layout()
+    {
+        self::__construct();
+    }
 
     public function __construct() {
         global $dictionary;

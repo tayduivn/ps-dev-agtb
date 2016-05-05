@@ -20,6 +20,14 @@ require_once 'modules/pmse_Project/pmse_BpmActivityUser/pmse_BpmActivityUser_sug
 
 class pmse_BpmActivityUser extends pmse_BpmActivityUser_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmActivityUser()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

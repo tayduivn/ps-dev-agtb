@@ -20,6 +20,13 @@ require_once 'modules/pmse_Project/pmse_BpmCaseData/pmse_BpmCaseData_sugar.php';
 
 class pmse_BpmCaseData extends pmse_BpmCaseData_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmCaseData()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

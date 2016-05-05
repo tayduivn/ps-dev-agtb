@@ -52,6 +52,13 @@ class Quota extends SugarBean
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = Array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Quota()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

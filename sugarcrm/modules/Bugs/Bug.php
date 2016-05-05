@@ -71,7 +71,13 @@ class Bug extends SugarBean {
 									'task_id'=>'tasks', 'note_id'=>'notes', 'meeting_id'=>'meetings',
 									'call_id'=>'calls', 'email_id'=>'emails');
 
-
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Bug()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {

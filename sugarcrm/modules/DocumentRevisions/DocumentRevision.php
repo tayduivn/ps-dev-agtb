@@ -85,8 +85,14 @@ class DocumentRevision extends SugarBean {
 		);
 		
 	var $required_fields = Array("revision");
-	
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function DocumentRevision()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

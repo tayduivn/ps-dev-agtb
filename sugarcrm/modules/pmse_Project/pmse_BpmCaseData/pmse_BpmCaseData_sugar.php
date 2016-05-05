@@ -42,6 +42,13 @@ class pmse_BpmCaseData_sugar extends Basic {
     var $cas_id;
     var $cas_data;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmCaseData_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

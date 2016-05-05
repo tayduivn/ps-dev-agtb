@@ -53,6 +53,14 @@ class pmse_BpmnBound_sugar extends Basic {
     var $bou_size_identical;
     var $bou_container;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnBound_sugar()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

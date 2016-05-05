@@ -27,6 +27,13 @@ class CalendarGrid {
 	protected $date_time_format; // user date time format
 	protected $scroll_height; // height of scrollable div
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function CalendarGrid(Calendar $cal)
+    {
+        self::__construct($cal);
+    }
 
 	/**
 	 * constructor

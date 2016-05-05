@@ -46,6 +46,14 @@ class pmse_BpmProcessDefinition_sugar extends Basic {
     var $pro_terminate_variables;
     var $execution_mode;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmProcessDefinition_sugar()
+    {
+        self::__construct();
+    }
+
 	public function __construct(){
 		parent::__construct();
 	}

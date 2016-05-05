@@ -20,6 +20,13 @@ require_once 'modules/pmse_Project/pmse_BpmConfig/pmse_BpmConfig_sugar.php';
 
 class pmse_BpmConfig extends pmse_BpmConfig_sugar {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmConfig()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

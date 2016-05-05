@@ -90,6 +90,13 @@ class Call extends SugarBean {
 
 	public $send_invites = false;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Call()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

@@ -69,6 +69,13 @@ class Document extends SugarBean {
 		'contract_id'=>'contracts',
 	 );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Document()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

@@ -43,6 +43,13 @@ class pmse_BpmGatewayDefinition_sugar extends Basic {
     var $pro_id;
     var $execution_mode;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmGatewayDefinition_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

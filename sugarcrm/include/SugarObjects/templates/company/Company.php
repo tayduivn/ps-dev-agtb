@@ -13,7 +13,13 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 
 class Company extends Basic
 {
-
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Company()
+    {
+        self::__construct();
+    }
 
     /**
  	 * Constructor

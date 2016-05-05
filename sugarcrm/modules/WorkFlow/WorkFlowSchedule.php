@@ -79,6 +79,13 @@ class WorkFlowSchedule extends SugarBean {
 
     var $disable_row_level_security = true;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function WorkFlowSchedule()
+    {
+        self::__construct();
+    }
 
     public function __construct() {
         global $dictionary;

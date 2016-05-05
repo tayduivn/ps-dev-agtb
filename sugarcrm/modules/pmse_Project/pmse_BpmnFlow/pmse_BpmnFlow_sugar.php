@@ -58,6 +58,13 @@ class pmse_BpmnFlow_sugar extends Basic {
     var $flo_y2;
     var $flo_state;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_BpmnFlow_sugar()
+    {
+        self::__construct();
+    }
 
 	public function __construct(){
 		parent::__construct();

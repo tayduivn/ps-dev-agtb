@@ -137,6 +137,13 @@ class Email extends SugarBean {
      */
     protected $addedFieldDefs = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Email()
+    {
+        self::__construct();
+    }
 
 	/**
 	 * sole constructor

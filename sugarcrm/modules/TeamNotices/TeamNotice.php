@@ -43,6 +43,13 @@ class TeamNotice extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function TeamNotice()
+    {
+        self::__construct();
+    }
 
 	public function __construct() {
 		parent::__construct();

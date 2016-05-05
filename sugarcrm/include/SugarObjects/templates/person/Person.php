@@ -28,6 +28,13 @@ class Person extends Basic
      */
     public $email_addresses;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Person()
+    {
+        self::__construct();
+    }
 
     public function __construct()
     {
