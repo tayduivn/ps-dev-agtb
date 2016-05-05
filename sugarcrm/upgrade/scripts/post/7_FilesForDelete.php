@@ -334,7 +334,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'silentFTSIndex.php';
             $files[] = 'upgrade/scripts/post/5_FTSHook.php';
             $files[] = 'modules/pmse_Business_Rules/clients/base/views/preview/preview.js';
-            $files[] = 'modules/pmse_Inbox/clients/base/fields/relate/relate.js';
         }
 
         // MACAROON-901... remove quickcreate files for PMSE modules
