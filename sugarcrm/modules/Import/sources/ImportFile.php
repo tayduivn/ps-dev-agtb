@@ -177,15 +177,23 @@ class ImportFile extends ImportDataSource
     /**
      * Gets the next row from $_importFile
      *
+     * @param bool $clean Whether to clean rows from xss. Should be true for most calls.
+     *
      * @return array current row of file
      */
-    public function getNextRow()
+    public function getNextRow($clean = true)
     {
         $this->_currentRow = FALSE;
 
         if (!$this->fileExists())
         {
             return false;
+        }
+
+        if (!$clean) {
+            $this->_currentRow = fgets($this->_fp);
+            $this->_rowsCount++;
+            return $this->_currentRow;
         }
 
         // explode on delimiter instead if enclosure is an empty string
@@ -227,7 +235,7 @@ class ImportFile extends ImportDataSource
             // Convert all line endings to the same style as PHP_EOL
             // Use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
             $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $this->_currentRow[$key]);
-            $this->_currentRow[$key] = remove_xss($this->_currentRow[$key]);
+            $this->_currentRow[$key] = SugarCleaner::cleanHtml($this->_currentRow[$key]);
         }
         
         $this->_rowsCount++;
