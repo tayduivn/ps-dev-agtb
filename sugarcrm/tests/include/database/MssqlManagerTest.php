@@ -341,6 +341,32 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ",
                 false
             ),
+            // 'union' in literal string
+            array(
+                "SELECT id
+                 FROM accounts
+                 WHERE name = 'UNION TEST'
+                 AND deleted != 1",
+                false
+            ),
+            array(
+                "SELECT id_c
+                 FROM accounts_cstm
+                 WHERE  union_c = '''UNION''s TEST'''
+                 AND deleted != 1",
+                false
+            ),
+            array(
+                "(SELECT id
+                 FROM accounts
+                 WHERE name = 'UNION TEST'
+                 AND deleted != 1)UNION(
+                 SELECT id_c
+                 FROM accounts_cstm
+                 WHERE union_c = '''UNION''s TEST'''
+                 AND deleted != 1)",
+                true
+            ),
         );
     }
 
