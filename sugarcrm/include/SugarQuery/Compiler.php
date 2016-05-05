@@ -12,6 +12,12 @@
 
 require_once('include/SugarQuery/Compiler/SQL.php');
 
+/**
+ * SugarQuery compiler
+ *
+ * @internal Should be only user by SugarQuery
+ * @deprecated Use the actual compiler instead
+ */
 class SugarQuery_Compiler
 {
 	function __construct() {}

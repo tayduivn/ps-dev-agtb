@@ -12,6 +12,8 @@
 
 /**
  * Literal clause in SQL query
+ *
+ * @deprecated
  */
 class SugarQuery_Builder_Literal
 {

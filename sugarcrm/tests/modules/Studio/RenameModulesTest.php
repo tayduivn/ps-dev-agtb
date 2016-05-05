@@ -353,4 +353,35 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($newLabel, $renamedLabelSingularFirst);
         $this->assertEquals($newLabelPluralFirst, $renamedLabelDefault);
     }
+
+    /**
+     * Test adding moduleList and moduleListSingular rename pair to custom language file.
+     */
+    public function testSaveCustomModuleNamePair()
+    {
+        RenameModules::saveCustomModuleNamePair('unitTest', array(
+            'singular' => 'Unit Test',
+            'plural' => 'Unit Tests',
+        ));
+
+        $langFile = file_get_contents('custom/include/language/' . $this->language . '.lang.php');
+
+        $pattern_match =
+            '/\s*\$app_list_strings\s*\[\'moduleList\'\]\[\s*\'' .
+            'unitTest' .
+            '\'\s*\]\s*=\s*[\'\"]Unit Tests[\'\"]{1};\s*/ism';
+
+        preg_match_all($pattern_match, $langFile, $matches);
+
+        $this->assertCount(1, $matches[0]);
+
+        $pattern_match =
+            '/\s*\$app_list_strings\s*\[\'moduleListSingular\'\]\[\s*\'' .
+            'unitTest' .
+            '\'\s*\]\s*=\s*[\'\"]Unit Test[\'\"]{1};\s*/ism';
+
+        preg_match_all($pattern_match, $langFile, $matches);
+
+        $this->assertCount(1, $matches[0]);
+    }
 }

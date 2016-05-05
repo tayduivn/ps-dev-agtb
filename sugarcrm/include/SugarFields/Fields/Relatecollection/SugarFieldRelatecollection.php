@@ -189,7 +189,7 @@ class SugarFieldRelatecollection extends SugarFieldBase
         $sq->joinSubpanel($parent, $relName);
 
         $result = array();
-        foreach ($sq->execute('array') as $record) {
+        foreach ($sq->execute() as $record) {
             $result[$record['id']] = $record;
         }
         return $result;

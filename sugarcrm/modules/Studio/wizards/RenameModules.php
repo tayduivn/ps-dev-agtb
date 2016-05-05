@@ -227,31 +227,31 @@ class RenameModules
      */
     private function renameCustomModules()
     {
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
         foreach ($this->changedModules as $moduleName => $module) {
             $_REQUEST['view_package'] = 'studio';
-            SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
             $parserDropDown = new ParserDropDown();
-
-            $singularName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['singular']);
-            $params = array(
-                'dropdown_name' => 'moduleListSingular',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $singularName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
-
-            $pluralName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['plural']);
-            $params = array(
-                'dropdown_name' => 'moduleList',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $pluralName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
+            $parserDropDown->saveDropDown($this->getParserDropDownParams($moduleName, $module['singular'], 'singular'));
+            $parserDropDown->saveDropDown($this->getParserDropDownParams($moduleName, $module['plural'], 'plural'));
         }
+    }
+
+    /**
+     * Creates params for parserDropDown's saveDropDown() func based on
+     * module's name, module's label and label's type (singular / plural)
+     */
+    private function getParserDropDownParams($moduleName, $label, $type)
+    {
+        $label = str_replace(array("'", '"'), array('&#039;', '&quot;'), $label);
+        $dropdownName = $type == 'singular' ? 'moduleListSingular' : 'moduleList';
+        $params = array(
+            'dropdown_name' => $dropdownName,
+            'dropdown_lang' => $this->selectedLanguage,
+            'list_value' => '[["' . $moduleName . '","' . $label . '"]]',
+            'use_push' => false,
+            'skipSaveExemptDropdowns' => true
+        );
+        return $params;
     }
 
     /**
@@ -393,6 +393,49 @@ class RenameModules
 
         // No changes, no worries
         return true;
+    }
+
+    /**
+     * Saves module name pair to custom language file.
+     *
+     * @param string $module The new name of the module to work with.
+     * @param array $name An array containing the singular and plural names for the given module.
+     * @return boolean
+     */
+    public static function saveCustomModuleNamePair($module, $name)
+    {
+        global $locale;
+        $language = $locale->getAuthenticatedUserLanguage();
+
+        $contents = return_custom_app_list_strings_file_contents($language);
+
+        $contents = str_replace('?>', '', $contents);
+
+        if (empty($contents)) {
+            $contents = '<?php' . "\n";
+        }
+
+        $pattern_match =
+            '/\s*\$app_list_strings\s*\[\'moduleList\'\]\[\s*\'' .
+            $module .
+            '\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
+
+        $contents = preg_replace($pattern_match, "\n", $contents);
+
+        $pattern_match =
+            '/\s*\$app_list_strings\s*\[\'moduleListSingular\'\]\[\s*\'' .
+            $module .
+            '\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
+
+        $contents = preg_replace($pattern_match, "\n", $contents);
+
+        $contents .=
+            "\n" . '$app_list_strings[\'moduleList\'][\'' . $module . '\']=' .
+            var_export_helper($name['plural']) . ';' .
+            "\n" . '$app_list_strings[\'moduleListSingular\'][\'' . $module . '\']=' .
+            var_export_helper($name['singular']) . ';';
+
+        return save_custom_app_strings_contents($contents, $language);
     }
 
     /**

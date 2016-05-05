@@ -12,6 +12,11 @@
 
 require_once 'include/SugarQuery/SugarQuery.php';
 
+/**
+ * Compiler of SugarQuery to SQL
+ *
+ * @internal Should be only user by SugarQuery
+ */
 class SugarQuery_Compiler_SQL
 {
     /**

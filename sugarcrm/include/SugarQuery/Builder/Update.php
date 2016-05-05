@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * UPDATE query builder
+ *
+ * @deprecated Use DBManager::update() instead
+ */
 class SugarQuery_Builder_Update {
 	/**
 	 * Table for the update
