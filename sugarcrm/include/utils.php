@@ -1465,39 +1465,16 @@ function get_unique_key()
 /**
  * A temporary method of generating GUIDs of the correct format for our DB.
  * @return String contianing a GUID in the format: aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
- *
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
+ * @deprecated Use Sugarcrm\Sugarcrm\Util\Uuid
  */
 function create_guid()
 {
-    $microTime = microtime();
-    list($a_dec, $a_sec) = explode(" ", $microTime);
-
-    $dec_hex = dechex($a_dec* 1000000);
-    $sec_hex = dechex($a_sec);
-
-    ensure_length($dec_hex, 5);
-    ensure_length($sec_hex, 6);
-
-    $guid = "";
-    $guid .= $dec_hex;
-    $guid .= create_guid_section(3);
-    $guid .= '-';
-    $guid .= create_guid_section(4);
-    $guid .= '-';
-    $guid .= create_guid_section(4);
-    $guid .= '-';
-    $guid .= create_guid_section(4);
-    $guid .= '-';
-    $guid .= $sec_hex;
-    $guid .= create_guid_section(6);
-
-    return $guid;
-
+    return Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
 }
 
+/**
+ * @deprecated see create_guid()
+ */
 function create_guid_section($characters)
 {
     $return = "";
@@ -1508,6 +1485,9 @@ function create_guid_section($characters)
     return $return;
 }
 
+/**
+ * @deprecated see create_guid()
+ */
 function ensure_length(&$string, $length)
 {
     $strlen = strlen($string);

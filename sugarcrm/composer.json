@@ -61,6 +61,8 @@
         "symfony/console": "v2.7.1",
         "google/apiclient": "1.1.4",
         "parsecsv/php-parsecsv": "0.4.5",
+        "paragonie/random_compat": "v2.0.2",
+        "ramsey/uuid": "2.9.0",
         "php": ">=5.3.0"
     },
     "require-dev": {
