@@ -199,17 +199,13 @@ class AbstractRelationships
     /*
      * Rename module
      * @param $newModuleName New lhs module name
-     * @param $newLhsLabel New lhs label name
     */
-    public function renameModule($newLhsModule, $newLhsLabel)
+    public function renameModule($newLhsModule)
     {
         foreach ($this->getRelationshipList() as $relationshipName) {
             $relationship = $this->get($relationshipName);
             $definition = $relationship->getDefinition();
             $definition['lhs_module'] = $newLhsModule;
-            if (!empty($newLhsLabel)) {
-                $definition['lhs_label'] = $newLhsLabel;
-            }
 
             // in order to create consistent relationship name,
             // blank it out from definition for factory to create a name.

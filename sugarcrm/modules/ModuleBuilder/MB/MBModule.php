@@ -759,12 +759,12 @@ class MBModule
         return $renamed ;
     }
 
-    private function renameRelationships($newModDir, $newModName)
+    public function renameRelationships($newModDir, $newModName)
     {
         //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
         // and BR-4147 lhs module name was not updated when module name is changed
         $relationships = new UndeployedRelationships($newModDir);
-        $relationships->renameModule($newModName, $this->config['label']);
+        $relationships->renameModule($newModName);
         $relationships->save();
     }
 
@@ -829,9 +829,6 @@ class MBModule
 
                     if ("relationships.php" == $e)
                     {
-                        //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
-                        // $contents = str_replace  ( "'{$old_name}'", "'{$this->key_name}'" , $contents ) ;
-
                         if (!empty($this->config['label'])) {
                             $oldLabel = translate($old_name);
                             $newLabel = $this->config['label'];
