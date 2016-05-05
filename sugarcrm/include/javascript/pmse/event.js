@@ -964,6 +964,10 @@ AdamEvent.prototype.createConfigureAction = function () {
                     }
                 ],
                 required: true,
+                change: function() {
+                    criteriaField._panel._evaluationPanels.module.getItem('field').fireDependentFields();
+                    criteriaField.isValid();
+                },
                 helpTooltip: {
                     message: translate('LBL_PMSE_FORM_TOOLTIP_WHEN_START_EVENT')
                 }
@@ -1001,6 +1005,7 @@ AdamEvent.prototype.createConfigureAction = function () {
                         });
                         App.alert.dismiss('upload');
                         w.html.style.display = 'inline';
+                        criteriaField.isValid();
                     }
                 });
             }

@@ -324,6 +324,9 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT' => 'contains',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT' => 'does not contain',
 
+    'LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_FROM' => 'changes from',
+    'LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_TO' => 'changes to',
+
     'LBL_PMSE_EXPCONTROL_OPERATOR_MAJOR_EQUAL_DATE' => 'on or after',
     'LBL_PMSE_EXPCONTROL_OPERATOR_MINOR_EQUAL_DATE' => 'on or before',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_EQUAL' => 'is not equal to',

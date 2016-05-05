@@ -149,7 +149,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     public function parseCriteria($criteriaToken, $params = array())
     {
         $tokenDelimiter = '::';
-        $newTokenArray = array('{', 'future', $criteriaToken->expModule, $criteriaToken->expField, '}');
+        $newTokenArray = array('{', 'future', $criteriaToken->expModule, $criteriaToken->expField, $criteriaToken->expOperator, '}');
         $assembledTokenString = implode($tokenDelimiter, $newTokenArray);
         $tokenValue = $this->parseTokenValue($assembledTokenString);
         $criteriaToken->expToken = $assembledTokenString;
@@ -297,7 +297,17 @@ class PMSEFieldParser implements PMSEDataParserInterface
 
             $field = $tokenArray[2];
             if (!empty($bean) && is_object($bean)) {
-                $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
+                if (isset($tokenArray[3]) && ($tokenArray[3] == 'changes_from' || $tokenArray[3] == 'changes_to')) {
+                    if (isset($bean->dataChanges) && isset($bean->dataChanges[$field])) {
+                        if ($tokenArray[3] == 'changes_from') {
+                            $value = $bean->dataChanges[$field]['before'];
+                        } else {
+                            $value = $bean->dataChanges[$field]['after'];
+                        }
+                    }
+                } else {
+                    $value = $this->pmseRelatedModule->getFieldValue($bean, $field);
+                }
             }
         }
 

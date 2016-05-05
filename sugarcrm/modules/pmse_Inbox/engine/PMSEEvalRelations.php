@@ -39,7 +39,9 @@ trait PMSEEvalRelations
             "starts_with",
             "ends_with",
             "contains",
-            "does_not_contain"
+            "does_not_contain",
+            "changes_from",
+            "changes_to"
         );
         $result = 0;
         if (!in_array($operator, $arrayRelationsLit)) {
@@ -54,6 +56,8 @@ trait PMSEEvalRelations
         $this->condition .= ':(' . is_array($value1) ? encodeMultienumValue($value1) : $value1 . '):';
         switch ($operator) {
             case 'equals':
+            case 'changes_from':
+            case 'changes_to':
                 $result = $value1 == $value2 ? 1 : 0;
                 break;
             case 'not_equals':

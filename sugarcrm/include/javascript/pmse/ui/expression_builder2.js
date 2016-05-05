@@ -129,6 +129,8 @@ ExpressionControl.prototype.OPERATORS  = {
 };
 
 ExpressionControl.prototype.initComparisonOperators = function(module) {
+    var fromLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_FROM', module);
+    var toLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_TO', module);
     ExpressionControl.prototype.OPERATORS.comparison = [
         {
             text: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_EQUAL', module),
@@ -177,6 +179,20 @@ ExpressionControl.prototype.initComparisonOperators = function(module) {
         {
             textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT', module),
                 value: "does_not_contain"
+        }
+    ];
+    ExpressionControl.prototype.OPERATORS.changed = [
+        {
+            text: fromLabel,
+            textfield: fromLabel,
+            datefield: fromLabel,
+            value: 'changes_from'
+        },
+        {
+            text: toLabel,
+            textfield: toLabel,
+            datefield: toLabel,
+            value: 'changes_to'
         }
     ];
 };
@@ -1428,6 +1444,7 @@ ExpressionControl.prototype._createVariablePanel = function () {
 
 ExpressionControl.prototype._createModulePanel = function () {
     var moduleField, that = this, settings = this._evaluationSettings.module, currentType;
+    var currentVal, currentMod;
     if (!this._evaluationPanels.module) {
         this._evaluationPanels.module = new FormPanel({
             id: "form-module-field-evaluation",
@@ -1466,6 +1483,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     return data[settings.fieldValueField] + that._auxSeparator + data[settings.fieldTypeField];
                                 })
                                 .load();
+                            dependantField.fireDependentFields();
                         } else {
                             dependantField.clearOptions();
                         }
@@ -1489,12 +1507,17 @@ ExpressionControl.prototype._createModulePanel = function () {
                     required: true,
                     dependencyHandler: function (dependantField, parentField, value) {
                         var type = value.split(that._auxSeparator)[1],
-                            form, newField, items = [], itemsObj, keys, operators, newFieldSettings, operatorField,
-                            labelField = 'text', aux;
+                            newField, items = [], itemsObj, keys, operators, newFieldSettings, operatorField,
+                            labelField = 'text', aux,
+                            form = dependantField.getForm(),
+                            selVal = $('#evn_params').val(),
+                            modVal = form.getItem('module')._value;
                         type = type && that._typeToControl[type.toLowerCase()];
-                        if ((type && type !== currentType) || type === 'dropdown') {
+                        if ((type && type !== currentType) || type === 'dropdown' ||
+                            selVal !== currentVal || modVal !== currentMod) {
                             currentType = type;
-                            form = dependantField.getForm();
+                            currentVal = selVal;
+                            currentMod = modVal;
 
                             newFieldSettings = {
                                 type: type,
@@ -1569,6 +1592,13 @@ ExpressionControl.prototype._createModulePanel = function () {
                             }
                             if (that.EXTRA_OPERATORS[labelField]) {
                                 operators = operators.concat(that.EXTRA_OPERATORS[labelField]);
+                            }
+                            if ((selVal == 'updated' || selVal == 'allupdates')) {
+                                var url = parentField._dataURL;
+                                var base = parentField._attributes ? parentField._attributes.base_module : false;
+                                if (url && base && url.endsWith(base)) {
+                                    operators = operators.concat(that.OPERATORS.changed);
+                                }
                             }
                             operatorField.setLabelField(labelField);
                             operatorField.setOptions(operators);
@@ -2329,6 +2359,10 @@ ExpressionControl.prototype.isValid = function() {
 
         if (cIsEval || (current.expType === "GROUP" && current.expValue === "(") || (current.expType === "LOGIC" && current.expValue === "NOT")) {
             valid = !(prev && (pIsEval || (prev.expType === "GROUP" && prev.expValue === ")")));
+            if (valid && (current.expOperator == 'changes_from' || current.expOperator == 'changes_to')) {
+                var selVal = $('#evn_params').val();
+                valid = selVal == 'updated' || selVal == 'allupdates';
+            }
         } else {
             valid = prev && ((prev.expType === "GROUP" && prev.expValue === ")") || (pIsEval || cIsEval));
             valid = valid === null ? true : valid;
