@@ -338,7 +338,18 @@ function smarty_function_sugar_button($params, $smarty)
             break;
 
 			case "DUPLICATE":
-                $output = '<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" onclick="' . $js_form . ' _form.return_module.value=\'' . $module . '\'; _form.return_action.value=\'DetailView\'; _form.isDuplicate.value=true; _form.action.value=\'DuplicateView\'; _form.return_id.value=\'{$id}\';SUGAR.ajaxUI.submitForm(_form);" type="button" name="Duplicate" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}" id="duplicate_button"> ';
+                $output = '';
+                if (SugarACL::checkAccess($module, 'edit', array('owner_override' => true))) {
+                    $output = '<input title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
+                        'accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" ' .
+                        'onclick="' . $js_form . ' _form.return_module.value=\'' . $module . '\'; ' .
+                            '_form.return_action.value=\'DetailView\'; ' .
+                            '_form.isDuplicate.value=true; ' .
+                            '_form.action.value=\'DuplicateView\'; ' .
+                            '_form.return_id.value=\'{$id}\';SUGAR.ajaxUI.submitForm(_form);" ' .
+                        'type="button" name="Duplicate" value="{$APP.LBL_DUPLICATE_BUTTON_LABEL}" ' .
+                        'id="duplicate_button"> ';
+                }
             break;
 
 			case "EDIT";
