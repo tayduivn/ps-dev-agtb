@@ -563,10 +563,10 @@
             'json_path' : 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
         },
         'emailInd' : {
-            'json_path' : 'DirectTelephoneInformationAvailableIndicator'
+            'json_path': 'DirectEmailInformationAvailableIndicator'
         },
         'phoneInd' : {
-            'json_path' : 'DirectEmailInformationAvailableIndicator'
+            'json_path': 'DirectTelephoneInformationAvailableIndicator'
         },
         'isDupe' : {
             'json_path' : 'isDupe'
