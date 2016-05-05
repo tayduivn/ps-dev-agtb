@@ -57,7 +57,8 @@ $yesNoSugarUpdates = !empty($_SESSION['setup_site_sugarbeet']) ? $mod_strings['L
 $yesNoCustomSession = !empty($_SESSION['setup_site_custom_session_path']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
 $yesNoCustomLog = !empty($_SESSION['setup_site_custom_log_dir']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
 $yesNoCustomId = !empty($_SESSION['setup_site_specify_guid']) ? $mod_strings['LBL_YES'] : $mod_strings['LBL_NO'];
-$demoData = ($sugar_config['default_language'] == 'en_us') ? ($mod_strings['LBL_YES']) : ($_SESSION['demoData']);
+$demoData = empty($_SESSION['demoData']) ? 'no' : $_SESSION['demoData'];
+$demoData = ($demoData == 'no') ? $mod_strings['LBL_NO'] : $mod_strings['LBL_YES'];
 
 // Populate the default date format, time format, and language for the system
 $defaultDateFormat = "";
