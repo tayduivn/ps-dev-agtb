@@ -74,22 +74,33 @@ class SugarUpgradeAddMeetingsAndCallsToEvents extends UpgradeScript
             $rows = $query->execute();
 
             foreach ($rows as $row) {
-                $bean = BeanFactory::getBean($module, $row['id']);
+                /** @var \Call | \Meeting $beanForUpdate */
+                $beanForUpdate = BeanFactory::getBean($module, $row['id']);
 
                 if ($verifyResult) {
-                    if (!empty($bean->repeat_parent_id)) {
-                        $bean->repeat_root_id = $bean->repeat_parent_id;
+                    if (!empty($beanForUpdate->repeat_parent_id)) {
+                        $beanForUpdate->repeat_root_id = $beanForUpdate->repeat_parent_id;
                     } else {
-                        $bean->repeat_root_id = $bean->id;
+                        $beanForUpdate->repeat_root_id = $beanForUpdate->id;
                     }
 
-                    if ($bean->repeat_type != 'Weekly') {
-                        $bean->repeat_dow = '';
+                    if ($beanForUpdate->repeat_type != 'Weekly') {
+                        $beanForUpdate->repeat_dow = '';
                     }
                 }
 
-                $bean->save(false, array('disableCalDavHook' => true));
-                $bean->getCalDavHook()->export($bean);
+                $beanForUpdate->save(false, array('disableCalDavHook' => true));
+            }
+
+            $query = $this->getQuery();
+            $query->from($bean);
+            $query->select(array('id'));
+            $query->where()->isEmpty('repeat_parent_id');
+            $rows = $query->execute();
+            foreach ($rows as $row) {
+                /** @var \Call | \Meeting $beanForExport */
+                $beanForExport = BeanFactory::getBean($module, $row['id']);
+                $beanForExport->getCalDavHook()->export($beanForExport, false, true);
             }
         }
     }
