@@ -154,6 +154,7 @@ class OpportunitiesSeedData {
             $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
             $amount = rand(1000, 7500);
             $opp->amount = $amount;
+            $opp->amount_usdollar = SugarMath::init($amount)->div($base_rate)->result();
             $opp->probability = $app_list_strings['sales_probability_dom'][$opp->sales_stage];
 
             //Setup forecast seed data
