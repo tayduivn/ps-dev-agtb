@@ -348,6 +348,52 @@ describe("enum field", function() {
                     getEditableDropdownFilterStub.restore();
                 });
             });
+
+        using('visibility grid',
+            [
+                {
+                    order: [{'90': '90', '1': 'One', '': ''}],
+                    expected: ['', '90', '1'],
+                    targetField: 'testField',
+                    targetValue: 'testValue',
+                    visibility_grid: {
+                        values: {}
+                    },
+                    modelValues: {
+                        'testField': 'testValue'
+                    }
+                },
+                {
+                    order: [{'90': '90', '1': 'One', '': ''}],
+                    expected: ['90', '1', ''],
+                    targetField: '',
+                    targetValue: 'testValue',
+                    visibility_grid: {
+                        values: {}
+                    },
+                    modelValues: {
+                    }
+                }
+            ],
+            function(provider) {
+                it('should correctly order the values', function() {
+                    var expected = provider.expected;
+                    field.def.visibility_grid = provider.visibility_grid;
+                    field.def.visibility_grid.trigger = provider.targetField;
+                    field.def.visibility_grid.values[provider.targetValue] = provider.expected;
+
+                    _.each(provider.modelValues, function(value, key) {
+                        field.model.set(key, value);
+                    });
+
+                    _order = provider.order;
+                    results = _.map(_order[0], function(label, key) {
+                        return {id: key, text: label};
+                    });
+                    results = field._sortResults(results);
+                    _expectOrder(results, expected);
+                });
+            });
     });
 
     describe('massupdate', function() {

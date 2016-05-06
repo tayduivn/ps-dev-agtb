@@ -558,26 +558,48 @@
             return results;
         }
 
-        // if it is not a dependency field (visibility_grid is not defined), we show the order from drop down list.
-        if (!this.def.visibility_grid) {
-            sortedResults = _.sortBy(results, function(item) {
-                return this._keysOrder[item.id];
-            }, this);
-            return sortedResults;
-        }
-
-        return results;
+        return _.sortBy(results, function(item) {
+            return this._keysOrder[item.id];
+        }, this);
     },
 
     _setupKeysOrder: function() {
-        var keys, orderedKeys, filteredOrderedKeys;
-        if (!this._keysOrder) {
+        var keys;
+        var orderedKeys;
+        var filteredOrderedKeys;
+        var visibilityGrid;
+
+        if (!_.isEmpty(this._keysOrder)) {
+            return;
+        }
+
+        visibilityGrid = this.def.visibility_grid || {};
+
+        var hasTrigger = visibilityGrid.values && visibilityGrid.trigger && this.model.has(visibilityGrid.trigger);
+
+        // in case we have visibility grid, build keys according to its order
+        if (hasTrigger) {
+            var trigger = this.model.get(visibilityGrid.trigger);
+            var _gridKeysOrder = visibilityGrid.values[trigger];
+
+            if (_gridKeysOrder) {
+                this._keysOrder = _.reduce(_gridKeysOrder, function(memo, value, index) {
+                    memo[value] = index;
+                    return memo;
+                }, {});
+
+                return;
+            }
+        } else {
             keys = _.keys(this.items);
             this._keysOrder = {};
+
             orderedKeys = _.map(app.lang.getAppListKeys(this.def.options), function(appListKey) {
                 return appListKey.toString();
             });
+
             filteredOrderedKeys = _.intersection(orderedKeys, keys);
+
             if (!_.isEqual(filteredOrderedKeys, keys)) {
                 _.each(filteredOrderedKeys, function(key, index) {
                     return this._keysOrder[key] = index;
