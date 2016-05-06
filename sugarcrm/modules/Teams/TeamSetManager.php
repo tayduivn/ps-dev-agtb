@@ -75,7 +75,11 @@ class TeamSetManager {
 				$tokens = explode('-', $module_table_name);
 				if(count($tokens) >= 3){
 					//we did find that this team_set was going to be removed from user_preferences
-					$userPrefResult = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE category = '" . $tokens[1] . "' AND deleted = 0", false, 'Failed to load user preferences');
+                    $sql = sprintf(
+                        'SELECT contents FROM user_preferences WHERE category = %s AND deleted = 0',
+                        $teamSetModule->db->quoted($tokens[1])
+                    );
+                    $userPrefResult = $teamSetModule->db->query($sql, 'Failed to load user preferences');
 					while ($userPrefRow = $teamSetModule->db->fetchByAssoc($userPrefResult)) {
 						$prefs = unserialize(base64_decode($userPrefRow['contents']));
 						$team_set_id = SugarArray::staticGet($prefs, implode('.', array_slice($tokens, 2)));
@@ -102,17 +106,27 @@ class TeamSetManager {
 		//now we have our list of team_set_ids we would like to remove, let's go ahead and do it and remember
 		//to update the TeamSetModule table.
 		foreach($arrayDiff as $team_set_id => $key){
-			//1) remove from team_sets_teams
-			$query1 = "DELETE FROM team_sets_teams WHERE team_set_id = '$team_set_id'";
-			$teamSetModule->db->query($query1);
+            //1) remove from team_sets_teams
+            $query1 = sprintf(
+                'DELETE FROM team_sets_teams WHERE team_set_id = %s',
+                $teamSetModule->db->quoted($team_set_id)
+            );
+            $teamSetModule->db->query($query1);
 
-			//2) remove from team_sets
-			$query2 = "DELETE FROM team_sets WHERE id = '$team_set_id'";
-			$teamSetModule->db->query($query2);
+            //2) remove from team_sets
+            $query2 = sprintf(
+                'DELETE FROM team_sets WHERE id = %s',
+                $teamSetModule->db->quoted($team_set_id)
+            );
+            $teamSetModule->db->query($query2);
 
-			//3) remove from team_sets_modules
-			$query3 = "DELETE FROM $teamSetModule->table_name WHERE team_set_id = '$team_set_id'";
-			$teamSetModule->db->query($query3);
+            //3) remove from team_sets_modules
+            $query3 = sprintf(
+                'DELETE FROM %s WHERE team_set_id = %s',
+                $teamSetModule->table_name,
+                $teamSetModule->db->quoted($team_set_id)
+            );
+            $teamSetModule->db->query($query3);
 		}
 		//clear out the cache
 		self::flushBackendCache();
@@ -152,10 +166,14 @@ class TeamSetManager {
     public static function doesRecordWithTeamSetExist($moduleTableName, $teamSetId, $beanId=false) 
     {
         $db = DBManagerFactory::getInstance();
-        $query = "SELECT COUNT(id) AS count FROM $moduleTableName WHERE team_set_id = '$teamSetId' AND deleted = 0";
+        $query = sprintf(
+            'SELECT COUNT(id) AS count FROM %s WHERE team_set_id = %s AND deleted = 0',
+            $moduleTableName,
+            $db->quoted($teamSetId)
+        );
 
         if ($beanId) {
-            $query .= " AND id != '$beanId'";
+            $query .= sprintf(' AND id != %s', $db->quoted($beanId));
         }
 
         $result = $db->query($query);
@@ -186,7 +204,11 @@ class TeamSetManager {
         }
 
         $db = DBManagerFactory::getInstance();
-        $query = "DELETE FROM team_sets_modules WHERE team_set_id = '$teamSetId' AND module_table_name='$focus->table_name'";
+        $query = sprintf(
+            'DELETE FROM team_sets_modules WHERE team_set_id = %s AND module_table_name = %s',
+            $db->quoted($teamSetId),
+            $db->quoted($focus->table_name)
+        );
         $db->query($query);
         self::flushBackendCache();
     }
@@ -417,7 +439,10 @@ class TeamSetManager {
 			$team_set_id = $row['id'];
 			$teamSetTeamIds = $teamSet->getTeams($team_set_id);
 
-			$teamSqlNoDelete = "SELECT team_id FROM team_sets_teams team_set_id = '$team_set_id'";
+            $teamSqlNoDelete = sprintf(
+                'SELECT team_id FROM team_sets_teams team_set_id = %s',
+                $teamSet->db->quoted($team_set_id)
+            );
 			$resultNoDelete = $teamSet->db->query($teamSqlNoDelete);
 			$teamIdsNoDelete = array();
 			while($rowNoDelete = $teamSet->db->fetchByAssoc($resultNoDelete)){
@@ -451,7 +476,11 @@ class TeamSetManager {
     public static function removeTeamFromSets($team_id){
 
 		$teamSet = BeanFactory::getBean('TeamSets');
-		$sql = "SELECT tsm.team_set_id, tsm.module_table_name FROM team_sets_modules tsm inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = '$team_id'";
+        $sql = sprintf(
+            'SELECT tsm.team_set_id, tsm.module_table_name FROM team_sets_modules tsm
+            inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = %s',
+            $teamSet->db->quoted($team_id)
+        );
     	$result = $teamSet->db->query($sql);
     	$affectedTeamSets = array();
 
@@ -460,36 +489,54 @@ class TeamSetManager {
     		  $team_set_id_modules[$row['team_set_id']][] = $row['module_table_name'];
     	}
 
-    	foreach($team_set_id_modules as $team_set_id=>$modules) {
-    	      $teamSet->id = $team_set_id;
-    	      $teamSet->removeTeamFromSet($team_id);
+        foreach ($team_set_id_modules as $team_set_id => $modules) {
+            $teamSet->id = $team_set_id;
+            $teamSet->removeTeamFromSet($team_id);
 
-    	      //Now check if the new team_md5 value already exists.  If it does, we have to go and
-    	      //update all the records that to use an existing team_set_id and get rid of this team set since
-    	      //it is essentially a duplicate
-    	      $sql = "SELECT id FROM team_sets WHERE team_md5 = '{$teamSet->team_md5}' AND id != '{$teamSet->id}'";
+            // Now check if the new team_md5 value already exists.  If it does, we have to go and
+            // update all the records that to use an existing team_set_id and get rid of this team set since
+            // it is essentially a duplicate
+            $sql = sprintf(
+                'SELECT id FROM team_sets WHERE team_md5 = %s AND id != %s',
+                $teamSet->db->quoted($teamSet->team_md5),
+                $teamSet->db->quoted($teamSet->id)
+            );
+                
     	      $result = $teamSet->db->query($sql);
     	      while($row = $teamSet->db->fetchByAssoc($result)) {
     	      	    $existing_team_set_id = $row['id'];
                     //Update the records
     	      	    foreach($modules as $module) {
-    	      	    	$sql = "UPDATE {$module} SET team_set_id = '{$existing_team_set_id}' WHERE team_set_id = '{$teamSet->id}'";
+                        $sql = sprintf(
+                            'UPDATE {$module} SET team_set_id = %s WHERE team_set_id = %s',
+                            $teamSet->db->quoted($existing_team_set_id),
+                            $teamSet->db->quoted($teamSet->id)
+                        );
                         $GLOBALS['log']->info($sql);
     	      	    	$teamSet->db->query($sql);
     	      	    }
 
     	      	    //Remove the team set entry
-                    $sql = "DELETE FROM team_sets WHERE id = '{$teamSet->id}'";
+                    $sql = sprintf(
+                        'DELETE FROM team_sets WHERE id = %s',
+                        $teamSet->db->quoted($teamSet->id)
+                    );
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
 
                     //Remove the team_sets_teams entries
-                    $sql = "DELETE FROM team_sets_teams WHERE team_set_id = '{$teamSet->id}'";
+                    $sql = sprintf(
+                        'DELETE FROM team_sets_teams WHERE team_set_id = %s',
+                        $teamSet->db->quoted($teamSet->id)
+                    );
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
 
                     //Remove the team_sets_modules entries
-                    $sql = "DELETE FROM team_sets_modules WHERE team_set_id = '{$teamSet->id}'";
+                    $sql = sprintf(
+                        'DELETE FROM team_sets_modules WHERE team_set_id = %s',
+                        $teamSet->db->quoted($teamSet->id)
+                    );
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
     	      }
@@ -500,4 +547,3 @@ class TeamSetManager {
 	    return $affectedTeamSets;
     }
 }
-?>
