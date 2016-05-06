@@ -53,7 +53,19 @@ class CountRelatedExpression extends NumericExpression
 
         // just the the length of the collection for the given linkField
         var target = this.context.target,
-            current_value = this.context.model.getRelatedCollection(linkField).length;
+            current_value = 0,
+            relatedColl = this.context.model.getRelatedCollection(linkField);
+
+        if (relatedColl.dataFetched) {
+            current_value = relatedColl.length;
+        } else if (this.context.model.has(linkField)) {
+            // check the case where related data still hasn't been loaded
+            // but we made a call to ExpressionEngine earlier
+            var link = this.context.model.get(linkField);
+            if (link.count) {
+                current_value = link.count;
+            }
+        }
 
         this.context.model.set(target, current_value);
         // update the relationship defs on the model
