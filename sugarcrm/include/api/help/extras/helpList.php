@@ -91,6 +91,16 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
         <?php foreach ($jsfiles as $file): ?>
         <script type="text/javascript" src="<?php echo $base_path . $file ?>"></script>
         <?php endforeach; ?>
+
+        <script type="text/javascript">
+            function openLongHelp($hash) {
+                var link = $('#help_link_' + $hash);
+                if ($('#endpoint_' + $hash + '_full').hasClass('collapse')) { // closed
+                    link.click();
+                }
+                $('html, body').animate({ scrollTop: link.offset().top }, 1000);
+            }
+        </script>
     </head>
 
     <body>
@@ -120,7 +130,8 @@ if (substr($_SERVER['REQUEST_URI'], -1) == '/') {
 
                     <div class="span3">
                         <?php echo htmlspecialchars($endpoint['reqType']) ?>
-                        <span class="btn-link" type="button" data-toggle="collapse" data-target="#endpoint_<?php echo $i ?>_full">
+                        <span id="help_link_<?php echo $i ?>" class="btn-link" type="button" data-toggle="collapse"
+                              data-target="#endpoint_<?php echo $i ?>_full">
                             <?php echo htmlspecialchars($endpoint['fullPath']) ?>
                         </span>
                     </div>
