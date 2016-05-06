@@ -16,7 +16,7 @@ namespace Sugarcrm\SugarcrmTests\Dav\Cal\Adapter;
  * Class AdapterCRYS1399Test
  * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract
  */
-class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
+class PrepareForImportTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \User */
     protected $origUser;
@@ -159,6 +159,35 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 ),
                 'groupId' => $groupId,
             ),
+            'Change date end of events' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('ChangeDateTimeEndEvents.before'),
+                'after' => static::getSourceIcsFile('ChangeDateTimeEndEvents.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'date_end' => array('2016-03-13 09:00:00', '2016-03-13 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-03-14 06:00:00', 1, $groupId),
+                        array(
+                            'date_end' => array('2016-03-14 09:00:00', '2016-03-14 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-03-15 06:00:00', 2, $groupId),
+                        array(
+                            'date_end' => array('2016-03-15 09:00:00', '2016-03-15 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
             'Change the time of the events in the parent' => array(
                 'participants_links' => $participants_links,
                 'before' => static::getSourceIcsFile('ChangeTheTimeOfTheEventsInTheParent.before'),
@@ -185,7 +214,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                             'update',
                             null,
                             null,
-                            '2016-04-27 06:00:00',
+                            null,
                             null,
                             $groupId,
                         ),
@@ -231,19 +260,32 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('AddedInvitees.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, null, null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_count' => array('1', '7'),
                         ),
                         array(),
                     ),
-
                     array(
-                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
-                        array(),
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'title' => array('Week Events Change Name For All'),
+                            'description' => array(null),
+                            'location' => array('Minsk, SugaCRM Office'),
+                            'status' => array(null),
+                            'date_start' => array('2016-03-11 06:00:00'),
+                            'date_end' => array('2016-03-11 07:00:00'),
+                        ),
                         array(
                             'added' => array(
+                                array(
+                                    'Addressees',
+                                    $addressees['test_1@test.com']['beanId'],
+                                    'test_1@test.com',
+                                    null,
+                                    'test_1@test.com',
+                                ),
                                 array(
                                     'Addressees',
                                     $addressees['test_2@test.com']['beanId'],
@@ -263,7 +305,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('SingleEvent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-10 09:00:00', null, $groupId),
+                        array('update', null, null, null, null, $groupId),
                         array(
                             'timezone' => array('Europe/Minsk', 'UTC'),
                             'title' => array('Single Event', 'Single'),
@@ -291,7 +333,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('WeeklyEvent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-02 06:00:00', null, $groupId),
+                        array('update', null, null, null, null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_until' => array('2016-03-22 20:59:00', '2016-03-29 20:59:00'),
@@ -299,10 +341,14 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-02 06:00:00', null, $groupId),
+                        array('override', null, null, null, null, $groupId),
                         array(
-                            'date_start' => array('2016-03-02 06:00:00', '2016-03-01 06:00:00'),
-                            'date_end' => array('2016-03-02 07:00:00', '2016-03-01 07:00:00'),
+                            'date_start' => array('2016-03-02 06:00:00'),
+                            'date_end' => array('2016-03-02 07:00:00'),
+                            'title' => array('Weekly Event'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
                         ),
                         array(),
                     ),
@@ -352,7 +398,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('NewEvents.after'),
                 'expected' => array(
                     array(
-                        array('override', null, null, '2016-03-01 06:00:00', null, $groupId),
+                        array('override', null, null, null, null, $groupId),
                         array(
                             'rrule_action' => 'added',
                             'rrule_frequency' => array('DAILY'),
@@ -407,7 +453,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('restore', null, null, '2016-03-04 06:00:00', 3, $groupId),
+                        array('override', null, null, '2016-03-04 06:00:00', 3, $groupId),
                         array(
                             'title' => array('Week Events Change Name For 4'),
                             'date_start' => array('2016-03-04 06:00:00'),
@@ -463,7 +509,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('AddTimes.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-06 06:00:00', null, $groupId),
+                        array('update', null, null, null, null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_count' => array('5', '3'),
@@ -527,7 +573,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeDateTimeStartEvents.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-13 08:00:00', null, $groupId),
+                        array('update', null, null, null, null, $groupId),
                         array(
                             'date_start' => array('2016-03-13 08:00:00', '2016-03-13 06:00:00'),
                             'date_end' => array('2016-03-13 09:00:00', '2016-03-13 07:00:00'),
@@ -535,7 +581,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-14 08:00:00', 1, $groupId),
+                        array('override', null, null, '2016-03-14 08:00:00', 1, $groupId),
                         array(
                             'date_start' => array('2016-03-14 08:00:00'),
                             'date_end' => array('2016-03-14 09:00:00'),
@@ -547,7 +593,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-15 08:00:00', 2, $groupId),
+                        array('override', null, null, '2016-03-15 08:00:00', 2, $groupId),
                         array(
                             'date_start' => array('2016-03-15 08:00:00'),
                             'date_end' => array('2016-03-15 09:00:00'),
@@ -568,15 +614,19 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeUntilDate.after'),
                 'expected' => array(
                     array(
-                        array('update', null, null, '2016-03-14 06:00:00', null, $groupId),
+                        array('override', null, null, null, null, $groupId),
                         array(
-                            'date_start' => array('2016-03-14 06:00:00', '2016-03-13 06:00:00'),
-                            'date_end' => array('2016-03-14 07:00:00', '2016-03-13 07:00:00'),
+                            'date_start' => array('2016-03-14 06:00:00'),
+                            'date_end' => array('2016-03-14 07:00:00'),
+                            'title' => array('until the end of the week'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-15 06:00:00', 1, $groupId),
+                        array('override', null, null, '2016-03-15 06:00:00', 1, $groupId),
                         array(
                             'date_start' => array('2016-03-15 06:00:00'),
                             'date_end' => array('2016-03-15 07:00:00'),
@@ -588,7 +638,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-16 06:00:00', 2, $groupId),
+                        array('override', null, null, '2016-03-16 06:00:00', 2, $groupId),
                         array(
                             'date_start' => array('2016-03-16 06:00:00'),
                             'date_end' => array('2016-03-16 07:00:00'),
@@ -600,7 +650,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-17 06:00:00', 3, $groupId),
+                        array('override', null, null, '2016-03-17 06:00:00', 3, $groupId),
                         array(
                             'date_start' => array('2016-03-17 06:00:00'),
                             'date_end' => array('2016-03-17 07:00:00'),
@@ -612,7 +662,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-18 06:00:00', 4, $groupId),
+                        array('override', null, null, '2016-03-18 06:00:00', 4, $groupId),
                         array(
                             'date_start' => array('2016-03-18 06:00:00'),
                             'date_end' => array('2016-03-18 07:00:00'),
@@ -624,7 +674,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, null, '2016-03-19 06:00:00', 5, $groupId),
+                        array('override', null, null, '2016-03-19 06:00:00', 5, $groupId),
                         array(
                             'date_start' => array('2016-03-19 06:00:00'),
                             'date_end' => array('2016-03-19 07:00:00'),
@@ -634,6 +684,298 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                             'status' => array(null),
                         ),
                         array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Change rrule with custom child and RSVP' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('RruleAndEnviteeStatusChanged.before'),
+                'after' => static::getSourceIcsFile('RruleAndEnviteeStatusChanged.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'rrule_action' => 'updated',
+                            'rrule_count' => array('4', '3'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array(
+                            'override', null, null, null, null, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-17 06:00:00'),
+                            'date_end' => array('2016-05-17 07:00:00'),
+                        ),
+                        array(
+                            'added' => array(
+                                array(
+                                    'Addressees',
+                                    $addressees['test_1@test.com']['beanId'],
+                                    'test_1@test.com',
+                                    'NEEDS-ACTION',
+                                    'test_1@test.com',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        array('override', null, null, '2016-05-18 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring 1'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-18 06:00:00'),
+                            'date_end' => array('2016-05-18 07:00:00'),
+                        ),
+                        array(
+                            'added' => array(
+                                array(
+                                    'Addressees',
+                                    $addressees['test_1@test.com']['beanId'],
+                                    'test_1@test.com',
+                                    'NEEDS-ACTION',
+                                    'test_1@test.com',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        array('override', null, null, '2016-05-19 06:00:00', 2, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-19 06:00:00'),
+                            'date_end' => array('2016-05-19 07:00:00'),
+                        ),
+                        array(
+                            'added' => array(
+                                array(
+                                    'Addressees',
+                                    $addressees['test_1@test.com']['beanId'],
+                                    'test_1@test.com',
+                                    'NEEDS-ACTION',
+                                    'test_1@test.com',
+                                ),
+                            ),
+                        ),
+                    ),
+                    array(
+                        array('override', null, null, '2016-05-20 06:00:00', 3, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-20 06:00:00'),
+                            'date_end' => array('2016-05-20 07:00:00'),
+                        ),
+                        array(
+                            'added' => array(
+                                array(
+                                    'Addressees',
+                                    $addressees['test_1@test.com']['beanId'],
+                                    'test_1@test.com',
+                                    'NEEDS-ACTION',
+                                    'test_1@test.com',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Move recurrence to day before' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('MoveRecurringToOneDay.before'),
+                'after' => static::getSourceIcsFile('MoveRecurringToOneDay.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'date_start' => array('2016-05-17 06:00:00', '2016-05-18 06:00:00'),
+                            'date_end' => array('2016-05-17 07:00:00', '2016-05-18 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('override', null, null, '2016-05-18 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-18 06:00:00'),
+                            'date_end' => array('2016-05-18 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Expand rrule with deleted children' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('ExpandRRuleWithDeletedChildren.before'),
+                'after' => static::getSourceIcsFile('ExpandRRuleWithDeletedChildren.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'rrule_action' => 'updated',
+                            'rrule_count' => array('3', '2'),
+                        ),
+                        array(),
+                    ),
+
+                    array(
+                        array('override', null, null, '2016-05-20 06:00:00', 2, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-20 06:00:00'),
+                            'date_end' => array('2016-05-20 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Split recurring with custom parent' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('SplitRecurringWithCustomParent.before'),
+                'after' => static::getSourceIcsFile('SplitRecurringWithCustomParent.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'rrule_action' => 'updated',
+                            'rrule_count' => array('2', '4'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'title' => array('test recurring splitted'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-20 06:00:00'),
+                            'date_end' => array('2016-05-20 07:00:00'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                            array('override', null, null, '2016-05-21 06:00:00', 1, $groupId),
+                            array(
+                                'title' => array('test recurring splitted'),
+                                'description' => array(null),
+                                'location' => array(null),
+                                'status' => array(null),
+                                'date_start' => array('2016-05-21 06:00:00'),
+                                'date_end' => array('2016-05-21 07:00:00'),
+                            ),
+                            array(),
+                    )
+                ),
+                'groupId' => $groupId,
+            ),
+            'Split until recurring with custom parent' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('SplitUntilRecurringWithCustomParent.before'),
+                'after' => static::getSourceIcsFile('SplitUntilRecurringWithCustomParent.after'),
+                'expected' => array(
+                    array(
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'title' => array('test until'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-20 06:00:00'),
+                            'date_end' => array('2016-05-20 07:00:00'),
+                        ),
+                        array(
+                            'added' =>
+                                array(array(null, null, 'sally@example.com', null, 'Sally Bronsen')),
+                        ),
+                    ),
+
+                    array(
+                        array('override', null, null, '2016-05-21 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test until'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-21 06:00:00'),
+                            'date_end' => array('2016-05-21 07:00:00'),
+                        ),
+                        array(
+                            'added' =>
+                                array(array(null, null, 'sally@example.com', null, 'Sally Bronsen')),
+                        ),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Split recurring with custom splitter' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('SplitRecurringWithCustomSplitter.before'),
+                'after' => static::getSourceIcsFile('SplitRecurringWithCustomSplitter.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'rrule_action' => 'updated',
+                            'rrule_count' => array('2', '4'),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'title' => array('test recurring 2'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-20 07:00:00'),
+                            'date_end' => array('2016-05-20 08:00:00'),
+                        ),
+                        array(
+                            'added' => array(
+                                array(null, null, 'tom@example.com', null, 'Max Jensen'),
+                                array(null, null, 'sally@example.com', 'NEEDS-ACTION', 'Sally Bronsen'),
+                            ),
+                        ),
+                    ),
+                    array(
+                        array('override', null, null, '2016-05-21 07:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-21 07:00:00'),
+                            'date_end' => array('2016-05-21 08:00:00'),
+                        ),
+                        array(
+                            'added' =>
+                                array(
+                                    array(null, null, 'tom@example.com', null, 'Max Jensen'),
+                                    array(null, null, 'sally@example.com', 'NEEDS-ACTION', 'Sally Bronsen'),
+                                ),
+                        ),
                     ),
                 ),
                 'groupId' => $groupId,

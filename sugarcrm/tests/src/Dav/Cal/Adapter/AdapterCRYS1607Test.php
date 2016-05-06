@@ -71,7 +71,6 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
                     array('update', 'Meeting', $beanMeeting->id, null, null, '1'),
                     array(
                         'status' => array('Planned'),
-                        'timezone' => array(null),
                     ),
                     array(),
                 ),
