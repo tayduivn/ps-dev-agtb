@@ -25,25 +25,6 @@
     },
 
     /**
-     * @inheritdoc
-     *
-     * Hide `forgot password` tooltip when clicking anywhere outside the link.
-     */
-    initialize: function(options) {
-        var self = this;
-
-        this._super('initialize', [options]);
-
-        $(document).on('click.login', function(event) {
-            var $forgotPassword = self.$('#forgot-password'),
-                forgotPassword = $forgotPassword.get(0);
-            if (!$.contains(forgotPassword, event.target)) {
-                app.utils.tooltip.hide(forgotPassword);
-            }
-        });
-    },
-
-    /**
      * Navigate to the `Signup` view.
      */
     signup: function() {
