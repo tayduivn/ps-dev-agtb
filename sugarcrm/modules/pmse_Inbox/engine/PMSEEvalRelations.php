@@ -40,6 +40,7 @@ trait PMSEEvalRelations
             "ends_with",
             "contains",
             "does_not_contain",
+            "changes",
             "changes_from",
             "changes_to"
         );
@@ -51,14 +52,23 @@ trait PMSEEvalRelations
             }
             $operator = $arrayRelationsLit[$index];
         }
-        $value1 = $this->typeData($value1, $typeDate);
-        $value2 = $this->typeData($value2, $typeDate);
+        if (isset($value1)) {
+            $value1 = $this->typeData($value1, $typeDate);
+        }
+        if (isset($value2)) {
+            $value2 = $this->typeData($value2, $typeDate);
+        }
         $this->condition .= ':(' . is_array($value1) ? encodeMultienumValue($value1) : $value1 . '):';
         switch ($operator) {
             case 'equals':
+                $result = $value1 == $value2 ? 1 : 0;
+                break;
+            case 'changes':
+                $result = isset($value1) ? 1 : 0;
+                break;
             case 'changes_from':
             case 'changes_to':
-                $result = $value1 == $value2 ? 1 : 0;
+                $result = (isset($value1) && $value1 == $value2) ? 1 : 0;
                 break;
             case 'not_equals':
                 $result = $value1 != $value2 ? 1 : 0;

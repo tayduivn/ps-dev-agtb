@@ -129,6 +129,7 @@ ExpressionControl.prototype.OPERATORS  = {
 };
 
 ExpressionControl.prototype.initComparisonOperators = function(module) {
+    var changesLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES', module);
     var fromLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_FROM', module);
     var toLabel = App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_TO', module);
     ExpressionControl.prototype.OPERATORS.comparison = [
@@ -181,7 +182,13 @@ ExpressionControl.prototype.initComparisonOperators = function(module) {
                 value: "does_not_contain"
         }
     ];
-    ExpressionControl.prototype.OPERATORS.changed = [
+    ExpressionControl.prototype.OPERATORS.changes = [
+        {
+            text: changesLabel,
+            textfield: changesLabel,
+            datefield: changesLabel,
+            value: 'changes'
+        },
         {
             text: fromLabel,
             textfield: fromLabel,
@@ -1085,26 +1092,28 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                         value = that._getStringOrNumber(data.value);
                     }
                     valueType = typeof data.value === 'string' ? typeof value : typeof data.value;
-                    label = subpanel.getItem("field").getSelectedText() + " " +
-                            subpanel.getItem("operator").getSelectedText() + " ";
+                    var op = subpanel.getItem('operator').getSelectedText();
+                    label = subpanel.getItem('field').getSelectedText() + ' ' + op + ' ';
 
-                    switch (aux[1]) {
-                        case 'Date':
-                        case 'Datetime':
-                            label += '%VALUE%';
-                            break;
-                        case 'user':
-                        case 'DropDown':
-                            label += valueField.getSelectedText();
-                            break;
-                        case 'Currency':
-                            label += valueField.getCurrencyText() + ' %VALUE%';
-                            break;
-                        case 'MultiSelect':
-                            label += valueField.getSelectionAsText();
-                            break;
-                        default:
-                            label += (valueType === "string" ? "\"" + value + "\"" : data.value);
+                    if (op != 'changes') {
+                        switch (aux[1]) {
+                            case 'Date':
+                            case 'Datetime':
+                                label += '%VALUE%';
+                                break;
+                            case 'user':
+                            case 'DropDown':
+                                label += valueField.getSelectedText();
+                                break;
+                            case 'Currency':
+                                label += valueField.getCurrencyText() + ' %VALUE%';
+                                break;
+                            case 'MultiSelect':
+                                label += valueField.getSelectionAsText();
+                                break;
+                            default:
+                                label += (valueType === 'string' ? '"' + value + '"' : data.value);
+                        }
                     }
                     
                     itemData = {
@@ -1497,7 +1506,8 @@ ExpressionControl.prototype._createModulePanel = function () {
                     labelField: "text",
                     valueField: "value",
                     required: true,
-                    options: this.OPERATORS.comparison
+                    options: this.OPERATORS.comparison,
+                    dependantFields: ['value']
                 },
                 {
                     type: "text",
@@ -1506,113 +1516,132 @@ ExpressionControl.prototype._createModulePanel = function () {
                     width: "35%",
                     required: true,
                     dependencyHandler: function (dependantField, parentField, value) {
-                        var type = value.split(that._auxSeparator)[1],
-                            newField, items = [], itemsObj, keys, operators, newFieldSettings, operatorField,
-                            labelField = 'text', aux,
-                            form = dependantField.getForm(),
-                            selVal = $('#evn_params').val(),
-                            modVal = form.getItem('module')._value;
-                        type = type && that._typeToControl[type.toLowerCase()];
-                        if ((type && type !== currentType) || type === 'dropdown' ||
-                            selVal !== currentVal || modVal !== currentMod) {
-                            currentType = type;
-                            currentVal = selVal;
-                            currentMod = modVal;
-
-                            newFieldSettings = {
-                                type: type,
-                                width: dependantField.width,
-                                label: dependantField.getLabel(),
-                                name: dependantField.getName()
-                            };
-
-                            if (type === 'dropdown' || type === 'multiselect' || type === 'radio') {
-                                aux = parentField.getSelectedData();
-                                if (aux) {
-                                    itemsObj = aux["optionItem"];
+                        var operatorField;
+                        if (parentField.getName() == 'field') {
+                            var form = dependantField.getForm(),
+                                type = value.split(that._auxSeparator)[1],
+                                selVal = $('#evn_params').val(),
+                                modVal = form.getItem('module')._value;
+                            type = type && that._typeToControl[type.toLowerCase()];
+                            operatorField = form.getItem('operator');
+                            if ((type && type !== currentType) ||
+                                type === 'dropdown' ||
+                                selVal !== currentVal ||
+                                modVal !== currentMod) {
+                                var labelField = 'textfield',
+                                    newFieldSettings = {
+                                        type: type,
+                                        width: dependantField.width,
+                                        label: dependantField.getLabel(),
+                                        name: dependantField.getName()
+                                    },
+                                    operators = that.OPERATORS.comparison.slice(0, 2),
+                                    setPrecision = true,
+                                    setGrouping = true;
+                                currentType = type;
+                                currentVal = selVal;
+                                currentMod = modVal;
+                                switch (type) {
+                                    case 'checkbox':
+                                        labelField = 'text';
+                                        break;
+                                    case 'dropdown':
+                                        labelField = 'text';
+                                    case 'multiselect':
+                                        var aux = parentField.getSelectedData() ||
+                                                parentField._getFirstAvailableOption(),
+                                            itemsObj = aux.optionItem;
+                                        newFieldSettings.options = [];
+                                        Object.keys(itemsObj).forEach(function(item, index, arr) {
+                                            newFieldSettings.options.push({
+                                                value: item,
+                                                label: itemsObj[item]
+                                            });
+                                        });
+                                        break;
+                                    case 'friendlydropdown':
+                                        newFieldSettings.options = [
+                                            {
+                                                'label': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'),
+                                                'value': 'currentuser'
+                                            },
+                                            {
+                                                'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'),
+                                                'value': 'owner'
+                                            },
+                                            {
+                                                'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'),
+                                                'value': 'supervisor'
+                                            }
+                                        ];
+                                        newFieldSettings.searchMore = {
+                                            module: 'Users',
+                                            fields: ['id', 'full_name'],
+                                            filterOptions: null
+                                        };
+                                        newFieldSettings.searchValue = PMSE_USER_SEARCH.value;
+                                        newFieldSettings.searchLabel = PMSE_USER_SEARCH.text;
+                                        newFieldSettings.searchURL = PMSE_USER_SEARCH.url;
+                                        break;
+                                    case 'datetime':
+                                        newFieldSettings.timeFormat = that._timeFormat;
+                                    case 'date':
+                                        newFieldSettings.dateFormat = that._dateFormat;
+                                        operators = that.OPERATORS.comparison.slice(0, 6);
+                                        labelField = 'datefield';
+                                        break;
+                                    case 'currency':
+                                        newFieldSettings.currencies = that._currencies;
+                                        newFieldSettings.precision = 2;
+                                        setPrecision = false;
+                                        newFieldSettings.groupingSeparator = that._numberGroupingSeparator;
+                                        setGrouping = false;
+                                    case 'decimal':
+                                    case 'float':
+                                    case 'number':
+                                        if (setPrecision) {
+                                            newFieldSettings.precision = -1;
+                                            setPrecision = false;
+                                        }
+                                    case 'integer':
+                                        labelField = 'text';
+                                        if (setPrecision) {
+                                            newFieldSettings.precision = 0;
+                                        }
+                                        if (setGrouping) {
+                                            newFieldSettings.groupingSeparator = '';
+                                        }
+                                        newFieldSettings.decimalSeparator = that._decimalSeparator;
+                                        operators = that.OPERATORS.comparison.slice(0, 6);
+                                        break;
+                                    case 'text':
+                                        operators = that.OPERATORS.comparison.slice();
+                                        operators.splice(2, 4);
+                                        break;
+                                    default:
                                 }
-                                else {
-                                    itemsObj = parentField._getFirstAvailableOption()["optionItem"];
+                                if (that.EXTRA_OPERATORS[labelField]) {
+                                    operators = operators.concat(that.EXTRA_OPERATORS[labelField]);
                                 }
-                                keys = Object.keys(itemsObj);
-                                keys.forEach(function (item, index, arr) {
-                                    items.push({
-                                        value: item,
-                                        label: itemsObj[item]
-                                    });
-                                });
-                                newFieldSettings.options = items;
-                            } else if (type === 'friendlydropdown') {
-                                newFieldSettings.options = [
-                                    {'label': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
-                                    {'label': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
-                                    {'label': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
-                                ];
-                                newFieldSettings.searchMore = {
-                                    module: "Users",
-                                    fields: ["id", "full_name"],
-                                    filterOptions: null
-                                };
-                                newFieldSettings.searchValue = PMSE_USER_SEARCH.value;
-                                newFieldSettings.searchLabel = PMSE_USER_SEARCH.text;
-                                newFieldSettings.searchURL = PMSE_USER_SEARCH.url;
-                            }
-                            operatorField = form.getItem("operator");
-
-                            switch (type) {
-                                case 'datetime':
-                                    newFieldSettings.timeFormat = that._timeFormat;
-                                case 'date':
-                                    labelField = "datefield";
-                                    operators = that.OPERATORS.comparison.slice(0, 6);
-                                    newFieldSettings.dateFormat = that._dateFormat;
-                                    break;
-                                case 'currency':
-                                    newFieldSettings.currencies = that._currencies;
-                                case 'decimal':
-                                case 'float':
-                                case 'integer':
-                                    operators = that.OPERATORS.comparison.slice(0, 6);
-                                    newFieldSettings.precision =
-                                        (type === 'integer' ? 0 : (type === 'currency' ? 2 : -1));
-                                    newFieldSettings.groupingSeparator =
-                                        (type === 'currency' ? that._numberGroupingSeparator : "");
-                                    newFieldSettings.decimalSeparator = that._decimalSeparator;
-                                    break;
-                                case 'text':
-                                    labelField = "textfield";
-                                    operators = that.OPERATORS.comparison.slice();
-                                    operators.splice(2, 4);
-                                    break;
-                                default:
-                                    if (type !== "dropdown" && type !== "checkbox") {
-                                        labelField = "textfield";
+                                if (selVal == 'updated' || selVal == 'allupdates') {
+                                    var url = parentField._dataURL,
+                                        base = parentField._attributes ? parentField._attributes.base_module : false;
+                                    if (url && base && url.endsWith(base)) {
+                                        operators = operators.concat(that.OPERATORS.changes);
                                     }
-                                    operators = that.OPERATORS.comparison.slice(0, 2);
-                            }
-                            if (that.EXTRA_OPERATORS[labelField]) {
-                                operators = operators.concat(that.EXTRA_OPERATORS[labelField]);
-                            }
-                            if ((selVal == 'updated' || selVal == 'allupdates')) {
-                                var url = parentField._dataURL;
-                                var base = parentField._attributes ? parentField._attributes.base_module : false;
-                                if (url && base && url.endsWith(base)) {
-                                    operators = operators.concat(that.OPERATORS.changed);
                                 }
+                                operatorField.setLabelField(labelField);
+                                operatorField.setOptions(operators);
+                                var newField = form._createField(newFieldSettings);
+                                form.replaceItem(newField, dependantField);
+                                newField.setDependencyHandler(dependantField._dependencyHandler);
+                                dependantField = newField;
                             }
-                            operatorField.setLabelField(labelField);
-                            operatorField.setOptions(operators);
-
-                            newField = form._createField(newFieldSettings);
-
-                            form.replaceItem(newField, dependantField);
-                            newField.setDependencyHandler(dependantField._dependencyHandler);
+                        } else {
+                            operatorField = parentField;
                         }
-
-                        /*if (type && constructor = that._typeToControl[type.toLowerCase()]) {
-
-                            form.replaceItem(form._createField());
-                        }*/
+                        var showValue = (operatorField.getValue() != 'changes');
+                        dependantField.setVisible(showValue);
                     }
                 }
             ],
@@ -2359,7 +2388,10 @@ ExpressionControl.prototype.isValid = function() {
 
         if (cIsEval || (current.expType === "GROUP" && current.expValue === "(") || (current.expType === "LOGIC" && current.expValue === "NOT")) {
             valid = !(prev && (pIsEval || (prev.expType === "GROUP" && prev.expValue === ")")));
-            if (valid && (current.expOperator == 'changes_from' || current.expOperator == 'changes_to')) {
+            if (valid &&
+                (current.expOperator == 'changes' ||
+                    current.expOperator == 'changes_from' ||
+                    current.expOperator == 'changes_to')) {
                 var selVal = $('#evn_params').val();
                 valid = selVal == 'updated' || selVal == 'allupdates';
             }

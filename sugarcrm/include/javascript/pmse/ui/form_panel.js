@@ -1408,6 +1408,22 @@ FormPanelDatetime.prototype.close = function() {
     return FormPanelDate.prototype.close.call(this).closeTime();
 };
 
+FormPanelDatetime.prototype.enable = function() {
+    if (this._htmlControl.length) {
+        this._htmlControl[0].disabled = false;
+        jQuery(this._htmlControl[1]).prop('readonly', false);
+    }
+    return FormPanelItem.prototype.enable.call(this);
+};
+
+FormPanelDatetime.prototype.disable = function() {
+    if (this._htmlControl.length) {
+        this._htmlControl[0].disabled = true;
+        jQuery(this._htmlControl[1]).prop('readonly', true);
+    }
+    return FormPanelItem.prototype.disable.call(this);
+};
+
 FormPanelDatetime.prototype._setValueToControl = function (value) {
     var date, time;
     if (!this._htmlControl.length) {

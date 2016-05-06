@@ -324,6 +324,7 @@ $mod_strings = array (
     'LBL_PMSE_EXPCONTROL_OPERATOR_CONTAINS_TEXT' => 'contains',
     'LBL_PMSE_EXPCONTROL_OPERATOR_NOT_CONTAINS_TEXT' => 'does not contain',
 
+    'LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES' => 'changes',
     'LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_FROM' => 'changes from',
     'LBL_PMSE_EXPCONTROL_OPERATOR_CHANGES_TO' => 'changes to',
 
