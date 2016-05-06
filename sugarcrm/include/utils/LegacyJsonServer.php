@@ -267,7 +267,7 @@ class LegacyJsonServer
             }
             if ($condition['name'] == 'email1' or $condition['name'] == 'email2' or $condition['name'] == 'email') {
 
-                $email1_value = strtoupper($condition['value']);
+                $email1_value = $GLOBALS['db']->quote(strtoupper($condition['value']));
                 $email1_condition = " {$table}id in ( SELECT  er.bean_id AS id FROM email_addr_bean_rel er, " .
                     "email_addresses ea WHERE ea.id = er.email_address_id " .
                     "AND ea.deleted = 0 AND er.deleted = 0 AND er.bean_module = '{$module}' AND email_address_caps LIKE '%{$email1_value}%' )";
@@ -276,11 +276,13 @@ class LegacyJsonServer
             } elseif ($condition['name'] == 'account_name' && $module == "Contacts") {
                 $account_name = " {$table}id in ( SELECT  lnk.contact_id AS id FROM accounts ac, " .
                     "accounts_contacts lnk WHERE ac.id = lnk.account_id " .
-                    "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+                    "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%" .
+                    $GLOBALS['db']->quote($condition['value']) . "%' )";
                 array_push($cond_arr, $account_name);
             } elseif ($condition['name'] === 'account_name' && $module === 'Leads') {
                 $account_name = " {$table}id in ( SELECT leads.id AS id FROM accounts ac, leads " .
-                    "WHERE ac.id = leads.account_id AND ac.deleted = 0 AND leads.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+                    "WHERE ac.id = leads.account_id AND ac.deleted = 0 AND leads.deleted = 0 AND ac.name LIKE '%" .
+                    $GLOBALS['db']->quote($condition['value']) . "%' )";
                 array_push($cond_arr, $account_name);
             } elseif ($condition['name'] === 'full_name') {
                 $query_parts = explode(' ', $condition['value']);
