@@ -11,7 +11,7 @@
  */
 
 /**
- * @coversDefaultClass ForecastWorksheet
+ * @covers ForecastWorksheet
  */
 
 require_once 'tests/SugarTestDatabaseMock.php';
@@ -71,7 +71,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSaveWorksheet
-     * @covers ::saveWorksheet
+     * @covers ForecastWorksheet::saveWorksheet
      */
     public function testSaveWorksheet($klass_name, $module_name, $likely_field)
     {
@@ -114,7 +114,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSaveWorksheet
-     * @covers ::saveWorksheet
+     * @covers ForecastWorksheet::saveWorksheet
      */
     public function testSaveWorksheetDoesNotUpdateDateClosed($klass_name, $module_name, $likely_field)
     {
@@ -157,7 +157,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSaveWorksheet
-     * @covers ::saveWorksheet
+     * @covers ForecastWorksheet::saveWorksheet
      */
     public function testSaveWorksheetDoesNotOverwriteBestWorst($klass_name, $module_name, $likely_field)
     {
@@ -199,7 +199,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::setWorksheetArgs
+     * @covers ForecastWorksheet::setWorksheetArgs
      */
     public function testSetWorksheetArgs()
     {
@@ -242,7 +242,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSaveRelatedOpportunity
-     * @covers ::saveRelatedOpportunity
+     * @covers ForecastWorksheet::saveRelatedOpportunity
      * @param $isCommit
      * @param $opp_values
      */
@@ -289,7 +289,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::saveRelatedProduct
+     * @covers ForecastWorksheet::saveRelatedProduct
      */
     public function testSaveRelatedProduct()
     {
@@ -339,7 +339,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::saveRelatedProduct
+     * @covers ForecastWorksheet::saveRelatedProduct
      */
     public function testSaveRelatedProductFetchedRelatedName()
     {
@@ -408,7 +408,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::commitWorksheet
+     * @covers ForecastWorksheet::commitWorksheet
      * @param $forecastSetup
      * @param $timePeriodId
      * @dataProvider dataProviderCommitWorksheetReturnFalse
@@ -455,7 +455,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderCommitWorksheet
-     * @covers ::commitWorksheet
+     * @covers ForecastWorksheet::commitWorksheet
      * @param string $type
      * @param string $bean
      */
@@ -556,7 +556,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
     /**
      * @dataProvider dataProviderRemoveMigratedRow
-     * @covers ::removeMigratedRow
+     * @covers ForecastWorksheet::removeMigratedRow
      */
     public function testRemoveMigratedRow($hasMigrated)
     {
@@ -641,7 +641,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
     /**
      * @dataProvider dataProviderCopyValues
-     * @covers ::copyValues
+     * @covers ForecastWorksheet::copyValues
      */
     public function testCopyValues($fields, $values)
     {
@@ -681,7 +681,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderProcessWorksheetDataChunk
-     * @covers  processWorksheetDataChunk
+     * @covers ForecastWorksheet::processWorksheetDataChunk
      */
     public function testProcessWorksheetDataChunk($type, $bean, $data)
     {
@@ -715,7 +715,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::createUpdateForecastWorksheetJob
+     * @covers ForecastWorksheet::createUpdateForecastWorksheetJob
      */
     public function testCreateUpdateForecastWorksheetJob()
     {
@@ -748,7 +748,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getRelatedName
+     * @covers ForecastWorksheet::getRelatedName
      */
     public function testGetRelatedNameReturnsEmpty()
     {
@@ -772,7 +772,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getRelatedName
+     * @covers ForecastWorksheet::getRelatedName
      */
     public function testGetRelatedNameReturnsName()
     {
@@ -799,7 +799,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider removeReassignedItemsProvider
-     * @covers ::removeReassignedItems
+     * @covers ForecastWorksheet::removeReassignedItems
      */
     public function testRemoveReassignedItems($settings, $expected, $tp_id, $execute_count, $beans)
     {
@@ -899,7 +899,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::processRemoveChunk
+     * @covers ForecastWorksheet::processRemoveChunk
      */
     public function testProcessRemoveChunk()
     {
@@ -913,7 +913,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::createRemoveReassignedJob
+     * @covers ForecastWorksheet::createRemoveReassignedJob
      */
     public function testCreateRemoveReassignedJob()
     {
@@ -947,7 +947,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::worksheetTotals
+     * @covers ForecastWorksheet::worksheetTotals
      */
     public function testWorksheetTotalsReturnFalse()
     {
@@ -967,7 +967,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::worksheetTotals
+     * @covers ForecastWorksheet::worksheetTotals
      */
     public function testWorksheetTotalsReturnsDefaultEmptyArrayWhenNoValuesAreFound()
     {
@@ -1043,7 +1043,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::worksheetTotals
+     * @covers ForecastWorksheet::worksheetTotals
      */
     public function testWorksheetTotals()
     {
