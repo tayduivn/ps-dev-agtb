@@ -886,6 +886,7 @@ class MBModule
 
         if ($copied)
         {
+            $this->renameRelationships($new, $old_name, $this->key_name);
             $this->renameMetaData ( $new , $old_name) ;
             $this->renameLanguageFiles ( $new, true ) ;
         }
