@@ -17235,6 +17235,9 @@ var jCore = (function ($, window) {
 
     CustomLine.prototype.createDiv = function(x, y, w, h, transform){
         var orientation = (w === 1 ? 1 : (h === 1 ? 0: -1)), offset;
+        // making the lines two pixels wide instead of one
+        var lineWidth = w === 1 ? 2 : w;
+        var lineHeight = h === 1 ? 2 : h;
 
         if (transform) {
             offset = {
@@ -17254,8 +17257,8 @@ var jCore = (function ($, window) {
                 'animation':'none',
                 'position': 'absolute'
             })
-            .width(w)
-            .height(h)
+            .width(lineWidth)
+            .height(lineHeight)
             .offset(offset);
         if (transform) {
             $(this.html).css({

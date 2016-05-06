@@ -514,6 +514,7 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
             endPortXCoord,
             endPortYCoord,
             connection,
+            saveCon,
             currentConnection = canvas.currentConnection,
             srcPort,
             dstPort,
@@ -665,7 +666,16 @@ AdamConnectionDropBehavior.prototype.onDrop = function (shape) {
             endPort.attachListeners(endPort);
 
             // finally trigger createEvent
-            canvas.triggerCreateEvent(connection, []);
+            if (canvas.zoomFactor != 1) {
+                saveCon = _.extend({}, connection);
+                _.each(saveCon.points, function(point) {
+                    point.x /= canvas.zoomFactor;
+                    point.y /= canvas.zoomFactor;
+                });
+            } else {
+                saveCon = connection;
+            }
+            canvas.triggerCreateEvent(saveCon, []);
         } else if (port) {
             port.setOldParent(port.getParent());
             port.setOldX(port.getX());
