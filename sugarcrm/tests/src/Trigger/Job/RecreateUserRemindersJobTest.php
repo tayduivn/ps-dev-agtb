@@ -186,12 +186,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -264,12 +264,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -342,12 +342,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 21:45:00',
+                        'reminderTime' => '2025-12-31 21:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -420,12 +420,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 21:45:00',
+                        'reminderTime' => '2025-12-31 21:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -498,12 +498,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 13:45:00',
+                        'reminderTime' => '2025-12-31 13:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -576,12 +576,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 13:45:00',
+                        'reminderTime' => '2025-12-31 13:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -654,12 +654,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 07:45:00',
+                        'reminderTime' => '2025-12-31 07:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',
@@ -732,12 +732,12 @@ class RecreateUserRemindersJobTest extends \Sugar_PHPUnit_Framework_TestCase
                     2 => array(
                         'beanName' => 'Call',
                         'id' => $callsId[1],
-                        'reminderTime' => '2025-12-31 07:45:00',
+                        'reminderTime' => '2025-12-31 07:40:00',
                     ),
                     3 => array(
                         'beanName' => 'Meeting',
                         'id' => $meetingsId[0],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     4 => array(
                         'beanName' => 'Meeting',

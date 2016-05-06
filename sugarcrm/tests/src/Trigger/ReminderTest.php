@@ -212,15 +212,6 @@ class ReminderTest extends \Sugar_PHPUnit_Framework_TestCase
                 'timeFormat' => 'H:i',
                 'callReminder' => false,
             ),
-            'createReminder' => array(
-                'beanModule' => 'Meetings',
-                'reminderTime' => 900,
-                'dateTimezone' => 'UTC',
-                'dateTimeFormat' => \TimeDate::DB_DATETIME_FORMAT,
-                'dateFormat' => \TimeDate::DB_DATE_FORMAT,
-                'timeFormat' => 'H:i:s',
-                'callReminder' => true,
-            ),
             'tryWrongReminderTime' => array(
                 'beanModule' => 'Meetings',
                 'reminderTime' => -100,
