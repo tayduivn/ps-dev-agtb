@@ -180,7 +180,10 @@ class HealthCheckScanner
         ),
         'Map to Lead' => array(
             array('version' => '2.6.0'),
-        )
+        ),
+        'wMaps76' => array(
+            array('version' => '*'),
+        ),
     );
 
     /**
