@@ -43,19 +43,19 @@ module.exports = function(grunt) {
         var cmdOptions = [
             '--buffer-size=100k',
             '-M',
-            // The output will be file names of files that doesnt match the pattern.
+            // The output will be a list of files that don't match the pattern.
             '-L',
             // Recursive mode.
             '-r',
             // Ignores case.
             '-i',
-            //Excluded directories.
+            // Excluded directories.
             '--exclude-dir="' + excludedDirectories + '"',
             // Excluded extensions.
             '--exclude="((.*)\.(' + excludedExtensions + '))"',
-            //Pattern to match in each file.
+            // Pattern to match in each file.
             '"^' + pattern + '$"',
-            //Directory where the command is executed.
+            // Directory where the command is executed.
             '.'
         ];
         var command = 'pcregrep ' + cmdOptions.join(' ') + '| grep -v -F "$( printf \'' + excludedFiles + '\' )"';
