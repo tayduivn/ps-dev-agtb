@@ -751,7 +751,7 @@ class MBModule
         $renamed = rename($oldModDir, $newModDir);
         if ($renamed)
         {
-            $this->renameRelationships($newModDir, $this->key_name);
+            $this->renameRelationships($newModDir, $old_name, $this->key_name);
             $this->renameMetaData($newModDir, $old_name);
             $this->renameLanguageFiles($newModDir);
 
@@ -759,12 +759,12 @@ class MBModule
         return $renamed ;
     }
 
-    public function renameRelationships($newModDir, $newModName)
+    public function renameRelationships($newModDir, $oldModName, $newModName)
     {
         //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
         // and BR-4147 lhs module name was not updated when module name is changed
         $relationships = new UndeployedRelationships($newModDir);
-        $relationships->renameModule($newModName);
+        $relationships->renameModule($oldModName, $newModName);
         $relationships->save();
     }
 

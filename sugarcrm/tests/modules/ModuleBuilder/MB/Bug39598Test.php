@@ -24,8 +24,8 @@ class Bug39598Test extends Sugar_PHPUnit_Framework_TestCase
         $contents = '<?php  $relationships = array (
            \'pk8_mod11_accounts\' =>
            array (
-           \'rhs_label\' => \'MyAccounts\',
-           \'lhs_label\' => \'Mod11s\',
+           \'rhs_label\' => \'Accounts\',
+           \'lhs_label\' => \'Pk8_Mod11\',
            \'lhs_subpanel\' => \'default\',
            \'rhs_subpanel\' => \'default\',
            \'lhs_module\' => \'Pk8_Mod11\',
@@ -39,6 +39,23 @@ class Bug39598Test extends Sugar_PHPUnit_Framework_TestCase
            \'from_studio\' => false,
            \'relationship_name\' => \'pk8_mod11_accounts\',
            ),
+           \'pk8_mod11_pk8_mod11\' =>
+           array (
+           \'rhs_label\' => \'Pk8_Mod11\',
+           \'lhs_label\' => \'Pk8_Mod11\',
+           \'lhs_subpanel\' => \'default\',
+           \'rhs_subpanel\' => \'default\',
+           \'lhs_module\' => \'Pk8_Mod11\',
+           \'rhs_module\' => \'Pk8_Mod11\',
+           \'relationship_type\' => \'one-to-one\',
+           \'readonly\' => false,
+           \'deleted\' => false,
+           \'relationship_only\' => false,
+           \'for_activities\' => false,
+           \'is_custom\' => false,
+           \'from_studio\' => false,
+           \'relationship_name\' => \'pk8_mod11_pk8_mod11\',
+           ),
         );';
         file_put_contents($this->relationshipFilePath, $contents);
     }
@@ -51,14 +68,30 @@ class Bug39598Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testRelationshipName()
     {
-        $mbModule = new MBModule('newname', $this->relationshipFileDir, 'test', 'test');
-        $expectedNewName = 'test_newname';
-        $mbModule->renameRelationships($this->relationshipFileDir, $expectedNewName);
+        $mbModule = new MBModule('NewMod', $this->relationshipFileDir, 'test', 'test');
+        $expectedNewName = 'test_NewMod';
+        $mbModule->renameRelationships($this->relationshipFileDir, 'Pk8_Mod11', $expectedNewName);
         $relationships = array();
         include $this->relationshipFilePath;
+
+        // check many-to-many lhs module name and relationship name change
         $this->assertEquals(
             $expectedNewName,
-            $relationships['test_newname_accounts']['lhs_module'],
+            $relationships['test_newmod_accounts']['lhs_module'],
+            'Lhs module name replaced correctly in relationships metadata.'
+        );
+
+        // check many-to-many rhs - should not change
+        $this->assertEquals(
+            'Accounts',
+            $relationships['test_newmod_accounts']['rhs_module'],
+            'Rhs module name not changed.'
+        );
+
+        // check one-to-one rhs - should change
+        $this->assertEquals(
+            $expectedNewName,
+            $relationships['test_newmod_test_newmod']['rhs_module'],
             'Module name replaced correctly in relationships metadata'
         );
 

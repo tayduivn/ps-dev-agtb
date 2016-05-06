@@ -198,14 +198,22 @@ class AbstractRelationships
 
     /*
      * Rename module
-     * @param $newModuleName New lhs module name
+     * @param $oldModuleName old module name
+     * @param $newModuleName new module name
     */
-    public function renameModule($newLhsModule)
+    public function renameModule($oldModuleName, $newModuleName)
     {
         foreach ($this->getRelationshipList() as $relationshipName) {
             $relationship = $this->get($relationshipName);
             $definition = $relationship->getDefinition();
-            $definition['lhs_module'] = $newLhsModule;
+
+            if ($definition['lhs_module'] == $oldModuleName) {
+                $definition['lhs_module'] = $newModuleName;
+            }
+
+            if ($definition['rhs_module'] == $oldModuleName) {
+                $definition['rhs_module'] = $newModuleName;
+            }
 
             // in order to create consistent relationship name,
             // blank it out from definition for factory to create a name.
