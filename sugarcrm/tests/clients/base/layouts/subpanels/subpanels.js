@@ -400,7 +400,7 @@ describe('Base.Layout.Subpanels', function() {
             _.each(components, function(component) {
                 layout._components.push(
                     app.view.createView({
-                        context: new Backbone.Model(component.context),
+                        context: app.context.getContext(component.context),
                         layout: layout
                     })
                 );

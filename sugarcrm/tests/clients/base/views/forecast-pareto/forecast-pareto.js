@@ -25,10 +25,14 @@ describe('Base.Views.ForecastPareto', function() {
 
         context = app.context.getContext();
         context.set('model', new Backbone.Model());
-        context.parent = new Backbone.Model();
-        context.parent.set('selectedUser', {id: 'test_user', is_manager: false});
-        context.parent.set('selectedTimePeriod', 'test_timeperiod');
-        context.parent.set('module', 'Forecasts');
+        context.parent = app.context.getContext({
+            selectedUser: {
+                id: 'test_user',
+                is_manager: false
+            },
+            selectedTimePeriod: 'test_timeperiod',
+            module: 'Forecasts'
+        });
         context.parent.children = [];
 
         SugarTest.testMetadata.init();

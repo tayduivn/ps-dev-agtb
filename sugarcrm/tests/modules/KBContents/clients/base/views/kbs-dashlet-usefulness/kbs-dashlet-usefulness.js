@@ -10,8 +10,9 @@ describe('KBContents.Base.Views.KBSDashletUsefulness', function() {
             module: moduleName
         });
         context.set('model', new Backbone.Model());
-        context.parent = new Backbone.Model();
-        context.parent.set('module', moduleName);
+        context.parent = app.context.getContext({
+            module: moduleName
+        });
         model = new Backbone.Model();
         model.set('useful', 10);
         model.set('notuseful', 20);
