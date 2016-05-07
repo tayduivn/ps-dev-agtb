@@ -15,8 +15,9 @@ describe("Twitter View", function() {
         };
         var context = app.context.getContext({module: moduleName});
         context.set('model', app.data.createBean(moduleName));
-        context.parent = new Backbone.Model();
-        context.parent.set('module', moduleName);
+        context.parent = app.context.getContext({
+            module: moduleName
+        });
         layout = SugarTest.createLayout('base', moduleName, 'list', null, context.parent);
         view = SugarTest.createView('base', moduleName, 'twitter', {}, context, true, layout);
         view.model = new Backbone.Model();

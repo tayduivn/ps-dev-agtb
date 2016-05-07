@@ -24,9 +24,11 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
         SugarTest.loadPlugin('Dashlet');
 
         context = app.context.getContext();
-        context.parent = new Backbone.Model();
-        context.parent.set({
-            selectedUser: {id: 'test_user', is_manager: false},
+        context.parent = app.context.getContext({
+            selectedUser: {
+                id: 'test_user',
+                is_manager: false
+            },
             selectedTimePeriod: 'test_timeperiod',
             module: 'Forecasts',
             model: new Backbone.Model()

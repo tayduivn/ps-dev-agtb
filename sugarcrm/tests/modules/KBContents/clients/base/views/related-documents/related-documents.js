@@ -9,8 +9,9 @@ describe('KBContents.Base.Views.RelatedDocuments', function() {
             module: moduleName
         });
         context.set('model', new Backbone.Model());
-        context.parent = new Backbone.Model();
-        context.parent.set('module', moduleName);
+        context.parent = app.context.getContext({
+            module: moduleName
+        });
         meta = {
             config: false
         };
