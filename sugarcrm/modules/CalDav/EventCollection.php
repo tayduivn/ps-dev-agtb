@@ -872,6 +872,7 @@ class CalDavEventCollection extends SugarBean
             return array_shift($this->events_calendar->getBeans());
         }
 
+        $GLOBALS['log']->warn('CalDav: No Calendar found for Event');
         return null;
     }
 
@@ -892,6 +893,7 @@ class CalDavEventCollection extends SugarBean
             $userHelper = new UserHelper();
             $calendar = array_shift($userHelper->getCalendars($user->user_name));
             $this->setCalendarId($calendar['id']);
+            $GLOBALS['log']->info("CalDav: Set Calendar({$calendar['id']}) for User({$user->id})");
             if (isset($this->events_calendar)) {
                 $this->events_calendar->resetLoaded();
             }
@@ -997,6 +999,7 @@ class CalDavEventCollection extends SugarBean
         $this->getParticipantsLinks(true);
         foreach ($participantsList as $participant) {
             $email = $participant->getEmail();
+            $GLOBALS['log']->debug("CalDav: Mapping participant '$email' to bean");
             if (!isset($this->participantLinks[$email])) {
                 if ($participant->getBeanName() && $participant->getBeanId()) {
                     $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
@@ -1014,6 +1017,8 @@ class CalDavEventCollection extends SugarBean
                     $focus->last_name = $email;
                     $focus->email1 = $email;
                     $focus->save();
+
+                    $GLOBALS['log']->debug("CalDav: Link wasn't found for '$email', so create Addressee bean");
 
                     $link = array(
                         'beanName' => $focus->module_name,
@@ -1037,6 +1042,8 @@ class CalDavEventCollection extends SugarBean
                     }
                 }
 
+                $GLOBALS['log']->debug("CalDav: Mapped '$email' to {$link['beanName']}({$link['beanId']})");
+
                 $participant->setBeanName($link['beanName']);
                 $participant->setBeanId($link['beanId']);
 
@@ -1052,6 +1059,7 @@ class CalDavEventCollection extends SugarBean
      */
     public function sync()
     {
+        $GLOBALS['log']->debug("CalDav: Syncing CalDavEventCollection({$this->id})");
         $isUpdate = $this->isUpdate();
         if ($this->vCalendar) {
             $this->calendar_data = $this->getVCalendar()->serialize();
@@ -1134,6 +1142,7 @@ class CalDavEventCollection extends SugarBean
             if ($this->isImportable() && $this->doLocalDelivery) {
                 $this->scheduleLocalDelivery('delete');
             }
+            $GLOBALS['log']->debug("CalDav: Sending CalDavEventCollection($id) to import as deleted");
             $this->getCalDavHook()->import($this, array('delete'));
         }
     }
@@ -1146,6 +1155,7 @@ class CalDavEventCollection extends SugarBean
         if (!$id) {
             return null;
         }
+
         if ($this->id != $id) {
             BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
             return null;
@@ -1305,6 +1315,7 @@ class CalDavEventCollection extends SugarBean
             return array_shift($result);
         }
 
+        $GLOBALS['log']->warn("CalDav: No CalDavEventCollection was found for $beanModule($beanId)");
         return null;
     }
 
@@ -1341,6 +1352,9 @@ class CalDavEventCollection extends SugarBean
         $adapter = $adapterFactory->getAdapter($bean->module_name);
 
         if ($adapter) {
+            $GLOBALS['log']->debug(
+                "CalDav: Creating text representation of event {$bean->module_name}($bean->id) for email"
+            );
             $exportDataSet = $adapter->prepareForExport($bean);
             if ($exportDataSet) {
                 foreach ($exportDataSet as $exportData) {
@@ -1354,10 +1368,12 @@ class CalDavEventCollection extends SugarBean
                 }
                 $vCalendarEvent = $collection->getVCalendar();
                 if (!empty($bean->send_invites_uid)) {
+                    $GLOBALS['log']->debug("CalDav: Setting invites uid = {$bean->send_invites_uid}");
                     $vCalendarEvent->getBaseComponent()->UID->setValue($bean->send_invites_uid);
                 }
 
                 if ($bean->deleted) {
+                    $GLOBALS['log']->debug("CalDav: Setting event method as 'CANCEL'");
                     $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'CANCEL'));
                     return $vCalendarEvent->serialize();
                 }
@@ -1377,11 +1393,16 @@ class CalDavEventCollection extends SugarBean
                 }
 
                 if ($inviteeEmail) {
+                    $GLOBALS['log']->debug("CalDav: There is a email for invitee. Email is $inviteeEmail");
+
                     $participants = $event->getParticipants();
                     $participants[] = $organizer;
                     $found = false;
                     foreach ($participants as $participant) {
                         if ($participant->getEmail() === $inviteeEmail) {
+                            $GLOBALS['log']->debug(
+                                "CalDav: Participant matches $inviteeEmail email. Setting RSVP to TRUE"
+                            );
                             $participant->setRSVP('TRUE');
                             $found = true;
                             break;
@@ -1389,8 +1410,10 @@ class CalDavEventCollection extends SugarBean
                     }
 
                     if ($found) {
+                        $GLOBALS['log']->debug("CalDav: Setting event method as 'REQUEST'");
                         $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'REQUEST'));
                     } else {
+                        $GLOBALS['log']->debug("CalDav: Setting event method as 'CANCEL'");
                         $vCalendarEvent->add($vCalendarEvent->createProperty('METHOD', 'CANCEL'));
                     }
                 }
@@ -1429,11 +1452,13 @@ class CalDavEventCollection extends SugarBean
         $result = $synchronizationObject->fetchFromQuery($query);
         if ($result) {
             $result = array_shift($result);
+            $GLOBALS['log']->debug("CalDav: Found existing synchronization object with id = {$result->id}");
             return $result;
         } else {
             if (!$this->id) {
                 $this->new_with_id = true;
                 $this->id = create_guid();
+                $GLOBALS['log']->info("CalDav: Creating new synchronization object with id = {$this->id}");
             }
             $synchronizationObject->event_id = $this->id;
             $synchronizationObject->save();
@@ -1610,6 +1635,11 @@ class CalDavEventCollection extends SugarBean
         $this->parentEvent = null;
         $currentParent = $this->getParent();
         $result = array();
+
+        $GLOBALS['log']->debug(
+            "CalDav: Calculating Event({$this->id}) diff structure for data: " . var_export($data, true)
+        );
+
         if ($data) {
             /** @var CalDavEventCollection $oldCollection */
             $oldCollection = new static();
@@ -1705,6 +1735,8 @@ class CalDavEventCollection extends SugarBean
                 }
             }
         }
+
+        $GLOBALS['log']->debug("CalDav: diff structure is: " . var_export($result, true));
 
         return $result;
     }

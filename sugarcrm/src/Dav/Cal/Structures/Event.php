@@ -12,11 +12,11 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 
-use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Component\VEvent;
 use Sabre\VObject\Property\ICalendar;
 use Sugarcrm\Sugarcrm\Dav\Cal\Property\CalAddress;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 class Event
 {
@@ -65,6 +65,11 @@ class Event
     protected $recurrenceId = null;
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
      * @param VEvent $event
      * @param int $state
      * @param array $participantsLinks array that contains dav emails that was linked on SugarCRM Persons:
@@ -87,6 +92,8 @@ class Event
         array $participantsLinks = array(),
         DavHelper\DateTimeHelper $dateTimeHelper = null
     ) {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+
         $this->dateTimeHelper = $dateTimeHelper ?: new DavHelper\DateTimeHelper();
         $this->participantsLinks = $participantsLinks;
 
@@ -120,6 +127,9 @@ class Event
             $linkInfo = $this->participantsLinks[$email];
             $participant->setBeanName($linkInfo['beanName']);
             $participant->setBeanId($linkInfo['beanId']);
+            $this->logger->debug(
+                "CalDav: Created Participant '$email' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
+            );
         }
 
         return $participant;
@@ -148,6 +158,7 @@ class Event
     protected function setStringProperty($propertyName, $value)
     {
         if (!$this->event) {
+            $this->logger->notice("CalDav: Attempt to set property $propertyName: '$value' for non-existing event");
             return false;
         }
 
@@ -168,6 +179,7 @@ class Event
             return true;
         }
 
+        $this->logger->notice("CalDav: Attempt to set property $propertyName: '$value' wasn't successful");
         return false;
     }
 
@@ -179,6 +191,7 @@ class Event
     protected function getDateTimeProperty($propertyName)
     {
         if (!$this->event) {
+            $this->logger->notice('CalDav: Attempt to get DateTime property of non-existing event');
             return null;
         }
         return $this->event->$propertyName ? $this->dateTimeHelper->davDateToSugar($this->event->$propertyName) : null;
@@ -193,6 +206,7 @@ class Event
     protected function setDateTimeProperty($propertyName, $value = null)
     {
         if (!$this->event) {
+            $this->logger->notice('CalDav: Attempt to get DateTime property of non-existing event');
             return false;
         }
         if (!$value) {
@@ -441,16 +455,17 @@ class Event
         }
 
         $dtEnd = $this->getDateTimeProperty('DTEND');
-        if($dtEnd) {
+        if ($dtEnd) {
             return $dtEnd;
         }
 
         $dtStart = $this->getDateTimeProperty('DTSTART');
-        if($this->event->DURATION && $dtStart) {
+        if ($this->event->DURATION && $dtStart) {
             $dtEnd = clone $dtStart;
             return $dtEnd->add(new \DateInterval($this->event->DURATION->getValue()));
         }
 
+        $this->logger->notice('CalDav: No end-date for event');
         return null;
     }
 
@@ -507,6 +522,7 @@ class Event
             return $this->createParticipantObject($this->event->ORGANIZER);
         }
 
+        $this->logger->notice('CalDav: Event without organizer');
         return null;
     }
 
@@ -526,6 +542,7 @@ class Event
                 if ($organizer && $organizer->getEmail() == $participant->getEmail()) {
                     continue;
                 }
+                $this->logger->debug('CalDav: Attach participant ' . $participant->getEmail() . ' to event');
                 $this->participants[] = $participant;
             }
         }
@@ -640,6 +657,7 @@ class Event
             return $this->setEndOfEvent($seconds, $dtEnd);
         }
 
+        $this->logger->debug("CalDav: Set event duration to $hours hours, $minutes minutes");
         return $this->deleteProperty('DTEND') | $this->setStringProperty('DURATION', $duration);
     }
 
@@ -754,8 +772,10 @@ class Event
     {
         $currentOrganizer = $this->getOrganizer();
         if ($currentOrganizer && $currentOrganizer->getEmail() != $organizer->getEmail()) {
+            $this->logger->debug(
+                'CalDav: Changing organizer from ' . $currentOrganizer->getEmail() . ' to ' . $organizer->getEmail()
+            );
             $currentOrganizer->setType('ATTENDEE');
-
         }
         $participant = clone $organizer;
         $participant->setRole('CHAIR');
@@ -818,6 +838,8 @@ class Event
      */
     public function deleteParticipant($email)
     {
+        $this->logger->debug("CalDav: Deleting Participant '$email'");
+
         if (!$this->event) {
             return false;
         }
@@ -847,6 +869,7 @@ class Event
             }
         }
 
+        $this->logger->notice("CalDav: Participant with '$email' email was not found for this event");
         return - 1;
     }
 

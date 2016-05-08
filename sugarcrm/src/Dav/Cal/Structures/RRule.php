@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Property\ICalendar\Recur;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class RRule
@@ -26,6 +27,11 @@ class RRule
      * @var Recur
      */
     protected $rRule;
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
 
     /**
      * Map property name to validation class
@@ -52,6 +58,7 @@ class RRule
         } else {
             $this->rRule = new Recur(new VCalendar(), 'RRULE');
         }
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
     }
 
     public function __clone()
@@ -71,6 +78,7 @@ class RRule
             return new $validatorClass($this);
         }
 
+        $this->logger->warning("CalDav: No validator for $paramName found");
         return null;
     }
 
@@ -112,6 +120,8 @@ class RRule
      */
     protected function setParameter($name, $value)
     {
+        $this->logger->debug("CalDav: Setting recurring rule $name parameter: " . var_export($value, true));
+
         if ((is_array($value) && !$value) || is_null($value)) {
             return $this->deleteParameter($name);
         }
@@ -147,6 +157,8 @@ class RRule
      */
     protected function deleteParameter($name)
     {
+        $this->logger->debug("CalDav: Deleting recurring rule parameter $name");
+
         $params = $this->rRule->getParts();
 
         if (isset($params[$name])) {
@@ -205,6 +217,7 @@ class RRule
             return $untilDateTime;
         }
 
+        $this->logger->notice("CalDav: There is no 'UNTIL' parameter for this recurring rule");
         return null;
     }
 

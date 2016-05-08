@@ -22,6 +22,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ListenerInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\HookListener\ExportListener;
 use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\HookListener\ImportListener;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 class Handler implements RunnableInterface
 {
@@ -39,6 +40,11 @@ class Handler implements RunnableInterface
     protected $hookHandler;
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
      * Handler constructor.
      *
      * @param string $eventId
@@ -46,6 +52,7 @@ class Handler implements RunnableInterface
     public function __construct($eventId)
     {
         $this->eventId = $eventId;
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
     }
 
     /**
@@ -66,6 +73,7 @@ class Handler implements RunnableInterface
         ));
 
         if (!$calDavBean) {
+            $this->logger->warning("CalDav: CalDavEvent bean for Event($this->eventId) not found");
             return \SchedulersJob::JOB_FAILURE;
         }
 
@@ -79,6 +87,9 @@ class Handler implements RunnableInterface
             $GLOBALS['current_user'] = \BeanFactory::getBean('Users', $queueItem->created_by);
             $conflictCounter = $calDavBean->getSynchronizationObject()->getConflictCounter();
             if ($conflictCounter && $queueItem->save_counter < $conflictCounter) {
+                $this->logger->debug(
+                    "CalDav: Queue item save_counter = $queueItem->save_counter, conflict_counter = $conflictCounter"
+                );
                 $calDavBean->getSynchronizationObject()->setJobCounter();
                 $queueItem->status = \CalDavQueue::STATUS_CONFLICT;
                 $queueItem->save();
@@ -88,33 +99,44 @@ class Handler implements RunnableInterface
             try {
                 switch ($queueItem->action) {
                     case \CalDavQueue::ACTION_IMPORT:
+                        $this->logger->debug('CalDav: Job performs import action');
                         $this->import($calDavBean, $queueItem);
                         break;
                     case \CalDavQueue::ACTION_EXPORT:
+                        $this->logger->debug('CalDav: Job performs export action');
                         $this->export($calDavBean, $queueItem);
                         break;
                     default:
+                        $this->logger->debug('CalDav: Job just resolves queue item with status complete');
                         $queueItem->save();
                         continue;
                 }
 
+                $this->logger->debug('CalDav: Job run: intializing conflict_solver');
                 $calDavBean->getSynchronizationObject()->setConflictCounter(false);
             } catch (\Exception $e) {
+                $this->logger->notice('CalDav: Job triggered expected exception: ' . $e->getMessage());
                 if ($this->listener instanceof ExportListener) {
                     $this->hookHandler->getExportNotifier()->detach($this->listener);
                 } elseif ($this->listener instanceof ImportListener) {
                     $this->hookHandler->getImportNotifier()->detach($this->listener);
                 }
+                $bean = $calDavBean->getBean();
+                $this->logger->debug("CalDav: Conflict. Job sends {$bean->module_name}({$bean->id}) to export");
                 $queueItem->status = \CalDavQueue::STATUS_CONFLICT;
-                $this->hookHandler->export($calDavBean->getBean(), false, true);
+                $this->hookHandler->export($bean, false, true);
             }
 
+            $this->logger->debug('Setting job_counter and saving queue item');
             $calDavBean->getSynchronizationObject()->setJobCounter();
             $queueItem->save();
             $calDavBean->retrieve(-1, true, false);
         }
 
+        $this->logger->debug("CalDav: Job sets global current user to User($currentUser->id)");
         $GLOBALS['current_user'] = $currentUser;
+
+        $this->logger->debug('CalDav: Job was successfully completed');
         return \SchedulersJob::JOB_SUCCESS;
     }
 
@@ -126,6 +148,8 @@ class Handler implements RunnableInterface
      */
     protected function import(\CalDavEventCollection $calDavBean, \CalDavQueue $queueItem)
     {
+        $this->logger->debug("CalDav: Job Queue Handler: Start import. CalDav bean id = {$calDavBean->id}");
+
         $bean = $calDavBean->getBean();
 
         if (!$bean) {
@@ -147,13 +171,16 @@ class Handler implements RunnableInterface
                 SugarCache::instance()->useLocalStore = false;
                 $bean->direction = $user->getPreference('caldav_call_direction');
                 SugarCache::instance()->useLocalStore = $oldValue;
+                $this->logger->debug("CalDav: Set Call direction to {$bean->direction}");
             }
             $calDavBean->setBean($bean);
             $calDavBean->doLocalDelivery = false;
             $calDavBean->save();
         }
+        $this->logger->debug("CalDav: Importing event's Sugar Bean is {$bean->module_name}({$bean->id})");
 
         $bean->send_invites_uid = $calDavBean->event_uid;
+        $this->logger->debug("CalDav: Set bean's send_invites_uid to event_uid = {$calDavBean->event_uid}");
 
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
@@ -161,7 +188,7 @@ class Handler implements RunnableInterface
         }
 
         $importData = json_decode($queueItem->data, true);
-        
+
         $this->listener = new ExportListener($bean);
         $this->hookHandler->getExportNotifier()->attach($this->listener);
         
@@ -170,7 +197,9 @@ class Handler implements RunnableInterface
         if ($result != AdapterInterface::NOTHING) {
             switch ($result) {
                 case AdapterInterface::SAVE :
+                    $this->logger->debug("CalDav: import via adapter resulted in 'bean should be saved'");
                     if (!empty($bean->repeat_parent_id)) {
+                        $this->logger->debug('CalDav: temporarily disable Activity Stream for child event');
                         \Activity::disable();
                     }
                     $bean->save();
@@ -179,9 +208,11 @@ class Handler implements RunnableInterface
                     }
                     break;
                 case AdapterInterface::DELETE :
+                    $this->logger->debug("CalDav: import via adapter resulted in 'bean should be deleted'");
                     $bean->mark_deleted($bean->id);
                     break;
                 case AdapterInterface::RESTORE :
+                    $this->logger->debug("CalDav: import via adapter resulted in 'bean should be restored'");
                     $bean->mark_undeleted($bean->id);
                     $bean->save();
                     break;
@@ -194,11 +225,15 @@ class Handler implements RunnableInterface
             foreach ($exportDataSet as $exportData) {
                 $exportData = $adapter->verifyExportAfterImport($importData, $exportData, $bean);
                 if ($exportData) {
+                    $this->logger->debug(
+                        'CalDav: JQ Handler Import: there is exportData, setting save_counter and do export'
+                    );
                     $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
                     $calDavBean->getQueueObject()->export($exportData, $saveCounter);
                 }
             }
         } else {
+            $this->logger->debug("CalDav: import via adapter resulted in 'nothing should be saved'");
             $this->hookHandler->getExportNotifier()->detach($this->listener);
         }
     }
@@ -211,7 +246,11 @@ class Handler implements RunnableInterface
      */
     protected function export(\CalDavEventCollection $calDavBean, \CalDavQueue $queueItem)
     {
+        $this->logger->debug("CalDav: Job Queue Handler: Start export. CalDav bean id = {$calDavBean->id}");
+
         $bean = $calDavBean->getBean();
+        $this->logger->debug("CalDav: Expoting event's Sugar Bean is {$bean->module_name}({$bean->id})");
+
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
 
         if (!$adapter) {
@@ -227,12 +266,15 @@ class Handler implements RunnableInterface
         if ($result != AdapterInterface::NOTHING) {
             switch ($result) {
                 case AdapterInterface::SAVE :
+                    $this->logger->debug("CalDav: export via adapter resulted in 'bean should be saved'");
                     $calDavBean->save();
                     break;
                 case AdapterInterface::DELETE :
+                    $this->logger->debug("CalDav: export via adapter resulted in 'bean should be deleted'");
                     $calDavBean->mark_deleted($calDavBean->id);
                     break;
                 case AdapterInterface::RESTORE :
+                    $this->logger->debug("CalDav: export via adapter resulted in 'bean should be restored'");
                     $calDavBean->mark_undeleted($calDavBean->id);
                     $calDavBean->save();
                     break;
@@ -245,11 +287,15 @@ class Handler implements RunnableInterface
             foreach ($importDataSet as $importData) {
                 $importData = $adapter->verifyImportAfterExport($exportData, $importData, $calDavBean);
                 if ($importData) {
+                    $this->logger->debug(
+                        'CalDav: JQ Handler Export: there is importData, setting save_counter and do import'
+                    );
                     $saveCounter = $calDavBean->getSynchronizationObject()->setSaveCounter();
                     $calDavBean->getQueueObject()->import($importData, $saveCounter);
                 }
             }
         } else {
+            $this->logger->debug("CalDav: export via adapter resulted in 'nothing should be saved'");
             $this->hookHandler->getExportNotifier()->detach($this->listener);
         }
     }

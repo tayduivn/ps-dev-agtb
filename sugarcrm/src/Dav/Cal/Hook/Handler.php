@@ -16,6 +16,7 @@ use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ExportNotifier;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ImportNotifier;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  *
@@ -47,6 +48,19 @@ class Handler
     protected static $exportNotifier;
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * @param \CalDavEventCollection $collection
      * @param mixed|false $previousData in case of false full import should be processed
      * @param bool $conflictSolver
@@ -55,26 +69,35 @@ class Handler
     public function import(\CalDavEventCollection $collection, $previousData = false, $conflictSolver = false)
     {
         if (static::$disabled) {
+            $this->logger->debug("CalDav: Import Handler is disabled");
             return false;
         }
         if (!$collection->isImportable() || !$collection->parent_type) {
+            $this->logger->notice("CalDav: EventCollection($collection->id) is not importable");
             return false;
         }
         $adapter = $this->getAdapterFactory()->getAdapter($collection->parent_type);
         if (!$adapter) {
+            $this->logger->warning("CalDav: No adapter for $collection->parent_type");
             return false;
         }
 
         $preparedDataSet = $adapter->prepareForImport($collection, $previousData);
+
         if (!$preparedDataSet) {
+            $this->logger->debug("CalDav: No import data-set for EventCollection($collection->id)");
             return false;
         }
 
         foreach ($preparedDataSet as $preparedData) {
             $continue = $this->getImportNotifier()->notify($collection->module_name, $collection->id, $preparedData);
             if ($continue && $preparedData) {
+                $this->logger->debug(
+                    'CalDav: Hook Handler Import: there is preparedData, so continue import, setting save_counter'
+                );
                 $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
                 if ($conflictSolver) {
+                    $this->logger->debug('CalDav: Hook Handler Import: solving conflict');
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                 }
 
@@ -97,10 +120,12 @@ class Handler
     public function export(\SugarBean $bean, $previousData = false, $conflictSolver = false)
     {
         if (static::$disabled) {
+            $this->logger->debug('CalDav: Export Handler is disabled');
             return false;
         }
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
+            $this->logger->warning("CalDav: No adapter for $bean->module_name");
             return false;
         }
 
@@ -109,6 +134,7 @@ class Handler
             $adapter->prepareForExport($bean, $previousData);
         
         if (!$preparedDataSet) {
+            $this->logger->debug("CalDav: No export data-set for $bean->module_name($bean->id)");
             return false;
         }
 
@@ -117,6 +143,8 @@ class Handler
         } else {
             $rootBeanId = $bean->id;
         }
+
+        $this->logger->debug("CalDav: $bean->module_name($bean->id) parent root id is $rootBeanId");
 
         /** @var \CalDavEventCollection $collection */
         $collection = \BeanFactory::getBean('CalDavEvents');
@@ -130,14 +158,19 @@ class Handler
                 $collection->set_created_by = false;
             }
             $collection->doLocalDelivery = false;
+            $this->logger->debug("CalDav: Creating new EventCollection record for $bean->module_name($bean->id)");
             $collection->save();
         }
 
         foreach ($preparedDataSet as $preparedData) {
             $continue = $this->getExportNotifier()->notify($bean->module_name, $rootBeanId, $preparedData);
             if ($continue && $preparedData) {
+                $this->logger->debug(
+                    'CalDav: Hook Handler Export: there is preparedData, so continue export, setting save_counter'
+                );
                 $saveCounter = $collection->getSynchronizationObject()->setSaveCounter();
                 if ($conflictSolver) {
+                    $this->logger->debug('CalDav: Hook Handler Export: solving conflict');
                     $collection->getSynchronizationObject()->setConflictCounter(true);
                     $conflictSolver = false;
                 }

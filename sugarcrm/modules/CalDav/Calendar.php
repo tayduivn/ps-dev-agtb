@@ -184,6 +184,8 @@ class CalDavCalendar extends SugarBean
         // TODO: Remove when after insert fetched_row will be present
         $this->retrieve();
 
+        $GLOBALS['log']->info("CalDav: Created default Calendar($this->id) for User($user->id)");
+
         return $this->fetched_row;
     }
 

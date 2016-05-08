@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Dav\Base\Helper;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Provides methods to  convert participants from CalDav to SugarCRM and back
@@ -22,6 +23,19 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant;
  */
 class ParticipantsHelper
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
     /**
      * Calculates simple diff between to arrays.
      *
@@ -41,6 +55,14 @@ class ParticipantsHelper
      */
     public function getInviteesDiff(array $inviteesBefore, array $inviteesAfter)
     {
+        $this->logger->debug(
+            sprintf(
+                'CalDav: Invitees before are: %s, Invitees after are: %s',
+                var_export($inviteesBefore, true),
+                var_export($inviteesAfter, true)
+            )
+        );
+
         $changedInvitees = array();
         foreach ($inviteesBefore as $keyBefore => $inviteeBefore) {
             foreach ($inviteesAfter as $keyAfter => $inviteeAfter) {
@@ -68,6 +90,8 @@ class ParticipantsHelper
         if ($inviteesAfter) {
             $changedInvitees['added'] = array_values($inviteesAfter);
         }
+
+        $this->logger->debug('CalDav: Invitees diff is: ' . var_export($changedInvitees, true));
         return $changedInvitees;
     }
 

@@ -69,6 +69,10 @@ class CalDavQueue extends SugarBean
      */
     public function export($data, $saveCounter)
     {
+        $GLOBALS['log']->debug(
+            "CalDav: Queue item for export action with save_counter = $saveCounter and data = " .
+            var_export($data, true)
+        );
         $bean = new static;
         $bean->event_id = $this->event_id;
         $bean->action = static::ACTION_EXPORT;
@@ -93,6 +97,10 @@ class CalDavQueue extends SugarBean
      */
     public function import($data, $saveCounter)
     {
+        $GLOBALS['log']->debug(
+            "CalDav: Queue item for import action with save_counter = $saveCounter and data = " .
+            var_export($data, true)
+        );
         $bean = new static;
         $bean->event_id = $this->event_id;
         $bean->action = static::ACTION_IMPORT;
