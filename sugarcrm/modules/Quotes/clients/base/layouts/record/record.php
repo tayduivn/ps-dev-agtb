@@ -11,11 +11,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Quotes']['base']['layout']['records'] = array(
+$viewdefs['Quotes']['base']['layout']['record'] = array(
+    'name' => 'bwc',
     'type' => 'bwc',
-    'components' => array(
+    'components' =>
         array(
-            'view' => 'bwc',
+            array(
+                'view' => 'bwc',
+            ),
         ),
-    ),
 );

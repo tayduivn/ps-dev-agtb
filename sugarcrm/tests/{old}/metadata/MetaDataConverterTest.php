@@ -167,7 +167,7 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             'target_record_key' => true,
         );
         $converter = new MetaDataConverter();
-        $bean = BeanFactory::getBean('Quotes');
+        $bean = BeanFactory::getBean('Users');
 
         $spDefs = new SubPanelDefinitions($bean);
         $layout_defs = $spDefs->layout_defs;
@@ -182,7 +182,7 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
             if ($aSubPanel->isCollection()) {
                 continue;
             }
-            $panel_definition = $converter->fromLegacySubpanelsViewDefs($aSubPanel->panel_definition, 'Quotes');
+            $panel_definition = $converter->fromLegacySubpanelsViewDefs($aSubPanel->panel_definition, 'Users');
         }
 
         $this->assertNotEmpty($panel_definition, "Panel Definition not set");

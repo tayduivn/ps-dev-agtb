@@ -647,7 +647,6 @@ $bwcModules = array(
     'Project',
     'ProjectTask',
     'Quotas',
-    'Quotes',
     'QueryBuilder',
     'Relationships',
     'Releases',
