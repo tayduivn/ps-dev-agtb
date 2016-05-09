@@ -1776,6 +1776,7 @@ ExpressionControl.prototype._createUserPanel = function () {
                                     .setDataRoot(settings.userRolesDataRoot)
                                     .setLabelField(settings.userRolesLabelField)
                                     .setValueField(settings.userRolesValueField)
+                                    .disableSearchMore()
                                     .load()
                                     .enable();
                                 break;
