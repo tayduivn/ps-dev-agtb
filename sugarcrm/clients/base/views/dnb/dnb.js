@@ -1347,7 +1347,7 @@
         if (_.isUndefined(importFlag)) {
             importFlag = true;
             setModelFlag = false;
-        } else if (importFlag) {
+        } else if (_.isObject(importFlag)) {
             setModelFlag = false;
         }
         var dnbCheckBox = this.$('.dnb_checkbox:checked');
