@@ -98,7 +98,7 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Should call initialize method with properly unpacked scalars.
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__constructor
+     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__construct
      * @dataProvider initializeCallScalarProvider
      * @param array $constructorArguments
      * @param array $expectedArguments
@@ -135,7 +135,7 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Should call initialize method with properly unpacked objects.
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__constructor
+     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__construct
      * @dataProvider initializeCallObjectProvider
      * @param null|int $userId
      * @param string $serializedEvent serialized event data.
@@ -154,7 +154,7 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * The method should throws an exception if initialize method is not implemented.
      *
-     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__constructor
+     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler::__construct
      * @expectedException \Exception
      * @expectedExceptionMessage Initialize method is not implemented
      */
