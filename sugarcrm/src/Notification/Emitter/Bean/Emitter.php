@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\EmitterInterface;
 use Sugarcrm\Sugarcrm\Notification\Dispatcher;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Bean emitter provides possibility to detect event which has happened on bean.
@@ -23,6 +24,19 @@ use Sugarcrm\Sugarcrm\Notification\Dispatcher;
  */
 class Emitter implements EmitterInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
     /**
      * Parent emitter
      *
@@ -47,6 +61,7 @@ class Emitter implements EmitterInterface
     {
         $event = $this->getEventPrototypeByString('update')->setBean($bean);
         $dispatcher = $this->getDispatcher();
+        $this->logger->debug("NC: Bean Emitter prepares $event event for dispatch");
         $dispatcher->dispatch($event);
     }
 

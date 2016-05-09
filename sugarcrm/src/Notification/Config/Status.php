@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Config;
 
 use Sugarcrm\Sugarcrm\Notification\CarrierRegistry;
 use Administration;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class Status
@@ -22,6 +23,19 @@ use Administration;
 class Status
 {
     const CONFIG_CATEGORY = 'notification_carrier';
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
 
     /**
      * Returns object of Status, customized if it's present
@@ -62,6 +76,7 @@ class Status
         $this->verifyModule($carrierName);
         /** @var \Administration $config */
         $config = \BeanFactory::getBean('Administration');
+        $this->logger->info("NC: Config saving '$carrierName' carrier with status = " . var_export($status, true));
         $config->saveSetting(static::CONFIG_CATEGORY, $carrierName, $status);
         return !empty($status);
     }

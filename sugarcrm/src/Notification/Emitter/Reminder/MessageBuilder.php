@@ -15,6 +15,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Emitter\Reminder;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class MessageBuilder
@@ -23,6 +24,19 @@ use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
  */
 class MessageBuilder implements MessageBuilderInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -34,6 +48,10 @@ class MessageBuilder implements MessageBuilderInterface
 
         $time = $this->generateTime($bean, $user);
         $url = $this->generateUrl($module, $bean);
+
+        $this->logger->debug(
+            "NC: Building message for event = '$event' of $module({$bean->id}) with time = $time and url = $url"
+        );
 
         if (array_key_exists('title', $messageSignature)) {
             $message['title'] = sprintf(translate('LBL_EVENT_REMINDER_TITLE', $module), $bean->name);
@@ -80,7 +98,7 @@ class MessageBuilder implements MessageBuilderInterface
      *
      * @param \SugarBean $bean Bean, causer of event.
      * @param \User $user recipient user.
-     * @return string dat and time event takes place at.
+     * @return string date and time event takes place at.
      */
     protected function generateTime($bean, $user)
     {

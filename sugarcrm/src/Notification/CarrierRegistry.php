@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification;
 
 use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class CarrierRegistry
@@ -37,6 +38,19 @@ class CarrierRegistry
     const CARRIER_INTERFACE = 'Sugarcrm\\Sugarcrm\\Notification\\Carrier\\CarrierInterface';
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * Returns object of CarrierRegistry, customized if it's present
      *
      * @return CarrierRegistry
@@ -55,7 +69,9 @@ class CarrierRegistry
      */
     public function getCarriers()
     {
-        return array_keys($this->getDictionary());
+        $carriers = array_keys($this->getDictionary());
+        $this->logger->debug('NC: All found Carrier names are: ' . var_export($carriers, true));
+        return $carriers;
     }
 
     /**
@@ -72,8 +88,11 @@ class CarrierRegistry
             \SugarAutoLoader::load($carriers[$moduleName]['path']);
             $class = $carriers[$moduleName]['class'];
 
+            $this->logger->debug("NC: $class Carrier was found for $moduleName");
+
             return new $class();
         } else {
+            $this->logger->notice("NC: no Carrier found for $moduleName");
             return null;
         }
     }
@@ -92,16 +111,20 @@ class CarrierRegistry
      */
     protected function scan()
     {
+        $this->logger->debug("NC: Carrier registry builds dictionary array with carrier class names and paths");
+
         $dictionary = array();
         foreach (array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']) as $module) {
             $path = 'modules/' . $module . '/Carrier.php';
             if (!\SugarAutoLoader::fileExists($path)) {
+                $this->logger->notice("NC: There is no carrier file found in $path");
                 continue;
             }
             \SugarAutoLoader::load($path);
             $class = $module . 'Carrier';
 
             if (!$this->isCarrierClass($class)) {
+                $this->logger->notice("NC: Carrier $class is not of a carrier class");
                 continue;
             }
 
@@ -109,9 +132,12 @@ class CarrierRegistry
             \SugarAutoLoader::load($customPath);
             $customClass = \SugarAutoLoader::customClass($class);
             if ($this->isCarrierClass($customClass)) {
+                $this->logger->debug("NC: Custom Carrier $customClass was found");
                 $class = $customClass;
                 $path = $customPath;
             }
+
+            $this->logger->debug("NC: Carrier $class with path = '$path' will be used");
 
             $dictionary[$module] = array(
                 'path' => $path,
@@ -145,6 +171,7 @@ class CarrierRegistry
     {
         $data = $this->getCache();
         if (is_null($data)) {
+            $this->logger->debug("NC: Carrier registry: no cache found, proceed to scanning files");
             $data = $this->scan();
             $this->setCache($data);
         }
@@ -160,6 +187,8 @@ class CarrierRegistry
     protected function getCache()
     {
         $path = sugar_cached(static::CACHE_FILE);
+        $this->logger->debug("NC: Carrier registry tries to get carriers data from cache $path file");
+
         if (\SugarAutoLoader::fileExists($path)) {
             include($path);
         }
@@ -178,6 +207,10 @@ class CarrierRegistry
      */
     protected function setCache($data)
     {
+        $this->logger->info(
+            'NC: Carrier registry sets cache file ' . static::CACHE_FILE . ' with data: '
+            . var_export($data, true)
+        );
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::CACHE_VARIABLE, $data, sugar_cached(static::CACHE_FILE));
     }

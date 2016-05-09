@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Notification\SubscriptionFilter;
 
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+
 /**
  * Registry of SubscriptionFilters. Ge list of files form "include/sfr.php" and form "custom/include/sfr.php".
  *
@@ -44,6 +46,19 @@ class SubscriptionFilterRegistry
     const VARIABLE = 'sfr';
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * Returns object of SubscriptionFilterRegistry, customized if it's present.
      *
      * @return SubscriptionFilterRegistry
@@ -66,8 +81,10 @@ class SubscriptionFilterRegistry
     {
         $sfList = $this->getDictionary();
         if (isset($sfList[$name])) {
+            $this->logger->debug("NC: registry instantiates '$name' SubscriptionFilter class");
             return new $sfList[$name]();
         } else {
+            $this->logger->notice("NC: no SubscriptionFilter found by name $name");
             return null;
         }
     }
@@ -84,6 +101,7 @@ class SubscriptionFilterRegistry
     {
         $data = self::getCache();
         if (is_null($data)) {
+            $this->logger->debug("NC: SubscriptionFilter registry: no cache found, proceed to scanning files");
             $data = self::scan();
             self::setCache($data);
         }
@@ -102,6 +120,8 @@ class SubscriptionFilterRegistry
     protected function getCache()
     {
         $path = sugar_cached(static::CACHE_FILE);
+        $this->logger->debug("NC: SubscriptionFilter registry tries to read cache $path file");
+
         if (\SugarAutoLoader::fileExists($path)) {
             return $this->getDataFromFile($path);
         } else {
@@ -115,11 +135,13 @@ class SubscriptionFilterRegistry
      * Retrieving array(dictionary array with subscription filter class names and full class name to it)
      * from file if it exists
      *
-     * @param $path to file
+     * @param string $path Path to file
      * @return array dictionary array from file
      */
     protected function getDataFromFile($path)
     {
+        $this->logger->debug("NC: SubscriptionFilter registry tries to get data from $path file");
+
         include($path);
 
         if (isset(${static::VARIABLE})) {
@@ -146,6 +168,7 @@ class SubscriptionFilterRegistry
         foreach ($registry as $name => $class) {
             $customClass = \SugarAutoLoader::customClass($class);
             if (in_array($class, class_parents($customClass))) {
+                $this->logger->debug("NC: adding $customClass to SubscriptionFilter registry");
                 $registry[$name] = $customClass;
             }
         }
@@ -155,10 +178,16 @@ class SubscriptionFilterRegistry
             foreach ($this->getDataFromFile($customRegistryFile) as $name => $class) {
                 if (array_key_exists($name, $registry)) {
                     if (in_array($baseRegistry[$name], class_parents($class))) {
+                        $this->logger->debug(
+                            "NC: adding $class to SubscriptionFilter registry from custom registry file"
+                        );
                         $registry[$name] = $class;
                     }
                 } else {
                     if (in_array(self::SF_INTERFACE, class_implements($class))) {
+                        $this->logger->debug(
+                            "NC: adding $class to SubscriptionFilter registry from custom registry file"
+                        );
                         $registry[$name] = $class;
                     }
                 }
@@ -175,6 +204,10 @@ class SubscriptionFilterRegistry
      */
     protected function setCache($data)
     {
+        $this->logger->info(
+            'NC: SubscriptionFilter registry sets cache file ' . static::CACHE_FILE . ' with data: '
+            . var_export($data, true)
+        );
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::VARIABLE, $data, sugar_cached(static::CACHE_FILE));
     }
@@ -186,6 +219,9 @@ class SubscriptionFilterRegistry
      */
     public function getFilters()
     {
-        return array_keys($this->getDictionary());
+        $filters = array_keys($this->getDictionary());
+        $this->logger->debug('NC: All found SubscriptionFilter names are: ' . var_export($filters, true));
+
+        return $filters;
     }
 }

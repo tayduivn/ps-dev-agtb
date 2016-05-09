@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
 use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class MessageBuilder.
@@ -23,6 +24,19 @@ use Sugarcrm\Sugarcrm\Notification\MessageBuilder\MessageBuilderInterface;
  */
 class MessageBuilder implements MessageBuilderInterface
 {
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
     /**
      * This is basic bean-level MessageBuilder indicator.
      * @var int
@@ -37,6 +51,8 @@ class MessageBuilder implements MessageBuilderInterface
         $message = array();
         $module = $event->getModuleName();
         $bean = $event->getBean();
+
+        $this->logger->debug("NC: Bean Message Builder: building message for $module({$bean->id})");
 
         // ToDo: build a correct message.
         if (array_key_exists('title', $messageSignature)) {

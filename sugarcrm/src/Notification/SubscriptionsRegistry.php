@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterRegistry;
 use Sugarcrm\Sugarcrm\Notification\Config\Status as CarrierStatus;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Subscription Registry will be our entry point to work with configuration of subscriptions.
@@ -32,26 +33,41 @@ class SubscriptionsRegistry
     const CARRIER_VALUE_DEFAULT = 'default';
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * Return configuration.
      *
      * @return array configuration
      */
     public function getGlobalConfiguration()
     {
-        $res = $this->getTree();
+        $result = $this->getTree();
         $beans = $this->getBeans($this->getSugarQuery());
 
         foreach ($beans as $bean) {
-            if ($this->isValidBeanForTree($res, $bean)) {
+            if ($this->isValidBeanForTree($result, $bean)) {
                 $emitter = (string)$this->getEmitter($bean);
-                $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
+                $result[$emitter][$bean->event_name][$bean->filter_name][] = array(
                     $bean->carrier_name,
                     $bean->carrier_option,
                 );
             }
         }
 
-        return $res;
+        $this->logger->debug('NC: Global configuration is: ' . var_export($result, true));
+
+        return $result;
     }
 
     /**
@@ -75,6 +91,7 @@ class SubscriptionsRegistry
                 $tree[$emitterName][$eventName] = array();
                 $event = $emitter->getEventPrototypeByString($eventName);
                 if (!is_null($bean) && $event instanceof BeanEvent) {
+                    $this->logger->debug("NC: Setting bean {$bean->module_name}({$bean->id}) for $event event");
                     $event->setBean($bean);
                 }
                 foreach ($sfList as $subscriptionFilter) {
@@ -90,9 +107,13 @@ class SubscriptionsRegistry
 
         foreach ($tree as $emitter => $config) {
             if (empty($config)) {
+                $this->logger->debug("NC: Removing $emitter from tree, since there is no config for it");
                 unset($tree[$emitter]);
             }
         }
+
+        $this->logger->debug('NC: Base configuration tree: ' . var_export($tree, true));
+
         return $tree;
     }
 
@@ -267,6 +288,7 @@ class SubscriptionsRegistry
                 throw new \LogicException('Cannot create emitter for target bean');
                 break;
         }
+        $this->logger->debug("NC: Subscription registry: working with $emitter Emitter");
         return $emitter;
     }
 
@@ -278,22 +300,26 @@ class SubscriptionsRegistry
      */
     public function getUserConfiguration($userId)
     {
-        $res = $this->getTree();
+        $result = $this->getTree();
         $beans = $this->getBeans($this->getSugarQuery($userId));
 
         foreach ($beans as $bean) {
-            if ($this->isValidBeanForTree($res, $bean)) {
+            if ($this->isValidBeanForTree($result, $bean)) {
                 $emitter = (string)$this->getEmitter($bean);
-                $res[$emitter][$bean->event_name][$bean->filter_name][] = array(
+                $result[$emitter][$bean->event_name][$bean->filter_name][] = array(
                     $bean->carrier_name,
                     $bean->carrier_option,
                 );
             }
         }
+        $this->logger->debug(
+            "NC: User($userId) configuration before filling it with default: " . var_export($result, true)
+        );
+        $this->fillDefaultConfig($result);
 
-        $this->fillDefaultConfig($res);
+        $this->logger->debug("NC: User($userId) configuration: " . var_export($result, true));
 
-        return $res;
+        return $result;
     }
 
     /**
@@ -321,6 +347,7 @@ class SubscriptionsRegistry
      */
     public function setGlobalConfiguration($config)
     {
+        $this->logger->info('NC: Setting Global configuration with data: ' . var_export($config, true));
         $this->setConfiguration(null, $config, true);
     }
 
@@ -359,6 +386,9 @@ class SubscriptionsRegistry
                         }
 
                         $diff = $this->getDiff($reducesBeans, $carriers);
+                        $this->logger->debug(
+                            "NC: Configuration diff for $emitter:$event:$filter = " . var_export($diff, true)
+                        );
 
                         if ($userId) {
                             $path += array('user_id' => $userId);
@@ -471,20 +501,20 @@ class SubscriptionsRegistry
      */
     protected function decodeEmitter($emitterName)
     {
-        $res = array('type' => null, 'emitter_module_name' => null);
+        $result = array('type' => null, 'emitter_module_name' => null);
         switch ($emitterName) {
             case 'ApplicationEmitter':
-                $res['type'] = 'application';
+                $result['type'] = 'application';
                 break;
             case 'BeanEmitter':
-                $res['type'] = 'bean';
+                $result['type'] = 'bean';
                 break;
             default:
-                $res['type'] = 'module';
-                $res['emitter_module_name'] = $emitterName;
+                $result['type'] = 'module';
+                $result['emitter_module_name'] = $emitterName;
                 break;
         }
-        return $res;
+        return $result;
     }
 
     /**
@@ -589,6 +619,9 @@ class SubscriptionsRegistry
     {
         foreach ($carriers as $key => $carrier) {
             $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
+            $this->logger->debug(
+                "NC: Creating Subscription bean for path = '$path' and data = " . var_export($carriers, true)
+            );
             $bean = $this->getNewBaseBean();
             $bean->fromArray($path + array('carrier_name' => $carrier[0], 'carrier_option' => $carrier[1]));
             $bean->save();
@@ -603,6 +636,7 @@ class SubscriptionsRegistry
     protected function deleteConfigBeans(array $beans)
     {
         foreach ($beans as $bean2Del) {
+            $this->logger->debug("NC: Deleting Subscription bean with id = {$bean2Del->id}");
             $bean2Del->mark_deleted($bean2Del->id);
         }
     }
@@ -615,6 +649,7 @@ class SubscriptionsRegistry
      */
     public function setUserConfiguration($userId, $config)
     {
+        $this->logger->info("NC: Setting User($userId) configuration with data: " . var_export($config, true));
         $this->setConfiguration($userId, $config, false);
     }
 
@@ -626,6 +661,7 @@ class SubscriptionsRegistry
      */
     public function getUsers(EventInterface $event)
     {
+        $this->logger->debug("NC: Calculating config of users with their carrier preference for event $event");
         $globalConfig = $this->getGlobalEventConfig($event);
         $sfList = $this->getUsersFilters($event);
         $config = array();
@@ -636,6 +672,9 @@ class SubscriptionsRegistry
                 $userConfig = $this->calculateUserConfig(
                     $userData[$filterName],
                     array_key_exists($filterName, $globalConfig) ? $globalConfig[$filterName] : array()
+                );
+                $this->logger->debug(
+                    "NC: Config for User($userId) & filter = '$filterName' is " . var_export($userConfig, true)
                 );
                 if (!empty($userConfig)) {
                     $config[$userId] = array(
@@ -685,6 +724,8 @@ class SubscriptionsRegistry
 
             $config[$userId][$filterName][$type][$carrier][] = $row['carrier_option'];
         }
+
+        $this->logger->debug("NC: Users config tree for the event $event: " . var_export($config, true));
         return $config;
     }
 
@@ -769,6 +810,9 @@ class SubscriptionsRegistry
             $globalConfig[$filter][$type][$carrier][] = $row['carrier_option'];
         }
 
+        $this->logger->debug(
+            "NC: Global of carrier preference for the event $event: " . var_export($globalConfig, true)
+        );
         return $globalConfig;
     }
 
@@ -871,6 +915,7 @@ class SubscriptionsRegistry
                 $supported[] = $subscriptionFilter;
             }
         }
+
         return $supported;
     }
 

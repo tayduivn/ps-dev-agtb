@@ -48,6 +48,7 @@ class CarrierBulkMessageHandler extends BaseHandler
      */
     protected function initialize(EventInterface $event, $carrierName, array $usersOptions)
     {
+        $this->logger->debug("NC: run CarrierBulkMessageHandler with event = $event, carrier = $carrierName");
         $this->event = $event;
         $this->carrierName =  $carrierName;
         $this->usersOptions = $usersOptions;
@@ -69,6 +70,9 @@ class CarrierBulkMessageHandler extends BaseHandler
             $user = \BeanFactory::getBean('Users', $userId);
             $message = $messageBuilder->build($this->event, $userData['filter'], $user, $messageSignature);
             foreach ($userData['options'] as $transportVal) {
+                $this->logger->debug(
+                    "NC: creating NotificationSend job for User($userId), {$this->event}, {$this->carrierName}"
+                );
                 $jobQueueManager->NotificationSend($userId, $this->carrierName, $transportVal, $message);
             }
         }

@@ -12,6 +12,7 @@
 namespace Sugarcrm\Sugarcrm\Notification\MessageBuilder;
 
 use Sugarcrm\Sugarcrm\Notification\EventInterface;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Registry of MessageBuilders. Gets list of files form "include/nmb.php" and forms "custom/include/mnb.php".
@@ -46,6 +47,19 @@ class MessageBuilderRegistry
     const VARIABLE = 'nmb';
 
     /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
+
+    /**
      * Return object of MessageBuilderRegistry, customized if it's present.
      *
      * @return MessageBuilderRegistry
@@ -72,6 +86,7 @@ class MessageBuilderRegistry
 
         foreach ($buildersList as $builderClass) {
             $builder = new $builderClass;
+            $this->logger->debug("NC: MessageBuilder registry: check $builderClass support for $event event");
             if ($builder->supports($event)) {
                 $supportedBuilders[$builder->getLevel()] = $builder;
             }
@@ -79,8 +94,12 @@ class MessageBuilderRegistry
 
         if (!empty($supportedBuilders)) {
             ksort($supportedBuilders);
+            $this->logger->debug(
+                'NC: Sorted list of supported Message Builders: ' . var_export($supportedBuilders, true)
+            );
             return end($supportedBuilders);
         } else {
+            $this->logger->notice("NC: no MessageBuilder found for event $event");
             return null;
         }
     }
@@ -95,6 +114,7 @@ class MessageBuilderRegistry
     {
         $data = $this->getCache();
         if (is_null($data)) {
+            $this->logger->debug("NC: MessageBuilder registry: no cache found, proceed to scanning files");
             $data = $this->scan();
             $this->setCache($data);
         }
@@ -111,6 +131,8 @@ class MessageBuilderRegistry
     protected function getCache()
     {
         $path = sugar_cached(static::CACHE_FILE);
+        $this->logger->debug("NC: MessageBuilder registry tries to read cache $path file");
+
         if (\SugarAutoLoader::fileExists($path)) {
             return $this->getDataFromFile($path);
         } else {
@@ -126,6 +148,8 @@ class MessageBuilderRegistry
      */
     protected function getDataFromFile($path)
     {
+        $this->logger->debug("NC: MessageBuilder registry tries to get data from $path file");
+
         include($path);
         if (isset(${static::VARIABLE})) {
             return ${static::VARIABLE};
@@ -151,10 +175,12 @@ class MessageBuilderRegistry
      */
     protected function scan()
     {
+        $this->logger->debug("NC: MessageBuilder registry builds dictionary with Message Builders full class names");
         $registry = array();
 
         foreach ($this->getDataFromFile(self::REGISTRY_FILE) as $class) {
             if ($this->isBuilderClass($class)) {
+                $this->logger->debug("NC: adding $class to MessageBuilder registry");
                 $registry[] = $class;
             }
         }
@@ -163,6 +189,7 @@ class MessageBuilderRegistry
         if (\SugarAutoLoader::fileExists($customRegistryFile)) {
             foreach ($this->getDataFromFile($customRegistryFile) as $class) {
                 if (!array_key_exists($class, $registry) && $this->isBuilderClass($class)) {
+                    $this->logger->debug("NC: adding $class to MessageBuilder registry from custom registry file");
                     $registry[] = $class;
                 }
             }
@@ -177,6 +204,10 @@ class MessageBuilderRegistry
      */
     protected function setCache($data)
     {
+        $this->logger->info(
+            'NC: MessageBuilder registry sets cache file ' . static::CACHE_FILE . ' with data: '
+            . var_export($data, true)
+        );
         create_cache_directory(static::CACHE_FILE);
         write_array_to_file(static::VARIABLE, $data, sugar_cached(static::CACHE_FILE));
     }
