@@ -13,7 +13,8 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch\Indexer;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Container;
-use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
+use Elastica\Exception\Bulk\ResponseException;
+use Psr\Log\LogLevel;
 
 /**
  *
@@ -56,18 +57,6 @@ class BulkHandler
      * TODO: make configurable
      */
     protected $allowExplicitIndex = false;
-
-    /**
-     * Make use of UDP transport. This needs to be explicilty configured on the
-     * Elasticsearch node(s) to be able to make use of this functionality. UDP
-     * has less overhead. It's recommended to only use this only for localhost
-     * traffic. See Elasticsearch documentation on the bulk UDP api. Note that
-     * explicit index usage is implied when using the bulk UDP api.
-     *
-     * @var boolean
-     * TODO: make configurable + udp settings in $sugar_config
-     */
-    protected $useUdp = false;
 
     /**
      * Ctor
@@ -140,7 +129,7 @@ class BulkHandler
          * When using explicit document index, we only use one queue instead
          * of splitting the document up per index.
          */
-        if ($this->allowExplicitIndex || $this->useUdp) {
+        if ($this->allowExplicitIndex) {
             $index = self::EXPLICIT_INDEX_KEY;
         } else {
             $document = $this->removeIndexFromDocument($document);
@@ -169,6 +158,7 @@ class BulkHandler
         foreach ($this->documents as $index => $documents) {
             if (!empty($documents)) {
                 $this->sendBulk($index, $documents);
+                $this->documents[$index] = array();
             }
         }
     }
@@ -180,6 +170,15 @@ class BulkHandler
     public function setMaxBulkThreshold($threshold)
     {
         $this->maxBulkThreshold = $threshold;
+    }
+
+    /**
+     * Get batched documents keyed by index
+     * @return array
+     */
+    public function getBatchedDocuments()
+    {
+        return $this->documents;
     }
 
     /**
@@ -210,36 +209,68 @@ class BulkHandler
 
         /*
          * Make sure we index against a specific index when explicit index is
-         * not allowed on the documents. This does not apply when UDP indexing
-         * is enabled as there is no request url available in this mode.
+         * not allowed on the documents.
          */
-        if (!$this->allowExplicitIndex && !$this->useUdp) {
+        if (!$this->allowExplicitIndex) {
             $bulk->setIndex($index);
         }
 
         try {
-            if ($this->useUdp) {
-                // TODO: fix Elastica logging, nothing implemented for UDP
-                $bulk->sendUdp();
+            $bulk->send();
+        } catch (\Exception $exception) {
+            if ($exception instanceof ResponseException) {
+                // handle specific bulk response exception
+                $this->handleBulkException($exception);
             } else {
-                $bulk->send();
+                // on any other exception send everything to the queue
+                $this->container->queueManager->queueDocuments($documents);
             }
-        } catch (\Exception $e) {
+        }
+    }
 
-            // TODO: add handling which records failed instead of sending
-            // them all to the queue
-            $this->container->queueManager->queueDocuments($documents);
+    /**
+     * Handle bulk exceptions logging only the actual failures
+     * @param ResponseException $exception
+     */
+    protected function handleBulkException(ResponseException $exception)
+    {
+        foreach ($exception->getResponseSet()->getBulkResponses() as $response) {
+            $data = $response->getData();
+            $status = isset($data['status']) ? $data['status'] : 500;
+
+            // Skip record/response if status is crisp and clean
+            if ($status >= 200 && $status <= 300) {
+                continue;
+            }
+
+            $errorMsg = sprintf(
+                'Unrecoverable indexing failure [%s]: %s -> %s -> %s -> %s',
+                $status,
+                isset($data['_index']) ? $data['_index'] : 'unknown index',
+                isset($data['_type']) ? $data['_type'] : 'unknown type',
+                isset($data['_id']) ? $data['_id'] : 'unknown id',
+                isset($data['error']) ? $data['error'] : 'unknown'
+            );
+            $this->log(LogLevel::CRITICAL, $errorMsg);
         }
     }
 
     /**
      * Get bulk object
-     * @param Client $client Optional client
      * @return \Elastica\Bulk
      */
-    protected function newBulkObject(Client $client = null)
+    protected function newBulkObject()
     {
-        $client = $client ?: $this->container->client;
-        return new \Elastica\Bulk($client);
+        return new \Elastica\Bulk($this->container->client);
+    }
+
+    /**
+     * Log message
+     * @param string $level
+     * @param string $message
+     */
+    protected function log($level, $message)
+    {
+        $this->container->logger->log($level, "Elasticsearch BulkHandler: $message");
     }
 }
