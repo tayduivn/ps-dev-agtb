@@ -46,13 +46,6 @@ class Team extends SugarBean
 
 	var $new_schema = true;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Team()
-    {
-        self::__construct();
-    }
 
 	public function __construct()
 	{

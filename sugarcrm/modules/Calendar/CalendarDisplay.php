@@ -33,13 +33,6 @@ class CalendarDisplay {
 		),
 	);
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function CalendarDisplay(Calendar $cal, $dashlet_id = "")
-    {
-        self::__construct($cal, $dashlet_id);
-    }
 
 	/**
 	 * constructor

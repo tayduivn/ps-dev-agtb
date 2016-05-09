@@ -91,13 +91,6 @@ class Contract extends SugarBean
     public $new_schema = true;
     public $module_dir = 'Contracts';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Contracts()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

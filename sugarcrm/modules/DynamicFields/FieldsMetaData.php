@@ -85,13 +85,6 @@ class FieldsMetaData extends SugarBean {
 	// METHODS
 	//////////////////////////////////////////////////////////////////
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function FieldsMetaData()
-    {
-        self::__construct();
-    }
 
 	public function __construct()
 	{

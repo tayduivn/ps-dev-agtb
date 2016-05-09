@@ -45,13 +45,6 @@ class pmse_BpmnLane_sugar extends Basic {
     var $lan_child_laneset;
     var $lan_is_horizontal;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnLane_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

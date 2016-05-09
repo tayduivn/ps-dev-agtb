@@ -77,13 +77,6 @@ class pmse_BpmRelatedDependency_sugar extends Basic {
     var $rel_element_module;
     var $rel_element_relationship;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmRelatedDependency_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

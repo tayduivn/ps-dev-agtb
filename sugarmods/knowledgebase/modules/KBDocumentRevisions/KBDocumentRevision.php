@@ -90,24 +90,14 @@ class KBDocumentRevision extends SugarBean {
 		);
 		
 	var $required_fields = Array("revision");
+	
+	
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function KBDocumentRevision()
-    {
-        self::__construct();
-    }
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->setupCustomFields('KBDocumentRevisions');  //parameter is module name
-        $this->disable_row_level_security =true; //no direct access to this module.
-    }
+	function KBDocumentRevision() {
+		parent::__construct();
+		$this->setupCustomFields('KBDocumentRevisions');  //parameter is module name
+		$this->disable_row_level_security =true; //no direct access to this module. 
+	}
 
 	function save($check_notify = false){	
 		parent::save($check_notify);

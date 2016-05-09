@@ -53,13 +53,6 @@ class pmse_BpmFormAction_sugar extends Basic {
     var $frm_date;
     var $frm_comment;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmFormAction_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

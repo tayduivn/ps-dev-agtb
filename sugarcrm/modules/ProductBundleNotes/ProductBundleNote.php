@@ -70,14 +70,6 @@ class ProductBundleNote extends SugarBean
 
     //deletes related products might want to change this in the future if we allow for sharing of products
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ProductBundleNote()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

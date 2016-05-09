@@ -20,13 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnData/pmse_BpmnData_sugar.php';
 
 class pmse_BpmnData extends pmse_BpmnData_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnData()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

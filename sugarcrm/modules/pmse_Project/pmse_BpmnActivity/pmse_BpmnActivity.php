@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnActivity/pmse_BpmnActivity_sugar.php
 
 class pmse_BpmnActivity extends pmse_BpmnActivity_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnActivity()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

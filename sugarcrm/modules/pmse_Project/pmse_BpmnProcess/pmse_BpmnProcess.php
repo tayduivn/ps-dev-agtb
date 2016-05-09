@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnProcess/pmse_BpmnProcess_sugar.php';
 
 class pmse_BpmnProcess extends pmse_BpmnProcess_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnProcess()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

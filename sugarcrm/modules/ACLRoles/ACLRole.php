@@ -24,13 +24,6 @@ class ACLRole extends SugarBean{
 
     var $created_by;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ACLRole()
-    {
-        self::__construct();
-    }
 
     public function __construct(){
         parent::__construct();

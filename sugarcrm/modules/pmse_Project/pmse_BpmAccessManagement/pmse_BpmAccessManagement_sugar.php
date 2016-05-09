@@ -47,13 +47,6 @@ class pmse_BpmAccessManagement_sugar extends Basic {
     var $acm_activation_data;
     var $acm_data;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmAccessManagement_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

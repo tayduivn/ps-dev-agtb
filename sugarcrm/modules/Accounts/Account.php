@@ -117,13 +117,6 @@ class Account extends Company {
     var $push_billing;
     var $push_shipping;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Account()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
         parent::__construct();

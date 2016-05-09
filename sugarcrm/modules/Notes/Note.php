@@ -60,14 +60,6 @@ class Note extends SugarBean
         'last_name'
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Note()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

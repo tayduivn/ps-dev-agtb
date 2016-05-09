@@ -40,14 +40,6 @@ class Tracker extends SugarBean
         "visible"
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Tracker()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

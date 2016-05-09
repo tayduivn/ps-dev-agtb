@@ -13,13 +13,6 @@
 require_once('include/SugarObjects/templates/basic/Basic.php');
 class Sale extends Basic
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Sale()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

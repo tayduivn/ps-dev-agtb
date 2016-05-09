@@ -45,13 +45,6 @@ class pmse_BpmnDocumentation_sugar extends Basic {
     var $doc_element_type;
     var $doc_documentation;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnDocumentation_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

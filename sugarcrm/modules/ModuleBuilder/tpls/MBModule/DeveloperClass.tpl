@@ -14,20 +14,4 @@
  */
 require_once('modules/{{$class.name}}/{{$class.name}}_sugar.php');
 class {{$class.name}} extends {{$class.name}}_sugar {
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function {{$class.name}}()
-    {
-        self::__construct();
-    }
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 }

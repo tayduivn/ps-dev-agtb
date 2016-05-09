@@ -69,13 +69,6 @@ class ProductCategory extends SugarBean
         public $additional_column_fields = Array();
      */
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ProductCategory()
-    {
-        self::__construct();
-    }
 
     /**
      * Product Category Constructor

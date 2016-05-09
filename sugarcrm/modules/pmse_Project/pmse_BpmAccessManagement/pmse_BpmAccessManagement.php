@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmAccessManagement/pmse_BpmAccessManage
 
 class pmse_BpmAccessManagement extends pmse_BpmAccessManagement_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmAccessManagement()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

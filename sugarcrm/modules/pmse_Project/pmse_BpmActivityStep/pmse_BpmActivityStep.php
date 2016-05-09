@@ -20,13 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmActivityStep/pmse_BpmActivityStep_sug
 
 class pmse_BpmActivityStep extends pmse_BpmActivityStep_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmActivityStep()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

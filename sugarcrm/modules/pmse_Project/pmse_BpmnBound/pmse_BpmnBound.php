@@ -20,13 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnBound/pmse_BpmnBound_sugar.php';
 
 class pmse_BpmnBound extends pmse_BpmnBound_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnBound()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

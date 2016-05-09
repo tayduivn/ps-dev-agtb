@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmThread/pmse_BpmThread_sugar.php';
 
 class pmse_BpmThread extends pmse_BpmThread_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmThread()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

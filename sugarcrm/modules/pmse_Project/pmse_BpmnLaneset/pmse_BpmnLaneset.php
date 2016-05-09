@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnLaneset/pmse_BpmnLaneset_sugar.php';
 
 class pmse_BpmnLaneset extends pmse_BpmnLaneset_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnLaneset()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

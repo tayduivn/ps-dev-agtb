@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmActivityDefinition/pmse_BpmActivityDe
 
 class pmse_BpmActivityDefinition extends pmse_BpmActivityDefinition_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmActivityDefinition()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

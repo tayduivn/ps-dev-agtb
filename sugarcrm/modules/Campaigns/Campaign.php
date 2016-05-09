@@ -67,13 +67,6 @@ class Campaign extends SugarBean {
 
 	var $new_schema = true;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Campaign()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

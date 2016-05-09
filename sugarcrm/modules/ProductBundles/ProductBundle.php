@@ -87,14 +87,6 @@ class ProductBundle extends SugarBean
         return parent::mark_deleted($id);
     }
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ProductBundle()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

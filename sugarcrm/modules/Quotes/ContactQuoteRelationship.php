@@ -47,13 +47,6 @@ class ContactQuoteRelationship extends SugarBean {
 
 	var $additional_column_fields = Array();
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ContactQuoteRelationship()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();

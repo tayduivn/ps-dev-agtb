@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser_sugar.php
 
 class pmse_BpmGroupUser extends pmse_BpmGroupUser_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmGroupUser()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

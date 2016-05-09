@@ -46,13 +46,6 @@ class pmse_Emails_Templates_sugar extends Basic {
 		var $published;
         var $disable_row_level_security = true;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_Emails_Templates_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

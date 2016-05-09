@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmnParticipant/pmse_BpmnParticipant_sug
 
 class pmse_BpmnParticipant extends pmse_BpmnParticipant_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnParticipant()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

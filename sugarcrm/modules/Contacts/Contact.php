@@ -136,13 +136,6 @@ class Contact extends Person {
         'contacts_users_id' => 'user_sync',
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Contact()
-    {
-        self::__construct();
-    }
 
 	public function __construct() {
 		parent::__construct();

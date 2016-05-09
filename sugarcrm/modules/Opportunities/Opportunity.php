@@ -117,13 +117,6 @@ class Opportunity extends SugarBean
         'quote_id' => 'quotes',
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Opportunity()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

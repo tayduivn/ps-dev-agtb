@@ -116,14 +116,6 @@ class User extends Person {
 
 	var $new_schema = true;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function User()
-    {
-        self::__construct();
-    }
-
 	public function __construct() {
 		parent::__construct();
 		$this->disable_row_level_security = true;

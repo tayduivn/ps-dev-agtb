@@ -42,13 +42,6 @@ class pmse_BpmConfig_sugar extends Basic {
     var $cfg_status;
     var $cfg_value;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmConfig_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

@@ -45,13 +45,6 @@ class pmse_BpmnArtifact_sugar extends Basic {
     var $art_type;
     var $art_category_ref;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnArtifact_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

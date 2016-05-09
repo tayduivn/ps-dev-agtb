@@ -41,13 +41,6 @@ class pmse_BpmGroupUser_sugar extends Basic {
     var $assigned_user_link;
     var $user_id;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmGroupUser_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

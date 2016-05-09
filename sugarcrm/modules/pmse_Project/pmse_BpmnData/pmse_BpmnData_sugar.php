@@ -51,13 +51,6 @@ class pmse_BpmnData_sugar extends Basic {
     var $dat_is_global;
     var $dat_object_ref;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnData_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

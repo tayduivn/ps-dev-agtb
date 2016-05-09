@@ -16,13 +16,6 @@ require_once 'modules/pmse_Inbox/pmse_Inbox_sugar.php';
 
 class pmse_Inbox extends pmse_Inbox_sugar
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_Inbox()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

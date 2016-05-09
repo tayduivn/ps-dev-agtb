@@ -55,13 +55,6 @@ class ContractType extends SugarBean {
 
 	var $required_fields =  array();
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ContractType()
-    {
-        self::__construct();
-    }
 
 	/*This bean's constructor*/
 	public function __construct() {

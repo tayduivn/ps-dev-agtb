@@ -61,14 +61,7 @@ class Configurator {
         'save',
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Configurator()
-    {
-        self::__construct();
-    }
-
+ 
     /**
      * Ctor
      */

@@ -50,13 +50,6 @@ class pmse_BpmNotes_sugar extends Basic {
     var $not_content;
     var $not_recipients;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmNotes_sugar()
-    {
-        self::__construct();
-    }
 
 	public function __construct(){
 		parent::__construct();

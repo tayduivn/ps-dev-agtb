@@ -50,14 +50,6 @@ class pmse_BpmnGateway_sugar extends Basic {
     var $gat_waiting_for_start;
     var $gat_default_flow;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmnGateway_sugar()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}

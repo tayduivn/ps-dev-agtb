@@ -51,13 +51,6 @@ class Calendar {
      */
     private $print = false;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Calendar($view = 'day', $time_arr = array())
-    {
-        self::__construct($view, $time_arr);
-    }
 
 	/**
 	 * constructor

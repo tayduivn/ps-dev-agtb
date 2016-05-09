@@ -49,13 +49,7 @@ class pmse_BpmEventDefinition_sugar extends Basic {
     var $evn_script;
     var $execution_mode;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmEventDefinition_sugar()
-    {
-        self::__construct();
-    }
+
 
 	public function __construct(){
 		parent::__construct();

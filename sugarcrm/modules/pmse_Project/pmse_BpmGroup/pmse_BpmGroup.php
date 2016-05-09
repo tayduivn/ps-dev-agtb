@@ -20,14 +20,6 @@ require_once 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup_sugar.php';
 
 class pmse_BpmGroup extends pmse_BpmGroup_sugar {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_BpmGroup()
-    {
-        self::__construct();
-    }
-
 	public function __construct(){
 		parent::__construct();
 	}
