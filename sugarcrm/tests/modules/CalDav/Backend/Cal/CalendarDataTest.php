@@ -137,7 +137,6 @@ END:VCALENDAR',
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -170,7 +169,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -193,7 +191,6 @@ END:VCALENDAR',
     public function testGetCalendarEventsBean()
     {
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -248,7 +245,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-            ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
 
@@ -286,7 +282,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -331,7 +326,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -398,7 +392,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -438,7 +431,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -458,7 +450,6 @@ END:VCALENDAR',
         $sugarUser = SugarTestUserUtilities::createAnonymousUser();
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 
@@ -535,7 +526,6 @@ END:VCALENDAR',
         ));
 
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                            ->disableOriginalConstructor()
                             ->setMethods(null)
                             ->getMock();
 

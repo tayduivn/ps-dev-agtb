@@ -257,8 +257,14 @@ class Call extends SugarBean {
         
         if (empty($options['disableCalDavHook'])) {
             if ($isUpdate) {
+                $GLOBALS['log']->debug(
+                    "CalDav: $this->object_name update: sending $this->object_name($this->id) to export"
+                );
                 $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
             } else {
+                $GLOBALS['log']->debug(
+                    "CalDav: $this->object_name create: sending $this->object_name($this->id) to export"
+                );
                 $this->getCalDavHook()->export($this);
             }
         }
@@ -789,11 +795,13 @@ class Call extends SugarBean {
         $this->load_relationship($link_name);
         foreach (array_diff($this->{$link_name}->get(), $invitees) as $id) {
             if ($this->created_by != $id) {
+                $GLOBALS['log']->debug("Deleting '$link_name' linked $id from $this->object_name($this->id)");
                 $this->{$link_name}->delete($this->id, $id);
             }
         }
         foreach (array_diff($invitees, $this->{$link_name}->get()) as $id) {
             if (!isset($existing[$id])) {
+                $GLOBALS['log']->debug("Adding '$link_name' $id to $this->object_name($this->id)");
                 $this->{$link_name}->add($id);
             }
         }

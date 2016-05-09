@@ -59,6 +59,7 @@ class CalDavSynchronization extends SugarBean
         }
         $this->retrieve();
 
+        $GLOBALS['log']->debug("CalDav: Save counter was set to $this->save_counter");
         return $this->save_counter;
     }
 
@@ -77,6 +78,7 @@ class CalDavSynchronization extends SugarBean
         }
         $this->retrieve();
 
+        $GLOBALS['log']->debug("CalDav: Job counter was set to $this->job_counter");
         return $this->job_counter;
     }
 
@@ -107,6 +109,7 @@ class CalDavSynchronization extends SugarBean
             $this->save();
         }
 
+        $GLOBALS['log']->debug("CalDav: Conflict counter was set to $this->conflict_counter");
         return $this->conflict_counter;
     }
 

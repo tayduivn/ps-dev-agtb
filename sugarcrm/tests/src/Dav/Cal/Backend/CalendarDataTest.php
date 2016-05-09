@@ -143,7 +143,6 @@ END:VCALENDAR',
     public function testDeleteCalendar()
     {
         $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                              ->disableOriginalConstructor()
                               ->setMethods(null)
                               ->getMock();
 
@@ -158,7 +157,6 @@ END:VCALENDAR',
     public function testCreateCalendar()
     {
         $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                              ->disableOriginalConstructor()
                               ->setMethods(null)
                               ->getMock();
 
@@ -185,7 +183,6 @@ END:VCALENDAR',
         $expectedParentModule
     ) {
         $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                             ->disableOriginalConstructor()
                              ->setMethods(array('getEventsBean'))
                              ->getMock();
 
@@ -215,7 +212,6 @@ END:VCALENDAR',
     public function testUpdateCalendarObject($calendarId, $objectUri, $calendarData)
     {
         $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                              ->disableOriginalConstructor()
                               ->setMethods(array('getEventsBean'))
                               ->getMock();
 
@@ -268,7 +264,6 @@ END:VCALENDAR',
     public function testGetSchedulingObjects($principalUri)
     {
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-            ->disableOriginalConstructor()
             ->setMethods(array('getUserHelper', 'getSchedulingByAssigned', 'schedulingSQLRowToCalDavArray'))
             ->getMock();
 
@@ -305,7 +300,6 @@ END:VCALENDAR',
     public function testGetSchedulingObject($principalUri, $objectUri)
     {
         $backendMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-            ->disableOriginalConstructor()
             ->setMethods(array('getUserHelper', 'getSchedulingByUri', 'schedulingSQLRowToCalDavArray'))
             ->getMock();
 
@@ -367,7 +361,6 @@ END:VCALENDAR',
     public function setUpSchedulingMocks($principalUri)
     {
         $calendarMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Dav\Cal\Backend\CalendarData')
-                             ->disableOriginalConstructor()
                              ->setMethods(array('getUserHelper', 'getSchedulingBean'))
                              ->getMock();
 

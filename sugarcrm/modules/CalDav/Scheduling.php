@@ -131,10 +131,12 @@ class CalDavScheduling extends SugarBean
     public function setSchedulingEventData(\User $user, $objectUri, $eventData)
     {
         if (!$eventData) {
+            $GLOBALS['log']->error('CalDav: Data should be specified to set it as scheduling event info');
             return false;
         }
 
         if (!$user) {
+            $GLOBALS['log']->error('CalDav: User should be specified to set scheduling event info');
             return false;
         }
         $this->assigned_user_id = $user->id;

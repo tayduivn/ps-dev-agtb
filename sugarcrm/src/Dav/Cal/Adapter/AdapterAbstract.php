@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as CalDavStatus;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Abstract class for iCal adapters common functionality
@@ -30,6 +31,19 @@ abstract class AdapterAbstract implements AdapterInterface
      * @var array
      */
     protected static $sendingImportGroup = array();
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
 
     /**
      * @inheritDoc
@@ -53,9 +67,15 @@ abstract class AdapterAbstract implements AdapterInterface
         $isRecurring = $calendarEvents->isEventRecurring($bean);
         $exportDataSet[] = $this->prepareBeanForExport($bean, array('rebuild'));
 
+        $this->logger->debug(
+            "CalDav: Prepare for rebuild {$bean->module_name}({$bean->id}). Event recurring = " .
+            var_export($isRecurring, true)
+        );
+
         if ($isRecurring) {
             $dateStart = $calendarEvents->formatDateTime('datetime', $bean->date_start, 'user');
             $params = $calendarEvents->buildParamsForRecurring($bean);
+            $this->logger->debug('CalDav: Params for recurring are: ' . var_export($params, true));
             $repeatDateTimeArray = $calendarEvents->buildRecurringSequence($dateStart, $params);
 
             array_shift($repeatDateTimeArray);
@@ -77,6 +97,7 @@ abstract class AdapterAbstract implements AdapterInterface
 
             $deletedChildren = array();
             foreach ($repeatDateTimeArray as $recurrenceId) {
+                $this->logger->debug("CalDav: Handling child event with id = $recurrenceId");
                 if (!isset($sugarChildren[$recurrenceId])) {
                     $child = clone $bean;
                     $child->id = create_guid();
@@ -93,6 +114,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         $child,
                         $calendarEvents->getSugarDateTime('datetime', $child->date_start)
                     );
+                    $this->logger->debug("CalDav: Child is not in Sugar children list, so move it to deleted");
                     $deletedChildren[] = $child;
                 } else {
                     $child = $sugarChildren[$recurrenceId];
@@ -139,6 +161,9 @@ abstract class AdapterAbstract implements AdapterInterface
                 null :
                 $bean->repeat_root_id;
 
+        $this->logger->debug(
+            "CalDav: Running prepare for export using '$action' action for {$bean->module_name}({$bean->id})"
+        );
         if (!$rootBeanId) {
             switch ($action) {
                 case 'rebuild':
@@ -151,11 +176,15 @@ abstract class AdapterAbstract implements AdapterInterface
                     if ($this->isRecurringChanged($changedFields)) {
                         $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
                         $action = 'override';
+                        $this->logger->debug("CalDav: Action was changed to '$action' because recurring changed");
                     } elseif ($this->getCalendarEvents()->isEventRecurring($bean)) {
                         if ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_CURRENT) {
                             $rootBeanId = $bean->repeat_root_id;
                         } elseif ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_FIELDS) {
                             $action = 'override';
+                            $this->logger->debug(
+                                "CalDav: Action was changed to '$action' because update child strategy is update_fields"
+                            );
                         }
                     }
                     break;
@@ -247,6 +276,7 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         $changedFields = array_intersect_key($changedFields, $changedFieldsFilter);
+        $this->logger->debug('CalDav: Event changed fields are: ' . var_export($changedFields, true));
 
         foreach ($changedInvitees as $inviteeAction => &$invitees) {
             foreach ($invitees as $key => $invitee) {
@@ -258,6 +288,8 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($changedInvitees[$inviteeAction]);
             }
         }
+
+        $this->logger->debug('CalDav: Event changed invitees are: ' . var_export($changedInvitees, true));
 
         if (!$changedFields && !$changedInvitees || ($bean->deleted && $action == 'update')) {
             return false;
@@ -273,6 +305,8 @@ abstract class AdapterAbstract implements AdapterInterface
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanModuleName, $beanId, $rootBeanId, $recurringParam, $organizerId) = $beanData;
+
+        $this->logger->debug("CalDav: Running export for $beanModuleName($beanId). Root bean id = $rootBeanId");
 
         if ($action == 'delete' && !$rootBeanId) {
             return static::DELETE;
@@ -476,6 +510,11 @@ abstract class AdapterAbstract implements AdapterInterface
             $previousData = '';
         }
 
+        $this->logger->debug(
+            "CalDav: Running prepare for import using '$action' action and previous data = " .
+            var_export($previousData, true)
+        );
+
         $diffStructure = $collection->getDiffStructure($previousData);
         $parentRecurrenceId = $collection->getParent()->getStartDate();
         $parentAction = null;
@@ -634,6 +673,8 @@ abstract class AdapterAbstract implements AdapterInterface
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanId, $childEventsId, $recurrenceId, $recurrenceIndex, $importGroupId) = $beanData;
+
+        $this->logger->debug("CalDav: Running import for {$bean->module_name}($beanId). Recurrence id = $recurrenceId");
 
         if ($bean->assigned_user_id) {
             \CalendarEvents::$old_assigned_user_id = $bean->assigned_user_id;
@@ -810,6 +851,14 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
+        $this->logger->debug(
+            sprintf(
+                'CalDav: On verify import after export exportFields = %s, importFields = %s',
+                var_export($exportFields, true),
+                var_export($importFields, true)
+            )
+        );
+
         if ($exportFields) {
             /** @var Event $event */
             $event = $this->getCurrentEvent($collection, $exportBean[3], $exportBean[2]);
@@ -853,6 +902,14 @@ abstract class AdapterAbstract implements AdapterInterface
                 }
             }
         }
+
+        $this->logger->debug(
+            sprintf(
+                'CalDav: On verify import after export exportInvitees = %s, importInvitees = %s',
+                var_export($exportInvitees, true),
+                var_export($importInvitees, true)
+            )
+        );
 
         foreach ($importInvitees as $action => $list) {
             if (empty($exportInvitees[$action])) {
@@ -915,6 +972,14 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
+        $this->logger->debug(
+            sprintf(
+                'CalDav: On verify export after import exportFields = %s, importFields = %s',
+                var_export($exportFields, true),
+                var_export($importFields, true)
+            )
+        );
+
         $changedByWorkflow = false;
         foreach ($importFields as $key => $value) {
             if (in_array($key, RecurringHelper::$rruleFieldList)) {
@@ -946,6 +1011,15 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($changedByWorkflow) {
             $exportBean[3] = $repeatRootId;
         }
+
+        $this->logger->debug(
+            sprintf(
+                'CalDav: On verify export after import exportInvitees = %s, importInvitees = %s',
+                var_export($exportInvitees, true),
+                var_export($importInvitees, true)
+            )
+        );
+
 
         foreach ($exportInvitees as $action => $list) {
             if (empty($importInvitees[$action])) {
@@ -1146,7 +1220,7 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * return true if one of rucurrig rules was changed
+     * return true if one of recurring rules was changed
      * @param array $changedFields
      * @return bool
      */
@@ -1191,17 +1265,20 @@ abstract class AdapterAbstract implements AdapterInterface
         $eventIndex = array_search($beanId, $sugarChildrenIds);
 
         if ($eventIndex === false) {
+            $this->logger->notice('CalDav: There is no event index');
             return null;
         }
 
         $recurrenceIds = array_values($collection->getAllChildrenRecurrenceIds());
         if (count($recurrenceIds) < $eventIndex) {
+            $this->logger->notice('CalDav: eventIndex is more then recurrenceIds count');
             return null;
         }
         $recurrenceId = array_slice($recurrenceIds, $eventIndex, 1);
         $recurrenceId = current($recurrenceId);
 
         if (!$recurrenceId) {
+            $this->logger->notice('CalDav: There is no recurrenceId');
             return null;
         }
 
@@ -1540,6 +1617,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setCalDavInvitees(array $value, Event $event, $override = false, $organizerId = null)
     {
+        $this->logger->debug('CalDav: Setting CalDav invitees with invitees = ' . var_export($value, true));
+
         $result = false;
         $participantHelper = $this->getParticipantHelper();
 
@@ -2038,6 +2117,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     protected function setBeanInvitees(array $value, \SugarBean $bean, $override = false)
     {
+        $this->logger->debug('CalDav: Setting Bean invitees with invitees = ' . var_export($value, true));
+
         $result = false;
 
         $definitions = \VardefManager::getFieldDefs($bean->module_name);

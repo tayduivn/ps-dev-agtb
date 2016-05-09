@@ -22,6 +22,7 @@ use Sabre\CalDAV\Backend\SchedulingSupport;
 use Sabre\CalDAV\Backend\SyncSupport;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper;
+use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
 
 /**
  * Class CalendarData
@@ -47,6 +48,19 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         '{http://apple.com/ns/ical/}calendar-order' => 'calendarorder',
         '{http://apple.com/ns/ical/}calendar-color' => 'calendarcolor',
     );
+
+    /**
+     * @var LoggerTransition
+     */
+    protected $logger;
+
+    /**
+     * Set up logger.
+     */
+    public function __construct()
+    {
+        $this->logger = new LoggerTransition(\LoggerManager::getLogger());
+    }
 
     /**
      * Get SugarQuery Instance
@@ -142,6 +156,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getCalendarsForUser($principalUri)
     {
+        $this->logger->debug("CalDav: Incoming data. getCalendarsForUser Principal URI = $principalUri");
+
         $result = array();
 
         $userHelper = $this->getUserHelper();
@@ -174,6 +190,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function createCalendar($principalUri, $calendarUri, array $properties)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. createCalendar Principal URI = $principalUri, Calendar URI = $calendarUri " .
+            "Properties = " . var_export($properties, true)
+        );
+
         throw new DAV\Exception\Forbidden('createCalendar is not allowed for calendar');
     }
 
@@ -182,6 +203,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function updateCalendar($calendarId, DAV\PropPatch $propPatch)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. updateCalendar Calendar ID = $calendarId, properties patch = " .
+            $propPatch->getMutations()
+        );
+
         $supportedProperties = array_keys($this->propertyMap);
         $supportedProperties[] = '{' . CalDAV\Plugin::NS_CALDAV . '}schedule-calendar-transp';
 
@@ -202,6 +228,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
                     }
                 }
 
+                $this->logger->debug("CalDav: Updating Calendar $calendar->id with " . var_export($mutations, true));
                 $calendar->save();
 
                 return true;
@@ -215,6 +242,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function deleteCalendar($calendarId)
     {
+        $this->logger->debug("CalDav: Incoming data. deleteCalendar Calendar ID = $calendarId");
         throw new DAV\Exception\Forbidden('Delete operation is not allowed for calendar');
     }
 
@@ -223,6 +251,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getCalendarObjects($calendarId)
     {
+        $this->logger->debug("CalDav: Incoming data. getCalendarObjects Calendar ID = $calendarId");
+
         $events = array();
         $calendar = $this->getCalendarBean($calendarId);
         if ($calendar->id) {
@@ -241,8 +271,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             foreach ($result as $event) {
                 $events[] = $this->eventSQLRowToCalDavArray($event);
             }
+            $this->logger->debug("CalDav: Get Calendar {$calendar->id} objects data: " . var_export($events, true));
         }
 
+        $this->logger->notice('CalDav: No Calendar bean found. Return empty array of data');
         return $events;
     }
 
@@ -274,11 +306,19 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getCalendarObject($calendarId, $objectUri)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. getCalendarObject Calendar ID = $calendarId, Object URI = $objectUri"
+        );
+
         $event = $this->getMultipleCalendarObjects($calendarId, array($objectUri));
         if (isset($event[0])) {
+            $this->logger->debug(
+                "CalDav: Calendar({$calendarId}) Object({$objectUri}) data: " . var_export($event[0], true)
+            );
             return $event[0];
         }
 
+        $this->logger->notice("CalDav: No data for Calendar({$calendarId}) Object({$objectUri}) found");
         return array();
     }
 
@@ -287,6 +327,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getMultipleCalendarObjects($calendarId, array $uris)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. getMultipleCalendarObjects Calendar ID = $calendarId, list of URIs = " .
+            var_export($uris, true)
+        );
+
         $events = array();
         $calendar = $this->getCalendarBean($calendarId);
         if ($calendar->id) {
@@ -308,9 +353,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
                 foreach ($result as $event) {
                     $events[] = $this->eventSQLRowToCalDavArray($event);
                 }
+                $this->logger->debug("CalDav: Get Calendar $calendar->id objects data: " . var_export($events, true));
             }
         }
 
+        $this->logger->notice('CalDav: No Calendar bean found. Return empty array of data');
         return $events;
     }
 
@@ -319,6 +366,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function createCalendarObject($calendarId, $objectUri, $calendarData)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. createCalendarObject Calendar ID = $calendarId, Object URI = $objectUri, " .
+            "Calendar Data = " . var_export($calendarData, true)
+        );
+
         if ($this->isUnsupported($calendarData)) {
             throw new DAV\Exception\NotImplemented('RRULE format not supported');
         }
@@ -330,9 +382,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $event->setCalendarId($calendarId);
             $event->save();
 
+            $this->logger->info("CalDav: Created CalDav event bean with id = {$event->id} and etag = {$event->etag}");
             return '"' . $event->etag . '"';
         }
 
+        $this->logger->notice('CalDav: Failed to create CalDav event bean or set data to it');
         return null;
     }
 
@@ -341,6 +395,11 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function updateCalendarObject($calendarId, $objectUri, $calendarData)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. updateCalendarObject Calendar ID = $calendarId, Object URI = $objectUri, " .
+            "Calendar Data = " . var_export($calendarData, true)
+        );
+
         if ($this->isUnsupported($calendarData)) {
             throw new DAV\Exception\NotImplemented('RRULE format not supported');
         }
@@ -360,6 +419,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $sugarChildrenCount = count($event->getSugarChildrenOrder());
             $eventChildrenCount = count($event->getAllChildrenRecurrenceIds());
 
+            $this->logger->debug(
+                "CalDav: Sugar children count = $sugarChildrenCount, Event children count = $eventChildrenCount"
+            );
+
             if ($sugarChildrenCount < $eventChildrenCount) {
                 throw new DAV\Exception\Locked('Event in the middle of import in instance');
             }
@@ -367,11 +430,13 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
 
         $event->doLocalDelivery = false;
         if ($event && $event->id && $event->setData($calendarData)) {
+            $this->logger->info("CalDav: Update calendar event $event->id and etag = {$event->etag}");
             $event->save();
 
             return '"' . $event->etag . '"';
         }
 
+        $this->logger->notice('CalDav: Failed to update CalDav event bean or set data to it');
         return null;
     }
 
@@ -380,6 +445,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function deleteCalendarObject($calendarId, $objectUri)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. deleteCalendarObject Calendar ID = $calendarId, Object URI = $objectUri"
+        );
+
         $eventBean = $this->getEventsBean();
         $events = $eventBean->getByURI($calendarId, array($objectUri), 1);
         if (!$events) {
@@ -388,6 +457,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
         $event = array_shift($events);
         if ($event && $event->id) {
             $event->doLocalDelivery = false;
+            $this->logger->info("CalDav: Delete calendar $event->id object with URI = $objectUri");
             $event->mark_deleted($event->id);
         }
     }
@@ -397,6 +467,9 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function calendarQuery($calendarId, array $filters)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. calendarQuery Calendar ID = $calendarId, filters = " . var_export($filters, true)
+        );
         $componentType = null;
         $requirePostFilter = true;
         $timeRange = null;
@@ -489,6 +562,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getCalendarObjectByUID($principalUri, $uid)
     {
+        $this->logger->debug("CalDav: Incoming data. getCalendarObjectByUID Principal URI = $principalUri, UID = $uid");
         $userHelper = $this->getUserHelper();
         $calendars = $userHelper->getCalendars($principalUri);
 
@@ -516,6 +590,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             }
         }
 
+        $this->logger->notice("CalDav: No calendars found for principal uri $principalUri");
         return null;
     }
 
@@ -524,10 +599,14 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getSchedulingObject($principalUri, $objectUri)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. getSchedulingObject Principal URI = $principalUri, Object URI = $objectUri"
+        );
         $userHelper = $this->getUserHelper();
         $user = $userHelper->getUserByPrincipalString($principalUri);
 
         if (!$user) {
+            $this->logger->notice("CalDav: No user found by principal uri $principalUri");
             return array();
         }
 
@@ -539,11 +618,13 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getSchedulingObjects($principalUri)
     {
+        $this->logger->debug("CalDav: Incoming data. getSchedulingObjects Principal URI = $principalUri");
         $userHelper = $this->getUserHelper();
         $user = $userHelper->getUserByPrincipalString($principalUri);
         $result = array();
 
         if (!$user) {
+            $this->logger->notice("CalDav: No user found by principal uri $principalUri");
             return $result;
         }
 
@@ -555,12 +636,16 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function deleteSchedulingObject($principalUri, $objectUri)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. deleteSchedulingObject Principal URI = $principalUri, Object URI = $objectUri"
+        );
         $userHelper = $this->getUserHelper();
         $schedulingBean = $this->getSchedulingBean();
         $user = $userHelper->getUserByPrincipalString($principalUri);
         $result = array();
 
         if (!$user) {
+            $this->logger->notice("CalDav: No user found by principal uri $principalUri");
             return $result;
         }
         $scheduling = $schedulingBean->getByUri($objectUri, $user->id);
@@ -575,6 +660,10 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function createSchedulingObject($principalUri, $objectUri, $objectData)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. createSchedulingObject Principal URI = $principalUri, " .
+            "Object URI = $objectUri, Object data = $objectData"
+        );
         $userHelper = $this->getUserHelper();
         $schedulingBean = $this->getSchedulingBean();
 
@@ -589,9 +678,16 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
      */
     public function getChangesForCalendar($calendarId, $syncToken = 0, $syncLevel = 1, $limit = null)
     {
+        $this->logger->debug(
+            "CalDav: Incoming data. getChangesForCalendar Calendar ID = $calendarId, Sync Token = $syncToken " .
+            "Sync Level = $syncLevel, Limit = $limit"
+        );
         $calendar = $this->getCalendarBean($calendarId);
 
         if (!$calendar->synctoken || $calendar->synctoken < $syncToken) {
+            $this->logger->debug(
+                'CalDav: no changes for calendar. Calendar syncToken = ' . var_export($calendar->synctoken, true)
+            );
             return null;
         }
 
@@ -635,6 +731,8 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
                     break;
             }
         }
+
+        $this->logger->debug("CalDav: Changes for Calendar $calendarId are " . var_export($out, true));
 
         return $out;
     }
@@ -680,6 +778,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             }
         }
 
+        $this->logger->debug("CalDav: Calendar schedulings for User($userId) are " . var_export($schedulings, true));
         return $schedulings;
     }
 
