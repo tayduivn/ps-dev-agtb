@@ -11,6 +11,7 @@
  */
 
 require_once 'include/utils/file_utils.php';
+require_once 'include/utils/sugar_file_utils.php';
 
 /**
  * File and class loader
