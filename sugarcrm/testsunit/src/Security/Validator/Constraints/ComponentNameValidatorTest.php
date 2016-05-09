@@ -86,10 +86,11 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
      * @covers ::validate
      * @dataProvider providerTestInvalidValues
      */
-    public function testInvalidValues($value, $code, $msg)
+    public function testInvalidValues($value, $code, $msg, $allowReservedSqlKeywords)
     {
         $constraint = new ComponentName(array(
             'message' => 'testMessage',
+            'allowReservedSqlKeywords' => $allowReservedSqlKeywords,
         ));
 
         $this->validator->validate($value, $constraint);
@@ -108,11 +109,13 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
                 'invalid+chars',
                 ComponentName::ERROR_INVALID_COMPONENT_NAME,
                 'must start with a letter and may only consist of letters, numbers, hyphens and underscores.',
+                true,
             ),
             array(
                 'SELECT',
                 ComponentName::ERROR_RESERVED_KEYWORD,
                 'reserved SQL keyword not allowed',
+                false,
             ),
         );
     }
