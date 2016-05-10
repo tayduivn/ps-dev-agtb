@@ -10,19 +10,16 @@
  */
 (function(app) {
     app.events.on('router:init', function(router) {
-        /*
-         * Add the pmse_Inbox module's routes to Sugar's router
-         */
         var module = 'pmse_Project';
         var routes = [
             {
-                name: 'record_layout',
-                route: module + '/:id/layout/:view',
-                callback: function(id, view) {
+                name: 'pd_record_layout',
+                route: module + '/:id/layout/:layout',
+                callback: function(id, layout) {
                     if (!app.router._moduleExists(module)) {
                         return;
                     }
-                    app.router.record(module, id, null, view);
+                    app.router.record(module, id, null, layout);
                 }
             }
         ];

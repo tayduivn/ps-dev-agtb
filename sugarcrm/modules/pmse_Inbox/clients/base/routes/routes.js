@@ -10,16 +10,25 @@
  */
 (function(app) {
     app.events.on('router:init', function(router) {
-        var module = 'pmse_Emails_Templates';
+        var module = 'pmse_Inbox';
         var routes = [
             {
-                name: 'et_record_layout',
-                route: module + '/:id/layout/:layout',
-                callback: function(id, layout) {
-                    if (!app.router._moduleExists(module)) {
+                name: 'show-case_layout_record_action',
+                route: module + '/:id/layout/:layout/:record(/:action)',
+                callback: function(id, layout, record, action) {
+                    if (!this._moduleExists(module)) {
                         return;
                     }
-                    app.router.record(module, id, null, layout);
+
+                    var opts = {
+                        module: module,
+                        modelId: id,
+                        layout: layout || 'record',
+                        action: record,
+                        record: action || 'detail'
+                    };
+
+                    app.controller.loadView(opts);
                 }
             }
         ];
