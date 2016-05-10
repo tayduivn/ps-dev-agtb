@@ -205,7 +205,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
     {
         $this->logger->debug(
             "CalDav: Incoming data. updateCalendar Calendar ID = $calendarId, properties patch = " .
-            $propPatch->getMutations()
+            var_export($propPatch->getMutations(), true)
         );
 
         $supportedProperties = array_keys($this->propertyMap);

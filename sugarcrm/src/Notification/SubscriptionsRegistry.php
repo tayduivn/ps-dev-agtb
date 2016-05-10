@@ -620,7 +620,8 @@ class SubscriptionsRegistry
         foreach ($carriers as $key => $carrier) {
             $carrier[1] = array_key_exists(1, $carrier) ? $carrier[1] : '';
             $this->logger->debug(
-                "NC: Creating Subscription bean for path = '$path' and data = " . var_export($carriers, true)
+                "NC: Creating Subscription bean for path = '" . var_export($path, true)
+                . "' and data = " . var_export($carriers, true)
             );
             $bean = $this->getNewBaseBean();
             $bean->fromArray($path + array('carrier_name' => $carrier[0], 'carrier_option' => $carrier[1]));
