@@ -84,16 +84,7 @@ class ImportViewStep2 extends ImportView
         }
 
         // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(array('is_published' => 'yes', 'module' => $importModule,) );
-        if ( count($published_imports_arr) )
-        {
-            $published = array();
-            foreach ( $published_imports_arr as $import)
-            {
-                $published[] = array("IMPORT_NAME" => $import->name, "IMPORT_ID"   => $import->id);
-            }
-            $this->ss->assign('published_imports',$published);
-        }
+        $this->ss->assign('published_imports',self::getSavedImportSourceOptions(true));
         //End custom mapping
 
         // add instructions for anything other than custom_delimited

@@ -74,7 +74,7 @@ class ComponentNameValidator extends ConstraintValidator
         }
 
         // check for reserved SQL keyword
-        if (isset($this->sqlKeywords[strtoupper($value)])) {
+        if (!$constraint->allowReservedSqlKeywords && isset($this->sqlKeywords[strtoupper($value)])) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('%msg%', 'reserved SQL keyword not allowed')
                 ->setInvalidValue($value)

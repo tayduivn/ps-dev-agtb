@@ -12862,6 +12862,8 @@ $app_list_strings['dnb_sic_naics_code'] = array(
 
 $app_list_strings['dnb_bal_cntct_type'] = array(
     "all" => "All Contacts",
+    "email" => "Email Only",
+    "phone" => "Phone Only",
     "prem" => "Premium Only"
 );
 

@@ -335,7 +335,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'Accounts__description' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
@@ -356,7 +356,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                     'description' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__description',
@@ -603,7 +603,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'Accounts__description' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
@@ -624,7 +624,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                     'description' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__description',
@@ -643,7 +643,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'KBContents__body' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
@@ -664,7 +664,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                     'body' => array(
                         'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'copy_to' => array(
                             'KBContents__body',
@@ -694,9 +694,11 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::buildMapping
      * @covers ::getMultiFieldProperty
+     * @covers ::createMultiFieldBase
+     * @covers ::isLongFieldType
      * @dataProvider providerTestBuildMapping
      */
-    public function testBuildMapping($module, array $types, array $multi, $field, array $defs, $searchable, array $expected)
+    public function testBuildMapping($module, $types, array $long, array $multi, $field, $defs, $searchable, $expected)
     {
         $mapping = new Mapping($module);
         $sut = $this->getMultiFieldHandlerMock(array('isFieldSearchable'));
@@ -707,10 +709,11 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
 
         // set multi field types and definitions
         TestReflection::setProtectedValue($sut, 'typesMultiField', $types);
+        TestReflection::setProtectedValue($sut, 'longFieldTypes', $long);
         TestReflection::setProtectedValue($sut, 'multiFieldDefs', $multi);
 
         $sut->buildMapping($mapping, $field, $defs);
-        $this->assertEquals($expected, $mapping->compile());
+        $this->assertSame($expected, $mapping->compile());
     }
 
     public function providerTestBuildMapping()
@@ -719,6 +722,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             // missing field type
             array(
                 'FooBar',
+                array(),
                 array(),
                 array(),
                 'first_name',
@@ -731,6 +735,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
             // missing mapping definition
             array(
                 'FooBar',
+                array(),
                 array(),
                 array(),
                 'first_name',
@@ -747,6 +752,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type1' => array('mapping1'),
                 ),
+                array(),
                 array(
                     'mapping1' => array('type' => 'string'),
                 ),
@@ -782,6 +788,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type1' => array('mapping1', 'mapping2'),
                 ),
+                array(),
                 array(
                     'mapping1' => array('type' => 'string'),
                     'mapping2' => array('type' => 'integer'),
@@ -821,6 +828,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type1' => array('not_analyzed'),
                 ),
+                array(),
                 array(
                     'not_analyzed' => array(),
                 ),
@@ -843,6 +851,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(
                     'type1' => array('mapping1', 'not_analyzed', 'mapping2'),
                 ),
+                array(),
                 array(
                     'not_analyzed' => array(),
                     'mapping1' => array('type' => 'string'),
@@ -870,6 +879,47 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     'field1' => array(
                         'type' => 'string',
                         'index' => 'not_analyzed',
+                        'include_in_all' => false,
+                        'copy_to' => array(
+                            'Opportunities__field1',
+                        ),
+                    ),
+                ),
+            ),
+            // multi definition with not indexed
+            array(
+                'Opportunities',
+                array(
+                    'type1' => array('mapping1', 'not_analyzed', 'mapping2'),
+                ),
+                array('type1'),
+                array(
+                    'not_analyzed' => array(),
+                    'mapping1' => array('type' => 'string'),
+                    'mapping2' => array('type' => 'integer'),
+                ),
+                'field1',
+                array(
+                    'type' => 'type1',
+                ),
+                true,
+                array(
+                    'Opportunities__field1' => array(
+                        'type' => 'string',
+                        'index' => 'no',
+                        'include_in_all' => false,
+                        'fields' => array(
+                            'mapping1' => array(
+                                'type' => 'string',
+                            ),
+                            'mapping2' => array(
+                                'type' => 'integer',
+                            ),
+                        ),
+                    ),
+                    'field1' => array(
+                        'type' => 'string',
+                        'index' => 'no',
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Opportunities__field1',

@@ -36,8 +36,7 @@ class RawProperty implements PropertyInterface
     }
 
     /**
-     * Set mapping
-     * @param array $mapping
+     * {@inheritdoc}
      */
     public function setMapping(array $mapping)
     {
@@ -45,8 +44,7 @@ class RawProperty implements PropertyInterface
     }
 
     /**
-     * Add copy_to field definition
-     * @param string $field Field name to copy to
+     * {@inheritdoc}
      */
     public function addCopyTo($field)
     {

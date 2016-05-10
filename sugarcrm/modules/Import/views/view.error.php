@@ -70,7 +70,7 @@ class ImportViewError extends SugarView
         $this->ss->assign("MESSAGE", $this->request->getValidInputRequest('message', null, ''));
         $this->ss->assign("SOURCE","");
         if ( isset($_REQUEST['source']) )
-        $this->ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external',''))), ''));
+        $this->ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => self::getImportSourceOptions())), ''));
         
         $this->ss->display('modules/Import/tpls/error.tpl');
     }

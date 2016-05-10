@@ -26,8 +26,8 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Exception\MappingException;
 class MultiFieldProperty extends RawProperty implements PropertyInterface
 {
     /**
-     * Allowed type supported by multi field
-     * @var unknown
+     * Allowed elastic type supported by multi field
+     * @var array
      */
     protected $allowedTypes = array(
         'string',

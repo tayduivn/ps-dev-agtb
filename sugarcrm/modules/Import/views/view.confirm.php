@@ -49,7 +49,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false), ENT_NOQUOTES);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
-        $importSource = $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external', ''))), 'csv');
+        $importSource = $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => self::getImportSourceOptions())), 'csv');
 
         // Clear out this user's last import
         $seedUsersLastImport = BeanFactory::getBean('Import_2');
@@ -612,7 +612,7 @@ EOJAVASCRIPT;
         $ss->assign("MOD", $GLOBALS['mod_strings']);
         $ss->assign("SOURCE","");
         $ss->assign("SHOWCANCEL",$showCancel);
-        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external', '')))));
+        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => self::getImportSourceOptions()))));
 
         if ($cancelLabel) {
             $ss->assign('CANCELLABEL', $cancelLabel);
