@@ -145,8 +145,46 @@ class ImportView extends SugarView
         $ss->assign("ACTION",$action);
         $ss->assign("IMPORT_MODULE",$module);
         $ss->assign("MOD", $GLOBALS['mod_strings']);
-        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => array('csv', 'external',''))), ''));
+        $ss->assign("SOURCE", $this->request->getValidInputRequest('source', array('Assert\Choice' => array('choices' => self::getImportSourceOptions())), ''));
 
         echo $ss->fetch('modules/Import/tpls/error.tpl');
+    }
+
+    /**
+     * Retrieve all valid import source options
+     * @return array
+     */
+    protected function getImportSourceOptions()
+    {
+        $savedSourceOptions = array_merge(self::getSavedImportSourceOptions(true),
+            self::getSavedImportSourceOptions(false));
+
+        $savedSourceOptionsFlattened = array();
+
+        foreach ($savedSourceOptions as $importOption) {
+            $savedSourceOptionsFlattened[] = "custom:" . $importOption['IMPORT_ID'];
+        }
+        return array_merge($savedSourceOptionsFlattened, array('csv', 'external', ''));
+    }
+
+    /**
+     * Retrieve published import options
+     * @return array
+     */
+    protected function getSavedImportSourceOptions($published = true)
+    {
+        $results = array();
+        $import_map_seed = BeanFactory::getBean('Import_1');
+        $publishedImportOptions = $import_map_seed->retrieve_all_by_string_fields(array(
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'is_published' => $published ? 'yes' : 'no',
+            'module' => $this->importModule
+        ));
+
+        foreach ($publishedImportOptions as $option) {
+            $results[] = array("IMPORT_NAME" => $option->name, "IMPORT_ID" => $option->id);
+        }
+
+        return $results;
     }
 }

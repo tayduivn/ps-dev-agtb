@@ -99,7 +99,10 @@
                                             {$MOD.LBL_OLD_PASSWORD}
                                         </td>
                                         <td >
-                                            <input name='old_password' id='old_password' type='password' tabindex='2' {$DISABLED} onkeyup="password_confirmation();" >
+                                            <input name='old_password' id='old_password' type='password' tabindex='2' {$DISABLED}
+                                               onkeyup="password_confirmation();"
+                                               onchange="password_confirmation();"
+                                            >
                                         </td>
                                         <td width='40%'>
                                         </td>
@@ -114,7 +117,10 @@
                                 </td>
                                 <td class='dataField'>
 
-                                    <input name='new_password' id= "new_password" type='password' tabindex='2' {$DISABLED} onkeyup="password_confirmation();newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}');" />
+                                    <input name='new_password' id= "new_password" type='password' tabindex='2' {$DISABLED}
+                                       onkeyup="password_confirmation();newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}');"
+                                       onchange="password_confirmation();newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}');"
+                                    />
                                 </td>
                                 <td width='40%'>
                                 </td>

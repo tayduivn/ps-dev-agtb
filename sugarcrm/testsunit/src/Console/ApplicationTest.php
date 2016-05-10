@@ -91,7 +91,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $app->setAutoExit(false);
 
         $this->assertSame('SugarCRM Console', $app->getName());
-        $this->assertSame('[standalone mode]', $app->getVersion());
 
         $tester = new ApplicationTester($app);
 
@@ -123,22 +122,38 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         // version from source tree
         $this->setupSugarVersionFixture('sugar_version_source');
         $app = new Application();
-        $this->assertEquals('[standalone mode]', $app->getVersion());
+        $this->assertEquals(
+            '[standalone mode]',
+            $app->getVersion(),
+            'Expecting standalone mode for source base sugar_version'
+        );
 
         // version from installed sugar
         $this->setupSugarVersionFixture('sugar_version_installed');
         $app = new Application();
-        $this->assertEquals('7.7.0.0-ULT-1234', $app->getVersion());
+        $this->assertEquals(
+            '7.7.0.0-ULT-1234',
+            $app->getVersion(),
+            'Expecting actual version number from built/installed system'
+        );
 
         // corrupt sugar_version file
         $this->setupSugarVersionFixture('sugar_version_corrupt');
         $app = new Application();
-        $this->assertEquals('[standalone mode]', $app->getVersion());
+        $this->assertEquals(
+            '[standalone mode]',
+            $app->getVersion(),
+            'Expecting standalone mode for corrupt sugar_version'
+        );
 
         // missing sugar version file (shouldnt happen, but got it covered)
         unlink($sugarVersionFile);
         $app = new Application();
-        $this->assertEquals('[standalone mode]', $app->getVersion());
+        $this->assertEquals(
+            '[standalone mode]',
+            $app->getVersion(),
+            'Expecting standalone mode for missing sugar_version'
+        );
 
         // restore original version file
         copy($backupFile, $sugarVersionFile);

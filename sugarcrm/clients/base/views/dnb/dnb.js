@@ -563,10 +563,10 @@
             'json_path' : 'PrincipalIdentificationNumberDetail.0.PrincipalIdentificationNumber'
         },
         'emailInd' : {
-            'json_path' : 'DirectTelephoneInformationAvailableIndicator'
+            'json_path': 'DirectEmailInformationAvailableIndicator'
         },
         'phoneInd' : {
-            'json_path' : 'DirectEmailInformationAvailableIndicator'
+            'json_path': 'DirectTelephoneInformationAvailableIndicator'
         },
         'isDupe' : {
             'json_path' : 'isDupe'
@@ -1347,7 +1347,7 @@
         if (_.isUndefined(importFlag)) {
             importFlag = true;
             setModelFlag = false;
-        } else if (importFlag) {
+        } else if (_.isObject(importFlag)) {
             setModelFlag = false;
         }
         var dnbCheckBox = this.$('.dnb_checkbox:checked');

@@ -978,7 +978,7 @@ RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 RedirectMatch 403 {$ignoreCase}/+composer\.(json|lock)
-RedirectMatch 403 {$ignoreCase}/+vendor/
+RedirectMatch 403 {$ignoreCase}/+vendor/(?!ytree.*\.(css|js|gif))
 RedirectMatch 403 {$ignoreCase}/+bin/
 RedirectMatch 403 {$ignoreCase}.*/\.git
 

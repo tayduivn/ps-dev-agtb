@@ -26,30 +26,41 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Property\ObjectProperty;
  * providers.
  *
  */
-class Mapping
+class Mapping implements MappingInterface
 {
     /**
      * @var string Module name
      */
-    protected $module;
+    private $module;
 
     /**
      * @var \SugarBean
      */
-    protected $bean;
+    private $bean;
 
     /**
-     * @var array Elasticsearch mapping properties
+     * Elasticsearch mapping properties
+     * @var PropertyInterface[]
      */
-    protected $properties = array();
+    private $properties = array();
 
     /**
      * Base mapping used for all multi fields
      * @var array
      */
-    protected $multiFieldBase = array(
+    private $multiFieldBase = array(
         'type' => 'string',
         'index' => 'not_analyzed',
+        'include_in_all' => false,
+    );
+
+    /**
+     * Base mapping for not indexed fields
+     * @var array
+     */
+    private $notIndexedBase = array(
+        'type' => 'string',
+        'index' => 'no',
         'include_in_all' => false,
     );
 
@@ -57,7 +68,7 @@ class Mapping
      * Excluded fields from _source
      * @var array
      */
-    protected $sourceExcludes = array();
+    private $sourceExcludes = array();
 
     /**
      * @param string $module
@@ -68,26 +79,23 @@ class Mapping
     }
 
     /**
-     * Add field to be excluded from _source
-     * @param string $fieldDef
+     * {@inheritdoc}
      */
-    public function excludeFromSource($fieldDef)
+    public function excludeFromSource($field)
     {
-        $this->sourceExcludes[] = $fieldDef;
+        $this->sourceExcludes[$field] = $field;
     }
 
     /**
-     * Get excluded fields from _source
-     * @return multitype:
+     * {@inheritdoc}
      */
     public function getSourceExcludes()
     {
-        return $this->sourceExcludes;
+        return array_values($this->sourceExcludes);
     }
 
     /**
-     * Build mapping
-     * @param ProviderCollection $providers
+     * {@inheritdoc}
      */
     public function buildMapping(ProviderCollection $providers)
     {
@@ -97,8 +105,7 @@ class Mapping
     }
 
     /**
-     * Get module
-     * @return string
+     * {@inheritdoc}
      */
     public function getModule()
     {
@@ -106,8 +113,7 @@ class Mapping
     }
 
     /**
-     * Get seed bean
-     * @return \SugarBean
+     * {@inheritdoc}
      */
     public function getBean()
     {
@@ -119,9 +125,7 @@ class Mapping
     }
 
     /**
-     * Compile mapping properties
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function compile()
     {
@@ -133,41 +137,31 @@ class Mapping
     }
 
     /**
-     * Add a not_analyzed string field to the mapping. As every multi field
-     * has a not_analyzed base definition we can just add this as is. Other
-     * providers can still register additional multi fields on top of this
-     * not analyzed field.
-     *
-     * @param string $field Field name
-     * @param array $copyTo Optional copy_to definition
+     * {@inheritdoc}
+     */
+    public function addNotIndexedField($field, array $copyTo = array())
+    {
+        $this->createMultiFieldBase($field, $this->notIndexedBase, $copyTo);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function addNotAnalyzedField($field, array $copyTo = array())
     {
-        $this->createMultiFieldBase($field, $copyTo);
+        $this->createMultiFieldBase($field, $this->multiFieldBase, $copyTo);
     }
 
     /**
-     * Add multi field mapping. This should be the primary method to be used
-     * to build the mapping as most fields are string based. Multi fields
-     * have the ability to define different analyzers for every sub field.
-     * During indexing the value for each multi field only has to be send once
-     * instead of being duplicated.
-     *
-     * @param string $baseField Base field name
-     * @param string $field Name of the multi field
-     * @param MultiFieldProperty $property
-     * @param array $copyTo Optional copy_to definition
+     * {@inheritdoc}
      */
-    public function addMultiField($baseField, $field, MultiFieldProperty $property, array $copyTo = array())
+    public function addMultiField($baseField, $field, MultiFieldProperty $property)
     {
-        $this->createMultiFieldBase($baseField, $copyTo)->addField($field, $property);
+        $this->createMultiFieldBase($baseField, $this->multiFieldBase, array())->addField($field, $property);
     }
 
     /**
-     * Add object (or nested) property mapping.
-     *
-     * @param string $field
-     * @param ObjectProperty $property
+     * {@inheritdoc}
      */
     public function addObjectProperty($field, ObjectProperty $property)
     {
@@ -175,12 +169,7 @@ class Mapping
     }
 
     /**
-     * Add raw property mapping. It is encouraged to use higher level property
-     * objects instead and the respective methods on this class to configure
-     * them instead of using a raw property. Use this method with caution.
-     *
-     * @param string $field
-     * @param RawProperty $property
+     * {@inheritdoc}
      */
     public function addRawProperty($field, RawProperty $property)
     {
@@ -188,24 +177,46 @@ class Mapping
     }
 
     /**
-     * Create base multi field object for given field.
+     * {@inheritdoc}
+     */
+    public function hasProperty($field)
+    {
+        return isset($this->properties[$field]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProperty($field)
+    {
+        if ($this->hasProperty($field)) {
+            return $this->properties[$field];
+        }
+        throw new MappingException("Trying to get non-existing property '{$field}' for '{$this->module}'");
+    }
+
+    /**
+     * Create base multi field object for given field. If the field already
+     * exists we use the one which is present and only apply the copyTo fields
+     * on top of the already existing one.
      *
      * @param string $field
+     * @param array $mapping Mapping to apply on base field
      * @param array $copyTo Optional copy_to definition
-     * @return MultiFieldBaseProperty
      * @throws MappingException
+     * @return MultiFieldBaseProperty
      */
-    protected function createMultiFieldBase($field, array $copyTo = array())
+    private function createMultiFieldBase($field, array $mapping, array $copyTo = array())
     {
         // create multi field base if not set yet
-        if (!isset($this->properties[$field])) {
+        if (!$this->hasProperty($field)) {
             $property = new MultiFieldBaseProperty();
-            $property->setMapping($this->multiFieldBase);
-            $this->addProperty($field, $property);
+            $property->setMapping($mapping);
+            $this->addRawProperty($field, $property);
         }
 
         // make sure we have a base multi field
-        $property = $this->properties[$field];
+        $property = $this->getProperty($field);
         if (!$property instanceof MultiFieldBaseProperty) {
             throw new MappingException("Field '{$field}' is not a multi field");
         }
@@ -225,7 +236,7 @@ class Mapping
      * @param PropertyInterface $property
      * @throws MappingException
      */
-    protected function addProperty($field, PropertyInterface $property)
+    private function addProperty($field, PropertyInterface $property)
     {
         if (isset($this->properties[$field])) {
             throw new MappingException("Cannot redeclare field '{$field}' for module '{$this->module}'");

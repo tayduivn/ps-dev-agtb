@@ -21,6 +21,12 @@
                 {{str "LBL_DNB_PREMIUM"}}
             </span>
         {{/eq}}
+        {{#if this.emailInd}}
+            <i class="fa fa-envelope-o pull-right"></i>
+        {{/if}}
+        {{#if this.phoneInd}}
+            <i class="fa fa-phone pull-right"></i>
+        {{/if}}
     </div>
     <div class='dnb-company-label'>
         {{this.companyName}}

@@ -35,7 +35,7 @@ class MultiFieldHandler extends AbstractHandler implements
     SearchFieldsHandlerInterface
 {
     /**
-     * Mappings for sugar types using multi field definition
+     * Mappings for types using multi field definition
      * @var array
      */
     protected $typesMultiField = array(
@@ -90,6 +90,20 @@ class MultiFieldHandler extends AbstractHandler implements
         'enum' => array(
             'not_analyzed',
         ),
+    );
+
+    /**
+     * By default this handler creates not_analyzed multi field base to stack
+     * the different mappings on top of it. However for fields which contain
+     * long texts, we will hit the term limit of 32'766 bytes. Therefor for the
+     * listed fields a non-indexed multi field base will be created instead.
+     *
+     * @var array
+     */
+    protected $longFieldTypes = array(
+        'text',
+        'longtext',
+        'htmleditable_tinymce',
     );
 
     /**
@@ -385,8 +399,9 @@ class MultiFieldHandler extends AbstractHandler implements
             return;
         }
 
-        foreach ($this->typesMultiField[$defs['type']] as $multiField) {
+        $fieldType = $defs['type'];
 
+        foreach ($this->typesMultiField[$fieldType] as $multiField) {
             /*
              * When a field is searchable we want to add a module prefix to the
              * field name to ensure disambigious field names during query time.
@@ -403,18 +418,45 @@ class MultiFieldHandler extends AbstractHandler implements
              */
             if ($this->isFieldSearchable($defs)) {
                 $realField = $mapping->getModule() . QueryBuilder::PREFIX_SEP . $field;
-                $mapping->addNotAnalyzedField($field, array($realField));
+                $this->createMultiFieldBase($mapping, $realField, $fieldType);
             } else {
                 $realField = $field;
             }
 
-            if ($multiField === 'not_analyzed') {
-                $mapping->addNotAnalyzedField($realField);
-            } else {
-                $multiFieldProperty = $this->getMultiFieldProperty($multiField);
-                $mapping->addMultiField($realField, $multiField, $multiFieldProperty);
+            // create multi field base for primary field
+            $copyTo = $realField === $field ? array() : array($realField);
+            $this->createMultiFieldBase($mapping, $field, $fieldType, $copyTo);
+
+            // add multi field mapping if available
+            if ($property = $this->getMultiFieldProperty($multiField)) {
+                $mapping->addMultiField($realField, $multiField, $property);
             }
         }
+    }
+
+    /**
+     * Create multi field base
+     * @param string $field
+     * @param string $fieldType
+     * @param array $copyTo
+     */
+    protected function createMultiFieldBase(Mapping $mapping, $field, $fieldType, array $copyTo = array())
+    {
+        if ($this->isLongFieldType($fieldType)) {
+            $mapping->addNotIndexedField($field, $copyTo);
+        } else {
+            $mapping->addNotAnalyzedField($field, $copyTo);
+        }
+    }
+
+    /**
+     * Check if given field type is defined as a long field
+     * @param string $fieldType
+     * @return boolean
+     */
+    protected function isLongFieldType($fieldType)
+    {
+        return in_array($fieldType, $this->longFieldTypes);
     }
 
     /**
@@ -505,12 +547,17 @@ class MultiFieldHandler extends AbstractHandler implements
      * Get multi field property object
      * @param string $name Multi field property name
      * @throws MappingException
-     * @return MultiFieldProperty
+     * @return MultiFieldProperty|false
      */
     protected function getMultiFieldProperty($name)
     {
         if (!isset($this->multiFieldDefs[$name])) {
             throw new MappingException("Unknown multi field definition '{$name}'");
+        }
+
+        // Gracefully return false if no explicit mapping is defined
+        if (empty($this->multiFieldDefs[$name])) {
+            return false;
         }
 
         if (!isset($this->multiFieldDefs[$name]['type'])) {
