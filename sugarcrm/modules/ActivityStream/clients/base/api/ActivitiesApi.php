@@ -146,7 +146,7 @@ class ActivitiesApi extends FilterApi
             $seed->populateFromRow($row, true);
             $record = $this->formatBean($api, $args, $seed, $options);
 
-            if ($record['activity_type'] === 'update') {
+            if (isset($record['activity_type']) && $record['activity_type'] === 'update') {
                 if (is_null($bean) || empty($bean->id)) {
                     $fields = json_decode($row['fields'], true);
                     $changedData = array();
