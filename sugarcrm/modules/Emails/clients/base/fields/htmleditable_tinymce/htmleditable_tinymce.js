@@ -20,6 +20,8 @@
     _signatureBtn: null,
     // The number of signatures found from the REST response
     _numSignatures: 0,
+    // Track the editor focus/blur state
+    _editorFocused: false,
 
     /**
      * @inheritdoc
@@ -80,6 +82,7 @@
      */
     _addCustomEditorEvents: function(editor) {
         editor.on('focus', _.bind(function(e) {
+            this._editorFocused = true;
             // the user has at least 1 signature
             if (this._numSignatures > 0) {
                 // enable the signature button
@@ -87,6 +90,7 @@
             }
         }, this));
         editor.on('blur', _.bind(function(e) {
+            this._editorFocused = false;
             // the user has at least 1 signature
             if (this._numSignatures > 0) {
                 // disable the signature button
@@ -170,6 +174,11 @@
 
             // Set the number of signatures the user has
             this._numSignatures = signatures.length;
+
+            // If the editor is focused before the signatures are returned, enable the signature button
+            if (this._editorFocused) {
+                this._signatureBtn.disabled(false);
+            }
         }
     },
 
