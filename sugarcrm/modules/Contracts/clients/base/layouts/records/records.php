@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Contracts']['base']['layout']['records'] = array(
+    'type' => 'bwc',
     'components' => array(
         array(
             'view' => 'bwc',
