@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Socket\Client;
 /**
  * Class SocketClientTest
  * @package Sugarcrm\SugarcrmTests\Socket
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Socket\Client
+ * @covers Sugarcrm\Sugarcrm\Socket\Client
  */
 class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -154,7 +154,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * Tests socket server settings check with invalid url.
      * Socket server availability should be false.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsInvalidUrl()
     {
@@ -181,7 +181,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with unreachable socket server url.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsUnreachableUrl()
     {
@@ -212,7 +212,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * Tests socket server settings check with valid and reachable url.
      * Socket server availability should be true.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsValidClientUrl()
     {
@@ -250,7 +250,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * Tests socket server settings check with valid and reachable url.
      * Socket server availability should be true.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsValidServerUrl()
     {
@@ -287,7 +287,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid socket server type in response.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsInvalidType()
     {
@@ -321,7 +321,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid socket server response.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsInvalidResponse()
     {
@@ -356,7 +356,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with balanced urls.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsBalancerValid()
     {
@@ -411,7 +411,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests socket server settings check with invalid server response at balanced url.
      *
-     * @covers ::checkWSSettings
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::checkWSSettings
      */
     public function testCheckWSSettingsBalancerInvalidResponse()
     {
@@ -463,7 +463,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * Tests if send() method returns correct operation status.
      *
      * @dataProvider messageUrlsProvider
-     * @covers       ::send
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::send
      * @param bool $expectedResult - expected response from send() method
      */
     public function testSendReturnValue($expectedResult)
@@ -503,7 +503,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * Tests sending message with data payload to socket server.
      *
      * @dataProvider messageDataProvider
-     * @covers       ::send
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::send
      * @param string $message - message to be sent
      * @param array|null $args - data payload to be sent
      */
@@ -555,7 +555,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
      * @param boolean $send
      * @param boolean $returned
      * @dataProvider providerCheckIsConfigured
-     * @covers ::push
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::send
      */
     public function testSendIsConfigured($isConfigured, $send, $returned)
     {
@@ -704,7 +704,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getInstance() factory method.
      *
-     * @covers ::getInstance
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::getInstance
      */
     public function testGetInstance()
     {
@@ -714,7 +714,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getInstance() factory method resets class properties to default values.
      *
-     * @covers ::getInstance
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::getInstance
      */
     public function testGetInstanceResetsItself()
     {
@@ -735,7 +735,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getHttpHelper() factory method.
      *
-     * @covers ::getHttpHelper
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::getHttpHelper
      */
     public function testGetHttpHelper()
     {
@@ -748,7 +748,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getAdministrationBean() factory method.
      *
-     * @covers ::getAdministrationBean
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::getAdministrationBean
      */
     public function testGetAdministrationBean()
     {
@@ -761,7 +761,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests getSugarConfig() factory method.
      *
-     * @covers ::getSugarConfig
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::getSugarConfig
      */
     public function testGetSugarConfig()
     {
@@ -774,7 +774,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests auth token retrieve (token is stored in DB).
      *
-     * @covers ::retrieveToken
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::retrieveToken
      */
     public function testRetrieveToken()
     {
@@ -822,7 +822,7 @@ class SocketClientTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests auth token retrieve (token is generated).
      *
-     * @covers ::retrieveToken
+     * @covers Sugarcrm\Sugarcrm\Socket\Client::retrieveToken
      */
     public function testGenerateToken()
     {

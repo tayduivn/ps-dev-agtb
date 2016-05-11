@@ -98,7 +98,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * Testing is configured.
      *
      * @dataProvider isConfiguredProvider
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::isConfigured
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::isConfigured
      * @param string $triggerServerUrl trigger server url saved in config.
      * @param bool $expectsIsConfigured expects IsConfigured result.
      */
@@ -118,7 +118,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing case when trigger server not configured.
      *
-     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::push
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::push
      */
     public function testPushNotConfigured()
     {
@@ -338,7 +338,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * Testing adding or updating triggers tasks.
      *
      * @dataProvider providerPush
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::push
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::push
      * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
      * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
      * @param array $saveSetting settings for mock simulator \Administration::getConfigForModule.
@@ -399,7 +399,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing case when trigger server not configured.
      *
-     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::delete
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::delete
      */
     public function testDeleteNotConfigured()
     {
@@ -500,7 +500,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing deleting triggers tasks.
      *
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::delete
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::delete
      * @dataProvider deleteProvider
      * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
      * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
@@ -556,7 +556,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing case when trigger server not configured.
      *
-     * @covers \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
      */
     public function testDeleteByTagsNotConfigured()
     {
@@ -598,7 +598,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing deleteByTags with invalid tags.
      *
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
      * @dataProvider deleteWitInvalidTagsProvider
      * @param mixed $tags variant of invalid tags.
      */
@@ -695,7 +695,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * Testing deleting triggers tasks.
      *
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::deleteByTags
      * @dataProvider deleteByTagsProvider
      * @param array $arguments all arguments for test(Arguments for push, configured serverUrl, generated token).
      * @param array $getConfigForModule settings for mock simulator \Administration::saveSetting.
@@ -785,7 +785,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * @param int $expectedPingCallsCount expected count calls of method ping.
      * @param bool $pingReturns method ping will return.
      * @param bool $expectedResult expected result.
-     * @covers       \Sugarcrm\Sugarcrm\Trigger\Client::::checkTriggerServerSettings
+     * @covers Sugarcrm\Sugarcrm\Trigger\Client::checkTriggerServerSettings
      * @dataProvider checkTriggerServerSettingsProvider
      */
     public function testCheckTriggerServerSettings($url, $expectedPingCallsCount, $pingReturns, $expectedResult)
