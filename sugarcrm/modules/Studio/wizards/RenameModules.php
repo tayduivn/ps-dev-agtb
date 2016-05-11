@@ -206,7 +206,6 @@ class RenameModules
         $this->renameAllDashlets();
         $this->changeStringsInRelatedModules();
         $this->changeGlobalAppStrings();
-        $this->renameCustomModules();
 
         // Run the metadata cache refresh queue so changes take effect
         MetaDataManager::runCacheRefreshQueue();
@@ -219,38 +218,6 @@ class RenameModules
                     app.api.call('read', app.api.buildURL('ping'));
                 </script>";
 
-        }
-    }
-
-    /**
-     * Custom modules have additional language files that should be changed
-     */
-    private function renameCustomModules()
-    {
-        foreach ($this->changedModules as $moduleName => $module) {
-            $_REQUEST['view_package'] = 'studio';
-            SugarAutoLoader::load('modules/ModuleBuilder/parsers/parser.dropdown.php');
-            $parserDropDown = new ParserDropDown();
-
-            $singularName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['singular']);
-            $params = array(
-                'dropdown_name' => 'moduleListSingular',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $singularName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
-
-            $pluralName = str_replace(array("'", '"'), array('&#039;', '&quot;'), $module['plural']);
-            $params = array(
-                'dropdown_name' => 'moduleList',
-                'dropdown_lang' => $this->selectedLanguage,
-                'list_value' => '[["' . $moduleName . '","' . $pluralName . '"]]',
-                'use_push' => false,
-                'skipSaveExemptDropdowns' => true
-            );
-            $parserDropDown->saveDropDown($params);
         }
     }
 
@@ -799,7 +766,7 @@ class RenameModules
         $GLOBALS['log']->info("Beginning to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
         $labelKeysToReplace = array(
-            array('name' => 'LNK_NEW_RECORD', 'type' => 'singular'), //Module built modules, Create <moduleName>
+            array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
             array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
             array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LNK_CREATE', 'type' => 'singular'),
