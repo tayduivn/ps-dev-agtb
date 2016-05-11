@@ -360,6 +360,7 @@
 
             //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array(
+                'portal2/lib/sugar.searchahead.js' => 'portal2/portal.min.js',
                 'portal2/error.js' => 'portal2/portal.min.js',
                 'portal2/user.js' => 'portal2/portal.min.js',
                 'portal2/portal.js' => 'portal2/portal.min.js',
