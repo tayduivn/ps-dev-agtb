@@ -182,12 +182,14 @@
      * Handler for when the ACLs change on the model. Toggles the `hide` class
      * on the pencil wrapper for each of the fields on this view that had ACL
      * changes.
+     * Hide the wrapper if no access to edit.
      *
      * @param {Object} diff The diff object of fields and whether or not they
      *   had ACL changes.
      */
     handleAclChange: function(diff) {
         var fields = _.keys(diff);
+        var editAccess = app.acl.hasAccessToModel('edit', this.model);
 
         this._setNoEditFields();
         this.setEditableFields();
@@ -199,7 +201,7 @@
             var $pencilEl = $(pencilEl);
             var field = $pencilEl.data('name');
 
-            if (!diff[field]) {
+            if (editAccess && !diff[field]) {
                 return;
             }
 
