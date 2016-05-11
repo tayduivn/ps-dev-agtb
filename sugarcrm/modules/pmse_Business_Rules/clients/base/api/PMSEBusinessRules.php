@@ -28,7 +28,8 @@ class PMSEBusinessRules extends vCardApi
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
                 'acl' => 'view',
-//                'shortHelp' => 'Exports a .pbr file with a Process Business Rules definition',
+                'shortHelp' => 'Exports a .pbr file with a Process Business Rules definition',
+                'longHelp'  => 'modules/pmse_Business_Rules/clients/base/api/help/business_rules_export_help.html',
             ),
             'businessRulesImportPost' => array(
                 'reqType' => 'POST',
@@ -37,7 +38,8 @@ class PMSEBusinessRules extends vCardApi
                 'method' => 'businessRulesImport',
                 'rawPostContents' => true,
                 'acl' => 'create',
-//                'shortHelp' => 'Imports a Process Business Rules record from a .pbr file',
+                'shortHelp' => 'Imports a Process Business Rules definition from a .pbr file',
+                'longHelp'  => 'modules/pmse_Business_Rules/clients/base/api/help/business_rules_import_help.html',
             ),
         );
     }
