@@ -95,11 +95,12 @@ $mod_strings = array (
     'LBL_KB_STATUS_BACK_TO_DRAFT' => 'Document status has been changed back to draft.',
     'LBL_OPERATOR_CONTAINING_THESE_WORDS' => 'containing these words',
     'LBL_OPERATOR_EXCLUDING_THESE_WORDS' => 'excluding these words',
-    'ERROR_EXP_DATE_LOW' => 'The Expiration Date must occur on a date after the Publish Date.',
+    'ERROR_EXP_DATE_LOW' => 'Error. Expiration Date can not be before the date of publishing.',
     'ERROR_ACTIVE_DATE_APPROVE_REQUIRED' => 'The Approved status requires publishing date.',
     'ERROR_ACTIVE_DATE_LOW' => 'The Publish Date must occur on a later date than today\'s date.',
     'ERROR_ACTIVE_DATE_EMPTY' => 'The Publish Date is empty.',
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'ERROR_IS_BEFORE' => 'Error. The date of this field must occur on a date after date of {{this}} field.',
     'TPL_SHOW_MORE_MODULE' => 'More {{module}} articles...',
     'LBL_LIST_FORM_TITLE' => 'Knowledge Base List',
     'LBL_SEARCH_FORM_TITLE' => 'Knowledge Base Search',
