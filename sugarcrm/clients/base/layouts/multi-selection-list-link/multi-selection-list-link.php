@@ -11,6 +11,7 @@
  */
 
 $viewdefs['base']['layout']['multi-selection-list-link'] = array(
+    'type' => 'multi-selection-list',
     'components' => array(
         array(
             'layout' => array(

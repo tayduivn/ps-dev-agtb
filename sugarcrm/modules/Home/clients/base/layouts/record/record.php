@@ -12,6 +12,7 @@
  */
 
 $viewdefs['Home']['base']['layout']['record'] = array(
+    'type' => 'dashboard',
     'name' => 'dashboard',
     'components' => array(
         array(

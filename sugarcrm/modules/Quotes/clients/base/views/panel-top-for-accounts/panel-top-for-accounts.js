@@ -14,5 +14,15 @@
  * @extends View.Views.Base.PanelTopView
  */
 ({
-    extendsFrom: 'PanelTopView'
+    extendsFrom: 'PanelTopView',
+
+    initialize: function(options) {
+        var ctrlName = options.name || this.toString();
+        app.logger.warn('The `' + ctrlName +
+            '` has been deprecated since 7.8.0 and will be removed in 7.9.0. ' +
+            'To extend from ' + this.extendsFrom + ' directly, remove the `' + ctrlName +
+            '` controller and add the `type` property in the metadata file instead.');
+
+        this._super('initialize', [options]);
+    }
 });

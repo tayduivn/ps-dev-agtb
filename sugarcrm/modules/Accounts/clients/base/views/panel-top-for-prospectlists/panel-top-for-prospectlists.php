@@ -11,6 +11,7 @@
  */
 
 $viewdefs['Accounts']['base']['view']['panel-top-for-prospectlists'] = array(
+    'type' => 'panel-top',
     'template' => 'panel-top',
     'buttons' => array(
         array(

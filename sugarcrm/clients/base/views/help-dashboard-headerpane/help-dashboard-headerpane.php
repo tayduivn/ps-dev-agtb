@@ -12,6 +12,7 @@
  */
 
 $viewdefs['base']['view']['help-dashboard-headerpane'] = array(
+    'type' => 'dashboard-headerpane',
     'template' => 'dashboard-headerpane',
     'buttons' => array(
         array(

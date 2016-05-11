@@ -11,6 +11,7 @@
  */
 
 $viewdefs['Quotes']['base']['view']['panel-top-for-accounts'] = array(
+    'type' => 'panel-top',
     'template' => 'panel-top',
     'buttons' => array(
         array(
