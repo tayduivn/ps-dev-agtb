@@ -2327,11 +2327,16 @@ class PMSECrmDataWrapper implements PMSEObservable
         $result = $q->execute();
 
         if (is_array($result)) {
-            $eventDefinitionId = $result[0]['id'];
-            $sql = "UPDATE pmse_bpm_event_definition
+            if (count($result) > 0) {
+                $eventDefinitionId = $result[0]['id'];
+                $sql = "UPDATE pmse_bpm_event_definition
                     SET evn_criteria = ''
                     WHERE id = " . $this->db->quoted($eventDefinitionId);
-            $res->success = (bool) $this->db->Query($sql);
+                $res->success = (bool)$this->db->Query($sql);
+            } else {
+                // cannot run update since the row is not there
+                $res->success = true;
+            }
         }
 
         return $res;
