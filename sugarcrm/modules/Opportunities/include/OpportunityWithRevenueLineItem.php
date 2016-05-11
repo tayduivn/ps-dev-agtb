@@ -254,13 +254,6 @@ EOL;
 
         sugar_file_put_contents($this->appExtFolder . '/Include/' . $this->rliModuleExtFile, $file_contents);
 
-        // Set up moduleList and moduleListSingular in custom language file.
-        require_once('modules/Studio/wizards/RenameModules.php');
-        RenameModules::saveCustomModuleNamePair('RevenueLineItems', array(
-            'plural' => 'Revenue Line Items',
-            'singular' => 'Revenue Line Item',
-        ));
-
         // enable the ACLs on RevenueLineItems
         ACLAction::addActions('RevenueLineItems');
 
