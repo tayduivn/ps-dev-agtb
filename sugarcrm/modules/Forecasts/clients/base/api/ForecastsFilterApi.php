@@ -28,6 +28,12 @@ class ForecastsFilterApi extends FilterApi
                 'jsonParams' => array('filter'),
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
+                'exceptions' => array(
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
@@ -36,6 +42,12 @@ class ForecastsFilterApi extends FilterApi
                 'method' => 'filterList',
                 'shortHelp' => 'Filter records from a single module',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsFilter.html',
+                'exceptions' => array(
+                    'SugarApiExceptionError',
+                    'SugarApiExceptionInvalidParameter',
+                    'SugarApiExceptionNotAuthorized',
+                    'SugarApiExceptionNotFound',
+                ),
             ),
         );
     }

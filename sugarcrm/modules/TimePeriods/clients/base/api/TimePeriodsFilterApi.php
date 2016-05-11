@@ -26,9 +26,9 @@ class TimePeriodsFilterApi extends FilterApi
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
-                    // Thrown in filterList
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
@@ -41,9 +41,9 @@ class TimePeriodsFilterApi extends FilterApi
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
                 'exceptions' => array(
-                    // Thrown in filterList
+                    'SugarApiExceptionNotFound',
+                    'SugarApiExceptionError',
                     'SugarApiExceptionInvalidParameter',
-                    // Thrown in filterListSetup and parseArguments
                     'SugarApiExceptionNotAuthorized',
                 ),
             ),
