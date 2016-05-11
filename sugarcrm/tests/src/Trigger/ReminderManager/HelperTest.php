@@ -132,12 +132,6 @@ class HelperTest extends \Sugar_PHPUnit_Framework_TestCase
                 'beanReminderTime' => -10,
                 'userReminderTime' => 10,
             ),
-            'userNotAssignedUserReminderTimeBelowZero' => array(
-                'userId' => $userId,
-                'userAssignedId' => create_guid(),
-                'beanReminderTime' => 10,
-                'userReminderTime' => -10,
-            ),
         );
     }
 
@@ -207,7 +201,7 @@ class HelperTest extends \Sugar_PHPUnit_Framework_TestCase
                 'userDateFormat' => 'Y/m/d',
                 'userTimeFormat' => 'H:i',
                 'userTimeZone' => 'Europe/Berlin',
-                'expectedReminderDate' => '2015-01-18 13:02:00',
+                'expectedReminderDate' => '2015-01-18 13:04:50',
             ),
         );
     }

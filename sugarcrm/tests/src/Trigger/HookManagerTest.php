@@ -164,11 +164,11 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     2 => array(
                         'idUser' => $users[1]['id'],
-                        'reminderTime' => '2025-12-31 15:30:00',
+                        'reminderTime' => '2025-12-31 15:40:00',
                     ),
                     3 => array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 15:20:00',
+                        'reminderTime' => '2025-12-31 15:40:00',
                     ),
                 ),
             ),
@@ -186,7 +186,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'expectedReminders' => array(
                     array(
                         'idUser' => $users[0]['id'],
-                        'reminderTime' => '2025-12-31 14:45:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                     array(
                         'idUser' => $users[1]['id'],
@@ -194,7 +194,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 14:20:00',
+                        'reminderTime' => '2025-12-31 14:40:00',
                     ),
                 ),
             ),
@@ -229,11 +229,11 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     2 => array(
                         'idUser' => $users[1]['id'],
-                        'reminderTime' => '2025-12-31 16:30:00',
+                        'reminderTime' => '2025-12-31 16:40:00',
                     ),
                     3 => array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 16:20:00',
+                        'reminderTime' => '2025-12-31 16:40:00',
                     ),
                 ),
             ),
@@ -251,7 +251,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'expectedReminders' => array(
                     array(
                         'idUser' => $users[0]['id'],
-                        'reminderTime' => '2025-12-31 12:45:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                     array(
                         'idUser' => $users[1]['id'],
@@ -259,7 +259,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 12:20:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                 ),
             ),
@@ -307,11 +307,11 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[1]['id'],
-                        'reminderTime' => '2025-12-31 12:30:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 12:20:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                 ),
             ),
@@ -329,7 +329,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'expectedReminders' => array(
                     array(
                         'idUser' => $users[0]['id'],
-                        'reminderTime' => '2025-12-31 12:45:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                     array(
                         'idUser' => $users[1]['id'],
@@ -337,7 +337,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-12-31 12:20:00',
+                        'reminderTime' => '2025-12-31 12:40:00',
                     ),
                 ),
             ),
@@ -372,11 +372,11 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[1]['id'],
-                        'reminderTime' => '2025-10-15 15:30:00',
+                        'reminderTime' => '2025-10-15 15:40:00',
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-10-15 15:20:00',
+                        'reminderTime' => '2025-10-15 15:40:00',
                     ),
                 ),
             ),
@@ -394,7 +394,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'expectedReminders' => array(
                     array(
                         'idUser' => $users[0]['id'],
-                        'reminderTime' => '2025-08-15 13:45:00',
+                        'reminderTime' => '2025-08-15 13:40:00',
                     ),
                     array(
                         'idUser' => $users[1]['id'],
@@ -402,7 +402,7 @@ class HookManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                     ),
                     array(
                         'idUser' => $users[2]['id'],
-                        'reminderTime' => '2025-08-15 13:20:00',
+                        'reminderTime' => '2025-08-15 13:40:00',
                     ),
                 ),
             ),

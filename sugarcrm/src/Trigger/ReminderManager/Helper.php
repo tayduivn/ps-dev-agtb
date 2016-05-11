@@ -41,11 +41,7 @@ class Helper
      */
     public static function calculateReminderDateTime(\SugarBean $bean, \User $user)
     {
-        if ($bean->assigned_user_id == $user->id) {
-            $reminderTime = (int)$bean->reminder_time;
-        } else {
-            $reminderTime = (int)$user->getPreference('reminder_time');
-        }
+        $reminderTime = (int)$bean->reminder_time;
         if ($reminderTime < 0) {
             return null;
         }
