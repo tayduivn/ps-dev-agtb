@@ -170,7 +170,8 @@ class SugarUpgradeClearHooks extends UpgradeScript
                 }
             }
         }
-        if (!empty($classes[$class]) && in_array($method, $classes[$class]['methods'])) {
+        if (!empty($classes[$class]) && (in_array($method, $classes[$class]['methods'])
+            || (($method == $class) && in_array('__construct', $classes[$class]['methods'])))) {
             return true;
         }
         return false;
