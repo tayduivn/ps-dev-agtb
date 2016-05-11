@@ -80,7 +80,12 @@ class TeamSet extends SugarBean{
     */
     public function getTeams($team_set_id){
         ///TODO CONCAT
-        $sql = "SELECT teams.id, teams.name, teams.name_2 FROM teams INNER JOIN team_sets_teams ON team_sets_teams.team_id = teams.id WHERE team_sets_teams.team_set_id = '$team_set_id'";
+        $sql = sprintf(
+            'SELECT teams.id, teams.name, teams.name_2 FROM teams
+            INNER JOIN team_sets_teams ON team_sets_teams.team_id = teams.id
+            WHERE team_sets_teams.team_set_id = %s',
+            $this->db->quoted($team_set_id)
+        );
         $result = $this->db->query($sql);
         $teams = array();
 
@@ -133,7 +138,11 @@ class TeamSet extends SugarBean{
             return $teamSetIdFromMD5;
         }
 
-        $sql = "SELECT id FROM $this->table_name WHERE team_md5 = '$team_md5'";
+        $sql = sprintf(
+            'SELECT id FROM %s WHERE team_md5 = %s',
+            $this->table_name,
+            $this->db->quoted($team_md5)
+        );
         $result = $this->db->query($sql);
         $row = $this->db->fetchByAssoc($result);
         if (!$row){
@@ -219,7 +228,11 @@ class TeamSet extends SugarBean{
     */
     public function removeTeamFromSet($team_id){
         $GLOBALS['log']->info("Removing team_id: {$team_id} from team set: {$this->id}");
-        $sqlDelete = "DELETE FROM team_sets_teams WHERE team_id = '$team_id' AND team_set_id = '$this->id'";
+        $sqlDelete = sprintf(
+            'DELETE FROM team_sets_teams WHERE team_id = %s AND team_set_id = %s',
+            $this->db->quoted($team_id),
+            $this->db->quoted($this->id)
+        );
         //$this->db->query($sqlDelete,true,"Error deleting team id from team_sets_teams: ");
 
         //have to recalc the md5 hash and the count
@@ -244,7 +257,12 @@ class TeamSet extends SugarBean{
             $this->teams->add($team_id);
         }else{
             $guid = create_guid();
-            $insertQuery = "INSERT INTO team_sets_teams (id, team_set_id, team_id) VALUES ('{$guid}', '{$this->id}', '{$team_id}')";
+            $insertQuery = sprintf(
+                'INSERT INTO team_sets_teams (id, team_set_id, team_id) VALUES (%s, %s, %s)',
+                $this->db->quoted($guid),
+                $this->db->quoted($this->id),
+                $this->db->quoted($team_id)
+            );
             $GLOBALS['db']->query($insertQuery);
         }
     }
@@ -274,8 +292,12 @@ class TeamSet extends SugarBean{
             return $cachedResults;
 
         $results = array();
-        $sql = "SELECT tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
-                AND team_memberships.user_id = '$user_id' AND team_memberships.deleted=0 group by tst.team_set_id";
+        $sql = sprintf(
+            'SELECT tst.team_set_id from team_sets_teams tst
+            INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+            AND team_memberships.user_id = %s AND team_memberships.deleted=0 group by tst.team_set_id',
+            $this->db->quoted($user_id)
+        );
         $rs = $GLOBALS['db']->query($sql, TRUE, "Error retrieving team set ids for user.");
         while($row = $GLOBALS['db']->fetchByAssoc($rs))
         {
@@ -295,10 +317,21 @@ class TeamSet extends SugarBean{
         // determine whether the user is already on the team
         $sql = '';
         if(!empty($team_set_id)){
-            $sql = "SELECT team_memberships.id FROM team_memberships INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id WHERE user_id='$user_id' AND team_sets_teams.team_set_id='$team_set_id' AND team_memberships.deleted = 0";
+            $sql = sprintf(
+                'SELECT team_memberships.id FROM team_memberships
+                INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id
+                WHERE user_id = %s AND team_sets_teams.team_set_id = %s AND team_memberships.deleted = 0',
+                $this->db->quoted($user_id),
+                $this->db->quoted($team_set_id)
+            );
         }elseif(!empty($team_ids)){
             $team_id_str = "'" . implode("','", $team_ids) . "'";
-            $sql = "SELECT team_memberships.id FROM team_memberships WHERE user_id='$user_id' AND team_id IN ($team_id_str) AND team_memberships.deleted = 0";
+            $sql = sprintf(
+                'SELECT team_memberships.id FROM team_memberships
+                WHERE user_id = %s AND team_id IN (%s) AND team_memberships.deleted = 0',
+                $this->db->quoted($user_id),
+                implode(',', array_map(array($this->db, 'quoted'), $team_ids))
+            );
         }else{
             return false;
         }
@@ -347,7 +380,13 @@ class TeamSet extends SugarBean{
     public function populateUserTempTable($current_user){
         if(!is_admin($current_user)){
             $user_id = $current_user->id;
-            $selectQuery = "SELECT tst.team_set_id, tst.date_modified FROM team_sets_teams tst INNER JOIN team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '$current_user->id' AND team_memberships.deleted=0 group by tst.team_set_id ORDER BY date_modified DESC";
+            $selectQuery = sprintf(
+                'SELECT tst.team_set_id, tst.date_modified FROM team_sets_teams tst
+                INNER JOIN team_memberships ON tst.team_id = team_memberships.team_id
+                AND team_memberships.user_id = %s AND team_memberships.deleted = 0
+                group by tst.team_set_id ORDER BY date_modified DESC',
+                $this->db->quoted($current_user->id)
+            );
 
             $foundInCache = false;
 
@@ -384,7 +423,10 @@ class TeamSet extends SugarBean{
             }
 
             //delete everything for this user first
-            $delQuery = "DELETE FROM team_sets_users WHERE user_id = '$user_id'";
+            $delQuery = sprintf(
+                'DELETE FROM team_sets_users WHERE user_id = %s',
+                $this->db->quoted($user_id)
+            );
             $this->db->query($delQuery);
 
             //now update the table
@@ -395,7 +437,11 @@ class TeamSet extends SugarBean{
                     $insertQuery .= ",";
                 }
                 $isFirst = false;
-                $insertQuery .= "('{$row['team_set_id']}', '{$user_id}')";
+                $insertQuery .= sprintf(
+                    '(%s, %s)',
+                    $this->db->quoted($row['team_set_id']),
+                    $this->db->quoted($user_id)
+                );
             }
             $this->db->query($insertQuery, TRUE, "Error finding team memberships: ");
         }

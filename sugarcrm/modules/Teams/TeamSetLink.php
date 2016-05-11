@@ -171,8 +171,15 @@ class TeamSetLink extends Link2 {
                 $runUpdate = (!empty($this->focus->id) && empty($this->focus->new_with_id) && !empty($this->focus->save_from_post));
             }
 
+            $db = DBManagerFactory::getInstance();
             if ($runUpdate) {
-                $GLOBALS['db']->query("UPDATE {$this->focus->table_name} SET team_set_id = '{$this->focus->team_set_id}' WHERE id = '{$this->focus->id}'");
+                $sql = sprintf(
+                    'UPDATE %s SET team_set_id = %s WHERE id = %s',
+                    $this->focus->table_name,
+                    $db->quoted($this->focus->team_set_id),
+                    $db->quoted($this->focus->id)
+                );
+                $db->query($sql);
             }
             //keep track of what we put into the database so we can clean things up later
             TeamSetManager::saveTeamSetModule($this->focus->team_set_id, $this->focus->table_name);

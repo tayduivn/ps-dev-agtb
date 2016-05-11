@@ -55,7 +55,11 @@ class Popup_Picker
 			foreach(array_keys($this->_popupMeta['whereClauses']) as $key) {
 				append_where_clause($whereClauses, $key, $this->_popupMeta['whereClauses'][$key]);
 				if($key == 'name' && !empty($_REQUEST['name'])) {
-					$whereClauses[count($whereClauses)-1] = "(" . $whereClauses[count($whereClauses)-1] . " or teams.name_2 like '" . $GLOBALS['db']->quote($_REQUEST['name']) . "%')";
+                    $whereClauses[count($whereClauses)-1] = sprintf(
+                        '(%s or teams.name_2 like %s)',
+                        $whereClauses[count($whereClauses)-1],
+                        $GLOBALS['db']->quoted($_REQUEST['name'] . '%')
+                    );
 				}
 			}
 
@@ -66,15 +70,18 @@ class Popup_Picker
             $where .= $this->_popupMeta['whereStatement'];
 		}
 
-		if(!empty($_REQUEST['custom_method'])) {
-		   if(!empty($_REQUEST['user_id'])) {
-		   	  $where .= !empty($where) ? ' and' : '';
-		   	  // deleted=0 added to fix CRYS-470.
-		   	  $where .= " teams.id in (select team_id from team_memberships where user_id = '" . $_REQUEST['user_id'] . "' and deleted=0)";
-		   } else {
-		   	  $where .= !empty($where) ? ' and teams.private = 0' : ' teams.private = 0';
-		   }
-		}
+        if (!empty($_REQUEST['custom_method'])) {
+            if (!empty($_REQUEST['user_id'])) {
+                $where .= !empty($where) ? ' and' : '';
+                // deleted=0 added to fix CRYS-470.
+                $where .= sprintf(
+                    ' teams.id in (select team_id from team_memberships where user_id = %s and deleted=0)',
+                    $GLOBALS['db']->quoted($_REQUEST['user_id'])
+                );
+            } else {
+                $where .= !empty($where) ? ' and teams.private = 0' : ' teams.private = 0';
+            }
+        }
 
 		return $where;
 	}
@@ -348,4 +355,3 @@ EOQ;
 		return $output_html;
 	}
 } // end of class Popup_Picker
-?>
