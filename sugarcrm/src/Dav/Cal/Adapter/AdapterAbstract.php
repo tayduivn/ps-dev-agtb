@@ -527,6 +527,10 @@ abstract class AdapterAbstract implements AdapterInterface
             $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
         }
 
+        if ($customizeParent && $customizeParent[0] == 'delete') {
+            $parentAction = 'delete';
+        }
+
         $rrule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
 
         // we need independent rrule update only when we change event
@@ -619,7 +623,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     array_merge($parentChangedFields, $childChangeFields),
                     array_merge($parentInvites, $childChangeInvitees),
                 );
-            } elseif ($childEvent && !$childEvent->isCustomized() && $parentAction) {
+            } elseif ($childEvent && !$childEvent->isCustomized() && $parentAction && $parentAction !== 'delete') {
                 $result[] = array(
                     array(
                         'update',
