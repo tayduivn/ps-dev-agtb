@@ -34,6 +34,7 @@ $dictionary['KBContent'] = array(
             ),
             'audited' => true,
             'duplicate_on_record_copy' => 'always',
+            'sortable' => false,
         ),
         'language' => array(
             'name' => 'language',
