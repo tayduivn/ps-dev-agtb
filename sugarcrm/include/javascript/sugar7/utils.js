@@ -736,6 +736,32 @@
 
                 return msg;
             },
+
+            /**
+             * Convert a raw file size into a human readable size
+             *
+             * @param {int} size
+             * @return {string}
+             */
+            getReadableFileSize: function(size) {
+                var i = -1,
+                    units = ['K', 'M', 'G', 'T'];
+
+                if (_.isEmptyValue(size) || size < 1) {
+                    size = 0;
+                } else if (size < 1000) {
+                    //Not displaying bytes, round up to 1K
+                    size = 1000;
+                }
+
+                do {
+                    size = Math.round(size / 1000);
+                    i++;
+                } while (size >= 1000 && i < (units.length - 1));
+
+                return size + units[i];
+            },
+
             /**
              * gets window location parameters by name regardless of case
              * @param {String} name name of parameter being searched for

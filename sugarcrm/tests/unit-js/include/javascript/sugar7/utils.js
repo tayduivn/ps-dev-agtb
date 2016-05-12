@@ -389,4 +389,29 @@ describe("Sugar7 utils", function() {
             expect(app.utils.isTruthy('YES')).toBeTruthy();
         });
     });
+
+    describe('getReadableFileSize', function() {
+        using('file sizes',
+            [
+                [undefined, '0K'],
+                [null, '0K'],
+                ['', '0K'],
+                [0, '0K'],
+                [1, '1K'],
+                [999, '1K'],
+                [2000, '2K'],
+                [999999, '1M'],
+                [1000000, '1M'],
+                [1500000, '2M'],
+                [1073741824, '1G'],
+                [1099511627776, '1T'],
+                [10000000000000000, '10000T']
+            ],
+            function(rawSize, readableSize) {
+                it('should convert the file size to a readable format', function() {
+                    var actual = app.utils.getReadableFileSize(rawSize);
+                    expect(actual).toEqual(readableSize);
+                });
+            });
+    });
 });
