@@ -41,10 +41,8 @@
         }
 
         _.each(options.meta.panels, function(panel, panelIdx) {
-            _.each(panel.fields, function(field, fieldIdx) {
-                if (field.name === 'status') {
-                    delete panel.fields[fieldIdx];
-                }
+            panel.fields = _.filter(panel.fields, function(field) {
+                return field.name !== 'status';
             }, this);
         }, this);
 
