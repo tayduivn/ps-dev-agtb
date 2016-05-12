@@ -120,6 +120,7 @@ class SugarFieldFile extends SugarFieldBase
             $bean->$field = $upload_file->get_stored_file_name();
             $bean->file_mime_type = $upload_file->mime_type;
             $bean->file_ext = $upload_file->file_ext;
+            $bean->file_size = $upload_file->file_size;
             $move=true;
         } else {
             $this->error = $upload_file->getErrorMessage();

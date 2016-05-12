@@ -252,6 +252,7 @@ class UploadFile
 		$this->stored_file_name = $this->create_stored_filename();
 		$this->temp_file_location = $_FILES[$this->field_name]['tmp_name'];
 		$this->uploaded_file_name = $_FILES[$this->field_name]['name'];
+        $this->file_size = $_FILES[$this->field_name]['size'];
 
 		return true;
 	}
