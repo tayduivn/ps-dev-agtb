@@ -112,8 +112,8 @@ class SugarUpgradeConvertKBOLDDocuments extends UpgradeScript
                 if (!empty($data['parent_type']) && $data['parent_type'] == 'Cases') {
                     $case = BeanFactory::getBean('Cases', $data['parent_id']);
                     if (!empty($case) && !empty($case->id)) {
-                        $KBContent->load_relationship('relcases_kbcontents');
-                        $KBContent->relcases_kbcontents->add($case);
+                        $KBContent->load_relationship('cases');
+                        $KBContent->cases->add($case);
                     }
                 }
 

@@ -125,7 +125,7 @@ class PMSEEngineUtils
         'favorite_link',
         'users',
         'user_sync',
-        'relcases_kbcontents',
+        'cases',
         'localizations',
         'revisions',
         'attachments',
