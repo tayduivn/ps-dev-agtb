@@ -348,7 +348,7 @@
         var self = this,
             requests = [],
             startAndEndDates = this.getStartAndEndDates(),
-            participants = undefined;
+            participants;
 
         try {
             participants = this.getFieldValue();
