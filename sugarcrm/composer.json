@@ -63,6 +63,7 @@
         "parsecsv/php-parsecsv": "0.4.5",
         "paragonie/random_compat": "v2.0.2",
         "ramsey/uuid": "2.9.0",
+        "moontoast/math": "1.1.0",
         "php": ">=5.3.0"
     },
     "require-dev": {

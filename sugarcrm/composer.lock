@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "08071d103639e1186a76b8c801912b54",
-    "content-hash": "0234c5c2d2bb699cfe4ee4802aef1841",
+    "hash": "60b2f88db684138cfe041a0d584f0e69",
+    "content-hash": "df55a064f53b6d107db03fe458501878",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -252,6 +252,42 @@
                 "password"
             ],
             "time": "2014-11-20 16:49:30"
+        },
+        {
+            "name": "moontoast/math",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/moontoast-math.git",
+                "reference": "fce28a9d1e73e73376cb44e5e581675d15fbe2f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/moontoast-math/zipball/fce28a9d1e73e73376cb44e5e581675d15fbe2f3",
+                "reference": "fce28a9d1e73e73376cb44e5e581675d15fbe2f3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Moontoast\\Math": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A mathematics library, providing functionality for large numbers",
+            "homepage": "https://github.com/moontoast/math",
+            "keywords": [
+                "bcmath",
+                "math"
+            ],
+            "time": "2013-01-19 17:42:34"
         },
         {
             "name": "onelogin/php-saml",
