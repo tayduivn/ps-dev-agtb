@@ -125,7 +125,15 @@
 
             if (link.length > 0) {
                 value.create = _.map(link, function(attachment) {
-                    return _.pick(attachment.attributes, '_file', 'name', 'filename', 'file_mime_type', 'file_source');
+                    return _.pick(
+                        attachment.attributes,
+                        '_file',
+                        'name',
+                        'filename',
+                        'file_mime_type',
+                        'file_size',
+                        'file_source'
+                    );
                 });
             }
 
