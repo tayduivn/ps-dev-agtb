@@ -16,6 +16,23 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.userName = app.user.get('user_name');
+
+        var parser = document.createElement('a');
+        parser.href = app.config.siteUrl;
+
+        this.serverAddress = parser.hostname;
+        this.serverPath = parser.pathname || '/';
+        if (this.serverPath.slice(-1) !== '/') {
+            this.serverPath += '/';
+        }
+        if (parser.port) {
+            this.serverPort = parser.port;
+        } else if (parser.protocol === 'https:') {
+            this.serverPort = 443;
+        } else {
+            this.serverPort = 80;
+        }
 
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field, fieldKey) {

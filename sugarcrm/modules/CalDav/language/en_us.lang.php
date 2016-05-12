@@ -48,6 +48,17 @@ $mod_strings = array(
 
     'LBL_CALDAV_TAB_TEXT' => 'Email & iCal Sync',
     'LBL_CALDAV_TITLE' => 'Calendar Sync Settings',
+
+    'LBL_CALDAV_SETUP_INFO_TITLE' => 'Calendar setup information',
+    'LBL_CALDAV_SETUP_INFO_TITLE_DESC' => 'Use this information to set up your editable Sugar Calendar ' .
+        'in any iCal-supported applications.',
+    'LBL_CALDAV_SETUP_INFO_SERVER_ADDRESS' => 'Server Address',
+    'LBL_CALDAV_SETUP_INFO_SERVER_PATH' => 'Server Path',
+    'LBL_CALDAV_SETUP_INFO_SERVER_PATH_DESC' => 'Please include the slash ("/") at the end of the server information.',
+    'LBL_CALDAV_SETUP_INFO_SERVER_PORT' => 'Port',
+    'LBL_CALDAV_SETUP_INFO_SERVER_PORT_DESC' => 'This is the default port. This port may change based on ' .
+        'the configuration set by your admin.',
+
     'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' => 'Calendar Sync System Settings',
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Calendar Sync Settings',
     'LBL_CALDAV_DEFAULT_MODULE' => 'Default event mapping',
