@@ -33,6 +33,7 @@ class DocumentRevision extends SugarBean {
 	var $created_by;
 	var $filename;
 	var $file_mime_type;
+    public $file_size;
 	var $revision;
 	var $change_log;
 	var $document_name;
@@ -92,7 +93,11 @@ class DocumentRevision extends SugarBean {
 		$this->disable_row_level_security =true; //no direct access to this module. 
 	}
 
-	function save($check_notify = false){	
+    function save($check_notify = false)
+    {
+        $filePath = "upload://{$this->id}";
+        $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;
+
 		$saveRet = parent::save($check_notify);
 
 		//update documents table. (not through save, because it causes a loop)

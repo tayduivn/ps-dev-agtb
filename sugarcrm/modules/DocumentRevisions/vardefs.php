@@ -103,7 +103,13 @@ $dictionary['DocumentRevision'] = array(
             'type' => 'varchar',
             'len' => '100',
         ),
-
+        'file_size' => array(
+            'name' => 'file_size',
+            'vname' => 'LBL_FILE_SIZE',
+            'type' => 'int',
+            'comment' => 'The size of the file',
+            'importable' => false,
+        ),
         'revision' => array(
             'name' => 'revision',
             'vname' => 'LBL_REVISION',

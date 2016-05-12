@@ -213,6 +213,26 @@ $dictionary['Document'] = array('table' => 'documents',
             'reportable' => false,
             'source' => 'non-db'
         ),
+        'latest_revision_file_mime_type' => array(
+            'name' => 'latest_revision_file_mime_type',
+            'type' => 'relate',
+            'link' => 'latest_document_revision_link',
+            'id_name' => 'document_revision_id',
+            'module' => 'DocumentRevisions',
+            'rname' => 'file_mime_type',
+            'source' => 'non-db',
+            'vname' => 'LBL_MIME',
+        ),
+        'latest_revision_file_size' => array(
+            'name' => 'latest_revision_file_size',
+            'type' => 'relate',
+            'link' => 'latest_document_revision_link',
+            'id_name' => 'document_revision_id',
+            'module' => 'DocumentRevisions',
+            'rname' => 'file_size',
+            'source' => 'non-db',
+            'vname' => 'LBL_FILE_SIZE',
+        ),
         'last_rev_create_date' =>
         array(
             'name' => 'last_rev_create_date',
