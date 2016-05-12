@@ -11,7 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
-use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 // $Id: performSetup.php 55505 2010-03-22 15:20:57Z clee $
 // This file will load the configuration settings from session data,
@@ -200,6 +201,9 @@ $nonStandardModules = array(//'Tracker',
 // TODO: Remove the following. (See MAR-1314)
 // Disable the activity stream from creating messages while installing.
 Activity::disable();
+
+// Disable processes for the time being
+Registry\Registry::getInstance()->set('setup:disable_processes', true);
 
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
 if ($db->supports('fulltext') && $db->full_text_indexing_installed()) {
@@ -735,6 +739,9 @@ MetaDataManager::setupMetadata(array('base'), array('en_us'));
 // TODO: Remove the following. (See MAR-1314)
 // Restore the activity stream behaviour.
 Activity::enable();
+
+// Allow processes to resume at this point
+Registry\Registry::getInstance()->drop('setup:disable_processes');
 
 installerHook('post_performSetup');
 $out = <<<EOQ
