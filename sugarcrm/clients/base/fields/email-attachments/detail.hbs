@@ -11,5 +11,7 @@
  */
 --}}
 {{#each value}}
-<a class="ellipsis_inline" data-placement="bottom" title="{{name}}" href="javascript:void(0);" data-url="{{_url}}" data-action="download">{{name}}</a>
+<span class="ellipsis_inline" data-placement="bottom">
+    <a title="{{name}}" href="javascript:void(0);" data-url="{{_url}}" data-action="download" track="click:email_attachment">{{name}}</a> ({{file_size}})
+</span>
 {{/each}}

@@ -236,7 +236,7 @@
                 if (choice._action === 'placeholder') {
                     $selection += ' <i class="fa fa-refresh fa-spin"></i>';
                 } else {
-                    $selection += ' (' + app.utils.getReadableFileSize(choice.file_size) + ')';
+                    $selection += ' (' + choice.file_size + ')';
                 }
 
                 return $selection;
@@ -305,7 +305,10 @@
         return this._attachments.filter(function(attachment) {
             return attachment.get('_action') !== 'delete';
         }).map(function(attachment) {
-            return attachment.toJSON();
+            var json = attachment.toJSON();
+            json.file_size = app.utils.getReadableFileSize(json.file_size);
+
+            return json;
         });
     },
 
@@ -395,6 +398,7 @@
                 name: model.get('filename'),
                 filename: model.get('filename'),
                 file_mime_type: model.get('file_mime_type'),
+                file_size: model.get('file_size'),
                 file_source: model.get('file_source')
             });
             added.push(file);
