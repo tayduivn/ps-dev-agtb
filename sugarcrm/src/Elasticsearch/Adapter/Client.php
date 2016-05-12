@@ -41,13 +41,21 @@ class Client extends BaseClient
     const CONN_FAILURE = -99;
 
     /**
-     * Supported Elasticsearch versions
+     * Return allowed versions array
      * @var array
      */
-    protected $supportedVersions = array(
-        '1.3.4',
-        '1.4.0',
-    );
+    protected $allowedVersions = [
+        '1.4',
+        '1.7',
+    ];
+
+    /**
+     * Return ES version checks for version_compare
+     * @var array
+     */
+    protected $supportedVersionsCheck = [
+        ['version' => '2.0.0', 'operator' => '<'],
+    ];
 
     /**
      * List of supported $sugar_config Elastic configuration options
@@ -194,9 +202,20 @@ class Client extends BaseClient
      */
     protected function isVersionCompatible($version)
     {
-        return true;
-        // TODO add dev mode support and expand functionality with blacklisting etc
-        return in_array($version, $this->supportedVersions);
+        $result = true;
+        foreach ($this->supportedVersionsCheck as $check) {
+            $result = $result && version_compare($version, $check['version'], $check['operator']);
+        }
+        return $result;
+    }
+
+    /**
+     * Return array of allowed ES versions
+     * @return array
+     */
+    public function getAllowedVersions()
+    {
+        return $this->allowedVersions;
     }
 
     /**

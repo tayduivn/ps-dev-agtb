@@ -15,16 +15,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
 use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
-
-function checkFTSSettings()
-{
-    installLog("Begining to check FTS Settings.");
-    $engine = SearchEngine::newEngine($_SESSION['setup_fts_type'], getFtsSettings());
-    $status = $engine->verifyConnectivity(false);
-    installLog("FTS connection results: $status");
-    $success = $status > 0 ? true : false;
-    return $success;
-}
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client;
 
 /**
  * Check WebSocket configuration.
@@ -304,10 +295,28 @@ function checkDBSettings($silent=false) {
             installLog("ERROR:: Elastic Search is required.");
             $errors['ERR_FTS'] = $mod_strings['LBL_FTS_REQUIRED'];
         } else {
-            if (!checkFTSSettings()) {
-                installLog("ERROR:: Unable to connect to FTS." . $_SESSION['setup_fts_type']);
-                $errors['ERR_FTS'] = $mod_strings['LBL_FTS_ERROR'];
+            installLog("Begining to check FTS Settings.");
+            $engine = SearchEngine::newEngine($_SESSION['setup_fts_type'], getFtsSettings());
+            $ftsStatus = $engine->verifyConnectivity(false);
+            switch ($ftsStatus) {
+                case Client::CONN_ERROR:
+                case Client::CONN_FAILURE:
+                    $errors['ERR_FTS'] = $mod_strings['LBL_FTS_CONN_ERROR'];
+                    installLog("ERROR:: Unable to connect to FTS." . $_SESSION['setup_fts_type']);
+                    break;
+                case Client::CONN_NO_VERSION_AVAILABLE:
+                    $errors['ERR_FTS'] = $mod_strings['LBL_FTS_NO_VERSION_AVAILABLE'];
+                    installLog("ERROR:: No FTS version available." . $_SESSION['setup_fts_type']);
+                    break;
+                case Client::CONN_VERSION_NOT_SUPPORTED:
+                    $errors['ERR_FTS'] = sprintf(
+                        $mod_strings['LBL_FTS_UNSUPPORTED_VERSION'],
+                        implode(', ', $engine->getContainer()->client->getAllowedVersions())
+                    );
+                    installLog("ERROR:: Unsupported version of Elastic search." . $_SESSION['setup_fts_type']);
+                    break;
             }
+            installLog("FTS connection results: $ftsStatus");
         }
 
         if (0) { // CRYS-1567-fix
