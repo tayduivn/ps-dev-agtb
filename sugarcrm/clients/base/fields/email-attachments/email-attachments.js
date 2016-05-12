@@ -618,7 +618,8 @@
             _file: doc.get('document_revision_id'),
             name: doc.get('filename'),
             filename: doc.get('filename'),
-            file_mime_type: doc.get('file_mime_type'),
+            file_mime_type: doc.get('latest_revision_file_mime_type'),
+            file_size: doc.get('latest_revision_file_size'),
             file_source: 'Document'
         });
         this._attachments.add(file, {merge: true});
