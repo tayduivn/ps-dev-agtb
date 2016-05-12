@@ -24,7 +24,6 @@ class Bug46448AutoFillTest extends Sugar_PHPUnit_Framework_TestCase
         $Account = new Account();
         populateFromPost('', $Account);
         $this->assertEquals($Account->assigned_user_id, $this->user->id);
-        $this->assertEquals($Account->team_id, $this->user->default_team);
     }
 
     public function setUp()

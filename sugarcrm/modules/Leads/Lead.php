@@ -112,18 +112,6 @@ class Lead extends Person {
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
-
-	public function __construct() {
-		parent::__construct();
-		global $current_user;
-		if(!empty($current_user)) {
-			$this->team_id = $current_user->default_team;	//default_team is a team id
-			$this->team_set_id = $current_user->team_set_id;
-		} else {
-			$this->team_id = 1; // make the item globally accessible
-		}
-	}
-
 	function get_account()
 	{
 		if(isset($this->account_id) && !empty($this->account_id)){

@@ -121,14 +121,6 @@ class Account extends Company {
 	public function __construct() {
         parent::__construct();
 
-		global $current_user;
-		if(!empty($current_user)) {
-			$this->team_id = $current_user->default_team;	//default_team is a team id
-			$this->team_set_id = $current_user->team_set_id;
-		} else {
-			$this->team_id = 1; // make the item globally accessible
-		}
-
         //Email logic
 		if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
         	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails') {
