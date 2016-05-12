@@ -227,6 +227,8 @@
 
                 if (choice._action === 'placeholder') {
                     $selection += ' <i class="fa fa-refresh fa-spin"></i>';
+                } else {
+                    $selection += ' (' + app.utils.getReadableFileSize(choice.file_size) + ')';
                 }
 
                 return $selection;
@@ -504,6 +506,7 @@
             name: data.record.filename,
             filename: data.record.filename,
             file_mime_type: data.record.file_mime_type,
+            file_size: data.record.file_size,
             file_source: 'Uploaded'
         });
         this._attachments.add(file);
@@ -704,6 +707,7 @@
                 name: model.get('filename'),
                 filename: model.get('filename'),
                 file_mime_type: model.get('file_mime_type'),
+                file_size: model.get('file_size'),
                 file_source: 'Template'
             });
             add.push(file);
