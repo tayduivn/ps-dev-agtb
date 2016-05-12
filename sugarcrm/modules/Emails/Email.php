@@ -1093,11 +1093,10 @@ class Email extends SugarBean {
 	///////////////////////////////////////////////////////////////////////////
 	////	SAVERS
 	function save($check_notify = false) {
-        global $current_user;
-
 		if($this->isDuplicate) {
 			$GLOBALS['log']->debug("EMAIL - tried to save a duplicate Email record");
 		} else {
+            $td = TimeDate::getInstance();
 
 			if(empty($this->id)) {
 				$this->id = create_guid();
@@ -1116,15 +1115,25 @@ class Email extends SugarBean {
 
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
-			// handle legacy concatenation of date and time fields
-			//Bug 39503 - SugarBean is not setting date_sent when seconds missing
- 			if(empty($this->date_sent)) {
-				global $timedate;
-				$date_sent_obj = $timedate->fromUser($timedate->merge_date_time($this->date_start, $this->time_start), $current_user);
-                 if (!empty($date_sent_obj) && ($date_sent_obj instanceof SugarDateTime)) {
- 				    $this->date_sent = $date_sent_obj->asDb();
-                 }
-			}
+            // Set date_sent.
+            if ($this->state === static::EMAIL_STATE_DRAFT) {
+                // Always update the timestamp when saving a draft.
+                $this->date_sent = $td->nowDb();
+            } elseif (empty($this->date_sent)) {
+                // Default the timestamp when it is empty.
+                if (!empty($this->date_start) && !empty($this->time_start)) {
+                    // Preserve legacy concatenation of date_start and time_start.
+                    // SI Bug #39503: SugarBean is not setting date_sent when seconds are missing.
+                    $mergedDateTime = $td->merge_date_time($this->date_start, $this->time_start);
+                    $dateSent = $td->fromUser($mergedDateTime, $GLOBALS['current_user']);
+
+                    if ($dateSent) {
+                        $this->date_sent = $dateSent->asDb();
+                    }
+                } else {
+                    $this->date_sent = $td->nowDb();
+                }
+            }
 
 			$parentSaveResult = parent::save($check_notify);
 
@@ -3431,6 +3440,7 @@ eoq;
 
             // Archive after sending.
             $this->state = Email::EMAIL_STATE_ARCHIVED;
+            $this->date_sent = TimeDate::getInstance()->nowDb();
             $this->save();
 
             //TODO: Push the sent email to the IMAP sent folder.

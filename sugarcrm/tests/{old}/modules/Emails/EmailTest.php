@@ -33,10 +33,39 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
+        SugarTestEmailUtilities::removeAllCreatedEmails();
 		unset($this->email);
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
 	}
+
+    public function saveAndSetDateSentProvider()
+    {
+        return array(
+            array(Email::EMAIL_STATE_DRAFT, null, null),
+            array(Email::EMAIL_STATE_ARCHIVED, null, null),
+            array(Email::EMAIL_STATE_ARCHIVED, null, null),
+            array(Email::EMAIL_STATE_ARCHIVED, '2014-06-22', '10:44'),
+        );
+    }
+
+    /**
+     * @covers ::save
+     * @dataProvider saveAndSetDateSentProvider
+     * @param string $state
+     * @param null|string $dateStart
+     * @param null|string $timeStart
+     */
+    public function testSave_DateSentIsSet($state, $dateStart, $timeStart)
+    {
+        $this->email->state = $state;
+        $this->email->date_start = $dateStart;
+        $this->email->time_start = $timeStart;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertNotEmpty($this->email->date_sent);
+    }
 
 	public function testSafeAttachmentName ()
 	{
