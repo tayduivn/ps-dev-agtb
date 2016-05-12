@@ -11,6 +11,7 @@
  */
 
 $dictionary['Email'] = array(
+    'favorites' => true,
     'table' => 'emails',
     'acl_fields' => false,
     'full_text_search' => true,
@@ -948,7 +949,10 @@ $dictionary['Email'] = array(
             'type' => 'index',
             'fields' => array('assigned_user_id', 'type', 'status')
         ),
-    ) // end indices
+    ), // end indices
+    'uses' => array(
+        'favorite',
+    ),
 );
 
 VardefManager::createVardef(

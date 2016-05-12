@@ -51,6 +51,12 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'readonly' => true,
                 ),
                 'name',
+                array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
+                    'type' => 'favorite',
+                    'dismiss_label' => true,
+                ),
             ),
         ),
         array(

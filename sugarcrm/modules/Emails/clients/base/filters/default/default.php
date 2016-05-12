@@ -20,5 +20,9 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',
         ),
+        '$favorite' => array(
+            'predefined_filter' => true,
+            'vname' => 'LBL_FAVORITES_FILTER',
+        ),
     ),
 );
