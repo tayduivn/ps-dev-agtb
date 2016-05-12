@@ -348,7 +348,14 @@
         var self = this,
             requests = [],
             startAndEndDates = this.getStartAndEndDates(),
+            participants = undefined;
+
+        try {
             participants = this.getFieldValue();
+        } catch (e) {
+            app.logger.warn(e);
+            return;
+        }
 
         if (this.freebusy.isFetching() || _.isEmpty(startAndEndDates)) {
             return;
