@@ -164,6 +164,21 @@ describe("Record View", function () {
             expect(actual_button_length).toBe(2);
         });
 
+        it('Should not have the locked fields as editable', function() {
+
+            view.render();
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            view.model.set('_locked_fields', ['name']);
+            view._handleLockedFields();
+
+            var actualFieldLength = _.keys(view.editableFields).length;
+            expect(actualFieldLength).toBe(7);
+        });
+
         it("Should hide 4 editable fields", function () {
             var hiddenFields = 0;
             view.hidePanel = true; //setting directly instead of using togglePlugin

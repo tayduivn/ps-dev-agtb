@@ -109,6 +109,11 @@
         this.recordContext = context;
         this.recordModel = context.get('model');
 
+        // Override Data.Bean#getLockedFields to return an empty array
+        this.recordModel.getLockedFields = function() {
+            return [];
+        };
+
         // Get the current module specific record layout and view
         var origRecordLayout = app.metadata.getLayout(this.recordModule, 'record');
         var origRecordView = app.metadata.getView(this.recordModule, 'record');

@@ -277,6 +277,9 @@
     setViewName: function(view) {
         this._super('setViewName', [view]);
         _.each(this.fields, function(field) {
+            if (view === 'edit' && field.isLocked()) {
+                return;
+            }
             field.setViewName(view);
         }, this);
     },
@@ -299,7 +302,6 @@
             } else {
                 field.action = name;
             }
-            field.setViewName(name);
         });
 
         //The _super 'setMode' would render all child fields.

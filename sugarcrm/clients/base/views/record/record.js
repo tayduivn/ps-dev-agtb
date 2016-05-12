@@ -149,6 +149,7 @@
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
         this.model.on('acl:change', this.handleAclChange, this);
+        this.model.on('fields:lock:change', this._handleLockedFields, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
@@ -206,6 +207,43 @@
             var hidePencil = !_.isUndefined(noEditFieldsMap[field]);
             $pencilEl.toggleClass('hide', hidePencil);
         }, this);
+    },
+
+    /**
+     * Go through the field controllers and set the locked states accordingly.
+     *
+     * @private
+     */
+    _handleLockedFields: function() {
+        _.each(this.$('.record-edit-link-wrapper[data-name], .record-lock-link-wrapper[data-name]'), function(el) {
+            var $el = $(el);
+            var fieldName = $el.data('name');
+            if (fieldName == '') {
+                // skip the empty filler fields
+                return;
+            }
+            if ($el.hasClass('record-edit-link-wrapper')) {
+                var field = this.getField(fieldName);
+                var isReadOnly = field.def.readonly ||
+                    (field.def.type !== 'fieldset' && field.isLocked()) ||
+                    _.indexOf(this.noEditFields, field.def.name) >= 0 ||
+                    field.parent;
+                $el.toggleClass('hide', isReadOnly ? true : false);
+            } else {
+                var isLocked = this.model.isFieldLocked(fieldName);
+                $el.toggleClass('hide', !isLocked);
+                if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
+                    var field = this.getField(fieldName);
+                    _.defer(function (field) {
+                        if (field.disposed) {
+                            return;
+                        }
+                        field.setMode('detail');
+                    }, field);
+                }
+            }
+        }, this);
+        this.setEditableFields();
     },
 
     /**
@@ -501,6 +539,7 @@
         _.each(this.fields, function(field) {
 
             var readonlyField = field.def.readonly ||
+                (field.def.type !== 'fieldset' && field.isLocked()) ||
                 _.indexOf(this.noEditFields, field.def.name) >= 0 ||
                 field.parent || (field.name && this.buttons[field.name]);
 
@@ -764,6 +803,7 @@
      */
     toggleEdit: function(isEdit) {
         var self = this;
+        this.$('.record-lock-link').toggleClass('record-lock-link-on', isEdit);
         this.toggleFields(this.editableFields, isEdit, function() {
             self.toggleViewButtons(isEdit);
             self.adjustHeaderpaneFields();
