@@ -33,17 +33,10 @@ class CSPRNG
     protected static $instance;
 
     /**
-     * Available generators
-     * @var array
-     */
-    protected $generators = array();
-
-    /**
      * Ctor
      */
     public function __construct()
     {
-        $this->generators = $this->getAvailableGens();
     }
 
     /**
@@ -72,94 +65,18 @@ class CSPRNG
      */
     public function generate($size, $encode = false)
     {
-        foreach ($this->generators as $name => $method) {
+        $random = random_bytes($size);
 
-            $random = call_user_func(array($this, $method), $size);
-
-            // try next one on failure
-            if ($random === false || $this->binaryStrLen($random) !== $size) {
-                continue;
-            }
-
-            return $encode ? $this->binaryEncode($random, $size) : $random;
+        // make sure the requested length is met
+        if ($this->binaryStrLen($random) !== $size) {
+            throw new \RuntimeException(sprintf(
+                'CSPRNG generated random value does not meet the requested size of %s bytes',
+                $size
+            ));
         }
 
-        throw new \RuntimeException(sprintf(
-            'CSPRNG unable to generate random %s bytes (last used generator %s)',
-            $size,
-            $name
-        ));
-    }
+        return $encode ? $this->binaryEncode($random, $size) : $random;
 
-    /**
-     * Get available generators. Note that the orders of the returned
-     * list matters where the most preferrable method should be listed
-     * on the top.
-     *
-     * @return array
-     */
-    protected function getAvailableGens()
-    {
-        $generators = array();
-
-        /*
-         * PHP7 CSPRNG
-         */
-        if (function_exists('random_bytes')) {
-            $generators['csprng'] = 'genCsprng';
-        }
-
-        /*
-         * Use /dev/urandom on *nix and Microsoft's Crypto API
-         */
-        if (function_exists('mcrypt_create_iv')) {
-            $generators['mcrypt'] = 'genMcrypt';
-        }
-
-        /*
-         * For better or for worse, available for platforms on PHP >= 5.3
-         */
-        if (function_exists('openssl_random_pseudo_bytes')) {
-            $generators['openssl'] = 'genOpenssl';
-        }
-
-        return $generators;
-    }
-
-    /**
-     * Generator using PHP7 builtin CSPRNG
-     * @param integer $size Byte size
-     * @return string|false
-     */
-    protected function genCsprng($size)
-    {
-        try {
-            $random = random_bytes($size);
-        } catch (\Error $e) {
-            $random = false;
-        }
-        return $random;
-    }
-
-    /**
-     * Generator using mcrypt
-     * @param integer $size Byte size
-     * @return string|false
-     */
-    protected function genMcrypt($size)
-    {
-        return mcrypt_create_iv($size, MCRYPT_DEV_URANDOM);
-    }
-
-    /**
-     * Generator using openssl
-     * @param integer $size Byte size
-     * @return string|false
-     */
-    protected function genOpenssl($size)
-    {
-        $random = openssl_random_pseudo_bytes($size, $isStrong);
-        return $isStrong ? $random : false;
     }
 
     /**
@@ -170,10 +87,7 @@ class CSPRNG
      */
     protected function binaryStrLen($string)
     {
-        if (function_exists('mb_strlen')) {
-            return mb_strlen($string, '8bit');
-        }
-        return strlen($string);
+        return RandomCompat_strlen($string);
     }
 
     /**
@@ -186,10 +100,7 @@ class CSPRNG
      */
     protected function binarySubStr($string, $start, $length)
     {
-        if (function_exists('mb_substr')) {
-            return mb_substr($string, $start, $length, '8bit');
-        }
-        return substr($string, $start, $length);
+        return RandomCompat_substr($string, $start, $length);
     }
 
     /**

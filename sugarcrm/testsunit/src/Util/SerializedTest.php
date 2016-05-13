@@ -9,7 +9,9 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 namespace Sugarcrm\SugarcrmTestsUnit\Util;
+
 /**
  *
  * @coversDefaultClass \Sugarcrm\Sugarcrm\Util\Serialized
@@ -95,14 +97,14 @@ class SerializedTest extends \PHPUnit_Framework_TestCase
                 null,
             ),
             array(
-                'YToyOntzOjM6ImZvbyI7czozOiJiYXIiO3M6MzoiYmF6IjtPOjg6InN0ZENsYXNzIjoxOntzOjM6ImZvbyI7czozOiJiYXIiO319DQo=',
+                'YToyOntzOjE6ImYiO3M6MToibyI7czoxOiJiIjtPOjg6InN0ZENsYXNzIjoxOntzOjM6ImZvbyI7czoyOiJiYSI7fX0=',
                 null,
                 true,
                 false,
                 null,
             ),
             array(
-                'YToyOntzOjM6ImZvbyI7czozOiJiYXIiO3M6MzoiYmF6IjtPOjg6InN0ZENsYXNzIjoxOntzOjM6ImZvbyI7czozOiJiYXIiO319DQo=',
+                'YToyOntzOjE6ImYiO3M6MToibyI7czoxOiJiIjtPOjg6InN0ZENsYXNzIjoxOntzOjM6ImZvbyI7czoyOiJiYSI7fX0=',
                 false,
                 true,
                 false,
