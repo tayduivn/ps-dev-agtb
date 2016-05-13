@@ -12,6 +12,32 @@
 --}}
 {{#each meta.panels}}
     <div></div>
+    <div class="span10"><h4>{{str "LBL_CALDAV_SETUP_INFO_TITLE" ../this.module}}</h4></div>
+    <div class="span10">{{str "LBL_CALDAV_SETUP_INFO_TITLE_DESC" ../this.module}}</div>
+    <div class="span10">
+        <p>
+            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_ADDRESS" ../this.module}}:</strong>
+            &nbsp;{{str ../this.serverAddress}}
+        </p>
+    </div>
+    <div class="span10">
+        <p>
+            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH" ../this.module}}:</strong>
+            &nbsp;{{str ../this.serverPath}}caldav.php/principals/users/{{str ../this.userName}}/
+            <br />
+            <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH_DESC" ../this.module}}</small>
+        </p>
+    </div>
+    <div class="span10">
+        <p>
+            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT" ../this.module}}:</strong>
+            &nbsp;{{str ../this.serverPort}}
+            <br />
+            <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT_DESC" ../this.module}}</small>
+        </p>
+    </div>
+
+    <div class="span11"><hr></div>
     {{#each fields}}
         {{#eq this.name 'caldav_module'}}
             <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
