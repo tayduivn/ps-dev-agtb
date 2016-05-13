@@ -296,7 +296,7 @@ class TeamSet extends SugarBean{
             'SELECT tst.team_set_id from team_sets_teams tst
             INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
             AND team_memberships.user_id = %s AND team_memberships.deleted=0 group by tst.team_set_id',
-            $this->db->quoted($user_id)
+            $GLOBALS['db']->quoted($user_id)
         );
         $rs = $GLOBALS['db']->query($sql, TRUE, "Error retrieving team set ids for user.");
         while($row = $GLOBALS['db']->fetchByAssoc($rs))
