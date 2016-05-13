@@ -84,7 +84,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('AddInviteOnlyForParent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(),
                         array(
                             'added' => array(
@@ -108,49 +108,49 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeTitleEventsForAllAndOneToFourEvent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-02 06:00:00', 1, $groupId),
+                        array('update', null, null, '2016-03-02 06:00:00', 1, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-03 06:00:00', 2, $groupId),
+                        array('update', null, null, '2016-03-03 06:00:00', 2, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-04 06:00:00', 3, $groupId),
+                        array('update', null, null, '2016-03-04 06:00:00', 3, $groupId),
                         array(
                             'title' => array('Week Events Change Name For 4', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-05 06:00:00', 4, $groupId),
+                        array('update', null, null, '2016-03-05 06:00:00', 4, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-06 06:00:00', 5, $groupId),
+                        array('update', null, null, '2016-03-06 06:00:00', 5, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-07 06:00:00', 6, $groupId),
+                        array('update', null, null, '2016-03-07 06:00:00', 6, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All', 'Week Events'),
                         ),
@@ -165,7 +165,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeTheTimeOfTheEventsInTheParent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(
                             'date_start' => array('2016-03-11 06:00:00', '2016-03-01 06:00:00'),
                             'date_end' => array('2016-03-11 07:00:00', '2016-03-01 07:00:00'),
@@ -184,7 +184,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(
                             'update',
                             null,
-                            array(),
+                            null,
                             '2016-04-27 06:00:00',
                             null,
                             $groupId,
@@ -205,7 +205,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(
                             'update',
                             null,
-                            array(),
+                            null,
                             '2016-04-29 06:00:00',
                             2,
                             $groupId,
@@ -231,7 +231,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('AddedInvitees.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_count' => array('1', '7'),
@@ -240,7 +240,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                     ),
 
                     array(
-                        array('update', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(),
                         array(
                             'added' => array(
@@ -263,7 +263,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('SingleEvent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-10 09:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-10 09:00:00', null, $groupId),
                         array(
                             'timezone' => array('Europe/Minsk', 'UTC'),
                             'title' => array('Single Event', 'Single'),
@@ -291,7 +291,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('WeeklyEvent.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-02 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-02 06:00:00', null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_until' => array('2016-03-22 20:59:00', '2016-03-29 20:59:00'),
@@ -299,7 +299,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-02 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-02 06:00:00', null, $groupId),
                         array(
                             'date_start' => array('2016-03-02 06:00:00', '2016-03-01 06:00:00'),
                             'date_end' => array('2016-03-02 07:00:00', '2016-03-01 07:00:00'),
@@ -307,7 +307,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-09 06:00:00', 1, $groupId),
+                        array('override', null, null, '2016-03-09 06:00:00', 1, $groupId),
                         array(
                             'date_start' => array('2016-03-09 06:00:00'),
                             'date_end' => array('2016-03-09 07:00:00'),
@@ -319,7 +319,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-16 06:00:00', 2, $groupId),
+                        array('override', null, null, '2016-03-16 06:00:00', 2, $groupId),
                         array(
                             'date_start' => array('2016-03-16 06:00:00'),
                             'date_end' => array('2016-03-16 07:00:00'),
@@ -339,7 +339,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('RemoveEvent.after'),
                 'expected' => array(
                     array(
-                        array('delete', null, array(), '2016-03-09 06:00:00', 1, $groupId),
+                        array('delete', null, null, '2016-03-09 06:00:00', 1, $groupId),
                         array(),
                         array(),
                     ),
@@ -352,7 +352,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('NewEvents.after'),
                 'expected' => array(
                     array(
-                        array('override', null, array(), '2016-03-01 06:00:00', null, $groupId),
+                        array('override', null, null, '2016-03-01 06:00:00', null, $groupId),
                         array(
                             'rrule_action' => 'added',
                             'rrule_frequency' => array('DAILY'),
@@ -383,7 +383,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         ),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-02 06:00:00', 1, $groupId),
+                        array('override', null, null, '2016-03-02 06:00:00', 1, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All'),
                             'date_start' => array('2016-03-02 06:00:00'),
@@ -395,7 +395,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-03 06:00:00', 2, $groupId),
+                        array('override', null, null, '2016-03-03 06:00:00', 2, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All'),
                             'date_start' => array('2016-03-03 06:00:00'),
@@ -407,7 +407,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('restore', null, array(), '2016-03-04 06:00:00', 3, $groupId),
+                        array('restore', null, null, '2016-03-04 06:00:00', 3, $groupId),
                         array(
                             'title' => array('Week Events Change Name For 4'),
                             'date_start' => array('2016-03-04 06:00:00'),
@@ -419,7 +419,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-05 06:00:00', 4, $groupId),
+                        array('override', null, null, '2016-03-05 06:00:00', 4, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All'),
                             'date_start' => array('2016-03-05 06:00:00'),
@@ -431,7 +431,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-06 06:00:00', 5, $groupId),
+                        array('override', null, null, '2016-03-06 06:00:00', 5, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All'),
                             'date_start' => array('2016-03-06 06:00:00'),
@@ -443,7 +443,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-07 06:00:00', 6, $groupId),
+                        array('override', null, null, '2016-03-07 06:00:00', 6, $groupId),
                         array(
                             'title' => array('Week Events Change Name For All'),
                             'date_start' => array('2016-03-07 06:00:00'),
@@ -463,7 +463,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('AddTimes.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-06 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-06 06:00:00', null, $groupId),
                         array(
                             'rrule_action' => 'updated',
                             'rrule_count' => array('5', '3'),
@@ -471,7 +471,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-07 06:00:00', 1, $groupId),
+                        array('override', null, null, '2016-03-07 06:00:00', 1, $groupId),
                         array(
                             'title' => array('deswvdswg'),
                             'description' => array(null),
@@ -483,7 +483,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-08 06:00:00', 2, $groupId),
+                        array('override', null, null, '2016-03-08 06:00:00', 2, $groupId),
                         array(
                             'title' => array('deswvdswg'),
                             'description' => array(null),
@@ -495,7 +495,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-09 06:00:00', 3, $groupId),
+                        array('override', null, null, '2016-03-09 06:00:00', 3, $groupId),
                         array(
                             'title' => array('deswvdswg'),
                             'description' => array(null),
@@ -507,7 +507,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('override', null, array(), '2016-03-10 06:00:00', 4, $groupId),
+                        array('override', null, null, '2016-03-10 06:00:00', 4, $groupId),
                         array(
                             'title' => array('deswvdswg'),
                             'description' => array(null),
@@ -527,7 +527,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeDateTimeStartEvents.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-13 08:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-13 08:00:00', null, $groupId),
                         array(
                             'date_start' => array('2016-03-13 08:00:00', '2016-03-13 06:00:00'),
                             'date_end' => array('2016-03-13 09:00:00', '2016-03-13 07:00:00'),
@@ -535,7 +535,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-14 08:00:00', 1, $groupId),
+                        array('update', null, null, '2016-03-14 08:00:00', 1, $groupId),
                         array(
                             'date_start' => array('2016-03-14 08:00:00'),
                             'date_end' => array('2016-03-14 09:00:00'),
@@ -547,7 +547,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-15 08:00:00', 2, $groupId),
+                        array('update', null, null, '2016-03-15 08:00:00', 2, $groupId),
                         array(
                             'date_start' => array('2016-03-15 08:00:00'),
                             'date_end' => array('2016-03-15 09:00:00'),
@@ -568,7 +568,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                 'after' => static::getSourceIcsFile('ChangeUntilDate.after'),
                 'expected' => array(
                     array(
-                        array('update', null, array(), '2016-03-14 06:00:00', null, $groupId),
+                        array('update', null, null, '2016-03-14 06:00:00', null, $groupId),
                         array(
                             'date_start' => array('2016-03-14 06:00:00', '2016-03-13 06:00:00'),
                             'date_end' => array('2016-03-14 07:00:00', '2016-03-13 07:00:00'),
@@ -576,7 +576,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-15 06:00:00', 1, $groupId),
+                        array('update', null, null, '2016-03-15 06:00:00', 1, $groupId),
                         array(
                             'date_start' => array('2016-03-15 06:00:00'),
                             'date_end' => array('2016-03-15 07:00:00'),
@@ -588,7 +588,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-16 06:00:00', 2, $groupId),
+                        array('update', null, null, '2016-03-16 06:00:00', 2, $groupId),
                         array(
                             'date_start' => array('2016-03-16 06:00:00'),
                             'date_end' => array('2016-03-16 07:00:00'),
@@ -600,7 +600,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-17 06:00:00', 3, $groupId),
+                        array('update', null, null, '2016-03-17 06:00:00', 3, $groupId),
                         array(
                             'date_start' => array('2016-03-17 06:00:00'),
                             'date_end' => array('2016-03-17 07:00:00'),
@@ -612,7 +612,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-18 06:00:00', 4, $groupId),
+                        array('update', null, null, '2016-03-18 06:00:00', 4, $groupId),
                         array(
                             'date_start' => array('2016-03-18 06:00:00'),
                             'date_end' => array('2016-03-18 07:00:00'),
@@ -624,7 +624,7 @@ class AdapterCRYS1399Test extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                        array('update', null, array(), '2016-03-19 06:00:00', 5, $groupId),
+                        array('update', null, null, '2016-03-19 06:00:00', 5, $groupId),
                         array(
                             'date_start' => array('2016-03-19 06:00:00'),
                             'date_end' => array('2016-03-19 07:00:00'),

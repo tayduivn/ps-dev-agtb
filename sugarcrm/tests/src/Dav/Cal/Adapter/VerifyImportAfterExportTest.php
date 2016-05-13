@@ -228,10 +228,7 @@ class verifyImportAfterExportTest extends \Sugar_PHPUnit_Framework_TestCase
                     array(
                         'update',
                         $calDavBeanId,
-                        array(
-                            '87943032-1511-bd7d-942e-56d04754a6df',
-                            'd8aff3a1-b1ae-f682-555f-56d0475142d3'
-                        ),
+                        'd8aff3a1-b1ae-f682-555f-56d0475142d3',
                         null,
                         1,
                     ),
