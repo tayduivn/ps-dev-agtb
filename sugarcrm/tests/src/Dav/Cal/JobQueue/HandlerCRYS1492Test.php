@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler;
 /**
  * Testing is correct current user on importing/exporting.
  *
- * @covers Handler
+ * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
  */
 class HandlerCRYS1492Test extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -94,7 +94,7 @@ class HandlerCRYS1492Test extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * On importing/exporting current user should be same that's create queueItem.
      *
-     * @covers Handler::run
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::run
      */
     public function testCurrentUser()
     {

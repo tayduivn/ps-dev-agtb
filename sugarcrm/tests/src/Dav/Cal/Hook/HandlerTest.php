@@ -18,13 +18,13 @@ use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as LogicHookHandler;
 require_once 'tests/SugarTestCalDavUtilites.php';
 
 /**
- * @coversDefaultClass \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
+ * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
  */
 
 class HandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getManager
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getManager
      */
     public function testGetManager()
     {
@@ -34,7 +34,7 @@ class HandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getAdapterFactory
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::getAdapterFactory
      */
     public function testGetAdapterFactory()
     {
