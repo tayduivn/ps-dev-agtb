@@ -352,8 +352,8 @@ describe("enum field", function() {
         using('visibility grid',
             [
                 {
-                    order: [{'90': '90', '1': 'One', '': ''}],
-                    expected: ['', '90', '1'],
+                    order: [{'1': 'One', '90': '90', '': ''}],
+                    expected: ['90', '', '1'],
                     targetField: 'testField',
                     targetValue: 'testValue',
                     visibility_grid: {
@@ -364,8 +364,8 @@ describe("enum field", function() {
                     }
                 },
                 {
-                    order: [{'90': '90', '1': 'One', '': ''}],
-                    expected: ['90', '1', ''],
+                    order: [{'1': 'One', '90': '90', '': ''}],
+                    expected: ['1', '90', ''],
                     targetField: '',
                     targetValue: 'testValue',
                     visibility_grid: {
