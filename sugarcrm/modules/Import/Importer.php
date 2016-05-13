@@ -196,7 +196,7 @@ class Importer
 
     protected function importRow($row)
     {
-        global $sugar_config, $mod_strings, $current_user;
+        global $sugar_config, $mod_strings, $current_user, $current_language;
 
         $focus = BeanFactory::getBean($this->bean->module_dir);
         $focus->unPopulateDefaultValues();
@@ -299,28 +299,38 @@ class Importer
             }
 
             // Handle the special case 'Sync to Mail Client'
-            if ( $focus->object_name == "Contact" && $field == 'sync_contact' )
-            {
-                /**
-                 * Bug #41194 : if true used as value of sync_contact - add curent user to list to sync
-                 */
-                if ( true == $rowValue || 'true' == strtolower($rowValue)) {
-                    $focus->sync_contact = $focus->id;
-                } elseif (false == $rowValue || 'false' == strtolower($rowValue)) {
-                    $focus->sync_contact = '';
-                } else {
-                    $bad_names = array();
-                    $returnValue = $this->ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
-                    // try the default value on fail
-                    if ( !$returnValue && !empty($defaultRowValue) )
-                        $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
-                    if ( !$returnValue )
-                    {
-                        $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, $bad_names);
-                        $do_save = 0;
+            if ($focus->object_name == "Contact") {
+                // Handle the special case 'Sync to Mail Client'
+                if ($field == 'sync_contact') {
+                    /**
+                     * Bug #41194 : if true used as value of sync_contact - add curent user to list to sync
+                     */
+                    if (true == $rowValue || 'true' == strtolower($rowValue)) {
+                        $focus->sync_contact = $focus->id;
+                    } elseif (false == $rowValue || 'false' == strtolower($rowValue)) {
+                        $focus->sync_contact = '';
                     } else {
-                        $focus->sync_contact = $returnValue;
+                        $bad_names = array();
+                        $returnValue = $this->ifs->synctooutlook($rowValue, $fieldDef, $bad_names);
+                        // try the default value on fail
+                        if (!$returnValue && !empty($defaultRowValue)) {
+                            $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
+                        }
+                        if (!$returnValue) {
+                            $this->importSource->writeError(
+                                $mod_strings['LBL_ERROR_SYNC_USERS'],
+                                $fieldTranslated,
+                                $bad_names
+                            );
+                            $do_save = 0;
+                        } else {
+                            $focus->sync_contact = $returnValue;
+                        }
                     }
+                }
+                // Handle preferred_language to sync to current_language if not set
+                if ($field == 'preferred_language' && empty($rowValue)) {
+                    $rowValue = $current_language;
                 }
             }
 
