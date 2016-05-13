@@ -54,7 +54,7 @@ if(isset($_REQUEST['query']))
 ////////////////////////////////////////////////////////
 // Start the output
 ////////////////////////////////////////////////////////
-$reqHTML = $request->getValidInputRequest('html', 'Asser\ComponentName');
+$reqHTML = $request->getValidInputRequest('html', 'Assert\ComponentName');
 if ($reqHTML === null) {
 	$form =new XTemplate ('modules/DataSets/Popup_picker.html');
 	$GLOBALS['log']->debug("using file modules/DataSets/Popup_picker.html");
