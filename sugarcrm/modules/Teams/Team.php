@@ -448,7 +448,7 @@ class Team extends SugarBean
      * Recursively add managers to the team
      * @param int $manager_id	Manager user id
      */
-    private function addManagerToTeam($manager_id)
+    public function addManagerToTeam($manager_id)
     {
         $manager = BeanFactory::getBean('Users', $manager_id);
         $managers_membership = BeanFactory::getBean('TeamMemberships');
@@ -565,7 +565,7 @@ class Team extends SugarBean
     		} else if (!$membership->explicit_assign and $membership->implicit_assign) {
                 //preserve the implicit relationship
             }
-            else {
+            elseif (!$membership->deleted) {
                 //delete   explcit implicit
                 //             1     0
                 //             0     0
