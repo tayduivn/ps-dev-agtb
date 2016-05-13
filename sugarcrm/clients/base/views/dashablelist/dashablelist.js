@@ -88,7 +88,7 @@
      *
      * @property {Array}
      */
-    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates'],
+    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates', 'Addressees'],
 
     /**
      * Module Additions
@@ -423,6 +423,9 @@
             module = this.context.parent.get('module');
             if (_.contains(this.moduleBlacklist, module)) {
                 module = _.first(availableModules);
+                // On 'initialize' model is set to context's model - that model can have no access at all
+                // and we'll result in 'no-access' template after render. So we change it to default model.
+                this.model = app.data.createBean(module);
             }
             this.settings.set('module', module);
         } else {
