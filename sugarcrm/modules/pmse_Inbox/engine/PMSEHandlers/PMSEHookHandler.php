@@ -17,67 +17,85 @@ require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class PMSEHookHandler
 {
     /**
-     *
-     * @var type
+     * The PMSE Request object
+     * @var PMSERequest
      */
     protected $request;
 
     /**
-     *
-     * @var type
+     * The PMSE Preprocessor object
+     * @var PMSEPreProcessor
      */
     protected $preProcessor;
 
     /**
-     *
+     * The PMSE Logger object
      * @var PMSELogger
      */
     protected $logger;
 
     /**
-     *
-     * @var type
+     * Sugar logger object
+     * @var LoggerManager
      */
-    protected $dbHandler;
+    protected $sugarLogger;
 
     /**
-     *
+     * The ProcessManager Registry object
+     * @var Registry
+     */
+    protected $registry;
+
+    /**
+     * List of reasons that processes could be disabled
+     * @var array
+     */
+    protected $disablers = [
+        'setup' => 'Perform Setup',
+        'upgrade' => 'Upgrade',
+    ];
+
+    /**
+     * Object constructor
      */
     public function __construct()
     {
-        global $db;
         $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $this->request->setType('hook');
         $this->preProcessor = PMSEPreProcessor::getInstance();
         $this->logger = PMSELogger::getInstance();
-        $this->dbHandler = $db;
+        $this->sugarLogger = LoggerManager::getLogger();
+        $this->registry = Registry\Registry::getInstance();
     }
 
     /**
-     *
-     * @param type $element
-     * @param type $createThread
-     * @param type $bean
-     * @param type $externalAction
-     * @param type $args
-     * @return type
+     * Executes a request
+     * @param array $args Arguments used in handling the request
+     * @param boolean $createThread Whether to create a new thread for processes
+     * @param SugarBean $bean Affected bean, if there is one
+     * @param string $externalAction Additional action to take
+     * @return void
      */
     public function executeRequest($args = array(), $createThread = false, $bean = null, $externalAction = '')
     {
-        $this->logger->info('Processing a hook request.');
-        $this->logger->debug('Hook request params: ' . print_r($args, true));
-        $this->request->setCreateThread($createThread);
-        $this->request->setExternalAction($externalAction);
-        $this->request->setBean($bean);
-        $this->request->setArguments($args);
+        // If we are disabled we need to bail immediately
+        if (!$this->isEnabled()) {
+            return;
+        }
 
-        $preProcessor = $this->preProcessor->getInstance();
-        $response = $preProcessor->processRequest($this->request);
-        return $response;
+        // Set the necessary request properties
+        $this->request->setArguments($args);
+        $this->request->setCreateThread($createThread);
+        $this->request->setBean($bean);
+        $this->request->setExternalAction($externalAction);
+
+        // Preprocessor doesn't actually return anything
+        return $this->preProcessor->processRequest($this->request);
     }
 
     /**
@@ -93,6 +111,11 @@ class PMSEHookHandler
      */
     public function runStartEventAfterSave($bean, $event, $arguments)
     {
+        // If we are disabled we need to bail immediately
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $this->logger->info("Executing Before save for bean module {$bean->module_name}, with id {$bean->id}");
         $this->executeRequest($arguments, false, $bean, '');
     }
@@ -100,6 +123,11 @@ class PMSEHookHandler
 
     public function terminateCaseAfterDelete($bean, $event, $arguments)
     {
+        // If we are disabled we need to bail immediately
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $this->logger->info("Executing Terminate Case for a deleted bean module {$bean->module_name}, with id {$bean->id}");
         $this->executeRequest($arguments, false, $bean, 'TERMINATE_CASE');
     }
@@ -109,6 +137,11 @@ class PMSEHookHandler
      */
     public function executeCron()
     {
+        // If we are disabled we need to bail immediately
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $this->logger->info("Executing PMSE scheduled tasks");
         $this->wakeUpSleepingFlows();
     }
@@ -116,34 +149,66 @@ class PMSEHookHandler
     /**
      * Execute all the flows marked as SLEEPING
      */
-    private function wakeUpSleepingFlows()
+    protected function wakeUpSleepingFlows()
     {
-        $this->logger->info("Checking flows with status sleeping");
+        // Needed for the query
         $today = TimeDate::getInstance()->nowDb();
 
-        //get all records with status = sleeping
-        $flowBean = BeanFactory::getBean('pmse_BpmFlow');//new BpmFlow();
+        // We will need this for quoting strings
+        $db = DBManagerFactory::getInstance();
 
-        //$flows = $flowBean->getSelectRows('', "bpmn_type = 'bpmnEvent' and cas_flow_status = 'SLEEPING' and cas_due_date <= '$today' ");
-        $flows = $flowBean->get_full_list(
-            '',
-            "bpmn_type = 'bpmnEvent' and cas_flow_status = 'SLEEPING' and cas_due_date <= '$today' "
-        );
-        $n = 0;
-        foreach ($flows as $flow) {
-            $this->newFollowFlow($flow->fetched_row, false, null, 'WAKE_UP');
-            $n++;
-        }
-        if ($n == 0) {
-            $this->logger->info("No flows processed with status sleeping");
+        // Used in the get full list process
+        $addedSQL = 'bpmn_type = ' . $db->quoted('bpmnEvent') .
+                    ' AND cas_flow_status = ' . $db->quoted('SLEEPING') .
+                    ' AND cas_due_date <= ' . $db->quoted($today);
+
+        $bean = BeanFactory::getBean('pmse_BpmFlow');
+        $flows = $bean->get_full_list('', $addedSQL);
+
+        // If there were flows to process, handle that
+        if ($flows !== null && ($c = count($flows)) > 0) {
+            foreach ($flows as $flow) {
+                $this->newFollowFlow($flow->fetched_row, false, null, 'WAKE_UP');
+            }
+
+            $this->logger->info("Processed $c flows with status sleeping");
         } else {
-            $this->logger->info("Processed $n flows with status sleeping");
+            $this->logger->info("No flows processed with status sleeping");
         }
     }
 
-    public function newFollowFlow($flowData, $createThread = false, $bean = null, $externalAction = '')
+    protected function newFollowFlow($flowData, $createThread = false, $bean = null, $externalAction = '')
     {
         $fr = ProcessManager\Factory::getPMSEObject('PMSEExecuter');
         return $fr->runEngine($flowData, $createThread, $bean, $externalAction);
+    }
+
+    /**
+     * Writes a log message to the sugar logger and the PMSE logger. Used primarily
+     * on installation and on upgrade.
+     * @param string $msg The message to log
+     */
+    protected function writeLog($msg)
+    {
+        $this->logger->alert($msg);
+        $this->sugarLogger->error($msg);
+    }
+
+    /**
+     * Checks to see if processes are enabled
+     * @return boolean
+     */
+    protected function isEnabled()
+    {
+        foreach ($this->disablers as $type => $by) {
+            $key = "$type:disable_processes";
+            $d = $this->registry->get($key);
+            if ($d !== null && $d !== false) {
+                $this->writeLog("Process workflows are currently disabled by $by.");
+                return false;
+            }
+        }
+
+        return true;
     }
 }
