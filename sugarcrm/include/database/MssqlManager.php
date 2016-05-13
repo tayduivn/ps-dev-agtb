@@ -400,17 +400,21 @@ class MssqlManager extends DBManager
      */
     protected function isUnionQuery($sql)
     {
-        if (stripos($sql, 'UNION') && !preg_match("/(')(UNION).?(')/i", $sql)) {
+        // replace string literals with empty string, eg field1='Union''s Test' => field1='',
+        // then any remaining word 'union' must be keyword
+        $sql = preg_replace("/'[^']+'/", "''", str_replace("''", '', $sql));
+        $unionPattern = "/(\)|\s)UNION(\(|\s)/i";
+        if (preg_match($unionPattern, $sql)) {
             if (preg_match_all('/\(\s*(select[^)]+)\)/i', $sql, $matches)) {
                 $isUnionInSub = false;
                 $sqlMain = $sql;
                 foreach ($matches[0] as $query) {
-                    if (stripos($query, 'UNION') && !preg_match("/(')(UNION).?(')/i", $query)) {
+                    if (preg_match($unionPattern, $query)) {
                         $isUnionInSub = true;
                     }
                     $sqlMain = str_ireplace($query, '', $sqlMain);
                 }
-                return !$isUnionInSub || (stripos($sqlMain, 'UNION') && !preg_match("/(')(UNION).?(')/i", $sqlMain));
+                return !$isUnionInSub || preg_match($unionPattern, $sqlMain);
             }
             return true;
         }
