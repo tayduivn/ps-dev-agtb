@@ -130,9 +130,9 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $acl = $this->getMock('SugarACLTeamBased', array('getCurrentUser'));
         $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
 
-        $actualUserAccess = $acl->checkAccess($this->module, $action, $context);
+        $actualAccess = $acl->checkAccess($this->module, $action, $context);
 
-        $this->assertEquals(false, $actualUserAccess[$action]);
+        $this->assertEquals(false, $actualAccess);
     }
 
     /**
@@ -162,6 +162,38 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($permissions, $actualUserAccess[$action]);
         $this->assertEquals($permissions, $actualAccess);
+    }
+
+    /**
+     * Test that cache considers about date modified.
+     */
+    public function testCacheByDateModified()
+    {
+        $action = 'edit';
+        $context = array('bean' => $this->bean);
+        // Give access.
+        $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+        $this->bean->save();
+
+        $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
+        ACLAction::setACLData($this->user->id, $this->module, $aclData);
+
+        $acl = $this->getMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
+
+        $actualAccess = $acl->checkAccess($this->module, $action, $context);
+        $this->assertEquals(true, $actualAccess);
+
+        // No access.
+        $this->bean->team_set_selected_id = $this->teamSetT2->id;
+        $this->bean->name = 'test';
+        $this->bean->save();
+
+        // Make sure "fetched_row" is populated. Date modified should force the cache.
+        $this->bean->retrieve($this->bean->id);
+
+        $actualAccess = $acl->checkAccess($this->module, $action, $context);
+        $this->assertEquals(false, $actualAccess);
     }
 
     public function aclDataProvider()

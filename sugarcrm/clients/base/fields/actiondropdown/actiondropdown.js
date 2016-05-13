@@ -133,6 +133,13 @@
                 }
             }
         });
+        this.model.on('acl:change', function() {
+            if (this.disposed) {
+                return;
+            }
+            this._orderButtons();
+            this.render();
+        }, this);
     },
 
     /**

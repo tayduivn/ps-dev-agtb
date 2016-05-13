@@ -186,7 +186,9 @@ class SugarACLTeamBased extends SugarACLStrategy
      */
     protected function isUserInSelectedTeams($user, $bean)
     {
-        $cacheAccessKey = $user->id . $bean->id;
+        // Db format with seconds.
+        $dateModified = !empty($bean->fetched_row['date_modified']) ? $bean->fetched_row['date_modified'] : '';
+        $cacheAccessKey = $user->id . $bean->id . $dateModified;
         if (array_key_exists($cacheAccessKey, self::$cacheAccess)) {
             return self::$cacheAccess[$cacheAccessKey];
         }
