@@ -1977,14 +1977,20 @@ class HealthCheckScanner
             }
         }
 
-        //Checks moduleList NULL values
-        $nullValues = array_keys($strings['moduleList'], null);
-        if ($nullValues) {
-            $this->updateStatus(
-                "moduleListNullValues",
-                $file,
-                implode(', ', $nullValues)
-            );
+        list($sugar_version, $sugar_flavor) = $this->getVersionAndFlavor();
+
+        // Don't do this check for 7.6.0.0 or >= 7.6.2.0, since they will have proper moduleList in core
+        // or 7_MergeDropdowns will take care of the empty values after upgrade.
+        if (!(version_compare($sugar_version, '7.6.0.0', '==') || version_compare($sugar_version, '7.6.2.0', '>='))) {
+            //Checks moduleList NULL values
+            $nullValues = array_keys($strings['moduleList'], null);
+            if ($nullValues) {
+                $this->updateStatus(
+                    "moduleListNullValues",
+                    $file,
+                    implode(', ', $nullValues)
+                );
+            }
         }
     }
 
