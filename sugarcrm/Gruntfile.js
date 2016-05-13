@@ -12,6 +12,9 @@
 var os = require('os');
 
 module.exports = function(grunt) {
+    grunt.log.error('Using Grunt is deprecated. Please use Gulp instead.\n' +
+        'Refer to CONTRIBUTING.md for more information about how to use Gulp.');
+
     grunt.loadTasks('grunt/tasks');
     grunt.loadTasks('grunt/tasks/check-license');
     grunt.loadNpmTasks('grunt-jsduck');
