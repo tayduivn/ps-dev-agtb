@@ -33,7 +33,7 @@ global $currentModule;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $seed_object = BeanFactory::getBean('DataSets');
-
+$request = InputValidation::getService();
 
 $where = "";
 if(isset($_REQUEST['query']))
