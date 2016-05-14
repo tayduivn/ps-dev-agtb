@@ -430,23 +430,6 @@
             },
 
             /**
-             * Create error tooltips.
-             * @param {jQuery} $element
-             */
-            createErrorTooltips: function($element) {
-                app.logger.warn('View.Field#createErrorTooltips: This method has been' +
-                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
-            },
-
-            /**
-             * Destroy all error tooltips.
-             */
-            destroyAllErrorTooltips: function() {
-                app.logger.warn('View.Field#destroyAllErrorTooltips: This method has been' +
-                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
-            },
-
-            /**
              * Destroy all error tooltips before disposing the field.
              * @private
              */

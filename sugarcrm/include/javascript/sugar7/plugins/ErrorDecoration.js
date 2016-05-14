@@ -25,15 +25,6 @@
                 }, this);
             },
 
-            showTooltip:function (e) {
-                app.logger.warn('ErrorDecoration#showTooltip: This method has been' +
-                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
-            },
-            hideTooltip:function (e) {
-                app.logger.warn('ErrorDecoration#hideTooltip: This method has been' +
-                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
-            },
-
             /**
              * Remove validation error decoration from fields
              *
