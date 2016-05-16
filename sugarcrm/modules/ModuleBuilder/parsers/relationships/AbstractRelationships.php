@@ -188,6 +188,44 @@ class AbstractRelationships
     }
 
     /*
+     * Remove a relationship from the set
+     * @param AbstractRelationship $relationshipName    The relationship to remove
+     */
+    protected function remove($relationshipName)
+    {
+        unset($this->relationships[$relationshipName]);
+    }
+
+    /*
+     * Rename module
+     * @param $oldModuleName old module name
+     * @param $newModuleName new module name
+    */
+    public function renameModule($oldModuleName, $newModuleName)
+    {
+        foreach ($this->getRelationshipList() as $relationshipName) {
+            $relationship = $this->get($relationshipName);
+            $definition = $relationship->getDefinition();
+
+            if ($definition['lhs_module'] == $oldModuleName) {
+                $definition['lhs_module'] = $newModuleName;
+            }
+
+            if ($definition['rhs_module'] == $oldModuleName) {
+                $definition['rhs_module'] = $newModuleName;
+            }
+
+            // in order to create consistent relationship name,
+            // blank it out from definition for factory to create a name.
+            unset($definition['relationship_name']);
+            $this->add(RelationshipFactory::newRelationship($definition));
+            // remove relationship with old name
+            $this->remove($relationshipName);
+        }
+
+    }
+
+    /*
      * Load a set of relationships from a file
      * The saved relationships are stored as AbstractRelationship objects, which isn't the same as the old MBRelationships definition
      * @param string $basepath  Base directory in which to store the relationships information

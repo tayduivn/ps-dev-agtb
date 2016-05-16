@@ -357,6 +357,11 @@ function buildInstall($path){
             foreach(array_keys($this->modules) as $module){
                 $old_name = $this->modules[$module]->key_name;
             	$this->modules[$module]->key_name = $this->key . '_' . $this->modules[$module]->name;
+                $this->modules[$module]->renameRelationships(
+                    $this->modules[$module]->getModuleDir(),
+                    $old_name,
+                    $this->modules[$module]->key_name
+                );
                 $this->modules[$module]->renameMetaData($this->modules[$module]->getModuleDir(), $old_name);
                 $this->modules[$module]->renameLanguageFiles($this->modules[$module]->getModuleDir());
                 if($save)$this->modules[$module]->save();

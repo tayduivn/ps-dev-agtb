@@ -740,23 +740,32 @@ class MBModule
 
     function rename ($new_name)
     {
-        $old = $this->getModuleDir () ;
+        $oldModDir = $this->getModuleDir();
         $old_name = $this->key_name;
         $this->name = $new_name ;
         $this->key_name = $this->package_key . '_' . $this->name ;
-        $new = $this->getModuleDir () ;
-        if (file_exists ( $new ))
-        {
+        $newModDir = $this->getModuleDir();
+        if (file_exists($newModDir)) {
             return false ;
         }
-        $renamed = rename ( $old, $new ) ;
+        $renamed = rename($oldModDir, $newModDir);
         if ($renamed)
         {
-            $this->renameMetaData ( $new , $old_name) ;
-            $this->renameLanguageFiles ( $new ) ;
+            $this->renameRelationships($newModDir, $old_name, $this->key_name);
+            $this->renameMetaData($newModDir, $old_name);
+            $this->renameLanguageFiles($newModDir);
 
         }
         return $renamed ;
+    }
+
+    public function renameRelationships($newModDir, $oldModName, $newModName)
+    {
+        //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
+        // and BR-4147 lhs module name was not updated when module name is changed
+        $relationships = new UndeployedRelationships($newModDir);
+        $relationships->renameModule($oldModName, $newModName);
+        $relationships->save();
     }
 
 	function renameLanguageFiles ($new_dir , $duplicate = false)
@@ -820,9 +829,6 @@ class MBModule
 
                     if ("relationships.php" == $e)
                     {
-                        //bug 39598 Relationship Name Is Not Updated If Module Name Is Changed In Module Builder
-                        $contents = str_replace  ( "'{$old_name}'", "'{$this->key_name}'" , $contents ) ;
-
                         if (!empty($this->config['label'])) {
                             $oldLabel = translate($old_name);
                             $newLabel = $this->config['label'];
@@ -880,6 +886,7 @@ class MBModule
 
         if ($copied)
         {
+            $this->renameRelationships($new, $old_name, $this->key_name);
             $this->renameMetaData ( $new , $old_name) ;
             $this->renameLanguageFiles ( $new, true ) ;
         }
