@@ -19,7 +19,6 @@ $viewdefs['KBContents']['base']['view']['subpanel-for-localizations'] = array(
                 'event' => 'list:preview:fire',
                 'icon' => 'fa-eye',
                 'acl_action' => 'view',
-                'allow_bwc' => false,
             ),
             array(
                 'type' => 'rowaction',

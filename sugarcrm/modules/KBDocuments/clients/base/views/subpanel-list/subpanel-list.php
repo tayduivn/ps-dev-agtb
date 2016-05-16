@@ -55,7 +55,6 @@ $viewdefs['KBDocuments']['base']['view']['subpanel-list'] = array(
                 'event' => 'list:preview:fire',
                 'icon' => 'fa-eye',
                 'acl_action' => 'view',
-                'allow_bwc' => true,
             ),
             array(
                 'type' => 'rowaction',
@@ -64,7 +63,6 @@ $viewdefs['KBDocuments']['base']['view']['subpanel-list'] = array(
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
-                'allow_bwc' => true,
             ),
             array(
                 'type' => 'unlink-action',

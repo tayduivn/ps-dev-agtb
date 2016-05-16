@@ -73,7 +73,6 @@ $viewdefs['Contracts']['base']['view']['subpanel-list'] = array(
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
-                'allow_bwc' => true,
             ),
             array(
                 'type' => 'unlink-action',

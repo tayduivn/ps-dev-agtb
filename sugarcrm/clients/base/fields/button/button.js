@@ -159,13 +159,18 @@
         // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
         var acl_module = this.def.acl_module,
             acl_action = this.def.acl_action;
-        //Need to test BWC status
-        if(_.isBoolean(this.def.allow_bwc) && !this.def.allow_bwc){
+
+        // Need to test BWC status
+        if (_.isBoolean(this.def.allow_bwc) && !this.def.allow_bwc) {
+            app.logger.warn('The "allow_bwc" property has been deprecated since 7.9, and will be removed in 7.10.');
+
             var isBwc = app.metadata.getModule(acl_module || this.module).isBwcEnabled;
-            if(isBwc){
-                return false; //Action not allowed for BWC module
+            if (isBwc) {
+                // Action not allowed for BWC module
+                return false;
             }
         }
+
         // Finally check ACLs
         if (!acl_module) {
             return app.acl.hasAccessToModel(acl_action, this.model, this);

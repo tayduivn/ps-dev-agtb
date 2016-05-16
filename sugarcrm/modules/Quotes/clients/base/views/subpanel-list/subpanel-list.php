@@ -67,9 +67,7 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
                 'icon' => 'fa-pencil',
                 'label' => 'LBL_EDIT_BUTTON',
                 'acl_action' => 'edit',
-                'allow_bwc' => true,
                 'event' => 'list:editrow:fire',
-                'full_form' => true
             ),
             array(
                 'type' => 'unlink-action',
