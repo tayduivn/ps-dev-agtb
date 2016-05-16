@@ -1,3 +1,4 @@
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -8,14 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/**
- * @class View.Views.Base.PrefilteredListView
- * @alias SUGAR.App.view.views.BasePrefilteredListView
- * @extends View.Views.Base.RecordlistView
- */
-({
-    /**
-     * @inheritdoc
-     */
-    extendsFrom: 'RecordlistView'
-})
+
+$viewdefs['base']['view']['history-summary-preview-header'] = array(
+    'type' => 'preview-header'
+);
