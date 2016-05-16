@@ -65,7 +65,6 @@ else {
 	$GLOBALS['log']->debug("using file modules/DataSets/".$reqHTML.'.html');
 }
 
-$request = InputValidation::getService();
 $reqForm = $request->getValidInputRequest('form');
 $description = $request->getValidInputRequest('description');
 $name = $request->getValidInputRequest('name');
