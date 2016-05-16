@@ -32,7 +32,8 @@ class PMSEEmailsTemplates extends vCardApi
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
                 'acl' => 'view',
-//                'shortHelp' => 'Exports a .pet file with a Process Email Template definition',
+                'shortHelp' => 'Exports a .pet file with a Process Email Templates definition',
+                'longHelp'  => 'modules/pmse_Emails_Templates/clients/base/api/help/email_templates_export_help.html',
             ),
             'emailTemplatesImportPost' => array(
                 'reqType' => 'POST',
@@ -41,7 +42,8 @@ class PMSEEmailsTemplates extends vCardApi
                 'method' => 'emailTemplatesImport',
                 'rawPostContents' => true,
                 'acl' => 'create',
-//                'shortHelp' => 'Imports a Process Email Template from a .pet file',
+                'shortHelp' => 'Imports a Process Email Templates from a .pet file',
+                'longHelp'  => 'modules/pmse_Emails_Templates/clients/base/api/help/email_templates_import_help.html',
             ),
             'listVariables' => array(
                 'reqType' => 'GET',
@@ -49,7 +51,8 @@ class PMSEEmailsTemplates extends vCardApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'findVariables',
                 'acl' => 'view',
-//                'shortHelp' => 'Search for variables in a related module',
+                'shortHelp' => 'Get the variable list for a module',
+                'longHelp'  => 'modules/pmse_Emails_Templates/clients/base/api/help/email_templates_variable_list_get_help.html',
             ),
             'listModulesRelated' => array(
                 'reqType' => 'GET',
@@ -57,7 +60,8 @@ class PMSEEmailsTemplates extends vCardApi
                 'pathVars' => array('module', '', ''),
                 'method' => 'retrieveRelatedBeans',
                 'acl' => 'view',
-//                'shortHelp' => 'Retrieve a list of related modules',
+                'shortHelp' => 'Retrieve a list of related modules',
+                'longHelp'  => 'modules/pmse_Emails_Templates/clients/base/api/help/email_templates_module_list_get_help.html',
             ),
         );
     }
