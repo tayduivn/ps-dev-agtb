@@ -120,15 +120,16 @@ class Event
     protected function createParticipantObject(CalAddress $node)
     {
         $participantClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Participant');
-
+        /** @var \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant $participant */
         $participant = new $participantClass($node);
-        $email = $participant->getEmail();
-        if (isset($this->participantsLinks[$email])) {
-            $linkInfo = $this->participantsLinks[$email];
+        $participantsHelper = new DavHelper\ParticipantsHelper();
+        $participantHash = $participantsHelper->participantHash($participant);
+        if (isset($this->participantsLinks[$participantHash])) {
+            $linkInfo = $this->participantsLinks[$participantHash];
             $participant->setBeanName($linkInfo['beanName']);
             $participant->setBeanId($linkInfo['beanId']);
             $this->logger->debug(
-                "CalDav: Created Participant '$email' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
+                "CalDav: Created Participant '$participantHash' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
             );
         }
 
@@ -850,6 +851,32 @@ class Event
             unset($this->participants[$foundIndex]);
             $this->setCustomized();
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Delete participant
+     * @param string $beanName
+     * @param string $beanId
+     * @return bool
+     */
+    public function deleteParticipantByBean($beanName, $beanId)
+    {
+        $this->logger->debug("CalDav: Deleting Participant '$beanName'/'$beanId'");
+
+        if (!$this->event) {
+            return false;
+        }
+
+        foreach ($this->getParticipants() as $i => $participant) {
+            if ($participant->getBeanName() == $beanName && $participant->getBeanId() == $beanId) {
+                $this->event->remove($participant->getObject());
+                unset($this->participants[$i]);
+                $this->setCustomized();
+                return true;
+            }
         }
 
         return false;

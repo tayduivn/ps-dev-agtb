@@ -999,14 +999,23 @@ class CalDavEventCollection extends SugarBean
         $this->getParticipantsLinks(true);
         foreach ($participantsList as $participant) {
             $email = $participant->getEmail();
-            $GLOBALS['log']->debug("CalDav: Mapping participant '$email' to bean");
-            if (!isset($this->participantLinks[$email])) {
+            $displayName = $participant->getDisplayName();
+            $participantsHelper = new ParticipantsHelper();
+            $participantHash = $participantsHelper->participantHash($participant);
+            $GLOBALS['log']->debug("CalDav: Mapping participant '$participantHash' to bean");
+            if (!isset($this->participantLinks[$participantHash])) {
                 if ($participant->getBeanName() && $participant->getBeanId()) {
                     $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
                 } else {
                     $link = $this->getPrincipalManager()
                                  ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
                                  ->findSugarLinkByEmail($email);
+                }
+                
+                if (!$link) {
+                    $link = $this->getPrincipalManager()
+                        ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                        ->findSugarLinkByDisplayName($displayName);
                 }
 
                 global $locale;
@@ -1047,7 +1056,7 @@ class CalDavEventCollection extends SugarBean
                 $participant->setBeanName($link['beanName']);
                 $participant->setBeanId($link['beanId']);
 
-                $this->participantLinks[$email] = $link;
+                $this->participantLinks[$participantHash] = $link;
             }
         }
 

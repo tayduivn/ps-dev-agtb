@@ -925,7 +925,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
             foreach ($list as $k => $importInvitee) {
                 foreach ($exportInvitees[$action] as $exportInvitee) {
-                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1] && $exportInvitee[2] == $importInvitee[2]) {
+                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1]) {
                         unset($importInvitees[$action][$k]);
                         continue;
                     }
@@ -1449,24 +1449,21 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         if (isset($value['added'])) {
             foreach ($value['added'] as $invitee) {
-                $findParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
-                if (!$findParticipant) {
+                if ($event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
         }
         if (isset($value['changed'])) {
             foreach ($value['changed'] as $invitee) {
-                $findParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
-                if (!$findParticipant) {
+                if (!$event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
         }
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $invitee) {
-                $findParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
-                if (!$findParticipant) {
+                if (!$event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
@@ -1691,7 +1688,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 if ($findParticipant) {
                     $invitee[2] = $findParticipant->getEmail();
                 }
-                if ($event->deleteParticipant($invitee[2])) {
+                if ($event->deleteParticipantByBean($invitee[0], $invitee[1])) {
                     $result = true;
                 } else {
                     unset($value['deleted'][$k]);

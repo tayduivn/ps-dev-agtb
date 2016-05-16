@@ -177,6 +177,30 @@ class Manager
     }
 
     /**
+     * Find sugar bean by principal displayname.
+     *
+     * @param $displayName
+     * @return array
+     */
+    public function findSugarLinkByDisplayName($displayName)
+    {
+        $modules = $this->getModulesForSearch();
+
+        foreach ($modules as $module) {
+            $searchObject = $this->getSearchObject($module);
+            if (!$this->formatStrategy) {
+                $searchObject->setFormat(new Search\Format\ArrayStrategy());
+            }
+            $result = $searchObject->searchPrincipals(array('{DAV:}displayname' => $displayName));
+            if ($result) {
+                return array_shift($result);
+            }
+        }
+
+        return array();
+    }
+
+    /**
      * Get search class name from principal prefix
      * @param string $prefixPath
      * @return string | null

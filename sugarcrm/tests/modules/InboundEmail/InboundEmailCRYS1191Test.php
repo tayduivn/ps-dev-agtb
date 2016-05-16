@@ -188,39 +188,24 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
         $inboundEmailMock = $this->getMock('InboundEmail', array('updateStatusForInvitee'));
         $participantMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant', array('getEmail', 'getStatus'));
 
-        if ($hasXProperty) {
-            if (in_array($beanName, array('Call', 'Meeting'))) {
-                $participantMock->expects($this->once())->method('getEmail')->willReturn($email);
-                $participantMock->expects($this->once())->method('getStatus')->willReturn($statusCalDav);
+        $participantMock->method('getEmail')->willReturn($email);
+        $participantMock->method('getStatus')->willReturn($statusCalDav);
 
-                $eventMock->expects($this->once())->method('getParticipants')->willReturn(array(
-                    $participantMock
-                ));
+        if (in_array($beanName, array('Call', 'Meeting'))) {
+            $eventMock->expects($this->once())->method('getParticipants')->willReturn(array(
+                $participantMock
+            ));
 
-                $beanModuleMock = BeanFactory::getBean($beanName, $beanId);
-                $inviteeMock = BeanFactory::getBean('Users', '1');
+            $beanModuleMock = BeanFactory::getBean($beanName, $beanId);
+            $inviteeMock = BeanFactory::getBean('Users', '1');
 
-                $inboundEmailMock
-                    ->expects($this->once())
-                    ->method('updateStatusForInvitee')
-                    ->with($this->equalTo($beanModuleMock), $this->equalTo($inviteeMock), $this->equalTo($statusSugar));
-            } else {
-                $participantMock->expects($this->never())->method('getEmail');
-                $participantMock->expects($this->never())->method('getStatus');
-
-                $eventMock->expects($this->never())->method('getParticipants');
-
-                $inboundEmailMock
-                    ->expects($this->never())
-                    ->method('updateStatusForInvitee');
-            }
+            $inboundEmailMock
+                ->method('updateStatusForInvitee')
+                ->with($this->equalTo($beanModuleMock), $this->equalTo($inviteeMock), $this->equalTo($statusSugar));
         } else {
-            $participantMock->expects($this->never())->method('getEmail');
-            $participantMock->expects($this->never())->method('getStatus');
-
             $eventMock->expects($this->never())->method('getParticipants');
-
-            $inboundEmailMock->expects($this->never())->method('updateStatusForInvitee');
+            $inboundEmailMock
+                ->method('updateStatusForInvitee');
         }
 
         $inboundEmailMock->parseAndUpdateStatusForInvitee($content, $email);

@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -2922,12 +2923,17 @@ class InboundEmail extends SugarBean {
                 $participants = $event->getParticipants();
                 foreach ($participants as $participant) {
                     $email = $participant->getEmail();
-                    if ($email === $emailAddress && isset($links[$email])) {
+                    $participantsHelper = new ParticipantsHelper();
+                    $participantHash = $participantsHelper->participantHash($participant);
+                    if ($email === $emailAddress && isset($links[$participantHash])) {
                         $map = SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap');
                         $map = new $map;
                         $status = $map->getSugarValue($participant->getStatus());
 
-                        $inviteBean = BeanFactory::getBean($links[$email]['beanName'], $links[$email]['beanId']);
+                        $inviteBean = BeanFactory::getBean(
+                            $links[$participantHash]['beanName'],
+                            $links[$participantHash]['beanId']
+                        );
                         $this->updateStatusForInvitee($bean, $inviteBean, $status);
                         break;
                     }
