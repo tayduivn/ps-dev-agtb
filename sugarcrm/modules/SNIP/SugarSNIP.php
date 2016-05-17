@@ -543,6 +543,7 @@ class SugarSNIP
         $e->to_addrs_names = $e->to_addrs;
         $e->cc_addrs_names = $e->cc_addrs;
         $e->bcc_addrs_names = $e->bcc_addrs;
+        $e->state = Email::EMAIL_STATE_ARCHIVED;
 
         $addrs = explode(',',$e->to_addrs.",".$e->cc_addrs.",".$e->bcc_addrs);
         $e->all_addrs = array();
