@@ -134,6 +134,8 @@ $mod_strings = array(
     'LBL_SEND_ANYWAYS' => 'Are you sure you want to send/save the email without subject?',
     'LBL_NO_BODY_SEND_ANYWAYS' => 'Are you sure you want to send/save the email without body?',
     'LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS' => 'Are you sure you want to send/save the email without subject and body?',
+    'LBL_NO_RELATED_TO_WITH_TEMPLATE_SEND_ANYWAYS' => 'Your email contains variables that will be replaced using ' .
+        'values from the Related To record. Please confirm that the Related To field is set correctly before sending.',
     'LBL_SEND_BUTTON_KEY' => 'S',
     'LBL_SEND_BUTTON_LABEL' => 'Send',
     'LBL_SEND_BUTTON_TITLE' => 'Send',
@@ -435,4 +437,3 @@ You may apply a predefined template using the Template button or include one of 
     'LBL_EMAIL_INVALID_USER_CONFIGURATION' => 'Your email settings are not correctly configured to send email. An SMTP server must be configured in <a href="#bwc/index.php?module=Users">User Profile Email Settings</a>.',
     'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION' => 'The default system SMTP server is not configured.  Please contact your system administrator for further assistance.',
 );
-

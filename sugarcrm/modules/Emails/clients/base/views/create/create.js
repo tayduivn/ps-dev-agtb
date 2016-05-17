@@ -30,6 +30,12 @@
     saveAsDraftButtonName: 'draft_button',
 
     /**
+     * @property {RegExp}
+     * Used for determining if an email's content contains variables.
+     */
+    _hasVariablesRegex: /\$[a-zA-Z]+_[a-zA-Z0-9_]+/,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -402,6 +408,10 @@
      * Send the email immediately or warn if user did not provide subject or body
      */
     send: function() {
+        var confirmationMessages = '';
+        var showConfirmation = false;
+        var fullContent = '';
+
         var sendEmail = _.bind(function() {
             this.model.set('state', this.STATE_READY);
             this.save();
@@ -416,26 +426,36 @@
                 level: 'error',
                 messages: 'LBL_EMAIL_COMPOSE_ERR_NO_RECIPIENTS'
             });
-        } else if (!this.isFieldPopulated('name') && !this.isFieldPopulated('description_html')) {
-            app.alert.show('send_confirmation', {
-                level: 'confirmation',
-                messages: app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module),
-                onConfirm: sendEmail
-            });
-        } else if (!this.isFieldPopulated('name')) {
-            app.alert.show('send_confirmation', {
-                level: 'confirmation',
-                messages: app.lang.get('LBL_SEND_ANYWAYS', this.module),
-                onConfirm: sendEmail
-            });
-        } else if (!this.isFieldPopulated('description_html')) {
-            app.alert.show('send_confirmation', {
-                level: 'confirmation',
-                messages: app.lang.get('LBL_NO_BODY_SEND_ANYWAYS', this.module),
-                onConfirm: sendEmail
-            });
         } else {
-            sendEmail();
+            // to/cc/bcc filled out, check other fields
+            if (!this.isFieldPopulated('name') && !this.isFieldPopulated('description_html')) {
+                confirmationMessages += app.lang.get('LBL_NO_SUBJECT_NO_BODY_SEND_ANYWAYS', this.module) + '<br />';
+                showConfirmation = true;
+            } else if (!this.isFieldPopulated('name')) {
+                confirmationMessages += app.lang.get('LBL_SEND_ANYWAYS', this.module) + '<br />';
+                showConfirmation = true;
+            } else if (!this.isFieldPopulated('description_html')) {
+                confirmationMessages += app.lang.get('LBL_NO_BODY_SEND_ANYWAYS', this.module) + '<br />';
+                showConfirmation = true;
+            }
+
+            fullContent = this._getFullContent();
+
+            if (_.isEmptyValue(this.model.get('parent_id')) && this._hasVariablesRegex.test(fullContent)) {
+                confirmationMessages += app.lang.get('LBL_NO_RELATED_TO_WITH_TEMPLATE_SEND_ANYWAYS', this.module);
+                showConfirmation = true;
+            }
+
+            if (showConfirmation) {
+                app.alert.show('send_confirmation', {
+                    level: 'confirmation',
+                    messages: confirmationMessages,
+                    onConfirm: sendEmail
+                });
+            } else {
+                // All checks pass, send the email
+                sendEmail();
+            }
         }
     },
 
@@ -465,6 +485,21 @@
         } else {
             return !_.isEmpty($.trim(value));
         }
+    },
+
+    /**
+     * Concatenates all content attributes: The subject, plain-text and HTML
+     * parts.
+     *
+     *
+     * @return {string}
+     * @private
+     */
+    _getFullContent: function() {
+        var subject = this.model.get('name') || '';
+        var text = this.model.get('description') || '';
+        var html = this.model.get('description_html') || '';
+        return subject + text + html;
     },
 
     /**

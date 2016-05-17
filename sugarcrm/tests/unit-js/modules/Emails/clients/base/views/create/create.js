@@ -467,12 +467,100 @@ describe('Emails.Views.Create', function() {
             expect(saveStub.called).toBe(false);
             expect(alertShowStub.calledOnce).toBe(true);
         });
+
+        using(
+            'content with variables and related to is not set',
+            [
+                [
+                    'Hi $contact_name',
+                    'How are you?',
+                    ''
+                ],
+                [
+                    'Hello there',
+                    'Hi, $account_name, how are you?',
+                    ''
+                ],
+                [
+                    'Read this!',
+                    '<b>What do you think?</b>',
+                    '$contact_name, What do you think?'
+                ],
+                [
+                    'Hi $contact_name',
+                    'Hi, $account_name, how are you?',
+                    '$contact_name, What do you think?'
+                ]
+            ],
+            function(subject, htmlBody, textBody) {
+                it('should show confirmation alert when content has variables and related to is not set', function() {
+                    view.model.set('to', 'foo@bar.com');
+                    view.model.set('name', subject);
+                    view.model.set('description_html', htmlBody);
+                    view.model.set('description', textBody);
+                    view.send();
+
+                    expect(saveStub).not.toHaveBeenCalled();
+                    expect(alertShowStub).toHaveBeenCalled();
+                });
+            }
+        );
+
+        using(
+            'content with variables and related to is set',
+            [
+                [
+                    'Hi $contact_name',
+                    'How are you?',
+                    ''
+                ],
+                [
+                    'Hello there',
+                    'Hi, $account_name, how are you?',
+                    ''
+                ],
+                [
+                    'Read this!',
+                    '<b>What do you think?</b>',
+                    '$contact_name, What do you think?'
+                ],
+                [
+                    'Hi $contact_name',
+                    'Hi, $account_name, how are you?',
+                    '$contact_name, What do you think?'
+                ]
+            ],
+            function(subject, htmlBody, textBody) {
+                it('should send email when content has variables and related to is set', function() {
+                    view.model.set('to', 'foo@bar.com');
+                    view.model.set('name', subject);
+                    view.model.set('description_html', htmlBody);
+                    view.model.set('description', textBody);
+                    view.model.set('parent_type', 'Contacts');
+                    view.model.set('parent_id', _.uniqueId());
+                    view.send();
+
+                    expect(saveStub).toHaveBeenCalled();
+                    expect(alertShowStub).not.toHaveBeenCalled();
+                });
+            }
+        );
+
+        it('should send email when content does not have variables', function() {
+            view.model.set('to', 'foo@bar.com');
+            view.model.set('name', 'Read this!');
+            view.model.set('description_html', '<b>What do you think?</b>');
+            view.model.set('description', 'What do you think?');
+            view.send();
+
+            expect(saveStub).toHaveBeenCalled();
+            expect(alertShowStub).not.toHaveBeenCalled();
+        });
     });
 
     describe('insert templates', function() {
         describe('replacing templates', function() {
-            var createBeanCollectionStub,
-                updateEditorWithSignatureStub;
+            var updateEditorWithSignatureStub;
 
             beforeEach(function() {
                 sandbox.spy(view, 'trigger');

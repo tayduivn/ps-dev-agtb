@@ -3397,6 +3397,16 @@ eoq;
             throw new SugarException('Could not find a relationship named: users_from');
         }
 
+        // Resolve variables in the subject and content.
+        $related = array(
+            $this->parent_type => $this->parent_id,
+            'Users' => $GLOBALS['current_user']->id,
+        );
+
+        $this->name = EmailTemplate::parse_template($this->name, $related);
+        $this->description_html = EmailTemplate::parse_template($this->description_html, $related);
+        $this->description = EmailTemplate::parse_template($this->description, $related);
+
         $this->description = $this->decodeDuringSend(from_html($this->description));
         $this->description_html = $this->decodeDuringSend(from_html($this->description_html));
 
