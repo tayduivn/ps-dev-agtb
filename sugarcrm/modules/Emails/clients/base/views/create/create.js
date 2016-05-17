@@ -378,6 +378,27 @@
     },
 
     /**
+     * Save and close drawer
+     */
+    saveAndClose: function() {
+        this.initiateSave(_.bind(function() {
+            var currentRoute, newRoute;
+
+            if (this.closestComponent('drawer')) {
+                app.drawer.close(this.context, this.model);
+            } else if (this.model.get('state') === 'Draft') {
+                // redirect to list view
+                newRoute = app.router.buildRoute(this.module);
+                app.router.navigate(newRoute, {trigger: true});
+            } else {
+                currentRoute = Backbone.history.getFragment();
+                newRoute = app.router.buildRoute(this.module, this.model.id);
+                (currentRoute === newRoute) ? app.router.refresh() : app.router.navigate(newRoute, {trigger: true});
+            }
+        }, this));
+    },
+
+    /**
      * Send the email immediately or warn if user did not provide subject or body
      */
     send: function() {
@@ -535,7 +556,8 @@
         var $row = $el.closest('.row-fluid');
         var attachments = this.model.get('attachments');
 
-        if (_.isEmpty(attachments)) {
+        //FIXME: Remove the check of field._attachments length after MAR-4031
+        if (_.isEmpty(attachments) && field._attachments.length === 0) {
             $row.addClass('hidden');
             $row.removeClass('single');
         } else {

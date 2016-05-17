@@ -138,7 +138,9 @@
             }
 
             if (unlink.length > 0) {
-                value.delete = _.pluck(unlink, 'id');
+                value.delete = _.map(unlink, function(attachment) {
+                    return attachment.get('_file');
+                });
             }
 
             return value;

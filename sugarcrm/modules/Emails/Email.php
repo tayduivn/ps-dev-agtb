@@ -3524,6 +3524,7 @@ eoq;
         // It will not retrieve all recipients if there are more than five.
         // It returns data like an API response instead of beans.
         $service = new RestService();
+        $service->user = $GLOBALS['current_user'];
         $api = new RelateCollectionApi();
         $args = array(
             'module' => $this->module_dir,

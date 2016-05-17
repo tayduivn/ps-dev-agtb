@@ -126,6 +126,51 @@ describe('Base.EmailAttachments', function() {
         });
     });
 
+    describe('setting up the model value', function() {
+        beforeEach(function() {
+            field = SugarTest.createField({
+                name: 'attachments',
+                type: 'email-attachments',
+                viewName: 'detail',
+                module: 'Emails',
+                model: model,
+                context: context
+            });
+        });
+
+        it('should set the create property on the model value', function() {
+            var file = new Backbone.Model({
+                _action: 'create',
+                _url: null,
+                _file: _.uniqueId(),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_source: 'Uploaded'
+            });
+
+            field._attachments.add(file);
+
+            expect(field.model.get(field.name).create.length).toEqual(1);
+            expect(_.first(field.model.get(field.name).create)._file).toEqual(file.get('_file'));
+        });
+
+        it('should set the delete property on the model value', function() {
+            var file = new Backbone.Model({
+                _action: 'delete',
+                _url: null,
+                _file: _.uniqueId(),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_source: 'Uploaded'
+            });
+
+            field._attachments.add(file);
+            expect(field.model.get(field.name)['delete']).toEqual([file.get('_file')]);
+        });
+    });
+
     describe('detail mode', function() {
         beforeEach(function() {
             field = SugarTest.createField({

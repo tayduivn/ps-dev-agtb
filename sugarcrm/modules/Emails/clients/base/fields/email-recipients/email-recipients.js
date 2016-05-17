@@ -71,31 +71,6 @@
     bindDataChange: function() {
         var value = this.model.get(this.name);
 
-        /**
-         * Sets the value of the Select2 element.
-         */
-        var updateTheDom = _.bind(function(recipients) {
-            // put the formatted recipients in the DOM
-            this.$(this.fieldTag).select2('data', recipients);
-
-            if (!this.def.readonly) {
-                this.setDragDropPluginEvents(this.$(this.fieldTag));
-            }
-        }, this);
-
-        /**
-         * Ensure models in collection are properly formatted
-         */
-        var formatCollectionModels = _.bind(function(collection) {
-            var recipients = this.format(collection.models);
-            // do this silently so we don't trigger another reset event and end
-            // up in an infinite loop
-            collection.reset(recipients, {silent: true});
-
-            // put the newly formatted recipients in the DOM
-            updateTheDom(recipients);
-        }, this);
-
         // Set up event handlers that allow external forces to manipulate the
         // contents of the collection, while maintaining the requirement for
         // storing formatted recipients.
@@ -104,21 +79,51 @@
             // that all models in the collection have been properly formatted
             // for use in this field
             value.on('add', function(models, collection) {
-                formatCollectionModels(collection);
+                this._formatCollectionModels(collection);
             }, this);
 
             // on "remove" the requisite models have already been removed, so we
             // only need to bother updating the value in the DOM
             value.on('remove', function(models, collection) {
                 // format the recipients and put them in the DOM
-                updateTheDom(this.getFormattedValue());
+                this._updateSelect2(this.getFormattedValue());
             }, this);
 
             // on "reset" we want to replace all models in the collection with
             // their formatted versions
             value.on('reset', function(collection) {
-                formatCollectionModels(collection);
+                this._formatCollectionModels(collection);
             }, this);
+        }
+    },
+
+    /**
+     * Format all the models on the collection
+     *
+     * @param {Data.MixedBeanCollection} collection
+     * @private
+     */
+    _formatCollectionModels: function(collection) {
+        var recipients = this.format(collection.models);
+
+        // do this silently so we don't trigger another reset event
+        collection.reset(recipients, {silent: true});
+
+        // put the newly formatted recipients in the DOM
+        this._updateSelect2(recipients);
+    },
+
+    /**
+     * Update select2 with a list of recipients
+     * @param {Array} recipients
+     * @private
+     */
+    _updateSelect2: function(recipients) {
+        // put the formatted recipients in the DOM
+        this.$(this.fieldTag).select2('data', recipients);
+
+        if (!this.def.readonly) {
+            this.setDragDropPluginEvents(this.$(this.fieldTag));
         }
     },
 
@@ -177,6 +182,8 @@
             if (!this.def.readonly) {
                 this.setDragDropPluginEvents(this.$(this.fieldTag));
             }
+
+            this._updateSelect2(this.getFormattedValue());
         }
     },
 
@@ -497,7 +504,7 @@
             attributes = {
                 id: recipient.get('id') || attributes.id,
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || attributes.module,
-                email_address: recipient.get('email') || recipient.get('email_address') || attributes.email_address,
+                email_address: recipient.get('email_address_used') || recipient.get('email') || recipient.get('email_address') || attributes.email_address,
                 name: app.utils.getRecordName(recipient) || attributes.name
             };
 

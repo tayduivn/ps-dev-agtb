@@ -285,6 +285,37 @@ describe('Emails.fields.email-recipients', function() {
                 // verify that the DOM has been updated accordingly
                 expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
             });
+
+            it('should synchronize with Select2 even when model has data before field initialized', function() {
+                var context, model, recipient;
+
+                context = app.context.getContext({
+                    module: 'Emails'
+                });
+                context.prepare();
+
+                recipient = new Backbone.Model({
+                    module: 'Contacts', name: 'Will Westin', email: 'will@example.com'
+                });
+
+                model = context.get('model');
+                model.set('to', new app.MixedBeanCollection([recipient]));
+
+                field = SugarTest.createField({
+                    client: 'base',
+                    name: 'to',
+                    type: 'email-recipients',
+                    viewName: 'edit',
+                    module: context.get('module'),
+                    model: model,
+                    context: context,
+                    loadFromModule: true
+                });
+
+                field.render();
+
+                expect(field.$(field.fieldTag).select2('data').length).toBe(1);
+            });
         });
 
         describe('recipient field pills should reflect locked state', function() {
