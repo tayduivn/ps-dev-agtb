@@ -17,43 +17,22 @@
     extendsFrom: 'ConfigHeaderButtonsView',
 
     /**
-     * Fix for RS-1284.
-     * When we save config, metadata for current user is cleared.
-     * That's why we need to sync metadata manually.
-     * Otherwise user will see error message "Metadata is out of sync" when will try to create new KB content.
+     * Saves the config model
+     *
+     * Also calling doValidate to check that there is no Language duplication
      *
      * @private
      */
     _saveConfig: function() {
         var self = this,
-            url = app.api.buildURL(this.module, 'config'),
-            model = this.context.get('model'),
-            params = {
-                success: _.bind(function(model) {
-                    app.metadata.sync(function() {
-                        self.showSavedConfirmation();
-                        if (self.context.parent && self.context.parent.get('module') === self.module) {
-                            self.context.parent.reloadData();
-                        }
-                        if (app.drawer && app.drawer.count()) {
-                            app.drawer.close(self.context, self.context.get('model'));
-                        } else {
-                            app.router.navigate(self.module, {trigger: true});
-                        }
-                    });
-                }, this),
-
-                error: _.bind(function() {
-                    self.getField('save_button').setDisabled(false);
-                }, this)
-            };
+            model = this.context.get('model');
 
         // Standard ConfigHeaderButtonsView doesn't use doValidate
-        model.doValidate(null, function(isValid){
+        model.doValidate(null, function(isValid) {
             if (isValid) {
-                app.api.call('create', url, model.attributes, params);
+                self._super('_saveConfig');
             } else {
-                params.error();
+                self.getField('save_button').setDisabled(false);
             }
         });
     }
