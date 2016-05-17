@@ -21,6 +21,7 @@
         var parser = document.createElement('a');
         parser.href = app.config.siteUrl;
 
+        this.isHasCalDavModules = true;
         this.serverAddress = parser.hostname;
         this.serverPath = parser.pathname || '/';
         if (this.serverPath.slice(-1) !== '/') {
@@ -41,5 +42,13 @@
                 }
             }, this);
         }, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    render: function(options) {
+        this.isHasCalDavModules = this.model.get('has_caldav_modules');
+        this._super('render', [options]);
     }
 })

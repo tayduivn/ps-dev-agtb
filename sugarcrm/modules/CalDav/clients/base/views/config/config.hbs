@@ -10,51 +10,60 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#each meta.panels}}
+
+{{#if this.isHasCalDavModules}}
     <div></div>
-    <div class="span10"><h4>{{str "LBL_CALDAV_SETUP_INFO_TITLE" ../this.module}}</h4></div>
-    <div class="span10">{{str "LBL_CALDAV_SETUP_INFO_TITLE_DESC" ../this.module}}</div>
-    <div class="span10">
-        <p>
-            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_ADDRESS" ../this.module}}:</strong>
-            &nbsp;{{str ../this.serverAddress}}
-        </p>
-    </div>
-    <div class="span10">
-        <p>
-            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH" ../this.module}}:</strong>
-            &nbsp;{{str ../this.serverPath}}caldav.php/principals/users/{{str ../this.userName}}/
-            <br />
-            <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH_DESC" ../this.module}}</small>
-        </p>
-    </div>
-    <div class="span10">
-        <p>
-            <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT" ../this.module}}:</strong>
-            &nbsp;{{str ../this.serverPort}}
-            <br />
-            <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT_DESC" ../this.module}}</small>
-        </p>
-    </div>
+    {{#eq context.attributes.section 'user'}}
+        <div class="span10"><h4>{{str "LBL_CALDAV_SETUP_INFO_TITLE" this.module}}</h4></div>
+        <div class="span10">{{str "LBL_CALDAV_SETUP_INFO_TITLE_DESC" this.module}}</div>
+        <div class="span10">
+            <p>
+                <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_ADDRESS" this.module}}:</strong>
+                &nbsp;{{str this.serverAddress}}
+            </p>
+        </div>
+        <div class="span10">
+            <p>
+                <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH" this.module}}:</strong>
+                &nbsp;{{str this.serverPath}}caldav.php/principals/users/{{str this.userName}}/
+                <br />
+                <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PATH_DESC" this.module}}</small>
+            </p>
+        </div>
+        <div class="span10">
+            <p>
+                <strong>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT" this.module}}:</strong>
+                &nbsp;{{str this.serverPort}}
+                <br />
+                <small>{{str "LBL_CALDAV_SETUP_INFO_SERVER_PORT_DESC" this.module}}</small>
+            </p>
+        </div>
 
-    <div class="span11"><hr></div>
-    {{#each fields}}
-        {{#eq this.name 'caldav_module'}}
-            <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
-            <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
-            <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
-        {{/eq}}
+        <div class="span11"><hr></div>
+    {{/eq}}
+    {{#each meta.panels}}
+        {{#each fields}}
+            {{#eq this.name 'caldav_module'}}
+                <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
+                <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
+                <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
+            {{/eq}}
 
-        {{#eq this.name 'caldav_call_direction'}}
-            <div class="span10"><h4>{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</h4></div>
-            <div class="span11"><hr></div>
-        {{/eq}}
+            {{#eq this.name 'caldav_call_direction'}}
+                <div class="span10"><h4>{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</h4></div>
+                <div class="span11"><hr></div>
+            {{/eq}}
 
-        {{#eq this.name 'caldav_interval'}}
-            <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
-            <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
-            <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
-        {{/eq}}
+            {{#eq this.name 'caldav_interval'}}
+                <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
+                <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
+                <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
+            {{/eq}}
+        {{/each}}
     {{/each}}
-{{/each}}
+{{else}}
+    <div></div>
+    <div class="span10"><h4>{{str "LBL_CALDAV_NO_MODULES_ACCESS" ../this.module}}</h4></div>
+{{/if}}
+
 

@@ -34,6 +34,7 @@
                 this.model.set('caldav_interval', data.values.caldav_interval, {silent: true});
                 this.model.set('caldav_call_direction', data.values.caldav_call_direction, {silent: true});
                 this.model.set('caldav_call_direction_options', data.call_directions, {silent: true});
+                this.model.set('has_caldav_modules', true);
                 this.render();
             }, this)
         });
@@ -63,6 +64,25 @@
             return true;
         } else {
             return (app.user.get('type') == 'admin');
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    render: function(options) {
+        var calDavModuleOptions = this.model.get('caldav_module_options');
+        var section = this.context.get('section');
+
+        if (calDavModuleOptions !== undefined) {
+            if (section == 'user' && !_.size(calDavModuleOptions)) {
+                var main = this.getComponent('sidebar').getComponent('main-pane');
+                if (main) {
+                    main.getComponent('config-header-buttons').meta.buttons = {};
+                }
+                this.model.set('has_caldav_modules', false);
+            }
+            this._super('render', [options]);
         }
     }
 })
