@@ -363,26 +363,26 @@ class SugarUpgradeRenameCustom extends UpgradeScript
         }
 
         foreach ($ddMappings as $dd => $map) {
-            if (isset($app_list_strings[$dd])) {
-                $arrays = array(
-                    &$app_list_strings,
-                    &$this->upgrader->state['dropdowns_to_merge'][$lang]['custom'],
+            $arrays = array(
+                &$app_list_strings,
+                &$this->upgrader->state['dropdowns_to_merge'][$lang]['custom'],
 
-                );
-
-                foreach ($arrays as &$arr) {
-                    $result = array();
-                    foreach ($arr[$dd] as $key => $value) {
-                        if (!empty($map[$key])) {
-                            $key = $map[$key];
-                            $changed = true;
-                        }
-                        $result[$key] = $value;
-                    }
-                    $arr[$dd] = $result;
+            );
+            foreach ($arrays as &$arr) {
+                if (empty($arr[$dd])) {
+                    continue;
                 }
-                $this->log("Dropdown {$dd} updated for language {$lang}");
+                $result = array();
+                foreach ($arr[$dd] as $key => $value) {
+                    if (!empty($map[$key])) {
+                        $key = $map[$key];
+                        $changed = true;
+                    }
+                    $result[$key] = $value;
+                }
+                $arr[$dd] = $result;
             }
+            $this->log("Dropdown {$dd} updated for language {$lang}");
         }
         return $app_list_strings;
     }

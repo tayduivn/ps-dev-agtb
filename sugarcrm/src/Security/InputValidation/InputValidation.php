@@ -72,7 +72,7 @@ class InputValidation
     public static function getService()
     {
         if (empty(self::$service)) {
-            self::init();
+            self::initService();
         }
         return self::$service;
     }

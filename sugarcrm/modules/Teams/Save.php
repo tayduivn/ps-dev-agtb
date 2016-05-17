@@ -79,10 +79,21 @@ function checkDupTeamName($focus){
     	return false;
     }
     if((null == $focus->fetched_row) || (null != $focus->fetched_row && 0 == $focus->private)) {
-        $query = "SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = '" . $db->quote(trim($focus->name)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name)) . "')";
+        $query = sprintf(
+            'SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = %s) OR (private = 1 AND %s = %s)',
+            $db->quoted(trim($focus->name)),
+            $contact_result,
+            $db->quoted(trim($focus->name))
+        );
     }
 	else {
-	    $query = "SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "') OR (private = 1 AND " . $contact_result . " = '" . $db->quote(trim($focus->name) . ' ' . trim($focus->name_2)) . "')";
+        $privateTeamNameQuoted = $db->quoted(trim($focus->name) . ' ' . trim($focus->name_2));
+        $query = sprintf(
+            'SELECT id from teams WHERE (deleted = 0) AND (private = 0 AND name = %s) OR (private = 1 AND %s = %s',
+            $privateTeamNameQuoted,
+            $contact_result,
+            $privateTeamNameQuoted
+        );
 	}
     $result = $db->query($query);
     while ($row=$db->fetchByAssoc($result)){
@@ -121,4 +132,3 @@ $GLOBALS['log']->debug("Saved record with id of {$return_id}");
 
 header("Location: index.php?action={$return_action}&module={$return_module}&record={$return_id}");
 }
-?>

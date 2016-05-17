@@ -31,8 +31,8 @@ class SugarUpgradeNullifyEmptyDurationMinutes extends UpgradeScript
 
     public function run()
     {
-        // Only run this if we are coming from a version lower than 7.7.1
-        if (version_compare($this->from_version, '7.7.1.0', '<')) {
+        // Only run this if we are coming from a version lower than 7.6.1
+        if (version_compare($this->from_version, '7.6.1.0', '<')) {
             $this->setEmptyValuesToNull();
         }
     }

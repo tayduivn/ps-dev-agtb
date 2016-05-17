@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'vendor/oauth2-php/lib/OAuth2.php';
 
 /**
@@ -100,7 +102,7 @@ class SugarOAuth2Server extends OAuth2
      */
     protected function genAccessToken()
     {
-        return create_guid();
+        return Uuid::uuid4();
     }
 
     /**
