@@ -91,7 +91,9 @@ $dictionary['kbusefulness'] = array(
             'join_key_rhs' => 'kbarticle_id',
             'join_key_lhs' => 'user_id',
             'true_relationship_type' => 'many-to-many',
-            'primary_flag_column' => 'zeroflag'
+            'primary_flag_column' => 'zeroflag',
+            'relationship_class' => 'KBUsefulnessRelationship',
+            'relationship_file' => 'modules/KBContents/KBUsefulnessRelationship.php',
         ),
     )
 );
