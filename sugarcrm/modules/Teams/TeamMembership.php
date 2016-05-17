@@ -51,27 +51,39 @@ class TeamMembership extends SugarBean {
         return $list_form;
     }
 
-    function delete()
+    /**
+     * Delete this team membership
+     */
+    public function delete()
     {
-        $query = "UPDATE $this->table_name set deleted = 1 where id='$this->id'";
+        $query = sprintf(
+            'UPDATE %s set deleted = 1 where id = %s',
+            $this->table_name,
+            $this->db->quoted($this->id)
+        );
         $result = $this->db->query($query, TRUE, "Error deleting team membership ($this->id): ");
     }
 
-    /** This method retrieves the membership for a given user_id and team_id.
-    * @returns true if found, false if not found.
-    * The membership taht this is called on is destroyed if a membership is found matching user_id and team_id
-    */
-    function retrieve_by_user_and_team($user_id, $team_id)
+    /**
+     * This method retrieves the membership for a given user_id and team_id.
+     * The membership that this is called on is destroyed if a membership is
+     * found matching user_id and team_id
+     * @returns boolean True if found, false if not found.
+     */
+    public function retrieve_by_user_and_team($user_id, $team_id)
     {
         // determine whether the user is already on the team
-        $query = "SELECT id FROM team_memberships WHERE user_id='$user_id' AND team_id='$team_id' AND deleted = 0";
+        $query = sprintf(
+            'SELECT id FROM team_memberships WHERE user_id = %s AND team_id = %s AND deleted = 0',
+            $this->db->quoted($user_id),
+            $this->db->quoted($team_id)
+        );
         $result = $this->db->query($query, TRUE, "Error finding team memberships: ");
 
         $row = $this->db->fetchByAssoc($result);
 
         if ($row!= null) {
             $this->retrieve($row['id']);
-
             return true;
         }
 
@@ -79,4 +91,3 @@ class TeamMembership extends SugarBean {
     }
 }
 
-?>

@@ -23,8 +23,6 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class CSPRNGTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Platform suported generator
-     *
      * @covers ::generate
      * @dataProvider providerTestGenerate
      */
@@ -47,50 +45,6 @@ class CSPRNGTest extends \PHPUnit_Framework_TestCase
             array(256, true),
             array(512, true),
             array(1024, true),
-        );
-    }
-
-    /**
-     * Generator specific testing
-     *
-     * @covers ::genCsprng
-     * @covers ::genMcrypt
-     * @covers ::genOpenssl
-     *
-     * @dataProvider providerTestGenerators
-     */
-    public function testGenerators($method, $size)
-    {
-        $csprng = new CSPRNG();
-
-        // make sure platform suports the generator
-        if (!in_array($method, TestReflection::getProtectedValue($csprng, 'generators'))) {
-            $this->markTestSkipped("Unsupported generator $method");
-        }
-
-        $random = TestReflection::callProtectedMethod($csprng, $method, array($size));
-        $actualSize = TestReflection::callProtectedMethod($csprng, 'binaryStrLen', array($random));
-        $this->assertEquals($size, $actualSize);
-    }
-
-    public function providerTestGenerators()
-    {
-        return array(
-            array('genCsprng', 8),
-            array('genCsprng', 16),
-            array('genCsprng', 22),
-            array('genCsprng', 32),
-            array('genCsprng', 64),
-            array('genMcrypt', 8),
-            array('genMcrypt', 16),
-            array('genMcrypt', 22),
-            array('genMcrypt', 32),
-            array('genMcrypt', 64),
-            array('genOpenssl', 8),
-            array('genOpenssl', 16),
-            array('genOpenssl', 22),
-            array('genOpenssl', 32),
-            array('genOpenssl', 64),
         );
     }
 

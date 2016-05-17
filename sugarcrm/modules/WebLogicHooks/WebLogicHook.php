@@ -167,6 +167,8 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
 
     private function formatRequestData(SugarBean $bean, $event, array $arguments)
     {
+        global $current_user;
+
         $data = array();
         $sfh = new SugarFieldHandler();
 
@@ -184,6 +186,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             ));
 
             $service = new RestService();
+            $service->user = $current_user;
             foreach ($fieldList as $fieldName => $properties) {
                 $fieldType = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 $field = $sfh->getSugarField($fieldType);

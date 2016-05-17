@@ -10,15 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('vendor/oauth2-php/lib/IOAuth2Storage.php');
-require_once('vendor/oauth2-php/lib/IOAuth2GrantUser.php');
-require_once('vendor/oauth2-php/lib/IOAuth2RefreshTokens.php');
-require_once('vendor/oauth2-php/lib/IOAuth2GrantExtension.php');
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
-require_once('modules/Administration/SessionManager.php');
+require_once 'vendor/oauth2-php/lib/IOAuth2Storage.php';
+require_once 'vendor/oauth2-php/lib/IOAuth2GrantUser.php';
+require_once 'vendor/oauth2-php/lib/IOAuth2RefreshTokens.php';
+require_once 'vendor/oauth2-php/lib/IOAuth2GrantExtension.php';
 
-require_once('include/api/SugarApiException.php');
-
+require_once 'modules/Administration/SessionManager.php';
+require_once 'include/api/SugarApiException.php';
 require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
 
 /**
@@ -656,7 +656,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $token->expire_ts = $expires;
         $token->platform = $this->platform;
         $token->setState(OAuthToken::ACCESS);
-        $token->download_token = create_guid();
+        $token->download_token = Uuid::uuid4();
 
         $token->save();
 
