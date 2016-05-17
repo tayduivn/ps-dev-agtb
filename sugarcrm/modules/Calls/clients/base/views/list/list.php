@@ -76,6 +76,7 @@ $viewdefs['Calls']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'sortable' => true,
+                    'related_fields' => array('invitees'),
                 ),
                 array(
                     'name' => 'date_entered',

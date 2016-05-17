@@ -100,6 +100,35 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
+     * Works the same as parent method with one exception: update relations before bean update.
+     * {@inheritdoc}
+     */
+    public function updateRecord($api, $args)
+    {
+        foreach ($this->disabledUpdateFields as $field) {
+            if (isset($args[$field])) {
+                unset($args[$field]);
+            }
+        }
+
+        $api->action = 'view';
+        $this->requireArgs($args, array('module', 'record'));
+
+        $bean = $this->loadBean($api, $args, 'save', $this->aclCheckOptions);
+        $api->action = 'save';
+
+        // If we uploaded files during the record update, move them from
+        // the temporary folder to the configured upload folder.
+        // FIXME Moving temporary files will be handled better in BR-2059.
+        $this->moveTemporaryFiles($args, $bean);
+
+        $this->updateRelatedRecords($api, $bean, $args);
+        $this->updateBean($bean, $api, $args);
+
+        return $this->getLoadedAndFormattedBean($api, $args);
+    }
+
+    /**
      * @inheritdoc
      */
     protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
