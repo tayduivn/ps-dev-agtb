@@ -94,7 +94,7 @@ class HandlerCRYS1492Test extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * On importing/exporting current user should be same that's create queueItem.
      *
-     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler::run
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler::run
      */
     public function testCurrentUser()
     {
