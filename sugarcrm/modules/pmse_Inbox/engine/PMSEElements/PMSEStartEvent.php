@@ -12,6 +12,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
 require_once 'modules/pmse_Inbox/engine/PMSEElements/PMSEEvent.php';
 
 class PMSEStartEvent extends PMSEEvent
@@ -26,12 +28,45 @@ class PMSEStartEvent extends PMSEEvent
      */
     public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
+        // Needed for checking on triggered starts
+        $regKey = 'triggered_starts';
+
+        // Used to read from and write to if necessary
+        $registry = Registry\Registry::getInstance();
+
+        // Get our list of triggered starts
+        $triggered = $registry->get($regKey, array());
+
+        // See if this start event has already been triggered in this request
+        if (isset($flowData['bpmn_id'])) {
+            // Will need this for writing
+            $startEventID = $flowData['bpmn_id'];
+
+            // If this start event has been triggered already, stop now to prevent
+            // infinite triggers
+            if (!empty($triggered[$startEventID])) {
+                // Log a message for this event
+                $msg = "Start Event ID $startEventID has already been triggered" .
+                       " in this request and cannot be triggered again.";
+                $this->logger->alert($msg);
+
+                // We need to call this method to ensure what is needed later is there
+                return $this->prepareResponse(array(), '', '');
+            }
+        }
+
         $relatedBean = $this->retrieveRelatedBean($flowData, $bean);
         if (!empty($relatedBean)) {
             $flowData = $this->createNewCase($relatedBean, $flowData);
         } else {
             $flowData = $this->createNewCase($bean, $flowData);
         }
+        // Set the triggered ID into registry now
+        if (isset($startEventID)) {
+            $triggered[$startEventID] = true;
+            $registry->set($regKey, $triggered, true);
+        }
+
         return parent::run($flowData, $bean, $externalAction, $arguments);
     }
 

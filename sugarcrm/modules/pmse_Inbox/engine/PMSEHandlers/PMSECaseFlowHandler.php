@@ -198,9 +198,14 @@ class PMSECaseFlowHandler
      */
     public function retrieveFollowingElements($flowData)
     {
+        // Bail out early if we don't have what we need
+        if (!isset($flowData['bpmn_type'], $flowData['bpmn_id'])) {
+            return array();
+        }
+
         $flowData['id'] = '';
 
-        $isFlow = $flowData['bpmn_type'] == 'bpmnFlow' ? true : false;
+        $isFlow = $flowData['bpmn_type'] == 'bpmnFlow';
         $bpmnFlowBean = $this->retrieveBean('pmse_BpmnFlow');
         $sugarQueryObject = $this->retrieveSugarQueryObject();
         if ($isFlow) {
@@ -222,7 +227,6 @@ class PMSECaseFlowHandler
             ->queryAnd()
             ->addRaw($where);
 
-        $raw = $sugarQueryObject->compileSql();
         $flows = $sugarQueryObject->execute();
 
         foreach ($flows as $key => $flow) {
