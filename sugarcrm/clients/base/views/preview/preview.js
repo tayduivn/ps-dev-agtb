@@ -135,6 +135,7 @@
         this.layout.trigger('preview:edit:complete');
         this.unsetContextAction();
         this.toggleFields(this.editableFields, false);
+        this.toggleLocks(false);
     },
 
     /**
@@ -146,6 +147,7 @@
     cancelClicked: function() {
         this.model.revertAttributes();
         this.toggleFields(this.editableFields, false);
+        this.toggleLocks(false);
         this._dismissAllAlerts();
         this.clearValidationErrors(this.editableFields);
         this.unsetContextAction();
@@ -445,6 +447,28 @@
         this.setEditableFields();
         this.toggleFields(this.editableFields, true);
         this.toggleButtons(true);
+        this.setButtonStates(this.STATE.EDIT);
+        this.toggleLocks(true);
+    },
+
+    /**
+     * Show or hide lock icons for locked fields
+     *
+     * @param {boolean} activate `true` to show lock icon on locked fields
+     */
+    toggleLocks: function(activate) {
+        if (!this._hasLockedFields) {
+            return;
+        }
+
+        if (activate) {
+            this.warnLockedFields();
+        }
+        _.each(this.fields, function(field) {
+            if (field.isLocked()) {
+                this.$('.preview-lock-link-wrapper[data-name=' + field.name + ']').toggleClass('hide', !activate);
+            }
+        }, this);
     },
 
     /**
@@ -454,15 +478,21 @@
      * is allowed
      */
     setEditableFields: function() {
-        var self = this;
+        // Clear any old locked fields that may have been set
+        this._hasLockedFields = false;
         // we only want to edit non readonly fields
         this.editableFields = _.reject(this.fields, function(field) {
+            // Locked fields should not be editable
+            if (field.isLocked()) {
+                this._hasLockedFields = true;
+                return true;
+            }
             return field.def.readOnly || field.def.calculated ||
                 //Added for SugarLogic fields since they are not supported
                 //Fixme: PAT-2241 will remove this
                 field.def.previewEdit === false ||
-                !app.acl.hasAccessToModel('edit', self.model, field.name);
-        });
+                !app.acl.hasAccessToModel('edit', this.model, field.name);
+        }, this);
     },
 
     /**

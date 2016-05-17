@@ -64,6 +64,14 @@
     _containerWidth: 0,
 
     /**
+     * Flag indicating if the model for this view contains fields that are locked.
+     *
+     * @private
+     * @type {boolean}
+     */
+    _hasLockedFields: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -217,6 +225,8 @@
      * @private
      */
     _handleLockedFields: function() {
+        this._hasLockedFields = false;
+
         _.each(this.$('.record-edit-link-wrapper[data-name], .record-lock-link-wrapper[data-name]'), function(el) {
             var $el = $(el);
             var fieldName = $el.data('name');
@@ -233,6 +243,7 @@
                 $el.toggleClass('hide', isReadOnly ? true : false);
             } else {
                 var isLocked = this.model.isFieldLocked(fieldName);
+                this._hasLockedFields = this._hasLockedFields || isLocked;
                 $el.toggleClass('hide', !isLocked);
                 if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
                     var field = this.getField(fieldName);
@@ -245,7 +256,30 @@
                 }
             }
         }, this);
+        if (this._hasLockedFields) {
+            this.warnLockedFields();
+        }
         this.setEditableFields();
+    },
+
+    /**
+     * Alert warning if there are locked fields on the model.
+     */
+    warnLockedFields: function() {
+        if (this.getCurrentButtonState() !== this.STATE.EDIT) {
+            return;
+        }
+
+        if (this.context.get('lockedFieldsWarning') === false) {
+            this.context.set('lockedFieldsWarning', true);
+        } else {
+            app.alert.show('record_locked_field_warning', {
+                level: 'warning',
+                messages: 'LBL_LOCKED_FIELD_RECORD_VIEW_WARNING',
+                autoClose: true,
+                autoCloseDelay: 5000
+            });
+        }
     },
 
     /**
@@ -786,8 +820,8 @@
     },
 
     cancelClicked: function() {
-        this.handleCancel();
         this.setButtonStates(this.STATE.VIEW);
+        this.handleCancel();
         this.clearValidationErrors(this.editableFields);
         this.setRoute();
         this.unsetContextAction();
@@ -806,6 +840,9 @@
     toggleEdit: function(isEdit) {
         var self = this;
         this.$('.record-lock-link').toggleClass('record-lock-link-on', isEdit);
+        if (this._hasLockedFields) {
+            this.warnLockedFields();
+        }
         this.toggleFields(this.editableFields, isEdit, function() {
             self.toggleViewButtons(isEdit);
             self.adjustHeaderpaneFields();
