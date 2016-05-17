@@ -120,6 +120,43 @@ describe('Base.Layout.Preview', function() {
         var componentTypes = _.pluck(_.map(testMeta.init_components, function(value) {
             return value.view ? value.view : value.layout;
         }), 'type');
+
+        using('different models', [
+            {
+                modelModule1: 'Contacts',
+                modelModule2: 'Cases',
+            }
+        ], function(provider) {
+            it('should reload context data when components already exist', function() {
+                var collection = app.data.createBeanCollection(provider.modelModule1);
+                var model = app.data.createBean(provider.modelModule1);
+                model.set('id', 'test');
+
+                var collection2 = app.data.createBeanCollection(provider.modelModule2);
+                var model2 = app.data.createBean(provider.modelModule2);
+                model2.set('id', 'test2');
+
+                testLayout.context.set('module', provider.modelModule1);
+
+                var initComponentsSpy = sinon.collection.spy(testLayout, 'initComponents');
+                var reloadDataStub = sinon.collection.stub(testLayout.context, 'reloadData');
+                var loadDataStub = sinon.collection.stub(testLayout.context, 'loadData');
+
+                // doesn't have components
+                testLayout._initPreviewPanel(model, collection);
+                expect(initComponentsSpy).toHaveBeenCalled();
+                expect(loadDataStub).toHaveBeenCalled();
+
+                // reset since it was called earlier
+                initComponentsSpy.reset();
+                reloadDataStub.reset();
+
+                // has components now, but the model changed
+                testLayout._initPreviewPanel(model2, collection);
+                expect(reloadDataStub).toHaveBeenCalled();
+            });
+        });
+
         using('different types of modules', [
             {
                 // Has not initialized its components yet.
