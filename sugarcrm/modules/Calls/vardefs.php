@@ -585,6 +585,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'massupdate' => false,
         'reportable' => false,
         'studio' => 'false',
+            'duplicate_on_record_copy' => 'no',
     ),
     'recurrence_id' => array(
         'name' => 'recurrence_id',

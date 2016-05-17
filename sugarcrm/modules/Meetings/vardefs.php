@@ -654,6 +654,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'massupdate' => false,
         'reportable' => false,
         'studio' => 'false',
+            'duplicate_on_record_copy' => 'no',
     ),
     'recurrence_id' => array(
         'name' => 'recurrence_id',
