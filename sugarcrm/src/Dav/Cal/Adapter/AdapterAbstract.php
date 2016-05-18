@@ -925,7 +925,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
             foreach ($list as $k => $importInvitee) {
                 foreach ($exportInvitees[$action] as $exportInvitee) {
-                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1] && $exportInvitee[2] == $importInvitee[2]) {
+                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1]) {
                         unset($importInvitees[$action][$k]);
                         continue;
                     }
@@ -1035,7 +1035,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
             foreach ($list as $k => $importInvitee) {
                 foreach ($importInvitees[$action] as $exportInvitee) {
-                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1] && $exportInvitee[2] == $importInvitee[2]) {
+                    if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1]) {
                         unset($exportInvitees[$action][$k]);
                         continue;
                     }
@@ -1449,21 +1449,21 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         if (isset($value['added'])) {
             foreach ($value['added'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[2]) != -1) {
+                if ($event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
         }
         if (isset($value['changed'])) {
             foreach ($value['changed'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[2]) == - 1) {
+                if (!$event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
         }
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $invitee) {
-                if ($event->findParticipantsByEmail($invitee[2]) == -1) {
+                if (!$event->getParticipantByBean($invitee[0], $invitee[1])) {
                     return false;
                 }
             }
@@ -1638,16 +1638,16 @@ abstract class AdapterAbstract implements AdapterInterface
             $value['deleted'] = array();
             if (isset($value['added'])) {
                 foreach ($value['added'] as $k => $invitee) {
-                    $index = $event->findParticipantsByEmail($invitee[2]);
-                    if ($index != - 1) {
-                        $indexes[] = $index;
+                    $foundParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
+                    if ($foundParticipant) {
+                        $indexes[] = $invitee[1];
                         $value['changed'][] = $invitee;
                         unset($value['added'][$k]);
                     }
                 }
             }
             foreach ($event->getParticipants() as $k => $participant) {
-                if (!in_array($k, $indexes)) {
+                if (!in_array($participant->getBeanId(), $indexes)) {
                     $value['deleted'][] = array($participant->getBeanName(), $participant->getBeanId(), $participant->getEmail());
                 }
             }
@@ -1684,7 +1684,11 @@ abstract class AdapterAbstract implements AdapterInterface
         }
         if (isset($value['deleted'])) {
             foreach ($value['deleted'] as $k => $invitee) {
-                if ($event->deleteParticipant($invitee[2])) {
+                $findParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
+                if ($findParticipant) {
+                    $invitee[2] = $findParticipant->getEmail();
+                }
+                if ($event->deleteParticipantByBean($invitee[0], $invitee[1])) {
                     $result = true;
                 } else {
                     unset($value['deleted'][$k]);

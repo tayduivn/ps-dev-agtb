@@ -120,15 +120,16 @@ class Event
     protected function createParticipantObject(CalAddress $node)
     {
         $participantClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Participant');
-
+        /** @var \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant $participant */
         $participant = new $participantClass($node);
-        $email = $participant->getEmail();
-        if (isset($this->participantsLinks[$email])) {
-            $linkInfo = $this->participantsLinks[$email];
+        $participantsHelper = new DavHelper\ParticipantsHelper();
+        $participantHash = $participantsHelper->participantHash($participant);
+        if (isset($this->participantsLinks[$participantHash])) {
+            $linkInfo = $this->participantsLinks[$participantHash];
             $participant->setBeanName($linkInfo['beanName']);
             $participant->setBeanId($linkInfo['beanId']);
             $this->logger->debug(
-                "CalDav: Created Participant '$email' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
+                "CalDav: Created Participant '$participantHash' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
             );
         }
 
@@ -289,17 +290,16 @@ class Event
             return false;
         }
 
-        $foundIndex = $this->findParticipantsByEmail($participant->getEmail());
-        if ($foundIndex != - 1) {
+        $foundParticipant = $this->getParticipantByBean($participant->getBeanName(), $participant->getBeanId());
+        if ($foundParticipant) {
             $isChanged = false;
-            $found = $this->participants[$foundIndex];
-            $isChanged |= $found->setStatus($participant->getStatus());
-            $isChanged |= $found->setDisplayName($participant->getDisplayName());
-            $isChanged |= $found->setBeanName($participant->getBeanName());
-            $isChanged |= $found->setRole($participant->getRole());
+            $isChanged |= $foundParticipant->setStatus($participant->getStatus());
+            $isChanged |= $foundParticipant->setDisplayName($participant->getDisplayName());
+            $isChanged |= $foundParticipant->setBeanName($participant->getBeanName());
+            $isChanged |= $foundParticipant->setRole($participant->getRole());
 
-            $found->setBeanId($participant->getBeanId());
-            $found->setType($type);
+            $foundParticipant->setBeanId($participant->getBeanId());
+            $foundParticipant->setType($type);
             if ($isChanged) {
                 $this->setCustomized();
                 return true;
@@ -857,6 +857,32 @@ class Event
     }
 
     /**
+     * Delete participant
+     * @param string $beanName
+     * @param string $beanId
+     * @return bool
+     */
+    public function deleteParticipantByBean($beanName, $beanId)
+    {
+        $this->logger->debug("CalDav: Deleting Participant '$beanName'/'$beanId'");
+
+        if (!$this->event) {
+            return false;
+        }
+
+        foreach ($this->getParticipants() as $i => $participant) {
+            if ($participant->getBeanName() == $beanName && $participant->getBeanId() == $beanId) {
+                $this->event->remove($participant->getObject());
+                unset($this->participants[$i]);
+                $this->setCustomized();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Found participant in collection by email
      * @param string $email
      * @return int - found index
@@ -871,6 +897,24 @@ class Event
 
         $this->logger->notice("CalDav: Participant with '$email' email was not found for this event");
         return - 1;
+    }
+
+    /**
+     * Find participant by bean name and id.
+     *
+     * @param string $beanName
+     * @param string $beanId
+     * @return Participant
+     */
+    public function getParticipantByBean($beanName, $beanId)
+    {
+        foreach ($this->getParticipants() as $i => $participant) {
+            if ($participant->getBeanName() == $beanName && $participant->getBeanId() == $beanId) {
+                return $participant;
+            }
+        }
+
+        return null;
     }
 
     /**
