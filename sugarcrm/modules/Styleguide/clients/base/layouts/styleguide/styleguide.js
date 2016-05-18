@@ -80,6 +80,8 @@
             request.page_details = request.chapter_details;
         }
 
+        request.page_details.css_class = 'container-fluid';
+
         this.context.set('request', request);
     }
 })
