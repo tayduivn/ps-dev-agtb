@@ -7719,12 +7719,17 @@ class SugarBean
 
         $save_user = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $user;
+        $context = array('user' => $user);
 
-        if (!empty($this->id) && empty($this->new_with_id)) {
-            $newBean = BeanFactory::retrieveBean($this->module_name, $this->id, array('use_cache' => false));
-            if (!empty($newBean)) {
-                $context = array('user' => $user);
-                $userHasAccess = $this->ACLAccess('view', $context);
+        if (!empty($this->id) && empty($this->new_with_id) && $this->ACLAccess('view', $context)) {
+            // user has ACLAccess. Now check for specific bean access taking team security into consideration
+            $q = new SugarQuery();
+            $q->from($this);
+            $q->where()->equals('id', $this->id);
+            $q->select('id');
+            $rows = $q->execute();
+            if (!empty($rows)) {
+                $userHasAccess = true;
             }
         }
 
