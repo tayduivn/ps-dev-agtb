@@ -953,6 +953,16 @@ $dictionary['User'] = array(
          'type' => 'enum',
          'vname' => 'LBL_PREFERRED_LANGUAGE',
          'options' => 'available_language_dom',
+            'studio' => array(
+                'editview'=>false,
+                'detailview' => false,
+                'listview' => false,
+                'quickcreate'=>false,
+                'searchview'=>false,
+                'wirelesseditview' => false,
+                'wirelessdetailview' => false,
+                'wirelesslistview' => false,
+            ),
       ),
 
 
