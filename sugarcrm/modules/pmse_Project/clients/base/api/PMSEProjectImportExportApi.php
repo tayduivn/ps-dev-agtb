@@ -30,7 +30,8 @@ class PMSEProjectImportExportApi extends vCardApi
                 'method' => 'projectImport',
                 'rawPostContents' => true,
                 'acl' => 'create',
-//                'shortHelp' => 'Imports a Process Definition from a .bpm file',
+                'shortHelp' => 'Imports a Process Definition from a .bpm file',
+                'longHelp'  => 'modules/pmse_Project/clients/base/api/help/project_import_help.html',
             ),
             'projectDownload' => array(
                 'reqType' => 'GET',
@@ -40,7 +41,8 @@ class PMSEProjectImportExportApi extends vCardApi
                 'rawReply' => true,
                 'allowDownloadCookie' => true,
                 'acl' => 'view',
-//                'shortHelp' => 'Exports a .bpm file with a Process Definition',
+                'shortHelp' => 'Exports a .bpm file with a Process Definition',
+                'longHelp'  => 'modules/pmse_Project/clients/base/api/help/project_export_help.html',
             ),
         );
     }
