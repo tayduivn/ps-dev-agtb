@@ -39,6 +39,14 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             return;
         }
         if(!empty($this->def['rname']) && !empty($this->def['link'])) {
+            //if related module is not defined, lets get the related module through the link
+            if (empty($this->def['module'])) {
+                $linkName = $this->def['link'];
+                $from = $this->query->from;
+                if ($from->load_relationship($linkName)) {
+                    $this->def['module'] =$from->$linkName->getRelatedModuleName();
+                }
+            }
             $this->table = $this->query->getJoinAlias($this->def['link']);
             $this->field = $this->def['rname'];
         } elseif (!empty($this->def['rname']) && !empty($this->def['table'])) {
@@ -46,6 +54,14 @@ class SugarQuery_Builder_Field_Condition extends SugarQuery_Builder_Field
             $this->field = $this->def['rname'];
         }  elseif(!empty($this->def['rname_link']) && !empty($this->def['link'])) {
             $this->field = $this->def['rname_link'];
+        }
+
+        //if module is empty, and this is a relationship id field, then try to get module from the query
+        if (empty($this->def['module']) && !empty($this->def['rname'])) {
+            //check to the bean attached to the joined table for module name
+            if (!empty($this->jta) && !empty($this->query->join[$this->jta]->bean->module_name)) {
+                $this->def['module'] = $this->query->join[$this->jta]->bean->module_name;
+            }
         }
 
         if (!empty($this->def['module'])) {
