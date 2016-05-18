@@ -33,7 +33,7 @@ global $currentModule;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 $seed_object = BeanFactory::getBean('DataSets');
-
+$request = InputValidation::getService();
 
 $where = "";
 if(isset($_REQUEST['query']))
@@ -54,7 +54,7 @@ if(isset($_REQUEST['query']))
 ////////////////////////////////////////////////////////
 // Start the output
 ////////////////////////////////////////////////////////
-$reqHTML = $request->getValidInputRequest('html', 'Asser\ComponentName');
+$reqHTML = $request->getValidInputRequest('html', 'Assert\ComponentName');
 if ($reqHTML === null) {
 	$form =new XTemplate ('modules/DataSets/Popup_picker.html');
 	$GLOBALS['log']->debug("using file modules/DataSets/Popup_picker.html");
@@ -65,7 +65,6 @@ else {
 	$GLOBALS['log']->debug("using file modules/DataSets/".$reqHTML.'.html');
 }
 
-$request = InputValidation::getService();
 $reqForm = $request->getValidInputRequest('form');
 $description = $request->getValidInputRequest('description');
 $name = $request->getValidInputRequest('name');
