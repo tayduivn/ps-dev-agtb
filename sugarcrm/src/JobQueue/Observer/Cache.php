@@ -43,23 +43,23 @@ class Cache implements ObserverInterface
     }
 
     /**
-     * Do nothing.
-     * {@inheritdoc}
-     */
-    public function onRun(WorkloadInterface $workload)
-    {
-    }
-
-    /**
      * Clear SugarCRM cache.
      * {@inheritdoc}
      */
-    public function onResolve(WorkloadInterface $workload, $resolution)
+    public function onRun(WorkloadInterface $workload)
     {
         $this->logger->info('Clear application cache.');
         \BeanFactory::clearCache();
         sugar_cache_reset();
         // Start populating local cache again.
         \SugarCache::$isCacheReset = false;
+    }
+
+    /**
+     * Do nothing.
+     * {@inheritdoc}
+     */
+    public function onResolve(WorkloadInterface $workload, $resolution)
+    {
     }
 }
