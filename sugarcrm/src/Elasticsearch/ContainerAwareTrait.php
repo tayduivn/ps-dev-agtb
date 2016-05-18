@@ -13,8 +13,6 @@
 namespace Sugarcrm\Sugarcrm\Elasticsearch;
 
 /**
- * !!! Do not use yet until we have PHP 5.4+ support !!!
- *
  * Container Aware Trait
  *
  */
@@ -26,7 +24,9 @@ trait ContainerAwareTrait
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * Set service container
+     *
+     * @param Container $container
      */
     public function setContainer(Container $container)
     {
@@ -34,7 +34,9 @@ trait ContainerAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Get service container
+     *
+     * @return Container
      */
     public function getContainer()
     {

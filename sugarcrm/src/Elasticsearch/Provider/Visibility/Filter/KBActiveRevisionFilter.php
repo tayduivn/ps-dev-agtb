@@ -21,25 +21,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
  */
 class KBActiveRevisionFilter implements FilterInterface
 {
-    // Awaiting PHP 5.4+ support
-    //use FilterTrait;
-
-    ///// Start trait
-
-    /**
-     * @var Visibility
-     */
-    protected $provider;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProvider(Visibility $provider)
-    {
-        $this->provider = $provider;
-    }
-
-    ///// End trait
+    use FilterTrait;
 
     /**
      * {@inheritdoc}

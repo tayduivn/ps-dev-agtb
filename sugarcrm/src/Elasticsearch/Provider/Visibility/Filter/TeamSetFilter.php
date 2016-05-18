@@ -21,30 +21,12 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
  */
 class TeamSetFilter implements FilterInterface
 {
-    // Awaiting PHP 5.4+ support
-    //use FilterTrait;
-
-    ///// Start trait
-
-    /**
-     * @var Visibility
-     */
-    protected $provider;
+    use FilterTrait;
 
     /**
      * @var string
      */
     protected $defaultField = 'team_set_id';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProvider(Visibility $provider)
-    {
-        $this->provider = $provider;
-    }
-
-    ///// End trait
 
     /**
      * {@inheritdoc}

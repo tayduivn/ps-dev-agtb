@@ -60,8 +60,8 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
 
     /**
      * @covers ::validate
-     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::getFormattedReturnValue
-     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue::setFormattedReturnValue
+     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait::getFormattedReturnValue
+     * @covers \Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait::setFormattedReturnValue
      * @dataProvider providerTestValidValues
      */
     public function testValidValues($value, $htmlDecode, $assoc, $expectedValue)

@@ -12,15 +12,19 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
+use Symfony\Component\Validator\Constraint;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait;
 
 /**
  *
  * @see FileValidator
  *
  */
-class File extends ConstraintReturnValue
+class File extends Constraint implements ConstraintReturnValueInterface
 {
+    use ConstraintReturnValueTrait;
+
     const ERROR_NULL_BYTES = 1;
     const ERROR_FILE_NOT_FOUND = 2;
     const ERROR_OUTSIDE_BASEDIR = 3;

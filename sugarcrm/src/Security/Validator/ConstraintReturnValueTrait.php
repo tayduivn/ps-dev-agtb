@@ -27,7 +27,9 @@ trait ConstraintReturnValueTrait
     protected $formattedReturnValue;
 
     /**
-     * {@inheritdoc}
+     * Get formatted validated return value
+     *
+     * @return mixed Formatted return value
      */
     public function getFormattedReturnValue()
     {
@@ -35,7 +37,9 @@ trait ConstraintReturnValueTrait
     }
 
     /**
-     * {@inheritdoc}
+     * Set formatted validated return value
+     *
+     * @param mixed $value Formatted return value
      */
     public function setFormattedReturnValue($value)
     {

@@ -15,9 +15,6 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Filter;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility\Visibility;
 
 /**
- *
- * !!! Do not use yet until we have PHP 5.4+ support !!!
- *
  * Filter trait
  *
  */
@@ -29,7 +26,9 @@ trait FilterTrait
     protected $provider;
 
     /**
-     * {@inheritdoc}
+     * Set visibility provider
+     *
+     * @param Visibility $provider
      */
     public function setProvider(Visibility $provider)
     {
