@@ -757,8 +757,9 @@ class SugarSNIP
         $note->email_id = $email->id;
         $note->name = $note->filename;
 
-        $note->save();
+        // Move the file before saving so that the file size is captured during save.
         $upload_file->final_move($note->id);
+        $note->save();
     }
 
     /**

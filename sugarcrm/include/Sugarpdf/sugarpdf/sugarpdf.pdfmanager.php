@@ -275,6 +275,8 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
 
         //Handle PDF Attachment
         $note = BeanFactory::newBean("Notes");
+        $note->id = create_guid();
+        $note->new_with_id = true;
         $note->filename = $file_name;
         $note->file_mime_type = $email_object->email2GetMime('upload://'.$file_name);
         $note->name = translate('LBL_EMAIL_ATTACHMENT', "Quotes").$file_name;
@@ -287,12 +289,10 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         $noteTeamSet = BeanFactory::newBean('TeamSets');
         $noteteamIdsArray = array($current_user->getPrivateTeamID());
         $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
-        
-        $note->save();
-        $note_id = $note->id;
 
+        // Copy the file before saving so that the file size is captured during save.
 	    $source = 'upload://'.$file_name;
-	    $destination = 'upload://'.$note_id;
+        $destination = "upload://{$note->id}";
         
         if (!copy($source, $destination)){
             $msg = str_replace('$destination', $destination, translate('LBL_RENAME_ERROR', "Quotes"));
@@ -300,6 +300,8 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         }
 
         @unlink($source);
+
+        $note->save();
 
         //return the email id
         return $email_id;

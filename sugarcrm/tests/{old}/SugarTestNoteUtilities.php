@@ -54,8 +54,7 @@ class SugarTestNoteUtilities
     public static function setCreatedNotes(array $ids)
     {
         foreach ($ids as $id) {
-            $note = \BeanFactory::newBean('Note');
-            $note->id = $id;
+            $note = \BeanFactory::getBean('Notes', $id);
             self::$createdNotes[] = $note;
         }
     }
@@ -67,9 +66,11 @@ class SugarTestNoteUtilities
     {
         $ids = self::getCreatedNoteIds();
         $GLOBALS['db']->query('DELETE FROM notes WHERE id IN (\'' . implode("', '", $ids) . '\')');
-        foreach ($ids as $id) {
-            if (file_exists('upload://' . $id)) {
-                unlink('upload://' . $id);
+        foreach (static::$createdNotes as $note) {
+            $file = 'upload://' . $note->getUploadId();
+
+            if (file_exists($file)) {
+                unlink($file);
             }
         }
     }

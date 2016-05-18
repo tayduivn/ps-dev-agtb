@@ -144,6 +144,8 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
 
         //Handle PDF Attachment
         $note = BeanFactory::newBean('Notes');
+        $note->id = create_guid();
+        $note->new_with_id = true;
         $note->filename = $file_name;
         $note->team_id = "";
         $note->file_mime_type = "application/pdf";
@@ -152,16 +154,17 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         //save the pdf attachment note
         $note->email_id = $email_object->id;
         $note->email_type = "Emails";
-        $note->save();
-        $note_id = $note->id;
 
+        // Move the file before saving so that the file size is captured during save.
 	    $source = "upload://$file_name";
-	    $destination = "upload://$note_id";
+        $destination = "upload://{$note->id}";
 
         if (!rename($source, $destination)){
             $msg = str_replace('$destination', $destination, $mod_strings['LBL_RENAME_ERROR']);
             die($msg);
         }
+
+        $note->save();
 
         //return the email id
         return $email_id;

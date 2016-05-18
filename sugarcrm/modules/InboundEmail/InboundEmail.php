@@ -3654,6 +3654,13 @@ class InboundEmail extends SugarBean {
 
 			if(file_put_contents($uploadDir.$fileName, $msgPart)) {
 				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
+
+                // When $forDisplay is false, the attachment has been saved as a Notes record. However, the file size
+                // would not have been captured because the file did not exist. Resave the bean to guarantee that the
+                // file size is stored.
+                if (!$forDisplay) {
+                    $attach->save();
+                }
 			} else {
                 $GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
                 return;
@@ -4388,8 +4395,8 @@ class InboundEmail extends SugarBean {
 				break; // no need to look for more
 			}
 		}
-		$attach->save();
 
+        // Write the file before saving so that the file size is captured during save.
 		$bin = convert_uudecode($UUEncode);
 		$filename = "upload://{$attach->id}";
 		if(file_put_contents($filename, $bin)) {
@@ -4397,6 +4404,8 @@ class InboundEmail extends SugarBean {
 		} else {
     		$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$filename);
 		}
+
+        $attach->save();
 	}
 
 	/**

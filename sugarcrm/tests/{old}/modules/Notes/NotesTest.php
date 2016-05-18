@@ -49,33 +49,81 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id =\''.$contact_id.'\'');
     }
 
-    public function testEmailAttachmentNote_attachmentFileFound_fileSizeSaved()
+    public function testSave_EmailAttachmentFileFound_FileIsSizeSaved()
     {
-        $noteId = create_guid();
-        $fileName = 'upload://' . $noteId;
-        $note = \SugarTestNoteUtilities::createNote($noteId);
+        $note = SugarTestNoteUtilities::createNote();
+
+        $file = "upload://{$note->id}";
+        file_put_contents($file, $note->id);
+        $filesize = filesize($file);
+
+        $note->email_type = 'Emails';
         $note->email_id = create_guid();
-        file_put_contents($fileName, 'test');
-        $note->save();
-        $this->assertEquals(filesize($fileName), $note->file_size, 'File Size Not computed on Attachment Save');
+        $note->save(false);
+
+        $this->assertSame($filesize, $note->file_size);
     }
 
-    public function testEmailAttachmentNote_attachmentFileNotFound_fileSizeIsZero()
+    public function testSave_EmailAttachmentFileFoundAtUploadId_FileIsSizeSaved()
     {
-        $noteId = create_guid();
-        $note = \SugarTestNoteUtilities::createNote($noteId);
+        $note = SugarTestNoteUtilities::createNote();
+        $note->upload_id = create_guid();
+
+        $file = "upload://{$note->upload_id}";
+        file_put_contents($file, $note->upload_id);
+        $filesize = filesize($file);
+
+        $note->email_type = 'Emails';
         $note->email_id = create_guid();
-        $note->save();
-        $this->assertEquals(0, $note->file_size, 'File Size Should be Zero when No Matching File');
+        $note->save(false);
+
+        $this->assertSame($filesize, $note->file_size);
     }
 
-    public function testNoteWithAttachedFile_MatchingFileButNoEmailReference_fileSizeIsZero()
+    public function testSave_EmailAttachmentFileUploaded_FileIsSizeSaved()
     {
-        $noteId = create_guid();
-        $fileName = 'upload://' . $noteId;
-        $note = \SugarTestNoteUtilities::createNote($noteId);
-        file_put_contents($fileName, 'test');
-        $note->save();
-        $this->assertEquals(0, $note->file_size, 'File Size computed for Note with No Email Reference');
+        $filename = create_guid();
+        $file = "upload://{$filename}";
+        file_put_contents($file, $filename);
+        $filesize = filesize($file);
+
+        $uploadFile = $this->getMockBuilder('UploadFile')
+            ->disableOriginalConstructor()
+            ->setMethods(array('get_temp_file_location'))
+            ->getMock();
+        $uploadFile->method('get_temp_file_location')->willReturn($file);
+
+        $note = BeanFactory::newBean('Notes');
+        $note->email_type = 'Emails';
+        $note->email_id = create_guid();
+        $note->file = $uploadFile;
+        $note->save(false);
+        SugarTestNoteUtilities::setCreatedNotes(array($note->id));
+
+        $this->assertSame($filesize, $note->file_size);
+
+        unlink($file);
+    }
+
+    public function testSave_EmailAttachmentFileNotFound_FileSizeIsZero()
+    {
+        $note = SugarTestNoteUtilities::createNote();
+        $note->email_type = 'Emails';
+        $note->email_id = create_guid();
+        $note->save(false);
+
+        $this->assertSame(0, $note->file_size);
+    }
+
+    public function testSave_NotAnEmailAttachment_FileSizeIsZero()
+    {
+        $note = SugarTestNoteUtilities::createNote();
+
+        $file = "upload://{$note->id}";
+        file_put_contents($file, $note->id);
+
+        $note->save(false);
+
+        $this->assertNull($note->file_size);
     }
 }

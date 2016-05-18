@@ -1917,6 +1917,11 @@ class Email extends SugarBean {
                 $note = BeanFactory::getBean($attachment->getModuleName(), $attachment->id);
                 $note->id = create_guid();
                 $note->new_with_id = true;
+
+                // Duplicate the file before saving so that the file size is captured during save.
+                // Note: This may not help since $note->email_id is not being set, as noted below.
+                UploadFile::duplicate_file($attachment->id, $note->id, $note->filename);
+
                 // By not setting $note->email_id = $this->id, it may be possible for some attachments to have the wrong
                 // parent after the request is done. This has been left as is to maintain the state of legacy code,
                 // given that there are no known bugs regarding this behavior.
@@ -1924,7 +1929,6 @@ class Email extends SugarBean {
                 // related email without an email_type.
                 $note->save();
 
-                UploadFile::duplicate_file($attachment->id, $note->id, $note->filename);
                 $attachmentsToCopy[] = $note;
             }
         }
@@ -1962,10 +1966,11 @@ class Email extends SugarBean {
 				$noteTemplate->email_id = $this->id;
 				$noteTemplate->email_type = $this->module_dir;
 				$noteTemplate->date_entered = '';
-				$noteTemplate->save();
 				$noteTemplate->team_id = $this->team_id;
 
+                // Duplicate the file before saving so that the file size is captured during save.
                 UploadFile::duplicate_file($noteId, $noteTemplate->id, $noteTemplate->filename);
+                $noteTemplate->save();
                 $attachmentsToCopy[] = $noteTemplate;
 			}
 		}
@@ -2051,6 +2056,8 @@ class Email extends SugarBean {
 				$doc = BeanFactory::newBean('Documents');
 				$docRev = BeanFactory::newBean('DocumentRevisions');
 				$docNote = BeanFactory::newBean('Notes');
+                $docNote->id = create_guid();
+                $docNote->new_with_id = true;
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
 				$docRev->retrieve($doc->document_revision_id);
@@ -2064,8 +2071,10 @@ class Email extends SugarBean {
 				$docNote->email_id = $this->id;
 				$docNote->email_type = 'Emails';
 				$docNote->file_mime_type = $docRev->file_mime_type;
-                $docNote->save();
+
+                // Duplicate the file before saving so that the file size is captured during save.
                 UploadFile::duplicate_file($docRev->id, $docNote->id, $docRev->filename);
+                $docNote->save();
 			}
 		}
 

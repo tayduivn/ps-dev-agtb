@@ -228,9 +228,10 @@ EOQ;
 					$newNote->new_with_id = true;
 					$newNote->date_modified = '';
 					$newNote->date_entered = '';
-					$newNoteId = $newNote->save();
 
-					UploadFile::duplicate_file($note->id, $newNoteId, $note->filename);
+                    // Duplicate the file before saving so that the file size is captured during save.
+                    UploadFile::duplicate_file($note->id, $newNote->id, $note->filename);
+                    $newNote->save();
 				}
 				continue;
 			}
@@ -267,6 +268,8 @@ EOQ;
 			$docRev = BeanFactory::retrieveBean('DocumentRevisions', $doc->document_revision_id);
 			if(empty($docRev)) continue;
 			$docNote = BeanFactory::newBean('Notes');
+            $docNote->id = create_guid();
+            $docNote->new_with_id = true;
 
 			array_push($focus->saved_attachments, $docRev);
 
@@ -278,9 +281,10 @@ EOQ;
             // EmailTemplates. If yes, then email_type may be Emails or EmailTemplates depending on the use.
 			$docNote->email_type = 'Emails';
 			$docNote->file_mime_type = $docRev->file_mime_type;
-			$docId = $docNote = $docNote->save();
 
-			UploadFile::duplicate_file($docRev->id, $docId, $docRev->filename);
+            // Duplicate the file before saving so that the file size is captured during save.
+            UploadFile::duplicate_file($docRev->id, $docNote->id, $docRev->filename);
+            $docNote->save();
 		}
 
 	}
