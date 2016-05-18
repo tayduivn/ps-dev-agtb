@@ -82,6 +82,11 @@
     isSocketConnected: false,
 
     /**
+     * On-SugarCRM alert id start mark.
+     */
+    alertIdStart: 'notification_on_sugarcrm_alert_',
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -152,7 +157,8 @@
                 'id',
                 'is_read',
                 'name',
-                'severity'
+                'severity',
+                'type'
             ],
             apiOptions: {
                 skipMetadataHash: true
@@ -327,9 +333,7 @@
      * @inheritdoc
      */
     _renderHtml: function() {
-        if (!app.api.isAuthenticated() ||
-            app.config.appStatus === 'offline' ||
-            !app.acl.hasAccess('view', this.module)) {
+        if (this.noDisplay()) {
             return;
         }
 
@@ -400,14 +404,72 @@
     },
 
     /**
-     * Render component if it not opened and not disposed.
+     * Detect whether notifications can be displayed or not.
+     * @return {boolean} true if not allowed to display.
+     */
+    noDisplay: function() {
+        return !app.api.isAuthenticated() ||
+            app.config.appStatus === 'offline' ||
+            !app.acl.hasAccess('view', this.module);
+    },
+
+    /**
+     * Render On-SugarCRM alerts and Notifications View.
      * @returns {SUGAR.App.view.views.NotificationsView} Instance of this view.
      */
-    reRender: function () {
+    reRender: function() {
+        this.reRenderView();
+        this.hideAlerts();
+        this.showAlerts();
+        return this;
+    },
+
+    /**
+     * Render component if it not opened and not disposed.
+     */
+    reRenderView: function() {
         if (this.disposed || this.isOpen()) {
-            return this;
+            return;
+        }
+        this.render();
+    },
+
+    /**
+     * Show On-SugarCRM alerts for each unread Notification Bean.
+     */
+    showAlerts: function() {
+        if (this.noDisplay()) {
+            return;
         }
 
-        return this.render();
+        _.each(this.collection.models, function(model) {
+            if (!model.get('is_read') && model.get('type') === 'alert') {
+                var modelURL = app.router.buildRoute(model.module, model.get('id'));
+                app.alert.show(this.alertIdStart + model.get('id'), {
+                    level: 'info',
+                    title: model.get('name'),
+                    model: model, // pass Notification model to alert view.
+                    messages: [app.lang.get('LBL_ON_SUGARCRM_ALERT_SHOW_MORE', this.module, {url: modelURL})],
+                    onClose: function() {
+                        this.model.save({is_read: true}, {
+                            success: _.bind(function() {
+                                app.events.trigger('app:notifications:markAs', this.model, true);
+                            }, this)
+                        });
+                    }
+                });
+            }
+        }, this);
+    },
+
+    /**
+     * Remove all displayed On-SugarCRM alerts.
+     */
+    hideAlerts: function() {
+        _.each(app.alert.getAll(), function(alert, key) {
+            if (key.indexOf(this.alertIdStart) === 0) {
+                app.alert.dismiss(key);
+            }
+        }, this);
     }
 })
