@@ -21,6 +21,12 @@
      */
     originalModel: undefined,
 
+    _delegateEvents: function() {
+        app.events.on('preview:render', this._renderPreview, this);
+        app.events.on('preview:close', this.closePreview, this);
+        this._super('_delegateEvents');
+    },
+
     /**
      * @inheritdoc
      */

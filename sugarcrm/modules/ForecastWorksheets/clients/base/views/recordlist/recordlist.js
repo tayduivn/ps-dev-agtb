@@ -1075,6 +1075,9 @@
         }
 
         app.events.on('preview:render', function(model) {
+            if (this.disposed) {
+                return;
+            }
             this.previewModel = model;
             this.previewVisible = true;
         }, this);
