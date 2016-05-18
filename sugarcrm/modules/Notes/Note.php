@@ -155,6 +155,11 @@ class Note extends SugarBean
         $this->filename = '';
         $this->file_mime_type = '';
         $this->file = '';
+        $this->file_size = '';
+        $this->file_source = '';
+        $this->email_type = '';
+        $this->email_id = '';
+        $this->upload_id = '';
         $this->save();
         return true;
     }
