@@ -120,18 +120,14 @@ class Note extends SugarBean
      */
     function mark_deleted($id)
     {
-        global $sugar_config;
+        if (!empty($this->email_id) &&
+            isset($GLOBALS['sugar_config']['email_default_delete_attachments']) &&
+            $GLOBALS['sugar_config']['email_default_delete_attachments'] == true
+        ) {
+            $removeFile = 'upload://' . $this->getUploadId();
 
-        if (!empty($this->email_id)) {
-            if (isset($sugar_config['email_default_delete_attachments']) &&
-                $sugar_config['email_default_delete_attachments'] == true
-            ) {
-                $removeFile = "upload://$id";
-                if (file_exists($removeFile)) {
-                    if (!unlink($removeFile)) {
-                        $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
-                    }
-                }
+            if (file_exists($removeFile) && !unlink($removeFile)) {
+                $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
             }
         }
 
@@ -141,31 +137,26 @@ class Note extends SugarBean
 
     function deleteAttachment($isduplicate = "false")
     {
+        $removeFile = '';
+
         if ($this->ACLAccess('edit')) {
             if ($isduplicate=="true") {
                 return true;
             }
-            $removeFile = "upload://{$this->id}";
+
+            $removeFile = 'upload://' . $this->getUploadId();
         }
 
-        if (file_exists($removeFile)) {
-            if (!unlink($removeFile)) {
-                $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
-            } else {
-                $this->filename = '';
-                $this->file_mime_type = '';
-                $this->file = '';
-                $this->save();
-                return true;
-            }
-        } else {
-            $this->filename = '';
-            $this->file_mime_type = '';
-            $this->file = '';
-            $this->save();
-            return true;
+        if (file_exists($removeFile) && !unlink($removeFile)) {
+            $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
+            return false;
         }
-        return false;
+
+        $this->filename = '';
+        $this->file_mime_type = '';
+        $this->file = '';
+        $this->save();
+        return true;
     }
 
     function get_summary_text()

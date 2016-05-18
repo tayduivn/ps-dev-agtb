@@ -126,4 +126,39 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertNull($note->file_size);
     }
+
+    public function testMarkDeleted()
+    {
+        $note = SugarTestNoteUtilities::createNote('', array(
+            'email_type' => 'Emails',
+            'email_id' => create_guid(),
+        ));
+
+        $file = "upload://{$note->id}";
+        file_put_contents($file, $note->id);
+        $this->assertFileExists($file);
+
+        $note->mark_deleted($note->id);
+        $this->assertFileNotExists($file);
+    }
+
+    public function testMarkDeleted_FileFoundAtUploadId()
+    {
+        $uploadId = create_guid();
+        $note = SugarTestNoteUtilities::createNote(
+            '',
+            array(
+                'email_type' => 'Emails',
+                'email_id' => create_guid(),
+                'upload_id' => $uploadId,
+            )
+        );
+
+        $file = "upload://{$uploadId}";
+        file_put_contents($file, $uploadId);
+        $this->assertFileExists($file);
+
+        $note->mark_deleted($note->id);
+        $this->assertFileNotExists($file);
+    }
 }
