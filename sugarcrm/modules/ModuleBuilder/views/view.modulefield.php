@@ -318,6 +318,7 @@ class ViewModulefield extends SugarView
             switch ($vardef['type']) {
                 case 'date':
                 case 'datetime':
+                case 'datetimecombo':
                     $fv->ss->assign('calcFieldType', 'date');
                     break;
                 case 'bool':
