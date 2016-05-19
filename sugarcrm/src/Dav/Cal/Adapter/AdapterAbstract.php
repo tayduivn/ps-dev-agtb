@@ -38,6 +38,20 @@ abstract class AdapterAbstract implements AdapterInterface
     protected $logger;
 
     /**
+     * Allowed changed fields for bean.
+     * @var array
+     */
+    protected static $allowedChangedFields = array(
+        'name' => true,
+        'location' => true,
+        'description' => true,
+        'date_start' => true,
+        'date_end' => true,
+        'status' => true,
+        'repeat_parent_id' => true,
+    );
+
+    /**
      * Set up logger.
      */
     public function __construct()
@@ -175,8 +189,12 @@ abstract class AdapterAbstract implements AdapterInterface
                 case 'update':
                     if ($this->isRecurringChanged($changedFields)) {
                         $recurringParam = $this->getRecurringHelper()->beanToArray($bean);
-                        $action = 'override';
-                        $this->logger->debug("CalDav: Action was changed to '$action' because recurring changed");
+                        if ($bean->updateChildrenStrategy &
+                            (\CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS)
+                        ) {
+                            $action = 'override';
+                            $this->logger->debug("CalDav: Action was changed to '$action' because recurring changed");
+                        }
                     } elseif ($this->getCalendarEvents()->isEventRecurring($bean)) {
                         if ($bean->updateChildrenStrategy & \CalendarEvents::UPDATE_CURRENT) {
                             $rootBeanId = $bean->repeat_root_id;
@@ -202,12 +220,7 @@ abstract class AdapterAbstract implements AdapterInterface
         switch ($action) {
             case 'rebuild':
             case 'override' :
-                if ($changedFields) {
-                    $changedFields = $this->getFieldsDiff($changedFields, false);
-                } else {
-                    $changedFields = $this->getBeanDataAsArray($bean);
-                }
-
+                $changedFields = $this->getBeanDataAsArray($bean);
                 if (isset($changedFields['repeat_type']) && !$changedFields['repeat_type'][0]) {
                     $changedFields['repeat_interval'][0] = null;
                 }
@@ -251,15 +264,7 @@ abstract class AdapterAbstract implements AdapterInterface
             return array($beanData, array(), array());
         }
 
-        $changedFieldsFilter = array(
-            'name' => true,
-            'location' => true,
-            'description' => true,
-            'date_start' => true,
-            'date_end' => true,
-            'status' => true,
-            'repeat_parent_id' => true,
-        );
+        $changedFieldsFilter = static::$allowedChangedFields;
 
         if (!$rootBeanId) {
             $changedFieldsFilter =
@@ -371,11 +376,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 unset($data[1]['name']);
             }
         }
-        if ($this->checkCalDavUrl('', $event)) {
-            global $sugar_config;
-            $this->setCalDavUrl($sugar_config['site_url'] . '/#' . $beanModuleName . '/' . $beanId, $event);
+
+        if ($collection->setEventURL($event, $beanModuleName, ($rootBeanId ?: $beanId))) {
             $isChanged = true;
         }
+
         if (isset($changedFields['description'])) {
             if ($this->setCalDavDescription($changedFields['description'][0], $event)) {
                 $isChanged = true;
@@ -517,43 +522,61 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($parentRecurrenceId && isset($diffStructure['children'][$parentRecurrenceId->asDb()])) {
             $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
         }
+        
 
-        if ($customizeParent && $customizeParent[0] == 'delete') {
-            $parentAction = 'delete';
-        }
-
-        $rrule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
+        $changedRRule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
 
         // we need independent rrule update only when we change event
-        if ($rrule && $previousData) {
+        if ($changedRRule && $previousData) {
             $result[] = array(
                 array(
                     $parentAction ?: 'update',
                     $collection->id,
                     null,
-                    $collection->getParent()->getStartDate()->asDb(),
+                    null,
                     null,
                     $importGroupId,
                 ),
-                $rrule,
+                $changedRRule,
                 array(),
             );
         }
 
+        $currentRRule = $collection->getRRule();
+        $currentUntilDate = $currentRRule ? $currentRRule->getUntil() : null;
+
+        $needParentOverride = $changedRRule || (isset($parentChangedFields['date_start']) && $currentUntilDate);
+
         if ($parentAction || $customizeParent) {
+            if ($needParentOverride) {
+                if ($customizeParent) {
+                    $overriddenParent = $collection->getChild($parentRecurrenceId);
+                    $customizeParent = null;
+                } else {
+                    $overriddenParent = $collection->getParent();
+                }
+                $parentChangedFields = $collection->getEventDiff($overriddenParent);
+                $parentInvites = $collection->getParticipantsDiff($overriddenParent);
+                $actionForParent = 'override';
+            } elseif ($customizeParent) {
+                $actionForParent = $customizeParent[0];
+            } else {
+                $actionForParent = $parentAction;
+            }
+
             $result[] = array(
                 array(
-                    $parentAction ?: 'update',
+                    $actionForParent,
                     $collection->id,
                     null,
-                    $collection->getParent()->getStartDate()->asDb(),
+                    $customizeParent && !$needParentOverride ? $parentRecurrenceId->asDb() : null,
                     null,
                     $importGroupId,
                 ),
                 array_merge(
                     isset($diffStructure['timezone']) ? array('timezone' => $diffStructure['timezone']) : array(),
                     // we need rrule with all fields only on creation
-                    (!$previousData && $rrule) ? $rrule : array(),
+                    (!$previousData && $changedRRule) ? $changedRRule : array(),
                     $parentChangedFields,
                     isset($customizeParent[1]) ? $customizeParent[1] : array()
                 ),
@@ -563,6 +586,8 @@ abstract class AdapterAbstract implements AdapterInterface
                 ),
             );
         }
+
+        $needChildrenOverride = $changedRRule || (isset($parentChangedFields['date_start']) && $currentRRule);
 
         $recurrenceIds = array_values($collection->getAllChildrenRecurrenceIds());
         $sugarChildren = $collection->getSugarChildrenOrder();
@@ -574,12 +599,11 @@ abstract class AdapterAbstract implements AdapterInterface
                 continue;
             }
 
-            $childChangeFields = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
-                ? $collection->getEventDiff($childEvent, null)
-                : array();
-            $childChangeInvitees = $childEvent && ($rrule || isset($parentChangedFields['date_start']))
-                ? $collection->getParticipantsDiff($childEvent, null)
-                : array();
+            $childChangeFields = $childChangeInvitees = array();
+            if ($childEvent && ($needChildrenOverride || $parentAction)) {
+                $childChangeFields = $collection->getEventDiff($childEvent, null);
+                $childChangeInvitees = $collection->getParticipantsDiff($childEvent, null);
+            }
 
             $sugarId = null;
 
@@ -587,21 +611,27 @@ abstract class AdapterAbstract implements AdapterInterface
                 $sugarId = $sugarChildren[$position];
             }
 
+            $changedChild = array();
             if (isset($diffStructure['children'][$recurrenceId->asDb()])) {
-                $changeChild = $diffStructure['children'][$recurrenceId->asDb()];
+                $changedChild = $diffStructure['children'][$recurrenceId->asDb()];
+            } elseif (isset($diffStructure['virtual'][$recurrenceId->asDb()])) {
+                $changedChild = $diffStructure['virtual'][$recurrenceId->asDb()];
+            }
+
+            if ($changedChild && !$needChildrenOverride) {
                 $result[] = array(
                     array(
-                        $changeChild[0],
+                        $changedChild[0],
                         $collection->id,
                         $sugarId,
                         $recurrenceId->asDb(),
                         $position,
                         $importGroupId,
                     ),
-                    array_merge($changeChild[1], $childChangeFields),
-                    array_merge($changeChild[2], $childChangeInvitees),
+                    $changedChild[1],
+                    $changedChild[2],
                 );
-            } elseif ($childEvent && $rrule) {
+            } elseif ($childEvent && ($needChildrenOverride || !$childEvent->isCustomized() && $parentAction)) {
                 $result[] = array(
                     array(
                         'override',
@@ -611,21 +641,8 @@ abstract class AdapterAbstract implements AdapterInterface
                         $position,
                         $importGroupId,
                     ),
-                    array_merge($parentChangedFields, $childChangeFields),
-                    array_merge($parentInvites, $childChangeInvitees),
-                );
-            } elseif ($childEvent && !$childEvent->isCustomized() && $parentAction && $parentAction !== 'delete') {
-                $result[] = array(
-                    array(
-                        'update',
-                        $collection->id,
-                        $sugarId,
-                        $recurrenceId->asDb(),
-                        $position,
-                        $importGroupId,
-                    ),
-                    array_merge($parentChangedFields, $childChangeFields),
-                    array_merge($parentInvites, $childChangeInvitees),
+                    $childChangeFields,
+                    $childChangeInvitees,
                 );
             }
         }
@@ -733,73 +750,46 @@ abstract class AdapterAbstract implements AdapterInterface
         $bean->inviteesNotification = \CalendarUtils::getInvitees($bean);
 
         // setting values
-        if (isset($changedFields['title'])) {
-            if ($this->setBeanName($changedFields['title'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['title']);
-            }
+        if (isset($changedFields['title']) && $this->setBeanName($changedFields['title'][0], $bean)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['description'])) {
-            if ($this->setBeanDescription($changedFields['description'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['description']);
-            }
+        if (isset($changedFields['description']) &&
+            $this->setBeanDescription($changedFields['description'][0], $bean)
+        ) {
+            $isChanged = true;
         }
-        if (isset($changedFields['location'])) {
-            if ($this->setBeanLocation($changedFields['location'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['location']);
-            }
+        if (isset($changedFields['location']) && $this->setBeanLocation($changedFields['location'][0], $bean)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['status'])) {
-            if ($this->setBeanStatus($changedFields['status'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['status']);
-            }
+        if (isset($changedFields['status']) && $this->setBeanStatus($changedFields['status'][0], $bean)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['date_start'])) {
-            if ($this->setBeanStartDate($changedFields['date_start'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['date_start']);
-            }
+        if (isset($changedFields['date_start']) && $this->setBeanStartDate($changedFields['date_start'][0], $bean)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['date_end'])) {
-            if ($this->setBeanEndDate($changedFields['date_end'][0], $bean)) {
-                $isChanged = true;
-            } elseif ($action != 'restore') {
-                unset($data[1]['date_end']);
-            }
+        if (isset($changedFields['date_end']) && $this->setBeanEndDate($changedFields['date_end'][0], $bean)) {
+            $isChanged = true;
         }
 
         if ($isChildInRecurringChainSave) {
             \Activity::disable();
         }
-        $changes = $this->setBeanInvitees($invitees, $bean, $action == 'override' || $action == 'restore');
+        if ($this->setBeanInvitees($invitees, $bean, $action == 'override' || $action == 'restore')) {
+            $isChanged = true;
+        }
         if ($isChildInRecurringChainSave) {
             \Activity::enable();
         }
 
-        if ($changes) {
-            $isChanged = true;
-            if ($action != 'restore') {
-                $data[2] = $changes;
-            }
-        } elseif ($action != 'restore') {
-            $data[2] = array();
-        }
         if (isset($changedFields['rrule_action'])) {
             if ($this->setBeanRecurrence($changedFields, $bean)) {
                 $isChanged = true;
-            } elseif ($action != 'restore') {
-                foreach (RecurringHelper::$rruleFieldList as $rRuleField) {
-                    unset($data[1][$rRuleField]);
-                }
             }
+        } elseif ($recurrenceIndex === null && $recurrenceId === null && isset($changedFields['date_start']) &&
+            $bean->repeat_until
+        ) {
+            $this->setRecurrenceChildrenOrder($bean);
+            $isChanged = true;
         }
 
         if ($action == 'restore' && $bean->deleted) {
@@ -816,8 +806,8 @@ abstract class AdapterAbstract implements AdapterInterface
      */
     public function verifyImportAfterExport($exportData, $importData, \CalDavEventCollection $collection)
     {
+        $sugarOrder = $collection->getSugarChildrenOrder();
         if (!$importData) {
-            $sugarOrder = $collection->getSugarChildrenOrder();
             $sugarId = null;
             $childIndex = array_search($exportData[0][2], $sugarOrder);
 
@@ -839,11 +829,17 @@ abstract class AdapterAbstract implements AdapterInterface
         list($exportBean, $exportFields, $exportInvitees) = $exportData;
         list($importBean, $importFields, $importInvitees) = $importData;
 
-        if (!empty($importBean[2])) {
+        if (!is_null($importBean[2])) {
             if ($importBean[2] != $exportBean[2]) {
                 return false;
             }
+        } elseif ($importBean[4]) {
+            $linkedId = isset($sugarOrder[$importBean[4]]) ? $sugarOrder[$importBean[4]] : null;
+            if ($linkedId != $exportBean[2]) {
+                return false;
+            }
         }
+
         if ($exportBean[0] == 'delete' && $importBean[0] == 'delete') {
             return false;
         }
@@ -1009,7 +1005,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     }
                     break;
                 default:
-                    if ($value[0] != $bean->$key) {
+                    if (array_key_exists($key, static::$allowedChangedFields) && $value[0] != $bean->$key) {
                         $changedByWorkflow = true;
                         $exportFields[$key] = array($bean->$key);
                     }
@@ -1390,18 +1386,6 @@ abstract class AdapterAbstract implements AdapterInterface
     }
 
     /**
-     * Checks that url matches current one.
-     *
-     * @param string $value
-     * @param Event $event
-     * @return bool
-     */
-    protected function checkCalDavUrl($value, Event $event)
-    {
-        return $event->getUrl() == $value;
-    }
-
-    /**
      * Checks that status matches current one.
      *
      * @param string $value
@@ -1562,18 +1546,6 @@ abstract class AdapterAbstract implements AdapterInterface
     protected function setCalDavLocation($value, Event $event)
     {
         return $event->setLocation($value);
-    }
-
-    /**
-     * Sets url to provided event and returns true if it was changed.
-     *
-     * @param string $value
-     * @param Event $event
-     * @return bool
-     */
-    protected function setCalDavUrl($value, Event $event)
-    {
-        return $event->setUrl($value);
     }
 
     /**
@@ -2009,13 +1981,13 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         if (isset($value['rrule_interval']) && count($value['rrule_interval']) == 2 &&
-            $bean->repeat_interval != $value['rrule_interval'][1]
+            intval($bean->repeat_interval) != intval($value['rrule_interval'][1])
         ) {
             return false;
         }
 
         if (isset($value['rrule_count']) && count($value['rrule_count']) == 2 &&
-            $bean->repeat_count != $value['rrule_count'][1]
+            intval($bean->repeat_count) != intval($value['rrule_count'][1])
         ) {
             return false;
         }

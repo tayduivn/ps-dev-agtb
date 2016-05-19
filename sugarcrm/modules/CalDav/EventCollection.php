@@ -1293,6 +1293,25 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Set url to event.
+     *
+     * @param Structures\Event $event
+     * @param string $beanModule
+     * @param string $beanId
+     * @return bool
+     */
+    public function setEventURL(Structures\Event $event, $beanModule, $beanId)
+    {
+        global $sugar_config;
+        if (!$event->getUrl() || strpos($event->getUrl(), $sugar_config['site_url'] . '/#') !== false) {
+            return $event->setUrl($sugar_config['site_url'] . '/#' . $beanModule . '/' . $beanId);
+        }
+
+
+        return false;
+    }
+
+    /**
      * Retrieve CalDavEventCollection by parent bean.
      *
      * @param SugarBean $bean
@@ -1690,11 +1709,15 @@ class CalDavEventCollection extends SugarBean
             );
         }
 
-        $childrenRecurrenceIds = $this->getCustomizedChildrenRecurrenceIds();
+        $childrenRecurrenceIds = $this->getAllChildrenRecurrenceIds();
         foreach ($childrenRecurrenceIds as $recurrenceId) {
 
             $oldChild = $oldCollection ? $oldCollection->getChild($recurrenceId) : null;
             $currentChild = $this->getChild($recurrenceId);
+
+            if (!$currentChild) {
+                continue;
+            }
 
             $changedFields = $this->getEventDiff($currentChild, $oldChild);
             $invites = $this->getParticipantsDiff($currentChild, $oldChild);
@@ -1707,8 +1730,15 @@ class CalDavEventCollection extends SugarBean
             }
 
             if ($filter && ($invites || $changedFields)) {
-                $result['children'][$recurrenceId->asDb()] = array(
-                    $oldChild ? 'update' : 'restore',
+                if ($currentChild->isVirtual()) {
+                    $childKey = 'virtual';
+                    $childAction = $oldChild ? 'update' : 'override';
+                } else {
+                    $childKey = 'children';
+                    $childAction = $oldChild ? 'update' : 'restore';
+                }
+                $result[$childKey][$recurrenceId->asDb()] = array(
+                    $childAction,
                     $changedFields,
                     $invites,
                 );
@@ -1736,6 +1766,9 @@ class CalDavEventCollection extends SugarBean
             foreach ($recurrenceIds as $recurrenceId) {
                 $currentChild = $this->getChild($recurrenceId);
                 if ($currentChild && !$currentChild->isCustomized()) {
+                    if (isset($result['virtual'][$recurrenceId->asDb()])) {
+                        unset($result['virtual'][$recurrenceId->asDb()]);
+                    }
                     $result['children'][$recurrenceId->asDb()] = array(
                         'restore',
                         $this->getEventDiff($currentChild, null),
@@ -1743,6 +1776,10 @@ class CalDavEventCollection extends SugarBean
                     );
                 }
             }
+        }
+
+        if (isset($result['virtual']) && !$result['virtual']) {
+            unset($result['virtual']);
         }
 
         $GLOBALS['log']->debug("CalDav: diff structure is: " . var_export($result, true));
