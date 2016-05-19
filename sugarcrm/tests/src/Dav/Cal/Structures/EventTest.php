@@ -338,7 +338,16 @@ class EventTest extends \PHPUnit_Framework_TestCase
                 'vEvent' => $this->getEvent('vemptyevent'),
                 'endDate' => $dtEnd,
                 'duration' => 3660,
-                'expectedMethods' => array('setStringProperty' => array('DURATION', 'PT1H1M')),
+                'expectedMethods' => array('setDateTimeProperty' => array('DTEND', $dtEnd)),
+            ),
+            array(
+                'vEvent' => $this->getEvent('vemptyevent'),
+                'endDate' => null,
+                'duration' => 3660,
+                'expectedMethods' => array(
+                    'deleteProperty' => array('DTEND'),
+                    'setStringProperty' => array('DURATION', 'PT1H1M')
+                ),
             ),
         );
     }
