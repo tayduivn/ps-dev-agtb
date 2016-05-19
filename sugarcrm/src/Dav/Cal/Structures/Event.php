@@ -266,7 +266,7 @@ class Event
             return false;
         }
 
-        if ($this->event->DTEND) {
+        if ($this->event->DTEND || !$this->event->DURATION) {
             if (!empty($endDate)) {
                 return $this->setDateTimeProperty('DTEND', $endDate);
             } else {
