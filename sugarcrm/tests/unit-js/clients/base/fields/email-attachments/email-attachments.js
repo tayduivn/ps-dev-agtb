@@ -38,12 +38,16 @@ describe('Base.EmailAttachments', function() {
                 id: _.uniqueId(),
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',
-                file_mime_type: 'application/pdf'
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_source: 'Uploaded'
             }, {
                 id: _.uniqueId(),
                 name: 'logo.jpg',
                 filname: 'logo.jpg',
-                file_mime_type: 'image/jpg'
+                file_mime_type: 'image/jpg',
+                file_size: 158589,
+                file_source: 'Document'
             }];
 
             model.set('id', _.uniqueId());
@@ -84,7 +88,8 @@ describe('Base.EmailAttachments', function() {
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded'
+                file_source: 'Uploaded',
+                file_size: 158589
             });
             var file2 = new Backbone.Model({
                 _url: 'url/to/download/file',
@@ -92,7 +97,8 @@ describe('Base.EmailAttachments', function() {
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded'
+                file_source: 'Uploaded',
+                file_size: 158589
             });
             var file3 = new Backbone.Model({
                 _action: 'placeholder',
@@ -107,8 +113,18 @@ describe('Base.EmailAttachments', function() {
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded'
+                file_source: 'Uploaded',
+                file_size: 158589
             });
+            var file1Json = file1.toJSON();
+            var file2Json = file2.toJSON();
+            var file3Json = file3.toJSON();
+
+            // The file sizes that SUGAR.App.utils#getReadableFileSize will
+            // return.
+            file1Json.file_size = '159K';
+            file2Json.file_size = '159K';
+            file3Json.file_size = '0K';
 
             field = SugarTest.createField({
                 name: 'attachments',
@@ -122,7 +138,7 @@ describe('Base.EmailAttachments', function() {
             field._attachments.add([file1, file2, file3, file4]);
 
             value = field.getFormattedValue();
-            expect(value).toEqual([file1.toJSON(), file2.toJSON(), file3.toJSON()]);
+            expect(value).toEqual([file1Json, file2Json, file3Json]);
         });
     });
 
@@ -192,6 +208,7 @@ describe('Base.EmailAttachments', function() {
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
+                file_size: 158589,
                 file_source: 'Uploaded'
             });
             field._attachments.add(file);
@@ -249,6 +266,7 @@ describe('Base.EmailAttachments', function() {
                             id: id,
                             deleted: false,
                             file_mime_type: 'application/pdf',
+                            file_size: 158589,
                             filename: fileName,
                             _module: 'Notes'
                         }
@@ -293,6 +311,7 @@ describe('Base.EmailAttachments', function() {
                     expect(attachment.get('name')).toBe(fileName);
                     expect(attachment.get('filename')).toBe(fileName);
                     expect(attachment.get('file_mime_type')).toBe('application/pdf');
+                    expect(attachment.get('file_size')).toBe(158589);
                     expect(attachment.get('file_source')).toBe('Uploaded');
                 });
             });
@@ -383,7 +402,8 @@ describe('Base.EmailAttachments', function() {
                     doc.set({
                         document_revision_id: _.uniqueId(),
                         filename: 'Contract.pdf',
-                        file_mime_type: 'application/pdf'
+                        latest_revision_file_mime_type: 'application/pdf',
+                        latest_revision_file_size: 158589
                     });
 
                     options.success(doc);
@@ -400,6 +420,7 @@ describe('Base.EmailAttachments', function() {
                 expect(attachment.get('name')).toBe('Contract.pdf');
                 expect(attachment.get('filename')).toBe('Contract.pdf');
                 expect(attachment.get('file_mime_type')).toBe('application/pdf');
+                expect(attachment.get('file_size')).toBe(158589);
                 expect(attachment.get('file_source')).toBe('Document');
 
                 app.drawer = null;
@@ -413,17 +434,20 @@ describe('Base.EmailAttachments', function() {
                     id: _.uniqueId(),
                     name: 'Disclosure Agreement.pdf',
                     filename: 'Disclosure Agreement.pdf',
-                    file_mime_type: 'application/pdf'
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589
                 }, {
                     id: _.uniqueId(),
                     name: 'NDA.pdf',
                     filname: 'NDA.pdf',
-                    file_mime_type: 'application/pdf'
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589
                 }, {
                     id: _.uniqueId(),
                     name: 'logo.jpg',
                     filname: 'logo.jpg',
-                    file_mime_type: 'image/jpg'
+                    file_mime_type: 'image/jpg',
+                    file_size: 158589
                 }];
 
                 // New uploaded attachment should still be linked after adding
@@ -435,6 +459,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
 
@@ -457,6 +482,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
 
@@ -469,6 +495,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Template'
                 });
 
@@ -483,6 +510,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Template'
                 });
 
@@ -493,6 +521,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Template'
                 });
 
@@ -503,6 +532,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Template'
                 });
 
@@ -571,6 +601,7 @@ describe('Base.EmailAttachments', function() {
                     expect(attachment.get('name')).toBe(templateAttachment.filename);
                     expect(attachment.get('filename')).toBe(templateAttachment.filename);
                     expect(attachment.get('file_mime_type')).toBe(templateAttachment.file_mime_type);
+                    expect(attachment.get('file_size')).toBe(templateAttachment.file_size);
                     expect(attachment.get('file_source')).toBe('Template');
                 });
             });
@@ -593,6 +624,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
 
@@ -610,6 +642,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
 
@@ -644,6 +677,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
                 var existing = new Backbone.Model({
@@ -652,6 +686,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
                 var attachment;
@@ -674,6 +709,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
                 var existing = new Backbone.Model({
@@ -682,6 +718,7 @@ describe('Base.EmailAttachments', function() {
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
+                    file_size: 158589,
                     file_source: 'Uploaded'
                 });
                 var attachment;
