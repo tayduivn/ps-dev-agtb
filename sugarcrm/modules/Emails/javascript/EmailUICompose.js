@@ -1379,17 +1379,22 @@ SE.composeLayout = {
     },
 
 	processResult : function(idx , id){
-		var post_data = {"module":"EmailTemplates","record":id};
-		var global_rpcClient =  new SugarRPCClient();
+        var api = parent.SUGAR.App.api;
+        var url = api.buildURL('EmailTemplates', null, {id: id});
 
-		result = global_rpcClient.call_method('retrieve', post_data, true);
-		if(!result['record']) return;
-		json_objects['email_template_object'] = result['record'];
-		this.appendEmailTemplateJSON();
+        api.call('read', url, {}, {
+            success: _.bind(function(result) {
+                json_objects['email_template_object'] = { fields: result };
+                this.appendEmailTemplateJSON();
 
-        // get attachments if any
-        AjaxObject.target = '';
-        AjaxObject.startRequest(callbackLoadAttachments, urlStandard + "&emailUIAction=getTemplateAttachments&parent_id=" + id);
+                // get attachments if any
+                AjaxObject.target = '';
+                AjaxObject.startRequest(
+                    callbackLoadAttachments,
+                    urlStandard + "&emailUIAction=getTemplateAttachments&parent_id=" + id
+                );
+            }, this)
+        });
     },
 
     appendEmailTemplateJSON : function() {
