@@ -12,11 +12,6 @@
 
 namespace Sugarcrm\Sugarcrm\Trigger;
 
-use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Helper;
-use Sugarcrm\Sugarcrm\Trigger\ReminderManager\Scheduler;
-use Sugarcrm\Sugarcrm\Trigger\ReminderManager\TriggerServer;
-use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager;
-
 require_once 'src/Trigger/ReminderManager/Helper.php';
 
 /**
@@ -25,7 +20,7 @@ require_once 'src/Trigger/ReminderManager/Helper.php';
  * methods are called and reminders are set up or deleted.
  * @package Sugarcrm\Sugarcrm\Trigger
  */
-class HookManager
+class HookManager extends Base
 {
 
     /**
@@ -135,97 +130,5 @@ class HookManager
     protected function decodePreferences($data)
     {
         return unserialize(base64_decode($data));
-    }
-
-    /**
-     * Factory method for Client class.
-     *
-     * @return Client
-     */
-    protected function getTriggerClient()
-    {
-        return Client::getInstance();
-    }
-
-    /**
-     * Returns Reminder Manager depends on is trigger client configured.
-     *
-     * @return Scheduler|TriggerServer
-     */
-    protected function getReminderManager()
-    {
-        if ($this->getTriggerClient()->isConfigured()) {
-            return $this->getTriggerServerManager();
-        } else {
-            return $this->getSchedulerManager();
-        }
-    }
-
-    /**
-     * Sets reminders for event(call or meeting).
-     *
-     * @param \Call|\Meeting $bean event for which will be set reminders.
-     * @param boolean $isUpdate If event was added the $isUpdate is false. Otherwise is true.
-     */
-    protected function setReminders(\SugarBean $bean, $isUpdate)
-    {
-        $reminderManager = $this->getReminderManager();
-        if ($isUpdate) {
-            $reminderManager->deleteReminders($bean);
-        }
-        foreach ($this->loadUsers($bean->users_arr) as $user) {
-            $reminderTime = Helper::calculateReminderDateTime($bean, $user);
-            if ($reminderTime && Helper::isInFuture($reminderTime)) {
-                $reminderManager->addReminderForUser($bean, $user, $reminderTime);
-            }
-        }
-    }
-
-    /**
-     * Loads users beans by array of id.
-     *
-     * @param string[] $usersIds
-     * @return \User[]
-     */
-    protected function loadUsers(array $usersIds)
-    {
-        $bean = \BeanFactory::getBean('Users');
-        $query = new \SugarQuery();
-        $query->from($bean);
-        $query->where()->in('id', $usersIds);
-        return $bean->fetchFromQuery($query);
-    }
-
-    /**
-     * Factory method for TriggerServer class.
-     *
-     * @return TriggerServer
-     * @codeCoverageIgnore
-     */
-    protected function getTriggerServerManager()
-    {
-        return new TriggerServer();
-    }
-
-    /**
-     * Factory method for Scheduler class.
-     *
-     * @return Scheduler
-     * @codeCoverageIgnore
-     */
-    protected function getSchedulerManager()
-    {
-        return new Scheduler();
-    }
-
-    /**
-     * Factory method for JobQueue Manager class.
-     *
-     * @return Manager
-     * @codeCoverageIgnore
-     */
-    protected function getJobQueueManager()
-    {
-        return new Manager();
     }
 }
