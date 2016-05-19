@@ -307,6 +307,13 @@ class Event
             return false;
         }
 
+        $participantsHelper = new DavHelper\ParticipantsHelper();
+        $participantHash = $participantsHelper->participantHash($participant);
+        $this->participantsLinks[$participantHash] = array(
+            'beanName' => $participant->getBeanName(),
+            'beanId' => $participant->getBeanId(),
+        );
+
         $participant->setType($type);
         $this->event->add($participant->getObject());
         $this->participants = array();
