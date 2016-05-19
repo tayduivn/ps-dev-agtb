@@ -76,7 +76,7 @@ class CalDavEventCollectionCRYS1322Test extends Sugar_PHPUnit_Framework_TestCase
      * @param string $emailInvitee
      * @param string $organizerEmail
      *
-     * @covers \CalDavEventCollection prepareForInvite
+     * @covers \CalDavEventCollection::prepareForInvite
      * @dataProvider prepareForInviteProvider
      */
     public function testPrepareForInvite($emailInvitee, $organizerEmail)
