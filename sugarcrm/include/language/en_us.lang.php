@@ -12804,6 +12804,11 @@ $app_list_strings['notifications_severity_list'] = array(
     'warning' => 'Warning',
 );
 
+    $app_list_strings['notifications_on_sugarcrm_type_list'] = array(
+        '' => '',
+        'alert' => 'Alert',
+    );
+
 $app_list_strings['web_hook_request_method_list'] = array(
     'POST' => 'POST',
     'GET' => 'GET',

@@ -34,6 +34,8 @@ class CarrierSugarTransport implements TransportInterface
             $notification = BeanFactory::newBean('Notifications');
 
             $notification->severity = 'information';
+            $notification->type = 'alert';
+
             if (!empty($message['title'])) {
                 $notification->name = $message['title'];
             }

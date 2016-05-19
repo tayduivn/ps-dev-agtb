@@ -77,6 +77,19 @@ $dictionary['Notifications'] = array(
             'comment' => 'ID of item indicated by parent_type.',
             'studio' => array('searchview' => false),
         ),
+        'type' => array(
+            'name' => 'type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'options' => 'notifications_on_sugarcrm_type_list',
+            'default' => '',
+            'studio' => false,
+            'importable' => false,
+            'reportable'=> false,
+            'duplicate_merge' => 'disabled',
+            'audited' => false,
+            'comment' => 'Type of On-SugarCRM notification.',
+        ),
     ),
     'indices' => array(
         array(

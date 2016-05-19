@@ -39,6 +39,11 @@ class Notifications extends Basic
     public $disable_custom_fields = true;
     public $disable_row_level_security = true;
 
+    /**
+     * @var string Type of 'On SugarCRM' notification.
+     */
+    public $type = '';
+
 
     public function __construct()
     {

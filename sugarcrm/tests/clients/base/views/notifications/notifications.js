@@ -58,7 +58,8 @@ describe('Notifications', function() {
                     'id',
                     'is_read',
                     'name',
-                    'severity'
+                    'severity',
+                    'type'
                 ],
                 apiOptions: {
                     skipMetadataHash: true
@@ -204,7 +205,8 @@ describe('Notifications', function() {
                     'id',
                     'is_read',
                     'name',
-                    'severity'
+                    'severity',
+                    'type'
                 ],
                 apiOptions: {
                     skipMetadataHash: true
@@ -622,6 +624,111 @@ describe('Notifications', function() {
             view.notificationMarkHandler(model, false);
 
             sinon.assert.calledTwice(view.reRender);
+        });
+    });
+
+    describe('View and On-SugarCRM Alerts re-render', function() {
+        beforeEach(function() {
+            view = SugarTest.createView('base', moduleName, viewName);
+            sinon.collection.stub(view, 'reRenderView');
+            sinon.collection.stub(view, 'hideAlerts');
+            sinon.collection.stub(view, 'showAlerts');
+        });
+
+        afterEach(function() {
+            sinon.collection.restore();
+            SugarTest.app.view.reset();
+            view.dispose();
+            view = null;
+        });
+
+        it('should re-render notifications view', function() {
+            view.reRender();
+            sinon.assert.calledOnce(view.reRenderView);
+        });
+
+        it('should re-render all alerts', function() {
+            view.reRender();
+            sinon.assert.calledOnce(view.hideAlerts);
+            sinon.assert.calledOnce(view.showAlerts);
+        });
+    });
+
+    describe('On-SugarCRM Alerts', function() {
+        var alertShow;
+        var alertDismiss;
+
+        beforeEach(function() {
+            view = SugarTest.createView('base', moduleName, viewName);
+            alertShow = sinon.collection.spy(app.alert, 'show');
+            alertDismiss = sinon.collection.stub(app.alert, 'dismiss');
+        });
+
+        afterEach(function() {
+            sinon.collection.restore();
+            SugarTest.app.view.reset();
+            app.alert.dismissAll();
+            view.dispose();
+            view = null;
+        });
+
+        describe('showAlerts', function() {
+            var model1;
+            var model2;
+
+            beforeEach(function() {
+                model1 = app.data.createBean(moduleName, {id: '1'});
+                model2 = app.data.createBean(moduleName, {id: '2'});
+            });
+
+            it('should not show alerts when system does not allow to show notifications', function() {
+                sinon.collection.stub(view, 'noDisplay').returns(true);
+                model1.set({is_read: false, type: 'alert'});
+                view.collection.add(model1);
+                view.showAlerts();
+                expect(alertShow).not.toHaveBeenCalled();
+            });
+
+            it('should not show read or non-alert type Notifications', function() {
+                sinon.collection.stub(view, 'noDisplay').returns(false);
+                model1.set({is_read: false, type: ''});
+                model2.set({is_read: true, type: 'alert'});
+                view.collection.add(model1);
+                view.collection.add(model2);
+                view.showAlerts();
+                expect(alertShow).not.toHaveBeenCalled();
+            });
+
+            it('should show alerts for all Notification models from collection', function() {
+                sinon.collection.stub(view, 'noDisplay').returns(false);
+                model1.set({is_read: false, type: 'alert'});
+                model2.set({is_read: false, type: 'alert'});
+                view.collection.add(model1);
+                view.collection.add(model2);
+                view.showAlerts();
+                sinon.assert.calledTwice(app.alert.show);
+            });
+        });
+
+        describe('hideAlerts', function() {
+            beforeEach(function() {
+                app.alert.show('foo');
+                app.alert.show('bar');
+                app.alert.show(view.alertIdStart + 'some_bean_id_1');
+                app.alert.show(view.alertIdStart + 'some_bean_id_2');
+            });
+
+            it('should not remove other existing non On-SugarCRM alerts', function() {
+                view.hideAlerts();
+                expect(alertDismiss).not.toHaveBeenCalledWith('foo');
+                expect(alertDismiss).not.toHaveBeenCalledWith('bar');
+            });
+
+            it('should remove all previously created On-SugarCRM alerts', function() {
+                view.hideAlerts();
+                expect(alertDismiss).toHaveBeenCalledWith(view.alertIdStart + 'some_bean_id_1');
+                expect(alertDismiss).toHaveBeenCalledWith(view.alertIdStart + 'some_bean_id_2');
+            });
         });
     });
 });
