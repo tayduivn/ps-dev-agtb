@@ -59,18 +59,20 @@
                         }, this);
                     }
 
-                    // On every collection sync event add field-change listeners to its every model.
-                    // Collection is present on both list and record views. But 'sync' event is only fired for list.
-                    this.collection.on('sync', function() {
-                        this.addChangeListenerForCollection('parent_name', this.handleParentChange);
-                        this.addChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
-                    }, this);
+                    if (this.collection) {
+                        // On every collection sync event add field-change listeners to its every model.
+                        // Collection is present on both list and record views. But 'sync' event is only fired for list.
+                        this.collection.on('sync', function() {
+                            this.addChangeListenerForCollection('parent_name', this.handleParentChange);
+                            this.addChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
+                        }, this);
 
-                    // There can be many collection 'sync' events, so we do not want to accumulate listeners.
-                    this.collection.on('reset', function() {
-                        this.removeChangeListenerForCollection('parent_name', this.handleParentChange);
-                        this.removeChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
-                    }, this);
+                        // There can be many collection 'sync' events, so we do not want to accumulate listeners.
+                        this.collection.on('reset', function() {
+                            this.removeChangeListenerForCollection('parent_name', this.handleParentChange);
+                            this.removeChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
+                        }, this);
+                    }
 
                 }, this);
             },
