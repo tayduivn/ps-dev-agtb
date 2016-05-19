@@ -88,6 +88,7 @@ class MaxRelatedExpression extends NumericExpression
             current_value = this.context.getRelatedField(relationship, 'rollupMax', rel_field) || '',
             all_values = this.context.getRelatedField(relationship, 'rollupMax', rel_field + '_values') || {},
             new_value = model.get(rel_field) || '',
+            finite_values = {},
             rollup_value = '0';
 
         if (isCurrency) {
@@ -107,8 +108,11 @@ class MaxRelatedExpression extends NumericExpression
         }
 
         if (_.size(all_values) > 0) {
+            finite_values = _.map(_.values(all_values), _.partial(parseInt, _, 10));
+            finite_values = _.filter(finite_values, _.isFinite);
+
             // get all the values and sort them so the highest is on top
-            rollup_value = _.values(all_values).sort(sortByDesc)[0];
+            rollup_value = finite_values.sort(sortByDesc)[0];
 
             if (isCurrency) {
                 rollup_value = App.currency.convertFromBase(
