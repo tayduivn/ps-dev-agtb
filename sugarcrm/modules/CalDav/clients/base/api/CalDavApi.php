@@ -13,6 +13,7 @@
 require_once('modules/Configurator/Configurator.php');
 
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as Adapters;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AclInterface;
 
 /**
  * Class CalDavApi
@@ -205,8 +206,11 @@ class CalDavApi extends SugarApi
     {
         $adapters = new Adapters;
         $modules = array();
+
         foreach ($adapters->getSupportedModules() as $module) {
-            $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
+            if (\SugarACL::checkAccess($module, 'access')) {
+                $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
+            }
         }
         return $modules;
     }

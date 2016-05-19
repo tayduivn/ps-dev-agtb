@@ -73,6 +73,8 @@ $mod_strings = array(
     'LBL_CALDAV_DEFAULT_INTERVAL_DESC' => 'Set the default initial sync setting (this will determine how far ' .
         'back the initial sync will go). After the initial sync, all new or updated events will sync between Sugar ' .
         'and external calendars, regardless of the event’s date or the options selected below.',
+    'LBL_CALDAV_NO_MODULES_ACCESS' => 'You don\'t have access to any of modules that can be synchronized with '.
+        'external calendar application.',
 
     'LBL_SYNC_SAVE_COUNTER' => 'Save event or module counter',
     'LBL_SYNC_JOB_COUNTER' => 'Counts of ending jobs',
