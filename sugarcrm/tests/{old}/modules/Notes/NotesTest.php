@@ -49,7 +49,13 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id =\''.$contact_id.'\'');
     }
 
-    public function testSave_EmailAttachmentFileFound_FileIsSizeSaved()
+    public function testSave_FileSizeDefaultsToZero()
+    {
+        $note = SugarTestNoteUtilities::createNote();
+        $this->assertSame(0, $note->file_size);
+    }
+
+    public function testSave_EmailAttachmentFileFound_FileSizeIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
 
@@ -64,7 +70,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($filesize, $note->file_size);
     }
 
-    public function testSave_EmailAttachmentFileFoundAtUploadId_FileIsSizeSaved()
+    public function testSave_EmailAttachmentFileFoundAtUploadId_FileSizeIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
         $note->upload_id = create_guid();
@@ -80,7 +86,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($filesize, $note->file_size);
     }
 
-    public function testSave_EmailAttachmentFileUploaded_FileIsSizeSaved()
+    public function testSave_EmailAttachmentFileUploaded_FileSizeIsSaved()
     {
         $filename = create_guid();
         $file = "upload://{$filename}";
@@ -115,16 +121,17 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame(0, $note->file_size);
     }
 
-    public function testSave_NotAnEmailAttachment_FileSizeIsZero()
+    public function testSave_NotAnEmailAttachmentButFileFound_FileSizeIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
 
         $file = "upload://{$note->id}";
         file_put_contents($file, $note->id);
+        $filesize = filesize($file);
 
         $note->save(false);
 
-        $this->assertNull($note->file_size);
+        $this->assertSame($filesize, $note->file_size);
     }
 
     public function testMarkDeleted()

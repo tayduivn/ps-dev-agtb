@@ -58,6 +58,7 @@ $dictionary['Note'] = array(
             'type' => 'int',
             'comment' => 'Attachment File Size',
             'importable' => false,
+            'default' => 0,
         ),
   'file_url'=>
   array(

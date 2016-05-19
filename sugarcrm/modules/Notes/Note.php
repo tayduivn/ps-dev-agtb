@@ -67,22 +67,20 @@ class Note extends SugarBean
      */
     public function save($check_notify = false)
     {
-        if (!empty($this->email_id)) {
-            $file = $this->getUploadId();
-            $filePath = '';
+        $file = $this->getUploadId();
+        $filePath = '';
 
-            if (empty($file)) {
-                // If a file has been uploaded but the note does not yet have an ID, then the upload has not yet been
-                // confirmed. The file can be found at the temporary location.
-                if ($this->file instanceof UploadFile) {
-                    $filePath = $this->file->get_temp_file_location();
-                }
-            } else {
-                $filePath = "upload://{$file}";
+        if (empty($file)) {
+            // If a file has been uploaded but the note does not yet have an ID, then the upload has not yet been
+            // confirmed. The file can be found at the temporary location.
+            if ($this->file instanceof UploadFile) {
+                $filePath = $this->file->get_temp_file_location();
             }
-
-            $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;
+        } else {
+            $filePath = "upload://{$file}";
         }
+
+        $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;
 
         return parent::save($check_notify);
     }
