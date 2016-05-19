@@ -496,7 +496,10 @@
              * @param {Array} events Events for the field
              */
             delegateEvents: function(events) {
-                events = events || this.events || (this.def ? this.def.events : null);
+                // FIXME SC-5676: The metadata events should typically be extended
+                // or mixed-in to the events, not OR'ed with `this.events`. SC-5676
+                // should address refactoring this method.
+                events = events || _.result(this, 'events') || (this.def ? this.def.events : null);
                 if (!events) {
                     return;
                 }
