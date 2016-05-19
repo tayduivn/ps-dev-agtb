@@ -1912,10 +1912,13 @@ EOQ;
         if ($fieldDef['type'] == 'int')
             $fieldDef['len'] = '4';
 
+        if ($fieldDef['type'] == 'bit') {
+            $fieldDef['len'] = '1';
+        }
+
         if(empty($fieldDef['len']))
         {
             switch($fieldDef['type']) {
-                case 'bit'      :
                 case 'bool'     : $fieldDef['len'] = '1'; break;
                 case 'smallint' : $fieldDef['len'] = '2'; break;
                 case 'float'    : $fieldDef['len'] = '8'; break;
