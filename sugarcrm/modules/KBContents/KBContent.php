@@ -277,6 +277,13 @@ class KBContent extends SugarBean {
             }
         }
 
+        // automatically set ApprovedBy for new record with Approved status
+        if ($this->new_with_id && $this->status === self::ST_APPROVED) {
+            $this->load_relationship('kbsapprovers_kbcontents');
+            $user = $GLOBALS['current_user'];
+            $this->kbsapprover_id = $user->id;
+        }
+
         $this->checkActiveRev();
 
         $beanId = parent::save($check_notify);
