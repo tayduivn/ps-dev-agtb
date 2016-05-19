@@ -17,42 +17,95 @@ var gutil = require('gulp-util');
 var karma = require('karma').server;
 var os = require('os');
 
+function splitByCommas(val) {
+    return val.split(',');
+}
+
 gulp.task('karma', function(done) {
+
     // get command-line arguments (only relevant for karma tests)
     commander
         .option('-d, --dev', 'Set Karma options for debugging')
-        .option('--path <path>', 'Set code coverage path (implies --coverage)')
+        .option('--coverage', 'Enable code coverage')
+        .option('--ci', 'Enable CI specific options')
+        .option('--path <path>', 'Set base output path')
         .option('--browsers <list>',
-                'Comma-separated list of browsers to run tests with',
-                function(val) { return val.split(','); })
+            'Comma-separated list of browsers to run tests with',
+            splitByCommas
+        )
+        .option('--sauce', 'Run IE 11 tests on SauceLabs. Not compatible with --dev option')
         .parse(process.argv);
 
-    var coverageRoot = os.tmpdir();
-    if (commander.path) {
-        commander.coverage = true;
-        coverageRoot = commander.path;
-    }
-
-    // retrieve test data
+    // set up default Karma options
+    eval('var baseFiles = ' + fs.readFileSync('grunt/assets/base-files.js', 'utf8'));
+    eval('var defaultTests = ' + fs.readFileSync('grunt/assets/default-tests.js', 'utf8'));
     var karmaAssets = _.flatten([
-        eval(fs.readFileSync('grunt/assets/base-files.js', 'utf8')),
-        eval(fs.readFileSync('grunt/assets/default-tests.js', 'utf8'))
+        baseFiles,
+        defaultTests
     ], true);
 
-    // set up Karma
     var karmaOptions = {
         files: karmaAssets,
-        autoWatch: false,
-        browsers: commander.browsers || ['PhantomJS'],
         configFile: __dirname + '/grunt/karma.conf.js',
+        browsers: ['PhantomJS'],
+        autoWatch: false,
         singleRun: true,
-        reporters: ['dots']
+        reporters: ['dots'],
     };
 
+    var path = commander.path || os.tmpdir();
+    path += '/karma';
+
     if (commander.dev) {
-        karmaOptions.browsers = commander.browsers || ['Chrome'];
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;
+        karmaOptions.browsers = ['Chrome'];
+    } else if (commander.sauce) {
+        // --dev isn't supported for --sauce
+        karmaOptions.reporters.push('saucelabs');
+        karmaOptions.browsers = ['sl_ie'];
+
+        // sauce is slower than local runs...
+        karmaOptions.reportSlowerThan = 2000;
+    }
+
+    if (commander.browsers) {
+        karmaOptions.browsers = commander.browsers;
+    }
+
+    if (commander.coverage) {
+
+        eval('karmaOptions.preprocessors = ' + fs.readFileSync('grunt/assets/default-pre-processors.js', 'utf-8'));
+        karmaOptions.reporters.push('coverage');
+
+        karmaOptions.coverageReporter = {
+            reporters: [
+                {
+                    type: 'cobertura',
+                    dir: path + '/coverage-xml',
+                    file: 'cobertura-coverage.xml',
+                    subdir: function() {
+                        return '';
+                    }
+                },
+                {
+                    type: 'html',
+                    dir: path + '/coverage-html'
+                }
+            ]
+        };
+
+        process.stdout.write('Coverage reports will be generated to: ' + path + '\n');
+    }
+
+    if (commander.ci) {
+        karmaOptions.reporters.push('junit');
+
+        karmaOptions.junitReporter = {
+            outputDir: path,
+            outputFile: '/test-results.xml',
+            useBrowserName: false
+        };
     }
 
     return karma.start(karmaOptions, function(exitStatus) {
