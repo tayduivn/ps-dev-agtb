@@ -17,37 +17,44 @@ var gutil = require('gulp-util');
 var karma = require('karma').server;
 var os = require('os');
 
+function splitByCommas(val) {
+    return val.split(',');
+}
+
 gulp.task('karma', function(done) {
+
     // get command-line arguments (only relevant for karma tests)
     commander
         .option('-d, --dev', 'Set Karma options for debugging')
-        .option('--path <path>', 'Set code coverage path (implies --coverage)')
+        .option('--coverage', 'Enable code coverage')
+        .option('--ci', 'Enable CI specific options')
+        .option('--path <path>', 'Set base output path')
         .option('--browsers <list>',
-                'Comma-separated list of browsers to run tests with',
-                function(val) { return val.split(','); })
+            'Comma-separated list of browsers to run tests with',
+            splitByCommas
+        )
+        .option('--sauce', 'Run IE 11 tests on SauceLabs. Not compatible with --dev option')
         .parse(process.argv);
 
-    var coverageRoot = os.tmpdir();
-    if (commander.path) {
-        commander.coverage = true;
-        coverageRoot = commander.path;
-    }
-
-    // retrieve test data
+    // set up default Karma options
+    eval('var baseFiles = ' + fs.readFileSync('grunt/assets/base-files.js', 'utf8'));
+    eval('var defaultTests = ' + fs.readFileSync('grunt/assets/default-tests.js', 'utf8'));
     var karmaAssets = _.flatten([
-        eval(fs.readFileSync('grunt/assets/base-files.js', 'utf8')),
-        eval(fs.readFileSync('grunt/assets/default-tests.js', 'utf8'))
+        baseFiles,
+        defaultTests
     ], true);
 
-    // set up Karma
     var karmaOptions = {
         files: karmaAssets,
-        autoWatch: false,
-        browsers: commander.browsers || ['PhantomJS'],
         configFile: __dirname + '/grunt/karma.conf.js',
+        browsers: ['PhantomJS'],
+        autoWatch: false,
         singleRun: true,
-        reporters: ['dots']
+        reporters: ['dots'],
     };
+
+    var path = commander.path || os.tmpdir();
+    path += '/karma';
 
     if (commander.dev) {
         karmaOptions.autoWatch = true;
