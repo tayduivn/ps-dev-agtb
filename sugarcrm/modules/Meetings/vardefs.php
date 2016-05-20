@@ -668,6 +668,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'studio' => false,
             'processes' => false,
             'visible' => false,
+            'reportable' => false,
         ),
 	'recurring_source' =>
 	array(
