@@ -216,8 +216,13 @@ class TeamSetLink extends Link2 {
                     $updatesArr[] .= "team_set_selected_id = " . $GLOBALS['db']->quoted($this->focus->team_set_selected_id);
                 }
                 //END SUGARCRM flav=ent ONLY
-                $update_query = implode(", ", $updatesArr);
-                $GLOBALS['db']->query("UPDATE {$this->focus->table_name} SET $update_query WHERE id = '{$this->focus->id}'");
+                $updateQuery = sprintf(
+                    'UPDATE %s SET %s WHERE id = %s',
+                    $this->focus->table_name,
+                    implode(", ", $updatesArr),
+                    $GLOBALS['db']->quoted($this->focus->id)
+                );
+                $GLOBALS['db']->query($updateQuery);
             }
 
             //keep track of what we put into the database so we can clean things up later
