@@ -51,14 +51,18 @@
 
             {{#eq this.name 'caldav_call_direction'}}
                 <div class="span10"><h4>{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</h4></div>
-                <div class="span11"><hr></div>
+                {{#notEq ../../../context.attributes.section 'user'}}
+                    <div class="span11"><hr></div>
+                {{/notEq}}
             {{/eq}}
 
-            {{#eq this.name 'caldav_interval'}}
-                <div class="span10"><h4>{{str this.label ../../../this.model.module}}</h4></div>
-                <div class="span10"><p>{{str this.description ../../../this.model.module}}</p></div>
-                <div class="span3">{{field ../../../this model=../../../context.attributes.createModel template="edit"}}</div>
-            {{/eq}}
+            {{#notEq ../../context.attributes.section 'user'}}
+                {{#eq ../this.name 'caldav_interval'}}
+                    <div class="span10"><h4>{{str ../this.label ../../../../this.model.module}}</h4></div>
+                    <div class="span10"><p>{{str ../this.description ../../../../this.model.module}}</p></div>
+                    <div class="span3">{{field ../../../../this model=../../../../context.attributes.createModel template="edit"}}</div>
+                {{/eq}}
+            {{/notEq}}
         {{/each}}
     {{/each}}
 {{else}}
