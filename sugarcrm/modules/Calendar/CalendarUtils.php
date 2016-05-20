@@ -589,4 +589,47 @@ class CalendarUtils
         }
         return $invitees;
     }
+
+    /**
+     * Compares invites before and after bean changing and returns invitees who should be invited.
+     *
+     * @param array $inviteesBefore
+     * @param array $inviteesAfter
+     * @return array
+     */
+    public static function compareBeforeAfterInvites($inviteesBefore, $inviteesAfter)
+    {
+        $mergedInvitees = array();
+
+        foreach ($inviteesBefore as $before) {
+            $needInvite = true;
+            foreach ($inviteesAfter as $after) {
+                if ($before[0] == $after[0] && $before[1] == $after[1]) {
+                    if ($before[3] == 'none' || (($before[3] != $after[3]) && ($after[3] != 'none'))) {
+                        $needInvite = false;
+                        break;
+                    }
+                }
+            }
+
+            if ($needInvite) {
+                $mergedInvitees[$before[1]] = $before[0];
+            }
+        }
+
+        foreach ($inviteesAfter as $after) {
+            $needInvite = true;
+            foreach ($inviteesBefore as $before) {
+                if ($before[0] == $after[0] && $before[1] == $after[1]) {
+                    $needInvite = false;
+                    break;
+                }
+            }
+            if ($needInvite) {
+                $mergedInvitees[$after[1]] = $after[0];
+            }
+        }
+
+        return $mergedInvitees;
+    }
 }
