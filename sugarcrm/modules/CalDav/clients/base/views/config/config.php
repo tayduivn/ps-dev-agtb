@@ -17,6 +17,12 @@ $viewdefs[$module_name]['base']['view']['config'] = array(
 //            'columns' => 2,
             'fields' => array(
                 array(
+                    'name' => 'caldav_enable_sync',
+                    'label' => 'LBL_CALDAV_ENABLE_SYNC',
+                    'description' => 'LBL_CALDAV_ENABLE_SYNC_DESC',
+                    'type' => 'bool',
+                ),
+                array(
                     'name' => 'caldav_module',
                     'label' => 'LBL_CALDAV_DEFAULT_MODULE',
                     'description' => 'LBL_CALDAV_DEFAULT_MODULE_DESC',

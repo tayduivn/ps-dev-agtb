@@ -12,6 +12,7 @@
 
 
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 
 /**
  * Add calls and meetings to events
@@ -60,7 +61,9 @@ class SugarUpgradeAddMeetingsAndCallsToEvents extends UpgradeScript
             );
 
             foreach ($properties as $property) {
-                if (isset($bean->field_defs[$property]['source']) && ($bean->field_defs['source'] == 'non-db')) {
+                if (isset($bean->field_defs[$property]['source'])
+                    && ($bean->field_defs[$property]['source'] == 'non-db')
+                ) {
                     $verifyResult = false;
                     break;
                 }
@@ -91,17 +94,10 @@ class SugarUpgradeAddMeetingsAndCallsToEvents extends UpgradeScript
 
                 $beanForUpdate->save(false, array('disableCalDavHook' => true));
             }
+        }
 
-            $query = $this->getQuery();
-            $query->from($bean);
-            $query->select(array('id'));
-            $query->where()->isEmpty('repeat_parent_id');
-            $rows = $query->execute();
-            foreach ($rows as $row) {
-                /** @var \Call | \Meeting $beanForExport */
-                $beanForExport = BeanFactory::getBean($module, $row['id']);
-                $beanForExport->getCalDavHook()->export($beanForExport, false, true);
-            }
+        if (!empty($this->getConfigurator()->config['caldav_enable_sync'])) {
+            $this->getJQManager()->CalDavRebuild();
         }
     }
 
@@ -123,5 +119,25 @@ class SugarUpgradeAddMeetingsAndCallsToEvents extends UpgradeScript
     protected function getCalDavAdapterFactory()
     {
         return new CalDavAdapterFactory();
+    }
+
+    /**
+     * Return Configurator.
+     *
+     * @return Configurator
+     */
+    public function getConfigurator()
+    {
+        return new Configurator();
+    }
+
+    /**
+     * Get manager object for handler processing.
+     *
+     * @return JQManager
+     */
+    protected function getJQManager()
+    {
+        return new JQManager();
     }
 }

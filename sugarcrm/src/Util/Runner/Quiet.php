@@ -10,39 +10,39 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Trigger\Repair\Runner;
-
-use Sugarcrm\Sugarcrm\Trigger\Repair\Repair;
+namespace Sugarcrm\Sugarcrm\Util\Runner;
 
 /**
- * Quiet runner rebuilding calls and meetings reminders.
+ * Quiet runner for execution action on list of beans.
  *
  * Class Quiet
- * @package Sugarcrm\Sugarcrm\Trigger\Repair\Runner
+ * @package Sugarcrm\Sugarcrm\Util\Runner
  */
 class Quiet
 {
     /**
-     * @var Repair
+     * @var RunnableInterface
      */
-    protected $repair;
+    protected $runnable;
 
     /**
-     * @param Repair $repair
+     * Quiet runner constructor.
+     *
+     * @param RunnableInterface $runnable
      */
-    public function __construct(Repair $repair)
+    public function __construct(RunnableInterface $runnable)
     {
-        $this->repair = $repair;
+        $this->runnable = $runnable;
     }
 
     /**
-     * Running process of repairing.
+     * Iteration by beans and execution action each bean.
      */
     public function run()
     {
         set_time_limit(0);
-        foreach ($this->repair->getBeans() as $bean) {
-            $this->repair->rebuild($bean);
+        foreach ($this->runnable->getBeans() as $bean) {
+            $this->runnable->execute($bean);
         }
     }
 }

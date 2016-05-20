@@ -72,6 +72,9 @@ class ServerHelper
             $validator->setSupportedClients($calDavSupportedClients['clients']);
         }
 
+        $enablePlugin = new Cal\EnablePlugin(new \Configurator());
+        $server->addPlugin($enablePlugin);
+
         $agentPlugin = new Cal\Agent\Plugin($validator, $client);
         $server->addPlugin($agentPlugin);
 

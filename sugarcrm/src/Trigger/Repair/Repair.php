@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Trigger\Client as TriggerClient;
 use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Reminder\Event as ReminderEvent;
 use Sugarcrm\Sugarcrm\Trigger\Base;
+use Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface;
 
 /**
  * Repair & rebuild task to reset triggers.
@@ -23,7 +24,7 @@ use Sugarcrm\Sugarcrm\Trigger\Base;
  * Class Repair
  * @package Sugarcrm\Sugarcrm\Trigger\Repair
  */
-class Repair extends Base
+class Repair extends Base implements RunnableInterface
 {
     const EVENT_STRING_REMINDER = 'reminder';
 
@@ -90,7 +91,7 @@ class Repair extends Base
      *
      * @param \Call|\Meeting|\SugarBean $bean
      */
-    public function rebuild(\SugarBean $bean)
+    public function execute(\SugarBean $bean)
     {
         if (TriggerClient::getInstance()->isConfigured()) {
             $this->getSchedulerManager()->deleteReminders($bean);

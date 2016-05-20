@@ -23,7 +23,7 @@ class SugarUpgradeRepairRemindersTest extends \UpgradeTestCase
     /** @var \SugarUpgradeRepairReminders */
     protected $reminderUpgrade;
 
-    /** @var \Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var \Sugarcrm\Sugarcrm\Util\Runner\Quiet|\PHPUnit_Framework_MockObject_MockObject */
     protected $runner;
 
     /**
@@ -33,7 +33,7 @@ class SugarUpgradeRepairRemindersTest extends \UpgradeTestCase
     {
         parent::setUp();
 
-        $this->runner = $this->getMockBuilder('Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet')
+        $this->runner = $this->getMockBuilder('Sugarcrm\Sugarcrm\Util\Runner\Quiet')
             ->disableOriginalConstructor()
             ->getMock();
 

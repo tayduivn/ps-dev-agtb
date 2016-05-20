@@ -34,6 +34,9 @@
      */
     _saveConfig: function() {
         var value = {};
+        if (this.context.get('section') !== 'user') {
+            value.caldav_enable_sync = this.model.get('caldav_enable_sync');
+        }
         value.caldav_module = this.model.get('caldav_module');
         value.caldav_interval = this.model.get('caldav_interval');
         if (value.caldav_module == 'Calls') {
@@ -41,9 +44,14 @@
         }
         var section = this.context.get('section');
         var url = app.api.buildURL('caldav', 'config' + (section ? '/' + section : ''), null, null);
+        app.alert.show('savind_caldav_config', {
+            level: 'process',
+            title: app.lang.get('LBL_SAVING')
+        });
         app.api.call('update', url, value,{
             success: _.bind(function() {
                 this.showSavedConfirmation();
+                app.alert.dismiss('savind_caldav_config');
                 // close the drawer
                 app.drawer.close(this.context, this.context.get('model'));
                 //Reload metadata

@@ -13,6 +13,27 @@
 
 {{#if this.isHasCalDavModules}}
     <div></div>
+    {{#notEq context.attributes.section 'user'}}
+        {{#each ../meta.panels}}
+            {{#each fields}}
+                {{#eq this.name 'caldav_enable_sync'}}
+                    <div class="span10">
+                        <h4>
+                            {{str this.label ../../../this.model.module}}&nbsp;
+                            {{field ../../../this model=../../../context.attributes.createModel template="edit"}}
+                        </h4>
+                    </div>
+                    <div class="span10">
+                        <p>{{str this.description ../../../this.model.module}}
+                            <br /><strong>{{str "LBL_WARNING" }}:</strong>
+                            {{str "LBL_CALDAV_ENABLE_SYNC_WARNING" ../../../this.module}}
+                        </p>
+                    </div>
+                {{/eq}}
+            {{/each}}
+        {{/each}}
+    {{/notEq}}
+
     {{#eq context.attributes.section 'user'}}
         <div class="span10"><h4>{{str "LBL_CALDAV_SETUP_INFO_TITLE" this.module}}</h4></div>
         <div class="span10">{{str "LBL_CALDAV_SETUP_INFO_TITLE_DESC" this.module}}</div>
