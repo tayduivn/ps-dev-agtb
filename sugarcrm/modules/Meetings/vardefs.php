@@ -292,6 +292,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
     'studio' => false,
     'importable' => false,
+    'hideacl' => true,
+    'workflow' => false,
   ),  
   'email_reminder_sent' => array( 
     'name' => 'email_reminder_sent',
@@ -301,6 +303,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'comment' => 'Whether email reminder is already sent',
     'studio' => false,
     'massupdate'=> false,
+    'workflow' => false,
+    'reportable' => false,
+    'hideacl' => true,
    ), 
    'outlook_id' =>
   array (
