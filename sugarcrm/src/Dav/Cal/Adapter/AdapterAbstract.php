@@ -511,6 +511,42 @@ abstract class AdapterAbstract implements AdapterInterface
             var_export($previousData, true)
         );
 
+        if ($action == 'delete') {
+            $sugarChildren = $collection->getSugarChildrenOrder();
+            if ($sugarChildren) {
+                $recurrenceIds = $collection->getAllChildrenRecurrenceIds();
+                foreach ($sugarChildren as $position => $sugarId) {
+                    $recurrenceId = array_shift($recurrenceIds);
+                    $result[] = array(
+                        array(
+                            $action,
+                            $collection->id,
+                            $sugarId,
+                            $recurrenceId->asDb(),
+                            $position,
+                            $importGroupId,
+                        ),
+                        array(),
+                        array(),
+                    );
+                }
+            } else {
+                $result[] =  array(
+                    array(
+                        $action,
+                        $collection->id,
+                        null,
+                        null,
+                        null,
+                        $importGroupId,
+                    ),
+                    array(),
+                    array(),
+                );
+            }
+            return $result;
+        }
+
         $diffStructure = $collection->getDiffStructure($previousData);
         $parentRecurrenceId = $collection->getParent()->getStartDate();
         $parentAction = null;
@@ -522,7 +558,7 @@ abstract class AdapterAbstract implements AdapterInterface
         if ($parentRecurrenceId && isset($diffStructure['children'][$parentRecurrenceId->asDb()])) {
             $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
         }
-        
+
 
         $changedRRule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
 
@@ -643,41 +679,6 @@ abstract class AdapterAbstract implements AdapterInterface
                     ),
                     $childChangeFields,
                     $childChangeInvitees,
-                );
-            }
-        }
-
-        if ($action == 'delete') {
-            $sugarChildren = $collection->getSugarChildrenOrder();
-            if ($sugarChildren) {
-                $recurrenceIds = $collection->getAllChildrenRecurrenceIds();
-                foreach ($sugarChildren as $position => $sugarId) {
-                    $recurrenceId = array_shift($recurrenceIds);
-                    $result[] = array(
-                        array(
-                            $action,
-                            $collection->id,
-                            $sugarId,
-                            $recurrenceId->asDb(),
-                            $position,
-                            $importGroupId,
-                        ),
-                        array(),
-                        array(),
-                    );
-                }
-            } else {
-                $result[] =  array(
-                    array(
-                        $action,
-                        $collection->id,
-                        null,
-                        null,
-                        null,
-                        $importGroupId,
-                    ),
-                    array(),
-                    array(),
                 );
             }
         }
@@ -952,7 +953,7 @@ abstract class AdapterAbstract implements AdapterInterface
         $repeatRootId = $this->getCalendarEvents()->isEventRecurring($bean) ? $bean->repeat_root_id : null;
         if (!$exportData) {
             $exportData = array(
-                array('update', $bean->module_name, $bean->id, $repeatRootId, null),
+                array('update', $bean->module_name, $bean->id, $repeatRootId, null, $bean->created_by),
                 array(),
                 array(),
             );
