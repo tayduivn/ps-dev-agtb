@@ -118,6 +118,8 @@ class ReportsExportApi extends SugarApi {
             $reporter = new Report(html_entity_decode($report->content), '', '');
             $reporter->layout_manager->setAttribute("no_sort",1);
             $reporter->fromApi = true;
+            $reporter->saved_report_id = $report->id;
+            $reporter->is_saved_report = true;
             //Translate pdf to correct language
             $mod_strings = return_module_language($current_language, 'Reports');
 
