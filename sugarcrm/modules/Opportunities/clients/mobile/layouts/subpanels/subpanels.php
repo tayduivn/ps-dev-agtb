@@ -78,5 +78,12 @@ $viewdefs['Opportunities']['mobile']['layout']['subpanels'] = array(
                 'link' => 'documents',
             ),
         ),
+        array (
+            'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array (
+                'link' => 'products',
+            ),
+        ),
     ),
 );
