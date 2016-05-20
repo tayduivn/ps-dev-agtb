@@ -64,7 +64,7 @@ class PhpSerializedValidator extends ConstraintValidator
         }
 
         // detect any objects
-        preg_match('/[oc]:\d+:/i', $value, $matches);
+        preg_match('/[oc]:[^:]*\d+:/i', $value, $matches);
         if (count($matches)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('%msg%', 'object(s) not allowed')
