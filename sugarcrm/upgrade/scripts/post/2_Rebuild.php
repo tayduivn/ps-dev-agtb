@@ -61,13 +61,12 @@ class SugarUpgradeRebuild extends UpgradeScript
         unset ($dictionary);
         include ("modules/TableDictionary.php");
         foreach ($dictionary as $meta) {
-	        $tablename = $meta['table'];
+            if (empty($meta['table']) || isset($repairedTables[$meta['table']])) {
+                continue;
+            }
 
-            if (empty($tablename) || isset($repairedTables[$tablename])) {
-	           continue;
-	        }
-
-	        $fielddefs = $meta['fields'];
+            $tablename = $meta['table'];
+            $fielddefs = $meta['fields'];
 	        $indices = $meta['indices'];
 	        $sql = $this->db->repairTableParams($tablename, $fielddefs, $indices, true);
 	        if(!empty($sql)) {

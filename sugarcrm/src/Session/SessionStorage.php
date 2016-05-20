@@ -184,7 +184,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                     } else {
                         $klass = get_class($sessionObject);
                     }
-                    $logger->alert('$_SESSION changed from TrackableArray object to ' . $klass);
+                    $logger->debug('$_SESSION changed from TrackableArray object to ' . $klass);
                 }
                 session_write_close();
             });

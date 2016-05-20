@@ -436,10 +436,15 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckUserAccessWithoutTeamAccess()
     {
-        $user = UserHelper::createAnonymousUser();
-        $account = AccountHelper::createAccount();
+        global $current_user;
+        $owner = UserHelper::createAnonymousUser();
 
-        $this->assertFalse($account->checkUserAccess($user));
+        $account = AccountHelper::createAccount(
+            null,
+            array('team_id' => $owner->id,'team_set_id' => $owner->id,)
+        );
+        $current_user = UserHelper::createAnonymousUser();
+        $this->assertFalse($account->checkUserAccess($current_user));
     }
 
     /**

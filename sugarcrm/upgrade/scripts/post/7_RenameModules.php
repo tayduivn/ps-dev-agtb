@@ -81,6 +81,7 @@ class SugarUpgradeRenameModules extends UpgradeScript
                 $shouldUpdatePlural = false;
                 if (
                     empty($app_list_strings['moduleList'][$moduleId])
+                    && isset($default['moduleListSingular'][$moduleId])
                     && $strings['moduleList'][$moduleId] != $default['moduleList'][$moduleId]
                 ) {
                     $shouldUpdatePlural = true;

@@ -63,8 +63,7 @@ gulp.task('karma', function(done) {
     });
 });
 
-gulp.task('check-license', function() {
-
+gulp.task('check-license', function(done) {
     var options = {
         excludedExtensions: [
             'json',
@@ -156,14 +155,16 @@ gulp.task('check-license', function() {
 
     var command = 'pcregrep ' + cmdOptions.join(' ') + '| grep -v -F "$( printf \'' + excludedFiles + '\' )"';
 
-    //Runs the command.
+    // Runs the command.
     exec(command, {maxBuffer: 2000 * 1024}, function(error, stdout, stderr) {
         if (stderr.length != 0) {
-            gutil.log(gutil.colors.red('Exec error:'), stderr);
+            done(stderr);
         } else if (stdout.length != 0) {
-            gutil.log(gutil.colors.red('Invalid license headers found in:'), stdout);
+            // Invalid license headers found
+            done(stdout);
         } else {
-            gutil.log('All files have the exact license specified in `sugarcrm/LICENSE`');
+            // All files have the exact license specified in `sugarcrm/LICENSE`
+            done();
         }
     });
 });
