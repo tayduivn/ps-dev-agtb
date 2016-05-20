@@ -207,7 +207,10 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'reportable' => false,
                     'massupdate' => false,
                     'default'=> -1,
-                    'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'
+                    'comment' => 'Specifies when a email reminder alert should be issued;'
+                        . ' -1 means no alert; otherwise the number of seconds prior to the start',
+                    'hideacl' => true,
+                    'workflow' => false,
                 ),
             'email_reminder_sent' => array(
                     'name' => 'email_reminder_sent',
@@ -217,6 +220,9 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
                     'comment' => 'Whether email reminder is already sent',
                     'studio' => false,
                     'massupdate'=> false,
+                    'workflow' => false,
+                    'reportable' => false,
+                    'hideacl' => true,
                 ),
 
 			'outlook_id' =>
