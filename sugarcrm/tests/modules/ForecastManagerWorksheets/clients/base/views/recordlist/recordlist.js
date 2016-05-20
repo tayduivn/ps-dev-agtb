@@ -351,6 +351,23 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             expect(saveStub).toHaveBeenCalled();
         });
 
+        it('should have foo for an id', function() {
+            m.set('id', 'foo');
+            view.saveWorksheet();
+            expect(saveStub).toHaveBeenCalled();
+            expect(m.get('id')).toEqual('foo');
+
+        });
+
+        it('should have null for an id', function() {
+            m.set('id', 'foo');
+            m.set('fakeId', true);
+            view.saveWorksheet();
+            expect(saveStub).toHaveBeenCalled();
+            expect(m.get('id')).toEqual(null);
+
+        });
+
         describe("Forecasts worksheet save dirty models with correct timeperiod after timeperiod changes", function() {
             var m, saveStub, safeFetchStub;
             beforeEach(function() {
@@ -418,9 +435,26 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
         it("selectedUser should contain default values since no model was found", function() {
             view.collectionSuccess(models);
             _.each(view.defaultValues, function(value, key) {
+                //need to undo the fakeId logic
+                if (sortedModels[0].fakeId && _.isEqual(key, 'id')) {
+                    sortedModels[0].id = '';
+                }
                 expect(sortedModels[0][key]).toEqual(value);
             });
-        })
+        });
+
+        it('fakeId should be set', function() {
+            view.collectionSuccess(models);
+            expect(sortedModels[1].fakeId).toEqual(true);
+        });
+
+        it('fakeId should not be set', function() {
+            models[0].id = 'foo';
+            view.collectionSuccess(models);
+            models[0].id = null;
+            expect(sortedModels[1].fakeId).toEqual(undefined);
+
+        });
 
         describe("should sort", function() {
             describe("desc correctly", function() {

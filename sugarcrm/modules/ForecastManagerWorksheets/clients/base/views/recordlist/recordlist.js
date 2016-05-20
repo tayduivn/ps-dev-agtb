@@ -839,6 +839,10 @@
                 row.draft = (this.selectedUser.id == app.user.id) ? 1 : 0;
                 row.name = user.name;
             }
+            if (_.isEmpty(row.id)) {
+                row.id = app.utils.generateUUID();
+                row.fakeId = true;
+            }
             records.push(row);
         }, this);
 
@@ -872,7 +876,6 @@
         }
 
         this.collection.isEmpty = (_.isEmpty(data));
-
         this.collection.reset(records);
     },
 
@@ -1048,8 +1051,9 @@
      * @fires forecasts:worksheet:saved
      */
     _worksheetSaveHelper: function(saveObj, ctx) {
+        var id = (saveObj.model.get('fakeId')) ? null : saveObj.model.get('id');
         saveObj.model.set({
-            id: saveObj.model.get('id') || null,        // we have to set the id back to null if ID is not set
+            id: id,        // we have to set the id back to null if ID is not set
                                                         // so when the xhr runs it knows it's a new model and will use
                                                         // POST vs PUT
             current_user: saveObj.userId || this.selectedUser.id,
