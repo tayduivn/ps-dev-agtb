@@ -44,16 +44,6 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                     'readonly' => true,
                 ),
                 array(
-                    'name' => 'opens',
-                    'label' => 'LBL_OPENS',
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'clicks',
-                    'label' => 'LBL_CLICKS',
-                    'readonly' => true,
-                ),
-                array(
                     'name' => 'assigned_user_name',
                     'target_record_key' => 'assigned_user_id',
                     'target_module' => 'Employees',

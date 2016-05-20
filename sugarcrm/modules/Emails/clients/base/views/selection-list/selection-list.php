@@ -39,14 +39,6 @@ $viewdefs['Emails']['base']['view']['selection-list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'opens',
-                    'label' => 'LBL_OPENS',
-                ),
-                array(
-                    'name' => 'clicks',
-                    'label' => 'LBL_CLICKS',
-                ),
-                array(
                     'name' => 'assigned_user_name',
                     'target_record_key' => 'assigned_user_id',
                     'target_module' => 'Employees',
