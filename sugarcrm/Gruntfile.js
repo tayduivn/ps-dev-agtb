@@ -51,7 +51,9 @@ module.exports = function(grunt) {
             },
             ci: {
                 junitReporter: {
-                    outputFile: path + 'karma/test-results.xml'
+                    outputDir: path,
+                    outputFile: '/karma/test-results.xml',
+                    useBrowserName: false
                 },
                 reporters: [
                     'dots',
@@ -66,7 +68,9 @@ module.exports = function(grunt) {
                     ]
                 },
                 junitReporter: {
-                    outputFile: path + 'karma/test-results.xml'
+                    outputDir: path,
+                    outputFile: '/karma/test-results.xml',
+                    useBrowserName: false
                 },
                 reporters: [
                     'coverage',
