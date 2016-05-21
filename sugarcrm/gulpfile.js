@@ -50,9 +50,60 @@ gulp.task('karma', function(done) {
     };
 
     if (commander.dev) {
-        karmaOptions.browsers = commander.browsers || ['Chrome'];
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;
+        karmaOptions.browsers = ['Chrome'];
+    } else if (commander.sauce) {
+        // --dev isn't supported for --sauce
+        karmaOptions.reporters.push('saucelabs');
+        karmaOptions.browsers = ['sl_ie'];
+
+        // sauce is slower than local runs...
+        karmaOptions.reportSlowerThan = 2000;
+    }
+
+    if (commander.browsers) {
+        karmaOptions.browsers = commander.browsers;
+    }
+
+    if (commander.ciCoverage) {
+        commander.ci = true;
+        commander.coverage = true;
+    }
+
+    if (commander.coverage) {
+
+        eval('karmaOptions.preprocessors = ' + fs.readFileSync('grunt/assets/default-pre-processors.js', 'utf-8'));
+        karmaOptions.reporters.push('coverage');
+
+        karmaOptions.coverageReporter = {
+            reporters: [
+                {
+                    type: 'cobertura',
+                    dir: path + '/coverage-xml',
+                    file: 'cobertura-coverage.xml',
+                    subdir: function() {
+                        return '';
+                    }
+                },
+                {
+                    type: 'html',
+                    dir: path + '/coverage-html'
+                }
+            ]
+        };
+
+        process.stdout.write('Coverage reports will be generated to: ' + path + '\n');
+    }
+
+    if (commander.ci) {
+        karmaOptions.reporters.push('junit');
+
+        karmaOptions.junitReporter = {
+            outputDir: path,
+            outputFile: '/test-results.xml',
+            useBrowserName: false
+        };
     }
 
     return karma.start(karmaOptions, function(exitStatus) {
