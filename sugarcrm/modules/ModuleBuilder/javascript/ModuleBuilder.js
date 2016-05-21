@@ -1265,9 +1265,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		 * 
 		 * @return {Void}
 		 */
-		resendRequest: function() {
-			var method = ModuleBuilder.requestElements.method || Connect.method,
-				url    = ModuleBuilder.requestElements.url || Connect.url;
+        resendRequest: function() {
+            var method = ModuleBuilder.requestElements.method || Connect.method,
+                url = ModuleBuilder.requestElements.url || Connect.url,
+                postFields = {};
 			
 			// Reset the isResend flag so that if this request fails it can fail
 			// legitimately
@@ -1278,12 +1279,18 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			if (ModuleBuilder.requestElements.fields) {
 				Connect.setForm(ModuleBuilder.requestElements.fields);
 			}
-			
-			Connect.asyncRequest(
-			    method, 
-			    url, 
-			    ModuleBuilder.requestElements.callbacks
-			);
+
+            // Attach CSRF token for POST
+            if (method == "POST") {
+                postFields['csrf_token'] = SUGAR.csrf.form_token;
+            }
+
+            Connect.asyncRequest(
+                method,
+                url,
+                ModuleBuilder.requestElements.callbacks,
+                SUGAR.util.paramsToUrl(postFields)
+            );
 		},
 		/**
 		 * Makes sure the session cookie is up to date. This supports being in 

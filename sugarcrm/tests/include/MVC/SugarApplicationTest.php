@@ -390,4 +390,126 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    /**
+     * @dataProvider providerTestCreateLoginVars
+     */
+    public function testCreateLoginVars(array $request, $url, SugarController $controller = null)
+    {
+        $app = $this->getMockBuilder('SugarApplication')
+            ->disableOriginalConstructor()
+            ->setMethods(array('getRequestVars'))
+            ->getMock();
+
+        $app->expects($this->once())
+            ->method('getRequestVars')
+            ->will($this->returnValue($request));
+
+        if ($controller) {
+            SugarTestReflection::setProtectedValue($app, 'controller', $controller);
+        }
+
+        $this->assertSame($url, $app->createLoginVars());
+    }
+
+    public function providerTestCreateLoginVars()
+    {
+        return array(
+            array(
+                array(),
+                '',
+            ),
+            array(
+                array(
+                    'csrf_token' => '123456',
+                ),
+                '',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                ),
+                '&login_foo=bar',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'more' => 'beer',
+                ),
+                '&login_foo=bar&login_more=beer',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'mobile' => '1',
+                    'more' => 'beer',
+                ),
+                '&login_foo=bar&login_mobile=1&login_more=beer&mobile=1',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'no_saml' => '1',
+                    'more' => 'beer',
+                ),
+                '&login_foo=bar&login_no_saml=1&login_more=beer&no_saml=1',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'csrf_token' => '123456',
+                    'more' => 'beer',
+                ),
+                '&login_foo=bar&login_more=beer',
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'csrf_token' => '123456',
+                    'more' => 'beer',
+                ),
+                '&login_foo=bar&login_more=beer',
+                $this->createControllerMock(),
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'csrf_token' => '123456',
+                    'more' => 'beer',
+                ),
+                '&login_foo=override&login_more=beer',
+                $this->createControllerMock(array(
+                    'foo' => 'override',
+                )),
+            ),
+            array(
+                array(
+                    'foo' => 'bar',
+                    'csrf_token' => '123456',
+                    'mobile' => '1',
+                    'more' => 'beer',
+                    'no_saml' => '1',
+                ),
+                '&login_foo=override&login_mobile=1&login_more=beer&login_no_saml=false&mobile=1&no_saml=1',
+                $this->createControllerMock(array(
+                    'foo' => 'override',
+                    'no_saml' => 'false',
+                )),
+            ),
+        );
+    }
+
+    /**
+     * Create SugarController mock with given public property values
+     * @param array $properties Key/value pairs to set
+     * @return SugarController
+     */
+    protected function createControllerMock(array $properties = array())
+    {
+        $controller = $this->getMock('SugarController');
+        foreach ($properties as $property => $value) {
+            $controller->$property = $value;
+        }
+        return $controller;
+    }
 }
