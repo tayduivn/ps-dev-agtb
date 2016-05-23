@@ -412,7 +412,7 @@ class KBContent extends SugarBean {
             $this->active_rev = 1;
             $this->expirePublished();
             if (empty($this->active_date)) {
-                $this->active_date = $this->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+                $this->active_date = $GLOBALS['timedate']->nowDbDate();
             }
         } else {
             $activeRevisionStatus = $this->getActiveRevisionStatus();
@@ -422,7 +422,7 @@ class KBContent extends SugarBean {
                 $this->resetActiveRev();
                 $this->active_rev = 1;
                 if (empty($this->active_date)) {
-                    $this->active_date = $this->db->convert($GLOBALS['timedate']->nowDbDate(), 'datetime');
+                    $this->active_date = $GLOBALS['timedate']->nowDbDate();
                 }
             }
         }
@@ -488,7 +488,7 @@ class KBContent extends SugarBean {
      */
     protected function expirePublished()
     {
-        $expDate = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
+        $expDate = $GLOBALS['timedate']->nowDb();
         $statuses = static::getPublishedStatuses();
 
         $query = new SugarQuery();
