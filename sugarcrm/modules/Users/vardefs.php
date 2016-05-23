@@ -1014,6 +1014,24 @@ $dictionary['User'] = array(
             )
         ) ,
         array(
+            'name' => 'idx_user_first_last',
+            'type' => 'index',
+                'fields' => array(
+                'first_name',
+                'last_name',
+                'deleted'
+                )
+            ) ,
+            array(
+                'name' => 'idx_user_last_first',
+                'type' => 'index',
+                'fields' => array(
+                'last_name',
+                'first_name',
+                'deleted'
+                )
+            ) ,
+            array(
 			'name' => 'idx_users_reports_to_id',
 			'type' => 'index',
 			'fields' => array('reports_to_id', 'id')

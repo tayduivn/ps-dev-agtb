@@ -33,10 +33,12 @@ class FindEmailFromBeanIdsTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->whereArr['first_name'] = 'testfn';
 		$this->whereArr['last_name'] = 'testln';
 		$this->whereArr['email_address'] = 'test@example.com';
+		// @codingStandardsIgnoreStart
 		$this->expectedQuery = <<<EOQ
-SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module FROM users JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON (eabr.email_address_id = ea.id)  WHERE (users.deleted = 0 AND eabr.primary_address = 1 AND users.id in ('8744c7d9-9e4b-2338-cb76-4ab0a3d0a651','8749a110-1d85-4562-fa23-4ab0a3c65e12','874c1242-4645-898d-238a-4ab0a3f7e7c3')) AND (first_name LIKE 'testfn%' OR last_name LIKE 'testln%' OR email_address LIKE 'test@example.com%') AND ea.invalid_email = 0 AND ea.opt_out = 0
+(SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module FROM users JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON (eabr.email_address_id = ea.id)  WHERE (users.deleted = 0 AND eabr.primary_address = 1 AND users.id in ('8744c7d9-9e4b-2338-cb76-4ab0a3d0a651','8749a110-1d85-4562-fa23-4ab0a3c65e12','874c1242-4645-898d-238a-4ab0a3f7e7c3')) AND (first_name LIKE 'testfn%') AND ea.invalid_email = 0 AND ea.opt_out = 0)\n UNION \n(SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module FROM users JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON (eabr.email_address_id = ea.id)  WHERE (users.deleted = 0 AND eabr.primary_address = 1 AND users.id in ('8744c7d9-9e4b-2338-cb76-4ab0a3d0a651','8749a110-1d85-4562-fa23-4ab0a3c65e12','874c1242-4645-898d-238a-4ab0a3f7e7c3')) AND (last_name LIKE 'testln%') AND ea.invalid_email = 0 AND ea.opt_out = 0)\n UNION \n(SELECT users.id, users.first_name, users.last_name, eabr.primary_address, ea.email_address, 'Users' module FROM users JOIN email_addr_bean_rel eabr ON (users.id = eabr.bean_id and eabr.deleted=0) JOIN email_addresses ea ON (eabr.email_address_id = ea.id)  WHERE (users.deleted = 0 AND eabr.primary_address = 1 AND users.id in ('8744c7d9-9e4b-2338-cb76-4ab0a3d0a651','8749a110-1d85-4562-fa23-4ab0a3c65e12','874c1242-4645-898d-238a-4ab0a3f7e7c3')) AND (email_address LIKE 'test@example.com%') AND ea.invalid_email = 0 AND ea.opt_out = 0)
 EOQ;
-	}
+		// @codingStandardsIgnoreEnd
+    }
 	
 	function tearDown()
 	{

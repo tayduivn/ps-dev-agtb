@@ -416,6 +416,18 @@ $vardefs =array(
 ),
 'relationships'=>array(
 ),
+'indices'=>array(
+     array(
+        'name' => 'idx_'.strtolower($module).'_last_first',
+        'type' => 'index',
+        'fields' => array('last_name', 'first_name', 'deleted'),
+     ),
+     array(
+        'name' => 'idx_'.strtolower($module).'_first_last',
+        'type' => 'index',
+        'fields' => array('first_name', 'last_name', 'deleted'),
+     ),
+),
 'duplicate_check' => array(
     'enabled' => true,
     'FilterDuplicateCheck' => array(

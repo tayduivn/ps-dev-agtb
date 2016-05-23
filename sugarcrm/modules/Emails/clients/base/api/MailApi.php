@@ -339,12 +339,12 @@ class MailApi extends ModuleApi
 
         if ($offset !== "end") {
             $emailRecipientsService = $this->getEmailRecipientsService();
-            $totalRecords = $emailRecipientsService->findCount($term, $module);
-            $records = $emailRecipientsService->find($term, $module, $orderBy, $limit, $offset);
-            $trueOffset = $offset + $limit;
-
-            if ($trueOffset < $totalRecords) {
-                $nextOffset = $trueOffset;
+            $records = $emailRecipientsService->find($term, $module, $orderBy, $limit+1, $offset);
+            $totalRecords = count($records);
+            if ($totalRecords > $limit) {
+                // means there are more records in DB than limit specified
+                $nextOffset = $offset + $limit;
+                array_pop($records);
             }
         }
 
