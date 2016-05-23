@@ -77,6 +77,7 @@ $viewdefs['Meetings']['base']['view']['preview'] = array(
                     'related_fields' => array(
                         'repeat_parent_id',
                     ),
+                    'readonly' => true,
                 ),
                 'location',
                 array(
