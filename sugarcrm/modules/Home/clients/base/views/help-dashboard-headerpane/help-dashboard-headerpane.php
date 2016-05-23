@@ -12,6 +12,7 @@
  */
 
 $viewdefs['Home']['base']['view']['help-dashboard-headerpane'] = array(
+    'type' => 'dashboard-headerpane',
     'buttons' => array(
         array(
             'type' => 'actiondropdown',
