@@ -16,7 +16,7 @@ require_once('modules/Configurator/Configurator.php');
 
 /**
  * Class CaldavApiTest
- * @coversDefaultClass \CalDavApi
+ * @covers CalDavApi
  */
 class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -111,7 +111,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the get admin config
      * @group caldav
-     * @covers \CalDavApi::caldavConfigGet
+     * @covers CalDavApi::configGet
      */
     public function testReadAdminConfig()
     {
@@ -150,7 +150,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the update admin config
      * @group caldav
-     * @covers \CalDavApi::caldavConfigSave
+     * @covers CalDavApi::configSave
      */
     public function testUpdateAdminConfig()
     {
@@ -202,7 +202,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the get user config
      * @group caldav
-     * @covers \CalDavApi::caldavUserConfigGet
+     * @covers CalDavApi::userConfigGet
      */
     public function testReadUserConfig()
     {
@@ -243,7 +243,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * test the update user config
      * @group caldav
-     * @covers \CalDavApi::caldavUserConfigSave
+     * @covers CalDavApi::userConfigSave
      */
     public function testUpdateUserConfig()
     {
@@ -293,7 +293,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
      * Testing is correctly generated list of Supported CalDav Modules.
      *
      * @group caldav
-     * @covers \CalDavApi::getSupportedCalDavModules
+     * @covers CalDavApi::getSupportedCalDavModules
      */
     public function testGetSupportedCalDavModules()
     {
