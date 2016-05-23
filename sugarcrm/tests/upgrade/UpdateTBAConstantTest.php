@@ -74,13 +74,18 @@ class UpdateTBAConstantTest extends UpgradeTestCase
      */
     public function testUpgradeTBAConstant()
     {
+        global $dictionary;
         $db = $this->db;
 
         // insert fake records
-        $db->query(
-            "INSERT INTO acl_roles_actions (id, role_id, action_id, access_override, date_modified, deleted)
-             VALUES ('{$db->quote($this->recId)}', 'somerole', 'someaction', '{$db->quote(self::OLD_CONST)}', '', 0)"
-        );
+        $db->insertParams('acl_roles_actions', $dictionary['acl_roles_actions']['fields'], array(
+            'id' => $this->recId,
+            'role_id' => 'somerole',
+            'action_id' => 'someaction',
+            'access_override' => self::OLD_CONST,
+            'date_modified' => $GLOBALS['timedate']->nowDb(),
+            'deleted' => 0,
+        ));
 
         // check set up
         $this->assertGreaterThanOrEqual(1, $this->getAclRolesActionsIds(self::OLD_CONST));
