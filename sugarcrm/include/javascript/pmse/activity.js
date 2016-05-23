@@ -2550,6 +2550,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                 name: 'act_fields',
                 submit: true,
                 placeholder: translate('LBL_PMSE_FORM_OPTION_SELECT'),
+                change: function() {
+                    combo_business.setValid(true);
+                },
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/rulesets/' + adamUID + '?order_by=name',
                     uid: adamUID,
@@ -2579,7 +2582,15 @@ AdamActivity.prototype.actionFactory = function (type) {
                             if (rules && rules.success) {
                                 combo_business.setOptions(rules.result);
                                 if (data && data.act_fields) {
-                                    combo_business.setValue(data.act_fields || '');
+                                    var isValid = false;
+                                    for (var i = 0; i < rules.result.length; i++) {
+                                        if (rules.result[i].value == data.act_fields) {
+                                            isValid = true;
+                                            break;
+                                        }
+                                    }
+                                    combo_business.setValue(data.act_fields);
+                                    combo_business.setValid(isValid);
                                 }
                             }
                             App.alert.dismiss('upload');
