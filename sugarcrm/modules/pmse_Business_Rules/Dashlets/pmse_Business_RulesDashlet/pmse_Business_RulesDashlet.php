@@ -29,6 +29,15 @@ require_once('include/Dashlets/DashletGeneric.php');
 require_once('modules/pmse_Business_Rules/pmse_Business_Rules.php');
 
 class pmse_Business_RulesDashlet extends DashletGeneric { 
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_Business_RulesDashlet($id, $def = null)
+    {
+        self::__construct($id, $def);
+    }
+
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;

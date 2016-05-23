@@ -20,6 +20,14 @@ require_once('include/workflow/workflow_utils.php');
  */
 class WorkFlowHandler {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function WorkFlowHandler(&$focus, $event)
+    {
+        self::__construct($focus, $event);
+    }
+
     public function __construct(&$focus, $event)
     {
 

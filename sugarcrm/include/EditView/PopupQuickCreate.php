@@ -17,6 +17,14 @@ require_once('include/EditView/SubpanelQuickCreate.php');
  */
 class PopupQuickCreate extends SubpanelQuickCreate{
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function PopupQuickCreate($module, $view = 'QuickCreate')
+    {
+        self::__construct($module, $view);
+    }
+
     public function __construct($module, $view = 'QuickCreate')
     {
 		$this->defaultProcess = false;

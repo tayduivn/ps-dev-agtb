@@ -16,6 +16,14 @@ class SetValueAction extends AbstractAction{
 	protected $expression =  "";
     protected $errorValue = null;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SetValueAction($params)
+    {
+        self::__construct($params);
+    }
+
     public function __construct($params)
     {
         $this->targetField = $params['target'];

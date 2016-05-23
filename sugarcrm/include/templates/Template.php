@@ -15,6 +15,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class Template
 {
+    /**
+     * @deprecated
+     */
+    public function Template()
+    {
+    }
+
  function display()
  { 
  }

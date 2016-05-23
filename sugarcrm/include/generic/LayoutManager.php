@@ -27,6 +27,14 @@ class LayoutManager
 	var $default_widget_name = 'Field';
 	var $DBHelper;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function LayoutManager()
+    {
+        self::__construct();
+    }
+
     public function __construct()
 	{
 		// set a sane default for context
@@ -352,4 +360,3 @@ class LayoutManager
 	}
 
 }
-?>

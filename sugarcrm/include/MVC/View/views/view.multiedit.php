@@ -12,12 +12,26 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once('include/EditView/EditView2.php');
 class ViewMultiedit extends SugarView
 {
  	var $type ='edit';
- 	
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewMultiedit($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
+
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        parent::__construct($bean, $view_object_map, $request);
+    }
+
  	function display(){
 		global $beanList, $beanFiles;
 		if($this->action == 'AjaxFormSave'){

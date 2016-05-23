@@ -16,6 +16,14 @@ require_once('include/MVC/View/SugarView.php');
 class ViewAjax extends SugarView
 {
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewAjax()
+    {
+        self::__construct();
+    }
+
+    /**
      * Constructor
      *
      * @see SugarView::__construct()

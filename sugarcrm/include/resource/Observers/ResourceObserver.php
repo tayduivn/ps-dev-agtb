@@ -21,6 +21,14 @@ class ResourceObserver {
 var $module;
 var $limit;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ResourceObserver($module)
+    {
+        self::__construct($module);
+    }
+
     public function __construct($module)
     {
         $this->module = $module;

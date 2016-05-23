@@ -21,6 +21,15 @@ class TrackerDashlet extends Dashlet {
 	var $tReporter;
 	var $column_widths = array('item_id'=>210,
 	                           'module_name'=>125);
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function TrackerDashlet($id, $def)
+    {
+        self::__construct($id, $def);
+    }
+
     /**
      * Constructor
      *
