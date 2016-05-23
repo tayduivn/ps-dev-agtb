@@ -13,23 +13,22 @@
         /**
          * Get the list of shortcuts that is allowed in this session.
          *
-         * @private
          * @param {View.Layout} layout
          * @returns {Array}
          */
-        var _createShortcutSession = function(layout) {
-            var shortcutList = layout.options.meta.shortcuts || layout.shortcuts;
-            if (!_.isEmpty(shortcutList)) {
-                app.shortcuts.createSession(shortcutList, this);
-            }
+        var getShortcutList = function(layout) {
+            return layout.options.meta.shortcuts || layout.shortcuts;
         };
 
         app.plugins.register('ShortcutSession', ['layout'], {
             /**
              * Create new shortcut session.
              */
-            onAttach: function(layout) {
-                layout.on('init', _.bind(_createShortcutSession, this, layout));
+            onAttach: function() {
+                var shortcutList = getShortcutList(this);
+                if (!_.isEmpty(shortcutList)) {
+                    app.shortcuts.createSession(shortcutList, this);
+                }
             }
         });
     });
