@@ -1,30 +1,34 @@
 describe("BaseFooterLayout", function() {
-    var layout, app, sinonSandbox;
+    var layout;
+    var app;
+    var sandbox;
 
     beforeEach(function() {
-        sinonSandbox = sinon.sandbox.create();
+        sandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'layout', 'footer');
-        SugarTest.loadHandlebarsTemplate('footer', 'layout', 'base');
         SugarTest.testMetadata.set();
         app = SugarTest.app;
         layout = SugarTest.createLayout('base', 'Users', 'footer', {});
     });
 
     afterEach(function() {
-        sinonSandbox.restore();
+        sandbox.restore();
     });
 
-    describe("render", function(){
-        it("should load the logo url and render the template", function(){
-            var templateStub = sinonSandbox.stub(layout, 'template'),
-                placeComponentStub = sinonSandbox.stub(layout, '_placeComponent');
-            sinonSandbox.stub(app.metadata, 'getLogoUrl', function() { return 'my_logo.jpg'; });
-            layout._components.push(new app.view.View({}));
+    describe('render', function() {
+
+        it('should load the logo url when re-rendering the layout', function() {
+
+            layout.$el.html('<span data-metadata="logo">Footer fixture</span>');
+
+            sandbox.stub(app.metadata, 'getLogoUrl', function() {
+                return 'my_logo.jpg';
+            });
+
             layout.render();
-            expect(layout.logoUrl).toEqual('my_logo.jpg');
-            expect(templateStub).toHaveBeenCalled();
-            expect(placeComponentStub).toHaveBeenCalled();
+
+            expect(layout.$('[data-metadata="logo"]').attr('src')).toBe('my_logo.jpg');
         });
     });
 });

@@ -14,35 +14,24 @@
  * @extends View.Layout
  */
 ({
-    events: {
-        'click [data-action=home]': 'home'
-    },
     /**
-     * Places all components within this layout inside btn-toolbar div
-     * @param component
-     * @private
+     * Places all components within this layout inside `btn-toolbar` div.
+     *
+     * @param {View.View|View.Layout} component View or layout component.
+     * @override
+     * @protected
      */
     _placeComponent: function(component) {
-        this.$el.find('.btn-toolbar').append(component.$el);
+        this.$('.btn-toolbar').append(component.el);
     },
 
     /**
-     * @override
-     * @private
+     * @inheritdoc
      */
     _render: function() {
-        this.logoUrl = app.metadata.getLogoUrl();
-        //For a layout we need to
-        this.$el.html(this.template(this));
-        _.each(this._components, function(component) {
-            this._placeComponent(component);
-        }, this);
-        app.view.Layout.prototype._render.call(this);
-    },
-
-    home: function() {
-        app.router.navigate('#Home', {
-            trigger: true
-        });
+        // FiXME SC-5765 the logo should be a separate view, so we can update it based
+        // on the re-render of this layout
+        this.$('[data-metadata="logo"]').attr('src', app.metadata.getLogoUrl());
+        return this._super('_render');
     }
 })
