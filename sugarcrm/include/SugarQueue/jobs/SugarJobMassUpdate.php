@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 require_once('include/MassUpdate.php');
 require_once('include/SugarQueue/SugarJobQueue.php');
@@ -206,7 +207,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
     }
 
     /**
-     *  Update records and mark 
+     *  Update records and mark
      *
      * @param $job SchedulersJob object associated with this job
      * @param $data array of job data
@@ -273,7 +274,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                 // ACL's might not let them modify this bean, but we should still do the rest
                 continue;
             }
-            
+
             if ($action == 'delete') {
                 $bean->mark_deleted($id);
                 continue;
@@ -282,6 +283,10 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
             try {
                 $errors = $helper->populateFromApi($bean, $data, array('massUpdate'=>true));
                 $check_notify = $helper->checkNotify($bean);
+
+                // Before calling save, we need to clear out any existing AWF
+                // triggered start events so they can continue to trigger.
+                Registry\Registry::getInstance()->drop('triggered_starts');
                 $bean->save($check_notify);
             } catch ( SugarApiExceptionNotAuthorized $e ) {
                 // ACL's might not let them modify this bean, but we should still do the rest
@@ -297,7 +302,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
             foreach ($prospectLists as $listId) {
                 if ($action == 'save') {
                     $success = $massupdate->add_prospects_to_prospect_list($module, $listId, $ids);
-                } else {                
+                } else {
                     $success = $massupdate->remove_prospects_from_prospect_list($module, $listId, $ids);
                 }
             }
