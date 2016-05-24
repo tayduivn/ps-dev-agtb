@@ -302,6 +302,19 @@ abstract class AdapterAbstract implements AdapterInterface
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanModuleName, $beanId, $rootBeanId, $recurringParam, $organizerId) = $beanData;
 
+        $parentEvent = $collection->getParent();
+        if (!$rootBeanId && $action == 'override' &&
+            $collection->getRRule() &&
+            $parentEvent && $parentEvent->getStartDate()
+        ) {
+            $parentRecurrenceId = $parentEvent->getStartDate();
+            if (!$collection->getChild($parentRecurrenceId)) {
+                if ($collection->reassign()) {
+                    throw new ExportException('Parent of the event was deleted. Rebuild needed');
+                }
+            }
+        }
+
         $this->logger->debug("CalDav: Running export for $beanModuleName($beanId). Root bean id = $rootBeanId");
 
         if ($action == 'delete' && !$rootBeanId) {
@@ -559,8 +572,30 @@ abstract class AdapterAbstract implements AdapterInterface
             $customizeParent = $diffStructure['children'][$parentRecurrenceId->asDb()];
         }
 
-
         $changedRRule = isset($diffStructure['rrule']) ? $diffStructure['rrule'] : array();
+
+        $currentRRule = $collection->getRRule();
+        $currentUntilDate = $currentRRule ? $currentRRule->getUntil() : null;
+        $needParentOverride = $changedRRule || (isset($parentChangedFields['date_start']) && $currentUntilDate);
+
+        if ($needParentOverride && !$collection->getChild($parentRecurrenceId)) {
+            $this->logger->debug("Parent was deleted for CalDavEventCollection $collection->id. Rebuild needed.");
+
+            $result[] = array(
+                array(
+                    'reassign',
+                    $collection->id,
+                    null,
+                    null,
+                    null,
+                    $importGroupId,
+                ),
+                array(),
+                array(),
+            );
+
+            return $result;
+        }
 
         // we need independent rrule update only when we change event
         if ($changedRRule && $previousData) {
@@ -694,6 +729,10 @@ abstract class AdapterAbstract implements AdapterInterface
         $isChanged = false;
         list($beanData, $changedFields, $invitees) = $data;
         list($action, $beanId, $sugarId, $recurrenceId, $recurrenceIndex, $importGroupId) = $beanData;
+
+        if ($action == 'reassign') {
+            throw new ImportException('Reassign action. Rebuild needed');
+        }
 
         $this->logger->debug("CalDav: Running import for {$bean->module_name}($beanId). Recurrence id = $recurrenceId");
 
@@ -1297,6 +1336,10 @@ abstract class AdapterAbstract implements AdapterInterface
     {
         list($beanData, $changedFields, $invitees) = $importData;
         list($action, $beanId, $sugarId, $recurrenceId, $recurrenceIndex) = $beanData;
+
+        if ($action == 'reassign') {
+            return $calDavBean->reassign();
+        }
 
         if (is_null($recurrenceIndex)) {
             return $bean;
