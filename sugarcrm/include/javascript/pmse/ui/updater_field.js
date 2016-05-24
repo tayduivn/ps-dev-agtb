@@ -1175,8 +1175,10 @@ TeamUpdaterItem.prototype.setSelectedTeams = function (teams) {
 
             if (data !== null) {
                 if (that._selectedTeams.indexOf(data.id) >= 0) {
-                    jQuery(item).find('.adam-team-action[name=lock]').addClass('active')
-                        .find('i').removeClass('fa-lock').addClass('active fa-unlock-alt');
+                    var $lockButton = $(item).find('.adam-team-action[name=lock]');
+                    $lockButton.addClass('active').find('i').removeClass('fa-lock').addClass('active fa-unlock-alt');
+                    $lockButton.attr('data-original-title', App.lang.get('LBL_TEAM_SET_DISABLE'));
+
                     existingValues.push(data.id);
                 }
             }
@@ -1636,6 +1638,11 @@ TeamUpdaterItem.prototype._performTeamAction = function () {
             case 'lock':
                 if (lineData !== null) {
                     $button.toggleClass('active').find('i').toggleClass('fa-lock fa-unlock-alt');
+                    if ($button.hasClass('active')) {
+                        $button.attr('data-original-title', App.lang.get('LBL_TEAM_SET_DISABLE'));
+                    } else {
+                        $button.attr('data-original-title', App.lang.get('LBL_TEAM_SET_ENABLE'));
+                    }
                     changed = $button;
                     actionID = TeamUpdaterItem.TEAM_ACTION.LOCK;
                 }
