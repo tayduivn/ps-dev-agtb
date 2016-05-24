@@ -322,4 +322,37 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->save();
         $this->assertEquals('0', $this->bean->useful);
     }
+
+    /**
+     * Test empty active date after status changed from KBContent::ST_PUBLISHED
+     */
+    public function testClearActiveDate()
+    {
+        //Prepare bean
+        $this->bean->save();
+        $this->bean->retrieve();
+        //Set status and check active date
+        $this->bean->status = KBContent::ST_PUBLISHED;
+        $this->bean->save();
+        $this->bean->retrieve();
+        $this->assertNotEmpty($this->bean->active_date);
+        //Another save with no status changed and check active date
+        $this->bean->status = KBContent::ST_PUBLISHED;
+        $this->bean->save();
+        $this->bean->retrieve();
+        $this->assertNotEmpty($this->bean->active_date);
+        //Change status and check active date
+        $this->bean->status = KBContent::ST_DRAFT;
+        $this->bean->save();
+        $this->bean->retrieve();
+        $this->assertEmpty($this->bean->active_date);
+        //Check that active date isn't cleared for approved status change
+        $this->bean->status = KBContent::ST_PUBLISHED;
+        $this->bean->save();
+        $this->bean->retrieve();
+        $this->bean->status = KBContent::ST_APPROVED;
+        $this->bean->save();
+        $this->bean->retrieve();
+        $this->assertNotEmpty($this->bean->active_date);
+    }
 }
