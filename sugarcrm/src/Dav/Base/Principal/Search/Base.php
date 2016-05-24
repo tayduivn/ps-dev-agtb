@@ -68,12 +68,18 @@ abstract class Base implements SearchInterface
             $usersQuery->from($focus);
 
             $focus->email_addresses->buildJoinSugarQuery($usersQuery, array('joinType' => 'LEFT'));
-            $usersQuery->select()->addField('email_addresses.email_address', array('alias' => 'email1'));
+            $usersQuery->select(array('id'))->addField('email_addresses.email_address', array('alias' => 'email1'));
 
-            $beans = $focus->fetchFromQuery($usersQuery);
+            foreach ($usersQuery->execute() as $result) {
+                $bean = \BeanFactory::getBean($focus->module_name, $result['id'], array(
+                    'strict_retrieve' => true,
+                    'deleted' => false,
+                    'disable_row_level_security' => true,
+                ));
 
-            foreach ($beans as $bean) {
-                $principals[] = $this->formatStrategy->formatBody($bean);
+                if ($bean) {
+                    $principals[] = $this->formatStrategy->formatBody($bean);
+                }
             }
         }
 
@@ -135,7 +141,7 @@ abstract class Base implements SearchInterface
                             array('joinType' => ($test == 'allof' ? 'INNER' : 'LEFT'))
                         );
 
-                        $query->select(array('email_addresses.email_address'));
+                        $query->select(array('id', 'email_addresses.email_address'));
 
                         $emailCaps = strtoupper(trim($value));
                         if ($test == 'allof') {
@@ -152,11 +158,19 @@ abstract class Base implements SearchInterface
         if (!$conditionExists) {
             return array();
         }
-        $principals = array();
-        $beans = $focus->fetchFromQuery($query);
 
-        foreach ($beans as $bean) {
-            $principals[] = $this->formatStrategy->formatUri($bean);
+        $principals = array();
+
+        foreach ($query->execute() as $result) {
+            $bean = \BeanFactory::getBean($focus->module_name, $result['id'], array(
+                'strict_retrieve' => true,
+                'deleted' => false,
+                'disable_row_level_security' => true,
+            ));
+
+            if ($bean) {
+                $principals[] = $this->formatStrategy->formatUri($bean);
+            }
         }
 
         return $principals;
