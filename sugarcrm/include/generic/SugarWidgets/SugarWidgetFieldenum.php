@@ -110,7 +110,11 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
         $list = getOptionsFromVardef($field_def);
         if ($list && isset($list[$value])) {
             $cell = $list[$value];
+        } elseif (is_array($list)) {
+            // $list returned from getOptionsFromVardef could also be array containing translation for options.
+            $cell = $list;
         }
+
         if (is_array($cell)) {
 
 			//#22632
