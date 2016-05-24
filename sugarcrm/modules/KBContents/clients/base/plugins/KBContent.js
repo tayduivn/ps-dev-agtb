@@ -43,6 +43,9 @@
                         this.context.on('list:editrow:fire', _.bind(function(model, view) {
                             this._initValidationHandler(model);
                         }, this));
+                        this.context.on('list:preview:fire', _.bind(function(model) {
+                            this._initValidationHandler(model);
+                        }, this));
                     } else {
                         this._initValidationHandler(this.model);
                     }
