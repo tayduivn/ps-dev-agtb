@@ -88,6 +88,12 @@
         app.api.call('read', verifyURL, null, {
             success: function(data) {
                 if (!data) {
+                    self._targetUrl = Backbone.history.getFragment();
+                    //Replace the url hash back to the current staying page
+                    if (self._targetUrl !== self._currentUrl) {
+                        app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+                    }
+
                     app.alert.show('delete_confirmation', {
                         level: 'confirmation',
                         messages: self.getDeleteMessages(model).confirmation,
