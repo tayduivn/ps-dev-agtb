@@ -16,10 +16,13 @@ $viewdefs['Emails']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'from_addr_name',
+                    'name' => 'from',
+                    'type' => 'from',
+                    'label' => 'LBL_LIST_FROM_ADDR',
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'fields' => array('name', 'email_address_used', 'email'),
                 ),
                 array(
                     'name' => 'name',
