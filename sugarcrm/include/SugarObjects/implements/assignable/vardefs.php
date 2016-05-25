@@ -72,7 +72,7 @@ $vardefs = array(
         'assigned_user_id' => array(
             'name' => 'idx_' . strtolower($table_name) . '_assigned_del',
             'type' => 'index',
-            'fields' => array('deleted', 'assigned_user_id')
+            'fields' => array('assigned_user_id', 'deleted'),
         ),
     ),
 'relationships'=>array(
