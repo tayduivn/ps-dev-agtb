@@ -165,13 +165,6 @@ $dictionary['KBContent'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
-        'cases' => array(
-            'name' => 'cases',
-            'type' => 'link',
-            'relationship' => 'relcases_kbcontents',
-            'source' => 'non-db',
-            'vname' => 'LBL_CASE',
-        ),
         'attachments' => array(
             'name' => 'attachments',
             'vname' => 'LBL_ATTACHMENTS',
@@ -368,12 +361,12 @@ $dictionary['KBContent'] = array(
             'studio' => true,
         ),
 
-        'relcases_kbcontents' => array(
-            'name' => 'relcases_kbcontents',
+        'cases' => array(
+            'name' => 'cases',
             'type' => 'link',
-            'vname' => 'LBL_KBSCASES',
             'relationship' => 'relcases_kbcontents',
             'source' => 'non-db',
+            'vname' => 'LBL_KBSCASES',
         ),
         'kbscase_id' => array(
             'name' => 'kbscase_id',
