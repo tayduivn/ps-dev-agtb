@@ -367,13 +367,13 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('first_name','Awesome');
-        $this->assertRegExp('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/s', $sq->compileSql());
 
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('contacts.last_name','Awesome');
-        $this->assertRegExp('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/s', $sq->compileSql());
 
         // with related in name
         $sq = new SugarQuery();
@@ -381,7 +381,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
         $sql = $sq->compileSql();
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/',$sql);
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sql);
         $this->assertNotContains('contacts.account_name', $sql);
 
         // without related in name
@@ -389,7 +389,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compileSql());
 
         // self-link
         $acc = BeanFactory::getBean('Accounts');
@@ -397,7 +397,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "name"));
         $sq->from($acc);
         $sq->where()->equals('parent_name','Awesome');
-        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compileSql());
 
         // custom field
         BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
@@ -411,28 +411,28 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('bigname_c','Chuck Norris');
-        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compileSql());
 
         // related custom field
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('report_to_bigname','Chuck Norris');
-        $this->assertRegExp('/WHERE.*jt\w+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\w+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/s', $sq->compileSql());
 
         // compare fields
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equalsField('bigname_c','report_to_bigname');
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\w+_cstm.bigname_c/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\w+_cstm.bigname_c/s', $sq->compileSql());
 
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", 'report_to_bigname'));
         $sq->from($contact);
         $sq->where()->notEqualsField('bigname_c','report_to_bigname');
         $sql = $sq->compileSql();
-        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/',$sql);
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\w+_cstm.bigname_c/s', $sql);
         $this->assertContains("SELECT  contacts.id id, contacts.last_name last_name, jt0_reports_to_link_cstm.bigname_c report_to_bigname", $sql);
     }
 
@@ -482,28 +482,28 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name");
-        $this->assertRegExp('/.*ORDER BY jt\w+.name DESC.*/',$sq->compileSql());
+        $this->assertRegExp('/.*ORDER BY jt\w+.name DESC.*/s', $sq->compileSql());
 
         // by custom field too
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
-        $this->assertRegExp('/ORDER BY jt\w+.name DESC,contacts.last_name ASC/',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.name DESC,contacts.last_name ASC/s', $sq->compileSql());
 
         // by related custom field
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("report_to_bigname");
-        $this->assertRegExp('/ORDER BY jt\w+.last_name DESC/',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.last_name DESC/s', $sq->compileSql());
 
         // skip bad one
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("portal_password1")->orderBy("account_name", "asc");
-        $this->assertRegExp('/ORDER BY jt\w+.name asc/',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\w+.name asc/s', $sq->compileSql());
     }
 
     public function testOrderByRaw()
@@ -545,8 +545,8 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = $accounts->join('opportunities');
         $opportunities->join('contacts');
         $sql = $sq->compileSql();
-        $this->assertRegExp('/INNER JOIN contacts jt(\w+) ON /', $sql);
-        $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /', $sql);
+        $this->assertRegExp('/INNER JOIN contacts jt(\w+) ON /s', $sql);
+        $this->assertRegExp('/INNER JOIN opportunities jt(\w+) ON /s', $sql);
     }
 
     public function testSetJoinOn()
