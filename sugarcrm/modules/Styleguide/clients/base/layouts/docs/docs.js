@@ -16,8 +16,10 @@
      * @inheritdoc
      */
     initComponents: function(components, context, module) {
-        var def, main, index,
-            request = this.context.get('request');
+        var def;
+        var main;
+        var content;
+        var request = this.context.get('request');
 
         this._super('initComponents', [components, context, module]);
 
@@ -26,18 +28,12 @@
                 type: request.keys[0] + '-' + request.view,
                 name: request.keys[0] + '-' + request.view,
                 meta: request.page_details
-            },
-            context: {
-                module: 'Styleguide',
-                skipFetch: true,
-                request: request
             }
         };
 
         main = this.getComponent('sidebar').getComponent('main-pane');
-        index = this.createComponentFromDef(def, this.context, 'Styleguide');
-        index.$el.addClass('container-fluid');
-        main.addComponent(index, def);
+        content = this.createComponentFromDef(def, this.context, this.module);
+        main.addComponent(content);
     },
 
     /**
