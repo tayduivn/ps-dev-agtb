@@ -19,6 +19,7 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class Importer
 {
@@ -816,6 +817,10 @@ class Importer
         if ( $focus->object_name == "Contact" && isset($list_of_users) )
             $focus->process_sync_to_outlook($list_of_users);
 
+        // Before calling save, we need to clear out any existing registered AWF
+        // triggered start events so they can continue to trigger.
+        Registry\Registry::getInstance()->drop('triggered_starts');
+
         $focus->save(false);
 
         //now that save is done, let's make sure that parent and related id's were saved as relationships
@@ -838,7 +843,7 @@ class Importer
         global $current_user;
 
         $firstrow = InputValidation::getService()->getValidInputRequest(
-            'firstrow', 
+            'firstrow',
             array('Assert\PhpSerialized' => array('base64Encoded' => true))
         );
         $mappingValsArr = $this->importColumns;
