@@ -85,7 +85,7 @@
      */
     getFieldNames: function() {
         // FIXME TY-920: we shouldn't have to override this per-dashlet
-        return this.dashletConfig.dashlets[0].fields || [];
+        return this.dashletConfig && this.dashletConfig.dashlets[0].fields || [];
     },
 
     /**
