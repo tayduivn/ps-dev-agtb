@@ -14,7 +14,7 @@
      */
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
-        this.collection.sync = this.sync;
+        this.collection.sync = _.bind(this.sync, this);
 //        this.collection.allowed_modules = ['User Assigned'];
         this.context.on('compose:addressbook:search', this.search, this);
     },
@@ -49,11 +49,11 @@
         callbacks = app.data.getSyncCallbacks(method, model, options);
         this.trigger('data:sync:start', method, model, options);
 
-        if (options.context.get('unattended')) {
+        if (this.context.get('unattended')) {
             options.params.unattended = true;
         }
 
-        url = app.api.buildURL('pmse_Inbox', 'reassignFlows/' + options.context.get('cas_id'), null, options.params);
+        url = app.api.buildURL('pmse_Inbox', 'reassignFlows/' + this.context.get('cas_id'), null, options.params);
         app.api.call('read', url, null, callbacks);
     },
     /**
