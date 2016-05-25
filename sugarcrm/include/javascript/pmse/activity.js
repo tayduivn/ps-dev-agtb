@@ -1926,8 +1926,9 @@ AdamActivity.prototype.createAssignUsersAction = function () {
             combo_users.enable().setRequired(true);
             combo_teams.disable();
         } else {
-            combo_users.disable().setValue("")
-            combo_teams.enable().setRequired(true);;
+            combo_users.disable().setValue('');
+            combo_users.setValid(false);
+            combo_teams.enable().setRequired(true);
         }
     };
 
@@ -1940,6 +1941,7 @@ AdamActivity.prototype.createAssignUsersAction = function () {
             case 'combo_users':
                 assignTeamField.setValue(null);
                 assignUserField.setValue(combo_users.value);
+                combo_users.setValid(true);
                 break;
         }
     };
@@ -2033,16 +2035,17 @@ AdamActivity.prototype.createAssignUsersAction = function () {
                         success: function(users) {
                             var i, theMatch;
                             users = users.result || [];
-
+                            users = _.union(users, aUsers);
                             for (i = 0; i < users.length; i++) {
                                 if (users[i].value === data.act_assign_user) {
                                     theMatch = {
                                         text: users[i].text,
                                         value: users[i].value
                                     };
+                                    break;
                                 }
                             }
-
+                            combo_users.setValid(theMatch);
                             if (!theMatch) {
                                 theMatch = {
                                     text: data.act_assign_user,
@@ -2547,6 +2550,9 @@ AdamActivity.prototype.actionFactory = function (type) {
                 name: 'act_fields',
                 submit: true,
                 placeholder: translate('LBL_PMSE_FORM_OPTION_SELECT'),
+                change: function() {
+                    combo_business.setValid(true);
+                },
                 proxy: new SugarProxy({
                     url: 'pmse_Project/CrmData/rulesets/' + adamUID + '?order_by=name',
                     uid: adamUID,
@@ -2576,7 +2582,15 @@ AdamActivity.prototype.actionFactory = function (type) {
                             if (rules && rules.success) {
                                 combo_business.setOptions(rules.result);
                                 if (data && data.act_fields) {
-                                    combo_business.setValue(data.act_fields || '');
+                                    var isValid = false;
+                                    for (var i = 0; i < rules.result.length; i++) {
+                                        if (rules.result[i].value == data.act_fields) {
+                                            isValid = true;
+                                            break;
+                                        }
+                                    }
+                                    combo_business.setValue(data.act_fields);
+                                    combo_business.setValid(isValid);
                                 }
                             }
                             App.alert.dismiss('upload');
