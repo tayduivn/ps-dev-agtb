@@ -155,8 +155,6 @@
              */
             _fieldOnDetach: function(component) {
                 $(document).off('mousedown.record' + this.cid);
-                // remove any lingering tooltip
-                app.utils.tooltip.destroy(this.$('[rel=tooltip]'));
             },
 
             /**
@@ -396,8 +394,11 @@
              * @protected
              */
             _fieldShowErrors: function() {
-                var $errorTooltips;
                 if (this._fieldIsErrorState === false) {
+                    var ftag = this.fieldTag || '';
+                    var $ftag = this.$(ftag);
+                    var $tooltip;
+
                     this._fieldIsErrorState = true;
 
                     var ctx = this.context.parent || this.context;
@@ -405,23 +406,17 @@
                     ctx.trigger('field:error', this, true);
 
                     this.$el.addClass('error');
-                    this.$('.error-tooltip')
-                        .addClass('add-on local')
-                        .removeClass('hide')
-                        .css('display', 'inline-block');
+
+                    var isWrapped = $ftag.parent().hasClass('input-append');
+                    if (!isWrapped) {
+                        $ftag.wrap('<div class="input-append ' + ftag + '">');
+                    }
+
+                    $ftag.parent().addClass('error');
+                    $tooltip = $(this.exclamationMarkTemplate([this._fieldErrorMessage]));
+                    $ftag.after($tooltip);
 
                     this.$('input').addClass('local-error');
-
-                    // we want to show the tooltip message, but hide the add-on (exclamation)
-                    $errorTooltips = this.$('[rel=tooltip]');
-                    app.utils.tooltip.initialize($errorTooltips, {
-                        title: this._fieldErrorMessage,
-                        trigger: 'manual'
-                    });
-                    $errorTooltips.each(function() {
-                        app.utils.tooltip.show(this);
-                    });
-                    $errorTooltips.hide();
                 }
             },
 
@@ -843,7 +838,6 @@
              * @inheritdoc
              */
             clearErrorDecoration: function() {
-                app.utils.tooltip.destroy(this.$('[rel=tooltip]'));
                 this._fieldIsErrorState = false;
 
                 var ctx = this.context.parent || this.context;
