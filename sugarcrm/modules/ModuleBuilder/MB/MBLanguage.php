@@ -154,7 +154,7 @@ class MBLanguage{
                 //FOR GENERIC MENU
                 'LNK_NEW_RECORD' => $mod_strings['LBL_CREATE'] . " " . $this->label_singular,
                 'LNK_LIST' => $mod_strings['LBL_VIEW'] . " " . $this->label,
-                'LNK_IMPORT_' . strtoupper($this->key_name) => translate('LBL_IMPORT') . " " . $this->label_singular,
+                'LNK_IMPORT_' . strtoupper($this->key_name) => translate('LBL_IMPORT') . " " . $this->label,
                 'LBL_SEARCH_FORM_TITLE' => $mod_strings['LBL_SEARCH'] . " " . $this->label_singular,
                 'LBL_HISTORY_SUBPANEL_TITLE' => $mod_strings['LBL_HISTORY'],
                 'LBL_ACTIVITIES_SUBPANEL_TITLE' => $mod_strings['LBL_ACTIVITIES'],
