@@ -1999,7 +1999,7 @@ FormPanelCheckbox.prototype._isValidValue = function (value) {
 };
 
 FormPanelCheckbox.prototype.setValue = function (value) {
-    return FormPanelField.prototype.setValue(!!value);
+    return FormPanelField.prototype.setValue.call(this, !!value);
 };
 
 FormPanelCheckbox.prototype._createControl = function () {
