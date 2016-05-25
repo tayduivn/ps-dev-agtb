@@ -600,10 +600,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'comment' => 'Recurrence ID of call. Original call start date',
             'importable' => false,
             'exportable' => false,
-        'massupdate' => false,
-        'reportable' => false,
-        'studio' => 'false',
+            'massupdate' => false,
+            'studio' => false,
+            'processes' => false,
             'visible' => false,
+            'reportable' => false,
+            'hideacl' => true,
     ),
   'recurring_source' =>
   array(
