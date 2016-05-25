@@ -38,6 +38,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(
                     array(
@@ -77,6 +78,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(
                     array(
@@ -118,6 +120,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(
                     array(
@@ -196,7 +199,13 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $attachment2 = SugarTestNoteUtilities::createNote();
         file_put_contents("upload://{$attachment2->id}", 'test');
 
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
+        $email = SugarTestEmailUtilities::createEmail(
+            '',
+            array(
+                'state' => Email::EMAIL_STATE_DRAFT,
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+            )
+        );
         $email->load_relationship('attachments');
         $email->attachments->add($attachment1);
         $email->attachments->add($attachment2);

@@ -966,3 +966,5 @@ VardefManager::createVardef(
 // adds a heavy taxation on the required disk space usage as well.
 $dictionary['Email']['fields']['description']['full_text_search']['enabled'] = false;
 $dictionary['Email']['fields']['description']['full_text_search']['searchable'] = false;
+
+$dictionary['Email']['visibility']['EmailsVisibility'] = true;

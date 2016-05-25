@@ -229,6 +229,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
             'outbound_email_id' => static::$systemConfig->id,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'email_addresses_from' => array(
                 'create' => array(
                     'email_address' => 'myname@mycompany.com',
@@ -310,6 +311,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
             'outbound_email_id' => static::$systemConfig->id,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'prospects_cc' => array(
                 'add' => array($prospect->id),
             ),
@@ -416,6 +418,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'accounts_to' => array(
                 'add' => array($account1->id),
             ),
@@ -523,6 +526,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_READY,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'contacts_from' => array(
                 'add' => array(
                     $contact1,

@@ -36,6 +36,7 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
         $email = new Email();
         $email->type = 'out';
         $email->status = 'sent';
+        $email->state = Email::EMAIL_STATE_ARCHIVED;
         $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
         $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
         $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");

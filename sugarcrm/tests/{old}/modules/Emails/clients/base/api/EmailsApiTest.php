@@ -108,6 +108,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Emails',
             'state' => Email::EMAIL_STATE_READY,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $api->createRecord($this->service, $args);
 
@@ -131,6 +132,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'module' => 'Emails',
             'record' => $email->id,
             'state' => $toState,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $api = new EmailsApi();
         $api->updateRecord($this->service, $args);
