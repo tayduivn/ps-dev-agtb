@@ -3646,7 +3646,7 @@ class MetaDataManager
         foreach ($platforms as $platform) {
             foreach (array(true, false) as $public) {
                 $mm = MetaDataManager::getManager($platform, $public);
-                $mm->getMetadata();
+                $mm->getMetadata(array('platform' => $platform));
                 foreach ($languages as $language) {
                     $mm->getLanguage($language);
                 }
