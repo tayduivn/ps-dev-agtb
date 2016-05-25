@@ -1293,6 +1293,48 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Finds parent call/meeting and assigns it to collection
+     * Returns new parent bean for collection
+     *
+     * @return \SugarBean | null
+     */
+    public function reassign()
+    {
+        if ($this->parent_type && $this->parent_id) {
+            $query = new \SugarQuery();
+            $queryBean = \BeanFactory::getBean($this->parent_type);
+            $query->from($queryBean);
+            $query->select(array('id'));
+            $query->where()->equals('repeat_root_id', $this->parent_id);
+            $query->orderBy('recurrence_id', 'ASC');
+            $query->limit(1);
+            $result = $query->execute();
+            if (!empty($result[0])) {
+                $reassignedId = $result[0]['id'];
+                $reassignedBean =
+                    \BeanFactory::getBean($this->parent_type, $reassignedId, array('strict_retrieve' => true));
+                if ($reassignedBean) {
+                    $this->db->updateParams(
+                        $reassignedBean->table_name,
+                        $reassignedBean->getFieldDefinitions(),
+                        array('repeat_root_id' => $reassignedId),
+                        array('repeat_root_id' => $this->parent_id),
+                        null,
+                        true,
+                        true
+                    );
+                    \BeanFactory::unregisterBean($this->parent_type, $reassignedId);
+                    $reassignedBean->repeat_root_id = $reassignedId;
+                    $this->setBean($reassignedBean);
+                    $this->save();
+                    return $reassignedBean;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Set url to event.
      *
      * @param Structures\Event $event

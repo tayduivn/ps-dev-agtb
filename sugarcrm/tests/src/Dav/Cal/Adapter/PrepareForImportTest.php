@@ -980,6 +980,19 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                 ),
                 'groupId' => $groupId,
             ),
+            'Expand recurring with deleted parent' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('ExpandRRuleWithDeletedParent.before'),
+                'after' => static::getSourceIcsFile('ExpandRRuleWithDeletedParent.after'),
+                'expected' => array(
+                    array(
+                        array('reassign', null, null, null, null, $groupId),
+                        array(),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
         );
     }
 
