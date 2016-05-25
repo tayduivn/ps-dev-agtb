@@ -757,20 +757,8 @@ class ConnectorsController extends SugarController {
         global $mod_strings;
 	    $this->view = 'ajax';
 	    $source_id = $this->request->getValidInputRequest('source_id', 'Assert\ComponentName');
-	    $source = SourceFactory::getSource($source_id);
-	    $properties = array();
-	    foreach($_REQUEST as $name=>$value) {
-	    	    if(preg_match("/^{$source_id}_(.*?)$/", $name, $matches)) {
-	    	       $properties[$matches[1]] = $value;
-	    	    }
-	    }
-	    $source->setProperties($properties);
-	    $source->saveConfig();
-
-        $this->view = 'ajax';
 
         // Get the source object and init it all at once
-        $source_id = $_REQUEST['source_id'];
         $source = SourceFactory::getSource($source_id, true);
 
         // Build a properties array
