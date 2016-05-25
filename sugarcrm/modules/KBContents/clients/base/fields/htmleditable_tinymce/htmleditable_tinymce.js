@@ -115,10 +115,19 @@
     },
 
     /**
+     * We are trying to get HTML content instead of raw one because
+     * when editor initialized it already contains some HTML (blank <p> or <br> tags).
+     * In this case it will be considered as non-empty value for this field even if we don't enter anything.
+     * It comes from ticket RS-1072.
+     *
+     * @override
      * @inheritdoc
      */
     getEditorContent: function() {
-        var text = this._htmleditor.getContent({format: 'html'});
+        // We can't use getContent({format: 'html'}) due to this issue https://github.com/tinymce/tinymce/issues/794
+        // That's why we save HTML Editor content to HTML Field and get content directly from HTML field.
+        this._htmleditor.save();
+        var text = this._getHtmlEditableField().html();
         //We don't need to get empty html, to prevent model changes.
         if (text !== '') {
             text = this._super('getEditorContent');
