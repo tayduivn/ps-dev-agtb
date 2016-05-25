@@ -9,6 +9,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 (function(app) {
+    /**
+     * A whitelist of routes that are allowed to be redirected to bwc
+     *
+     * @type {Array}
+     * @private
+     */
+    var bwcRedirectRoutes = [
+        'config',
+        'create',
+        'editAllRecurrences',
+        'layout',
+        'list',
+        'record',
+        'record_layout',
+        'record_layout_action',
+        'vcardImport'
+    ];
+
     app.events.on('router:init', function() {
         // FIXME: Routes should be an extension of router.js, and not in a
         // privately-scoped variable; will be addressed in SC-2761.
@@ -465,11 +483,17 @@
          *   otherwise.
          */
         bwcRedirect: function(options) {
-            if (options && _.isArray(options.args) && options.args[0]) {
-                var module = options.args[0],
-                    id = options.args[1],
-                    action = id ? 'DetailView' : 'index',
-                    meta = app.metadata.getModule(module);
+            if (options.route && !_.contains(bwcRedirectRoutes, options.route)) {
+                // this route is a non bwc redirecting one
+                return true;
+            }
+
+            if (_.isArray(options.args) && options.args[0]) {
+                var module = options.args[0];
+                var id = options.args[1];
+                var action = id ? 'DetailView' : 'index';
+                var meta = app.metadata.getModule(module);
+
                 if (meta && meta.isBwcEnabled) {
                     var sidecarAction = options.args[2] || options.route,
                         bwcAction = app.bwc.getAction(sidecarAction);
@@ -488,9 +512,11 @@
                     _.defer(function() {
                         app.router.navigate(redirect, {trigger: true, replace: true});
                     });
+
                     return false;
                 }
             }
+
             return true;
         },
 

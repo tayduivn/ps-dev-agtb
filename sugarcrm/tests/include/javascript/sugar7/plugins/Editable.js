@@ -145,13 +145,13 @@ describe("Editable Plugin", function() {
         });
 
         it("should not alert warning message if unsaved changes are empty", function() {
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();
 
             sinonSandbox.stub(view, "hasUnsavedChanges", function() {
                 return false;
             });
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();
         });
 
@@ -160,7 +160,7 @@ describe("Editable Plugin", function() {
             sinonSandbox.stub(view, "hasUnsavedChanges", function() {
                 return true;
             });
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).toHaveBeenCalledOnce();
         });
 
@@ -179,7 +179,7 @@ describe("Editable Plugin", function() {
                 return true;
             });
             view.dispose();
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();
         });
     });

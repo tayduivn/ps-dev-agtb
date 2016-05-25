@@ -132,6 +132,37 @@ describe('Sugar7.Routes', function() {
         });
     });
 
+    describe('Before Route BWC Redirect Check', function() {
+        var hasAccessStub;
+        var getModuleStub;
+
+        beforeEach(function() {
+            hasAccessStub = sinon.stub(app.acl, 'hasAccess');
+            hasAccessStub.returns(true);
+
+            getModuleStub = sinon.stub(app.metadata, 'getModule');
+            getModuleStub.returns({isBwcEnabled: true});
+
+        });
+
+        afterEach(function() {
+            hasAccessStub.restore();
+            getModuleStub.restore();
+        });
+
+        it('should not redirect to bwc for search route', function() {
+            var route = 'search';
+            var response = app.routing.triggerBefore('route', {route: route, args: ['test']});
+            expect(response).toBe(true);
+        });
+
+        it('should redirect to bwc for list route', function() {
+            var route = 'list';
+            var response = app.routing.triggerBefore('route', {route: route, args: ['test']});
+            expect(response).toBe(false);
+        });
+    });
+
     describe("Before Route Show Wizard Check", function() {
         var hasAccessStub;
 

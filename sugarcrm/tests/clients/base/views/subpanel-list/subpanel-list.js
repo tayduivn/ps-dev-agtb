@@ -64,7 +64,7 @@ describe("Subpanel List View", function() {
         });
 
         it("should not alert warning message if _modelToUnlink is not defined", function() {
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalled();
         });
         it("should return true if _modelToUnlink is not defined", function() {

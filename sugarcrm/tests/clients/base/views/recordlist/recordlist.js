@@ -240,7 +240,7 @@ describe('Base.View.RecordList', function() {
             });
 
             it('should not alert warning message if _modelToDelete is not defined', function() {
-                app.routing.triggerBefore('route');
+                app.routing.triggerBefore('route', {});
                 expect(alertShowStub).not.toHaveBeenCalled();
             });
 
