@@ -540,10 +540,6 @@ for($i=0; $i<$number_contacts; $i++) {
     $email->state = $i % 2 === 0 ? 'Draft' : 'Archived';
 	$email->parent_id = $account_id;
 	$email->parent_type = 'Accounts';
-	$email->to_addrs = $contact->emailAddress->getPrimaryAddress($contact);
-	$email->from_addr = $assignedUser->emailAddress->getPrimaryAddress($assignedUser);
-	$email->from_addr_name = $email->from_addr;
-	$email->to_addrs_names = $email->to_addrs;
     if (key($sugar_demodata['email_seed_data_types']) === null) {
         reset($sugar_demodata['email_seed_data_types']);
     }
@@ -554,6 +550,10 @@ for($i=0; $i<$number_contacts; $i++) {
 	$email->contacts->add($contact);
 	$email->load_relationship('accounts');
 	$email->accounts->add($contacts_account);
+    $email->load_relationship('users_from');
+    $email->users_from->add($contacts_account->assigned_user_id);
+    $email->load_relationship('contacts_to');
+    $email->contacts_to->add($contact);
 
     if ($i % 10 === 0) {
         echo '.';
