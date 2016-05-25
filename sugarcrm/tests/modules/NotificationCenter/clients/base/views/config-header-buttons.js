@@ -96,20 +96,19 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
             expect(updateAddresses).toHaveBeenCalled();
         });
 
-        it('should navigate browser back on successful model save', function() {
-            var goBack = sandbox.spy(app.router, 'goBack');
-
+        it('should close the drawer if there is one', function() {
+            app.drawer = {
+                close: $.noop,
+                count: function() {
+                    return 1;
+                }
+            };
+            sinon.collection.spy(app.drawer, 'close');
             view._saveConfig();
             server.respond();
-            expect(goBack).toHaveBeenCalled();
-        });
-    });
 
-    describe('cancelConfig()', function() {
-        it ('should navigate browser back', function() {
-            var goBack = sandbox.spy(app.router, 'goBack');
-            view.cancelConfig();
-            expect(goBack).toHaveBeenCalled();
+            expect(app.drawer.close).toHaveBeenCalled();
+            delete app.drawer;
         });
     });
 });

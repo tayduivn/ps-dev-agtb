@@ -17,11 +17,13 @@
                 name: "UserCalDavConfigPage",
                 route: "CalDav/config/user",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'CalDav',
-                        skipFetch: true,
-                        section: 'user'
+                        context: {
+                            module: 'CalDav',
+                            section: 'user',
+                            fromRouter: true
+                        }
                     });
                 }
             },
@@ -29,11 +31,13 @@
                 name: "GlobalCalDavConfigPage",
                 route: "CalDav/config",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'CalDav',
-                        skipFetch: true,
-                        section: null
+                        context: {
+                            module: 'CalDav',
+                            section: null,
+                            fromRouter: true
+                        }
                     });
                 }
             },

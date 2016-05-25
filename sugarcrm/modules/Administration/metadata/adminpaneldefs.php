@@ -110,10 +110,21 @@ if(SugarOAuthServer::enabled()) {
 }
 
 if (0) { // CRYS-1567-fix
-    $admin_option_defs['Administration']['websockets'] = array('Administration', 'LBL_WEB_SOCKET_CONFIGURATION', 'LBL_WEB_SOCKET_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("WebSockets/config", {trigger: true});');
-    $admin_option_defs['Administration']['triggerserver'] = array('Administration', 'LBL_TRIGGER_SERVER_CONFIGURATION', 'LBL_TRIGGER_SERVER_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("TriggerServer/config", {trigger: true});');
+    $admin_option_defs['Administration']['websockets'] = array(
+        'Administration', 'LBL_WEB_SOCKET_CONFIGURATION',
+        'LBL_WEB_SOCKET_CONFIGURATION_DESC',
+        'javascript:void(parent.SUGAR.App.router.navigate("WebSockets/config", {trigger: true}));');
+    $admin_option_defs['Administration']['triggerserver'] = array(
+        'Administration',
+        'LBL_TRIGGER_SERVER_CONFIGURATION',
+        'LBL_TRIGGER_SERVER_CONFIGURATION_DESC',
+        'javascript:void(parent.SUGAR.App.router.navigate("TriggerServer/config", {trigger: true}));');
 }
-$admin_option_defs['Notifications']['config-default'] = array('Administration', 'LBL_NOTIFICATIONS_CONFIGURATION', 'LBL_NOTIFICATIONS_CONFIGURATION_DESC', 'javascript:parent.SUGAR.App.router.navigate("NotificationCenter/config/default", {trigger: true});');
+$admin_option_defs['Notifications']['config-default'] = array(
+    'Administration',
+    'LBL_NOTIFICATIONS_CONFIGURATION',
+    'LBL_NOTIFICATIONS_CONFIGURATION_DESC',
+    'javascript:void(parent.SUGAR.App.router.navigate("NotificationCenter/config/default", {trigger: true}));');
 
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
@@ -133,7 +144,7 @@ $admin_option_defs['Campaigns']['register_snip']=array('icon_AdminThemes','LBL_C
 $admin_option_defs['CalDav']['caldav_config'] = array('ical-settings-icon',
     'LBL_CONFIGURE_CALDAV',
     'LBL_CONFIGURE_CALDAV_DESC',
-    'javascript:parent.SUGAR.App.router.navigate("CalDav/config", {trigger: true});');
+    'javascript:void(parent.SUGAR.App.router.navigate("CalDav/config", {trigger: true}));');
 
 $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL_EMAIL_DESC');
 

@@ -32,7 +32,9 @@
                 // If we're inside a drawer - refresh
                 if (app.drawer) {
                     this.showSavedConfirmation();
-                    app.router.goBack();
+                    app.drawer.close(this.context, this.context.get('model'));
+                    //Reload metadata
+                    app.sync();
                 }
             }, this),
             error: _.bind(function (error) {
@@ -44,15 +46,5 @@
                 });
             }, this)
         });
-    },
-
-    /**
-     * Because we're not drawer we simply need to go back.
-     * @inheritdoc
-     */
-    cancelConfig: function() {
-        if (this.triggerBefore('cancel')) {
-            app.router.goBack();
-        }
     }
 })
