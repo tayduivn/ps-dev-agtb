@@ -292,4 +292,20 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
     }
+
+    /**
+     * @covers ::validateEmailAddresses
+     */
+    public function testValidateEmailAddresses_OneIsValidAndOneIsInvalid()
+    {
+        $args = array(
+            'foo@bar.com',
+            'foo',
+        );
+        $api = new EmailsApi();
+        $actual = $api->validateEmailAddresses($this->service, $args);
+
+        $this->assertTrue($actual[$args[0]], "Should have set the value for key '{$args[0]}' to true.");
+        $this->assertFalse($actual[$args[1]], "Should have set the value for key '{$args[1]}' to false.");
+    }
 }

@@ -541,7 +541,7 @@
                 // return before the response is known
                 async: false
             },
-            url = app.api.buildURL('Mail', 'address/validate');
+            url = app.api.buildURL('Emails', 'address/validate');
 
         callbacks.success = function(result) {
             isValid = result[emailAddress];

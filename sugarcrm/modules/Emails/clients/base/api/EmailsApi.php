@@ -111,6 +111,14 @@ class EmailsApi extends ModuleApi
                 'shortHelp' => 'This method updates an Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_put_help.html',
             ),
+            'validateEmailAddresses' => array(
+                'reqType' => 'POST',
+                'path' => array('Emails', 'address', 'validate'),
+                'pathVars' => array(''),
+                'method' => 'validateEmailAddresses',
+                'shortHelp' => 'Validate One Or More Email Address',
+                'longHelp' => 'modules/Emails/clients/base/api/help/emails_address_validate_post_help.html',
+            ),
         );
     }
 
@@ -208,6 +216,32 @@ class EmailsApi extends ModuleApi
         }
 
         return $result;
+    }
+
+    /**
+     * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
+     * addresses and the values are booleans indicating whether or not the email address is valid.
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiException
+     */
+    public function validateEmailAddresses($api, $args)
+    {
+        $validatedEmailAddresses = array();
+        unset($args['__sugar_url']);
+        if (!is_array($args)) {
+            throw new SugarApiExceptionInvalidParameter('Invalid argument: cannot validate');
+        }
+        if (empty($args)) {
+            throw new SugarApiExceptionMissingParameter('Missing email address(es) to validate');
+        }
+        $emailAddresses = $args;
+        foreach ($emailAddresses as $emailAddress) {
+            $validatedEmailAddresses[$emailAddress] = SugarEmailAddress::isValidEmail($emailAddress);
+        }
+        return $validatedEmailAddresses;
     }
 
     /**

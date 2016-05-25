@@ -108,6 +108,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Search For Email Recipients',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
             ),
+            // validateEmailAddresses is deprecated. Please use validateEmailAddresses on EmailsApi instead
             'validateEmailAddresses' => array(
                 'reqType' => 'POST',
                 'path' => array('Mail', 'address', 'validate'),
@@ -588,9 +589,14 @@ class MailApi extends ModuleApi
      * @param array $args
      * @return array
      * @throws SugarApiException
+     * @deprecated 7.9.0 This function has been moved to EmailsApi and will be
+     *   removed in 7.11.0.
      */
     public function validateEmailAddresses(ServiceBase $api, array $args)
     {
+        LoggerManager::getLogger()->deprecated('POST /Mail/address/validate has been deprecated as of 7.9.0' .
+            ' and will be removed in 7.11.0. Please use POST /Emails/address/validate instead.');
+
         $validatedEmailAddresses = array();
         unset($args["__sugar_url"]);
         if (!is_array($args)) {
