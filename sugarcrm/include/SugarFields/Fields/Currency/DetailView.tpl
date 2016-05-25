@@ -11,7 +11,7 @@
  */
 *}
 <span id='{{sugarvar key='name'}}'>
-{sugar_currency_format var={{sugarvar key='value' stringFormat='false'}} }
+{sugar_number_format var={{sugarvar key='value' stringFormat='false'}} }
 </span>
 {{if !empty($displayParams.enableConnectors)}}
 {{sugarvar_connector view='DetailView'}}
