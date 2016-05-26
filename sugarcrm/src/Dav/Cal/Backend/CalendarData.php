@@ -383,7 +383,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $event->save();
 
             $this->logger->info("CalDav: Created CalDav event bean with id = {$event->id} and etag = {$event->etag}");
-            return '"' . $event->etag . '"';
+            return null;
         }
 
         $this->logger->notice('CalDav: Failed to create CalDav event bean or set data to it');
@@ -433,7 +433,7 @@ class CalendarData extends AbstractBackend implements SchedulingSupport, SyncSup
             $this->logger->info("CalDav: Update calendar event $event->id and etag = {$event->etag}");
             $event->save();
 
-            return '"' . $event->etag . '"';
+            return null;
         }
 
         $this->logger->notice('CalDav: Failed to update CalDav event bean or set data to it');

@@ -390,7 +390,7 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
 
-        if ($collection->setEventURL($event, $beanModuleName, ($rootBeanId ?: $beanId))) {
+        if ($collection->setEventURL($event, $beanModuleName, $beanId)) {
             $isChanged = true;
         }
 

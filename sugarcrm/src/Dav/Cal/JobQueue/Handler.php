@@ -168,8 +168,6 @@ class Handler implements RunnableInterface
                 $this->logger->debug("CalDav: Set Call direction to {$bean->direction}");
             }
             $calDavBean->setBean($bean);
-            $calDavBean->setEventURL($calDavBean->getParent(), $bean->module_name, $bean->id);
-            $calDavBean->doLocalDelivery = false;
             $calDavBean->save();
         }
         $this->logger->debug("CalDav: Importing event's Sugar Bean is {$bean->module_name}({$bean->id})");

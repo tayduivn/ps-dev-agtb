@@ -1097,6 +1097,57 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Sets bean link for every child.
+     */
+    protected function rebuildEventsUrl()
+    {
+        if (!$this->parent_id || !$this->isImportable()) {
+            return;
+        }
+
+        $parentEvent = $this->getParent();
+        if (!$parentEvent) {
+            return;
+        }
+
+        $this->setEventURL($parentEvent, $this->parent_type, $this->parent_id);
+        if (!$this->getRRule()) {
+            return;
+        }
+
+        $sugarChildrenOrder = $this->getSugarChildrenOrder();
+        $calDavChildrenOrder = $this->getAllChildrenRecurrenceIds();
+
+        if (count($sugarChildrenOrder) != count($calDavChildrenOrder)) {
+            return;
+        }
+
+        $currentIndex = 0;
+        $customizedParent = null;
+        foreach ($calDavChildrenOrder as $recurrenceId) {
+            $sugarId = $sugarChildrenOrder[$currentIndex ++];
+            $child = $this->getChild($recurrenceId);
+            if (!$child) {
+                continue;
+            }
+            if ($recurrenceId == $parentEvent->getStartDate()) {
+                if ($child->isCustomized()) {
+                    $customizedParent = $child;
+                    $this->setEventURL($customizedParent, $this->parent_type, $sugarId);
+                }
+            } else {
+                $this->setEventURL($child, $this->parent_type, $sugarId);
+            }
+        }
+
+        if ($customizedParent && $parentEvent->isEqualTo($customizedParent)) {
+            $vCalendar = $this->getVCalendar();
+            $vCalendar->remove($customizedParent->getObject());
+            $this->childEvents = array();
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function save($check_notify = false)
@@ -1108,7 +1159,7 @@ class CalDavEventCollection extends SugarBean
         if (!$this->parent_type) {
             $this->parent_type = $GLOBALS['current_user']->getPreference('caldav_module');
         }
-
+        $this->rebuildEventsUrl();
         $this->sync();
         if ($this->isImportable() && $this->doLocalDelivery && $this->scheduleLocalDelivery()) {
             $this->sync();
@@ -1242,6 +1293,16 @@ class CalDavEventCollection extends SugarBean
             case 'restore':
                 $newData = $this->getVCalendar();
                 break;
+        }
+
+        if ($oldData) {
+            /** @var CalDavEventCollection $oldCollection */
+            $oldCollection = new static();
+            $oldCollection->setData($oldData);
+            $oldParent = $oldCollection->getParent();
+            if (!$oldParent->getStartDate()) {
+                $oldData = null;
+            }
         }
 
         return $schedulePlugin->calendarObjectSugarChange($newData, $oldData, $schedulingUser->user_name);

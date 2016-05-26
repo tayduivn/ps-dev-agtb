@@ -322,6 +322,47 @@ class Event
     }
 
     /**
+     * Checks that the events are the same.
+     *
+     * @param Event $event Event to compare
+     *
+     * @return bool
+     */
+    public function isEqualTo(Event $event)
+    {
+        $isFieldEquals =
+            $this->getUrl() == $event->getUrl() &&
+            $this->getTitle() == $event->getTitle() &&
+            $this->getDescription() == $event->getDescription() &&
+            $this->getStartDate() == $event->getStartDate() &&
+            $this->getDuration() == $event->getDuration() &&
+            $this->getEndDate() == $event->getEndDate() &&
+            $this->getLocation() == $event->getLocation();
+
+        if (!$isFieldEquals) {
+            return false;
+        }
+
+        $participants = $this->getParticipants();
+        $participantsToCompare = $event->getParticipants();
+        if (count($participants) != count($participantsToCompare)) {
+            return false;
+        }
+
+        foreach ($participants as $participant) {
+            $foundIndex = $event->findParticipantsByEmail($participant->getEmail());
+            if ($foundIndex == - 1) {
+                return false;
+            }
+            if (!$participant->isEqualTo($participantsToCompare[$foundIndex])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Is event deleted or not
      * @return bool
      */

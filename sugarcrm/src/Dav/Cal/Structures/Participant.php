@@ -64,6 +64,21 @@ class Participant
     }
 
     /**
+     * Checks that the participants are the same.
+     *
+     * @param Participant $participant Participant to compare
+     *
+     * @return bool
+     */
+    public function isEqualTo(Participant $participant)
+    {
+        return
+            $this->getDisplayName() == $participant->getDisplayName() &&
+            $this->getStatus() == $participant->getStatus() &&
+            $this->getEmail() == $participant->getEmail();
+    }
+
+    /**
      * @param string $name
      * @return mixed
      */
