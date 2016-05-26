@@ -137,7 +137,11 @@ class PMSEEngineUtils
      * @var array
      */
     public static $relatedBlacklistedLinksByModule = array(
-        'Accounts'=>array('revenuelineitems')
+        'Accounts'=>array('revenuelineitems'),
+        'Leads' => array(
+            'meetings_parent',
+            'calls_parent',
+        ),
     );
 
     /**

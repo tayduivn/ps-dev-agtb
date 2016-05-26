@@ -290,36 +290,6 @@ class Lead extends Person {
 		return $temp_array;
 	}
 
-    /**
-     * Returns an array of fields that are of type link.
-     *
-     * @return array List of fields.
-     *
-     * Internal function, do not override.
-     */
-	//fix for bug 27339 Shine
-    function get_linked_fields()
-    {
-    	$linked_fields=array();
-    	$fieldDefs = $this->getFieldDefinitions();
-
-    	//find all definitions of type link.
-    	if (!empty($fieldDefs))
-    	{
-    		foreach ($fieldDefs as $name=>$properties)
-    		{
-                if ($name == 'meetings_parent' || $name == 'calls_parent') {
-                    continue;
-                }
-    			elseif (array_search('link',$properties) === 'type')
-    			{
-    				$linked_fields[$name]=$properties;
-    			}
-    		}
-    	}
-    	return $linked_fields;
-    }
-
 	/**
 		builds a generic search based on the query string using or
 		do not include any $this-> because this is called on without having the class instantiated
