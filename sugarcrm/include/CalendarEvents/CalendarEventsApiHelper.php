@@ -80,7 +80,7 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
 
         $bean->update_vcal = false;
 
-        $bean->users_arr = $this->getUserInvitees($bean, $submittedData);
+        $bean->users_arr = $this->getInvitees($bean, 'users', $submittedData);
         $bean->leads_arr = $this->getInvitees($bean, 'leads', $submittedData);
         $bean->contacts_arr = $this->getInvitees($bean, 'contacts', $submittedData);
         $bean->addressees_arr = $this->getInvitees($bean, 'addressees', $submittedData);
@@ -170,27 +170,5 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         }
 
         return $invites;
-    }
-
-    /**
-     * Returns an array of IDs for associated users.
-     *
-     * The assigned user is included if not already invited. The current user is included if the event is new and the
-     * current user is not the assigned user.
-     *
-     * @param SugarBean $bean
-     * @param array $submittedData The submitted data for this request
-     * @return array
-     */
-    protected function getUserInvitees(SugarBean $bean, $submittedData)
-    {
-        $userInvitees = $this->getInvitees($bean, 'users', $submittedData);
-        $userInvitees[] = $bean->assigned_user_id;
-
-        if ($bean->assigned_user_id != $GLOBALS['current_user']->id && (empty($bean->id) || $bean->new_with_id)) {
-            $userInvitees[] = $GLOBALS['current_user']->id;
-        }
-
-        return array_unique($userInvitees);
     }
 }

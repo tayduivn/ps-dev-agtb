@@ -122,6 +122,13 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
                 'none',
                 $locale->formatName($this->contact)
             ),
+            array(
+                'Users',
+                $meeting->assigned_user_id,
+                '',
+                'none',
+                $locale->formatName($current_user),
+            ),
         );
 
         $invitesAfterExpected = array (

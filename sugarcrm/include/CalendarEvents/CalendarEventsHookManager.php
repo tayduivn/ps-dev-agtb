@@ -115,6 +115,7 @@ class CalendarEventsHookManager
     {
         $link = $args['link'];
         $bean->load_relationship($link);
+        $bean->$link->load();
         $acceptStatus = 'none';
         if (isset($bean->$link->rows[$args['related_id']])) {
             $acceptStatus = $bean->$link->rows[$args['related_id']]['accept_status'];

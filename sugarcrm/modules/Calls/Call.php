@@ -225,6 +225,8 @@ class Call extends SugarBean {
             $this->status = $this->getDefaultStatus();
         }
 
+        $this->handleInviteesForUserAssign();
+
         $return_id = parent::save($check_notify);
 
         if ($this->update_vcal) {
@@ -924,5 +926,26 @@ class Call extends SugarBean {
     public function getParticipantsHelper()
     {
         return new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper();
+    }
+
+    /**
+     * Handles invitees list when Call is assigned to a user.
+     * - new user should be added to invitees, if it is not already there;
+     * - on create when current user assigns Meeting not to himself, add current user to invitees.
+     */
+    protected function handleInviteesForUserAssign()
+    {
+        $this->load_relationship('users');
+        $existingUsers = $this->users->get();
+
+        if (isset($this->assigned_user_id) && !in_array($this->assigned_user_id, $existingUsers)) {
+            $this->users->add($this->assigned_user_id);
+        }
+
+        if (!$this->isUpdate() && isset($GLOBALS['current_user']->id) &&
+            $this->assigned_user_id !== $GLOBALS['current_user']->id &&
+            !in_array($GLOBALS['current_user']->id, $existingUsers)) {
+            $this->users->add($GLOBALS['current_user']->id);
+        }
     }
 }
