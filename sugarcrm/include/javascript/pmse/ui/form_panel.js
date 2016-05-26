@@ -1657,7 +1657,6 @@ FormPanelDropdown.prototype._onLoadDataSuccess = function () {
         var items = that._dataRoot ? data[that._dataRoot] : data;
         that._removeLoadingMessage();
         that.setOptions(items);
-        that.setSelect2Tooltips();
     };
 };
 
@@ -1672,30 +1671,6 @@ FormPanelDropdown.prototype.load = function () {
         success: this._onLoadDataSuccess()
     });
     return this;
-};
-
-FormPanelDropdown.prototype.setSelect2Tooltips = function() {
-    //bind whenever select2 loads
-    //this includes when select2 initializes and when it completes a search
-    $(document).on('select2-loaded.select2event', function(){
-        //remove any stuck tooltips
-        $('.tooltip').remove();
-
-        //add attributes required for tooltips
-        $('.select2-result').attr('rel', 'tooltip');
-        $('.select2-result').attr('data-placement', 'right');
-        _.each($('.select2-result'), function(result){
-            //We do $($(result).find('div')[0]).text() to get the value of the option
-            //the tooltip plugin uses data-original-title to set the content of the tooltip
-            $(result).attr('data-original-title', $($(result).find('div')[0]).text());
-            App.utils.tooltip.initialize($(result));
-        });
-    });
-
-    //remove all tooltips when closing select2
-    $(document).on('select2-close.select2event', function() {
-        $('.tooltip').remove();
-    });
 };
 
 FormPanelDropdown.prototype.setDataRoot = function (root) {
@@ -2404,6 +2379,12 @@ FormPanelFriendlyDropdown.prototype._createControl = function () {
             query: this._queryFunction(),
             initSelection: this._initSelection(),
             width: "100%",
+            formatResult: function(result, container, query, escapeMarkup) {
+                container.attr('rel', 'tooltip');
+                container.attr('data-placement', 'right');
+                container.attr('data-original-title', result.text);
+                return $.fn.select2.defaults.formatResult.apply(this, arguments);
+            },
             formatNoMatches: function (term) {
                 return (term && (term !== '')) ? translate('LBL_PA_FORM_COMBO_NO_MATCHES_FOUND') : '';
             }
