@@ -511,7 +511,9 @@ class OracleManager extends DBManager
 
         if($this->getDatabase()) {
             $tables = array();
-            $r = $this->query('SELECT TABLE_NAME FROM USER_TABLES');
+            $owner = strtoupper($this->configOptions['db_schema_name']);
+            $query = 'SELECT TABLE_NAME FROM ALL_TABLES WHERE OWNER = ' . $this->quoted($owner);
+            $r = $this->query($query);
             if (is_resource($r)) {
                 while ($a = $this->fetchByAssoc($r))
                     $tables[] = strtolower($a['table_name']);
@@ -524,15 +526,18 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::tableExists()
+     * {@inheritDoc}
      */
     public function tableExists($tableName)
     {
         $GLOBALS['log']->info("tableExists: $tableName");
 
         if ($this->getDatabase()){
-            $this->tableName = strtoupper($tableName);
-            $sql = "select count(*) count from user_tables where upper(table_name) like '$this->tableName'";
+            $tableName = strtoupper($tableName);
+            $owner = strtoupper($this->configOptions['db_schema_name']);
+            $sql = 'SELECT COUNT(*) FROM ALL_TABLES'
+                . ' WHERE OWNER = ' . $this->quoted($owner)
+                . ' AND TABLE_NAME = ' . $this->quoted($tableName);
             $count = $this->getOne($sql);
             return ($count == 0) ? false : true;
         }
@@ -549,7 +554,11 @@ class OracleManager extends DBManager
     {
         if ($this->getDatabase()) {
             $tables = array();
-            $r = $this->query('SELECT TABLE_NAME tn FROM USER_TABLES WHERE TABLE_NAME LIKE '.strtoupper($this->quoted($like)));
+            $owner = strtoupper($this->configOptions['db_schema_name']);
+            $sql = 'SELECT TABLE_NAME FROM ALL_TABLES'
+                . ' WHERE OWNER = ' . $this->quoted($owner)
+                . ' AND TABLE_NAME LIKE ' . $this->quoted($like);
+            $r = $this->query($sql);
             if (!empty($r)) {
                 while ($a = $this->fetchByAssoc($r)) {
                     $row = array_values($a);
@@ -752,6 +761,10 @@ class OracleManager extends DBManager
         if(!$configOptions)
 			$configOptions = $sugar_config['dbconfig'];
 
+        if (empty($configOptions['db_schema_name'])) {
+            $configOptions['db_schema_name'] = $configOptions['db_user_name'];
+        }
+
 		$this->configOptions = $configOptions;
 		if(!empty($configOptions['charset'])) {
 		    $charset = $configOptions['charset'];
@@ -803,6 +816,10 @@ class OracleManager extends DBManager
                 QUERY_REWRITE_INTEGRITY = TRUSTED
                 QUERY_REWRITE_ENABLED = TRUE
                 NLS_LENGTH_SEMANTICS=CHAR ";
+
+        if (strcasecmp($configOptions['db_schema_name'], $configOptions['db_user_name']) != 0) {
+            $session_query .= ' CURRENT_SCHEMA = ' . strtoupper($configOptions['db_schema_name']);
+        }
 
             $collation = $this->getOption('collation');
             if(!empty($collation)) {
@@ -1117,9 +1134,16 @@ class OracleManager extends DBManager
 	 */
 	protected function _isNullableDb($tableName, $fieldName)
 	{
-		return $this->getOne("SELECT nullable FROM user_tab_columns
-				WHERE TABLE_NAME = '".strtoupper($tableName)."'
-					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
+        $owner = strtoupper($this->configOptions['db_schema_name']);
+        $tableName = strtoupper($tableName);
+        $fieldName = strtoupper($fieldName);
+
+        $query = 'SELECT NULLABLE FROM ALL_TAB_COLUMNS'
+            . ' WHERE OWNER = ' . $this->quoted($owner)
+            . ' AND TABLE_NAME = ' . $this->quoted($tableName)
+            . ' AND COLUMN_NAME = ' . $this->quoted($fieldName);
+
+        return strcmp($this->getOne($query), 'Y') == 0;
 	}
 
 	/**
@@ -1339,6 +1363,8 @@ class OracleManager extends DBManager
      *
      * @param  string $name index name
      * @return string
+     *
+     * @deprecated
      */
     protected function fixIndexName($name)
     {
@@ -1447,48 +1473,57 @@ class OracleManager extends DBManager
 
         $columns = array();
         if (!$filterByTable) {
-            $columns[] = 'ui.table_name';
+            $columns[] = 'i.table_name';
         }
 
         if (!$filterByIndex) {
-            $columns[] = 'ui.index_name';
+            $columns[] = 'i.index_name';
         }
 
-        $columns[] = 'uc.constraint_type';
-        $columns[] = 'uic.column_name';
+        $columns[] = 'c.constraint_type';
+        $columns[] = 'ic.column_name';
+
+        $owner = strtoupper($this->configOptions['db_schema_name']);
 
         $query = 'SELECT ' . implode(', ', $columns) . '
-FROM user_indexes ui
-INNER JOIN user_ind_columns uic
-    ON uic.index_name = ui.index_name
-LEFT JOIN user_constraints uc
-    ON uc.index_name = ui.index_name
-        AND uc.table_name = ui.table_name';
+FROM all_indexes i
+INNER JOIN all_ind_columns ic
+    ON ic.index_name = i.index_name
+        AND ic.index_owner = i.owner
+            AND ic.table_name = i.table_name
+                AND ic.table_owner = i.table_owner
+LEFT JOIN all_constraints c
+    ON c.index_name = i.index_name
+        AND c.owner = i.owner';
 
-        $where = array();
+        $query_owner = strtoupper($owner);
+        $where = array(
+            'i.table_owner = ' . $this->quoted($query_owner),
+        );
+
         if ($filterByTable) {
             $query_table_name = strtoupper($table_name);
-            $where[] = 'ui.table_name = ' . $this->quoted($query_table_name);
+            $where[] = 'i.table_name = ' . $this->quoted($query_table_name);
         }
 
         if ($filterByIndex) {
             $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
-            $where[] = 'ui.index_name = ' . $this->quoted($query_index_name);
+            $where[] = 'i.index_name = ' . $this->quoted($query_index_name);
         }
 
-        $where[] = 'ui.index_type = \'NORMAL\'';
+        $where[] = 'i.index_type = \'NORMAL\'';
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
         if (!$filterByTable) {
-            $order[] = 'ui.table_name';
+            $order[] = 'i.table_name';
         }
 
         if (!$filterByIndex) {
-            $order[] = 'ui.index_name';
+            $order[] = 'i.index_name';
         }
 
-        $order[] = 'uic.column_position';
+        $order[] = 'ic.column_position';
         $query .= ' ORDER BY ' . implode(', ', $order);
 
         $result = $this->query($query);
@@ -1520,7 +1555,7 @@ LEFT JOIN user_constraints uc
     }
 
     /**
-     * Get list of DB column definitions
+     * {@inheritDoc}
      */
     public function get_columns($tablename)
     {
@@ -1539,10 +1574,14 @@ LEFT JOIN user_constraints uc
             'data_default',
             'nullable'
         );
+        $owner = strtoupper($this->configOptions['db_schema_name']);
+        $tablename = strtoupper($tablename);
+
         $query = "SELECT "
             . implode(',', $columns)
-            . " FROM user_tab_columns "
-            . " WHERE TABLE_NAME = {$this->quoted(strtoupper($tablename))}";
+            . ' FROM ALL_TAB_COLUMNS '
+            . ' WHERE OWNER = ' . $this->quoted($owner)
+            . ' AND TABLE_NAME = ' . $this->quoted($tablename);
         //find all unique indexes and primary keys.
         $result = $this->query($query);
 

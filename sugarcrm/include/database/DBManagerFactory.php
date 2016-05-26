@@ -27,7 +27,7 @@ class DBManagerFactory
      *
      * @param  string $type DB type
      * @param array $config DB configuration
-     * @return object DBManager instance
+     * @return DBManager
      */
     public static function getTypeInstance($type, $config = array())
     {
