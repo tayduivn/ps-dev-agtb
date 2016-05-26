@@ -14,7 +14,7 @@
 {{#if collection.models}}
     {{#each collection.models}}
         <li class="search-result">
-            <a href="{{link}}" tabindex="-1">
+            {{#if viewAccess}}<a href="#{{buildRoute model=this}}" tabindex="-1">{{else}}<div class="qs-row">{{/if}}
                 {{#if ../layout.v2}}
                     {{partial 'row' ../../this view=../../this model=this module=module}}
                 {{else}}
@@ -22,7 +22,7 @@
                         {{moduleIconLabel module}}
                     </span>{{name}}{{#if field_name}}, {{field_name}}: {{field_value}}{{/if}}
                 {{/if}}
-            </a>
+            {{#if viewAccess}}</a>{{else}}</div>{{/if}}
         </li>
     {{/each}}
     {{#notEq collection.next_offset "-1"}}

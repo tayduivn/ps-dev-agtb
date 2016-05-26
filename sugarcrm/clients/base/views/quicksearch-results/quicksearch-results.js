@@ -107,8 +107,8 @@
             gsUtils.formatRecords(collection, false);
 
             _.each(this.collection.models, function(model) {
+                model.viewAccess = app.acl.hasAccessToModel('view', model);
 
-                model.link = '#' + app.router.buildRoute(model.module, model.id);
                 // FIXME: SC-4254 Remove this.layout.v2
                 if (this.layout.v2) {
                     var moduleMeta = this._fieldsMeta[model.module] || gsUtils.getFieldsMeta(model.module, {linkablePrimary: false});
