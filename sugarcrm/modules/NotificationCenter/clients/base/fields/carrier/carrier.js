@@ -59,6 +59,7 @@
         if ('global' === this.model.get('configMode')) {
             this.def.config = this.model.get('carriers')[this.name];
         }
+        this.def.selectable = this.carriers[this.def.name].selectable ? true : false;
         return this.carriers[this.def.name].status;
     },
 

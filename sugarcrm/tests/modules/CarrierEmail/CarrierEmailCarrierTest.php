@@ -64,4 +64,20 @@ class CarrierEmailCarrierTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Email', $this->carrier->getAddressType());
     }
+
+    /**
+     * Should return correct options list.
+     *
+     * @covers CarrierEmailCarrier::getOptions
+     */
+    public function testGetOptions()
+    {
+        $this->assertEquals(
+            array(
+                'deliveryOptionsDisplayStyle' => 'multiselect',
+                'deliveryOptionsBehavior' => 'multiple',
+            ),
+            $this->carrier->getOptions()
+        );
+    }
 }

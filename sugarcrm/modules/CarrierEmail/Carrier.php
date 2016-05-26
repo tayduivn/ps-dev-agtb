@@ -49,4 +49,15 @@ class CarrierEmailCarrier implements CarrierInterface
     {
         return new AddressTypeEmail();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOptions()
+    {
+        return array(
+            'deliveryOptionsDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_MULTISELECT,
+            'deliveryOptionsBehavior' => static::DELIVERY_BEHAVIOR_MULTIPLE,
+        );
+    }
 }

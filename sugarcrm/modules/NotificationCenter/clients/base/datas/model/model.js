@@ -133,11 +133,13 @@
             return;
         }
 
-        var allCarriers = this.get('personal')['carriers'],
-            addresses = {};
+        var allCarriers = this.get('personal').carriers;
+        var addresses = {};
+
         // Prepare addresses
         _.each(allCarriers, function(carrier, name) {
-            if (carrier.selectable) {
+            if (carrier.deliveryOptionsDisplayStyle !== 'none') {
+                allCarriers[name].selectable = true;
                 addresses[name] = [];
             }
         });

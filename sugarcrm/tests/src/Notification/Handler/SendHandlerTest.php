@@ -171,4 +171,12 @@ class CarrierCRYS1288 implements CarrierInterface
     {
 
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOptions()
+    {
+
+    }
 }

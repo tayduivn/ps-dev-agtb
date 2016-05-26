@@ -441,6 +441,13 @@ class {$moduleName}Carrier {$implement}
     public function getAddressType()
     {
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptions()
+    {
+    }    
 }
 ";
         sugar_file_put_contents("modules/{$moduleName}/Carrier.php", $classCode);
@@ -481,6 +488,13 @@ class {$moduleName}Carrier implements \\Sugarcrm\\Sugarcrm\\Notification\\Carrie
     public function getAddressType()
     {
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptions()
+    {
+    }      
 }
 ";
         sugar_file_put_contents("custom/modules/{$moduleName}/Carrier.php", $classCode);

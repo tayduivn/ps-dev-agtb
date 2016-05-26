@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\Notification;
 
+use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionFilter\SubscriptionFilterInterface;
@@ -435,6 +436,29 @@ class SubscriptionsRegistry
     }
 
     /**
+     * Returns list of selectable carriers with only one possible option.
+     *
+     * @return array
+     */
+    protected function getSelectableCarriersWithOneOption()
+    {
+        $oneOptionCarriers = array();
+        $enabledCarriers = $this->getEnabledCarriers();
+        foreach ($enabledCarriers as $carrierName) {
+            $carrier = $this->getCarrierRegistry()->getCarrier($carrierName);
+            $carrierOptions = $carrier->getOptions();
+
+            if (!array_key_exists('deliveryOptionsBehavior', $carrierOptions)
+                ||
+                $carrierOptions['deliveryOptionsBehavior'] == CarrierInterface::DELIVERY_BEHAVIOR_SINGLE
+            ) {
+                $oneOptionCarriers[] = $carrierName;
+            }
+        }
+        return $oneOptionCarriers;
+    }
+
+    /**
      * @see CarrierRegistry::getInstance
      */
     protected function getCarrierRegistry()
@@ -459,14 +483,19 @@ class SubscriptionsRegistry
     protected function filterCarriers($carriers)
     {
         $availableAndEnabledCarriers = $this->getEnabledCarriers();
-
+        $oneOptionCarriers = $this->getSelectableCarriersWithOneOption();
+        $selectedSingleCarriers = array();
         $filtered = array();
-
         if (is_array($carriers)) {
             foreach ($carriers as $item) {
                 if (is_array($item) && count($item) > 0) {
                     if (in_array($item[0], $availableAndEnabledCarriers)) {
-                        $filtered[] = $item;
+                        if (in_array($item[0], $oneOptionCarriers) && !in_array($item[0], $selectedSingleCarriers)) {
+                            $filtered[] = $item;
+                            $selectedSingleCarriers[] = $item[0];
+                        } elseif (!in_array($item[0], $oneOptionCarriers)) {
+                            $filtered[] = $item;
+                        }
                     }
                 }
             }

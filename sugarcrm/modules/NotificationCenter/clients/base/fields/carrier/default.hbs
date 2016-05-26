@@ -29,6 +29,9 @@
                 >{{#if def.config.isConfigured }}{{str 'LBL_LINK_CARRIER_EDIT' module}} {{else}} {{str 'LBL_LINK_CARRIER_CONFIGURE' module}} {{/if}} </a> 
          {{/if}}
         {{/eq}}
+    {{#if def.selectable}}
+    {{{str 'LBL_LINK_TO_USER_PROFILE' module}}}
+    {{/if}}
     </span>
 </label>
 

@@ -167,11 +167,14 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'getSubscriptionFilterRegistry',
                 'getCarrierRegistry',
                 'getCarrierStatus',
+                'getSelectableCarriersWithOneOption',
             )
         );
         $this->subscriptionsRegistry->method('getSubscriptionFilterRegistry')->willReturn($subscriptionFilterRegistry);
         $this->subscriptionsRegistry->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
         $this->subscriptionsRegistry->method('getCarrierStatus')->willReturn($this->carrierStatus);
+        $this->subscriptionsRegistry->method('getSelectableCarriersWithOneOption')->willReturn(array());
+
         $subscriptionFilterRegistry->method('getFilters')->willReturn(array(
             'NotSupportsFilterCRYS1301',
             'MeetingFilterCRYS1301',

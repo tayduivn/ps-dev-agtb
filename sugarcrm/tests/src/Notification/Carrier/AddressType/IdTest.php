@@ -86,14 +86,4 @@ class IdTest extends \PHPUnit_Framework_TestCase
         $result = $this->addressType->getTransportValue($this->user, $key);
         $this->assertEquals($this->user->id, $result);
     }
-
-    /**
-     * isSelectable should return false for Id Address Type
-     *
-     * @covers Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Id::isSelectable
-     */
-    public function isSelectableReturnsFalse()
-    {
-        $this->assertFalse($this->addressType->isSelectable());
-    }
 }

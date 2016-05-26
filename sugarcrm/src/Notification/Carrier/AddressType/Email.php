@@ -72,12 +72,4 @@ class Email implements AddressTypeInterface
         $this->logger->notice("NC: No email for User({$user->id}) and option = $option found");
         return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isSelectable()
-    {
-        return true;
-    }
 }

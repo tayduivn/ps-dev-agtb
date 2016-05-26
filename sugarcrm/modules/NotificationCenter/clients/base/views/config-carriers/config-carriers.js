@@ -40,7 +40,8 @@
      * @private
      */
     populateCarriers: function() {
-        var carriersData, address;
+        var carriersData;
+        var address;
 
         if (this.model.get('configMode') === 'user') {
             carriersData = this.model.get('personal') ? this.model.get('personal')['carriers'] : null;
@@ -53,11 +54,12 @@
             address = (!value.selectable) ? null :
             {
                 name: key + '-address',
-                type: 'address',
+                type: value.deliveryOptionsDisplayStyle ? 'address-' + value.deliveryOptionsDisplayStyle  : 'address',
                 view: 'edit',
                 options: value.options,
                 carrier: key,
-                css_class: 'span12'
+                css_class: 'span12',
+                fieldName: 'address',
             };
             this.carriers.push({
                 name: key,

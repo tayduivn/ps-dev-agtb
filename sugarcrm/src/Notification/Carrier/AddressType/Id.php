@@ -42,12 +42,4 @@ class Id implements AddressTypeInterface
     {
         return $user->id;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isSelectable()
-    {
-        return false;
-    }
 }
