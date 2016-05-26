@@ -92,8 +92,13 @@ class Datetime extends Base implements EvaluatorInterface
             $input = $timedate->$method($this->data[$this->name]);
             $input = $this->getComparisonValue($input);
 
+            // Get the right side check, or what was from the bean. Values from
+            // beans will be in the user's format:  2016//03/24 14:27.
+            $original = $timedate->fromUser($this->bean->{$this->name}, $this->getCurrentUser());
+            $original = $this->getComparisonValue($original);
+
             // Send back the comparison result
-            return $input != $this->bean->{$this->name};
+            return $input != $original;
         }
 
         return false;
