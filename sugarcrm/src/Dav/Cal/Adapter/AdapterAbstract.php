@@ -225,8 +225,17 @@ abstract class AdapterAbstract implements AdapterInterface
                     $changedFields['repeat_interval'][0] = null;
                 }
 
-                // Since it's an override action we just take all the existing invitees in diff format (adding them).
-                $changedInvitees = $participantsHelper->getInviteesDiff(array(), \CalendarUtils::getInvitees($bean));
+                if ($changedInvitees) {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        $changedInvitees,
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                } else {
+                    $changedInvitees = $participantsHelper->getInviteesDiff(
+                        array(),
+                        \CalendarUtils::getInvitees($bean)
+                    );
+                }
 
                 break;
             case 'update' :

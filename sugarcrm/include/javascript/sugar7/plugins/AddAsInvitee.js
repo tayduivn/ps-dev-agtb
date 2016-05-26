@@ -58,22 +58,6 @@
                             this.addChangeListener('assigned_user_name', this.handleAssignedUserChange);
                         }, this);
                     }
-
-                    if (this.collection) {
-                        // On every collection sync event add field-change listeners to its every model.
-                        // Collection is present on both list and record views. But 'sync' event is only fired for list.
-                        this.collection.on('sync', function() {
-                            this.addChangeListenerForCollection('parent_name', this.handleParentChange);
-                            this.addChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
-                        }, this);
-
-                        // There can be many collection 'sync' events, so we do not want to accumulate listeners.
-                        this.collection.on('reset', function() {
-                            this.removeChangeListenerForCollection('parent_name', this.handleParentChange);
-                            this.removeChangeListenerForCollection('assigned_user_name', this.handleAssignedUserChange);
-                        }, this);
-                    }
-
                 }, this);
             },
 
@@ -102,36 +86,6 @@
             },
 
             /**
-             * Adds an event listener for every collection's model changes to the specified field and
-             * calls the specified callback.
-             *
-             * @param {string} fieldName The field on which to listen for
-             * changes.
-             * @param {Function} callback The function that is called when a
-             * change occurs.
-             */
-            addChangeListenerForCollection: function(fieldName, callback) {
-                _.each(this.collection.models, function(model) {
-                    model.on('change:' + fieldName, callback, this);
-                }, this);
-            },
-
-            /**
-             * Removes an event listener from every collection's model changes to the specified field and
-             * calls the specified callback.
-             *
-             * @param {string} fieldName The field on which to listen for
-             * changes.
-             * @param {Function} callback The function that is called when a
-             * change occurs.
-             */
-            removeChangeListenerForCollection: function(fieldName, callback) {
-                _.each(this.collection.models, function(model) {
-                    model.off('change:' + fieldName, callback, this);
-                }, this);
-            },
-
-            /**
              * If parent field changes, check if it is a possible invitee add as
              * an invitee
              *
@@ -148,11 +102,11 @@
                     name: model.get('parent_name')
                 });
 
-                if (this.isPossibleInvitee(parent, model)) {
+                if (this.isPossibleInvitee(parent)) {
                     if (this._isCreateAndLinkAction(parent, model)) {
                         parent.deletable = false;
                     }
-                    this.addAsInvitee(parent, model, options);
+                    this.addAsInvitee(parent, options);
                 }
             },
 
@@ -172,8 +126,8 @@
                     name: model.get('assigned_user_name')
                 });
 
-                if (this.isPossibleInvitee(user, model)) {
-                    this.addAsInvitee(user, model, options);
+                if (this.isPossibleInvitee(user)) {
+                    this.addAsInvitee(user, options);
                 }
             },
 
@@ -193,11 +147,11 @@
                     name: model.get('contact_name')
                 });
 
-                if (this.isPossibleInvitee(contact, model)) {
+                if (this.isPossibleInvitee(contact)) {
                     if (this._isCreateAndLinkAction(contact, model)) {
                         contact.deletable = false;
                     }
-                    this.addAsInvitee(contact, model, options);
+                    this.addAsInvitee(contact, options);
                 }
             },
 
@@ -221,12 +175,11 @@
              * possible invitee modules.
              *
              * @param {Object} person
-             * @param {Data.Bean} model
              * @return {Boolean}
              */
-            isPossibleInvitee: function(person, model) {
+            isPossibleInvitee: function(person) {
                 var inviteeModuleList = ['Leads', 'Contacts', 'Users', 'Addressees'],
-                    invitees = model.get('invitees');
+                    invitees = this.model.get('invitees');
 
                 return (!_.isEmpty(person.id) &&
                     _.contains(inviteeModuleList, person.module) &&
@@ -246,16 +199,15 @@
              * Add the given person as an invitee
              *
              * @param {Object} person
-             * @param {Data.Bean} model
              * @param {Object} [options] Additional options to pass along when
              *   adding an invitee to the collection.
              */
-            addAsInvitee: function(person, model, options) {
+            addAsInvitee: function(person, options) {
                 var complete;
 
                 complete = _.bind(function complete(request) {
                     options = _.extend({merge: true}, (options || {}));
-                    model.get('invitees').add(person, options);
+                    this.model.get('invitees').add(person, options);
                 }, this);
 
                 if (person.fields && _.has(person.fields, 'email') && _.isFunction(person.fetch)) {

@@ -110,7 +110,7 @@ describe('Plugins.AddAsInvitee', function() {
                 view.model.set('invitees', new Backbone.Collection(invitees));
             }
 
-            expect(view.isPossibleInvitee(parent, view.model)).toEqual(isPossibleInvitee);
+            expect(view.isPossibleInvitee(parent)).toEqual(isPossibleInvitee);
         });
     });
 
@@ -121,7 +121,7 @@ describe('Plugins.AddAsInvitee', function() {
         };
         view.model.set('invitees', new Backbone.Collection());
         expect(view.model.get('invitees').get('123')).toBeUndefined();
-        view.addAsInvitee(person, view.model);
+        view.addAsInvitee(person);
         expect(view.model.get('invitees').get('123')).not.toBeUndefined();
     });
 
@@ -138,7 +138,7 @@ describe('Plugins.AddAsInvitee', function() {
         inviteeAddSpy = sandbox.spy(inviteeCollection, 'add');
 
         expect(view.model.get('invitees').get('123')).toBeUndefined();
-        view.addAsInvitee(person, view.model, {default: true});
+        view.addAsInvitee(person, {default: true});
         expect(view.model.get('invitees').get('123')).not.toBeUndefined();
         expect(inviteeAddSpy.lastCall.args[1].merge).toEqual(true);
         expect(inviteeAddSpy.lastCall.args[1].default).toEqual(true);
@@ -162,7 +162,7 @@ describe('Plugins.AddAsInvitee', function() {
                 options.complete();
             });
 
-            view.addAsInvitee(person, view.model);
+            view.addAsInvitee(person);
 
             expect(view.model.get('invitees').get('123')).not.toBeUndefined();
             expect(person.fetch).toHaveBeenCalledOnce();
@@ -175,7 +175,7 @@ describe('Plugins.AddAsInvitee', function() {
             person = app.data.createBean('Contacts', {id: '123'});
             sandbox.spy(person, 'fetch');
 
-            view.addAsInvitee(person, view.model);
+            view.addAsInvitee(person);
 
             expect(view.model.get('invitees').get('123')).not.toBeUndefined();
             expect(person.fetch).not.toHaveBeenCalledOnce();
@@ -191,7 +191,7 @@ describe('Plugins.AddAsInvitee', function() {
             };
             sandbox.spy(person, 'fetch');
 
-            view.addAsInvitee(person, view.model);
+            view.addAsInvitee(person);
 
             expect(view.model.get('invitees').get('123')).not.toBeUndefined();
             expect(person.fetch).not.toHaveBeenCalledOnce();

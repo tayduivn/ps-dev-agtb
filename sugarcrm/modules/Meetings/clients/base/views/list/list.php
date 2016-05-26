@@ -65,7 +65,6 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'enabled' => true,
-                    'related_fields' => array('invitees'),
                 ),
                 array(
                     'name' => 'date_entered',
