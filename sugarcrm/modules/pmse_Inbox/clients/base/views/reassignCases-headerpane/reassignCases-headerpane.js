@@ -28,6 +28,12 @@
       * @private
       */
      _done: function() {
+         // If collection.models is missing or empty then there is nothing to save
+         if (_.isUndefined(this.collection.models) || (this.collection.models.length == 0)) {
+             app.drawer.close();
+             return;
+         }
+
          var attributes = {};
          app.alert.show('saving', {level: 'process', title: 'LBL_SAVING', autoclose: false});
          var url = app.api.buildURL('pmse_Inbox', 'reassignFlows', null, null);

@@ -906,6 +906,7 @@ class PMSEEngineApi extends SugarApi
         }
 
         if (!empty($args['q'])) {
+            $rowsLoad = array();
             foreach ($rows as $key => $row) {
                 if (strstr(strtolower($row['assigned_user']), strtolower($args['q']))) {
                     $rowsLoad = $rows;
