@@ -184,6 +184,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'vendor/PHPMailer/',
             // PAT-2081 Move Google API library to composer
             'include/google-api-php-client',
+            // Delete files that should have been deleted before
+            'upgrade/scripts/post/5_MinifyJS.php',
         );
 
         // must be upgrading from between 710 to 722
@@ -275,7 +277,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
                 $files[] = 'vendor/OneLogin/Saml';
             }
         }
-        
+
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
