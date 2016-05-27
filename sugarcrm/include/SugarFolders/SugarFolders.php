@@ -632,7 +632,8 @@ ENDW;
 		$bean->add_team_security_where_clause($teamSecurityClause,'f');
 		$bean->disable_row_level_security = true;
 
-        $rootWhere = "AND coalesce(i.mailbox_type, '') != 'caldav'" .
+        // need space in coalesce for oracle to avoid to null conversion
+        $rootWhere = "AND coalesce(i.mailbox_type, ' ') != 'caldav'" .
             " AND (f.parent_folder IS NULL OR f.parent_folder = '')";
 
 		if($subscribed) {
