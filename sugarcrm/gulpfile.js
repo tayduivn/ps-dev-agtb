@@ -188,16 +188,9 @@ gulp.task('check-license', function(done) {
 
     // Prepares the PCRE pattern.
     pattern = pattern.replace(/\*/g, '\\*');
-    // Ignore CRLF files
-    pattern = pattern.replace(/\n/g, '\\s*');
+    pattern = pattern.replace(/\n/g, '\\s');
     pattern = pattern.replace(/\(/g, '\\(');
     pattern = pattern.replace(/\)/g, '\\)');
-
-    // Ignore if license isn't with the correct spacing
-    pattern = pattern.replace(/\\s\* \\\*/g, '\\s*\\s*\\\*');
-
-    // Ignore last CRLF line of the license
-    pattern += '\\s*';
 
     var cmdOptions = [
         '--buffer-size=10M',
