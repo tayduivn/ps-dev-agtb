@@ -1257,6 +1257,7 @@ class CalDavEventCollection extends SugarBean
             return BeanFactory::getBean($this->parent_type, $this->parent_id, array(
                 'strict_retrieve' => true,
                 'deleted' => false,
+                'disable_row_level_security' => true,
             ));
         }
 
