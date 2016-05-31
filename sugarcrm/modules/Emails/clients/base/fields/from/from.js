@@ -22,23 +22,35 @@
      */
     format: function(value) {
         var fromModel;
+        var fromName = '';
+        var fromEmail = '';
 
-        this.fromName = '';
-        this.fromEmail = '';
+        this.tooltipText = '';
 
         if (value instanceof Backbone.Collection && value.length > 0) {
             fromModel = value.first();
             if (fromModel.has('name')) {
-                this.fromName = fromModel.get('name');
+                fromName = fromModel.get('name');
             }
             if (fromModel.has('email_address_used')) {
-                this.fromEmail = fromModel.get('email_address_used');
+                fromEmail = fromModel.get('email_address_used');
             }
-            if (_.isEmpty(this.fromEmail)) {
-                this.fromEmail = app.utils.getPrimaryEmailAddress(fromModel);
+            if (_.isEmpty(fromEmail)) {
+                fromEmail = app.utils.getPrimaryEmailAddress(fromModel);
+            }
+
+            if (!_.isEmpty(fromName)) {
+                this.tooltipText = fromName;
+            }
+            if (!_.isEmpty(fromEmail)) {
+                if (!_.isEmpty(this.tooltipText)) {
+                    this.tooltipText += ' <' + fromEmail + '>';
+                } else {
+                    this.tooltipText = fromEmail;
+                }
             }
         }
 
-        return this.fromName || this.fromEmail;
+        return fromName || fromEmail;
     }
 })

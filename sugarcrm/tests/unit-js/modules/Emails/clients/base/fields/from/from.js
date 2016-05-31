@@ -30,35 +30,31 @@ describe('Emails.Field.From', function() {
                     name: 'Will Westin',
                     email_address_used: 'will@example.com'
                 }]),
-                expectedFromName: 'Will Westin',
-                expectedFromEmail: 'will@example.com',
-                expectedFormattedValue: 'Will Westin'
+                expectedFormattedValue: 'Will Westin',
+                expectedTooltipText: 'Will Westin <will@example.com>'
             },
             {
                 value: new Backbone.Collection([{
                     name: '',
                     email_address_used: 'will@example.com'
                 }]),
-                expectedFromName: '',
-                expectedFromEmail: 'will@example.com',
-                expectedFormattedValue: 'will@example.com'
+                expectedFormattedValue: 'will@example.com',
+                expectedTooltipText: 'will@example.com'
             },
             {
                 value: new Backbone.Collection([{
                     email_address_used: 'will@example.com'
                 }]),
-                expectedFromName: '',
-                expectedFromEmail: 'will@example.com',
-                expectedFormattedValue: 'will@example.com'
+                expectedFormattedValue: 'will@example.com',
+                expectedTooltipText: 'will@example.com'
             },
             {
                 value: new Backbone.Collection([{
                     name: 'Will Westin',
                     email_address_used: ''
                 }]),
-                expectedFromName: 'Will Westin',
-                expectedFromEmail: '',
-                expectedFormattedValue: 'Will Westin'
+                expectedFormattedValue: 'Will Westin',
+                expectedTooltipText: 'Will Westin'
             },
             {
                 value: new Backbone.Collection([{
@@ -71,37 +67,32 @@ describe('Emails.Field.From', function() {
                         opt_out: false
                     }]
                 }]),
-                expectedFromName: 'Will Westin',
-                expectedFromEmail: 'primary@valid.com',
-                expectedFormattedValue: 'Will Westin'
+                expectedFormattedValue: 'Will Westin',
+                expectedTooltipText: 'Will Westin <primary@valid.com>'
             },
             {
                 value: new Backbone.Collection([{
                     name: 'Will Westin'
                 }]),
-                expectedFromName: 'Will Westin',
-                expectedFromEmail: '',
-                expectedFormattedValue: 'Will Westin'
+                expectedFormattedValue: 'Will Westin',
+                expectedTooltipText: 'Will Westin'
             },
             {
                 value: new Backbone.Collection([{}]),
-                expectedFromName: '',
-                expectedFromEmail: '',
-                expectedFormattedValue: ''
+                expectedFormattedValue: '',
+                expectedTooltipText: ''
             },
             {
                 value: null,
-                expectedFromName: '',
-                expectedFromEmail: '',
-                expectedFormattedValue: ''
+                expectedFormattedValue: '',
+                expectedTooltipText: ''
             }
         ], function(data) {
             it('should set instance variables and return formatted value properly', function() {
                 var actual = field.format(data.value);
 
-                expect(field.fromName).toEqual(data.expectedFromName);
-                expect(field.fromEmail).toEqual(data.expectedFromEmail);
                 expect(actual).toEqual(data.expectedFormattedValue);
+                expect(field.tooltipText).toEqual(data.expectedTooltipText);
             });
         });
     });
