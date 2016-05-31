@@ -613,6 +613,99 @@ class EventTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Provides data for \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::isEqualTo method
+     * @return array
+     */
+    public function isEqualToProvider()
+    {
+        return array(
+            'No changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/original'),
+                'result' => true,
+            ),
+            'Title changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedTitle'),
+                'result' => false,
+            ),
+            'Description changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedDescription'),
+                'result' => false,
+            ),
+            'Location changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedLocation'),
+                'result' => false,
+            ),
+            'Start date changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedDateStart'),
+                'result' => false,
+            ),
+            'End date changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedDateEnd'),
+                'result' => false,
+            ),
+            'End date replaced by duration' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/replaceEndDateToDuration'),
+                'result' => true,
+            ),
+            'Duration changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedDuration'),
+                'result' => false,
+            ),
+            'URL changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedURL'),
+                'result' => false,
+            ),
+            'Participant deleted' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/deletedParticipant'),
+                'result' => false,
+            ),
+            'Participant email changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedParticipantEmail'),
+                'result' => false,
+            ),
+            'Participant status changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedParticipantStatus'),
+                'result' => false,
+            ),
+            'Participant name changed' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedParticipantName'),
+                'result' => false,
+            ),
+        );
+    }
+
+    /**
+     * Test checks isEqualTo logic.
+     *
+     * @param VEvent $VEvent
+     * @param VEvent $changedVEvent
+     * @param $expectedResult
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::isEqualTo
+     *
+     * @dataProvider isEqualToProvider
+     */
+    public function testIsEqualTo(VEvent $VEvent, VEvent $changedVEvent, $expectedResult)
+    {
+        $eventMock = $this->getEventMock($VEvent);
+        $eventToCompareMock = $this->getEventMock($changedVEvent);
+        $this->assertEquals($expectedResult, $eventMock->isEqualTo($eventToCompareMock));
+    }
+
+    /**
      * @param VEvent $VEvent
      * @param string $expectedResult
      *
