@@ -230,16 +230,12 @@ To create a {{meetings_singular_module}}:
         'It is also possible to enable/disable all reminder methods by clicking the leftmost checkbox.<br/><br/>' .
         'Please note, some notification methods may be unavailable because your administrator ' .
         'has disabled these options.',
-    'LBL_EMITTER_DESC_ADMIN' => 'Choose what types of notifications and the delivery methods you would like ' .
-        'for your users. Notifications can apply to users that are assigned to a record-, ' .
-        'on a team with belonging to a record,- or invited to a meeting.',
-    'LBL_EMITTER_DESC_USER' => 'Choose the types of notifications you would like to receive. You can also change ' .
-        'the delivery method for each notification. Notifications apply to the users that are assigned to ' .
-        'the record-, on a team with belonging to the record,- or invited to a meeting.',
+    'LBL_EMITTER_DESC_ADMIN' => 'Select the types of notifications and delivery methods available for users.',
+    'LBL_EMITTER_DESC_USER' => 'Select the types of notifications you would like to receive. ' .
+        'You can also select the delivery method for each notification.',
   // Event remind
     'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about {{singular_module_name}}',
     'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',
     'LBL_EVENT_REMINDER_TEXT' => 'You have meeting "%1$s" at %2$s: %3$s',
     'LBL_EVENT_REMINDER_HTML' => 'You have meeting <a href="%3$s">%1$s</a> at %2$s.',
-    'LBL_EVENT_REMINDER_MORE_INFO' => 'If you want to change reminder time please update your profile settings',
 );

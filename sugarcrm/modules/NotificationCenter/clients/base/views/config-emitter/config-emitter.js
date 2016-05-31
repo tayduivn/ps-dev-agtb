@@ -126,7 +126,6 @@
                         this.meta.emitter,
                         additionalText
                     ),
-                    info: app.lang.get('LBL_EVENT_' + eventName.toUpperCase() + '_MORE_INFO', this.meta.emitter),
                     columns: columns
                 });
             }, this);
