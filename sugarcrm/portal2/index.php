@@ -55,7 +55,7 @@ $versionToken = getVersionedPath(null);
         <script src="../include/javascript/modernizr.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Sidecar Scripts -->
-        <script src="../sidecar/minified/sidecar<?php if (shouldResourcesBeMinified()): ?>.min<?php endif; ?>.js?v=<?php echo $versionToken;?>"></script>
+        <script src="../sidecar/minified/sidecar.min.js?v=<?php echo $versionToken;?>"></script>
         <script src="../cache/include/javascript/sugar_sidecar.min.js?v=<?php echo $versionToken;?>"></script>
 
         <!-- Portal specific JS -->
