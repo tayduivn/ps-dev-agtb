@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Emails']['base']['view']['recordlist'] = array(
+    'following' => false,
     'selection' => array(
         'type' => 'multi',
         'actions' => array(
@@ -45,4 +46,34 @@ $viewdefs['Emails']['base']['view']['recordlist'] = array(
             ),
         ),
     ),
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'fa-eye',
+                'acl_action' => 'view',
+            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'edit_button',
+                'label' => 'LBL_EDIT_BUTTON',
+                'event' => 'list:editrow:fire',
+                'acl_action' => 'edit',
+            ),
+            array(
+                'type' => 'rowaction',
+                'name' => 'delete_button',
+                'event' => 'list:deleterow:fire',
+                'label' => 'LBL_DELETE_BUTTON',
+                'acl_action' => 'delete',
+            ),
+        ),
+    ),
 );
+
+
+
+

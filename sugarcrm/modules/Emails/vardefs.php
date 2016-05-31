@@ -952,6 +952,7 @@ $dictionary['Email'] = array(
     ), // end indices
     'uses' => array(
         'favorite',
+        'following',
     ),
 );
 
