@@ -478,7 +478,11 @@
                         if (_.isFunction(this.bindKeyDown)) {
                             this.bindKeyDown(_.bind(this._fieldOnKeyDown, this));
                         } else {
-                            this.on('keydown.record' + this.cid, {field: this}, _.bind(this._fieldOnKeyDown, this));
+                            this.$(this.fieldTag).on(
+                                'keydown.record' + this.cid,
+                                {field: this},
+                                _.bind(this._fieldOnKeyDown, this)
+                            );
                         }
 
                         $(document).on('mousedown.record' + this.cid, {field: this}, _.bind(this._fieldMouseClicked, this));
