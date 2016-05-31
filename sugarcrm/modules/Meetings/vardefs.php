@@ -442,6 +442,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
             'source'=>'non-db',
             'vname'=>'LBL_ADDRESSEES',
             'visible' => false,
+            'workflow' => false,
         ),
   'project'=> array (
     'name' => 'project',
