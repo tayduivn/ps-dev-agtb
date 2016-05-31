@@ -546,11 +546,17 @@
         if (this.disposed === true) {
             return;
         }
-        app.alert.show('delete_confirmation', {
-            level: 'confirmation',
-            messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
-            onConfirm: _.bind(this._insertTemplate, this, template)
-        });
+
+        if (_.isEmpty(this._getFullContent())) {
+            this._insertTemplate(template);
+
+        } else {
+            app.alert.show('delete_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
+                onConfirm: _.bind(this._insertTemplate, this, template)
+            });
+        }
     },
 
     /**

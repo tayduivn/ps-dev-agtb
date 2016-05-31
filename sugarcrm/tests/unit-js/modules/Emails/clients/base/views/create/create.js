@@ -559,6 +559,41 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('insert templates', function() {
+        describe('confirm template', function() {
+            beforeEach(function() {
+                sandbox.stub(view, '_insertTemplate');
+                sandbox.stub(app.alert, 'show');
+            });
+
+            it('should warn the user about replacing the content', function() {
+                var template = app.data.createBean('EmailTemplates', {
+                    id: _.uniqueId(),
+                    name: 'template',
+                    body_html: 'foo bar'
+                });
+
+                sandbox.stub(view, '_getFullContent').returns('previous content');
+                view._confirmTemplate(template);
+
+                expect(view._insertTemplate).not.toHaveBeenCalled();
+                expect(app.alert.show).toHaveBeenCalled();
+            });
+
+            it('should not warn the user about replacing the content', function() {
+                var template = app.data.createBean('EmailTemplates', {
+                    id: _.uniqueId(),
+                    name: 'template',
+                    body_html: 'foo bar'
+                });
+
+                sandbox.stub(view, '_getFullContent').returns('');
+                view._confirmTemplate(template);
+
+                expect(view._insertTemplate).toHaveBeenCalled();
+                expect(app.alert.show).not.toHaveBeenCalled();
+            });
+        });
+
         describe('replacing templates', function() {
             var updateEditorWithSignatureStub;
 
