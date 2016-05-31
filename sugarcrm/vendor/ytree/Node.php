@@ -33,6 +33,14 @@ class Node {
 	var $dynamicloadfunction='loadDataForNode'; //default script to load node data (children)
 	var $expanded=false;  //show node expanded during initial load.
 	 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Node($id, $label, $show_expanded = false)
+    {
+        self::__construct($id, $label, $show_expanded);
+    }
+
     public function __construct($id, $label, $show_expanded = false)
     {
 		$this->_label=$label;	
@@ -83,4 +91,3 @@ class Node {
 		return $ret;		
  	}
 }
-?>

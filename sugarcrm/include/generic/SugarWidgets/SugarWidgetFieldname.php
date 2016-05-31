@@ -17,6 +17,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarWidgetFieldName(&$layout_manager)
+    {
+        self::__construct($layout_manager);
+    }
 
     public function __construct(&$layout_manager)
     {
@@ -256,5 +263,3 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         return $group_by;
 	}
 }
-
-?>

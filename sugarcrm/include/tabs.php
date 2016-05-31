@@ -16,6 +16,14 @@ class SugarWidgetTabs
  var $tabs;
  var $current_key;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarWidgetTabs(&$tabs, $current_key, $jscallback)
+    {
+        self::__construct($tabs, $current_key, $jscallback);
+    }
+
     public function __construct(&$tabs,$current_key,$jscallback)
     {
         $this->tabs = $tabs;

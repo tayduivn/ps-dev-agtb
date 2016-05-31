@@ -25,6 +25,14 @@ class MySugar{
      */
     protected $request;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function MySugar($type)
+    {
+        self::__construct($type);
+    }
+
     public function __construct($type)
     {
 		$this->type = $type;

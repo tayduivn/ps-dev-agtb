@@ -22,6 +22,14 @@ class javascript{
 		$this->formname = $name;
 	}
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function javascript()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		global $app_strings, $current_user, $sugar_config;
@@ -290,4 +298,3 @@ class javascript{
         return empty($required) ? "false" : "true";
     }
 }
-?>

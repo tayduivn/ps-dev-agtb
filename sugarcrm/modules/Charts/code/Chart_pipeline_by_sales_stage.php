@@ -30,6 +30,13 @@ class Chart_pipeline_by_sales_stage
 	  var $modules = array('Opportunities');
 	  var $order = 0;
 
+    /**
+     * @deprecated
+     */
+    public function Chart_pipeline_by_sales_stage()
+    {
+    }
+
 function draw($extra_tools)
 {
 

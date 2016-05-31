@@ -12,6 +12,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class UpgradeSavedSearch {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function UpgradeSavedSearch()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		
@@ -101,4 +109,3 @@ class UpgradeSavedSearch {
 		} //while
 	}
 }
-?>

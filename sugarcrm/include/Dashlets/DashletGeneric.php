@@ -86,6 +86,14 @@ class DashletGeneric extends Dashlet {
     var $lvs;
     var $layoutManager;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function DashletGeneric($id, $options = null)
+    {
+        self::__construct($id, $options);
+    }
+
     public function __construct($id, $options = null)
     {
         parent::__construct($id);
@@ -516,4 +524,3 @@ class DashletGeneric extends Dashlet {
         }
     }
 }
-?>

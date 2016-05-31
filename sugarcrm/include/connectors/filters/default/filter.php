@@ -17,6 +17,13 @@ class default_filter {
 
 var $_component;
 
+    /**
+     * @deprecated
+     */
+    public function default_filter()
+    {
+    }
+
 public function setComponent($component) {
    	$this->_component = $component;
 }

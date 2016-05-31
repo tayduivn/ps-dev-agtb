@@ -13,6 +13,8 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
@@ -22,6 +24,14 @@ class ViewLayoutView extends SugarView
 {
     /** @var GridLayoutMetaDataParser */
     protected $parser;
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewLayoutView($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
 
     public function __construct($bean = null, $view_object_map = array(), $request = null)
     {

@@ -36,6 +36,14 @@ class Tree {
   //collection of parmeter properties;
   var $_params=array();
   				   
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Tree($name)
+    {
+        self::__construct($name);
+    }
+
     public function __construct($name)
     {
 		$this->_name=$name;
@@ -141,4 +149,3 @@ class Tree {
 		return $return;
 	}
 }
-?>

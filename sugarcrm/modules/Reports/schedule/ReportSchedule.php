@@ -19,6 +19,14 @@ var $table_name='report_schedules';
     /** @var DBManager */
 var $db;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ReportSchedule()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         $this->db = DBManagerFactory::getInstance();

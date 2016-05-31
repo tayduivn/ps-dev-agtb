@@ -13,6 +13,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class Metric {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Metric($type, $name)
+    {
+        self::__construct($type, $name);
+    }
+
     public function __construct($type, $name)
     {
         $this->_name = $name;

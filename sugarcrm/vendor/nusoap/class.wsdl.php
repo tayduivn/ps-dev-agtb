@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-05-23 - smorozov - Restored PHP 4 constructor for backward compatibility
+
 2016-01-22 - avlasov - PHP 7 compatibility
 
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
@@ -106,6 +108,33 @@ class wsdl extends nusoap_base {
 	var $password = '';				// Password for HTTP authentication
 	var $authtype = '';				// Type of HTTP authentication
 	var $certRequest = array();		// Certificate for HTTP SSL authentication
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function wsdl(
+        $wsdl = '',
+        $proxyhost = false,
+        $proxyport = false,
+        $proxyusername = false,
+        $proxypassword = false,
+        $timeout = 0,
+        $response_timeout = 30,
+        $curl_options = null,
+        $use_curl = false
+    ) {
+        self::__construct(
+            $wsdl,
+            $proxyhost,
+            $proxyport,
+            $proxyusername,
+            $proxypassword,
+            $timeout,
+            $response_timeout,
+            $curl_options,
+            $use_curl
+        );
+    }
 
     /**
      * constructor
@@ -1982,5 +2011,3 @@ class wsdl extends nusoap_base {
 		return true;
 	}
 }
-
-?>

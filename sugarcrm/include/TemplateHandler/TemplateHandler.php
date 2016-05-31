@@ -23,6 +23,15 @@ class TemplateHandler {
     var $cacheDir;
     var $templateDir = 'modules/';
     var $ss;
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function TemplateHandler()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
       $this->cacheDir = sugar_cached('');

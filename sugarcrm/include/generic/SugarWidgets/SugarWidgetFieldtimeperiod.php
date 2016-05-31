@@ -13,6 +13,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldTimeperiod extends SugarWidgetFieldEnum
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarWidgetFieldTimeperiod(&$layout_manager)
+    {
+        self::__construct($layout_manager);
+    }
+
+    public function __construct(&$layout_manager)
+    {
+        parent::__construct($layout_manager);
+    }
+
 	public function queryFilteris($layout_def) {
         $input_name0 = $this->getInputValue($layout_def);
 

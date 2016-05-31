@@ -66,6 +66,14 @@ class Dashlet
     var $autoRefresh = "0";
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function Dashlet($id)
+    {
+        self::__construct($id);
+    }
+
+    /**
      * Constructor
      *
      * @param $id

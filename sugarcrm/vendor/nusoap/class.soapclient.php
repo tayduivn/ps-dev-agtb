@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-05-23 - smorozov - Restored PHP 4 constructor for backward compatibility
+
 2016-01-22 - avlasov - PHP 7 compatibility
 
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
@@ -231,6 +233,33 @@ class nusoap_client extends nusoap_base  {
 	 * @access   public
 	 */
 	var $faultdetail;
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function nusoap_client(
+        $endpoint,
+        $wsdl = false,
+        $proxyhost = false,
+        $proxyport = false,
+        $proxyusername = false,
+        $proxypassword = false,
+        $timeout = 0,
+        $response_timeout = 30,
+        $portName = ''
+    ) {
+        self::__construct(
+            $endpoint,
+            $wsdl,
+            $proxyhost,
+            $proxyport,
+            $proxyusername,
+            $proxypassword,
+            $timeout,
+            $response_timeout,
+            $portName
+        );
+    }
 
 	/**
 	* constructor
@@ -1146,4 +1175,3 @@ if (!extension_loaded('soap')) {
  */
 class nusoapclient extends nusoap_client {
 }
-?>

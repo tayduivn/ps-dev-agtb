@@ -26,6 +26,14 @@ require_once('include/MVC/View/views/view.detail.php');
 
 class CampaignsViewDetail extends ViewDetail {
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function CampaignsViewDetail()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -115,4 +123,3 @@ class CampaignsViewDetail extends ViewDetail {
 
     }
 }
-?>

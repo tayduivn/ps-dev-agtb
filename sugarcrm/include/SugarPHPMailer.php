@@ -28,6 +28,14 @@ class SugarPHPMailer extends PHPMailerProxy
     var $opensslOpened = true;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarPHPMailer()
+    {
+        self::__construct();
+    }
+
+    /**
      * Sole constructor
      *
      * Doesn't call PHPMailerProxy's constructor so that using PHPMailer with exceptions is not imposed on
