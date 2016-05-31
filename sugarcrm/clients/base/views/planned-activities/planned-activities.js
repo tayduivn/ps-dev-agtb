@@ -32,6 +32,22 @@
     extendsFrom: 'HistoryView',
 
     /**
+     * Besides defining new DOM events that will be later bound to methods
+     * through {@link #delegateEvents, the events method also makes sure parent
+     * classes events are explicitly inherited.
+     *
+     * @property {Function}
+     */
+    events: function() {
+        var prototype = Object.getPrototypeOf(this);
+        var parentEvents = _.result(prototype, 'events');
+
+        return _.extend({}, parentEvents, {
+            'click [data-action=date-switcher]': 'dateSwitcher'
+        });
+    },
+
+    /**
      * @inheritdoc
      *
      * @property {Object} _defaultSettings
@@ -94,10 +110,6 @@
      * the invitation collection by calling {@link #updateInvitation}.
      */
     _initEvents: function() {
-        this.events = _.extend(this.events, {
-            'click [data-action=date-switcher]': 'dateSwitcher'
-        });
-
         this._super('_initEvents');
         this.on('planned-activities:close-record:fire', this.heldActivity, this);
         this.on('linked-model:create', this.loadData, this);
