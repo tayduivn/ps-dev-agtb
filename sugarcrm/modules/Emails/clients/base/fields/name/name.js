@@ -44,5 +44,39 @@
         }
 
         return value;
+    },
+
+    /**
+     * Build email record route depending on whether the email is a draft or
+     * not and whether the user has the Sugar Email Client enabled
+     *
+     * @return {string}
+     */
+    buildHref: function() {
+        var defRoute = this.def.route ? this.def.route : {};
+        var module = this.model.module || this.context.get('module');
+
+        if (this.model.get('state') === 'Draft' && this._useSugarEmailClient()) {
+            module += '/drafts';
+        }
+
+        return '#' + app.router.buildRoute(module, this.model.get('id'), defRoute.action);
+    },
+
+    /**
+     * Determine if the user is configured to use the Sugar Email Client for
+     * editing existing draft emails.
+     *
+     * @return {boolean}
+     * @private
+     */
+    _useSugarEmailClient: function() {
+        var emailClientPreference = app.user.getPreference('email_client_preference');
+
+        return (
+            emailClientPreference &&
+            emailClientPreference.type === 'sugar' &&
+            app.acl.hasAccess('edit', 'Emails')
+        );
     }
 })

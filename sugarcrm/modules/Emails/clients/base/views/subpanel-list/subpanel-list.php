@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
     'panels' => array(
         array(
@@ -29,7 +28,11 @@ $viewdefs['Emails']['base']['view']['subpanel-list'] = array(
                     'name' => 'name',
                     'enabled' => true,
                     'default' => true,
-                    'link' => 'true'
+                    'link' => 'true',
+                    'related_fields' => array(
+                        'attachments',
+                        'state',
+                    ),
                 ),
                 array(
                     'name' => 'state',

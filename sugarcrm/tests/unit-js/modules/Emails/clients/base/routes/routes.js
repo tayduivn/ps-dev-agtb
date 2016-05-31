@@ -24,41 +24,7 @@ describe('Emails.Routes', function() {
     });
 
     describe('Routes', function() {
-        describe('Email Create', function() {
-            it('should open create drawer when routing from another page in the app', function() {
-                //routing from layout
-                app.controller.context.set('layout', 'foo');
-
-                app.drawer = app.drawer || {open: $.noop};
-                var stub = sinon.sandbox.stub(app.drawer, 'open');
-
-                app.router.navigate('Emails/create', {trigger: true});
-
-                expect(stub).toHaveBeenCalled();
-            });
-
-            it('should open full page create when routing from login', function() {
-                //routing from login
-                app.controller.context.set('layout', 'login');
-
-                sinon.sandbox.stub(app.router, 'create');
-
-                app.router.navigate('Emails/create', {trigger: true});
-                expect(app.router.create).toHaveBeenCalled();
-            });
-
-            it('should open full page create when routing directly', function() {
-                //routing from outside the app
-                app.controller.context.unset('layout');
-
-                sinon.sandbox.stub(app.router, 'create');
-
-                app.router.navigate('Emails/create', {trigger: true});
-                expect(app.router.create).toHaveBeenCalled();
-            });
-        });
-
-        describe('Email Record', function() {
+        describe('Email Draft', function() {
             var model;
 
             beforeEach(function() {
@@ -68,23 +34,6 @@ describe('Emails.Routes', function() {
                 sinon.sandbox.stub(model, 'fetch', function(options) {
                     options.success(model);
                 });
-                sinon.sandbox.stub(app.user, 'getPreference');
-                app.user.getPreference.returns({type: 'sugar'});
-            });
-
-            it('should open the record layout if not a draft', function() {
-                model.set('state', 'Archived');
-                sinon.sandbox.stub(app.router, 'record');
-                app.router.navigate('Emails/' + model.id, {trigger: true});
-                expect(app.router.record).toHaveBeenCalled();
-            });
-
-            it('should open the record layout if not using Sugar Email Client', function() {
-                model.set('state', 'Draft');
-                app.user.getPreference.returns({type: 'external'});
-                sinon.sandbox.stub(app.router, 'record');
-                app.router.navigate('Emails/' + model.id, {trigger: true});
-                expect(app.router.record).toHaveBeenCalled();
             });
 
             it('should open create drawer when routing from another page in the app', function() {
@@ -96,7 +45,7 @@ describe('Emails.Routes', function() {
                 app.drawer = app.drawer || {open: $.noop};
                 sinon.sandbox.stub(app.drawer, 'open');
 
-                app.router.navigate('Emails/' + model.id, {trigger: true});
+                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
                 expect(app.drawer.open).toHaveBeenCalled();
             });
 
@@ -108,7 +57,7 @@ describe('Emails.Routes', function() {
 
                 sinon.sandbox.stub(app.controller, 'loadView');
 
-                app.router.navigate('Emails/' + model.id, {trigger: true});
+                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
                 expect(app.controller.loadView).toHaveBeenCalled();
             });
 
@@ -120,8 +69,17 @@ describe('Emails.Routes', function() {
 
                 sinon.sandbox.stub(app.controller, 'loadView');
 
-                app.router.navigate('Emails/' + model.id, {trigger: true});
+                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
                 expect(app.controller.loadView).toHaveBeenCalled();
+            });
+
+            it('should open record view if email is not a draft', function() {
+                model.set('state', 'Archived');
+
+                sinon.sandbox.stub(app.router, 'record');
+
+                app.router.navigate('Emails/drafts/' + model.id, {trigger: true});
+                expect(app.router.record).toHaveBeenCalled();
             });
         });
     });

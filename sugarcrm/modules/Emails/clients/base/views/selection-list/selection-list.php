@@ -28,10 +28,14 @@ $viewdefs['Emails']['base']['view']['selection-list'] = array(
                     'name' => 'name',
                     'enabled' => true,
                     'default' => true,
-                    'link' => 'true'
+                    'link' => 'true',
+                    'related_fields' => array(
+                        'attachments',
+                        'state',
+                    ),
                 ),
                 array(
-                    'name' => 'status',
+                    'name' => 'state',
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
