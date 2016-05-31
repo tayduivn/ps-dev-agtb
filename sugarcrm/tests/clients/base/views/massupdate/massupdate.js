@@ -118,7 +118,7 @@ describe("Base.View.Massupdate", function() {
         });
 
         it("should not alert warning message if _modelToDelete is not defined", function() {
-            app.routing.triggerBefore("route");
+            app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalled();
         });
         it("should return true if _modelToDelete is not defined", function() {
