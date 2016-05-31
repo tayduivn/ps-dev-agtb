@@ -21,7 +21,10 @@ var Base = function (options) {
     var defaults = {
         id : (options && options.id) || 'base-ui-' + UITools.getIndex()
     };
-    $.extend(true, defaults, options);
+
+    // Do not deep copy here
+    $.extend(defaults, options);
+
     /**
      * Unique Identifier
      * @type {String}
@@ -78,5 +81,5 @@ Base.prototype.dispose = function () {
     }
 };
 if (typeof exports !== "undefined") {
-        module.exports = Base;
-    }
+    module.exports = Base;
+}

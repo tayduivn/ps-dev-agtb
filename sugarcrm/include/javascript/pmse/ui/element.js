@@ -97,7 +97,10 @@ Element.prototype.initObject = function (options) {
         zOrder : 1,
         visible : true
     };
-    $.extend(true, defaults, options);
+
+    // Do not deep copy here
+    $.extend(defaults, options);
+
     this//.setId(defaults.id)
         .setStyle(new Style({
             belongsTo: this,
