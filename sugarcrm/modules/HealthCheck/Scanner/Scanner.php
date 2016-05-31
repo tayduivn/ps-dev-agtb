@@ -184,6 +184,18 @@ class HealthCheckScanner
         'wMaps76' => array(
             array('version' => '*'),
         ),
+        'Login/Sudo' => array(
+            array('version' => '*'),
+        ),
+        'Login/Sudo - SugarCRM 7.1.6/7.2' => array(
+            array('version' => '*'),
+        ),
+        'Login/Sudo - SugarCRM 7.1.6/7.2.*/7.5.*' => array(
+            array('version' => '*'),
+        ),
+        'Login/Sudo - SugarCRM 7.6.*/7.7.*/7.8.*/7.9.*' => array(
+            array('version' => '*'),
+        ),
     );
 
     /**
