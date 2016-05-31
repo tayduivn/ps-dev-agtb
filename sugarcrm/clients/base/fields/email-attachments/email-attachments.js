@@ -529,7 +529,7 @@
     /**
      * Handles an error response from the API for uploading the file.
      *
-     * If the error status is a 413, then an error is shown to the user
+     * If the error status is 'request_too_large' or 413, then an error is shown to the user
      * indicating that the error was due to exceeding the maximum filesize.
      * Otherwise, the error is handled by the framework.
      *
@@ -541,7 +541,7 @@
             return;
         }
 
-        if (error && error.status == 413) {
+        if (error && (error.error === 'request_too_large' || error.status == 413)) {
             // Mark the error as having been handled so that it doesn't get
             // handled again.
             error.handled = true;

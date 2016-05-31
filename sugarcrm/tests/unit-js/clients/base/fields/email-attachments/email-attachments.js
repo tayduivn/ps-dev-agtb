@@ -319,11 +319,9 @@ describe('Base.EmailAttachments', function() {
             it('should alert the user when the uploaded file is too large', function() {
                 var fileName = 'quote.pdf';
                 var $file = $('<input/>', {value: fileName});
-                var error = new SUGAR.Api.HttpError({
-                    xhr: {
-                        status: 413
-                    }
-                });
+                var error = {
+                    error: 'request_too_large'
+                };
                 var flag;
 
                 sandbox.spy(app.alert, 'show');
