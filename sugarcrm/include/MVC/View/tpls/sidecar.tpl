@@ -57,11 +57,7 @@
             </div>
         </div>
         <!-- App Scripts -->
-        {if empty($shouldResourcesBeMinified)}
-            {sugar_getscript file="sidecar/minified/sidecar.js"}
-        {else}
-            {sugar_getscript file="sidecar/minified/sidecar.min.js"}
-        {/if}
+        {sugar_getscript file="sidecar/minified/sidecar.min.js"}
         <script src='{sugar_getjspath file=$sugarSidecarPath}'></script>
         <script src='{sugar_getjspath file=$SLFunctionsPath}'></script>
         <!-- <script src='{sugar_getjspath file='sidecar/minified/sugar.min.js'}'></script> -->
