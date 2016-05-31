@@ -73,7 +73,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = SugarTestAccountUtilities::createAccount();
         $this->bean->addVisibilityStrategy('TeamBasedACLVisibility');
-        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->acl_team_set_id = $this->teamSet->id;
         $this->bean->save();
     }
 
@@ -125,7 +125,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $privateTeamSet = BeanFactory::getBean('TeamSets');
         $privateTeamSet->addTeams(array($newUser->getPrivateTeamID()));
 
-        $this->bean->team_set_selected_id = $privateTeamSet->id;
+        $this->bean->acl_team_set_id = $privateTeamSet->id;
         $this->bean->save();
 
         $this->assertFalse($this->isBeanAvailableUsingFrom());
@@ -158,7 +158,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->__construct();
         $this->bean->team_id = $this->team->id;
         $this->bean->team_set_id = $this->teamSet->id;
-        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->acl_team_set_id = $this->teamSet->id;
         $this->bean->save();
         SugarTestAccountUtilities::setCreatedAccount(array($this->bean->id));
 
@@ -200,7 +200,7 @@ class TeamBasedACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->bean->team_id = $this->team->id;
         $this->bean->team_set_id = $this->teamSet->id;
-        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->acl_team_set_id = $this->teamSet->id;
         $this->bean->save();
 
         $aclData['module'][$action]['aclaccess'] = $expectedAccess;

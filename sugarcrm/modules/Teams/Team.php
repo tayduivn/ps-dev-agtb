@@ -52,7 +52,7 @@ class Team extends SugarBean
     public static $nameTeamsetMapping = array(
         'team_name' => 'team_set_id',
         //BEGIN SUGARCRM flav=ent ONLY
-        'team_selected_name' => 'team_set_selected_id',
+        'acl_team_names' => 'acl_team_set_id',
         //END SUGARCRM flav=ent ONLY
     );
 

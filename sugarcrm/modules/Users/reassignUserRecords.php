@@ -346,7 +346,7 @@ else if(!isset($_GET['execute'])){
 		}
         //BEGIN SUGARCRM flav=ent ONLY
         if ($teamSetSelectedId && $tbaConfigurator->isEnabledForModule($module)) {
-            $q_set .= ", team_set_selected_id = '{$teamSetSelectedId}' ";
+            $q_set .= ", acl_team_set_id = '{$teamSetSelectedId}' ";
         }
         //END SUGARCRM flav=ent ONLY
 		$q_tables   = " {$object->table_name} ";

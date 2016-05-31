@@ -305,7 +305,7 @@ class ImportDuplicateCheck
             'all' => array(
                 'team_set_id',
                 //BEGIN SUGARCRM flav=ent ONLY
-                'team_set_selected_id',
+                'acl_team_set_id',
                 //END SUGARCRM flav=ent ONLY
                 'id',
                 'deleted',

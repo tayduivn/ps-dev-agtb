@@ -103,7 +103,7 @@ class TeamBasedACLFieldTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNonOwnerNoSelectedTeamSet()
     {
-        $this->bean->team_set_selected_id = null;
+        $this->bean->acl_team_set_id = null;
         $this->bean->save();
 
         ACLField::$acl_fields[$this->user->id][$this->bean->module_dir][$this->fieldName] =
@@ -124,7 +124,7 @@ class TeamBasedACLFieldTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->bean->assigned_user_id = $this->user->id;
         // The different set.
-        $this->bean->team_set_selected_id = $this->teamSetT2->id;
+        $this->bean->acl_team_set_id = $this->teamSetT2->id;
         $this->bean->save();
 
         ACLField::$acl_fields[$this->user->id][$this->bean->module_dir][$this->fieldName] =
@@ -145,9 +145,9 @@ class TeamBasedACLFieldTest extends Sugar_PHPUnit_Framework_TestCase
     public function testNonOwnerACL($access, $inSelectedTeams, $permissions)
     {
         if ($inSelectedTeams) {
-            $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+            $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         } else {
-            $this->bean->team_set_selected_id = $this->teamSetT2->id;
+            $this->bean->acl_team_set_id = $this->teamSetT2->id;
         }
 
         $this->bean->save();

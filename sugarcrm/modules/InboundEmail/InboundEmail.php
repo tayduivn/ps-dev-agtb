@@ -2983,7 +2983,7 @@ class InboundEmail extends SugarBean {
 			$c->team_id = $_REQUEST['team_id'];
 			$c->team_set_id = $_REQUEST['team_set_id'];
 //BEGIN SUGARCRM flav=ent ONLY		
-            $c->team_set_selected_id = $_REQUEST['team_set_selected_id'];
+            $c->acl_team_set_id = $_REQUEST['acl_team_set_id'];
 //END SUGARCRM flav=ent ONLY
 			if(!empty($email->reply_to_email)) {
 				$contactAddr = $email->reply_to_email;
@@ -4345,13 +4345,13 @@ class InboundEmail extends SugarBean {
 			}
 
             //BEGIN SUGARCRM flav=ent ONLY
-            $email->team_set_selected_id = '';
+            $email->acl_team_set_id = '';
             $selectedTeamIdsArray = InputValidation::getService()->getValidInputRequest('selected_team_ids');
             if (!empty($selectedTeamIdsArray)) {
                 $selectedTeamIdsArray = explode(',', $selectedTeamIdsArray);
                 $selectedTeamIdsArray = array_filter($selectedTeamIdsArray);
                 if (!empty($selectedTeamIdsArray)) {
-                    $email->team_set_selected_id = $this->getTeamSetIdForTeams($selectedTeamIdsArray);
+                    $email->acl_team_set_id = $this->getTeamSetIdForTeams($selectedTeamIdsArray);
                 }
             }
             //END SUGARCRM flav=ent ONLY

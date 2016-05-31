@@ -201,7 +201,7 @@ class SugarACLTeamBased extends SugarACLStrategy
         $sq->select('id');
         $sq->from($bean, array('alias' => 'bean', 'team_security' => false));
         $sq->joinRaw(
-            "INNER JOIN team_sets_teams tst ON tst.team_set_id = bean.team_set_selected_id AND tst.deleted = 0"
+            "INNER JOIN team_sets_teams tst ON tst.team_set_id = bean.acl_team_set_id AND tst.deleted = 0"
         );
         $sq->joinRaw(
             'INNER JOIN team_memberships tm ON tm.team_id = tst.team_id ' .

@@ -417,7 +417,7 @@ EOL;
                 $rli->team_id = $opp->team_id;
                 $rli->team_set_id = $opp->team_set_id;
                 //BEGIN SUGARCRM flav=ent ONLY
-                $rli->team_set_selected_id = $opp->team_set_selected_id;
+                $rli->acl_team_set_id = $opp->acl_team_set_id;
                 //END SUGARCRM flav=ent ONLY
                 $rli->save();
 

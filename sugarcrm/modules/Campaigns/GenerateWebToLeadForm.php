@@ -89,7 +89,7 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
     if (!empty($teams_selected)) {
         $teamSetSelected = BeanFactory::getBean('TeamSets');
         if (!empty($teamSetSelected)) {
-            $web_team_set_selected_id = $teamSetSelected->addTeams($teams_selected);
+            $web_acl_team_set_id = $teamSetSelected->addTeams($teams_selected);
         }
     }
 
@@ -510,9 +510,9 @@ if(!empty($web_team_user)){
 if(!empty($web_team_set_id_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='team_set_id' name='team_set_id' value='$web_team_set_id_user'></td></tr>";
 }
-if (!empty($web_team_set_selected_id)) {
+if (!empty($web_acl_team_set_id)) {
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'>
-        <input type='hidden' id='team_set_selected_id' name='team_set_selected_id' value='$web_team_set_selected_id'>
+        <input type='hidden' id='acl_team_set_id' name='acl_team_set_id' value='$web_acl_team_set_id'>
     </td></tr>";
 }
 $req_fields='';

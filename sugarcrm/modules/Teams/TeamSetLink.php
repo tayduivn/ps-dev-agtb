@@ -138,27 +138,27 @@ class TeamSetLink extends Link2 {
                     if (!in_array($this->focus->team_id, $this->_teamList)) {
                         $this->_teamList[] = $this->focus->team_id;
                         //BEGIN SUGARCRM flav=ent ONLY
-                        //use default team_set_selected_id
-                        if (empty($this->focus->team_set_selected_id)
-                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_selected_id)
+                        //use default acl_team_set_id
+                        if (empty($this->focus->acl_team_set_id)
+                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->acl_team_set_id)
                         ) {
-                            $this->_selectedTeamList[] = $GLOBALS['current_user']->team_set_selected_id;
+                            $this->_selectedTeamList[] = $GLOBALS['current_user']->acl_team_set_id;
                         }
                         //END SUGARCRM flav=ent ONLY
                     }
 
                     //BEGIN SUGARCRM flav=ent ONLY
-                    // Apply the above-described functionality for team_set_selected_id also.
+                    // Apply the above-described functionality for acl_team_set_id also.
                     if (empty($this->_selectedTeamList)) {
-                        if ($usedDefaultTeam && empty($this->focus->team_set_selected_id)
-                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_selected_id)
+                        if ($usedDefaultTeam && empty($this->focus->acl_team_set_id)
+                            && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->acl_team_set_id)
                         ) {
-                            $this->focus->team_set_selected_id = $GLOBALS['current_user']->team_set_selected_id;
+                            $this->focus->acl_team_set_id = $GLOBALS['current_user']->acl_team_set_id;
                         }
 
-                        //this is a safety check to ensure we actually do have a set team_set_selected_id
-                        if (!empty($this->focus->team_set_selected_id)) {
-                            $this->_selectedTeamList = $this->_teamSet->getTeamIds($this->focus->team_set_selected_id);
+                        //this is a safety check to ensure we actually do have a set acl_team_set_id
+                        if (!empty($this->focus->acl_team_set_id)) {
+                            $this->_selectedTeamList = $this->_teamSet->getTeamIds($this->focus->acl_team_set_id);
                         }
                     }
                     //END SUGARCRM flav=ent ONLY
@@ -195,7 +195,7 @@ class TeamSetLink extends Link2 {
                 //BEGIN SUGARCRM flav=ent ONLY
                 // If Team based ACLs have been enabled on any team then set the correct team set id on the bean
                 if (!empty($this->_selectedTeamList)) {
-                    $this->focus->team_set_selected_id = $this->_teamSet->addTeams($this->_selectedTeamList);
+                    $this->focus->acl_team_set_id = $this->_teamSet->addTeams($this->_selectedTeamList);
                 }
                 //END SUGARCRM flav=ent ONLY
             }//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
@@ -213,7 +213,7 @@ class TeamSetLink extends Link2 {
                 //BEGIN SUGARCRM flav=ent ONLY
                 // If Team based ACLs are enabled on any team then add that to the update as well
                 if (!empty($this->_selectedTeamList)) {
-                    $updatesArr[] .= "team_set_selected_id = " . $GLOBALS['db']->quoted($this->focus->team_set_selected_id);
+                    $updatesArr[] .= "acl_team_set_id = " . $GLOBALS['db']->quoted($this->focus->acl_team_set_id);
                 }
                 //END SUGARCRM flav=ent ONLY
                 $update_query = implode(", ", $updatesArr);
@@ -314,9 +314,9 @@ class TeamSetLink extends Link2 {
             if (!empty($additional_values['selected_teams'])) {
                 if (empty($this->_selectedTeamList)) {
                     $selected_team_ids = array();
-                    if (!empty($this->focus->team_set_selected_id)) {
+                if (!empty($this->focus->acl_team_set_id)) {
                         // get the teams associated with this selected team set id
-                        $selected_team_ids = $this->_teamSet->getTeamIds($this->focus->team_set_selected_id);
+                        $selected_team_ids = $this->_teamSet->getTeamIds($this->focus->acl_team_set_id);
                     }
                     // merge the old teams and new teams
                     $this->_selectedTeamList = array_merge($selected_team_ids, $additional_values['selected_teams']);

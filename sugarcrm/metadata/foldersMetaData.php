@@ -72,7 +72,7 @@ $dictionary['folders'] = array(
 		),
 //BEGIN SUGARCRM flav=ent ONLY
 	array(
-            'name' => 'team_set_selected_id',
+            'name' => 'acl_team_set_id',
             'type' => 'id',
             'required' => false,
         ),

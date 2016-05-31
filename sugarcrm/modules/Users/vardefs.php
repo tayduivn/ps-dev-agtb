@@ -443,17 +443,17 @@ $dictionary['User'] = array(
 			    'audited' => true,
 			    'studio' => 'false',
 			),
-        //BEGIN SUGARCRM flav=ent ONLY
-        'team_set_selected_id' => array(
-            'name' => 'team_set_selected_id',
-            'vname' => 'LBL_TEAM_SET_SELECTED_ID',
-            'type' => 'id',
-            'audited' => true,
-            'studio' => false,
-            'isnull' => true,
-            'duplicate_on_record_copy' => 'always',
-        ),
-        //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            'acl_team_set_id' => array(
+                'name' => 'acl_team_set_id',
+                'vname' => 'LBL_TEAM_SET_SELECTED_ID',
+                'type' => 'id',
+                'audited' => true,
+                'studio' => false,
+                'isnull' => true,
+                'duplicate_on_record_copy' => 'always',
+            ),
+            //END SUGARCRM flav=ent ONLY
 			'team_count' =>
 			array (
 				'name' => 'team_count',
@@ -506,7 +506,7 @@ $dictionary['User'] = array(
                 'exportable'=> true,
                 //BEGIN SUGARCRM flav=ent ONLY
                 // Until the same control is used for selecting.
-                'fields' => array('team_set_selected_id'),
+                'fields' => array('acl_team_set_id'),
                 //END SUGARCRM flav=ent ONLY
 			),
 			'team_link' =>

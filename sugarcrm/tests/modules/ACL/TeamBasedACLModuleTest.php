@@ -121,7 +121,7 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $action = 'view';
         $context = array();
         // The user is in the TeamSetT1.
-        $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+        $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         $this->bean->save();
 
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
@@ -143,9 +143,9 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // The user is in the TeamSetT1.
         if ($inSelectedTeams) {
-            $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+            $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         } else {
-            $this->bean->team_set_selected_id = $this->teamSetT2->id;
+            $this->bean->acl_team_set_id = $this->teamSetT2->id;
         }
         $this->bean->save();
 
@@ -172,7 +172,7 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $action = 'edit';
         $context = array('bean' => $this->bean);
         // Give access.
-        $this->bean->team_set_selected_id = $this->teamSetT1T2->id;
+        $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         $this->bean->save();
 
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
@@ -185,7 +185,7 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(true, $actualAccess);
 
         // No access.
-        $this->bean->team_set_selected_id = $this->teamSetT2->id;
+        $this->bean->acl_team_set_id = $this->teamSetT2->id;
         $this->bean->name = 'test';
         $this->bean->save();
 

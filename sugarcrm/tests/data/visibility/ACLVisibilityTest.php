@@ -104,7 +104,7 @@ class ACLVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($this->isBeanAvailable());
 
         // TeamBasedACL
-        $this->bean->team_set_selected_id = $this->teamSet->id;
+        $this->bean->acl_team_set_id = $this->teamSet->id;
         $this->bean->save();
 
         $this->assertTrue($this->isBeanAvailable());

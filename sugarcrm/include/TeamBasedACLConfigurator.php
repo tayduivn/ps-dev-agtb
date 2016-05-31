@@ -550,9 +550,13 @@ class TeamBasedACLConfigurator
     {
         if (!isset(self::$implementationCache[$module])) {
             $bean = BeanFactory::getBean($module);
-            self::$implementationCache[$module] = $bean &&
-                $bean->getFieldDefinition('team_set_selected_id') &&
-                $bean->bean_implements('ACL');
+            // need to check if $bean is instance of SugarBean
+            // because of DynamicFields module and DynamicField class which is not a SugarBean
+            self::$implementationCache[$module] =
+                $bean
+                && $bean instanceof SugarBean
+                && $bean->getFieldDefinition('acl_team_set_id')
+                && $bean->bean_implements('ACL');
         }
         return self::$implementationCache[$module];
     }

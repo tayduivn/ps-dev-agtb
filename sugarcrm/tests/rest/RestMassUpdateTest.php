@@ -763,7 +763,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $apiClass->massUpdate($api, $args); // Replace mode.
 
         $contact->retrieve();
-        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->acl_team_set_id);
         $this->assertEquals($team1->id, $resultTeam[0]['id']);
 
         $args['massupdate_params']['team_name'] = array(
@@ -773,7 +773,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $apiClass->massUpdate($api, $args);
 
         $contact->retrieve();
-        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->acl_team_set_id);
         $this->assertContains($team1->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
         $this->assertContains($team2->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
 
@@ -784,7 +784,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
         $apiClass->massUpdate($api, $args);
 
         $contact->retrieve();
-        $resultTeam = TeamSetManager::getTeamsFromSet($contact->team_set_selected_id);
+        $resultTeam = TeamSetManager::getTeamsFromSet($contact->acl_team_set_id);
         $this->assertEquals($team2->id, $resultTeam[0]['id']);
     }
     //END SUGARCRM flav=ent ONLY
