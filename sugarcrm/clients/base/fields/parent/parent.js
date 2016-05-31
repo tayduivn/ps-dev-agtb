@@ -186,6 +186,7 @@
                 if (!_.isUndefined(model.id)) {
                     this.model.set('parent_id', model.id, {silent: silent});
                     // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
+                    // SC-4196 will fix this.
                     var value = model.value || model[this.def.rname || 'name'] || model['full_name'] ||
                         app.utils.formatNameLocale(model);
                     this.model.set('parent_name', value, {silent: silent});

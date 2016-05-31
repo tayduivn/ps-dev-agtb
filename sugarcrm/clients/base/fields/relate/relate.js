@@ -586,7 +586,9 @@
 
         _.each(models, _.bind(function(model) {
             values[this.def.id_name].push(model.id);
-            values[this.def.name].push(model[this.getRelatedModuleField()] || model.value);
+            //FIXME SC-4196 will fix the fallback to `formatNameLocale` for person type models.
+            values[this.def.name].push(model[this.getRelatedModuleField()] ||
+                app.utils.formatNameLocale(model) || model.value);
         }, this));
 
         // If it's not a multiselect relate, we get rid of the array.

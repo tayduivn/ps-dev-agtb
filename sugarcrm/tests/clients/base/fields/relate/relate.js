@@ -35,6 +35,7 @@ describe('Base.Field.Relate', function() {
                 options.success.call(this, args);
             }
         });
+        sinon.collection.stub(app.user, 'getPreference').withArgs('default_locale_name_format').returns('s f l');
     });
 
     afterEach(function() {
@@ -287,7 +288,7 @@ describe('Base.Field.Relate', function() {
             var field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
 
             field.module = 'Accounts';
-            field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+            field.model = app.data.createBean('Accounts', {account_id: '1234', account_name: 'bob'});
             field.buildRoute('Users', '1');
 
             expect(aclHasAccessStub).toHaveBeenCalled();
