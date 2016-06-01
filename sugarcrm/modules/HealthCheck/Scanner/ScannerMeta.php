@@ -527,6 +527,14 @@ class HealthCheckScannerMeta
             //@codingStandardsIgnoreEnd
         ),
 
+        543 => array(
+            'report' => 'noCSPRNGfound',
+            'bucket' => self::MANUAL,
+        ),
+        544 => array(
+            'report' => 'noRandomCompat',
+            'bucket' => self::MANUAL,
+        ),
         // Bucket G
         901 => array(
             'report' => 'alreadyUpgraded',
