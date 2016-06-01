@@ -117,13 +117,20 @@
         // initializing the preview panel. Otherwise, if the modules are
         // different, we need to reinitialize the preview panel with the new
         // metadata from that module.
-        var shouldInit = _.isEmpty(this._components) || this.context.get('module') !== model.module;
+        var hasComponents = !_.isEmpty(this._components);
+        var modelChanged = this.context.get('module') !== model.module;
 
-        if (shouldInit) {
+        if (!hasComponents || modelChanged) {
             this._disposeComponents();
             this.context.set(attrs);
             this.initComponents(this.meta.init_components, this.context, model.module);
-            this.context.loadData();
+            if (hasComponents) {
+                // In case we already have components, reload the
+                // data to remove previous load data (e.g. fetchCalled, etc)
+                this.context.reloadData();
+            } else {
+                this.context.loadData();
+            }
             this.render();
         } else {
             this.context.set(attrs);
