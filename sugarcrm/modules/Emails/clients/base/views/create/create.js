@@ -36,6 +36,12 @@
     _hasVariablesRegex: /\$[a-zA-Z]+_[a-zA-Z0-9_]+/,
 
     /**
+     * @property {boolean}
+     * False when the email client reports a configuration issue
+     */
+    _userHasConfiguration: true,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -113,6 +119,7 @@
                 }
             });
 
+            this._userHasConfiguration = false;
             sendButton = this.getField('send_button');
             if (sendButton) {
                 sendButton.setDisabled(true);
@@ -606,7 +613,73 @@
             $row.addClass('single');
         }
 
+        this._checkAttachmentLimit();
         this.resizeEditor();
+    },
+
+    /**
+     * Calculate the sum total bytes from each attachment
+     * associated with the email
+     *
+     * @return {number}
+     * @private
+     */
+    _calculateTotalAttachments: function() {
+        var field = this.getField('attachments');
+        var attachments;
+        var totalBytes = 0;
+
+        if (!_.isUndefined(field._attachments)) {
+            attachments = field._attachments.filter(function(attachment) {
+                // Ensure the attachment isn't queued for removal
+                var action = attachment.get('_action');
+                return (action === 'create' || _.isEmpty(action));
+            });
+
+            _.each(attachments, function(attachment) {
+                totalBytes += attachment.get('file_size');
+            });
+        }
+
+        return totalBytes;
+    },
+
+    /**
+     * Enable/disable the draft/send buttons based on if the sum total of the
+     * attachments exceeds the maximum
+     *
+     * @private
+     */
+    _checkAttachmentLimit: function() {
+        var totalBytes = this._calculateTotalAttachments();
+        var maxTotalSize = app.config.maxAggregateEmailAttachmentsBytes;
+        var sendButton = this.getField(this.sendButtonName);
+        var draftButton = this.getField(this.saveAsDraftButtonName);
+        var readableMax = app.utils.getReadableFileSize(maxTotalSize);
+        var label = app.lang.get('LBL_TOTAL_ATTACHMENT_MAX_SIZE', this.module);
+
+        if (totalBytes > maxTotalSize) {
+            app.alert.show('email-attachment-status', {
+                level: 'warning',
+                messages: app.utils.formatString(label, [readableMax])
+            });
+
+            if (sendButton) {
+                sendButton.setDisabled(true);
+            }
+            if (draftButton) {
+                draftButton.setDisabled(true);
+            }
+        } else {
+            if (sendButton) {
+                sendButton.setDisabled(!this._userHasConfiguration);
+            }
+            if (draftButton) {
+                draftButton.setDisabled(false);
+            }
+
+            app.alert.dismiss('email-attachment-status');
+        }
     },
 
     /**

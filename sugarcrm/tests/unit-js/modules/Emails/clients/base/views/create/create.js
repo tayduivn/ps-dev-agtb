@@ -118,6 +118,7 @@ describe('Emails.Views.Create', function() {
 
             expect(alertShowStub.callCount).toBe(1);
             expect(spyOnField.calledOnce).toBe(true);
+            expect(view._userHasConfiguration).toBe(false);
         });
     });
 
@@ -592,6 +593,115 @@ describe('Emails.Views.Create', function() {
                 expect(view._insertTemplate).toHaveBeenCalled();
                 expect(app.alert.show).not.toHaveBeenCalled();
             });
+        });
+
+        describe('inserting attachments', function() {
+            beforeEach(function() {
+                sandbox.stub(app.alert, 'show');
+                app.config.maxAggregateEmailAttachmentsBytes = 10000000;
+            });
+
+            it('should show warning with a single attachment totaling over 10MB', function() {
+                var Bean = SUGAR.App.Bean;
+                var attachmentModel = new Bean({
+                    id: _.uniqueId(),
+                    _action: 'create',
+                    file_size: 11000000
+                });
+
+                sandbox.stub(view, 'getField')
+                    .withArgs('attachments')
+                    .returns({
+                        _attachments: app.data.createBeanCollection('Notes', attachmentModel)
+                    });
+
+                view._checkAttachmentLimit();
+                expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
+            });
+
+            it('should show warning with multiple attachments totaling over 10MB', function() {
+                var Bean = SUGAR.App.Bean;
+                var attachmentModel = new Bean({
+                    id: _.uniqueId(),
+                    _action: 'create',
+                    file_size: 4000000
+                });
+                var attachmentModel2 = new Bean({
+                    id: _.uniqueId(),
+                    _action: 'create',
+                    file_size: 4000000
+                });
+                var attachmentModel3 = new Bean({
+                    id: _.uniqueId(),
+                    _action: 'create',
+                    file_size: 4000000
+                });
+
+                sandbox.stub(view, 'getField')
+                    .withArgs('attachments')
+                    .returns({
+                        _attachments: app.data.createBeanCollection('Notes', [
+                            attachmentModel,
+                            attachmentModel2,
+                            attachmentModel3
+                        ])
+                    });
+
+                view._checkAttachmentLimit();
+                expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
+            });
+
+            it('should not show warning with an attachment under 10MB', function() {
+                var Bean = SUGAR.App.Bean;
+                var attachmentModel = new Bean({
+                    id: _.uniqueId(),
+                    _action: 'create',
+                    file_size: 9000000
+                });
+
+                sandbox.stub(view, 'getField')
+                    .withArgs('attachments')
+                    .returns({
+                        _attachments: app.data.createBeanCollection('Notes', attachmentModel)
+                    });
+
+                view._checkAttachmentLimit();
+                expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
+            });
+
+            it('should not show warning with multiple attachments totaling over 10MB when one is queued for removal',
+                function() {
+                    var Bean = SUGAR.App.Bean;
+                    var attachmentModel = new Bean({
+                        id: _.uniqueId(),
+                        _action: 'create',
+                        file_size: 4000000
+                    });
+                    var attachmentModel2 = new Bean({
+                        id: _.uniqueId(),
+                        _action: 'create',
+                        file_size: 4000000
+                    });
+                    var attachmentModel3 = new Bean({
+                        id: _.uniqueId(),
+                        _action: 'delete',
+                        file_size: 4000000
+                    });
+
+                    sandbox.stub(view, 'getField')
+                        .withArgs('attachments')
+                        .returns({
+                            _attachments: app.data.createBeanCollection('Notes', [
+                                attachmentModel,
+                                attachmentModel2,
+                                attachmentModel3
+                            ])
+                        });
+
+                    view._checkAttachmentLimit();
+                    expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
+                }
+            );
         });
 
         describe('replacing templates', function() {

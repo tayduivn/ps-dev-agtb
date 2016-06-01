@@ -47,6 +47,8 @@ $mod_strings = array(
     'LBL_ATTACH_FROM_LOCAL' => 'Upload From Local',
     'LBL_ATTACH_SUGAR_DOC' => 'Sugar Document',
     'LBL_ATTACHMENTS' => 'Attachments',
+    'LBL_TOTAL_ATTACHMENT_MAX_SIZE' => 'Your total attachments exceed {0}. ' .
+        'Please reduce the size or number of attachments.',
     'LBL_HAS_ATTACHMENT' => 'Has Attachment?:',
     'LBL_BCC' => 'Bcc:',
     'LBL_BODY' => 'Body:',
