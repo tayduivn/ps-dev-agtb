@@ -555,6 +555,7 @@ class OracleManager extends DBManager
         if ($this->getDatabase()) {
             $tables = array();
             $owner = strtoupper($this->configOptions['db_schema_name']);
+            $like = strtoupper($like);
             $sql = 'SELECT TABLE_NAME FROM ALL_TABLES'
                 . ' WHERE OWNER = ' . $this->quoted($owner)
                 . ' AND TABLE_NAME LIKE ' . $this->quoted($like);
