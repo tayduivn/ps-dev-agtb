@@ -874,6 +874,7 @@
             showAlerts: false,
             update: true,
             remove: _.isUndefined(params.offset),
+            reset: _.isUndefined(params.offset),
             fields: this.getSearchFields(),
             context: self,
             params: params,
