@@ -3407,10 +3407,15 @@ eoq;
         }
 
         // Resolve variables in the subject and content.
-        $related = array(
-            $this->parent_type => $this->parent_id,
-            'Users' => $GLOBALS['current_user']->id,
-        );
+        // The parent must be listed prior to the current user or any variables associated with the parent will be
+        // stripped when substituting variables associated with the user.
+        $related = array();
+
+        if (!empty($this->parent_type) && !empty($this->parent_id)) {
+            $related[$this->parent_type] = $this->parent_id;
+        }
+
+        $related['Users'] = $GLOBALS['current_user']->id;
 
         $this->name = EmailTemplate::parse_template($this->name, $related);
         $this->description_html = EmailTemplate::parse_template($this->description_html, $related);
