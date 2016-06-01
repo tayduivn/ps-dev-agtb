@@ -1,3 +1,15 @@
+{*
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+*}
 <br>
 <table width="100%" cellpadding="0" border="0" class="StyleDottedHr">
     <tr><th colspan="3" align="left" >{$MOD.LBL_TRIGGER_SERVER_CONFIGURATION_LABEL}</td></tr>
