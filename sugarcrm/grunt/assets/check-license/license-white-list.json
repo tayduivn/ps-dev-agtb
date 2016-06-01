@@ -6,7 +6,6 @@
         "custom/",
         "config_si.php",
         "composer.lock",
-        "cookie.html",
         "include/SugarTheme/cssmin.php",
         "include/Expressions/javascript/index.html",
         "include/externalAPI/cmis_repository_wrapper.php",
