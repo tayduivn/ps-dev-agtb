@@ -551,25 +551,35 @@ class EventTest extends \PHPUnit_Framework_TestCase
             array(
                 'vEvent' => $this->getEvent('vevent'),
                 'links' => array(
-                    'test@sugarcrm.com' => array(
+                    array(
                         'beanName' => '',
-                        'beanId' => ''
+                        'beanId' => '',
+                        'email' => '',
+                        'displayName' => '',
                     ),
-                    'sally@example.com' => array(
+                    array(
                         'beanName' => 'Users',
-                        'beanId' => 'a1'
+                        'beanId' => 'a1',
+                        'email' => 'sally@example.com',
+                        'displayName' => null,
                     ),
-                    'test@test.com' => array(
+                    array(
                         'beanName' => 'Users',
-                        'beanId' => 'a2'
+                        'beanId' => 'a2',
+                        'email' => 'test@test.com',
+                        'displayName' => 'Test Test',
                     ),
-                    'test1@test.com' => array(
+                    array(
                         'beanName' => 'Contacts',
-                        'beanId' => 'a3'
+                        'beanId' => 'a3',
+                        'email' => 'test1@test.com',
+                        'displayName' => 'Test1 Test1',
                     ),
-                    'test3@test.com' => array(
+                    array(
                         'beanName' => 'Leads',
-                        'beanId' => 'a4'
+                        'beanId' => 'a4',
+                        'email' => 'test3@test.com',
+                        'displayName' => 'Test3 Test3',
                     ),
                 ),
                 'organizer' => array(
@@ -585,7 +595,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
                     array(
                         'getStatus' => 'NEEDS-ACTION',
                         'isOrganizer' => false,
-                        'getDisplayName' => '',
+                        'getDisplayName' => null,
                         'getRole' => 'REQ-PARTICIPANT',
                         'getEmail' => 'sally@example.com',
                         'getBeanName' => 'Users',
@@ -1211,9 +1221,12 @@ class EventTest extends \PHPUnit_Framework_TestCase
             $expectedParticipant = $expectedParticipants[$i];
             $this->assertInstanceOf('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant', $participant);
 
-            foreach ($expectedParticipant as $method => $value) {
-                $this->assertEquals($value, $participant->$method());
-            }
+            $this->assertEquals(
+                array_values($expectedParticipant),
+                array_map(function ($method) use ($participant) {
+                    return $participant->$method();
+                }, array_keys($expectedParticipant))
+            );
         }
 
         $organizer = $eventMock->getOrganizer();

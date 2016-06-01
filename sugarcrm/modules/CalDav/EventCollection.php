@@ -169,7 +169,7 @@ class CalDavEventCollection extends SugarBean
     public $doLocalDelivery = true;
 
     /**
-     * Array of links email => [beanName, beanId]
+     * Array of links recurrence => [hash => [beanName, beanId]]
      * @var string
      */
     protected $participantLinks = array();
@@ -295,8 +295,9 @@ class CalDavEventCollection extends SugarBean
                     if ($child == $it->currentOverriddenEvent) {
                         $state = $eventClass::STATE_CUSTOM;
                     }
-                    $event = new $eventClass($child, $state, $this->getParticipantsLinks());
-                    $this->childEvents[$event->getRecurrenceID()->getTimestamp()] = $event;
+                    $recurrence = $child->{'RECURRENCE-ID'}->getDateTime()->getTimestamp();
+                    $event = new $eventClass($child, $state, $this->getParticipantsLinksForNode($recurrence));
+                    $this->childEvents[$recurrence] = $event;
                 }
                 $currentChildIndex ++;
                 $it->next();
@@ -432,7 +433,8 @@ class CalDavEventCollection extends SugarBean
         $vCalendar = $this->getVCalendar();
         $parent = $this->getBaseComponent($vCalendar);
         $eventClass = $this->getEventClass();
-        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $this->getParticipantsLinks());
+        $participants = $this->getParticipantsLinksForNode('parent');
+        $this->parentEvent = new $eventClass($parent, $eventClass::STATE_PARENT, $participants);
 
         return $this->parentEvent;
     }
@@ -985,82 +987,122 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Get part participants from participantsLinks.
+     * @param string|integer $recurrence
+     * @return array
+     */
+    protected function getParticipantsLinksForNode($recurrence)
+    {
+        $participants = $this->getParticipantsLinks();
+        if (isset($participants[$recurrence])) {
+            return $participants[$recurrence];
+        } elseif ($recurrence !== 'parent') {
+            return $this->getParticipantsLinksForNode('parent');
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Get link (beanName, beanId, email) from participant.
+     * @param Structures\Participant $participant
+     * @return array
+     */
+    protected function mapParticipantToBean(Structures\Participant $participant)
+    {
+        global $locale;
+
+        $email = $participant->getEmail();
+        $displayName = $participant->getDisplayName();
+
+        if ($participant->getBeanName() && $participant->getBeanId()) {
+            $link = array(
+                'beanName' => $participant->getBeanName(),
+                'beanId' => $participant->getBeanId(),
+            );
+        } else {
+            $link = $this->getPrincipalManager()
+                ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                ->findSugarLinkByEmail($email);
+        }
+        if (!$link) {
+            $link = $this->getPrincipalManager()
+                ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
+                ->findSugarLinkByDisplayName($displayName);
+        }
+
+        if (!$link) {
+            /** @var Addressee $focus */
+            $focus = \BeanFactory::getBean('Addressees');
+            $focus->last_name = $email;
+            $focus->email1 = $email;
+            $focus->save();
+
+            $GLOBALS['log']->debug("CalDav: Link wasn't found for '$email', so create Addressee bean");
+
+            $link = array(
+                'beanName' => $focus->module_name,
+                'beanId' => $focus->id,
+            );
+        }
+
+        if ($link['beanName'] == 'Addressees') {
+            /** @var Addressee $focus */
+            $focus = \BeanFactory::getBean('Addressees', $link['beanId']);
+            if ($focus->last_name === $email) {
+                $parseName = $locale->getLocaleUnFormattedName($displayName);
+                $parseName = array_filter($parseName);
+                if ($parseName) {
+                    $focus->first_name = isset($parseName['f']) ? $parseName['f'] : '';
+                    $focus->last_name = isset($parseName['l']) ? $parseName['l'] : '';
+                    $focus->salutation = isset($parseName['s']) ? $parseName['s'] : '';
+
+                    $focus->save();
+                }
+            }
+        }
+
+        $link['email'] = $email;
+        $link['displayName'] = $displayName;
+        $participant->setBeanName($link['beanName']);
+        $participant->setBeanId($link['beanId']);
+
+        return $link;
+    }
+
+    /**
      * Links all dav participants to sugar beans and return array with links
      * @return array
      */
     protected function mapParticipantsToBeans()
     {
-        $participantsList = $this->getParent()->getParticipants();
-        $customChildrenId = $this->getCustomizedChildrenRecurrenceIds();
-        foreach ($customChildrenId as $recurrenceId) {
-            $participantsList = array_merge($participantsList, $this->getChild($recurrenceId)->getParticipants());
+        $this->getParticipantsLinks(true);
+        $participantsList = array('parent' => array());
+        foreach ($this->getParent()->getParticipants() as $participant) {
+            $link = $this->mapParticipantToBean($participant);
+            $participantsList['parent'][] = $link;
         }
 
-        $this->getParticipantsLinks(true);
-        foreach ($participantsList as $participant) {
-            $email = $participant->getEmail();
-            $displayName = $participant->getDisplayName();
-            $participantsHelper = new ParticipantsHelper();
-            $participantHash = $participantsHelper->participantHash($participant);
-            $GLOBALS['log']->debug("CalDav: Mapping participant '$participantHash' to bean");
-            if (!isset($this->participantLinks[$participantHash])) {
-                if ($participant->getBeanName() && $participant->getBeanId()) {
-                    $link = array('beanName' => $participant->getBeanName(), 'beanId' => $participant->getBeanId());
-                } else {
-                    $link = $this->getPrincipalManager()
-                                 ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
-                                 ->findSugarLinkByEmail($email);
-                }
-                
-                if (!$link && !$email) {
-                    $link = $this->getPrincipalManager()
-                        ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
-                        ->findSugarLinkByDisplayName($displayName);
-                }
+        $customChildrenId = $this->getCustomizedChildrenRecurrenceIds();
+        foreach ($customChildrenId as $recurrenceId) {
+            $recurrenceIdKey = $recurrenceId->getTimestamp();
 
-                global $locale;
+            if (!isset($participantsList[$recurrenceIdKey])) {
+                $participantsList[$recurrenceIdKey] = array();
+            }
 
-                if (!$link) {
-                    /** @var Addressee $focus */
-                    $focus = \BeanFactory::getBean('Addressees');
-                    $focus->last_name = $email;
-                    $focus->email1 = $email;
-                    $focus->save();
+            foreach ($this->getChild($recurrenceId)->getParticipants() as $participant) {
+                $link = $this->mapParticipantToBean($participant);
+                $participantsList[$recurrenceIdKey][] = $link;
+            }
 
-                    $GLOBALS['log']->debug("CalDav: Link wasn't found for '$email', so create Addressee bean");
-
-                    $link = array(
-                        'beanName' => $focus->module_name,
-                        'beanId' => $focus->id,
-                    );
-                }
-
-                if ($link['beanName'] == 'Addressees') {
-                    /** @var Addressee $focus */
-                    $focus = \BeanFactory::getBean('Addressees', $link['beanId']);
-                    if ($focus->last_name === $email) {
-                        $parseName = $locale->getLocaleUnFormattedName($participant->getDisplayName());
-                        $parseName = array_filter($parseName);
-                        if ($parseName) {
-                            $focus->first_name = isset($parseName['f']) ? $parseName['f'] : '';
-                            $focus->last_name = isset($parseName['l']) ? $parseName['l'] : '';
-                            $focus->salutation = isset($parseName['s']) ? $parseName['s'] : '';
-
-                            $focus->save();
-                        }
-                    }
-                }
-
-                $GLOBALS['log']->debug("CalDav: Mapped '$email' to {$link['beanName']}({$link['beanId']})");
-
-                $participant->setBeanName($link['beanName']);
-                $participant->setBeanId($link['beanId']);
-
-                $this->participantLinks[$participantHash] = $link;
+            if ($participantsList['parent'] === $participantsList[$recurrenceIdKey]) {
+                unset($participantsList[$recurrenceIdKey]);
             }
         }
 
-        return $this->participantLinks;
+        $this->participantLinks = $participantsList;
+        return $participantsList;
     }
 
     /**

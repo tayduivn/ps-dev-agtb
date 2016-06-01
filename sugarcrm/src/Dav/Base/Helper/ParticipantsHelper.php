@@ -72,10 +72,14 @@ class ParticipantsHelper
                 if ($inviteeBefore[1] != $inviteeAfter[1]) {
                     continue;
                 }
+                if ($inviteeBefore[2] != $inviteeAfter[2]) {
+                    continue;
+                }
                 if ($inviteeBefore[3] != $inviteeAfter[3]) {
                     $changedInvitees['changed'][] = $inviteeAfter;
                 }
                 unset($inviteesBefore[$keyBefore], $inviteesAfter[$keyAfter]);
+                break;
             }
         }
         if ($inviteesBefore) {
@@ -125,21 +129,5 @@ class ParticipantsHelper
             $participant->getStatus(),
             $participant->getDisplayName(),
         );
-    }
-
-    /**
-     * Generation of hash based the participant.
-     *
-     * @param Participant $participant
-     * @return mixed
-     */
-    public function participantHash(Participant $participant)
-    {
-        $email = $participant->getEmail();
-        if (\SugarEmailAddress::isValidEmail($email)) {
-            return $email;
-        }
-
-        return md5($participant->getDisplayName());
     }
 }

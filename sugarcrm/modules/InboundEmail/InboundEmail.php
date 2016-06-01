@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
 
 require_once('include/OutboundEmail/OutboundEmail.php');
 
@@ -2918,21 +2917,21 @@ class InboundEmail extends SugarBean {
             $bean = BeanFactory::getBean($moduleName, $entityId);
             if ($bean instanceof Call || $bean instanceof Meeting) {
                 $eventCollection->sync();
-                $links = json_decode($eventCollection->participants_links, true);
-
                 $participants = $event->getParticipants();
                 foreach ($participants as $participant) {
                     $email = $participant->getEmail();
-                    $participantsHelper = new ParticipantsHelper();
-                    $participantHash = $participantsHelper->participantHash($participant);
-                    if ($email === $emailAddress && isset($links[$participantHash])) {
+                    if ($email == $emailAddress) {
                         $map = SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap');
                         $map = new $map;
                         $status = $map->getSugarValue($participant->getStatus());
 
                         $inviteBean = BeanFactory::getBean(
-                            $links[$participantHash]['beanName'],
-                            $links[$participantHash]['beanId']
+                            $participant->getBeanName(),
+                            $participant->getBeanId(),
+                            array(
+                                'disable_row_level_security' => true,
+                                'strict_retrieve' => true,
+                            )
                         );
                         $this->updateStatusForInvitee($bean, $inviteBean, $status);
                         break;

@@ -65,13 +65,36 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
      */
     public static function prepareForImportProvider()
     {
-        $addressees = array(
-            'test_1@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
-            'test_2@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
-            'test_3@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
+        $randomDataHashes = array(
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1()),
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1()),
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1()),
         );
 
-        $groupId = create_guid();
+        $addressees = array(
+            'parent' => array(
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[0][0],
+                    'email' => 'test_1@test.com',
+                    'displayName' => 'Test1 Test1',
+                ),
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[1][0],
+                    'email' => 'test_2@test.com',
+                    'displayName' => 'Test2 Test2',
+                ),
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[2][0],
+                    'email' => 'test_3@test.com',
+                    'displayName' => 'Test3 Test3',
+                ),
+            ),
+        );
+
+        $groupId = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
 
         $participants_links = json_encode($addressees);
 
@@ -282,10 +305,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     null,
-                                    'Sammo Hung Kam-Bo',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),
@@ -416,7 +439,7 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                                 array(
                                     array(
                                         'Addressees',
-                                        $addressees['test_1@test.com']['beanId'],
+                                        $randomDataHashes[0][0],
                                         'test_1@test.com',
                                     ),
                                 ),
@@ -437,7 +460,7 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                                 array(
                                     array(
                                         'Addressees',
-                                        $addressees['test_1@test.com']['beanId'],
+                                        $randomDataHashes[0][0],
                                         'test_1@test.com',
                                     ),
                                 ),
@@ -473,17 +496,17 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     null,
-                                    'test_1@test.com',
+                                    'Test1 Test1',
                                 ),
                                 array(
                                     'Addressees',
-                                    $addressees['test_2@test.com']['beanId'],
+                                    $randomDataHashes[1][0],
                                     'test_2@test.com',
                                     null,
-                                    'test_2@test.com',
+                                    'Test2 Test2',
                                 ),
                             ),
                         ),
@@ -508,10 +531,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_3@test.com']['beanId'],
+                                    $randomDataHashes[2][0],
                                     'test_3@test.com',
                                     null,
-                                    'Mark Dacascos',
+                                    'Test3 Test3',
                                 ),
                             ),
                         ),
@@ -612,10 +635,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     null,
-                                    'Sammo Hung Kam-Bo',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),
@@ -908,10 +931,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     'NEEDS-ACTION',
-                                    'test_1@test.com',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),
@@ -930,10 +953,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     'NEEDS-ACTION',
-                                    'test_1@test.com',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),
@@ -952,10 +975,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     'NEEDS-ACTION',
-                                    'test_1@test.com',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),
@@ -974,10 +997,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                             'added' => array(
                                 array(
                                     'Addressees',
-                                    $addressees['test_1@test.com']['beanId'],
+                                    $randomDataHashes[0][0],
                                     'test_1@test.com',
                                     'NEEDS-ACTION',
-                                    'test_1@test.com',
+                                    'Test1 Test1',
                                 ),
                             ),
                         ),

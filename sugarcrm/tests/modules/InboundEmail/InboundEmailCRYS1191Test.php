@@ -185,11 +185,13 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
         $eventCollection = BeanFactory::getBean('CalDavEvents');
         $eventCollection->setParent($eventMock);
 
-        $inboundEmailMock = $this->getMock('InboundEmail', array('updateStatusForInvitee'));
-        $participantMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant', array('getEmail', 'getStatus'));
+        $inboundEmailMock = $this->getMock('InboundEmail', array('updateStatusForInvitee', 'getBeanFromParticipant'));
+        $participantMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant', array());
 
         $participantMock->method('getEmail')->willReturn($email);
         $participantMock->method('getStatus')->willReturn($statusCalDav);
+        $participantMock->method('getBeanId')->willReturn('1');
+        $participantMock->method('getBeanName')->willReturn('Users');
 
         if (in_array($beanName, array('Call', 'Meeting'))) {
             $eventMock->expects($this->once())->method('getParticipants')->willReturn(array(
@@ -198,7 +200,6 @@ class InboundEmailCRYS1191Test extends Sugar_PHPUnit_Framework_TestCase
 
             $beanModuleMock = BeanFactory::getBean($beanName, $beanId);
             $inviteeMock = BeanFactory::getBean('Users', '1');
-
             $inboundEmailMock
                 ->method('updateStatusForInvitee')
                 ->with($this->equalTo($beanModuleMock), $this->equalTo($inviteeMock), $this->equalTo($statusSugar));
