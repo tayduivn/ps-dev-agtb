@@ -37,7 +37,14 @@ class SchedulerDaemon extends Scheduler {
 	var $uptimeMonitor;
 	var $shutdown = false;
 
-	
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SchedulerDaemon()
+    {
+        self::__construct();
+    }
+
 	/**
 	 * Sole constructor.
 	 */
@@ -751,5 +758,3 @@ class SchedulerDaemon extends Scheduler {
 	}
 
 } // end SchedulerDaemon class desc.
-
-?>

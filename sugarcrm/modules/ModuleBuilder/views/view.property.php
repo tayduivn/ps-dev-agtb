@@ -17,6 +17,14 @@ require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParse
 
 class ViewProperty extends SugarView
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewProperty()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         parent::__construct();

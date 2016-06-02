@@ -561,6 +561,14 @@ class Smarty
      */
     var $_cache_including = false;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Smarty()
+    {
+        self::__construct();
+    }
+
     /**#@-*/
     /**
      * The class constructor.
@@ -1936,5 +1944,3 @@ class Smarty
 }
 
 /* vim: set expandtab: */
-
-?>

@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('include/EditView/EditView2.php');
 class ViewEdit extends SugarView
 {
@@ -19,6 +21,19 @@ class ViewEdit extends SugarView
  	var $useForSubpanel = false;  //boolean variable to determine whether view can be used for subpanel creates
  	var $useModuleQuickCreateTemplate = false; //boolean variable to determine whether or not SubpanelQuickCreate has a separate display function
  	var $showTitle = true;
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewEdit($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
+
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        parent::__construct($bean, $view_object_map, $request);
+    }
 
     /**
      * @see SugarView::preDisplay()
@@ -45,4 +60,3 @@ class ViewEdit extends SugarView
         return new EditView();
     }
 }
-

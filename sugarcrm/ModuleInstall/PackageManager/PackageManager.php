@@ -24,6 +24,14 @@ class PackageManager{
     var $soap_client;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function PackageManager()
+    {
+        self::__construct();
+    }
+
+    /**
      * Constructor: In this method we will initialize the nusoap client to point to the hearbeat server
      */
     public function __construct()
@@ -866,4 +874,3 @@ class PackageManager{
 		return $packages;
     }
  }
-?>

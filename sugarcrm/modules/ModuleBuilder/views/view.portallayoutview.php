@@ -14,6 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once('modules/ModuleBuilder/views/view.layoutview.php');
 require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
@@ -21,6 +22,11 @@ require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
 
 class ViewPortalLayoutView extends ViewLayoutView
 {
+    public function ViewPortalLayoutView($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        parent::__construct($bean, $view_object_map, $request);
+    }
+
     public function __construct($bean = null, $view_object_map = array(), Request $request = null)
 	{
         parent::__construct($bean, $view_object_map, $request);

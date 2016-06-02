@@ -64,6 +64,14 @@ class ModuleInstaller{
      */
     protected $patch = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ModuleInstaller()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         $this->ms = new ModuleScanner();

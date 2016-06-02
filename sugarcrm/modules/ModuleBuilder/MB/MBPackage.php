@@ -62,6 +62,14 @@ class MBPackage{
 // END SUGARCRM flav=ent ONLY
     );
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function MBPackage($name)
+    {
+        self::__construct($name);
+    }
+
     public function __construct($name)
     {
         $this->name = $name;

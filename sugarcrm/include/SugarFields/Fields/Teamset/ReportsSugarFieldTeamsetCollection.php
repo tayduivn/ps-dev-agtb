@@ -23,6 +23,14 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
 
 	var $showPrimaryChecked = true;
 	
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ReportsSugarFieldTeamsetCollection($fill_data = false)
+    {
+        self::__construct($fill_data);
+    }
+
     public function __construct($fill_data = false)
     {
         parent::__construct($fill_data);
@@ -92,4 +100,3 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
     }    
     
 }
-?>

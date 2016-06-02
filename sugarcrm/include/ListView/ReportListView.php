@@ -45,6 +45,19 @@ class ReportListView  extends ListView {
 	//related to reporting
 	var $export_type = "Normal";
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ReportListView()
+    {
+        self::__construct();
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
 	function setup($seed_object, $data_object=null, $x_block, $html_var, $interlock=false){
 	
 		$this->seed_object = $seed_object;

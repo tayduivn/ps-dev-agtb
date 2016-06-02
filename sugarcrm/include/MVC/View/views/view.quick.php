@@ -15,7 +15,15 @@ require_once('include/MVC/View/views/view.detail.php');
 
 class ViewQuick extends ViewDetail{
 	var $type ='detail';
-	
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewQuick()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         parent::__construct();

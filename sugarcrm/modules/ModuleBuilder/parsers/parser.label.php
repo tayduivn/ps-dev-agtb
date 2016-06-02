@@ -23,6 +23,14 @@ class ParserLabel extends ModuleBuilderParser
      */
     protected static $moduleInstaller;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ParserLabel($moduleName, $packageName = '')
+    {
+        self::__construct($moduleName, $packageName);
+    }
+
     public function __construct($moduleName, $packageName = '')
     {
         $this->moduleName = $moduleName;
@@ -302,4 +310,3 @@ class ParserLabel extends ModuleBuilderParser
         self::$moduleInstaller->rebuild_languages(array($language => $language), array($moduleName));
     }
 }
-
