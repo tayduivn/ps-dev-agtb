@@ -89,13 +89,13 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->teamSetUserNot->addTeams(array($teamUserNot->id));
 
         $this->beanTBA = SugarTestAccountUtilities::createAccount();
-        $this->beanTBA->team_set_selected_id = $this->teamSetUserIn->id;
+        $this->beanTBA->acl_team_set_id = $this->teamSetUserIn->id;
         $this->beanTBA->save();
 
         $this->records[] = $this->beanTBA->id;
 
         $this->beanNotTBA = SugarTestAccountUtilities::createAccount();
-        $this->beanNotTBA->team_set_selected_id = $this->teamSetUserNot->id;
+        $this->beanNotTBA->acl_team_set_id = $this->teamSetUserNot->id;
         $this->beanNotTBA->save();
 
         $this->records[] = $this->beanNotTBA->id;
@@ -161,7 +161,7 @@ class TeamBasedACLExportApiTest extends Sugar_PHPUnit_Framework_TestCase
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $tbaConfigurator->setForModule($this->module, false);
 
-        $this->beanTBA->team_set_selected_id = '';
+        $this->beanTBA->acl_team_set_id = '';
         $this->beanTBA->save();
 
         $listData = $this->recordList->recordListCreate(

@@ -119,7 +119,7 @@ function pollMonitoredInboxes() {
 						$_REQUEST['team_id'] = $sugarFolder->team_id;
 						$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
 //BEGIN SUGARCRM flav=ent ONLY
-                        $_REQUEST['team_set_selected_id'] = $sugarFolder->team_set_selected_id;
+                        $_REQUEST['acl_team_set_id'] = $sugarFolder->acl_team_set_id;
 //END SUGARCRM flav=ent ONLY
 					} // if
 					$messagesToDelete = array();
@@ -157,7 +157,7 @@ function pollMonitoredInboxes() {
 							$_REQUEST['team_id'] = $sugarFolder->team_id;
 							$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
 //BEGIN SUGARCRM flav=ent ONLY
-                            $_REQUEST['team_set_selected_id'] = $sugarFolder->team_set_selected_id;
+                            $_REQUEST['acl_team_set_id'] = $sugarFolder->acl_team_set_id;
 //END SUGARCRM flav=ent ONLY
 							if ($ieX->importOneEmail($msgNo, $uid)) {
 								// add to folder

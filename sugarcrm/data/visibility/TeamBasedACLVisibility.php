@@ -96,7 +96,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
             FROM team_sets_teams tst
             INNER JOIN team_memberships {$teamTableAlias} ON {$teamTableAlias}.team_id = tst.team_id
                 AND {$teamTableAlias}.user_id = '{$current_user->id}' AND {$teamTableAlias}.deleted = 0
-            WHERE tst.team_set_id = {$tableAlias}.team_set_selected_id AND tst.deleted = 0";
+            WHERE tst.team_set_id = {$tableAlias}.acl_team_set_id AND tst.deleted = 0";
 
         $ow = new OwnerVisibility($this->bean, $this->params);
         $ownerVisibilityRaw = '';
@@ -147,7 +147,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
      */
     public function elasticBuildMapping(Mapping $mapping, Visibility $provider)
     {
-        $mapping->addNotAnalyzedField('team_set_selected_id');
+        $mapping->addNotAnalyzedField('acl_team_set_id');
     }
 
     /**
@@ -162,7 +162,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
      */
     public function elasticGetBeanIndexFields($module, Visibility $provider)
     {
-        return array('team_set_selected_id' => 'id');
+        return array('acl_team_set_id' => 'id');
     }
 
     /**
@@ -173,7 +173,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
         if ($this->isApplicable()) {
             $combo = new \Elastica\Filter\BoolOr();
             $combo->addFilter(
-                $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'team_set_selected_id'))
+                $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'acl_team_set_id'))
             );
             $combo->addFilter(
                 $provider->createFilter('Owner', array('bean' => $this->bean, 'user' => $user))

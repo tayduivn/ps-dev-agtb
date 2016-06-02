@@ -58,9 +58,9 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
         $this->teamSet->addTeams(array($team->id));
 
         $this->beanToExport = SugarTestAccountUtilities::createAccount();
-        $this->beanToExport->team_set_selected_id = $this->teamSet->id;
-        $this->beanToExport->team_selected_name = TeamSetManager::getCommaDelimitedTeams(
-            $this->beanToExport->team_set_selected_id,
+        $this->beanToExport->acl_team_set_id = $this->teamSet->id;
+        $this->beanToExport->acl_team_names = TeamSetManager::getCommaDelimitedTeams(
+            $this->beanToExport->acl_team_set_id,
             $this->beanToExport->team_id
         );
         $this->beanToExport->save();
@@ -81,40 +81,40 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The team_set_selected_id field should be importable.
+     * The acl_team_set_id field should be importable.
      */
     public function testImporttTBA()
     {
         $importedRecordId = $this->prepareImporter(array(
             'team_id' => $this->beanToExport->team_id,
-            'team_set_selected_id' => $this->beanToExport->team_set_selected_id,
-            'team_selected_name' => $this->beanToExport->team_selected_name,
+            'acl_team_set_id' => $this->beanToExport->acl_team_set_id,
+            'acl_team_names' => $this->beanToExport->acl_team_names,
         ));
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
-        $this->assertEquals($this->beanToExport->team_set_selected_id, $importedBean->team_set_selected_id);
+        $this->assertEquals($this->beanToExport->acl_team_set_id, $importedBean->acl_team_set_id);
     }
 
     /**
-     * The team_set_selected_id field should be populated by team_selected_name.
+     * The acl_team_set_id field should be populated by acl_team_names.
      */
     public function testImportByTeamSelectedName()
     {
-        $expectedTeamSet = $this->beanToExport->team_set_selected_id;
+        $expectedTeamSet = $this->beanToExport->acl_team_set_id;
 
-        $this->beanToExport->team_set_selected_id = null;
+        $this->beanToExport->acl_team_set_id = null;
         $this->beanToExport->save();
         $importedRecordId = $this->prepareImporter(array(
             'team_id' => $this->beanToExport->team_id,
-            // The "team_set_selected_id" is not specified.
-            'team_selected_name' => $this->beanToExport->team_selected_name,
+            // The "acl_team_set_id" is not specified.
+            'acl_team_names' => $this->beanToExport->acl_team_names,
         ));
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
-        $this->assertNotEmpty($importedBean->team_set_selected_id);
-        $this->assertEquals($expectedTeamSet, $importedBean->team_set_selected_id);
+        $this->assertNotEmpty($importedBean->acl_team_set_id);
+        $this->assertEquals($expectedTeamSet, $importedBean->acl_team_set_id);
     }
 
     /**
@@ -126,22 +126,22 @@ class TeamBasedACLImportTest extends Sugar_PHPUnit_Framework_TestCase
         // As a result the super global REQUEST have the construction below.
         // Maybe for setting a real default value which depends on teams in SugarFieldTeamset::importSanitaze().
         $_REQUEST['default_value_team_name'] = 'default_value_team_name';
-        $_REQUEST['default_value_team_selected_name'] = 'default_value_team_selected_name';
+        $_REQUEST['default_value_acl_team_names'] = 'default_value_acl_team_names';
 
         $importedRecordId = $this->prepareImporter(array(
             // Matched to "team_set_id".
             'team_name' => TeamSetManager::getCommaDelimitedTeams($this->teamSet->id),
-            // Matched to "team_set_selected_id".
-            'team_selected_name' => '',
+            // Matched to "acl_team_set_id".
+            'acl_team_names' => '',
         ));
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
         unset($_REQUEST['default_value_team_name']);
-        unset($_REQUEST['default_value_team_selected_name']);
+        unset($_REQUEST['default_value_acl_team_names']);
 
         $this->assertEquals($this->teamSet->id, $importedBean->team_set_id);
-        $this->assertEquals(null, $importedBean->team_set_selected_id);
+        $this->assertEquals(null, $importedBean->acl_team_set_id);
     }
 
     /**

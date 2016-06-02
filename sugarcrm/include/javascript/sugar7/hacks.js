@@ -22,8 +22,8 @@
                     delete field.len;
                     field.type = "teamset";
                 }
-                if (module.fields.team_selected_name) {
-                    module.fields.team_selected_name.type = 'teamset';
+                if (module.fields.acl_team_names) {
+                    module.fields.acl_team_names.type = 'teamset';
                 }
 
                 _.each(module.fields,function(field) {

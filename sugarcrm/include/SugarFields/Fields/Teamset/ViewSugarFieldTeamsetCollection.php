@@ -19,7 +19,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 
 	var $add_user_private_team = true;
     //BEGIN SUGARCRM flav=ent ONLY
-    public $team_set_selected_id;
+    public $acl_team_set_id;
     //END SUGARCRM flav=ent ONLY
 	var $team_set_id = null;
 	var $team_id = null;
@@ -113,21 +113,21 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 			        		$this->bean->team_set_id = $this->team_set_id;
 			        	}
                         //BEGIN SUGARCRM flav=ent ONLY
-                        if(!empty($this->team_set_selected_id)){
-                            $this->bean->team_set_selected_id = $this->team_set_selected_id;
+                    if (!empty($this->acl_team_set_id)) {
+                            $this->bean->acl_team_set_id = $this->acl_team_set_id;
                         }
                         //END SUGARCRM flav=ent ONLY
 			        }else if(!empty($_REQUEST['record'])){
 		            	$this->bean->retrieve($_REQUEST['record']);
 			        }
 
-                    if (!empty($this->bean->team_set_id)) {
+                if (!empty($this->bean->team_set_id)) {
                         //BEGIN SUGARCRM flav=ent ONLY
                         $selectedTeamIds = array();
-                        if (!empty($this->bean->team_set_selected_id)) {
+                    if (!empty($this->bean->acl_team_set_id)) {
                             $selectedTeamIds = array_map(function ($el) {
                                 return $el['id'];
-                            }, TeamSetManager::getTeamsFromSet($this->bean->team_set_selected_id));
+                            }, TeamSetManager::getTeamsFromSet($this->bean->acl_team_set_id));
                         }
                         //END SUGARCRM flav=ent ONLY
                         $teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);

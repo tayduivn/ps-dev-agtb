@@ -49,7 +49,7 @@ class NotesApiHelper extends SugarBeanApiHelper
             $bean->team_id = $contact->fetched_row['team_id'];
             $bean->team_set_id = $contact->fetched_row['team_set_id'];
             //BEGIN SUGARCRM flav=ent ONLY
-            $bean->team_set_selected_id = $contact->fetched_row['team_set_selected_id'];
+            $bean->acl_team_set_id = $contact->fetched_row['acl_team_set_id'];
             //END SUGARCRM flav=ent ONLY
 
             $bean->account_id = $account;

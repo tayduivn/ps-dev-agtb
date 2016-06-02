@@ -463,7 +463,7 @@ eoq;
 		$ie1->team_id = empty($current_user->default_team) ? $current_user->team_id : $current_user->default_team;
 		$ie1->team_set_id = $current_user->team_set_id;
         //BEGIN SUGARCRM flav=ent ONLY
-        $ie1->team_set_selected_id = $current_user->team_set_selected_id;
+        $ie1->acl_team_set_id = $current_user->acl_team_set_id;
         //END SUGARCRM flav=ent ONLY
         // need this bean to generate correct teamset field
         $emailsBean = BeanFactory::getBean('Emails');
@@ -471,7 +471,7 @@ eoq;
         $emailsBean->team_id = $ie1->team_id;
         $emailsBean->team_set_id = $ie1->team_set_id;
         //BEGIN SUGARCRM flav=ent ONLY
-        $emailsBean->team_set_selected_id = $ie1->team_set_selected_id;
+        $emailsBean->acl_team_set_id = $ie1->acl_team_set_id;
         //END SUGARCRM flav=ent ONLY
 
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');

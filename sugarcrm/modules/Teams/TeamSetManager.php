@@ -387,10 +387,10 @@ class TeamSetManager {
 
         //BEGIN SUGARCRM flav=ent ONLY
         $selectedTeamIds = array();
-        if ($isTBAEnabled && !empty($focus->team_set_selected_id)) {
+        if ($isTBAEnabled && !empty($focus->acl_team_set_id)) {
             $selectedTeamIds = array_map(function ($el) {
                 return $el['id'];
-            }, TeamSetManager::getTeamsFromSet($focus->team_set_selected_id));
+            }, TeamSetManager::getTeamsFromSet($focus->acl_team_set_id));
         }
         //END SUGARCRM flav=ent ONLY
 

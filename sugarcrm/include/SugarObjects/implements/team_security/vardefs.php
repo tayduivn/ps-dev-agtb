@@ -41,8 +41,8 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
         ),
         //BEGIN SUGARCRM flav=ent ONLY
-        'team_set_selected_id' => array(
-            'name' => 'team_set_selected_id',
+        'acl_team_set_id' => array(
+            'name' => 'acl_team_set_id',
             'vname' => 'LBL_TEAM_SET_SELECTED_ID',
             'type' => 'id',
             'audited' => true,
@@ -104,13 +104,13 @@ $vardefs = array(
             'exportable'=>true,
             //BEGIN SUGARCRM flav=ent ONLY
 			// Until the same control is used for selecting.
-			'fields' => array('team_set_selected_id'),
+            'fields' => array('acl_team_set_id'),
             //END SUGARCRM flav=ent ONLY
         ),
       //BEGIN SUGARCRM flav=ent ONLY
 	  // handled by SugarFieldTeamset
-      'team_selected_name' => array(
-          'name' => 'team_selected_name',
+        'acl_team_names' => array(
+          'name' => 'acl_team_names',
           // Prevent a notice during import.
           'table' => 'teams',
           // Field is not a 'relationship_info', so needs 'module' & 'id_name' like other relate fields.
@@ -119,7 +119,7 @@ $vardefs = array(
           // Or db_concat_fields.
           'rname' => 'name',
           // Readable representation for export.
-          'id_name' => 'team_set_selected_id',
+          'id_name' => 'acl_team_set_id',
           'source' => 'non-db',
           // Relate is the only way to export non-db field, link value is replaced in getExportContentFromResult()
           // value doesn't matter but "many" type is filtered by create_export_query().

@@ -7275,8 +7275,8 @@ class SugarBean
             $this->team_id = $current_user->default_team;	//default_team is a team id
             $this->team_set_id = $current_user->team_set_id; //default team_set_id is the set of default teams
             //BEGIN SUGARCRM flav=ent ONLY
-            $this->team_set_selected_id = !empty($current_user->team_set_selected_id) ?
-                $current_user->team_set_selected_id : '';
+            $this->acl_team_set_id = !empty($current_user->acl_team_set_id) ?
+                $current_user->acl_team_set_id : '';
             //END SUGARCRM flav=ent ONLY
         } else {
             $this->team_id = 1; // make the item globally accessible

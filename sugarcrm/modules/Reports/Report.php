@@ -2510,7 +2510,7 @@ class Report
             0,
             $saved_report->team_id,
             $chart_type,
-            $saved_report->team_set_selected_id
+            $saved_report->acl_team_set_id
         );
         $this->saved_report = $saved_report;
 

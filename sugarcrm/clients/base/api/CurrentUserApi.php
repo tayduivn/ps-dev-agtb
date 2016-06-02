@@ -638,7 +638,7 @@ class CurrentUserApi extends SugarApi
         $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
         //BEGIN SUGARCRM flav=ent ONLY
         $defaultSelectedTeamIds = array();
-        foreach (TeamSetManager::getTeamsFromSet($current_user->team_set_selected_id) as $selectedTeam) {
+        foreach (TeamSetManager::getTeamsFromSet($current_user->acl_team_set_id) as $selectedTeam) {
             $defaultSelectedTeamIds[] = $selectedTeam['id'];
         }
         //END SUGARCRM flav=ent ONLY

@@ -72,10 +72,10 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
         if (!empty($this->bean->team_set_id)) {
             //BEGIN SUGARCRM flav=ent ONLY
             $selectedTeamIds = array();
-            if (!empty($this->bean->team_set_selected_id)) {
+            if (!empty($this->bean->acl_team_set_id)) {
                 $selectedTeamIds = array_map(function ($el) {
                     return $el['id'];
-                }, TeamSetManager::getTeamsFromSet($this->bean->team_set_selected_id));
+                }, TeamSetManager::getTeamsFromSet($this->bean->acl_team_set_id));
             }
             //END SUGARCRM flav=ent ONLY
             $teams = TeamSetManager::getTeamsFromSet($this->bean->team_set_id);

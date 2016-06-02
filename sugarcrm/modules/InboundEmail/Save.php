@@ -199,7 +199,7 @@ $monitor_fields = array(
     'team_id',
     'team_set_id',
 //BEGIN SUGARCRM flav=ent ONLY
-    'team_set_selected_id',
+    'acl_team_set_id',
 //END SUGARCRM flav=ent ONLY
 );
 
@@ -285,7 +285,7 @@ function syncSugarFoldersWithBeanChanges($fieldName, $focus)
         case 'team_id':
         case 'team_set_id':
 //BEGIN SUGARCRM flav=ent ONLY
-        case 'team_set_selected_id':
+        case 'acl_team_set_id':
 //END SUGARCRM flav=ent ONLY
             $f->$fieldName = $focus->$fieldName;
             $f->save();

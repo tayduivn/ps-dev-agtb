@@ -896,9 +896,9 @@ class Email extends SugarBean {
 				? explode(",", $_REQUEST['selectedTeam'])
 				: array();
 			if (!empty($selectedTeamIdsArray)) {
-				$this->team_set_selected_id = $teamSet->addTeams($selectedTeamIdsArray);
+                $this->acl_team_set_id = $teamSet->addTeams($selectedTeamIdsArray);
 			} else {
-				$this->team_set_selected_id = '';
+                $this->acl_team_set_id = '';
 			}
             //END SUGARCRM flav=ent ONLY
 

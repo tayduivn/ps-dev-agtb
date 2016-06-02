@@ -118,8 +118,8 @@ class SugarFolder {
             'type' => 'link',
         ),
 //BEGIN SUGARCRM flav=ent ONLY
-        'team_set_selected_id' => array(
-            'name' => 'team_set_selected_id',
+        'acl_team_set_id' => array(
+            'name' => 'acl_team_set_id',
             'type' => 'id',
         ),
 //END SUGARCRM flav=ent ONLY
