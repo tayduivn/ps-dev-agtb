@@ -108,6 +108,11 @@ class CountConditionalRelatedExpression extends NumericExpression
                 return;
             }
 
+            // if the previous_value was not valid, it should just bail out
+            if (!_.contains(condition_values, previous_value)) {
+                return;
+            }
+
             if (conditionValid && !hasModelBeenRemoved) {
                 // if the condition is valid and the condition field changed, check if the previous value
                 // was an invalid condition, if it was, the `new_value` just needs to be added back
