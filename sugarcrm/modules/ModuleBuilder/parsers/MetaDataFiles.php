@@ -1154,6 +1154,12 @@ class MetaDataFiles
                                 $results[$fileInfo['subPath']]['meta'] = $viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']];
                             }
                         } else {
+                            if ($fileInfo['subPath'] == 'header' && $type == 'menu') {
+                                $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']] =
+                                    array_values(
+                                        $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]
+                                    );
+                            }
                             if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                                 $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
                             } else {
