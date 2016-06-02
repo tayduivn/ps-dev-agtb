@@ -29,6 +29,26 @@ describe('Plugins.ClickToEdit', function() {
         app = null;
     });
 
+    describe('handleHideDatePicker', function() {
+        beforeEach(function() {
+            plugin.$ = function() {
+                return {
+                    val: function() {}
+                };
+            };
+        });
+
+        afterEach(function() {
+            plugin.$ = null;
+        });
+
+        it('should return true if isHiding is true', function() {
+            //simulate multiple handleHideDatePicker calls
+            plugin.isHiding = true;
+            expect(plugin.handleHideDatePicker()).toBeTruthy();
+        });
+    });
+
     describe('onAttach', function() {
         beforeEach(function() {
             sinon.collection.stub(plugin, '_fieldOnAttach', function() {});

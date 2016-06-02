@@ -75,6 +75,11 @@
             _fieldIsErrorState: false,
 
             /**
+             * if we have already processed the handleHideDatePicker event, don't process it again
+             */
+            isHiding: false,
+
+            /**
              * @inheritdoc
              */
             onAttach: function(component, plugin) {
@@ -804,6 +809,16 @@
                 var $field = this.$(this.fieldTag),
                     value = $field.val();
 
+                /**
+                 * flag for if we've already processed the hide event. Setting the mode can trigger another
+                 * hide event, which causes infinite loops in the UI.  This is bad.
+                 */
+                if (this.isHiding) {
+                    this.isHiding = false;
+                    return true;
+                }
+
+                this.isHiding = true;
                 // if new value is empty, revert it back to the previous value
                 // to be compliant with Forecasts requisites
                 if (_.isEmpty(value)) {
