@@ -6,6 +6,7 @@
         "cache/",
         "custom/",
         "config.php",
+        "config_override.php",
         "config_si.php",
         "composer.lock",
         "include/SugarTheme/cssmin.php",
