@@ -69,8 +69,8 @@ class RelateCollectionApi extends CollectionApi
     /** {@inheritDoc} */
     protected function getCollectionDefinition(ServiceBase $api, array $args)
     {
-        $this->requireArgs($args, array('collection_name'));
-        $bean = $this->bean = $this->loadBean($api, $args);
+        $this->requireArgs($args, array('module', 'collection_name'));
+        $bean = $this->bean = BeanFactory::newBean($args['module']);
 
         require_once 'clients/base/api/CollectionApi/CollectionDefinition/RelateCollectionDefinition.php';
         $definition = new RelateCollectionDefinition($bean, $args['collection_name']);
