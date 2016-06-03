@@ -34,6 +34,10 @@ class SugarACLAddressees extends SugarACLStrategy
             return true;
         }
 
+        if ($view == 'view') {
+            return false;
+        }
+
         if (!$this->isWriteOperation($view, $context)) {
             return true;
         } else {
