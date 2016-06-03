@@ -414,13 +414,16 @@ class MysqlManager extends DBManager
 	{
 		$this->log->info("tableExists: $tableName");
 
-		if ($this->getDatabase()) {
-			$result = $this->query("SHOW TABLES LIKE ".$this->quoted($tableName) . ';');
-			if(empty($result)) return false;
-			$row = $this->fetchByAssoc($result);
-            $exists = !empty($row);
-			return $exists;
-		}
+        if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
+            $sql = sprintf(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+                  WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+                $this->quoted($this->connectOptions['db_name']),
+                $this->quoted($tableName)
+            );
+            $row = $this->getOne($sql);
+            return !empty($row);
+        }
 
 		return false;
 	}
