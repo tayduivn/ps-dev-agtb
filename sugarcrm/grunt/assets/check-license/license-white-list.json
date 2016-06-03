@@ -1,9 +1,11 @@
 {
     "excludedFiles": [
+        ".htaccess",
         "LICENSE",
         "SugarCRM_Basic_Development_Rules",
         "cache/",
         "custom/",
+        "config.php",
         "config_si.php",
         "composer.lock",
         "include/SugarTheme/cssmin.php",
