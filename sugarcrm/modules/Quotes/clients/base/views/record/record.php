@@ -304,6 +304,30 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
             ),
         ),
         array(
+            'name' => 'panel_setting_body',
+            'label' => 'LBL_QUOTESETTINGS',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'currency_id',
+                    'type' => 'currency-type-dropdown',
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                'taxrate_name',
+                'shipper_name',
+                'show_line_nums',
+                'calc_grand_total',
+            ),
+        ),
+        array(
             'name' => 'panel_hidden',
             'label' => 'LBL_RECORD_SHOWMORE',
             'hide' => true,

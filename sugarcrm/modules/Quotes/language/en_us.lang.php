@@ -152,6 +152,7 @@ $mod_strings = array (
     'LBL_QUOTE_LAYOUT_DOES_NOT_EXIST_ERROR' => 'quote layout file does not exist: $layout',
     'LBL_QUOTE_LAYOUT_REGISTERED_ERROR' => 'quote layout is not registered in modules/Quotes/Layouts.php',
     'LBL_QUOTED' => 'Quoted',
+    'LBL_QUOTESETTINGS' => 'Quote Settings',
     'LBL_REMOVE_COMMENT' => 'Remove Comment',
     'LBL_REMOVE_ROW' => 'Remove Row',
     'LBL_RENAME_ERROR' => 'ERROR: can\'t move_pdf to $destination. You should try making the directory writable by the webserver',

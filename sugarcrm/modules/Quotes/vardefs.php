@@ -37,7 +37,7 @@ $dictionary['Quote'] = array(
             'len' => '255',
             'vname' => 'LBL_SHIPPING_PROVIDER',
             'source' => 'non-db',
-            'comment' => 'Shipper Name'
+            'comment' => 'Shipper Name',
         ),
         'shippers' => array(
             'name' => 'shippers',
@@ -53,6 +53,22 @@ $dictionary['Quote'] = array(
             'required' => false,
             'do_report' => false,
             'reportable' => false,
+        ),
+        'taxrate_name' => array(
+            'name' => 'taxrate_name',
+            'rname' => 'name',
+            'id_name' => 'taxrate_id',
+            'join_name' => 'taxrates',
+            'type' => 'relate',
+            'link' => 'taxrates',
+            'table' => 'taxrates',
+            'isnull' => 'true',
+            'module' => 'TaxRates',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'vname' => 'LBL_TAXRATE',
+            'source' => 'non-db',
+            'comment' => 'Tax Rate Name',
         ),
         'show_line_nums' => array(
             'name' => 'show_line_nums',
