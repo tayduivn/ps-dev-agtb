@@ -1074,11 +1074,14 @@ class MssqlManager extends DBManager
     {
         $GLOBALS['log']->info("tableExists: $tableName");
 
-        $this->checkConnection();
-        $result = $this->getOne(
-            "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME=".$this->quoted($tableName));
-
-        return !empty($result);
+        if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
+            $result = $this->getOne(
+                "SELECT * FROM INFORMATION_SCHEMA.TABLES ".
+                "WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME=".$this->quoted($tableName)
+            );
+            return !empty($result);
+        }
+        return false;
     }
 
     /**
