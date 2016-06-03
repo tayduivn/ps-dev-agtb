@@ -16,7 +16,7 @@
 
 ({
     events: {
-        'click .qs-tag': 'handleTagSelection'
+        'click .qs-tag a': 'handleTagSelection'
     },
 
     initialize: function(options) {
@@ -43,7 +43,7 @@
             this.close();
         }, this);
 
-        this.collection.on('sync', this.quicksearchHandler,  this);
+        this.collection.on('sync', this.quicksearchHandler, this);
 
         //Listener for receiving focus for up/down arrow navigation:
         this.on('navigate:focus:receive', function() {
@@ -232,7 +232,7 @@
      * Dispose the keydown events for the view.
      */
     disposeKeyEvents: function() {
-        this.$el.off();
+        this.$el.off('keydown keyup');
     },
 
     /**
