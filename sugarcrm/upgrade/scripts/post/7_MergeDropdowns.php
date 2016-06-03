@@ -88,7 +88,7 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
             }
             //If there was nothing left to upgrade, return.
             if ((empty($this->upgrader->state['dropdowns_to_merge']))) {
-                $this->log('**** Skipped Dropdown Lists Merge **** Nothing left to merge as mtime elimated all options');
+                $this->log('**** Skipped Dropdown Lists Merge **** Nothing left to merge as mtime eliminated all options');
                 return;
             }
         }
