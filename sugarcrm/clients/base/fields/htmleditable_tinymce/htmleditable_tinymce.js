@@ -178,6 +178,10 @@
                     // Changes have been made, mark widget as dirty so we don't lose them
                     self._isDirty = true;
                 });
+                self._htmleditor.on('paste', function() {
+                    // Some content has been pasted, mark widget as dirty so we don't lose pasted content.
+                    self._isDirty = true;
+                });
                 self.addCustomButtons(editor);
             };
             config.oninit = function(inst) {
