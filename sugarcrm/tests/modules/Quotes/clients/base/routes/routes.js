@@ -28,37 +28,13 @@ describe('Quotes.Routes', function() {
         sinon.collection.restore();
     });
 
-    it('should load the detail view in bwc mode', function() {
-        var id = 'foo';
-        var options = {
-            layout: 'bwc',
-            url: 'index.php?module=Quotes&return_module=Quotes&action=DetailView&record=' + id
-        };
-
-        app.router.navigate('Quotes/foo', {trigger: true});
-        expect(app.controller.loadView).toHaveBeenCalledWith(options);
-
-    });
-
     it('should load the create view in bwc mode', function() {
         var options = {
                 layout: 'bwc',
-                url: 'index.php?module=Quotes&action=EditView&return_module=Quotes&return_action=DetailView'
+                url: 'index.php?module=Quotes&action=EditView&return_module=Quotes'
             };
 
         app.router.navigate('Quotes/create', {trigger: true});
-        expect(app.controller.loadView).toHaveBeenCalledWith(options);
-
-    });
-
-    it('should load the record view in bwc mode', function() {
-        var options = {
-            layout: 'records',
-            module: 'Quotes',
-            url: ''
-        };
-
-        app.router.navigate('Quotes/DetailView', {trigger: true});
         expect(app.controller.loadView).toHaveBeenCalledWith(options);
 
     });

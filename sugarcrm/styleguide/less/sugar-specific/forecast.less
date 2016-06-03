@@ -175,3 +175,37 @@
 .commit_stage_field > * {
   overflow-y: hidden;
 }
+
+.recordTotalsWrapper {
+    margin-bottom: 55px;
+}
+
+.totalsRow {
+    width: 100%;
+    display: table;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-bottom: 1px solid #DDDDDD;
+
+    .totalsRowItem {
+        display: table-cell;
+        height: 38px;
+        padding: 5px;
+        text-align: right;
+        border-right: 1px solid #DDDDDD;
+        width: 16%;
+        white-space: nowrap;
+
+        .totalsRowValue {
+            font-weight: bold;
+            line-height: 24px;
+            font-size: 16px;
+        }
+    }
+
+    .totalsRowItem:last-child {
+        border-right: none;
+        width: 20%;
+    }
+}

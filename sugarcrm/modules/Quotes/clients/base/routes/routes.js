@@ -14,22 +14,13 @@
         var routes = [
             {
                 name: 'quotesCompatibility',
-                route: 'Quotes/*id',
-                callback: function(id) {
-                    id = id.split('/')[0];
+                route: 'Quotes/create',
+                callback: function() {
                     var options = {
                         layout: 'bwc',
-                        url: 'index.php?module=Quotes&return_module=Quotes&action=DetailView&record=' + id
+                        url: 'index.php?module=Quotes&action=EditView' +
+                            '&return_module=Quotes',
                     };
-
-                    if (id == 'create') {
-                        options.url = 'index.php?module=Quotes&action=EditView' +
-                            '&return_module=Quotes&return_action=DetailView';
-                    } else if (id == 'DetailView') {
-                        options.layout = 'records';
-                        options.module = 'Quotes';
-                        options.url = '';
-                    }
 
                     app.controller.loadView(options);
                 }

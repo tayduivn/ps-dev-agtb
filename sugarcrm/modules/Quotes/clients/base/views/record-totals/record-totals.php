@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,14 +9,22 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-$viewdefs['Quotes']['base']['layout']['record'] = array(
-    'name' => 'bwc',
-    'type' => 'bwc',
-    'components' =>
+$viewdefs['Quotes']['base']['view']['record-totals'] = array(
+    'panels' => array(
         array(
-            array(
-                'view' => 'bwc',
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
+            'fields' => array(
+                'subtotal',
+                'discount',
+                'new_sub',
+                'tax',
+                'shipping',
+                array(
+                    'name' => 'total',
+                    'label' => 'LBL_LIST_GRAND_TOTAL',
+                ),
             ),
         ),
+    ),
 );

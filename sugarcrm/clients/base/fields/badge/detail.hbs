@@ -11,6 +11,5 @@
  */
 --}}
 {{#if this.model.id}}
-{{#eq this.model.attributes.quote_id ""}}<span class="label label-pending">{{str "LBL_NOT_QUOTED" this.module}}</span>{{/eq}}
-{{#notEq this.model.attributes.quote_id ""}}<span class="label label-success">{{str "LBL_QUOTED" this.module}}</span>{{/notEq}}
+    <span class="label {{this.currentCSSClass}}">{{this.currentLabel}}</span>
 {{/if}}
