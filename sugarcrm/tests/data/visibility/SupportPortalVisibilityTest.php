@@ -102,7 +102,7 @@ class SupportPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
             array('Case', array(0, 1), true),
             array('Case', array(2), false),
             // Leads aren't available in portal
-            array('Lead', array(0, 1), false)
+            array('Lead', array(0, 1), false),
         );
     }
 

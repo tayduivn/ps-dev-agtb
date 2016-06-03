@@ -141,9 +141,12 @@ class TeamSecurity extends SugarVisibility implements StrategyInterface
   GROUP BY tst.team_set_id
 )
 SQL;
-        $query->joinTable($table, array(
-            'alias' => $table_alias . '_tf'
-        ))->on()->equalsField($table_alias . '_tf.team_set_id', $table_alias . '.team_set_id');
+        $query->joinTable(
+            $table,
+            array(
+                'alias' => $table_alias . '_tf',
+            )
+        )->on()->equalsField($table_alias . '_tf.team_set_id', $table_alias . '.team_set_id');
 
         if ($this->getOption('join_teams')) {
             $query->joinTable('teams')
