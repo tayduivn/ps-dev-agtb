@@ -68,13 +68,14 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
 
         $source = $this->addSource ? ", 1 /* direct */ source" : "";
         // directly assigned emails
-        $subQuery = "select eb.email_id $source FROM emails_beans eb where eb.bean_module = '{$this->focus->module_dir}'
-                AND eb.bean_id = $bean_id AND eb.deleted=0\n";
+        $subQuery = "SELECT eb.bean_id AS id, eb.email_id $source FROM emails_beans eb
+            WHERE eb.bean_module = '{$this->focus->module_dir}' AND eb.bean_id = $bean_id AND eb.deleted=0\n";
 
         $source = $this->addSource ? ", 2 /* related */ source" : "";
         $subQuery .= " UNION ".
         // Related by directly by email
-            "select DISTINCT eear.email_id $source from emails_email_addr_rel eear INNER JOIN email_addr_bean_rel eabr
+            "SELECT DISTINCT eabr.bean_id AS id, eear.email_id $source from emails_email_addr_rel eear
+            INNER JOIN email_addr_bean_rel eabr
                 ON eabr.bean_id = $bean_id AND eabr.bean_module = '{$this->focus->module_dir}' AND
                 eabr.email_address_id = eear.email_address_id and eabr.deleted=0 where eear.deleted=0\n";
 
@@ -82,12 +83,13 @@ class ArchivedEmailsBeanLink extends ArchivedEmailsLink
             // Assigned to contacts
             $source = $this->addSource ? ", 4 /* contact */ source" : "";
             $subQuery .= " UNION ".
-                "select DISTINCT eb.email_id $source FROM emails_beans eb
+                "SELECT DISTINCT eb.bean_id AS id, eb.email_id $source FROM emails_beans eb
                 $rel_join AND link_bean.id = eb.bean_id
                 where eb.bean_module = '$rel_module' AND eb.deleted=0\n";
             // Related by email to linked contact
             $source = $this->addSource ? ", 8 /* related_contact */  source" : "";
-            $subQuery .= " UNION select DISTINCT eear.email_id $source FROM emails_email_addr_rel eear
+            $subQuery .= " UNION SELECT DISTINCT eabr.bean_id AS id, eear.email_id $source
+                FROM emails_email_addr_rel eear
                 INNER JOIN email_addr_bean_rel eabr
                 ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
                 $rel_join AND link_bean.id = eabr.bean_id

@@ -28,7 +28,8 @@ class CaseEmailsLink extends ArchivedEmailsBeanLink
             $relation = $this->def['link'];
             $this->focus->load_relationship($relation);
             $emailsSubQuery = $this->getEmailsSubquery($relation);
-            $subQuery = "( SELECT email_id, MIN(source) sources FROM ($emailsSubQuery) email_ids2 GROUP BY email_id )";
+            $subQuery = "( SELECT id, email_id, MIN(source) sources
+                FROM ($emailsSubQuery) email_ids2 GROUP BY email_id )";
             $where = str_replace("%1", $this->focus->case_number, $this->focus->getEmailSubjectMacro());
             $where = DBManagerFactory::getInstance()->sqlLikeString($where, '%', false);
             $join = $query->joinTable($subQuery, array('alias' => $alias));
