@@ -53,6 +53,9 @@ class AmazonSQS implements AdapterInterface
      */
     public function __construct($config, LoggerInterface $logger)
     {
+        if (!isset($config['key'], $config['secret'], $config['region'])) {
+            throw new LogicException('Required parameter "key", "secret" or "region" is not provided.');
+        }
         $credentials = new Credentials($config['key'], $config['secret']);
         $this->client = SqsClient::factory(array(
             'credentials' => $credentials,

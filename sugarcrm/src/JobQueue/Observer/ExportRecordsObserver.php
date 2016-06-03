@@ -65,7 +65,7 @@ class ExportRecordsObserver implements ObserverInterface
         list(,,$noteId) = $workload->getData();
         $note = \BeanFactory::getBean('Notes', $noteId);
         $job->load_relationship('notes');
-        $job->notes->add($note);
+        $job->notes->add($note, array('parent_type' => 'SchedulersJobs'));
 
         // if parent task - skip following, we need that only after child is finished
         if (!$job->job_group) {

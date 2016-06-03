@@ -86,6 +86,7 @@ abstract class AbstractRunner implements RunnerInterface
         $this->logger = $logger;
         $this->worker = $worker;
         $this->lock = $lock;
+        $this->registerTicks();
     }
 
     /**
@@ -121,6 +122,11 @@ abstract class AbstractRunner implements RunnerInterface
     abstract public function run();
 
     /**
+     * Registers the process signal listeners.
+     */
+    abstract protected function registerTicks();
+
+    /**
      * Start handling workers.
      */
     public function startWorker()
@@ -128,52 +134,56 @@ abstract class AbstractRunner implements RunnerInterface
         $this->logger->info('Start worker.');
         $startTime = time();
 
+        $cycle = 0;
         while (!$this->stopWork) {
-            gc_collect_cycles();
-            if ($this->worker->work() ||
-                $this->worker->returnCode() === WorkerInterface::RETURN_CODE_IO_WAIT ||
-                $this->worker->returnCode() === WorkerInterface::RETURN_CODE_NO_JOBS
-            ) {
-                // Lock gone or previous work was too long.
-                if (!$this->isWorkProcessActual()) {
-                    $this->stopWork = true;
-                    continue;
-                }
-                if ($this->worker->returnCode() === WorkerInterface::RETURN_CODE_SUCCESS) {
-                    continue;
-                }
-
-                if (!$this->worker->wait()) {
-                    $this->stopWork = true;
-                    continue;
-                }
+            if ((++$cycle % 10) == 0) {
+                gc_collect_cycles();
             }
+            $workersResult = $this->worker->work();
+            $workersCode = $this->worker->returnCode() !== null ? $this->worker->returnCode() :
+                ($workersResult == true ? WorkerInterface::RETURN_CODE_SUCCESS : WorkerInterface::RETURN_CODE_SHUTDOWN);
 
+            // Lock gone or previous work was too long.
             if (!$this->isWorkProcessActual()) {
                 $this->stopWork = true;
                 continue;
             }
 
-            /**
+            /*
              * Check the running time of the current process.
              * If it has been too long, stop working.
              */
             if ($this->maxRuntime > 0 && time() - $startTime > $this->maxRuntime) {
+                $this->logger->info('Max runtime reached.');
                 $this->stopWork = true;
                 continue;
             }
 
-            /**
+            /*
              * Update lock time every minute.
              */
             if ((time() - $this->lockValue) > $this->lockUpdateCycle) {
                 $this->updateLock();
             }
 
-            if ($this->worker->returnCode() === WorkerInterface::RETURN_CODE_NO_JOBS ||
-                $this->worker->returnCode() === WorkerInterface::RETURN_CODE_TIMEOUT
-            ) {
-                $this->noJobsHandler();
+            switch (true) {
+                case $workersCode === WorkerInterface::RETURN_CODE_SUCCESS:
+                    continue 2;
+                    break;
+                case $workersCode === WorkerInterface::RETURN_CODE_SHUTDOWN:
+                    $this->stopWork = true;
+                    continue 2;
+                    break;
+                case $workersCode === WorkerInterface::RETURN_CODE_NO_JOBS:
+                case $workersCode === WorkerInterface::RETURN_CODE_TIMEOUT:
+                    $this->noJobsHandler();
+                    break;
+                default:
+            }
+
+            if (!$this->stopWork && !$this->worker->wait()) {
+                $this->stopWork = true;
+                continue;
             }
         }
         $this->shutdownHandler();
@@ -206,7 +216,8 @@ abstract class AbstractRunner implements RunnerInterface
      */
     protected function noJobsHandler()
     {
-        if (!empty($this->noJobsTimeout)) {
+        if (!$this->stopWork && !empty($this->noJobsTimeout)) {
+            $this->logger->debug("Freeze process for {$this->noJobsTimeout} seconds.");
             sleep($this->noJobsTimeout);
         }
     }

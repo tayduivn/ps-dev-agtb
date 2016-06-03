@@ -82,7 +82,7 @@ class ExportRecordsTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function getObserver()
     {
         if (!$this->observer) {
-            $this->observer = new ExportRecordsObserver();
+            $this->observer = new ExportRecordsObserver(new NullLogger());
         }
         return $this->observer;
     }
@@ -93,7 +93,7 @@ class ExportRecordsTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function getReflection()
     {
         if (!$this->reflection) {
-            $this->reflection = new Reflection();
+            $this->reflection = new Reflection(new NullLogger());
         }
         return $this->reflection;
     }

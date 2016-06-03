@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\JobQueue\Workload\Workload;
 class ReflectionTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @var Database
+     * @var Reflection
      */
     protected $observer;
 

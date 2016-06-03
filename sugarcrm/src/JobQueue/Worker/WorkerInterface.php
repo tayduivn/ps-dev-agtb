@@ -21,6 +21,7 @@ interface WorkerInterface
     // Gearman codes http://php.net/manual/en/gearman.constants.php
     const RETURN_CODE_SUCCESS = 0;
     const RETURN_CODE_IO_WAIT = 1;
+    const RETURN_CODE_SHUTDOWN = 2;
     const RETURN_CODE_NO_ACTIVE_FDS = 7;
     const RETURN_CODE_NO_REGISTERED_FUNCTIONS = 34;
     const RETURN_CODE_NO_JOBS = 35;
