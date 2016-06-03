@@ -67,6 +67,8 @@ gulp.task('karma', function(done) {
 
         // sauce is slower than local runs...
         karmaOptions.reportSlowerThan = 2000;
+        // and 60 seconds of timeout seems to be normal...
+        karmaOptions.browserNoActivityTimeout = 60000;
     }
 
     if (commander.browsers) {
