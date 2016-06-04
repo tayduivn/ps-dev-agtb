@@ -100,6 +100,14 @@ class QueryFilter extends QueryBuilder {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function QueryFilter()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		parent::__construct();

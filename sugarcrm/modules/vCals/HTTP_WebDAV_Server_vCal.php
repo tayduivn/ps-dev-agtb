@@ -41,6 +41,14 @@ require_once 'vendor/HTTP_WebDAV_Server/Server.php';
         var $source = "";
         var $publish_key = "";
 
+        /**
+         * @deprecated Use __construct() instead
+         */
+        public function HTTP_WebDAV_Server_vCal()
+        {
+            self::__construct();
+        }
+
     public function __construct()
         {
            $this->vcal_focus = BeanFactory::getBean('vCals');
@@ -412,6 +420,3 @@ require_once 'vendor/HTTP_WebDAV_Server/Server.php';
         }
 
     }
-
-
-?>

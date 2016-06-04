@@ -45,6 +45,14 @@ class ListViewDisplay {
      */
     protected $request;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ListViewDisplay(Request $request = null)
+    {
+        self::__construct($request);
+    }
+
 	/**
 	 * Constructor
      *

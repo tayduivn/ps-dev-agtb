@@ -565,6 +565,14 @@ function setDisplayHeaderAndFooter($bool) {
         $this->display_header_and_footer = $bool;
 }
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ListView()
+    {
+        self::__construct();
+    }
+
 /**initializes ListView
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -2042,4 +2050,3 @@ function getUserVariable($localVarName, $varName) {
  }
 
 }
-?>

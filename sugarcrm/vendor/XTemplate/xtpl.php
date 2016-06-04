@@ -4,6 +4,8 @@
 
 Modification information for LGPL compliance
 
+2016-05-23 - smorozov - Restored PHP 4 constructor for backward compatibility
+
 2016-01-22 - avlasov - PHP 7 compatibility
 
 jvink@sugarcrm.com - 2015-06-30 - Adding CSRF form token support
@@ -152,6 +154,14 @@ var $ERROR="";
 var $AUTORESET=1;										/* auto-reset sub blocks */
 
 /***[ constructor ]*********************************************************/
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function XTemplate($file, $alt_include = '', $mainblock = 'main')
+    {
+        self::__construct($file, $alt_include, $mainblock);
+    }
 
     public function __construct($file, $alt_include = '', $mainblock = 'main')
     {
@@ -589,4 +599,3 @@ function r_getfile($file) {
     }
 
 } /* end of XTemplate class. */
-

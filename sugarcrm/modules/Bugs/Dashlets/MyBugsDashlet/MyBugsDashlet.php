@@ -17,6 +17,15 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyBugsDashlet extends DashletGeneric { 
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function MyBugsDashlet($id, $def = null)
+    {
+        self::__construct($id, $def);
+    }
+
     public function __construct($id, $def = null)
     {
         global $current_user, $app_strings;
@@ -52,5 +61,3 @@ class MyBugsDashlet extends DashletGeneric {
         return $this->configureSS->fetch($this->configureTpl);
     }
 }
-
-?>
