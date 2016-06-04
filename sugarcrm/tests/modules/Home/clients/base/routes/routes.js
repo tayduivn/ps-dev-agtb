@@ -12,15 +12,15 @@ describe('Home.Routes', function() {
         setStub = sinon.collection.stub(app.user.lastState, 'set');
 
         SugarTest.loadFile('../modules/Home/clients/base/routes', 'routes', 'js', function(d) {
-            app.events.off('router:init');
             eval(d);
-            app.events.trigger('router:init');
+            app.routing.start();
         });
-        app.routing.start();
     });
 
     afterEach(function() {
         sinon.collection.restore();
+        app.routing.stop();
+        app.events.off('router:init');
     });
 
     describe('Routes', function() {

@@ -14,6 +14,7 @@ describe('Module Menu', function() {
         SugarTest.testMetadata.set();
 
         view = SugarTest.createView('base', moduleName, 'module-menu', null, null);
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -21,6 +22,7 @@ describe('Module Menu', function() {
         view.dispose();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
+        app.routing.stop();
     });
 
     it('should populate recently viewed and favorites on menu open', function() {

@@ -22,6 +22,7 @@ describe("Editable Plugin", function() {
 
         sinonSandbox = sinon.sandbox.create();
         view = SugarTest.createView("base", moduleName, 'record', null, null);
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -31,6 +32,7 @@ describe("Editable Plugin", function() {
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         view = null;
+        app.routing.stop();
     });
 
     it("Should toggle a single field to edit modes", function() {
@@ -138,6 +140,7 @@ describe("Editable Plugin", function() {
         beforeEach(function() {
             alertShowStub = sinonSandbox.stub(app.alert, "show");
             sinonSandbox.stub(Backbone.history, "getFragment");
+            sinonSandbox.stub(app.router, 'navigate');
         });
 
         afterEach(function() {
@@ -148,36 +151,25 @@ describe("Editable Plugin", function() {
             app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();
 
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return false;
-            });
+            sinonSandbox.stub(view, 'hasUnsavedChanges').returns(false);
             app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();
         });
 
         it("should warn unsaved changes if router is changed with unsaved values", function() {
-
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
+            sinonSandbox.stub(view, 'hasUnsavedChanges').returns(true);
             app.routing.triggerBefore('route', {});
             expect(alertShowStub).toHaveBeenCalledOnce();
         });
 
         it("should warn unsaved changes if custom unsaved logic is applied with unsaved values", function() {
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
-            var _callback = function() {};
-            view.triggerBefore("unsavedchange", {callback: _callback});
+            sinonSandbox.stub(view, 'hasUnsavedChanges').returns(true);
+            view.triggerBefore('unsavedchange', {callback: _.noop});
             expect(alertShowStub).toHaveBeenCalledOnce();
         });
 
-
         it("ALL EDITABLE VIEWS MUST DISPOSE IN JASMINE TEST", function() {
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
+            sinonSandbox.stub(view, 'hasUnsavedChanges').returns(true);
             view.dispose();
             app.routing.triggerBefore('route', {});
             expect(alertShowStub).not.toHaveBeenCalledOnce();

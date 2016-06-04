@@ -36,6 +36,7 @@ describe('Base.Field.Relate', function() {
             }
         });
         sinon.collection.stub(app.user, 'getPreference').withArgs('default_locale_name_format').returns('s f l');
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -44,6 +45,7 @@ describe('Base.Field.Relate', function() {
         app.view.reset();
         Handlebars.templates = {};
         fieldDef = null;
+        app.routing.stop();
     });
 
     describe('getSearchModule', function() {

@@ -4,6 +4,7 @@ describe("Base.Field.Button", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadComponent('base', 'field', 'button');
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -14,6 +15,7 @@ describe("Base.Field.Button", function() {
         field._loadTemplate = null;
         field = null;
         Address = null;
+        app.routing.stop();
     });
 
     it("should setDisabled with CSS 'disabled'", function() {

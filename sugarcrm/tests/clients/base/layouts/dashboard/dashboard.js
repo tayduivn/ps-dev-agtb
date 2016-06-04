@@ -20,6 +20,7 @@ describe("Base.Layout.Dashboard", function() {
            callbacks.success();
            callbacks.complete();
         });
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -30,6 +31,7 @@ describe("Base.Layout.Dashboard", function() {
         layout.dispose();
         layout.context = null;
         layout = null;
+        app.routing.stop();
     });
 
     describe("Home Dashboard", function() {

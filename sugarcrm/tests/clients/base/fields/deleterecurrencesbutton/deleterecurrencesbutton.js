@@ -22,6 +22,7 @@ describe('Delete Recurrences Field', function() {
             model: app.data.createBean('Meetings')
         });
         field.model.module = 'Meetings';
+        app.routing.start();
 
     });
 
@@ -31,6 +32,7 @@ describe('Delete Recurrences Field', function() {
         sinon.collection.restore();
         field.model = null;
         field = null;
+        app.routing.stop();
     });
 
     it('should show the button if the meeting is a recurring meeting', function() {

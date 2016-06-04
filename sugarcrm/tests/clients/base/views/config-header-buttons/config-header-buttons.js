@@ -20,11 +20,13 @@ describe('Base.View.ConfigHeaderButtons', function() {
         sinon.collection.stub(app.lang, 'getModuleName').withArgs(module, {plural: true}).returns('Opps');
 
         view = SugarTest.createView('base', module, 'config-header-buttons');
+        app.routing.start();
     });
 
     afterEach(function() {
         sinon.collection.restore();
         view = null;
+        app.routing.stop();
     });
 
     it('will have custom module name in moduleLangObj', function() {

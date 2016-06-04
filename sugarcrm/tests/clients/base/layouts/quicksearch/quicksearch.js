@@ -36,6 +36,7 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
         layout = SugarTest.createLayout('base', null, 'quicksearch', defaultMeta);
         layout.initialize(layout.options);
         layout.initComponents();
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -46,6 +47,7 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
         app.shortcuts._savedSessions = [];
         app.shortcuts._globalShortcuts = {};
         layout = viewA = viewB = viewC = viewAisFocusable = viewBisFocusable = viewCisFocusable = null;
+        app.routing.stop();
     });
 
     describe('firing navigation events on components', function() {
