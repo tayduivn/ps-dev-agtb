@@ -16,8 +16,9 @@ $mod_strings = array(
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Notification Center Settings',
     'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' => 'Notification Center System Settings',
     'LBL_CARRIER_DELIVERY_OPTION_TITLE' => 'Notification Delivery Methods',
-    'LBL_CARRIER_DELIVERY_ADMIN_DESC' => 'Enable how your users can receive SugarCRM notifications',
-    'LBL_CARRIER_DELIVERY_USER_DESC' => 'Enable how you receive Notifications',
+    'LBL_CARRIER_DELIVERY_ADMIN_DESC' => 'Enable how your users can receive notifications. ' .
+        'The delivery methods selected will determine the subset of options available to users.',
+    'LBL_CARRIER_DELIVERY_USER_DESC' => 'Select how you would like to receive notifications.',
     'LBL_CARRIER_DELIVERY_OPTION_HELP' =>
         'Configure notification delivery methods.<br/><br/>Please note, the delivery methods selected will determine '.
         'the subset of options available to you. Enabling/disabling a notification method affects '.
