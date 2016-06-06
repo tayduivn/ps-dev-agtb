@@ -34,7 +34,8 @@ class PMSECasesListApi extends FilterApi
                 'method' => 'selectCasesList',
                 'jsonParams' => array('filter'),
                 'acl' => 'adminOrDev',
-//                'shortHelp' => 'Returns a list with the processes for Process Management',
+                'shortHelp' => 'Returns a list with the processes for Process Management',
+                'longHelp' =>  'modules/pmse_Inbox/clients/base/api/help/process_select_cases_list_help.html',
             ),
             'getLoadLogs' => array(
                 'reqType' => 'GET',
@@ -43,7 +44,8 @@ class PMSECasesListApi extends FilterApi
                 'method' => 'selectLogLoad',
                 'jsonParams' => array(),
                 'acl' => 'adminOrDev',
-//                'shortHelp' => 'Return the text of the PMSE.log file',
+                'shortHelp' => 'Return the text of the PMSE.log file',
+                'longHelp' =>  'modules/pmse_Inbox/clients/base/api/help/process_select_log_load_help.html',
             ),
             'clearLogs' => array(
                 'reqType' => 'PUT',
@@ -52,7 +54,8 @@ class PMSECasesListApi extends FilterApi
                 'method' => 'clearLog',
                 'jsonParams' => array(),
                 'acl' => 'adminOrDev',
-//                'shortHelp' => 'Clear the PMSE.log file log',
+                'shortHelp' => 'Clear the PMSE.log file log',
+                'longHelp' =>  'modules/pmse_Inbox/clients/base/api/help/process_clear_log_help.html',
             ),
             'getConfigLogs' => array(
                 'reqType' => 'GET',
@@ -323,6 +326,7 @@ class PMSECasesListApi extends FilterApi
 
     public function configLogLoad(ServiceBase $api, array $args)
     {
+        PMSEEngineUtils::logDeprecated(__METHOD__);
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
         $configLogBean = BeanFactory::newBean('pmse_BpmConfig');
@@ -354,6 +358,7 @@ class PMSECasesListApi extends FilterApi
      */
     public function configLogPut(ServiceBase $api, array $args)
     {
+        PMSEEngineUtils::logDeprecated(__METHOD__);
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $data = $args['cfg_value'];
         $bean = BeanFactory::newBean('pmse_BpmConfig')
@@ -366,6 +371,7 @@ class PMSECasesListApi extends FilterApi
 
     public function returnProcessUsersChart(ServiceBase $api, array $args)
     {
+        PMSEEngineUtils::logDeprecated(__METHOD__);
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];
         return $this->createProcessUsersChartData($filter);
@@ -373,6 +379,7 @@ class PMSECasesListApi extends FilterApi
 
     public function returnProcessStatusChart(ServiceBase $api, array $args)
     {
+        PMSEEngineUtils::logDeprecated(__METHOD__);
         ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];
         return $this->createProcessStatusChartData($filter);

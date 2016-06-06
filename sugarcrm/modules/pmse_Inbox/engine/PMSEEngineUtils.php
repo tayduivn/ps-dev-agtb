@@ -1857,4 +1857,15 @@ class PMSEEngineUtils
             return null;
         }
     }
+
+    /*
+     * Logs Deprecated functions
+     * @param $method method to be deprecated
+     * @param $version sugar version
+     */
+    public static function logDeprecated($method, $version = '7.10')
+    {
+        $msg = "$method is deprecated as of $version and will be removed in a future release";
+        LoggerManager::getLogger()->deprecated($msg);
+    }
 }

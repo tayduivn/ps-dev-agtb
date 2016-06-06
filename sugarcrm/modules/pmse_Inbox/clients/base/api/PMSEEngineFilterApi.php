@@ -71,7 +71,8 @@ class PMSEEngineFilterApi extends FilterApi
                     'SugarApiExceptionInvalidParameter',
                     'SugarApiExceptionNotAuthorized',
                 ),
-//                'shortHelp' => 'Returns a list of Processes by user',
+                'shortHelp' => 'Returns a list of Processes by user',
+                'longHelp' => 'modules/pmse_Inbox/clients/base/api/help/process_filter_list_help.html',
             ),
             'filterModuleAll' => array(
                 'reqType' => 'GET',
@@ -85,7 +86,8 @@ class PMSEEngineFilterApi extends FilterApi
                     'SugarApiExceptionInvalidParameter',
                     'SugarApiExceptionNotAuthorized',
                 ),
-//                'shortHelp' => 'Returns a list of Processes by user using filters',
+                'shortHelp' => 'Returns a list of Processes by user using filters',
+                'longHelp' => 'modules/pmse_Inbox/clients/base/api/help/process_filter_list_all_pa_help.html',
             ),
             'filterModuleAllCount' => array(
                 'reqType' => 'GET',
