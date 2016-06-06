@@ -31,6 +31,18 @@ if(!defined('SUGARCRM_MIN_MEM')) {
 $error_found = false;
 $error_txt = '';
 
+    try {
+        random_bytes(4);
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+        installLog($mod_strings['ERR_CHECKSYS_CSPRNG'].': '.$message);
+        $error_found = true;
+        $error_txt .= '
+            <tr>
+                <td><b>'.$mod_strings['LBL_CHECKSYS_CSPRNG'].'</b></td>
+                <td ><span class="error">'.$message.'</span></td>
+            </tr>';
+    }
 
 // check IIS and FastCGI
 $server_software = $_SERVER["SERVER_SOFTWARE"];
