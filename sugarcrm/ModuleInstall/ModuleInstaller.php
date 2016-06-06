@@ -2205,7 +2205,6 @@ class ModuleInstaller{
             if(!empty($mod) && $mod instanceof SugarBean && empty($mod->disable_vardefs)) { //#30273
                 $GLOBALS['log']->debug( "Creating Tables Bean : $bean");
                 $mod->create_tables();
-                SugarBean::createRelationshipMeta($mod->getObjectName(), $mod->db,$mod->table_name,'',$mod->module_dir);
             }
 
             // Return state. Null values essentially unset what wasn't set before
