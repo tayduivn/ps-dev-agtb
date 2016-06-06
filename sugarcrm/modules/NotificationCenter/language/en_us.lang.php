@@ -24,13 +24,15 @@ $mod_strings = array(
         'the subset of options available to you. Enabling/disabling a notification method affects '.
         'all modules utilizing the Notification Center.<br/><br/>' .
         'You can enable or disable a notification method by clicking the corresponding checkbox.<br/><br/>' .
-        'Some notification methods (e.g. Email) provide the option to specify multiple delivery addresses.',
+        'Some notification methods (e.g. Email) provide the option to specify multiple delivery addresses.'
+        . ' All email addresses provided will receive notification email.',
     'LBL_CARRIER_DELIVERY_OPTION_HELP_ADMIN' =>
         'Configure notification delivery methods.<br/><br/>Please note, the delivery methods selected will determine '.
         'the subset of options available to your users. Enabling/disabling a notification method affects '.
         'all modules utilizing the Notification Center.<br/><br/>' .
         'You can enable or disable a notification method by clicking the corresponding checkbox.<br/><br/>' .
-        'Some notification methods (e.g. Email) provide the option to specify multiple delivery addresses.',
+        'Some notification methods (e.g. Email) provide the option to specify multiple delivery addresses.'
+        . ' All email addresses provided will receive notification email.',
 
     'LBL_APPLICATION_EMITTER_TITLE' => 'SugarCRM Application Notifications',
     'LBL_APPLICATION_EMITTER_DESC' => 'As an Administrator get application specific notifications.',
