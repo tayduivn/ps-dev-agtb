@@ -31,6 +31,13 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'label' => 'LBL_BUTTON_FORWARD',
                     'acl_action' => 'view',
                 ),
+                array(
+                    'name' => 'delete_button',
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'label' => 'LBL_DELETE_BUTTON',
+                    'acl_action' => 'view',
+                ),
             ),
         ),
         array(

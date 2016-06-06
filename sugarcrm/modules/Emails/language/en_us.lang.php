@@ -436,4 +436,8 @@ $mod_strings = array(
 You may apply a predefined template using the Template button or include one of your signatures using the Signature button. Use the Upload New button to add an attachment to the email.',
     'LBL_EMAIL_INVALID_USER_CONFIGURATION' => 'Your email settings are not correctly configured to send email. An SMTP server must be configured in <a href="#bwc/index.php?module=Users">User Profile Email Settings</a>.',
     'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION' => 'The default system SMTP server is not configured.  Please contact your system administrator for further assistance.',
+    'NTC_DELETE_CONFIRMATION_FORMATTED' => 'Are you sure you want to delete the {0}? It will be removed for all ' .
+        'users who have access to this email.',
+    'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected email(s)? They will be removed ' .
+        'for all users who have access to them.',
 );
