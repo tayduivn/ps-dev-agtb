@@ -37,10 +37,9 @@ class RelateCollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->bean = SugarTestMeetingUtilities::createMeeting();
-
         SugarTestHelper::setUp('current_user', array(true));
         $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->bean = SugarTestMeetingUtilities::createMeeting('', $this->user);
     }
 
     protected function tearDown()
