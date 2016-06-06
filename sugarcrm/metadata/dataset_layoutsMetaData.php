@@ -108,8 +108,7 @@ $dictionary['DataSet_Layout'] = array('table' => 'dataset_layouts'
   array (
     'name' => 'row_header_id',
     'vname' => 'LBL_ROW_HEADER_ID',
-    'type' => 'varchar',
-    'len' => '36',
+    'type' => 'id',
   ),
        'hide_column' => 
   array (

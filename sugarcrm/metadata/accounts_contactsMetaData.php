@@ -15,18 +15,15 @@ $dictionary['accounts_contacts'] = array (
     'fields' => array(
         'id' => array(
             'name' => 'id',
-            'type' => 'varchar',
-            'len' => '36',
+            'type' => 'id',
         ),
         'contact_id' => array(
             'name' => 'contact_id',
-            'type' => 'varchar',
-            'len' => '36',
+            'type' => 'id',
         ),
         'account_id' => array(
             'name' => 'account_id',
-            'type' => 'varchar',
-            'len' => '36',
+            'type' => 'id',
         ),
         'date_modified' => array (
             'name' => 'date_modified',

@@ -98,7 +98,7 @@ $dictionary['pmse_Inbox'] = array(
     'required' => true,
     'name' => 'pro_id',
     'vname' => 'LBL_PRO_ID',
-    'type' => 'varchar',
+    'type' => 'id',
     'massupdate' => false,
     'no_default' => false,
     'comments' => '',
@@ -111,7 +111,6 @@ $dictionary['pmse_Inbox'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'calculated' => false,
-    'len' => '36',
     'size' => '20',
   ),
   'cas_title' => 
