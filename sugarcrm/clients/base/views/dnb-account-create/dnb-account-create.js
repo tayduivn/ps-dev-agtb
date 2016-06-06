@@ -195,8 +195,10 @@
             this.$('.clearDNBResults').removeClass('enabled');
             this.$('.clearDNBResults').addClass('disabled');
             this.companyList = null;
+            tester = new RegExp(/\*$/, 'i');
+            searchString = tester.test(searchString) ? searchString : searchString + '*';
             var balParams = {
-                'KeywordText': searchString
+                'OrganizationName': searchString
             };
             this.balParams = balParams;
             this.baseAccountsBAL(this.setApiPaginationParams(balParams), this.renderCompanyList);
