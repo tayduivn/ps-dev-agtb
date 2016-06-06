@@ -304,7 +304,7 @@ class MetaDataManager
         'lead_conv_activity_opt' => true,
         'team_based_acl' => array(
             'enabled' => true,
-            'disabled_modules' => true,
+            'enabled_modules' => true,
         ),
         'preview_edit' => true,
     );

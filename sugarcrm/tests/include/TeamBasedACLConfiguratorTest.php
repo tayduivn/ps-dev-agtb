@@ -231,6 +231,9 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $action = 'view';
         $extraModule = 'Bugs';
         $roleActions = $this->role->getRoleActions($this->role->id);
+        // make sure it is disabled to test fallback
+        $this->tbaConfig->setForModule($extraModule, false);
+
         $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
         $this->tbaConfig->setForModule($extraModule, true);
 

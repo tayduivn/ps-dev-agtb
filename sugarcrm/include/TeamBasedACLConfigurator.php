@@ -36,17 +36,27 @@ class TeamBasedACLConfigurator
      */
     protected static $defaultConfig = array(
         'enabled' => false,
-        'disabled_modules' => array(),
+        'enabled_modules' => array(),
     );
 
     /**
-     * Permanently hidden modules.
+     * Hidden modules.
      * These modules can't be enabled/disabled on Team-based Permissions admin page.
      * @var array
      */
     protected static $hiddenModules = array(
         'pmse_Inbox', // see RS-1275
         'Users', // see RS-1347
+    );
+
+    /**
+     * Permanently enabled modules.
+     * Useful in pair with self::$hiddenModules.
+     * @var array
+     */
+    private static $alwaysEnabledModules = array(
+        'pmse_Inbox',
+        'Users',
     );
 
     /**
@@ -181,17 +191,18 @@ class TeamBasedACLConfigurator
             return;
         }
         $cfg = new Configurator();
-        $actualList = $cfg->config[self::CONFIG_KEY]['disabled_modules'];
+        $actualList = $cfg->config[self::CONFIG_KEY]['enabled_modules'];
 
         if ($enable) {
-            $actualList = array_values(array_diff($actualList, array($module)));
-        } else {
             $actualList[] = $module;
+        } else {
+            $actualList = array_values(array_diff($actualList, array($module)));
         }
+        $actualList = array_unique($actualList);
         // Configurator doesn't handle lists, to remove an element overriding needed.
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
+        $cfg->config[self::CONFIG_KEY]['enabled_modules'] = false;
         $this->saveConfig($cfg);
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $actualList;
+        $cfg->config[self::CONFIG_KEY]['enabled_modules'] = $actualList;
         $this->saveConfig($cfg);
 
         if ($enable) {
@@ -215,7 +226,7 @@ class TeamBasedACLConfigurator
             return;
         }
         $cfg = new Configurator();
-        $actualList = $cfg->config[self::CONFIG_KEY]['disabled_modules'];
+        $actualList = $cfg->config[self::CONFIG_KEY]['enabled_modules'];
         $newList = $actualList;
 
         foreach ($modules as $module) {
@@ -224,18 +235,19 @@ class TeamBasedACLConfigurator
                 continue;
             }
             if ($enable) {
-                $newList = array_values(array_diff($newList, array($module)));
-            } else {
                 $newList[] = $module;
+            } else {
+                $newList = array_values(array_diff($newList, array($module)));
             }
             self::$moduleCache[$module] = $enable;
         }
         if ($newList == $actualList) {
             return;
         }
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
+        $newList = array_unique($newList);
+        $cfg->config[self::CONFIG_KEY]['enabled_modules'] = false;
         $this->saveConfig($cfg);
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = $newList;
+        $cfg->config[self::CONFIG_KEY]['enabled_modules'] = $newList;
         $this->saveConfig($cfg);
 
         if ($enable) {
@@ -260,7 +272,12 @@ class TeamBasedACLConfigurator
         }
         if (!isset(self::$moduleCache[$module])) {
             $config = self::getConfig();
-            self::$moduleCache[$module] = !in_array($module, $config['disabled_modules']);
+            $hiddenAndEnabled = in_array($module, self::$hiddenModules)
+                && in_array($module, self::$alwaysEnabledModules);
+            $enabled = !empty($config['enabled_modules'])
+                && is_array($config['enabled_modules'])
+                && in_array($module, $config['enabled_modules']);
+            self::$moduleCache[$module] = $hiddenAndEnabled || $enabled;
         }
         return self::$moduleCache[$module];
     }
@@ -279,8 +296,7 @@ class TeamBasedACLConfigurator
         $cfg->config[self::CONFIG_KEY]['enabled'] = $enable;
         $this->saveConfig($cfg);
 
-        $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
-        $notDisabledModules = array_diff(array_keys($actionsList), $cfg->config[self::CONFIG_KEY]['disabled_modules']);
+        $notDisabledModules = $cfg->config[self::CONFIG_KEY]['enabled_modules'];
         if ($enable) {
             $this->restoreTBA($notDisabledModules);
         } else {
@@ -365,7 +381,7 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Restore previously disabled TBA actions if they were not changed after fallback.
+     * Restore previously enabled TBA actions if they were not changed after fallback.
      * @param array $modules
      */
     protected function restoreTBA($modules)
@@ -523,7 +539,7 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Returns permanently disabled modules.
+     * Returns permanently hidden modules.
      * @return array
      */
     public static function getHiddenModules()
@@ -577,6 +593,8 @@ class TeamBasedACLConfigurator
      */
     protected function saveConfig(\Configurator $cfg)
     {
+        // [RS-1580]. Clean up old data. Can be deleted for future releases which will not be upgraded from 7.8.
+        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
         $cfg->handleOverride();
         SugarConfig::getInstance()->clearCache();
         // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules
@@ -619,5 +637,34 @@ class TeamBasedACLConfigurator
                 $this->removeAllTBAValuesFromTable($bean->getTableName());
             }
         }
+    }
+
+    /**
+     * Get modules list which are implement TBA and which are not hidden.
+     */
+    public function getListOfPublicTBAModules()
+    {
+        $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
+
+        // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
+        foreach ($actionsList as $name => $category) {
+            $buf = reset($category);
+            if (isset($buf['access']['aclaccess']) && $buf['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
+                unset($actionsList[$name]);
+                continue;
+            }
+            $objName = BeanFactory::getObjectName($name);
+            VardefManager::loadVardef($name, $objName);
+            $dictionary = $GLOBALS['dictionary'][$objName];
+            if ((!empty($dictionary['hidden_to_role_assignment']) && $dictionary['hidden_to_role_assignment']) ||
+                    !self::implementsTBA($name)) {
+                unset($actionsList[$name]);
+            }
+        }
+
+        // remove hidden modules
+        $actionsList = array_diff(array_keys($actionsList), self::getHiddenModules());
+
+        return $actionsList;
     }
 }

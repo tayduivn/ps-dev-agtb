@@ -132,12 +132,12 @@ class TeamsController extends SugarController {
                         new AssertBasic\Type(array('type' => 'string')),
                     ),
                 );
-                $disabledModules = $request->getValidInputPost('disabled_modules', $validators, array());
+                $enabledModules = $request->getValidInputPost('enabled_modules', $validators, array());
 
                 $tbaConfigurator->setGlobal($enabled);
 
                 $actionsList = array_keys(ACLAction::getUserActions($GLOBALS['current_user']->id));
-                $enabledModules = array_values(array_diff($actionsList, $disabledModules));
+                $disabledModules = array_values(array_diff($actionsList, $enabledModules));
 
                 $tbaConfigurator->setForModulesList($disabledModules, false);
                 $tbaConfigurator->setForModulesList($enabledModules, true);

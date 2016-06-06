@@ -85,9 +85,10 @@
              * @return {boolean}
              */
             isEnabledForModule: function(module) {
-                if (!_.isUndefined(app.config.teamBasedAcl.enabled) && !_.isUndefined(app.config.teamBasedAcl.disabledModules)) {
+                if (!_.isUndefined(app.config.teamBasedAcl.enabled) &&
+                        !_.isUndefined(app.config.teamBasedAcl.enabledModules)) {
                     return app.config.teamBasedAcl.enabled &&
-                        (_.indexOf(app.config.teamBasedAcl.disabledModules, module) === -1);
+                        (_.indexOf(app.config.teamBasedAcl.enabledModules, module) !== -1);
                 } else {
                     return false;
                 }

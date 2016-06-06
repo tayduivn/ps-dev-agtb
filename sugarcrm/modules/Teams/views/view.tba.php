@@ -60,40 +60,20 @@ class TeamsViewTBA extends SugarView
     }
 
     /**
-     * Get user actions list filtered by default TbACLs disabled_modules parameter.
+     * Get sorted modules list which are implement TBA and which are not hidden.
      */
     private function _getUserActionsList()
     {
-        $actionsList = ACLAction::getUserActions($GLOBALS['current_user']->id);
-
-        // Skipping modules that have 'hidden_to_role_assignment' property or not implement TBA
-        foreach ($actionsList as $name => $category) {
-            $buf = reset($category);
-            if (isset($buf['access']['aclaccess']) && $buf['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
-                unset($actionsList[$name]);
-                continue;
-            }
-            $objName = BeanFactory::getObjectName($name);
-            VardefManager::loadVardef($name, $objName);
-            if (
-                (!empty($GLOBALS['dictionary'][$objName]['hidden_to_role_assignment']) &&
-                    $GLOBALS['dictionary'][$objName]['hidden_to_role_assignment']) ||
-                !TeamBasedACLConfigurator::implementsTBA($name)
-            ) {
-                unset($actionsList[$name]);
-            }
-        }
-
-        // remove hidden modules
-        $actionsList = array_diff(array_keys($actionsList), TeamBasedACLConfigurator::getHiddenModules());
+        $tbaConfigurator = new TeamBasedACLConfigurator();
+        $modules = $tbaConfigurator->getListOfPublicTBAModules();
 
         // sort modules by module label
-        $modules = array();
-        foreach ($actionsList as $name) {
-            $modules[$name] = $GLOBALS['app_list_strings']['moduleList'][$name];
+        $modulesTitles = array();
+        foreach ($modules as $name) {
+            $modulesTitles[$name] = $GLOBALS['app_list_strings']['moduleList'][$name];
         }
-        asort($modules);
+        asort($modulesTitles);
 
-        return array_keys($modules);
+        return array_keys($modulesTitles);
     }
 }
