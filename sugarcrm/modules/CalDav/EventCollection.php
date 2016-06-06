@@ -15,7 +15,7 @@ use Sabre\VObject\Component as SabreComponent;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper as DavHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Constants as DavConstants;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as DavStatusMapper;
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry as CalDavAdapterRegistry;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures;
 use Sabre\VObject\Recur\EventIterator;
 use Sugarcrm\Sugarcrm\Dav\Base\Principal;
@@ -226,7 +226,7 @@ class CalDavEventCollection extends SugarBean
         if (!$this->calendar_data) {
             $this->vCalendar = new SabreComponent\VCalendar();
             $timezone = $this->vCalendar->createComponent('VTIMEZONE');
-            $currentTimezone = $this->getCurrentUser()->getPreference('timezone');
+            $currentTimezone = $this->getCurrentUser() ? $this->getCurrentUser()->getPreference('timezone') : null;
             if (!$currentTimezone) {
                 $currentTimezone = date_default_timezone_get();
             }
@@ -886,13 +886,13 @@ class CalDavEventCollection extends SugarBean
         $calendar = $this->getRelatedCalendar();
         $user = null;
         if ($this->created_by) {
-            $user = \BeanFactory::getBean('Users', $this->created_by);
+            $user = \BeanFactory::getBean('Users', $this->created_by, array('strict_retrieve' => true));
         }
         if (!$user) {
-            $user = $GLOBALS['current_user'];
+            $user = $this->getCurrentUser();
         }
         if (!$calendar && $user instanceof User) {
-            $userHelper = new UserHelper();
+            $userHelper = $this->getUserHelper();
             $calendar = array_shift($userHelper->getCalendars($user->user_name));
             $this->setCalendarId($calendar['id']);
             $GLOBALS['log']->info("CalDav: Set Calendar({$calendar['id']}) for User({$user->id})");
@@ -1195,11 +1195,19 @@ class CalDavEventCollection extends SugarBean
     public function save($check_notify = false)
     {
         $isUpdate = $this->isUpdate();
+        if (!$this->created_by) {
+            $this->created_by = $this->getCurrentUser()->id;
+        }
+
         $currentETag = isset($this->fetched_row['etag']) ? $this->fetched_row['etag'] : null;
 
         $this->setRelatedCalendar();
-        if (!$this->parent_type) {
-            $this->parent_type = $GLOBALS['current_user']->getPreference('caldav_module');
+        $this->setParentType();
+        $adapterFactory = $this->getAdapterRegistry()->getFactory($this->parent_type);
+        if ($adapterFactory) {
+            /* @var $user \User */
+            $user = \BeanFactory::getBean('Users', $this->created_by, array('strict_retrieve' => true));
+            $adapterFactory->getPropertiesAdapter()->setCollectionProperties($this, $user);
         }
         $this->rebuildEventsUrl();
         $this->sync();
@@ -1308,7 +1316,7 @@ class CalDavEventCollection extends SugarBean
         $schedulingUser = $this->getCurrentUser();
 
         if ($this->created_by && $this->created_by != $schedulingUser->id) {
-            $schedulingUser = \BeanFactory::getBean('Users', $this->created_by);
+            $schedulingUser = \BeanFactory::getBean('Users', $this->created_by, array('strict_retrieve' => true));
         }
         $server = $this->serverHelper->setUp();
 
@@ -1522,10 +1530,13 @@ class CalDavEventCollection extends SugarBean
     public static function prepareForInvite(SugarBean $bean, $inviteeEmail = null, $organizerEmail = null)
     {
         $collection = new static();
-        $adapterFactory = $collection->getAdapterFactory();
-        $adapter = $adapterFactory->getAdapter($bean->module_name);
+        /* @var $collection CalDavEventCollection */
+        $adapterFactory = $collection->getAdapterRegistry()->getFactory($bean->module_name);
 
-        if ($adapter) {
+        if ($adapterFactory) {
+            /* @var $adapter \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\DataAdapterInterface */
+            $adapter = $adapterFactory->getAdapter();
+
             $GLOBALS['log']->debug(
                 "CalDav: Creating text representation of event {$bean->module_name}($bean->id) for email"
             );
@@ -1604,11 +1615,13 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     * Factory method for Adapter Registry.
+     *
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry
      */
-    protected function getAdapterFactory()
+    protected function getAdapterRegistry()
     {
-        return CalDavAdapterFactory::getInstance();
+        return CalDavAdapterRegistry::getInstance();
     }
 
     /**
@@ -2011,5 +2024,58 @@ class CalDavEventCollection extends SugarBean
     public function getCalendarEvents()
     {
         return new CalendarEvents();
+    }
+
+    /**
+     * Sets event parent type from users preferences or event information.
+     */
+    protected function setParentType()
+    {
+        $event = $this->getParent();
+        $eventModule = $event->getSugarModule();
+        $supportedModules = $this->getAdapterRegistry()->getSupportedModules();
+
+        if (!$this->parent_type) {
+            if ($eventModule && in_array($eventModule, $supportedModules)) {
+                $this->parent_type = $eventModule;
+            } else {
+                /* @var $user \User */
+                $user = \BeanFactory::getBean('Users', $this->created_by, array('strict_retrieve' => true));
+                $sugarModule = $user ? $user->getPreference('caldav_module') :
+                    $this->getSugarConfig()->get('default_caldav_module');
+
+                if (in_array($sugarModule, $supportedModules)) {
+                    $this->parent_type = $sugarModule;
+                }
+            }
+        }
+
+        if ($eventModule && !in_array($eventModule, $supportedModules)) {
+            $eventModule = null;
+        }
+
+        if ($this->parent_type && !$eventModule) {
+            $event->setSugarModule($this->parent_type);
+        }
+    }
+
+    /**
+     * Factory method for SugarConfig
+     *
+     * @return SugarConfig
+     */
+    protected function getSugarConfig()
+    {
+        return \SugarConfig::getInstance();
+    }
+
+    /**
+     * Get user helper.
+     *
+     * @return UserHelper
+     */
+    protected function getUserHelper()
+    {
+        return new UserHelper();
     }
 }

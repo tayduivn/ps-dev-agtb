@@ -16,11 +16,11 @@ namespace Sugarcrm\SugarcrmTests\Dav\Cal\Adapter;
 /**
  * Class verifyImportAfterExportTest
  *
- * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract
+ * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter
  */
 class verifyImportAfterExportTest extends \Sugar_PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter */
     protected $adapterMock;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|\CalDavEventCollection $collectionMock */
@@ -36,7 +36,7 @@ class verifyImportAfterExportTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->adapterMock =
-            $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract', null);
+            $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter', null);
         $this->collectionMock = $this->getMock('CalDavEventCollection');
         $this->eventMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event');
     }
@@ -256,7 +256,7 @@ class verifyImportAfterExportTest extends \Sugar_PHPUnit_Framework_TestCase
      * @param array $expectedImportData
      * @param string $calDavBeanId
      *
-     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract::verifyImportAfterExport
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter::verifyImportAfterExport
      *
      * @dataProvider verifyImportAfterExportWithLockedFieldsProvider
      */

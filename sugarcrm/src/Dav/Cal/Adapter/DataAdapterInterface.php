@@ -12,13 +12,16 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
 
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception\ExportException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception\ImportException;
+
 /**
- * Interface for beans import export adapters
- * Interface AdapterInterface
+ * Interface for beans import export adapters.
+ *
+ * Interface DataAdapterInterface
  * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
  */
-
-interface AdapterInterface
+interface DataAdapterInterface
 {
     /**
      * Should be used as return value of export & import methods in case in nothing should be saved.
@@ -59,7 +62,7 @@ interface AdapterInterface
     /**
      * @param mixed $data should be updated for verifyImportAfterExport
      * @param \CalDavEventCollection $collection
-     * @return AdapterInterface::NOTHING|AdapterInterface::SAVE|AdapterInterface::DELETE|AdapterInterface::RESTORE next action
+     * @return DataAdapterInterface::NOTHING|DataAdapterInterface::SAVE|DataAdapterInterface::DELETE|DataAdapterInterface::RESTORE
      * @throws ExportException if conflict has been found
      */
     public function export(&$data, \CalDavEventCollection $collection);
@@ -90,7 +93,7 @@ interface AdapterInterface
     /**
      * @param mixed $data should be updated for verifyExportAfterImport
      * @param \SugarBean $bean
-     * @return AdapterInterface::NOTHING|AdapterInterface::SAVE|AdapterInterface::DELETE|AdapterInterface::RESTORE next action
+     * @return DataAdapterInterface::NOTHING|DataAdapterInterface::SAVE|DataAdapterInterface::DELETE|DataAdapterInterface::RESTORE
      * @throws ImportException if conflict has been found
      */
     public function import(&$data, \SugarBean $bean);

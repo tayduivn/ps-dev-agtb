@@ -10,13 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception;
 
 /**
- * Class ExportException
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
+ * Class ImportException
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception
  */
-class ExportException extends \SugarException
+class ImportException extends \SugarException
 {
 
 }

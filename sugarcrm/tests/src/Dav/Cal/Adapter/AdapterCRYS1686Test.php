@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Dav\Cal\Adapter;
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter;
 
 /**
  * Class AdapterCRYS1686Test
@@ -76,9 +76,12 @@ class AdapterCRYS1686Test extends \Sugar_PHPUnit_Framework_TestCase
     {
         $event = $this->calDavEventCollectionMock->getParent();
 
-        $reflectionMethod = new \ReflectionMethod('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings', 'setCalDavInvitees');
+        $reflectionMethod = new \ReflectionMethod(
+            '\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter',
+            'setCalDavInvitees'
+        );
         $reflectionMethod->setAccessible(true);
-        $reflectionMethod->invokeArgs(new Meetings(), array(
+        $reflectionMethod->invokeArgs(new DataAdapter(), array(
             $value,
             $event,
             true,
@@ -263,8 +266,8 @@ class AdapterCRYS1686Test extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function qtestVerifyImportAfterExport($exportData, $importData, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Meetings $adapterMock */
-        $adapterMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings', null);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DataAdapter $adapterMock */
+        $adapterMock = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter', null);
         $actual = $adapterMock->verifyImportAfterExport($exportData, $importData, $this->calDavEventCollectionMock);
         $this->assertEquals($expected, $actual);
     }

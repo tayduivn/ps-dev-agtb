@@ -10,13 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter;
+
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter;
 
 /**
- * Class ImportException
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
+ * Class for processing Meetings by iCal protocol
+ *
+ * Class DataAdapter
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter
  */
-class ImportException extends \SugarException
+class DataAdapter extends AbstractDataAdapter
 {
-
+    // nothing special for meetings, everything done in AdapterAbstract
 }

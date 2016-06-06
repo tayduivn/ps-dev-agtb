@@ -10,15 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception;
 
 /**
- * Class for processing Meetings by iCal protocol
- *
- * Class Meetings
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
+ * Class ExportException
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception
  */
-class Meetings extends AdapterAbstract
+class ExportException extends \SugarException
 {
-    // nothing special for meetings, everything done in AdapterAbstract
+
 }

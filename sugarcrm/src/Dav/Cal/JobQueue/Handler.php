@@ -13,11 +13,9 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\JobQueue;
 
-use SugarCache;
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry as CalDavAdapterRegistry;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as HookHandler;
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterInterface;
-use Sugarcrm\Sugarcrm\JobQueue\Exception\LogicException as JQLogicException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\DataAdapterInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Handler\RunnableInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ListenerInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\HookListener\ExportListener;
@@ -168,19 +166,25 @@ class Handler implements RunnableInterface
             $bean->id = create_guid();
             $bean->send_invites_uid = $calDavBean->event_uid;
             $bean->new_with_id = true;
-            if ($bean instanceof \Call) {
-                $bean->direction = $user->getPreference('caldav_call_direction');
-                $this->logger->debug("CalDav: Set Call direction to {$bean->direction}");
+
+            $adapterFactory = $this->getAdapterRegistry()->getFactory($bean->module_name);
+            if (!$adapterFactory) {
+                $this->logger->debug("CalDav: Adapter factory for module $bean->module_name has not found");
+                return;
             }
+            $adapterFactory->getPropertiesAdapter()->setBeanProperties($bean, $calDavBean, $user);
+
             $calDavBean->setBean($bean);
             $calDavBean->save();
         }
         $this->logger->debug("CalDav: Importing event's Sugar Bean is {$bean->module_name}({$bean->id})");
-
-        $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
-        if (!$adapter) {
-            throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
+        $adapterFactory = $this->getAdapterRegistry()->getFactory($bean->module_name);
+        if (!$adapterFactory) {
+            $this->logger->debug("CalDav: Adapter factory for module $bean->module_name has not found");
+            return;
         }
+
+        $adapter = $adapterFactory->getAdapter();
 
         $importData = json_decode($queueItem->data, true);
 
@@ -193,9 +197,9 @@ class Handler implements RunnableInterface
         $this->logger->debug("CalDav: Set bean's send_invites_uid to event_uid = {$calDavBean->event_uid}");
 
         $result = $adapter->import($importData, $bean);
-        if ($result != AdapterInterface::NOTHING) {
+        if ($result != DataAdapterInterface::NOTHING) {
             switch ($result) {
-                case AdapterInterface::SAVE :
+                case DataAdapterInterface::SAVE:
                     $this->logger->debug("CalDav: import via adapter resulted in 'bean should be saved'");
                     if (!empty($bean->repeat_parent_id)) {
                         $this->logger->debug('CalDav: temporarily disable Activity Stream for child event');
@@ -206,11 +210,11 @@ class Handler implements RunnableInterface
                         \Activity::enable();
                     }
                     break;
-                case AdapterInterface::DELETE :
+                case DataAdapterInterface::DELETE:
                     $this->logger->debug("CalDav: import via adapter resulted in 'bean should be deleted'");
                     $bean->mark_deleted($bean->id);
                     break;
-                case AdapterInterface::RESTORE :
+                case DataAdapterInterface::RESTORE:
                     $this->logger->debug("CalDav: import via adapter resulted in 'bean should be restored'");
                     $bean->mark_undeleted($bean->id);
                     $bean->save();
@@ -250,11 +254,13 @@ class Handler implements RunnableInterface
         $bean = $calDavBean->getBean();
         $this->logger->debug("CalDav: Expoting event's Sugar Bean is {$bean->module_name}({$bean->id})");
 
-        $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
-
-        if (!$adapter) {
-            throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
+        $adapterFactory = $this->getAdapterRegistry()->getFactory($bean->module_name);
+        if (!$adapterFactory) {
+            $this->logger->debug("CalDav: Adapter factory for module $bean->module_name has not found");
+            return;
         }
+
+        $adapter = $adapterFactory->getAdapter();
 
         $exportData = json_decode($queueItem->data, true);
 
@@ -262,17 +268,17 @@ class Handler implements RunnableInterface
         $this->hookHandler->getImportNotifier()->attach($this->listener);
 
         $result = $adapter->export($exportData, $calDavBean);
-        if ($result != AdapterInterface::NOTHING) {
+        if ($result != DataAdapterInterface::NOTHING) {
             switch ($result) {
-                case AdapterInterface::SAVE :
+                case DataAdapterInterface::SAVE:
                     $this->logger->debug("CalDav: export via adapter resulted in 'bean should be saved'");
                     $calDavBean->save();
                     break;
-                case AdapterInterface::DELETE :
+                case DataAdapterInterface::DELETE:
                     $this->logger->debug("CalDav: export via adapter resulted in 'bean should be deleted'");
                     $calDavBean->mark_deleted($calDavBean->id);
                     break;
-                case AdapterInterface::RESTORE :
+                case DataAdapterInterface::RESTORE:
                     $this->logger->debug("CalDav: export via adapter resulted in 'bean should be restored'");
                     $calDavBean->mark_undeleted($calDavBean->id);
                     $calDavBean->save();
@@ -300,12 +306,12 @@ class Handler implements RunnableInterface
     }
 
     /**
-     * Get CalDav adapter.
+     * Factory method for Adapter Registry.
      *
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry
      */
-    protected function getAdapterFactory()
+    protected function getAdapterRegistry()
     {
-        return CalDavAdapterFactory::getInstance();
+        return CalDavAdapterRegistry::getInstance();
     }
 }
