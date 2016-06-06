@@ -1154,10 +1154,53 @@ class Email extends SugarBean {
                 }
 			}
 
+            $this->updateTeamsForAttachments();
+
             return $parentSaveResult;
 		}
 		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
+
+    /**
+     * Updates the the teams fields on all attachments to match the teams on the email.
+     */
+    protected function updateTeamsForAttachments()
+    {
+        if ($this->load_relationship('attachments')) {
+            $this->attachments->resetLoaded();
+            $attachments = $this->attachments->get();
+
+            foreach ($attachments as $attachmentId) {
+                $attachment = BeanFactory::retrieveBean(
+                    'Notes',
+                    $attachmentId,
+                    array('disable_row_level_security' => true)
+                );
+
+                if ($attachment) {
+                    $this->updateTeamsForAttachment($attachment);
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates an attachment's teams fields to match the teams on the email.
+     *
+     * @param Note $attachment
+     */
+    public function updateTeamsForAttachment(Note $attachment)
+    {
+        $attachment->team_set_id = $this->team_set_id;
+        $attachment->team_id = $this->team_id;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $attachment->team_set_selected_id = $this->team_set_selected_id;
+        //END SUGARCRM flav=ent ONLY
+
+        if (!static::inOperation('saving_related')) {
+            $attachment->save();
+        }
+    }
 
 	/**
 	 * Helper function to save temporary attachments assocaited to an email as note.

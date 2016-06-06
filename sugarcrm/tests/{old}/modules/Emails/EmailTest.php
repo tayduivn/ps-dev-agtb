@@ -291,6 +291,49 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         OutboundEmailConfigurationTestHelper::tearDown();
     }
+
+    /**
+     * @covers ::save
+     * @covers ::updateTeamsForAttachments
+     * @covers ::updateTeamsForAttachment
+     * @covers Note::save
+     */
+    public function testUpdateTeamsForAttachments()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $data = array(
+            'email_type' => 'Emails',
+            'email_id' => $email->id,
+        );
+        $note1 = SugarTestNoteUtilities::createNote('', $data);
+        $note2 = SugarTestNoteUtilities::createNote('', $data);
+
+        // Change the teams on the email.
+        $teams = BeanFactory::getBean('TeamSets');
+        $email->team_id = 'East';
+        $email->team_set_id = $teams->addTeams(array('East', 'West'));
+        //BEGIN SUGARCRM flav=ent ONLY
+        $email->team_set_selected_id = 'East';
+        //END SUGARCRM flav=ent ONLY
+        $email->save();
+
+        $this->assertEquals($email->team_set_id, $note1->team_set_id, 'note1.team_set_id does not match');
+        $this->assertEquals($email->team_set_id, $note2->team_set_id, 'note2.team_set_id does not match');
+        $this->assertEquals($email->team_id, $note1->team_id, 'note1.team_id does not match');
+        $this->assertEquals($email->team_id, $note2->team_id, 'note2.team_id does not match');
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->assertEquals(
+            $email->team_set_selected_id,
+            $note1->team_set_selected_id,
+            'note1.team_set_selected_id does not match'
+        );
+        $this->assertEquals(
+            $email->team_set_selected_id,
+            $note2->team_set_selected_id,
+            'note2.team_set_selected_id does not match'
+        );
+        //END SUGARCRM flav=ent ONLY
+    }
 }
 
 

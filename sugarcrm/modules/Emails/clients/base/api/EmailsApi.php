@@ -401,8 +401,6 @@ class EmailsApi extends ModuleApi
         $record['id'] = create_guid();
         $record['email_id'] = $bean->id;
         $record['email_type'] = $bean->module_dir;
-        $record['team_id'] = $bean->team_id;
-        $record['team_set_id'] = $bean->team_set_id;
 
         return "upload://{$record['id']}";
     }

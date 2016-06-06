@@ -166,8 +166,6 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'id' => create_guid(),
                 'email_id' => $email->id,
                 'email_type' => $email->module_name,
-                'team_id' => $email->team_id,
-                'team_set_id' => $email->team_set_id,
             ),
         );
 
