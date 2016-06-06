@@ -98,25 +98,8 @@ $viewdefs['base']['layout']['records'] = array(
                             'name' => 'preview-pane',
                             'components' => array(
                                 array(
-                                    'layout' => array(
-                                        // FIXME SC-5042 will allow us to avoid duplicating metadata
-                                        // that is already in the `preview` layout metadata file.
-                                        'init_components' => array(
-                                            array(
-                                                'view' => 'preview-header',
-                                            ),
-                                            array(
-                                                'view' => 'preview',
-                                            ),
-                                            array(
-                                                'layout' => 'preview-activitystream',
-                                                'context' => array(
-                                                    'module' => 'Activities',
-                                                    'forceNew' => true,
-                                                ),
-                                            ),
-                                        ),
-                                        'type' => 'preview',
+                                    'layout' => 'preview',
+                                    'xmeta' => array(
                                         'editable' => true,
                                     ),
                                 ),
