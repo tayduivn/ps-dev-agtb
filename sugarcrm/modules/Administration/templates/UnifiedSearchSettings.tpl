@@ -159,7 +159,8 @@
                     SUGAR.util.paramsToUrl({
                         module: "Administration",
                         action: "saveunifiedsearchsettings",
-                        enabled_modules: modules
+                        enabled_modules: modules,
+                        csrf_token: SUGAR.csrf.form_token
                     }) + "to_pdf=1"
             );
 
