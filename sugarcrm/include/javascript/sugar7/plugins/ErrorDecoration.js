@@ -25,24 +25,13 @@
                 }, this);
             },
 
-            /**
-             * We need to add those events to the view to show/hide the tooltip that contains the error message
-             */
-            events:{
-                'focus input':'showTooltip',
-                'blur input':'hideTooltip',
-                'focus textarea':'showTooltip',
-                'blur textarea':'hideTooltip'
-            },
             showTooltip:function (e) {
-                _.defer(function () {
-                    var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
-                    app.utils.tooltip.show($addon);
-                }, this);
+                app.logger.warn('ErrorDecoration#showTooltip: This method has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
             },
             hideTooltip:function (e) {
-                var $addon = this.$(e.currentTarget).nextAll('.add-on').first();
-                app.utils.tooltip.hide($addon);
+                app.logger.warn('ErrorDecoration#hideTooltip: This method has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
             },
 
             /**

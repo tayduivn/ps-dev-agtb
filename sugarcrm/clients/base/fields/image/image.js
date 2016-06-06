@@ -412,7 +412,6 @@
             errorMessages.push(app.error.getErrorString(errorName, errorContext));
         });
         this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
-        this.createErrorTooltips(this.$('.error-tooltip'));
     },
 
     /**

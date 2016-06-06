@@ -276,7 +276,6 @@
             errorMessages = [value.message];
             $tooltip = $(this.exclamationMarkTemplate(errorMessages));
             $inp.after($tooltip);
-            this.createErrorTooltips($tooltip);
         }, this);
     },
 
@@ -285,7 +284,6 @@
      * @override
      */
     clearErrorDecoration: function () {
-        this.destroyAllErrorTooltips();
         this.$('.add-on.error-tooltip').remove();
         _.each(this.$('input[type=text]'), function(inp) {
             var $inp = this.$(inp);

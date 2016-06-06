@@ -452,7 +452,6 @@
 
         $ftag.parent().children('input').each(function(index) {
             $(this).after($tooltip[index]);
-            self.createErrorTooltips($tooltip[index]);
         });
     },
 

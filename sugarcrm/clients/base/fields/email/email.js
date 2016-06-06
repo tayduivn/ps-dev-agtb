@@ -442,7 +442,6 @@
             $input.wrap('<div class="input-append error '+this.fieldTag+'">');
         $input.next('.error-tooltip').remove();
         $input.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
-        this.createErrorTooltips($input.next('.error-tooltip'));
     },
 
     /**

@@ -20,11 +20,17 @@
             tooltip: {
                 /**
                  * Initializes tooltips for given elements
+                 *
+                 * @deprecated `app.utils.tooltip` class has been deprecated since 7.8.0
+                 *   and will be removed in 7.9.0.
                  * @param {jQuery} $elements
                  * @param {object} (optional) options - see bootstrap-tooltip docs
                  * @returns {jQuery}
                  */
                 initialize: function($element, options, direction) {
+                    app.logger.warn('Utils.Utils.Tooltip#initialize: The `app.utils.tooltip` class has been' +
+                        ' deprecated since 7.8.0 and will be removed in 7.9.0.');
+
                     options = options || {};
 
                     if (!$element.data('bs.tooltip')) {
@@ -42,9 +48,15 @@
 
                 /**
                  * Destroy tooltips
+                 *
+                 * @deprecated `app.utils.tooltip` class has been deprecated since 7.8.0
+                 *   and will be removed in 7.9.0.
                  * @param {jQuery} $tooltips
                  */
                 destroy: function($tooltips) {
+                    app.logger.warn('Utils.Utils.Tooltip#destroy: The `app.utils.tooltip` class has been' +
+                        ' deprecated since 7.8.0 and will be removed in 7.9.0.');
+
                     $tooltips.tooltip('destroy');
                 },
 

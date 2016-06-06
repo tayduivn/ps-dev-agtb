@@ -428,7 +428,6 @@
 
                 $tooltip = $(this.exclamationMarkTemplate(errorMessages));
                 $ftag.after($tooltip);
-                this.createErrorTooltips($tooltip);
             },
 
             /**
@@ -436,19 +435,16 @@
              * @param {jQuery} $element
              */
             createErrorTooltips: function($element) {
-                this._errorTooltips = this._errorTooltips || [];
-                this._errorTooltips.push(app.utils.tooltip.initialize($element));
+                app.logger.warn('View.Field#createErrorTooltips: This method has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
             },
 
             /**
              * Destroy all error tooltips.
              */
             destroyAllErrorTooltips: function() {
-                if (!this._errorTooltips) {
-                    return;
-                }
-                app.utils.tooltip.destroy($(this._errorTooltips));
-                this._errorTooltips = null;
+                app.logger.warn('View.Field#destroyAllErrorTooltips: This method has been' +
+                    ' deprecated since 7.8.0 and will be removed in 7.9.0.');
             },
 
             /**
@@ -456,7 +452,6 @@
              * @private
              */
             _dispose: function() {
-                this.destroyAllErrorTooltips();
                 _fieldProto._dispose.call(this);
             },
 
@@ -468,7 +463,6 @@
                     $ftag = this.$(ftag);
 
                 // Remove previous exclamation then add back.
-                this.destroyAllErrorTooltips();
                 this.$('.add-on.error-tooltip').remove();
                 var isWrappedError = $ftag.parent().hasClass('input-append') && $ftag.parent().hasClass('error');
 
