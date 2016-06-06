@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\Visibility;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\AbstractProvider;
 use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\ContainerAwareTrait;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Document;
@@ -28,33 +29,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder;
  */
 class Visibility extends AbstractProvider implements ContainerAwareInterface
 {
-    // Awaiting PHP 5.4+ support
-    //use ContainerAwareTrait;
-
-    ///// Start trait
-
-    /**
-     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    //// End trait
+    use ContainerAwareTrait;
 
     /**
      * List of strategy collection per module

@@ -12,15 +12,19 @@
 
 namespace Sugarcrm\Sugarcrm\Security\Validator\Constraints;
 
-use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValue;
+use Symfony\Component\Validator\Constraint;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait;
 
 /**
  *
  * @see JSONValidator
  *
  */
-class JSON extends ConstraintReturnValue
+class JSON extends Constraint implements ConstraintReturnValueInterface
 {
+    use ConstraintReturnValueTrait;
+
     const ERROR_JSON_DECODE = 1;
 
     protected static $errorNames = array(

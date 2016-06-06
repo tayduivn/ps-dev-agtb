@@ -28,55 +28,7 @@ require_once 'modules/Administration/clients/base/api/AdministrationApi.php';
  */
 class ElasticsearchQueueCommand extends Command implements InstanceModeInterface
 {
-    // Not using trait until we have PHP 5.4 minimum support
-    //use ApiEndpointTrait;
-
-    // START TRAIT
-    /**
-     * @var \SugarApi
-     */
-    protected $api;
-
-    /**
-     * @var \RestService
-     */
-    protected $service;
-
-    /**
-     * Initialize API
-     * @param \SugarApi $api
-     * @return ApiEndpointTrait
-     * @codeCoverageIgnore
-     */
-    protected function initApi(\SugarApi $api)
-    {
-        $this->api = $api;
-        $this->service = $this->getService();
-        return $this;
-    }
-
-    /**
-     * Wrapper to call a method with arguments on given SugarApi object
-     * @param string $method Method to be invoked on the public API
-     * @codeCoverageIgnore
-     * @param array $args Arguments to be passed to the public API
-     */
-    protected function callApi($method, array $args = array())
-    {
-        $args = array($this->service, $args);
-        return call_user_func_array(array($this->api, $method), $args);
-    }
-
-    /**
-     * Get REST service backend
-     * @return \RestService
-     * @codeCoverageIgnore
-     */
-    protected function getService()
-    {
-        return new \RestService();
-    }
-    // END TRAIT
+    use ApiEndpointTrait;
 
     /**
      * {inheritdoc}

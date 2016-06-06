@@ -16,6 +16,7 @@ use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Constraints as Assert;
+use Sugarcrm\Sugarcrm\Security\Validator\ConstraintReturnValueTrait;
 
 /**
  *
@@ -24,6 +25,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Delimited extends All implements ConstraintReturnValueInterface
 {
+    use ConstraintReturnValueTrait;
+
     public $delimiter = ',';
 
     /**
@@ -42,26 +45,5 @@ class Delimited extends All implements ConstraintReturnValueInterface
         if (!is_string($this->delimiter) || empty($this->delimiter)) {
             throw new ConstraintDefinitionException('Delimiter is expected to be a string');
         }
-    }
-
-    /**
-     * @var mixed
-     */
-    protected $formattedReturnValue;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormattedReturnValue()
-    {
-        return $this->formattedReturnValue;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setFormattedReturnValue($value)
-    {
-        $this->formattedReturnValue = $value;
     }
 }
