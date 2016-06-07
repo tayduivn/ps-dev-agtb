@@ -2609,10 +2609,6 @@ class Email extends SugarBean {
 			$this->status_name = $app_list_strings['dom_email_status'][$this->status];
 		}
 
-		if ( empty($this->name ) &&  empty($_REQUEST['record'])) {
-			$this->name = $mod_strings['LBL_NO_SUBJECT'];
-		}
-
 		parent::fill_in_additional_detail_fields();
 	}
 
