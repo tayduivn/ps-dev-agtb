@@ -195,4 +195,50 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
+
+    /**
+     * Test that when assigned user is not a current one new Call will contain them both.
+     * @covers \Call::save
+     */
+    public function testCallIsNewTheAssignedUserIsNotTheCurrentUserBothUsersAreInvited()
+    {
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+
+        $call = new Call();
+        $this->callid = $call->id = create_guid();
+        $call->new_with_id = true;
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $call->assigned_user_id = $user2->id;
+        $call->save();
+
+        $call->load_relationship('users');
+        $invitees = $call->users->get();
+        $this->assertCount(2, $invitees, 'Should include both the assigned user and current user');
+        $this->assertContains($call->assigned_user_id, $invitees, 'Should contain assigned user');
+        $this->assertContains($GLOBALS['current_user']->id, $invitees, 'Should contain current user user');
+    }
+
+    /**
+     * Test that when assigned user is not a current one re-saved Call will contain only assigned user.
+     * @covers \Call::save
+     */
+    public function testCallIsExistingTheAssignedUserIsNotTheCurrentUserTheCurrentUserIsNotInvited()
+    {
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+
+        $call = BeanFactory::newBean('Calls');
+        $call->id = create_guid();
+        $call->name = 'Test Call';
+        $call->duration_hours = '0';
+        $call->duration_minutes = '15';
+        $call->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $call->assigned_user_id = $user2->id;
+        $call->save();
+        $this->callid = $call->id;
+
+
+        $invitees = $call->users->get();
+        $this->assertCount(1, $invitees, 'Should only contain the assigned user');
+        $this->assertContains($call->assigned_user_id, $invitees, 'The assigned user was not found');
+    }
 }

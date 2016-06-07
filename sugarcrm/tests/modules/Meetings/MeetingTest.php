@@ -217,4 +217,43 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
+
+    /**
+     * Test that when assigned user is not a current one new Meeting will contain them both.
+     * @covers \Meeting::save
+     */
+    public function testMeetingIsNewTheAssignedUserIsNotTheCurrentUserBothUsersAreInvited()
+    {
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+
+        $meeting = SugarTestMeetingUtilities::createMeeting(create_guid(), $user2);
+
+        $meeting->load_relationship('users');
+        $invitees = $meeting->users->get();
+        $this->assertCount(2, $invitees, 'Should include both the assigned user and current user');
+        $this->assertContains($meeting->assigned_user_id, $invitees, 'Should contain assigned user');
+        $this->assertContains($GLOBALS['current_user']->id, $invitees, 'Should contain current user user');
+    }
+
+    /**
+     * Test that when assigned user is not a current one re-saved Meeting will contain only assigned user.
+     * @covers \Meeting::save
+     */
+    public function testMeetingIsExistingTheAssignedUserIsNotTheCurrentUserTheCurrentUserIsNotInvited()
+    {
+        $user2 = SugarTestUserUtilities::createAnonymousUser();
+
+        $meeting = $this->meeting = BeanFactory::newBean('Meetings');
+        $meeting->id = create_guid();
+        $meeting->name = 'Test Meeting';
+        $meeting->duration_hours = '0';
+        $meeting->duration_minutes = '15';
+        $meeting->date_start = TimeDate::getInstance()->getNow()->asDb();
+        $meeting->assigned_user_id = $user2->id;
+        $meeting->save();
+
+        $invitees = $meeting->users->get();
+        $this->assertCount(1, $invitees, 'Should only contain the assigned user');
+        $this->assertContains($meeting->assigned_user_id, $invitees, 'The assigned user was not found');
+    }
 }
