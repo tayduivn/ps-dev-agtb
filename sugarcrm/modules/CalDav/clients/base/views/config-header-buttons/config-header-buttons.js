@@ -17,11 +17,6 @@
 ({
     extendsFrom: "ConfigHeaderButtonsView",
 
-    events: {
-        "click [name=save_button]":   "_save",
-        "click [name=cancel_button]": "_cancel"
-    },
-
     /**
      * @inheritdoc
      */
@@ -37,8 +32,7 @@
      *
      * @private
      */
-    _save: function() {
-        app.alert.show('upload', {level: 'process', title: 'LBL_LOADING', autoclose: false});
+    _saveConfig: function() {
         var value = {};
         value.caldav_module = this.model.get('caldav_module');
         value.caldav_interval = this.model.get('caldav_interval');
@@ -48,23 +42,16 @@
         var section = this.context.get('section');
         var url = app.api.buildURL('caldav', 'config' + (section ? '/' + section : ''), null, null);
         app.api.call('update', url, value,{
-            success: function() {
-                    app.alert.dismiss('upload');
-                    app.router.goBack();
-            },
-            error: function(error) {
+            success: _.bind(function() {
+                this.showSavedConfirmation();
+                // close the drawer
+                app.drawer.close(this.context, this.context.get('model'));
+                //Reload metadata
+                app.sync();
+            }, this),
+            error: _.bind(function() {
                 this.getField('save_button').setDisabled(false);
-            }
+            }, this)
         });
-    },
-
-    /**
-     * Close the drawer.
-     *
-     * @private
-     */
-    _cancel: function() {
-        app.router.goBack();
     }
-
 })

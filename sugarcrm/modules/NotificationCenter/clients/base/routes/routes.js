@@ -17,11 +17,13 @@
                 name: "GlobalDeliveryConfigPage",
                 route: "NotificationCenter/config/default",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'NotificationCenter',
-                        skipFetch: true,
-                        section: 'default'
+                        context: {
+                            module: 'NotificationCenter',
+                            section: 'default',
+                            fromRouter: true
+                        }
                     });
                 }
             },
@@ -29,11 +31,13 @@
                 name: "UserDeliveryConfigPage",
                 route: "NotificationCenter/config",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'NotificationCenter',
-                        skipFetch: true,
-                        section: null
+                        context: {
+                            module: 'NotificationCenter',
+                            section: null,
+                            fromRouter: true
+                        }
                     });
                 }
             },

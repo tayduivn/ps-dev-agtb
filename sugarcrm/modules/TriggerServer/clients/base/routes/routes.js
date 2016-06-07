@@ -23,10 +23,12 @@
                 name: "TriggerServerConfig",
                 route: "TriggerServer/config",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'TriggerServer',
-                        skipFetch: true
+                        context: {
+                            module: 'TriggerServer',
+                            fromRouter: true
+                        }
                     });
                 }
             }

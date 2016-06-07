@@ -23,10 +23,12 @@
                 name: "WebSocketsConfig",
                 route: "WebSockets/config",
                 callback: function () {
-                    app.controller.loadView({
+                    app.drawer.open({
                         layout: 'config-drawer',
-                        module: 'WebSockets',
-                        skipFetch: true
+                        context: {
+                            module: 'WebSockets',
+                            fromRouter: true
+                        }
                     });
                 }
             }

@@ -50,7 +50,9 @@
         app.api.call('update', url, this.model.attributes, {
                 success: _.bind(function() {
                     this.showSavedConfirmation();
-                    app.router.goBack();
+                    app.drawer.close(this.context, this.context.get('model'));
+                    //Reload metadata
+                    app.sync();
                 }, this),
                 error: _.bind(function() {
                     this.getField('save_button').setDisabled(false);
@@ -77,15 +79,5 @@
                 }
             }, this)
         });
-    },
-
-    /**
-     * Because we're not drawer we simply need to go back.
-     * @inheritdoc
-     */
-    cancelConfig: function() {
-        if (this.triggerBefore('cancel')) {
-            app.router.goBack();
-        }
     }
 })
