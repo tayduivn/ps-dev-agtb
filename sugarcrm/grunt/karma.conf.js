@@ -10,6 +10,27 @@
  */
 
 module.exports = function(config) {
+    var sauceLaunchers = {
+        sl_safari: {
+            base: 'SauceLabs',
+            browserName: 'safari',
+            platform: 'OS X 10.11',
+            version: '9.0'
+        },
+        sl_firefox: {
+            base: 'SauceLabs',
+            browserName: 'firefox',
+            platform: 'Linux',
+            version: 44.0
+        },
+        sl_ie: {
+            base: 'SauceLabs',
+            browserName: 'internet explorer',
+            platform: 'Windows 7',
+            version: 11.0
+        }
+    };
+
     config.set({
         basePath: '../',
         frameworks: [
@@ -21,7 +42,9 @@ module.exports = function(config) {
             'karma-firefox-launcher',
             'karma-jasmine',
             'karma-junit-reporter',
-            'karma-phantomjs-launcher'
+            'karma-phantomjs-launcher',
+            'karma-sauce-launcher',
+            'karma-safari-launcher'
         ],
         proxies: {
             '/clients': '/base/clients',
@@ -37,6 +60,10 @@ module.exports = function(config) {
         },
         reportSlowerThan: 500,
         browserDisconnectTimeout: 5000,
-        browserDisconnectTolerance: 5
+        browserDisconnectTolerance: 5,
+        sauceLabs: {
+            testName: 'Mango Karma Tests'
+        },
+        customLaunchers: sauceLaunchers
     });
 };
