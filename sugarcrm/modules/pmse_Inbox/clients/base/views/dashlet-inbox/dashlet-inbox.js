@@ -39,20 +39,19 @@
     },
 
     /**
-     * @inheritdoc
+     * Besides defining new DOM events that will be later bound to methods
+     * through {@link #delegateEvents, the events method also makes sure parent
+     * classes events are explicitly inherited.
+     *
+     * @property {Function}
      */
-    _initEvents: function() {
-        this.events = _.extend(this.events, {
-            'click [data-action=date-switcher]': 'dateSwitcher',
-            'click [data-action=participate-switcher]': 'participateSwitcher'
+    events: function() {
+        var prototype = Object.getPrototypeOf(this);
+        var parentEvents = _.result(prototype, 'events');
+
+        return _.extend({}, parentEvents, {
+            'click [data-action=date-switcher]': 'dateSwitcher'
         });
-        this._super('_initEvents');
-
-        return this;
-    },
-
-    participateSwitcher: function() {
-        alert('participate');
     },
 
     /**
