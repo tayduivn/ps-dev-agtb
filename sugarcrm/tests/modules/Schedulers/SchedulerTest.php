@@ -16,6 +16,16 @@ class SchedulerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	static protected $old_timedate;
 
+    /**
+     * @var TestScheduler
+     */
+    protected $scheduler;
+
+    /**
+     * @var array
+     */
+    protected $preferencesOld;
+
 	public static function setUpBeforeClass()
 	{
 		self::$old_timedate = $GLOBALS['timedate'];
@@ -39,6 +49,21 @@ class SchedulerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['timedate'] = $this->timedate = TimeDate::getInstance();
         $this->timedate->allow_cache = true;
         $this->now = $this->timedate->getNow();
+
+        SugarTestReflection::callProtectedMethod($this->scheduler, 'getUser');
+        $this->scheduler->user->getPreference('timezone');
+        $cacheDb = SugarCache::instance();
+        $cacheKey = $this->scheduler->user->id . '_PREFERENCES';
+        $prefs = $cacheDb->$cacheKey;
+        $this->preferencesOld = $prefs;
+        $prefs['global']['timezone'] = "America/Los_Angeles";
+        $prefs['global']['timef'] = "h:ia";
+        $prefs['global']['datef'] = "m/d/Y";
+        SugarTestReflection::callProtectedMethod(
+            $this->scheduler->user->_userPreferenceFocus,
+            'storeToCache',
+            array($prefs['global'], 'global')
+        );
     }
 
     public function tearDown()
@@ -46,6 +71,12 @@ class SchedulerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->timedate->setNow($this->now);
         $GLOBALS['db']->query("DELETE FROM schedulers WHERE id='{$this->scheduler->id}'");
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='{$this->scheduler->id}'");
+
+        SugarTestReflection::callProtectedMethod(
+            $this->scheduler->user->_userPreferenceFocus,
+            'storeToCache',
+            array($this->preferencesOld['global'], 'global')
+        );
     }
 
     /**
