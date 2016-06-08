@@ -69,6 +69,7 @@ $dictionary['Addressee'] = array(
     'uses' => array(
         'basic',
         'assignable',
+        'team_security',
         'person',
     )
 );
