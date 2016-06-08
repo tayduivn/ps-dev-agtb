@@ -44,7 +44,10 @@ ExpressionContainer.prototype.init = function (options, parent) {
         onBeforeOpenPanel: null,
         onChange: null
     };
-    $.extend(true, defaults, options);
+
+    // Do not deep copy here
+    $.extend(defaults, options);
+
     this.setExpressionValue(defaults.expression)
         //.setIsCBOpen(defaults.isCBOpen)
         //.setIsDDOpen(defaults.isDDOpen)

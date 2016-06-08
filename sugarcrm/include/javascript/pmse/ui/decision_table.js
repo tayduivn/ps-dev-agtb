@@ -491,14 +491,6 @@
         row.appendChild(i);
         this.dom.indexTable.appendChild(row);
 
-        if(this.decisionRows === 1) {
-            this.updateDimensions();
-        }
-
-        if(typeof this.onAddRow === 'function') {
-            this.onAddRow.call(this);
-        }
-
         return this;
     };
 
@@ -622,6 +614,9 @@
         if(!self.decisionRows) {
             self.addDecisionRow();
         }
+
+        self.updateDimensions();
+
         App.alert.dismiss('upload');
         self.setIsDirty(false);
     };
@@ -1395,7 +1390,8 @@
             onChangeValue: null
         };
 
-        $.extend(true, defaults, options);
+        // Do not deep copy here
+        $.extend(defaults, options);
 
         this.parent = defaults.parent;
         this.variableMode = defaults.variableMode;
@@ -1918,7 +1914,10 @@
             parent: null,
             fields: []
         };
-        $.extend(true, defaults, settings || {});
+
+        // Do not deep copy here
+        $.extend(defaults, settings || {});
+
         this.parent = defaults.parent;
         this.expression = new ExpressionContainer({
             variables: defaults.fields,
