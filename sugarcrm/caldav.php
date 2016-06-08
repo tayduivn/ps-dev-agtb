@@ -19,8 +19,4 @@ require_once 'include/entryPoint.php';
 $serverHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper();
 $server = $serverHelper->setUp();
 
-//@todo Should be deleted in future. Using for browse server
-$browser = new Sabre\DAV\Browser\Plugin();
-$server->addPlugin($browser);
-
 $server->exec();
