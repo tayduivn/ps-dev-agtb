@@ -207,10 +207,13 @@
 
     /**
      * Handle tree loaded. Load additional leafs for the tree.
-     * @return {Boolean} Always true.
+     * @return {boolean} If tree has been loaded.
      */
     treeLoaded: function() {
         var self = this;
+        if (this.collection === undefined) {
+            return false;
+        }
         this.bulkLoadLeafs(this.collection.models, function() {
             if (self.useStates) {
                 self.loadJSTreeState();
@@ -232,7 +235,14 @@
             return model.id;
         });
 
-        this.loadAdditionalLeafs(ids, callback);
+        if (ids.length === 0) {
+            if (_.isFunction(callback)) {
+                callback.call();
+            }
+            return;
+        }
+
+        this.loadAdditionalLeafs(ids, callback, true);
     },
 
     /**
@@ -381,21 +391,17 @@
      *
      * @param {Array} ids Ids of tree nodes to load data in.
      * @param {Function} callback Callback funct
+     * @param {boolean} bulkLoad Identify if we need to perform bulk load
      */
-    loadAdditionalLeafs: function(ids, callback) {
+    loadAdditionalLeafs: function(ids, callback, bulkLoad) {
         var self = this;
-
-        if (ids.length === 0) {
+        var processedIds = _.filter(ids, function(id) {
+            return self.addLeafFromCache(id);
+        });
+        if (processedIds.length === ids.length) {
             if (_.isFunction(callback)) {
                 callback.call();
             }
-            return;
-        }
-
-        var processedIds = _.filter(ids, function(id) {
-            return self.addLeafFromCache(id, callback);
-        });
-        if (processedIds.length === ids.length) {
             return;
         }
 
@@ -418,18 +424,19 @@
                 if (_.isFunction(callback)) {
                     callback.call();
                 }
-            }
+            },
+            apiOptions: bulkLoad ? {bulk: true} : {}
         });
+        app.api.triggerBulkCall();
     },
 
     /**
      * Tries to find loaded leaf in cache and adds it to the tree.
      *
      * @param {String} id Leaf id.
-     * @param {Function} callback Callback function that will be executed after trying to adding leafs from cache.
      * @return {boolean} Returns true if leaf was added from cache, otherwise - false.
      */
-    addLeafFromCache: function(id, callback) {
+    addLeafFromCache: function(id) {
         if (!_.isUndefined(this.loadedLeafs[id]) && this.loadedLeafs[id].timestamp < Date.now() - this.cacheLifetime) {
             delete this.loadedLeafs[id];
         }
@@ -443,9 +450,6 @@
         ) {
             if (!_.isUndefined(this.loadedLeafs[id])) {
                 this.addLeafs(this.loadedLeafs[id].models, id);
-            }
-            if (_.isFunction(callback)) {
-                callback.call();
             }
             return true;
         }

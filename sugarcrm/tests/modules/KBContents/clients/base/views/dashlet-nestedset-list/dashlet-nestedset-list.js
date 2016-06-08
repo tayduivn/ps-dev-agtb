@@ -53,6 +53,7 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
         view = SugarTest.createView(
             'base', moduleName, 'dashlet-nestedset-list', viewMeta, context, true, layout
         );
+        app.routing.start();
     });
 
     afterEach(function() {
@@ -164,4 +165,10 @@ describe('modules.KBContents.clients.base.view.DashletNestesetList', function() 
         expect(view.loadedLeafs[id].models).toEqual(models);
     });
 
+    it('After load leafs callback must be called even if empty array of IDs passed to bulkLoadLeafs', function() {
+        var afterLoadCallback = sinon.spy();
+        var ids = [];
+        view.bulkLoadLeafs(ids, afterLoadCallback);
+        expect(afterLoadCallback).toHaveBeenCalled();
+    });
 });
