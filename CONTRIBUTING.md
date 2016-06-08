@@ -392,6 +392,12 @@ $ ./node_modules/grunt-cli/bin/grunt karma:ci-coverage [--path <path>]
 
 If the `--path` option isn't supplied, the coverage reports are generated into a temporary folder. Its path is printed to the terminal while the task is executed.
 
+#### karma:sauce
+
+This task is pre-configured for running Karma tests on Safari on Sauce Labs. It is configured to be suitable for CI as well.
+You must have the environment variables SAUCE_USERNAME and SAUCE_ACCESS_KEY predefined.
+(Note that SAUCE_ACCESS_KEY is NOT the password, it's a token).
+
 #### Exclusive tests
 
 If you want to reduce the scope of each test run, you can use exclusive tests.
