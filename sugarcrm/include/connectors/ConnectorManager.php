@@ -96,11 +96,9 @@ class ConnectorManager
      */
     public function getUserConnectors()
     {
-        // Handle the cache file
-        $cacheFile = sugar_cached('api/metadata/connectors.php');
-        if (file_exists($cacheFile)) {
-            require $cacheFile;
-        } else {
+        // retrieve connector metadata from sugar_cache
+        $connectors = sugar_cache_retrieve('connector_metadata');
+        if (empty($connectors)) {
             $connectors = $this->buildConnectorsMeta();
         }
 
@@ -126,22 +124,8 @@ class ConnectorManager
      */
     public function putConnectorCache($data)
     {
-        // Create the cache directory if need be
-        // fix for the cache/api/metadata problem
-        $cacheDir = 'api/metadata';
-
-        mkdir_recursive(sugar_cached($cacheDir));
-
-        // Handle the cache file
-        $cacheFile = sugar_cached('api/metadata/connectors.php');
-        $write = "<?php\n" .
-            '// created: ' . date('Y-m-d H:i:s') . "\n" .
-            '$connectors = ' .
-            var_export_helper($data) . ';';
-
-        // Write with atomic writing to prevent issues with simultaneous requests
-        // for this file
-        sugar_file_put_contents_atomic($cacheFile, $write);
+        // store to sugar_cache
+        sugar_cache_put('connector_metadata', $data);
 
         if (!empty($data['_hash'])) {
             $this->addToHash('connectors', $data['_hash']);
@@ -156,11 +140,13 @@ class ConnectorManager
      */
     protected function addToHash($key, $hash)
     {
-        $hashes = array();
-        $path = sugar_cached("api/metadata/connectorHashes.php");
-        @include($path);
+        $hashes = sugar_cache_retrieve('connector_hashes');
+        if (empty($hashes)) {
+            $hashes = array();
+        }
+
         $hashes[$key] = $hash;
-        write_array_to_file("hashes", $hashes, $path);
+        sugar_cache_put('connector_hashes', $hashes);
     }
 
     /**
@@ -170,9 +156,10 @@ class ConnectorManager
      */
     protected function getFromHashCache($key)
     {
-        $hashes = array();
-        $path = sugar_cached("api/metadata/connectorHashes.php");
-        @include($path);
+        $hashes = sugar_cache_retrieve('connector_hashes');
+        if (empty($hashes)) {
+            $hashes = array();
+        }
 
         return !empty($hashes[$key]) ? $hashes[$key] : false;
     }

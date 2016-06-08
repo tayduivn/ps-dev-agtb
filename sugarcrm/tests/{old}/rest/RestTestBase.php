@@ -399,12 +399,6 @@ abstract class RestTestBase extends TestCase
     {
         MetaDataFiles::clearModuleClientCache();
 
-        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
-        if ( is_array($metadataFiles) ) {
-            foreach ($metadataFiles as $metadataFile) {
-                @unlink($metadataFile);
-            }
-        }
     }
 
     /**

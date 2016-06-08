@@ -104,11 +104,7 @@ class ConnectorsValidTest extends TestCase
 {
     public function tearDown()
     {
-        $cacheFile = sugar_cached('api/metadata/connectors.php');
-        if (file_exists($cacheFile)) {
-            // delete the current file because it has trash data in it
-            unlink($cacheFile);
-        }
+        sugar_cache_clear('connector_metadata');
     }
 
     /*
@@ -176,12 +172,8 @@ class ConnectorsValidTest extends TestCase
         unset($connectors['_hash']);
         $this->assertEquals($connectors, $expectedOut);
 
-        // should create cache file
-        // Handle the cache file
-        $cacheFile = sugar_cached('api/metadata/connectors.php');
-        if (file_exists($cacheFile)) {
-            require $cacheFile;
-        }
+
+        $connectors = sugar_cache_retrieve('connector_metadata');
         $this->assertEquals($currentHash, $connectors['_hash']);
     }
 
