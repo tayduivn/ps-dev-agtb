@@ -1482,8 +1482,10 @@ class OracleManager extends DBManager
             $columns[] = 'i.index_name';
         }
 
+        $columns[] = 'i.index_type';
         $columns[] = 'c.constraint_type';
         $columns[] = 'ic.column_name';
+        $columns[] = 'die.column_expression';
 
         $owner = strtoupper($this->configOptions['db_schema_name']);
 
@@ -1494,6 +1496,12 @@ INNER JOIN all_ind_columns ic
         AND ic.index_owner = i.owner
             AND ic.table_name = i.table_name
                 AND ic.table_owner = i.table_owner
+LEFT JOIN dba_ind_expressions die
+    ON die.index_owner = i.owner
+    AND die.index_name = i.index_name
+    AND die.table_owner = i.table_owner
+    AND die.table_name = i.table_name
+    AND die.column_position = ic.column_position
 LEFT JOIN all_constraints c
     ON c.index_name = i.index_name
         AND c.owner = i.owner';
@@ -1513,7 +1521,7 @@ LEFT JOIN all_constraints c
             $where[] = 'i.index_name = ' . $this->quoted($query_index_name);
         }
 
-        $where[] = 'i.index_type = \'NORMAL\'';
+        $where[] = 'i.index_type IN (\'NORMAL\', \'FUNCTION-BASED NORMAL\')';
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
@@ -1531,7 +1539,7 @@ LEFT JOIN all_constraints c
         $result = $this->query($query);
 
         $data = array();
-        while ($row = $this->fetchByAssoc($result)) {
+        while ($row = $this->fetchByAssoc($result, false)) {
             if (!$filterByTable) {
                 $table_name = strtolower($row['table_name']);
             }
@@ -1550,7 +1558,16 @@ LEFT JOIN all_constraints c
 
             $data[$table_name][$index_name]['name'] = $index_name;
             $data[$table_name][$index_name]['type'] = $type;
-            $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
+
+            if ($row['index_type'] == 'FUNCTION-BASED NORMAL' && $row['column_expression']) {
+                // oracle returns expressions with fields wrapped with '"'
+                // we have to get rid of them to match the vardef index definitions
+                $data[$table_name][$index_name]['fields'][] = strtolower(
+                    preg_replace('/"(\w+)"/', '$1', $row['column_expression'])
+                );
+            } else {
+                $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
+            }
         }
 
         return $data;
