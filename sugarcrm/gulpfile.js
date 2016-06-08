@@ -152,15 +152,6 @@ gulp.task('check-license', function(done) {
             'less',
             'css'
         ],
-        // Array of directory patterns (PCRE regex).
-        // Only works with the name, not its path.
-        excludedDirectories: [
-            'node_modules',
-            'vendor',
-            'tests',
-            // sugarcharts should be ignored
-            'SugarCharts'
-        ],
         licenseFile: 'LICENSE',
         // Add paths you want to exclude in the whiteList file.
         whiteList: 'grunt/assets/check-license/license-white-list.json'
@@ -171,11 +162,12 @@ gulp.task('check-license', function(done) {
     var licenseFile = options.licenseFile;
     var whiteList = options.whiteList;
     var excludedExtensions = options.excludedExtensions.join('|');
-    var excludedDirectories = options.excludedDirectories.join('|');
 
     //Prepares excluded files.
-    eval('var excludedFiles = ' + fs.readFileSync(whiteList) + '.excludedFiles', 'utf8');
-    excludedFiles = excludedFiles.join('\\n');
+    var excludedFiles = JSON.parse(fs.readFileSync(whiteList, 'utf8'));
+    excludedFiles = _.map(excludedFiles, function(f) {
+        return './' + f;
+    }).join('\\n');
 
     var pattern = fs.readFileSync(licenseFile).toString();
     pattern = pattern.trim();
@@ -203,8 +195,6 @@ gulp.task('check-license', function(done) {
         '-r',
         // Ignores case.
         '-i',
-        // Excluded directories.
-        '--exclude-dir="' + excludedDirectories + '"',
         // Excluded extensions.
         '--exclude="((.*)\.(' + excludedExtensions + '))"',
         // Pattern to match in each file.
