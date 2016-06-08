@@ -16,7 +16,7 @@ namespace Sugarcrm\Sugarcrm\ProcessManager\Field\Evaluator;
  * Integer evaluator object.
  * @package ProcessManager
  */
-class Int extends Base implements EvaluatorInterface
+class Integer extends Base implements EvaluatorInterface
 {
     /**
      * @inheritDoc

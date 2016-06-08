@@ -41,6 +41,8 @@ class Factory
         'time' => 'Datetime',
         'datetimecombo' => 'Datetime',
         'datetime' => 'Datetime',
+        // int is a reserved word in PHP7
+        'int' => 'Integer',
     ];
 
     /**

@@ -14,7 +14,7 @@ namespace Sugarcrm\SugarcrmTests\ProcessManager\Field\Evaluator;
 
 use Sugarcrm\Sugarcrm\ProcessManager\Field\Evaluator;
 
-class IntTest extends \Sugar_PHPUnit_Framework_TestCase
+class IntegerTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * EvaluatorInterface object
@@ -25,7 +25,7 @@ class IntTest extends \Sugar_PHPUnit_Framework_TestCase
     public function setup()
     {
         parent::setup();
-        $this->eval = new Evaluator\Int;
+        $this->eval = new Evaluator\Integer;
     }
 
     /**
