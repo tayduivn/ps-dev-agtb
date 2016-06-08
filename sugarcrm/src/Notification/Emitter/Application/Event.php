@@ -43,4 +43,23 @@ class Event implements EventInterface
     {
         return $this->name;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize()
+    {
+        return serialize(array('name' => $this->name));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $instance = new static($data['name']);
+
+        return $instance;
+    }
 }

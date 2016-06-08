@@ -186,9 +186,9 @@ class CarrierBulkMessageHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             array('getMessageBuilderRegistry', 'getJobQueueManager', 'getCarrierRegistry'),
             array(
                 null,
-                array('', serialize($this->event)),
-                array('', serialize($carrierName)),
-                array('', serialize($usersOptions))
+                array('', 'Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event', $this->event->serialize()),
+                array('', null, serialize($carrierName)),
+                array('', null, serialize($usersOptions)),
             )
         );
 

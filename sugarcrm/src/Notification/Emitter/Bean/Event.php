@@ -93,4 +93,25 @@ class Event implements ModuleEventInterface
     {
         return $this->getBean()->module_name;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function serialize()
+    {
+        $data = array('module_name' => $this->bean->module_name, 'id' => $this->bean->id, 'name' => $this->name);
+        return serialize($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $instance = new static($data['name']);
+        $instance->setBean(\BeanFactory::getBean($data['module_name'], $data['id']));
+
+        return $instance;
+    }
 }

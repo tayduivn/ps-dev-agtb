@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\Notification\JobQueue;
 
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JobQueueManager;
+use Sugarcrm\Sugarcrm\Notification\EventInterface;
 
 class Manager extends JobQueueManager
 {
@@ -54,8 +55,17 @@ class Manager extends JobQueueManager
             if (is_object($argument)) {
                 $reflection = new \ReflectionObject($argument);
                 $path = $reflection->getFileName();
+                $className = $reflection->getName();
+                if ($argument instanceof EventInterface) {
+                    $data = $argument->serialize();
+                } else {
+                    throw new \InvalidArgumentException('Object must implements EventInterface');
+                }
+            } else {
+                $data = serialize($argument);
+                $className = null;
             }
-            $arguments[$key] = array($path, serialize($argument));
+            $arguments[$key] = array($path, $className, $data);
         }
 
         return $arguments;

@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Notification\ModuleEventInterface;
  * Event for reminder upcoming events calls or meeting
  * @package Sugarcrm\Sugarcrm\Notification\Emitter\Reminder
  */
-class Event implements ModuleEventInterface, \Serializable
+class Event implements ModuleEventInterface
 {
 
     /**
@@ -98,11 +98,14 @@ class Event implements ModuleEventInterface, \Serializable
     /**
      * @inheritDoc
      */
-    public function unserialize($serialized)
+    public static function unserialize($serialized)
     {
         $data = unserialize($serialized);
-        $this->user = \BeanFactory::getBean('Users', $data['userId']);
-        $this->bean = \BeanFactory::getBean($data['module_name'], $data['id']);
+        $instance = new static();
+        $instance->setBean(\BeanFactory::getBean($data['module_name'], $data['id']));
+        $instance->setUser(\BeanFactory::getBean('Users', $data['userId']));
+
+        return $instance;
     }
 
     /**

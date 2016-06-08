@@ -60,7 +60,10 @@ class EventHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'getJobQueueManager',
                 'getUser',
             ),
-            array(null, array(null, serialize($this->event))),
+            array(
+                null,
+                array(null, 'Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event', $this->event->serialize()),
+            ),
             '',
             true
         );

@@ -37,12 +37,24 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         \SugarTestHelper::setUp('files');
         $this->notificationClassName = 'NotificationSomeClass' . rand(1000, 1999);
         $this->notificationFilePath = sugar_cached($this->notificationClassName . '.php');
-        $classCode = "<?php
-            class {$this->notificationClassName}
+        $classCode = '<?php
+            class ' . $this->notificationClassName . ' implements Sugarcrm\Sugarcrm\Notification\EventInterface
             {
-
+                public function __toString()
+                {
+                    return "name";
+                }
+                public function serialize()
+                {        
+                    return serialize(array(1));
+                }
+                
+                public static function unserialize($value)
+                {        
+                    return new static();
+                }
             }
-        ";
+        ';
         \SugarTestHelper::saveFile($this->notificationFilePath);
         sugar_file_put_contents($this->notificationFilePath, $classCode);
         require_once $this->notificationFilePath;
@@ -71,8 +83,8 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             'serializedScalar' => array(
                 'constructorArguments' => array(
                     'userId' => rand(2000, 2999),
-                    'arg' => array('', serialize($rand1)),
-                    'event' => array('', serialize('create')),
+                    'arg' => array('', null, serialize($rand1)),
+                    'event' => array('', null, serialize('create')),
                 ),
                 'expectedArguments' => array(
                     $rand1,
@@ -82,9 +94,9 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             'fourArguments' => array(
                 'constructorArguments' => array(
                     'userId' => rand(1000, 1999),
-                    'arg' => array('', serialize($rand2)),
-                    'event' => array('', serialize('update')),
-                    'date' => array('', serialize('2015-12-12')),
+                    'arg' => array('', null, serialize($rand2)),
+                    'event' => array('', null, serialize('update')),
+                    'date' => array('', null, serialize('2015-12-12')),
                 ),
                 'expectedArguments' => array(
                     $rand2,
@@ -121,12 +133,12 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
         return array(
             'serializedObjectWithUserId' => array(
                 'userId' => rand(1000, 1999),
-                'serializedEvent' => array('', serialize('update')),
+                'serializedEvent' => array('', null, serialize('update')),
                 'expectedEvent' => 'update',
             ),
             'serializedObjectWithoutUser' => array(
                 'userId' => null,
-                'serializedEvent' => array('', serialize('update')),
+                'serializedEvent' => array('', null, serialize('update')),
                 'expectedEvent' => 'update',
             ),
         );
@@ -144,7 +156,7 @@ class BaseHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
     public function testInitializeCallObject($userId, $serializedEvent, $expectedEvent)
     {
         $obj = new $this->notificationClassName();
-        $objSerialized = array($this->notificationFilePath, serialize($obj));
+        $objSerialized = array($this->notificationFilePath, $this->notificationClassName, $obj->serialize());
 
         $handler = new JobQueueHandlerCRYS1289($userId, $objSerialized, $serializedEvent);
         $this->assertEquals($obj, $handler->arguments[0]);

@@ -45,7 +45,12 @@ abstract class BaseHandler implements RunnableInterface
             if ($argument[0]) {
                 require_once $argument[0];
             }
-            $arguments[$key] = unserialize($argument[1]);
+            
+            if (!is_null($argument[1])) {
+                $arguments[$key] = $argument[1]::unserialize($argument[2]);
+            } else {
+                $arguments[$key] = unserialize($argument[2]);
+            }
         }
 
         call_user_func_array(array($this, 'initialize'), $arguments);

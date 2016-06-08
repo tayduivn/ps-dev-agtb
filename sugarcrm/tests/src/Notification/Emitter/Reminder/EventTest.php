@@ -250,8 +250,7 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $serializedEvent = $event->serialize();
 
-        $expectedEvent = new ReminderEvent();
-        $expectedEvent->unserialize($serializedEvent);
+        $expectedEvent = ReminderEvent::unserialize($serializedEvent);
         $this->assertInstanceOf('\User', $expectedEvent->getUser());
         $this->assertInstanceOf($beanClass, $expectedEvent->getBean());
         $this->assertTrue($expectedEvent->getUser()->wasRetrieved);

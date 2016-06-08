@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTests\Notification\Emitter\Bean;
 
 use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
+use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * Class EventTest
@@ -21,6 +22,24 @@ use Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event as BeanEvent;
  */
 class EventTest extends \Sugar_PHPUnit_Framework_TestCase
 {
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        \BeanFactory::setBeanClass('Meetings', 'Sugarcrm\SugarcrmTests\Notification\Emitter\Bean\MeetingCRYS1713');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        \BeanFactory::setBeanClass('Meetings');
+        parent::tearDown();
+    }
     /**
      * Check if string representation of emitter is given in constructor data.
      *
@@ -195,5 +214,53 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($constructorBean->module_name, $event->getModuleName());
         $event->setBean($methodBean);
         $this->assertEquals($methodBean->module_name, $event->getModuleName());
+    }
+
+    /**
+     * Testing handling serialization and unserialization.
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::serialize
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Bean\Event::unserialize
+     */
+    public function testSerialization()
+    {
+        $event = new BeanEvent('testName');
+        /** @var $bean \Meeting|\PHPUnit_Framework_MockObject_MockObject */
+        $bean = \BeanFactory::getBean('Meetings');
+        $bean->id = Uuid::uuid1();
+
+        $event->setBean($bean);
+
+        $serializedEvent = $event->serialize();
+
+        $unserializedEvent = BeanEvent::unserialize($serializedEvent);
+        $this->assertInstanceOf('Meeting', $unserializedEvent->getBean());
+        $this->assertTrue($unserializedEvent->getBean()->wasRetrieved);
+        $this->assertEquals($bean->id, $unserializedEvent->getBean()->id);
+        $this->assertEquals('testName', (string)$unserializedEvent);
+    }
+}
+
+/**
+ * Class MeetingCRYS1713
+ * @package Sugarcrm\SugarcrmTests\Notification\Emitter\Reminder
+ */
+class MeetingCRYS1713 extends \Meeting
+{
+    public $wasRetrieved = false;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param string $id
+     * @param bool|true $encode
+     * @param bool|true $deleted
+     * @return MeetingCRYS1713
+     */
+    public function retrieve($id = '-1', $encode = true, $deleted = true)
+    {
+        $this->id = $id;
+        $this->wasRetrieved = true;
+        return $this;
     }
 }

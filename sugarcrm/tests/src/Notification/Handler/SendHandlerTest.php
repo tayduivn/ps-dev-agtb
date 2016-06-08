@@ -73,24 +73,24 @@ class SendHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
 
         return array(
             'returnTrueSendingSuccessful' => array(
-                'transportValue' => array('', serialize($transport1)),
-                'message' => array('', serialize($message1)),
+                'transportValue' => array('', null, serialize($transport1)),
+                'message' => array('', null, serialize($message1)),
                 'expectedTransport' => $transport1,
                 'expectedMessage' => $message1,
                 'sendResult' => true,
                 'expectedResult' => \SchedulersJob::JOB_SUCCESS,
             ),
             'returnFalseSendingFailed' => array(
-                'transportValue' => array('', serialize($transport2)),
-                'message' => array('', serialize($message2)),
+                'transportValue' => array('', null, serialize($transport2)),
+                'message' => array('', null, serialize($message2)),
                 'expectedTransport' => $transport2,
                 'expectedMessage' => $message2,
                 'sendResult' => false,
                 'expectedResult' => \SchedulersJob::JOB_FAILURE,
             ),
             'returnFalseSendingReturnsNotStrictTrue' => array(
-                'transportValue' => array('', serialize($transport3)),
-                'message' => array('', serialize($message3)),
+                'transportValue' => array('', null, serialize($transport3)),
+                'message' => array('', null, serialize($message3)),
                 'expectedTransport' => $transport3,
                 'expectedMessage' => $message3,
                 'sendResult' => 1,
@@ -125,7 +125,7 @@ class SendHandlerTest extends \Sugar_PHPUnit_Framework_TestCase
             array('getCarrierRegistry'),
             array(
                 rand(1000, 1999),
-                array(__FILE__, serialize('CarrierCRYS1288')),
+                array(__FILE__, null, serialize('CarrierCRYS1288')),
                 $transportValue,
                 $message,
             )
