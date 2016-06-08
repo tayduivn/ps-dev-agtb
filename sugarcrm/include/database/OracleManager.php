@@ -57,6 +57,7 @@ class OracleManager extends DBManager
         'limit_subquery' => true,
         "recursive_query" => true,
         "prepared_statements" => true,
+        "case_insensitive" => true,
     );
 
     public $preparedStatementClass = 'OraclePreparedStatement';
@@ -2183,35 +2184,5 @@ LEFT JOIN all_constraints c
     {
         $guidStart = create_guid_section(3);
       	return "'$guidStart-' || sys_guid()";
-    }
-
-    /**
-     * Converts both column name and search string to upper case for case insensitive search.
-     *
-     * @param  string $name column name
-     * @param  string $value search string
-     * @return string
-     */
-    public function getLikeSQL($name, $value)
-    {
-        if (!empty($GLOBALS['sugar_config']['oracle_enable_ci'])) {
-            $name = 'UPPER('.$name.')';
-            $value = strtoupper($value);
-        }
-        return parent::getLikeSQL($name, $value);
-    }
-    
-    /**
-     * Check if this DB supports certain capability
-     * See $this->capabilities for the list
-     * @param string $cap
-     * @return bool
-     */
-    public function supports($cap)
-    {
-        if ($cap == 'case_insensitive') {
-            return !empty($GLOBALS['sugar_config']['oracle_enable_ci']);
-        }
-        return parent::supports($cap);
     }
 }

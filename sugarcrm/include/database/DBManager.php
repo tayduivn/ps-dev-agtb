@@ -2797,6 +2797,11 @@ protected function checkQuery($sql, $object_name = false)
      */
     public function getLikeSQL($name, $value)
     {
+        if ($this->supports('case_insensitive')) {
+            $name = 'UPPER(' . $name . ')';
+            $value = strtoupper($value);
+        }
+
         return $name . ' LIKE ' . $this->quoted($value);
     }
 
