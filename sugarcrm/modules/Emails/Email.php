@@ -1170,6 +1170,9 @@ class Email extends SugarBean {
             $this->attachments->resetLoaded();
             $attachments = $this->attachments->get();
 
+            $message = 'Updating the teams for %d attachment(s) for Emails/%s in %s.';
+            $GLOBALS['log']->debug(sprintf($message, count($attachments), $this->id, __METHOD__));
+
             foreach ($attachments as $attachmentId) {
                 $attachment = BeanFactory::retrieveBean(
                     'Notes',
@@ -1179,8 +1182,14 @@ class Email extends SugarBean {
 
                 if ($attachment) {
                     $this->updateTeamsForAttachment($attachment);
+                } else {
+                    $message = 'Failed to load the attachment Notes/%s for Emails/%s in %s.';
+                    $GLOBALS['log']->error(sprintf($message, $attachmentId, $this->id, __METHOD__));
                 }
             }
+        } else {
+            $message = 'Failed to load the attachments for the email Emails/%s in %s.';
+            $GLOBALS['log']->error(sprintf($message, $this->id, __METHOD__));
         }
     }
 
@@ -1194,6 +1203,10 @@ class Email extends SugarBean {
     public function updateTeamsForAttachment(Note $attachment)
     {
         if ($this->state === static::EMAIL_STATE_DRAFT) {
+            $message = 'Setting the teams for attachment Notes/%s to the private team for Users/%s for the draft ' .
+                'Emails/%s in %s.';
+            $GLOBALS['log']->debug(sprintf($message, $attachment->id, $this->assigned_user_id, $this->id, __METHOD__));
+
             $user = BeanFactory::retrieveBean(
                 'Users',
                 $this->assigned_user_id,
@@ -1202,12 +1215,14 @@ class Email extends SugarBean {
             $privateTeam = $user ? $user->getPrivateTeam() : null;
 
             if (!$privateTeam) {
-                $message = "Could not get the private team for Users/{$this->assigned_user_id}. The fields " .
-                    "team_set_id, team_id, and team_set_selected_id could not assigned appropriately for attachment " .
-                    "Notes/{$attachment->id}";
-                $GLOBALS['log']->error($message);
+                $message = 'Could not get the private team for Users/%s. The fields team_set_id, team_id, and ' .
+                    'team_set_selected_id could not be assigned appropriately for attachment Notes/%s in %s.';
+                $GLOBALS['log']->error(sprintf($message, $this->assigned_user_id, $attachment->id, __METHOD__));
                 return;
             }
+
+            $message = "Attachment Notes/%s's team_set_id, team_id, and team_set_selected_id are all %s.";
+            $GLOBALS['log']->debug(sprintf($message, $attachment->id, $privateTeam));
 
             $attachment->team_set_id = $privateTeam;
             $attachment->team_id = $privateTeam;
@@ -1215,6 +1230,17 @@ class Email extends SugarBean {
             $attachment->team_set_selected_id = $privateTeam;
             //END SUGARCRM flav=ent ONLY
         } else {
+            $message = "Attachment Notes/%s's team_set_id, team_id, and team_set_selected_id are %s, %s, and %s, " .
+                'respectively.';
+            $message = sprintf(
+                $message,
+                $attachment->id,
+                $this->team_set_id,
+                $this->team_id,
+                $this->team_set_selected_id
+            );
+            $GLOBALS['log']->debug($message);
+
             $attachment->team_set_id = $this->team_set_id;
             $attachment->team_id = $this->team_id;
             //BEGIN SUGARCRM flav=ent ONLY
@@ -1222,7 +1248,13 @@ class Email extends SugarBean {
             //END SUGARCRM flav=ent ONLY
         }
 
-        if (!static::inOperation('saving_related')) {
+        if (static::inOperation('saving_related')) {
+            $message = 'In operation saving_related, so attachment Notes/%s is not saved in %s.';
+            $GLOBALS['log']->debug(sprintf($message, $attachment->id, __METHOD__));
+        } else {
+            $message = 'Attachment Notes/%s is being saved in %s.';
+            $GLOBALS['log']->debug(sprintf($message, $attachment->id, __METHOD__));
+
             $attachment->save();
         }
     }
