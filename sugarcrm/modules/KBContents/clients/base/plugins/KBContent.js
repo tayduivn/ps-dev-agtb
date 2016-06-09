@@ -536,17 +536,10 @@
                                     });
 
                                 }
-
-                                // enable buttons in recordview
-                                if (_.isFunction(this.toggleButtons)) {
-                                    this.toggleButtons(true);
-                                }
-
-                                // enable save button in recorlist view
-                                var inlineSaveButton = this.getField('inline-save', model);
-                                if (!_.isEmpty(inlineSaveButton)) {
-                                    inlineSaveButton.setDisabled(false);
-                                }
+                                // Emulate invalid validation to discard changes in components.
+                                // Pass a stub in order not to decorate anything in case of no real errors.
+                                errors.kbcontentsValidationCancel = {stub: true};
+                                callback(null, fields, errors);
                             }, this)
                         });
                     } else if (!publishingDate) {
