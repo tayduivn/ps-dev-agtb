@@ -46,10 +46,7 @@ class SugarRelationshipFactory {
 
     public static function deleteCache()
     {
-        $file = self::getInstance()->getCacheFile();
-        if(sugar_is_file($file)) {
-            unlink($file);
-        }
+        sugar_cache_clear('relationships');
     }
 
     /**
@@ -180,12 +177,11 @@ class SugarRelationshipFactory {
 
     protected function loadRelationships()
     {
-        if(sugar_is_file($this->getCacheFile())) {
-            include $this->getCacheFile();
-            $this->relationships = $relationships;
-        } else {
+        $this->relationships = sugar_cache_retrieve('relationships');
+        if (empty($this->relationships)) {
             $this->buildRelationshipCache();
         }
+
         //For now set the global relationships. These are deprecated but we need to keep them around for now.
         $GLOBALS['relationships'] = $this->relationships;
     }
@@ -206,10 +202,7 @@ class SugarRelationshipFactory {
             $relationships = array_merge($this->relationships, $relationships);
         }
 
-        //Save it out
-        sugar_mkdir(dirname($this->getCacheFile()), null, true);
-        $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
-        sugar_file_put_contents_atomic($this->getCacheFile(), $out);
+        sugar_cache_put('relationships', $relationships);
 
         // There are only certain times when the relationship cache needs to be 
         // refreshed...
@@ -317,16 +310,7 @@ class SugarRelationshipFactory {
         
         return $relationships;
     }
-
-    /**
-     * Gets the cache file name
-     * 
-     * @return string
-     */
-    protected function getCacheFile() {
-        return sugar_cached("Relationships/relationships.cache.php");
-    }
-
+    
     public function getRelationshipsBetweenModules($mod1, $mod2, $type = "")
     {
         $result = array();
