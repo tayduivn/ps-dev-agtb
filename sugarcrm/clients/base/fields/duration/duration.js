@@ -200,7 +200,10 @@
 
         // Do not change the end date if the start date has not been set or if the start date
         // and the end date have been changed at the same time.
-        if (!startDateString || (changedAttributes.date_start && changedAttributes.date_end)) {
+        if (!startDateString ||
+            (changedAttributes.date_start && changedAttributes.date_end) ||
+            !app.acl.hasAccessToModel('edit', this.model, 'date_end')
+        ) {
             return;
         }
 
