@@ -12,6 +12,7 @@
 
 namespace Sugarcrm\SugarcrmTests\Notification;
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
 use Sugarcrm\Sugarcrm\Notification\EmitterRegistry;
 use Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry;
 use Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event as ApplicationEvent;
@@ -36,9 +37,6 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
     /** @var \SugarTestDatabaseMock */
     protected $db;
-
-    /** @var \SugarQuery $sugarQuery */
-    protected $sugarQuery = null;
 
     /**
      * {@inheritdoc}
@@ -135,6 +133,9 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $callFilter->method('getOrder')->willReturn(rand(100, 199));
         $callFilter->method('supports')->willReturn(true);
         $callFilter->method('__toString')->willReturn('CallFilterCRYS1301');
+        $callFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
+            $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+        });
 
         /** @var SubscriptionFilterInterface|\PHPUnit_Framework_MockObject_MockObject $meetingFilter */
         $meetingFilter = $this->getMock(
@@ -145,6 +146,9 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         });
         $meetingFilter->method('getOrder')->willReturn(rand(200, 299));
         $meetingFilter->method('__toString')->willReturn('MeetingFilterCRYS1301');
+        $meetingFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
+            $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+        });
 
         /** @var SubscriptionFilterInterface|\PHPUnit_Framework_MockObject_MockObject $meetingFilter */
         $userFilter = $this->getMock(
@@ -153,9 +157,9 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $userFilter->method('getOrder')->willReturn(rand(300, 399));
         $userFilter->method('supports')->willReturn(true);
         $userFilter->method('__toString')->willReturn('UserFilterCRYS1301');
-
-        $this->sugarQuery = new \SugarQuery();
-        \SugarTestReflection::setProtectedValue($this->sugarQuery, 'db', $this->db);
+        $userFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
+            $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+        });
 
         $this->subscriptionsRegistry = $this->getMock(
             'Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry',
@@ -163,15 +167,11 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'getSubscriptionFilterRegistry',
                 'getCarrierRegistry',
                 'getCarrierStatus',
-                'getBaseSugarQuery',
             )
         );
         $this->subscriptionsRegistry->method('getSubscriptionFilterRegistry')->willReturn($subscriptionFilterRegistry);
         $this->subscriptionsRegistry->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
         $this->subscriptionsRegistry->method('getCarrierStatus')->willReturn($this->carrierStatus);
-
-        $this->subscriptionsRegistry->method('getBaseSugarQuery')->willReturn($this->sugarQuery);
-
         $subscriptionFilterRegistry->method('getFilters')->willReturn(array(
             'NotSupportsFilterCRYS1301',
             'MeetingFilterCRYS1301',
@@ -199,7 +199,6 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         NotificationCenterSubscriptionCRYS1301::$savedArrayFields = array();
         NotificationCenterSubscriptionCRYS1301::$markDeleted = array();
         BeanEventCRYS1301::$currentBean = null;
-        \SugarTestReflection::setProtectedValue($this->sugarQuery, 'db', null);
         \SugarTestHelper::tearDown();
         parent::tearDown();
     }
@@ -229,7 +228,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'globalConfig' => array(
                 'beans' => array(
                     'ApplicationTypeNotReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'application',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -238,7 +237,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'ApplicationTypeNotSuitableGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'application',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -247,7 +246,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'ModuleTypeReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -256,7 +255,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'BeanTypeReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'bean',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -265,7 +264,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'ModuleTypeWrongFilterNotReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -274,7 +273,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'ModuleTypeBeanEventReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'MeetingFilterCRYS1301',
@@ -283,7 +282,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'ModuleTypeNotSupportedFilter' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'NotSupportsFilterCRYS1301',
@@ -292,7 +291,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'event_name' => 'reminder',
                     ),
                     'BeanEventShouldSetBean' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'bean',
                         'emitter_module_name' => 'UsersCRYS1301',
                         'filter_name' => 'UserFilterCRYS1301',
@@ -412,10 +411,10 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         return array(
             'globalConfig' => array(
-                'idUser' => create_guid(),
+                'idUser' => Uuid::uuid1(),
                 'beans' => array(
                     'ApplicationTypeNotReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'application',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -423,7 +422,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'carrier_option' => $carrierOption1,
                     ),
                     'ModuleTypeReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'CallsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -431,7 +430,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'carrier_option' => $carrierOption2,
                     ),
                     'ModuleTypeWrongFilterNotReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'CallFilterCRYS1301',
@@ -439,7 +438,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'carrier_option' => $carrierOption3,
                     ),
                     'ModuleTypeBeanEventReturnGlobalConfig' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'MeetingFilterCRYS1301',
@@ -447,7 +446,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'carrier_option' => $carrierOption4,
                     ),
                     'ModuleTypeNotSupportedFilter' => array(
-                        'id' => create_guid(),
+                        'id' => Uuid::uuid1(),
                         'type' => 'module',
                         'emitter_module_name' => 'MeetingsCRYS1301',
                         'filter_name' => 'NotSupportsFilterCRYS1301',
@@ -551,9 +550,9 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             'beanWithoutEmitter' => array(
-                'idUser' => create_guid(),
+                'idUser' => Uuid::uuid1(),
                 'beanData' => array(
-                    'id' => create_guid(),
+                    'id' => Uuid::uuid1(),
                     'type' => 'type' . rand(1000, 1999),
                     'emitter_module_name' => 'MeetingCRYS1301',
                     'filter_name' => 'CallFilterCRYS1301',
@@ -598,7 +597,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
     public static function setGlobalConfigurationProvider()
     {
         $callsCallFilterCarrierBean = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'CallsCRYS1301',
             'filter_name' => 'CallFilterCRYS1301',
@@ -607,7 +606,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'is_suitable' => true,
         );
         $meetingsMeetingFilterCarrierBean1 = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'MeetingsCRYS1301',
             'filter_name' => 'MeetingFilterCRYS1301',
@@ -616,7 +615,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'is_suitable' => true,
         );
         $meetingsMeetingFilterCarrierBean2 = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'MeetingsCRYS1301',
             'filter_name' => 'MeetingFilterCRYS1301',
@@ -625,7 +624,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'is_suitable' => true,
         );
         $meetingsNotSupportsFilterCarrierBean = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'MeetingsCRYS1301',
             'filter_name' => 'NotSupportsFilterCRYS1301',
@@ -634,7 +633,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'is_suitable' => true,
         );
         $usersUserFilterCarrierBean = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'UsersCRYS1301',
             'filter_name' => 'UserFilterCRYS1301',
@@ -643,7 +642,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             'is_suitable' => true,
         );
         $emptyCarrierBean = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'module',
             'emitter_module_name' => 'CallsCRYS1301',
             'filter_name' => 'CallFilterCRYS1301',
@@ -940,7 +939,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $beans = array(
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'CallsCRYS1301',
                 'filter_name' => 'CallFilterCRYS1301',
@@ -949,7 +948,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => true,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'CallsCRYS1301',
                 'filter_name' => 'CallFilterCRYS1301',
@@ -958,7 +957,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => false,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'CallsCRYS1301',
                 'filter_name' => 'CallFilterCRYS1301',
@@ -967,7 +966,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => true,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'MeetingsCRYS1301',
                 'filter_name' => 'MeetingFilterCRYS1301',
@@ -976,7 +975,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => true,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'MeetingCRYS1301',
                 'filter_name' => 'MeetingFilterCRYS1301',
@@ -985,7 +984,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => true,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'MeetingsCRYS1301',
                 'filter_name' => 'NotSupportsFilterCRYS1301',
@@ -994,7 +993,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'is_suitable' => true,
             ),
             array(
-                'id' => create_guid(),
+                'id' => Uuid::uuid1(),
                 'type' => 'module',
                 'emitter_module_name' => 'UsersCRYS1301',
                 'filter_name' => 'UserFilterCRYS1301',
@@ -1004,7 +1003,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $idUser = create_guid();
+        $idUser = Uuid::uuid1();
         return array(
             'setConfigReturnsConfig' => array(
                 'idUser' => $idUser,
@@ -1247,31 +1246,31 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $users = array(
             array(
-                'user_id' => create_guid(),
+                'user_id' => Uuid::uuid1(),
                 'carrier_name' => $carrierName1,
                 'type' => 'bean',
                 'carrier_option' => $carrierOption1,
             ),
             array(
-                'user_id' => create_guid(),
+                'user_id' => Uuid::uuid1(),
                 'carrier_name' => $carrierName2,
                 'type' => 'main',
                 'carrier_option' => $carrierOption2,
             ),
             array(
-                'user_id' => create_guid(),
+                'user_id' => Uuid::uuid1(),
                 'carrier_name' => $carrierName3,
                 'type' => 'bean' . rand(1000, 1999),
                 'carrier_option' => $carrierOption3,
             ),
             array(
-                'user_id' => create_guid(),
+                'user_id' => Uuid::uuid1(),
                 'carrier_name' => $carrierName4,
                 'type' => 'bean',
                 'carrier_option' => $carrierOption4,
             ),
             array(
-                'user_id' => create_guid(),
+                'user_id' => Uuid::uuid1(),
                 'carrier_name' => '',
                 'type' => '',
                 'carrier_option' => '',
@@ -1279,7 +1278,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         );
 
         $globalConfigMain = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'main',
             'emitter_module_name' => 'CallCRYS1301',
             'filter_name' => 'CallFilterCRYS1301',
@@ -1288,7 +1287,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         );
 
         $globalConfigMainEmptyCarrier = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'main',
             'emitter_module_name' => 'CallCRYS1301',
             'filter_name' => 'CallFilterCRYS1301',
@@ -1297,7 +1296,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         );
 
         $globalConfigBean = array(
-            'id' => create_guid(),
+            'id' => Uuid::uuid1(),
             'type' => 'bean',
             'emitter_module_name' => 'CallCRYS1301',
             'filter_name' => 'CallFilterCRYS1301',
