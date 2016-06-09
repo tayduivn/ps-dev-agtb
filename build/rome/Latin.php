@@ -93,7 +93,11 @@ class Latin
                         }
                     }
                     $lic_cont = trim(file_get_contents($this->baseDir . '/sugarcrm/LICENSE'));
-                    $subbed_lic = str_replace(PHP_EOL, PHP_EOL . ' * ', $lic_cont);
+                    $subbed_lic = str_replace(
+                        PHP_EOL . ' * ' . PHP_EOL,
+                        PHP_EOL . ' *' . PHP_EOL,
+                        str_replace(PHP_EOL, PHP_EOL . ' * ', $lic_cont)
+                    );
                     $license = '/*' . PHP_EOL . ' * ' . $subbed_lic . PHP_EOL . ' */' . PHP_EOL;
                     $lang_config_path = "{$this->rome->buildPath}/$flav/sugarcrm/install/lang.config.php";
                     $config_vars = var_export($langConfig, true);
