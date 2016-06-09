@@ -263,8 +263,10 @@
             this.$(this.selectors.load).toggleClass('hide', false);
             this.$(this.selectors.rslt).toggleClass('hide', true);
             this.companyList = null;
+            tester = new RegExp(/\*$/, 'i');
+            companyName = tester.test(companyName) ? companyName : companyName + '*';
             var balParams = {
-                'KeywordText': companyName
+                'OrganizationName': companyName
             };
             //setting balParams to context because we want to retain the api parameters
             //without the pagination related parameters
