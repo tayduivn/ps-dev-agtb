@@ -883,6 +883,9 @@ class HealthCheckScanner
         // Check Process Author invalid fields in activities and business rules
         $this->checkPAInvalidFields();
 
+        // Check if function random_bytes() exists or random_compat library is able to provide this function
+        $this->checkCSPRNG();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -2820,6 +2823,41 @@ class HealthCheckScanner
         }
         if (!empty($files)) {
             $this->updateStatus("foundCustomElastic", $files);
+        }
+    }
+
+    /**
+     * Check if random_bytes() function exists and works properly.
+     * This function is required for cryptographically secure pseudorandom number generation.
+     *
+     * If function doesn't exist random_compat library will try to use extensions to define this function.
+     * If no extensions or system files/libraries acessible for random_compat warnings noRandomCompat/noCSPRNGfound
+     * will be raised.
+     *
+     */
+    protected function checkCSPRNG()
+    {
+        if (!function_exists('random_bytes')) {
+            $manifestFile = $this->upgrader->context['extract_dir'] . '/manifest.php';
+
+            if (file_exists($manifestFile)) {
+                include $manifestFile;
+                $packagePath = $this->upgrader->context['extract_dir'] . '/' . $manifest['copy_files']['from_dir'];
+                $lib = $packagePath . '/vendor/paragonie/random_compat/lib/random.php';
+                if (file_exists($lib)) {
+                    include $lib;
+                }
+            }
+        }
+
+        if (!function_exists('random_bytes')) {
+            $this->updateStatus('noRandomCompat');
+        } else {
+            try {
+                random_bytes(4);
+            } catch (Exception $e) {
+                $this->updateStatus('noCSPRNGfound');
+            }
         }
     }
 
