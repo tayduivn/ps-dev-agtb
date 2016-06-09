@@ -60,7 +60,7 @@ class ImportController extends SugarController
             elseif ( $this->bean->bean_implements('ACL')){
                 if(!ACLController::checkAccess($this->bean->module_dir, 'import', true)){
                     ACLController::displayNoAccess();
-                    sugar_die('');
+                    sugar_cleanup(true);
                 }
             }
         }
