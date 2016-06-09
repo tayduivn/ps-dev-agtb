@@ -38,6 +38,7 @@ class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $teams = BeanFactory::getBean('TeamSets');
         $data = array(
+            'state' => Email::EMAIL_STATE_ARCHIVED,
             'team_id' => 'East',
             'team_set_id' => $teams->addTeams(array('East', 'West')),
             //BEGIN SUGARCRM flav=ent ONLY

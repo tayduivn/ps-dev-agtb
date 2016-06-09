@@ -310,6 +310,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Change the teams on the email.
         $teams = BeanFactory::getBean('TeamSets');
+        $email->state = Email::EMAIL_STATE_ARCHIVED;
         $email->team_id = 'East';
         $email->team_set_id = $teams->addTeams(array('East', 'West'));
         //BEGIN SUGARCRM flav=ent ONLY
@@ -333,6 +334,68 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             'note2.team_set_selected_id does not match'
         );
         //END SUGARCRM flav=ent ONLY
+    }
+
+    /**
+     * @covers ::updateTeamsForAttachment
+     */
+    public function testUpdateTeamsForAttachment_EmailIsADraft_TeamIsPrivateTeamOfAssignedUser()
+    {
+        $note = $this->getMockBuilder('Note')
+            ->disableOriginalConstructor()
+            ->setMethods(array('save'))
+            ->getMock();
+        $note->expects($this->once())->method('save');
+
+        $email = BeanFactory::newBean('Emails');
+        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->assigned_user_id = $GLOBALS['current_user']->id;
+        $email->team_id = 'East';
+        $email->team_set_id = create_guid();
+        //BEGIN SUGARCRM flav=ent ONLY
+        $email->team_set_selected_id = 'East';
+        //END SUGARCRM flav=ent ONLY
+        $email->updateTeamsForAttachment($note);
+
+        $expected = $GLOBALS['current_user']->getPrivateTeam();
+        $this->assertEquals($expected, $note->team_set_id, 'team_set_id does not match');
+        $this->assertEquals($expected, $note->team_id, 'team_id does not match');
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->assertEquals($expected, $note->team_set_selected_id, 'team_set_selected_id does not match');
+        //END SUGARCRM flav=ent ONLY
+    }
+
+    /**
+     * @covers ::updateTeamsForAttachment
+     */
+    public function testUpdateTeamsForAttachment_EmailIsADraft_NoAssignedUser()
+    {
+        $teamSetId = create_guid();
+        $note = $this->getMockBuilder('Note')
+            ->disableOriginalConstructor()
+            ->setMethods(array('save'))
+            ->getMock();
+        $note->expects($this->never())->method('save');
+        $note->team_id = 'West';
+        $note->team_set_id = $teamSetId;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $note->team_set_selected_id = 'West';
+        //END SUGARCRM flav=ent ONLY
+
+        $email = BeanFactory::newBean('Emails');
+        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->assigned_user_id = null;
+        $email->team_id = 'East';
+        $email->team_set_id = create_guid();
+        //BEGIN SUGARCRM flav=ent ONLY
+        $email->team_set_selected_id = 'East';
+        //END SUGARCRM flav=ent ONLY
+        $email->updateTeamsForAttachment($note);
+
+        $this->assertEquals($teamSetId, $note->team_set_id, 'team_set_id should not have changed');
+        $this->assertEquals('West', $note->team_id, 'team_id should not have changed');
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->assertEquals('West', $note->team_set_selected_id, 'team_set_selected_id should not have changed');
     }
 }
 

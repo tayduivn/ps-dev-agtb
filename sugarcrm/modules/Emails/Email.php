@@ -1185,17 +1185,42 @@ class Email extends SugarBean {
     }
 
     /**
-     * Updates an attachment's teams fields to match the teams on the email.
+     * Updates an attachment's teams fields to match the teams on the email. An attachment is only visible to those who
+     * have access to the email. When an email is a draft, the owner's private team is used for its attachments since
+     * only the owner can access a draft.
      *
      * @param Note $attachment
      */
     public function updateTeamsForAttachment(Note $attachment)
     {
-        $attachment->team_set_id = $this->team_set_id;
-        $attachment->team_id = $this->team_id;
-        //BEGIN SUGARCRM flav=ent ONLY
-        $attachment->team_set_selected_id = $this->team_set_selected_id;
-        //END SUGARCRM flav=ent ONLY
+        if ($this->state === static::EMAIL_STATE_DRAFT) {
+            $user = BeanFactory::retrieveBean(
+                'Users',
+                $this->assigned_user_id,
+                array('disable_row_level_security' => true)
+            );
+            $privateTeam = $user ? $user->getPrivateTeam() : null;
+
+            if (!$privateTeam) {
+                $message = "Could not get the private team for Users/{$this->assigned_user_id}. The fields " .
+                    "team_set_id, team_id, and team_set_selected_id could not assigned appropriately for attachment " .
+                    "Notes/{$attachment->id}";
+                $GLOBALS['log']->error($message);
+                return;
+            }
+
+            $attachment->team_set_id = $privateTeam;
+            $attachment->team_id = $privateTeam;
+            //BEGIN SUGARCRM flav=ent ONLY
+            $attachment->team_set_selected_id = $privateTeam;
+            //END SUGARCRM flav=ent ONLY
+        } else {
+            $attachment->team_set_id = $this->team_set_id;
+            $attachment->team_id = $this->team_id;
+            //BEGIN SUGARCRM flav=ent ONLY
+            $attachment->team_set_selected_id = $this->team_set_selected_id;
+            //END SUGARCRM flav=ent ONLY
+        }
 
         if (!static::inOperation('saving_related')) {
             $attachment->save();
