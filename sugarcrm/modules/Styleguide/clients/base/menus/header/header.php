@@ -47,11 +47,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'Accounts',
         'icon' => 'fa-plus',
     ),
-    // array(
-    //     'route'=>'styleguide/tests/global.html',
-    //     'label' =>'Run Tests',
-    //     'acl_action'=>'list',
-    //     'acl_module'=>'Accounts',
-    //     'icon' => 'fa-heart',
-    // ),
 );

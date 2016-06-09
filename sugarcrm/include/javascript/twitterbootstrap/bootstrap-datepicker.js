@@ -773,6 +773,7 @@
 								// year length is 1 or 2 (already disallowed empty "surrounding" parts)
 								if (len < 3) {
 									date.setFullYear(century() + twoDigitString(val));
+                                    year = date.getFullYear();
 								}
 								// e.g. no reasonable way to handle 2000 + 113 
 								else if (len === 3) {
