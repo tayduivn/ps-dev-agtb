@@ -1,0 +1,102 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Lists filtered records.
+</span>
+
+<h2>Summary</h2>
+<span class="lead">
+    Adds additional operations to <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a> that are
+    specific to Emails. A special macro, <b>$current_user_id</b>, is a convenience that allows for finding emails
+    involving the current user.
+</span>
+
+<h3>Filter Expressions</h3>
+<span class="lead">
+The additional filters:
+</span>
+
+<h4>Emails Sent By</h4>
+<div class="well well-small">
+    The <b>$from</b> operation allows you to find emails sent by one or more people. When the person is not known, only
+    the email address is stored. In such a case, the <b>participant_module</b> is EmailAddresses and the
+    <b>participant_id</b> is the ID of the email address from the database. In the example, you would find any emails
+    sent by the current user, the Contacts record with ID "fa300a0e-0ad1-b322-9601-512d0983c19a", or the email address
+    with ID "b0701501-1fab-8ae7-3942-540da93f5017".
+
+    <h5>Example</h5>
+<pre class="pre-scrollable">
+{
+    "filter":[
+        {
+            "$from":{
+                {
+                    "participant_module":"Users",
+                    "participant_id":"$current_user_id"
+                },
+                {
+                    "participant_module":"Contacts",
+                    "participant_id":"fa300a0e-0ad1-b322-9601-512d0983c19a"
+                },
+                {
+                    "participant_module":"EmailAddresses",
+                    "participant_id":"b0701501-1fab-8ae7-3942-540da93f5017"
+                }
+            }
+        }
+    ]
+}
+</pre>
+
+    <span class="lead">
+        Below is a list of operation types in addition to those from
+        <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a>:
+    </span>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Operation</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                $from
+            </td>
+            <td>
+                Finds emails sent by one or more people as specified as an array.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v11
+        </td>
+        <td>
+            Added <code>$from</code> operation to <code>/Emails/filter</code> GET endpoint.
+        </td>
+    </tr>
+</table>

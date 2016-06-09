@@ -33,6 +33,26 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
+            'id' => 'my_sent',
+            'name' => 'LBL_FILTER_MY_SENT',
+            'filter_definition' => array(
+                array(
+                    '$from' => array(
+                        array(
+                            'participant_module' => 'Users',
+                            'participant_id' => '$current_user_id',
+                        ),
+                    ),
+                ),
+                array(
+                    'state' => array(
+                        '$in' => array('Archived'),
+                    ),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
             'id' => 'my_drafts',
             'name' => 'LBL_FILTER_MY_DRAFTS',
             'filter_definition' => array(
