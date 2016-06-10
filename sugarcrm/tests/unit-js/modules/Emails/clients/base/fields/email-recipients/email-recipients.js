@@ -207,18 +207,56 @@ describe('Emails.fields.email-recipients', function() {
         });
 
         describe('format options the user can select', function() {
-            it('Should return the recipient name and email address when they both exist.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com', name: 'Will Westin'}),
-                    actual = field._formatResult(recipient);
+            beforeEach(function() {
+                field.select2ResultTemplate = sinon.stub();
+            });
 
-                expect(actual).toEqual('"Will Westin" &lt;will@example.com&gt;');
+            it('Should return the recipient name and email address when they both exist.', function() {
+                var recipient = app.data.createBean(
+                    'Users',
+                    {
+                        email_address: 'will@example.com',
+                        name: 'Will Westin',
+                        module: 'Users'
+                    }
+                );
+
+                field._formatResult(recipient);
+                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
+                    value: '"Will Westin" <will@example.com>',
+                    module: 'Users'
+                });
             });
 
             it('Should return the recipient email address when name does not exist.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'}),
-                    actual = field._formatResult(recipient);
+                var recipient = app.data.createBean(
+                    'Users',
+                    {
+                        email_address: 'will@example.com',
+                        module: 'Users'
+                    }
+                );
 
-                expect(actual).toEqual(recipient.get('email_address'));
+                field._formatResult(recipient);
+                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
+                    value: recipient.get('email_address'),
+                    module: 'Users'
+                });
+            });
+
+            it('Should pass a blank module when recipient does not have one.', function() {
+                var recipient = app.data.createBean(
+                    'Users',
+                    {
+                        email_address: 'will@example.com'
+                    }
+                );
+
+                field._formatResult(recipient);
+                expect(field.select2ResultTemplate).toHaveBeenCalledWith({
+                    value: recipient.get('email_address'),
+                    module: ''
+                });
             });
         });
 

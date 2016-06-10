@@ -41,6 +41,12 @@
                 this.model.set(this.name, []);
             }
         }
+
+        this.select2ResultTemplate = app.template.getField(
+            this.type,
+            'select2-result',
+            this.module
+        );
     },
 
     /**
@@ -212,7 +218,7 @@
         // the first 10 results should be enough
         options.max_num = 10;
         // build the URL for fetching recipients that match the search term
-        url = app.api.buildURL('Mail', 'recipients/find', null, options);
+        url = app.api.buildURL('Emails', 'recipients/find', null, options);
         // create the callbacks
         callbacks.success = function(result) {
             // the api returns objects formatted such that sidecar can convert
@@ -298,16 +304,19 @@
      * @private
      */
     _formatResult: function(recipient) {
-        var format,
-            email = Handlebars.Utils.escapeExpression(recipient.get('email_address'));
+        var value;
+        var module = recipient.get('module') || '';
 
         if (recipient.get('name')) {
-            format = '"' + Handlebars.Utils.escapeExpression(recipient.get('name')) + '" &lt;' + email + '&gt;';
+            value = '"' + recipient.get('name') + '" <' + recipient.get('email_address') + '>';
         } else {
-            format = email;
+            value = recipient.get('email_address');
         }
 
-        return format;
+        return this.select2ResultTemplate({
+            value: value,
+            module: module
+        });
     },
 
     /**

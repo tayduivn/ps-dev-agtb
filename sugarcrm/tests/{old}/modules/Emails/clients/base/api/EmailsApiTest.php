@@ -306,4 +306,128 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($actual[$args[0]], "Should have set the value for key '{$args[0]}' to true.");
         $this->assertFalse($actual[$args[1]], "Should have set the value for key '{$args[1]}' to false.");
     }
+
+    public function testFindRecipients_NextOffsetIsLessThanTotalRecords_ReturnsRealNextOffset()
+    {
+        $args = array(
+            'offset' => 0,
+            'max_num' => 5,
+        );
+
+        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
+        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->any())
+            ->method('find')
+            ->will($this->returnValue(array_pad(array(10), 10, 0)));
+
+        $mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $response = $mailApi->findRecipients($this->service, $args);
+        $expected = 5;
+        $actual = $response['next_offset'];
+        $this->assertEquals($expected, $actual, "The next offset should be {$expected}.");
+    }
+
+    public function testFindRecipients_NextOffsetIsGreaterThanTotalRecords_ReturnsNextOffsetAsNegativeOne()
+    {
+        $args = array(
+            'offset' => 5,
+            'max_num' => 5,
+        );
+
+        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
+        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->any())
+            ->method('findCount')
+            ->will($this->returnValue(4));
+        $emailRecipientsServiceMock->expects($this->any())
+            ->method('find')
+            ->will($this->returnValue(array()));
+
+        $mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $response = $mailApi->findRecipients($this->service, $args);
+        $expected = -1;
+        $actual   = $response['next_offset'];
+        $this->assertEquals($expected, $actual, 'The next offset should be -1.');
+    }
+
+    public function testFindRecipients_OffsetIsEnd_ReturnsNextOffsetAsNegativeOne()
+    {
+        $args = array(
+            'offset' => 'end',
+        );
+
+        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
+        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->never())->method('findCount');
+        $emailRecipientsServiceMock->expects($this->never())->method('find');
+
+        $mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $response = $mailApi->findRecipients($this->service, $args);
+        $expected = -1;
+        $actual   = $response['next_offset'];
+        $this->assertEquals($expected, $actual, 'The next offset should be -1.');
+    }
+
+    public function testFindRecipients_NoArguments_CallsFindCountAndFindWithDefaults()
+    {
+        $args = array();
+
+        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
+        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->once())
+            ->method('find')
+            ->with(
+                $this->isEmpty(),
+                $this->equalTo('LBL_DROPDOWN_LIST_ALL'),
+                $this->isEmpty(),
+                $this->equalTo(21),
+                $this->equalTo(0)
+            )
+            ->will($this->returnValue(array()));
+
+        $mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $mailApi->findRecipients($this->service, $args);
+    }
+
+    public function testFindRecipients_HasAllArguments_CallsFindCountAndFindWithArguments()
+    {
+        $args = array(
+            'q' => 'foo',
+            'module_list' => 'contacts',
+            'order_by' => 'name,email:desc',
+            'max_num' => 5,
+            'offset' => 3,
+        );
+
+        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
+        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $emailRecipientsServiceMock->expects($this->once())
+            ->method('find')
+            ->with(
+                $this->equalTo($args['q']),
+                $this->equalTo($args['module_list']),
+                $this->equalTo(array('name' => 'ASC', 'email' => 'DESC')),
+                $this->equalTo(6),
+                $this->equalTo(3)
+            )
+            ->will($this->returnValue(array()));
+
+        $mailApi->expects($this->any())
+            ->method('getEmailRecipientsService')
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $mailApi->findRecipients($this->service, $args);
+    }
 }

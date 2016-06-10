@@ -100,6 +100,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Lookup Email Recipient Info',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
             ),
+            // findRecipients is deprecated. Please use findRecipients on EmailsApi instead
             'listRecipients' => array(
                 'reqType' => 'GET',
                 'path' => array('Mail', 'recipients', 'find'),
@@ -266,6 +267,8 @@ class MailApi extends ModuleApi
      * @param ServiceBase $api
      * @param array $args
      * @return array
+     * @deprecated 7.9.0 This function has been moved to EmailsApi and will be
+     *   removed in 7.11.0.
      */
     public function findRecipients(ServiceBase $api, array $args)
     {
