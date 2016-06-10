@@ -131,6 +131,8 @@ class Handler implements RunnableInterface
             $calDavBean->getSynchronizationObject()->setJobCounter();
             $queueItem->save();
             $calDavBean->retrieve(-1, true, false);
+
+            \BeanFactory::clearCache();
         }
 
         $this->logger->debug("CalDav: Job sets global current user to User($currentUser->id)");
@@ -184,7 +186,7 @@ class Handler implements RunnableInterface
 
         $this->listener = new ExportListener($bean);
         $this->hookHandler->getExportNotifier()->attach($this->listener);
-        
+
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $importData);
         $result = $adapter->import($importData, $bean);
         if ($result != AdapterInterface::NOTHING) {
