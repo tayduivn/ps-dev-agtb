@@ -231,19 +231,14 @@ class FontManager{
      * This method fill the fontList with all the fonts available
      */
     public function listFontFiles(){
-        $this->fontList=array();
-        if(file_exists($cachedfile = sugar_cached("Sugarpdf/cachedFontList.php"))) {
-            require $cachedfile;
-            $this->fontList=$cachedFontList;
-            return true;
-        }else{
+        $this->fontList = sugar_cache_retrieve('font_list');
+        if (empty($this->fontList)) {
             if($this->parseFolder()){
-                $cacheDir = create_cache_directory('Sugarpdf/');
-                write_array_to_file('cachedFontList', $this->fontList, $cacheDir . 'cachedFontList.php');
-                return true;
+                sugar_cache_put('font_list', $this->fontList);
             }
         }
-        return false;
+
+        return !empty($this->fontList);
     }
     /**
      * This method generate an array of font which can be use with get_select_options_with_id
@@ -292,7 +287,7 @@ class FontManager{
                 if(file_exists($this->fontPath.$this->getFilenameShort().".z") && is_writable($this->fontPath.$this->getFilenameShort().".z")){
                     unlink($this->fontPath.$this->getFilenameShort().".z");
                 }
-                $this->clearCachedFile();
+                $this->clearCachedFontList();
                 return true;
             }else{
                 array_push($this->errors, $this->fontPath.$this->filename . " " . translate("ERR_FONT_NOT_WRITABLE","Configurator"));
@@ -381,21 +376,22 @@ class FontManager{
             }
 
         }
-        $this->clearCachedFile();
+        $this->clearCachedFontList();
         return $error;
     }
     /**
      * This method  delete the cached file cachedFontList.php
      * @return boolean
      */
-    public function clearCachedFile(){
+    public function clearCachedFontList()
+    {
         global $current_user;
         if(!$current_user->isDeveloperForAnyModule()){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
         }
-         if(file_exists($cachedfile = sugar_cached("Sugarpdf/cachedFontList.php"))) {
-            return unlink($cachedfile);
-        }
+
+        sugar_cache_clear('font_list');
+
         return true;
     }
     /**
