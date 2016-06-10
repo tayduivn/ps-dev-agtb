@@ -18,4 +18,16 @@ class Addressee extends Person {
     public $object_name = 'Addressee';
     public $object_names = 'Addressees';
     public $table_name = 'addressees';
+
+    /**
+     * @inheritdoc
+     */
+    public function save($check_notify = false)
+    {
+        if (!$this->assigned_user_id) {
+            $this->assigned_user_id = $GLOBALS['current_user']->id;
+        }
+
+        return parent::save($check_notify);
+    }
 }
