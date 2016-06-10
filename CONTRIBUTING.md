@@ -72,7 +72,7 @@ Composer is a tool for dependency management in PHP. It allows you to declare th
 
 SugarCRM requires composer to manage its dev dependencies and provide better support on versioning across external libraries, while allowing easier maintenance when keeping those libraries up to date.
 
-To install composer, please follow the official information provided in the [composer page][Composer install]. It has all the information available to install composer in your system.
+To install composer, please follow the official information provided in the [composer page][Composer install]. It has all the information available to install composer on your system.
 
 #### Get the SugarCRM Source Code
 
@@ -106,7 +106,7 @@ See [GitHub using pull requests][GitHub using pull requests] for more informatio
 
 Now that SugarCRM is installed, check that all unit tests pass on your environment as explained in the dedicated [tests section](#running-sugarcrm-tests).
 * Make sure you have added the necessary tests for your changes.
-* Run _all_ the tests to assure nothing else was accidentally broken.
+* Run _all_ the tests to ensure nothing else was accidentally broken.
 
 #### Build the codebase
 
@@ -193,6 +193,8 @@ $ git rebase upstream/master
 ```
 
 > Replace `master` with `7_1_x` if you are working on a bug fix
+> Note: After this if you do not see latest commits in your branch, then you may need to execute following:
+>       git pull --rebase upstream 7_1_x
 
 When doing the `rebase` command, you might have to fix merge conflicts. `git status` will show you the *unmerged* files. Resolve all the conflicts, then continue the rebase:
 
@@ -342,11 +344,31 @@ Check the code coverage by opening the generated `cov/index.html` page in a brow
 
 ### Client side test suite
 
-The SugarCRM client side test suite is composed of three different tools: [Karma test runner], [Jasmine] and [Grunt the Javascript task runner].
+The SugarCRM client side test suite is composed of three different tools: [Karma test runner], [Jasmine] and [Gulp the Streaming build system].
 
 #### How to install
 
-First you need to have [NodeJS] running on your local machine. Then, you need to build the several flavors of Sugar (PRO, ENT) and install all the dependent packages for each:
+First you need to have [NodeJS] running on your local machine.
+
+##### Using Sugar's npm registry
+
+SugarCRM caches its npm dependencies to improve availability. To use the new repo, do the following:
+
+```bash
+$ npm cache clear
+$ npm config set registry http://npm-cache.qa.sugarcrm.net:8181/content/groups/npm/
+```
+
+We also have a custom download proxy for one of our core testing dependencies, PhantomJS.
+To use it, please run:
+
+```bash
+$ npm config set phantomjs_cdnurl http://sugar-ci.s3.amazonaws.com/npm-downloads
+```
+
+#### Installing dependencies
+
+Next, you need to build the several flavors of Sugar (PRO, ENT) and install all the dependent packages for each:
 
 ```bash
 $ cd <sugarcrm>
@@ -360,37 +382,89 @@ $ npm install
 
 #### Tasks
 
-After the installation process finishes you're ready to check the impact of your modifications, by running the tasks bellow:
+After the installation process finishes you're ready to check the impact of your modifications, by running the tasks below:
 
-##### karma:ci
+##### karma
 
-This task is pre-configured with CI settings and is ideal to use before submitting your pull requests thus detecting any major problems before they happen.
-
-```bash
-$ cd <sugarcrm>
-$ ./node_modules/grunt-cli/bin/grunt karma:ci
-```
-
-```bash
-$ cd <sugarcrm/sidecar>
-$ ./node_modules/grunt-cli/bin/grunt karma:ci
-```
-
-##### karma:ci-coverage
-
-This task is pre-configured with CI settings and is responsible for generating CI code coverage reports. Also, this task notifies you about the impact your pull requests might have on the end result of the tests.
+This task is pre-configured with CI settings and is ideal to use before submitting your pull requests, thus detecting any major problems before they happen.
 
 ```bash
 $ cd <sugarcrm>
-$ ./node_modules/grunt-cli/bin/grunt karma:ci-coverage [--path <path>]
+$ node_modules/gulp/bin/gulp.js karma [--browsers <b1,...>]
 ```
+
+##### karma --dev
+
+Targeted at daily development, notifies you about the impact that your pull requests might have on the end result of the tests.
+
+By having the auto watch flag enabled you only need to run the task once before starting new developments. It will then listen for file changes and act accordingly by automatically triggering a new test run.
 
 ```bash
-$ cd <sugarcrm/sidecar>
-$ ./node_modules/grunt-cli/bin/grunt karma:ci-coverage [--path <path>]
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js karma --dev [--browsers <b1,...>]
 ```
 
-If the `--path` option isn't supplied, the coverage reports are generated into a temporary folder. Its path is printed to the terminal while the task is executed.
+##### karma --manual
+
+With this option, you can trigger the tests by launching any browser and visiting the URL where karma web server is listening (by default it is listening on 0.0.0.0:9876 HTTP). This is useful to test browsers like IE while running in virtual machines. Note that this parameter is not compatible with any other parameters.
+
+```bash
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js karma --manual
+```
+
+##### karma --ci
+
+This option generates additional XML report after the tests have finished running. The file `test-results.xml` is created in path and it contains information for friendly display on CI.
+
+```bash
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js karma --ci [--browsers <b1,...>] [--path <path>]
+```
+
+##### karma --coverage
+ 
+ Targeted at the final stage of development. Besides notifying you about the impact that your pull requests might have on the end result of the tests, it also displays the current code coverage.
+ 
+ ```bash
+ $ cd <sugarcrm>
+ $ node_modules/gulp/bin/gulp.js karma --coverage [--browsers <b1,...>] [--path <path>]
+ ```
+ 
+This task uses _coverage_ and _dots_ as reporters and generates two different types of reports, text based (printed on terminal) and _HTML_.
+
+If the `--path` option isn't supplied, the _HTML_ based report is generated into a temporary folder. Its path is printed to the terminal while the task is executed.
+
+##### karma --sauce
+
+This task is pre-configured for running Karma tests on IE 11 on Sauce Labs. It is configured to be suitable for CI as well.
+You must have the environment variables `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY` predefined.
+
+```bash
+$ cd <sugarcrm>
+$ SAUCE_USERNAME=<user> SAUCE_ACCESS_KEY=<access_key> node_modules/gulp/bin/gulp.js karma --sauce [--browsers <b1,...>]
+```
+
+**Note that `SAUCE_ACCESS_KEY` is NOT the password, it's a token.**
+
+This task does not support the browsers specified by `--browsers`; instead, the options are `sl_safari`, `sl_firefox`,
+and `sl_ie` mapping to IE 11 (on Windows 7), Safari 9 (on OS X 10.11) and Firefox 44 (on Linux) respectively.
+IE 11 (on Windows 7) is currently the default when no `--browsers` option is provided.
+
+#### Common Options
+
+The following options are available to all Karma tasks:
+
+By specifying `--browsers` you are able to tell against which browsers this task should run against.
+If no browser is specified, `Chrome` is used by default for the `dev` task and `PhantomJS` is used by default for
+almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `Safari`, and `PhantomJS`, except for
+the `sauce` task, which has other options.
+
+<!--
+    FIXME SC-5265: uncomment this
+    By specifying `--team` you're reducing the scope of each test run by only running tests relevant to the given team.
+    Currently supported teams are: `br`, `int`, `mar`, `sc`, `ty`, and `sfa`.
+-->
 
 #### Exclusive tests
 
@@ -401,7 +475,7 @@ Exclusive tests are source based, which means that you have to edit the source c
 * `ddescribe` states that only specs within these test suites will run.
 * `iit` states that only these specific specs will run.
 
-Beware that `iit` has precedence over `ddescribe`, so it’s important to understand that this is level independent. It doesn't matter what “hierarchy” of ddescribes you might have, if an `iit` is defined that is the spec that is going to run.
+Beware that `iit` has precedence over `ddescribe`, so it’s important to understand that this is level independent. It doesn't matter what “hierarchy” of ddescribes you might have; if an `iit` is defined that is the spec that is going to run.
 
 ## Translation Changes
 If you make changes involving translatable strings, there is a special procedure to follow. See [Making Translation Changes][Making Translation Changes] for details.
@@ -419,7 +493,7 @@ If you make changes involving translatable strings, there is a special procedure
 
 [Composer install]: https://getcomposer.org/doc/00-intro.md
 
-[Grunt the Javascript task runner]: http://gruntjs.com/
+[Gulp the Streaming build system]: http://gulpjs.com/
 [Jasmine]: http://jasmine.github.io/
 [Karma test runner]: http://karma-runner.github.io/
 [NodeJS]: http://nodejs.org/
