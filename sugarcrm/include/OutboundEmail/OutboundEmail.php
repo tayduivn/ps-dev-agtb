@@ -58,6 +58,14 @@ class OutboundEmail {
      */
     protected static $sysMailerCache = null;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function OutboundEmail()
+    {
+        self::__construct();
+    }
+
 	/**
 	 * Sole constructor
 	 */

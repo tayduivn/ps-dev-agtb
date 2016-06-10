@@ -14,6 +14,15 @@ require_once('modules/ModuleBuilder/MB/MBPackageTree.php');
 require_once('modules/ModuleBuilder/Module/DropDownBrowser.php');
 
 class DropDownTree extends MBPackageTree{
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function DropDownTree()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		$this->tree = new Tree('package_tree');

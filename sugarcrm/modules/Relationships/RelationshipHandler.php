@@ -57,6 +57,14 @@ class RelationshipHandler extends Relationship {
 
 ///////////////////////////Setup and populate functions//////////////////////////////
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function RelationshipHandler($db, $base_module = '')
+    {
+        self::__construct($db, $base_module);
+    }
+
     public function __construct($db, $base_module = '')
     {
         $this->base_module = $base_module;
@@ -419,5 +427,3 @@ function get_farthest_reach(){
 
 //end class RelationshipHandler
 }
-
-?>

@@ -30,6 +30,14 @@ class DetailView extends ListView {
      */
     protected $request;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function DetailView()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -435,4 +443,3 @@ class DetailView extends ListView {
     }
 
 	}
-?>

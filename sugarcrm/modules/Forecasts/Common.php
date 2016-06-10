@@ -38,6 +38,14 @@ class Common {
 	var $timeperiod_name;
 	var $timedate;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Common()
+    {
+        self::__construct();
+    }
+
 	//class constructor.
     public function __construct()
     {

@@ -19,6 +19,15 @@ require_once 'include/Dashlets/DashletGeneric.php';
 require_once 'modules/pmse_Inbox/pmse_Inbox.php';
 
 class pmse_InboxDashlet extends DashletGeneric {
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function pmse_InboxDashlet($id, $def = null)
+    {
+        self::__construct($id, $def);
+    }
+
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;

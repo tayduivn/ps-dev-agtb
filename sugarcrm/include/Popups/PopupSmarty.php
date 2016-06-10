@@ -44,6 +44,14 @@ class PopupSmarty extends ListViewSmarty{
     var $module;
     var $massUpdateData = '';
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function PopupSmarty($seed, $module)
+    {
+        self::__construct($seed, $module);
+    }
+
     public function __construct($seed, $module)
     {
         parent::__construct();
@@ -534,4 +542,3 @@ EOQ;
 		return $qc->process($this->module);
 	}
 }
-?>

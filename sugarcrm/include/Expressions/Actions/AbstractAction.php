@@ -27,6 +27,14 @@ abstract class AbstractAction {
      */
     protected $disallowedActions = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function AbstractAction($params)
+    {
+        self::__construct($params);
+    }
+
 	/**
 	 * Actions are expressions which modify data or layouts.
 	 *

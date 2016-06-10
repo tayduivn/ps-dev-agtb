@@ -40,6 +40,14 @@ class ProcessView {
     var $top_block;
     var $bottom_block;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ProcessView($workflow_object, $target_bean)
+    {
+        self::__construct($workflow_object, $target_bean);
+    }
+
     public function __construct($workflow_object, $target_bean)
     {
         $this->xtpl = new XTemplate ('include/ListView/ProcessView.html');
@@ -1017,4 +1025,3 @@ class ProcessView {
     }
     //end class ProcessView
 }
-

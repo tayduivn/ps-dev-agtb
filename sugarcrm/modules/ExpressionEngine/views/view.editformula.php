@@ -14,6 +14,14 @@ require_once('modules/ExpressionEngine/formulaHelper.php');
 
 class ViewEditFormula extends SugarView
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewEditFormula()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		$this->options['show_footer'] = false;

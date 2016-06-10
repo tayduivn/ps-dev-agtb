@@ -20,6 +20,14 @@ class ChartsDashlet extends Dashlet {
     var $report_id;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function ChartsDashlet($id, $report_id, $def)
+    {
+        self::__construct($id, $report_id, $def);
+    }
+
+    /**
      * Constructor
      *
      * @global string current language

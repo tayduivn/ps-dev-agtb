@@ -35,6 +35,14 @@ class Crypt
     protected $moduleName;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function Crypt()
+    {
+        self::__construct();
+    }
+
+    /**
      * Constructor here set modulePath, pmse, moduleName properties to init an instance of this class
      *
      * @return Crypt

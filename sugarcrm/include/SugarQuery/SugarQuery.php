@@ -621,7 +621,7 @@ class SugarQuery
         $this->data = $this->dataItems = array();
 
         //check if short list of fields in 'group by' is supported, if not add all fields in select
-        if (empty($this->db->capabilities['short_group_by'])) {
+        if (!$this->db->supports('short_group_by')) {
             //add fields to group by
             $this->addGroupByFields();
         }

@@ -6985,6 +6985,14 @@ class Overview {
 		);
 	*/
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function Overview()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		global $dictionary;

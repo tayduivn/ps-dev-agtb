@@ -82,13 +82,14 @@ class SugarUpgradeMergeDropdowns extends UpgradeScript
             //Check for each language if the custom/include file was the last touched.
             foreach ($this->upgrader->state['dropdowns_to_merge'] as $language => $dropdowns) {
 
-                if ($dropdowns['mtime']['include'] < $dropdowns['mtime']['ext']) {
+                $isMTimeExists = array_key_exists('mtime', $dropdowns) && is_array($dropdowns['mtime']);
+                if ($isMTimeExists && $dropdowns['mtime']['include'] < $dropdowns['mtime']['ext']) {
                     unset($this->upgrader->state['dropdowns_to_merge'][$language]);
                 }
             }
             //If there was nothing left to upgrade, return.
             if ((empty($this->upgrader->state['dropdowns_to_merge']))) {
-                $this->log('**** Skipped Dropdown Lists Merge **** Nothing left to merge as mtime elimated all options');
+                $this->log('**** Skipped Dropdown Lists Merge **** Nothing left to merge as mtime eliminated all options');
                 return;
             }
         }

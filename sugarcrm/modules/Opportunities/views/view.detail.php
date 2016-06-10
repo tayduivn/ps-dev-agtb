@@ -20,10 +20,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 require_once('include/MVC/View/views/view.detail.php');
 
 class OpportunitiesViewDetail extends ViewDetail {
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function OpportunitiesViewDetail($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
+
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        parent::__construct($bean, $view_object_map, $request);
+    }
+
  	function display() {
 
 	    $currency = BeanFactory::getBean('Currencies');

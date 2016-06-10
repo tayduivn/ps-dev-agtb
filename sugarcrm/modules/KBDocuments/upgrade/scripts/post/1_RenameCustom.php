@@ -365,9 +365,10 @@ class SugarUpgradeRenameCustom extends UpgradeScript
         foreach ($ddMappings as $dd => $map) {
             $arrays = array(
                 &$app_list_strings,
-                &$this->upgrader->state['dropdowns_to_merge'][$lang]['custom'],
-
             );
+            if (!empty($this->upgrader->state['dropdowns_to_merge'][$lang]['custom'])) {
+                $arrays[] = &$this->upgrader->state['dropdowns_to_merge'][$lang]['custom'];
+            }
             foreach ($arrays as &$arr) {
                 if (empty($arr[$dd])) {
                     continue;

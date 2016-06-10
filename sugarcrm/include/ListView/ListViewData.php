@@ -38,6 +38,14 @@ class ListViewData {
      */
     var $count_query = '';
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ListViewData(Request $request = null)
+    {
+        self::__construct($request);
+    }
+
 	/**
 	 * Constructor sets the limitName to look up the limit in $sugar_config
 	 *

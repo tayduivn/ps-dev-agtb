@@ -11,6 +11,14 @@
  */
 class ViewFunctiondetail extends SugarView
 {
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ViewFunctionDetail()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		$this->options['show_footer'] = false;
@@ -70,4 +78,3 @@ class ViewFunctiondetail extends SugarView
 		));
  	}
 }
-?>

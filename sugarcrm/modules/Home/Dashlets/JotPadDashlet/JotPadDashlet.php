@@ -19,6 +19,14 @@ class JotPadDashlet extends Dashlet {
     var $height = '200'; // height of the pad
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function JotPadDashlet($id, $def)
+    {
+        self::__construct($id, $def);
+    }
+
+    /**
      * Constructor
      *
      * @global string current language
@@ -140,5 +148,3 @@ class JotPadDashlet extends Dashlet {
                                        'savedText' => $optionsArray['savedText']));
     }
 }
-
-?>
