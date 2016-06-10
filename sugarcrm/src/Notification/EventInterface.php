@@ -25,4 +25,18 @@ interface EventInterface
      * @return string event information.
      */
     public function __toString();
+
+    /**
+     * String representation of object.
+     *
+     * @return string the string representation of the object or null
+     */
+    public function serialize();
+
+    /**
+     * Constructs the object and returns it.
+     *
+     * @return EventInterface
+     */
+    public static function unserialize($serialized);
 }

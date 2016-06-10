@@ -66,6 +66,7 @@ class MessageBuilderRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->event = $this->getMock('Sugarcrm\Sugarcrm\Notification\EventInterface');
         $this->builder = MessageBuilderRegistry::getInstance();
 
+        \SugarTestHelper::saveFile('cache/' . MessageBuilderRegistry::CACHE_FILE);
         \SugarTestHelper::ensureDir('custom/include');
         \SugarTestHelper::saveFile('custom/' . MessageBuilderRegistry::REGISTRY_FILE);
         $this->saveCustomEventBuildersList(array());

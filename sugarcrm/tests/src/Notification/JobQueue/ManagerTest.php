@@ -12,6 +12,8 @@
 
 namespace Sugarcrm\SugarcrmTests\Notification\JobQueue;
 
+use Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\AdapterInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Client\ClientInterface;
 use Sugarcrm\Sugarcrm\Notification\JobQueue\BaseHandler as JobQueueHandler;
 use Sugarcrm\Sugarcrm\Notification\JobQueue\Manager as JobQueueManager;
 
@@ -25,11 +27,23 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     /** @var JobQueueManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $managerMock = null;
 
+    /** @var ClientInterface |  \PHPUnit_Framework_MockObject_MockObject */
+    protected $jobQClientMock = null;
+
+    /** @var AdapterInterface | \PHPUnit_Framework_MockObject_MockObject  */
+    protected $jobQAdapter = null;
+
     /** @var string */
     protected $className = '';
 
+    /** @var string  */
+    protected $classNameWithoutSerialize = '';
+
     /** @var string */
     protected $filePath = '';
+
+    /** @var string  */
+    protected $filePathWithoutSerialize = '';
 
     /**
      * {@inheritdoc}
@@ -39,21 +53,62 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
         \SugarTestHelper::setUp('files');
         $this->className = 'Notification' . rand(1000, 1999);
+        $this->classNameWithoutSerialize = 'NotificationWithoutSerialize' . rand(1000, 1999);
         $this->filePath = sugar_cached($this->className . '.php');
-        $classCode = "<?php
-            class {$this->className}
+        $this->filePathWithoutSerialize = sugar_cached($this->classNameWithoutSerialize . '.php');
+        $classCode = '<?php
+            class ' . $this->className . ' implements Sugarcrm\Sugarcrm\Notification\EventInterface
             {
-
-            }
-        ";
+                public function __toString()
+                {
+                    return "name";
+                }
+                public function serialize()
+                {        
+                    return serialize(array(1));
+                }
+                
+                public static function unserialize($value)
+                {        
+                    return new static();
+                }
+            }';
         \SugarTestHelper::saveFile($this->filePath);
         sugar_file_put_contents($this->filePath, $classCode);
         require_once $this->filePath;
-        $this->managerMock = $this->getMock('Sugarcrm\Sugarcrm\Notification\JobQueue\Manager', array('addJob'));
+
+        $classCode = '<?php
+            class ' . $this->classNameWithoutSerialize . '
+            {
+                
+            }';
+        \SugarTestHelper::saveFile($this->filePathWithoutSerialize);
+        sugar_file_put_contents($this->filePathWithoutSerialize, $classCode);
+        require_once $this->filePathWithoutSerialize;
+
+        $this->managerMock =
+            $this->getMock('Sugarcrm\Sugarcrm\Notification\JobQueue\Manager', array('getClient', 'getObserver'));
         $this->managerMock->registerHandler(
             'managerBaseHandlerCRYS1290',
             'Sugarcrm\SugarcrmTests\Notification\JobQueue\JobQueueHandlerCRYS1290'
         );
+
+        $logger = $this->getMockForAbstractClass('Psr\Log\AbstractLogger');
+
+        $this->jobQAdapter = $this->getMock(
+            'Sugarcrm\Sugarcrm\JobQueue\Adapter\MessageQueue\Sugar',
+            array('addJob'),
+            array(array(), $logger)
+        );
+
+        $this->jobQClientMock = $this->getMock(
+            'Sugarcrm\Sugarcrm\JobQueue\Client\MessageQueue',
+            null,
+            array($this->jobQAdapter, $this->managerMock->getSerializer(), $logger)
+        );
+
+        $this->managerMock->method('getClient')->willReturn($this->jobQClientMock);
+        $this->managerMock->method('getObserver')->willReturn(array());
     }
 
     /**
@@ -77,11 +132,11 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
         return array(
             'firstArgumentNull' => array(
                 'arguments' => array(null, true, 5),
-                'expectedArguments' =>  array(null, array('', serialize(true)), array('', serialize(5))),
+                'expectedArguments' =>  array(null, array('', null, serialize(true)), array('', null, serialize(5))),
             ),
             'firstArgumentExists' => array(
                 'arguments' => array($userId, true, 5),
-                'expectedArguments' =>  array($userId, array('', serialize(true)), array('', serialize(5))),
+                'expectedArguments' =>  array($userId, array('', null, serialize(true)), array('', null, serialize(5))),
             ),
         );
     }
@@ -114,14 +169,14 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
                 'arguments' => array(null, true),
                 'expectedArguments' => array(
                     null,
-                    array('', serialize(true)),
+                    array('', null, serialize(true)),
                 ),
             ),
             'firstArgumentExists' => array(
                 'arguments' => array($userId, true),
                 'expectedArguments' => array(
                     $userId,
-                    array('', serialize(true)),
+                    array('', null, serialize(true)),
                 ),
             ),
         );
@@ -139,9 +194,22 @@ class ManagerTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $obj = new $this->className();
         $arguments[] = $obj;
-        $expectedArguments[] = array(realpath($this->filePath), serialize($obj));
+        $expectedArguments[] =
+            array(realpath($this->filePath), $this->className, 'a:1:{i:0;i:1;}');
         call_user_func_array(array($this->managerMock, 'managerBaseHandlerCRYS1290'), $arguments);
         $this->assertEquals($expectedArguments, JobQueueHandlerCRYS1290::$arguments);
+    }
+
+    /**
+     * Checks class that is not implements \Serializeble interface.
+     *
+     * @expectedException \InvalidArgumentException
+     * @covers Sugarcrm\Sugarcrm\Notification\JobQueue\Manager::__call
+     */
+    public function testCallObjectWithoutSerialize()
+    {
+        $arguments = array(null, new $this->classNameWithoutSerialize());
+        call_user_func_array(array($this->managerMock, 'managerBaseHandlerCRYS1290'), $arguments);
     }
 }
 

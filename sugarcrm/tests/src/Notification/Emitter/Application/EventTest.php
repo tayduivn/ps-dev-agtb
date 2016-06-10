@@ -46,4 +46,17 @@ class EventTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->assertEquals($this->eventName, (string)$this->event);
     }
+
+    /**
+     * Testing handling serialization and unserialization.
+     *
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event::serialize
+     * @covers Sugarcrm\Sugarcrm\Notification\Emitter\Application\Event::unserialize
+     */
+    public function testSerialization()
+    {
+        $serializedEvent = $this->event->serialize();
+        $unserializedEvent = ApplicationEvent::unserialize($serializedEvent);
+        $this->assertEquals($this->eventName, (string)$unserializedEvent);
+    }
 }
