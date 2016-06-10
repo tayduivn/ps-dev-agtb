@@ -120,24 +120,42 @@ class TeamsController extends SugarController {
                     'choices' => ['true', 'false']
                 )
             );
-            $enabled = isTruthy($request->getValidInputPost('enabled', $validators, false));
-            $validators = array(
-                'Assert\Delimited' => array(
-                    new AssertBasic\Type(array('type' => 'string'))
-                )
-            );
-            $disabledModules = $request->getValidInputPost('disabled_modules', $validators, array());
 
             $tbaConfigurator = new TeamBasedACLConfigurator();
-            $tbaConfigurator->setGlobal($enabled);
 
+            $enabled = isTruthy($request->getValidInputPost('enabled', $validators, false));
+
+            // if enabled or become enabled do usual job
             if ($enabled) {
+                $validators = array(
+                    'Assert\Delimited' => array(
+                        new AssertBasic\Type(array('type' => 'string')),
+                    ),
+                );
+                $disabledModules = $request->getValidInputPost('disabled_modules', $validators, array());
+
+                $tbaConfigurator->setGlobal($enabled);
+
                 $actionsList = array_keys(ACLAction::getUserActions($GLOBALS['current_user']->id));
                 $enabledModules = array_values(array_diff($actionsList, $disabledModules));
 
                 $tbaConfigurator->setForModulesList($disabledModules, false);
                 $tbaConfigurator->setForModulesList($enabledModules, true);
+
+                // remove TBA values from disabled modules
+                foreach ($disabledModules as $moduleName) {
+                    $tbaConfigurator->removeAllTBAValuesFromBean(BeanFactory::getBean($moduleName));
+                }
+            } elseif (TeamBasedACLConfigurator::isEnabledGlobally()) {
+                // $enabled is false and TBA is enabled here, so TBA is becoming disabled
+
+                // do disable
+                $tbaConfigurator->setGlobal(false);
+
+                // clear ALL TBA data
+                $tbaConfigurator->removeAllTBAValuesFromBeans($GLOBALS['beanList']);
             }
+
             echo json_encode(array('status' => true));
         } else {
             echo json_encode(array(

@@ -585,4 +585,39 @@ class TeamBasedACLConfigurator
             opcache_invalidate('config_override.php', true);
         }
     }
+
+    /**
+     * Sets acl_team_set_id to NULL for ALL records of db table.
+     * @param string $tableName
+     */
+    protected function removeAllTBAValuesFromTable($tableName)
+    {
+        DBManagerFactory::getInstance()->query("UPDATE {$tableName} SET acl_team_set_id = null");
+    }
+
+    /**
+     * Sets acl_team_set_id to NULL for ALL records of bean's db table.
+     * @param SugarBean $bean
+     */
+    public function removeAllTBAValuesFromBean(SugarBean $bean)
+    {
+        if (!self::implementsTBA($bean->getModuleName())) {
+            return;
+        }
+        $this->removeAllTBAValuesFromTable($bean->getTableName());
+    }
+
+    /**
+     * Sets acl_team_set_id to NULL for ALL records for beans db tables.
+     * @param array $beanList A $moduleName => $beanName array
+     */
+    public function removeAllTBAValuesFromBeans(array $beanList)
+    {
+        foreach ($beanList as $moduleName => $beanName) {
+            if (self::implementsTBA($moduleName)) {
+                $bean = BeanFactory::newBeanByName($beanName);
+                $this->removeAllTBAValuesFromTable($bean->getTableName());
+            }
+        }
+    }
 }
