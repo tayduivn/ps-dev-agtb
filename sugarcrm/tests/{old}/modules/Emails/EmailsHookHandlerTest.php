@@ -30,15 +30,16 @@ class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::updateTeamsForAttachment
-     * @covers Email::updateTeamsForAttachment
+     * @covers ::updateAttachmentVisibility
+     * @covers Email::updateAttachmentVisibility
      * @covers Note::save
      */
-    public function testUpdateTeamsForAttachment()
+    public function testUpdateAttachmentVisibility()
     {
         $teams = BeanFactory::getBean('TeamSets');
         $data = array(
             'state' => Email::EMAIL_STATE_ARCHIVED,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
             'team_id' => 'East',
             'team_set_id' => $teams->addTeams(array('East', 'West')),
             //BEGIN SUGARCRM flav=ent ONLY
@@ -52,6 +53,16 @@ class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
         $email->load_relationship('attachments');
         $email->attachments->add(array($note1, $note2));
 
+        $this->assertEquals(
+            $email->assigned_user_id,
+            $note1->assigned_user_id,
+            'note1.assigned_user_id does not match'
+        );
+        $this->assertEquals(
+            $email->assigned_user_id,
+            $note2->assigned_user_id,
+            'note2.assigned_user_id does not match'
+        );
         $this->assertEquals($email->team_set_id, $note1->team_set_id, 'note1.team_set_id does not match');
         $this->assertEquals($email->team_set_id, $note2->team_set_id, 'note2.team_set_id does not match');
         $this->assertEquals($email->team_id, $note1->team_id, 'note1.team_id does not match');

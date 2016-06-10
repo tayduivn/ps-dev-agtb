@@ -13,14 +13,14 @@
 class EmailsHookHandler
 {
     /**
-     * Anytime an attachment is added to an email, the attachment must be updated to guarantee that its teams fields
-     * match those of the email.
+     * Anytime an attachment is added to an email, the attachment must be updated to guarantee that its visibility
+     * mirrors the visibility of the email.
      *
      * @param SugarBean $bean The email.
      * @param string $event
      * @param array $args
      */
-    public function updateTeamsForAttachment(SugarBean $bean, $event, array $args)
+    public function updateAttachmentVisibility(SugarBean $bean, $event, array $args)
     {
         $message = 'The arguments for %s are %s/%s, %s, and %s.';
         $message = sprintf($message, __METHOD__, $bean->getModuleName(), $bean->id, $event, print_r($args, true));
@@ -45,7 +45,7 @@ class EmailsHookHandler
         );
 
         if ($attachment) {
-            $bean->updateTeamsForAttachment($attachment);
+            $bean->updateAttachmentVisibility($attachment);
         } else {
             $message = 'Failed to load the attachment Notes/%s for Emails/%s in %s.';
             $GLOBALS['log']->error(sprintf($message, $args['related_id'], $bean->id, __METHOD__));

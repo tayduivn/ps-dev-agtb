@@ -1154,7 +1154,7 @@ class Email extends SugarBean {
                 }
 			}
 
-            $this->updateTeamsForAttachments();
+            $this->updateAttachmentsVisibility();
 
             return $parentSaveResult;
 		}
@@ -1162,9 +1162,9 @@ class Email extends SugarBean {
 	}
 
     /**
-     * Updates the the teams fields on all attachments to match the teams on the email.
+     * Updates the visibility on all attachments to match the visibility of the email.
      */
-    protected function updateTeamsForAttachments()
+    protected function updateAttachmentsVisibility()
     {
         if ($this->load_relationship('attachments')) {
             $this->attachments->resetLoaded();
@@ -1181,7 +1181,7 @@ class Email extends SugarBean {
                 );
 
                 if ($attachment) {
-                    $this->updateTeamsForAttachment($attachment);
+                    $this->updateAttachmentVisibility($attachment);
                 } else {
                     $message = 'Failed to load the attachment Notes/%s for Emails/%s in %s.';
                     $GLOBALS['log']->error(sprintf($message, $attachmentId, $this->id, __METHOD__));
@@ -1198,9 +1198,11 @@ class Email extends SugarBean {
      * have access to the email. When an email is a draft, the owner's private team is used for its attachments since
      * only the owner can access a draft.
      *
+     * The attachment is also assigned to the same user to which the email is assigned.
+     *
      * @param Note $attachment
      */
-    public function updateTeamsForAttachment(Note $attachment)
+    public function updateAttachmentVisibility(Note $attachment)
     {
         if ($this->state === static::EMAIL_STATE_DRAFT) {
             $message = 'Setting the teams for attachment Notes/%s to the private team for Users/%s for the draft ' .
@@ -1247,6 +1249,10 @@ class Email extends SugarBean {
             $attachment->team_set_selected_id = $this->team_set_selected_id;
             //END SUGARCRM flav=ent ONLY
         }
+
+        $message = "Assigning attachment Note/%s to User/%s in %s.";
+        $GLOBALS['log']->debug(sprintf($message, $attachment->id, $this->assigned_user_id, __METHOD__));
+        $attachment->assigned_user_id = $this->assigned_user_id;
 
         if (static::inOperation('saving_related')) {
             $message = 'In operation saving_related, so attachment Notes/%s is not saved in %s.';

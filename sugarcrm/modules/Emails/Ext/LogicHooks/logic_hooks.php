@@ -12,8 +12,8 @@
 
 $hook_array['after_relationship_add'][] = array(
     1,
-    'update_teams_for_attachment',
+    'update_attachment_visibility',
     SugarAutoLoader::requireWithCustom('modules/Emails/EmailsHookHandler.php'),
     SugarAutoLoader::customClass('EmailsHookHandler'),
-    'updateTeamsForAttachment',
+    'updateAttachmentVisibility',
 );

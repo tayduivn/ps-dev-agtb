@@ -294,11 +294,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @covers ::save
-     * @covers ::updateTeamsForAttachments
-     * @covers ::updateTeamsForAttachment
+     * @covers ::updateAttachmentsVisibility
+     * @covers ::updateAttachmentVisibility
      * @covers Note::save
      */
-    public function testUpdateTeamsForAttachments()
+    public function testUpdateAttachmentsVisibility()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $data = array(
@@ -311,6 +311,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Change the teams on the email.
         $teams = BeanFactory::getBean('TeamSets');
         $email->state = Email::EMAIL_STATE_ARCHIVED;
+        $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
         $email->team_set_id = $teams->addTeams(array('East', 'West'));
         //BEGIN SUGARCRM flav=ent ONLY
@@ -318,6 +319,16 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
         $email->save();
 
+        $this->assertEquals(
+            $email->assigned_user_id,
+            $note1->assigned_user_id,
+            'note1.assigned_user_id does not match'
+        );
+        $this->assertEquals(
+            $email->assigned_user_id,
+            $note2->assigned_user_id,
+            'note2.assigned_user_id does not match'
+        );
         $this->assertEquals($email->team_set_id, $note1->team_set_id, 'note1.team_set_id does not match');
         $this->assertEquals($email->team_set_id, $note2->team_set_id, 'note2.team_set_id does not match');
         $this->assertEquals($email->team_id, $note1->team_id, 'note1.team_id does not match');
@@ -337,9 +348,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::updateTeamsForAttachment
+     * @covers ::updateAttachmentVisibility
      */
-    public function testUpdateTeamsForAttachment_EmailIsADraft_TeamIsPrivateTeamOfAssignedUser()
+    public function testUpdateAttachmentVisibility_EmailIsADraft_TeamIsPrivateTeamOfAssignedUser()
     {
         $note = $this->getMockBuilder('Note')
             ->disableOriginalConstructor()
@@ -355,8 +366,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //BEGIN SUGARCRM flav=ent ONLY
         $email->team_set_selected_id = 'East';
         //END SUGARCRM flav=ent ONLY
-        $email->updateTeamsForAttachment($note);
+        $email->updateAttachmentVisibility($note);
 
+        $this->assertEquals($email->assigned_user_id, $note->assigned_user_id, 'assigned_user_id does not match');
         $expected = $GLOBALS['current_user']->getPrivateTeam();
         $this->assertEquals($expected, $note->team_set_id, 'team_set_id does not match');
         $this->assertEquals($expected, $note->team_id, 'team_id does not match');
@@ -366,16 +378,18 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::updateTeamsForAttachment
+     * @covers ::updateAttachmentVisibility
      */
-    public function testUpdateTeamsForAttachment_EmailIsADraft_NoAssignedUser()
+    public function testUpdateAttachmentVisibility_EmailIsADraft_NoAssignedUser()
     {
+        $assignedUserId = create_guid();
         $teamSetId = create_guid();
         $note = $this->getMockBuilder('Note')
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
         $note->expects($this->never())->method('save');
+        $note->assigned_user_id = $assignedUserId;
         $note->team_id = 'West';
         $note->team_set_id = $teamSetId;
         //BEGIN SUGARCRM flav=ent ONLY
@@ -390,8 +404,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //BEGIN SUGARCRM flav=ent ONLY
         $email->team_set_selected_id = 'East';
         //END SUGARCRM flav=ent ONLY
-        $email->updateTeamsForAttachment($note);
+        $email->updateAttachmentVisibility($note);
 
+        $this->assertEquals($assignedUserId, $note->assigned_user_id, 'assigned_user_id should not have changed');
         $this->assertEquals($teamSetId, $note->team_set_id, 'team_set_id should not have changed');
         $this->assertEquals('West', $note->team_id, 'team_id should not have changed');
         //BEGIN SUGARCRM flav=ent ONLY
@@ -400,11 +415,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @covers ::save
-     * @covers ::updateTeamsForAttachments
-     * @covers ::updateTeamsForAttachment
+     * @covers ::updateAttachmentsVisibility
+     * @covers ::updateAttachmentVisibility
      * @covers Note::save
      */
-    public function testUpdateTeamsForAttachments_ArchivingADraftSynchronizesTeams()
+    public function testUpdateAttachmentsVisibility_ArchivingADraftSynchronizesTeams()
     {
         $email = SugarTestEmailUtilities::createEmail();
         $data = array(
@@ -435,6 +450,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $email->state = Email::EMAIL_STATE_ARCHIVED;
         $email->save();
 
+        $this->assertEquals($email->assigned_user_id, $note->assigned_user_id, 'assigned_user_id does not match');
         $this->assertEquals($email->team_set_id, $note->team_set_id, 'team_set_id does not match');
         $this->assertEquals($email->team_id, $note->team_id, 'team_id does not match');
         //BEGIN SUGARCRM flav=ent ONLY
