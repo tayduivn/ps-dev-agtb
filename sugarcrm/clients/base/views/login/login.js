@@ -278,7 +278,7 @@
      * @return {Boolean} `true` if the browser is supported, `false` otherwise.
      * @private
      */
-    _isSupportedBrowser: function() {
+    _isSupportedBrowser: function(currentNavigator) {
         var supportedBrowsers = {
             // For Safari & Chrome jQuery.Browser returns the webkit revision
             // instead of the browser version and it's hard to determine this
@@ -290,12 +290,13 @@
         };
 
         var current = parseFloat($.browser.version);
+        currentNavigator = currentNavigator || navigator;
 
         // For IE11, navigator behaves differently in order to conform to HTML5
         // standards. This changes the behavior of jQuery.Browser and so IE11
         // will show up as not supported in the above checks when it should be
         // supported. The following check rectifies this issue.
-        if ((/Trident\/7\./).test(navigator.userAgent)) {
+        if ((/Trident\/7\./).test(currentNavigator.userAgent)) {
             var supported = supportedBrowsers['msie'];
             return current >= supported.min;
         // jquery $.browser returns 'safari' on a Chrome browser

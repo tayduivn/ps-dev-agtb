@@ -49,7 +49,9 @@ describe("Login View", function() {
 
     describe("Browser support", function() {
 
-        var alertStub, originalBrowser;
+        var alertStub;
+        var originalBrowser;
+        var currentNavigator = {};
 
         beforeEach(function() {
             alertStub = sinon.stub(app.alert, "show");
@@ -66,28 +68,28 @@ describe("Login View", function() {
                 'version': '8',
                 'msie': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem IE9 as an unsupported browser", function () {
             $.browser = {
                 'version': '9',
                 'msie': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem IE10 as an unsupported browser", function () {
             $.browser = {
                 'version': '10',
                 'msie': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem IE11 as a supported browser", function() {
             $.browser = {
                 'version': '11',
                 'msie': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
         });
 
         //Mozilla Firefox
@@ -96,14 +98,14 @@ describe("Login View", function() {
                 'version': '40',
                 'mozilla': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem Firefox 41 as a supported browser", function () {
             $.browser = {
                 'version': '41',
                 'mozilla': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
         });
         //Safari
         it("should deem Safari 7 as an unsupported browser", function () {
@@ -112,7 +114,7 @@ describe("Login View", function() {
                 'safari': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem Safari 8 as a supported browser", function () {
             $.browser = {
@@ -120,7 +122,7 @@ describe("Login View", function() {
                 'safari': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
         });
         //Chrome
         it("should deem Chrome 26 as an unsupported browser", function() {
@@ -129,7 +131,7 @@ describe("Login View", function() {
                 'chrome': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
         });
         it("should deem Chrome 27 as a supported browser", function() {
             $.browser = {
@@ -137,7 +139,7 @@ describe("Login View", function() {
                 'chrome': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
         });
         it("should deem Chrome 47 as a supported browser", function () {
             $.browser = {
@@ -145,7 +147,7 @@ describe("Login View", function() {
                 'chrome': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser()).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
         });
     });
 
