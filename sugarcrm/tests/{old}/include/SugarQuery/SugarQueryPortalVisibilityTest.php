@@ -66,14 +66,15 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $query->select('*');
         $query->from($contact);
         $contact->addVisibilityQuery($query);
-        $queryShouldBe
-            = "INNER JOIN accounts_contacts jt0_accounts_contacts ON contacts.id = jt0_accounts_contacts.contact_id AND"
-                . " jt0_accounts_contacts.deleted = 0
- INNER JOIN accounts accounts_pv ON accounts_pv.id = jt0_accounts_contacts.account_id AND accounts_pv.deleted = 0 AND"
-                . " accounts_pv.id IN ('1','2','3','4')  WHERE contacts.deleted";
 
+        $this->assertArrayHasKey('accounts_pv', $query->join);
+        /** @var SugarQuery_Builder_Condition $condition */
+        $condition = $query->join['accounts_pv']->on['and']->conditions[2];
+        $this->assertEquals('Accounts', $condition->field->moduleName);
+        $this->assertEquals('id', $condition->field->field);
+        $this->assertEquals('IN', $condition->operator);
+        $this->assertEquals(array(1, 2, 3, 4), $condition->values);
 
-        $this->assertContains($queryShouldBe, $query->compileSql(), "The query does not match");
         unset($_SESSION);
         unset($contact);
         unset($query);
