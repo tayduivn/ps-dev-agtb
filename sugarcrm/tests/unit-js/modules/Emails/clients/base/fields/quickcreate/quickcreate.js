@@ -9,7 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe("Emails.Fields.Quickcreate", function() {
-    var app, field;
+    var app;
+    var field;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -33,9 +34,9 @@ describe("Emails.Fields.Quickcreate", function() {
     });
 
     describe('initialize', function() {
-        var ctxModel,
-            onSpy,
-            offSpy;
+        var ctxModel;
+        var onSpy;
+        var offSpy;
 
         beforeEach(function() {
             onSpy = sinon.collection.spy();
@@ -71,8 +72,8 @@ describe("Emails.Fields.Quickcreate", function() {
     });
 
     describe('_beforeRouteChanged', function() {
-        var ctxModel,
-            offSpy;
+        var ctxModel;
+        var offSpy;
 
         beforeEach(function() {
             offSpy = sinon.collection.spy();
@@ -97,9 +98,9 @@ describe("Emails.Fields.Quickcreate", function() {
     });
 
     describe('_routeChanged', function() {
-        var ctxModel,
-            onSpy,
-            offSpy;
+        var ctxModel;
+        var onSpy;
+        var offSpy;
 
         beforeEach(function() {
             onSpy = sinon.collection.spy();
@@ -132,10 +133,14 @@ describe("Emails.Fields.Quickcreate", function() {
         });
     });
 
-    describe("_retrieveEmailOptionsFromLink", function() {
-        it("should return email options to prepopulate on email compose if existing parent model exists on context", function() {
-            var bean = app.data.createBean('Contacts'),
-                result;
+    describe('_retrieveEmailOptionsFromLink', function() {
+        var should;
+
+        should = 'should return email options to prepopulate on email compose if existing parent model exists on ' +
+            'context';
+        it(should, function() {
+            var bean = app.data.createBean('Contacts');
+            var result;
 
             bean.set({
                 id: '123',
@@ -150,10 +155,12 @@ describe("Emails.Fields.Quickcreate", function() {
             });
         });
 
-        it("should return email options to prepopulate on email compose if existing parent model exists on parent context", function() {
-            var bean = app.data.createBean('Contacts'),
-                parentContext = app.context.getContext(),
-                result;
+        should = 'should return email options to prepopulate on email compose if existing parent model exists on ' +
+            'parent context';
+        it(should, function() {
+            var bean = app.data.createBean('Contacts');
+            var parentContext = app.context.getContext();
+            var result;
 
             bean.set({
                 id: '123',
@@ -170,7 +177,7 @@ describe("Emails.Fields.Quickcreate", function() {
             });
         });
 
-        it("should return empty object if parent model does not exist", function() {
+        it('should return empty object if parent model does not exist', function() {
             var result;
             field.context.unset('model');
             result = field._retrieveEmailOptionsFromLink();
@@ -178,9 +185,9 @@ describe("Emails.Fields.Quickcreate", function() {
             expect(result).toEqual({});
         });
 
-        it("should return empty object if parent model has no id, meaning it is not an existing record", function() {
-            var bean = app.data.createBean('Contacts'),
-                result;
+        it('should return empty object if parent model has no id, meaning it is not an existing record', function() {
+            var bean = app.data.createBean('Contacts');
+            var result;
 
             bean.set({
                 name: 'Foo'
@@ -193,8 +200,8 @@ describe("Emails.Fields.Quickcreate", function() {
     });
 
     describe('_dispose', function() {
-        var ctxModel,
-            offSpy;
+        var ctxModel;
+        var offSpy;
 
         beforeEach(function() {
             offSpy = sinon.collection.spy();

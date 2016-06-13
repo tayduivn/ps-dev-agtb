@@ -34,52 +34,52 @@ class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 '<p>Hello Test,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable'
+                'Assert that template string does not contain a dynamic variable',
             ),
             array(
                 '<p>Hello $accountName,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable because it lacks an underscore'
+                'Assert that template string does not contain a dynamic variable because it lacks an underscore',
             ),
             array(
                 '<p>Hello $1,000,000,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable with dollar value'
+                'Assert that template string does not contain a dynamic variable with dollar value',
             ),
             array(
                 '<p>Hello $account_name,</p>',
                 1,
-                'Assert that template string has $module_field'
+                'Assert that template string has $module_field',
             ),
             array(
                 '<p>Hello $accountName_field,</p>',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 '<p>Hello $account_fieldName,</p>',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 '<p>Hello $accountName_fieldName,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName'
+                'Assert that template string has $accountName_fieldName',
             ),
             array(
                 '<p>Hello $accountName_fieldName_c,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName_c'
+                'Assert that template string has $accountName_fieldName_c',
             ),
             array(
                 '<p>Hello $accountName_fieldName_is_something_else,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName_is_something_else'
+                'Assert that template string has $accountName_fieldName_is_something_else',
             ),
             array(
                 '<p>Hello $account_name1,</p>',
                 1,
-                'Assert that template string has $module_field1 with numbers'
+                'Assert that template string has $module_field1 with numbers',
             ),
         );
     }

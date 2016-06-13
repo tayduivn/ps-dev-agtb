@@ -9,7 +9,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('EmailClientLaunch Plugin', function() {
-    var app, field, originalDrawer, setUseSugarClient, userPrefs, sandbox;
+    var app;
+    var field;
+    var originalDrawer;
+    var setUseSugarClient;
+    var userPrefs;
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -74,8 +79,8 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should refresh app context if module is Emails', function() {
-            var drawerCloseCallback,
-                model = app.data.createBean('Emails');
+            var drawerCloseCallback;
+            var model = app.data.createBean('Emails');
 
             app.controller.context.set('module', 'Emails');
             setUseSugarClient(true);
@@ -86,8 +91,8 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should not refresh app context if module is not Emails', function() {
-            var drawerCloseCallback,
-                model = app.data.createBean('Emails');
+            var drawerCloseCallback;
+            var model = app.data.createBean('Emails');
 
             app.controller.context.set('module', 'Tasks');
             setUseSugarClient(true);
@@ -112,49 +117,50 @@ describe('EmailClientLaunch Plugin', function() {
     describe('Retrieve Valid Recipients', function() {
         it('should not return bean recipients that do not have a valid email address', function() {
             var emails = [
-                    {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
-                    {email_address: 'foo2@bar.com', primary_address: true, invalid_email: true, opt_out: true}
-                ],
-                bean = new Backbone.Model({email: emails}),
-                recipients = [{bean: bean}],
-                validRecipients = field._retrieveValidRecipients(recipients);
+                {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
+                {email_address: 'foo2@bar.com', primary_address: true, invalid_email: true, opt_out: true}
+            ];
+            var bean = new Backbone.Model({email: emails});
+            var recipients = [{bean: bean}];
+            var validRecipients = field._retrieveValidRecipients(recipients);
 
             expect(validRecipients).toEqual([]);
         });
 
         it('should specify valid email address for bean recipients the in list', function() {
             var emails = [
-                    {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
-                    {email_address: 'foo2@bar.com', primary_address: false, invalid_email: false, opt_out: true},
-                    {email_address: 'foo3@bar.com', primary_address: true, invalid_email: false, opt_out: false}
-                ],
-                bean = new Backbone.Model({email: emails}),
-                recipients = [{bean: bean}],
-                validRecipients = field._retrieveValidRecipients(recipients);
+                {email_address: 'foo1@bar.com', primary_address: false, invalid_email: true, opt_out: false},
+                {email_address: 'foo2@bar.com', primary_address: false, invalid_email: false, opt_out: true},
+                {email_address: 'foo3@bar.com', primary_address: true, invalid_email: false, opt_out: false}
+            ];
+            var bean = new Backbone.Model({email: emails});
+            var recipients = [{bean: bean}];
+            var validRecipients = field._retrieveValidRecipients(recipients);
             expect(_.first(validRecipients).get('email')).toEqual('foo3@bar.com');
         });
 
         it('should leave bean recipients that have email address specified', function() {
             var emails = [
-                    {email_address: 'foo@bar.com', primary_address: true, invalid_email: false, opt_out: false}
-                ],
-                bean = new Backbone.Model({email: emails}),
-                recipients = [{
-                    email: 'abc@bar.com',
-                    bean: bean
-                }],
-                validRecipients = field._retrieveValidRecipients(recipients);
+                {email_address: 'foo@bar.com', primary_address: true, invalid_email: false, opt_out: false}
+            ];
+            var bean = new Backbone.Model({email: emails});
+            var recipients = [{
+                email: 'abc@bar.com',
+                bean: bean
+            }];
+            var validRecipients = field._retrieveValidRecipients(recipients);
 
             expect(_.first(validRecipients).get('email')).toEqual('abc@bar.com');
         });
 
         it('should set EmailAddresses module when just have email address specified', function() {
-            var recipients, validRecipients;
+            var recipients;
+            var validRecipients;
 
             app.data.declareModel('EmailAddresses');
             recipients = {
                 email: 'abc@bar.com'
-            },
+            };
             validRecipients = field._retrieveValidRecipients(recipients);
 
             expect(_.first(validRecipients).get('email')).toEqual('abc@bar.com');
@@ -164,15 +170,15 @@ describe('EmailClientLaunch Plugin', function() {
 
     describe('Should Add Email Options', function() {
         it('should set a copy of the related model in email options', function() {
+            var module = 'Contacts';
+            var model = app.data.createBean(module);
             sandbox.stub(app.data, 'createBean', function() {
-                    var bean = new Backbone.Model();
-                    bean.copy = function(copyFrom) {
-                        bean.set('foo', copyFrom.get('foo'));
-                    };
-                    return bean;
-                }),
-                module = 'Contacts',
-                model = app.data.createBean(module);
+                var bean = new Backbone.Model();
+                bean.copy = function(copyFrom) {
+                    bean.set('foo', copyFrom.get('foo'));
+                };
+                return bean;
+            });
 
             model.set('id', '123');
             model.set('foo', 'bar');
@@ -205,45 +211,45 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should return mailto with only to address', function() {
-            var email1 = 'foo@bar.com',
-                email2 = 'foo2@bar.com',
-                url = field._buildMailToURL({
-                    to: [
-                        {email: email1},
-                        {email: email2}
-                    ]
-                });
+            var email1 = 'foo@bar.com';
+            var email2 = 'foo2@bar.com';
+            var url = field._buildMailToURL({
+                to: [
+                    {email: email1},
+                    {email: email2}
+                ]
+            });
             expect(url).toEqual('mailto:' + email1 + ',' + email2);
         });
 
         it('should return mailto with cc and bcc addresses in querystring', function() {
-            var email1 = 'foo@bar.com',
-                email2 = 'foo2@bar.com',
-                url = field._buildMailToURL({
-                    cc: [
-                        {email: email1}
-                    ],
-                    bcc: [
-                        {email: email2}
-                    ]
-                }),
-                expectedParams = {
-                    cc: email1,
-                    bcc: email2
-                };
+            var email1 = 'foo@bar.com';
+            var email2 = 'foo2@bar.com';
+            var url = field._buildMailToURL({
+                cc: [
+                    {email: email1}
+                ],
+                bcc: [
+                    {email: email2}
+                ]
+            });
+            var expectedParams = {
+                cc: email1,
+                bcc: email2
+            };
             expect(url).toEqual('mailto:?' + $.param(expectedParams));
         });
 
         it('should return mailto with subject and text body in querystring', function() {
             var expectedParams = {
-                    subject: 'Foo',
-                    body: 'Bar!'
-                },
-                url = field._buildMailToURL({
-                    subject: expectedParams.subject,
-                    text_body: expectedParams.body,
-                    html_body: '<b>' + expectedParams.body + '</b>'
-                });
+                subject: 'Foo',
+                body: 'Bar!'
+            };
+            var url = field._buildMailToURL({
+                subject: expectedParams.subject,
+                text_body: expectedParams.body,
+                html_body: '<b>' + expectedParams.body + '</b>'
+            });
             expect(url).toEqual('mailto:?' + $.param(expectedParams));
         });
     });
@@ -255,27 +261,25 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should return a single address if only email string passed in', function() {
-            var expected = 'foo@bar.com',
-                actual = field._formatRecipientsToString(expected);
+            var expected = 'foo@bar.com';
+            var actual = field._formatRecipientsToString(expected);
             expect(actual).toEqual(expected);
         });
 
         it('should return emails passed in different forms', function() {
-            var bean,
-                actual,
-                email1 = 'foo1@bar.com',
-                email2 = 'foo2@bar.com',
-                email3 = 'foo3@bar.com';
+            var bean;
+            var actual;
+            var email1 = 'foo1@bar.com';
+            var email2 = 'foo2@bar.com';
+            var email3 = 'foo3@bar.com';
 
             bean = new Backbone.Model({
-                    email: [
-                        {
-                            email_address: email3,
-                            primary_address: true,
-                            invalid_email: false,
-                            opt_out: false
-                        }
-                    ]
+                email: [{
+                    email_address: email3,
+                    primary_address: true,
+                    invalid_email: false,
+                    opt_out: false
+                }]
             });
             actual = field._formatRecipientsToString([
                 email1,
@@ -286,24 +290,24 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should not return emails in bean form if no valid email on bean', function() {
-            var email1 = 'foo1@bar.com',
-                email2 = 'foo2@bar.com',
-                bean = new Backbone.Model({email: [{
-                    email_address: email2,
-                    invalid_email: true
-                }]}),
-                actual = field._formatRecipientsToString([
-                    email1,
-                    {bean: bean}
-                ]);
+            var email1 = 'foo1@bar.com';
+            var email2 = 'foo2@bar.com';
+            var bean = new Backbone.Model({email: [{
+                email_address: email2,
+                invalid_email: true
+            }]});
+            var actual = field._formatRecipientsToString([
+                email1,
+                {bean: bean}
+            ]);
             expect(actual).toEqual(email1);
         });
     });
 
     describe('Retrieving Email Options', function() {
         it('should return empty object if no options on link or controller', function() {
-            var actual,
-                $link = $('<a href="#">Foo!</a>');
+            var actual;
+            var $link = $('<a href="#">Foo!</a>');
 
             field.emailOptions = undefined;
             actual = field._retrieveEmailOptions($link);
@@ -311,8 +315,8 @@ describe('EmailClientLaunch Plugin', function() {
         });
 
         it('should return options from controller combined with options from link', function() {
-            var actual,
-                $link = $('<a href="#">Foo!</a>');
+            var actual;
+            var $link = $('<a href="#">Foo!</a>');
 
             $link.data({
                 to: 'foo@bar.com',

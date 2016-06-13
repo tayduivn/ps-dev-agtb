@@ -93,7 +93,7 @@ class DocumentRevision extends SugarBean {
 		$this->disable_row_level_security =true; //no direct access to this module. 
 	}
 
-    function save($check_notify = false)
+    public function save($check_notify = false)
     {
         $filePath = "upload://{$this->id}";
         $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;

@@ -79,7 +79,8 @@
 
                 recipients = _.isArray(recipients) ? recipients : [recipients];
                 _.each(recipients, function(recipient) {
-                    var validRecipient, module;
+                    var validRecipient;
+                    var module;
 
                     if (recipient.bean) {
                         validRecipient = recipient.bean.clone();
@@ -255,20 +256,25 @@
             },
 
             /**
+             * Updates all the links in the view with the proper href from the current model
+             */
+            updateEmailLinks: function() {
+                var self = this;
+                var $emailLinks = this.$('a[data-action="email"]');
+
+                $emailLinks.each(function() {
+                    var options = self._retrieveEmailOptions($(this));
+                    var href = self._getEmailHref(options);
+                    $(this).attr('href', href);
+                });
+            },
+
+            /**
              * @inheritdoc
              * On render, modify the href appropriately for the correct email client
              */
             onAttach: function () {
-                this.on('render', function() {
-                    var self = this,
-                        $emailLinks = this.$('a[data-action="email"]');
-
-                    $emailLinks.each(function() {
-                        var options = self._retrieveEmailOptions($(this)),
-                            href = self._getEmailHref(options);
-                        $(this).attr('href', href);
-                    });
-                }, this);
+                this.on('render', this.updateEmailLinks, this);
             }
         });
     });

@@ -73,7 +73,3 @@ $viewdefs['Emails']['base']['view']['recordlist'] = array(
         ),
     ),
 );
-
-
-
-

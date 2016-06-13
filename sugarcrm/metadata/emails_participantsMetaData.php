@@ -76,7 +76,7 @@ $dictionary['emails_participants'] = array(
                 'role',
                 'participant_module',
                 'participant_id',
-            )
+            ),
         ),
         array(
             'name' => 'idx_email_address',

@@ -10,8 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('modules/UserSignatures/UserSignaturesApiHelper.php');
-require_once('include/api/RestService.php');
+require_once 'modules/UserSignatures/UserSignaturesApiHelper.php';
+require_once 'include/api/RestService.php';
 
 class UserSignaturesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,8 @@
 describe('Emails.fields.email-recipients', function() {
-    var app,
-        field,
-        context,
-        model;
+    var app;
+    var field;
+    var context;
+    var model;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -62,17 +62,20 @@ describe('Emails.fields.email-recipients', function() {
             expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
         });
         it('should remove recipients from the collection', function() {
+            var recipientsToRemove;
+            var expected;
+
             field.render();
             // seed the field with a few recipients
             field.model.get(field.name).add(recipients);
             expect(field.model.get(field.name).length).toBe(recipients.length);
             expect(field.$(field.fieldTag).select2('data').length).toBe(recipients.length);
             // now remove the recipients
-            var recipientsToRemove = [
-                    field.model.get(field.name).at(0),
-                    field.model.get(field.name).at(2)
-                ],
-                expected = recipients.length - recipientsToRemove.length;
+            recipientsToRemove = [
+                field.model.get(field.name).at(0),
+                field.model.get(field.name).at(2)
+            ];
+            expected = recipients.length - recipientsToRemove.length;
             field.model.get(field.name).remove(recipientsToRemove);
             // verify that the field has the correct number of recipients
             expect(field.model.get(field.name).length).toBe(expected);
@@ -113,8 +116,9 @@ describe('Emails.fields.email-recipients', function() {
 
     describe('interacting with Select2', function() {
         describe('search for more recipients', function() {
-            var query,
-                apiSearchStub;
+            var query;
+            var apiSearchStub;
+            var should;
 
             beforeEach(function() {
                 jasmine.Clock.useMock();
@@ -126,8 +130,11 @@ describe('Emails.fields.email-recipients', function() {
                 apiSearchStub.restore();
             });
 
-            it('Should call the query callback with one record when the api call is successful and returns one record.', function() {
+            should = 'Should call the query callback with one record when the api call is successful and returns ' +
+                'one record.';
+            it(should, function() {
                 var records = [{id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'}];
+                var actual;
 
                 apiSearchStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                     callbacks.success({records: records});
@@ -137,11 +144,13 @@ describe('Emails.fields.email-recipients', function() {
                 field._loadOptions(query);
                 jasmine.Clock.tick(301);
 
-                var actual = query.callback.lastCall.args[0].results.length;
+                actual = query.callback.lastCall.args[0].results.length;
                 expect(actual).toBe(records.length);
             });
 
             it('Should call the query callback with no records when the api call results in an error.', function() {
+                var actual;
+
                 apiSearchStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                     callbacks.error();
                     callbacks.complete();
@@ -150,33 +159,35 @@ describe('Emails.fields.email-recipients', function() {
                 field._loadOptions(query);
                 jasmine.Clock.tick(301);
 
-                var actual = query.callback.lastCall.args[0].results.length;
+                actual = query.callback.lastCall.args[0].results.length;
                 expect(actual).toBe(0);
             });
 
             it('Should make a call to the API.', function() {
+                var actual;
+
                 apiSearchStub = sinon.stub(app.api, 'call');
 
                 field._loadOptions(query);
                 jasmine.Clock.tick(301);
 
-                var actual = apiSearchStub.callCount;
+                actual = apiSearchStub.callCount;
                 expect(actual).toBe(1);
             });
         });
 
         describe('create a new recipient option for the user to select', function() {
             it('Should return undefined when data is not empty.', function() {
-                var data = [{id: 'foo', email_address: 'foo@bar.com'}],
-                    actual = field._createOption('foo', data);
+                var data = [{id: 'foo', email_address: 'foo@bar.com'}];
+                var actual = field._createOption('foo', data);
 
                 expect(actual).toBeUndefined();
             });
 
             it('Should return a new option as an object when data is empty.', function() {
-                var data = [],
-                    expected = {email_address: 'foo@bar.com'},
-                    actual = field._createOption(expected.email_address, data);
+                var data = [];
+                var expected = {email_address: 'foo@bar.com'};
+                var actual = field._createOption(expected.email_address, data);
 
                 expect(actual.toJSON()).toEqual(expected);
             });
@@ -184,22 +195,22 @@ describe('Emails.fields.email-recipients', function() {
 
         describe('format the selected recipients', function() {
             it('Should return the recipient name when it exists.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com', name: 'Will Westin'}),
-                    actual = $(field._formatSelection(recipient)).text();
+                var recipient = app.data.createBean('Users', {email_address: 'will@example.com', name: 'Will Westin'});
+                var actual = $(field._formatSelection(recipient)).text();
 
                 expect(actual).toEqual(recipient.get('name'));
             });
 
             it('Should return the recipient email address when name does not exist.', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'}),
-                    actual = $(field._formatSelection(recipient)).text();
+                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'});
+                var actual = $(field._formatSelection(recipient)).text();
 
                 expect(actual).toEqual(recipient.get('email_address'));
             });
             it('Should return the selection by wrapping the tooltip elements', function() {
-                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'}),
-                    actualPlugin = $(field._formatSelection(recipient)).attr('rel'),
-                    actualTitle = $(field._formatSelection(recipient)).data('title');
+                var recipient = app.data.createBean('Users', {email_address: 'will@example.com'});
+                var actualPlugin = $(field._formatSelection(recipient)).attr('rel');
+                var actualTitle = $(field._formatSelection(recipient)).data('title');
 
                 expect(actualPlugin).toBe('tooltip');
                 expect(actualTitle).toBe(recipient.get('email_address'));
@@ -262,15 +273,15 @@ describe('Emails.fields.email-recipients', function() {
 
         describe('respond when the user selects an option from the list', function() {
             it('Should return false when event.object does not exist.', function() {
-                var event = {},
-                    actual = field._handleEventOnSelected(event);
+                var event = {};
+                var actual = field._handleEventOnSelected(event);
                 expect(actual).toBeFalsy();
             });
 
             it('Should return true when event.object has an id.', function() {
-                var recipient = app.data.createBean('Users', {id: 'abcd', email_address: 'foo@bar.com'}),
-                    event = {object: recipient},
-                    actual = field._handleEventOnSelected(event);
+                var recipient = app.data.createBean('Users', {id: 'abcd', email_address: 'foo@bar.com'});
+                var event = {object: recipient};
+                var actual = field._handleEventOnSelected(event);
                 expect(actual).toBeTruthy();
             });
 
@@ -286,20 +297,24 @@ describe('Emails.fields.email-recipients', function() {
                 });
 
                 it('Should return true when new email address and the email address is valid.', function() {
+                    var recipient = app.data.createBean('Users', {email_address: 'foo@bar.com'});
+                    var event = {object: recipient};
+                    var actual;
+
                     validateEmailAddressStub.returns(true);
 
-                    var recipient = app.data.createBean('Users', {email_address: 'foo@bar.com'}),
-                        event = {object: recipient},
-                        actual = field._handleEventOnSelected(event);
+                    actual = field._handleEventOnSelected(event);
                     expect(actual).toBeTruthy();
                 });
 
                 it('Should return false when new email address and the email address is invalid.', function() {
+                    var recipient = app.data.createBean('Users', {email_address: 'foo-bar.com'});
+                    var event = {object: recipient};
+                    var actual;
+
                     validateEmailAddressStub.returns(false);
 
-                    var recipient = app.data.createBean('Users', {email_address: 'foo-bar.com'}),
-                        event = {object: recipient},
-                        actual = field._handleEventOnSelected(event);
+                    actual = field._handleEventOnSelected(event);
                     expect(actual).toBeFalsy();
                 });
             });
@@ -309,8 +324,22 @@ describe('Emails.fields.email-recipients', function() {
             it('should synchronize the collection with the data in Select2', function() {
                 var recipients = [
                     app.data.createBean('Users', {id: '123', email_address: 'will@example.com', name: 'Will Westin'}),
-                    app.data.createBean('Leads', {id: '456', email_address: 'sarah@example.com', name: 'Sarah Example'}),
-                    app.data.createBean('Contacts', {id: '789', email_address: 'sally@example.com', name: 'Sally Seashell'})
+                    app.data.createBean(
+                        'Leads',
+                        {
+                            id: '456',
+                            email_address: 'sarah@example.com',
+                            name: 'Sarah Example'
+                        }
+                    ),
+                    app.data.createBean(
+                        'Contacts',
+                        {
+                            id: '789',
+                            email_address: 'sally@example.com',
+                            name: 'Sally Seashell'
+                        }
+                    )
                 ];
                 field.render();
                 // make sure the collection is empty
@@ -325,7 +354,9 @@ describe('Emails.fields.email-recipients', function() {
             });
 
             it('should synchronize with Select2 even when model has data before field initialized', function() {
-                var context, model, recipient;
+                var context;
+                var model;
+                var recipient;
 
                 context = app.context.getContext({
                     module: 'Emails'
@@ -361,7 +392,8 @@ describe('Emails.fields.email-recipients', function() {
                 field.def.readonly = false;
             });
             it('should be locked if field is readonly', function() {
-                var recipient, actual;
+                var recipient;
+                var actual;
 
                 field.def.readonly = true;
                 recipient = new Backbone.Model({
@@ -374,7 +406,8 @@ describe('Emails.fields.email-recipients', function() {
             });
 
             it('should be unlocked if field is not readonly', function() {
-                var recipient, actual;
+                var recipient;
+                var actual;
 
                 recipient = new Backbone.Model({
                     module: 'Contacts', name: 'Will Westin', email: 'will@example.com'
@@ -389,7 +422,12 @@ describe('Emails.fields.email-recipients', function() {
         using('Different Recipient Combos', [
             {
                 message: 'Should return an array of one recipient when the parameter is a Backbone model.',
-                recipients: new Backbone.Model({id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}),
+                recipients: new Backbone.Model({
+                    id: '123',
+                    module: 'Users',
+                    email: 'will@example.com',
+                    name: 'Will Westin'
+                }),
                 expected: 1
             },
             {
@@ -398,12 +436,16 @@ describe('Emails.fields.email-recipients', function() {
                 expected: 1
             },
             {
-                message: 'Should return an array of one recipient when the parameter is a Backbone collection containing one model.',
-                recipients: new Backbone.Collection([{id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}]),
+                message: 'Should return an array of one recipient when the parameter is a Backbone collection ' +
+                    'containing one model.',
+                recipients: new Backbone.Collection([
+                    {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}
+                ]),
                 expected: 1
             },
             {
-                message: 'Should return an array of three recipients when the parameter is a Backbone collection containing three models.',
+                message: 'Should return an array of three recipients when the parameter is a Backbone collection ' +
+                    'containing three models.',
                 recipients: new Backbone.Collection([
                     {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
                     {id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'},
@@ -412,7 +454,8 @@ describe('Emails.fields.email-recipients', function() {
                 expected: 3
             },
             {
-                message: 'Should return an array of three recipients when the parameter is an array containing three objects.',
+                message: 'Should return an array of three recipients when the parameter is an array containing ' +
+                    'three objects.',
                 recipients: [
                     {id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'},
                     {id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'},
@@ -421,11 +464,17 @@ describe('Emails.fields.email-recipients', function() {
                 expected: 3
             },
             {
-                message: 'Should return an array of three recipients when the parameter is an array containing three Backbone models.',
+                message: 'Should return an array of three recipients when the parameter is an array containing ' +
+                    'three Backbone models.',
                 recipients: [
                     new Backbone.Model({id: '123', module: 'Users', email: 'will@example.com', name: 'Will Westin'}),
                     new Backbone.Model({id: '456', module: 'Leads', email: 'sarah@example.com', name: 'Sarah Example'}),
-                    new Backbone.Model({id: '789', module: 'Contacts', email: 'sally@example.com', name: 'Sally Seashell'})
+                    new Backbone.Model({
+                        id: '789',
+                        module: 'Contacts',
+                        email: 'sally@example.com',
+                        name: 'Sally Seashell'
+                    })
                 ],
                 expected: 3
             },
@@ -605,17 +654,19 @@ describe('Emails.fields.email-recipients', function() {
         });
 
         it('Should return false when the api call results in an error.', function() {
+            var actual;
+
             apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error();
             });
 
-            var actual = field._validateEmailAddress('foo');
+            actual = field._validateEmailAddress('foo');
             expect(actual).toBeFalsy();
         });
 
         it('Should return false when the api call is successful and returns false.', function() {
-            var emailAddress = 'foo@bar.',
-                actual;
+            var emailAddress = 'foo@bar.';
+            var actual;
 
             apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                 var result = {};
@@ -628,8 +679,8 @@ describe('Emails.fields.email-recipients', function() {
         });
 
         it('Should return true when the api call is successful and returns true.', function() {
-            var emailAddress = 'foo@bar.com',
-                actual;
+            var emailAddress = 'foo@bar.com';
+            var actual;
 
             apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                 var result = {};

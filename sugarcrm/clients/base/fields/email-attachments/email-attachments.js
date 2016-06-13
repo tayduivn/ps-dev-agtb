@@ -289,7 +289,7 @@
      * `this._fileTag` is not possible; it would cause `this.$` to be stubbed
      * for all calls.
      *
-     * @returns {jQuery}
+     * @return {jQuery}
      * @private
      */
     _getFileInput: function() {

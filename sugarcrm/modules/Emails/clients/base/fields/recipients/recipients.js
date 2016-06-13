@@ -133,8 +133,8 @@
      * @private
      */
     _render: function() {
-        var $controlsEl,
-            $recipientsField;
+        var $controlsEl;
+        var $recipientsField;
 
         if (this.$el) {
             $controlsEl = this.$el.closest('.controls');

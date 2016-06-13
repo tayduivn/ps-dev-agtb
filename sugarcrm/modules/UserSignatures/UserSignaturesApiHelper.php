@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('data/SugarBeanApiHelper.php');
+require_once 'data/SugarBeanApiHelper.php';
 
 class UserSignaturesApiHelper extends SugarBeanApiHelper
 {

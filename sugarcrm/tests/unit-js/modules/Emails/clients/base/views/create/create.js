@@ -1,15 +1,15 @@
 describe('Emails.Views.Create', function() {
-    var app,
-        view,
-        dataProvider,
-        sandbox;
+    var app;
+    var view;
+    var dataProvider;
+    var sandbox;
 
     beforeEach(function() {
-        var context,
-            viewName = 'create',
-            moduleName = 'Emails';
+        var context;
+        var viewName = 'create';
+        var moduleName = 'Emails';
         app = SugarTest.app;
-        app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop };
+        app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
 
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('create', 'view', 'base', 'recipient-options', moduleName);
@@ -62,7 +62,8 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('Render', function() {
-        var setTitleStub, prepopulateStub;
+        var setTitleStub;
+        var prepopulateStub;
 
         beforeEach(function() {
             setTitleStub = sandbox.stub(view, 'setTitle');
@@ -102,9 +103,9 @@ describe('Emails.Views.Create', function() {
         });
 
         it('Email client preference error - should disable the send button and alert user', function() {
-            var alertShowStub = sandbox.stub(app.alert, 'show'),
-                sendField = {setDisabled: $.noop},
-                spyOnField = sandbox.spy(sendField, 'setDisabled');
+            var alertShowStub = sandbox.stub(app.alert, 'show');
+            var sendField = {setDisabled: $.noop};
+            var spyOnField = sandbox.spy(sendField, 'setDisabled');
 
             sandbox.stub(view, '_setAttachmentVisibility');
             sandbox.stub(app.user, 'getPreference')
@@ -123,7 +124,11 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('prepopulate', function() {
-        var populateRelatedStub, modelSetStub, populateForModulesStub, flag, mockCollection;
+        var populateRelatedStub;
+        var modelSetStub;
+        var populateForModulesStub;
+        var flag;
+        var mockCollection;
 
         beforeEach(function() {
             flag = false;
@@ -183,7 +188,13 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('_populateRelated', function() {
-        var relatedModel, fetchedModel, parentId, parentValue, inputValues, fetchedValues;
+        var relatedModel;
+        var fetchedModel;
+        var parentId;
+        var parentValue;
+        var inputValues;
+        var fetchedValues;
+        var should;
 
         beforeEach(function() {
             inputValues = {
@@ -224,7 +235,9 @@ describe('Emails.Views.Create', function() {
             expect(parentValue).toEqual(inputValues.name);
         });
 
-        it('should set the parent_name field with id and name on the fetched model when no name on the relatedModel passed in', function() {
+        should = 'should set the parent_name field with id and name on the fetched model when no name on the ' +
+            'relatedModel passed in';
+        it(should, function() {
             relatedModel.unset('name');
             view._populateRelated(relatedModel);
             expect(parentId).toEqual(fetchedValues.id);
@@ -240,10 +253,10 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('populateForCases', function() {
-        var configStub,
-            caseSubjectMacro = '[CASE:%1]',
-            relatedModel,
-            contacts;
+        var configStub;
+        var caseSubjectMacro = '[CASE:%1]';
+        var relatedModel;
+        var contacts;
 
         beforeEach(function() {
             var relatedCollection;
@@ -296,8 +309,8 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('Recipient Options', function() {
-        var toggleFieldVisibilitySpy,
-            isRecipientOptionButtonActive;
+        var toggleFieldVisibilitySpy;
+        var isRecipientOptionButtonActive;
 
         beforeEach(function() {
             toggleFieldVisibilitySpy = sandbox.spy(view, '_toggleFieldVisibility');
@@ -387,7 +400,8 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('Send', function() {
-        var saveStub, alertShowStub;
+        var saveStub;
+        var alertShowStub;
 
         beforeEach(function() {
             saveStub = sandbox.stub(view, 'save');
@@ -722,12 +736,14 @@ describe('Emails.Views.Create', function() {
             });
 
             it('should not set content of subject when the template does not include a subject', function() {
-                var Bean = SUGAR.App.Bean,
-                    bodyHtml = '<h1>Test</h1>',
-                    templateModel = new Bean({
+                var bodyHtml = '<h1>Test</h1>';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
                         id: '1234',
                         body_html: bodyHtml
-                    });
+                    }
+                );
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
@@ -737,14 +753,16 @@ describe('Emails.Views.Create', function() {
             });
 
             it('should set content of editor with html version of template', function() {
-                var Bean = SUGAR.App.Bean,
-                    bodyHtml = '<h1>Test</h1>',
-                    subject = 'This is my subject',
-                    templateModel = new Bean({
+                var bodyHtml = '<h1>Test</h1>';
+                var subject = 'This is my subject';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
                         id: '1234',
                         subject: subject,
                         body_html: bodyHtml
-                    });
+                    }
+                );
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
@@ -754,17 +772,19 @@ describe('Emails.Views.Create', function() {
             });
 
             it('should set content of editor with text only version of template', function() {
-                var Bean = SUGAR.App.Bean,
-                    bodyHtml = '<h1>Test</h1>',
-                    bodyText = 'Test',
-                    subject = 'This is my subject',
-                    templateModel = new Bean({
+                var bodyHtml = '<h1>Test</h1>';
+                var bodyText = 'Test';
+                var subject = 'This is my subject';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
                         id: '1234',
                         subject: subject,
                         body_html: bodyHtml,
                         body: bodyText,
                         text_only: 1
-                    });
+                    }
+                );
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
@@ -774,14 +794,17 @@ describe('Emails.Views.Create', function() {
             });
 
             it('should call to insert the signature that was marked as the last one selected', function() {
-                var bodyHtml = '<h1>Test</h1>',
-                    subject = 'This is my subject',
-                    templateModel = new app.Bean({
+                var bodyHtml = '<h1>Test</h1>';
+                var subject = 'This is my subject';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
                         id: '1234',
                         subject: subject,
                         body_html: bodyHtml
-                    }),
-                    signature = new app.Bean({id: 'abcd'});
+                    }
+                );
+                var signature = new app.Bean({id: 'abcd'});
 
                 view._lastSelectedSignature = signature;
 
@@ -805,33 +828,33 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should retrieve a signature when the signature ID is present', function() {
-            var id = 'abcd',
-                signature = new app.Bean({id: id});
+            var id = 'abcd';
+            var signature = app.data.createBean('UserSignatures', {id: id});
 
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', /.*rest\/v10\/UserSignatures\/.*/,
-                [200, { 'Content-Type': 'application/json'}, JSON.stringify({})]);
+                [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
 
             view._updateEditorWithSignature(signature);
             expect(ajaxSpy.getCall(0).args[0].url).toContain('rest/v10/UserSignatures');
         });
 
         it('should not retrieve a signature when the signature ID is not present', function() {
-            var signature = new app.Bean();
+            var signature = app.data.createBean('UserSignatures');
 
             view._updateEditorWithSignature(signature);
             expect(ajaxSpy.callCount).toBe(0);
         });
 
         it('should change the last selected signature, on success, to the one that is retrieved', function() {
-            var id = 'abcd',
-                signature = new app.Bean({id: id}),
-                results = {
-                    id: id,
-                    name: 'Signature A',
-                    signature: 'Regards',
-                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                };
+            var id = 'abcd';
+            var signature = app.data.createBean('UserSignatures', {id: id});
+            var results = {
+                id: id,
+                name: 'Signature A',
+                signature: 'Regards',
+                signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+            };
 
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [
@@ -848,9 +871,9 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should not change the last selected signature, on success, when no signature is returned', function() {
-            var id = 'abcd',
-                signature = new app.Bean({id: id}),
-                results = [];
+            var id = 'abcd';
+            var signature = app.data.createBean('UserSignatures', {id: id});
+            var results = [];
 
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [
@@ -867,8 +890,8 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should not change the last selected signature on error', function() {
-            var id = 'abcd',
-                signature = new app.Bean({id: id});
+            var id = 'abcd';
+            var signature = app.data.createBean('UserSignatures', {id: id});
 
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [404, {}, '']);
@@ -903,9 +926,9 @@ describe('Emails.Views.Create', function() {
         });
 
         describe('insert a signature', function() {
-            var signatureTagBegin = '<div class="signature">',
-                signatureTagEnd = '</div>',
-                signature;
+            var signatureTagBegin = '<div class="signature">';
+            var signatureTagEnd = '</div>';
+            var signature;
 
             beforeEach(function() {
                 sandbox.restore();
@@ -915,62 +938,77 @@ describe('Emails.Views.Create', function() {
             });
 
             it('should append the signature to the email body', function() {
-                var id = 'abcd',
-                    htmlBody = 'my message body is awesome!';
+                var id = 'abcd';
+                var htmlBody = 'my message body is awesome!';
+                var expectedBody;
+                var actualReturn;
 
-                signature = new app.Bean({
-                    id: id,
-                    name: 'Signature A',
-                    signature: 'Regards',
-                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                });
+                signature = app.data.createBean(
+                    'UserSignatures',
+                    {
+                        id: id,
+                        name: 'Signature A',
+                        signature: 'Regards',
+                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                    }
+                );
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
                 view.model.set('description_html', htmlBody);
-                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                var actualReturn = view._insertSignature(signature);
+                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
                 expect(view.model.get('description_html')).toBe(expectedBody);
             });
 
             it('should remove a nested signature from the email body', function() {
-                var id = 'abcd',
-                    message = 'my message body is awesome!' +
-                        '<div class="signature"><div class="signature">SIG</div><p>Regards</p></div>',
-                    htmlBody = 'my message body is awesome!';
+                var id = 'abcd';
+                var message = 'my message body is awesome!' +
+                        '<div class="signature"><div class="signature">SIG</div><p>Regards</p></div>';
+                var htmlBody = 'my message body is awesome!';
+                var expectedBody;
+                var actualReturn;
 
-                signature = new app.Bean({
-                    id: id,
-                    name: 'Signature A',
-                    signature: 'Regards',
-                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                });
+                signature = app.data.createBean(
+                    'UserSignatures',
+                    {
+                        id: id,
+                        name: 'Signature A',
+                        signature: 'Regards',
+                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                    }
+                );
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
                 view.model.set('description_html', message);
-                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                var actualReturn = view._insertSignature(signature);
+                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
                 expect(view.model.get('description_html')).toBe(expectedBody);
             });
 
             it('should remove a signature marked for removal', function() {
-                var id = 'abcd',
-                    message = '<div class="signature remove"><p>Regards, Jim</p></div>' +
-                        'my message body is awesome!<div class="signature"><p>Regards</p></div>',
-                    htmlBody = 'my message body is awesome!';
+                var id = 'abcd';
+                var message = '<div class="signature remove"><p>Regards, Jim</p></div>' +
+                        'my message body is awesome!<div class="signature"><p>Regards</p></div>';
+                var htmlBody = 'my message body is awesome!';
+                var expectedBody;
+                var actualReturn;
 
-                signature = new app.Bean({
-                    id: id,
-                    name: 'Signature A',
-                    signature: 'Regards',
-                    signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-                });
+                signature = app.data.createBean(
+                    'UserSignatures',
+                    {
+                        id: id,
+                        name: 'Signature A',
+                        signature: 'Regards',
+                        signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
+                    }
+                );
 
                 signature.set('signature_html', view._formatSignature(signature.get('signature_html')));
                 view.model.set('description_html', message);
-                var expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
-                var actualReturn = view._insertSignature(signature);
+                expectedBody = htmlBody + signatureTagBegin + signature.get('signature_html') + signatureTagEnd;
+                actualReturn = view._insertSignature(signature);
                 expect(actualReturn).toBe(true);
                 expect(view.model.get('description_html')).toBe(expectedBody);
             });
@@ -983,9 +1021,9 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should populate the related field according to how the Mail API expects it', function() {
-            var sendModel,
-                parentId = '123',
-                parentType = 'Foo';
+            var sendModel;
+            var parentId = '123';
+            var parentType = 'Foo';
             view.model.set('parent_id', parentId);
             view.model.set('parent_type', parentType);
             sendModel = view.initializeSendEmailModel();
@@ -994,17 +1032,19 @@ describe('Emails.Views.Create', function() {
     });
 
     describe('ResizeEditor', function() {
-        var $drawer, $editor;
+        var $drawer;
+        var $editor;
 
         beforeEach(function() {
             var mockHtml = '<div><div class="drawer">' +
                     '<div class="headerpane"></div>' +
-                    '<div class="record"><div class="mce-stack-layout"><div class="mce-stack-layout-item"><iframe frameborder="0"></iframe></div></div></div>' +
-                    '<div class="show-hide-toggle"></div>' +
-                    '</div></div>',
-                drawerHeight = view.MIN_EDITOR_HEIGHT + 300,
-                otherHeight = 50,
-                editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING - view.ATTACHMENT_FIELD_HEIGHT;
+                    '<div class="record"><div class="mce-stack-layout"><div class="mce-stack-layout-item">' +
+                    '<iframe frameborder="0"></iframe></div></div></div><div class="show-hide-toggle"></div>' +
+                    '</div></div>';
+            var drawerHeight = view.MIN_EDITOR_HEIGHT + 300;
+            var otherHeight = 50;
+            var editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING -
+                view.ATTACHMENT_FIELD_HEIGHT;
 
             view.$el = $(mockHtml);
             $drawer = view.$('.drawer');
@@ -1022,8 +1062,8 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should increase the height of the editor when drawer height increases', function() {
-            var editorHeightBefore = $editor.height(),
-                drawerHeightBefore = $drawer.height();
+            var editorHeightBefore = $editor.height();
+            var drawerHeightBefore = $drawer.height();
 
             //increase drawer height by 100 pixels
             $drawer.height(drawerHeightBefore + 100);
@@ -1034,8 +1074,8 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should decrease the height of the editor when drawer height decreases', function() {
-            var editorHeightBefore = $editor.height(),
-                drawerHeightBefore = $drawer.height();
+            var editorHeightBefore = $editor.height();
+            var drawerHeightBefore = $drawer.height();
 
             //decrease drawer height by 100 pixels
             $drawer.height(drawerHeightBefore - 100);
@@ -1055,8 +1095,8 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should resize editor to fill empty drawer space but with a padding to prevent scrolling', function() {
-            var editorHeightBefore = $editor.height(),
-                editorHeightPlusPadding = editorHeightBefore + view.EDITOR_RESIZE_PADDING;
+            var editorHeightBefore = $editor.height();
+            var editorHeightPlusPadding = editorHeightBefore + view.EDITOR_RESIZE_PADDING;
 
             //add the resize padding on
             $editor.height(editorHeightPlusPadding);

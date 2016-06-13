@@ -203,15 +203,15 @@
      * @private
      */
     _loadOptions: _.debounce(function(query) {
-        var self = this,
-            data = {
-                results: [],
-                // only show one page of results
-                more: false
-            },
-            options = {},
-            callbacks = {},
-            url;
+        var self = this;
+        var data = {
+            results: [],
+            // only show one page of results
+            more: false
+        };
+        var options = {};
+        var callbacks = {};
+        var url;
 
         // add the search term to the URL params
         options.q = query.term;
@@ -281,8 +281,8 @@
      * @private
      */
     _formatSelection: function(recipient) {
-        var value = recipient.get('name') || recipient.get('email_address'),
-            template = app.template.getField(this.type, 'select2-selection', this.module);
+        var value = recipient.get('name') || recipient.get('email_address');
+        var template = app.template.getField(this.type, 'select2-selection', this.module);
         if (template) {
             return template({
                 id: this._getSelect2Id(recipient),
@@ -495,7 +495,8 @@
      * @private
      */
     _getRecipientAttributes: function(recipient) {
-        var bean, attributes;
+        var bean;
+        var attributes;
 
         attributes = {};
         if (recipient instanceof Backbone.Model) {
@@ -543,14 +544,14 @@
      * @private
      */
     _validateEmailAddress: function(emailAddress) {
-        var isValid = false,
-            callbacks = {},
-            options = {
-                // execute the api call synchronously so that the method doesn't
-                // return before the response is known
-                async: false
-            },
-            url = app.api.buildURL('Emails', 'address/validate');
+        var isValid = false;
+        var callbacks = {};
+        var options = {
+            // execute the api call synchronously so that the method doesn't
+            // return before the response is known
+            async: false
+        };
+        var url = app.api.buildURL('Emails', 'address/validate');
 
         callbacks.success = function(result) {
             isValid = result[emailAddress];

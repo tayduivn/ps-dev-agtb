@@ -33,13 +33,13 @@ $viewdefs['EmailTemplates']['base']['view']['selection-list'] = array(
                     'name' => 'has_variables',
                     'default' => true,
                     'sortable' => false,
-                    'label' => 'LBL_TEMPLATE_HAS_VARIABLES'
+                    'label' => 'LBL_TEMPLATE_HAS_VARIABLES',
                 ),
                 array(
                     'name' => 'description',
                     'default' => false,
                     'sortable' => false,
-                    'label' => 'LBL_DESCRIPTION'
+                    'label' => 'LBL_DESCRIPTION',
                 ),
                 array(
                     'name'  => 'assigned_user_name',

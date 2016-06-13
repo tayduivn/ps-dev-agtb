@@ -744,8 +744,8 @@
              * @return {string}
              */
             getReadableFileSize: function(size) {
-                var i = -1,
-                    units = ['K', 'M', 'G', 'T'];
+                var i = -1;
+                var units = ['K', 'M', 'G', 'T'];
 
                 if (_.isEmptyValue(size) || size < 1) {
                     size = 0;

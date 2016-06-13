@@ -43,7 +43,7 @@ class EmailTemplatesUpdateHasVariablesTest extends UpgradeTestCase
     {
         $emailTpl = SugarTestEmailTemplateUtilities::createEmailTemplate('', array(
             'body' => $bodyStr,
-            'body_html' => $bodyHtmlStr
+            'body_html' => $bodyHtmlStr,
         ));
 
         $this->db->query('UPDATE email_templates SET has_variables = 0');
@@ -64,121 +64,121 @@ class EmailTemplatesUpdateHasVariablesTest extends UpgradeTestCase
                 '',
                 '<p>Hello Test,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable'
+                'Assert that template string does not contain a dynamic variable',
             ),
             array(
                 '',
                 '<p>Hello $accountName,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable because it lacks an underscore'
+                'Assert that template string does not contain a dynamic variable because it lacks an underscore',
             ),
             array(
                 '',
                 '<p>Hello $1,000,000,</p>',
                 0,
-                'Assert that template string does not contain a dynamic variable with dollar value'
+                'Assert that template string does not contain a dynamic variable with dollar value',
             ),
             array(
                 '',
                 '<p>Hello $account_name,</p>',
                 1,
-                'Assert that template string has $module_field'
+                'Assert that template string has $module_field',
             ),
             array(
                 '',
                 '<p>Hello $accountName_field,</p>',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 '',
                 '<p>Hello $account_fieldName,</p>',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 '',
                 '<p>Hello $accountName_fieldName,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName'
+                'Assert that template string has $accountName_fieldName',
             ),
             array(
                 '',
                 '<p>Hello $accountName_fieldName_c,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName_c'
+                'Assert that template string has $accountName_fieldName_c',
             ),
             array(
                 '',
                 '<p>Hello $accountName_fieldName_is_something_else,</p>',
                 1,
-                'Assert that template string has $accountName_fieldName_is_something_else'
+                'Assert that template string has $accountName_fieldName_is_something_else',
             ),
             array(
                 '',
                 '<p>Hello $account_name1,</p>',
                 1,
-                'Assert that template string has $module_field1 with numbers'
+                'Assert that template string has $module_field1 with numbers',
             ),
             array(
                 'Hello Test,',
                 '',
                 0,
-                'Assert that template string does not contain a dynamic variable'
+                'Assert that template string does not contain a dynamic variable',
             ),
             array(
                 'Hello $accountName,',
                 '',
                 0,
-                'Assert that template string does not contain a dynamic variable because it lacks an underscore'
+                'Assert that template string does not contain a dynamic variable because it lacks an underscore',
             ),
             array(
                 'Hello $1,000,000,',
                 '',
                 0,
-                'Assert that template string does not contain a dynamic variable with dollar value'
+                'Assert that template string does not contain a dynamic variable with dollar value',
             ),
             array(
                 'Hello $account_name,',
                 '',
                 1,
-                'Assert that template string has $module_field'
+                'Assert that template string has $module_field',
             ),
             array(
                 'Hello $accountName_field,',
                 '',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 'Hello $account_fieldName,',
                 '',
                 1,
-                'Assert that template string has $moduleName_field'
+                'Assert that template string has $moduleName_field',
             ),
             array(
                 'Hello $accountName_fieldName,',
                 '',
                 1,
-                'Assert that template string has $accountName_fieldName'
+                'Assert that template string has $accountName_fieldName',
             ),
             array(
                 'Hello $accountName_fieldName_c,',
                 '',
                 1,
-                'Assert that template string has $accountName_fieldName_c'
+                'Assert that template string has $accountName_fieldName_c',
             ),
             array(
                 'Hello $accountName_fieldName_is_something_else,',
                 '',
                 1,
-                'Assert that template string has $accountName_fieldName_is_something_else'
+                'Assert that template string has $accountName_fieldName_is_something_else',
             ),
             array(
                 'Hello $account_name1,',
                 '',
                 1,
-                'Assert that template string has $module_field1 with numbers'
+                'Assert that template string has $module_field1 with numbers',
             ),
         );
     }

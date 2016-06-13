@@ -230,7 +230,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
                     ),
                 ),
                 'delete' => array(
-                    $attachment2->id
+                    $attachment2->id,
                 ),
             ),
         );

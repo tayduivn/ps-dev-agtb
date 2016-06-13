@@ -66,8 +66,8 @@
      * @inheritdoc
      */
     _render: function() {
-        var prepopulateValues,
-            $controls;
+        var prepopulateValues;
+        var $controls;
 
         this._super('_render');
 

@@ -109,7 +109,7 @@ class UserSignature extends Basic
 
         if ($defaultSignature !== $this->id && $this->is_default === true) {
             $newDefault = $this->id;
-        } else if ($defaultSignature === $this->id && $this->is_default === false) {
+        } elseif ($defaultSignature === $this->id && $this->is_default === false) {
             $newDefault = '';
         }
 

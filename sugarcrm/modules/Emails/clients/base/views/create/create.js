@@ -72,8 +72,8 @@
      * @inheritdoc
      */
     _render: function() {
-        var $controls,
-            prepopulateValues;
+        var $controls;
+        var prepopulateValues;
 
         this._super('_render');
 
@@ -106,8 +106,8 @@
      * Notifies the user of configuration issues and disables send button
      */
     notifyConfigurationStatus: function() {
-        var sendButton,
-            emailClientPrefence = app.user.getPreference('email_client_preference');
+        var sendButton;
+        var emailClientPrefence = app.user.getPreference('email_client_preference');
 
         if (_.isObject(emailClientPrefence) && _.isObject(emailClientPrefence.error)) {
             app.alert.show('email-client-status', {
@@ -164,23 +164,23 @@
         }
     },
 
-
     /**
      * Populates email compose with cases specific data.
      * TODO: Refactor once we have custom module specific models
      * @param {Data.Bean} relatedModel
      */
     _populateForCases: function(relatedModel) {
-        var config = app.metadata.getConfig(),
-            keyMacro = '%1',
-            caseMacro = config.inboundEmailCaseSubjectMacro,
-            subject = caseMacro + ' ' + relatedModel.get('name');
+        var config = app.metadata.getConfig();
+        var keyMacro = '%1';
+        var caseMacro = config.inboundEmailCaseSubjectMacro;
+        var subject = caseMacro + ' ' + relatedModel.get('name');
+        var contacts;
 
         subject = subject.replace(keyMacro, relatedModel.get('case_number'));
         this.model.set('name', subject);
         if (!this.isFieldPopulated('to')) {
             // no addresses, attempt to populate from contacts relationship
-            var contacts = relatedModel.getRelatedCollection('contacts');
+            contacts = relatedModel.getRelatedCollection('contacts');
 
             contacts.fetch({
                 relate: true,
@@ -244,15 +244,15 @@
      * @private
      */
     _renderRecipientOptions: function(container) {
-        var field = this.getField(container),
-            $panelBody,
-            recipientOptionTemplate;
+        var field = this.getField(container);
+        var $panelBody;
+        var recipientOptionTemplate;
 
         if (field) {
             $panelBody = field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR);
             recipientOptionTemplate = app.template.getView('create.recipient-options', this.module);
 
-            $(recipientOptionTemplate({'module' : this.module}))
+            $(recipientOptionTemplate({'module': this.module}))
                 .insertAfter($panelBody.find('div span.normal'));
         }
     },
@@ -277,8 +277,8 @@
      * @param {boolean} [active] Whether toggle button active and field shown
      */
     toggleRecipientOption: function(fieldName, active) {
-        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]',
-            $toggleButton = this.$(toggleButtonSelector);
+        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]';
+        var $toggleButton = this.$(toggleButtonSelector);
 
         // if explicit active state not set, toggle to opposite
         if (_.isUndefined(active)) {
@@ -296,8 +296,8 @@
      * @private
      */
     _handleRecipientOptionClick: function(event) {
-        var $toggleButton = $(event.currentTarget),
-            fieldName = $toggleButton.data('toggle-field');
+        var $toggleButton = $(event.currentTarget);
+        var fieldName = $toggleButton.data('toggle-field');
 
         this.toggleRecipientOption(fieldName);
         this.resizeEditor();
@@ -330,7 +330,7 @@
         if (!_.isUndefined(id)) {
             id = id.toString();
             if (id.length > 0) {
-                related['id'] = id;
+                related.id = id;
                 type = this.model.get('parent_type');
                 if (!_.isUndefined(type)) {
                     type = type.toString();
@@ -395,7 +395,8 @@
      */
     saveAndClose: function() {
         this.initiateSave(_.bind(function() {
-            var currentRoute, newRoute;
+            var currentRoute;
+            var newRoute;
 
             if (this.closestComponent('drawer')) {
                 app.drawer.close(this.context, this.model);
@@ -531,8 +532,10 @@
      * @param {Data.Bean} model
      */
     _templateDrawerCallback: function(model) {
+        var emailTemplate;
+
         if (model) {
-            var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
+            emailTemplate = app.data.createBean('EmailTemplates', {id: model.id});
             emailTemplate.fetch({
                 success: _.bind(this._confirmTemplate, this),
                 error: _.bind(function(error) {
@@ -706,12 +709,17 @@
      * @param {Data.Bean} model
      */
     _updateEditorWithSignature: function(model) {
+        var signature;
+
         if (model && model.id) {
-            var signature = app.data.createBean('UserSignatures', { id: model.id });
+            signature = app.data.createBean('UserSignatures', {id: model.id});
 
             signature.fetch({
                 success: _.bind(function(model) {
-                    if (this.disposed === true) return; //if view is already disposed, bail out
+                    if (this.disposed === true) {
+                        // If view is already disposed, bail out.
+                        return;
+                    }
                     if (this._insertSignature(model)) {
                         this._lastSelectedSignature = model;
                     }
@@ -732,12 +740,15 @@
      */
     _insertSignature: function(signature) {
         var htmlBodyObj;
+        var emailBody;
+        var signatureOpenTag;
+        var signatureCloseTag;
+        var signatureContent;
 
         if (_.isObject(signature) && signature.get('signature_html')) {
-            var emailBody = this.model.get('description_html'),
-                signatureOpenTag = '<div class="signature keep">',
-                signatureCloseTag = '</div>',
-                signatureContent = this._formatSignature(signature.get('signature_html'));
+            signatureOpenTag = '<div class="signature keep">';
+            signatureCloseTag = '</div>';
+            signatureContent = this._formatSignature(signature.get('signature_html'));
 
             // insert signature at cursor location
             emailBody = this._insertInEditor(signatureOpenTag + signatureContent + signatureCloseTag);
@@ -774,8 +785,8 @@
     /**
      * Inserts the content into the tinyMCE editor at the cursor location.
      *
-     * @param {String} content
-     * @return {String} the content of the editor
+     * @param {string} content
+     * @return {string} the content of the editor
      * @private
      */
     _insertInEditor: function(content) {
@@ -853,7 +864,13 @@
      * @param {number} [drawerHeight] current height of the drawer or height the drawer will be after animations
      */
     resizeEditor: function(drawerHeight) {
-        var $editor, headerHeight, recordHeight, showHideHeight, diffHeight, editorHeight, newEditorHeight;
+        var $editor;
+        var headerHeight;
+        var recordHeight;
+        var showHideHeight;
+        var diffHeight;
+        var editorHeight;
+        var newEditorHeight;
 
         $editor = this.$('.mce-stack-layout .mce-stack-layout-item iframe');
         //if editor not already rendered, cannot resize

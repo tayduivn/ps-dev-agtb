@@ -57,7 +57,7 @@ class EmailRecipientRelationship extends M2MRelationship
                 // Get the existing row so you know what email_address_id is.
                 $args = array(
                     $this->def['join_key_lhs'] => $lhs->id,
-                    $this->def['join_key_rhs'] => $rhs->id
+                    $this->def['join_key_rhs'] => $rhs->id,
                 );
                 $row = $this->checkExisting($args);
 

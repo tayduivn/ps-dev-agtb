@@ -26,7 +26,8 @@ $mod_strings = array(
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_EMAILS_QUOTES_REL' => 'Emails:Quotes',
     'LBL_ERROR_SELECT_REPORT' => 'Please select a report',
-    'LBL_ERROR_SELECT_MODULE_SELECT' => 'Please select a name by clicking on the select button next to Related To field',
+    'LBL_ERROR_SELECT_MODULE_SELECT' => 'Please select a name by clicking on the select button next to Related To ' .
+        'field',
     'LBL_ERROR_SELECT_MODULE' => 'Please select a module for the Related to field',
     'ERR_ARCHIVE_EMAIL' => 'Error: Select emails to archive.',
     'ERR_DATE_START' => 'Date Start',
@@ -198,9 +199,12 @@ $mod_strings = array(
     "LBL_SHOW_MORE_RECIPIENTS" => "More recipients...",
     "LBL_COMPOSE_ADDRESSBOOK" => "Address Book",
     'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this recipient from the email?',
-    'WARNING_SETTINGS_NOT_CONF' => 'Your email settings are not correctly configured to send email. An SMTP server must be configured in <a href="#bwc/index.php?module=EmailMan&action=config">Email Settings</a>.',
-    'WARNING_NO_UPLOAD_DIR' => 'Attachments may fail: No value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
-    'WARNING_UPLOAD_DIR_NOT_WRITABLE' => 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
+    'WARNING_SETTINGS_NOT_CONF' => 'Your email settings are not correctly configured to send email. An SMTP server ' .
+        'must be configured in <a href="#bwc/index.php?module=EmailMan&action=config">Email Settings</a>.',
+    'WARNING_NO_UPLOAD_DIR' => 'Attachments may fail: No value for "upload_tmp_dir" was detected.  Please correct ' .
+        'this in your php.ini file.',
+    'WARNING_UPLOAD_DIR_NOT_WRITABLE' => 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" ' .
+        'was detected.  Please correct this in your php.ini file.',
     'LBL_MESSAGE_UID' => 'Message UID',
 
     // for All emails
@@ -307,10 +311,14 @@ $mod_strings = array(
 
     //#20680 EmialTemplate Ext.Message.show;
     'LBL_EMAILTEMPLATE_MESSAGE_SHOW_TITLE' => 'Please check!',
-    'LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG' => 'The template will overwrite all contents in this email. Are you sure you want to use this template and overwrite content?',
-    'LBL_EMAILTEMPLATE_MESSAGE_CLEAR_MSG' => 'Selecting "--None--" will clear any data already entered within the email body. Do you wish to continue?',
+    'LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG' => 'The template will overwrite all contents in this email. Are you sure ' .
+        'you want to use this template and overwrite content?',
+    'LBL_EMAILTEMPLATE_MESSAGE_CLEAR_MSG' => 'Selecting "--None--" will clear any data already entered within the ' .
+        'email body. Do you wish to continue?',
     'LBL_EMAILTEMPLATE_MESSAGE_WARNING_TITLE' => 'Warning',
-    'LBL_EMAILTEMPLATE_MESSAGE_MULTIPLE_RECIPIENTS' => 'Using an email template containing contact variables, such as the contact name, to send emails to multiple recipients may have unexpected results. It is recommended that you use an email campaign for mass mailings.',
+    'LBL_EMAILTEMPLATE_MESSAGE_MULTIPLE_RECIPIENTS' => 'Using an email template containing contact variables, such ' .
+        'as the contact name, to send emails to multiple recipients may have unexpected results. It is recommended ' .
+        'that you use an email campaign for mass mailings.',
     'LBL_CHECK_ATTACHMENTS' => 'Please Check Attachments!',
     'LBL_HAS_ATTACHMENTS' => 'This email already has attachment(s). Would you like to keep the attachment(s)?',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required field',
@@ -353,7 +361,8 @@ $mod_strings = array(
     'LBL_TEST_EMAIL_BODY' => 'This email was sent in order to test the outgoing mail server information provided in the Sugar application.  A successful receipt of this email indicates that the outgoing mail server information provided is valid.',
 
     // for outbound email dialog
-    'LBL_SMTP_SERVER_HELP' => 'This SMTP Mail Server can be used for outgoing mail. Provide a username and password for your email account in order to use the mail server.',
+    'LBL_SMTP_SERVER_HELP' => 'This SMTP Mail Server can be used for outgoing mail. Provide a username and password ' .
+        'for your email account in order to use the mail server.',
     'LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS' => 'The administator has not yet configured the default outbound account.  Unable to send test email.',
     'LBL_MAIL_SMTPAUTH_REQ' => 'Use SMTP Authentication?',
     'LBL_MAIL_SMTPPASS' => 'SMTP Password:',
