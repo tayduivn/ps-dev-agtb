@@ -171,50 +171,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query("delete from contacts where id = '{$row['id']}'");
     }
 
-    public function testDelete()
-    {
-        $bean = new Contact();
-        $bean->last_name = 'foobar' . mt_rand();
-        $bean->id = create_guid();
-        $this->_db->insert($bean);
-        $id = $bean->id;
-
-        $bean = new Contact();
-        $this->_db->delete($bean,array('id'=>$id));
-
-        $result = $this->_db->query("select deleted from contacts where id = '{$id}'");
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['deleted'],'1');
-
-        $this->_db->query("delete from contacts where id = '{$id}'");
-    }
-
-    public function testRetrieve()
-    {
-        $bean = new Contact();
-        $bean->last_name = 'foobar' . mt_rand();
-        $bean->id = create_guid();
-        $this->_db->insert($bean);
-        $id = $bean->id;
-
-        $bean = new Contact();
-        $result = $this->_db->retrieve($bean,array('id'=>$id));
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['id'],$id);
-
-        $this->_db->query("delete from contacts where id = '{$id}'");
-    }
-
-    public function testRetrieveView()
-    {
-        // TODO: Write this test
-    }
-
-    public function testCreateTable()
-    {
-        // TODO: Write this test
-    }
-
     public function testCreateTableParams()
     {
         $tablename = 'test' . mt_rand();
@@ -237,11 +193,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
 
         $this->dropTableName($tablename);
-    }
-
-    public function testRepairTable()
-    {
-        // TODO: Write this test
     }
 
     public function testRepairTableNoChanges()
@@ -815,195 +766,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->dropTableName($tablename2);
     }
 
-//    public function testCompareIndexInTables()
-//    {
-//        $tablename1 = 'test9_' . mt_rand();
-//        $this->_db->createTableParams($tablename1,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename1,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//        $tablename2 = 'test10_' . mt_rand();
-//        $this->_db->createTableParams($tablename2,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename2,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//
-//        $res = $this->_db->compareIndexInTables(
-//            'idx_foo', $tablename1, $tablename2);
-//
-//        $this->assertEquals($res['msg'],'match');
-//
-//        $this->_db->dropTableName($tablename1);
-//        $this->_db->dropTableName($tablename2);
-//    }
-//
-//    public function testCompareIndexInTablesNotInTable1()
-//    {
-//        $tablename1 = 'test11_' . mt_rand();
-//        $this->_db->createTableParams($tablename1,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename1,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//        $tablename2 = 'test12_' . mt_rand();
-//        $this->_db->createTableParams($tablename2,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename2,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//
-//        $res = $this->_db->compareIndexInTables(
-//            'idx_foo', $tablename1, $tablename2);
-//
-//        $this->assertEquals($res['msg'],'not_exists_table1');
-//
-//        $this->_db->dropTableName($tablename1);
-//        $this->_db->dropTableName($tablename2);
-//    }
-//
-//    public function testCompareIndexInTablesNotInTable2()
-//    {
-//        $tablename1 = 'test13_' . mt_rand();
-//        $this->_db->createTableParams($tablename1,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename1,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//        $tablename2 = 'test14_' . mt_rand();
-//        $this->_db->createTableParams($tablename2,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_'. $tablename2,
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//
-//        $res = $this->_db->compareIndexInTables(
-//            'idx_foo', $tablename1, $tablename2);
-//
-//        $this->assertEquals($res['msg'],'not_exists_table2');
-//
-//        $this->_db->dropTableName($tablename1);
-//        $this->_db->dropTableName($tablename2);
-//    }
-//
-//    public function testCompareIndexInTablesIndexesDoNotMatch()
-//    {
-//        $tablename1 = 'test15_' . mt_rand();
-//        $this->_db->createTableParams($tablename1,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foo',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_foo',
-//                    'type'   => 'index',
-//                    'fields' => array('foo'),
-//                    )
-//                )
-//            );
-//        $tablename2 = 'test16_' . mt_rand();
-//        $this->_db->createTableParams($tablename2,
-//            array(
-//                'foo' => array (
-//                    'name' => 'foobar',
-//                    'type' => 'varchar',
-//                    'len' => '255',
-//                    ),
-//                ),
-//            array(
-//                array(
-//                    'name'   => 'idx_foo',
-//                    'type'   => 'index',
-//                    'fields' => array('foobar'),
-//                    )
-//                )
-//            );
-//
-//        $res = $this->_db->compareIndexInTables(
-//            'idx_foo', $tablename1, $tablename2);
-//
-//        $this->assertEquals($res['msg'],'no_match');
-//
-//        $this->_db->dropTableName($tablename1);
-//        $this->_db->dropTableName($tablename2);
-//    }
-
-    public function testCreateIndex()
-    {
-        // TODO: Write this test
-    }
-
     public function testAddIndexes()
     {
         //TODO Fix test with normal index inspection
@@ -1543,11 +1305,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($insertValue, $checkResult['foo']);
     }
 
-    public function testDropTable()
-    {
-        // TODO: Write this test
-    }
-
     public function testDropTableName()
     {
         $tablename = 'test' . mt_rand();
@@ -1566,11 +1323,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->dropTableName($tablename);
 
         $this->assertFalse(in_array($tablename,$this->_db->getTablesArray()));
-    }
-
-    public function testDeleteColumn()
-    {
-        // TODO: Write this test
     }
 
     public function testDisconnectAll()
@@ -1685,11 +1437,6 @@ SQL;
         $this->assertEquals($row['id'],$beanIds[0]);
 
         $this->_removeRecords($beanIds);
-    }
-
-    public function testConnect()
-    {
-        // TODO: Write this test
     }
 
     public function testDisconnect()
@@ -3100,10 +2847,7 @@ SQL;
         $this->assertRegExp("#quantity.*?decimal\\($result\\)#i", $sql, "Bad length change for $driver");
     }
 
-    /**
-     * Data provider for testIsNullable()
-     */
-    public function testIsNullableData()
+    public function isNullableProvider()
     {
         return array(
             array(
@@ -3138,7 +2882,7 @@ SQL;
 
     /**
      * @ticket PAT-579
-     * @dataProvider testIsNullableData
+     * @dataProvider isNullableProvider
      */
     public function testIsNullable($vardef, $isNullable)
     {
@@ -3156,10 +2900,6 @@ SQL;
      */
     public function setupPreparedStatementsInsertStructure()
     {
-        if (empty($this->_db->preparedStatementClass)) {
-            $this->markTestSkipped('This DBManager does not support prepared statements');
-        }
-
         // create test table for operational testing
         $tableName = "testPreparedStatement";
         $params =  array(
@@ -3230,30 +2970,6 @@ SQL;
      * @group preparedStatements
      * @param $data
      */
-    public function testPreparedStatementsInsertSql($data){
-
-        // turn on prepared statements
-        $dataStructure = $this->setupPreparedStatementsInsertStructure();
-        $params = $dataStructure['params'];
-        $tableName = $dataStructure['tableName'];
-        $sql = "INSERT INTO {$tableName}(id,col1,col2, col3) VALUES(?int, ?, ?text, ?date)";
-        $ps = $this->_db->preparedQuery($sql, $data, array('col2'));
-        $this->assertNotEmpty($ps, "Prepare failed");
-
-        $result = $this->_db->query("SELECT * FROM $tableName");
-        $resultsCnt = 0;
-        while(($row = $this->_db->fetchByAssoc($result)) != null) {
-            $resultsCnt++;
-        }
-        $this->assertEquals(1, $resultsCnt, "Incorrect number or records. Found: $resultsCnt Expected: 1");
-    }
-
-
-    /**
-     * @dataProvider providerPreparedStatementsInsert
-     * @group preparedStatements
-     * @param $data
-     */
     public function testPreparedStatementsInsertParams($data)
     {
 
@@ -3303,48 +3019,6 @@ SQL;
     /**
      * @group preparedStatements
      */
-    public function testMultipleUsageOfPreparedStatements()
-    {
-        $dataStructure = $this->setupPreparedStatementsInsertStructure();
-        $tableName = $dataStructure['tableName'];
-
-        $sql = "INSERT INTO {$tableName} (id, col1, col2, col3) VALUES (?int, ?, ?text, ?date)";
-        $ps = $this->_db->prepareStatement($sql, array('col2'));
-        $this->assertNotEmpty($ps, 'Prepare failed');
-
-        $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
-        while (strlen($blobData) < 10000) {
-            $blobData .= $blobData;
-        }
-
-        $data = array(
-            array(
-                0 => 0,
-                1 => "col1 data",
-                2 => $blobData,
-                3 => '2012-12-31',
-            ),
-            array(
-                0 => 1,
-                1 => "col1 data",
-                2 => str_rot13($blobData),
-                3 => '2012-12-31',
-            ),
-
-        );
-        $ps->executePreparedStatement($data[0], 'Error');
-        $ps->executePreparedStatement($data[1], 'Error');
-
-        $result = $this->_db->query("SELECT col2 FROM $tableName order by id asc");
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['col2'], $blobData, "Incorrect BlobData.");
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['col2'], str_rot13($blobData), "Incorrect BlobData.");
-    }
-
-    /**
-     * @group preparedStatements
-     */
     public function testPreparedStatementsBean()
     {
         // insert test
@@ -3370,21 +3044,6 @@ SQL;
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
         $this->assertEquals($bean->description, $row['description'], 'description failed');
         $this->assertEquals($bean->id, $row['id'], 'id failed');
-
-        // retrieve test
-        // we can't use lob fields in where, because of that we try to retrieve bean by last_name
-        $this->_db->retrieve($bean, array('last_name' => $bean->last_name));
-        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
-        $this->assertEquals($bean->description, $row['description'], 'description failed');
-        $this->assertEquals($bean->id, $row['id'], 'id failed');
-
-        // delete test
-        $this->_db->delete($bean,array('id'=>$bean->id), true);
-        $result = $this->_db->query("select deleted from contacts where id = '{$bean->id}'");
-        $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals(1, $row['deleted'], "Delete failed");
     }
 
     /**
@@ -3393,10 +3052,6 @@ SQL;
     private function setupPreparedStatementsDataTypesStructure()
     {
         // create test table for datatType testing
-        if (empty($this->_db->preparedStatementClass)) {
-            $this->markTestSkipped('DBManager does not support prepared statements');
-        }
-
         $tableName = "testPreparedStatementTypes";
         $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
                             'int_param'           =>array ('name'=>'int_param',           'type'=>'int',     'default'=>1),
@@ -3565,36 +3220,6 @@ SQL;
     }
 
     /**
-     * @group preparedStatements
-     */
-    public function testPreparedStatementsSqlSelect()
-    {
-        // create data table
-        $dataStructure = $this->setupPreparedStatementsDataTypesStructure();
-        $params = $dataStructure['params'];
-        $tableName = $dataStructure['tableName'];
-
-        // load and test each data record
-        $data = $this->setupPreparedStatementsDataTypesData();
-        foreach ($data as $row) {  // insert a single row of data and check it column by column
-            $res = $this->_db->insertParams($tableName, $params, $row);
-            $this->assertNotEmpty($res, "Failed to insert");
-        }
-
-        $ps = $this->_db->prepareStatement("SELECT id FROM $tableName WHERE id = ?id");
-        $this->assertNotEmpty($ps, "Failed to prepare statement");
-
-        foreach ($data as $row) {
-            $result = $ps->executePreparedStatement(array($row['id']));
-            $fetched = $this->_db->fetchByAssoc($result);
-            $this->assertInternalType('array', $fetched);
-            $this->assertEquals($row['id'], $fetched['id'], "Incorrect data returned");
-        }
-
-        $ps->preparedStatementClose();
-    }
-
-    /**
      * This test is checking conversion blob field to clob
      * @param string $data Data for insert into table
      *
@@ -3657,26 +3282,6 @@ SQL;
             $bean->getIndices());
 
         $this->assertRegExp('/create\s*table\s*contacts/i',$sql);
-    }
-
-    public function testDeleteSQL()
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $sql = $this->_db->deleteSQL(new Contact, array("id" => "1"));
-
-        $this->assertRegExp('/update\s*contacts\s*set\s*deleted\s*=\s*1/i',$sql);
-        $this->assertRegExp('/where\s*contacts.id\s*=\s*\'1\'/i',$sql);
-    }
-
-    public function testRetrieveSQL()
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $sql = $this->_db->retrieveSQL(new Contact, array("id" => "1"));
-
-        $this->assertRegExp('/select\s*\*\s*from\s*contacts/i',$sql);
-        $this->assertRegExp('/where\s*contacts.id\s*=\s*\'1\'/i',$sql);
     }
 
     public function testCreateIndexSQL()

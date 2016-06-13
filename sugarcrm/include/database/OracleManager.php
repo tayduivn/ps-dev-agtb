@@ -57,8 +57,6 @@ class OracleManager extends DBManager
         "case_insensitive" => true,
     );
 
-    public $preparedStatementClass = 'OraclePreparedStatement';
-
     protected $maxNameLengths = array(
         'table' => 30,
         'column' => 30,

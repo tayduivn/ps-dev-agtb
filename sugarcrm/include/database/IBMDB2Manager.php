@@ -114,8 +114,6 @@ class IBMDB2Manager  extends DBManager
         "order_stability" => false,
 	);
 
-	public $preparedStatementClass = 'IBMDB2PreparedStatement';
-
 	/**
 	 * Schema in which all the DB2 objects live.
 	 * Is only used for management operations for now and set to the DB2 user id.

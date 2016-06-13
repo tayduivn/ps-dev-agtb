@@ -76,7 +76,6 @@ class MysqliManager extends MysqlManager
 	public $variant = 'mysqli';
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
-	public $preparedStatementClass = 'MysqliPreparedStatement';
 
     /**
      * Array of options used for mysqli::real_connect()

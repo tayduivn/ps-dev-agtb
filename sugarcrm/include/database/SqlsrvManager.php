@@ -78,8 +78,6 @@ class SqlsrvManager extends MssqlManager
         "recursive_query" => true,
     );
 
-    public $preparedStatementClass = 'SqlsrvPreparedStatement';
-
     protected $type_map = array(
             'int'      => 'int',
             'double'   => 'float',

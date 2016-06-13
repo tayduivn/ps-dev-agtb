@@ -897,47 +897,6 @@ protected function checkQuery($sql, $object_name = false)
         return $this->updateParams($bean->getTableName(), $dataFields, $dataValues, $where_data);
 	}
 
-    /**
-     * Implements a generic delete for any bean identified by id
-     *
-     * @param SugarBean $bean Sugarbean instance
-     * @param array  $where values with the keys as names of fields.
-     * If we want to pass multiple values for a name, pass it as an array
-     * If where is not passed, it defaults to id of table
-     * @return bool query result
-     *
-     * @deprecated Use SugarBean::mark_deleted() instead
-     */
-	public function delete(SugarBean $bean, array $where = array())
-	{
-	    $tablename =  $bean->getTableName();
-	    $msg = "Error deleting from table: $tablename:";
-        list($sql, $data) = $this->deleteSQL($bean, $where);
-        // Prepare and execute the statement
-        return $this->preparedQuery($sql, $data, array(), $msg);
-	}
-
-	/**
-	 * Implements a generic retrieve for any bean identified by id
-	 *
-	 * If we want to pass multiple values for a name, pass it as an array
-	 * If where is not passed, it defaults to id of table
-	 *
-	 * @param  SugarBean   $bean  Sugarbean instance
-	 * @param  array    $where values with the keys as names of fields.
-	 * @return resource result from the query
-     *
-     * @depreated Use SugarBean::retrieve() instead
-	 */
-	public function retrieve(SugarBean $bean, array $where = array())
-	{
-		$tablename =  $bean->getTableName();
-	    $msg = "Error retriving values from table: $tablename:";
-        list($sql, $data) = $this->retrieveSQL($bean, $where);
-        // Prepare and execute the statement
-        return $this->preparedQuery($sql, $data, array(), $msg);
-	}
-
 	/**
 	 * Implements a generic retrieve for a collection of beans.
 	 *
@@ -959,25 +918,6 @@ protected function checkQuery($sql, $object_name = false)
 		$sql = $this->retrieveViewSQL($beans, $cols, $where);
 		$msg = "Error retriving values from View Collection:";
 		return $this->query($sql,true,$msg);
-	}
-
-	/**
-	 * Run query throuh prepared statement
-	 * @param string $sql SQL query
-	 * @param string $data Data for SQL
-     * @param array $blobs names of blob fields from query
-	 * @param string $msg Error message
-	 * @return boolean
-     *
-     * @deprecated
-	 */
-    public function preparedQuery($sql, $data, array $blobs = array(), $msg = '')
-	{
-        $ps = $this->prepareStatement($sql, $blobs);
-	    if(!$ps) {
-	        return false;
-	    }
-	    return $ps->executePreparedStatement($data, $msg);
 	}
 
 	/**
@@ -2388,115 +2328,6 @@ protected function checkQuery($sql, $object_name = false)
 		return "LTRIM(RTRIM(".$this->convert($first, 'CONCAT', $elems)."))";
 	}
 
-	/**
-	 * Given a sql stmt attempt to parse it into the sql and the tokens. Then return the index of this prepared statement
-	 * Tokens can come in the following forms:
-	 * ? - a scalar which will be quoted
-	 * ! - a literal which will not be quoted
-	 * & - binary data to read from a file
-	 *
-	 * @param  string	$sql        The sql to parse
-	 * @return int index of the prepared statement to be used with execute
-     *
-     * @deprecated
-	 */
-	public function prepareQuery($sql)
-	{
-		//parse out the tokens
-		$tokens = preg_split('/((?<!\\\)[&?!])/', $sql, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-		//maintain a count of the actual tokens for quick reference in execute
-		$count = 0;
-
-		$sqlStr = '';
-		foreach ($tokens as $key => $val) {
-			switch ($val) {
-				case '?' :
-				case '!' :
-				case '&' :
-					$count++;
-					$sqlStr .= '?';
-					break;
-
-				default :
-					//escape any special characters
-					$tokens[$key] = preg_replace('/\\\([&?!])/', "\\1", $val);
-					$sqlStr .= $tokens[$key];
-					break;
-			} // switch
-		} // foreach
-
-		$this->preparedTokens[] = array('tokens' => $tokens, 'tokenCount' => $count, 'sqlString' => $sqlStr);
-		end($this->preparedTokens);
-		return key($this->preparedTokens);
-	}
-
-	/**
-	 * Takes a prepared stmt index and the data to replace and creates the query and runs it.
-	 *
-	 * @param  int		$stmt       The index of the prepared statement from preparedTokens
-	 * @param  array    $data 		The array of data to replace the tokens with.
-	 * @return resource result set or false on error
-	 */
-	public function executePreparedQuery($stmt, $data = array())
-	{
-		if(!empty($this->preparedTokens[$stmt])){
-			if(!is_array($data)){
-				$data = array($data);
-			}
-
-			$pTokens = $this->preparedTokens[$stmt];
-
-			//ensure that the number of data elements matches the number of replacement tokens
-			//we found in prepare().
-			if(count($data) != $pTokens['tokenCount']){
-				//error the data count did not match the token count
-				return false;
-			}
-
-			$query = '';
-			$dataIndex = 0;
-			$tokens = $pTokens['tokens'];
-			foreach ($tokens as $val) {
-				switch ($val) {
-					case '?':
-						$query .= $this->quote($data[$dataIndex++]);
-						break;
-					case '&':
-						$filename = $data[$dataIndex++];
-						$query .= file_get_contents($filename);
-						break;
-					case '!':
-						$query .= $data[$dataIndex++];
-						break;
-					default:
-						$query .= $val;
-						break;
-				}//switch
-			}//foreach
-			return $this->query($query);
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * Run both prepare and execute without the client having to run both individually.
-	 *
-	 * @param  string	$sql        The sql to parse
-	 * @param  array    $data 		The array of data to replace the tokens with.
-	 * @return resource result set or false on error
-     *
-     * @deprecated
-	 */
-	public function pQuery($sql, $data = array())
-	{
-		$stmt = $this->prepareQuery($sql);
-		return $this->executePreparedQuery($stmt, $data);
-	}
-
-
-
 /********************** SQL FUNCTIONS ****************************/
     /**
      * Generates sql for create table statement for a bean.
@@ -2718,7 +2549,7 @@ protected function checkQuery($sql, $object_name = false)
     {
         $where = $this->getColumnWhereClause(
             $bean->getTableName(),
-            $this->prepareTypeData($bean, array_keys($whereArray))
+            $whereArray
         );
 
 	    return " WHERE $where";
@@ -2893,58 +2724,6 @@ protected function checkQuery($sql, $object_name = false)
 			//Give up and assume the whole thing is the field name
 			return $string;
 	}
-
-	/**
-	 * Make array of types for prepared statement from list of columns
-	 * @param SugarBean $bean
-	 * @param array $columns
-	 * @return array
-     *
-     * @deprecated
-	 */
-	protected function prepareTypeData(SugarBean $bean, $columns)
-	{
-	    $types = array();
-	    foreach ($columns as $name) {
-	        $def = $bean->getFieldDefinition($name);
-	        $types[$name] = "?" . $def['type'];
-	    }
-	    return $types;
-	}
-
-    /**
-     * Generates SQL for delete statement identified by id.
-     *
-     * @param SugarBean $bean SugarBean instance
-     * @param array $where where conditions in an array
-     * @return string SQL Update Statement
-     *
-     * @deprecated Use SugarBean::mark_deleted() instead
-     */
-    public function deleteSQL(SugarBean $bean, array $where)
-    {
-        $where_data = $this->updateWhereArray($bean, $where);
-        $tname = $bean->getTableName();
-        $where = $this->getWhereClause($bean, $where_data);
-        return array("UPDATE $tname SET deleted=1 $where", array_values($where_data));
-    }
-
-    /**
-     * Generates SQL for select statement for any bean identified by id.
-     *
-     * @param SugarBean $bean SugarBean instance
-     * @param array $where where conditions in an array
-     * @return string SQL Select Statement
-     *
-     * @depreated Use SugarBean::retrieve() instead
-     */
-    public function retrieveSQL(SugarBean $bean, array $where)
-    {
-        $where_data = $this->updateWhereArray($bean, $where);
-        $tname = $bean->getTableName();
-        $where = $this->getWhereClause($bean, $where_data);
-        return array("SELECT * FROM $tname $where AND deleted=0", array_values($where_data));
-    }
 
     /**
      * This method implements a generic sql for a collection of beans.
@@ -4215,15 +3994,12 @@ protected function checkQuery($sql, $object_name = false)
             $freeResult = false;
         }
 
-        if($result instanceof PreparedStatement) {
-            $row = $result->preparedStatementFetch();
-        } else {
-            $row = $this->fetchRow($result);
-            if ($freeResult){
-                // free DB result reference
-                $this->freeDbResult($result);
-            }
+        $row = $this->fetchRow($result);
+        if ($freeResult) {
+            // free DB result reference
+            $this->freeDbResult($result);
         }
+
         if (!empty($row) && $encode && $this->encode) {
             return array_map(array($this, "encodeHTML"), $row);
         } else {
@@ -4444,28 +4220,6 @@ protected function checkQuery($sql, $object_name = false)
 	public function postInstall()
 	{
 	}
-
-	/**
-	 * Create prepared statement from query
-	 * @param string $sql SQL Query
-     * @param array $blobs names of blob fields from query
-	 * @param string $msg Error message
-	 * @return false|PreparedStatement
-     *
-     * @deprecated
-	 */
-    public function prepareStatement($sql, array $blobs = array(), $msg = '')
-	{
-        if (empty($this->preparedStatementClass)) {
-	       $this->registerError($msg, "Prepared statements not supported");
-	    }
-	    $ps = new $this->preparedStatementClass($this);
-	    if(!$ps) {
-	        return false;
-	    }
-        return $ps->prepareStatement($sql, $blobs, $msg);
-	}
-
 
 	/**
 	 * Disable keys on the table

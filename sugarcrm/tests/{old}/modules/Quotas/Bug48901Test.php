@@ -40,13 +40,13 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $current_user;
         $ammount_diff = 100;
-        $focus = new Quota48901Mock();
+        $focus = new Quota();
         $amount = $focus->getGroupQuota($this->_timeperiod->id, false);
         $user = SugarTestUserUtilities::createAnonymousUser(false);
         $user->reports_to_id = $current_user->id;
         $user->save();
 
-        $bean = new Quota48901Mock();
+        $bean = new Quota();
         $bean->quota_type = "Direct";
         $bean->created_by = $current_user->id;
         $bean->user_id = $user->id;
@@ -56,10 +56,15 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
         $bean->currency_id = -99;
         $bean->committed = 0;
         $bean->save();
+
+        SugarTestQuotaUtilities::setCreatedQuota(array($bean->id));
+
         $amount2 = $focus->getGroupQuota($this->_timeperiod->id, false);
 
         $this->assertEquals($amount2 - $amount, $ammount_diff);
-        $data = $bean->getUserManagedSelectData($this->_timeperiod->id);
+        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', array(
+            $this->_timeperiod->id,
+        ));
         $this->assertContains($user->id, $this->getUsersArray($data));
 
         $user->mark_deleted($user->id);
@@ -67,10 +72,10 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
         $amount2 = $focus->getGroupQuota($this->_timeperiod->id, false);
 
         $this->assertEquals($amount, $amount2);
-        $data = $bean->getUserManagedSelectData($this->_timeperiod->id);
+        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', array(
+            $this->_timeperiod->id,
+        ));
         $this->assertNotContains($user->id, $this->getUsersArray($data));
-
-        $bean->db->delete($bean, array('id' => $bean->id));
     }
 
     private function getUsersArray($data)
@@ -86,14 +91,7 @@ class Bug48901Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestHelper::tearDown();
-    }
-}
-
-class Quota48901Mock extends Quota
-{
-    public function getUserManagedSelectData($time_period)
-    {
-        return parent::getUserManagedSelectData($time_period);
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
+        parent::tearDown();
     }
 }
