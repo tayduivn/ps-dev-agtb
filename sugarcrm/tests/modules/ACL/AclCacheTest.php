@@ -17,30 +17,14 @@ class AclCacheTest extends PHPUnit_Framework_TestCase
     /** @var AclCache */
     private $cache;
 
-    /*
-     * Needed to determine if we should preserve session, or if we're creating a fake one.
-     */
-    private $fake_session = false;
-
     protected function setUp()
     {
         $this->cache = AclCache::getInstance();
         $this->cache->clear();
-
-        if (!session_id()) {
-            $this->fake_session = true;
-            session_id(create_guid());
-        }
     }
 
     protected function tearDown()
     {
-        if ($this->fake_session) {
-            // If we're using a fake session, we need to reset the id
-            session_id('');
-            $this->fake_session = false;
-        }
-
         if ($this->cache) {
             $this->cache->clear();
         }
