@@ -20,7 +20,8 @@ class Client
     protected $patterns = array(
         '#(mac[\s_+]os[\s_+]x)/([\d.]+).+(calendaragent)/([\d.]+)#i' =>
             array('Mac OS X', 2, 'NativeCalendarApplication', 4),
-        '#(ios)/([\d.]+).+(accountsd)/([\d.]+)#i' => array('iOS', 2, 'NativeCalendarApplication', 4),
+        '#(ios)/([\d.]+).+(accountsd)/([\d.]+)#i' => array('iOS', 2, 'NativeCalendarApplication', 4), // settings page
+        '#(ios)/([\d.]+).+(dataaccessd)/([\d.]+)#i' => array('iOS', 2, 'NativeCalendarApplication', 4), // calendar app
     );
 
     /**
