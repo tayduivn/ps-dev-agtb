@@ -316,7 +316,7 @@ describe('Emails.Views.Create', function() {
             toggleFieldVisibilitySpy = sandbox.spy(view, '_toggleFieldVisibility');
             sandbox.stub(view, '_renderRecipientOptions', function() {
                 var template = app.template.getView('create.recipient-options', view.module);
-                view.$el.append(template({'module' : view.module}));
+                view.$el.append(template({'module': view.module}));
             });
             sandbox.stub(view, '_setAttachmentVisibility');
         });

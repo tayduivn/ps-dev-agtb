@@ -1,5 +1,7 @@
 describe('Emails.Routes', function() {
-    var app, oldSync;
+    var app;
+    var oldSync;
+
     beforeEach(function() {
         app = SugarTest.app;
 

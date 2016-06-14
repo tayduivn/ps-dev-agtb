@@ -532,7 +532,8 @@ describe('Emails.fields.email-recipients', function() {
                 }
             },
             {
-                message: 'should return an object without an email when the recipient has an more than one email but no primary address',
+                message: 'should return an object without an email when the recipient has an more than one email ' +
+                    'but no primary address',
                 recipient: new Backbone.Model(
                     {
                         id: 'abcd',
@@ -557,7 +558,8 @@ describe('Emails.fields.email-recipients', function() {
                 }
             },
             {
-                message: 'should return an object with all properties when the recipient has an id, module, name, and email',
+                message: 'should return an object with all properties when the recipient has an id, module, name, ' +
+                    'and email',
                 recipient: new Backbone.Model(
                     {
                         id: 'abcd',
@@ -574,7 +576,8 @@ describe('Emails.fields.email-recipients', function() {
                 }
             },
             {
-                message: 'should return an object with all properties when the recipient has an id, module, full_name, and email',
+                message: 'should return an object with all properties when the recipient has an id, module, ' +
+                    'full_name, and email',
                 recipient: new Backbone.Model(
                     {
                         id: 'abcd',
