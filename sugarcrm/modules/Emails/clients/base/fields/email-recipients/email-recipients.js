@@ -497,6 +497,7 @@
     _getRecipientAttributes: function(recipient) {
         var bean;
         var attributes;
+        var emailAddress;
 
         attributes = {};
         if (recipient instanceof Backbone.Model) {
@@ -511,10 +512,12 @@
 
             // prioritize any values found on recipient over those already
             // extracted from bean
+            emailAddress = recipient.get('email_address_used') || recipient.get('email') ||
+                recipient.get('email_address') || attributes.email_address;
             attributes = {
                 id: recipient.get('id') || attributes.id,
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || attributes.module,
-                email_address: recipient.get('email_address_used') || recipient.get('email') || recipient.get('email_address') || attributes.email_address,
+                email_address: emailAddress,
                 name: app.utils.getRecordName(recipient) || attributes.name
             };
 
