@@ -175,7 +175,10 @@ class QuotesViewEdit extends ViewEdit
 		require_once('modules/Currencies/ListCurrency.php');
 		$currency = new ListCurrency();
 		$base_rate = '1.00';
-        if (!empty($this->bean->id) && isset($this->bean->currency_id) && !empty($this->bean->currency_id)) {
+
+        if ((!empty($this->bean->id) || $this->ev->isDuplicate) &&
+            isset($this->bean->currency_id) &&
+            !empty($this->bean->currency_id)) {
             $curid = $this->bean->currency_id;
         } elseif ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
             $curid = $_REQUEST['currency_id'];
