@@ -183,6 +183,9 @@ describe('Plugins.KBContents', function() {
         });
 
         sandbox.stub(app.alert, 'show', function() {});
+        sandbox.stub(view, '_getNextAvailableLanguage', function() {
+            return 'de';
+        });
 
         view._onCreateLocalization(fakeModel);
         expect(createRelatedDrawerStub).not.toHaveBeenCalled();
@@ -193,7 +196,7 @@ describe('Plugins.KBContents', function() {
         });
         view._onCreateLocalization(fakeModel);
         expect(createRelatedDrawerStub).toHaveBeenCalled();
-        expect(fakeModel.get('language')).toBe(undefined);
+        expect(fakeModel.get('language')).toBe('de');
         expect(fakeModel.get('kbarticle_id')).toBe(undefined);
         expect(fakeModel.get('related_languages')).toEqual(['en', 'fr']);
     });

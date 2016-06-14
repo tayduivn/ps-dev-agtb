@@ -240,8 +240,11 @@ class KBContent extends SugarBean {
         $dataChanges = $this->db->getDataChanges($this);
         if(empty($this->id) || !empty($this->new_with_id)) {
             if (empty($this->language)) {
-                $lang = $this->getPrimaryLanguage();
-                $this->language = $lang['key'];
+                $lang = $this->getNextAvailableLanguage();
+                if ($lang === null) {
+                    throw new SugarApiException('There is no available languages for localization');
+                }
+                $this->language = $lang;
             }
             if (empty($this->revision)) {
                 $this->revision = 1;
@@ -305,6 +308,67 @@ class KBContent extends SugarBean {
         return $beanId;
     }
 
+    /**
+     * Returns next available language for localization for current bean.
+     *
+     * @return string|null Language key for next available language. Null returned if there is no available.
+     */
+    private function getNextAvailableLanguage()
+    {
+        $languages = $this->getLanguages();
+        $localizationLanguages = $this->getLocalizationLanguages();
+
+        $availableLanguages = array();
+        foreach ($languages as $language) {
+            $alreadyUsed = false;
+            foreach ($localizationLanguages as $localizationLanguage) {
+                if (array_key_exists($localizationLanguage, $language)) {
+                    $alreadyUsed = true;
+                    break;
+                }
+            }
+
+            if (!$alreadyUsed) {
+                // If primary language has not been used for localization, then using it.
+                if ($language['primary'] === true) {
+                    // language key is the first key argument in language definition array;
+                    unset($language['primary']);
+                    return reset(array_keys($language));
+                }
+                $availableLanguages[] = $language;
+            }
+        }
+
+        if (count($availableLanguages) === 0) {
+            return null;
+        }
+
+        $nextAvailable = reset($availableLanguages);
+        unset($nextAvailable['primary']);
+        
+        return reset(array_keys($nextAvailable));
+    }
+
+    /**
+     * Gets languages used for localization of bean
+     *
+     * @return string[] List of languages used for localization
+     * @throws SugarQueryException
+     */
+    private function getLocalizationLanguages()
+    {
+        $query = new SugarQuery();
+        $query->select(array('language'));
+        $query->distinct(true);
+        $query->from(BeanFactory::getBean('KBContents'));
+        $query->where()->equals('kbdocument_id', $this->kbdocument_id);
+        $languages = $query->execute();
+
+        return array_map(function ($lang) {
+            return $lang['language'];
+        }, $languages);
+    }
+    
     /**
      * Mute changes in kb voting (need when
      * save kb article).
