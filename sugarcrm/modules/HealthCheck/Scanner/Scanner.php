@@ -2838,15 +2838,22 @@ class HealthCheckScanner
     protected function checkCSPRNG()
     {
         if (!function_exists('random_bytes')) {
-            $manifestFile = $this->upgrader->context['extract_dir'] . '/manifest.php';
+            $package = '';
 
-            if (file_exists($manifestFile)) {
-                include $manifestFile;
-                $packagePath = $this->upgrader->context['extract_dir'] . '/' . $manifest['copy_files']['from_dir'];
-                $lib = $packagePath . '/vendor/paragonie/random_compat/lib/random.php';
-                if (file_exists($lib)) {
-                    include $lib;
+            if (!empty($this->upgrader->context['new_source_dir'])) {
+                $package = $this->upgrader->context['new_source_dir'] . '/';
+            } else {
+                $manifestFile = $this->upgrader->context['extract_dir'] . '/manifest.php';
+
+                if (file_exists($manifestFile)) {
+                    include $manifestFile;
+                    $package = $this->upgrader->context['extract_dir'] . '/' . $manifest['copy_files']['from_dir'] .'/';
                 }
+            }
+
+            $file = $package . 'vendor/paragonie/random_compat/lib/random.php';
+            if (file_exists($file)) {
+                include $file;
             }
         }
 
