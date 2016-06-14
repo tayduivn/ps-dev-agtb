@@ -219,7 +219,7 @@
              * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
              *
              * @param {Object} choice
-             * @return {null/string/number}
+             * @return {null|string|number}
              */
             id: function(choice) {
                 return _.isEmpty(choice) ? null : choice._file;
