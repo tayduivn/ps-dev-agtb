@@ -65,6 +65,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * SQL Server (mssql) manager
+ *
+ * @deprecated Use SqlsrvManager instead
  */
 class MssqlManager extends DBManager
 {

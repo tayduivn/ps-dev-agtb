@@ -65,6 +65,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * MySQL manager implementation for mysql extension
+ *
+ * @deprecated Use MysqliManager instead.
  */
 class MysqlManager extends DBManager
 {

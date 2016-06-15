@@ -15,6 +15,8 @@ include_once('include/database/MssqlManager.php');
 
 /**
  * SQL Server driver for FreeTDS
+ *
+ * @deprecated Use SqlsrvManager instead
  */
 class FreeTDSManager extends MssqlManager
 {
