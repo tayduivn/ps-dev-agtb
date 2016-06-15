@@ -79,17 +79,6 @@ class Bug51311Test extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-
-    /**
-     * @dataProvider providerBug51311
-     */
-    public function testFreeTDSMassageFieldDef($fieldDef, $tablename, $len)
-    {
-        $manager = new FreeTDSManager();
-        $manager->massageFieldDef($fieldDef, $tablename);
-        $this->assertEquals($len, $fieldDef['len']);
-    }
-
     /**
      * @dataProvider providerBug51311
      */
@@ -99,6 +88,4 @@ class Bug51311Test extends Sugar_PHPUnit_Framework_TestCase
         $manager->massageFieldDef($fieldDef, $tablename);
         $this->assertEquals($len, $fieldDef['len']);
     }
-
-
 }

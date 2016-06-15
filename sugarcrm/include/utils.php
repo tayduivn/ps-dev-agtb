@@ -4586,14 +4586,6 @@ if (version_compare(phpversion(), '5.0.0', '<')) {
     }
 }
 
-/*
- * @deprecated use DBManagerFactory::isFreeTDS
- */
-function is_freetds()
-{
-    return DBManagerFactory::isFreeTDS();
-}
-
 /**
  * Chart dashlet helper function that returns the correct CSS file, dependent on the current theme.
  *

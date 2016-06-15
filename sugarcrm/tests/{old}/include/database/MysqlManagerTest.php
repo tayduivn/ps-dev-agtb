@@ -10,45 +10,40 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
+abstract class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static public function setUpBeforeClass()
+    /**
+     * @var MysqlManager
+     */
+    protected $db;
+
+    public static function setUpBeforeClass()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        parent::setUpBeforeClass();
+
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_strings');
     }
 
-    static public function tearDownAfterClass()
+    protected function setUp()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['app_strings']);
-    }
-
-    public function setUp()
-    {
-        if (version_compare(phpversion(), '5.5.0', '>=')) {
-            $this->markTestSkipped('The mysql extension is deprecated since php 5.5.');
-        }
-        if ( $GLOBALS['db']->dbType != 'mysql' ) {
-            $this->markTestSkipped('Only applies to MySQL');
+        if ($GLOBALS['db']->dbType != 'mysql') {
+            $this->markTestSkipped('The instance needs to be configured to use MySQL');
         }
 
-        $this->_db = new MysqlManagerTestMock();
+        parent::setUp();
     }
 
     public function testQuote()
     {
         $string = "'dog eat ";
-        if(!$this->_db->valid()) $this->markTestSkipped("MySQL not enabled");
-        $this->assertEquals($this->_db->quote($string),"\\'dog eat ");
+        $this->assertEquals($this->db->quote($string), "\\'dog eat ");
     }
 
     public function testArrayQuote()
     {
-        if(!$this->_db->valid()) $this->markTestSkipped("MySQL not enabled");
         $string = array("'dog eat ");
-        $this->_db->arrayQuote($string);
+        $this->db->arrayQuote($string);
         $this->assertEquals($string,array("\\'dog eat "));
     }
 
@@ -161,7 +156,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
+        $this->assertEquals($result, call_user_func_array(array($this->db, "convert"), $parameters));
      }
 
      /**
@@ -169,7 +164,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
       */
      public function testConcat()
      {
-         $ret = $this->_db->concat('foo',array('col1','col2','col3'));
+         $ret = $this->db->concat('foo', array('col1', 'col2', 'col3'));
          $this->assertEquals("LTRIM(RTRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))))", $ret);
      }
 
@@ -203,7 +198,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
          )
      {
          $this->assertEquals(
-             $this->_db->fromConvert($parameters[0],$parameters[1]),
+             $this->db->fromConvert($parameters[0], $parameters[1]),
              $result);
     }
 
@@ -244,27 +239,10 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @ticket BR-238
      * @dataProvider providerEmptyValues
      */
-    public function testEmptyValues($parameters, $result)
+    public function testEmptyValues($parameters, $expected)
     {
-        $this->assertEquals($result, $this->_db->_emptyValue($parameters[0], $parameters[1]));
-    }
-
-    /**
-     * This is the data provider for testSupports
-     */
-    public function supportsProvider() {
-        return array(
-            array('recursive_query', false),
-            array('fix:report_as_condition', true)
-        );
-    }
-
-    /**
-     * This is a test for known supported features
-     * @dataProvider supportsProvider
-     */
-    public function testSupports($feature, $expectedSupport) {
-        $this->assertEquals($expectedSupport, $this->_db->supports($feature));
+        $emptyValue = SugarTestReflection::callProtectedMethod($this->db, '_emptyValue', $parameters);
+        $this->assertEquals($expected, $emptyValue);
     }
 
     /**
@@ -273,13 +251,6 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testOrderStability()
     {
         $msg = 'MysqlManager should not have order_stability capability';
-        $this->assertFalse($this->_db->supports('order_stability'), $msg);
-    }
-}
-
-class MysqlManagerTestMock extends MysqlManager
-{
-    public function _emptyValue($val, $type) {
-        return parent::_emptyValue($val, $type);
+        $this->assertFalse($this->db->supports('order_stability'), $msg);
     }
 }

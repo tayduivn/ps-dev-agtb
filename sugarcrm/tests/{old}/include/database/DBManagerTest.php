@@ -1393,7 +1393,7 @@ SQL;
         $this->assertEquals($id,$beanIds[0]);
 
         // bug 38994
-        if ( $this->_db instanceOf MysqlManager ) {
+        if ($this->_db->dbType == 'mysql') {
             $id = $this->_db->getOne($this->_db->limitQuerySql("SELECT id From contacts where last_name = 'foobar'", 0, 1));
             $this->assertEquals($id,$beanIds[0]);
         }
@@ -2792,7 +2792,7 @@ SQL;
         );
 
         $result = array();
-        foreach (array('MysqlManager', 'MysqliManager', 'SqlsrvManager', 'IBMDB2Manager') as $driver) {
+        foreach (array('MysqliManager', 'SqlsrvManager', 'IBMDB2Manager') as $driver) {
             foreach ($data as $item) {
                 $item[] = $driver;
                 $result[] = $item;
@@ -3967,7 +3967,7 @@ SELECT
   accounts.id
 FROM accounts
 JOIN (
-  /* this comments makes a fool of MSSQLManager's query parser,
+  /* this comments makes a fool of SQL Server's query parser,
      it thinks that UNION is in the top level query */
   $dummy
   UNION

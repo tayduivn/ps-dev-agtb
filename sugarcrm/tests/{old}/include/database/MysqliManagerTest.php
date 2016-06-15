@@ -10,22 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MysqliManagerTest extends Sugar_PHPUnit_Framework_TestCase
+require_once 'include/database/MysqlManagerTest.php';
+
+class MysqliManagerTest extends MysqlManagerTest
 {
-    /**
-     * @var DBManager
-     */
-    protected $db;
-    
     protected $configOptions = array();
 
-    public function setUp()
+    protected function setUp()
     {
-        $this->db = DBManagerFactory::getTypeInstance('mysql');        
+        parent::setUp();
 
-        if (!$this->db instanceof MysqliManager) {
-            $this->markTestSkipped('MysqliManager is not available');
-        }
+        $this->db = new MysqliManager();
 
         $this->configOptions = array(
             'db_host_name' => $GLOBALS['db']->connectOptions['db_host_name'],
@@ -37,10 +32,13 @@ class MysqliManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->db->setOptions(array());
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
-        $this->db->disconnect();
-        $this->db = null;
+        if ($this->db) {
+            $this->db->disconnect();
+        }
+
+        parent::tearDown();
     }
 
     /**
@@ -74,5 +72,25 @@ class MysqliManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $dbInstanceOptions = SugarTestReflection::getProtectedValue($this->db, 'connectOptions');
 
         $this->assertEquals($dbInstanceOptions['db_client_flags'], 0);
+    }
+
+    /**
+     * This is the data provider for testSupports
+     */
+    public function supportsProvider()
+    {
+        return array(
+            array('recursive_query', true),
+            array('fix:report_as_condition', true),
+        );
+    }
+
+    /**
+     * This is a test for known supported features
+     * @dataProvider supportsProvider
+     */
+    public function testSupports($feature, $expectedSupport)
+    {
+        $this->assertEquals($expectedSupport, $this->db->supports($feature));
     }
 }

@@ -487,7 +487,7 @@ class MysqliManager extends MysqlManager
 	 */
 	public function valid()
 	{
-		return function_exists("mysqli_connect") && empty($GLOBALS['sugar_config']['mysqli_disabled']);
+        return function_exists('mysqli_connect');
 	}
 
 

@@ -945,8 +945,7 @@ abstract class UpgradeDriver
 
         // validate manifest
         list($this->from_version, $this->from_flavor) = $this->getFromVersion();
-        $db = DBManagerFactory::getInstance();
-        
+
         $res = $this->validateManifest();
         if ($res !== true) {
             if ($this->clean_on_fail) {

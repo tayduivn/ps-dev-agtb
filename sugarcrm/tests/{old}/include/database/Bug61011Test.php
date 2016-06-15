@@ -51,21 +51,8 @@ FROM t6_test61011
  WHERE ((((t6_test61011.name IS NOT NULL AND t6_test61011.name <> ''))))
 AND  t6_test61011.deleted=0
 END;
-        $db = new Bug61011Test_Db($GLOBALS['db']);
-        $db->addDistinctClause($query);
+        SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', array(&$query));
         $this->assertContains("SELECT sum(", $query);
         $this->assertContains("group by tst.team_set_id", $query);
-    }
-}
-
-class Bug61011Test_Db extends MysqlManager
-{
-    public function __construct($db) {
-        $this->db = $db;
-    }
-
-    public function addDistinctClause(&$sql)
-    {
-        return $this->db->addDistinctClause($sql);
     }
 }

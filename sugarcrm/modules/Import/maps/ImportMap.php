@@ -177,8 +177,9 @@ class ImportMap extends SugarBean
         $this->content          = $oldcontent;
         parent::save();
 
-        // Bug 29365 - The enclosure character isn't saved correctly if it's a tab using MssqlManager, so resave it
-        if ( $enclosure == '\\t' && $this->db instanceOf MssqlManager ) {
+        // Bug 29365 - The enclosure character isn't saved correctly if it's a tab using SQL Server adapter,
+        // so resave it
+        if ($enclosure == '\\t' && $this->db->dbType == 'mssql') {
             $this->enclosure = $enclosure;
             parent::save();
         }

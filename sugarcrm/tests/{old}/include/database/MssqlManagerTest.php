@@ -10,24 +10,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
+abstract class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static public function setUpBeforeClass()
-    {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-    }
+    /**
+     * @var MssqlManager
+     */
+    protected $_db;
 
-    static public function tearDownAfterClass()
+    public static function setUpBeforeClass()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['app_strings']);
-    }
+        parent::setUpBeforeClass();
 
-    public function setUp()
-    {
-        $this->_db = new MssqlManager();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_strings');
     }
 
     public function testQuote()
@@ -195,8 +190,9 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConnectWithNoDbName()
     {
-        if ( ($GLOBALS['db']->dbType != 'mssql') || !function_exists('mssql_connect'))
-            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
+        if ($GLOBALS['db']->dbType != 'mssql') {
+            $this->markTestSkipped('The instance needs to be configured to use SQL Server');
+        }
 
         // set up a connection w/o a db_name
         $configOptions = array(
@@ -214,11 +210,7 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testTruncateTableSQL()
     {
-        if(!$GLOBALS['db'] instanceof MssqlManager) {
-            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
-        }
-
-        $sql = $GLOBALS['db']->truncateTableSQL('TEST_TABLE');
+        $sql = $this->_db->truncateTableSQL('TEST_TABLE');
 
         $this->assertEquals('TRUNCATE TABLE TEST_TABLE', $sql);
     }
@@ -379,9 +371,6 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsUnionQuery($sql, $isUnionExpected)
     {
-        if (!$this->_db instanceof MssqlManager) {
-            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
-        }
         $isUnion = SugarTestReflection::callProtectedMethod($this->_db, 'isUnionQuery', array($sql));
 
         $this->assertEquals($isUnionExpected, $isUnion);
@@ -540,17 +529,12 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testColumnLengthLimits(array $fieldDef, $successRegex)
     {
-        $db = DBManagerFactory::getInstance();
-        if (!$db instanceof MssqlManager) {
-            $this->markTestSkipped('Only applies to SQL Server legacy driver.');
-        }
-
-        $colType = $db->getColumnType($db->getFieldType($fieldDef));
-        if ($type = $db->getTypeParts($colType)) {
+        $colType = $this->_db->getColumnType($this->_db->getFieldType($fieldDef));
+        if ($type = $this->_db->getTypeParts($colType)) {
             $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
         }
 
-        $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
+        $result = SugarTestReflection::callProtectedMethod($this->_db, 'oneColumnSQLRep', array($fieldDef));
         $this->assertEquals(1, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
     }
 
@@ -559,7 +543,7 @@ class MssqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testOrderStability()
     {
-        $msg = 'MssqlManager should not have order_stability capability';
+        $msg = 'SQL Server adapter should not declare order_stability capability';
         $this->assertFalse($this->_db->supports('order_stability'), $msg);
     }
 }

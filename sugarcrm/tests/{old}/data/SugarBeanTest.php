@@ -66,22 +66,36 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testRetrieveQuoting()
     {
+        $db = $this->getDbMock();
+        $db->expects($this->once())
+            ->method('quote')
+            ->with('bad\'idstring');
+
         $bean = new BeanMockTestObjectName();
-        $bean->db = new MockMysqlDb();
+        $bean->db = $db;
         $bean->retrieve("bad'idstring");
-        $this->assertNotContains("bad'id", $bean->db->lastQuery);
-        $this->assertContains("bad", $bean->db->lastQuery);
-        $this->assertContains("idstring", $bean->db->lastQuery);
     }
 
     public function testRetrieveStringQuoting()
     {
+        $db = $this->getDbMock();
+        $db->expects($this->at(0))
+            ->method('quote')
+            ->with('bad\'string')
+            ->willReturn('quoted string');
+
         $bean = new BeanMockTestObjectName();
-        $bean->db = new MockMysqlDb();
-        $bean->retrieve_by_string_fields(array("test1" => "bad'string", "evil'key" => "data", 'tricky-(select * from config)' => 'test'));
-        $this->assertNotContains("bad'string", $bean->db->lastQuery);
-        $this->assertNotContains("evil'key", $bean->db->lastQuery);
-        $this->assertNotContains("select * from config", $bean->db->lastQuery);
+        $bean->db = $db;
+        $where = $bean->get_where(array(
+            'test1' => 'bad\'string',
+            'evil\'key' => 'data',
+            'tricky-(select * from config)' => 'test',
+        ));
+
+        $this->assertNotContains('bad\'string', $where);
+        $this->assertContains('quoted string', $where);
+        $this->assertNotContains('evil\'key', $where);
+        $this->assertNotContains('select * from config', $where);
     }
 
     /**
@@ -973,33 +987,19 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($actual['add']['success']);
     }
 
-}
-
-// Using Mssql here because mysql needs real connection for quoting
-class MockMysqlDb extends MssqlManager
-{
-    public $database = true;
-    public $lastQuery;
-
-    public function connect(array $configOptions = null, $dieOnError = false)
+    private function getDbMock()
     {
-        return true;
-    }
+        /** @var DBManager|PHPUnit_Framework_MockObject_MockObject $db */
+        $db = $this->getMockBuilder('DBManager')
+            ->setMethods(array('checkError'))
+            ->getMockForAbstractClass();
+        $db->expects($this->any())
+            ->method('fromConvert')
+            ->willReturnCallback(function ($string) {
+                return $string;
+            });
 
-    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
-    {
-        $this->lastQuery = $sql;
-        return true;
-    }
-
-    public function fetchByAssoc($result, $encode = true)
-    {
-        return false;
-    }
-
-    public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true){
-        $this->lastQuery = $sql;
-        return false;
+        return $db;
     }
 }
 

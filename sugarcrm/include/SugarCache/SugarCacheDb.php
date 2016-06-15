@@ -79,7 +79,7 @@ class SugarCacheDb extends SugarCacheAbstract
         }
 
         // limit usage to mysql based databases only
-        if (!$this->db instanceof MysqlManager) {
+        if ($this->db->dbType != 'mysql') {
             return false;
         }
 

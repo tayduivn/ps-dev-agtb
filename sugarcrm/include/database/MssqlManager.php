@@ -67,7 +67,7 @@
  *
  * @deprecated Use SqlsrvManager instead
  */
-class MssqlManager extends DBManager
+abstract class MssqlManager extends DBManager
 {
     /**
      * @see DBManager::$dbType
@@ -134,113 +134,6 @@ class MssqlManager extends DBManager
 
     protected $connectOptions = null;
 
-    /**
-     * @see DBManager::connect()
-     */
-    public function connect(array $configOptions = null, $dieOnError = false)
-    {
-        global $sugar_config;
-
-        if (is_null($configOptions))
-            $configOptions = $sugar_config['dbconfig'];
-
-        //SET DATEFORMAT to 'YYYY-MM-DD''
-        ini_set('mssql.datetimeconvert', '0');
-
-        //set the text size and textlimit to max number so that blob columns are not truncated
-        ini_set('mssql.textlimit','2147483647');
-        ini_set('mssql.textsize','2147483647');
-        ini_set('mssql.charset','UTF-8');
-
-        if(!empty($configOptions['db_host_instance'])) {
-            $configOptions['db_host_instance'] = trim($configOptions['db_host_instance']);
-        }
-        //set the connections parameters
-        if (empty($configOptions['db_host_instance'])) {
-            $connect_param = $configOptions['db_host_name'];
-        } else {
-            $connect_param = $configOptions['db_host_name']."\\".$configOptions['db_host_instance'];
-        }
-
-        //create persistent connection
-        if ($this->getOption('persistent')) {
-            $this->database =@mssql_pconnect(
-                $connect_param ,
-                $configOptions['db_user_name'],
-                $configOptions['db_password']
-                );
-        }
-        //if no persistent connection created, then create regular connection
-        if(!$this->database){
-            $this->database = mssql_connect(
-                    $connect_param ,
-                    $configOptions['db_user_name'],
-                    $configOptions['db_password']
-                    );
-            if(!$this->database){
-                $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name'].
-                    " as ".$configOptions['db_user_name'].".");
-                if($dieOnError) {
-                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
-                } else {
-                    return false;
-                }
-            }
-            if($this->database && $this->getOption('persistent')){
-                $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
-                    . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
-                    . "config.php file</B>";
-            }
-        }
-        //make sure connection exists
-        if(!$this->database) {
-                if($dieOnError) {
-                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
-                } else {
-                    return false;
-                }
-        }
-
-        //select database
-
-        //Adding sleep and retry for mssql connection. We have come across scenarios when
-        //an error is thrown.' Unable to select database'. Following will try to connect to
-        //mssql db maximum number of 5 times at the interval of .2 second. If can not connect
-        //it will throw an Unable to select database message.
-
-        if(!empty($configOptions['db_name']) && !@mssql_select_db($configOptions['db_name'], $this->database)){
-			$connected = false;
-			for($i=0;$i<5;$i++){
-				usleep(200000);
-				if(@mssql_select_db($configOptions['db_name'], $this->database)){
-					$connected = true;
-					break;
-				}
-			}
-			if(!$connected){
-			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
-                if($dieOnError) {
-                    if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
-                        sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
-                    } else {
-                        sugar_die("Could not connect to the database. Please refer to sugarcrm.log for details.");
-                    }
-                } else {
-                    return false;
-                }
-			}
-         }
-
-        if(!$this->checkError('Could Not Connect', $dieOnError))
-            $GLOBALS['log']->info("connected to db");
-
-        $this->connectOptions = $configOptions;
-
-        $GLOBALS['log']->info("Connect:".$this->database);
-
-        return true;
-    }
-
 	/**
      * @see DBManager::version()
      */
@@ -248,58 +141,6 @@ class MssqlManager extends DBManager
     {
         return $this->getOne("SELECT @@VERSION as version");
 	}
-
-	/**
-     * @see DBManager::query()
-	 */
-	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
-    {
-        if(is_array($sql)) {
-            return $this->queryArray($sql, $dieOnError, $msg, $suppress);
-        }
-        // Flag if there are odd number of single quotes
-        if ((substr_count($sql, "'") & 1))
-            $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
-
-		$sql = $this->_appendN($sql);
-
-        $GLOBALS['log']->info('Query:' . $sql);
-        $this->checkConnection();
-        $this->countQuery($sql);
-        $this->query_time = microtime(true);
-
-        // Bug 34892 - Clear out previous error message by checking the @@ERROR global variable
-		@mssql_query("SELECT @@ERROR", $this->database);
-
-        $result = $suppress?@mssql_query($sql, $this->database):mssql_query($sql, $this->database);
-
-        if (!$result) {
-            // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
-            // 				  and difficult to reproduce error. The message is only a warning, and does
-            //				  not affect the functionality of the query
-            $sqlmsg = mssql_get_last_message();
-            $sqlpos = strpos($sqlmsg, 'Changed database context to');
-			$sqlpos2 = strpos($sqlmsg, 'Warning:');
-			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-
-			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
-				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
-			else {
-				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
-				if($dieOnError)
-					sugar_die('SQL Error : ' . $sqlmsg);
-			}
-        }
-
-        $this->query_time = microtime(true) - $this->query_time;
-        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-
-        $this->dump_slow_queries($sql);
-
-        $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-
-        return $result;
-    }
 
     /**
      * This function take in the sql for a union query, the start and offset,
@@ -999,33 +840,6 @@ class MssqlManager extends DBManager
         return $tbl_name;
     }
 
-
-	/**
-     * @see DBManager::getFieldsArray()
-     */
-	public function getFieldsArray($result, $make_lower_case = false)
-	{
-		$field_array = array();
-
-		if(! isset($result) || empty($result))
-            return 0;
-
-        $i = 0;
-        while ($i < mssql_num_fields($result)) {
-            $meta = mssql_fetch_field($result, $i);
-            if (!$meta)
-                return 0;
-            if($make_lower_case==true)
-                $meta->name = strtolower($meta->name);
-
-            $field_array[] = $meta->name;
-
-            $i++;
-        }
-
-        return $field_array;
-	}
-
     /**
      * @see DBManager::getAffectedRowCount()
      * 
@@ -1038,23 +852,6 @@ class MssqlManager extends DBManager
     {
         return $this->getOne("SELECT @@ROWCOUNT");
     }
-
-	/**
-	 * @see DBManager::fetchRow()
-	 */
-	public function fetchRow($result)
-	{
-        if (empty($result) || !is_resource($result)) {
-            return false;
-        }
-
-        $row = mssql_fetch_assoc($result);
-        if (empty($row)) {
-            return false;
-        }
-
-        return $row;
-	}
 
     /**
      * @see DBManager::quote()
@@ -2047,77 +1844,6 @@ EOQ;
 	}
 
     /**
-     * Disconnects from the database
-     *
-     * Also handles any cleanup needed
-     */
-    public function disconnect()
-    {
-    	$GLOBALS['log']->debug('Calling Mssql::disconnect()');
-        if(!empty($this->database)){
-            $this->freeResult();
-            mssql_close($this->database);
-            $this->database = null;
-        }
-
-        parent::disconnect();
-    }
-
-    /**
-     * @see DBManager::freeDbResult()
-     */
-    protected function freeDbResult($dbResult)
-    {
-        if(is_resource($dbResult))
-            mssql_free_result($dbResult);
-    }
-
-	/**
-	 * (non-PHPdoc)
-	 * @see DBManager::lastDbError()
-	 */
-    public function lastDbError()
-    {
-        $sqlmsg = mssql_get_last_message();
-        if(empty($sqlmsg)) return false;
-        global $app_strings;
-        if (empty($app_strings)
-		    or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])
-			or !isset($app_strings['ERR_MSSQL_WARNING']) ) {
-        //ignore the message from sql-server if $app_strings array is empty. This will happen
-        //only if connection if made before language is set.
-		    return false;
-        }
-
-        $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        $sqlpos2 = strpos($sqlmsg, 'Warning:');
-        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false ) {
-            return false;
-        } else {
-        	global $app_strings;
-            //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
-            if (empty($app_strings) or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])) {
-                //ignore the message from sql-server if $app_strings array is empty. This will happen
-                //only if connection if made before languge is set.
-                $GLOBALS['log']->debug("Ignoring this database message: " . $sqlmsg);
-                return false;
-            }
-            else {
-                $sqlpos = strpos($sqlmsg, $app_strings['ERR_MSSQL_DB_CONTEXT']);
-                if ( $sqlpos !== false )
-                    return false;
-            }
-        }
-
-        if ( strlen($sqlmsg) > 2 ) {
-        	return "SQL Server error: " . $sqlmsg;
-        }
-
-        return false;
-    }
-
-    /**
      * (non-PHPdoc)
      * @see DBManager::getDbInfo()
      */
@@ -2254,15 +1980,6 @@ EOQ;
     }
 
     /**
-     * Select database
-     * @param string $dbname
-     */
-    protected function selectDb($dbname)
-    {
-        return mssql_select_db($dbname);
-    }
-
-    /**
      * Check if certain DB user exists
      * @param string $username
      */
@@ -2308,15 +2025,6 @@ EOQ;
     public function dropDatabase($dbname)
     {
         return $this->query("DROP DATABASE $dbname", true);
-    }
-
-    /**
-     * Check if this driver can be used
-     * @return bool
-     */
-    public function valid()
-    {
-        return function_exists("mssql_connect");
     }
 
     /**

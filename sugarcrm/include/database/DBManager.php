@@ -72,6 +72,11 @@ abstract class DBManager
     /**
      * @var string
      */
+    public $dbType;
+
+    /**
+     * @var string
+     */
     public $variant;
 
 	/**

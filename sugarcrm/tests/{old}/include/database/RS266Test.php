@@ -33,9 +33,8 @@ class RS266Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $db = DBManagerFactory::getInstance();
 
-        if(!$db instanceof MssqlManager) {
+        if ($db->dbType != 'mssql') {
             $this->markTestSkipped('Skipped');
-            return;
         }
         $this->db = $db;
         $this->dropTestTableIfExists();

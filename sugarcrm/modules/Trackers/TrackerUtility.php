@@ -16,8 +16,7 @@ class TrackerUtility {
  * getSQLHash
  * This method attempts to remove the values between single quotes in a SQL statement
  * in an effort to check if the same SQL (with different values between quotes or numerical values) 
- * has been run. A good portion of this code is similar to the appendN method found 
- * in include/database/FreeTDSManager.php file.
+ * has been run.
  * 
  * @param $sql SQL statement
  * @return String of SQL statement with unique values removed

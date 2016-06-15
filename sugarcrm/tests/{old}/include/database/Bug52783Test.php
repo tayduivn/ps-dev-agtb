@@ -25,11 +25,8 @@ class Bug52783Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->_db = new MssqlManager();
-	}
-
-	public function tearDown()
-	{
+        parent::setUp();
+        $this->_db = new SqlsrvManager();
 	}
 
 	/**
