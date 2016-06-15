@@ -382,52 +382,27 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         // setting values
-        if (isset($changedFields['name'])) {
-            if ($this->setCalDavTitle($changedFields['name'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['name']);
-            }
+        if (isset($changedFields['name']) && $this->setCalDavTitle($changedFields['name'][0], $event)) {
+            $isChanged = true;
         }
-
         if ($collection->setEventURL($event, $beanModuleName, $beanId)) {
             $isChanged = true;
         }
-
-        if (isset($changedFields['description'])) {
-            if ($this->setCalDavDescription($changedFields['description'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['description']);
-            }
+        if (isset($changedFields['description'])
+            && $this->setCalDavDescription($changedFields['description'][0], $event)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['location'])) {
-            if ($this->setCalDavLocation($changedFields['location'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['location']);
-            }
+        if (isset($changedFields['location']) && $this->setCalDavLocation($changedFields['location'][0], $event)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['status'])) {
-            if ($this->setCalDavStatus($changedFields['status'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['status']);
-            }
+        if (isset($changedFields['status']) && $this->setCalDavStatus($changedFields['status'][0], $event)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['date_start'])) {
-            if ($this->setCalDavStartDate($changedFields['date_start'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['date_start']);
-            }
+        if (isset($changedFields['date_start']) && $this->setCalDavStartDate($changedFields['date_start'][0], $event)) {
+            $isChanged = true;
         }
-        if (isset($changedFields['date_end'])) {
-            if ($this->setCalDavEndDate($changedFields['date_end'][0], $event)) {
-                $isChanged = true;
-            } else {
-                unset($data[1]['date_end']);
-            }
+        if (isset($changedFields['date_end']) && $this->setCalDavEndDate($changedFields['date_end'][0], $event)) {
+            $isChanged = true;
         }
         $participantOverride = $action == 'override' || $action == 'rebuild';
         if ($action == 'participant-delete') {
@@ -452,9 +427,6 @@ abstract class AdapterAbstract implements AdapterInterface
         }
         if ($changes) {
             $isChanged = true;
-            $data[2] = $changes;
-        } else {
-            $data[2] = array();
         }
         if (!$rootBeanId) {
             if ($recurringParam) {
@@ -826,7 +798,7 @@ abstract class AdapterAbstract implements AdapterInterface
                 $isChanged = true;
             }
         } elseif ($recurrenceIndex === null && $recurrenceId === null && isset($changedFields['date_start']) &&
-            $bean->repeat_until
+            $bean->repeat_until && $action == 'override'
         ) {
             $this->setRecurrenceChildrenOrder($bean);
             $isChanged = true;
@@ -922,12 +894,14 @@ abstract class AdapterAbstract implements AdapterInterface
                         }
                         break;
                     case 'date_start':
-                        if ($value[0] != $event->getStartDate()->asDb()) {
+                        if ($this->getDateTimeHelper()->sugarDateToUTC($value[0])->asDb()
+                            != $event->getStartDate()->asDb()) {
                             $importFields['date_start'] = array($event->getStartDate()->asDb());
                         }
                         break;
                     case 'date_end':
-                        if ($value[0] != $event->getEndDate()->asDb()) {
+                        if ($this->getDateTimeHelper()->sugarDateToUTC($value[0])->asDb()
+                            != $event->getEndDate()->asDb()) {
                             $importFields['date_end'] = array($event->getEndDate()->asDb());
                         }
                         break;
@@ -1129,13 +1103,15 @@ abstract class AdapterAbstract implements AdapterInterface
             }
         }
         if (isset($exportFields['date_start']) && isset($importFields['date_start'])) {
-            if ($exportFields['date_start'][0] == $importFields['date_start'][0]) {
+            if ($this->getDateTimeHelper()->sugarDateToUTC($exportFields['date_start'][0])->asDb()
+                == $importFields['date_start'][0]) {
                 unset($exportFields['date_start']);
                 unset($importFields['date_start']);
             }
         }
         if (isset($exportFields['date_end']) && isset($importFields['date_end'])) {
-            if ($exportFields['date_end'][0] == $importFields['date_end'][0]) {
+            if ($this->getDateTimeHelper()->sugarDateToUTC($exportFields['date_end'][0])->asDb()
+                == $importFields['date_end'][0]) {
                 unset($exportFields['date_end']);
                 unset($importFields['date_end']);
             }
