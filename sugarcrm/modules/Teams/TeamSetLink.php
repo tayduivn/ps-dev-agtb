@@ -62,13 +62,18 @@ class TeamSetLink extends Link2 {
 			$GLOBALS['log']->debug("TeamSetLink.add, Null key passed, no-op, returning... ");
 			return;
 		}
-		//if we have an array of ids, let's assume that this is a batch style operation so
-		//go ahead and add the whole list.
-		if(is_array($rel_keys)){
-			$this->appendTeams($rel_keys, $additional_values, $save);
-		}else{
-			$this->appendTeams(array($rel_keys), $additional_values, $save);
-		}
+
+        $rel_keys = is_array($rel_keys) ? $rel_keys : [$rel_keys];
+        $teamIds = [];
+        foreach ($rel_keys as $key) {
+            if ($key instanceof SugarBean) { /**@var $key SugarBean*/
+                $teamIds[] = $key->id;
+            } else { /**@var $key string*/
+                $teamIds[] = $key;
+            }
+        }
+
+        $this->appendTeams($teamIds, $additional_values, $save);
 	}
 
 	/**
