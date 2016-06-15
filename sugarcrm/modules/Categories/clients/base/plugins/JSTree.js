@@ -295,7 +295,11 @@
                             selectedNode = {
                                 id: id,
                                 name: node.find('a:first').text().trim(),
-                                type: node.data('type') || 'folder'
+                                type: node.data('type') || 'folder',
+                                toString: function() {
+                                    // jstree jquery plugin uses toString to get ID. We need to return right one.
+                                    return id;
+                                }
                             };
                             val[i] = selectedNode;
                         }, this);
