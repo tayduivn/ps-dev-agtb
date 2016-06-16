@@ -278,6 +278,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             }
         }
 
+        if (version_compare($this->from_version, '7.7.1', '<')) {
+            $files[] = 'jssource/src_files';
+        }
+
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
