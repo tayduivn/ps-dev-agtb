@@ -56,8 +56,8 @@ class CarrierSugarCarrier implements CarrierInterface
     public function getOptions()
     {
         return array(
-            'deliveryOptionsDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_NONE,
-            'deliveryOptionsBehavior' => static::DELIVERY_BEHAVIOR_SINGLE,
+            'deliveryDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_NONE,
+            'deliveryBehavior' => static::DELIVERY_BEHAVIOR_SINGLE,
         );
     }
 }

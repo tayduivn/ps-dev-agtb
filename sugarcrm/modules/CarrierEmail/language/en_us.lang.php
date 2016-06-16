@@ -12,4 +12,5 @@
 
 $mod_strings = array(
     'LBL_TITLE' => 'Email',
+    'LBL_LINK_TO_MANAGE_ADDRESSES' => 'To change delivery addresses, go to your <a href="#profile">user profile</a>.',
 );

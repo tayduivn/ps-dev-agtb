@@ -33,8 +33,9 @@
             return;
         }
         var self = this;
-        $(this.fieldTag).on('change', function() {
-            self.setSelectedAddresses($(self.fieldTag + ':checked').val());
+        var el = this.$el.find(this.fieldTag);
+        el.on('change', function() {
+            self.setSelectedAddresses(self.$el.find(self.fieldTag + ':checked').val());
         });
     }
 });

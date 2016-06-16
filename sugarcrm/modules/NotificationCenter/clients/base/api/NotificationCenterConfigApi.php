@@ -120,22 +120,22 @@ class NotificationCenterConfigApi extends GlobalConfigApi
         foreach ($this->getCarrierRegistry()->getCarriers() as $module) {
             $carrier = $this->getCarrierRegistry()->getCarrier($module);
             $addressType = $carrier->getAddressType();
-            $options = new stdClass();
+            $addressTypeOptions = new stdClass();
             foreach ($addressType->getOptions($user) as $optionKey => $option) {
-                $options->{$optionKey} = $option;
+                $addressTypeOptions->{$optionKey} = $option;
             }
             $carrierOptions = $carrier->getOptions();
-            if (!array_key_exists('deliveryOptionsDisplayStyle', $carrierOptions)) {
-                $carrierOptions['deliveryOptionsDisplayStyle'] = CarrierInterface::DELIVERY_DISPLAY_STYLE_NONE;
+            if (!array_key_exists('deliveryDisplayStyle', $carrierOptions)) {
+                $carrierOptions['deliveryDisplayStyle'] = CarrierInterface::DELIVERY_DISPLAY_STYLE_NONE;
             }
             $carriers[$module] = array(
                 // If personal is not yet set up, take it from global config.
                 'status' => array_key_exists($module, $carriersStatus) ?
                     (!empty($carriersStatus[$module])) :
                     $globalCarriers[$module]['status'],
-                'options' => $options,
+                'options' => $carrierOptions,
+                'addressTypeOptions' => $addressTypeOptions,
             );
-            $carriers[$module] = array_merge($carriers[$module], $carrierOptions);
         }
         return $carriers;
     }

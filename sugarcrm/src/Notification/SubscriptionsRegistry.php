@@ -388,7 +388,7 @@ class SubscriptionsRegistry
 
                         $diff = $this->getDiff($reducesBeans, $carriers);
                         $this->logger->debug(
-                            "NC: Configuration diff for $emitter:$event:$filter = " . var_export($diff, true)
+                            "NC: Configuration diff for $emitter:$event:$filter = " . print_r($diff, true)
                         );
 
                         if ($userId) {
@@ -436,26 +436,26 @@ class SubscriptionsRegistry
     }
 
     /**
-     * Returns list of selectable carriers with only one possible option.
+     * Returns list of selectable carriers with the single delivery behavior.
      *
      * @return array
      */
-    protected function getSelectableCarriersWithOneOption()
+    protected function getSingleDeliveryCarriers()
     {
-        $oneOptionCarriers = array();
+        $result = array();
         $enabledCarriers = $this->getEnabledCarriers();
         foreach ($enabledCarriers as $carrierName) {
             $carrier = $this->getCarrierRegistry()->getCarrier($carrierName);
             $carrierOptions = $carrier->getOptions();
 
-            if (!array_key_exists('deliveryOptionsBehavior', $carrierOptions)
+            if (!array_key_exists('deliveryBehavior', $carrierOptions)
                 ||
-                $carrierOptions['deliveryOptionsBehavior'] == CarrierInterface::DELIVERY_BEHAVIOR_SINGLE
+                $carrierOptions['deliveryBehavior'] == CarrierInterface::DELIVERY_BEHAVIOR_SINGLE
             ) {
-                $oneOptionCarriers[] = $carrierName;
+                $result[] = $carrierName;
             }
         }
-        return $oneOptionCarriers;
+        return $result;
     }
 
     /**
@@ -476,6 +476,7 @@ class SubscriptionsRegistry
 
     /**
      * Filter carriers to output only carriers that are known to the system and are enabled.
+     * Prevents save of incorrect or malicious input data passed from clients.
      *
      * @param array $carriers Carriers to be filtered.
      * @return array Carriers that are known to the system and are enabled.
@@ -483,17 +484,18 @@ class SubscriptionsRegistry
     protected function filterCarriers($carriers)
     {
         $availableAndEnabledCarriers = $this->getEnabledCarriers();
-        $oneOptionCarriers = $this->getSelectableCarriersWithOneOption();
-        $selectedSingleCarriers = array();
+        $singleDeliveryCarriers = $this->getSingleDeliveryCarriers();
+
         $filtered = array();
+
         if (is_array($carriers)) {
             foreach ($carriers as $item) {
                 if (is_array($item) && count($item) > 0) {
+                    // Prevent disabled or unknown carriers.
                     if (in_array($item[0], $availableAndEnabledCarriers)) {
-                        if (in_array($item[0], $oneOptionCarriers) && !in_array($item[0], $selectedSingleCarriers)) {
-                            $filtered[] = $item;
-                            $selectedSingleCarriers[] = $item[0];
-                        } elseif (!in_array($item[0], $oneOptionCarriers)) {
+                        // Prevent singleDelivery carriers to have multiple options.
+                        if (!in_array($item[0], $singleDeliveryCarriers) ||
+                            !in_array($item[0], array_map('current', $filtered))) {
                             $filtered[] = $item;
                         }
                     }

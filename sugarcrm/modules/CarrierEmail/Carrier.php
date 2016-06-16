@@ -56,8 +56,8 @@ class CarrierEmailCarrier implements CarrierInterface
     public function getOptions()
     {
         return array(
-            'deliveryOptionsDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_MULTISELECT,
-            'deliveryOptionsBehavior' => static::DELIVERY_BEHAVIOR_MULTIPLE,
+            'deliveryDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_MULTISELECT,
+            'deliveryBehavior' => static::DELIVERY_BEHAVIOR_MULTIPLE,
         );
     }
 }

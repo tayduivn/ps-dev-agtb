@@ -82,12 +82,12 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             'getStatus',
             'getSubscriptionsRegistry',
             'getCarrierRegistry',
-            'getSelectableCarriersWithOneOption',
+            'getSingleDeliveryCarriers',
         ));
         $this->api->method('getStatus')->willReturn($this->notificationConfigStatus);
         $this->api->method('getSubscriptionsRegistry')->willReturn($this->subscriptionsRegistry);
         $this->api->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
-        $this->api->method('getSelectableCarriersWithOneOption')->willReturn(array());
+        $this->api->method('getSingleDeliveryCarriers')->willReturn(array());
 
         $this->carriers = array(
             'Carrier' . rand(1000, 1999),
@@ -457,7 +457,10 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             $this->assertArrayHasKey($carrier, $result['personal']['carriers']);
             $this->assertEquals($this->carrierUserStatus[$carrier], $result['personal']['carriers'][$carrier]['status']);
             if ($this->carriersMap[$k][1] instanceof CarrierInterface) {
-                $this->assertEquals($this->carriersMap[$k][1]->addressType->options, json_decode(json_encode($result['personal']['carriers'][$carrier]['options']), true));
+                $this->assertEquals(
+                    $this->carriersMap[$k][1]->addressType->options,
+                    json_decode(json_encode($result['personal']['carriers'][$carrier]['addressTypeOptions']), true)
+                );
             }
         }
     }

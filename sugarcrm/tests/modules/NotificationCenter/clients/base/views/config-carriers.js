@@ -36,7 +36,7 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
 
     describe('populateCarriers()', function() {
         beforeEach(function() {
-            view.model.set('configMode', 'default')
+            view.model.set('configMode', 'default');
         });
 
         it('should not populate carriers if model is empty', function() {
@@ -64,7 +64,7 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
 
         it('should add an address field metadata to corresponding carrier if carrier is selectable', function() {
             view.model.set('carriers', {
-                foo: {selectable: true}
+                foo: {options: {deliveryDisplayStyle: 'select'}}
             });
             view.populateCarriers();
             expect(view.carriers[0].address).not.toBeNull();
@@ -72,27 +72,27 @@ describe('NotificationCenter.View.ConfigCarriers', function() {
 
         it('should not add an address field metadata to carrier if carrier is not selectable', function() {
             view.model.set('carriers', {
-                foo: {selectable: false}
+                foo: {options: {deliveryDisplayStyle: 'none'}}
             });
             view.populateCarriers();
             expect(view.carriers[0].address).toBeNull();
         });
 
         it('should add an address field definition with correct metadata', function() {
-            var options = {
+            var addressTypeOptions = {
                 'one': 1
             };
             view.model.set('carriers', {
                 foo: {
-                    selectable: true,
-                    options: options
+                    options: {deliveryDisplayStyle: 'select'},
+                    addressTypeOptions: addressTypeOptions
                 }
             });
             view.populateCarriers();
-            expect(view.carriers[0].address.type).toBe('address');
+            expect(view.carriers[0].address.type).toBe('address-select');
             expect(view.carriers[0].address.name).toBe('foo-address');
             expect(view.carriers[0].address.carrier).toBe('foo');
-            expect(view.carriers[0].address.options).toBe(options);
+            expect(view.carriers[0].address.addressTypeOptions).toBe(addressTypeOptions);
         });
     });
 });

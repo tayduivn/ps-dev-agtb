@@ -18,16 +18,6 @@
     extendsFrom: 'BaseField',
 
     /**
-     * @property {Object} Attached events.
-     */
-    events: {},
-
-    /**
-     * @property {string} Append addresses field
-     */
-    appendAddressTag: 'input[name=append_address]',
-
-    /**
      * @property {Array[]} List of carrier items.
      */
     items: null,
@@ -42,7 +32,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.items = options.def.options;
+        this.items = options.def.addressTypeOptions;
         this.carrier = options.def.carrier;
         this.model.on('change:personal:carrier:' + this.carrier, this.showHideField, this);
         this.model.on('reset:all', this.render, this);
@@ -74,6 +64,7 @@
 
     /**
      * Build addresses values with labels. Used for checkboxes and radio buttons.
+     * @inheritdoc
      */
     getFormattedValue: function() {
         var value = [];

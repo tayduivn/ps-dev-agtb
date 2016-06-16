@@ -21,10 +21,10 @@ use Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\AddressTypeInterface;
  */
 interface CarrierInterface
 {
-    /** allow only one carrier option selected */
+    /** allow only one carrier option to be saved */
     const DELIVERY_BEHAVIOR_SINGLE = 'single';
 
-    /** allow more than one carrier options selected */
+    /** allow more than one carrier options to be saved */
     const DELIVERY_BEHAVIOR_MULTIPLE = 'multiple';
 
     /** use when carrier options should not be displayed */
@@ -69,18 +69,18 @@ interface CarrierInterface
      * Return carriers options, like selectable type, view name, etc.
      *
      * @return array (
-     *      follow option describe which input type should be used for carrier options displayed
-     *      by default it is hidden field, otherwise some of constants.
-     *     'deliveryOptionsDisplayStyle' => DELIVERY_DISPLAY_STYLE_NONE|DELIVERY_DISPLAY_STYLE_MULTISELECT|
+     *      The following options describe which input type should be used for carrier options displayed.
+     *      By default it is a hidden field, otherwise some of constants.
+     *     'deliveryDisplayStyle' => DELIVERY_DISPLAY_STYLE_NONE|DELIVERY_DISPLAY_STYLE_MULTISELECT|
      *                                      DELIVERY_DISPLAY_STYLE_SINGLESELECT|DELIVERY_DISPLAY_STYLE_RADIO|
      *                                      DELIVERY_DISPLAY_STYLE_CHECKBOX (default DELIVERY_DISPLAY_STYLE_NONE),
      *
-     *      follow options describe has ot not user select more than one option for carrier delivery method
-     *      by default user can select only one.
-     *      'deliveryOptionsBehavior' => DELIVERY_BEHAVIOR_SINGLE|DELIVERY_BEHAVIOR_MULTIPLE,
+     *      The following options describe whether user can select one or several options for carrier delivery method.
+     *      By default user can select only one.
+     *      'deliveryBehavior' => DELIVERY_BEHAVIOR_SINGLE|DELIVERY_BEHAVIOR_MULTIPLE,
      *                                      (default DELIVERY_BEHAVIOR_SINGLE)
      * );
-     * If deliveryOptionsBehavior isn't present it means single.
+     * If deliveryBehavior isn't present it means single.
      */
     public function getOptions();
 }

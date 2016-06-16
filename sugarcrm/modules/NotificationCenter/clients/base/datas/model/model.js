@@ -138,8 +138,7 @@
 
         // Prepare addresses
         _.each(allCarriers, function(carrier, name) {
-            if (carrier.deliveryOptionsDisplayStyle !== 'none') {
-                allCarriers[name].selectable = true;
+            if (carrier.options.deliveryDisplayStyle !== 'none') {
                 addresses[name] = [];
             }
         });
@@ -152,7 +151,7 @@
                     _.each(firstFilter, function(carrierArray) {
                         var carrierName = _.first(carrierArray),
                             address = _.last(carrierArray);
-                        if (address !== '' && allCarriers[carrierName].selectable &&
+                        if (address !== '' && allCarriers[carrierName].options.deliveryDisplayStyle !== 'none' &&
                             !_.contains(addresses[carrierName], address)) {
                             addresses[carrierName].push(address);
                         }
@@ -163,8 +162,8 @@
 
         // If no addresses were selected by user, put the first one as default.
         _.each(allCarriers, function(carrier, name) {
-            if (carrier.selectable && addresses[name].length === 0) {
-                addresses[name].push(_.first(_.keys(carrier.options)));
+            if (carrier.options.deliveryDisplayStyle !== 'none' && addresses[name].length === 0) {
+                addresses[name].push(_.first(_.keys(carrier.addressTypeOptions)));
             }
         });
 
@@ -201,6 +200,10 @@
                         }
                     });
                     _.each(carriers, function(carrierName) {
+                        // Set the first address as default if no one is selected.
+                        if (addresses[carrierName].length === 0) {
+                            newCarriersArray.push([carrierName, '0']);
+                        }
                         _.each(addresses[carrierName], function(address) {
                             newCarriersArray.push([carrierName, address]);
                         });

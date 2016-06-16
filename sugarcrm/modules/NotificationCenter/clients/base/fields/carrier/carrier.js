@@ -59,8 +59,13 @@
         if ('global' === this.model.get('configMode')) {
             this.def.config = this.model.get('carriers')[this.name];
         }
-        this.def.selectable = this.carriers[this.def.name].selectable ? true : false;
-        return this.carriers[this.def.name].status;
+
+        var carrier = this.carriers[this.def.name];
+        if (carrier.options && carrier.options.deliveryDisplayStyle !== 'none') {
+            this.def.manageAddressesLabel = app.lang.get('LBL_LINK_TO_MANAGE_ADDRESSES', this.def.name);
+        }
+
+        return carrier.status;
     },
 
     /**

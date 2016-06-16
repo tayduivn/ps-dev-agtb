@@ -11,7 +11,7 @@
  */
 --}}
 <div class="address span4">
-    {{#each addresses}}
+    {{#each value}}
     <label>
         <input type="radio" name="{{../name}}" {{#if checked}} checked{{/if}} value="{{this.id}}" />
         <strong>{{label}}</strong>

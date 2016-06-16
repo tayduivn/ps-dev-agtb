@@ -11,11 +11,7 @@
  */
 --}}
 <div class="address span4">
-    <div class="control-group">
-        <div class="controls controls-two btn-fit">
-            <input type="hidden" name="{{name}}" class="select2 inherit-width" value="{{value.id}}">
-        </div>
-    </div>
+    <input type="hidden" name="{{name}}" class="select2" value="{{value.id}}">
     {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
 </div>
 

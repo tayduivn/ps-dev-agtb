@@ -51,15 +51,14 @@
 
         this.carriers = [];
         _.each(carriersData, function(value, key) {
-            address = (!value.selectable) ? null :
+            address = (!value.options || value.options.deliveryDisplayStyle === 'none') ? null :
             {
                 name: key + '-address',
-                type: value.deliveryOptionsDisplayStyle ? 'address-' + value.deliveryOptionsDisplayStyle  : 'address',
+                type: value.options.deliveryDisplayStyle ? 'address-' + value.options.deliveryDisplayStyle  : 'address',
                 view: 'edit',
-                options: value.options,
+                addressTypeOptions: value.addressTypeOptions,
                 carrier: key,
-                css_class: 'span12',
-                fieldName: 'address',
+                css_class: 'span12'
             };
             this.carriers.push({
                 name: key,

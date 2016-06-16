@@ -167,13 +167,12 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 'getSubscriptionFilterRegistry',
                 'getCarrierRegistry',
                 'getCarrierStatus',
-                'getSelectableCarriersWithOneOption',
+                'getSingleDeliveryCarriers',
             )
         );
         $this->subscriptionsRegistry->method('getSubscriptionFilterRegistry')->willReturn($subscriptionFilterRegistry);
         $this->subscriptionsRegistry->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
         $this->subscriptionsRegistry->method('getCarrierStatus')->willReturn($this->carrierStatus);
-        $this->subscriptionsRegistry->method('getSelectableCarriersWithOneOption')->willReturn(array());
 
         $subscriptionFilterRegistry->method('getFilters')->willReturn(array(
             'NotSupportsFilterCRYS1301',
@@ -907,6 +906,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         }
         $this->carrierStatus->method('getCarrierStatus')->willReturnMap($carrierStatuses);
         $this->carrierRegistry->method('getCarriers')->willReturn(array_keys($carriers));
+        $this->subscriptionsRegistry->method('getSingleDeliveryCarriers')->willReturn(array());
 
         $this->subscriptionsRegistry->setGlobalConfiguration($config);
         foreach ($expectedSaved as $name => $expectedData) {
@@ -1037,6 +1037,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'status' => false,
                     ),
                 ),
+                'singleDeliveryCarriers' => array(),
                 'config' => array(
                     'CallsCRYS1301' => array(
                         'reminder' => array(
@@ -1115,6 +1116,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'status' => false,
                     ),
                 ),
+                'singleDeliveryCarriers' => array(),
                 'config' => array(
                     'CallsCRYS1301' => array(
                         'reminder' => array(
@@ -1136,6 +1138,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'status' => false,
                     ),
                 ),
+                'singleDeliveryCarriers' => array(),
                 'config' => array(
                     'CallsCRYS1301' => array(
                         'reminder' => array(
@@ -1159,6 +1162,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         'status' => true,
                     ),
                 ),
+                'singleDeliveryCarriers' => array(),
                 'config' => array(
                     'CallsCRYS1301' => array(
                         'reminder' => array(
@@ -1182,6 +1186,45 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                 ),
                 'expectedDeletedId' => array(),
             ),
+            'shouldNotSaveSecondOptionForCarrierOfSingleDeliveryBehavior' => array(
+                'idUser' => $idUser,
+                'beans' => array(),
+                'carriers' => array(
+                    $carrierName1 => array(
+                        'options' => $carrierOption1,
+                        'status' => true,
+                    ),
+                    $carrierName2 => array(
+                        'options' => $carrierOption2,
+                        'status' => true,
+                    ),
+                ),
+                'singleDeliveryCarriers' => array(
+                    $carrierName1,
+                ),
+                'config' => array(
+                    'CallsCRYS1301' => array(
+                        'reminder' => array(
+                            'CallFilterCRYS1301' => array(
+                                array($carrierName1, $carrierOption1),
+                                array($carrierName1, 'secondOption'),
+                                array($carrierName2, $carrierOption2),
+                            ),
+                        ),
+                    ),
+                ),
+                'expectedSaved' => array(
+                    $carrierName1 => array(
+                        'carrier_name' => $carrierName1,
+                        'carrier_option' => $carrierOption1,
+                    ),
+                    $carrierName2 => array(
+                        'carrier_name' => $carrierName2,
+                        'carrier_option' => $carrierOption2,
+                    ),
+                ),
+                'expectedDeletedId' => array(),
+            ),
         );
     }
 
@@ -1193,12 +1236,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
      * @param string $idUser Id of a User that saves configuration.
      * @param array $beans Existing (previously saved) carrier beans.
      * @param array $carriers All carriers known to the system.
+     * @param array $singleDeliveryCarriers All carriers with single delivery behavior.
      * @param array $config User's input configuration.
      * @param array $expectedSaved Information about carrier beans that expected to be saved.
      * @param array $expectedDeletedId Ids of carrier beans that are expected to be deleted.
      */
-    public function testSetUserConfiguration($idUser, $beans, $carriers, $config, $expectedSaved, $expectedDeletedId)
-    {
+    public function testSetUserConfiguration(
+        $idUser,
+        $beans,
+        $carriers,
+        $singleDeliveryCarriers,
+        $config,
+        $expectedSaved,
+        $expectedDeletedId
+    ) {
         foreach ($beans as $beanData) {
             $bean = new NotificationCenterSubscriptionCRYS1301();
             $bean->id = $beanData['id'];
@@ -1218,8 +1269,10 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         }
         $this->carrierStatus->method('getCarrierStatus')->willReturnMap($carrierStatuses);
         $this->carrierRegistry->method('getCarriers')->willReturn(array_keys($carriers));
+        $this->subscriptionsRegistry->method('getSingleDeliveryCarriers')->willReturn($singleDeliveryCarriers);
 
         $this->subscriptionsRegistry->setUserConfiguration($idUser, $config);
+
         foreach ($expectedSaved as $name => $expectedData) {
             $this->assertArrayHasKey($name, NotificationCenterSubscriptionCRYS1301::$savedArrayFields);
             $this->assertArraySubset($expectedData, NotificationCenterSubscriptionCRYS1301::$savedArrayFields[$name]);

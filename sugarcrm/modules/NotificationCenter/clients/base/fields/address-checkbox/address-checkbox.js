@@ -18,11 +18,6 @@
     extendsFrom: 'NotificationCenterAddressBaseField',
 
     /**
-     * @property {string} File input selector.
-     */
-    fieldTag: '',
-
-    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -38,8 +33,9 @@
             return;
         }
         var self = this;
-        $(this.fieldTag).on('change', function() {
-            var selectedAddresses = $(self.checkboxSelector + ':checked').map(function() {
+        var el = this.$el.find(this.fieldTag);
+        el.on('change', function() {
+            var selectedAddresses = self.$el.find(self.fieldTag + ':checked').map(function() {
                 return this.value;
             }).get();
             self.setSelectedAddresses(selectedAddresses);

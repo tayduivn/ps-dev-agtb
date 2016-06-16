@@ -74,8 +74,8 @@ class CarrierEmailCarrierTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'deliveryOptionsDisplayStyle' => 'multiselect',
-                'deliveryOptionsBehavior' => 'multiple',
+                'deliveryDisplayStyle' => 'multiselect',
+                'deliveryBehavior' => 'multiple',
             ),
             $this->carrier->getOptions()
         );

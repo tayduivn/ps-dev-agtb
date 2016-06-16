@@ -74,8 +74,8 @@ class CarrierSugarCarrierTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(
-                'deliveryOptionsDisplayStyle' => 'none',
-                'deliveryOptionsBehavior' => 'single',
+                'deliveryDisplayStyle' => 'none',
+                'deliveryBehavior' => 'single',
             ),
             $this->carrier->getOptions()
         );
