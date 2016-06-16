@@ -260,6 +260,6 @@ class RepairTest extends \Sugar_PHPUnit_Framework_TestCase
             $this->schedulerManager->expects($this->never())->method('addReminderForUser');
         }
 
-        $this->repair->rebuild($this->callBean);
+        $this->repair->execute($this->callBean);
     }
 }

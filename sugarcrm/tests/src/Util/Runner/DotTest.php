@@ -10,26 +10,26 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Trigger\Repair\Runner;
+namespace Sugarcrm\SugarcrmTests\Util\Runner;
 
-use Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet as RunnerQuiet;
+use Sugarcrm\Sugarcrm\Util\Runner\Dot as RunnerDot;
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
- * Testing is all found beans will be forwarded to rebuild.
+ * Testing is all found beans will be forwarded to rebuild, and check is outputted same count of dots.
  *
- * @covers \Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet
+ * @covers \Sugarcrm\Sugarcrm\Util\Runner\Dot
  */
-class QuietTest extends \Sugar_PHPUnit_Framework_TestCase
+class DotTest extends \Sugar_PHPUnit_Framework_TestCase
 {
     /** @var \SugarBean[] */
     protected $listOfBeans = array();
 
-    /** @var RunnerQuiet|\PHPUnit_Framework_MockObject_MockObject */
-    protected $quietRunner = null;
+    /** @var RunnerDot|\PHPUnit_Framework_MockObject_MockObject */
+    protected $dotRunner = null;
 
-    /** @var \Sugarcrm\Sugarcrm\Trigger\Repair\Repair|\PHPUnit_Framework_MockObject_MockObject */
-    protected $repair = null;
+    /** @var \Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $runnable = null;
 
     /**
      * @inheritDoc
@@ -37,9 +37,12 @@ class QuietTest extends \Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->repair = $this->getMock('Sugarcrm\Sugarcrm\Trigger\Repair\Repair');
 
-        $this->quietRunner = new RunnerQuiet($this->repair);
+        $this->runnable = $this->getMock(
+            'Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface',
+            array('getBeans', 'execute')
+        );
+        $this->dotRunner = new RunnerDot($this->runnable);
 
         for ($i = 0; $i < 3; $i ++) {
             $bean = $this->getMockBuilder('SugarBean')
@@ -52,24 +55,25 @@ class QuietTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Testing is all found beans will be forwarded to rebuild.
+     * Testing is all found beans will be forwarded to rebuild, and check is outputted same count of dots.
      *
-     * @covers \Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet::run
+     * @covers \Sugarcrm\Sugarcrm\Util\Runner\Dot::run
      */
     public function testRun()
     {
-        $this->repair->expects($this->once())
-            ->method('getBeans')
+        $this->runnable->method('getBeans')
             ->willReturn($this->listOfBeans);
 
-        $this->repair->expects($this->exactly(count($this->listOfBeans)))
-            ->method('rebuild')
+        $this->runnable->expects($this->exactly(count($this->listOfBeans)))
+            ->method('execute')
             ->withConsecutive(
                 array($this->listOfBeans[0]),
                 array($this->listOfBeans[1]),
                 array($this->listOfBeans[2])
             );
 
-        $this->quietRunner->run();
+        $this->expectOutputString(str_repeat('. ', count($this->listOfBeans)));
+
+        $this->dotRunner->run();
     }
 }

@@ -32,6 +32,7 @@
                 this.model.set('caldav_module', data.values.caldav_module, {silent: true});
                 this.model.set('caldav_interval_options', data.intervals, {silent: true});
                 this.model.set('caldav_interval', data.values.caldav_interval, {silent: true});
+                this.model.set('caldav_enable_sync', data.values.caldav_enable_sync, {silent: true});
                 this.model.set('caldav_call_direction', data.values.caldav_call_direction, {silent: true});
                 this.model.set('caldav_call_direction_options', data.call_directions, {silent: true});
                 this.model.set('has_caldav_modules', true);

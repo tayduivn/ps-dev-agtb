@@ -72,6 +72,12 @@ class Handler
             $this->logger->debug("CalDav: Import Handler is disabled");
             return false;
         }
+        $configurator = $this->getConfigurator();
+        if (!$configurator->config['caldav_enable_sync']) {
+            $this->logger->debug('CalDav: Calendar Sync is disabled');
+            return false;
+        }
+
         if (!$collection->isImportable() || !$collection->parent_type) {
             $this->logger->notice("CalDav: EventCollection($collection->id) is not importable");
             return false;
@@ -123,6 +129,12 @@ class Handler
             $this->logger->debug('CalDav: Export Handler is disabled');
             return false;
         }
+        $configurator = $this->getConfigurator();
+        if (!$configurator->config['caldav_enable_sync']) {
+            $this->logger->debug('CalDav: Calendar Sync is disabled');
+            return false;
+        }
+
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             $this->logger->warning("CalDav: No adapter for $bean->module_name");
@@ -132,7 +144,7 @@ class Handler
         $preparedDataSet = $conflictSolver ?
             $adapter->prepareForRebuild($bean, $previousData) :
             $adapter->prepareForExport($bean, $previousData);
-        
+
         if (!$preparedDataSet) {
             $this->logger->debug("CalDav: No export data-set for $bean->module_name($bean->id)");
             return false;
@@ -231,5 +243,15 @@ class Handler
     protected function getAdapterFactory()
     {
         return CalDavAdapterFactory::getInstance();
+    }
+
+    /**
+     * Return Configurator.
+     *
+     * @return \Configurator
+     */
+    public function getConfigurator()
+    {
+        return new \Configurator();
     }
 }

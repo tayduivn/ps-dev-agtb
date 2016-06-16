@@ -49,6 +49,15 @@ class Cache implements ObserverInterface
     public function onRun(WorkloadInterface $workload)
     {
         $this->logger->info('Clear application cache.');
+
+        global $sugar_config;
+        if (is_file('config.php')) {
+            require 'config.php';
+        }
+        if (is_file('config_override.php')) {
+            require 'config_override.php';
+        }
+        \SugarConfig::getInstance()->clearCache();
         \BeanFactory::clearCache();
         sugar_cache_reset();
         // Start populating local cache again.

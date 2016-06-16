@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Trigger\Repair\Runner\Quiet as TriggerRepairRunner;
+use Sugarcrm\Sugarcrm\Util\Runner\Quiet as TriggerRepairRunner;
 use Sugarcrm\Sugarcrm\Trigger\Repair\Repair as TriggerRepair;
 
 /**

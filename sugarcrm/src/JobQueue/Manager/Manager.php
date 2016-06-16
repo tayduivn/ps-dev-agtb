@@ -84,10 +84,11 @@ class Manager extends AbstractManager
         'ExportRecords' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportRecords',
         'ExportToCSV' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSV',
         'CalDavHandler' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler',
-        'NotificationEvent' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\EventHandler',
-        'NotificationCarrierBulkMessage' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\CarrierBulkMessageHandler',
-        'NotificationSend' => 'Sugarcrm\\Sugarcrm\\Notification\\Handler\\SendHandler',
-        'RecreateUserRemindersJob' => 'Sugarcrm\\Sugarcrm\\Trigger\Job\\RecreateUserRemindersJob',
+        'CalDavRebuild' => 'Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\JobQueue',
+        'NotificationEvent' => 'Sugarcrm\Sugarcrm\Notification\Handler\EventHandler',
+        'NotificationCarrierBulkMessage' => 'Sugarcrm\Sugarcrm\Notification\Handler\CarrierBulkMessageHandler',
+        'NotificationSend' => 'Sugarcrm\Sugarcrm\Notification\Handler\SendHandler',
+        'RecreateUserRemindersJob' => 'Sugarcrm\Sugarcrm\Trigger\Job\RecreateUserRemindersJob',
     );
 
     /**

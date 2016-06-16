@@ -11,9 +11,11 @@
  */
 
 require_once('modules/Configurator/Configurator.php');
+require_once 'modules/Administration/QuickRepairAndRebuild.php';
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as Adapters;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as AdapterFactory;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AclInterface;
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 
 /**
  * Class CalDavApi
@@ -116,7 +118,7 @@ class CalDavApi extends SugarApi
 
         $values = $this->checkArgs($args);
 
-        $this->adminconfigSave($values);
+        $this->adminConfigSave($values);
 
         return $this->configGet($api, $args);
     }
@@ -130,13 +132,33 @@ class CalDavApi extends SugarApi
     {
         if (!empty($values)) {
             $cfg = $this->getConfigurator();
-
+            $oldEnable = $cfg->config['caldav_enable_sync'];
             foreach ($values as $key => $val) {
-                $cfg->config['default_' . $key] = $val;
+                if ('caldav_enable_sync' == $key) {
+                    $cfg->config[$key] = $val;
+                } else {
+                    $cfg->config['default_' . $key] = $val;
+                }
             }
             // set new config values
             $cfg->handleOverride();
+            if ($cfg->config['caldav_enable_sync'] != $oldEnable) {
+                if ($cfg->config['caldav_enable_sync']) {
+                    $this->getJQManager()->CalDavRebuild();
+                }
+                $this->getRepairAndClear()->repairAndClearAll(array('clearAll'), array('Calendar'), false, false);
+            }
         }
+    }
+
+    /**
+     * Get manager object for handler processing.
+     *
+     * @return \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager
+     */
+    protected function getJQManager()
+    {
+        return new JQManager();
     }
 
     /**
@@ -174,7 +196,9 @@ class CalDavApi extends SugarApi
     public function userConfigSave(ServiceBase $api, $args)
     {
         $values = $this->checkArgs($args);
-
+        if (isset($values['caldav_enable_sync'])) {
+            unset($values['caldav_enable_sync']);
+        }
         $this->userConfigUpdate($values);
 
         return $this->userConfigGet($api, $args);
@@ -204,10 +228,10 @@ class CalDavApi extends SugarApi
      */
     public function getSupportedCalDavModules()
     {
-        $adapters = new Adapters;
+        $adapterFactory = $this->getAdapterFactory();
         $modules = array();
 
-        foreach ($adapters->getSupportedModules() as $module) {
+        foreach ($adapterFactory->getSupportedModules() as $module) {
             if (\SugarACL::checkAccess($module, 'access')) {
                 $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
             }
@@ -255,6 +279,9 @@ class CalDavApi extends SugarApi
                 }
             }
         }
+        if (isset($args['caldav_enable_sync'])) {
+            $out['caldav_enable_sync'] = $args['caldav_enable_sync'];
+        }
         return $out;
     }
 
@@ -268,6 +295,7 @@ class CalDavApi extends SugarApi
         $cfg = $this->getConfigurator();
 
         return array(
+            'caldav_enable_sync' => $cfg->config['caldav_enable_sync'],
             'caldav_module' => $cfg->config['default_caldav_module'],
             'caldav_interval' => $cfg->config['default_caldav_interval'],
             'caldav_call_direction' => $cfg->config['default_caldav_call_direction'],
@@ -308,5 +336,27 @@ class CalDavApi extends SugarApi
                 $args
             );
         }
+    }
+
+    /**
+     * Return RepairAndClear.
+     *
+     * @return RepairAndClear
+     */
+    protected function getRepairAndClear()
+    {
+        $repair = new RepairAndClear();
+        return $repair;
+    }
+
+    /**
+     * Return DavCal adapter factory.
+     *
+     * @return AdapterFactory
+     */
+    protected function getAdapterFactory()
+    {
+        $adapters = new AdapterFactory();
+        return $adapters;
     }
 }

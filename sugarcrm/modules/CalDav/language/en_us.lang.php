@@ -45,6 +45,13 @@ $mod_strings = array(
     'LBL_SCHEDULING_SIZE' => 'Size in bytes',
 
     'LBL_TITLE' => 'CalDav',
+    'LBL_MODULE_NAME' => 'CalDav',
+
+    'LBL_CALDAV_ENABLE_SYNC' => 'Enable calendar sync',
+    'LBL_CALDAV_ENABLE_SYNC_DESC_ADMIN' => 'Enable calendar sync will allow your users to sync their '
+        . 'Sugar Calendar to supported iCal calendar application.',
+    'LBL_CALDAV_ENABLE_SYNC_WARNING' => 'Disabling calendar sync after it is already in use will stop syncing '
+        . 'any current and future events to external calendar applications.',
 
     'LBL_CALDAV_TAB_TEXT' => 'Email & iCal Sync',
     'LBL_CALDAV_TITLE' => 'Calendar Sync Settings',
