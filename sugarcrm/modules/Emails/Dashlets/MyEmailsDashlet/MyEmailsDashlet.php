@@ -18,6 +18,15 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyEmailsDashlet extends DashletGeneric {
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function MyEmailsDashlet($id, $def = null)
+    {
+        self::__construct($id, $def);
+    }
+
     public function __construct($id, $def = null)
     {
         global $current_user, $app_strings, $dashletData;

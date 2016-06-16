@@ -26,6 +26,12 @@ var $hideNewButton = false;
 var $hideSelectButton = false;
 var $focus;
 
+    /**
+     * @deprecated
+     */
+    public function SubPanelViewProducts(){
+    }
+
 function setFocus(&$value){
 	$this->focus =(object) $value;		
 }

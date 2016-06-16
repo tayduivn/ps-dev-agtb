@@ -35,6 +35,14 @@ class Monitor implements Trackable {
 	var $session_id;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function Monitor($name = '', $monitorId = '', $metadata = '', $store = '')
+    {
+        self::__construct($name, $monitorId, $metadata, $store);
+    }
+
+    /**
      * Monitor constructor
      */
     public function __construct($name='', $monitorId='', $metadata='', $store='')

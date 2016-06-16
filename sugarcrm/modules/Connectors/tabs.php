@@ -18,6 +18,14 @@ class ConnectorWidgetTabs extends SugarWidgetTabs
 {
  var $class;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ConnectorWidgetTabs(&$tabs, $current_key, $jscallback, $class = 'tablist')
+    {
+        self::__construct($tabs, $current_key, $jscallback);
+    }
+
     public function __construct(&$tabs,$current_key,$jscallback, $class='tablist')
     {
         parent::__construct($tabs, $current_key, $jscallback);
@@ -103,4 +111,3 @@ function selectTabCSS(key)
         return $ob_contents;
 	}
 }
-?>

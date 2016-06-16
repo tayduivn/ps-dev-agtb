@@ -12,9 +12,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
 require_once('include/MVC/View/views/view.detail.php');
 
 class AccountsViewDetail extends ViewDetail {
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function AccountsViewDetail($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        self::__construct($bean, $view_object_map, $request);
+    }
+
+    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
+    {
+        parent::__construct($bean, $view_object_map, $request);
+    }
+
  	/**
  	 * display
  	 * Override the display method to support customization for the buttons that display
@@ -71,5 +87,3 @@ class AccountsViewDetail extends ViewDetail {
 		echo $this->dv->display();
  	} 	
 }
-
-?>

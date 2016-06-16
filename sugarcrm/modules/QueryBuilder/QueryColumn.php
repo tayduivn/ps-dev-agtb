@@ -84,6 +84,14 @@ class QueryColumn extends QueryBuilder {
 		,"start_axis" => "x"
 		);		
 	
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function QueryColumn()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		parent::__construct();

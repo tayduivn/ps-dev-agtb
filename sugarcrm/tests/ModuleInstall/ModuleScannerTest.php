@@ -144,6 +144,24 @@ EOQ;
     }
 
     /**
+     * Make sure if catches even when comment is used between function variable and (
+     */
+    public function testCallMethodVariableWithCommentFail()
+    {
+
+        $fileModContents = <<<EOQ
+<?PHP
+    \$dod = 'fwrite';
+        \$dod/* */();
+?>
+EOQ;
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertNotEmpty($errors, 'There should have been an error caught for use of function variable');
+    }
+
+    /**
      *
      * When ModuleScanner is enabled, validating allowed and disallowed file extension names.
      *

@@ -34,6 +34,14 @@ class UserDemoData {
 	*/
 	);
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function UserDemoData($seed_user, $large_scale_test = false)
+    {
+        self::__construct($seed_user, $large_scale_test);
+    }
+
 	/**
 	 * Constructor for creating user demo data
 	 */
@@ -180,4 +188,3 @@ class UserDemoData {
 	}
 
 }
-?>

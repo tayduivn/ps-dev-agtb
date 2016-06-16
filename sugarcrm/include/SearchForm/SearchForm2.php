@@ -61,6 +61,14 @@ require_once('include/EditView/EditView2.php');
       */
      protected $request;
 
+     /**
+      * @deprecated Use __construct() instead
+      */
+     public function SearchForm($seed, $module, $action = 'index', $options = array())
+     {
+         self::__construct($seed, $module, $action, $options);
+     }
+
     public function __construct($seed, $module, $action = 'index', $options = array())
     {
         $this->request = InputValidation::getService();

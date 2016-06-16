@@ -17,6 +17,13 @@ require_once("include/templates/Template.php");
 class TemplateDragDropChooser extends Template {
     var $args;
 
+    /**
+     * @deprecated
+     */
+    public function TemplateDragDropChooser()
+    {
+    }
+
 /*
  * This function creates the html and uses the args parameter to call the class file
  * ideally, you would want to call the displayScriptTags() function,
@@ -265,5 +272,3 @@ class TemplateDragDropChooser extends Template {
     }
 
 }
-
-?>

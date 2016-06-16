@@ -18,6 +18,15 @@ require_once('include/Dashlets/DashletGeneric.php');
 
 
 class MyAccountsDashlet extends DashletGeneric { 
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function MyAccountsDashlet($id, $def = null)
+    {
+        self::__construct($id, $def);
+    }
+
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;
@@ -57,5 +66,3 @@ class MyAccountsDashlet extends DashletGeneric {
     	parent::process($lvsParams);
     }
 }
-
-?>

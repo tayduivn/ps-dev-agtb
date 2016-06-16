@@ -26,6 +26,14 @@ class SugarWidgetReportField extends SugarWidgetField
      */
     protected $reporter;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarWidgetReportField(&$layout_manager)
+    {
+        self::__construct($layout_manager);
+    }
+
     public function __construct(&$layout_manager)
     {
         parent::__construct($layout_manager);

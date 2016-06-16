@@ -16,6 +16,14 @@ require_once("include/utils/db_utils.php");
 class jsAlerts{
 	var $script;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function jsAlerts()
+    {
+        self::__construct();
+    }
+
     public function __construct()
     {
 		global $app_strings;

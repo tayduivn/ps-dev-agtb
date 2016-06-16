@@ -184,6 +184,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'vendor/PHPMailer/',
             // PAT-2081 Move Google API library to composer
             'include/google-api-php-client',
+            // Delete files that should have been deleted before
+            'upgrade/scripts/post/5_MinifyJS.php',
             // MACAROON-1125
             'include/javascript/pmse/business_rules.js',
             // MACAROON-1328

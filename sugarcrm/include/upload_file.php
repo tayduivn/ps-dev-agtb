@@ -59,6 +59,14 @@ class UploadFile
 			UPLOAD_ERR_EXTENSION => 'UPLOAD_ERR_EXTENSION - A PHP extension stopped the file upload.',
 			);
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function UploadFile($field_name = '')
+    {
+        self::__construct($field_name);
+    }
+
 	/**
 	 * Create upload file handler
 	 * @param string $field_name Form field name
@@ -915,4 +923,3 @@ class UploadStream
     }
 
 }
-

@@ -1285,7 +1285,7 @@ class SugarBean
     */
     function create_relationship_meta($key,&$db,&$log,$tablename,$dictionary,$module_dir)
     {
-        SugarBean::createRelationshipMeta($key,$db,$tablename,$dictionary,$module_dir);
+        $GLOBALS['log']->deprecated('Deprecated method ' . __METHOD__ . '() called');
     }
 
 
@@ -1907,9 +1907,6 @@ class SugarBean
                 $this->teams->save(false, $usedDefaultTeam);
             }
         }
-
-        // use the db independent query generator
-        $this->preprocess_fields_on_save();
 
         //make sure the bean has the latest changes to the email field prior to checking for changes
         $this->populateFetchedEmail('bean_field');

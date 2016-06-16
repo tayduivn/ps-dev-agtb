@@ -17,6 +17,20 @@ if(!defined('sugarEntry') || !sugarEntry)
 
 
 class SugarWidgetField extends SugarWidget {
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarWidgetField(&$layout_manager)
+    {
+        self::__construct($layout_manager);
+    }
+
+    public function __construct(&$layout_manager)
+    {
+        parent::__construct($layout_manager);
+    }
+
     public function display($layout_def)
     {
 		//print $layout_def['start_link_wrapper']."===";

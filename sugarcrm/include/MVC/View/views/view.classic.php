@@ -16,7 +16,7 @@ require_once('include/MVC/Controller/SugarController.php');
 
 class ViewClassic extends SugarView
 {
- 	/**
+    /**
      * @see SugarView::__construct()
  	 */
     public function __construct(

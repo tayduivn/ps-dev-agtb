@@ -21,6 +21,14 @@ class iFrameDashlet extends Dashlet {
     var $url;
     protected $allowed_schemes = array("http", "https");
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function iFrameDashlet($id, $options = null)
+    {
+        self::__construct($id, $options);
+    }
+
     public function __construct($id, $options = null)
     {
         parent::__construct($id);

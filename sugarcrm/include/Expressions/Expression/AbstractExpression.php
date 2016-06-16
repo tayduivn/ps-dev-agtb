@@ -55,6 +55,14 @@ abstract class AbstractExpression
 	// instance variables
 	var $params;
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function AbstractExpression($params = null)
+    {
+        self::__construct($params);
+    }
+
 	/**
 	 * Constructs an Expression object given the parameters.
 	 */

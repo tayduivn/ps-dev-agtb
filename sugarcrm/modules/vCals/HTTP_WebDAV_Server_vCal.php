@@ -36,6 +36,14 @@ class HTTP_WebDAV_Server_vCal extends HTTP_WebDAV_Server
         var $source = "";
         var $publish_key = "";
 
+        /**
+         * @deprecated Use __construct() instead
+         */
+        public function HTTP_WebDAV_Server_vCal()
+        {
+            self::__construct();
+        }
+
     public function __construct()
         {
            $this->vcal_focus = BeanFactory::getBean('vCals');

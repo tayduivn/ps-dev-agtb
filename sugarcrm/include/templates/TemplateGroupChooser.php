@@ -21,6 +21,13 @@ class TemplateGroupChooser extends Template {
     var $display_hide_tabs = true;
     var $display_third_tabs = false;
 
+    /**
+     * @deprecated
+     */
+    public function TemplateGroupChooser()
+    {
+    }
+
     function display() {
         global $app_strings, $mod_strings, $js_loaded;
         

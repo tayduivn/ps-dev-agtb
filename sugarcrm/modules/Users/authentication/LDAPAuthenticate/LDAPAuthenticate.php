@@ -23,4 +23,17 @@ require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.p
 class LDAPAuthenticate extends SugarAuthenticate {
 	var $userAuthenticateClass = 'LDAPAuthenticateUser';
 	var $authenticationDir = 'LDAPAuthenticate';
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function LDAPAuthenticate()
+    {
+        self::__construct();
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
 }

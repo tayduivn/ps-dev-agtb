@@ -9,10 +9,26 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
+use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+
  require_once('include/ListView/ListViewSmarty.php');
  
 class ListViewPackages extends ListViewSmarty{
     var $secondaryDisplayColumns;
+
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function ListViewPackages(Request $request = null)
+    {
+        self::__construct($request);
+    }
+
+    public function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+    }
 
     /**
      * Override the setup method in ListViewSmarty since we are not passing in a bean

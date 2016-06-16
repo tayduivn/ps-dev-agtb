@@ -22,6 +22,14 @@ private $disabledMonitors = array();
 private static $paused = false;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function TrackerManager()
+    {
+        self::__construct();
+    }
+
+    /**
      * Constructor for TrackerManager.  Declared private for singleton pattern.
      *
      */
@@ -272,4 +280,3 @@ public function unsetMonitors() {
 }
 
 }
-?>

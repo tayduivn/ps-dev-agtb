@@ -8,7 +8,6 @@
     "config_override.php",
     "config_si.php",
     "composer.lock",
-    "include/SugarTheme/cssmin.php",
     "include/Expressions/javascript/index.html",
     "include/externalAPI/cmis_repository_wrapper.php",
     "include/fonts",

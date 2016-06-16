@@ -45,6 +45,14 @@ class SugarFieldBase {
      */
     protected $options = array();
 
+    /**
+     * @deprecated Use __construct() instead
+     */
+    public function SugarFieldBase($type)
+    {
+        self::__construct($type);
+    }
+
     public function __construct($type)
     {
     	$this->type = $type;

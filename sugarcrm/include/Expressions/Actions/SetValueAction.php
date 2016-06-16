@@ -41,6 +41,14 @@ class SetValueAction extends AbstractAction
     protected $errorValue = null;
 
     /**
+     * @deprecated Use __construct() instead
+     */
+    public function SetValueAction($params)
+    {
+        self::__construct($params);
+    }
+
+    /**
      * Constructor
      *
      * @param array $params
@@ -50,17 +58,6 @@ class SetValueAction extends AbstractAction
         $this->targetField = $params['target'];
         $this->expression = str_replace("\n", '', $params['value']);
         $this->errorValue = array_key_exists('errorValue', $params) ? $params['errorValue'] : null;
-    }
-
-    /**
-     * This is deprecated in 7.8 and will be removed in a future version.  Please use __construct
-     *
-     * @deprecated
-     * @param array $params
-     */
-    public function SetValueAction($params)
-    {
-        self::__construct($params);
     }
 
     /**

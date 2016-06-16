@@ -275,7 +275,6 @@ foreach ($beanFiles as $bean => $file) {
 
         installLog("creating Relationship Meta for " . $focus->getObjectName());
         installerHook('pre_createModuleTable', array('module' => $focus->getObjectName()));
-        SugarBean::createRelationshipMeta($focus->getObjectName(), $db, $table_name, $empty, $focus->module_dir);
         installerHook('post_createModuleTable', array('module' => $focus->getObjectName()));
         echo ".";
 
@@ -310,8 +309,6 @@ foreach ($rel_dictionary as $rel_name => $rel_data) {
             isset($rel_data['indices']) ? $rel_data['indices'] : array()
         );
     }
-
-    SugarBean::createRelationshipMeta($rel_name, $db, $table, $rel_dictionary, '');
 }
 
 // Setup the relationship cache and build out the initial vardef cache

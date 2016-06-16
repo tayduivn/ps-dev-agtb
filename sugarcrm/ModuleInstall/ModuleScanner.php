@@ -580,7 +580,9 @@ class ModuleScanner{
 			}else{
 				$token['_msi'] = token_name($token[0]);
 				switch($token[0]){
-					case T_WHITESPACE: continue;
+                    case T_WHITESPACE:
+                    case T_COMMENT:
+                        continue;
 					case T_EVAL:
 						if(in_array('eval', $this->blackList) && !in_array('eval', $this->blackListExempt))
 						$issues[]= translate('ML_INVALID_FUNCTION') . ' eval()';
@@ -635,10 +637,9 @@ class ModuleScanner{
 						$possibleIssue = '';
 
 				}
-				if ($token[0] != T_WHITESPACE)
-				{
-					$lastToken = $token;
-				}
+                if ($token[0] != T_WHITESPACE && $token[0] != T_COMMENT) {
+                    $lastToken = $token;
+                }
 			}
 
 		}
