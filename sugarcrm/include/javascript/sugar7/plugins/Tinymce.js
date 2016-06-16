@@ -99,7 +99,7 @@
 
                 if (attributes.type === 'image' && fileObj.type.indexOf('image') === -1) {
                     this.clearFileInput($target);
-                    attributes.win.tinyMCEPopup.alert(app.lang.get('LBL_UPLOAD_ONLY_IMAGE', 'EmbeddedFiles'));
+                    tinymce.activeEditor.windowManager.alert(app.lang.get('LBL_UPLOAD_ONLY_IMAGE', 'EmbeddedFiles'));
                     return;
                 }
 

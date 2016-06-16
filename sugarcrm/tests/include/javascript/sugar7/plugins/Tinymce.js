@@ -38,11 +38,12 @@ describe('Plugins.Tinymce', function() {
     });
 
     it('Clear element on file type mismatching.', function() {
-        var winObj = {
-            tinyMCEPopup: {
+        tinymce.activeEditor = {
+            windowManager: {
                 alert: sinonSandbox.stub()
             }
         };
+        var winObj = {};
         var fakeFileObj = {name: 'filename.txt', type: 'text/plain'};
         var clearFileSpy = sinonSandbox.spy(field, 'clearFileInput');
 
