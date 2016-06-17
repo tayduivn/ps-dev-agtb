@@ -53,6 +53,46 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
             'editable' => false,
         ),
         array(
+            'id' => 'my_received',
+            'name' => 'LBL_FILTER_MY_RECEIVED',
+            'filter_definition' => array(
+                array(
+                    '$or' => array(
+                        array(
+                            '$to' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$cc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$bcc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'state' => array(
+                        '$in' => array('Archived'),
+                    ),
+                ),
+            ),
+            'editable' => false,
+        ),
+        array(
             'id' => 'my_drafts',
             'name' => 'LBL_FILTER_MY_DRAFTS',
             'filter_definition' => array(

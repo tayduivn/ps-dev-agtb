@@ -99,6 +99,7 @@ $mod_strings = array(
     'LBL_ERROR_SENDING_EMAIL' => 'Error sending email!',
     'LBL_ERROR_SAVING_DRAFT' => 'Error saving draft!',
     'LBL_FILTER_MY_DRAFTS' => 'My Drafts',
+    'LBL_FILTER_MY_RECEIVED' => 'My Received',
     'LBL_FILTER_MY_SENT' => 'My Sent',
     'LBL_FORWARD_HEADER' => 'Begin forwarded message:',
     'LBL_FROM_NAME' => 'From Name',

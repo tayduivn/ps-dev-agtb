@@ -79,15 +79,15 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::filterListSetup
      * @covers ::addFilters
      * @covers ::addFilter
-     * @covers ::addFromFilter
+     * @covers ::addParticipantFilter
      * @covers ::runQuery
      */
-    public function testAddFromFilter()
+    public function testAddParticipantFilter()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $contact = SugarTestContactUtilities::createContact();
 
-        // Archived email sent by the current user.
+        // Archived email sent by the current user to $contact.
         $data = array(
             'state' => Email::EMAIL_STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
@@ -95,8 +95,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email->load_relationship('users_from');
         $email->users_from->add($GLOBALS['current_user']);
+        $email->load_relationship('contacts_to');
+        $email->contacts_to->add($contact);
 
-        // Archived email sent by the current user.
+        // Archived email sent by the current user to $user and $contact.
         $data = array(
             'state' => Email::EMAIL_STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
@@ -104,6 +106,10 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email->load_relationship('users_from');
         $email->users_from->add($GLOBALS['current_user']);
+        $email->load_relationship('users_to');
+        $email->users_to->add($user);
+        $email->load_relationship('contacts_cc');
+        $email->contacts_cc->add($contact);
 
         // Draft email owned by the current user.
         $data = array(
@@ -113,8 +119,21 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email->load_relationship('users_from');
         $email->users_from->add($GLOBALS['current_user']);
+        $email->load_relationship('users_to');
+        $email->users_to->add($user);
 
-        // Archived email sent by $user.
+        // Draft email owned by the current user to be sent to $contact.
+        $data = array(
+            'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email->load_relationship('users_from');
+        $email->users_from->add($GLOBALS['current_user']);
+        $email->load_relationship('contacts_cc');
+        $email->contacts_cc->add($contact);
+
+        // Archived email sent by $user to the current user.
         $data = array(
             'state' => Email::EMAIL_STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
@@ -122,6 +141,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email->load_relationship('users_from');
         $email->users_from->add($user);
+        $email->load_relationship('users_to');
+        $email->users_to->add($GLOBALS['current_user']);
 
         // Draft email owned by $user.
         $data = array(
@@ -132,7 +153,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email->load_relationship('users_from');
         $email->users_from->add($user);
 
-        // Archived email sent by $contact.
+        // Archived email sent by $contact to $user and the current user.
         $data = array(
             'state' => Email::EMAIL_STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
@@ -140,8 +161,22 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email->load_relationship('contacts_from');
         $email->contacts_from->add($contact);
+        $email->load_relationship('users_to');
+        $email->users_to->add($user);
+        $email->load_relationship('users_bcc');
+        $email->users_bcc->add($GLOBALS['current_user']);
 
-        // All emails where the current user is the sender.
+        // Draft email to be sent by $user to $contact.
+        $data = array(
+            'state' => Email::EMAIL_STATE_DRAFT,
+            'assigned_user_id' => $user->id,
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email->load_relationship('users_from');
+        $email->users_from->add($user);
+        $email->load_relationship('contacts_to');
+        $email->contacts_to->add($contact);
+
         $args = array(
             'module' => 'Emails',
             'filter' => array(
@@ -158,9 +193,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'order_by' => 'name:ASC',
         );
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(3, $response['records'], 'The current user is the sender on 3 emails');
+        $this->assertCount(4, $response['records'], 'All emails where the current user is the sender');
 
-        // All archived emails where the current user is the sender.
         $args = array(
             'module' => 'Emails',
             'filter' => array(
@@ -182,9 +216,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'order_by' => 'name:ASC',
         );
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(2, $response['records'], 'The current user is the sender on 2 archived emails');
+        $this->assertCount(2, $response['records'], 'All archived emails sent by the current user');
 
-        // All archived emails where the current user or other user is the sender.
         $args = array(
             'module' => 'Emails',
             'filter' => array(
@@ -210,9 +243,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'order_by' => 'name:ASC',
         );
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(3, $response['records'], 'The current user or $user is the sender on 3 archived emails');
+        $this->assertCount(3, $response['records'], 'All archived emails sent by the current user or other user');
 
-        // All emails where the contact is the sender.
         $args = array(
             'module' => 'Emails',
             'filter' => array(
@@ -229,6 +261,145 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             'order_by' => 'name:ASC',
         );
         $response = $this->api->filterList($this->service, $args);
-        $this->assertCount(1, $response['records'], '$contact is the sender on 1 email');
+        $this->assertCount(1, $response['records'], 'All emails sent by the contact');
+
+        $args = array(
+            'module' => 'Emails',
+            'filter' => array(
+                array(
+                    '$or' => array(
+                        array(
+                            '$to' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$cc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$bcc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                array(
+                    'state' => array(
+                        '$in' => array('Archived'),
+                    ),
+                ),
+            ),
+            'fields' => 'id,name',
+            'order_by' => 'name:ASC',
+        );
+        $response = $this->api->filterList($this->service, $args);
+        $this->assertCount(2, $response['records'], 'All archived emails received by the current user');
+
+        $args = array(
+            'module' => 'Emails',
+            'filter' => array(
+                array(
+                    '$or' => array(
+                        array(
+                            '$to' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => $user->id,
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$cc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => $user->id,
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$bcc' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => $user->id,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'fields' => 'id,name',
+            'order_by' => 'name:ASC',
+        );
+        $response = $this->api->filterList($this->service, $args);
+        $this->assertCount(4, $response['records'], 'All emails received by the current user or $user');
+
+        $args = array(
+            'module' => 'Emails',
+            'filter' => array(
+                array(
+                    '$or' => array(
+                        array(
+                            '$from' => array(
+                                array(
+                                    'participant_module' => 'Users',
+                                    'participant_id' => '$current_user_id',
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$to' => array(
+                                array(
+                                    'participant_module' => 'Contacts',
+                                    'participant_id' => $contact->id,
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$cc' => array(
+                                array(
+                                    'participant_module' => 'Contacts',
+                                    'participant_id' => $contact->id,
+                                ),
+                            ),
+                        ),
+                        array(
+                            '$bcc' => array(
+                                array(
+                                    'participant_module' => 'Contacts',
+                                    'participant_id' => $contact->id,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'fields' => 'id,name',
+            'order_by' => 'name:ASC',
+        );
+        $response = $this->api->filterList($this->service, $args);
+        $this->assertCount(4, $response['records'], 'All emails sent by the current user or to the contact');
     }
 }

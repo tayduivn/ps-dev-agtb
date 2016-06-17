@@ -59,6 +59,49 @@ The additional filters:
 }
 </pre>
 
+</div>
+
+    <h4>Emails Sent To</h4>
+    <div class="well well-small">
+        The <b>$to</b>, <b>$cc</b>, and <b>$bcc</b> operations allow you to find emails sent to one or more people. In
+        the example, you would find any emails sent to the current user, where the current user is a recipient found in
+        of the TO, CC, or BCC headers. The filter is styled like the <b>$from</b> filter. Each operation can accept one
+        or more tuples.
+
+    <h5>Example</h5>
+<pre class="pre-scrollable">
+{
+    "filter":[
+        {
+            "$or":{
+                "$to":{
+                    {
+                        "participant_module":"Users",
+                        "participant_id":"$current_user_id"
+                    }
+                },
+                "$cc":{
+                    {
+                        "participant_module":"Users",
+                        "participant_id":"$current_user_id"
+                    }
+                },
+                "$bcc":{
+                    {
+                        "participant_module":"Users",
+                        "participant_id":"$current_user_id"
+                    }
+                }
+            }
+        }
+    ]
+}
+</pre>
+
+</div>
+
+<div class="well well-small">
+
     <span class="lead">
         Below is a list of operation types in addition to those from
         <a onclick="openLongHelp('3d2524f2398c30db68af051c799f3c18');">Filter API</a>:
@@ -80,6 +123,33 @@ The additional filters:
                 Finds emails sent by one or more people as specified as an array.
             </td>
         </tr>
+        <tr>
+            <td>
+                $to
+            </td>
+            <td>
+                Finds emails sent to one or more people as specified as an array, where recipients are found in the TO
+                header.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                $cc
+            </td>
+            <td>
+                Finds emails sent to one or more people as specified as an array, where recipients are found in the CC
+                header.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                $bcc
+            </td>
+            <td>
+                Finds emails sent to one or more people as specified as an array, where recipients are found in the BCC
+                header.
+            </td>
+        </tr>
         </tbody>
     </table>
 
@@ -96,7 +166,8 @@ The additional filters:
             v11
         </td>
         <td>
-            Added <code>$from</code> operation to <code>/Emails/filter</code> GET endpoint.
+            Added the <code>$from</code>, <code>$to</code>, <code>$cc</code>, and <code>$bcc</code> operations to
+            <code>/Emails/filter</code> GET endpoint.
         </td>
     </tr>
 </table>

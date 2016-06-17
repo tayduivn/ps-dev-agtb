@@ -16,6 +16,9 @@ class EmailsFilterApi extends FilterApi
 {
     const MACRO_CURRENT_USER_ID = '$current_user_id';
     const MACRO_FROM = '$from';
+    const MACRO_TO = '$to';
+    const MACRO_CC = '$cc';
+    const MACRO_BCC = '$bcc';
 
     /**
      * Registers Emails-specific Filter API routes for all generic Filter API routes.
@@ -52,7 +55,10 @@ class EmailsFilterApi extends FilterApi
     {
         switch ($field) {
             case EmailsFilterApi::MACRO_FROM:
-                static::addFromFilter($q, $where, $filter);
+            case EmailsFilterApi::MACRO_TO:
+            case EmailsFilterApi::MACRO_CC:
+            case EmailsFilterApi::MACRO_BCC:
+                static::addParticipantFilter($q, $where, $filter, $field);
                 break;
             default:
                 parent::addFilter($field, $filter, $where, $q);
@@ -60,7 +66,7 @@ class EmailsFilterApi extends FilterApi
     }
 
     /**
-     * This function adds a from filter to the sugar query.
+     * This function adds a from, to, cc, or bcc filter to the sugar query based on the value of `$field`.
      *
      * <code>
      * array(
@@ -83,46 +89,55 @@ class EmailsFilterApi extends FilterApi
      * )
      * </code>
      *
-     * The above from filter definition would return all emails sent by the current user, by the contact whose ID is
+     * The above filter definition would return all emails sent by the current user, by the contact whose ID is
      * fa300a0e-0ad1-b322-9601-512d0983c19a, or using the email address foo@bar.com, which is referenced by the ID
-     * b0701501-1fab-8ae7-3942-540da93f5017. Any number of sender tuples can be provided in the definition. When the
+     * b0701501-1fab-8ae7-3942-540da93f5017. Any number of tuples can be provided in the definition. When the
      * $current_user_id macro is used for the participant_id field, it is swapped for the current user's ID.
      *
      * @param SugarQuery $q The whole SugarQuery object
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
      * @param array $filter
+     * @param string $field The filter to use: $from, $to, $cc, or $bcc.
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected static function addFromFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter)
+    protected static function addParticipantFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter, $field)
     {
         if (!is_array($filter)) {
             throw new SugarApiExceptionInvalidParameter(static::MACRO_FROM . ' requires an array');
         }
+
+        static $roles = array(
+            EmailsFilterApi::MACRO_FROM => 'from',
+            EmailsFilterApi::MACRO_TO => 'to',
+            EmailsFilterApi::MACRO_CC => 'cc',
+            EmailsFilterApi::MACRO_BCC => 'bcc',
+        );
 
         $fta = $q->getFromAlias();
         $jta = $q->getJoinTableAlias('emails_participants', false, false);
         $joinParams = array(
             'alias' => $jta,
         );
-        $join = $q->joinTable('emails_participants', $joinParams);
-        $or = $join->onOr();
+        $join = isset($q->join[$jta]) ? $q->join[$jta] : $q->joinTable('emails_participants', $joinParams);
+        $join->on()->equalsField("{$fta}.id", "{$jta}.email_id");
+        $or = $where->queryOr();
 
         foreach ($filter as $def) {
             if (!is_array($def)) {
                 throw new SugarApiExceptionInvalidParameter(
-                    'definition for ' . static::MACRO_FROM . ' operation is invalid: must be an array'
+                    "definition for {$field} operation is invalid: must be an array"
                 );
             }
 
             if (!isset($def['participant_module'])) {
                 throw new SugarApiExceptionInvalidParameter(
-                    'definition for ' . static::MACRO_FROM . ' operation is invalid: participant_module is required'
+                    "definition for {$field} operation is invalid: participant_module is required"
                 );
             }
 
             if (!isset($def['participant_id'])) {
                 throw new SugarApiExceptionInvalidParameter(
-                    'definition for ' . static::MACRO_FROM . ' operation is invalid: participant_id is required'
+                    "definition for {$field} operation is invalid: participant_id is required"
                 );
             }
 
@@ -131,8 +146,7 @@ class EmailsFilterApi extends FilterApi
             }
 
             $or->queryAnd()
-                ->equalsField("{$fta}.id", "{$jta}.email_id")
-                ->equals("{$jta}.role", 'from')
+                ->equals("{$jta}.role", $roles[$field])
                 ->equals("{$jta}.participant_module", $def['participant_module'])
                 ->equals("{$jta}.participant_id", $def['participant_id']);
         }
