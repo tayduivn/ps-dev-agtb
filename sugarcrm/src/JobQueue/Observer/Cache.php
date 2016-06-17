@@ -70,5 +70,7 @@ class Cache implements ObserverInterface
      */
     public function onResolve(WorkloadInterface $workload, $resolution)
     {
+        \BeanFactory::clearCache();
+        gc_collect_cycles();
     }
 }

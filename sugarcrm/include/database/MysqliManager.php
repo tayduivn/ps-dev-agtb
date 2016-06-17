@@ -131,7 +131,6 @@ class MysqliManager extends MysqlManager
         if(is_array($sql)) {
             return $this->queryArray($sql, $dieOnError, $msg, $suppress);    //queryArray does not support any return sets
         }
-        static $queryMD5 = array();
 
         parent::countQuery($sql);
         $this->log->info('Query:' . $sql);
@@ -152,10 +151,6 @@ class MysqliManager extends MysqlManager
 
         else
             $result = $suppress?@mysqli_query($this->database,$sql):mysqli_query($this->database,$sql);
-        $md5 = md5($sql);
-
-        if (empty($queryMD5[$md5]))
-            $queryMD5[$md5] = true;
 
         $this->query_time = microtime(true) - $this->query_time;
         $this->log->info('Query Execution Time:'.$this->query_time);
