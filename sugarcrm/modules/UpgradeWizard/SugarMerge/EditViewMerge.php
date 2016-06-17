@@ -705,19 +705,38 @@ class EditViewMerge{
 	 */
 	protected function loadData($module, $original_file, $new_file, $custom_file){
 		$this->module = $module;
-		$varnmame = $this->varName;
+        $varName = $this->varName;
 		require($original_file);
-		$this->originalData = $$varnmame;
+        $$varName = $this->renameEmailField($$varName);
+        $this->originalData = $$varName;
 		require($new_file);
-		$this->newData = $$varnmame;
+        $this->newData = $$varName;
 		if(file_exists($custom_file)){
 			require($custom_file);
-			$this->customData = $$varnmame;
+            $$varName = $this->renameEmailField($$varName);
+            $this->customData = $$varName;
 		}else{
 			$this->customData = $this->originalData;
 		}	
 	}
-	
+
+    /**
+     * Renames email1 field to email before merging layouts
+     *
+     * @param array $viewDefs Layout definitions
+     * @return array Updated layout definitions
+     */
+    protected function renameEmailField(array $viewDefs)
+    {
+        array_walk_recursive($viewDefs, function (&$value, $key) {
+            if (($key === 'name' || is_numeric($key)) && $value === 'email1') {
+                $value = 'email';
+            }
+        });
+
+        return $viewDefs;
+    }
+
 	/**
 	 * This will save the merged data to a file
 	 *
@@ -787,5 +806,3 @@ class EditViewMerge{
 		
 	}
 }
-
-?>
