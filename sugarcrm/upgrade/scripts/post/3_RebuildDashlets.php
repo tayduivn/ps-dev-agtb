@@ -19,10 +19,6 @@ class SugarUpgradeRebuildDashlets extends UpgradeScript
 
     public function run()
     {
-        if(is_file(sugar_cached('dashlets/dashlets.php'))) {
-            unlink(sugar_cached('dashlets/dashlets.php'));
-        }
-
         $dc = new DashletCacheBuilder();
         $dc->buildCache();
     }

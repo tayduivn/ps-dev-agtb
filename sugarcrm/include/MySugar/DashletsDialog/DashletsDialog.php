@@ -18,7 +18,7 @@ class DashletsDialog {
     function getDashlets($category='') {
         global $app_strings, $current_language, $mod_strings;
 
-        require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+        $dashletsFiles = DashletManager::getDashletsFiles();
 
         $categories = array( 'module' 	=> 'Module Views',
         					 'portal' 	=> 'Portal',

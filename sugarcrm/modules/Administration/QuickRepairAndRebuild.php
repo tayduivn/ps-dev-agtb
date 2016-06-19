@@ -332,7 +332,8 @@ class RepairAndClear
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARDASHLET']}</h3>";
-		$this->_clearCache(sugar_cached('dashlets'), '.php');
+        $dcb = new DashletCacheBuilder();
+        $dcb->clearCache();
 	}
     public function clearThemeCache()
     {

@@ -80,10 +80,6 @@ function add_EZ_PDF() {
 
 
 function rebuild_dashlets(){
-    if(is_file('cache/dashlets/dashlets.php')) {
-        unlink('cache/dashlets/dashlets.php');
-    }
-
     require_once('include/Dashlets/DashletCacheBuilder.php');
     $dc = new DashletCacheBuilder();
     $dc->buildCache();

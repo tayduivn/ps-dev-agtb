@@ -649,13 +649,7 @@ class RenameModules
     private function renameAllDashlets()
     {
         //Load the Dashlet metadata so we know what needs to be changed
-        if (!is_file(sugar_cached('dashlets/dashlets.php'))) {
-            $dc = new DashletCacheBuilder();
-            $dc->buildCache();
-        }
-
-        include(sugar_cached('dashlets/dashlets.php'));
-
+        $dashletsFiles = DashletManager::getDashletsFiles();
         foreach ($this->changedModules as $moduleName => $replacementLabels) {
             $this->changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles);
         }

@@ -14,9 +14,6 @@ $silent = isset($_REQUEST['silent']) ? true : false;
 if(is_admin($current_user)){
     global $mod_strings;
 	if (!$silent) { echo $mod_strings['LBL_REBUILD_DASHLETS_DESC']; }
-    if(is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
-        unlink($cachedfile);
-    }
 
     $dc = new DashletCacheBuilder();
     $dc->buildCache();

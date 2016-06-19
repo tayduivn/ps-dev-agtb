@@ -125,18 +125,35 @@ class DashletManager
         }
 	}
 
+    public static function getDashletsFiles()
+    {
+        self::_loadCache();
+        return self::$dashletCache;
+    }
+
+    public static function updateDashletsFiles($updateDashlets)
+    {
+        $dashletsFiles = self::getDashletsFiles();
+        if (!empty($dashletsFiles)) {
+            foreach ($updateDashlets as $id => $entry) {
+                if (!isset($dashletsFiles[$id])) {
+                    $dashletsFiles[$id] = $entry;
+                }
+            }
+            sugar_cache_put('dashlets_files', $dashletsFiles);
+        } //if
+    }
 
 	private static function _loadCache(
 	    $refresh = false
 	    )
 	{
-		if($refresh || !is_file(sugar_cached('dashlets/dashlets.php'))) {
+        $dashletsFiles = sugar_cache_retrieve('dashlets_files');
+        if ($refresh || empty($dashletsFiles)) {
             $dc = new DashletCacheBuilder();
-            $dc->buildCache();
+            $dashletsFiles = $dc->buildCache();
 		}
 
-		$dashletsFiles = array();
-		require_once(sugar_cached('dashlets/dashlets.php'));
 		DashletManager::$dashletCache = $dashletsFiles;
 
 	}
