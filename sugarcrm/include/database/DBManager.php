@@ -999,7 +999,8 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	protected function createConstraintSql(SugarBean $bean)
 	{
-		return $this->getConstraintSql($bean->getIndices(), $bean->getTableName());
+        $indices = $this->massageIndexDefs($bean->getFieldDefinitions(), $bean->getIndices());
+        return $this->getConstraintSql($indices, $bean->getTableName());
 	}
 
 	/**
@@ -1014,6 +1015,7 @@ protected function checkQuery($sql, $object_name = false)
      */
 	public function createTableParams($tablename, $fieldDefs, $indices, $engine = null)
 	{
+        $indices = $this->massageIndexDefs($fieldDefs, $indices);
 		if (!empty($fieldDefs)) {
 			$sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices, $engine);
 			$res = true;
@@ -1126,7 +1128,7 @@ protected function checkQuery($sql, $object_name = false)
 
         $sql = $this->repairTableColumns($tableName, $fielddefs, $execute);
         if (empty($this->options['skip_index_rebuild'])) {
-            $sql .= $this->repairTableIndices($tableName, $indices, $execute);
+            $sql .= $this->repairTableIndices($tableName, $fielddefs, $indices, $execute);
         }
 
         return $sql;
@@ -1284,29 +1286,30 @@ protected function checkQuery($sql, $object_name = false)
      * Supplies the SQL commands that repair a table Indices
      *
      * @param  string $tableName
-     * @param  array  $indices   Index definitions, in vardef format
-     * @param  bool   $execute   optional, true if we want the queries executed instead of returned
-     *
+     * @param  array $fieldDefs field definitions of the table
+     * @param  array $indices Index definitions, in vardef format
+     * @param  bool $execute optional, true if we want the queries executed instead of returned
      * @return string
      */
-    private function repairTableIndices($tableName, $indices, $execute)
+    private function repairTableIndices($tableName, $fieldDefs, $indices, $execute)
     {
         $schemaIndices = $this->get_indices($tableName);
-        return $this->alterTableIndices($tableName, $indices, $schemaIndices, $execute);
+        return $this->alterTableIndices($tableName, $fieldDefs, $indices, $schemaIndices, $execute);
     }
 
     /**
      * Supplies the SQL commands that alters table to match the definition
      *
      * @param string $tableName Table name
+     * @param array $fieldDefs Field definitions from vardefs
      * @param array $indices Index definitions from vardefs
      * @param array $compareIndices Index definitions obtained from database
      * @param bool $execute Whether we want the queries executed instead of returned
-     *
      * @return string
      */
-    public function alterTableIndices($tableName, $indices, $compareIndices, $execute)
+    public function alterTableIndices($tableName, $fieldDefs, $indices, $compareIndices, $execute)
     {
+        $indices = $this->massageIndexDefs($fieldDefs, $indices);
         $take_action = false;
         $tableDefs = $this->get_columns($tableName);
         $sql = "/* INDEXES */\n";
@@ -5108,4 +5111,16 @@ protected function checkQuery($sql, $object_name = false)
         'XMLCAST' => true, 'XMLEXISTS' => true, 'XMLNAMESPACES' => true, 'XMLTYPE' => true,
         'XOR' => true, 'YEAR' => true, 'YEARS' => true, 'YEAR_MONTH' => true, 'ZEROFILL' => true,
         'ZEROFILLADD' => true, 'ZONE' => true);
+
+    /**
+     * Adapts indices for a concrete database
+     *
+     * @param $fieldDefs
+     * @param $indices
+     * @return array
+     */
+    protected function massageIndexDefs($fieldDefs, $indices)
+    {
+        return $indices;
+    }
 }

@@ -2202,4 +2202,66 @@ LEFT JOIN all_constraints c
         $guidStart = create_guid_section(3);
       	return "'$guidStart-' || sys_guid()";
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function massageIndexDefs($fieldDefs, $indices)
+    {
+        $indices = parent::massageIndexDefs($fieldDefs, $indices);
+        return array_merge($indices, $this->generateCaseInsensitiveIndices($fieldDefs, $indices));
+    }
+
+    /**
+     * Generate indices to support case-insensitive search as oracle
+     * does not support case insensitive collation
+     *
+     * @param $fieldDefs
+     * @param $indices
+     * @return array
+     */
+    protected function generateCaseInsensitiveIndices($fieldDefs, $indices)
+    {
+        $result = array();
+
+        foreach ($indices as $key => $index) {
+            // skip if it's primary or unique index as they can't be function-based
+            if ($index['type'] != 'index') {
+                continue;
+            }
+
+            if (!is_array($index['fields'])) {
+                $index['fields'] = array($index['fields']);
+            }
+
+            $wrappedFields = array();
+            $hasWrappedFields = false;
+            foreach ($index['fields'] as $field) {
+                $fieldDef = isset($fieldDefs[$field]) ? $fieldDefs[$field] : false;
+
+                // skip indices with non-db fields
+                if ($fieldDef && isset($fieldDef['source']) && $fieldDef['source'] == 'non-db') {
+                    continue 2;
+                }
+
+                if ($fieldDef
+                    && !in_array($fieldDef['type'], array('id', 'enum'))
+                    && $this->getTypeClass($this->getFieldType($fieldDef)) == 'string'
+                ) {
+                    $wrappedFields[] = 'UPPER(' . $field . ')';
+                    $hasWrappedFields = true;
+                } else {
+                    $wrappedFields[] = $field;
+                }
+            }
+
+            if ($hasWrappedFields) {
+                $index['name'] = $index['name'] . '_ci';
+                $index['fields'] = $wrappedFields;
+                $result[] = $index;
+            }
+        }
+
+        return $result;
+    }
 }
