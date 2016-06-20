@@ -2223,6 +2223,8 @@ LEFT JOIN all_constraints c
     protected function generateCaseInsensitiveIndices($fieldDefs, $indices)
     {
         $result = array();
+        // TODO: Remove this call in 7.9 (see BR-2859)
+        $fieldDefs = $this->normalizeFieldDefs($fieldDefs);
 
         foreach ($indices as $key => $index) {
             // skip if it's primary or unique index as they can't be function-based
@@ -2260,6 +2262,23 @@ LEFT JOIN all_constraints c
                 $index['fields'] = $wrappedFields;
                 $result[] = $index;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Normalize field defs
+     * TODO: Remove this method in 7.9 (see BR-2859)
+     *
+     * @param $fieldDefs
+     * @return array
+     */
+    private function normalizeFieldDefs($fieldDefs)
+    {
+        $result = array();
+        foreach ($fieldDefs as $fieldDef) {
+            $result[$fieldDef['name']] = $fieldDef;
         }
 
         return $result;
