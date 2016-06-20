@@ -117,6 +117,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $revisionData = array(
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
+            'language' => $this->bean->language,
         );
 
         $revision1 = SugarTestKBContentUtilities::createBean($revisionData);
@@ -138,6 +139,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $revisionData = array(
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
+            'language' => $this->bean->language,
         );
 
         $this->bean->active_rev = 1;
@@ -167,6 +169,7 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $revisionData = array(
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
+            'language' => $this->bean->language,
         );
 
         $this->bean->active_rev = 1;
@@ -279,7 +282,8 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Test of saveUsefulness().
      */
-    public function testSaveUsefulness() {
+    public function testSaveUsefulness()
+    {
 
         $beanDateModified = $this->bean->date_modified;
         $beanModifiedBy = $this->bean->modified_by;
@@ -354,5 +358,67 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->save();
         $this->bean->retrieve();
         $this->assertNotEmpty($this->bean->active_date);
+    }
+
+    public function testNextAvailableLanguageTakenWhenSavingNewLocalization()
+    {
+        $bean = SugarTestKBContentUtilities::createBean(array(), false);
+
+        $bean->language = '';
+        SugarTestKBContentUtilities::saveBean($bean);
+
+        $primaryLanguage = $bean->getPrimaryLanguage();
+        $this->assertEquals($primaryLanguage['key'], $bean->language);
+
+        $filtered = array_filter($bean->getLanguages(), function ($language) {
+            return $language['primary'] !== true;
+        });
+        $nonPrimaryLanguages = array_map(function ($lang) {
+            unset($lang['primary']);
+
+            return $lang;
+        }, $filtered);
+
+        foreach ($nonPrimaryLanguages as $language) {
+            $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+            $newLocalization->kbdocument_id = $bean->kbdocument_id;
+            $newLocalization->language = '';
+            SugarTestKBContentUtilities::saveBean($newLocalization);
+
+            $this->assertEquals(reset(array_keys($language)), $newLocalization->language);
+        }
+    }
+
+    /**
+     * @expectedException SugarApiException
+     */
+    public function testExceptionGeneratedIfNoAvailableLocalizationLanguage()
+    {
+        $bean = SugarTestKBContentUtilities::createBean(array(), false);
+        $bean->language = '';
+        $bean->save();
+        SugarTestKBContentUtilities::saveBean($bean);
+
+        $filtered = array_filter($bean->getLanguages(), function ($language) {
+            return $language['primary'] !== true;
+        });
+        $nonPrimaryLanguages = array_map(function ($lang) {
+            unset($lang['primary']);
+
+            return $lang;
+        }, $filtered);
+
+        foreach ($nonPrimaryLanguages as $language) {
+            $languageKey = reset(array_keys($language));
+            $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+            $newLocalization->kbdocument_id = $bean->kbdocument_id;
+            $newLocalization->language = $languageKey;
+            SugarTestKBContentUtilities::saveBean($newLocalization);
+        }
+
+        $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+        $newLocalization->kbdocument_id = $bean->kbdocument_id;
+        $newLocalization->language = '';
+        SugarTestKBContentUtilities::saveBean($newLocalization);
     }
 }

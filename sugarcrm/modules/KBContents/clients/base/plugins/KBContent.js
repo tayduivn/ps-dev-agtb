@@ -187,7 +187,6 @@
              * @private
              */
             _onCreateLocalization: function(prefill, parentModel) {
-
                 if (!this.checkCreateLocalization(parentModel)) {
                     app.alert.show('localizations', {
                         level: 'warning',
@@ -202,9 +201,9 @@
                     this.getAvailableLangsForLocalization(parentModel),
                     {silent: true}
                 );
-                prefill.unset('language', {silent: true});
+                var language = this._getNextAvailableLanguage(parentModel);
+                prefill.set('language', language);
                 prefill.unset('kbarticle_id', {silent: true});
-
                 this._openCreateRelatedDrawer(prefill, parentModel);
             },
 
@@ -340,6 +339,26 @@
                 }
 
                 return true;
+            },
+
+            /**
+             * Returns next available language that can be used for localization.
+             *
+             * @param {Data.Model} model Parent model.
+             * @return {string} Next available localization language.
+             * @private
+             */
+            _getNextAvailableLanguage: function(model) {
+                var usedLangs = this.getAvailableLangsForLocalization(model);
+                var config = app.metadata.getModule('KBContents', 'config');
+
+                var allLangs = _.map(config.languages, function(language) {
+                    var langObject = _.omit(language, 'primary');
+                    return _.first(_.keys(langObject));
+                });
+
+                var availableLangs = _.difference(allLangs, usedLangs);
+                return _.first(availableLangs);
             },
 
             /**
