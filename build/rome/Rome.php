@@ -719,6 +719,9 @@ class Rome
 
     public function remove($path)
     {
+        if (is_link($path)) {
+            return unlink($path);
+        }
         if (!file_exists($path)) {
             return true;
         }
