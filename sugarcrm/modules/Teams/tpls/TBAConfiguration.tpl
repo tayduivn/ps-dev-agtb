@@ -67,11 +67,11 @@
                 <table width="100%" border="0" cellspacing="10" cellpadding="0" class="edit view">
                     <tr>
                     {foreach from=$actionsList key=key item=value name=tba}
-                        <td class="title {if !$value|in_array:$config.disabled_modules}active{/if}">
+                        <td class="title {if $value|in_array:$config.enabled_modules}active{/if}">
                             <div class="tba-container">
-                                <input type="checkbox" name="team_based[disabled_modules][]"
+                                <input type="checkbox" name="team_based[enabled_modules][]"
                                        data-group="tba_em" data-module-name="{$value}" value="{$value}" id="tba_em_{$key}"
-                                       {if !$value|in_array:$config.disabled_modules}checked="checked"{/if}/>
+                                       {if $value|in_array:$config.enabled_modules}checked="checked"{/if}/>
                                 <label for="tba_em_{$key}">{$APP_LIST.moduleList[$value]}</label>
                             </div>
                         </td>

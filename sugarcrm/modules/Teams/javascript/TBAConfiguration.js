@@ -15,21 +15,21 @@ $(document).ready(function() {
     // use this variable to prevent unsaved changes warnings while saving
     var savingConfiguration = false;
     var backUrl = "#bwc/index.php?module=Administration&action=index";
-    var getDisabledModules = function() {
+    var getEnabledModules = function() {
             var moduleList = [];
-            $.each($('input[data-group=tba_em]:not(:checked)'), function(index, item) {
+            $.each($('input[data-group=tba_em]:checked'), function(index, item) {
                 moduleList.push($(item).val());
             });
             return moduleList;
-        },
-        saveConfiguration = function(isTBAEnabled, disabledModulesList) {
+        };
+    var saveConfiguration = function(isTBAEnabled, enabledModulesList) {
             ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 
             var queryString = SUGAR.util.paramsToUrl({
                     module: 'Teams',
                     action: 'savetbaconfiguration',
                     enabled: isTBAEnabled,
-                    disabled_modules: disabledModulesList,
+                    enabled_modules: enabledModulesList,
                     csrf_token: SUGAR.csrf.form_token
                 }) + 'to_pdf=1';
 
@@ -55,10 +55,10 @@ $(document).ready(function() {
                     ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'ERR_GENERIC_SERVER_ERROR'));
                 }
             });
-        },
-        initState = {
+        };
+    var initState = {
             isTBAEnabled: $('input#tba_set_enabled').attr('checked') === 'checked',
-            disabledModules: getDisabledModules()
+            enabledModules: getEnabledModules()
         };
 
     /**
@@ -67,11 +67,11 @@ $(document).ready(function() {
      * @returns {Boolean}
      */
     var hasUnsavedChanges = function() {
-        var disabledModules = getDisabledModules(),
-            isTBAEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
+        var enabledModules = getEnabledModules();
+        var isTBAEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
 
         return initState.isTBAEnabled !== isTBAEnabled
-            || !_.isEqual(disabledModules, initState.disabledModules);
+            || !_.isEqual(enabledModules, initState.enabledModules);
     };
 
     /**
@@ -174,9 +174,9 @@ $(document).ready(function() {
 
     $('input#tba_set_enabled').on('click', function() {
         if ($(this).attr('checked') === 'checked') {
-            var disabledModules = getDisabledModules();
+            var enabledModules = getEnabledModules();
             _.each($('input[data-group=tba_em]'), function(item) {
-                if (_.indexOf(disabledModules, $(item).val()) === -1) {
+                if (_.indexOf(enabledModules, $(item).val()) !== -1) {
                     $(item).attr('checked', 'checked');
                 }
             });
@@ -187,11 +187,11 @@ $(document).ready(function() {
     });
 
     $('input[name=save]').on('click', function() {
-        var disabledModules = getDisabledModules(),
-            isTBAEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
+        var enabledModules = getEnabledModules();
+        var isTBAEnabled = $('input#tba_set_enabled').attr('checked') === 'checked';
 
         if ((initState.isTBAEnabled && $('input#tba_set_enabled').attr('checked') !== 'checked') ||
-            _.difference(disabledModules, initState.disabledModules).length > 0) {
+            _.difference(initState.enabledModules, enabledModules).length > 0) {
             app.alert.show('submit_tba_confirmation', {
                 level: 'confirmation',
                 messages: app.user.get('type') == 'admin'
@@ -199,11 +199,11 @@ $(document).ready(function() {
                     : SUGAR.language.get('Teams', 'LBL_TBA_CONFIGURATION_WARNING_NO_ADMIN')
                 ,
                 onConfirm: function() {
-                    saveConfiguration(isTBAEnabled, disabledModules);
+                    saveConfiguration(isTBAEnabled, enabledModules);
                 }
             });
         } else {
-            saveConfiguration(isTBAEnabled, disabledModules);
+            saveConfiguration(isTBAEnabled, enabledModules);
         }
     });
 
