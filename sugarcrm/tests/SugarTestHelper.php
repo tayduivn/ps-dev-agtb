@@ -22,6 +22,11 @@ set_include_path(
 if (!defined('SUGAR_PHPUNIT_RUNNER'))
     define('SUGAR_PHPUNIT_RUNNER', true);
 
+// prevent ext/session from trying to send headers, since it doesn't make sense in CLI mode
+// and will conflict with PHPUnit output
+ini_set('session.use_cookies', false);
+session_cache_limiter(false);
+
 // initialize the various globals we use
 global $sugar_config, $db, $fileName, $current_user, $locale, $current_language;
 if ( !isset($_SERVER['HTTP_USER_AGENT']) )

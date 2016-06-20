@@ -50,8 +50,13 @@ class SugarSessionHandler extends SessionHandler
      */
     public function open($save_path, $session_id)
     {
-        $this->session_start = time();
-        return parent::open($save_path, $session_id);
+        $result = parent::open($save_path, $session_id);
+
+        if ($result) {
+            $this->session_start = time();
+        }
+
+        return $result;
     }
 
     /**

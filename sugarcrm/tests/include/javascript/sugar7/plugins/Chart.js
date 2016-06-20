@@ -187,7 +187,7 @@ describe('Chart Plugin', function() {
             var resizedWidth = view.$el.find('.nv-pie .nv-pie').attr('transform');
 
             expect(currentWidth).not.toBe(resizedWidth);
-            expect('translate(500,157.5)').toBe(resizedWidth);
+            expect(resizedWidth).toMatch(/^translate\(500[, ]+157.5\)/);
         });
 
         it('Chart should be resized when dashlet expand event fires on layout.', function() {
