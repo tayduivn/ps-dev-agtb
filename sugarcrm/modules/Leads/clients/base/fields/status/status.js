@@ -30,9 +30,10 @@
      * Filter out the Converted option if the Lead is not already converted.
      */
     _filterOptions: function(options) {
+        var status = this.model.get('status');
         var filteredOptions = this._super('_filterOptions', [options]);
 
-        return (this.model.get('status') !== 'Converted') ?
+        return (!_.isUndefined(status) && status !== 'Converted') ?
             _.omit(filteredOptions, 'Converted') :
             filteredOptions;
     }
