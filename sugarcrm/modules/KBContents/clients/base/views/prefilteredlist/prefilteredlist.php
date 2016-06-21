@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['KBContents']['base']['view']['prefilteredlist'] = array(
-    'type' => 'recordlist',
     'favorite' => true,
     'following' => true,
     'sticky_resizable_columns' => true,
