@@ -127,14 +127,14 @@
             if (hasComponents) {
                 // In case we already have components, reload the
                 // data to remove previous load data (e.g. fetchCalled, etc)
-                this.context.reloadData();
+                this.context.reloadData({resetCollection: false});
             } else {
                 this.context.loadData();
             }
             this.render();
         } else {
             this.context.set(attrs);
-            this.context.reloadData();
+            this.context.reloadData({resetCollection: false});
         }
 
         this.showPreviewPanel();

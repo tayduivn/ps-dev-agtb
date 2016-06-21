@@ -160,7 +160,7 @@
      * @private
      */
     _delegateEvents: function() {
-        app.events.on('preview:collection:change', this.updateCollection, this);
+        app.events.on('preview:collection:change', this.showPreviousNextBtnGroup, this);
 
         // TODO: Remove when pagination on activity streams is fixed.
         app.events.on('preview:module:update', this.updatePreviewModule, this);
@@ -184,11 +184,17 @@
         }
     },
 
+    /**
+     * Calls `View.Views.Base.PreviewView#showPreviousNextBtnGroup`.
+     *
+     * @deprecated since 7.8, will be removed in 7.9.
+     * @param {Data.BeanCollection} collection the given collection (unused)
+     */
     updateCollection: function(collection) {
-        if( this.collection ) {
-            this.collection.reset(collection.models);
-            this.showPreviousNextBtnGroup();
-       }
+        app.logger.warn('View.Views.Base.PreviewView#updateCollection is deprecated since 7.8 and will be' +
+            ' removed in 7.9. Since the preview layout now share the view collection, this method is obsolete.');
+
+        this.showPreviousNextBtnGroup();
     },
 
     // TODO: Remove when pagination on activity streams is fixed.
