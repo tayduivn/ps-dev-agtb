@@ -33,13 +33,20 @@ describe('Leads Status Field', function() {
         var newOptions;
         field.model.set('status', 'New');
         newOptions = field._filterOptions(options);
-        expect(newOptions['Converted']).toBeUndefined();
+        expect(newOptions.Converted).toBeUndefined();
     });
 
     it('should not filter out "Converted" as an option if value is already Converted', function() {
         var newOptions;
         field.model.set('status', 'Converted');
         newOptions = field._filterOptions(options);
-        expect(newOptions['Converted']).not.toBeUndefined();
+        expect(newOptions.Converted).not.toBeUndefined();
+    });
+
+    it('should not filter out "Converted" as an option if value on model is not set yet', function() {
+        var newOptions;
+        field.model.unset('status');
+        newOptions = field._filterOptions(options);
+        expect(newOptions.Converted).not.toBeUndefined();
     });
 });
