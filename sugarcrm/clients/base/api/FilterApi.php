@@ -237,8 +237,6 @@ class FilterApi extends SugarApi
         $orderBy = $this->getOrderByFromArgs($args, $seed);
         if ($orderBy) {
             $options['order_by'] = $orderBy;
-        } else {
-            $options['order_by'] = $this->defaultOrderBy;
         }
 
         // Set $options['module'] so that runQuery can create beans of the right
@@ -407,6 +405,9 @@ class FilterApi extends SugarApi
             static::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
+        if (!sizeof($q->order_by)) {
+            self::addOrderBy($q, $this->defaultOrderBy);
+        }
         return array($args, $q, $options, $seed);
     }
 
@@ -540,18 +541,32 @@ class FilterApi extends SugarApi
 
         $q->select($fields);
 
-        foreach ($options['order_by'] as $orderBy) {
-            // ID and date_modified are used to give some order to the system
-            if ($orderBy[0] != 'date_modified' && $orderBy[0] != 'id') {
-                self::verifyField($q, $orderBy[0]);
-            }
-            $q->orderBy($orderBy[0], $orderBy[1]);
+        if (!empty($options['order_by'])) {
+            self::addOrderBy($q, $options['order_by']);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
         $q->limit($options['limit'] + 1);
         $q->offset($options['offset']);
 
         return $q;
+    }
+
+    /**
+     * Adds order by to query
+     * @param SugarQuery $q
+     * @param $orderByOption
+     * @throws SugarApiExceptionInvalidParameter
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected static function addOrderBy(SugarQuery $q, array $orderByOption)
+    {
+        foreach ($orderByOption as $orderBy) {
+            // ID and date_modified are used to give some order to the system
+            if ($orderBy[0] != 'date_modified' && $orderBy[0] != 'id') {
+                self::verifyField($q, $orderBy[0]);
+            }
+            $q->orderBy($orderBy[0], $orderBy[1]);
+        }
     }
 
     /**
