@@ -1607,7 +1607,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 }
 
                 $tmpField['optionItem'] = 'none';
-                if (in_array($field['type'], array('enum', 'radioenmu', 'multienum'))) {
+                if (in_array($field['type'], array('enum', 'radioenum', 'multienum'))) {
                     if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
                         if (PMSEEngineUtils::specialFields($field, $type)) {
                             $tmpField['optionItem'] = $this->gatewayModulesMethod($field);

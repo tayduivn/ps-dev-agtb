@@ -1487,7 +1487,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                                 name: dependantField.getName()
                             };
 
-                            if (type === 'dropdown' || type === 'multiselect') {
+                            if (type === 'dropdown' || type === 'multiselect' || type === 'radio') {
                                 aux = parentField.getSelectedData();
                                 if (aux) {
                                     itemsObj = aux["optionItem"];
