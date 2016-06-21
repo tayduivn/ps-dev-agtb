@@ -15,7 +15,7 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['CommittedDeleteWarning', 'KBContent']);
+        this.plugins = _.union(this.plugins || [], ['CommittedDeleteWarning', 'KBContent', 'KBNotify']);
         this._super('initialize', [options]);
     },
 
@@ -36,6 +36,10 @@
                     emptyValues: emptyValues
                 });
                 if(this.$('.btn[name=update_button]').hasClass('disabled') === false) {
+                    this.listenTo(this.collection, 'data:sync:complete', _.bind(function() {
+                        this.notifyAll('kb:collection:updated');
+                        this.stopListening(this.collection);
+                    }, this));
                     this.save();
                 }
             } else {

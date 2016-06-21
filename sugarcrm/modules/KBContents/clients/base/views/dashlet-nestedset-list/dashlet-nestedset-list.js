@@ -10,7 +10,7 @@
  */
 ({
 
-    plugins: ['Dashlet', 'NestedSetCollection', 'JSTree'],
+    plugins: ['Dashlet', 'NestedSetCollection', 'JSTree', 'KBNotify'],
 
     /**
      * Module name that provides an netedset data.
@@ -101,18 +101,17 @@
                 this.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
             }
         }, this);
-        if (currentContext.get('collection') !== undefined) {
-            this.listenTo(currentContext.get('collection'), 'data:sync:complete', function() {
-                _.defer(function(self) {
-                    if (self.layout.disposed === true) {
-                        return;
-                    }
-                    if (!_.isUndefined(self.layout.reloadDashlet)) {
-                        self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
-                    }
-                }, this);
+
+        this.on('kb:collection:updated', _.bind(function() {
+            _.defer(function(self) {
+                if (self.layout.disposed === true) {
+                    return;
+                }
+                if (!_.isUndefined(self.layout.reloadDashlet)) {
+                    self.layout.reloadDashlet({complete: function() {}, saveLeafs: false});
+                }
             }, this);
-        }
+        }, this));
 
     },
 

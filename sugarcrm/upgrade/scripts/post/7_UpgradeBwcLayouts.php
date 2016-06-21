@@ -21,7 +21,7 @@ require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
  */
 class SugarUpgradeUpgradeBwcLayouts extends UpgradeScript
 {
-    public $order = 7000;
+    public $order = 7001;
     public $type = self::UPGRADE_CUSTOM;
     public $sidecarMetaDataUpgraderBwcUpgrader;
 

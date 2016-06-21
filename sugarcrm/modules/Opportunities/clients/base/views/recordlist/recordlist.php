@@ -53,7 +53,7 @@ $viewdefs['Opportunities']['base']['view']['recordlist'] = array(
                 'events' => array(
                     'click' => 'list:massdelete:fire',
                 ),
-                'related_fields' => array('sales_stage')
+                'related_fields' => array('sales_stage', 'sales_status', 'closed_revenue_line_items'),
             ),
             array(
                 'name' => 'export_button',
