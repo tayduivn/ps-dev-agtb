@@ -1915,11 +1915,7 @@ function unlinkUWTempFiles() {
 				@rmdir($dir);
 			}
 		}
-		$cacheFile = sugar_cached("modules/UpgradeWizard/_persistence.php");
-		if(is_file($cacheFile)) {
-			logThis("Unlinking Upgrade cache file: '_persistence.php'", $path);
-			@unlink($cacheFile);
-		}
+        sugar_cache_clear('upgrade_wizard_persistence');
 	}
 	logThis("finished!");
 }

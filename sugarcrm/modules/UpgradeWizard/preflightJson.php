@@ -20,10 +20,10 @@ if(ob_get_level() < 1)
 	ob_start();
 ob_implicit_flush(1);
 
-// load the generated persistence file if found
-$persistence = array();
-if(file_exists($persist = sugar_cached('/modules/UpgradeWizard/_persistence.php'))) {
-	require_once $persist;
+// load the generated persistence array if found in cache
+$persistence = sugar_cache_retrieve('upgrade_wizard_persistence');
+if (empty($persistence)) {
+    $persistence = array();
 }
 require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('include/utils/zip_utils.php');
@@ -53,4 +53,4 @@ switch($_REQUEST['preflightStep']) {
 	break;
 }
 
-write_array_to_file('persistence', $persistence, $persist);
+sugar_cache_put('upgrade_wizard_persistence', $persistence);
