@@ -227,7 +227,7 @@ class RepairTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Testing is will be deleted legacy scheduler jobs and created necessary.
      *
-     * @covers \Sugarcrm\Sugarcrm\Trigger\Repair\Repair::rebuild
+     * @covers \Sugarcrm\Sugarcrm\Trigger\Repair\Repair::execute
      * @dataProvider triggerClientForDeletingSchedulerJobs
      * @param boolean $isConfigured
      * @param boolean $triggerServerUsed
