@@ -233,6 +233,10 @@ class RecurringHelper
                 foreach ($value['rrule_byday'][0] as $day) {
                     $sugarValue .= $this->dayMap->getSugarValue($day);
                 }
+            } else {
+                $utcStartDate = $dateTimeHelper->sugarDateToUTC($bean->date_start);
+                $userStartDate = $this->getSugarTimeDate()->tzUser($utcStartDate);
+                $sugarValue = $userStartDate->getDayOfWeek();
             }
             if ($bean->repeat_dow != $sugarValue) {
                 $bean->repeat_dow = $sugarValue;
@@ -342,5 +346,15 @@ class RecurringHelper
         }
 
         return $isChanged;
+    }
+
+    /**
+     * Gets Sugar TimeDate instance.
+     *
+     * @return \TimeDate
+     */
+    protected function getSugarTimeDate()
+    {
+        return new \TimeDate();
     }
 }
