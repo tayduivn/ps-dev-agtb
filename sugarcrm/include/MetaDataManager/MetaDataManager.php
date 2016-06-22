@@ -1383,6 +1383,9 @@ class MetaDataManager
      */
     public static function clearAPICacheOnShutdown($deleteModuleClientCache = true, $workingDirectory = "")
     {
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
         if (!self::getCacheHasBeenCleared()) {
             //shutdown functions are not always called from the same working directory as the script that registered it
             //Need to chdir to ensure we can find the correct files
