@@ -47,8 +47,16 @@ class Email extends SugarBean {
 
 	/* Bean Attributes */
 	var $name;
+    /**
+     * @var string
+     * @deprecated 7.9 Will be removed in a future release.
+     */
     var $type = 'archived';
     var $date_sent;
+    /**
+     * @var string
+     * @deprecated 7.9 Will be removed in a future release.
+     */
 	var $status;
 	var $intent;
 	var $mailbox_id;
@@ -416,12 +424,15 @@ class Email extends SugarBean {
 	/**
 	 * Returns true or false if this email is a draft.
 	 *
+     * @deprecated 7.9 Will be removed in a future release.
 	 * @param array $request
 	 * @return bool True indicates this email is a draft.
 	 */
 	function isDraftEmail($request)
 	{
-	    return ( isset($request['saveDraft']) || ($this->type == 'draft' && $this->status == 'draft') );
+        return isset($request['saveDraft']) ||
+            ($this->type == 'draft' && $this->status == 'draft') ||
+            $this->state === Email::EMAIL_STATE_DRAFT;
 	}
 
 	/**
@@ -491,10 +502,12 @@ class Email extends SugarBean {
         if ($saveAsDraft) {
             $this->type = 'draft';
             $this->status = 'draft';
+            $this->state = Email::EMAIL_STATE_DRAFT;
         } else {
             if ($archived) {
                 $this->type = 'archived';
                 $this->status = 'archived';
+                $this->state = Email::EMAIL_STATE_ARCHIVED;
             }
 
 			/* Apply Email Templates */
@@ -553,6 +566,7 @@ class Email extends SugarBean {
                 $this->new_with_id = true;
                 $this->type = 'out';
                 $this->status = 'sent';
+                $this->state = Email::EMAIL_STATE_ARCHIVED;
             }
         }
 
@@ -824,10 +838,12 @@ class Email extends SugarBean {
                 // sending a draft email
                 $this->type   = 'out';
                 $this->status = 'sent';
+                $this->state = Email::EMAIL_STATE_ARCHIVED;
                 $forceSave    = true;
             } elseif ($saveAsDraft) {
                 $this->type   = 'draft';
                 $this->status = 'draft';
+                $this->state = Email::EMAIL_STATE_DRAFT;
                 $forceSave    = true;
             }
 
@@ -1102,6 +1118,11 @@ class Email extends SugarBean {
 				$this->id = create_guid();
 				$this->new_with_id = true;
 			}
+
+            if (in_array($this->status, array('draft', 'send_error'))) {
+                $this->state = static::EMAIL_STATE_DRAFT;
+            }
+
 			$this->from_addr_name = $this->cleanEmails($this->from_addr_name);
 			$this->to_addrs_names = $this->cleanEmails($this->to_addrs_names);
 			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
@@ -2441,6 +2462,7 @@ class Email extends SugarBean {
                 $ieMail = new Email();
                 $ieMail->retrieve($_REQUEST['inbound_email_id']);
                 $ieMail->status = 'replied';
+                $ieMail->state = Email::EMAIL_STATE_ARCHIVED;
                 $ieMail->save();
             }
 

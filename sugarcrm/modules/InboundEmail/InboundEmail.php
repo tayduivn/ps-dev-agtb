@@ -2725,6 +2725,7 @@ class InboundEmail extends SugarBean {
 
 				$reply = BeanFactory::newBean('Emails');
 				$reply->type				= 'out';
+                $reply->state = Email::EMAIL_STATE_ARCHIVED;
 				$reply->to_addrs			= $to[0]['email'];
 				$reply->to_addrs_arr		= $to;
 				$reply->cc_addrs_arr		= array();
@@ -2931,6 +2932,7 @@ class InboundEmail extends SugarBean {
 
 				$reply = BeanFactory::newBean('Emails');
 				$reply->type				= 'out';
+                $reply->state = Email::EMAIL_STATE_ARCHIVED;
 				$reply->to_addrs			= $to[0]['email'];
 				$reply->to_addrs_arr		= $to;
 				$reply->cc_addrs_arr		= array();
@@ -4093,6 +4095,7 @@ class InboundEmail extends SugarBean {
 			// handle UTF-8/charset encoding in the ***headers***
 			global $db;
 			$email->name			= $this->handleMimeHeaderDecode($header->subject);
+            $email->state = Email::EMAIL_STATE_ARCHIVED;
 			$email->type = 'inbound';
 			if(!empty($unixHeaderDate)) {
 			    $email->date_sent = $timedate->asUser($unixHeaderDate);

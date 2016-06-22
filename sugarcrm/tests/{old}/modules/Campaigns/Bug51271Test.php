@@ -102,6 +102,7 @@ class Bug51271Test extends Sugar_PHPUnit_Framework_TestCase
         $this->email->name = 'Bug51271Test';
         $this->email->type = 'out';
         $this->email->status = 'sent';
+        $this->email->state = Email::EMAIL_STATE_ARCHIVED;
         $this->email->parent_type = 'Campaigns';
         $this->email->parent_id = $this->campaign->id;
         $this->email->save();
