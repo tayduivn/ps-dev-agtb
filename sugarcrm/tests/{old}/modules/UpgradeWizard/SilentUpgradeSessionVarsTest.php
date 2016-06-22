@@ -18,10 +18,7 @@ class SilentUpgradeSessionVarsTest extends TestCase
     
     public function setUp() 
     {
-        $this->varsCacheFileName = sugar_cached("/silentUpgrader/silentUpgradeCache.php");
-        if(file_exists($this->varsCacheFileName)) {
-            unlink($this->varsCacheFileName);
-        }
+        sugar_cache_clear('silent_upgrade_vars_cache');
     }
 
     public function testSilentUpgradeSessionVars()
@@ -39,17 +36,13 @@ class SilentUpgradeSessionVarsTest extends TestCase
     	$get = getSilentUpgradeVar('SDizzle');
     	$this->assertEquals('BSnizzle', $get, "Unexpected value when getting silent upgrade var before resetting");
     	
-    	$write = writeSilentUpgradeVars();
-    	$this->assertTrue($write, "Could not write the silent upgrade vars to the cache file. Function returned false");
-    	$this->assertFileExists($this->varsCacheFileName, "Cache file doesn't exist after call to writeSilentUpgradeVars()");
         $output = getSilentUpgradeVar('SDizzle');
     	
     	$this->assertEquals('BSnizzle', $output, "Running custom script didn't successfully retrieve the value");
     	
     	removeSilentUpgradeVarsCache();
     	$this->assertEmpty($silent_upgrade_vars_loaded, "Silent upgrade vars variable should have been unset in removeSilentUpgradeVarsCache() call");
-    	$this->assertFileNotExists($this->varsCacheFileName, "Cache file exists after call to removeSilentUpgradeVarsCache()");
-    	
+
     	$get = getSilentUpgradeVar('SDizzle');
     	$this->assertNotEquals('BSnizzle', $get, "Unexpected value when getting silent upgrade var after resetting");
     }
