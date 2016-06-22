@@ -160,7 +160,7 @@ class SugarSNIP
 
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => '', //$snipuser->authenticate_id,
+                        'password' => '',
                         'client_api_url' => $this->getURL(),
                         'license' => $license,
             );
@@ -499,17 +499,6 @@ class SugarSNIP
 				}
 	        }
         }
-
-    /*
-     	Disabled by PM request - do not assign by default to any user.
-        if(empty($email->assigned_user_id) && !empty($username)) {
-            $email->assigned_user_id = $user->retrieve_user_id($username);
-        }
-
-        if(empty($email->assigned_user_id) && !empty($GLOBALS['current_user'])) {
-            $email->assigned_user_id = $GLOBALS['current_user']->id;
-        }
-     */
     }
 
     /**

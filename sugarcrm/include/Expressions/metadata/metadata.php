@@ -126,12 +126,10 @@ $dd_meta = array(
 		'loadUSStates'=>array(
 			'field'=>'state_select',
 			'expression'=>'enum("New York", "Pennsylvania", "California", "Florida")',
-			//'expression'=>'SugarEnum("usstatelist")',
 		),
 		'loadCNStates'=>array(
 			'field'			=>	'state_select',
 			'expression'	=>	'enum("Ontario", "Quebec", "British Columbia", "Manitoba")',
-			//'expression'	=>	'SugarEnum("cnstatelist")',
 		),
 
 
@@ -284,14 +282,5 @@ $val_meta = array(
 
 require_once "include/Expressions/metadata/metatojs.php";
 
-//echo getJSFromDDMeta($dd_meta);
 echo getJSFromDDMeta($dep_meta);
 echo getJSFromValidationMeta($val_meta);
-
-
-
-// $GLOBALS['app_list_strings']['en_us']['usstatelist'] = array('NEW YORK'=>'NEW YORK', 'CALIFORNIA'=>'CALIFORNIA');
-// multiply(divide($weight_pounds,pow(add(multiply($height_feet, 12),$height_inches),2)),703)
-
-
-?>

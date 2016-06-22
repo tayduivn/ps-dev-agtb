@@ -173,35 +173,6 @@ class SugarView
         if ($this->_getOption('show_footer')) $this->displayFooter();
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
 
-
-        // TODO no more ajaxUI?
-        /*
-        if ($this->_getOption('json_output'))
-        {
-            $content = ob_get_clean();
-            $module = $this->module;
-            $ajax_ret = array(
-                'content' => mb_detect_encoding($content) == "UTF-8" ? $content : utf8_encode($content),
-                 'menu' => array(
-                     'module' => $module,
-                     'label' => translate($module),
-                     $this->getMenu($module),
-                 ),
-                'title' => $this->getBrowserTitle(),
-                'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
-                'record' => isset($_REQUEST['record']) ? $_REQUEST['record'] : "",
-                'favicon' => $this->getFavicon(),
-            );
-
-            if(empty($this->responseTime))
-                $this->_calculateFooterMetrics();
-            $ajax_ret['responseTime'] = $this->responseTime;
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-            $GLOBALS['app']->headerDisplayed = false;
-            ob_flush();
-        }
-        */
         //Do not track if there is no module or if module is not a String
         $this->_track();
     }
@@ -1015,7 +986,6 @@ EOHTML;
         $deltaTime = $endTime - $GLOBALS['startTime'];
         $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' ' . number_format(round($deltaTime, 2), 2) . ' ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
-       // $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
         // Output the DB instances only if there is more than one actually created(the error case)
         $checkDB = DBManagerFactory::getInstance();
@@ -1182,8 +1152,6 @@ EOHTML;
         // Default anonymous pages to be under Home
         elseif ( !isset($app_list_strings['moduleList'][$this->module]) )
             return $defaultTab;
-//        elseif ( isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui" )
-//        	return $defaultTab;
         else
             return $this->module;
     }
@@ -1273,7 +1241,6 @@ EOHTML;
     protected function _getModuleTitleParams($browserTitle = false)
     {
         $params = array($this->_getModuleTitleListParam($browserTitle));
-		//$params = array();
         if (isset($this->action)){
             switch ($this->action) {
             case 'EditView':
@@ -1310,36 +1277,28 @@ EOHTML;
      */
     protected function _getModuleTitleListParam( $browserTitle = false )
     {
-    	global $current_user;
-    	global $app_strings;
+        global $current_user;
+        global $app_strings;
 
-    	if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
-    		$firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
-    	else
-    		$firstParam = $this->module;
+        if (!empty($GLOBALS['app_list_strings']['moduleList'][$this->module])) {
+            $firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
+        } else {
+            $firstParam = $this->module;
+        }
 
     	$iconPath = $this->getModuleTitleIconPath($this->module);
-    	if($this->action == "ListView" || $this->action == "index") {
-    	    if (!empty($iconPath) && !$browserTitle) {
-    	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-    	    		return $app_strings['LBL_SEARCH']."&nbsp;"
-    	    			 . "$firstParam";
 
-    	    	} else {
-					return "$firstParam"
-					     . "&nbsp;".$app_strings['LBL_SEARCH'];
-    	    	}
-			} else {
-				return $firstParam;
-			}
-    	}
-    	else {
-		    if (!empty($iconPath) && !$browserTitle) {
-				//return "<a href='index.php?module={$this->module}&action=index'>$this->module</a>";
-			} else {
-				return $firstParam;
-			}
-    	}
+        if ($this->action == "ListView" || $this->action == "index") {
+            if (empty($iconPath) || $browserTitle) {
+                return $firstParam;
+            } elseif (SugarThemeRegistry::current()->directionality == "ltr") {
+                return $app_strings['LBL_SEARCH']. "&nbsp;" . $firstParam;
+            } else {
+                return $firstParam . "&nbsp;" . $app_strings['LBL_SEARCH'];
+            }
+        } elseif (empty($iconPath) || $browserTitle) {
+            return $firstParam;
+        }
     }
 
     protected function getModuleTitleIconPath($module)

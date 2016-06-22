@@ -96,7 +96,6 @@ class UserDemoData {
 		$u->user_hash = User::getPasswordHash($user_name);
 		$u->reports_to_id = $reports_to;
 		$u->reports_to_name = $reports_to_name;
-		//$u->email1 = $email;
 		$u->emailAddress->addAddress($email, true);
 		$u->emailAddress->addAddress("reply.".$email, false, true);
 		$u->emailAddress->addAddress("alias.".$email);

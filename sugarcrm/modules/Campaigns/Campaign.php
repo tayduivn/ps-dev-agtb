@@ -84,7 +84,6 @@ class Campaign extends SugarBean {
 		$result = $this->db->query($query);
 		$user = $this->db->fetchByAssoc($result);
 
-		//_ppd($user);
 		if(!empty($user)) {
             $fullName = $locale->formatName($user);
 			$listTmpl->assign('ASSIGNED_USER_NAME', $fullName);
@@ -123,13 +122,6 @@ class Campaign extends SugarBean {
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
-		//format numbers.
-
-		//don't need additional formatting here.
-		//$this->budget=format_number($this->budget);
-		//$this->expected_cost=format_number($this->expected_cost);
-		//$this->actual_cost=format_number($this->actual_cost);
-		//$this->expected_revenue=format_number($this->expected_revenue);
 	}
 
 
@@ -301,31 +293,6 @@ class Campaign extends SugarBean {
 		return $listquery;
 
 	}
-//	function get_prospect_list_entries() {
-//		$this->load_relationship('prospectlists');
-//		$query_array = $this->prospectlists->getQuery(true);
-//
-//		$query=<<<EOQ
-//			SELECT distinct prospect_lists.*,
-//			(case  when (email_marketing.id is null) then default_message.id else email_marketing.id end) marketing_id,
-//			(case  when  (email_marketing.id is null) then default_message.name else email_marketing.name end) marketing_name
-//
-//			FROM prospect_lists
-//
-//			INNER JOIN prospect_list_campaigns ON (prospect_lists.id=prospect_list_campaigns.prospect_list_id AND prospect_list_campaigns.campaign_id='{$this->id}')
-//
-//			LEFT JOIN email_marketing on email_marketing.message_for = prospect_lists.id and email_marketing.campaign_id = '{$this->id}'
-//			and email_marketing.deleted =0 and email_marketing.status='active'
-//
-//			LEFT JOIN email_marketing default_message on default_message.message_for = prospect_list_campaigns.campaign_id and
-//			default_message.campaign_id = '{$this->id}' and default_message.deleted =0
-//			and default_message.status='active'
-//
-//			WHERE prospect_list_campaigns.deleted=0 AND prospect_lists.deleted=0
-//
-//EOQ;
-//		return $query;
-//	}
 
 	 function bean_implements($interface){
 		switch($interface){

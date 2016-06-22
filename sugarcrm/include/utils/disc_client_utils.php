@@ -201,7 +201,6 @@ function convert_disc_client(){
                 $sugar_config['oc_converted'] = true;
 
 			    echo 'Updating Local Information<br>';
-			 	//echo 'Done - will auto logout in <div id="seconds_left">10</div> seconds<script> function logout_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php?module=Users&action=Logout";}else{left--; setTimeout("logout_countdown("+ left+")", 1000)}};setTimeout("logout_countdown(10)", 1000)</script>';
                 // done with soap calls
                 $result = $soapclient->call( 'logout', array('session'=>$session) );
 	            ksort( $sugar_config );

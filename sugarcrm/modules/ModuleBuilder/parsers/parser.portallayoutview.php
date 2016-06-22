@@ -43,7 +43,6 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
     {
         $viewType = strtolower(str_ireplace('view', '', $view));
         $GLOBALS['log']->debug("in ParserPortalLayoutView");
-        //$file = "modules/{$module}/metadata/portal." . strtolower($view) . "defs.php";
         $file = 'modules/' . $module . '/metadata/portal/layouts/' . $viewType . '.php';
         $this->_customFile = MetaDataFiles::PATHCUSTOM . $file;
         $this->_workingFile = MetaDataFiles::PATHWORKING . $file;
@@ -254,7 +253,6 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
                 (isset($def['type']) && !in_array($def['type'], $invalidTypes)))
             {
             	$label = isset($def['vname']) ? $def ['vname'] : $def['name'];
-                //$GLOBALS['log']->debug($label . ',' . $def['type']);
             	$modelFields [$field] = array('name' => $field, 'label' => $label);
             }
         }
@@ -292,4 +290,3 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         return $this->maxColumns;
     }
 }
-?>

@@ -164,7 +164,6 @@ foreach ($lead->field_defs as $field_def) {
 
     $field_def['vname'] = preg_replace('/:$/','',translate($field_def['vname'],'Leads'));
 
-     //$cols_name = "{'".$field_def['vname']."'}";
      $col_arr = array();
      if((isset($field_def['required']) && $field_def['required'] != null && $field_def['required'] != 0)
      	|| $field_def['name']=='last_name'
@@ -187,7 +186,6 @@ foreach ($lead->field_defs as $field_def) {
 }
 
 $xtpl->assign("WEB_POST_URL",$web_post_url);
-//$xtpl->assign("LEAD_SELECT_FIELDS",'MOD.LBL_SELECT_LEAD_FIELDS');
 
 require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
@@ -237,7 +235,6 @@ $javascript = new javascript();
 $javascript->setFormName('WebToLeadCreation');
 $javascript->setSugarBean($lead);
 $javascript->addAllFields('');
-//$javascript->addFieldGeneric('redirect_url', '', 'LBL_REDIRECT_URL' ,'true');
 $javascript->addFieldGeneric('campaign_name', '', 'LBL_RELATED_CAMPAIGN' ,'true');
 $javascript->addFieldGeneric('assigned_user_name', '', 'LBL_ASSIGNED_TO' ,'true');
 $javascript->addToValidateBinaryDependency('campaign_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_LEAD_NOTIFY_CAMPAIGN'], 'false', '', 'campaign_id');
@@ -256,12 +253,6 @@ $xtpl->assign("DRAG_DROP_CHOOSER_WEB_TO_LEAD",constructDDWebToLeadFields($fields
 
 $xtpl->parse("main");
 $xtpl->out("main");
-/*
-$str = "<script>
-WebToLeadForm.lead_fields = {$lead_fields};
-</script>";
-echo $str;
-*/
 /*
  *This function constructs Drag and Drop multiselect box of subscriptions for display in manage subscription form
 */

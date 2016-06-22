@@ -39,9 +39,6 @@ class Link {
 	var $ignore_role_filter=false;
 	//if set to true distinct clause will be added to the select list.
 	var $add_distinct=false;
-	//value of this variable dictates the action to be taken when a duplicate relationship record is found.
-	//1-ignore,2-update,3-delete.
-	//var $when_dup_relationship_found=2; // deprecated - only used by Queues, which is also no longer used
 
 	// a value for duplicate variable is stored by the _relatinship_exists method.
 	var $_duplicate_key;
@@ -637,7 +634,6 @@ class Link {
 
 		//make a copy of this bean to avoid recursion.
 		$bean = clone $this->_bean;
-		// BeanFactory::getBean($this->_bean->module_dir, $this->_bean->id);
 
 	   	$bean->{$this->_relationship->lhs_key}=$key;
 
@@ -790,24 +786,7 @@ class Link {
 
 		//check whether duplicate exist or not.
 		if ($this->relationship_exists($this->_relationship->join_table,$add_values)) {
-
-/*			switch($this->when_dup_relationship_found) {
-
-				case 1: //do nothing.
-					$GLOBALS['log']->debug("Executing default option, no action.");
-					break;
-
-				case 3: //delete the record first, then create a new entry.
-					$this->_delete_row($this->_relationship->join_table,$this->_duplicate_key);
-					$this->_insert_row($add_values);
-					break;
-
-				default:
-				case 2: //update the record.
-*/					$this->_update_row($add_values,$this->_relationship->join_table,$this->_duplicate_where);
-/*					break;
-			}*/
-
+                    $this->_update_row($add_values, $this->_relationship->join_table, $this->_duplicate_where);
 		} else {
 			$this->_insert_row($add_values);
 		}
@@ -968,7 +947,7 @@ class Link {
 		}
 
         if (empty($this->_bean->id)) {
-            $this->_bean->retrieve($id);//!$bean_is_lhs || empty($related_id) ? $id : $related_id);
+            $this->_bean->retrieve($id);
         }
         //BEGIN SUGARCRM flav=een ONLY
         $linkField = VardefManager::getLinkFieldForRelationship(

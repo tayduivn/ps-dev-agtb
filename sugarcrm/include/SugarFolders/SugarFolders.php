@@ -826,7 +826,6 @@ ENDW;
 			$nodePath = "Home::".$folderNode->_properties['id'];
 
 			$folderNode->dynamic_load = true;
-	        //$folderNode->set_property('click', " SUGAR.email2.listView.populateListFrameSugarFolder(YAHOO.namespace('frameFolders').selectednode, '{$a['id']}', 'false');");
 	        $folderNode->set_property('ieId', 'folder');
 	        $folderNode->set_property('is_group', ($a['is_group'] == 1) ? 'true' : 'false');
 	        $folderNode->set_property('is_dynamic', ($a['is_dynamic'] == 1) ? 'true' : 'false');
@@ -1010,7 +1009,6 @@ ENDW;
 			$rSub = $this->db->query($qSub);
 		}
 		return $canContinue;
-		//_pp($q3);_pp($qRel);_pp($qSub);
 	}
 
     /**

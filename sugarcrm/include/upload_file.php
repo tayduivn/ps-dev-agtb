@@ -244,12 +244,6 @@ class UploadFile
 		}
 
         // Added Sugar API Override flag to FILES to allow PUT API hits to work
-		//if(!is_uploaded_file($_FILES[$this->field_name]['tmp_name']) || !isset($_FILES[$this->field_name]['_SUGAR_API_UPLOAD']) || $_FILES[$this->field_name]['_SUGAR_API_UPLOAD'] !== true) {
-		//	return false;
-		//} elseif($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
-		//    $GLOBALS['log']->fatal("ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");
-		//	return false;
-		//}
         if (is_uploaded_file($_FILES[$this->field_name]['tmp_name']) || (isset($_FILES[$this->field_name]['_SUGAR_API_UPLOAD']) && $_FILES[$this->field_name]['_SUGAR_API_UPLOAD'] === true)) {
             if($_FILES[$this->field_name]['size'] > $sugar_config['upload_maxsize']) {
                 $this->setError('fatal', "ERROR: uploaded file was too big: max filesize: {$sugar_config['upload_maxsize']}");

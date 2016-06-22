@@ -229,7 +229,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         $begin = TimeDate::getInstance()->nowDb();
         //kbrill bug #13884
-       	//$begin = $timedate->to_display_date_time($begin,true,true,$this->assigned_user);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), false, $this->assigned_user);
 
         if (!$timestamp) {
@@ -253,7 +252,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         $begin = date($GLOBALS['timedate']->get_db_date_time_format(), time()+(86400 * $days));  //gmt date with day adjustment applied.
         //kbrill bug #13884
-        //$begin = $timedate->to_display_date_time($begin,true,true,$this->assigned_user);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), false, $this->assigned_user);
 
         if ($time=='start') {
@@ -1146,9 +1144,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $cal_dateformat = $timedate->get_cal_date_format();
         $str = "<select name='type_{$layout_def['name']}'>";
         $str .= get_select_options_with_id($filterTypes, (empty($layout_def['input_name0']) ? '' : $layout_def['input_name0']));
-//        foreach($filterTypes as $value => $label) {
-//            $str .= '<option value="' . $value . '">' . $label. '</option>';
-//        }
         $str .= "</select>";
 
 

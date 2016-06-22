@@ -56,10 +56,6 @@ if (isset($_REQUEST['error_string'])) $xtpl->assign("ERROR_STRING", "<span class
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
-// handle Create $module then Cancel
-//if (empty($_REQUEST['return_id'])) {
-	//$xtpl->assign("RETURN_ACTION", 'index');
-//}
 $xtpl->assign("JAVASCRIPT", get_set_focus_js().get_validate_record_js().get_chooser_js());
 $xtpl->assign("ID", $focus->id);
 $xtpl->assign("NAME", $focus->name);

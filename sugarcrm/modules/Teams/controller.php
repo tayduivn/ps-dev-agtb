@@ -24,8 +24,6 @@ class TeamsController extends SugarController {
 			$sql = "SELECT team_hierarchies.id, teams.name FROM team_hierarchies INNER JOIN teams ON teams.id = team_hierarchies.team_id WHERE parent_id = '$parent_id'";
 
 		}else{
-			//return the whole tree with top level nodes only
-			//echo '[{"text":"build","id":"123456","cls":"folder"},{"text":"INCLUDE_ORDER.txt","id":"\/INCLUDE_ORDER.txt","leaf":true,"cls":"file"},{"text":"ext-core.js","id":"\/ext-core.js","leaf":true,"cls":"file"},{"text":"source","id":"\/source","cls":"folder"},{"text":"adapter","id":"\/adapter","cls":"folder"},{"text":"examples","id":"\/examples","cls":"folder"},{"text":"docs","id":"\/docs","cls":"folder"},{"text":"ext-all.js","id":"\/ext-all.js","leaf":true,"cls":"file"},{"text":"license.txt","id":"\/license.txt","leaf":true,"cls":"file"},{"text":"ext-core-debug.js","id":"\/ext-core-debug.js","leaf":true,"cls":"file"},{"text":"ext-all-debug.js","id":"\/ext-all-debug.js","leaf":true,"cls":"file"},{"text":"resources","id":"\/resources","cls":"folder"},{"text":"CHANGES.html","id":"\/CHANGES.html","leaf":true,"cls":"file"}]';
 			$sql = "SELECT team_hierarchies.id, teams.name FROM team_hierarchies INNER JOIN teams ON teams.id = team_hierarchies.team_id WHERE (parent_id is NULL OR parent_id = '')";
 		}
 		$result = $GLOBALS['db']->query($sql);

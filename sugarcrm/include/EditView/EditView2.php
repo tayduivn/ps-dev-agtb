@@ -376,8 +376,6 @@ class EditView
     {
         global $mod_strings, $sugar_config, $app_strings, $app_list_strings;
 
-        //the retrieve already did this work;
-        //$this->focus->fill_in_relationship_fields();
         //Bug#53261: If quickeditview is loaded after editview.tpl is created,
         //           the th->checkTemplate will return true. So, the following
         //           code prevent avoid rendering popup editview container.
@@ -436,7 +434,6 @@ class EditView
             foreach ($this->focus->toArray() as $name => $value)
             {
                 $valueFormatted = false;
-                //if ($this->focus->field_defs[$name]['type']=='link')continue;
 
                 $this->fieldDefs[$name] = (!empty($this->fieldDefs[$name]) && !empty($this->fieldDefs[$name]['value']))
                     ? array_merge($this->focus->field_defs[$name], $this->fieldDefs[$name])
@@ -504,7 +501,6 @@ class EditView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-                    // $this->focus->format_field($this->focus->field_defs[$name]);
                    $value = isset($this->focus->$name) ? $this->focus->$name : '';
                 }
 
@@ -588,7 +584,6 @@ class EditView
         {
             if(is_array($this->defs['templateMeta']['javascript']))
             {
-                //$this->th->ss->assign('externalJSFile', 'modules/' . $this->module . '/metadata/editvewdefs.js');
                 $this->th->ss->assign('externalJSFile', $this->defs['templateMeta']['javascript']);
             }
             else
@@ -647,8 +642,6 @@ class EditView
             $form_id = 'form_'.$this->view .'_'.$this->module;
             $form_name = $form_id;
             $this->view = $form_name;
-            //$this->defs['templateMeta']['form']['buttons'] = array();
-            //$this->defs['templateMeta']['form']['buttons']['ajax_save'] = array('id' => 'AjaxSave', 'customCode'=>'<input type="button" class="button" value="Save" onclick="this.form.action.value=\'AjaxFormSave\';return saveForm(\''.$form_name.'\', \'multiedit_form_{$module}\', \'Saving {$module}...\');"/>');
         }
 
         $form_name = $form_name == 'QuickCreate' ? "QuickCreate_{$this->module}" : $form_name;

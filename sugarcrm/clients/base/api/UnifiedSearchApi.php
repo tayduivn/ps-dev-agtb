@@ -108,12 +108,7 @@ class UnifiedSearchApi extends SugarListApi {
                     $column = $order;
                     $direction = 'ASC';
                 }
-/*
-  // Need to extend this to do field security on all modules that we are searching by.
-                if ( !$api->security->canAccessField($seed,$column,'list') || !isset($seed->field_defs[$column]) ) {
-                    throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
-                }
-*/
+
                 // If this field has already been added, don't do it again
                 // Common cause of this was the id field, since we always add it
                 // by default.
@@ -352,7 +347,6 @@ class UnifiedSearchApi extends SugarListApi {
             $formattedRecord = $this->formatBean($api, $moduleArgs, $bean);
 
             // add additional parameters expected to be returned
-            //$formattedRecord['_module'] = $module;
             $formattedRecord['_search']['score'] = $result->getScore();
             $formattedRecord['_search']['highlighted'] = $result->getHighlightedHitText();
 

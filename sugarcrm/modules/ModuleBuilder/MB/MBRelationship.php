@@ -78,19 +78,6 @@ class MBRelationship
         return $this->implementation->get ( $relationshipName ) ;
     }
 
-    /*
-     * Deprecated
-     * Add a relationship to this set
-     * Original MBRelationships could only support one relationship between this module and any other
-     */
-    /*    
-    function addRelationship ($name , $relatedTo , $relatedSubpanel = 'default' , $mysubpanel = 'default' , $type)
-    {
-        $this->implementation->add ( new ManyToManyRelationship ( $name, $this->moduleName, $relatedTo, $mysubpanel, $relatedSubpanel ) ) ;
-        $this->updateRelationshipVariable () ;
-    }
-*/
-    
     /* Add a relationship to this set
      * Original MBRelationships could only support one relationship between this module and any other
      * @param array $rel    Relationship definition in the old format (defined by self::oldFormatKeys)
@@ -132,13 +119,6 @@ class MBRelationship
         $this->implementation->addInstallDefs ( $installDef ) ;
     }
 
-    /*
-    function load ()
-    {
-        $this->implementation->load () ;
-        $this->updateRelationshipVariable () ;
-    }
-*/
     /*
      * Transitional function to keep the public relationship variable in sync with the implementation master copy
      * We have to do this as various things refer directly to MBRelationship->relationships...

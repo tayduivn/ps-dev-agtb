@@ -34,7 +34,6 @@ class ViewQuicklist extends SugarView{
 	    $query_fields = array('is_read' => 0,'assigned_user_id' => $current_user->id);
 	    $n = BeanFactory::getBean('Notifications');
 	    $where = "is_read = '0'";
-	    //$data = $n->get_list('date_entered',$where);
 	   $n1 = BeanFactory::getBean('Notifications');
 	   $n1->name = 'Roger';
 	   $data['list'][] = $n1;

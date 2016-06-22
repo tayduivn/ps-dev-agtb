@@ -72,7 +72,6 @@ class SubPanelViewTeams {
 		$button .= "<input type='hidden' name='return_id' value='{$this->focus->id}'>\n";
 		$button .= "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']
 			."' type='button' class='button' value='  ".$app_strings['LBL_SELECT_BUTTON_LABEL']
-//			."  ' name='button' onclick='window.open(\"index.php?module=Users&action=Popup&html=Popup_picker&form=TeamsDetailView&form_submit=true\",\"new\",\"width=600,height=400,resizable=1,scrollbars=1\");'>\n";
 			."  ' name='button' onclick='open_popup(\"Users\", 600, 400, \"\", false, true, {$encoded_popup_request_data});'>\n";
 		$button .= "</form>\n";
 		return $button;

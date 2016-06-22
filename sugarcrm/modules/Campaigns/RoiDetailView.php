@@ -47,12 +47,6 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 
 // For all campaigns show the same ROI interface
 // ..else default to legacy detail view
-/*
-if(!$focus->campaign_type == "NewsLetter"){
-    include ('modules/Campaigns/NewsLetterTrackDetailView.php');
-} else{
-	
-*/
     echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
     
     $GLOBALS['log']->info("Campaign detail view");
@@ -120,7 +114,6 @@ $campaign_id = $focus->id;
             $opp_result1=$focus->db->query($opp_query1);              
             $opp_data1=$focus->db->fetchByAssoc($opp_result1);
       if(empty($opp_data1['opp_count'])) $opp_data1['opp_count']=0; 
-      //_ppd($opp_data1);     
      $smarty->assign("OPPORTUNITIES_WON",$opp_data1['opp_count']);
           
             $camp_query1  = "select camp.name, count(*) click_thru_link";	           
@@ -181,21 +174,13 @@ $campaign_id = $focus->id;
     
 
     $smarty->assign("TEAM_NAME", $focus->team_name);
-    /* comment out the non-pro code
-
-
-    */
-    
-    
     
     //add chart
     $seps				= array("-", "/");
     $dates				= array(date($GLOBALS['timedate']->dbDayFormat), $GLOBALS['timedate']->dbDayFormat);
     $dateFileNameSafe	= str_replace($seps, "_", $dates);
-    //$cache_file_name	= $current_user->getUserPrivGuid()."_campaign_response_by_activity_type_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
     $cache_file_name_roi	= $current_user->getUserPrivGuid()."_campaign_response_by_roi_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
     $chart= new campaign_charts();
-    //_ppd($roi_vals);
     $smarty->assign("MY_CHART_ROI", $chart->campaign_response_roi($app_list_strings['roi_type_dom'],$app_list_strings['roi_type_dom'],$focus->id,true,true));    
     //end chart
     //custom chart code

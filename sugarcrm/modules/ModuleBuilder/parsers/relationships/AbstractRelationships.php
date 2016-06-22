@@ -270,7 +270,6 @@ class AbstractRelationships
 
         foreach ( $relationships as $relationship )
         {
-            // if (! $relationship->readonly ())
             $definitions [ $relationship->getName () ] = $relationship->getDefinition () ;
         }
 
@@ -487,7 +486,9 @@ class AbstractRelationships
         $filename = "$basepath/relationships/{$relationshipName}MetaData.php" ;
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveRelationshipMetaData(): saving the following to {$filename}" . print_r ( $properties, true ) ) ;
         write_array_to_file ( 'dictionary["' . $relationshipName . '"]', $properties, "{$filename}", 'w' ) ;
-        $installDefs [ $relationshipName ] = array ( /*'module' => $rhs_module , 'module_vardefs' => "<basepath>/Vardefs/{$relationshipName}.php" ,*/ 'meta_data' => "{$installDefPrefix}/relationships/relationships/{$relationshipName}MetaData.php" ) ;
+        $installDefs[$relationshipName] = array(
+            'meta_data' => "{$installDefPrefix}/relationships/relationships/{$relationshipName}MetaData.php",
+        );
 
         return $installDefs ;
     }

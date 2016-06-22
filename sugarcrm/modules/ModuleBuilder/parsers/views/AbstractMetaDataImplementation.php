@@ -226,15 +226,6 @@ abstract class AbstractMetaDataImplementation
     public function setViewClientFromView()
     {
         if (!empty($this->_view)) {
-            /*
-            if (strpos($this->_view, 'portal') !== false) {
-                $this->_viewClient = 'portal';
-            } elseif (strpos($this->_view, 'wireless') !== false || strpos($this->_view, 'mobile') !== false) {
-                $this->_viewClient = 'mobile';
-            } else {
-                $this->_viewClient = 'base';
-            }
-            */
             $this->_viewClient = MetaDataFiles::getViewClient($this->_view);
         }
     }

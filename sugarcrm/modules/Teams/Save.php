@@ -31,9 +31,8 @@ if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorize
 $focus = BeanFactory::getBean('Teams');
 
 if ($_POST['isDuplicate'] != 1) {
-//	echo "not duplicate, retrieving record {$_POST['record']}";
 	$focus->retrieve($_POST['record']);
-}// else { echo "duplicate, not retrieving"; }
+}
 
 foreach ($focus->column_fields as $field) {
 	if (isset($_POST[$field])) {
@@ -112,17 +111,9 @@ else {
 $focus->save();
 $return_id = $focus->id;
 
-//echo "<br>saved record, focus->id = {$focus->id}";
-
 if ($_POST['isDuplicate'] == 1) {
-//	echo "<br>duplicating users from old team ({$_REQUEST['record']}) into new team ({$focus->id})";
 	$focus->complete_team_duplication($_REQUEST['record']);
 }
-else {
-	//$focus->create_team();
-}
-
-//sugar_die();
 
 $return_module = (!empty($_POST['return_module'])) ? $_POST['return_module'] : "Teams";
 $return_id = (!empty($_POST['return_id'])) ? $_POST['return_id'] : $return_id;

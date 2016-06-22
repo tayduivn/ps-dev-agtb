@@ -430,15 +430,6 @@ class DependencyManager
 
     private static function getModuleDependencyMetadata($module)
     {
-        /* //Disable caching for now
-        $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
-        //If the cache file exists, use it.
-        if(inDeveloperMode() && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
-            include($cacheLoc);
-        }
-        //Otherwise load all the def locations and create the cache file.
-        else {
-        */
         $dependencies = array($module => array());
         foreach (SugarAutoLoader::existingCustom("modules/$module/metadata/dependencydefs.php") as $loc)
         {
@@ -448,11 +439,6 @@ class DependencyManager
         if($defs) {
             require $defs;
         }
-        /*  //More disabled cache code
-            $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
-                 . override_value_to_string('dependencies', $module, $dependencies[$module]);
-            file_put_contents($cacheLoc, $out);
-        }*/
 
         return $dependencies[$module];
     }

@@ -2842,7 +2842,6 @@ class SugarBean
 							$this->$field = '';
 						} else
 						{
-							//$this->$field = from_db_convert($this->$field, 'time');
 							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
 							{
 								$this->$field = $timedate->to_display_time($this->$field,true, false);
@@ -3147,7 +3146,6 @@ class SugarBean
         );
         if(!$this->disable_row_level_security)
         {
-            //$this->table_name != 'users' && $this->table_name != 'teams' && $this->table_name != 'team_memberships' && $this->table_name != 'currencies')
             $this->addVisibilityFrom($query, $options);
         }
 
@@ -3745,7 +3743,6 @@ class SugarBean
         }
 
         // FIXME: duplicate with create_new_list_query, why?
-        //$this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,$select_fields,array(), $show_deleted,'',false,null,$singleSelect);
         return $this->process_list_query($query, $row_offset, $limit, $max, $where);
     }
@@ -3889,7 +3886,6 @@ class SugarBean
         }
 
         // FIXME: Duplicate with create_new_list_query - why?
-        //$this->addVisibilityWhere($where);
         $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted, $offset);
 
         return $this->process_detail_query($query, $row_offset, $limit, $max, $where, $offset);
@@ -6156,12 +6152,6 @@ class SugarBean
                         $return_array[$cache[$field]] = $this->$field;
                     }
                     //end bug 21672
-// tjy: no need to do this str_replace as the changes in 29994 for ListViewGeneric.tpl for translation handle this now
-//				}elseif(!empty($value['type']) && $value['type'] == 'multienum'&& empty($value['function'])){
-//					$return_array[strtoupper($field)] = str_replace('^,^', ', ', $this->$field );
-                }elseif(!empty($value['custom_module']) && $value['type'] != 'currency'){
-//					$this->format_field($value);
-                    $return_array[$cache[$field]] = $this->$field;
                 }else{
                     $return_array[$cache[$field]] = $this->$field;
                 }

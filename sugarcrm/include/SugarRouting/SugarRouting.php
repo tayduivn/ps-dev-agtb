@@ -22,8 +22,6 @@ class SugarRouting {
 	var $rules; // array containing rule sets
 	var $rulesCache; // path to folder containing rules files
 	var $actions = array( // array containing function names defined in baseActions.php
-		//'delete_bean',
-		//'delete_file',
 		'move_mail',
 		'copy_mail',
 		'_break',
@@ -76,7 +74,6 @@ class SugarRouting {
 
 		$dd = $sdd->metadata;
 
-		//
 		$tmpRuleGroup = array();
 		foreach($rules as $k => $v) {
 			if(strpos($k, "::") !== false) {
@@ -134,8 +131,6 @@ class SugarRouting {
 		)
 		*/
 
-		//_pp($ruleGroup);
-
 		/* create the rule array */
 		$criteria = array();
 		foreach($ruleGroup['criteriaGroup'] as $index => $grouping) {
@@ -156,7 +151,6 @@ class SugarRouting {
 			'criteria'	=> $criteria,
 			'actions'	=> $actions,
 		);
-		//_pp($newrule);
 
 		$new = true;
 		if(isset($this->rules) && is_array($this->rules)) {
@@ -176,7 +170,6 @@ class SugarRouting {
 			$this->rules[] = $newrule;
 		}
 
-		//_ppd($this->rules);
 		$this->saveRulesToFile();
 	}
 
@@ -469,8 +462,6 @@ class SugarRouting {
 	 * ******************************************************************
 	 */
 	function _checkCriteria(&$bean, &$focusRule) {
-		//_ppl('bean name: '.$bean->name);
-		//_ppl($focusRule);
 		if(!isset($focusRule['criteria'])) {
 			$GLOBALS['log']->debug("********** SUGARROUTING: focusCriteria['criteria'] empty");
 			return false;
@@ -482,8 +473,6 @@ class SugarRouting {
 		 * We will force a return of FALSE if the "all" flag is checked and some criteria is NOT satisfied (catch-all).
 		 */
 		$allCriteriaFilled = false;
-
-		//_ppl("got [ {$bean->name} ] from [ {$bean->from_addr} ]");
 
 		foreach($focusRule['criteria'] as $criteria) {
 			if(is_array($criteria)) {
@@ -584,7 +573,6 @@ class SugarRouting {
 					 */
 					default:
 						$GLOBALS['log']->debug("********** SUGARROUTING: criteria for rule does not match any rule definitions: [ {$crit['crit0']} ]");
-						//_ppl($crit);
 					break;
 				}
 			}
@@ -650,7 +638,6 @@ class SugarRouting {
 			'-2' => $app_strings['LBL_ROUTING_BREAK'],
 			'priority_high' => $app_strings['LBL_ROUTING_MATCH_PRIORITY_HIGH'],
 			'priority_normal' => $app_strings['LBL_ROUTING_MATCH_PRIORITY_NORMAL'],
-			//'priority_low' => $app_strings['LBL_ROUTING_MATCH_PRIORITY_LOW'], // no support in PHP_IMAP
 		);
 
 		return $ret;

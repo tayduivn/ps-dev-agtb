@@ -368,11 +368,6 @@ function pruneDatabase() {
 // * Job 4
 // */
 
-//function securityAudit() {
-//	// do something
-//	return true;
-//}
-
 function trimTracker()
 {
     global $sugar_config, $timedate;

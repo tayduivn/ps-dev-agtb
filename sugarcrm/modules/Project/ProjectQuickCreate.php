@@ -38,7 +38,6 @@ class ProjectQuickCreate extends QuickCreate {
         $this->javascript->setSugarBean($focus);
         $this->javascript->addAllFields('');
 
-		//$this->ss->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['project_status_dom'], $focus->status));
         $this->ss->assign('additionalScripts', $this->javascript->getScript(false));
         $this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
         
@@ -69,4 +68,3 @@ class ProjectQuickCreate extends QuickCreate {
         
     }   
 }
-?>

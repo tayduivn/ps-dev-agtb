@@ -63,9 +63,6 @@ if(!empty($relModule)){
 global $sugar_config;
 
 $filter = array();
-if(array_key_exists('mailmerge_filter', $sugar_config)){
- //   $filter = $sugar_config['mailmerge_filter'];
-}
 array_push($filter, 'link');
 
 $merge_array = array();
@@ -96,7 +93,6 @@ write_array_to_file('merge_array', $merge_array, $dataDir.$dataFileName);
 //Save the temp file so we can remove when we are done
 $_SESSION['MAILMERGE_TEMP_FILE_'.$mTime] = $dataDir.$dataFileName;
 $site_url = $sugar_config['site_url'];
-//$templateFile = $site_url . '/' . UploadFile::get_upload_url($document);
 $templateFile = $site_url.'/'.UploadFile::get_url(from_html($document->filename),$document->id);
 $dataFile =$dataFileName;
 $redirectUrl = 'index.php?action=index&step=5&module=MailMerge&mtime='.$mTime;

@@ -173,21 +173,6 @@ class WorkFlowActionShell extends SugarBean {
 
 		global $current_user;
 		
-		/*
-		///Determine Natural Language to display
-		if($this->action_type=='new'){
-			$natural_language = $current_module_strings['LBL_ACTION_NEW']." ".$beanList[$this->action_module];
-		}	
-		if($this->action_type=='update_rel'){
-			$workflow_object = $this->get_workflow_object();
-			$rel_module = $workflow_object->get_rel_module($this->rel_module);
-			$natural_language = $current_module_strings['LBL_ACTION_UPDATE_REL']." ".$rel_module;
-			unset($workflow_object);
-		}	
-		if($this->action_type=='update'){
-			$natural_language = $current_module_strings['LBL_ACTION_UPDATE']." ".$current_module_strings['LBL_RECORD'];
-		}		
-		*/
 		//begin - rsmith
     	include_once('include/ListView/ProcessView.php');
         $ProcessView = new ProcessView($this->get_workflow_object(), $this);
@@ -229,7 +214,6 @@ class WorkFlowActionShell extends SugarBean {
 		//END WFLOW PLUGINS		
 		$prev_display_text = $ProcessView->get_prev_text("ActionsCreateStep1", $this->action_type);
 		unset($ProcessView);
-		//$natural_language = "<i>".$current_module_strings['LBL_LIST_STATEMENT_CONTENT']."</i>";
 		$natural_language = "<b>".$prev_display_text."</b>";		
 		
 		
@@ -238,7 +222,6 @@ class WorkFlowActionShell extends SugarBean {
 		$temp_array['TYPE'] = $current_module_strings2['LBL_MODULE_NAME'];
 		$temp_array['STATEMENT'] = "<i>".$natural_language."</i>";
 		$temp_array['DETAILS_TABLE'] = $table_html;
-		//$temp_array['ACTION_DESCRIPTION'] = "<i>".$natural_language."</i>";
 		$temp_array['ID'] = $this->id;
 
 		

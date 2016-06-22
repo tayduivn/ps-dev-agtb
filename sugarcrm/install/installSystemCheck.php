@@ -286,7 +286,6 @@ if(!make_writable('./custom')) {
 
 // check modules dir
 $_SESSION['unwriteable_module_files'] = array();
-//if(!$writeableFiles['ret_val']) {
 $passed_write = recursive_make_writable('./modules');
 if (isset($_SESSION['unwriteable_module_files']['failed']) && $_SESSION['unwriteable_module_files']['failed']){
     $passed_write = false;

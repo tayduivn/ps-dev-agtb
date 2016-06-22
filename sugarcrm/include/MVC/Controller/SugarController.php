@@ -751,13 +751,6 @@ class SugarController
 		$this->view = 'list';
 	}
 
-/*
-
-	//THIS IS HANDLED IN ACTION_REMAP WHERE INDEX IS SET TO LISTVIEW
-	function action_index(){
-	}
-*/
-
 	/**
 	 * Action to handle when using a file as was done in previous versions of Sugar.
 	 */

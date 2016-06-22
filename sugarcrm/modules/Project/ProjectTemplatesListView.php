@@ -39,8 +39,6 @@ global $focus_list;
 if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true')
     $current_user->setPreference('ListViewDisplayColumns', array(), 0, $currentModule);
 
-//$savedDisplayColumns = $current_user->getPreference('ListViewDisplayColumns', $currentModule); // get user defined display columns
-
 $json = getJSONobj();
 
 $seedProject = BeanFactory::getBean('Project'); // seed bean
@@ -57,9 +55,6 @@ if(!empty($_REQUEST['displayColumns'])) {
             $displayColumns[$col] = $listViewDefs['ProjectTemplates'][$col];
     }
 }
-/*elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences
-    $displayColumns = $savedDisplayColumns;
-}*/
 else { // use columns defined in listviewdefs for default display columns
 	foreach($listViewDefs['ProjectTemplates'] as $col => $params) {
         if(!empty($params['default']) && $params['default'])
@@ -110,32 +105,11 @@ if(isset($_REQUEST['query']))
     $searchForm->populateFromRequest(); // gathers search field inputs from $_REQUEST
     $where_clauses = $searchForm->generateSearchWhere(true, "Project"); // builds the where clause from search field inputs
 
-    //if (count($where_clauses) > 0 )$where = implode(' and ', $where_clauses);
     $GLOBALS['log']->info("Here is the where clause for the list view: $where");
 }
 
 // list only the Project Templates
 $where .= 'is_template = 1 ';
-
-// start display
-// which tab of search form to display
-/*if(!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false') {
-
-    $searchForm->setup();
-
-	if(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'advanced_search') {
-        $searchForm->displayAdvanced();
-    }
-    elseif(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'saved_views'){
-        $searchForm->displaySavedViews($listViewDefs, $lv);
-    }
-    else {
-        $searchForm->displayBasic();
-    }
-}
-*/
-
-//_pp($mod_strings);
 
 $seedProject->create_action = 'ProjectTemplatesEditView';
 

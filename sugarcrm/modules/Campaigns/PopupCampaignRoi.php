@@ -39,7 +39,6 @@ $GLOBALS['log']->info("Campaign detail view");
 
 $xtpl=new XTemplate ('modules/Campaigns/PopupCampaignRoi.html');
 
-//_pp($_REQUEST['id']);
 $campaign_id=$_REQUEST['id'];
 $campaign = BeanFactory::getBean('Campaigns');
 $opp_query1  = "select camp.name, camp.actual_cost,camp.budget,camp.expected_revenue,count(*) opp_count,SUM(opp.amount) as Revenue, SUM(camp.actual_cost) as Investment,
@@ -94,65 +93,12 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 
 }
 
-//$detailView->processListNavigation($xtpl, "CAMPAIGN", $offset, $focus->is_AuditEnabled());
-// adding custom fields:
-//require_once('modules/DynamicFields/templates/Files/DetailView.php');
-
-
-//$xtpl->assign("TEAM_NAME", $focus->team_name);
-//$xtpl->parse("main.pro");
-/* we need to build the dropdown of related marketing values
-    $latest_marketing_id = '';
-    $selected_marketing_id = '';
-    if(isset($_REQUEST['mkt_id'])) $selected_marketing_id = $_REQUEST['mkt_id'];
-    $options_str = '<option value="all">--None--</option>';
-    //query for all email marketing records related to this campaign
-    $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
-
-    //build string with value(s) retrieved
-    $result =$campaign->db->query($latest_marketing_query);
-    if ($row = $campaign->db->fetchByAssoc($result)){
-        //first, populated the latest marketing id variable, as this
-        // variable will be used to build chart and subpanels
-        $latest_marketing_id = $row['id'];
-        //fill in first option value
-        $options_str .= '<option value="'. $row['id'] .'"';
-        // if the marketing id is same as selected marketing id, set this option to render as "selected"
-        if (!empty($selected_marketing_id) && $selected_marketing_id == $row['id']) {
-            $options_str .=' selected>'. $row['name'] .'</option>';
-        // if the marketing id is empty then set this first option to render as "selected"
-        }elseif(empty($selected_marketing_id)){
-            $options_str .=' selected>'. $row['name'] .'</option>';
-        // if the marketing is not empty, but not same as selected marketing id, then..
-        //.. do not set this option to render as "selected"
-        }else{
-            $options_str .='>'. $row['name'] .'</option>';
-        }
-    }
-    //process rest of records, if they exist
-    while ($row = $campaign->db->fetchByAssoc($result)){
-        //add to list of option values
-        $options_str .= '<option value="'. $row['id'] .'"';
-        //if the marketing id is same as selected marketing id, then set this option to render as "selected"
-        if (!empty($selected_marketing_id) && $selected_marketing_id == $row['id']) {
-            $options_str .=' selected>'. $row['name'] .'</option>';
-        }else{
-            $options_str .=' >'. $row['name'] .'</option>';
-        }
-     }
-    //populate the dropdown
-    $xtpl->assign("MKT_DROP_DOWN",$options_str);
-
-  */
-
 //add chart
 $seps				= array("-", "/");
 $dates				= array(date($GLOBALS['timedate']->dbDayFormat), $GLOBALS['timedate']->dbDayFormat);
 $dateFileNameSafe	= str_replace($seps, "_", $dates);
 $cache_file_name_roi	= $current_user->getUserPrivGuid()."_campaign_response_by_roi_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
 $chart= new campaign_charts();
-
-//ob_start();
 
     //if marketing id has been selected, then set "latest_marketing_id" to the selected value
     //latest marketing id will be passed in to filter the charts and subpanels
@@ -164,12 +110,6 @@ $chart= new campaign_charts();
 
     $xtpl->assign("MY_CHART_ROI", $chart->campaign_response_roi_popup($app_list_strings['roi_type_dom'],$app_list_strings['roi_type_dom'],$campaign_id,sugar_cached("xml/") .$cache_file_name_roi,true));
     }
-
-//$output_html .= ob_get_contents();
-//ob_end_clean();
-
-
-//_ppd($xtpl);
 //end chart
 
 $xtpl->parse("main");

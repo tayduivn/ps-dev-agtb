@@ -11,24 +11,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-//global $modInvisList;
 global $dictionary;
 
 $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
 
-//nsingh bug: 21669. Messes up localization
-/*foreach($modInvisList as $modinvisname){
-    if(empty($app_list_strings['moduleList'][$modinvisname])){
-	   $app_list_strings['moduleList'][$modinvisname] = $modinvisname;
-    }
-}*/
 $sugar_smarty->assign('APP_LIST', $app_list_strings);
-/*foreach($modInvisList as $modinvisname){
-	unset($app_list_strings['moduleList'][$modinvisname]);
-}*/
 $role = BeanFactory::getBean('ACLRoles', $_REQUEST['record']);
 $categories = ACLRole::getRoleActions($_REQUEST['record']);
 $names = ACLAction::setupCategoriesMatrix($categories);
@@ -73,7 +62,6 @@ $params = array();
 $params[] = "<a href='index.php?module=ACLRoles&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 $params[] = $role->get_summary_text();
 echo getClassicModuleTitle("ACLRoles", $params, true);
-//$sugar_smarty->assign('TITLE', $title);
 $hide_hide_supanels = true;
 
 echo $sugar_smarty->fetch('modules/ACLRoles/DetailView.tpl');

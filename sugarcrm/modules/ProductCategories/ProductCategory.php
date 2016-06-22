@@ -63,12 +63,6 @@ class ProductCategory extends SugarBean
     );
 
 //END TREEVIEW
-    /*
-
-        // This is used to retrieve related fields from form posts.
-        public $additional_column_fields = Array();
-     */
-
 
     /**
      * Product Category Constructor
@@ -118,15 +112,12 @@ class ProductCategory extends SugarBean
         if ($add_blank) {
             $list[''] = '';
         }
-        //if($this->db->getRowCount($result) > 0){
         // We have some data.
         while (($row = $this->db->fetchByAssoc($result)) != null) {
-            //while ($row = $this->db->fetchByAssoc($result)) {
             $list[$row['id']] = $row['name'];
             $GLOBALS['log']->debug("row id is:" . $row['id']);
             $GLOBALS['log']->debug("row name is:" . $row['name']);
         }
-        //}
         return $list;
     }
 

@@ -122,10 +122,7 @@ class PackageManagerDisplay{
         $header_text = $result['text'];
         $isAlive = $result['isAlive'];
         $show_login = $result['show_login'];
-        $display = 'none';
-        //if($isAlive){
-            $display = 'block';
-        //}
+        $display = 'block';
         $form2 = "<table  class='tabForm' width='100%'  cellpadding='0' cellspacing='0' width='100%' border='0'>";
         if(!$isAlive)
         	$form2 .= "<tr><td><span id='span_display_html'>".$header_text."</span></td></tr>";
@@ -143,9 +140,6 @@ class PackageManagerDisplay{
 		 $form2 .= "</div>";
 		 if(!$show_login)
          	$loginViewStyle = 'none';
-         //$form2 .= "<div id='loginView' style='display:".$loginViewStyle."'>";
-    	 //$form2 .= PackageManagerDisplay::buildLoginPanel($mod_strings, $isAlive);
-    	 //$form2 .= "</div>";
 
         $form2 .= "</td></tr></table>";
         $form2 = '';
@@ -166,14 +160,6 @@ class PackageManagerDisplay{
           	$filter = array('type' => $type_str);
           	$filter = PackageManager::toNameValueList($filter);
             $pm = new PackageManager();
-            /*if(in_array('patch', $types)){
-            	$releases = $pm->getReleases('3', '3', $filter);
-            }else{
-            	$releases = $pm->getReleases('', '', $filter);
-            }*/
-        }
-        if($form_action == 'install.php' && (empty($releases) || count($releases['packages']) == 0)){
-        	//return false;
         }
         $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
         $tree->tree_style= getVersionedPath('vendor/ytree/TreeView/css/check/tree.css');
@@ -231,7 +217,6 @@ class PackageManagerDisplay{
 		$loginViewStyle = ($display ? 'none' : 'block');
 		$selectViewStyle = ($display ? 'block' : 'none');
 		$output .= "<div id='selectView' style='display:".$selectViewStyle."'>";
-         //if($display){
     		$output .= "<table border=0 width='100%' class='moduleTitle'><tr><td width='100%' valign='top'>";
     		$output .= "<div id='treeview'>";
     		$output .= $tree->generate_nodes_array();
@@ -243,15 +228,9 @@ class PackageManagerDisplay{
             $output .= "<tr><td width='100%' align='left'>";
             $output .= "<input type='button' class='button' value='Download Selected' onClick='PackageManager.download();'>";
             $output .= "</td></tr></table>";
-        // }
          $output .= "</div>";
          if(!$show_login)
          	$loginViewStyle = 'none';
-        // $output .= "<div id='loginView' style='display:".$loginViewStyle."'>";
-         // jchi ,#24296 :commented code because we are currently not using depot, in the future this may change so you can put this code back in.
-    	 //$output .= PackageManagerDisplay::buildLoginPanel($mod_strings, $display);
-    	 //$output .= "</div>";
-    	 //$output .= "<table width='100%' class='moduleTitle' border=1><tr><td><div id='patch_downloads' class='ygrid-mso' style='height:205px;'></div></td></tr></table>";
 		$output .= "</div>";
 
 		return $output;
@@ -352,7 +331,6 @@ class PackageManagerDisplay{
         $ss->assign('sugar_version', $sugar_version);
         $ss->assign('js_custom_version', $sugar_config['js_custom_version']);
          $ss->assign('IS_ALIVE', $isAlive);
-        //if($type == 'patch' && $releases != null){
         if($type == 'patch'){
             $ss->assign('module_load', 'false');
             $patches = PackageManagerDisplay::createJavascriptPackageArray($releases);
@@ -492,10 +470,7 @@ class PackageManagerDisplay{
         	$show_login = false;
         }else{
             $credentials = PackageManager::getCredentials();
-            if(empty($credentials['username']) || empty($credentials['password'])){
-            	//$header_text = "<font color='red'><b>".$mod_strings['ERR_CREDENTIALS_MISSING']."</b></font>";
-            }
-            else{
+            if (!empty($credentials['username']) && !empty($credentials['password'])) {
             	$result = PackageManagerComm::login();
             	if((is_array($result) && !empty($result['faultcode'])) || $result == false){
             		$header_text = "<font color='red'><b>".$result['faultstring']."</b></font>";
@@ -574,9 +549,6 @@ class PackageManagerDisplay{
 				$icon = getImageForType( $manifest['type'] );
 			}
 			$installed_objects[] = array('icon' => $icon, 'name' => $name, 'type' => $type, 'version' => $version, 'date_entered' => $date_entered, 'description' => $description, 'file' => $link);
-			//print( "<form action=\"" . $form_action . "_prepare\" method=\"post\">\n" );
-			//print( "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$date_entered</td><td>$description</td><td>$link</td></tr>\n" );
-			//print( "</form>\n" );
 		}
     }
  }

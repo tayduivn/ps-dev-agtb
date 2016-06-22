@@ -204,9 +204,7 @@ class SugarWebServiceImplv4_1 extends SugarWebServiceImplv4
             $query .= " AND m2.id = '".$GLOBALS['db']->quote($module_user_id)."'";
         }
 
-        //if($related_module == 'Meetings' || $related_module == 'Calls' || $related_module = 'Contacts'){
         $query = string_format($query, array('m1'));
-        //}
 
         require_once('soap/SoapRelationshipHelper.php');
         $results = retrieve_modified_relationships($module_name, $related_module, $query, $deleted, $offset, $max_results, $select_fields, $relationship_name);

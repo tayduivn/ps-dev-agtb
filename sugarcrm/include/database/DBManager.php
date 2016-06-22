@@ -1523,54 +1523,6 @@ protected function checkQuery($sql, $object_name = false)
 
 		return $returnArray;
 	}
-//
-//    /**
-//     * Compare an index in two different tables
-//     * @deprecated
-//     * @param  string $name   index name
-//     * @param  string $table1
-//     * @param  string $table2
-//     * @return array  array with keys 'msg','table1','table2'
-//     */
-//    public function compareIndexInTables($name, $table1, $table2)
-//    {
-//        $row1 = $this->describeIndex($name, $table1);
-//        $row2 = $this->describeIndex($name, $table2);
-//        $returnArray = array(
-//            'table1' => $row1,
-//            'table2' => $row2,
-//            'msg'    => 'error',
-//            );
-//        $ignore_filter = array('Table'=>1, 'Seq_in_index'=>1,'Cardinality'=>1, 'Sub_part'=>1, 'Packed'=>1, 'Comment'=>1);
-//
-//        if ($row1) {
-//            if (!$row2) {
-//                //Exists on table1 but not table2
-//                $returnArray['msg'] = 'not_exists_table2';
-//            }
-//            else {
-//                if (sizeof($row1) != sizeof($row2)) {
-//                    $returnArray['msg'] = 'no_match';
-//                }
-//                else {
-//                    $returnArray['msg'] = 'match';
-//                    foreach ($row1 as $fname => $fvalue) {
-//                        if (!isset($row2[$fname])) {
-//                            $returnArray['msg'] = 'no_match';
-//                        }
-//                        if(!isset($ignore_filter[$fname]) && $row1[$fname] != $row2[$fname]){
-//                            $returnArray['msg'] = 'no_match';
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            $returnArray['msg'] = 'not_exists_table1';
-//        }
-//
-//        return $returnArray;
-//    }
-
 
 	/**
 	 * Creates an index identified by name on the given fields.
@@ -1951,8 +1903,6 @@ protected function checkQuery($sql, $object_name = false)
 			}
 		}
 
-		//if (sizeof ($values) == 0) return ""; // no columns set
-
 		// get the entire sql
 		$sql .= "(".implode(",", $columns).") ";
 		$sql .= "VALUES";
@@ -1973,7 +1923,12 @@ protected function checkQuery($sql, $object_name = false)
 				$custom_sql .= ", ";
 			}
 		}
-		return array('data' => $sql, 'cstm_sql' => $custom_sql, /*'result_count' => $row_count, */ 'total_count' => $rows_found, 'next_offset' => $next_offset);
+        return array(
+            'data' => $sql,
+            'cstm_sql' => $custom_sql,
+            'total_count' => $rows_found,
+            'next_offset' => $next_offset,
+        );
 	}
 
 	/**

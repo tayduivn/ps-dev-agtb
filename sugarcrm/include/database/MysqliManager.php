@@ -158,30 +158,6 @@ class MysqliManager extends MysqlManager
         // slow query logging
         $this->dump_slow_queries($sql);
 
-        // This is some heavy duty debugging, leave commented out unless you need this:
-        /*
-          $bt = debug_backtrace();
-          $line['file'] = 'NO_FILE';
-          $line['line'] = 'NO_LINE';
-          $line['function'] = 'NO_FUNCTION';
-          $i = 0;
-          foreach ( $bt as $i => $tryLine ) {
-              if ( strpos($tryLine['file'],'include/database') === false && strpos($tryLine['file'],'include/SugarQuery') === false ) {
-                  $line = $tryLine;
-                  // Go function line up to find the real function
-                  if ( isset($bt[($i+1)]['function']) ) {
-                      $line['function'] = $bt[($i+1)]['function'];
-                  }
-                  break;
-              }
-          }
-        $dumpQuery = str_replace(array('      ','     ','    ','   ','  ',"\n","\t","\r"),
-                                 array(' ',     ' ',    ' ',   ' ',  ' ', ' ', ' ', ' ',),
-                                 $sql);
-
-        $this->log->fatal("{$line['file']}:{$line['line']} ${line['function']} \nQuery: $dumpQuery\n");
-        */
-
 		if($keepResult) {
 			$this->lastResult = $result;
         }

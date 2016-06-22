@@ -227,7 +227,6 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 				$extra .= "\n</select>";
 				break;
 			default:
-				//echo "Skipping field {$meta['name']} since the type is not supported<BR>";
 				continue;
 		}
 		echo "<$tag $size name=\"$name\" $multi>\n$extra";
@@ -401,7 +400,6 @@ else if(!isset($_GET['execute'])){
 						$q_where .= " and ({$object->table_name}{$addcstm}.{$meta['dbname']} in ($in_string) $empty_check)";
 						break;
 					default:
-						//echo "Skipping field {$meta['name']} since the type is not supported<BR>";
 						continue;
 						break;
 				}
@@ -436,7 +434,6 @@ else if(!isset($_GET['execute'])){
 	echo "</form>\n";
 
 	// debug
-	//print_r($_SESSION['reassignRecords']);
 ///////////////////// END STEP 2 - Confirm Selections /////////////////////////
 }
 /////////////////// BEGIN STEP 3 - Execute reassignment ///////////////////////
@@ -448,8 +445,6 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
 	$toteam = $_SESSION['reassignRecords']['toteam'];
 	$toteamsetid = $_SESSION['reassignRecords']['toteamsetid'];
 	$toteamname = $_SESSION['reassignRecords']['toteamname'];
-
-	//$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
 
 	foreach($_SESSION['reassignRecords']['modules'] as $module => $queries){
 
@@ -471,7 +466,6 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true) {
             $affected_rows = $db->getAffectedRowCount($res);
         }
 
-		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";

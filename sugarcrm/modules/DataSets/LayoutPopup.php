@@ -17,20 +17,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 require_once('modules/DataSets/DataSet_Layout.php');
-
-
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
-
 global $urlPrefix;
 global $currentModule;
-
 
 $seed_object = BeanFactory::getBean('DataSets');
 
@@ -38,9 +29,6 @@ if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $seed_object->retrieve($_REQUEST['record']);
 
 }
-
-
-
 
 ////////////////////////////////////////////////////////
 // Start the output
@@ -58,10 +46,6 @@ else {
 
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
-
-// the form key is required
-//if(!isset($_REQUEST['form']))
-//	sugar_die("Missing 'form' parameter");
 
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
@@ -123,7 +107,6 @@ $form->assign("LAYOUT_TYPE_DISABLE", "disabled");	//visible
 $form->assign("DISPLAY_TYPE_DISABLE", "disabled");	//visible
 
 $form->assign("MODULE_NAME", $currentModule);
-//$form->assign("FORM", $_REQUEST['form']);
 $form->assign("GRIDLINE", $gridline);
 $form->assign("SET_RETURN_JS", $the_javascript);
 
@@ -172,7 +155,6 @@ $form->parse("main.attribute_head");
 
 
 		$form->assign("BODY_FORMAT_TYPE", get_select_options_with_id($app_list_strings['dataset_att_format_type_dom'], $body_object->format_type));
-		//$form->assign("BODY_FORMAT", $body_object->format);
 
 		$form->assign("BODY_SIZE_TYPE", get_select_options_with_id($app_list_strings['width_type_dom'],$body_object->size_type));
 		$form->assign('BODY_CELL_SIZE', $body_object->cell_size);

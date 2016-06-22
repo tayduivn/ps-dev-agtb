@@ -93,9 +93,7 @@ function sync_get_modified_relationships($session, $module_name, $related_module
 		$query .= "( {0}.deleted = 0)";
 	}
 	if(isset($module_id) && !empty($module_id)){
-		//if(isset($in) && !empty($in)){
 			$query .= " AND";
-		//}
         $query .= " m2.id = '".$GLOBALS['db']->quote($module_id)."'";
 	}
 	if($related_module == 'Meetings' || $related_module == 'Calls'){

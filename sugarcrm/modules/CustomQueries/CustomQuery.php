@@ -49,7 +49,6 @@ class CustomQuery extends SugarBean {
 	var $column_array;
 
 	var $table_name = "custom_queries";
-	//var $rel_products = "products";
 
 	var $object_name = "CustomQuery";
 	var $module_dir = 'CustomQueries';
@@ -87,7 +86,6 @@ class CustomQuery extends SugarBean {
 			$list['']='';
 		}
         while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
-		//while ($row = $this->db->fetchByAssoc($result)) {
 			$list[$row['id']] = $row['name'];
 			$GLOBALS['log']->debug("row id is:".$row['id']);
 			$GLOBALS['log']->debug("row name is:".$row['name']);
@@ -252,7 +250,6 @@ class CustomQuery extends SugarBean {
             $result =$this->getSlaveDb()->query($decoded_query, false);
 			$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
-			//if(($row = $this->db->fetchByAssoc($result)) != null) {
 			if(!empty($result)){
                 $this->column_array = $this->getSlaveDb()->getFieldsArray($result, true);
 				$this->column_quantity = count($this->column_array);
@@ -328,7 +325,6 @@ class CustomQuery extends SugarBean {
 
 		$temp_array["ENCODED_NAME"]=$this->name;
 
-//         $valid = $this->get_custom_results(true,false,false,true);
 		    //Always return Valid for now.  This was done to prevent performance issues.
             $valid = array();
 		    $valid['result'] = "Valid";
@@ -516,7 +512,6 @@ in use by a data set, especially if the data set has the custom layout enabled.
 					";
         $result = $this->getSlaveDb()->query($query, true, "Error running query removing layout for column");
 		$GLOBALS['log']->debug("check custom binding remove layout: result is ".print_r($result,true));
-		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
         while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 
@@ -560,7 +555,6 @@ in use by a data set, especially if the data set has the custom layout enabled.
 
         $result = $this->getSlaveDb()->query($query, true, "Error running query modify layout for column");
 		$GLOBALS['log']->debug("check custom binding modify layout: result is ".print_r($result, true));
-		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
         while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 				$dataset_object = new DataSet_Layout();
@@ -586,7 +580,6 @@ in use by a data set, especially if the data set has the custom layout enabled.
 
         $result = $this->getSlaveDb()->query($query, true, "Error finding where query exists");
 		$GLOBALS['log']->debug("check custom binding add columns to layout: result is ".print_r($result, true));
-		//if($this->db->getRowCount($result) > 0){
 		//data sets exists with this query and custom layout enabled
         while (($row = $this->getSlaveDb()->fetchByAssoc($result)) != null) {
 				//Get new position

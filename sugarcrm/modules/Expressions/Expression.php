@@ -216,8 +216,6 @@ class Expression extends SugarBean {
 		if($type=='field'){
 		    $temp_module = BeanFactory::getBean($dom_name);
 		    if ( !is_object($temp_module) ) {
-		        //var_dump($dom_name);
-		        //display_stack_trace(true);
 		        $GLOBALS['log']->fatal("get_selector_array: Unknown module: $dom_name");
 		        return null;
 		    }
@@ -375,11 +373,6 @@ class Expression extends SugarBean {
 			$this->display_array['rhs_value'] = $this->get_display_rhs_value($this->rhs_value);
 		//end if not enum multi value
 		}
-
-		//if blank value then set to "NONE"
-		//if($this->display_array['rhs_value']==""){
-		//	$this->display_array['rhs_value'] = "none";
-		//}
 
 		return $this->display_array;
 

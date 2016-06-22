@@ -152,16 +152,11 @@ include_once('include/workflow/expression_utils.php');
 					asort($sorted_fields);
 				}
 				$column_select = get_select_options_with_id($sorted_fields, $selected_value);
-				//if(!empty($target_field_array['isMultiSelect']) && $target_field_array['isMultiSelect'] == true){
-				//	$selected_operator = "in";
-				//	$enum_multi = true;
-				//}
 				$isMultiSelect = false;
 				$value_select = "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value' tabindex='2'>".$column_select."</select>";
 				if($enum_multi===true){
 					$value_select .= "&nbsp;<select id='".$meta_array['parent_type']."__field_value_multi' tabindex='1' name='".$meta_array['parent_type']."__field_value_multi[]' multiple size='5'>".$column_select."</select>";
 				}else if(!empty($target_field_array['isMultiSelect']) && $target_field_array['isMultiSelect'] == true){
-					//$value_select = "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value[]' tabindex='2' multiple size='5'>".$column_select."</select>";
 					$value_select = "&nbsp;<select id='".$meta_array['parent_type']."__field_value_multi' tabindex='1' name='".$meta_array['parent_type']."__field_value_multi[]' multiple size='5'>".$column_select."</select>";
 					$isMultiSelect = true;
 				}
@@ -264,7 +259,6 @@ include_once('include/workflow/expression_utils.php');
 
 				$value_select = "<textarea id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."__field_value' tabindex='1' cols=\"40\" rows=\"3\">".$selected_value."</textarea>";
 
-				//$value_select = "<input id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."__field_value' tabindex='1' size='25' maxlength='".$max_length."' type='text' value='".$selected_value."'>";
 				$output_array['value_select']['display'] = $value_select;
 				$operator = get_select_options_with_id($app_list_strings['cselect_type_dom'],$selected_operator);
 				$output_array['operator']['display'] = $operator;
@@ -351,7 +345,6 @@ include_once('include/workflow/expression_utils.php');
 				//Set the value select
 				$user_array = get_user_array(true, 'Active', '', true, null, ' AND is_group = 0 OR is_group IS NULL ');
 
-				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
 				$value_select =  "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value' tabindex='2'>".$column_select."</select>";
 				if($enum_multi===true){
@@ -604,7 +597,6 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 	global $app_list_strings, $current_user;
 
     if($temp_module->field_defs[$field]['type']=="relate"){
-		//echo $field;
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && !empty($context['for_action_display'])) {
             if($adv_type != 'exist_user') {

@@ -25,19 +25,10 @@ require_once('modules/Reports/templates/templates_chart.php');
 require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $mod_strings;
 
-
-
-//$mod_strings = return_module_language($current_language,"Reports");
-
-
 require_once('modules/Reports/Report.php');
-
 $args = array();
 
 // set default
-//if ( empty($_REQUEST['report_module'])) {
-//	$_REQUEST['report_module'] = $default_report_type;
-//}
 if ($_REQUEST['action'] == 'index') {
 if ( isset($_REQUEST['id'])) {
 	$saved_report_seed = BeanFactory::getBean('Reports');

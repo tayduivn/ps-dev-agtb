@@ -85,13 +85,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         }
 
         $viewdefs = $this->implementation->getViewdefs () ;
-        //if (!isset(self::$variableMap [ $view ]))
-        //    self::$variableMap [ $view ] = $view;
         if (MetaDataFiles::getViewDefVar($view) === null) {
             MetaDataFiles::setViewDefVar($view, $view);
         }
 
-        //if (!isset($viewdefs [ self::$variableMap [ $view ]])){
         if (!$this->hasViewVariable($viewdefs, $view)) {
             sugar_die ( get_class ( $this ) . ": incorrect view variable for $view" ) ;
         }

@@ -187,8 +187,6 @@ EOQ;
 
 
 
-		//for($i = 0; $i < $max_files_upload; $i++) {
-
 		foreach ($_FILES as $key => $file)
 		{
 			$note = BeanFactory::getBean('Notes');

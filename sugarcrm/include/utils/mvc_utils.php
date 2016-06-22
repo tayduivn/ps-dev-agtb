@@ -18,10 +18,6 @@ function loadParentView($type)
 
 function getPrintLink()
 {
-//    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
-//    {
-//        return "javascript:SUGAR.ajaxUI.print();";
-//    }
     return "javascript:void window.open('index.php?',"
          . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
 }
@@ -33,29 +29,4 @@ function getPrintLink()
 function ajaxLink($url)
 {
     return $url;
-    /*
-    global $sugar_config;
-    $match = array();
-    $javascriptMatch = array();
-
-    preg_match('/module=([^&]*)/i', $url, $match);
-    preg_match('/^javascript/i', $url, $javascriptMatch);
-
-    if(!empty($sugar_config['disableAjaxUI'])){
-        return $url;
-    }
-    else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
-        return $url;
-    }
-    //Don't modify javascript calls.
-    else if (isset($javascriptMatch[0])) {
-    	return $url;
-    }
-    else
-    {
-        return "?action=ajaxui#ajaxUILoc=" . urlencode($url);
-    }
-    */
 }
-
-?>

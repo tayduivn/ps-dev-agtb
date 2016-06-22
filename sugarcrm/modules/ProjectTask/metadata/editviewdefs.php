@@ -102,9 +102,6 @@ $viewdefs['ProjectTask']['EditView'] = array(
       
       array (
         'name' => 'percent_complete',
-        /*
-        'customCode' => '<input type="text" name="{$fields.percent_complete.name}" id="{$fields.percent_complete.name}" size="30" value="{$fields.percent_complete.value}" title="" tabindex="0" onChange="update_status(this.value);" /></tr>',
-        */
 		'customCode' => '<span id="percent_complete_text">{$fields.percent_complete.value}</span><input type="hidden" name="{$fields.percent_complete.name}" id="{$fields.percent_complete.name}" value="{$fields.percent_complete.value}" /></tr>',
       ),
     ),
@@ -158,24 +155,6 @@ $viewdefs['ProjectTask']['EditView'] = array(
         'name' => 'description',
       ),
     ),
-    /*
-  	//BEGIN SUGARCRM flav=com ONLY
-    array (
-      array (
-      	'name' => 'duration',
-      	'hideLabel' => true,
-      	'customCode' => '<input type="hidden" name="duration" id="projectTask_duration" value="0" />',
-      ),
-    ),
-    array (
-      array (
-        'name' => 'duration_unit',
-      	'hideLabel' => true,
-      	'customCode' => '<input type="hidden" name="duration_unit" id="projectTask_durationUnit" value="Days" />',
-      	),
-    ),
-    //END SUGARCRM flav=com ONLY
-     */
   ),
 )
 

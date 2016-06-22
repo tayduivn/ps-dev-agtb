@@ -169,7 +169,6 @@ function commitLanguagePack($uninstall=false) {
     if($uninstall) {
         // unlink all pack files
         foreach($filesFrom as $fileFrom) {
-            //echo "deleting: ".getcwd().substr($fileFrom, strlen($unzip_dir), strlen($fileFrom))."<br>";
             @unlink(getcwd().substr($fileFrom, strlen($unzip_dir), strlen($fileFrom)));
         }
 
@@ -268,7 +267,6 @@ function commitPatch($unlink = false, $type = 'patch'){
                 $new_upgrade->type          = $manifest['type'];
                 $new_upgrade->version       = $manifest['version'];
                 $new_upgrade->status        = "installed";
-                //$new_upgrade->author        = $manifest['author'];
                 $new_upgrade->name          = $manifest['name'];
                 $new_upgrade->description   = $manifest['description'];
                 $serial_manifest = array();
@@ -340,7 +338,6 @@ function commitModules($unlink = false, $type = 'module'){
                     $new_upgrade->type          = $manifest['type'];
                     $new_upgrade->version       = $manifest['version'];
                     $new_upgrade->status        = "installed";
-                   // $new_upgrade->author        = $manifest['author'];
                     $new_upgrade->name          = $manifest['name'];
                     $new_upgrade->description   = $manifest['description'];
                     $new_upgrade->id_name       = (isset($installdefs['id_name'])) ? $installdefs['id_name'] : '';
@@ -350,7 +347,6 @@ function commitModules($unlink = false, $type = 'module'){
                     $serial_manifest['upgrade_manifest'] = (isset($upgrade_manifest) ? $upgrade_manifest : '');
                     $new_upgrade->manifest   = base64_encode(serialize($serial_manifest));
                     $new_upgrade->save();
-                    //unlink($file);
                 }//fi
             }//rof
     }//fi
@@ -480,7 +476,6 @@ function getInstalledLangPacks($showButtons=true) {
     global $next_step;
 
     $ret  = "<tr><td colspan=7 align=left>{$mod_strings['LBL_LANG_PACK_INSTALLED']}</td></tr>";
-    //$ret .="<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
     $ret .= "<tr>
                 <td width='15%' ><b>{$mod_strings['LBL_ML_NAME']}</b></td>
                 <td width='15%' ><b>{$mod_strings['LBL_ML_VERSION']}</b></td>
@@ -509,7 +504,6 @@ function getInstalledLangPacks($showButtons=true) {
                 $manifest_type = $manifest['type'];
 
                 $deletePackage = getPackButton('uninstall', $target_manifest, $file, $next_step, $uninstallable, $showButtons);
-                //$ret .="<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
                 $ret .= "<tr>";
                 $ret .= "<td width='15%' >".$name."</td>";
                 $ret .= "<td width='15%' >".$version."</td>";
@@ -795,7 +789,6 @@ function handleSugarConfig() {
     $sugar_config['sugar_version']                  = $setup_sugar_version;
     $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
     $sugar_config['upload_dir']                 = 'upload/';
-//    $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
     if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
         $sugar_config['sugarbeet']      = $_SESSION['setup_site_sugarbeet_anonymous_stats'];
@@ -1332,14 +1325,6 @@ function insert_default_settings(){
     $db->query("INSERT INTO config (category, name, value) VALUES ('notify', 'send_by_default', '1')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('notify', 'on', '1')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('notify', 'send_from_assigning_user', '0')");
-    /* cn: moved to OutboundEmail class
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'smtpserver', 'localhost')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'smtpport', '25')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'sendtype', 'smtp')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'smtpuser', '')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'smtppass', '')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('mail', 'smtpauth_req', '0')");
-    */
     $db->query("INSERT INTO config (category, name, value) VALUES ('info', 'sugar_version', '" . $sugar_db_version . "')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('MySettings', 'tab', '')");
     $db->query("INSERT INTO config (category, name, value, platform) VALUES ('portal', 'on', '0', 'support')");
@@ -1507,7 +1492,6 @@ function recursive_make_writable($start_file)
             {
                 $_SESSION['unwriteable_module_files'][dirname($file)] = dirname($file);
                 $fnl_ret_val = false;
-                //break;
             }
         }
     }
@@ -1831,7 +1815,6 @@ function validate_offlineClientConfig() {
  */
 function langPackFinalMove($file) {
     global $sugar_config;
-    //."upgrades/langpack/"
     $destination = $sugar_config['upload_dir'].$file->stored_file_name;
     if(!move_uploaded_file($_FILES[$file->field_name]['tmp_name'], $destination)) {
         die ("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
@@ -1910,7 +1893,6 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
         $notice_text =  $mod_strings['LBL_LANG_PACK_READY'];
     }
     $ret = "<tr><td colspan=7 align=left>{$notice_text}</td></tr>";
-    //$ret .="<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
     $ret .= "<tr>
                 <td width='20%' ><b>{$mod_strings['LBL_ML_NAME']}</b></td>
                 <td width='15%' ><b>{$mod_strings['LBL_ML_VERSION']}</b></td>
@@ -1975,7 +1957,6 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
             $manifest_type = $manifest['type'];
             $commitPackage = getPackButton('commit', $target_manifest, $file, $next_step);
             $deletePackage = getPackButton('remove', $target_manifest, $file, $next_step);
-            //$ret .="<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
             $ret .= "<tr>";
             $ret .= "<td width='20%' >".$name."</td>";
             $ret .= "<td width='15%' >".$version."</td>";
@@ -2042,7 +2023,6 @@ function unlinkTempFiles($manifest='', $zipFile='') {
     if(!empty($manifest))
         @unlink($manifest);
     if(!empty($zipFile)) {
-        //@unlink($zipFile);
         $tmpZipFile = substr($zipFile, strpos($zipFile, 'langpack/') + 9, strlen($zipFile));
         @unlink($sugar_config['upload_dir'].$tmpZipFile);
     }
@@ -2123,43 +2103,6 @@ function validate_manifest( $manifest ){
 
     return true; // making this a bit more relaxed since we updated the language extraction and merge capabilities
 
-    /*
-    if( isset($manifest['acceptable_sugar_versions']) ){
-        $version_ok = false;
-        $matches_empty = true;
-        if( isset($manifest['acceptable_sugar_versions']['exact_matches']) ){
-            $matches_empty = false;
-            foreach( $manifest['acceptable_sugar_versions']['exact_matches'] as $match ){
-                if( $match == $sugar_version ){
-                    $version_ok = true;
-                }
-            }
-        }
-        if( !$version_ok && isset($manifest['acceptable_sugar_versions']['regex_matches']) ){
-            $matches_empty = false;
-            foreach( $manifest['acceptable_sugar_versions']['regex_matches'] as $match ){
-                if( preg_match( "/$match/", $sugar_version ) ){
-                    $version_ok = true;
-                }
-            }
-        }
-
-        if( !$matches_empty && !$version_ok ){
-            die( $mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version );
-        }
-    }
-
-    if( isset($manifest['acceptable_sugar_flavors']) && sizeof($manifest['acceptable_sugar_flavors']) > 0 ){
-        $flavor_ok = false;
-        foreach( $manifest['acceptable_sugar_flavors'] as $match ){
-            if( $match == $sugar_flavor ){
-                $flavor_ok = true;
-            }
-        }
-        if( !$flavor_ok ){
-            //die( $mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor );
-        }
-    }*/
 }
 }
 

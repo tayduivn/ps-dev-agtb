@@ -41,10 +41,6 @@ global $focus_list;
 global $current_user;
 $header_text = '';
 
-//if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-//		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>";
-//}
-
 $button  = "<table cellspacing='0' border='0' width='100%'><tr><td nowrap><form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='DataSets'>\n";
 $button .= "<input type='hidden' name='return_module' value='".$currentModule."'>\n";

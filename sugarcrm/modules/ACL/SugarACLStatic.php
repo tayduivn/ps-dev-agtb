@@ -83,8 +83,6 @@ class SugarACLStatic extends SugarACLStrategy
     static $action_translate = array(
         'listview' => 'list',
         'index' => 'list',
-//        'popupeditview' => 'edit',
-//        'editview' => 'edit',
         'detail' => 'view',
         'detailview' => 'view',
         'save' => 'edit',

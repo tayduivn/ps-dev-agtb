@@ -383,19 +383,6 @@ for($i=0; $i<$number_contacts; $i++) {
     $contact->portal_password = User::getPasswordHash($contact->first_name.$contact->last_name.$i);
     $contact->preferred_language = $preferred_language;
 //END SUGARCRM flav=ent ONLY
-/* comment out the non-pro code
-for($i=0; $i<1000; $i++)
-{
-	$contact->assigned_user_id = $assigned_user_id;
-	$contact->email1 = createEmailAddress();
-	$key = array_rand($sugar_demodata['street_address_array']);
-	$contact->primary_address_street = $sugar_demodata['street_address_array'][$key];
-	$key = array_rand($sugar_demodata['city_array']);
-	$contact->primary_address_city = $sugar_demodata['city_array'][$key];
-	$contact->lead_source = array_rand($app_list_strings['lead_source_dom']);
-	$contact->title = $titles[array_rand($titles)];
-
-*/
 	$contact->phone_work = create_phone_number();
 	$contact->phone_home = create_phone_number();
 	$contact->phone_mobile = create_phone_number();
@@ -442,7 +429,6 @@ for($i=0; $i<1000; $i++)
 	$key = array_rand($sugar_demodata['meeting_seed_data_names']);
 	$meeting->name = $sugar_demodata['meeting_seed_data_names'][$key];
 	$meeting->date_start = create_date(). ' ' . create_time();
-	//$meeting->time_start = date("H:i",time());
 	$meeting->duration_hours = array_rand($possible_duration_hours_arr);
 	$meeting->duration_minutes = array_rand($possible_duration_minutes_arr);
 	$meeting->assigned_user_id = $assigned_user_id;
@@ -683,19 +669,6 @@ foreach($sugar_demodata['currency_seed_data'] as $v){
 
 echo '.';
 $dollar_id = '-99';
-//$tekkyware_id = $manufacturer->id;
-//$widgetworld_id = $manufacturer->id;
-//$fedex_id = $shipper->id;
-//$usps_id = $shipper->id;
-//$desktops_id = $category->id;
-//$laptops_id = $category->id;
-//$stationary_id = $category->id;
-//$wobbly_id = $category->id;
-//$widgets_id = $type->id;
-//$hardware_id = $type->id;
-//$support_id = $type->id;
-//$taxrate_id = $taxrate->id;
-//$euro_id = $currency->id;
 foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$manufacturer_id_max = count($manufacturer_id_arr) - 1;
 	$productcategory_id_max = count($productcategory_id_arr) - 1;

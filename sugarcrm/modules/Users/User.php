@@ -283,7 +283,6 @@ class User extends Person {
 
 	function setUserPrivGuid() {
 		$privGuid = create_guid();
-		//($name, $value, $nosession=0)
 		$this->setPreference('userPrivGuid', $privGuid, 0, 'global', $this);
 	}
 
@@ -588,11 +587,9 @@ class User extends Person {
 			        unset($_SESSION['license_seats_needed']);
 		     	if ($this->portal_only != 1 && $this->is_group != 1 && (empty($this->fetched_row) || $this->fetched_row['status'] == 'Inactive' || $this->fetched_row['status'] == '') && $this->status == 'Active'){
 			        global $sugar_flavor;
-					//if((isset($sugar_flavor) && $sugar_flavor != null) && ($sugar_flavor=='CE')){
 			            $license_users = $admin->settings['license_users'];
 			            if ($license_users != '') {
 	            			global $db;
-	            			//$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
 							$result = $db->query($query, true, "Error filling in user array: ");
 							$row = $db->fetchByAssoc($result);
 				            $license_seats_needed = $row['total'] - $license_users;
@@ -600,7 +597,6 @@ class User extends Person {
 				        else
 				        	$license_seats_needed = -1;
 				        if( $license_seats_needed >= 0 ){
-				           // displayAdminError( translate('WARN_LICENSE_SEATS_MAXED', 'Administration'). ($license_seats_needed + 1) . translate('WARN_LICENSE_SEATS2', 'Administration')  );
 						    if (isset($_REQUEST['action']) && $_REQUEST['action'] != 'MassUpdate' && $_REQUEST['action'] != 'Save') {
 					            die(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
 						    }
@@ -615,7 +611,6 @@ class User extends Person {
 							    die();
 						  	}
 				        }
-			        //}
 		     	}
 			}
             // End Express License Enforcement Check
@@ -756,7 +751,6 @@ class User extends Person {
 	}
 
     function get_summary_text() {
-        //$this->_create_proper_name_field();
         return $this->name;
 	}
 
@@ -1597,9 +1591,6 @@ EOQ;
 				'&return_action='.$ret_action.
 				'&return_id='.$ret_id;
 
-    		//Generate the compose package for the quick create options.
-    		//$json = getJSONobj();
-    		//$composeOptionsLink = $json->encode( array('composeOptionsLink' => $emailLinkUrl,'id' => $focus->id) );
 			require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);

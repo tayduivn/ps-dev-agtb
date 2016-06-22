@@ -44,9 +44,7 @@ $xtpl->assign("APP", $app_strings);
 	if(!empty($_REQUEST['edit'])){
 		$xtpl->assign("EDIT", $_REQUEST['edit']);
 	}
-	//if(!empty($_REQUEST['edit']) && $_REQUEST['edit'] !=true){
 		$xtpl->assign("REPAIR", "repair");	
-	//}	
 	
 	$xtpl->parse("main");
 	$xtpl->out("main");

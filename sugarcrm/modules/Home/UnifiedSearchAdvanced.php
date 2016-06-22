@@ -277,7 +277,6 @@ class UnifiedSearchAdvanced {
                           $where_clauses[] = $dbfield . " LIKE '" . $this->query_string . "%'";
                           $params['custom_select'] .= ", $dbfield";
                           $params['distinct'] = true;
-                          //$filterFields[$dbfield] = $dbfield;
                     }
                 }
 
@@ -322,11 +321,9 @@ class UnifiedSearchAdvanced {
                 $module_counts[$moduleName] = $lv->data['pageData']['offsets']['total'];
 
                 if($lv->data['pageData']['offsets']['total'] == 0) {
-                    //$module_results[$moduleName] .= "<li class='noBullet' id='whole_subpanel_{$moduleName}'><div id='div_{$moduleName}'><h2>" . $home_mod_strings['LBL_NO_RESULTS_IN_MODULE'] . '</h2></div></li>';
                     $module_results[$moduleName] .= '<h2>' . $home_mod_strings['LBL_NO_RESULTS_IN_MODULE'] . '</h2>';
                 } else {
                     $has_results = true;
-                    //$module_results[$moduleName] .= "<li class='noBullet' id='whole_subpanel_{$moduleName}'><div id='div_{$moduleName}'>" . $lv->display(false, false) . '</div></li>';
                     $module_results[$moduleName] .= $lv->display(false, false);
                 }
 
@@ -443,8 +440,6 @@ class UnifiedSearchAdvanced {
         // Why do we have the 2nd foreach loop isn't the caching happening in getUnifiedSearchModulesDisplay already?
         // This code needs to be consolidated.
 
-        //require_once('modules/Home/UnifiedSearchAdvanced.php');
-        //$usa = new UnifiedSearchAdvanced();
         $modLists = $this->retrieveEnabledAndDisabledModules();
 
         foreach ($modLists as $list)

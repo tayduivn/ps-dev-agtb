@@ -82,13 +82,6 @@ class ProcessView {
         }
         $this->top_block = $this->xtpl->text("top");
         $this->bottom_block = $this->xtpl->text("bottom");
-        /*
-         //to protect when you come back here
-         if($focus->type == "compare_change"){
-         //limit select options
-         $form->assign("DISABLE_OPTIONS", "disabled");
-         }
-         */
         //end function write
     }
 
@@ -651,8 +644,6 @@ class ProcessView {
 
         if($type=="rel1"){
             $target_array['all'] = $target_array['all']." ".$rel1_array['plabel'];
-            //removed because it is Ambiguous
-            //$target_array['first'] = $target_array['first']." ".$rel1_array['slabel'];
             $target_array['filter'] = $target_array['filter']." ".$rel1_array['plabel'];
 
             //end if type is rel1
@@ -661,7 +652,6 @@ class ProcessView {
         if($type=="rel2"){
             $target_array['all'] = $target_array['all']." ".$rel1_array['slabel'].$local_string['LBL__S']." ".$rel2_array['plabel'];
             ////removed because it is Ambiguous
-            //$target_array['first'] = $target_array['first']." ".$rel1_array['slabel'].$GLOBALS['mod_strings']['LBL__S']." ".$rel2_array['slabel'];
             $target_array['filter'] = $target_array['filter']." ".$rel1_array['slabel'].$local_string['LBL__S']." ".$rel2_array['plabel'];
 
             //end if type is rel1
@@ -963,7 +953,6 @@ class ProcessView {
                 	}
                 }
 
-                //$target_module = $focus->target_module;
                 if($trigger_shell->type != "compare_count")
                 {
                     $display_array = $filter1_object->get_display_array_using_name();

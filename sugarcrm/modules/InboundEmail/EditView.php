@@ -225,7 +225,6 @@ $xtpl->assign('RETURN_MODULE', 'InboundEmail');
 $xtpl->assign('RETURN_ID', $focus->id);
 $xtpl->assign('RETURN_ACTION', $return_action);
 // module specific
-//$xtpl->assign('ROLLOVER', $email->rolloverStyle);
 $xtpl->assign("EMAIL_OPTIONS", $mod_strings['LBL_EMAIL_OPTIONS']);
 $xtpl->assign('MODULE_TITLE', getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_MODULE_NAME'],$focus->name), true));
 $xtpl->assign('ID', $focus->id);
@@ -358,7 +357,6 @@ $team_id = get_select_options_with_id($teamArr, $my_team_id);
 if($focus->is_personal) {
 	$code = "<select name='team_id' id ='team_id' tabindex='211' disabled >{$team_id}</select>";
 } else {
-//$xtpl->assign('TEAM_ID', $team_id);
 require_once('include/QuickSearchDefaults.php');
 $qsd = QuickSearchDefaults::getQuickSearchDefaults();
 
@@ -394,7 +392,6 @@ $code = $teamSetField->get_code();
 }
 $xtpl->assign("TEAM_SET_FIELD", $code);
 
-//$javascript = get_set_focus_js(). $javascript->getScript() . $quicksearch_js;
 $xtpl->assign('JAVASCRIPT', get_set_focus_js(). $javascript->getScript() . $quicksearch_js);
 
 require_once('include/SugarSmarty/plugins/function.sugar_help.php');
@@ -423,11 +420,6 @@ foreach ($tipsStrings as $string)
 }
 $xtpl->assign('TIPS', $tips);
 
-// WINDOWS work arounds
-//if(is_windows()) {
-//	$xtpl->assign('MAYBE', '<style> div.maybe { display:none; }</style>');
-//}
-// PARSE AND PRINT
 //Overrides for bounce mailbox accounts
 if ($focus->mailbox_type == 'bounce')
 {
@@ -441,9 +433,6 @@ elseif ($focus->mailbox_type == 'createcase')
 
 else if( $focus->is_personal == '1')
      $xtpl->assign('MODULE_TITLE', getClassicModuleTitle('InboundEmail', array($mod_strings['LBL_PERSONAL_MODULE_NAME'],$focus->name), true));
-
-//else
-
 
 $xtpl->parse("main");
 $xtpl->out("main");

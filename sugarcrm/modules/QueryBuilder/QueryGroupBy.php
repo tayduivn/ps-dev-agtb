@@ -121,7 +121,6 @@ class QueryGroupBy extends QueryBuilder
             // Print out the columns
             while ($row = $this->db->fetchByAssoc($result))
             {
-                //$groupby_table = $this->get_module_info($row['groupby_module']);
                 $groupby_bean = $this->get_module_info($row['groupby_module']);
                 //run query2 more than once if you have additional group by fields
                 for ($i = 0; $i < $temp_groupby_count; $i ++)
@@ -132,22 +131,6 @@ class QueryGroupBy extends QueryBuilder
                     }
                     else
                     {
-                        /*
-				//THIS IS MOVED- CAN REMOVE THIS AREA - MAYBE Move the below logic into the QueryBuilder module, because this can be used for other stuff as well.
-				//Check to see if the groupby_field is a custom field or not
-				global $dictionary;
-				if(!empty($dictionary[$groupby_bean->object_name]['fields'][$row['groupby_field']]['custom_type'])){
-				//field is present in the module's custom table.  Retrieve this table and use as query
-					$custom_join = $groupby_bean->custom_fields->getJOIN();
-					$field_select = $groupby_bean->table_name."_cstm.".$row['groupby_field'];
-
-				}
-                else
-                {
-				//field is not custom and present in module table
-					$field_select = $groupby_bean->table_name.".".$row['groupby_field'];
-				}
-				*/
                         $field_select = $this->get_field_table($row['groupby_module'], $row['groupby_field']);
                         $query2 = "	SELECT $field_select
 									from $groupby_bean->table_name";
@@ -166,7 +149,6 @@ class QueryGroupBy extends QueryBuilder
                             //Fields so you can edit an existing groupby
                             $xtemplate_object->assign("DISPLAY_GROUPBY_FIELD", $row['groupby_field']);
                             $xtemplate_object->assign("DISPLAY_COLSPAN", $this->db->getRowCount($result2));
-                            //$xtemplate_object->assign("DISPLAY_GROUPBY_MODULE", $row['groupby_module']);
                             $xtemplate_object->assign("GROUPBY_RECORD", $row['id']);
                             $xtemplate_object->assign("COLUMN_RECORD", $row['column_record']);
                             // Print out the columns
@@ -189,18 +171,13 @@ class QueryGroupBy extends QueryBuilder
                 if (! empty($time_count))
                 {
                     $new_count = $time_count;
-                    //echo "THERE";
                     $time_count = null;
                 }
                 else
                 {
-                    //echo "HERE";
                     $new_count = $this->db->getRowCount($result2);
                 }
-                //echo "COUNT BEFORE".$temp_groupby_count."<BR>";
-                //echo "COUNT NEW".$new_count."<BR>";
                 $temp_groupby_count = $new_count * $temp_groupby_count;
-                //echo "COUNT".$temp_groupby_count."<BR>";
                 $xtemplate_object->parse($main_block_name . "." . $block_name);
                 //end while
             }
@@ -228,9 +205,6 @@ class QueryGroupBy extends QueryBuilder
     ///////////////time interval library information
     function get_time_info (& $groupby_array, & $xtemplate_object, $main_block_name, $block_name, $height_count)
     {
-        //$this->groupby_qualifier;
-        //$this->groupby_qualifier_qty;
-        //$this->groupby_qualifier_start;
         $height_count = $groupby_array['groupby_qualifier_qty'] * $height_count;
         $row_height = 100 / $height_count;
         for ($i = 0; $i < $groupby_array['groupby_qualifier_qty']; $i ++)

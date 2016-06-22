@@ -378,7 +378,6 @@ function get_sugar_config_defaults()
     'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
     'upload_maxsize' => 30000000,
     'import_max_execution_time' => 3600,
-//	'use_php_code_json' => returnPhpJsonStatus(),
     'verify_client_ip' => true,
     'js_custom_version' => '',
     'js_lang_version' => 1,
@@ -2768,7 +2767,6 @@ function get_emails_by_assign_or_link($params)
 
     $return_array['where']=" WHERE emails.deleted=0 ";
 
-        //$return_array['join'] = '';
         $return_array['join_tables'][0] = '';
 
         if ($bean->object_name == "Case" && !empty($bean->case_number)) {
@@ -2893,7 +2891,6 @@ function skype_formatted($number)
     } else {
         return substr($number, 0, 1) == '+' || substr($number, 0, 2) == '00' || substr($number, 0, 3) == '011';
     }
-//	return substr($number, 0, 1) == '+' || substr($number, 0, 2) == '00' || substr($number, 0, 2) == '011';
 }
 
 function format_skype($number)
@@ -3276,28 +3273,6 @@ function check_iis_version($sys_iis_version = '')
 
     return $retval;
 }
-// no longer needed
-//function pre_login_check(){
-//	global $action, $login_error;
-//	if (!empty($action)&& $action == 'Login') {
-//
-//		if (!empty($login_error)) {
-//			$login_error = htmlentities($login_error);
-//			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
-//			$_SESSION['login_error'] = $login_error;
-//			echo '<script>
-//						function set_focus() {}
-//						if (document.getElementById("post_error")) {
-//							document.getElementById("post_error").innerHTML="'. $login_error. '";
-//							document.getElementById("cant_login").value=1;
-//							document.getElementById("login_button").disabled = true;
-//							document.getElementById("user_name").disabled = true;
-//							//document.getElementById("user_password").disabled = true;
-//						}
-//						</script>';
-//		}
-//	}
-//}
 
 /**
  * Get Sugar root directory
@@ -3428,7 +3403,6 @@ function check_logic_hook_file($module_name, $event, $action_array)
     if ($add_logic == true) {
 
         //reorder array by element[0]
-        //$hook_array = reorder_array($hook_array, $event);
         //!!!Finish this above TODO
 
         $new_contents = replace_or_add_logic_type($hook_array);
@@ -3815,7 +3789,6 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name)
         if ($rel_value == $relationship_name) {
             $temp_bean = BeanFactory::getBean($tar_rel_module);
             $temp_bean->disable_row_level_security = true;
-    //		echo $focus->$rel_key;
             $temp_bean->retrieve($focus->$rel_key);
             if ($temp_bean->id!="") {
 
@@ -3899,7 +3872,6 @@ function get_valid_bean_name($module_name)
 
 function  checkAuthUserStatus()
 {
-    //authUserStatus();
 }
 
 
@@ -4081,21 +4053,6 @@ require_once 'include/utils/db_utils.php';
  */
 function setPhpIniSettings()
 {
-    // zlib module
-    // Bug 37579 - Comment out force enabling zlib.output_compression, since it can cause problems on certain hosts
-    /*
-    if (function_exists('gzclose') && headers_sent() == false) {
-        ini_set('zlib.output_compression', 1);
-    }
-    */
-    // mbstring module
-    //nsingh: breaks zip/unzip functionality. Commenting out 4/23/08
-
-    /*if (function_exists('mb_strlen')) {
-        ini_set('mbstring.func_overload', 7);
-        ini_set('mbstring.internal_encoding', 'UTF-8');
-    }*/
-
     // http://us3.php.net/manual/en/ref.pcre.php#ini.pcre.backtrack-limit
     // starting with 5.2.0, backtrack_limit breaks JSON decoding
     $backtrack_limit = ini_get('pcre.backtrack_limit');
@@ -5558,7 +5515,6 @@ function assignConcatenatedValue(SugarBean $bean, $fieldDef, $value)
     if (count($valueParts) == 1 && $fieldDef['db_concat_fields'] == array('first_name', 'last_name')) {
         $bean->last_name = $value;
     }
-    // elseif ($fieldNum >= count($valueParts))
     else {
         for ($i = 0; $i < $fieldNum; $i++) {
             $fieldValue = array_shift($valueParts);

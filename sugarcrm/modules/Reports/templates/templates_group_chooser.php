@@ -39,7 +39,6 @@ function template_groups_chooser(&$args) {
 	$smarty->assign('leftarrow_big', $leftarrow_big);
 	$smarty->assign('rightarrow_big', $rightarrow_big);
 	$smarty->assign('table_style', $table_style);
-	//echo $smarty->fetch("modules/Reports/templates/_template_groups_chooser.tpl");
  	if ($js_loaded == false) {
   		$js_loaded = true; 		
  	}
@@ -227,11 +226,6 @@ function left_to_right(left_name,right_name,id)
 
 	object_refs[left_name] = left_td.getElementsByTagName('select')[0];
 	object_refs[right_name] = right_td.getElementsByTagName('select')[0];
-	if(left_name == 'display_columns' && getReportType() == 'summary'){
-		//deleteAllGroups(0);
-		//remakeGroups();
-	}
-
 	try
 	{
 		eval("onmoveright_"+id+"();");
@@ -324,10 +318,6 @@ function right_to_left(left_name,right_name,id)
 
 	object_refs[left_name] = left_td.getElementsByTagName('select')[0];
 	object_refs[right_name] = right_td.getElementsByTagName('select')[0];
-	if(left_name == 'display_columns' && getReportType() == 'summary'){
-	//deleteAllGroups(0);
-	//remakeGroups();
-	}
 	try
 	{
 		eval("onmoveleft_"+id+"();");

@@ -1261,7 +1261,6 @@ class OracleManager extends DBManager
 	            if(isset($nowCol['default']) && !isset($fieldDef['default'])) {
                     // removing default is allowed by changing to "DEFAULT NULL"
                     $colArray['default'] = "DEFAULT NULL";
-                    //$colArray['required'] = '';
                 }
 	    		if ( !$ignoreRequired && ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 	    			$colArray['required'] = '';

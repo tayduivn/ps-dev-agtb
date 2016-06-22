@@ -38,9 +38,6 @@ if ( !empty($_GET['expression']) ) {
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/container/container_core-min.js"></script>
 
-<!--  sugar expressions js -->
-<!--script language="javascript" src="./sugar_expressions.php"></script-->
-
 <!-- custom js -->
 <script language="javascript">
 YAHOO.util.Event.onDOMReady( function() {
@@ -168,9 +165,6 @@ BODY {
 
 <body>
 
-<!-- div id="overlay" style="width: 100%; height: 100%;position: absolute; left: 0px; top: 0px; background: #BFBFBF; z-index: -10;"></div -->
-
-
 <div id="container">
 
 	<div id="results">
@@ -186,78 +180,3 @@ BODY {
 </body>
 
 </html>
-
-
-
-
-<?php
-
-/*
-echo "<u>Testing Expressions</u>";
-echo "<p>";
-$expressions = array(
-					"add(10, 10)",
-					"subtract(100.5, 10)",
-					"multiply(9, 17)",
-					"divide(100, 5)",
-					"divide(100, 6)",
-					"abs(-100)",
-					"abs(101.5)",
-					"negate(add(10, 10, 100, multiply(10, 400), 10, multiply(10, 10)))",
-					"ceil(-100.5)",
-					"floor(-100.5)",
-					"log(1)",
-					"strlen(\"Hello World,\")",
-					"strlen(\"(flawed)add(10, 10), internal execution,\")",
-					"concat(\"first\",      \" second\")",
-					"strlen(concat(\"first\", \" second\"))",
-					"not(contains(\"abcdefg\", \"abc\"))",
-					"and(contains(\"abcdefg\", \"abc\"), contains(\"house\", \"ouse\"))",
-					"and(contains(\"abcdefg\", \"abc\"), not(contains(\"house\", \"ouse\")))",
-					"or(contains(\"abcdefg\", \"abc\"), not(contains(\"house\", \"ouse\")))",
-					"value_at(0, enum(false, \"string\", 12, 123))",
-					/*"date(9,7,2008)",
-					"dayofweek(date(9,7,2008))",
-					"time(3, 29, 45)",
-					"hourofday(time(3, 29, 45))",
-					"monthofyear(date(9, 7, 2008))",
-					"strlen(string(monthofyear(date(9, 7, 2008))))",
-					"isInEnum(10, enum(\"hello\", false, 10, -115))",
-				);
-
-foreach ( $expressions as $expr )
-	echo "<b>EVALUATE</b> <i>$expr</i> = <u>" . Parser::evaluate($expr)->evaluate() . "</u><br>";
-
-echo "</p>";
-
-
-echo "<u>Testing Errors</u>";
-echo "<p>";
-
-$expressions = array(
-					"add()",							// no params for add
-					"add(10, 10",						// no closing paren
-					"random_func(100.5, 10)",			// unrecognized function
-					"multiply 9, 17)",					// no open paren
-					"divide(100)",						// single divide
-					"divide(100, 6, 10)",				// more than two divide
-					"abs(-100, -3.141592653589723)",	// multiple abs
-					"abs()",							// no abs
-					"negate add(10, 10, 100, multiply(10, 400), 10, multiply(10, 10)))",
-					"ceil()",							// no params ceil
-					"ceil(1, 2)",						// two params ceil
-					"floor(-100.5, 871)",				// multiple floor
-					"log(1, 10)",						// multiple log
-				);
-
-foreach ( $expressions as $expr )  {
-	try {
-		echo "<b>EVALUATE</b> <i>$expr</i> = ";
-		echo "<u>" . $p->evaluate($expr)->evaluate() . "</u><br>";
-	} catch (Exception $e) {
-		echo "<p>" . $e . "</p>";
-	}
-}
-
-echo "</p>";*/
-?>

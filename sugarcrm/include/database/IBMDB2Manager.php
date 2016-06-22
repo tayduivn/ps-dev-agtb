@@ -99,9 +99,6 @@ class IBMDB2Manager  extends DBManager
 	 */
 	protected $capabilities = array(
 		"affected_rows" => true,
-		//"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
-		//"inline_keys" => false,   // Since we still need indexes created separately.
-		//"case_sensitive" => false, // DB2 is case insensitive by default
 		"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
 		"auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => false, // DB2 doesn't support OPTIMIZE FOR n ROWS in sub query
@@ -837,18 +834,10 @@ public function convert($string, $type, array $additional_parameters = array())
 		$matches = array();
 		if(!empty($fieldDef['len']) &&
 			preg_match('/^decimal(\((?P<len>\d*),*(?P<prec>\d*)\))?$/i', $ref['colType'], $matches)) {
-			// Overriding len and precision for decimals as the current DBManager class doesn't handle decimal as both regular type and dbtype well
-//            if(strpos($fieldDef['len'], ',') === false)
-//            {
-//                $numspec = array($fieldDef['len']); // We are ignoring the length if it existed since we have one that comes from the vardefs
-//                $numspec []= !empty($fieldDef['precision']) ? $fieldDef['precision'] : $matches['prec']; // Use the vardef precision if it exists otherwise use the one that was already present
-//                $ref['colType'] = 'decimal('.implode(',',$numspec).')'; // Reconstuct type based on new values
-//            } else {
 				$numspec = array($fieldDef['len']); // We are ignoring the length if it existed since we have one that comes from the vardefs
 				if(!empty($fieldDef['precision']) && !strpos($fieldDef['len'], ','))
 					$numspec []=  $fieldDef['precision']; // Use the vardef precision if it exists and wasn't specified in the length
 				$ref['colType'] = 'decimal('.implode(',', $numspec).')';
-//            }
 		}
 
 		if(!empty($ref['default'])
@@ -1394,52 +1383,6 @@ FROM SYSIBMTS.TSINDEXES';
         }
 
         if(empty($fieldDef['isnull'])) $fieldDef['isnull'] = 'false';
-//
-//        if ($fieldDef['type'] == 'int')
-//            $fieldDef['len'] = '4';
-//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '1';
-//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '1';
-//        if ($fieldDef['type'] == 'float' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '8';
-//        if ($fieldDef['type'] == 'varchar' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '255';
-//		if ($fieldDef['type'] == 'nvarchar' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '255';
-//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['default']) )
-//            $fieldDef['default'] = '0';
-//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['default']) )
-//            $fieldDef['default'] = '0';
-//        if ($fieldDef['type'] == 'image' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2147483647';
-//        if ($fieldDef['type'] == 'ntext' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2147483646';
-//        if ($fieldDef['type'] == 'smallint' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2';
-//		if (isset($fieldDef['required']) && $fieldDef['required'] && !isset($fieldDef['default']) )
-//			$fieldDef['default'] = '';
-
-//        if ( isset($fieldDef['default']) &&
-//            ($fieldDef['dbType'] == 'text'
-//                || $fieldDef['dbType'] == 'blob'
-//                || $fieldDef['dbType'] == 'longtext'
-//                || $fieldDef['dbType'] == 'longblob' ))
-//            unset($fieldDef['default']);
-//        if ($fieldDef['dbType'] == 'uint')
-//            $fieldDef['len'] = '10';
-//        if ($fieldDef['dbType'] == 'ulong')
-//            $fieldDef['len'] = '20';
-//        if ($fieldDef['dbType'] == 'bool')
-//            $fieldDef['type'] = 'tinyint';
-//        if ($fieldDef['dbType'] == 'bool' && empty($fieldDef['default']) )
-//            $fieldDef['default'] = '0';
-//        if (($fieldDef['dbType'] == 'varchar' || $fieldDef['dbType'] == 'enum') && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '255';
-//        if ($fieldDef['dbType'] == 'uint')
-//            $fieldDef['len'] = '10';
-//        if ($fieldDef['dbType'] == 'int' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '11';
 	}
 
 
@@ -1878,7 +1821,6 @@ FROM SYSIBMTS.TSINDEXES';
 	 */
 	public function dropDatabase($dbname)
 	{
-	// return $this->query("DROP DATABASE `$dbname`", true);
 		return true;
 	}
 

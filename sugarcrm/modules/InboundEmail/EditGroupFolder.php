@@ -96,19 +96,10 @@ if(!empty($focus->id)) {
 
 require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 $teamSetField = new EmailSugarFieldTeamsetCollection($focus, $ie->field_defs, "get_non_private_teams_array");
-//$teamSetField = new EmailSugarFieldTeamset($focus->module_dir, $focus->id);
 $code = $teamSetField->get_code();
 $sqs_objects = $teamSetField->createQuickSearchCode(false);
 
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
-/*
-require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-$teamSetField = new SugarFieldTeamset('Teamset');
-$teamSetField->add_user_private_team = false;
-$teamSetField->objectBean = $focus;
-$teamSetField->initClassicView($ie->field_defs);
-$code = $teamSetField->getClassicView();
-*/
 $smarty->assign('JAVASCRIPT', $quicksearch_js);
 $smarty->assign("TEAM_SET_FIELD", $code);
 $smarty->assign("langHeader", get_language_header());
@@ -118,4 +109,3 @@ $smarty->assign('CSS',SugarThemeRegistry::current()->getCSS());
 
 $smarty->assign('languageStrings', getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']));
 echo $smarty->fetch("modules/Emails/templates/_createGroupFolder.tpl");
-?>

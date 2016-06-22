@@ -182,8 +182,6 @@ if(!empty($tmpUploadDir)) {
 	if(!is_writable($tmpUploadDir)) {
 		echo "<font color='red'>{$mod_strings['WARNING_UPLOAD_DIR_NOT_WRITABLE']}</font>";
 	}
-} else {
-	//echo "<font color='red'>{$mod_strings['WARNING_NO_UPLOAD_DIR']}</font>";
 }
 
 
@@ -439,17 +437,14 @@ if($email_type != 'forward') {
 	$xtpl->assign('BCC_ADDRS_EMAILS', $focus->bcc_addrs_emails);
 }
 
-//$xtpl->assign('FROM_ADDR', $from['name'].' <'.$from['email'].'>');
 $xtpl->assign('FROM_ADDR_NAME', $from['name']);
 $xtpl->assign('FROM_ADDR_EMAIL', $from['email']);
 
 $xtpl->assign('NAME', from_html($name));
-//$xtpl->assign('DESCRIPTION_HTML', from_html($focus->description_html));
 $xtpl->assign('DESCRIPTION', $focus->description);
 $xtpl->assign('TYPE',$email_type);
 
 // Unimplemented until jscalendar language files are fixed
-// $xtpl->assign('CALENDAR_LANG',((empty($cal_codes[$current_language])) ? $cal_codes[$default_language] : $cal_codes[$current_language]));
 $xtpl->assign('CALENDAR_LANG', 'en');
 $xtpl->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
 $xtpl->assign('DATE_START', $focus->date_start);
@@ -631,7 +626,6 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 			<div id='noteDiv{$the_note->id}'>
 				" . SugarThemeRegistry::current()->getImage('delete_inline', "onclick='deletePriorAttachment(\"{$the_note->id}\");' value='{$the_note->id}'", null, null, ".gif", $mod_strings['LBL_DELETE_INLINE']) . "&nbsp;";
 		$attachments .= "<a href=\"index.php?entryPoint=download&id=".$the_note->id."&type=Notes\">".$the_note->name."</a><div />";
-		//$attachments .= '<a href="'.UploadFile::get_url($the_note->filename,$the_note->id).'&entryPoint=download&type=Notes' . '" target="_blank">'. $the_note->filename .'</a></div>';
 
 	}
 	// cn: bug 8034 - attachments from forwards/replies lost when saving drafts

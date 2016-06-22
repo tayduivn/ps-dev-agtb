@@ -164,7 +164,6 @@ if($db->supports("create_user")){
 // create / set db user dropdown
 $auto_select = '';$provide_select ='';$create_select = '';$same_select = '';
 if(isset($_SESSION['dbUSRData'])){
-//    if($_SESSION['dbUSRData']=='auto')    {$auto_select ='selected';}
     if($_SESSION['dbUSRData']=='provide') {$provide_select ='selected';}
 if(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && strtolower($_SESSION['install_type'])=='custom'){
     if($_SESSION['dbUSRData']=='create')  {$create_select ='selected';}

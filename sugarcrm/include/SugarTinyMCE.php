@@ -125,12 +125,6 @@ class SugarTinyMCE
         $jsConfig = $json->encode($config);
 
         $instantiateCall = '';
-        if (!empty($targets)) {
-            $exTargets = explode(",", $targets);
-            foreach ($exTargets as $instance) {
-                //$instantiateCall .= "tinyMCE.execCommand('mceAddControl', false, document.getElementById('{$instance}'));\n";
-            }
-        }
         $path = getJSPath('include/javascript/tiny_mce/tiny_mce.js');
         $ret
                    = <<<eoq

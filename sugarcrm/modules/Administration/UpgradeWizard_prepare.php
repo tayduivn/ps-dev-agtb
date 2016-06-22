@@ -429,17 +429,7 @@ if( $show_files == true ){
 			}
 			if( !$forced_copy && is_file( $new_file ) && (md5_file( $unzip_file ) == md5_file( $new_file )) ){
 				$disabled = "disabled=\"true\"";
-				//$checked = "";
 			}
-			//BEGIN SUGARCRM flav=int ONLY
-			/*
-			 //4.0 feature
-			 else{
-			 $highlight_start    = "<font color=red>";
-			 $highlight_end      = "</font>";
-			 }
-			 */
-			 //END SUGARCRM flav=int ONLY
 			if( $checked != "" && $disabled != "" ){    // need to put a hidden field
 				print( "<input name=\"copy_$count\" type=\"hidden\" value=\"" . $the_file . "\">\n" );
 			}
@@ -463,7 +453,6 @@ if( $show_files == true ){
 	}
         print( "</ul>\n" );
 }
-//    echo '</div>';
 if($mode == "Disable" || $mode == "Enable"){
 	//check to see if any files have been modified
 	$modified_files = UpgradeWizardCommon::getDiffFiles($unzip_dir, $install_file, ($mode == 'Enable'), $previous_version);

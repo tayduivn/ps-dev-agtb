@@ -400,52 +400,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	if (!isset($_POST[$prefix.'email_opt_out'])) $focus->email_opt_out = 0;
 	if (!isset($_POST[$prefix.'do_not_call'])) $focus->do_not_call = 0;
 	
-	if (empty($_POST['record']) && empty($_POST['dup_checked'])) {
-		/*
-		// we don't check dupes on Prospects - this is the dirtiest data in the system
-		//$duplicateProspects = $this->checkForDuplicates($prefix);
-		if(isset($duplicateProspects)){
-			$get='module=Prospects&action=ShowDuplicates';
-			
-			//add all of the post fields to redirect get string
-			foreach ($focus->column_fields as $field) 
-			{
-				if (!empty($focus->$field))
-				{
-					$get .= "&Prospects$field=".urlencode($focus->$field);
-				}	
-			}
-			
-			foreach ($focus->additional_column_fields as $field) 
-			{
-				if (!empty($focus->$field))
-				{
-					$get .= "&Prospects$field=".urlencode($focus->$field);
-				}	
-			}
-
-			//create list of suspected duplicate prospect id's in redirect get string
-			$i=0;
-			foreach ($duplicateProspects as $prospect)
-			{
-				$get .= "&duplicate[$i]=".$prospect['id'];
-				$i++;
-			}
-
-			//add return_module, return_action, and return_id to redirect get string
-			$get .= "&return_module=";
-			if(!empty($_POST['return_module'])) $get .= $_POST['return_module'];
-			else $get .= "Prospects";
-			$get .= "&return_action=";
-			if(!empty($_POST['return_action'])) $get .= $_POST['return_action'];
-			else $get .= "DetailView";
-			if(!empty($_POST['return_id'])) $get .= "&return_id=".$_POST['return_id'];
-
-			//now redirect the post to modules/Prospects/ShowDuplicates.php
-			header("Location: index.php?$get");
-			return null;
-		}*/
-	}
 	global $current_user;
 
 	$focus->save($GLOBALS['check_notify']);

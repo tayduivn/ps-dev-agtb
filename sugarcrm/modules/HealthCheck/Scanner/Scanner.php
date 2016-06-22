@@ -884,34 +884,6 @@ class HealthCheckScanner
         $this->checkLanguageFiles();
         $this->scanCustomDir();
 
-        // check non-upgrade-safe customizations by verifying md5's
-        /*
-        $this->log("Comparing md5 sums");
-        $skip_prefixes = "#^[.]/(custom/|cache/|tmp/|temp/|upload/|config|examples/|[.]htaccess|sugarcrm[.]log)#";
-        $skip_files = array(
-            './styleguide/less/bootstrap-mobile.less copy',
-            './styleguide/less/bootstrap.less copy',
-        );
-        foreach ($this->md5_files as $file => $sum) {
-            if (in_array($file, $skip_files)) {
-                continue;
-            }
-            if (preg_match($skip_prefixes, $file)) {
-                continue;
-            }
-            if (!file_exists($file)) {
-                $this->updateStatus("missingFile", $file);
-            }
-            // TODO: uncomment when we decide to enable it once again in later releases (probably > 7.5.x). (See CRYS-455).
-            /*
-            if (md5_file($file) !== $sum) {
-                $this->updateStatus("md5Mismatch", $file, $sum);
-            }
-            */
-        /*
-        }
-        */
-
         foreach ($this->getModuleList() as $module) {
             $this->log("Checking module $module");
             $this->scanModule($module);

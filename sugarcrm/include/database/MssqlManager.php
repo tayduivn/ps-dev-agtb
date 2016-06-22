@@ -890,11 +890,6 @@ class MssqlManager extends DBManager
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
 
-            // Bug # 44923 - This breaks the query and does not properly filter isnull
-            // as there are other functions such as ltrim and rtrim.
-            /* else if (strncasecmp($psql, 'isnull', 6) != 0)
-                $alias_beg_pos = strpos($psql, " "); */
-
             if ($alias_beg_pos > 0) {
                 $col_name = substr($psql,0, $alias_beg_pos );
             }
@@ -1949,27 +1944,6 @@ EOQ;
         }
 		if (isset($fieldDef['required']) && $fieldDef['required'] && !isset($fieldDef['default']) )
 			$fieldDef['default'] = '';
-//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '1';
-//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '1';
-//        if ($fieldDef['type'] == 'float' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '8';
-//        if ($fieldDef['type'] == 'varchar' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '255';
-//		if ($fieldDef['type'] == 'nvarchar' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '255';
-//        if ($fieldDef['type'] == 'image' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2147483647';
-//        if ($fieldDef['type'] == 'ntext' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2147483646';
-//        if ($fieldDef['type'] == 'smallint' && empty($fieldDef['len']) )
-//            $fieldDef['len'] = '2';
-//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['default']) )
-//            $fieldDef['default'] = '0';
-//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['default']) )
-//            $fieldDef['default'] = '0';
-
     }
 
     /**

@@ -225,9 +225,7 @@ class DataSet_Layout extends SugarBean {
 
 		$result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
 
-		//if($this->db->getRowCount($result) > 0){
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while($row = $this->db->fetchByAssoc($result)){
 				//Get head attribute information
 				$head_attribute_id = $this->get_attribute_id("Head", $row['id']);
 				$head_att_object = BeanFactory::getBean('DataSet_Attribute');
@@ -274,9 +272,6 @@ class DataSet_Layout extends SugarBean {
                 //end if body attribute exists
                 }
 
-
-            //Load the layout_array with the necessary attribute and parameter information
-            //array_push($layout_array, $row['parent_value']);
 
 //////////////////Column Display Name
 
@@ -338,9 +333,3 @@ class DataSet_Layout extends SugarBean {
 
 //end class datasets_Layout
 }
-
-
-
-
-
-?>

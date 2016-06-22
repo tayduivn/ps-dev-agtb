@@ -58,7 +58,6 @@ class MeetingsQuickCreate extends QuickCreate {
         $date_start_array=explode(" ",trim($focus->date_start));
         if (count($date_start_array)==2) {
 			$focus->time_start = $timedate->to_db_time($date_start_array[1], false);
-        	//$focus->date_start = $date_start_array[0];
         }
 
 		$this->ss->assign("DATE_START", $focus->date_start);
@@ -91,14 +90,6 @@ class MeetingsQuickCreate extends QuickCreate {
 		   $num_of_hours = 13;
 		   $start_at = 1;	
 		} 
-		
-		/*
-		// Seems to be problematic... $time_meridiem is always empty
-		if (empty ($time_meridiem)) {
-			$num_of_hours = 24;
-			$start_at = 0;
-		}
-		*/
 		
 		for ($i = $start_at; $i < $num_of_hours; $i ++) {
 			$i = $i."";

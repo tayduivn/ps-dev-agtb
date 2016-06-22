@@ -11,11 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*if($_SERVER['SERVER_ADDR'] != $_SERVER['REMOTE_ADDR']) { // make sure this script only gets executed locally
-	header('Location: index.php?action=Login&module=Users');
-	return;
-} else
-*/
 if(!empty($_REQUEST['job_id'])) {
 	
 	

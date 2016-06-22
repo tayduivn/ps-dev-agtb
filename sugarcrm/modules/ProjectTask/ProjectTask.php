@@ -16,9 +16,6 @@ class ProjectTask extends SugarBean {
 	var $id;
 	var $date_entered;
 	var $date_modified;
-	//var $assigned_user_id;
-	//var $modified_user_id;
-	//var $created_by;
 	var $team_id;
 	var $name;
     var $description;
@@ -188,8 +185,6 @@ class ProjectTask extends SugarBean {
         $row = $this->db->fetchByAssoc($result);
         if($row != null)
         {
-            //$this->parent_name_owner = $row['assigned_user_id'];
-            //$this->parent_name_mod = 'Project';
             $return_value = $row['name'];
         }
 
@@ -238,23 +233,8 @@ class ProjectTask extends SugarBean {
 		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate, $locale;
 		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 		$task_fields =$this->get_list_view_array();
-		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
         if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
-
-		/*
-        if ($this->status != "Completed" && $this->status != "Deferred" ) {
-			$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline","alt='Close' border='0'")."</a>";
-		}
-
-		if( $date_due	< $today){
-			$task_fields['DATE_DUE']= "<font class='overdueTask'>".$task_fields['DATE_DUE']."</font>";
-		}else if( $date_due	== $today ){
-			$task_fields['DATE_DUE'] = "<font class='todaysTask'>".$task_fields['DATE_DUE']."</font>";
-		}else{
-			$task_fields['DATE_DUE'] = "<font class='futureTask'>".$task_fields['DATE_DUE']."</font>";
-		}
-        */
 
         if ( !isset($task_fields["FIRST_NAME"]) )
             $task_fields["FIRST_NAME"] = '';

@@ -171,8 +171,6 @@ $query = "update emails_email_addr_rel set deleted = 1 WHERE email_id = '{$focus
 $focus->db->query($query);
 
 // delete al the relationship of this email with all the beans
-//$query = "update emails_beans set deleted = 1, bean_id = '', bean_module = '' WHERE email_id = '{$focus->id}'";
-//$focus->db->query($query);
 if(!empty($_REQUEST['to_addrs_ids'])) {
     $exContactIds = explode(';', $_REQUEST['to_addrs_ids']);
 } else {

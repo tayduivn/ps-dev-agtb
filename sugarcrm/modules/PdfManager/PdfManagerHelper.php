@@ -112,13 +112,11 @@ class PdfManagerHelper
             if (!empty($fieldsForSelectedModule) && $addLinks) {
                 $linksForSelectedModule = PdfManagerHelper::getLinksForModule($moduleName);
                 if (count($linksForSelectedModule) > 0) {
-                    //$fieldsForSelectedModule[''] = '-----';
                     $linksFieldsForSelectedModule = array();
                     foreach ($linksForSelectedModule as $linkName => $linkDef) {
                         $linksFieldsForSelectedModule['pdfManagerRelateLink_' . $linkName] = $linkDef['label'];
                     }
                     asort($linksFieldsForSelectedModule);
-                    //$fieldsForSelectedModule += $linksFieldsForSelectedModule;
                     $fieldsForSelectedModule = array(
                         translate('LBL_FIELDS_LIST', 'PdfManager') => $fieldsForSelectedModule,
                         translate('LBL_LINK_LIST', 'PdfManager') => $linksFieldsForSelectedModule,

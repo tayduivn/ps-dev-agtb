@@ -153,14 +153,9 @@ class Account extends Company {
 	* We now automatically prefix http://
 	* @deprecated.
  	*/
-	function remove_redundant_http()
-	{	/*
-		if(preg_match("@http://@", $this->website))
-		{
-			$this->website = substr($this->website, 7);
-		}
-		*/
-	}
+    public function remove_redundant_http()
+    {
+    }
 
 	function fill_in_additional_detail_fields()
 	{

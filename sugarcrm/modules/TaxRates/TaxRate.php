@@ -77,15 +77,12 @@ class TaxRate extends SugarBean {
 		if ($add_blank) {
 			$list['']='';
 		}
-		//if($this->db->getRowCount($result) > 0){
 			// We have some data.
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
 				$list[$row['id']] = $row['name'];
 				$GLOBALS['log']->debug("row id is:".$row['id']);
 				$GLOBALS['log']->debug("row name is:".$row['name']);
 			}
-		//}
 		return $list;
 	}
 
@@ -104,8 +101,6 @@ class TaxRate extends SugarBean {
 		$result = $this->db->query($query, false);
 		$GLOBALS['log']->debug("get_taxrates: result is ".print_r($result,true));
 
-		//if($this->db->getRowCount($result) > 0){
-			// We have some data.
 		$row = $this->db->fetchByAssoc($result);
 		if(!empty($row)){
 			$result = $row['value'];
@@ -135,15 +130,11 @@ class TaxRate extends SugarBean {
 		$js .= "function get_taxrate (id) { \n";
 		$js .= "  switch (id) { \n";
 
-		//if($this->db->getRowCount($result) > 0){
-			// We have some data.
 			while (($row = $this->db->fetchByAssoc($result)) != null){
-			//while ($row = $this->db->fetchByAssoc($result)) {
 				$js .= "    case '".$row['id']."': \n";
 				$value = $row['value'] / 100;
 				$js .= "      return ".$value."; \n";
 			}
-		//}
 		$js .= "  } \n";
 		$js .= "} \n";
 		$js .= "</script> \n";
@@ -157,8 +148,6 @@ class TaxRate extends SugarBean {
 
 	function clear_product_taxrates_relationship($taxrates_id)
 	{
-		//$query = "UPDATE $this->rel_products set taxrates_id='' where (taxrates_id='$taxrates_id') and deleted=0";
-		//$this->db->query($query,true,"Error clearing taxrates to taxrates relationship: ");
 	}
 
 	function mark_relationships_deleted($id)
@@ -178,7 +167,6 @@ class TaxRate extends SugarBean {
 	function get_list_view_data(){
 		$temp_array = $this->get_list_view_array();
         $temp_array["ENCODED_NAME"]=$this->name;
-//    	$temp_array["ENCODED_NAME"]=htmlspecialchars($this->name, ENT_QUOTES);
     	return $temp_array;
 
 	}
@@ -204,5 +192,3 @@ class TaxRate extends SugarBean {
 
 
 }
-
-?>

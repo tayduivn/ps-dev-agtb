@@ -49,22 +49,6 @@ class json_config {
 		$str .= $this->global_registry_var_name.".meta = new Object();\n";
 		$str .= $this->global_registry_var_name.".meta.modules = new Object();\n";
 
-		/*
-		$modules_arr = array('Meetings','Calls');
-		$meta_modules = array();
-
-		global $beanFiles,$beanList;
-		//header('Content-type: text/xml');
-		foreach($modules_arr as $module) {
-			require_once($beanFiles[$beanList[$module]]);
-			$focus = new $beanList[$module];
-			$meta_modules[$module] = array();
-			$meta_modules[$module]['field_defs'] = $focus->field_defs;
-		}
-
-		$str .= $this->global_registry_var_name.".meta.modules.Meetings = ". $json->encode($meta_modules['Meetings'])."\n";
-		$str .= $this->global_registry_var_name.".meta.modules.Calls = ". $json->encode($meta_modules['Calls'])."\n";
-		*/
 		return $str;
 	}
 
@@ -177,8 +161,6 @@ class json_config {
 		$all_fields = $focus->column_fields;
 		// MEETING SPECIFIC
 		$all_fields = array_merge($all_fields,array('required','accept_status','name')); // need name field for contacts and users
-		//$all_fields = array_merge($focus->column_fields,$focus->additional_column_fields);
-
 		$module_arr = array();
 
 		$module_arr['module'] = $focus->object_name;

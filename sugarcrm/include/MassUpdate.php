@@ -504,21 +504,6 @@ class MassUpdate
             $fielddefs['status']['options'] = 'user_status_dom';
         }
 
-        /*---------------------------------------------------------------
-        This is being taken off of the Menu as part of MAR-1421 until the support for it exists in the new MassUpdate Api
-        BR-823 was created to add the support in the New MassUpdate Api
-        ----------------------------------------------------------------*/
-        // if(in_array($moduleName, array("Contacts", "Accounts", "Leads", "Prospects"))) {
-        //     $fielddefs['optout_primary'] = array(
-        //         'name' => 'sync',
-        //         'type' => 'enum',
-        //         'label' => 'LBL_OPT_OUT_FLAG_PRIMARY',
-        //         'massupdate' => true,
-        //         'source' => 'non-db',
-        //         'options' => 'optout_dom',
-        //     );
-        // }
-
         return $fielddefs;
     }
 
@@ -681,28 +666,9 @@ class MassUpdate
 
 		    $field_count++;
 		}
-
-        /*---------------------------------------------------------------
-        This is being taken off of the Menu as part of MAR-1421 until the support for it exists in the new MassUpdate Api
-        BR-823 was created to add the support in the New MassUpdate Api
-        ----------------------------------------------------------------*/
-        // if ($this->sugarbean->object_name == 'Contact' ||
-        //      $this->sugarbean->object_name == 'Account' ||
-        //  	$this->sugarbean->object_name == 'Lead' ||
-        //  	$this->sugarbean->object_name == 'Prospect') {
-        //
-        //      $html .= "<tr><td width='15%'  scope='row' class='dataLabel'>$lang_optout_primaryemail</td><td width='35%' class='dataField'><select name='optout_primary'><option value=''>{$GLOBALS['app_strings']['LBL_NONE']}</option><option value='false'>{$GLOBALS['app_list_strings']['checkbox_dom']['2']}</option><option value='true'>{$GLOBALS['app_list_strings']['checkbox_dom']['1']}</option></select></td></tr>";
-        //
-        // }
-
         $html .="</table>";
 
 		$html .= "<table cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td class='buttons'><input onclick='return sListView.send_mass_update(\"selected\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\")' type='submit' id='update_button' name='Update' value='{$lang_update}' class='button'>&nbsp;<input onclick='javascript:toggleMassUpdateForm();' type='button' id='cancel_button' name='Cancel' value='{$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL']}' class='button'>";
-		// TODO: allow ACL access for Delete to be set false always for users
-//		if($this->sugarbean->ACLAccess('Delete', true) && $this->sugarbean->object_name != 'User') {
-//			global $app_list_strings;
-//			$html .=" <input id='delete_button' type='submit' name='Delete' value='{$lang_delete}' onclick='return confirm(\"{$lang_confirm}\") && sListView.send_mass_update(\"selected\", \"{$app_strings['LBL_LISTVIEW_NO_SELECTED']}\", 1)' class='button'>";
-//		}
 
 		// only for My Inbox views - to allow CSRs to have an "Archive" emails feature to get the email "out" of their inbox.
 		if($this->sugarbean->object_name == 'Email'

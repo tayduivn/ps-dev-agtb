@@ -98,7 +98,6 @@ if(!empty($_SESSION['EXCEEDING_OC_LICENSES']) && $_SESSION['EXCEEDING_OC_LICENSE
 if(isset($license) && !empty($license->settings['license_msg_admin'])){
     // UUDDLRLRBA
 	$GLOBALS['log']->fatal(base64_decode($license->settings['license_msg_admin']));
-    //displayAdminError(base64_decode($license->settings['license_msg_admin']));
 	return;
 }
 
@@ -203,19 +202,6 @@ if($smtp_error) {
 				}
 			}
         }
-
-//		if (!isset($_SESSION['dst_fixed']) || $_SESSION['dst_fixed'] != true) {
-//			$qDst = "SELECT count(*) AS dst FROM versions WHERE name = 'DST Fix'";
-//			$rDst = $db->query($qDst);
-//			$rowsDst = $db->fetchByAssoc($rDst);
-//			if($rowsDst['dst'] > 0) {
-//				$_SESSION['dst_fixed'] = true;
-//			} else {
-//				$_SESSION['dst_fixed'] = false;
-//				displayAdminError($app_strings['LBL_DST_NEEDS_FIXIN']);
-//			}
-//
-//		}
 
 		if(isset($_SESSION['administrator_error']))
 		{

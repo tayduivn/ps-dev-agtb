@@ -212,28 +212,6 @@ class SupportPortalVisibility extends SugarVisibility
                     //END SUGARCRM flav=ent ONLY
                 } else {
                     $portalEnabled = false;
-                    // TODO: Currently custom modules are not supported in portal, but if they were, 
-                    // it'd look a little something like this:
-                    /*
-                    // We have to find a portal_viewable field before this module will be viewable in the portal
-                    if ( isset($this->bean->field_defs['portal_viewable']) ) {
-                        $wherePart = " $table_alias.portal_viewable = 1 ";
-                        $portalEnabled = true;
-                    } else if ( isset($this->bean->field_defs['portal_viewable_c']) ) {
-                        // Custom portal_viewable field... the table name is a bit of a mystery.
-                        $wherePart = " {$table_alias}_cstm.portal_viewable_c = 1 ";
-                        $portalEnabled = true;
-                    }
-                    if ( $portalEnabled && $queryType == 'from' ) {
-                        // This is expensive, we need to find the link to the Accounts module that this random module uses
-                        if ( isset($this->bean->field_defs['accounts']) ) {
-                            $linkName = 'accounts';
-                        } else {
-                            // Couldn't find a link by that name
-                            $portalEnabled = false;
-                        }
-                    }
-                    */
                 }
                 
                 if ( $portalEnabled ) {

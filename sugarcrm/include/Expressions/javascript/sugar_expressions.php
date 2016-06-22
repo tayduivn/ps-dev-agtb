@@ -280,7 +280,6 @@ SUGAR.expressions.Expression.prototype.getParameterTypes = function() {
  * Construct a new NumericExpression.
  */
 SUGAR.expressions.NumericExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.NumericExpression, SUGAR.expressions.Expression, {
 	/**
@@ -296,7 +295,6 @@ SUGAR.util.extend(SUGAR.expressions.NumericExpression, SUGAR.expressions.Express
  * Construct a new StringExpression.
  */
 SUGAR.expressions.StringExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.StringExpression, SUGAR.expressions.Expression, {
 	/**
@@ -312,7 +310,6 @@ SUGAR.util.extend(SUGAR.expressions.StringExpression, SUGAR.expressions.Expressi
  * Construct a new BooleanExpression.
  */
 SUGAR.expressions.BooleanExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.BooleanExpression, SUGAR.expressions.Expression, {
 	/**
@@ -328,7 +325,6 @@ SUGAR.util.extend(SUGAR.expressions.BooleanExpression, SUGAR.expressions.Express
  * Construct a new EnumExpression.
  */
 SUGAR.expressions.EnumExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.EnumExpression, SUGAR.expressions.Expression, {
 	/**
@@ -344,7 +340,6 @@ SUGAR.util.extend(SUGAR.expressions.EnumExpression, SUGAR.expressions.Expression
  * Construct a new DateExpression.
  */
 SUGAR.expressions.DateExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.DateExpression, SUGAR.expressions.Expression, {
 	/**
@@ -360,7 +355,6 @@ SUGAR.util.extend(SUGAR.expressions.DateExpression, SUGAR.expressions.Expression
  * Construct a new TimeExpression.
  */
 SUGAR.expressions.TimeExpression = function(params) {
-	//this.init(params);
 };
 SUGAR.util.extend(SUGAR.expressions.TimeExpression, SUGAR.expressions.Expression, {
 	/**
@@ -399,7 +393,6 @@ EXPRESSIONJS;
  * STEP 2: 	Compile the code for the available operations mostly
  * 			generated in the 'functions_cache_new.js' file.
  */
-//echo "(function(){\n";
 
 echo <<<EOQ
 //(function(){
@@ -470,11 +463,6 @@ EOQ;
 
 // now include the cached list of functions
 include('./functions_cache_new.js');
-//include('./temp_cache.js');
-
-// end the anonymous function
-//echo "\n})();";
-
 
 
 /**
@@ -484,8 +472,6 @@ include('./functions_cache_new.js');
 
 
 echo <<<EOQ
-//(function(){
-
 /**
  * The ExpressionParser object.
  */
@@ -661,8 +647,6 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	// neither
 	return null;
 }
-
-//})();
 EOQ;
 
 ?>

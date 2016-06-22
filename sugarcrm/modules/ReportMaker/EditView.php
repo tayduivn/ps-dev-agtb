@@ -16,10 +16,6 @@ global $current_user;
 global $mod_strings;
 global $app_list_strings;
 global $app_strings;
-// Unimplemented until jscalendar language files are fixed
-// global $current_language;
-// global $default_language;
-// global $cal_codes;
 
 $focus = BeanFactory::getBean('ReportMaker');
 
@@ -46,9 +42,6 @@ $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 
 global $timedate;
-// Unimplemented until jscalendar language files are fixed
-// $xtpl->assign("CALENDAR_LANG", ((empty($cal_codes[$current_language])) ? $cal_codes[$default_language] : $cal_codes[$current_language]));
-//$xtpl->assign("CALENDAR_LANG", "en");$xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 
 if (isset($_REQUEST['return_module'])) $xtpl->assign("RETURN_MODULE", $_REQUEST['return_module']);
 if (isset($_REQUEST['return_action'])) $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
@@ -81,14 +74,6 @@ else {
 
 
 global $current_user;
-
-//if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-//	$record = '';
-//	if(!empty($_REQUEST['record'])){
-//		$record = 	$_REQUEST['record'];
-//	}
-//	$xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
-//}
 
 //Add Custom Fields
 require_once('modules/DynamicFields/templates/Files/EditView.php');

@@ -66,8 +66,6 @@ if(!empty($_REQUEST['user_type']) && $_REQUEST['user_type']!="") {
 
 
 ///////Get the type of workflow object that this is///////
-//Remove below line, this is already determined above
-//$workflow_object = $focus->get_workflow_object();
 $base_type = $target_workflow_object->type;
 
 
@@ -137,7 +135,6 @@ if(		$focus->user_type=="rel_user_custom"){
 		$target_module = $rel_handler->get_farthest_reach();
 
 
-	//$target_module = get_rel_trace_results($focus->base_module, $focus->rel_module1, $focus->rel_module2);
 	$target_module_name = $target_module->module_dir;
 
 	$current_module_strings = return_module_language($current_language, $target_module_name);
@@ -216,7 +213,6 @@ if(		$focus->user_type=="rel_user_custom"){
 		$target_module = BeanFactory::getBean($focus->base_module);
 
 
-	//$target_module = get_rel_trace_results($focus->base_module, $focus->rel_module1, $focus->rel_module2);
 	$target_module_name = $target_module->module_dir;
 
 	$current_module_strings = return_module_language($current_language, $target_module_name);

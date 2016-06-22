@@ -333,7 +333,6 @@ class ModuleInstaller{
             foreach($this->installdefs['copy'] as $cp){
                 $GLOBALS['log']->debug("Copying ..." . $cp['from'].  " to " .$cp['to'] );
                 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
-                //$this->copy_path($cp['from'], $cp['to']);
                 $this->copy_path($cp['from'], $cp['to'], $backup_path);
                 /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
             }
@@ -349,7 +348,6 @@ class ModuleInstaller{
                 $cp['from'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['from']));
                 $GLOBALS['log']->debug('Unlink ' . $cp['to']);
                 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
-                //rmdir_recursive($cp['to']);
 
                 $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to'] );
                 $this->uninstall_new_files($cp, $backup_path);
@@ -1283,7 +1281,6 @@ class ModuleInstaller{
 
     /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
     function copy_path($from, $to, $backup_path='', $uninstall=false){
-        //function copy_path($from, $to){
         /* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
         $to = str_replace('<basepath>', $this->base_dir, $to);
 
@@ -1293,7 +1290,6 @@ class ModuleInstaller{
         }
         else {
             $from = str_replace('<basepath>', $backup_path, $from);
-            //$GLOBALS['log']->debug('Restore ' . $from);
         }
         $from = clean_path($from);
         $to = clean_path($to);
@@ -2381,7 +2377,6 @@ class ModuleInstaller{
         $_SESSION['MODULEINSTALLER_ERRORS'] = $errors;
         echo '<META HTTP-EQUIV="Refresh" content="0;url=index.php?module=Administration&action=UpgradeWizard&view=module">';
         die();
-        //header('Location: index.php?module=Administration&action=UpgradeWizard&view=module');
     }
 
     /**
@@ -2911,30 +2906,22 @@ class ModuleInstaller{
         //but we should check the version in the module install against the version on the file system
         //if they match then we can copy the file back, but otherwise we should ask the user.
 
-//		$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy()');
         if(isset($GLOBALS['mi_overwrite_files']) && $GLOBALS['mi_overwrite_files']){
-//		$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy():mi_overwrite_files=true');
             if(!empty($this->installdefs['copy'])){
-//				$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy(): installdefs not empty');
                 foreach($this->installdefs['copy'] as $cp){
                     $cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
                     $cp['from'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['from']));
                     $backup_path = clean_path( remove_file_extension(urldecode(hashToFile($this->validateInstallFile())))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
                     //check if this file exists in the -restore directory
-//					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
                     $this->uninstall_new_files($cp, $backup_path);
                     if(file_exists($backup_path)){
                         //since the file exists, then we want do an md5 of the install version and the file system version
                         $from = str_replace('<basepath>', $this->base_dir, $cp['from']);
 
-                        //if(is_file($from) && md5_file($from) == md5_file($cp['to'])){
                         //since the files are the same then we can safely move back from the -restore
                         //directory into the file system
                         $GLOBALS['log']->debug("DISABLE COPY:: FROM: ".$backup_path. " TO: ".$cp['to']);
                         $this->copy_path($backup_path, $cp['to']);
-                        /*}else{
-                            //since they are not equal then we need to prompt the user
-                        }*/
                     }//fi
                 }//rof
             }//fi

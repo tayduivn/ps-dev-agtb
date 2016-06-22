@@ -126,13 +126,9 @@ function reply($action, $bean, $ie) {
 		)
 	);
 
-	//_ppl("######### Sending Reply message to [ {$toEmail} ]");
-
 	$ea = BeanFactory::getBean('EmailAddresses');
 	$ie->email->from_name = $current_user->full_name;
-	//_ppl("from_name:".$ie->email->from_name);
 	$ie->email->from_addr = $ea->getReplyToAddress($current_user);
-	//_ppl("from_addr:".$ie->email->from_addr);
 
 	return $ie->email->send();
 }
@@ -200,7 +196,6 @@ function mark_flagged($action, $bean, $ie) {
  */
 function mark_flag($action, $bean, $ie, $flag) {
 	$result = imap_setflag_full($ie->conn, $bean->uid, $flag, ST_UID);
-	//var_dump($result);_ppl($ie->conn);_ppl($ie->mailbox); _ppl($flag); _ppl($bean->uid);
 	return $result;
 }
 
@@ -213,10 +208,6 @@ function mark_flag($action, $bean, $ie, $flag) {
  */
 function copy_mail($action, $bean, $ie, $copy=true) {
 	$args = explode("::", $action['action1']);
-//	_pp($bean->uid);
-//	_pp($bean->imap_uid);
-//	_ppf($bean, true);
-//	_ppl($action);_ppl($args);
 
 	if($args[0] == 'sugar') {
 		// we're dealing with a target Sugar Folder
@@ -235,12 +226,6 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 			}
 
 			$sf->addBean($ie->email);
-
-			if(!$copy) {
-				// remove message from email server
-				/* pending functional abstraction of sugar-side vs imap-side functionality */
-				//$ie->deleteMessageOnMailServer($bean->uid);
-			}
 		} else {
 			$GLOBALS['log']->fatal("*** SUGARROUTING: baseActions:copy_mail: could not retrieve SugarFolder with id [ {$folder_id} ]");
 		}

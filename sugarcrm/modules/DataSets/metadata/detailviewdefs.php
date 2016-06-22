@@ -55,7 +55,6 @@ $viewdefs['DataSets']['DetailView'] = array(
       array (
         'name' => 'table_width',
         'fields'=>array('table_width', 'table_width_type'),
-        //'customCode' => '{$fields.table_width.value} {$APP.width_type_dom[$fields.table_width_type.value]}',
       ),
       'font_size',
     ),

@@ -64,31 +64,6 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
     protected function getUserReportees($user_id)
     {
         $db = DBManagerFactory::getInstance();
-
-        //BEGIN SUGARCRM flav=int ONLY
-        //Remove use of getRecursiveSelectSQL for now since MysqlManager does not support this and needs to be phased out first
-        /*
-        $sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
-            'id, user_name, first_name, last_name, reports_to_id, _level', false,
-            "id = '{$user_id}' AND status = 'Active' AND deleted = 0", null, " AND status = 'Active' AND deleted = 0"
-        );
-
-        $result = $db-query($sql);
-        $reportees = array();
-
-        while ($row = $db->fetchByAssoc($result)) {
-
-            if ($row['_level'] > 2) continue;
-
-            if ($row['_level'] == 1) {
-                $reportees = array_merge(array($row['id'] => $row['user_name']), $reportees);
-            } else {
-                $reportees[$row['id']] = $row['user_name'];
-            }
-        }
-        */
-        //END SUGARCRM flav=int ONLY
-
         $sql = sprintf("SELECT id, user_name, first_name, last_name, title, reports_to_id FROM users WHERE (reports_to_id = '%s' OR id = '%s') AND " . User::getLicensedUsersWhere(), $user_id, $user_id);
 
         $result = $db->query($sql);

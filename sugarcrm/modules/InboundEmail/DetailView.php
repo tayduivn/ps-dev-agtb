@@ -48,17 +48,7 @@ if($focus->delete_seen == 1) {
 	$delete_seen = $mod_strings['LBL_MARK_READ_YES'];
 }
 
-// deferred
-//$r = $focus->db->query("SELECT id, name FROM queues WHERE owner_id = '".$focus->id."'");
-//$a = $focus->db->fetchByAssoc($r);
-//$queue = '<a href="index.php?module=Queues&action=EditView&record='.$a['id'].'">'.$a['name'].'</a>';
 $groupName = '';
-if($focus->group_id) {
-	
-	//$group = BeanFactory::getBean('Groups');
-	//$group->retrieve($focus->group_id);
-	//$groupName = $group->user_name;
-}
 
 if($focus->template_id) {
 	
@@ -103,8 +93,6 @@ $create_case_email_template='';
 $create_case_email_template_name = $mod_strings['LBL_NONE'];
 $leaveMessagesOnMailServer = $app_strings['LBL_EMAIL_NO'];
 
-//$fromNameAddr = $fromName.' &lt;'.$from['email'].'&gt; <br><em>('.$mod_strings['LBL_SYSTEM_DEFAULT'].')</em>';
-//$replyNameAddr = $mod_strings['LBL_SAME_AS_ABOVE'];
 $onlySince = $mod_strings['LBL_ONLY_SINCE_NO'];
 
 if(!empty($focus->stored_options)) {
@@ -203,7 +191,6 @@ $xtpl->assign('MARK_READ', $delete_seen);
 $xtpl->assign('ALLOW_OUTBOUND_GROUP_USAGE', $allow_outbound_group_usage);
 
 // deferred
-//$xtpl->assign('QUEUE', $queue);
 $createCaseRowStyle = "display:none";
 $leaveMessagesOnMailServerStyle = "display:none";
 if ($focus->is_personal) {
@@ -286,4 +273,3 @@ else if( $focus->is_personal == '1')
 
 $xtpl->parse('main');
 $xtpl->out('main');
-?>
