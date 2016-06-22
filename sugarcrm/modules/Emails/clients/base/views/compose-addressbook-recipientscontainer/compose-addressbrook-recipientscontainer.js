@@ -12,17 +12,15 @@
  * @class View.Views.Base.Emails.ComposeAddressbookRecipientscontainerView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookRecipientscontainerView
  * @extends View.Views.Base.RecordView
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
-    extendsFrom:         "RecordView",
+    extendsFrom: 'RecordView',
     enableHeaderButtons: false,
-    enableHeaderPane:    false,
-    events:              {},
+    enableHeaderPane: false,
+    events: {},
 
     initialize: function(options) {
-        this._super("initialize", [options]);
+        this._super('initialize', [options]);
     },
 
     /**
@@ -66,7 +64,7 @@
      *
      * @param field
      */
-    toggleLabelByField: function (field) {},
+    toggleLabelByField: function(field) {},
 
     /**
      * Override to remove unwanted functionality.

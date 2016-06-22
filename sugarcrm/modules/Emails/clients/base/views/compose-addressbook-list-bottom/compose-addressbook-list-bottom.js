@@ -12,11 +12,9 @@
  * @class View.Views.Base.Emails.ComposeAddressbookListBottomView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookListBottomView
  * @extends View.Views.Base.ListBottomView
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
-    extendsFrom: "ListBottomView",
+    extendsFrom: 'ListBottomView',
 
     /**
      * Assign proper label for 'show more' link.

@@ -12,8 +12,6 @@
  * @class View.Views.Base.Emails.ComposeAddressbookListView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookListView
  * @extends View.Views.Base.FlexListView
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     extendsFrom: 'FlexListView',
@@ -26,13 +24,13 @@
         if (massCollection) {
             massCollection.off(null, null, this);
         }
-        this._super("unbindData");
+        this._super('unbindData');
     },
     /**
      * Override to inject field names into the request when fetching data for the list.
      *
-     * @param module
-     * @returns {Array}
+     * @param {string} module
+     * @return {Array}
      */
     getFieldNames: function(module) {
         // id and module always get returned, so name and email just need to be added
@@ -46,8 +44,8 @@
      * @private
      */
     _render: function() {
-        this._super("_render");
-        var massCollection              = this.context.get('mass_collection'),
+        this._super('_render');
+        var massCollection = this.context.get('mass_collection'),
             selectedRecipientsFieldName = 'compose_addressbook_selected_recipients';
         if (massCollection) {
             // get rid of any old event listeners on the mass collection

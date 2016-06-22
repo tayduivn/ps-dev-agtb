@@ -12,19 +12,18 @@
  * @class View.Views.Base.Emails.ComposeAddressbookFilterView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookFilterView
  * @extends View.View
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     _moduleFilterList: [],
-    _allModulesId:     'All',
-    _selectedModule:   null,
-    _currentSearch:    '',
+    _allModulesId: 'All',
+    _selectedModule: null,
+    _currentSearch: '',
     events: {
-        'keyup .search-name':        'throttledSearch',
-        'paste .search-name':        'throttledSearch',
+        'keyup .search-name': 'throttledSearch',
+        'paste .search-name': 'throttledSearch',
         'click .add-on.fa-times': 'clearInput'
     },
+
     /**
      * Converts the input field to a select2 field and adds the module filter for refining the search.
      *
@@ -35,6 +34,7 @@
         this.buildModuleFilterList();
         this.buildFilter();
     },
+
     /**
      * Builds the list of allowed modules to provide the data to the select2 field.
      */
@@ -52,6 +52,7 @@
             });
         }, this);
     },
+
     /**
      * Converts the input field to a select2 field and initializes the selected module.
      */
@@ -59,17 +60,17 @@
         var $filter = this.getFilterField();
         if ($filter.length > 0) {
             $filter.select2({
-                data:                    this._moduleFilterList,
-                allowClear:              false,
-                multiple:                false,
+                data: this._moduleFilterList,
+                allowClear: false,
+                multiple: false,
                 minimumResultsForSearch: -1,
-                formatSelection:         _.bind(this.formatModuleSelection, this),
-                formatResult:            _.bind(this.formatModuleChoice, this),
-                dropdownCss:             {width: 'auto'},
-                dropdownCssClass:        'search-filter-dropdown',
-                initSelection:           _.bind(this.initSelection, this),
-                escapeMarkup:            function(m) { return m; },
-                width:                   'off'
+                formatSelection: _.bind(this.formatModuleSelection, this),
+                formatResult: _.bind(this.formatModuleChoice, this),
+                dropdownCss: {width: 'auto'},
+                dropdownCssClass: 'search-filter-dropdown',
+                initSelection: _.bind(this.initSelection, this),
+                escapeMarkup: function(m) { return m; },
+                width: 'off'
             });
             $filter.off('change');
             $filter.on('change', _.bind(this.handleModuleSelection, this));
@@ -77,22 +78,25 @@
             $filter.select2('val', this._selectedModule);
         }
     },
+
     /**
      * Gets the filter DOM field.
      *
-     * @returns {Object} DOM Element
+     * @return {Object} DOM Element
      */
     getFilterField: function() {
         return this.$('input.select2');
     },
+
     /**
      * Gets the module filter DOM field.
      *
-     * @returns {Object} DOM Element
+     * @return {Object} DOM Element
      */
     getModuleFilter: function() {
         return this.$('div.choice-filter');
     },
+
     /**
      * Destroy the select2 plugin.
      */
@@ -102,8 +106,9 @@
             $filter.off();
             $filter.select2('destroy');
         }
-        this._super("unbind");
+        this._super('unbind');
     },
+
     /**
      * Performs a search once the user has entered a term.
      */
@@ -114,11 +119,12 @@
             this.applyFilter();
         }
     }, 400),
+
     /**
      * Initialize the module selection with the value for all modules.
      *
-     * @param el
-     * @param callback
+     * @param {jQuery} el
+     * @param {Function} callback
      */
     initSelection: function(el, callback) {
         if (el.is(this.getFilterField())) {
@@ -126,6 +132,7 @@
             callback({id: module.id, text: module.text});
         }
     },
+
     /**
      * Format the selected module to display its name.
      *
@@ -135,19 +142,21 @@
     formatModuleSelection: function(item) {
         // update the text for the selected module
         this.getModuleFilter().html(item.text);
-        return '<span class="select2-choice-type">'
-            + app.lang.get('LBL_MODULE')
-            + '<i class="fa fa-caret-down"></i></span>';
+        return '<span class="select2-choice-type">' +
+            app.lang.get('LBL_MODULE') +
+            '<i class="fa fa-caret-down"></i></span>';
     },
+
     /**
      * Format the choices in the module select box.
      *
      * @param {Object} option
      * @return {String}
      */
-    formatModuleChoice: function (option) {
+    formatModuleChoice: function(option) {
         return '<div><span class="select2-match"></span>' + option.text + '</div>';
     },
+
     /**
      * Handler for when the module filter dropdown value changes, either via a click or manually calling jQuery's
      * .trigger("change") event.
@@ -165,6 +174,7 @@
             this.applyFilter();
         }
     },
+
     /**
      * Triggers an event that makes a call to search the address book and filter the data set.
      */
@@ -177,6 +187,7 @@
         this._toggleClearQuickSearchIcon(isDirty);
         this.context.trigger('compose:addressbook:search', module, this._currentSearch);
     },
+
     /**
      * Append or remove an icon to the quicksearch input so the user can clear the search easily.
      * @param {Boolean} addIt TRUE if you want to add it, FALSE to remove
@@ -188,12 +199,13 @@
             this.$('.add-on.fa-times').remove();
         }
     },
+
     /**
      * Clear input
      */
     clearInput: function() {
-        var $filter          = this.getFilterField();
-        this._currentSearch  = '';
+        var $filter = this.getFilterField();
+        this._currentSearch = '';
         this._selectedModule = this._allModulesId;
         this.$('.search-name').val(this._currentSearch);
         if ($filter.length > 0) {

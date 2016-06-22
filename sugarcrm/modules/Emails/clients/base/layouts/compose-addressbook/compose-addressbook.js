@@ -12,8 +12,6 @@
  * @class View.Layouts.Base.Emails.ComposeAddressbookLayout
  * @alias SUGAR.App.view.layouts.BaseEmailsComposeAddressbookLayout
  * @extends View.Layout
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
     /**
@@ -26,11 +24,11 @@
         this.context.on('compose:addressbook:search', this.search, this);
     },
     /**
-     * Calls the custom Mail API endpoint to search for email addresses.
+     * Calls the custom Emails API endpoint to search for email addresses.
      *
-     * @param method
-     * @param model
-     * @param options
+     * @param {string} method
+     * @param {Data.Bean} model
+     * @param {Object} options
      */
     sync: function(method, model, options) {
         var callbacks,
@@ -56,7 +54,7 @@
         callbacks = app.data.getSyncCallbacks(method, model, options);
         this.trigger('data:sync:start', method, model, options);
 
-        url = app.api.buildURL('Mail', 'recipients/find', null, options.params);
+        url = app.api.buildURL('Emails', 'recipients/find', null, options.params);
         app.api.call('read', url, null, callbacks);
     },
     /**

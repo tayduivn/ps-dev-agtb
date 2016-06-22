@@ -12,15 +12,13 @@
  * @class View.Views.Base.Emails.ComposeAddressbookHeaderpaneView
  * @alias SUGAR.App.view.views.BaseEmailsComposeAddressbookHeaderpaneView
  * @extends View.Views.Base.HeaderpaneView
- *
- * @deprecated 7.9.0 Will be removed in 7.11.0.
  */
 ({
-    extendsFrom: "HeaderpaneView",
+    extendsFrom: 'HeaderpaneView',
 
     events: {
-        "click [name=done_button]":   "_done",
-        "click [name=cancel_button]": "_cancel"
+        'click [name=done_button]': '_done',
+        'click [name=cancel_button]': '_cancel'
     },
 
      /**
@@ -30,7 +28,7 @@
       * @private
       */
      _done: function() {
-         var recipients = this.model.get("compose_addressbook_selected_recipients");
+         var recipients = this.model.get('compose_addressbook_selected_recipients');
 
          if (recipients) {
              app.drawer.close(recipients);
