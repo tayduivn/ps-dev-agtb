@@ -155,6 +155,9 @@ class Handler implements RunnableInterface
         $bean = $calDavBean->getBean();
 
         if (!$bean) {
+            if ($calDavBean->deleted) {
+                return;
+            }
             /** @var \User $user */
             $user = $GLOBALS['current_user'];
             if (!$calDavBean->parent_type) {
