@@ -23,6 +23,10 @@
 
     fieldTag: 'input.select2',
 
+    events: {
+        'click .btn': '_showAddressBook'
+    },
+
     /**
      * @inheritdoc
      *
@@ -155,8 +159,15 @@
      * @private
      */
     _render: function() {
+        var $controlsEl;
         var $recipientsField;
 
+        if (this.$el) {
+            $controlsEl = this.$el.closest('.controls');
+            if ($controlsEl.length) {
+                $controlsEl.addClass('controls-one btn-fit');
+            }
+        }
         this._super('_render');
 
         $recipientsField = this.$(this.fieldTag);
@@ -565,5 +576,41 @@
         app.api.call('create', url, [emailAddress], callbacks, options);
 
         return isValid;
+    },
+
+    /**
+     * When in edit mode, the field includes an icon button for opening an address book. Clicking the button will
+     * trigger an event to open the address book, which calls this method to do the dirty work. The selected recipients
+     * are added to this field upon closing the address book.
+     *
+     * @private
+     */
+    _showAddressBook: function() {
+        // Callback to add recipients, from a closing drawer, to the target Recipients field.
+        var addRecipients = _.bind(function(recipients) {
+            //TODO: Is there a way we can get the model.module set on these without having to add here?
+            if (recipients && recipients.models) {
+                _.each(recipients.models, function(recipient) {
+                    recipient.module = recipient.get('module');
+                    console.log(recipient.module);
+                });
+            }
+            if (recipients && recipients.length > 0) {
+                this.model.get(this.name).add(recipients.models);
+            }
+        }, this);
+
+        app.drawer.open(
+            {
+                layout: 'compose-addressbook',
+                context: {
+                    module: 'Emails',
+                    mixed: true
+                }
+            },
+            function(recipients) {
+                addRecipients(recipients);
+            }
+        );
     }
 })
