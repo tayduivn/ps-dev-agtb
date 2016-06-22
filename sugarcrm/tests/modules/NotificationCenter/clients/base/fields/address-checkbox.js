@@ -59,23 +59,23 @@ describe('NotificationCenter.Field.AddressCheckbox', function() {
 
     describe('bindDomChange()', function() {
         afterEach(function() {
-            field.model.set('selectedAddresses', {foo: []});
+            field.model.get('personal').selectedCarriersOptions = {foo: []};
         });
 
-        it('should set checked addresses as selected addresses to a model', function() {
-            field.model.set('selectedAddresses', {foo: []});
+        it('should set checked addresses as selectedCarriersOptions to a model', function() {
+            field.model.get('personal').selectedCarriersOptions = {foo: []};
             field.render();
             field.$(field.fieldTag).eq(0).prop('checked', true).trigger('change');
             field.$(field.fieldTag).eq(1).prop('checked', true).trigger('change');
-            expect(model.get('selectedAddresses')).toEqual({foo: ['0', '1']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['0', '1']});
         });
 
         it('should remove unchecked addresses from selected addresses of a model', function() {
-            field.model.set('selectedAddresses', {foo: ['0', '1', '2']});
+            field.model.get('personal').selectedCarriersOptions = {foo: ['0', '1', '2']};
             field.render();
             field.$(field.fieldTag).eq(0).prop('checked', false).trigger('change');
             field.$(field.fieldTag).eq(1).prop('checked', false).trigger('change');
-            expect(model.get('selectedAddresses')).toEqual({foo: ['2']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['2']});
         });
     });
 });

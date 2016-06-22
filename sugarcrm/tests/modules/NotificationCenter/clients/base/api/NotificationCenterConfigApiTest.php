@@ -163,6 +163,7 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'personal' => array(
                 'config' => array(),
+                'selectedCarriersOptions' => array(),
             ),
         );
         $this->api->updateUserConfig($this->service, $args);
@@ -180,6 +181,25 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'personal' => array(
                 'carriers' => array(),
+                'selectedCarriersOptions' => array(),
+            ),
+        );
+        $this->api->updateUserConfig($this->service, $args);
+    }
+
+    /**
+     * Throws if personal selectedCarriersOptions is missed
+     *
+     * @covers NotificationCenterConfigApi::updateUserConfig
+     * @expectedException SugarApiExceptionMissingParameter
+     * @expectedExceptionMessage Missing parameter: selectedCarriersOptions
+     */
+    public function testUpdateUserConfigThrowsIfPersonalSelectedCarriersOptionsIsMissed()
+    {
+        $args = array(
+            'personal' => array(
+                'carriers' => array(),
+                'config' => array(),
             ),
         );
         $this->api->updateUserConfig($this->service, $args);
@@ -274,6 +294,7 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             'personal' => array(
                 'carriers' => array(),
                 'config' => array(),
+                'selectedCarriersOptions' => array(),
             ),
         );
 
@@ -333,6 +354,7 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             'personal' => array(
                 'carriers' => array(),
                 'config' => array(),
+                'selectedCarriersOptions' => array(),
             ),
         );
 
@@ -340,6 +362,30 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setUserConfiguration')
             ->with($this->equalTo($this->user->id), $this->equalTo($args['personal']['config']));
+
+        $this->api->updateUserConfig($this->service, $args);
+    }
+
+    /**
+     * setUserDefaultCarriersOptions is called with correct args
+     *
+     * @covers NotificationCenterConfigApi::updateUserConfig
+     * @dataProvider updateUserConfigUpdatesUserConfigProvider
+     */
+    public function testUpdateUserConfigUpdatesSelectedCarriersOptions()
+    {
+        $args = array(
+            'personal' => array(
+                'carriers' => array(),
+                'config' => array(),
+                'selectedCarriersOptions' => array(),
+            ),
+        );
+
+        $this->subscriptionsRegistry
+            ->expects($this->once())
+            ->method('setUserDefaultCarriersOptions')
+            ->with($this->equalTo($this->user->id), $this->equalTo($args['personal']['selectedCarriersOptions']));
 
         $this->api->updateUserConfig($this->service, $args);
     }
@@ -355,6 +401,7 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             'personal' => array(
                 'carriers' => array(),
                 'config' => array(),
+                'selectedCarriersOptions' => array(),
             ),
         );
 
@@ -511,5 +558,18 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->subscriptionsRegistry->method('getUserConfiguration')->willReturn($config);
         $result = $this->api->getUserConfig($this->service, array());
         $this->assertEquals($config, $result['personal']['config']);
+    }
+
+    /**
+     * Returns personal selectedCarriersOptions configuration
+     *
+     * @covers NotificationCenterConfigApi::getUserConfig
+     */
+    public function testGetUserConfigReturnsSelectedCarriersOptions()
+    {
+        $selectedCarriersOptions = array('foo' => array('0', '1'));
+        $this->subscriptionsRegistry->method('getUserDefaultCarriersOptions')->willReturn($selectedCarriersOptions);
+        $result = $this->api->getUserConfig($this->service, array());
+        $this->assertEquals($selectedCarriersOptions, $result['personal']['selectedCarriersOptions']);
     }
 }

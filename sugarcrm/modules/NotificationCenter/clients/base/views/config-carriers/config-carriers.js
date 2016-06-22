@@ -41,7 +41,6 @@
      */
     populateCarriers: function() {
         var carriersData;
-        var address;
 
         if (this.model.get('configMode') === 'user') {
             carriersData = this.model.get('personal') ? this.model.get('personal')['carriers'] : null;
@@ -51,7 +50,7 @@
 
         this.carriers = [];
         _.each(carriersData, function(value, key) {
-            address = (!value.options || value.options.deliveryDisplayStyle === 'none') ? null :
+            var address = (!value.options || value.options.deliveryDisplayStyle === 'none') ? null :
             {
                 name: key + '-address',
                 type: value.options.deliveryDisplayStyle ? 'address-' + value.options.deliveryDisplayStyle  : 'address',

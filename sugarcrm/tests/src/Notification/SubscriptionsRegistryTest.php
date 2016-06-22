@@ -360,6 +360,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $expectedQuery = new \SugarQuery();
         $expectedQuery->from($notificationBean);
         $expectedQuery->where()->isNull('user_id');
+        $expectedQuery->where()->isNotEmpty('event_name');
 
         $expectedFields = array(
             'type',
@@ -511,6 +512,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $expectedQuery = new \SugarQuery();
         $expectedQuery->from($notificationBean);
         $expectedQuery->where()->equals('user_id', $idUser);
+        $expectedQuery->where()->isNotEmpty('event_name');
 
         $expectedFields = array(
             'type',
@@ -540,6 +542,129 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
             NotificationCenterSubscriptionCRYS1301::$fetchParams
         );
         $this->assertInstanceOf('UserCRYS1301', BeanEventCRYS1301::$currentBean);
+    }
+
+    /**
+     * Data provider for testGetUserDefaultCarriersOptions.
+     *
+     * @see Sugarcrm\SugarcrmTests\Notification\SubscriptionsRegistryTest::testGetUserDefaultCarriersOptions
+     * @return array
+     */
+    public static function getUserDefaultCarriersOptionsProvider()
+    {
+        $carrierName1 = 'Carrier' . rand(1000, 1999);
+        $carrierName2 = 'Carrier' . rand(2000, 3999);
+
+        $carrierOption1 = rand(1000, 1999);
+        $carrierOption2 = rand(2000, 2999);
+
+        return array(
+            'noSelectedOptions' => array(
+                'idUser' => Uuid::uuid1(),
+                'beans' => array(
+                ),
+                'expectedConfiguration' => new \stdClass(),
+            ),
+            'oneSelectedOptions' => array(
+                'idUser' => Uuid::uuid1(),
+                'beans' => array(
+                    'FirstSelectedCarriersOptionsBean' => array(
+                        'id' => Uuid::uuid1(),
+                        'type' => 'module',
+                        'emitter_module_name' => '',
+                        'filter_name' => '',
+                        'event_name' => '',
+                        'carrier_name' => $carrierName2,
+                        'carrier_option' => $carrierOption2,
+                    ),
+                ),
+                'expectedConfiguration' => array(
+                    $carrierName2 => array(
+                        $carrierOption2,
+                    ),
+                ),
+            ),
+            'twoSelectedOptions' => array(
+                'idUser' => Uuid::uuid1(),
+                'beans' => array(
+                    'FirstSelectedCarriersOptionsBean' => array(
+                        'id' => Uuid::uuid1(),
+                        'type' => 'module',
+                        'emitter_module_name' => '',
+                        'filter_name' => '',
+                        'event_name' => '',
+                        'carrier_name' => $carrierName1,
+                        'carrier_option' => $carrierOption1,
+                    ),
+                    'SecondSelectedCarriersOptionsBean' => array(
+                        'id' => Uuid::uuid1(),
+                        'type' => 'module',
+                        'emitter_module_name' => '',
+                        'filter_name' => '',
+                        'event_name' => '',
+                        'carrier_name' => $carrierName1,
+                        'carrier_option' => $carrierOption2,
+                    ),
+                ),
+                'expectedConfiguration' => array(
+                    $carrierName1 => array(
+                        $carrierOption1,
+                        $carrierOption2,
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Should return user selectedCarriersOptions.
+     *
+     * @dataProvider getUserDefaultCarriersOptionsProvider
+     * @covers Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry::getUserDefaultCarriersOptions
+     * @param array $idUser
+     * @param array $beans
+     * @param array $expectedConfiguration
+     */
+    public function testGetUserDefaultCarriersOptions($idUser, $beans, $expectedConfiguration)
+    {
+        /** @var NotificationCenterSubscriptionCRYS1301 $notificationBean */
+        $notificationBean = \BeanFactory::newBean('NotificationCenterSubscriptions');
+        $notificationBean->new_with_id = true;
+        $notificationBean->id = 'query_id';
+
+        $expectedQuery = new \SugarQuery();
+        $expectedQuery->from($notificationBean);
+        $expectedQuery->where()->equals('user_id', $idUser);
+        $expectedQuery->where()->isEmpty('event_name');
+
+        $expectedFields = array(
+            'type',
+            'emitter_module_name',
+            'event_name',
+            'filter_name',
+            'carrier_name',
+            'carrier_option',
+        );
+
+        foreach ($beans as $beanData) {
+            $bean = new \NotificationCenterSubscription();
+            $bean->id = $beanData['id'];
+            $bean->type = $beanData['type'];
+            $bean->emitter_module_name = $beanData['emitter_module_name'];
+            $bean->event_name = 'reminder';
+            $bean->filter_name = $beanData['filter_name'];
+            $bean->event_name = $beanData['event_name'];
+            $bean->carrier_name = $beanData['carrier_name'];
+            $bean->carrier_option = $beanData['carrier_option'];
+            NotificationCenterSubscriptionCRYS1301::$beans[] = $bean;
+        }
+        $config = $this->subscriptionsRegistry->getUserDefaultCarriersOptions($idUser);
+        $this->assertEquals(json_encode($expectedConfiguration), json_encode($config));
+
+        $this->assertEquals(
+            array($expectedQuery, $expectedFields),
+            NotificationCenterSubscriptionCRYS1301::$fetchParams
+        );
     }
 
     /**
@@ -1272,6 +1397,139 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->subscriptionsRegistry->method('getSingleDeliveryCarriers')->willReturn($singleDeliveryCarriers);
 
         $this->subscriptionsRegistry->setUserConfiguration($idUser, $config);
+
+        foreach ($expectedSaved as $name => $expectedData) {
+            $this->assertArrayHasKey($name, NotificationCenterSubscriptionCRYS1301::$savedArrayFields);
+            $this->assertArraySubset($expectedData, NotificationCenterSubscriptionCRYS1301::$savedArrayFields[$name]);
+        }
+        $this->assertEquals($expectedDeletedId, NotificationCenterSubscriptionCRYS1301::$markDeleted);
+    }
+
+    /**
+     * Data provider for testSetUserDefaultCarriersOptions.
+     *
+     * @see Sugarcrm\SugarcrmTests\Notification\SubscriptionsRegistryTest::testSetUserDefaultCarriersOptions
+     * @return array
+     */
+    public static function setUserDefaultCarriersOptionsProvider()
+    {
+        $carrierName1 = 'Carrier' . rand(1000, 1999);
+        $carrierName2 = 'Carrier' . rand(2000, 2999);
+        $carrierName3 = 'Carrier' . rand(3000, 3999);
+
+        $carrierOption1 = rand(1000, 1999);
+        $carrierOption2 = rand(2000, 2999);
+        $carrierOption3 = rand(3000, 3999);
+
+        $beans = array(
+            array(
+                'id' => Uuid::uuid1(),
+                'type' => 'module',
+                'emitter_module_name' => '',
+                'filter_name' => '',
+                'event_name' => '',
+                'carrier_name' => $carrierName1,
+                'carrier_option' => $carrierOption1,
+                'is_suitable' => true,
+            ),
+            array(
+                'id' => Uuid::uuid1(),
+                'type' => 'module',
+                'emitter_module_name' => '',
+                'filter_name' => '',
+                'event_name' => '',
+                'carrier_name' => $carrierName1,
+                'carrier_option' => $carrierOption2,
+                'is_suitable' => true,
+            ),
+            array(
+                'id' => Uuid::uuid1(),
+                'type' => 'module',
+                'emitter_module_name' => '',
+                'filter_name' => '',
+                'event_name' => '',
+                'carrier_name' => $carrierName3,
+                'carrier_option' => $carrierOption3,
+                'is_suitable' => true,
+            ),
+        );
+
+        $idUser = Uuid::uuid1();
+        return array(
+            'addNewSelectedCarrierOptions' => array(
+                'idUser' => $idUser,
+                'beans' => array(
+                    $beans[0],
+                    $beans[1],
+                ),
+                'config' => array(
+                    $carrierName1 => array(
+                        $carrierOption1,
+                        $carrierOption2,
+                    ),
+                    $carrierName3 => array(
+                        $carrierOption3,
+                    ),
+                ),
+                'expectedSaved' => array(
+                    $carrierName3 => array(
+                        'carrier_name' => $carrierName3,
+                        'carrier_option' => $carrierOption3,
+                        'emitter_module_name' => '',
+                        'filter_name' => '',
+                        'event_name' => '',
+                        'type' => 'module',
+                        'user_id' => $idUser,
+                    ),
+                ),
+                'expectedDeletedId' => array(),
+            ),
+            'deleteSelectedCarriersOption' => array(
+                'idUser' => $idUser,
+                'beans' => array(
+                    $beans[0],
+                    $beans[2],
+                ),
+                'config' => array(
+                    $carrierName1 => array(
+                        $carrierOption1,
+                    ),
+                ),
+                'expectedSaved' => array(),
+                'expectedDeletedId' => array(
+                    array($beans[2]['id']),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * Should save user's selected carriers' options correctly.
+     *
+     * @dataProvider setUserDefaultCarriersOptionsProvider
+     * @covers Sugarcrm\Sugarcrm\Notification\SubscriptionsRegistry::setUserDefaultCarriersOptions
+     * @param string $idUser Id of a User that saves configuration.
+     * @param array $beans Existing (previously saved) carrier beans.
+     * @param array $config User's input configuration.
+     * @param array $expectedSaved Information about carrier beans that expected to be saved.
+     * @param array $expectedDeletedId Ids of carrier beans that are expected to be deleted.
+     */
+    public function testSetUserDefaultCarriersOptions($idUser, $beans, $config, $expectedSaved, $expectedDeletedId)
+    {
+        foreach ($beans as $beanData) {
+            $bean = new NotificationCenterSubscriptionCRYS1301();
+            $bean->id = $beanData['id'];
+            $bean->type = $beanData['type'];
+            $bean->emitter_module_name = $beanData['emitter_module_name'];
+            $bean->event_name = ['event_name'];
+            $bean->filter_name = $beanData['filter_name'];
+            $bean->carrier_name = $beanData['carrier_name'];
+            $bean->carrier_option = $beanData['carrier_option'];
+            $bean->isSuitable = $beanData['is_suitable'];
+            NotificationCenterSubscriptionCRYS1301::$beans[] = $bean;
+        }
+
+        $this->subscriptionsRegistry->setUserDefaultCarriersOptions($idUser, $config);
 
         foreach ($expectedSaved as $name => $expectedData) {
             $this->assertArrayHasKey($name, NotificationCenterSubscriptionCRYS1301::$savedArrayFields);

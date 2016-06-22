@@ -64,7 +64,7 @@ describe('NotificationCenter.Field.AddressSelect', function() {
             function(selectedAddresses, value) {
                 it('should call format() with correct value', function() {
                     var format = sandbox.stub(field, 'format');
-                    model.set('selectedAddresses', selectedAddresses);
+                    model.get('personal').selectedCarriersOptions = selectedAddresses;
                     field.getFormattedValue();
                     expect(format).toHaveBeenCalledWith(value);
                 });
@@ -101,7 +101,7 @@ describe('NotificationCenter.Field.AddressSelect', function() {
 
     describe('_updateModelAndTriggerChange()', function() {
         beforeEach(function() {
-            field.model.set('selectedAddresses', {'foo': []});
+            field.model.get('personal').selectedCarriersOptions = {'foo': []};
         });
 
         it('should call render()', function() {
@@ -110,16 +110,16 @@ describe('NotificationCenter.Field.AddressSelect', function() {
             expect(render).toHaveBeenCalled();
         });
 
-        using('set value, expected selectedAddresses list',
+        using('set value, expected selectedCarriersOptions list',
             [
                 [[], {foo: []}],
                 [['email1'], {foo: ['email1']}],
                 [['email1', 'email2'], {foo: ['email1', 'email2']}]
             ],
-            function(value, selectedAddresses) {
-                it('should populate model\'s selectedAddresses', function() {
+            function(value, selectedCarriersOptions) {
+                it('should populate model\'s selectedCarriersOptions', function() {
                     field._updateModelAndTriggerChange(value);
-                    expect(field.model.get('selectedAddresses')).toEqual(selectedAddresses);
+                    expect(field.model.get('personal').selectedCarriersOptions).toEqual(selectedCarriersOptions);
                 });
             });
     });

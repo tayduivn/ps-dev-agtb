@@ -68,7 +68,7 @@ describe('NotificationCenter.Layout.ConfigDrawer', function() {
         });
 
         using('methods',
-            ['replaceDefaultToActualValues', 'setSelectedAddresses'],
+            ['replaceDefaultToActualValues'],
             function(method) {
                 it('should call model\'s method on a successful get of the config-model from server', function() {
                     var spiedMethod = sandbox.spy(layout.model, method);

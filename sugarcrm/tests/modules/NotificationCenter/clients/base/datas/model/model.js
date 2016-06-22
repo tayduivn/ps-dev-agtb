@@ -30,7 +30,7 @@ describe('Data.Base.NotificationCenter', function() {
 
     using('methods list',
         ['_copyFiltersFromDefault', '_copyCarriersStatusFromDefault', 'replaceDefaultToActualValues',
-            'setSelectedAddresses', 'updateCarriersAddresses'],
+            'updateCarriersAddresses'],
         function(method) {
             it('should stop method execution if personal settings are not found', function() {
                 model.set('configMode', 'default');
@@ -292,7 +292,7 @@ describe('Data.Base.NotificationCenter', function() {
         });
 
         it('should reset selected addresses in case of reset-all', function() {
-            mock.expects('setSelectedAddresses').once();
+            mock.expects('_resetSelectedCarriersOptions').once();
             model.resetToDefault('all');
             mock.verify();
         });
@@ -300,7 +300,7 @@ describe('Data.Base.NotificationCenter', function() {
         it('should only copy data only of a given emitter in case of reset-emitter', function() {
             mock.expects('_copyFiltersFromDefault').once().withExactArgs('emitter1');
             mock.expects('_copyCarriersStatusFromDefault').never();
-            mock.expects('setSelectedAddresses').never();
+            mock.expects('_resetSelectedCarriersOptions').never();
             model.resetToDefault('emitter1');
             mock.verify();
         });
@@ -310,173 +310,6 @@ describe('Data.Base.NotificationCenter', function() {
             model.resetToDefault('foo');
             mock.verify();
         });
-    });
-
-    describe('setSelectedAddresses', function() {
-        using('emitter data & selected addresses',
-            [
-                {
-                    'case': 'Empty emitter & and selectable carrier',
-                    emitters: {emitter1: {}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Empty emitter & and not selectable carrier',
-                    emitters: {emitter1: {}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'none'}
-                        }
-                    },
-                    result: {}
-                },
-                {
-                    'case': 'Emitter with empty event',
-                    emitters: {emitter1: {event1: {}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Emitter with "default" string filter',
-                    emitters: {emitter1: {event1: {filter1: 'default'}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Emitter with filter that has empty marker',
-                    emitters: {emitter1: {event1: {filter1: [['foo', '']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Emitter with filter that has empty and address marker',
-                    emitters: {emitter1: {event1: {filter1: [['foo', ''], ['foo', '0']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Emitter with filter that has empty and 2 address markers',
-                    emitters: {emitter1: {event1: {filter1: [['foo', ''], ['foo', '0'], ['foo', '1']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        }
-                    },
-                    result: {foo: ['0', '1']}
-                },
-                {
-                    'case': 'Emitter with filter that has only address marker',
-                    emitters:  {emitter1: {event1: {filter1: [['foo', '1']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        }
-                    },
-                    result: {foo: ['1']}
-                },
-                {
-                    'case': 'Emitter with filter that has only 2 address markers',
-                    emitters: {emitter1: {event1: {filter1: [['foo', '1']], filter2: [['foo', '1']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        }
-                    },
-                    result: {foo: ['1']}
-                },
-                {
-                    'case': 'Emitter with filter that has 2 empty markers',
-                    emitters: {emitter1: {event1: {filter1: [['foo', ''], ['bar', '']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        },
-                        bar: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0'], bar: ['0']}
-                },
-                {
-                    'case': 'Emitter with 2 events with filters that have only empty markers',
-                    emitters: {emitter1: {event1: {filter1: [['foo', '']]}, event2: {filter1: [['foo', '']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0}
-                        }
-                    },
-                    result: {foo: ['0']}
-                },
-                {
-                    'case': 'Emitter with 2 events with filters that have only address markers',
-                    emitters: {emitter1: {event1: {filter1: [['foo', '0']]}, event2: {filter1: [['foo', '1']]}}},
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        }
-                    },
-                    result: {foo: ['0', '1']}
-                },
-                {
-                    'case': 'Two emitters with 2 events with filters that have same address markers and empty ones',
-                    emitters: {
-                        emitter1: {event1: {filter1: []}, event2: {filter1: [['foo', '1']]}},
-                        emitter2: {event1: {filter1: [['bar', '0']]}, event2: {filter1: [['foo', '1']]}}
-                    },
-                    carriers: {
-                        foo: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        },
-                        bar: {
-                            options: {deliveryDisplayStyle: 'select'},
-                            addressTypeOptions: {0: 0, 1: 1}
-                        }
-                    },
-                    result: {foo: ['1'], bar: ['0']}
-                }
-            ],
-            function(data) {
-                it('should set proper selectedAddresses attribute in model in case of ' + data.case, function() {
-                    model.set('personal', {carriers: data.carriers, config: data.emitters});
-                    model.setSelectedAddresses();
-                    expect(model.get('selectedAddresses')).toEqual(data.result);
-                });
-            }
-        );
     });
 
     describe('updateCarriersAddresses', function() {
@@ -527,8 +360,7 @@ describe('Data.Base.NotificationCenter', function() {
             ],
             function(data) {
                 it('should put carrier-array into filters for every selected address in case of ' + data.case, function() {
-                    model.set('selectedAddresses', data.addresses);
-                    model.set('personal', {config: data.config});
+                    model.set('personal', {config: data.config, selectedCarriersOptions: data.addresses});
                     model.updateCarriersAddresses();
                     expect(model.get('personal')['config']).toEqual(data.result);
                 });

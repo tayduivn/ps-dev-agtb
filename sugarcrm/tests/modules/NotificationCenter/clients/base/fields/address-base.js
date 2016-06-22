@@ -108,7 +108,7 @@ describe('NotificationCenter.Field.AddressBase', function() {
             function(selectedAddresses, value) {
                 it('should call format() with correct value', function() {
                     var format = sandbox.stub(field, 'format');
-                    model.set('selectedAddresses', {'foo': selectedAddresses});
+                    model.get('personal').selectedCarriersOptions = {'foo': selectedAddresses};
                     field.getFormattedValue();
                     expect(format).toHaveBeenCalledWith(value);
                 });
@@ -117,23 +117,23 @@ describe('NotificationCenter.Field.AddressBase', function() {
 
     describe('setSelectedAddresses()', function() {
         beforeEach(function() {
-            field.model.set('selectedAddresses', {foo: ['0']});
+            field.model.get('personal').selectedCarriersOptions = {foo: ['0']};
         });
 
-        it('should set selectedAddresses to model in case one address is given', function() {
+        it('should set selectedCarriersOptions to model in case one address is given', function() {
             field.setSelectedAddresses('1');
-            expect(model.get('selectedAddresses')).toEqual({foo: ['1']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['1']});
         });
 
-        it('should set selectedAddresses to model in case list of address is given', function() {
+        it('should set selectedCarriersOptions to model in case list of address is given', function() {
             field.setSelectedAddresses(['0', '1', '2']);
-            expect(model.get('selectedAddresses')).toEqual({foo: ['0', '1', '2']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['0', '1', '2']});
         });
 
         it('should not affect selected addresses of other carriers' , function() {
-            field.model.set('selectedAddresses', {foo: ['0'], bar: ['0', '1']});
+            field.model.get('personal').selectedCarriersOptions = {foo: ['0'], bar: ['0', '1']};
             field.setSelectedAddresses(['0']);
-            expect(model.get('selectedAddresses')).toEqual({foo: ['0'], bar: ['0', '1']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['0'], bar: ['0', '1']});
         });
     });
 });
