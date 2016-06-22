@@ -80,27 +80,12 @@
      * @constructor
      */
     var Socket = function(app, lazyTrigger) {
-        /**
-         * Flag indicating an `app.sync` is in progress.
-         *
-         * @type {boolean}
-         * @private
-         */
-        this._isSyncing = false;
         this._super = Backbone.Events;
         this._socket = null;
         this._channels = {};
         this._app = app;
-        this._socketBinds = {
-            onConnect: null,
-            onConnectAuth: null,
-            onDisconnect: null,
-            onMessage: null,
-            onClose: null
-        };
         var trigger = _.bind(function() {
             this._app.events.on('app:init', this._initConfig, this);
-            this._app.events.on('app:notifications:socket:config:changed', this._appSync, this);
         }, this);
         if (lazyTrigger) {
             lazyTrigger(trigger);
@@ -126,11 +111,11 @@
 
             if (this._app.config.websockets.client.balancer) {
                 this._Factory$().get(this._app.config.websockets.client.url).done(_.bind(function(data) {
-                    if (!_.isUndefined(data) && !_.isUndefined(data.location) && !_.isEmpty(data.location)) {
+                    if (!_.isUndefined(data) && !_.isUndefined(data.location)) {
                         this._initClientLibrary(data.location);
                     }
                 }, this));
-            } else if (!_.isEmpty(this._app.config.websockets.client.url)) {
+            } else {
                 this._initClientLibrary(this._app.config.websockets.client.url);
             }
         },
@@ -171,46 +156,12 @@
         _bind: function() {
             this._app.events.on('app:login:success', this.authorize, this);
             this._app.events.on('app:logout', this.authorize, this);
-            this._socketBinds.onConnectAuth = _.bind(this.authorize, this);
-            this._socketBinds.onConnect = _.bind(this._app.events.trigger, this._app.events, 'app:socket:connect');
-            this._socketBinds.onDisconnect =
-                _.bind(this._app.events.trigger, this._app.events, 'app:socket:disconnect');
-            this._socketBinds.onMessage = _.bind(this._message, this);
-            this._socketBinds.onClose = _.bind(this._appSync, this);
+            this.socket().on('connect', _.bind(this.authorize, this));
 
-            this.socket().on('connect', this._socketBinds.onConnectAuth);
+            this.socket().on('connect', _.bind(this._app.events.trigger, this._app.events, 'app:socket:connect'));
+            this.socket().on('disconnect', _.bind(this._app.events.trigger, this._app.events, 'app:socket:disconnect'));
 
-            this.socket().on('connect', this._socketBinds.onConnect);
-            this.socket().on('disconnect', this._socketBinds.onDisconnect);
-
-            this.socket().on('message', this._socketBinds.onMessage);
-
-            this.on('close', this._socketBinds.onClose);
-        },
-
-        /**
-         * Unsubscribes from events.
-         *
-         * @private
-         */
-        _unbind: function() {
-            this._app.events.off('app:login:success', this.authorize, this);
-            this._app.events.off('app:logout', this.authorize, this);
-            this.socket().off('connect', this._socketBinds.onConnectAuth);
-
-            this.socket().off('connect', this._socketBinds.onConnect);
-            this.socket().off('disconnect', this._socketBinds.onDisconnect);
-
-            this.socket().off('message', this._socketBinds.onMessage);
-            this.off('close', this._socketBinds.onClose);
-
-            this._socketBinds = {
-                onConnect: null,
-                onConnectAuth: null,
-                onDisconnect: null,
-                onMessage: null,
-                onClose: null
-            };
+            this.socket().on('message', _.bind(this._message, this));
         },
 
         /**
@@ -236,39 +187,6 @@
             if (context) {
                 context.trigger(data.message, data.args);
             }
-        },
-
-        /**
-         * Calls app synchronization.
-         *
-         * @private
-         */
-        _appSync: function() {
-            if (this._isSyncing) {
-                return;
-            }
-            this._isSyncing = true;
-            this._app.sync({
-                callback: this._onAppSync.bind(this, this._app.config.websockets),
-                params: {__: Math.random()}
-            });
-        },
-
-        /**
-         * Handles changing of socket server's config and reinit socket server connection.
-         *
-         * @param {Object} oldWebSocketsConfig
-         * @private
-         */
-        _onAppSync: function(oldWebSocketsConfig) {
-            if (!_.isEqual(this._app.config.websockets, oldWebSocketsConfig)) {
-                if (this.socket()) {
-                    this._unbind();
-                    this.socket().close();
-                }
-                this._initConfig();
-            }
-            this._isSyncing = false;
         },
 
         /**

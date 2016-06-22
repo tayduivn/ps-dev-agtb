@@ -42,13 +42,12 @@ describe('Sugar Socket Server Client', function() {
         describe('Socket', function() {
             beforeEach(function() {
                 scope.stub(app.socket, '_initConfig');
-                scope.stub(app.socket, '_appSync');
                 initSocketConstructor();
             });
 
             it('binds _initConfig on app:init event', function() {
-                sinon.assert.called(app.events.on);
-                sinon.assert.called(app.events.on, app.events);
+                sinon.assert.calledOnce(app.events.on);
+                sinon.assert.calledOnce(app.events.on, app.events);
                 sinon.assert.calledWith(app.events.on, 'app:init');
 
                 var callback = app.events.on.getCall(0).args[1];
@@ -58,19 +57,6 @@ describe('Sugar Socket Server Client', function() {
                 callback();
 
                 sinon.assert.calledOnce(app.socket._initConfig);
-            });
-            it('binds _appSync on app:notifications:socket:config:changed event', function() {
-                sinon.assert.called(app.events.on);
-                sinon.assert.called(app.events.on, app.events);
-                sinon.assert.calledWith(app.events.on, 'app:notifications:socket:config:changed');
-
-                var callback = app.events.on.getCall(1).args[1];
-                var bind = app.events.on.getCall(1).args[2];
-
-                expect(bind).toBe(app.socket);
-                callback();
-
-                sinon.assert.calledOnce(app.socket._appSync);
             });
         });
         describe('_initConfig', function() {
@@ -98,15 +84,6 @@ describe('Sugar Socket Server Client', function() {
             it('does not execute _initClientLibrary if config.websockets.client.url is not defined', function() {
                 app.config.websockets = {
                     client: {}
-                };
-                app.socket._initConfig();
-                sinon.assert.notCalled(app.socket._initClientLibrary);
-            });
-            it('does not execute _initClientLibrary if config.websockets.client.url is empty', function() {
-                app.config.websockets = {
-                    client: {
-                        url: ''
-                    }
                 };
                 app.socket._initConfig();
                 sinon.assert.notCalled(app.socket._initClientLibrary);
@@ -144,57 +121,38 @@ describe('Sugar Socket Server Client', function() {
                 sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
                 sinon.assert.notCalled(app.socket._initClientLibrary);
             });
-            it('does not call _initClientLibrary in done callback of request when result does not have location',
-                function() {
-                    app.config.websockets = {
-                        client: {
-                            url: 'http://domain' + Math.round(Math.random() * 100) + '.com',
-                            balancer: true
-                        }
-                    };
-                    app.socket._initConfig();
-                    sinon.assert.calledOnce($Stub.get);
-                    sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
-                    sinon.assert.notCalled(app.socket._initClientLibrary);
-                    sinon.assert.calledOnce($Stub.done);
-                    $Stub.done.getCall(0).args[0]();
-                    sinon.assert.notCalled(app.socket._initClientLibrary);
-                });
-            it('does not call _initClientLibrary in done callback of request when result have empty location',
-                function() {
-                    app.config.websockets = {
-                        client: {
-                            url: 'http://domain' + Math.round(Math.random() * 100) + '.com',
-                            balancer: true
-                        }
-                    };
-                    var location = '';
-                    app.socket._initConfig();
-                    sinon.assert.calledOnce($Stub.get);
-                    sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
-                    sinon.assert.notCalled(app.socket._initClientLibrary);
-                    sinon.assert.calledOnce($Stub.done);
-                    $Stub.done.getCall(0).args[0]({location: location});
-                    sinon.assert.notCalled(app.socket._initClientLibrary);
-                });
-            it('calls _initClientLibrary with response url in done callback of request when result has location',
-                function() {
-                    app.config.websockets = {
-                        client: {
-                            url: 'http://domain' + Math.round(Math.random() * 100) + '.com',
-                            balancer: true
-                        }
-                    };
-                    var location = 'http://domain' + Math.round(Math.random() * 100) + '.com';
-                    app.socket._initConfig();
-                    sinon.assert.calledOnce($Stub.get);
-                    sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
-                    sinon.assert.notCalled(app.socket._initClientLibrary);
-                    sinon.assert.calledOnce($Stub.done);
-                    $Stub.done.getCall(0).args[0]({location: location});
-                    sinon.assert.calledOnce(app.socket._initClientLibrary);
-                    sinon.assert.calledWith(app.socket._initClientLibrary, location);
-                });
+            it('does not call _initClientLibrary in done callback of request when result does not have location', function() {
+                app.config.websockets = {
+                    client: {
+                        url: 'http://domain' + Math.round(Math.random() * 100) + '.com',
+                        balancer: true
+                    }
+                };
+                app.socket._initConfig();
+                sinon.assert.calledOnce($Stub.get);
+                sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
+                sinon.assert.notCalled(app.socket._initClientLibrary);
+                sinon.assert.calledOnce($Stub.done);
+                $Stub.done.getCall(0).args[0]();
+                sinon.assert.notCalled(app.socket._initClientLibrary);
+            });
+            it('calls _initClientLibrary with response url in done callback of request when result has location', function() {
+                app.config.websockets = {
+                    client: {
+                        url: 'http://domain' + Math.round(Math.random() * 100) + '.com',
+                        balancer: true
+                    }
+                };
+                var location = 'http://domain' + Math.round(Math.random() * 100) + '.com';
+                app.socket._initConfig();
+                sinon.assert.calledOnce($Stub.get);
+                sinon.assert.calledWith($Stub.get, app.config.websockets.client.url);
+                sinon.assert.notCalled(app.socket._initClientLibrary);
+                sinon.assert.calledOnce($Stub.done);
+                $Stub.done.getCall(0).args[0]({location: location});
+                sinon.assert.calledOnce(app.socket._initClientLibrary);
+                sinon.assert.calledWith(app.socket._initClientLibrary, location);
+            });
         });
         describe('_initClientLibrary', function() {
             var $Stub, url;
@@ -266,18 +224,8 @@ describe('Sugar Socket Server Client', function() {
                 };
                 url = 'http://domain' + Math.round(Math.random() * 100) + '.com';
 
-                app.socket._socketBinds = {
-                    onConnect: null,
-                    onConnectAuth: null,
-                    onDisconnect: null,
-                    onMessage: null,
-                    onClose: null
-                };
-
-                scope.stub(app.socket, 'on');
                 scope.stub(app.socket, 'authorize');
                 scope.stub(app.socket, '_message');
-                scope.stub(app.socket, '_appSync');
                 scope.stub(app.socket, 'socket').returns(IOStub);
             });
 
@@ -323,22 +271,6 @@ describe('Sugar Socket Server Client', function() {
                     sinon.assert.calledOn(app.socket._message, app.socket);
                 }
             });
-            it('subscribes to close event with _appSync method', function() {
-                app.socket._bind();
-                sinon.assert.called(app.socket.on);
-                sinon.assert.calledWith(app.socket.on, 'close');
-                for (var i = 0; i < app.socket.on.callCount; i ++) {
-                    var info = app.socket.on.getCall(i);
-                    if (info.args[0] != 'close') {
-                        continue;
-                    }
-                    expect(info.args[1]).toBeDefined();
-                    sinon.assert.notCalled(app.socket._appSync);
-                    info.args[1]();
-                    sinon.assert.called(app.socket._appSync);
-                    sinon.assert.calledOn(app.socket._appSync, app.socket);
-                }
-            });
             ['connect', 'disconnect'].forEach(function (event) {
                 it('is bound event ' + event, function () {
                     app.socket._bind();
@@ -358,105 +290,6 @@ describe('Sugar Socket Server Client', function() {
                     sinon.assert.calledOn(app.events.trigger, app.events);
                     sinon.assert.calledWith(app.events.trigger, 'app:socket:' + event);
                 })
-            });
-        });
-        describe('_unbind', function() {
-            var IOStub;
-            var socketBinds;
-
-            beforeEach(function() {
-                IOStub = {
-                    off: scope.stub().returnsThis()
-                };
-
-                scope.stub(app.socket, 'off');
-                scope.stub(app.socket, 'authorize');
-                scope.stub(app.socket, 'socket').returns(IOStub);
-
-                socketBinds = {
-                    onConnect: Math.random(),
-                    onConnectAuth: Math.random(),
-                    onDisconnect: Math.random(),
-                    onMessage: Math.random(),
-                    onClose: Math.random()
-                };
-
-                app.socket._socketBinds = {
-                    onConnect: socketBinds.onConnect,
-                    onConnectAuth: socketBinds.onConnectAuth,
-                    onDisconnect: socketBinds.onDisconnect,
-                    onMessage: socketBinds.onMessage,
-                    onClose: socketBinds.onClose
-                };
-            });
-
-            it('unsubscribes from app:login:success event of app with authorize method', function() {
-                app.socket._unbind();
-                sinon.assert.called(app.events.off);
-                sinon.assert.calledWith(app.events.off, 'app:login:success', app.socket.authorize, app.socket);
-            });
-            it('unsubscribes from app:logout event of app with authorize method', function() {
-                app.socket._unbind();
-                sinon.assert.called(app.events.off);
-                sinon.assert.calledWith(app.events.off, 'app:logout', app.socket.authorize, app.socket);
-            });
-            it('unsubscribes from connect event of socket with authorize and app.events.trigger methods',
-                function() {
-                    app.socket._unbind();
-                    sinon.assert.called(IOStub.off);
-                    for (var i = 0; i < IOStub.off.callCount; i ++) {
-                        var info = IOStub.off.getCall(i);
-                        if (info.args[0] != 'connect') {
-                            continue;
-                        }
-                        expect(info.args[1]).toBeDefined();
-                        var index = [
-                            socketBinds.onConnect,
-                            socketBinds.onConnectAuth
-                        ].indexOf(info.args[1]);
-                        expect(index).toBeGreaterThan(-1);
-                    }
-                    expect(app.socket._socketBinds.onConnect).toBeNull();
-                    expect(app.socket._socketBinds.onConnectAuth).toBeNull();
-                });
-            it('unsubscribes from message event of socket with _message method', function() {
-                app.socket._unbind();
-                sinon.assert.called(IOStub.off);
-                for (var i = 0; i < IOStub.off.callCount; i ++) {
-                    var info = IOStub.off.getCall(i);
-                    if (info.args[0] != 'message') {
-                        continue;
-                    }
-                    expect(info.args[1]).toBeDefined();
-                    expect(info.args[1]).toEqual(socketBinds.onMessage);
-                }
-                expect(app.socket._socketBinds.onMessage).toBeNull();
-            });
-            it('unsubscribes from close event with _appSync method', function() {
-                app.socket._unbind();
-                sinon.assert.called(app.socket.off);
-                for (var i = 0; i < app.socket.off.callCount; i ++) {
-                    var info = app.socket.off.getCall(i);
-                    if (info.args[0] != 'close') {
-                        continue;
-                    }
-                    expect(info.args[1]).toBeDefined();
-                    expect(info.args[1]).toEqual(socketBinds.onClose);
-                }
-                expect(app.socket._socketBinds.onClose).toBeNull();
-            });
-            it('unsubscribes from disconnect event with app.events.trigger method', function() {
-                app.socket._unbind();
-                sinon.assert.called(IOStub.off);
-                for (var i = 0; i < IOStub.off.callCount; i ++) {
-                    var info = IOStub.off.getCall(i);
-                    if (info.args[0] != 'disconnect') {
-                        continue;
-                    }
-                    expect(info.args[1]).toBeDefined();
-                    expect(info.args[1]).toEqual(socketBinds.onDisconnect);
-                }
-                expect(app.socket._socketBinds.onDisconnect).toBeNull();
             });
         });
         describe('_message', function() {
@@ -514,92 +347,6 @@ describe('Sugar Socket Server Client', function() {
                 sinon.assert.calledOn(channel1Stub.trigger, channel1Stub);
                 sinon.assert.calledWith(channel1Stub.trigger, message.message, message.args);
                 sinon.assert.notCalled(channel2Stub.trigger);
-            });
-        });
-        describe('_appSync', function() {
-            var webSocketsConfig;
-
-            beforeEach(function() {
-                app.sync = scope.stub();
-                webSocketsConfig = Math.random();
-                app.config.websockets = webSocketsConfig;
-
-                scope.stub(app.socket, '_onAppSync');
-            });
-            afterEach(function() {
-                delete app.sync;
-            });
-
-            it('calls app.sync with _onAppSync binding as callback', function() {
-                app.socket._appSync();
-                sinon.assert.calledOnce(app.sync);
-
-                var callback = app.sync.getCall(0);
-                expect(callback.args[0]).toBeDefined();
-                expect(callback.args[0].callback).toBeDefined();
-                sinon.assert.notCalled(app.socket._onAppSync);
-                callback.args[0].callback();
-                sinon.assert.called(app.socket._onAppSync);
-                sinon.assert.calledOn(app.socket._onAppSync, app.socket);
-                sinon.assert.calledWith(app.socket._onAppSync, webSocketsConfig);
-            });
-            it('not call app.sync on syncing', function() {
-                app.socket._appSync();
-                app.socket._appSync();
-
-                sinon.assert.calledOnce(app.sync);
-            });
-        });
-        describe('_onAppSync', function() {
-            var IOStub;
-            var webSocketsConfig;
-
-            beforeEach(function() {
-                webSocketsConfig = {
-                    url: Math.random()
-                };
-                app.config.websockets = webSocketsConfig;
-                IOStub = {
-                    close: scope.stub()
-                };
-
-                scope.stub(app.socket, '_unbind');
-                scope.stub(app.socket, '_initConfig');
-                scope.stub(app.socket, 'socket').returns(IOStub);
-            });
-
-            it('does nothing if old websockets config equals new one', function() {
-                var oldWebSocketsConfig = {
-                    url: webSocketsConfig.url
-                };
-                app.socket._onAppSync(oldWebSocketsConfig);
-                sinon.assert.notCalled(app.socket._unbind);
-                sinon.assert.notCalled(app.socket._initConfig);
-                sinon.assert.notCalled(IOStub.close);
-            });
-            it('calls _unbind if socket io is created', function() {
-                var oldWebSocketsConfig = {
-                    url: Math.random()
-                };
-                app.socket._onAppSync(oldWebSocketsConfig);
-                sinon.assert.calledOnce(app.socket._unbind);
-                sinon.assert.calledOn(app.socket._unbind, app.socket);
-            });
-            it('closes socket if socket io is created', function() {
-                var oldWebSocketsConfig = {
-                    url: Math.random()
-                };
-                app.socket._onAppSync(oldWebSocketsConfig);
-                sinon.assert.calledOnce(IOStub.close);
-                sinon.assert.calledOn(IOStub.close, IOStub);
-            });
-            it('calls _initConfig', function() {
-                var oldWebSocketsConfig = {
-                    url: Math.random()
-                };
-                app.socket._onAppSync(oldWebSocketsConfig);
-                sinon.assert.calledOnce(app.socket._initConfig);
-                sinon.assert.calledOn(app.socket._initConfig, app.socket);
             });
         });
         describe('authorize', function() {

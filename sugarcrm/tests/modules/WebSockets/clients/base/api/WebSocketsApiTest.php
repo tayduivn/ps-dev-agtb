@@ -258,7 +258,6 @@ class WebSocketsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 $config = $configurator->config;
             }
         );
-        $this->client->method('recipient')->willReturnSelf();
 
         $this->webSocketsApi->configSave($this->api, $args);
         $this->assertEquals($expected, $config['websockets']);
@@ -380,36 +379,6 @@ class WebSocketsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'websockets_server_protocol' => 'http',
             'websockets_server_port' => 2999,
         );
-
-        $this->webSocketsApi->configSave($this->api, $args);
-    }
-
-    /**
-     * Sends "close" message with Socket Client to all recipients if server and client host is not isset.
-     *
-     * @covers WebSocketsApi::configSave
-     */
-    public function testConfigSaveSendsCloseIfServerAndClientHostsNotIsset()
-    {
-        $args = array(
-            'websockets_client_port' => 3001,
-            'websockets_client_host' => '',
-            'websockets_client_protocol' => 'http',
-            'websockets_server_host' => '',
-            'websockets_server_protocol' => 'http',
-            'websockets_server_port' => 2999,
-        );
-
-        $this->client
-            ->expects($this->atLeast(1))
-            ->method('recipient')
-            ->with($this->equalTo(Client::RECIPIENT_ALL))
-            ->willReturnSelf();
-
-        $this->client
-            ->expects($this->atLeast(1))
-            ->method('send')
-            ->with($this->equalTo('close'));
 
         $this->webSocketsApi->configSave($this->api, $args);
     }
