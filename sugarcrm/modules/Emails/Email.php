@@ -1118,11 +1118,6 @@ class Email extends SugarBean {
 				$this->id = create_guid();
 				$this->new_with_id = true;
 			}
-
-            if (in_array($this->status, array('draft', 'send_error'))) {
-                $this->state = static::EMAIL_STATE_DRAFT;
-            }
-
 			$this->from_addr_name = $this->cleanEmails($this->from_addr_name);
 			$this->to_addrs_names = $this->cleanEmails($this->to_addrs_names);
 			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
