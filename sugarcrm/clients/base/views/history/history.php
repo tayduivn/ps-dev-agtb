@@ -158,7 +158,9 @@ $viewdefs['base']['view']['history'] = array(
         array(
             'filter_applied_to' => 'date_entered',
             'filters' => array(
-                'type' => array('$in' => array('out', 'inbound', 'archived')),
+                'state' => array(
+                    '$in' => array('Archived'),
+                ),
             ),
             'labels' => array(
                 'singular' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR',
