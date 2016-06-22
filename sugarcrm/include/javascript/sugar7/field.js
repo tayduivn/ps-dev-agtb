@@ -57,13 +57,12 @@
                 this.clearErrorDecoration();
                 _.defer(function (field) {
                     field._errors = errors;
-                    // Only call setMode to re-render if this is the current field we are editing
-                    // Solves issue when the model is on the page more than once, yet we are editing
-                    // in only 1 view. Example Recordlist and Preview together
-                    if (field.parent && field.parent.action === 'edit') {
-                        field.parent.render();
-                    } else if (field.action === 'edit') {
-                        field.render();
+                    if (field.action === 'edit' || field.view.inlineEditMode) {
+                        if (field.parent) {
+                            field.parent.setMode('edit');
+                        } else {
+                            field.setMode('edit');
+                        }
                     }
                     // As we're now "post form submission", if `no_required_placeholder`, we need to
                     // manually decorateRequired (as we only omit required on form's initial render)
