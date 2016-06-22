@@ -109,6 +109,8 @@
      * @protected
      */
     _bootstrap: function() {
+        this.stopPulling();
+
         this._initOptions();
         this._initCollection();
         this._initFavicon();
