@@ -94,7 +94,7 @@
      * @return {Object} DOM Element
      */
     getModuleFilter: function() {
-        return this.$('div.choice-filter');
+        return this.$('span.choice-filter-label');
     },
 
     /**
