@@ -33,17 +33,15 @@
      * @param {Object} options
      */
     initialize: function(options) {
+        var value;
         this.plugins = _.union(this.plugins || [], ['DragdropSelect2']);
 
         this._super('initialize', [options]);
 
-        if (this.model.isNew()) {
-            try {
-                fieldValue = this._getFieldValue();
-            } catch (e) {
-                // create a new virtual collection
-                this.model.set(this.name, []);
-            }
+        value = this.model.get(this.name);
+        if (this.model.isNew() && !(value instanceof app.BeanCollection)) {
+            // create a new collection
+            this.model.set(this.name, app.data.createMixedBeanCollection());
         }
 
         this.select2ResultTemplate = app.template.getField(
@@ -54,57 +52,38 @@
     },
 
     /**
-     * Returns the collection stored for this field.
-     *
-     * @throws An exception when the value is not a collection
-     * @return {VirtualCollection}
-     * @private
-     */
-    _getFieldValue: function() {
-        var value = this.model.get(this.name);
-
-        if (!(value instanceof app.BeanCollection)) {
-            throw 'the value must be a BeanCollection';
-        }
-
-        return value;
-    },
-
-    /**
      * @inheritdoc
      *
      * Sets up event handlers for syncing between the model and the recipients
      * field.
+     *
+     * Allow external forces to manipulate the contents of the collection, while
+     * maintaining the requirement for storing formatted recipients.
      *
      * See {@link #format} for the acceptable formats for recipients.
      */
     bindDataChange: function() {
         var value = this.model.get(this.name);
 
-        // Set up event handlers that allow external forces to manipulate the
-        // contents of the collection, while maintaining the requirement for
-        // storing formatted recipients.
-        if (value instanceof Backbone.Collection) {
-            // on "add" we want to force the collection to be reset to guarantee
-            // that all models in the collection have been properly formatted
-            // for use in this field
-            value.on('add', function(models, collection) {
-                this._formatCollectionModels(collection);
-            }, this);
+        // on "add" we want to force the collection to be reset to guarantee
+        // that all models in the collection have been properly formatted
+        // for use in this field
+        value.on('add', function(models, collection) {
+            this._formatCollectionModels(collection);
+        }, this);
 
-            // on "remove" the requisite models have already been removed, so we
-            // only need to bother updating the value in the DOM
-            value.on('remove', function(models, collection) {
-                // format the recipients and put them in the DOM
-                this._updateSelect2(this.getFormattedValue());
-            }, this);
+        // on "remove" the requisite models have already been removed, so we
+        // only need to bother updating the value in the DOM
+        value.on('remove', function(models, collection) {
+            // format the recipients and put them in the DOM
+            this._updateSelect2(this.getFormattedValue());
+        }, this);
 
-            // on "reset" we want to replace all models in the collection with
-            // their formatted versions
-            value.on('reset', function(collection) {
-                this._formatCollectionModels(collection);
-            }, this);
-        }
+        // on "reset" we want to replace all models in the collection with
+        // their formatted versions
+        value.on('reset', function(collection) {
+            this._formatCollectionModels(collection);
+        }, this);
     },
 
     /**
@@ -588,13 +567,6 @@
     _showAddressBook: function() {
         // Callback to add recipients, from a closing drawer, to the target Recipients field.
         var addRecipients = _.bind(function(recipients) {
-            //TODO: Is there a way we can get the model.module set on these without having to add here?
-            if (recipients && recipients.models) {
-                _.each(recipients.models, function(recipient) {
-                    recipient.module = recipient.get('module');
-                    console.log(recipient.module);
-                });
-            }
             if (recipients && recipients.length > 0) {
                 this.model.get(this.name).add(recipients.models);
             }
