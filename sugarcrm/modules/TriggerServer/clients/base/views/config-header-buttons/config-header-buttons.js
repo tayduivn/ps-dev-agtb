@@ -26,15 +26,9 @@
     _saveConfig: function () {
         app.alert.dismiss('trigger_server_confirmation');
 
-        var model = this.context.get('model');
-
-        model.isNew = function() {
-            return false;
-        };
-        var url = app.api.buildURL(this.module, 'config');
-        app.api.call('update', url, model.attributes, {
+        this.context.get('model').save({}, {
             // getting the fresh model with correct config settings passed in as the param
-            success: _.bind(function() {
+            success: _.bind(function (model) {
                 // If we're inside a drawer - refresh
                 if (app.drawer) {
                     this.showSavedConfirmation();
@@ -43,7 +37,7 @@
                     app.sync();
                 }
             }, this),
-            error: _.bind(function(error) {
+            error: _.bind(function (error) {
                 this.getField('save_button').setDisabled(false);
                 app.alert.show('trigger_server_confirmation', {
                     level: 'error',

@@ -566,17 +566,6 @@ describe('Notifications', function() {
 
                     expect(badge).toHaveBeenCalledWith(expected);
                 });
-                it('should update favicon badge with the correct unread notifications ' +
-                    'if the collection is changed', function() {
-                    view._bootstrap();
-
-                    var badge = sinon.collection.stub(view.favicon, 'badge');
-                    view.collection.length = length;
-                    view.collection.next_offset = offset;
-                    view.collection.trigger('change');
-
-                    expect(badge).toHaveBeenCalledWith(expected);
-                });
             }
         );
 

@@ -50,7 +50,7 @@ class TriggerServerApi extends SugarApi
                 'longHelp' => 'include/api/help/module_config_get_help.html',
             ),
             'triggerServerConfigUpdate' => array(
-                'reqType' => 'PUT',
+                'reqType' => 'POST',
                 'path' => array('TriggerServer', 'config'),
                 'pathVars' => array('module', '', ''),
                 'method' => 'configSave',
