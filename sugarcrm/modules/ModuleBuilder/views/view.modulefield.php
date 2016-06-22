@@ -157,7 +157,10 @@ class ViewModulefield extends SugarView
             	}
                 if (!empty($def['type']) && $def['type'] == "enum" && $field != $vardef['name'])
                 {
-                    if(!empty($def['studio']) && $def['studio'] == "false") continue; //bug51866
+                    //skip if $def has studio element set to false or "false".  NULL is a valid value
+                    if (isset($def['studio']) && ($def['studio'] === false || $def['studio'] === "false")) {
+                        continue;
+                    }
                     $enumFields[$field] = translate($def['vname'], $moduleName);
                     if (substr($enumFields[$field], -1) == ":")
                         $enumFields[$field] = substr($enumFields[$field], 0, strlen($enumFields[$field]) - 1);
