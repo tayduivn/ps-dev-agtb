@@ -174,7 +174,7 @@ class MailApi extends ModuleApi
                 throw new SugarApiExceptionMissingParameter();
             }
 
-            if ($email->status != 'draft') {
+            if ($email->state !== Email::EMAIL_STATE_DRAFT) {
                 throw new SugarApiExceptionRequestMethodFailure();
             }
         } else {

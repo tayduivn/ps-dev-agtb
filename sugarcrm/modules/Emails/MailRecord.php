@@ -353,6 +353,7 @@ class MailRecord
             "html_body" => $this->html_body,
             "text_body" => $this->text_body,
             "status" => ($status == 'ready') ? 'sent' : $status,
+            'state' => $email->state,
         );
 
         if (!empty($this->date_sent)) {
