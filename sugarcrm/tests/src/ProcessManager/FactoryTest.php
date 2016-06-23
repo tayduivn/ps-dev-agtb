@@ -47,6 +47,19 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests getting the proper class name
+     * @dataProvider getPMSEClassNameProvider
+     * @param string $name Name of the element to get the object for
+     * @param string $prefix Prefix to inject into the class name
+     * @param string $expect Test expectation
+     */
+    public function testGetPMSEClassName($name, $prefix, $expect)
+    {
+        $actual = ProcessManager\Factory::getPMSEClassName($name, $prefix);
+        $this->assertEquals($actual, $expect);
+    }
+
+    /**
      * Tests getting any PMSE object
      * @dataProvider getPMSEObjectProvider
      * @param string $name The name of the object to load
@@ -151,6 +164,36 @@ class FactoryTest extends \Sugar_PHPUnit_Framework_TestCase
             [
                 'name' => 'Activity',
                 'instances' => ['PMSEActivity', 'PMSERunnable'],
+            ],
+        ];
+    }
+
+    public function getPMSEClassNameProvider()
+    {
+        return [
+            // Test basic use case
+            [
+                'name' => 'PMSETest',
+                'prefix' => '',
+                'expect' => 'PMSETest',
+            ],
+            // Test prefix
+            [
+                'name' => 'PMSETest',
+                'prefix' => 'Zazu',
+                'expect' => 'PMSEZazuTest',
+            ],
+            // Test no PMSE
+            [
+                'name' => 'Test',
+                'prefix' => '',
+                'expect' => 'PMSETest',
+            ],
+            // Test no PMSE with prefix
+            [
+                'name' => 'Test',
+                'prefix' => 'Bilbo',
+                'expect' => 'PMSEBilboTest',
             ],
         ];
     }
