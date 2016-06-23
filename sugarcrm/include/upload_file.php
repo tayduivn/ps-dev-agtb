@@ -754,6 +754,16 @@ class UploadStream
     }
 
     /**
+     * Move temp file to the parent path
+     * @param string $path_from temp file
+     * @param string $path_to Target destination
+     */
+    public static function move_temp_file($path_from, $path_to)
+    {
+        return self::$instance->rename($path_from, $path_to);
+    }
+
+    /**
      * Register new file added to uploads by external means
      * @param string $path
      * @return boolean

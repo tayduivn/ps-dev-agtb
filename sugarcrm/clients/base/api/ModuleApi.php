@@ -443,7 +443,9 @@ class ModuleApi extends SugarApi {
             $destination = rtrim($configDir, '/\\') . '/' . $filename;
             // FIXME BR-1956 will address having multiple files
             // associated with a record.
-            rename($filepath, $destination);
+            $from = UploadStream::STREAM_NAME . "://tmp/" . $args[$fieldName . '_guid'];
+            $to = UploadStream::STREAM_NAME . "://" . $filename;
+            UploadStream::move_temp_file($from, $to);
         }
     }
 
