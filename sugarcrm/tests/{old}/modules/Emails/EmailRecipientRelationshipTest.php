@@ -345,7 +345,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
-        $email1 = SugarTestEmailUtilities::createEmail();
+        $email1 = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
         $email1->load_relationship('contacts_to');
         $email1->contacts_to->add($contact);
 
@@ -356,6 +356,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $email3 = SugarTestEmailUtilities::createEmail();
         $email3->load_relationship('contacts_to');
         $email3->contacts_to->add($contact, array('email_address_id' => $address->id));
+
+        $email4 = SugarTestEmailUtilities::createEmail();
+        $email4->load_relationship('contacts_to');
+        $email4->contacts_to->add($contact);
 
         $contact->load_relationship('emails_to');
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
@@ -384,6 +388,19 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(1, $rows, "The row should have been replaced with the chosen email address");
         $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
         $this->assertSame($address->id, $row['participant_id'], 'The row should use the chosen email address');
+
+        // When an email is archived, the email address has been set automatically. The row should be replaced instead
+        // of completely removed.
+        $rows = $this->getRows(
+            array(
+                'email_id' => $email4->id,
+                'role' => 'to',
+            )
+        );
+        $row = $rows[0];
+        $this->assertCount(1, $rows, "The row should have been replaced with the contact's primary email address");
+        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
+        $this->assertSame($primaryId, $row['participant_id'], "The row should use the contact's primary email address");
     }
 
     /**
