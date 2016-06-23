@@ -433,7 +433,7 @@ class RepairAndClear
 	}
 
 	/**
-	 * Remove the cached unified_search_modules.php file
+     * Clear search engine metadata cache
 	 */
     public function clearSearchCache() {
         global $mod_strings, $sugar_config;
@@ -441,9 +441,6 @@ class RepairAndClear
         // clear sugar_cache backend for SugarSearchEngine
         SugarSearchEngineMetadataHelper::clearCache();
         
-        // Clear the cache file AFTER the cache clear, as it will be rebuilt by
-        // clearCache otherwise
-        UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
     }
     public function clearExternalAPICache()
 	{

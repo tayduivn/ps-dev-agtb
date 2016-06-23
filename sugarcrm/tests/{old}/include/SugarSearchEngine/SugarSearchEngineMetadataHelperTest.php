@@ -27,33 +27,10 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
 
-        $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
-        $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
-
-        if (file_exists($this->_cacheFile))
-        {
-            $this->_cacheRenamed = true;
-            rename($this->_cacheFile, $this->_backupCacheFile);
-        }
-        else
-        {
-            $this->_cacheRenamed = false;
-        }
     }
 
     public function tearDown()
     {
-        if ($this->_cacheRenamed)
-        {
-            if (file_exists($this->_backupCacheFile))
-            {
-                rename($this->_backupCacheFile, $this->_cacheFile);
-            }
-        }
-        else if (file_exists($this->_cacheFile))
-        {
-            unlink($this->_cacheFile);
-        }
         SugarTestHelper::tearDown();
     }
 
