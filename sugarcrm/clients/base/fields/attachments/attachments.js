@@ -281,6 +281,17 @@
     },
 
     /**
+     * Returns a File object from the HTML element passed in.
+     *
+     * @private
+     * @param {HTMLElement} el The <input> element containing the file.
+     * @return {File} The File object, containing file information.
+     */
+    _getFileFromInput: function(el) {
+        return el.files[0];
+    },
+
+    /**
      * Upload the file and define callbacks for success & failure
      */
     uploadFile: function() {
@@ -295,6 +306,17 @@
 
         //don't do anything if user cancels out of picking a file
         if (_.isEmpty(this.getFileInputVal())) {
+            return;
+        }
+
+        var inputEl = $fileInput.get(0);
+        var file = this._getFileFromInput(inputEl);
+
+        if (file.size > app.config.uploadMaxsize) {
+            app.alert.show('large_attachment_error', {
+                level: 'error',
+                messages: app.lang.get('ERROR_MAX_FILESIZE_EXCEEDED')
+            });
             return;
         }
 

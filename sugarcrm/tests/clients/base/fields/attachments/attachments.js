@@ -8,13 +8,13 @@ describe("Base.Field.Attachments", function() {
         SugarTest.loadHandlebarsTemplate('attachments', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
 
-        apiCallStub = sinon.stub(app.api, 'call');
+        apiCallStub = sinon.collection.stub(app.api, 'call');
 
         field = SugarTest.createField("base", "attachments", "attachments", "edit");
     });
 
     afterEach(function() {
-        apiCallStub.restore();
+        sinon.collection.restore();
         app.cache.cutAll();
         app.view.reset();
         field.dispose();
@@ -75,11 +75,7 @@ describe("Base.Field.Attachments", function() {
             field.render();
             field.addAttachment(attachment1);
             field.addAttachment(attachment2);
-            triggerStub = sinon.stub(field.context, 'trigger');
-        });
-
-        afterEach(function() {
-            triggerStub.restore();
+            triggerStub = sinon.collection.stub(field.context, 'trigger');
         });
 
         // test to be fixed under MAR-1493
@@ -118,48 +114,72 @@ describe("Base.Field.Attachments", function() {
         });
 
         it('should cancel the request', function() {
-            var stub = sinon.stub(app.api, 'abortRequest');
+            var stub = sinon.collection.stub(app.api, 'abortRequest');
 
             field.requests['upload1'] = 13;
             field.notifyAttachmentRemoved({id: 'upload1', type: 'upload'});
 
             expect(stub).toHaveBeenCalled();
-            stub.restore();
         });
 
         it('should not cancel the request', function() {
-            var stub = sinon.stub(app.api, 'abortRequest');
+            var stub = sinon.collection.stub(app.api, 'abortRequest');
 
             field.notifyAttachmentRemoved({id: 'upload1', type: 'upload'});
 
             expect(stub).not.toHaveBeenCalled();
-            stub.restore();
         });
     });
 
     describe("Uploading Attachments", function() {
-        var getFileInputValStub, alertStub, loggerStub, attachmentsBefore, expectedAttachmentsBefore;
+        var getFileInputValStub;
+        var alertStub;
+        var loggerStub;
+        var attachmentsBefore;
+        var expectedAttachmentsBefore;
+        var getFileStub;
 
         beforeEach(function() {
             field.render();
             expectedAttachmentsBefore = [{id:'upload1', nameForDisplay:'foo.txt', showProgress:true}];
-            getFileInputValStub = sinon.stub(field, 'getFileInputVal', function() {return 'C:\\fakepath\\foo.txt'});
-            alertStub = sinon.stub(app.alert, 'show');
-            loggerStub = sinon.stub(app.logger, 'error');
+            getFileInputValStub = sinon.collection.stub(field, 'getFileInputVal', function() {
+                return 'C:\\fakepath\\foo.txt';
+            });
+            alertStub = sinon.collection.stub(app.alert, 'show');
+            loggerStub = sinon.collection.stub(app.logger, 'error');
+            getFileStub = sinon.collection.stub(field, '_getFileFromInput').returns({});
             apiCallStub.restore();
         });
 
-        afterEach(function() {
-            getFileInputValStub.restore();
-            alertStub.restore();
-            loggerStub.restore();
+        using('different file sizes', [
+            {
+                // Oversized file (in bytes)
+                size: 30000001,
+                expectedAlert: true
+            },
+            {
+                // File within limit
+                size: 30000000,
+                expectedAlert: false
+            },
+        ], function(provider) {
+            it('should allow/abort the upload process accordingly', function() {
+                app.config.uploadMaxsize = 30000000;
+                sinon.collection.stub(app.api, 'call');
+                getFileStub.returns({
+                    size: provider.size
+                });
+                field.uploadFile();
+
+                expect(alertStub.calledWith('large_attachment_error')).toBe(provider.expectedAlert);
+            });
         });
 
         it("should set placeholder when uploading file and replace it on success", function() {
             var mockUploadResult = {guid:'123', nameForDisplay:'foo.txt'},
                 expectedAttachmentsAfterAfter = [{id:'123', nameForDisplay:'foo.txt', type:'upload'}];
 
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 attachmentsBefore = field.$node.select2('data');
                 callbacks.success(mockUploadResult);
             });
@@ -171,7 +191,7 @@ describe("Base.Field.Attachments", function() {
         it("should alert and remove placeholder if no result guid on success", function() {
             var mockUploadResult = {nameForDisplay:'foo.txt'};
 
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 attachmentsBefore = field.$node.select2('data');
                 callbacks.success(mockUploadResult);
             });
@@ -182,7 +202,7 @@ describe("Base.Field.Attachments", function() {
         });
 
         it("should alert and remove placeholder if error returned from API", function() {
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error({});
             });
             field.uploadFile();
@@ -192,21 +212,18 @@ describe("Base.Field.Attachments", function() {
         });
 
         it('should pass the oauth token in the query string', function() {
-            var apiGetTokenStub, url;
-
-            apiGetTokenStub = sinon.stub(app.api, 'getOAuthToken').returns('foo')
-            apiCallStub = sinon.stub(app.api, 'call');
+            var url;
+            var apiGetTokenStub = sinon.collection.stub(app.api, 'getOAuthToken').returns('foo');
+            apiCallStub = sinon.collection.stub(app.api, 'call');
 
             field.uploadFile();
             url = apiCallStub.lastCall.args[1];
 
             expect(url).toMatch(/&oauth_token=foo/);
-
-            apiGetTokenStub.restore();
         });
 
         it('should use the default error message when alerting an error', function() {
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error({});
             });
             field.uploadFile();
@@ -214,7 +231,7 @@ describe("Base.Field.Attachments", function() {
         });
 
         it('should use a specified error message when alerting an error', function() {
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error({error_message: 'custom error message'});
             });
             field.uploadFile();
@@ -222,25 +239,23 @@ describe("Base.Field.Attachments", function() {
         });
 
         it('should not display an error message if the request was aborted', function() {
-            var stub = sinon.stub(field, 'handleUploadError');
+            var stub = sinon.collection.stub(field, 'handleUploadError');
 
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error({errorThrown: 'abort'});
             });
             field.uploadFile();
             expect(stub).not.toHaveBeenCalled();
-            stub.restore();
         });
 
         it('should clear the file field when the upload request completes', function() {
-            var stub = sinon.stub(field, 'clearFileInputVal');
+            var stub = sinon.collection.stub(field, 'clearFileInputVal');
 
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+            sinon.collection.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.complete();
             });
             field.uploadFile();
             expect(stub).toHaveBeenCalled();
-            stub.restore();
         });
     });
 });
