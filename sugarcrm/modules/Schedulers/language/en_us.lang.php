@@ -138,6 +138,11 @@ $mod_strings = array (
 'LBL_REFRESHJOBS' => 'Refresh Jobs',
 'LBL_POLLMONITOREDINBOXES' => 'Check Inbound Mail Accounts',
 'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
+'LBL_SUGARJOBREMOVEPDFFILES' => 'Remove temporary PDF files',
+'LBL_SUGARJOBKBCONTENTUPDATEARTICLES' => 'Publish approved articles & Expire KB Articles.',
+'LBL__SUGARCRM_SUGARCRM_ELASTICSEARCH_QUEUE_SCHEDULER' => 'Elasticsearch Queue Scheduler',
+'LBL_SUGARJOBREMOVEDIAGNOSTICFILES' => 'Remove diagnostic tool files',
+'LBL_SUGARJOBREMOVETMPFILES' => 'Remove temporary files',
 
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
 'LBL_ASYNCMASSUPDATE' => 'Perform Asynchronous Mass Updates',
