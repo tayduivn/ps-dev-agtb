@@ -39,7 +39,13 @@ class GroupFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['mod_strings']);
     }
 
-	/**
+    public static function tearDownAfterClass()
+    {
+        SugarTestEmailUtilities::removeAllCreatedEmails();
+        parent::tearDownAfterClass();
+    }
+
+    /**
 	 * Create a group folder
 	 *
 	 */
@@ -66,26 +72,29 @@ class GroupFoldersTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateEmail() 
     {
-    	global $current_user, $groupfolder_id, $teamObject, $email_id;
-    	$email = new Email();
-    	$email->name = "Unittest";
-    	$email->description = "Unittest";
-    	$email->description_html = "<b>Unittest</b>";
-    	$email->from_addr_name = "Unittest";
-    	$email->to_addrs_names = "Unittestto";
-    	$email->cc_addrs_names = "Unittestcc";
-    	$email->bcc_addrs_names = "Unittestbcc";
-    	$email->reply_to_addr = "Unittest@ubnittest.com";
-    	$email->from_addr = "ajaysales@sugarcrm.com";
-    	$email->to_addrs = "Unittest@unittest.com";
-    	$email->cc_addrs = "Unittest@unittest.com";
-    	$email->bcc_addrs = "Unittest@unittest.com";
-    	$email->message_id = md5('Unittest - ' . mt_rand());
-		$email->team_id = $teamObject->id;
-		$email->team_set_id = $teamObject->id;
-		$email->assigned_user_id = $current_user->id;
-		$email->save();
-		$email_id = $email->id;
+        global $current_user, $teamObject, $email_id;
+
+        $data = array(
+            'name' => 'Unittest',
+            'description' => 'Unittest',
+            'description_html' => '<b>Unittest</b>',
+            'from_addr_name' => 'Unittest',
+            'to_addrs_names' => 'Unittestto',
+            'cc_addrs_names' => 'Unittestcc',
+            'bcc_addrs_names' => 'Unittestbcc',
+            'reply_to_addr' => 'Unittest@ubnittest.com',
+            'from_addr' => 'ajaysales@sugarcrm.com',
+            'to_addrs' => 'Unittest@unittest.com',
+            'cc_addrs' => 'Unittest@unittest.com',
+            'bcc_addrs' => 'Unittest@unittest.com',
+            'message_id' => md5('Unittest - ' . mt_rand()),
+            'team_id' => $teamObject->id,
+            'team_set_id' => $teamObject->id,
+            'assigned_user_id' => $current_user->id,
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+        $email_id = $email->id;
+
         $this->assertTrue(!empty($email_id), "testAssignEmailToGroupFolder failed");
     }
     

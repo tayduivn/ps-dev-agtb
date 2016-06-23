@@ -15,7 +15,6 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        global $current_user;
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
     }
@@ -23,6 +22,7 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestEmailUtilities::removeAllCreatedEmails();
         unset($GLOBALS['current_user']);
     }
 
@@ -31,16 +31,17 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSaveNewFolder()
     {
-        global $current_user, $app_strings;
+        global $app_strings;
 
-        $email = new Email();
-        $email->type = 'out';
-        $email->status = 'sent';
-        $email->state = Email::EMAIL_STATE_ARCHIVED;
-        $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
-        $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
-        $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");
-        $email->save();
+        $data = array(
+            'type' => 'out',
+            'status' => 'sent',
+            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'from_addr_name' => 'sender@domain.eu',
+            'to_addrs_names' => 'to@domain.eu',
+            'cc_addrs_names' => 'cc@domain.eu',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
 
         $_REQUEST["emailUIAction"] = "getSingleMessageFromSugar";
         $_REQUEST["uid"] = $email->id;

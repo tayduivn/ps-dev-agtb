@@ -85,9 +85,6 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api->createRecord($this->service, $args);
     }
 
-    /**
-     * @expectedException SugarApiExceptionRequestMethodFailure
-     */
     public function testCreateRecord_NoEmailIsCreatedOnFailureToSend()
     {
         $before = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
@@ -99,13 +96,28 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'module' => 'Emails',
+            'name' => 'Sugar Email' . mt_rand(),
             'state' => Email::EMAIL_STATE_READY,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
-        $api->createRecord($this->service, $args);
+
+        $caught = false;
+
+        try {
+            $api->createRecord($this->service, $args);
+        } catch (SugarApiExceptionRequestMethodFailure $e) {
+            $caught = true;
+        }
+
+        $this->assertTrue($caught, 'SugarApiExceptionRequestMethodFailure was expected');
 
         $after = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
         $this->assertSame($before['num'], $after['num'], 'A new email should not have been created');
+
+        // In reality, an email was created, but it was immediately deleted. SugarTestEmailUtilities has no knowledge of
+        // it, so add the ID in order to allow teardown to clean up the database.
+        $id = $GLOBALS['db']->fetchOne("SELECT id FROM emails WHERE name='{$args['name']}' AND deleted=1");
+        SugarTestEmailUtilities::setCreatedEmail($id);
     }
 
     /**
