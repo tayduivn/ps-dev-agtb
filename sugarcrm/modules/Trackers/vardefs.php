@@ -83,7 +83,7 @@ $dictionary['Tracker'] = array(
             'type' => 'varchar',
             'len' => '36',
             'isnull' => 'true',
-			'exportable' => false,
+            'exportable' => false,
         ),
         'visible'=>array(
             'name' => 'visible',
