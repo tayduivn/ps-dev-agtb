@@ -75,7 +75,7 @@ describe("Login View", function() {
                 'version': '9',
                 'msie': true
             };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
 
         });
         it("should deem IE10 as a supported browser", function() {
@@ -83,7 +83,7 @@ describe("Login View", function() {
                 'version': '10',
                 'msie': true
             };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
 
         });
         it("should deem IE11 as a supported browser", function() {
@@ -141,7 +141,7 @@ describe("Login View", function() {
                 'chrome': true,
                 'webkit': true
             };
-            expect(view._isSupportedBrowser(currentNavigator)).toBeTruthy();
+            expect(view._isSupportedBrowser(currentNavigator)).toBeFalsy();
 
         });
         it("should deem Chrome 47 as a supported browser", function () {
