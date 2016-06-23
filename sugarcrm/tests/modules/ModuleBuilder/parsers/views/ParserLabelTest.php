@@ -19,6 +19,9 @@ class ParserLabelTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Administration');
         parent::setUp();
         SugarTestHelper::setUp('files');
     }
@@ -45,7 +48,8 @@ class ParserLabelTest extends PHPUnit_Framework_TestCase
         ));
 
         $strings = return_app_list_strings_language($current_language);
-        $this->assertNotEquals($label, $strings[$listName][$module]);
+        $orig = $strings[$listName][$module];
+        $this->assertNotEquals($label, $orig);
 
         $parser = new ParserLabel($module);
         $parser->handleSave(array(
@@ -54,6 +58,11 @@ class ParserLabelTest extends PHPUnit_Framework_TestCase
 
         $strings = return_app_list_strings_language($current_language);
         $this->assertEquals($label, $strings[$listName][$module]);
+
+        //save the original strings back
+        $parser->handleSave(array(
+            'label_' . $labelName => $orig,
+        ), $current_language);
     }
 
     public static function updateModuleListsProvider()

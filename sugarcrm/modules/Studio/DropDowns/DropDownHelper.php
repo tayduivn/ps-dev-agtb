@@ -91,8 +91,8 @@ class DropDownHelper
         $my_list_strings = return_app_list_strings_language($selected_lang);
         while (isset($params['slot_' . $count])) {
             $index = $params['slot_' . $count];
-            $key = (isset($params['key_' . $index]))?SugarCleaner::stripTags($params['key_' . $index]): 'BLANK';
-            $value = (isset($params['value_' . $index]))?SugarCleaner::stripTags($params['value_' . $index]): '';
+            $key = (isset($params['key_' . $index])) ? SugarCleaner::stripTags($params['key_' . $index]) : 'BLANK';
+            $value = (isset($params['value_' . $index])) ? SugarCleaner::stripTags($params['value_' . $index]) : '';
             if ($key == 'BLANK') {
                 $key = '';
             }
@@ -105,47 +105,6 @@ class DropDownHelper
             $count++;
         }
 
-        if ($selected_lang == $GLOBALS['current_language']) {
-           $GLOBALS['app_list_strings'][$dropdown_name] = $dropdown;
-        }
-        $contents = return_custom_app_list_strings_file_contents($selected_lang);
-
-        //get rid of closing tags they are not needed and are just trouble
-        $contents = str_replace("?>", '', $contents);
-        if (empty($contents)) $contents = "<?php";
-        //add new drop down to the bottom
-        if (!empty($params['use_push'])) {
-            //this is for handling moduleList and such where nothing should be 
-            //deleted or anything but they can be renamed
-            foreach ($dropdown as $key=>$value) {
-                //only if the value has changed or does not exist do we want to add it this way
-                if (!isset($my_list_strings[$dropdown_name][$key]) || strcmp($my_list_strings[$dropdown_name][$key], $value) != 0 ) {
-                    //clear out the old value
-                    $pattern_match = '/\s*\$app_list_strings\s*\[\s*\''.$dropdown_name.'\'\s*\]\[\s*\''.$key.'\'\s*\]\s*=\s*[\'\"]{1}.*?[\'\"]{1};\s*/ism';
-                    $contents = preg_replace($pattern_match, "\n", $contents);
-                    //add the new ones
-                    $contents .= "\n\$app_list_strings['$dropdown_name']['$key']=" . var_export_helper($value) . ";";
-                }
-            }
-        } else {
-            //clear out the old value
-            $pattern_match = '/\s*\$app_list_strings\s*\[\s*\''.$dropdown_name.'\'\s*\]\s*=\s*array\s*\([^\)]*\)\s*;\s*/ism';
-            $contents = preg_replace($pattern_match, "\n", $contents);
-            //add the new ones
-            $contents .= "\n\$app_list_strings['$dropdown_name']=" . var_export_helper($dropdown) . ";";
-        }
-
-        // Bug 40234 - If we have no contents, we don't write the file. Checking for "<?php" because above it's set to that if empty
-        if ($contents != "<?php") {
-            save_custom_app_list_strings_contents($contents, $selected_lang);
-            sugar_cache_reset();
-        }
-        
-        // Bug38011
-        $repairAndClear = new RepairAndClear();
-        $repairAndClear->module_list = array(translate('LBL_ALL_MODULES'));
-        $repairAndClear->show_output = false;
-        $repairAndClear->clearJsLangFiles();
-        // ~~~~~~~~
+        return save_custom_dropdown_strings(array($dropdown_name => $dropdown));
     }
 }
