@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
-
 /**
  * Language files management
  * @api
@@ -31,12 +29,16 @@ class LanguageManager
 		if(inDeveloperMode() || !empty($_SESSION['developerMode'])){
         	$refresh = true;
     	}
-		$temp_mod_strings = $mod_strings;
+
 		$lang = $current_language;
         if(empty($lang))
             $lang = $GLOBALS['sugar_config']['default_language'];
-		
-		if(empty(self::$createdModules[$module]) && ($refresh || !file_exists(sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php'))){
+
+        $key = self::getLanguageCacheKey($module, $lang);
+        if (!$refresh) {
+            $cached_mod_strings = sugar_cache_retrieve($key);
+        }
+        if (empty(self::$createdModules[$module]) && ($refresh || empty($cached_mod_strings))) {
 			$loaded_mod_strings = array();
 			$loaded_mod_strings = LanguageManager::loadTemplateLanguage($module , $templates, $lang , $loaded_mod_strings);
 			self::$createdModules[$module] = true;
@@ -94,65 +96,60 @@ class LanguageManager
 		if(empty($lang))
 			$lang = $GLOBALS['sugar_config']['default_language'];
 
-		$file = create_cache_directory('modules/' . $module . '/language/'.$lang.'.lang.php');
-		write_array_to_file('mod_strings',$loaded_mod_strings, $file);
-        include FileLoader::validateFilePath($file);
-
 		// put the item in the sugar cache.
 		$key = self::getLanguageCacheKey($module,$lang);
 		sugar_cache_put($key,$loaded_mod_strings);
-        
-	}
+
+        // Maintain list of modules that have lang strings in the cache to use in clearing cache
+        $language_cache_module_list = sugar_cache_retrieve('language_cache_module_list');
+        if (empty($language_cache_module_list)) {
+            $language_cache_module_list = array();
+        }
+
+        $language_cache_module_list[$module][$lang] = $key;
+        sugar_cache_put('language_cache_module_list', $language_cache_module_list);
+    }
 
 	/**
 	 * clear out the language cache.
-	 * @param string module_dir the module_dir to clear, if not specified then clear
+     * @param string module name to clear, if not specified then clear
 	 *                      clear language cache for all modules.
 	 * @param string lang the name of the object we are clearing this is for sugar_cache
 	 */
-    public static function clearLanguageCache($module_dir = '', $lang = '')
+    public static function clearLanguageCache($module = '', $lang = '')
     {
-		if(empty($lang)) {
+        $language_cache_module_list = sugar_cache_retrieve('language_cache_module_list');
+        if (empty($language_cache_module_list)) {
+            return;
+        }
+
+        if (empty($lang)) {
 			$languages = array_keys($GLOBALS['sugar_config']['languages']);
 		} else {
 			$languages = array($lang);
 		}
-		//if we have a module name specified then just remove that language file
-		//otherwise go through each module and clean up the language
-		if(!empty($module_dir)) {
-			foreach($languages as $clean_lang) {
-                self::_clearCache($module_dir, $clean_lang);
-			}
-		} else {
-            $cache_dir = sugar_cached('modules');
-            if (file_exists($cache_dir)) {
-                foreach (glob("{$cache_dir}/*", GLOB_ONLYDIR|GLOB_NOSORT) as $entry) {
-                    $module = basename($entry);
-                    foreach ($languages as $clean_lang) {
-                        self::_clearCache($module, $clean_lang);
+
+        if (empty($module)) {
+            // if $module is not specified then clear lang for all modules cached
+            $module_list = array_keys($language_cache_module_list);
+        } else {
+            $module_list = array($module);
+        }
+
+        if (!empty($language_cache_module_list)) {
+            foreach ($module_list as $module) {
+                foreach ($languages as $clean_lang) {
+                    $key = self::getLanguageCacheKey($module, $clean_lang);
+                    sugar_cache_clear($key);
+                    if (!empty($language_cache_module_list[$module][$clean_lang])) {
+                        unset($language_cache_module_list[$module][$clean_lang]);
                     }
+                    $key = "return_mod_lang_{$module}_{$lang}";
+                    sugar_cache_clear($key);
                 }
             }
-		}
-	}
-
-	/**
-	 * PRIVATE function used within clearLanguageCache so we do not repeat logic
-	 * @param string module_dir the module_dir to clear
-	 * @param string lang the name of the language file we are clearing this is for sugar_cache
-	 */
-    private static function _clearCache($module_dir = '', $lang)
-    {
-		if(!empty($module_dir) && !empty($lang)){
-			$file = sugar_cached('modules/').$module_dir.'/language/'.$lang.'.lang.php';
-			if(file_exists($file)){
-				unlink($file);
-				$key = self::getLanguageCacheKey($module_dir,$lang);
-				sugar_cache_clear($key);
-                $key = "return_mod_lang_{$module_dir}_{$lang}";
-                sugar_cache_clear($key);
-			}
-		}
+        }
+        sugar_cache_put('language_cache_module_list', $language_cache_module_list);
 	}
 
     /**
@@ -243,33 +240,26 @@ class LanguageManager
 			}
 		}
 
-		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
-		$cachedfile = sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php';
-		if($refresh || !file_exists($cachedfile)){
-			LanguageManager::refreshLanguage($module, $lang);
-		}
+        // reaching here means refresh is needed
+        LanguageManager::refreshLanguage($module, $lang);
 
-		//at this point we should have the cache/modules/... file
-		//which was created from the refreshVardefs so let's try to load it.
-		if(file_exists($cachedfile)){
-			global $mod_strings;
+        global $mod_strings;
+        // refreshLanguage puts mod_strings in cache
+        $mod_strings = sugar_cache_retrieve($key);
+        if (!empty($mod_strings) && is_array($mod_strings)) {
+            if (!empty($_SESSION['translation_mode'])) {
+                $mod_strings = array_map('translated_prefix', $mod_strings);
+            }
+            return $mod_strings;
+        } else {
+        ////BEGIN SUGARCRM flav=int ONLY
+            display_notice('<B> MISSING FIELD_DEFS '
+                . 'modules/'. strtoupper($module)
+                . '/language/'.$lang.'.lang.php </b><BR>');
+        //END SUGARCRM flav=int ONLY
+        }
 
-			require $cachedfile;
-
-			// now that we hae loaded the data from disk, put it in the cache.
-			if(!empty($mod_strings))
-				sugar_cache_put($key,$mod_strings);
-			if(!empty($_SESSION['translation_mode'])){
-				$mod_strings = array_map('translated_prefix', $mod_strings);
-			}
-			return $mod_strings;
-		}
-    	////BEGIN SUGARCRM flav=int ONLY
-    	else{
-    		display_notice('<B> MISSING FIELD_DEFS ' . 'modules/'. strtoupper($module) . '/language/'.$lang.'.lang.php </b><BR>');
-    	}
-    		//END SUGARCRM flav=int ONLY
-	}
+    }
 
     /**
      * Return the cache key for the module language definition

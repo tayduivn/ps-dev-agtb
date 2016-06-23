@@ -1183,8 +1183,10 @@ function return_module_language($language, $module, $refresh=false)
     }
 
     // Bug 21559 - So we can get all the strings defined in the template, refresh
-    // the vardefs file if the cached language file doesn't exist.
-    if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
+    // the vardefs file if the cached language entry doesn't exist.
+    $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
+    $cache_entry = sugar_cache_retrieve($cache_key);
+    if (empty($cache_entry)
             && !empty($GLOBALS['beanList'][$module])){
         $object = BeanFactory::getObjectName($module);
         VardefManager::loadVardef($module,$object);
