@@ -82,7 +82,7 @@ class AclCache
      */
     public function retrieve($userId, $key)
     {
-        if (!$userId || !session_id()) {
+        if (!$userId) {
             return null;
         }
 
@@ -108,7 +108,7 @@ class AclCache
      */
     public function store($userId, $key, $value)
     {
-        if (!$userId || !session_id()) {
+        if (!$userId) {
             return;
         }
 

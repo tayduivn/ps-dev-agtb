@@ -319,6 +319,7 @@
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Teams/clients/base/plugins/TbACLs.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=ent ONLY
+                    'modules/KBContents/clients/base/plugins/KBNotify.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Tinymce.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/VirtualCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/SearchForMore.js'  => 'include/javascript/sugar_sidecar.min.js',

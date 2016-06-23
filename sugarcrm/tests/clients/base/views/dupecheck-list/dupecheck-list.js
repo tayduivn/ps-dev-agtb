@@ -63,10 +63,10 @@ describe('Base.View.DupeCheckList', function() {
     });
 
     it('should removing all links except rowactions', function(){
-        var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
-            htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
-
+        var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a class="rowaction" href="">wrapped</a>';
+        var htmlAfter = 'unwrapped<a class="rowaction" href="">wrapped</a>';
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
+
         view.layout = layout;
         view.$el = $('<div>' + htmlBefore + '</div>');
         view.render();

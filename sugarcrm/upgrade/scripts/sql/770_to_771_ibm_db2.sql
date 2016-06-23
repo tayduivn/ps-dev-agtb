@@ -9,6 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-UPDATE calls m SET m.parent_id = NULL from kbcontents s WHERE s.deleted = 1 AND s.id = m.parent_id AND m.parent_type = 'KBContents';
-UPDATE tasks m SET m.parent_id = NULL from kbcontents s WHERE s.deleted = 1 AND s.id = m.parent_id AND m.parent_type = 'KBContents';
-UPDATE meetings m SET m.parent_id = NULL from kbcontents s WHERE s.deleted = 1 AND s.id = m.parent_id AND m.parent_type = 'KBContents';
+UPDATE calls m SET m.parent_id = NULL WHERE m.parent_type = 'KBContents' AND m.parent_id in (SELECT id FROM kbcontents s WHERE s.deleted = 1);
+UPDATE tasks m SET m.parent_id = NULL WHERE m.parent_type = 'KBContents' AND m.parent_id in (SELECT id FROM kbcontents s WHERE s.deleted = 1);
+UPDATE meetings m SET m.parent_id = NULL WHERE m.parent_type = 'KBContents' AND m.parent_id in (SELECT id FROM kbcontents s WHERE s.deleted = 1);

@@ -58,7 +58,6 @@ $dictionary['Tracker'] = array(
             'len' => '255',
             'isnull' => 'false',
         ),
-
 		'team_id'=>array(
 			'name' => 'team_id',
 			'vname' => 'LBL_TEAM_ID',
@@ -84,6 +83,7 @@ $dictionary['Tracker'] = array(
             'type' => 'varchar',
             'len' => '36',
             'isnull' => 'true',
+            'exportable' => false,
         ),
         'visible'=>array(
             'name' => 'visible',
@@ -100,7 +100,6 @@ $dictionary['Tracker'] = array(
 		    'reportable'=>false,
 		    'comment' => 'Record deletion indicator'
 		),
-
 		'assigned_user_link'=>array (
 		    'name' => 'assigned_user_link',
 		    'type' => 'link',
