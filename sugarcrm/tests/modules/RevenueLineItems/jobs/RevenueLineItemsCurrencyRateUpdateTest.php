@@ -132,6 +132,14 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
         );
 
         $this->db->addQuerySpy(
+            'post_select_config',
+            "/SELECT name, value FROM config/",
+            array(
+                array('name'=>'opps_view_by', 'value'=>'RevenueLineItems'),
+            )
+        );
+
+        $this->db->addQuerySpy(
             'post_update',
             "/UPDATE opportunities/"
         );
