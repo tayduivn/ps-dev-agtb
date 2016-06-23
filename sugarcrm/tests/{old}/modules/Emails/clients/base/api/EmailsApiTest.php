@@ -59,20 +59,12 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 Email::EMAIL_STATE_ARCHIVED,
             ),
             array(
-                Email::EMAIL_STATE_SCHEDULED,
-                Email::EMAIL_STATE_DRAFT,
-            ),
-            array(
                 Email::EMAIL_STATE_ARCHIVED,
                 Email::EMAIL_STATE_DRAFT,
             ),
             array(
                 Email::EMAIL_STATE_ARCHIVED,
                 Email::EMAIL_STATE_READY,
-            ),
-            array(
-                Email::EMAIL_STATE_ARCHIVED,
-                Email::EMAIL_STATE_SCHEDULED,
             ),
         );
     }

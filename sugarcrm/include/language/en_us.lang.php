@@ -1114,7 +1114,6 @@ $app_list_strings = array (
 
     'dom_email_states' => array(
         'Draft' => 'Draft',
-        'Scheduled' => 'Scheduled',
         'Archived' => 'Archived',
     ),
 

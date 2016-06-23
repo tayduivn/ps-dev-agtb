@@ -33,7 +33,6 @@ class EmailsApi extends ModuleApi
                 'to' => array(
                     Email::EMAIL_STATE_READY,
                     Email::EMAIL_STATE_DRAFT,
-                    Email::EMAIL_STATE_SCHEDULED,
                     Email::EMAIL_STATE_ARCHIVED,
                 ),
             ),
@@ -43,20 +42,7 @@ class EmailsApi extends ModuleApi
                 'from' => Email::EMAIL_STATE_DRAFT,
                 'to' => array(
                     Email::EMAIL_STATE_DRAFT,
-                    // Schedule the the draft to be sent.
-                    Email::EMAIL_STATE_SCHEDULED,
                     // The draft is ready to be sent.
-                    Email::EMAIL_STATE_READY,
-                ),
-            ),
-            array(
-                'from' => Email::EMAIL_STATE_SCHEDULED,
-                'to' => array(
-                    // Allows for the scheduled date to be modified.
-                    Email::EMAIL_STATE_SCHEDULED,
-                    // Cancel a scheduled email.
-                    Email::EMAIL_STATE_ARCHIVED,
-                    // Send the scheduled email immediately.
                     Email::EMAIL_STATE_READY,
                 ),
             ),
@@ -80,9 +66,8 @@ class EmailsApi extends ModuleApi
     /**
      * The fields `type` and `status` are disabled on create and update. The field `id` is disabled on create.
      *
-     * All sender links are disabled on update, as the sender cannot be changed. For emails in the "Draft," "Ready," or
-     * "Scheduled" state, the sender is always the current user. For emails in the "Archived" state, the sender is
-     * immutable.
+     * All sender links are disabled on update, as the sender cannot be changed. For emails in the "Draft," or "Ready"
+     * state, the sender is always the current user. For emails in the "Archived" state, the sender is immutable.
      *
      * {@inheritdoc}
      */

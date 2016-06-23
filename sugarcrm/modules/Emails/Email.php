@@ -13,7 +13,6 @@
 class Email extends SugarBean {
 
     const EMAIL_STATE_READY = 'Ready';
-    const EMAIL_STATE_SCHEDULED = 'Scheduled';
     const EMAIL_STATE_DRAFT = 'Draft';
     const EMAIL_STATE_ARCHIVED = 'Archived';
 
@@ -23,7 +22,6 @@ class Email extends SugarBean {
 
     public $emailStates = array(
         self::EMAIL_STATE_READY,
-        self::EMAIL_STATE_SCHEDULED,
         self::EMAIL_STATE_DRAFT,
         self::EMAIL_STATE_ARCHIVED,
     );
