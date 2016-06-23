@@ -374,7 +374,8 @@ class TimePeriod extends SugarBean
         if ($date instanceOf SugarDateTime) {
             $date = $date->asDbDate(false);
         }
-        $timestamp = strtotime($date);
+        $datetime = new DateTime($date, new DateTimeZone('UTC'));
+        $timestamp = $datetime->getTimestamp();
         $retVal = false;
 
         if (empty($type)) {
