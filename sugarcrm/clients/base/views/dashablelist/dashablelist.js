@@ -743,6 +743,19 @@
     },
 
     /**
+     * @override
+     * @private
+     */
+    _render: function() {
+        if (!this.meta || !this.meta.config) {
+            return this._super('_render');
+        }
+
+        this.action = 'list';
+        return this._super('_render');
+    },
+
+    /**
      * @inheritdoc
      *
      * Calls {@link BaseDashablelistView#_stopAutoRefresh} so that the refresh will
