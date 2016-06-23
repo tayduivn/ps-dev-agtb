@@ -188,6 +188,7 @@
 
         this.favicon = new Favico({animation: 'none'});
         this.collection.on('add', this._updateFaviconBadge, this);
+        this.collection.on('change', this._updateFaviconBadge, this);
         this.collection.on('remove', this._updateFaviconBadge, this);
         this.collection.on('reset', this._updateFaviconBadge, this);
 
