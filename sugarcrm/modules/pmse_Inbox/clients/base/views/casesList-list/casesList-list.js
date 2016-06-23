@@ -50,5 +50,13 @@
                 layout: 'access-denied'
             });
         }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        jQuery('.adam-modal').remove();
+        this._super('_dispose');
     }
 })
