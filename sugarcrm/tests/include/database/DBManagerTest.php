@@ -2164,7 +2164,7 @@ SQL;
                   ),
                   array('intval' => 'NULL', 'floatval' => 'NULL',
                   		'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
-                        'test_dt' => 'NULL', 'test_tm' => 'NULL'
+                        'test_dt' => 'NULL', 'test_tm' => 'NULL',
                   ),
             ),
         );

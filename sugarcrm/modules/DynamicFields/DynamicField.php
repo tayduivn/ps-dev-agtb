@@ -458,6 +458,9 @@ class DynamicField {
                     && (empty($this->bean->$name) || $this->bean->$name == '1900-01-01')) {
                         $this->bean->$name = ''; // do not set it to string 'NULL'
                     }
+                    if ($field['type'] === 'enum' && $this->bean->$name === '') {
+                        $this->bean->$name = null;
+                    }
                     $values[$name] = $this->bean->$name;
                 }
             }
