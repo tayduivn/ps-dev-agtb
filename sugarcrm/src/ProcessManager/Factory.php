@@ -16,11 +16,6 @@
 namespace Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
- * Load up the relevant Process Manager namespaces needed for this class
- */
-use Sugarcrm\Sugarcrm\ProcessManager\Exception as PME;
-
-/**
  * Factory class for handling creation of objects for Process Management
  * @package ProcessManager
  */
@@ -104,9 +99,10 @@ class Factory
      * Custom classes before overrides.
      *
      * @param string $name Name of the element to get the object for
+     * @param string $prefix Prefix to inject into the class name
      * @return PMSE* Object
      */
-    public static function getPMSEObject($name)
+    public static function getPMSEObject($name, $prefix = '')
     {
         // Default variable for our classname
         $class = '';
@@ -117,6 +113,9 @@ class Factory
             $exception = static::getException('Runtime', $msg);
             throw $exception;
         }
+
+        // Get the proper class name for this
+        $name = static::getPMSEClassName($name, $prefix);
 
         // Get the paths to traverse
         $paths = self::getPMSEPaths();
@@ -155,6 +154,27 @@ class Factory
 
         // Get new object. Argument passing will take place in other methods.
         return new $class;
+    }
+
+    /**
+     * Gets a modified class name based on $prefix prefix
+     * @param string $name Name of the element to get the object for
+     * @param string $prefix Prefix to inject into the class name
+     * @return string
+     */
+    public static function getPMSEClassName($name, $prefix = '')
+    {
+        // If the PMSE prefix was left off, add it
+        if (substr($name, 0, 4) !== 'PMSE') {
+            // And add the prefix, if there is one
+            $name = "PMSE$prefix$name";
+        } else {
+            // Add in the prefix between the PMSE and class name. A simple str_replace
+            // here could be problematic, if classes have another PMSE in the name.
+            $name = "PMSE$prefix" . substr($name, 4);
+        }
+
+        return $name;
     }
 
     /**
