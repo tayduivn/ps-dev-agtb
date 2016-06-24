@@ -584,14 +584,16 @@
     },
 
     /**
-     * When in edit mode, the field includes an icon button for opening an address book. Clicking the button will
-     * trigger an event to open the address book, which calls this method to do the dirty work. The selected recipients
-     * are added to this field upon closing the address book.
+     * When in edit mode, the field includes an icon button for opening an
+     * address book. Clicking the button will trigger an event to open the
+     * address book, which calls this method to do the dirty work. The selected
+     * recipients are added to this field upon closing the address book.
      *
      * @private
      */
     _showAddressBook: function() {
-        // Callback to add recipients, from a closing drawer, to the target Recipients field.
+        // Callback to add recipients, from a closing drawer, to the target
+        // Recipients field.
         var addRecipients = _.bind(function(recipients) {
             if (recipients && recipients.length > 0) {
                 this.model.get(this.name).add(recipients.models);
