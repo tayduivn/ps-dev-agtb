@@ -82,7 +82,7 @@
     /**
      * Gets the filter DOM field.
      *
-     * @return {Object} DOM Element
+     * @return {jQuery} DOM Element
      */
     getFilterField: function() {
         return this.$('input.select2');
@@ -91,7 +91,7 @@
     /**
      * Gets the module filter DOM field.
      *
-     * @return {Object} DOM Element
+     * @return {jQuery} DOM Element
      */
     getModuleFilter: function() {
         return this.$('span.choice-filter-label');
