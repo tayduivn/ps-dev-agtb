@@ -22,6 +22,8 @@
     _numSignatures: 0,
     // Track the editor focus/blur state
     _editorFocused: false,
+    // Force the field to display the correct view even if there is no data to show
+    showNoData: false,
 
     /**
      * @inheritdoc

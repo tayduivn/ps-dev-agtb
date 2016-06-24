@@ -10,13 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-
 {{#each value}}
-    {{#if attributes.name}}
-        <span>
-            <a href="#{{buildRoute model=this action='detail'}}">{{attributes.name}}</a> ({{attributes.email_address}}){{#unless @last}}, {{/unless}}
-        </span>
-    {{else}}
-        <span>{{attributes.email_address}}{{#unless @last}}, {{/unless}}</span>
-    {{/if}}
+<a href="javascript:void(0);" data-url="{{_url}}" data-action="download" class="pill">
+    <span>{{name}} ({{file_size}})</span>
+</a>
 {{/each}}
