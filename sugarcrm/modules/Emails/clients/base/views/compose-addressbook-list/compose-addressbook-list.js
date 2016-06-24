@@ -46,7 +46,7 @@
     _render: function() {
         this._super('_render');
         var massCollection = this.context.get('mass_collection');
-        var selectedRecipientsFieldName = 'compose_addressbook_selected_recipients';
+        var selectedRecipientsFieldName = 'to';
 
         if (massCollection) {
             // get rid of any old event listeners on the mass collection

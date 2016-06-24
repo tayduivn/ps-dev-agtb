@@ -28,7 +28,7 @@
       * @private
       */
      _done: function() {
-         var recipients = this.model.get('compose_addressbook_selected_recipients');
+         var recipients = this.model.get('to');
 
          if (recipients) {
              app.drawer.close(recipients);

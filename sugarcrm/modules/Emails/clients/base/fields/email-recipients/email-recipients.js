@@ -33,15 +33,19 @@
      * @param {Object} options
      */
     initialize: function(options) {
-        var value;
+        var fieldValue;
+
         this.plugins = _.union(this.plugins || [], ['DragdropSelect2']);
 
         this._super('initialize', [options]);
 
-        value = this.model.get(this.name);
-        if (this.model.isNew() && !(value instanceof app.BeanCollection)) {
-            // create a new collection
-            this.model.set(this.name, app.data.createMixedBeanCollection());
+        if (this.model.isNew()) {
+            try {
+                fieldValue = this._getFieldValue();
+            } catch (e) {
+                // create a new virtual collection
+                this.model.set(this.name, []);
+            }
         }
 
         this.select2ResultTemplate = app.template.getField(
@@ -49,6 +53,23 @@
             'select2-result',
             this.module
         );
+    },
+
+    /**
+     * Returns the collection stored for this field.
+     *
+     * @throws An exception when the value is not a collection
+     * @return {VirtualCollection}
+     * @private
+     */
+    _getFieldValue: function() {
+        var value = this.model.get(this.name);
+
+        if (!(value instanceof app.BeanCollection)) {
+            throw 'the value must be a BeanCollection';
+        }
+
+        return value;
     },
 
     /**
@@ -65,25 +86,30 @@
     bindDataChange: function() {
         var value = this.model.get(this.name);
 
-        // on "add" we want to force the collection to be reset to guarantee
-        // that all models in the collection have been properly formatted
-        // for use in this field
-        value.on('add', function(models, collection) {
-            this._formatCollectionModels(collection);
-        }, this);
+        // Set up event handlers that allow external forces to manipulate the
+        // contents of the collection, while maintaining the requirement for
+        // storing formatted recipients.
+        if (value instanceof Backbone.Collection) {
+            // on "add" we want to force the collection to be reset to guarantee
+            // that all models in the collection have been properly formatted
+            // for use in this field
+            value.on('add', function(models, collection) {
+                this._formatCollectionModels(collection);
+            }, this);
 
-        // on "remove" the requisite models have already been removed, so we
-        // only need to bother updating the value in the DOM
-        value.on('remove', function(models, collection) {
-            // format the recipients and put them in the DOM
-            this._updateSelect2(this.getFormattedValue());
-        }, this);
+            // on "remove" the requisite models have already been removed, so we
+            // only need to bother updating the value in the DOM
+            value.on('remove', function(models, collection) {
+                // format the recipients and put them in the DOM
+                this._updateSelect2(this.getFormattedValue());
+            }, this);
 
-        // on "reset" we want to replace all models in the collection with
-        // their formatted versions
-        value.on('reset', function(collection) {
-            this._formatCollectionModels(collection);
-        }, this);
+            // on "reset" we want to replace all models in the collection with
+            // their formatted versions
+            value.on('reset', function(collection) {
+                this._formatCollectionModels(collection);
+            }, this);
+        }
     },
 
     /**
