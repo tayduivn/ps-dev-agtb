@@ -28,10 +28,6 @@ class SugarUpgradeMigrateEmailState extends UpgradeScript
             return;
         }
 
-        $this->log('Set the default value (Archived) for emails.state for all emails');
-        $sql = "UPDATE emails SET state='Archived'";
-        $this->runQuery($sql);
-
         $this->log('Set emails.state to Draft where emails.status is draft or send_error');
         $sql = "UPDATE emails SET state='Draft' WHERE status IN ('draft', 'send_error')";
         $this->runQuery($sql);

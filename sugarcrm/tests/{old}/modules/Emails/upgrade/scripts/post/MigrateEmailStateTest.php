@@ -42,8 +42,6 @@ class MigrateEmailStateTest extends UpgradeTestCase
         SugarTestEmailUtilities::createEmail('', array('status' => 'send_error', 'type' => 'out'));
         SugarTestEmailUtilities::createEmail('', array('status' => 'send_error', 'type' => 'out'));
 
-        $GLOBALS['db']->query("UPDATE emails SET state=NULL");
-
         $script = $this->upgrader->getScript('post', '2_MigrateEmailState');
         $script->db = $GLOBALS['db'];
         $script->from_version = '7.8.0.0';
