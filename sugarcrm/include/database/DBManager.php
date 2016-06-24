@@ -803,13 +803,6 @@ protected function checkQuery($sql, $object_name = false)
                 continue;
             }
 
-            if (isset($data[$field]) && ($data[$field] !== '' || !$this->isNullable($fieldDef))) {
-                // clean the incoming value..
-                $val = $this->decodeHTML($data[$field]);
-			} else {
-					$val = null;
-			}
-
 			//handle auto increment values here - we may have to do something like nextval for oracle
 			if (!empty($fieldDef['auto_increment'])) {
 				$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
@@ -821,18 +814,11 @@ protected function checkQuery($sql, $object_name = false)
                     continue;
                 }
 
-                // clean the incoming value
-                $value = $this->decodeHTML($data[$field]);
-
-                $fieldType = $this->getFieldType($fieldDef);
-
-                // boolean fields are nullable in Sugar
-                if ($fieldType == 'bool') {
-                    //$value = (int) !empty($value);
+                if ($data[$field] === '' && $this->isNullable($fieldDef)) {
+                    $values[$field] = null;
+                } else {
+                    $values[$field] = $this->decodeHTML($data[$field]);
                 }
-
-                // need to do some thing about types of values
-                $values[$field] = $this->massageValue($value, $fieldDef, true);
             }
         }
 
@@ -2391,12 +2377,10 @@ protected function checkQuery($sql, $object_name = false)
             // we should care about auto_increment in update query
             if (!empty($fieldDef['auto_increment'])) {
                 continue;
-            } elseif (!is_null($val) || !empty($fieldDef['required'])) {
-                $values[$field] = $this->massageValue($val, $fieldDef, true);
-            } elseif ($this->isNullable($fieldDef)) {
-                $values[$field] = null;
-            } else {
+            } elseif ($val === null && !$this->isNullable($fieldDef)) {
                 $values[$field] = $this->emptyValue($fieldType, true);
+            } else {
+                $values[$field] = $val;
             }
         }
 
@@ -2434,7 +2418,7 @@ protected function checkQuery($sql, $object_name = false)
     {
         return $this->convert(
             $builder->createPositionalParameter(
-                $value,
+                $this->massageValue($value, $fieldDef, true),
                 $this->getParamType($fieldDef)
             ),
             $this->getFieldType($fieldDef)
