@@ -371,5 +371,17 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$folder_id}'");
         $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$folder_id}'");
     }
+
+    /**
+     * Testing is generated archived query hide CalDav Emails.
+     */
+    public function testHideCalDavEmails()
+    {
+        $this->folder->folder_type = 'archived';
+
+        $query = $this->folder->generateSugarsDynamicFolderQuery();
+
+        $this->assertRegExp("/" . preg_quote("AND coalesce(emails.intent, ' ') != 'caldav'") . "/", $query);
+    }
 }
 ?>
