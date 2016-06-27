@@ -78,9 +78,6 @@
      * Sets up event handlers for syncing between the model and the recipients
      * field.
      *
-     * Allow external forces to manipulate the contents of the collection, while
-     * maintaining the requirement for storing formatted recipients.
-     *
      * See {@link #format} for the acceptable formats for recipients.
      */
     bindDataChange: function() {
