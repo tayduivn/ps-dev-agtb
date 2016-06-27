@@ -81,6 +81,9 @@ class ServerHelper
         $authPlugin = new DAV\Auth\Plugin($authBackend, 'SugarCRM DAV Server');
         $server->addPlugin($authPlugin);
 
+        $forceDeletePlugin = new Cal\ForceDeletePlugin();
+        $server->addPlugin($forceDeletePlugin);
+
         $aclPlugin = new Principal\Acl\Plugin();
         $aclPlugin->defaultUsernamePath = 'principals/users';
         $server->addPlugin($aclPlugin);
