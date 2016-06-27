@@ -216,8 +216,11 @@
      * unnecessary unsaved changes warnings.
      */
     handleHideDatePicker: function() {
-        var $field = this.$(this.fieldTag),
-            value = this.unformat($field.val());
+        var $field = this.$(this.fieldTag);
+
+        // If we partially delete date from date picker and click outside the field, it will return undefined value.
+        // But we need to use empty string as the only one negative value.
+        var value = this.unformat($field.val()) || '';
 
         if (!value) {
             $field.val(value);
