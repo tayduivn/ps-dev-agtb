@@ -45,10 +45,10 @@ describe('Emails.Base.Layout.ComposeAddressbook', function() {
             parseOptionsStub.restore();
         });
 
-        it('Should search for emails through the Mail API', function() {
+        it('Should search for emails through the Emails API', function() {
             layout.collection.sync('read', layout.collection);
             expect(apiCallStub.calledOnce).toBe(true);
-            expect(apiCallStub.args[0][1].indexOf('Mail/recipients/find')).not.toBe(-1);
+            expect(apiCallStub.args[0][1].indexOf('Emails/recipients/find')).not.toBe(-1);
         });
 
         it('Should search for emails in all allow modules when options.module_list is empty.', function() {
