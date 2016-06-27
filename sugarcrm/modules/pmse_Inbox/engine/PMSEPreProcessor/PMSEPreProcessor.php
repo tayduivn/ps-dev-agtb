@@ -174,19 +174,26 @@ class PMSEPreProcessor
     }
 
     /**
-     *
-     * @param type $request
-     * @param type $createThread
-     * @param type $bean
-     * @param type $externalAction
-     * @return type
+     * Processes a request
+     * @param PMSERequest $request
+     * @return boolean
      */
     public function processRequest(PMSERequest $request)
     {
+        // Default the return
+        $result = true;
+
+        // Handle terminations first
         if ($request->getExternalAction() == 'TERMINATE_CASE') {
-            $this->terminateCaseByBeanAndProcess($request->getBean());
+            $result = $this->terminateCaseByBeanAndProcess($request->getBean());
         } else {
+            // Now handle actual processing of the request
             $flowDataList = $this->getFlowDataList($request);
+
+            // Set the start time, outside of the loop since that is where it belongs
+            Registry\Registry::getInstance()->set('pmse_start_time', microtime(true));
+
+            // Loop the flowdata list and handle the actions necessary
             foreach ($flowDataList as $flowData) {
                 // Process the flow data and also the bean object data
                 $request->setFlowData($this->processFlowData($flowData));
@@ -208,29 +215,50 @@ class PMSEPreProcessor
                             $request->setBean($parentBean);
                         }
 
-                        $this->logger->info('Request validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
+                        // Set the engine runner arguments
+                        $exFlowData = $validatedRequest->getFlowData();
+                        $exCreateThread = $validatedRequest->getCreateThread();
+                        $exBean = $validatedRequest->getBean();
+                        $exExternalAction = $validatedRequest->getExternalAction();
+                        $exArguments = $validatedRequest->getArguments();
 
-                        // Set the start time
-                        Registry\Registry::getInstance()->set('pmse_start_time', microtime(true));
-
-                        $result = $this->executer->runEngine(
-                            $validatedRequest->getFlowData(), $validatedRequest->getCreateThread(),
-                            $validatedRequest->getBean(), $validatedRequest->getExternalAction(),
-                            $validatedRequest->getArguments()
+                        // Run the executer and capture the result
+                        $res = $this->executer->runEngine(
+                            $exFlowData,
+                            $exCreateThread,
+                            $exBean,
+                            $exExternalAction,
+                            $exArguments
                         );
-                        $this->logger->info('Execution of case: #' . $data['cas_id'] . ' completed');
-                    }
 
+                        // Stack the results for use later
+                        $result = $result && $res;
+                    }
                 } else {
+                    // We need this for the log message
                     $data = $request->getFlowData();
-                    $this->logger->info('Request not validated for element: ' . $data['bpmn_type'] . ' with id: ' . $data['bpmn_id']);
+
+                    // Parse a log message
+                    $msg = sprintf(
+                        'Request not validated for element %s with id %s',
+                        $data['bpmn_type'],
+                        $data['bpmn_id']
+                    );
+
+                    // Log it
+                    $this->logger->info($msg);
+
+                    // Set the return value
+                    $result = false;
                 }
 
                 if ($request->getResult() == 'TERMINATE_CASE') {
-                    $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
+                    $result = $this->terminateCaseByBeanAndProcess($request->getBean(), $data);
                 }
             }
         }
+
+        return $result;
     }
 
     public function retrieveCasesByBean($bean)
@@ -257,22 +285,47 @@ class PMSEPreProcessor
         return (!empty($parentBean) && is_object($parentBean)) ? $parentBean: $bean;
     }
 
-    public function terminateCaseByBeanAndProcess($bean, $data = array())
+    /**
+     * Terminates a case by bean and process id
+     * @param SugarBean $bean
+     * @param array $data Flow data
+     * @return boolean
+     */
+    public function terminateCaseByBeanAndProcess(SugarBean $bean, array $data = array())
     {
+        // Gets the target module bean or the its parent
         $processBean = $this->retrieveProcessBean($bean, $data);
+
+        // Gets flow data for a given record
         $flows = $this->retrieveCasesByBean($processBean);
-        $verifiedProcesses = array();
+
+        // Needed for checking inside the loop, but doesn't need to be check for
+        // each iteration
+        $isEmpty = empty($data);
+
+        // Stack holder for what has been terminated already
+        $needsTerm = array();
+
+        // Loop and check
         foreach ($flows as $flow) {
-            if (empty($data) || $flow['pro_id'] == $data['pro_id']) {
-                if (!array_key_exists($flow['cas_id'], $verifiedProcesses)) {
-                    $verifiedProcesses[$flow['cas_id']] = true;
+            if ($isEmpty || $flow['pro_id'] == $data['pro_id']) {
+                // If we haven't terminated this one yet, mark it as needed
+                if (!isset($needsTerm[$flow['cas_id']])) {
+                    $needsTerm[$flow['cas_id']] = true;
                 }
-                if ($verifiedProcesses[$flow['cas_id']]) {
-                    $this->caseFlowHandler->terminateCase($flow, $processBean, "TERMINATED");
-                    $verifiedProcesses[$flow['cas_id']] = false;
+
+                // If this case id needs to be terminated, terminate it
+                if ($needsTerm[$flow['cas_id']]) {
+                    $this->caseFlowHandler->terminateCase($flow, $processBean, 'TERMINATED');
+
+                    // Then mark it as not needing check
+                    $needsTerm[$flow['cas_id']] = false;
                 }
             }
         }
+
+        // This isn't exactly accurate, but its better than returning nothing.
+        return true;
     }
 
     /**

@@ -13,6 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/SugarQueue/SugarJobQueue.php';
 require_once 'modules/Schedulers/Scheduler.php';
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
 /**
  * CRON driver for job queue
  * @api
@@ -188,6 +190,10 @@ class SugarCronJobs
      */
     public function executeJob($job)
     {
+        // Before calling save, we need to clear out any existing registered AWF
+        // triggered start events so they can continue to trigger.
+        Registry\Registry::getInstance()->drop('triggered_starts');
+
         $this->setTimeLimit($this->max_runtime);
         $res = $this->job->runJob();
         $this->clearTimeLimit();
