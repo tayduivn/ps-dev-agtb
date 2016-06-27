@@ -214,7 +214,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
 
         if(empty($legacyDefs['subpanel_setup'])) {
-            $GLOBALS['log']->error("Could not convert subpanels for subpanel: {$subpanelName} - {$loadedModule}");
+            if (isModuleBWC($loadedModule)) {
+                $GLOBALS['log']->error("Could not convert subpanels for subpanel: {$subpanelName} - {$loadedModule}");
+            }
+
             return $subpanelName;
         }
 
