@@ -704,7 +704,7 @@
         if (_.isNull(this.dupecheckList)) {
             this.dupecheckList = app.view.createLayout({
                 context: this.context,
-                type: 'create-dupecheck',
+                name: 'create-dupecheck',
                 module: this.module
             });
             this.dupecheckList.initComponents();
