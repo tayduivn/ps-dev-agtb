@@ -67,13 +67,13 @@ class JobQueueTest extends \Sugar_PHPUnit_Framework_TestCase
     public function testRun()
     {
         $clearTableQueries = array(
-            'clear_events' => '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_events')) . '/',
-            'clear_calendars' => '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_calendars')) . '/',
-            'clear_changes' => '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_changes')) . '/',
-            'clear_scheduling' => '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_scheduling')) . '/',
+            'clear_events' => '/' . preg_quote($this->db->truncateTableSQL('caldav_events')) . '/',
+            'clear_calendars' => '/' . preg_quote($this->db->truncateTableSQL('caldav_calendars')) . '/',
+            'clear_changes' => '/' . preg_quote($this->db->truncateTableSQL('caldav_changes')) . '/',
+            'clear_scheduling' => '/' . preg_quote($this->db->truncateTableSQL('caldav_scheduling')) . '/',
             'clear_synchronization' =>
-                '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_synchronization')) . '/',
-            'clear_queue' => '/' . preg_quote($GLOBALS['db']->truncateTableSQL('caldav_queue')) . '/',
+                '/' . preg_quote($this->db->truncateTableSQL('caldav_synchronization')) . '/',
+            'clear_queue' => '/' . preg_quote($this->db->truncateTableSQL('caldav_queue')) . '/',
         );
         foreach ($clearTableQueries as $key => $query) {
             $this->db->addQuerySpy($key, "{$query}");
