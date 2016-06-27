@@ -197,8 +197,12 @@
      * @protected
      */
     _getChildFields: function() {
+        if (!_.isEmpty(this.fields)) {
+            return this.fields;
+        }
+
         var metaFields = this._getChildFieldsMeta();
-        if (_.isEmpty(this.fields) && metaFields) {
+        if (metaFields) {
             _.each(metaFields, function(fieldDef) {
                 var field = app.view.createField({
                     def: fieldDef,
@@ -333,8 +337,10 @@
             }
         }, 100);
 
-        _.each(this._getChildFields(), function(field) {
-            this.model.on('change:' + field.name, removeNoData, this);
+        _.each(this.def.fields, function(field) {
+            if (field.name) {
+                this.model.on('change:' + field.name, removeNoData, this);
+            }
         }, this);
     },
 
