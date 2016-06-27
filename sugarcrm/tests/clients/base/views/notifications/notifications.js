@@ -21,12 +21,16 @@ describe('Notifications', function() {
 
         it('should bootstrap', function() {
             var _initOptions = sinon.collection.stub(view, '_initOptions', $.noop()),
-                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop());
+                _initCollection = sinon.collection.stub(view, '_initCollection', $.noop()),
+                _initFavicon = sinon.collection.stub(view, '_initFavicon', $.noop()),
+                stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
 
             view._bootstrap();
 
             expect(_initOptions).toHaveBeenCalledOnce();
             expect(_initCollection).toHaveBeenCalledOnce();
+            expect(_initFavicon).toHaveBeenCalledOnce();
+            expect(stopPulling).toHaveBeenCalledOnce();
         });
 
         it('should initialize options with default values', function() {
