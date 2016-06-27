@@ -380,6 +380,9 @@ class CalendarUtils
             $clone->update_vcal = false;
             $clone->send_invites = false;
             $clone->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
+            
+            // make sure any store relationship info is not saved
+            $clone->rel_fields_before_value = array();
 
             $fields = array(
                 'id' => array('name' => 'id', 'type' => 'id'),
