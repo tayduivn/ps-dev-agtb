@@ -98,6 +98,7 @@ FormPanel.prototype._createField = function (settings) {
             field = new FormPanelCurrency(defaults);
             break;
         case 'dropdown':
+        case 'radio':
             field = new FormPanelDropdown(defaults);
             break;
         case 'friendlydropdown':
@@ -108,9 +109,6 @@ FormPanel.prototype._createField = function (settings) {
             break;
         case 'datetime':
             field = new FormPanelDatetime(defaults);
-            break;
-        case 'radio':
-            field = new FormPanelRadio(defaults);
             break;
         case 'hidden':
             field = new FormPanelHidden(defaults);

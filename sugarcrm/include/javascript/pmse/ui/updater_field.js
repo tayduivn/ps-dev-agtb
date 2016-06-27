@@ -187,6 +187,7 @@ UpdaterField.prototype.setOptions = function (settings) {
                 newOption = new DateUpdaterItem(currentSetting);
                 break;
             case 'DropDown':
+            case 'Radio':
                 aUsers = [];
                 if (currentSetting.options instanceof Array) {
                     if (currentSetting.value === 'assigned_user_id') {
