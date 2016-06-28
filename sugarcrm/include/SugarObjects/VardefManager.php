@@ -547,17 +547,13 @@ class VardefManager{
     public static function saveCache($module, $object)
     {
         $object = self::updateObjectDictionary($module, $object);
-        
-        $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
-        if ($sc->get('noFilesystemMetadataCache', false)) {
-            $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
-            $cache->set(static::getCacheKey($module, $object), $GLOBALS['dictionary'][$object]);
-        } else {
-            $file = create_cache_directory(self::getCacheFileName($module, $object));
 
-            $out="<?php \n \$GLOBALS[\"dictionary\"][\"". $object . "\"]=" . var_export($GLOBALS['dictionary'][$object], true) .";";
-            sugar_file_put_contents_atomic($file, $out);
+        $db = DBManagerFactory::getInstance();
+        if ($db) {
+            $cache = self::$cache ?: self::$cache = new MetaDataCache($db);
+            $cache->set(static::getCacheKey($module, $object), $GLOBALS['dictionary'][$object]);
         }
+
     }
 
     /**
@@ -589,17 +585,11 @@ class VardefManager{
         //otherwise go through each module and remove the vardefs.php
         if(!empty($module_dir) && !empty($object_name)){
         }else{
-            $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
-            if ($sc->get('noFilesystemMetadataCache', false)) {
-                $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+            $db = DBManagerFactory::getInstance();
+            if ($db) {
+                $cache = self::$cache ?: self::$cache = new MetaDataCache($db);
                 $cache->clearKeysLike('vardefs::');
-            } else {
-                global $beanList;
-                foreach($beanList as $module_dir => $object_name){
-                    VardefManager::_clearCache($module_dir, $object_name);
-                }
             }
-
         }
         VardefManager::_clearCache($module_dir, $object_name);
     }
@@ -619,15 +609,10 @@ class VardefManager{
                 $object_name = $newName != false ? $newName : $object_name;
             }
 
-            $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
-            if ($sc->get('noFilesystemMetadataCache', false)) {
-                $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+            $db = DBManagerFactory::getInstance();
+            if ($db) {
+                $cache = self::$cache ?: self::$cache = new MetaDataCache($db);
                 $cache->set(static::getCacheKey($module_dir, $object_name), null);
-            } else {
-                $file = sugar_cached(self::getCacheFileName($module_dir, $object_name));
-                if (file_exists($file)) {
-                    unlink($file);
-                }
             }
         }
     }
@@ -1116,15 +1101,10 @@ class VardefManager{
 
 
     protected static function loadFromCache($module, $object) {
-        $sc = self::$sugarConfig ?: self::$sugarConfig = SugarConfig::getInstance();
-        if ($sc->get('noFilesystemMetadataCache', false)) {
-            $cache = self::$cache ?: self::$cache = new MetaDataCache(DBManagerFactory::getInstance());
+        $db = DBManagerFactory::getInstance();
+        if ($db) {
+            $cache = self::$cache ?: self::$cache = new MetaDataCache($db);
             $GLOBALS['dictionary'][$object] = $cache->get(static::getCacheKey($module, $object));
-        } else {
-            $cachedfile = sugar_cached(self::getCacheFileName($module, $object));
-            if (file_exists($cachedfile)) {
-                include $cachedfile;
-            }
         }
     }
 

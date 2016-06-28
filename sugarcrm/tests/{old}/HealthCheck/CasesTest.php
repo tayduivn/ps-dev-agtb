@@ -31,10 +31,16 @@ class HealthCheckCasesTest extends TestCase
             $this->cachedPath = sugar_cached(md5(microtime(true)));
         } while (is_dir($this->cachedPath));
         sugar_mkdir($this->cachedPath);
+
+        // Since this UT uses its own vardefs, start with clean slate
+        VardefManager::clearVardef('Accounts');
     }
 
     public function tearDown()
     {
+        // Since this UT uses its own vardefs, clean slate after UT
+        VardefManager::clearVardef('Accounts');
+
         chdir($this->currentDirectory);
         $this->currentDirectory = '';
 

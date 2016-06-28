@@ -54,7 +54,6 @@ EOQ;
            //Setup the neccessary Smarty configurations
         $this->parentFieldArray = 'fields';
         VardefManager::loadVardef('Accounts', 'Account', true);
-        require_once 'cache/modules/Accounts/Accountvardefs.php';
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
         $this->displayParams = array('sources'=>array('ext_rest_twitter'));
         $this->tabindex = 0;
