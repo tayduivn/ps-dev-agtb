@@ -684,8 +684,6 @@ $app_list_strings = array (
       'KBContents' => 'Knowledge Base',
   ),
     'record_type_display_emails' => array(
-        //FIXME: Remove the empty option once the BWC Emails UI has reached its EOL.
-        '' => '',
         'Accounts' => 'Account',
         'Contacts' => 'Contact',
         'Tasks' => 'Task',
