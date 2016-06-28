@@ -26,8 +26,7 @@ $dictionary['tracker_sessions'] = array(
         'session_id'=>array(
             'name' => 'session_id',
             'vname' => 'LBL_SESSION_ID',
-            'type' => 'varchar',
-            'len' => '36',
+            'type' => 'id',
             'isnull' => 'false',
         ),   
         'date_start'=>array(

@@ -17,18 +17,15 @@ $dictionary['roles_users'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'role_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'user_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		)
       , array ('name' => 'date_modified','type' => 'datetime'),
 		array (
@@ -61,6 +58,4 @@ $dictionary['roles_users'] = array (
 							  'relationship_type'=>'many-to-many',
 							  'join_table'=> 'roles_users', 'join_key_lhs'=>'role_id', 'join_key_rhs'=>'user_id')),
 	
-)
-                                  
-?>
+);

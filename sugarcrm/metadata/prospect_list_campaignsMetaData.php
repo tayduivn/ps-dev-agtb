@@ -17,18 +17,15 @@ $dictionary['prospect_list_campaigns'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'prospect_list_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'campaign_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
        array ('name' => 'date_modified','type' => 'datetime'),
 		array (

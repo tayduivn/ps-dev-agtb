@@ -740,6 +740,7 @@ class MysqlManager extends DBManager
 		if (empty($columns))
 			return false;
 
+        $indices = $this->massageIndexDefs($fieldDefs, $indices);
 		$keys = $this->keysSQL($indices);
 		if (!empty($keys))
 			$keys = ",$keys";

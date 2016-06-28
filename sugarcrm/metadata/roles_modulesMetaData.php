@@ -17,18 +17,15 @@ $dictionary['roles_modules'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'role_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'module_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'allow',
