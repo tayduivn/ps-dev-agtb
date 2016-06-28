@@ -242,6 +242,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType)
 		if (tokens.name == 'related' && def.type) {
 		    switch(def.type) {
 		        case "datetime":
+                case 'datetimecombo':
 		            returnType = "date"; break;
 		        case "bool":
 		            returnType = "boolean"; break;
