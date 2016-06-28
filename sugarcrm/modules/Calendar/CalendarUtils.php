@@ -602,36 +602,73 @@ class CalendarUtils
     public static function compareBeforeAfterInvites($inviteesBefore, $inviteesAfter)
     {
         $mergedInvitees = array();
+        $inviteesBeforeFlipped = array();
+        $inviteesAfterFlipped = array();
 
         foreach ($inviteesBefore as $before) {
-            $needInvite = true;
-            foreach ($inviteesAfter as $after) {
-                if ($before[0] == $after[0] && $before[1] == $after[1]) {
-                    if ($before[3] == 'none' || (($before[3] != $after[3]) && ($after[3] != 'none'))) {
-                        $needInvite = false;
-                        break;
-                    }
-                }
-            }
-
-            if ($needInvite) {
-                $mergedInvitees[$before[1]] = $before[0];
-            }
+            $inviteesBeforeFlipped[$before[1]] = $before;
         }
 
         foreach ($inviteesAfter as $after) {
+            $inviteesAfterFlipped[$after[1]] = $after;
+        }
+
+        foreach ($inviteesAfterFlipped as $id => $after) {
             $needInvite = true;
-            foreach ($inviteesBefore as $before) {
-                if ($before[0] == $after[0] && $before[1] == $after[1]) {
-                    $needInvite = false;
-                    break;
-                }
+            if (isset($inviteesBeforeFlipped[$id])
+                &&
+                $inviteesBeforeFlipped[$id][3] != $after[3]
+                &&
+                $after[3] != 'none'
+            ) {
+                $needInvite = false;
             }
             if ($needInvite) {
                 $mergedInvitees[$after[1]] = $after[0];
             }
         }
 
+        foreach ($inviteesBeforeFlipped as $id => $before) {
+            if (!isset($inviteesAfterFlipped[$id])) {
+                $mergedInvitees[$before[1]] = $before[0];
+            }
+        }
+
         return $mergedInvitees;
+    }
+
+    /**
+     * Build notification list for Calls and Meetings. If event was saved in sugar - all invites should be in the list.
+     * If event was saved in iCal we should exclude invite if user change only own status.
+     *
+     * @param Call|Meeting|SugarBean $event
+     * @return string[]
+     * @throws Exception
+     */
+    public static function buildInvitesList(\SugarBean $event)
+    {
+        if (!($event instanceof \Call) && !($event instanceof \Meeting)) {
+            throw new Exception('$event should be instance of Call or Meeting. Get:' . get_class($event));
+        }
+        $inviteesList = array();
+        if (empty($event->send_invites_uid)) {
+            $invitees = static::getInvitees($event);
+            foreach ($invitees as $invite) {
+                $inviteesList[$invite[1]] = $invite[0];
+            }
+        } else {
+            $inviteesBefore = $event->inviteesNotification ? : array();
+            $inviteesAfter = static::getInvitees($event);
+            $inviteesList = static::compareBeforeAfterInvites($inviteesBefore, $inviteesAfter);
+        }
+
+        if (!$event->ignoreOrganizerNotification &&
+            !empty($event->created_by) &&
+            !isset($inviteesList[$event->created_by])
+        ) {
+            $inviteesList[$event->created_by] = 'Users';
+        }
+
+        return $inviteesList;
     }
 }
