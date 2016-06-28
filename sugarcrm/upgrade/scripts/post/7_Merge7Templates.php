@@ -91,6 +91,7 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
     protected function fieldList($panels)
     {
         $fields = array();
+        $panel_labels = array();
         foreach ($panels as $pindex => $panel) {
             if (empty($panel['fields'])) {
                 continue;
@@ -99,6 +100,9 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
                 $pname = $panel['name'];
             } else {
                 $pname = null;
+            }
+            if (!empty($panel['label'])) {
+                $panel_labels[$pindex] = $panel['label'];
             }
             foreach ($panel['fields'] as $fieldno => $field) {
                 if (is_array($field)) {
@@ -114,7 +118,7 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
             }
         }
 
-        return $fields;
+        return array($fields, $panel_labels);
     }
 
     /**
@@ -179,8 +183,12 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
      */
     public function mergePanelDefs($old_viewdefs, $new_viewdefs, $custom_viewdefs)
     {
-        $old_fields = $this->fieldList($old_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']);
-        $new_fields = $this->fieldList($new_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']);
+        list($old_fields, $old_panel_labels) = $this->fieldList(
+            $old_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']
+        );
+        list($new_fields, $new_panel_labels) = $this->fieldList(
+            $new_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']
+        );
 
         // Here we care only for field presence, not for changes in field metadata
         $removed_fields = array_udiff_assoc($old_fields, $new_fields, function () {
@@ -197,16 +205,28 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
             }
         );
 
-        if (empty($added_fields) && empty($removed_fields) && empty($changed_fields)) {
-            // nothing to do
-            $this->log("Merge7Templates mergePanelDefs No changes to merge... skipping");
+        // Index custom fields too
+        list($custom_fields, $custom_panel_labels) = $this->fieldList(
+            $custom_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']
+        );
 
-            return $custom_viewdefs;
+        if (empty($added_fields) && empty($removed_fields) && empty($changed_fields)) {
+            if ($old_panel_labels == $new_panel_labels) {
+                // nothing to do
+                $this->log("Merge7Templates mergePanelDefs No changes to merge... skipping");
+
+                return $custom_viewdefs;
+            } else {
+                $custom_viewdefs = $this->megePanelDefLabels(
+                    $old_panel_labels,
+                    $new_panel_labels,
+                    $custom_panel_labels,
+                    $custom_viewdefs
+                );
+            }
         }
         $this->log("Fields added: " . var_export($added_fields, true));
         $this->log("Fields removed: " . var_export($removed_fields, true));
-        // Index custom fields too
-        $custom_fields = $this->fieldList($custom_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels']);
 
         foreach ($added_fields as $field => $data) {
             unset($changed_fields[$field]);
@@ -255,6 +275,70 @@ class SugarUpgradeMerge7Templates extends UpgradeScript
             }
         }
 
+        return $custom_viewdefs;
+    }
+
+    /**
+     * Merges panel labels, combining custom into new labels then into the old labels.
+     *
+     * @param array $old_panel_labels The previous instance view labels
+     * @param array $new_panel_labels The upgrade instance view labels
+     * @param array $custom_panel_labels Customization labels from the previous instance
+     * @param array $custom_viewdefs Customization viewdefs from the previous instance
+     *
+     * @return array A new custom set of viewdefs
+     */
+    public function megePanelDefLabels($old_panel_labels, $new_panel_labels, $custom_panel_labels, $custom_viewdefs)
+    {
+        $removed_panel_labels = array_udiff_assoc($old_panel_labels, $new_panel_labels, function () {
+            return 0;
+        });
+        $added_panel_labels = array_udiff_assoc($new_panel_labels, $old_panel_labels, function () {
+            return 0;
+        });
+        $changed_panel_labels = array_udiff_assoc($new_panel_labels, $old_panel_labels, function ($a, $b) {
+            return $a == $b ? 0 : -1;
+        });
+        $cVdefs = $custom_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels'];
+        if (!empty($added_panel_labels)) {
+            $this->log("Panel labels added: " . var_export($added_panel_labels, true));
+            foreach ($added_panel_labels as $pindex => $label) {
+                unset($changed_panel_labels[$pindex]);
+                if (!empty($custom_panel_labels[$pindex])) {
+                    continue;
+                }
+                $cVdefs[$pindex]['label'] = $label;
+                $this->needSave = true;
+            }
+        }
+        if (!empty($removed_panel_labels)) {
+            $this->log("Panel labels removed: " . var_export($removed_panel_labels, true));
+            foreach ($removed_panel_labels as $pindex => $label) {
+                unset($changed_panel_labels[$pindex]);
+                if (empty($custom_panel_labels[$pindex])) {
+                    continue;
+                }
+                unset($cVdefs[$pindex]['label']);
+                $this->needSave = true;
+            }
+        }
+        if (!empty($changed_panel_labels)) {
+            $this->log("Panel labels changed: " . var_export($changed_panel_labels, true));
+            foreach ($changed_panel_labels as $pindex => $label) {
+                if (empty($custom_panel_labels[$pindex]) ||
+                    empty($old_panel_labels[$pindex]) ||
+                    empty($new_panel_labels[$pindex])) {
+                    // Custom has no such index - ignore it
+                    continue;
+                }
+                // Change only if custom matches old data
+                if ($custom_panel_labels[$pindex] == $old_panel_labels[$pindex]) {
+                    $cVdefs[$pindex]['label'] = $new_panel_labels[$pindex]['label'];
+                    $this->needSave = true;
+                }
+            }
+        }
+        $custom_viewdefs[$this->moduleName][$this->clientType]['view'][$this->viewName]['panels'] = $cVdefs;
         return $custom_viewdefs;
     }
 
