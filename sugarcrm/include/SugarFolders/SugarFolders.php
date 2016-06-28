@@ -349,6 +349,7 @@ ENDQ;
 
         $q .= <<<ENDW
  WHERE emails.deleted=0 AND emails.type NOT IN ('out', 'draft') AND emails.status NOT IN ('sent', 'draft')
+ AND coalesce(emails.intent, ' ') != 'caldav'
 AND EXISTS (
 SELECT 1 FROM emails_email_addr_rel eear
  JOIN email_addr_bean_rel eabr ON eabr.email_address_id=eear.email_address_id AND eabr.bean_id = '{$current_user->id}'
