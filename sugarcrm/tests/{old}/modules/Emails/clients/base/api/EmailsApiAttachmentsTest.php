@@ -163,8 +163,8 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $this->deleteRecord($record['id'], $args);
 
-        $noteUploaded  = BeanFactory::retrieveBean('Notes', $uploadedAttachment, array(), false);
-        $noteDocument  = BeanFactory::retrieveBean('Notes', $documentAttachment, array(), false);
+        $noteUploaded  = BeanFactory::retrieveBean('Notes', $uploadedAttachment, array("use_cache" => false), false);
+        $noteDocument  = BeanFactory::retrieveBean('Notes', $documentAttachment, array("use_cache" => false), false);
 
         $this->assertEquals(1, $noteUploaded->deleted, 'Uploaded Attachment - Note Object not deleted');
         $this->assertEquals(1, $noteDocument->deleted, 'Document Attachment - Note Object not deleted');
@@ -246,6 +246,39 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $this->assertCount(0, $found, "{$attachment2->id} should have been removed");
 
         unlink("upload://{$templateId}");
+    }
+
+    public function testDeleteEmailAttachment()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $note = SugarTestNoteUtilities::createNote();
+
+        $file = "upload://{$note->id}";
+        file_put_contents($file, $note->id);
+        $this->assertFileExists($file);
+
+        $this->assertTrue($email->load_relationship('attachments'), 'Attachment is not loaded');
+        $email->attachments->add($note);
+
+        $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
+        $this->assertEquals($email->id, $note->email_id, 'Note is not attached to Email');
+
+        $api = new RelateRecordApi();
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $api->deleteRelatedLink(
+            $service,
+            array(
+                'module' => 'Emails',
+                'record' => $email->id,
+                'link_name' => 'attachments',
+                'remote_id' => $note->id,
+            )
+        );
+
+        $this->assertFileNotExists($file, "Attachment File Should have been deleted");
+
+        $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
+        $this->assertEmpty($note, "Attachment Note Should Have Been Deleted");
     }
 
     /**

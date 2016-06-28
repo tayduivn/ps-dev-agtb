@@ -60,9 +60,6 @@ class EmailManController extends SugarController
         $mm = MetaDataManager::getManager();
         $mm->setUserMetadataHasChanged($current_user);
 
-        // save User defaults for emails
-        $configurator->config['email_default_delete_attachments'] = (isset($_REQUEST['email_default_delete_attachments'])) ? true : false;
-
         ///////////////////////////////////////////////////////////////////////////////
         ////	SECURITY
         $security = array();

@@ -113,13 +113,6 @@ class ViewConfig extends SugarView
         foreach($editors as $k => $v) {
             if($k != "") { $newEditors[$k] = $v; }
         }
-
-        // preserve attachments
-        $preserveAttachments = '';
-        if(isset($sugar_config['email_default_delete_attachments']) && $sugar_config['email_default_delete_attachments'] == true) {
-            $preserveAttachments = 'CHECKED';
-        }
-        $this->ss->assign('DEFAULT_EMAIL_DELETE_ATTACHMENTS', $preserveAttachments);
         ////	END USER EMAIL DEFAULTS
         ///////////////////////////////////////////////////////////////////////////////
 

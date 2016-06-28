@@ -111,22 +111,16 @@ class Note extends SugarBean
     }
 
     /**
-     * overrides SugarBean's method.
-     * If a system setting is set, it will mark all related notes as deleted, and attempt to delete files that are
-     * related to those notes
-     * @param string id ID
+     * Deletes the Note associated with the $id parameter by marking it as
+     * deleted and if there is a file attached, it will be deleted as well.
+     *
+     * @param string $id ID of Note to be deleted.
      */
     function mark_deleted($id)
     {
-        if (!empty($this->email_id) &&
-            isset($GLOBALS['sugar_config']['email_default_delete_attachments']) &&
-            $GLOBALS['sugar_config']['email_default_delete_attachments'] == true
-        ) {
-            $removeFile = 'upload://' . $this->getUploadId();
-
-            if (file_exists($removeFile) && !unlink($removeFile)) {
-                $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
-            }
+        $removeFile = 'upload://' . $this->getUploadId();
+        if (file_exists($removeFile) && !unlink($removeFile)) {
+            $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
         }
 
         // delete note

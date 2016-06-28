@@ -17,3 +17,10 @@ $hook_array['after_relationship_add'][] = array(
     SugarAutoLoader::customClass('EmailsHookHandler'),
     'updateAttachmentVisibility',
 );
+$hook_array['after_relationship_delete'][] = array(
+    1,
+    'remove_email_attachment',
+    SugarAutoLoader::requireWithCustom('modules/Emails/EmailsHookHandler.php'),
+    SugarAutoLoader::customClass('EmailsHookHandler'),
+    'removeEmailAttachment',
+);

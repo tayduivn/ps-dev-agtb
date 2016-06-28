@@ -136,10 +136,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testMarkDeleted()
     {
-        $note = SugarTestNoteUtilities::createNote('', array(
-            'email_type' => 'Emails',
-            'email_id' => create_guid(),
-        ));
+        $note = SugarTestNoteUtilities::createNote();
 
         $file = "upload://{$note->id}";
         file_put_contents($file, $note->id);

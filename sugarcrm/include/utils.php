@@ -324,7 +324,6 @@ function get_sugar_config_defaults()
     'email_address_separator' => ',', // use RFC2368 spec unless we have a noncompliant email client
     'email_default_editor' => 'html',
     'email_default_client' => 'sugar',
-    'email_default_delete_attachments' => true,
     'email_mailer_timeout' => 10,
     'smtp_mailer_debug' => 0,
     'history_max_viewed' => 50,

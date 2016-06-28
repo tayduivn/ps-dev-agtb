@@ -178,7 +178,6 @@ $sugar_config = array (
   'display_inbound_email_buttons' => false,
   'dump_slow_queries' => false,
   'email_default_client' => 'sugar',
-  'email_default_delete_attachments' => true,
   'email_default_editor' => 'html',
   'export_delimiter' => ',',
   'history_max_viewed' => 50,
