@@ -190,6 +190,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/javascript/pmse/business_rules.js',
             // MACAROON-1328
             'modules/pmse_Inbox/engine/PMSEAccessManagement.php',
+            // BR-4286 - Retire unused MVC action files
+            'modules/Calendar/views/view.createinvitee.php',
+            'modules/Calendar/views/view.getgr.php',
+            'modules/Calendar/views/view.getgrusers.php',
         );
 
         // must be upgrading from between 710 to 722

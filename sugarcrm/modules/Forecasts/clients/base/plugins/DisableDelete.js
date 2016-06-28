@@ -17,6 +17,11 @@
         app.plugins.register('DisableDelete', ['field'], {
 
             /**
+             * semaphore to prevent multiple executions of the plugin
+             */
+            running: false,
+
+            /**
              * Attach code for when the plugin is registered on a view
              *
              * @param {object} component
@@ -38,6 +43,13 @@
              * @return {string} message that was set
              */
             removeDelete: function() {
+                //if we are currently running the plugin on an element, prevent overlapping calls
+                if (this.running) {
+                    return;
+                }
+
+                this.running = true;
+
                 var config = app.metadata.getModule('Forecasts', 'config') || {},
                     sales_stage_won = config.sales_stage_won || ['Closed Won'],
                     sales_stage_lost = config.sales_stage_lost || ['Closed Lost'],
@@ -82,6 +94,7 @@
                         button.tooltip('destroy');
                     }
                 }
+                this.running = false;
                 return message;
             },
 

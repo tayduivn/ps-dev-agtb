@@ -59,8 +59,6 @@ class PMSEDirectRequestHandler
      */
     public function executeRequest($args = array(), $createThread = false, $bean = null, $externalAction = '')
     {
-        $this->logger->info('Processing a direct request.');
-        $this->logger->debug('Direct request params: ' . print_r($args));
         $this->request->setCreateThread($createThread);
         $this->request->setExternalAction($externalAction);
         $this->request->setBean($bean);
