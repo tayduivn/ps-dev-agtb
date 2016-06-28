@@ -186,6 +186,10 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/google-api-php-client',
             // Delete files that should have been deleted before
             'upgrade/scripts/post/5_MinifyJS.php',
+            // BR-4286 - Retire unused MVC action files
+            'modules/Calendar/views/view.createinvitee.php',
+            'modules/Calendar/views/view.getgr.php',
+            'modules/Calendar/views/view.getgrusers.php',
         );
 
         // must be upgrading from between 710 to 722

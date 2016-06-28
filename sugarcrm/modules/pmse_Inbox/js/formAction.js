@@ -308,6 +308,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                     if (f.validate()) {
                         _App.alert.show('upload', {level: 'process', title: 'LBL_SAVING', autoClose: false});
                         var cbDate = combo_users.getSelectedText();
+                        var auid = combo_users.value;
                         if (combo_users.name == 'reassign_user') {
                             items[6].setValue(cbDate);
                         } else {
@@ -332,6 +333,7 @@ var showModalWindow = function (casId, casIndex, wtype, flowId, pmseInboxId,task
                                 } else {
                                     if ($('#assigned_user_name').length) {
                                         $("#assigned_user_name").val(cbDate);
+                                        $('#assigned_user_id').val(auid);
                                         var formView = _App.controller.layout.getComponent('bwc');
                                         if (!_.isUndefined(formView)) {
                                             formView.revertBwcModel();

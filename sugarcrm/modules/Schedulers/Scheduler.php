@@ -1085,7 +1085,7 @@ class Scheduler extends SugarBean {
 
             foreach($job_strings as $v) {
                 if(preg_match('/^class\:\:(.+)$/', $v, $match)) {
-                    self::$job_strings[$v] = $mod_strings['LBL_' . strtoupper($match[1])];
+                    self::$job_strings[$v] = $mod_strings['LBL_' . strtoupper(str_replace('\\', '_', $match[1]))];
                 } else {
                     self::$job_strings['function::' . $v] = $mod_strings['LBL_'.strtoupper($v)];
                 }
