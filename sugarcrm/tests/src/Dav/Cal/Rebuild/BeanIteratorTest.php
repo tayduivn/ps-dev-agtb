@@ -74,7 +74,7 @@ class BeanIteratorTest extends \Sugar_PHPUnit_Framework_TestCase
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\BeanIterator::key
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\BeanIterator::valid
      * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\BeanIterator::rewind
-     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\BeanIterator::fillBuffer
+     * @covers \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\BeanIterator::fillIds
      */
     public function testBeanIterator()
     {
