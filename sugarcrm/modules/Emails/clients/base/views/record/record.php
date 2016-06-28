@@ -81,7 +81,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'fields' => array(
                         'name',
                         'email_address_used',
-                        'email'
+                        'email',
                     ),
                 ),
                 array(
@@ -96,7 +96,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'fields' => array(
                         'name',
                         'email_address_used',
-                        'email'
+                        'email',
                     ),
                     'span' => 12,
                 ),
@@ -132,7 +132,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'fields' => array(
                         'name',
                         'email_address_used',
-                        'email'
+                        'email',
                     ),
                 ),
                 array(
@@ -143,7 +143,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'fields' => array(
                         'name',
                         'email_address_used',
-                        'email'
+                        'email',
                     ),
                 ),
                 array(
