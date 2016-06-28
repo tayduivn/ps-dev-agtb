@@ -76,9 +76,13 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 array(
                     'name' => 'from',
                     'type' => 'from',
-                    'label' => 'LBL_SENDER',
+                    'label' => 'LBL_FROM',
                     'readonly' => true,
-                    'fields' => array('name', 'email_address_used', 'email'),
+                    'fields' => array(
+                        'name',
+                        'email_address_used',
+                        'email'
+                    ),
                 ),
                 array(
                     'name' => 'date_sent',
@@ -87,15 +91,19 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 array(
                     'name' => 'to',
                     'type' => 'email-recipients',
-                    'label' => 'LBL_TO_RECIPIENT',
+                    'label' => 'LBL_TO',
                     'readonly' => true,
-                    'fields' => array('name', 'email_address_used', 'email'),
+                    'fields' => array(
+                        'name',
+                        'email_address_used',
+                        'email'
+                    ),
                     'span' => 12,
                 ),
                 array(
                     'name' => 'description_html',
                     'type' => 'htmleditable_tinymce',
-                    'label' => 'LBL_BODY',
+                    'dismiss_label' => true,
                     'readonly' => true,
                     'span' => 12,
                 ),
@@ -121,14 +129,22 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'email-recipients',
                     'label' => 'LBL_CC',
                     'readonly' => true,
-                    'fields' => array('name', 'email_address_used', 'email'),
+                    'fields' => array(
+                        'name',
+                        'email_address_used',
+                        'email'
+                    ),
                 ),
                 array(
                     'name' => 'bcc',
                     'type' => 'email-recipients',
                     'label' => 'LBL_BCC',
                     'readonly' => true,
-                    'fields' => array('name', 'email_address_used', 'email'),
+                    'fields' => array(
+                        'name',
+                        'email_address_used',
+                        'email'
+                    ),
                 ),
                 array(
                     'name' => 'assigned_user_name',
@@ -142,9 +158,12 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'name' => 'team_name',
                     'readonly' => true,
                 ),
+                array(
+                    'name' => 'tag',
+                    'label' => 'Tags',
+                    'span' => 12,
+                ),
             ),
         ),
-
-
     ),
 );

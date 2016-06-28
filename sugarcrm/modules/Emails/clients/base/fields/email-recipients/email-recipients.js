@@ -87,18 +87,26 @@
         // contents of the collection, while maintaining the requirement for
         // storing formatted recipients.
         if (value instanceof Backbone.Collection) {
+            // on "add" we want to force the collection to be reset to guarantee
+            // that all models in the collection have been properly formatted
+            // for use in this field
             value.on('add', function(models, collection) {
                 if (this.action === 'edit') {
                     this._formatCollectionModels(collection);
                 }
             }, this);
 
+            // on "remove" the requisite models have already been removed, so we
+            // only need to bother updating the value in the DOM
             value.on('remove', function(models, collection) {
                 if (this.action === 'edit') {
+                    // format the recipients and put them in the DOM
                     this._updateSelect2(this.getFormattedValue());
                 }
             }, this);
 
+            // on "reset" we want to replace all models in the collection with
+            // their formatted versions
             value.on('reset', function(collection) {
                 if (this.action === 'edit') {
                     this._formatCollectionModels(collection);

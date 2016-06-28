@@ -3,6 +3,7 @@ describe('Emails.fields.email-recipients', function() {
     var field;
     var context;
     var model;
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -28,6 +29,8 @@ describe('Emails.fields.email-recipients', function() {
             context: context,
             loadFromModule: true
         });
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -693,6 +696,27 @@ describe('Emails.fields.email-recipients', function() {
 
             actual = field._validateEmailAddress(emailAddress);
             expect(actual).toBeTruthy();
+        });
+    });
+
+    describe('field render events', function() {
+        var renderStub;
+
+        beforeEach(function() {
+            renderStub = sandbox.stub(field, 'render');
+        });
+
+        it('should not call render() in edit mode', function() {
+            field.setMode('edit');
+            field.model.trigger('change:' + this.name);
+
+            expect(renderStub.callCount).toEqual(1);
+        });
+        it('should call render() in detail mode', function() {
+            field.setMode('detail');
+            field.model.trigger('change:' + field.name);
+
+            expect(renderStub.callCount).toEqual(2);
         });
     });
 });

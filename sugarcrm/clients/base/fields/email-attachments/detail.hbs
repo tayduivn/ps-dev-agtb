@@ -10,8 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
+<div class="attachments">
 {{#each value}}
-<span class="ellipsis_inline" data-placement="bottom">
-    <a title="{{name}}" href="javascript:void(0);" data-url="{{_url}}" data-action="download" track="click:email_attachment">{{name}}</a> ({{file_size}})
-</span>
+
+<a href="javascript:void(0);" data-url="{{_url}}" data-action="download" class="attachment">
+    <span>{{name}} ({{file_size}})</span>
+</a>
+
 {{/each}}
+</div>
+<!--
+<input type="hidden" name="{{name}}" class="select2{{#if def.css_class}} {{def.css_class}}{{/if}} attachments"/>
+-->
