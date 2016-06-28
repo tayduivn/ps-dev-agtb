@@ -385,7 +385,7 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
             $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
         }
         $expectedValues = array(
-            'caldav_module' => rand(1000, 9999),
+            'caldav_module' => 'Meetings',
             'caldav_interval' => rand(1000, 9999),
             'caldav_call_direction' => rand(1000, 9999),
         );

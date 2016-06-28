@@ -172,12 +172,14 @@ class CalDavApi extends SugarApi
     {
         global $current_user;
 
+        $supportedModules = $this->getSupportedCalDavModules();
+        $defaultModule = $current_user->getPreference('caldav_module');
         $caldav_config = array(
-            'modules' => $this->getSupportedCalDavModules(),
+            'modules' => $supportedModules,
             'intervals' => $this->getOldestSyncDates(),
             'call_directions' => $this->getCallDirections(),
             'values' => array(
-                'caldav_module' => $current_user->getPreference('caldav_module'),
+                'caldav_module' => in_array($defaultModule, $supportedModules) ? $defaultModule : null,
                 'caldav_interval' => $current_user->getPreference('caldav_interval'),
                 'caldav_call_direction' => $current_user->getPreference('caldav_call_direction'),
             )

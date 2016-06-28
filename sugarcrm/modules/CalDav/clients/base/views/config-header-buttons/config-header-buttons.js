@@ -28,6 +28,23 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    saveConfig: function() {
+        var self = this;
+        if (this.triggerBefore('save')) {
+            this.getField('save_button').setDisabled(true);
+            this.model.doValidate(null, function(isValid) {
+                if (isValid) {
+                    self._saveConfig();
+                } else {
+                    self.getField('save_button').setDisabled(false);
+                }
+            });
+        }
+    },
+
+    /**
      * Save the drawer.
      *
      * @private

@@ -68,6 +68,7 @@ $mod_strings = array(
 
     'LBL_CONFIG_TITLE_MODULE_SETTINGS_ADMIN' => 'Calendar Sync System Settings',
     'LBL_CONFIG_TITLE_MODULE_SETTINGS' => 'Calendar Sync Settings',
+    'LBL_CONFIG_ERROR_SELECT_MODULE' => 'Module should be selected',
     'LBL_CALDAV_DEFAULT_MODULE' => 'Default event mapping',
     'LBL_CALDAV_DEFAULT_MODULE_DESC_ADMIN' => 'Set the default type of record to be used when syncing events ' .
                                         'created through an external calendar application.',
