@@ -63,7 +63,7 @@ class ForecastSalesStageExpression extends EnumExpression
 			    params = this.getParameters(),
 			    includeWon = params[0].evaluate(),
 			    includeClosed = params[1].evaluate(),
-			    array = _.values(App.lang.getAppListStrings('sales_stage_dom')),
+			    array = _.keys(App.lang.getAppListStrings('sales_stage_dom')),
 			    keysToRemove = [];
 
             if (!SEE.isTruthy(includeWon)) {
