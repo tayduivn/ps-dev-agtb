@@ -1178,7 +1178,12 @@ function get_action_contents($workflow_id, $trigger_count, $action_module_name, 
 						// fired while away from the workflow engine. This allows
 						// for that.
 						if ($workflow_trigger_id) {
-							$action_string .= "\t \$action_meta_array['".$array_position_name."']['trigger_id'] = '$workflow_trigger_id'; \n ";
+                            $action_string .= "\t \$action_meta_array['" .
+                                $array_position_name .
+                                "']['trigger_id'] = '$workflow_trigger_id'; \n ";
+                            $action_string .= "\t \$action_meta_array['" .
+                                $array_position_name .
+                                "']['action_id'] = '" . $row['id'] . "'; \n ";
 						}
 						$action_string .= "\t process_workflow_actions(\$focus, \$action_meta_array['".$array_position_name."']); \n ";
 
