@@ -180,6 +180,28 @@ class PMSEExecuter
     }
 
     /**
+     * Gets a proper PMSEElement class name from a script type or activity type
+     * @param string $base
+     * @param string $sep
+     * @return string
+     */
+    protected function getElementName($base, $sep = '_')
+    {
+        // Empty is invalid
+        if (empty($base)) {
+            return 'InvalidElement';
+        }
+
+        // Assign Team breaks convention
+        if ($base === 'ASSIGN_TEAM') {
+            return 'RoundRobin';
+        }
+
+        // Return a ACTION_TYPE to ActionType conversion
+        return str_replace($sep, '', ucwords(strtolower($base), $sep));
+    }
+
+    /**
      *
      * @param type $id
      * @return boolean
@@ -191,38 +213,18 @@ class PMSEExecuter
         $bpmnBean->retrieve($id);
         $definitionBean->retrieve($id);
 
-        $bpmElement = false;
+        // Empty element will load a PMSEElement by default
+        $elementName = '';
         switch ($bpmnBean->act_task_type) {
             case 'SCRIPTTASK':
-                switch ($bpmnBean->act_script_type) {
-                    case 'BUSINESS_RULE':
-                        $bpmElement = $this->retrievePMSEElement('PMSEBusinessRule');
-                        break;
-                    case 'CHANGE_FIELD':
-                        $bpmElement = $this->retrievePMSEElement('PMSEChangeField');
-                        break;
-                    case 'ASSIGN_TEAM':
-                        $bpmElement = $this->retrievePMSEElement('PMSERoundRobin');
-                        break;
-                    case 'ASSIGN_USER':
-                        $bpmElement = $this->retrievePMSEElement('PMSEAssignUser');
-                        break;
-                    case 'ADD_RELATED_RECORD':
-                        $bpmElement = $this->retrievePMSEElement('PMSEAddRelatedRecord');
-                        break;
-                    default:
-                        $bpmElement = $this->retrievePMSEElement('PMSEInvalidElement');
-                        break;
-                }
+                $elementName = $this->getElementName($bpmnBean->act_script_type);
                 break;
             case 'USERTASK':
-                $bpmElement = $this->retrievePMSEElement('PMSEUserTask');
-                break;
-            default :
-                $bpmElement = $this->retrievePMSEElement();
+                $elementName = 'UserTask';
                 break;
         }
 
+        $bpmElement = $this->retrievePMSEElement($elementName);
         $bpmElement->setExecutionMode($definitionBean->execution_mode);
         return $bpmElement;
     }
