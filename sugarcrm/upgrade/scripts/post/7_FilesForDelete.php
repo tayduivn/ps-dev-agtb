@@ -190,6 +190,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'include/javascript/pmse/business_rules.js',
             // MACAROON-1328
             'modules/pmse_Inbox/engine/PMSEAccessManagement.php',
+            // MACAROON-1385
+            'modules/pmse_Inbox/engine/PMSEHandlers/PMSECronHandler.php',
         );
 
         // must be upgrading from between 710 to 722

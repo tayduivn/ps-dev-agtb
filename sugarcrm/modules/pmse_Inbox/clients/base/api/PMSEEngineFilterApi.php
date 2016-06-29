@@ -49,6 +49,18 @@ class PMSEEngineFilterApi extends FilterApi
         '$starts',
     );
 
+    /**
+     * Mapping of fields to a query column in getQueryObjectPA()
+     * @var array
+     */
+    protected $queryObjectOrderByMap = [
+        'pro_title' => 'process.name',
+        'task_name' => 'activity.name',
+        'cas_title' => 'inbox.cas_title',
+        'cas_user_id_full_name' => 'cas_user_id',
+        'prj_user_id_full_name' => 'prj_created_by',
+    ];
+
     public function registerApiRest()
     {
         return array(
@@ -512,27 +524,23 @@ class PMSEEngineFilterApi extends FilterApi
         $q->select($fields)
             ->fieldRaw('user_data.last_name', 'assigned_user_name');
 
-        foreach ($options['order_by'] as $orderBy) {
-            if ($orderBy[0] == 'pro_title'){
-                $orderBy[0] = 'process.name';
+        if (isset($options['order_by'])) {
+            foreach ($options['order_by'] as $orderBy) {
+                // Handle sorting fields based on the map, if a mapped field exists
+                // Default to the basic expectation first
+                $exp = $orderBy[0];
+                if (isset($this->queryObjectOrderByMap[$orderBy[0]])) {
+                    $exp = $this->queryObjectOrderByMap[$orderBy[0]];
+                }
+
+                // Get the sort direction now
+                $dir = $orderBy[1];
+
+                // Set the values into SugarQuery now
+                $q->orderBy($exp, $dir);
             }
-            if ($orderBy[0] == 'task_name'){
-                $orderBy[0] = 'activity.name';
-            }
-            if ($orderBy[0] == 'cas_title'){
-                $orderBy[0] = 'inbox.cas_title';
-            }
-            if ($orderBy[0] == 'cas_user_id_full_name'){
-                $orderBy[0] = 'cas_user_id';
-            }
-            if ($orderBy[0] == 'prj_user_id_full_name'){
-                $orderBy[0] = 'prj_created_by';
-            }
-            if ($orderBy[0] == 'assigned_user_name'){
-                $orderBy[0] = 'assigned_user_name';
-            }
-            $q->orderBy($orderBy[0], $orderBy[1]);
         }
+
         // Add an extra record to the limit so we can detect if there are more records to be found
         $q->limit($options['limit'] + 1);
         $q->offset($options['offset']);
