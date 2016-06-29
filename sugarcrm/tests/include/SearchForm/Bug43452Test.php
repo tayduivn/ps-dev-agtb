@@ -33,18 +33,18 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGenerateSearchWhereWithUnsetBool()
     {
+        global $db;
         // Looking for a NON Converted Lead named "Fabio".
         // Without changes, PopupSmarty return a bad query, with AND and OR at the same level.
         // With this fix we get parenthesis:
         //     1) From SearchForm2->generateSearchWhere, in case of 'bool' (they surround "converted = '0' or converted IS NULL")
         //     2) From PopupSmarty->_get_where_clause, when items of where's array are imploded.
 
-        $tGoodWhere = "( leads.first_name LIKE 'Fabio%' and (leads.converted = 0 OR leads.converted IS NULL) )";
-
         $_searchFields['Leads'] = array ('first_name'=> array('value' => 'Fabio', 'query_type'=>'default'),
                                          'converted'=> array('type'=> 'bool', 'value' => '0', 'query_type'=>'default'),
                                         );
         // provides $searchdefs['Leads']
+        $searchdefs = array();
         require "modules/Leads/metadata/searchdefs.php";
         
         $bean = BeanFactory::getBean('Leads');
@@ -53,6 +53,7 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
         $popup->searchForm->searchFields = $_searchFields['Leads'];
         $tWhere = $popup->_get_where_clause();
 
-        $this->assertEquals($tGoodWhere, $tWhere);
+        $this->assertContains('(leads.converted = 0 OR leads.converted IS NULL)', $tWhere);
+        $this->assertContains($db->getLikeSQL('leads.first_name', 'Fabio%'), $tWhere);
     }
 }

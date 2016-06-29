@@ -5193,6 +5193,10 @@ protected function checkQuery($sql, $object_name = false)
      */
     protected function massageIndexDefs($fieldDefs, $indices)
     {
+        if (!$this->isFieldArray($indices)) {
+            $indices = array($indices);
+        }
+
         return $indices;
     }
 }
