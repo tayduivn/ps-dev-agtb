@@ -192,18 +192,15 @@
           background-color: darken(@grayLighter, 20%);
         }
         div {
-          display: inline-block;
-          text-overflow: ellipsis;
-          overflow: hidden;
           max-width: 200px;
           font-size: 13px;
           line-height: 20px;
-          .filename {
+          .ellipsis-value {
             display: inline-block !important;
             float: left;
             max-width: 136px;
           }
-          .filesize {
+          .ellipsis-extra {
             padding-left: 3px;
           }
         }
@@ -635,9 +632,6 @@
   border-radius: 3px;
   cursor: default;
   a {
-    display: inline-block;
-    text-overflow: ellipsis;
-    overflow: hidden;
     max-width: 100%;
     color: inherit;
     font-size: 13px;
@@ -648,7 +642,7 @@
       text-decoration: none;
     }
   }
-  span {
+  span.fa {
     position: absolute;
     top: 7px;
     right: 7px;
@@ -656,16 +650,13 @@
     &:hover {
       color: @grayDarker;
     }
-    &.static {
-      position: static;
-    }
   }
-  .filename {
+  .ellipsis-value {
     display: inline-block !important;
     float: left;
     max-width: 136px;
   }
-  .filesize {
+  .ellipsis-extra {
     padding-left: 3px;
   }
 }

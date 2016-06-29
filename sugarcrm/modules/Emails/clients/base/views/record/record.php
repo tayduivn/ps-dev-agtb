@@ -12,6 +12,16 @@
 $viewdefs['Emails']['base']['view']['record'] = array(
     'buttons' => array(
         array(
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn' => 'edit',
+            'events' => array(
+                'click' => 'button:cancel_button:click',
+            ),
+        ),
+        array(
             'type' => 'rowaction',
             'event' => 'button:save_button:click',
             'name' => 'save_button',
@@ -41,21 +51,18 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
-                    'name' => 'delete_button',
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'label' => 'LBL_DELETE_BUTTON',
-                    'acl_action' => 'view',
-                ),
-                array(
-                    'type' => 'divider',
-                ),
-                array(
                     'type' => 'rowaction',
                     'event' => 'button:edit_button:click',
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'acl_action' => 'edit',
+                ),
+                array(
+                    'name' => 'delete_button',
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'label' => 'LBL_DELETE_BUTTON',
+                    'acl_action' => 'view',
                 ),
             ),
         ),
