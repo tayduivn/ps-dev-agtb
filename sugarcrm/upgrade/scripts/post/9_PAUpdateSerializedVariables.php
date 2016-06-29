@@ -84,7 +84,7 @@ class SugarUpgradePAUpdateSerializedVariables extends UpgradeScript
         $cleared = str_replace('O:8:"stdClass"', '', $value);
 
         // Now use the same logic as the unserialize validator
-        preg_match('/[oc]:\d+:/i', $cleared, $matches);
+        preg_match('/[oc]:[^:]*\d+:/i', $cleared, $matches);
 
         // If there were any references to objects found, return a false
         if (count($matches) > 0) {
