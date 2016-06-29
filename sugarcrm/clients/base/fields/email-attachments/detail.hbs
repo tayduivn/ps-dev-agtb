@@ -10,15 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="attachments">
 {{#each value}}
-
-<a href="javascript:void(0);" data-url="{{_url}}" data-action="download" class="attachment">
-    <span>{{name}} ({{file_size}})</span>
-</a>
-
+    <div class="square-pill readonly">
+        <a href="javascript:void(0);" data-url="{{_url}}" data-action="download">
+            {{name}} ({{file_size}})
+        </a>
+    </div>
 {{/each}}
-</div>
-<!--
-<input type="hidden" name="{{name}}" class="select2{{#if def.css_class}} {{def.css_class}}{{/if}} attachments"/>
--->

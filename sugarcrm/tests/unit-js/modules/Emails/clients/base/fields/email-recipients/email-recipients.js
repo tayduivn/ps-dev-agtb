@@ -699,20 +699,21 @@ describe('Emails.fields.email-recipients', function() {
         });
     });
 
-    describe('field render events', function() {
+    describe('rendering when the field changes on the model', function() {
         var renderStub;
 
         beforeEach(function() {
             renderStub = sandbox.stub(field, 'render');
         });
 
-        it('should not call render() in edit mode', function() {
+        it('should not do a full re-render when in edit mode', function() {
             field.setMode('edit');
             field.model.trigger('change:' + this.name);
 
             expect(renderStub.callCount).toEqual(1);
         });
-        it('should call render() in detail mode', function() {
+
+        it('should do a full re-render when in detail mode', function() {
             field.setMode('detail');
             field.model.trigger('change:' + field.name);
 

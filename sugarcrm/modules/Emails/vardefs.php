@@ -953,6 +953,7 @@ $dictionary['Email'] = array(
     'uses' => array(
         'favorite',
         'following',
+        'taggable',
     ),
 );
 

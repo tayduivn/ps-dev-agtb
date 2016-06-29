@@ -102,6 +102,10 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'type' => 'email-attachments',
                     'dismiss_label' => true,
                 ),
+                array(
+                    'name' => 'tag',
+                    'span' => '12',
+                ),
             ),
         ),
         array(

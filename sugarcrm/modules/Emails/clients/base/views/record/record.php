@@ -160,7 +160,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'tag',
-                    'label' => 'Tags',
+                    'readonly' => true,
                     'span' => 12,
                 ),
             ),
