@@ -233,13 +233,15 @@
              * @return {string}
              */
             formatSelection: function(choice) {
-                var $selection = '<span data-id="' + choice._file + '">' + choice.name + '</span>';
+                var $selection = '<span class="filename ellipsis_inline">' + choice.name + '</span>';
 
                 if (choice._action === 'placeholder') {
-                    $selection += ' <i class="fa fa-refresh fa-spin"></i>';
+                    $selection += '<span class="filesize"><i class="fa fa-refresh fa-spin"></i></span>';
                 } else {
-                    $selection += ' (' + choice.file_size + ')';
+                    $selection += '<span class="filesize">(' + choice.file_size + ')</span>';
                 }
+
+                $selection = '<span data-id="' + choice._file + '">' + $selection + '</span>';
 
                 return $selection;
             },
