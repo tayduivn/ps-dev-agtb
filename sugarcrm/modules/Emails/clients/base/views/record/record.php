@@ -12,6 +12,15 @@
 $viewdefs['Emails']['base']['view']['record'] = array(
     'buttons' => array(
         array(
+            'type' => 'rowaction',
+            'event' => 'button:save_button:click',
+            'name' => 'save_button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'btn btn-primary',
+            'showOn' => 'edit',
+            'acl_action' => 'edit',
+        ),
+        array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
             'primary' => true,
@@ -38,6 +47,16 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'label' => 'LBL_DELETE_BUTTON',
                     'acl_action' => 'view',
                 ),
+                array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(
@@ -57,7 +76,10 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly' => true,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    'readonly' => true,
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
@@ -146,21 +168,11 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                         'email',
                     ),
                 ),
-                array(
-                    'name' => 'assigned_user_name',
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'parent_name',
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'team_name',
-                    'readonly' => true,
-                ),
+                'assigned_user_name',
+                'parent_name',
+                'team_name',
                 array(
                     'name' => 'tag',
-                    'readonly' => true,
                     'span' => 12,
                 ),
             ),
