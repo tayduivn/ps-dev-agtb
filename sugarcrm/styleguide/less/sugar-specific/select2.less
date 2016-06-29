@@ -643,6 +643,10 @@
     font-size: 13px;
     font-weight: normal;
     line-height: 20px;
+    &:hover {
+      color: @grayDarker;
+      text-decoration: none;
+    }
   }
   span {
     position: absolute;
@@ -652,9 +656,20 @@
     &:hover {
       color: @grayDarker;
     }
+    &.static {
+      position: static;
+    }
   }
   &.readonly {
     padding: 3px 6px;
+  }
+  .filename {
+    display: inline-block !important;
+    float: left;
+    max-width: 136px;
+  }
+  .filesize {
+    padding-left: 3px;
   }
 }
 
