@@ -2613,6 +2613,14 @@ AdamActivity.prototype.getAction = function(type, w) {
                             if (modules && modules.success && modules.result && modules.result.length > 1) {
                                 modules.result = modules.result.splice(1);
                                 comboModules.setOptions(modules.result);
+                                // If the stored value of related module does not exist in the list of options
+                                // (maybe the related module got deactivated or deleted) then add the missing option
+                                // back to the list of options and set it as invalid so that an error will be
+                                // flagged to the user
+                                if (comboModules.value != comboModules.controlObject.value) {
+                                    comboModules.addOption({value: comboModules.value, text: comboModules.value});
+                                    comboModules.setValid(false);
+                                }
                                 var initialModule = data.act_field_module || modules.result[0].value;
                                 updater_field.proxy.uid = PROJECT_MODULE;
                                 updater_field.proxy.url = 'pmse_Project/CrmData/addRelatedRecord/' + initialModule;
