@@ -136,7 +136,7 @@ describe("Base.View.Forecastdetails-record", function() {
                 });
                 view.includedIds = ['modelId'];
                 result = view.processCases(model);
-                expect(result.likely_case).toBe(90);
+                expect(result.likely_case).toBe('90');
             });
 
             it("should make likely_case 0 when given a string", function() {
@@ -158,7 +158,7 @@ describe("Base.View.Forecastdetails-record", function() {
                 });
                 view.includedIds = ['modelId'];
                 result = view.processCases(model);
-                expect(result.likely_case).toBe(-100);
+                expect(result.likely_case).toBe('-100');
             });
 
             it("should make best_case 0 when given a string", function() {
@@ -180,7 +180,7 @@ describe("Base.View.Forecastdetails-record", function() {
                 });
                 view.includedIds = ['modelId'];
                 result = view.processCases(model);
-                expect(result.best_case).toBe(-200);
+                expect(result.best_case).toBe('-200');
             });
 
             it("should make worst_case 0 when given a string", function() {
@@ -202,7 +202,7 @@ describe("Base.View.Forecastdetails-record", function() {
                 });
                 view.includedIds = ['modelId'];
                 result = view.processCases(model);
-                expect(result.worst_case).toBe(-50);
+                expect(result.worst_case).toBe('-50');
             });
         });
     });
@@ -371,7 +371,7 @@ describe("Base.View.Forecastdetails-record", function() {
 
             it("should subtract likely_case from from closed_amount", function() {
                 view.processSalesStage(mdl);
-                expect(view.serverData.get('closed_amount')).toEqual(80);
+                expect(view.serverData.get('closed_amount')).toEqual('80');
             });
 
             it("should run calculateData", function() {
@@ -400,7 +400,7 @@ describe("Base.View.Forecastdetails-record", function() {
 
             it("should add likely_case to closed_amount", function() {
                 view.processSalesStage(mdl);
-                expect(view.serverData.get('closed_amount')).toEqual(120);
+                expect(view.serverData.get('closed_amount')).toEqual('120');
             });
 
             it("should run calculateData", function() {
@@ -456,7 +456,7 @@ describe("Base.View.Forecastdetails-record", function() {
 
             it("should subtract likely_case from from serverData likely", function() {
                 view.processCommitStage(mdl);
-                expect(view.serverData.get('likely')).toEqual(80);
+                expect(view.serverData.get('likely')).toEqual('80');
             });
 
             it("should run calculateData", function() {
@@ -484,7 +484,7 @@ describe("Base.View.Forecastdetails-record", function() {
 
             it("should add likely_case to serverData likely", function() {
                 view.processCommitStage(mdl);
-                expect(view.serverData.get('likely')).toEqual(120);
+                expect(view.serverData.get('likely')).toEqual('120');
             });
 
             it("should run calculateData", function() {

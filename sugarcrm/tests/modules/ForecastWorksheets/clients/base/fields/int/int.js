@@ -42,7 +42,10 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
     describe('ClickToEdit fieldValueChanged', function() {
         var sandbox = sinon.sandbox.create();
         beforeEach(function() {
-            field.value = '1';
+            sandbox.stub(field.model, 'get', function() {
+                return field.value;
+            });
+            field.value = '50';
         });
         afterEach(function() {
             field.value = undefined;
@@ -55,7 +58,7 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
                     val: function() {
                         return '+1';
                     }
-                }
+                };
             });
             expect(field.fieldValueChanged(field)).toBeTruthy();
         });
@@ -66,7 +69,7 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
                     val: function() {
                         return '-1';
                     }
-                }
+                };
             });
             expect(field.fieldValueChanged(field)).toBeTruthy();
         });
@@ -75,9 +78,9 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
             sandbox.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '+1%';
+                        return '+10%';
                     }
-                }
+                };
             });
             expect(field.fieldValueChanged(field)).toBeTruthy();
         });
@@ -86,9 +89,9 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
             sandbox.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '-1%';
+                        return '-10%';
                     }
-                }
+                };
             });
             expect(field.fieldValueChanged(field)).toBeTruthy();
         });
@@ -97,9 +100,9 @@ describe("ForecastWorksheets.Base.Field.Int", function () {
             sandbox.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '1';
+                        return '50';
                     }
-                }
+                };
             });
             expect(field.fieldValueChanged(field)).toBeFalsy();
         });
