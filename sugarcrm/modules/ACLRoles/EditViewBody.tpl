@@ -18,7 +18,7 @@
 <tr> <td colspan="2" scope="row"><a href='javascript:void(0);' onclick='aclviewer.view("{$ROLE.id}", "All");'><b>{$MOD.LBL_ALL}</b></a></td></tr>
 
 {foreach from=$CATEGORIES2 item="TYPES" key="CATEGORY_NAME"}
-{if $APP_LIST.moduleList[$CATEGORY_NAME]!='Users'}
+{if $CATEGORY_NAME!='Users'}
 <TR>
 <td nowrap width='1%' scope="row"><a href='javascript:void(0);' onclick='aclviewer.view("{$ROLE.id}", "{$CATEGORY_NAME}");'><b>{$APP_LIST.moduleList[$CATEGORY_NAME]}</b></a></td>
 </TR>

@@ -1132,7 +1132,7 @@ class HealthCheckScanner
         $cleared = str_replace('O:8:"stdClass"', '', $value);
 
         // Now use the same logic as the unserialize validator
-        preg_match('/[oc]:\d+:/i', $cleared, $matches);
+        preg_match('/[oc]:[^:]*\d+:/i', $cleared, $matches);
         return count($matches) > 0;
     }
 
