@@ -194,6 +194,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Calendar/views/view.createinvitee.php',
             'modules/Calendar/views/view.getgr.php',
             'modules/Calendar/views/view.getgrusers.php',
+            // MACAROON-1385
+            'modules/pmse_Inbox/engine/PMSEHandlers/PMSECronHandler.php',
         );
 
         // must be upgrading from between 710 to 722

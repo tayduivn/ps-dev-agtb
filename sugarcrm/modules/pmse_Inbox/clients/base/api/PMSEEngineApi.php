@@ -27,10 +27,22 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSEEngineApi extends SugarApi
 {
-
+    /**
+     * PMSECaseFlowHandler object
+     * @var PMSECaseFlowHandler
+     */
     private $caseFlowHandler;
+
+    /**
+     * PMSEUserAssignmentHandler object
+     * @var PMSEUserAssignmentHandler
+     */
     private $userAssignmentHandler;
-    private $requestHandler;
+    /**
+     * PMSECaseWrapper object
+     * @var PMSECaseWrapper
+     */
+    private $caseWrapper;
 
     public function __construct()
     {
@@ -38,7 +50,6 @@ class PMSEEngineApi extends SugarApi
         $this->userAssignmentHandler = ProcessManager\Factory::getPMSEObject('PMSEUserAssignmentHandler');
         $this->pmse = PMSE::getInstance();
         $this->wrapper = ProcessManager\Factory::getPMSEObject('PMSEWrapper');
-        $this->requestHandler = ProcessManager\Factory::getPMSEObject('PMSEDirectRequestHandler');
         $this->caseWrapper = ProcessManager\Factory::getPMSEObject('PMSECaseWrapper');
     }
 
@@ -335,9 +346,11 @@ class PMSEEngineApi extends SugarApi
     public function engineRoute($api, $args)
     {
         // Needed to tell the save process to ignore locked field enforcement
+        // @TODO Use the Registry for this if it is still needed after refactor
         $args['skip_locked_fields'] = 1;
         // The handler will call to the preprocessor in this step
-        $this->retrieveRequestHandler('direct')->executeRequest($args, false, null, strtoupper($args['frm_action']));
+        $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Direct');
+        $h->executeRequest($args, false, null, strtoupper($args['frm_action']));
         // return the success request array
         return array('success' => true);
     }
@@ -397,7 +410,8 @@ class PMSEEngineApi extends SugarApi
         $result = array('success' => true);
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
         // The handler will call to the preprocessor in this step
-        $this->retrieveRequestHandler('direct')->executeRequest($case, false, $bean, 'REASSIGN');
+        $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Direct');
+        $h->executeRequest($case, false, $bean, 'REASSIGN');
         if(!empty($args['data']['not_content'])){
             $this->saveNotes($api,$args);
         }
@@ -740,32 +754,14 @@ class PMSEEngineApi extends SugarApi
     public function reactivateFlows($api, $args)
     {
         $this->checkACL($api, $args);
-        $result = array('success' => true);
+        $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Engine');
         foreach ($args['cas_id'] as $value) {
             $val['cas_id'] = $value;
             // The handler will call to the preprocessor in this step
-            $this->retrieveRequestHandler('reactivate')->executeRequest($val, false, null, 'RESUME_EXECUTION');
+            $h->executeRequest($val, false, null, 'RESUME_EXECUTION');
         }
         // return the success request array
-        return $result;
-    }
-
-    /**
-     * Retrieve a request handler based on the request type.
-     * @param type $type
-     * @return \PMSEEngineRequestHandler|\PMSEDirectRequestHandler
-     */
-    public function retrieveRequestHandler($type)
-    {
-        switch ($type) {
-            case 'reactivate':
-                return ProcessManager\Factory::getPMSEObject('PMSEEngineRequestHandler');
-                break;
-            case 'direct':
-            default:
-                return ProcessManager\Factory::getPMSEObject('PMSEDirectRequestHandler');
-                break;
-        }
+        return array('success' => true);
     }
 
     /**

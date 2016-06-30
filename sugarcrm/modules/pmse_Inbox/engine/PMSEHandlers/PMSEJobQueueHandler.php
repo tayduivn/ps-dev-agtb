@@ -14,8 +14,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
-
-use Sugarcrm\Sugarcrm\ProcessManager;
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEAbstractRequestHandler.php';
 
 /**
  * Description of PMSEJobQueue
@@ -23,8 +22,12 @@ use Sugarcrm\Sugarcrm\ProcessManager;
  * element such as a gateway, activity or event.
  *
  */
-class PMSEJobQueueHandler
+class PMSEJobQueueHandler extends PMSEAbstractRequestHandler
 {
+    /**
+     * @inheritDoc
+     */
+    protected $requestType = 'queue';
 
     /**
      * @var SchedulersJob this attribute stores an instance of the SchedulersJob class
@@ -43,171 +46,86 @@ class PMSEJobQueueHandler
     protected $currentUser;
 
     /**
-     *
-     * @var type
-     */
-    protected $request;
-
-    /**
-     *
-     * @var type
-     */
-    protected $preProcessor;
-
-    /**
-     *
-     * @var type
-     */
-    protected $logger;
-
-    /**
-     * Class Constructor
-     * @global type $current_user
-     * @codeCoverageIgnore
-     */
-    public function __construct()
-    {
-        global $current_user;
-        $this->schedulersJob = new SchedulersJob();
-        $this->sugarJobQueue = new SugarJobQueue();
-        $this->logger = PMSELogger::getInstance();
-        $this->currentUser = $current_user;
-    }
-
-    /**
-     * Retrieve the Scheduler Job attribute
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getSchedulersJob()
-    {
-        return $this->schedulersJob;
-    }
-
-    /**
-     * Retrieve the Sugar Job Queue attribute
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getSugarJobQueue()
-    {
-        return $this->sugarJobQueue;
-    }
-
-    /**
      * Set the Scheduler Job attribute
-     * @param type $schedulersJob
+     * @param SchedulersJob $schedulersJob
      * @codeCoverageIgnore
      */
-    public function setSchedulersJob($schedulersJob)
+    public function setSchedulersJob(SchedulersJob $schedulersJob)
     {
         $this->schedulersJob = $schedulersJob;
     }
 
     /**
-     * Set the Sugar Job Queue attribute.
-     * @param type $sugarJobQueue
+     * Retrieve the Scheduler Job attribute
+     * @return SchedulersJob
      * @codeCoverageIgnore
      */
-    public function setSugarJobQueue($sugarJobQueue)
+    public function getSchedulersJob()
+    {
+        if (empty($this->schedulersJob)) {
+            $this->schedulersJob = new SchedulersJob();
+        }
+
+        return $this->schedulersJob;
+    }
+
+    /**
+     * Set the Sugar Job Queue attribute.
+     * @param SugarJobQueue $sugarJobQueue
+     * @codeCoverageIgnore
+     */
+    public function setSugarJobQueue(SugarJobQueue $sugarJobQueue)
     {
         $this->sugarJobQueue = $sugarJobQueue;
     }
 
     /**
-     * Get Current User attribute
-     * @return type
+     * Retrieve the Sugar Job Queue attribute
+     * @return SugarJobQueue
      * @codeCoverageIgnore
      */
-    public function getCurrentUser()
+    public function getSugarJobQueue()
     {
-        return $this->currentUser;
+        if (empty($this->sugarJobQueue)) {
+            $this->sugarJobQueue = new SugarJobQueue();
+        }
+
+        return $this->sugarJobQueue;
     }
 
     /**
      * Set the current User attribute
-     * @param type $currentUser
+     * @param User $currentUser
      * @codeCoverageIgnore
      */
-    public function setCurrentUser($currentUser)
+    public function setCurrentUser(User $currentUser)
     {
         $this->currentUser = $currentUser;
     }
 
     /**
-     *
-     * @return type
+     * Get Current User attribute
+     * @return User
      * @codeCoverageIgnore
      */
-    public function getRequest()
+    public function getCurrentUser()
     {
-        return $this->request;
+        if (empty($this->currentUser)) {
+            $this->currentUser = $this->fetchCurrentUser();
+        }
+
+        return $this->currentUser;
     }
 
     /**
-     *
-     * @return type
-     * @codeCoverageIgnore
+     * Fetches the current user from the global variable
+     * @return User
      */
-    public function getPreProcessor()
+    protected function fetchCurrentUser()
     {
-        return $this->preProcessor;
+        global $current_user;
+        return $current_user;
     }
-
-    /**
-     *
-     * @return type
-     * @codeCoverageIgnore
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     *
-     * @param type $logger
-     * @codeCoverageIgnore
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     *
-     * @param type $request
-     * @codeCoverageIgnore
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     *
-     * @param type $preProcessor
-     * @codeCoverageIgnore
-     */
-    public function setPreProcessor($preProcessor)
-    {
-        $this->preProcessor = $preProcessor;
-    }
-
-
-    /**
-     * Prepare Pre-Processor
-     * Cannot be tested since the PMSEPreProcessor uses an static method call
-     * @codeCoverageIgnore
-     */
-    public function preparePreProcessor()
-    {
-        // preprocessor required initialization
-        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $this->request->setType('queue');
-        $this->preProcessor = PMSEPreProcessor::getInstance();
-    }
-
 
     /**
      * Submit a Job top the Sugar job queue handler
@@ -216,44 +134,28 @@ class PMSEJobQueueHandler
      */
     public function submitPMSEJob($params)
     {
-        // logger calls
-        $this->logger->info('Submit PMSE job.');
-        $this->logger->debug('PMSE Job parameters: ' . print_r($params, true));
+        // Grab our jobber
+        $job = $this->getSchedulersJob();
 
-        $this->schedulersJob->name = "PMSE Job - {$params->id}";
+        // Set some properties now
+        $job->name = "PMSE Job - {$params->id}";
+
         //data we are passing to the job
-        $this->schedulersJob->data = json_encode($this->filterData($params->data));
+        $job->data = json_encode($this->filterData($params->data));
+
         //function to call
-        $this->schedulersJob->target = "function::PMSEJobRun";
-        $this->schedulersJob->message = "Executing a PMSE queued task.";
+        $job->target = "function::PMSEJobRun";
+        $job->message = "Executing a PMSE queued task.";
+
         //set the user the job runs as
-        $this->schedulersJob->assigned_user_id = $this->currentUser->id;
+        $job->assigned_user_id = $this->getCurrentUser()->id;
+
         //push into the queue to run
-        $jobId = $this->sugarJobQueue->submitJob($this->schedulersJob);
-        //log the job id
-        $this->logger->info('PMSE Job created with id: ' . $jobId);
-        return $jobId;
-    }
-
-    public function executeRequest($args = array(), $createThread = false, $bean = null, $externalAction = '')
-    {
-        $this->logger->info('Processing a direct request.');
-        $this->logger->debug('Direct request params: ' . print_r($args, true));
-
-        $this->preparePreProcessor();
-        $this->request->setCreateThread($createThread);
-        $this->request->setExternalAction($externalAction);
-        $this->request->setBean($bean);
-        $this->request->setArguments($args);
-
-        $response = $this->preProcessor->processRequest($this->request);
-        return $response;
+        return $this->getSugarJobQueue()->submitJob($job);
     }
 
     public function filterData($dataArray)
     {
-        $this->logger->debug('Pre-Filtered Data: ' . print_r($dataArray, true));
-
         $validFields = array(
             'evn_criteria',
             'rel_element_module',
@@ -290,7 +192,6 @@ class PMSEJobQueueHandler
             }
         }
 
-        $this->logger->debug('Filtered Data: ' . print_r($dataArray, true));
         return $dataArray;
     }
 }

@@ -34,11 +34,6 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected $calDavApi = null;
 
     /**
-     * @var RepairAndClear|PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $repairAndClear = null;
-
-    /**
      * @var Configurator|PHPUnit_Framework_MockObject_MockObject
      */
     protected $configurator = null;
@@ -79,13 +74,11 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->adapterFactory = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory');
         $this->adapterFactory->method('getSupportedModules')->willReturn($this->supportedModules);
         $this->configurator = $this->getMock('Configurator');
-        $this->repairAndClear = $this->getMock('RepairAndClear');
 
         $this->calDavApi = $this->getMock(
             'CalDavApi',
-            array('getRepairAndClear', 'getConfigurator', 'getAdapterFactory', 'getJQManager')
+            array('clearMetaDataAPICache', 'getConfigurator', 'getAdapterFactory', 'getJQManager')
         );
-        $this->calDavApi->method('getRepairAndClear')->willReturn($this->repairAndClear);
         $this->calDavApi->method('getConfigurator')->willReturn($this->configurator);
         $this->calDavApi->method('getAdapterFactory')->willReturn($this->adapterFactory);
         $this->calDavApi->method('getJQManager')->willReturn($this->jobQueueManager);
@@ -245,11 +238,9 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
             'caldav_enable_sync' => $argsEnable,
         );
         if ($clearCache) {
-            $this->repairAndClear->expects($this->once())
-                ->method('repairAndClearAll')
-                ->with(array('clearAll'), array('Calendar'), $this->isFalse(), $this->isFalse());
+            $this->calDavApi->expects($this->once())->method('clearMetaDataAPICache');
         } else {
-            $this->repairAndClear->expects($this->never())->method('repairAndClearAll');
+            $this->calDavApi->expects($this->never())->method('clearMetaDataAPICache');
         }
         if ($reExported) {
             $this->jobQueueManager->expects($this->once())->method('CalDavRebuild');

@@ -13,31 +13,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 require_once 'include/SugarQuery/SugarQuery.php';
-require_once 'modules/pmse_Inbox/engine/PMSEPreProcessor/PMSEPreProcessor.php';
-require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
+require_once 'modules/pmse_Inbox/engine/PMSEHandlers/PMSEAbstractRequestHandler.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
-class PMSEHookHandler
+class PMSEHookHandler extends PMSEAbstractRequestHandler
 {
     /**
-     * The PMSE Request object
-     * @var PMSERequest
+     * @inheritDoc
      */
-    protected $request;
-
-    /**
-     * The PMSE Preprocessor object
-     * @var PMSEPreProcessor
-     */
-    protected $preProcessor;
-
-    /**
-     * The PMSE Logger object
-     * @var PMSELogger
-     */
-    protected $logger;
+    protected $requestType = 'hook';
 
     /**
      * Sugar logger object
@@ -61,25 +47,31 @@ class PMSEHookHandler
     ];
 
     /**
-     * Object constructor
+     * Sets the Sugar logger object
+     * @param LoggerManager $logger
+     * @codeCoverageIgnore
      */
-    public function __construct()
+    public function setSugarLogger(LoggerManager $logger)
     {
-        $this->request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $this->request->setType('hook');
-        $this->preProcessor = PMSEPreProcessor::getInstance();
-        $this->logger = PMSELogger::getInstance();
-        $this->sugarLogger = LoggerManager::getLogger();
-        $this->registry = Registry\Registry::getInstance();
+        $this->sugarLogger = $logger;
     }
 
     /**
-     * Executes a request
-     * @param array $args Arguments used in handling the request
-     * @param boolean $createThread Whether to create a new thread for processes
-     * @param SugarBean $bean Affected bean, if there is one
-     * @param string $externalAction Additional action to take
-     * @return void
+     * Gets the Sugar Logger object
+     * @return LoggerManager
+     * @codeCoverageIgnore
+     */
+    public function getSugarLogger()
+    {
+        if (empty($this->sugarLogger)) {
+            $this->sugarLogger = LoggerManager::getLogger();
+        }
+
+        return $this->sugarLogger;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function executeRequest($args = array(), $createThread = false, $bean = null, $externalAction = '')
     {
@@ -88,14 +80,8 @@ class PMSEHookHandler
             return;
         }
 
-        // Set the necessary request properties
-        $this->request->setArguments($args);
-        $this->request->setCreateThread($createThread);
-        $this->request->setBean($bean);
-        $this->request->setExternalAction($externalAction);
-
-        // Preprocessor doesn't actually return anything
-        return $this->preProcessor->processRequest($this->request);
+        // Otherwise, pass through
+        return parent::executeRequest($args, $createThread, $bean, $externalAction);
     }
 
     /**
@@ -116,7 +102,6 @@ class PMSEHookHandler
             return;
         }
 
-        $this->logger->info("Executing Before save for bean module {$bean->module_name}, with id {$bean->id}");
         $this->executeRequest($arguments, false, $bean, '');
     }
 
@@ -128,7 +113,6 @@ class PMSEHookHandler
             return;
         }
 
-        $this->logger->info("Executing Terminate Case for a deleted bean module {$bean->module_name}, with id {$bean->id}");
         $this->executeRequest($arguments, false, $bean, 'TERMINATE_CASE');
     }
 
@@ -142,7 +126,6 @@ class PMSEHookHandler
             return;
         }
 
-        $this->logger->info("Executing PMSE scheduled tasks");
         $this->wakeUpSleepingFlows();
     }
 
@@ -171,9 +154,9 @@ class PMSEHookHandler
                 $this->newFollowFlow($flow->fetched_row, false, null, 'WAKE_UP');
             }
 
-            $this->logger->info("Processed $c flows with status sleeping");
+            $this->getLogger()->info("Processed $c flows with status sleeping");
         } else {
-            $this->logger->info("No flows processed with status sleeping");
+            $this->getLogger()->info("No flows processed with status sleeping");
         }
     }
 
@@ -190,8 +173,8 @@ class PMSEHookHandler
      */
     protected function writeLog($msg)
     {
-        $this->logger->alert($msg);
-        $this->sugarLogger->error($msg);
+        $this->getLogger()->alert($msg);
+        $this->getSugarLogger()->error($msg);
     }
 
     /**
@@ -200,9 +183,12 @@ class PMSEHookHandler
      */
     protected function isEnabled()
     {
+        // Get the registry object
+        $registry = Registry\Registry::getInstance();
+
         foreach ($this->disablers as $type => $by) {
             $key = "$type:disable_processes";
-            $d = $this->registry->get($key);
+            $d = $registry->get($key);
             if ($d !== null && $d !== false) {
                 $this->writeLog("Process workflows are currently disabled by $by.");
                 return false;

@@ -150,6 +150,7 @@ var ComboboxField = function (options, parent) {
      */
     this.options = [];
     this.related = null;
+    this._isValid = true;
     ComboboxField.prototype.initObject.call(this, options);
 };
 ComboboxField.prototype = new Field();
@@ -167,11 +168,13 @@ ComboboxField.prototype.type = 'ComboboxField';
 ComboboxField.prototype.initObject = function (options) {
     var defaults = {
         options: [],
-        related: null
+        related: null,
+        isValid: true
     };
     $.extend(true, defaults, options);
     this.setOptions(defaults.options)
-        .setRelated(defaults.related);
+        .setRelated(defaults.related)
+        .setValid(defaults.isValid);
 };
 
 /**
@@ -190,6 +193,22 @@ ComboboxField.prototype.setOptions = function (data) {
         if (!this.value) {
             this.value = this.controlObject.value;
         }
+    }
+    return this;
+
+};
+
+/**
+ * Adds a single option to the dropdown
+ * @param data
+ * @return {ComboboxField}
+ */
+ComboboxField.prototype.addOption = function(data) {
+    if ((this.html) && (data)) {
+        this.controlObject.appendChild(this.generateOption(data));
+    }
+    if (!this.value) {
+        this.value = this.controlObject.value;
     }
     return this;
 };
@@ -311,6 +330,20 @@ ComboboxField.prototype.attachListeners = function () {
             });
     }
     return this;
+};
+
+ComboboxField.prototype.isValid = function() {
+    return this._isValid;
+};
+
+ComboboxField.prototype.setValid = function(valid) {
+    this._isValid = valid ? true : false;
+    this.decorateValid();
+    return this;
+};
+
+ComboboxField.prototype.decorateValid = function() {
+    $(this.controlObject).toggleClass(this._invalidFieldClass, !this.isValid());
 };
 
 /**

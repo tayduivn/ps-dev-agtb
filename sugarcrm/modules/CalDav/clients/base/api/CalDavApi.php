@@ -146,7 +146,7 @@ class CalDavApi extends SugarApi
                 if ($cfg->config['caldav_enable_sync']) {
                     $this->getJQManager()->CalDavRebuild();
                 }
-                $this->getRepairAndClear()->repairAndClearAll(array('clearAll'), array('Calendar'), false, false);
+                $this->clearMetaDataAPICache();
             }
         }
     }
@@ -341,14 +341,11 @@ class CalDavApi extends SugarApi
     }
 
     /**
-     * Return RepairAndClear.
-     *
-     * @return RepairAndClear
+     * Clears the API metadata cache of all cache files.
      */
-    protected function getRepairAndClear()
+    protected function clearMetaDataAPICache()
     {
-        $repair = new RepairAndClear();
-        return $repair;
+        MetaDataManager::clearAPICache();
     }
 
     /**
