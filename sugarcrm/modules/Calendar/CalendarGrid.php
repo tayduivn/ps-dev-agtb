@@ -88,7 +88,11 @@ class CalendarGrid {
 				$wf = 1;
 			else
 				$wf = 0;
-			$head_content = "<a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$GLOBALS['timedate']->fromTimestamp($start + $wf*3600*24)->format('W')."</a>";
+            $head_content = "<a href='index.php?module=Calendar&action=index&view=week&hour=0&day="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('j') . "&month="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('n') . "&year="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('Y') . "'>"
+                . $GLOBALS['timedate']->fromTimestamp($start + $wf*3600*24)->format('W') . "</a>";
 		}
 		$str .= "<div class='left_col'>";
 			//if(!$this->scrollable)
@@ -186,7 +190,10 @@ class CalendarGrid {
 			if($this->startday == 0)
 				$wf = 1;
 			$head_content = $GLOBALS['timedate']->fromTimestamp($start + $wf*3600*24)->format('W');
-			$head_content = "<a href='".ajaxLink("index.php?module=Calendar&action=index&view=week&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$head_content."</a>";
+            $head_content = "<a href='index.php?module=Calendar&action=index&view=week&hour=0&day="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('j') . "&month="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('n') . "&year="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('Y') . "'>" . $head_content . "</a>";
 		}
 		$left_col = ($this->style != 'basic' || $this->cal->view == 'month');
 
@@ -246,7 +253,12 @@ class CalendarGrid {
 			$headstyle = "";
 			if($this->today_ts == $start)
 				$headstyle = " today";
-			$str .= "<div class='col_head".$headstyle."'><a href='".ajaxLink("index.php?module=Calendar&action=index&view=day&hour=0&day=".$GLOBALS['timedate']->fromTimestamp($start)->format('j')."&month=".$GLOBALS['timedate']->fromTimestamp($start)->format('n')."&year=".$GLOBALS['timedate']->fromTimestamp($start)->format('Y'))."'>".$this->weekdays[$day]." ".$GLOBALS['timedate']->fromTimestamp($start)->format('d')."</a></div>";
+            $str .= "<div class='col_head" . $headstyle
+                . "'><a href='index.php?module=Calendar&action=index&view=day&hour=0&day="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('j') . "&month="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('n') . "&year="
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('Y'). "'>" . $this->weekdays[$day] . " "
+                . $GLOBALS['timedate']->fromTimestamp($start)->format('d'). "</a></div>";
 		}
 		return $str;
 	}
@@ -422,7 +434,10 @@ class CalendarGrid {
 			if($m % 3 == 0)
 				$str .= "<tr>";
 					$str .= '<td class="yearCalBodyMonth" align="center" valign="top" scope="row">';
-						$str .= '<a class="yearCalBodyMonthLink" href="'.ajaxLink('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.$GLOBALS['timedate']->fromTimestamp($month_start_ts)->format('Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
+                        $str .= '<a class="yearCalBodyMonthLink" href="index.php?module=Calendar&action=index'
+                            . '&view=month&&hour=0&day=1&month=' . ($m+1) . '&year='
+                            . $GLOBALS['timedate']->fromTimestamp($month_start_ts)->format('Y') . '">'
+                            . $GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1] . '</a>';
 						$str .= '<table id="'. $table_id. '" cellspacing="1" cellpadding="0" border="0" width="100%">';
 							$str .= '<tr class="monthCalBodyTH">';
 								for($d = 0; $d < 7; $d++)
@@ -438,7 +453,16 @@ class CalendarGrid {
 										if($curr_time < $month_start_ts || $curr_time >= $month_end_ts)
 											$monC = "";
 										else
-											$monC = '<a href="'.ajaxLink('index.php?module=Calendar&action=index&view=day&hour=0&day='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'&month='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('n').'&year='.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('Y')) .'">'.$GLOBALS['timedate']->fromTimestamp($curr_time)->format('j').'</a>';
+                                            $monC = '<a href="index.php?module=Calendar&action=index&view=day'
+                                                . '&hour=0&day='
+                                                . $GLOBALS['timedate']->fromTimestamp($curr_time)->format('j')
+                                                . '&month='
+                                                . $GLOBALS['timedate']->fromTimestamp($curr_time)->format('n')
+                                                . '&year='
+                                                . $GLOBALS['timedate']->fromTimestamp($curr_time)->format('Y')
+                                                . '">'
+                                                . $GLOBALS['timedate']->fromTimestamp($curr_time)->format('j')
+                                                . '</a>';
 
 										if($d == $weekEnd1 || $d == $weekEnd2)
 											$str .= "<td class='weekEnd monthCalBodyWeekEnd'>";

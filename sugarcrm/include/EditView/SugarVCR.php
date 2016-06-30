@@ -77,22 +77,35 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
             $menu = SugarVCR::play($module, $offset);
 
-            $list_link = '';
-            if ($saveAndContinue && !empty($menu['NEXT']))
-            {
-                $list_link = ajaxLink('index.php?action=' . $action . '&module=' . $module . '&record=' . $menu['NEXT'] . '&offset=' . ($offset + 1));
-            }
-
             $previous_link = "";
             if (!empty($menu['PREV']))
             {
-                $previous_link = ajaxLink('index.php?module=' . $module . '&action=' . $action . '&offset=' . ($offset - 1) . '&record=' . $menu['PREV']);
+                $previous_link = 'index.php?' . http_build_query(
+                    array(
+                        'action' => $action,
+                        'module' => $module,
+                        'offset' => ($offset - 1),
+                        'record' => $menu['PREV'],
+                    )
+                );
             }
 
-            $next_link = "";
+            $list_link = '';
+            $next_link = '';
             if (!empty($menu['NEXT']))
             {
-                $next_link = ajaxLink('index.php?module=' . $module . '&action=' . $action . '&offset=' . ($offset + 1) . '&record=' . $menu['NEXT']);
+                $next_link = 'index.php?' . http_build_query(
+                    array(
+                        'action' => $action,
+                        'module' => $module,
+                        'offset' => ($offset + 1),
+                        'record' => $menu['NEXT'],
+                    )
+                );
+
+                if ($saveAndContinue) {
+                    $list_link = $next_link;
+                }
             }
 
             $ss = new Sugar_Smarty();

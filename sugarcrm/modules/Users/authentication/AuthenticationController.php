@@ -103,9 +103,6 @@ class AuthenticationController
 		$this->loggedIn = true;
 
 		if($this->loginSuccess){
-			//Ensure the user is authorized
-			checkAuthUserStatus();
-
 			loginLicense();
 			if(!empty($GLOBALS['login_error'])){
 				unset($_SESSION['authenticated_user_id']);

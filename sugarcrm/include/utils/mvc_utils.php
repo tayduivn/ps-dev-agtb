@@ -21,12 +21,3 @@ function getPrintLink()
     return "javascript:void window.open('index.php?',"
          . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
 }
-
-/**
- * @deprecated since 7.0
- * @return the $url given
- */
-function ajaxLink($url)
-{
-    return $url;
-}

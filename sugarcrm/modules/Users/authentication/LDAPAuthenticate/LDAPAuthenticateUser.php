@@ -270,7 +270,6 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 		$GLOBALS['ldap_config'] = Administration::getSettings('ldap');
 		$GLOBALS['log']->debug("Starting user load for ". $name);
 		if(empty($name) || empty($password)) return false;
-		checkAuthUserStatus();
 
 		$user_id = $this->authenticateUser($name, $password);
 		if(empty($user_id)) {

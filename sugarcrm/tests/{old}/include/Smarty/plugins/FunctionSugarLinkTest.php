@@ -27,7 +27,7 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'Dog','link_only'=>'1'),
             $this->_smarty);
         
-        $this->assertContains(ajaxLink("index.php?module=Dog&action=index"),$output);
+        $this->assertContains("index.php?module=Dog&action=index", $output);
     }
     
     public function testReturnModuleLinkWithAction()
@@ -36,7 +36,7 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'Dog','action'=>'cat','link_only'=>'1'),
             $this->_smarty);
         
-        $this->assertContains(ajaxLink("index.php?module=Dog&action=cat"),$output);
+        $this->assertContains("index.php?module=Dog&action=cat", $output);
     }
     
     public function testReturnModuleLinkWithActionAndExtraParams()
@@ -45,7 +45,7 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'Dog','action'=>'cat','extraparams'=>'foo=bar','link_only'=>'1'),
             $this->_smarty);
         
-        $this->assertContains(ajaxLink("index.php?module=Dog&action=cat&foo=bar"),$output);
+        $this->assertContains("index.php?module=Dog&action=cat&foo=bar", $output);
     }
     
     /**
@@ -66,7 +66,10 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'Dog','data'=>$data,'link_only'=>'1'),
             $this->_smarty);
         
-        $this->assertContains(ajaxLink("index.php?module=iFrames&action=index&record=63edeacd-6ba5-b658-5e2a-4af9a5d682be&tab=true"),$output);
+        $this->assertContains(
+            "index.php?module=iFrames&action=index&record=63edeacd-6ba5-b658-5e2a-4af9a5d682be&tab=true",
+            $output
+        );
     }
     
     public function testCreatingFullLink()
@@ -82,11 +85,14 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
                 'accesskey'=>'B',
                 'options'=>'scope="row"',
                 'label'=>'foo3',
-                ),
-            $this->_smarty);
-        
-        $this->assertContains(
-            '<a href="' . ajaxLink('index.php?module=Dog&action=cat') . '" id="foo1" class="foo4" style="color:red;" scope="row" title="foo2" module="Dog">foo3</a>',$output);
+            ),
+            $this->_smarty
+        );
 
+        $this->assertContains(
+            '<a href="index.php?module=Dog&action=cat" id="foo1" class="foo4" style="color:red;"'
+            . ' scope="row" title="foo2" module="Dog">foo3</a>',
+            $output
+        );
     }
 }

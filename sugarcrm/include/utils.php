@@ -3870,11 +3870,6 @@ function get_valid_bean_name($module_name)
     return BeanFactory::getObjectName($module_name);
 }
 
-function  checkAuthUserStatus()
-{
-}
-
-
 /**
  * This function returns an array of phpinfo() results that can be parsed and
  * used to figure out what version we run, what modules are compiled in, etc.
