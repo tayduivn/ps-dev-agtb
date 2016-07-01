@@ -648,6 +648,14 @@
     },
 
     /**
+     * Extracts the field names from the metadata for directly related views/panels.
+     * @param {string} [module] Module name.
+     */
+    getFieldNames: function(module) {
+        return _.union(this._super('getFieldNames', arguments), this._getDataFields());
+    },
+
+    /**
      * Register keyboard shortcuts.
      */
     registerShortcuts: function() {
