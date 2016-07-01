@@ -1568,29 +1568,43 @@
     },
 
     /**
-     * Adds the favorite field to app.view.View.getFieldNames() if `favorite` field is within a panel
-     * so my_favorite is part of the field list and is fetched
+     * Returns some fields to be used with app.view.View.getFieldNames() if their corresponding
+     * meta attribute is true
+     *
+     * @private
      */
-    getFieldNames: function(module, onlyDataFields) {
-        //Start with an empty set of fields since the view name in the request will load all fields from the metadata.
-        var fields = onlyDataFields ? [ ] : this._super('getFieldNames', arguments),
-            favorite = _.find(this.meta.panels, function(panel) {
-                return _.find(panel.fields, function(field) {
-                    return field.type === 'favorite';
-                });
-            }),
-            follow = _.find(this.meta.panels, function(panel) {
-                return _.find(panel.fields, function(field) {
-                    return field.type === 'follow';
-                });
+    _getDataFields: function() {
+        var fields = [];
+
+        var favorite = _.find(this.meta.panels, function(panel) {
+            return _.find(panel.fields, function(field) {
+                return field.type === 'favorite';
             });
+        });
+
+        var follow = _.find(this.meta.panels, function(panel) {
+            return _.find(panel.fields, function(field) {
+                return field.type === 'follow';
+            });
+        });
+
         if (favorite) {
-            fields = _.union(fields, ['my_favorite']);
+            fields.push('my_favorite');
         }
+
         if (follow) {
-            fields = _.union(fields, ['following']);
+            fields.push('following');
         }
+
         return fields;
+    },
+
+    /**
+     * Extracts the field names from the metadata for directly related views/panels.
+     * @param {string} [module] Module name.
+     */
+    getFieldNames: function(module) {
+        return _.union(this._super('getFieldNames', arguments), this._getDataFields());
     },
 
     /**
