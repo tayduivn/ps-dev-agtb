@@ -115,6 +115,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'date_sent',
+                    'label' => 'LBL_DATE',
                     'readonly' => true,
                 ),
                 array(
