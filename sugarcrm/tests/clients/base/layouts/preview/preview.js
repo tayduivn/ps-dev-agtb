@@ -4,8 +4,8 @@ describe('Base.Layout.Preview', function() {
     var testLayout;
     var module = 'Contacts';
     var testMeta = {
-        components: [],
-        init_components: [
+        lazy_loaded: true,
+        components: [
             {
                 'view': {'type': 'preview-header'},
             },
@@ -34,7 +34,10 @@ describe('Base.Layout.Preview', function() {
             }
         };
 
-        testLayout = SugarTest.createLayout('base', module, 'preview', testMeta, app.controller.context);
+        // We need to pass a copy of 'testMeta' since initializing the layout will empty the components array.
+        var testMetaCopy = app.utils.deepCopy(testMeta);
+
+        testLayout = SugarTest.createLayout('base', module, 'preview', testMetaCopy, app.controller.context);
     });
 
     afterEach(function() {
@@ -117,7 +120,7 @@ describe('Base.Layout.Preview', function() {
         });
     });
     describe('_initPreviewPanel', function() {
-        var componentTypes = _.pluck(_.map(testMeta.init_components, function(value) {
+        var componentTypes = _.pluck(_.map(testMeta.components, function(value) {
             return value.view ? value.view : value.layout;
         }), 'type');
 
@@ -199,7 +202,7 @@ describe('Base.Layout.Preview', function() {
                 testLayout.context.set('module', provider.contextModule);
 
                 if (provider.compInitialized) {
-                    testLayout.initComponents(testLayout.meta.init_components, testLayout.context, model.module);
+                    testLayout.initComponents(testLayout._componentsMeta, testLayout.context, model.module);
                 }
 
                 var initComponentsSpy = sinon.collection.spy(testLayout, 'initComponents');
@@ -211,7 +214,7 @@ describe('Base.Layout.Preview', function() {
 
                 testLayout._initPreviewPanel(model, collection);
 
-                expect(initComponentsSpy.calledWith(testMeta.init_components, testLayout.context, model.module))
+                expect(initComponentsSpy.calledWith(testLayout._componentsMeta, testLayout.context, model.module))
                     .toBe(provider.expect.init);
                 expect(_.pluck(testLayout._components, 'type')).toEqual(provider.expect.components);
                 expect(testLayout.context.get('model')).toBe(model);
