@@ -139,9 +139,7 @@ class ExternalAPIFactory
             require_once('modules/Administration/Common.php');
             $languages = get_languages();
             foreach( $languages as $lang => $langLabel ) {
-                $contents = return_custom_app_list_strings_file_contents($lang);
-                $new_contents = replace_or_add_dropdown_type('extapi_meeting_password', $meetingPasswordList, $contents);
-                save_custom_app_list_strings_contents($new_contents, $lang);
+                save_custom_dropdown_strings(array('extapi_meeting_password' => $meetingPasswordList), $lang);
             }
         }
 

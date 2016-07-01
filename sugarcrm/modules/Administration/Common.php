@@ -169,6 +169,7 @@ function create_dropdown_type_all_lang($dropdown_name)
  * @param string $contents The contents of the new file
  * @param string $language The language to save
  * @return boolean
+ * @deprecated This method will be deprecated make use of save_custom_dropdown_strings instead
  */
 function save_custom_app_strings_contents($contents, $language)
 {
@@ -180,6 +181,7 @@ function save_custom_app_strings_contents($contents, $language)
  * @param string $language
  * @param string $custom_dir_name
  * @desc Saves the app_list_strings to file in the 'custom' dir.
+ * @deprecated This method will be deprecated make use of save_custom_dropdown_strings instead
  */
 function save_custom_app_list_strings_contents($contents, $language, $cache_index = 'app_list_strings')
 {
@@ -220,6 +222,66 @@ function save_custom_app_list_strings(&$app_list_strings, $language)
         $GLOBALS['log']->fatal("Unable to create dir: $dirname");
     }
     return false;
+}
+
+/**
+ * @return bool
+ * @param new_dd_strings array  array of language strings to change
+ * @param all_languages bool whether this is for all languages or the current language
+ * @param string language where labels will be replaced.  Use the current language by default
+ * @desc Saves language changes to dropdown labels (in app_list_strings) in an extension file
+ *
+ */
+function save_custom_dropdown_strings($new_dd_strings, $language = '', $all_languages = false)
+{
+    if (empty($new_dd_strings) || !is_array($new_dd_strings)) {
+        return false;
+    }
+    $modules = array();
+    //set the language(s) array
+    if ($all_languages) {
+        $languages = get_languages();
+    } else {
+        //use current language if no language was specified
+        global $current_language;
+        if (empty($language)) {
+            $language =  $current_language;
+        }
+        $languages = array($language => $language); //need the array key defined
+    }
+    //iterate through each language
+    foreach ($languages as $current_lang => $current_lang_name) {
+        // get the default app_list_strings for the language
+        $app_list_strings = return_app_list_strings_language($current_lang);
+        $modules = array_keys($app_list_strings['moduleList']);
+        $refresh = false;
+
+        //iterate and overwrite/create the dropdown entries
+        foreach ($new_dd_strings as $list_key => $list_val) {
+            //process new string values if they exist in $app_list_strings and the new entry is different.. OR
+            //if the key doesn't exist in $app_list_strings but there is a new value in the passed in strings
+            //ignore if values are same or there is a new blank value
+            if (isset($app_list_strings[$list_key]) && $app_list_strings[$list_key] != $new_dd_strings[$list_key]) {
+                //rather than iterate and figure out which elements to add or remove, just overwrite with new values
+                $app_list_strings[$list_key] = $new_dd_strings[$list_key];
+                $extFilename = "custom/Extension/application/Ext/Language/$current_lang.sugar_" .
+                    $list_key . '.php';
+                //write out dropdown changes to app_list_strings in an extension file
+                write_array_to_file_as_key_value_pair(
+                    "app_list_strings['$list_key']",
+                    $app_list_strings[$list_key],
+                    $extFilename
+                );
+                $refresh = true;
+            }
+        }
+    }
+    //run quick repair if there has been a change
+    if ($refresh) {
+        $repairAndClear = new RepairAndClear();
+        $actions = array('rebuildExtensions');
+        $repairAndClear->repairAndClearAll($actions, $modules, false, false, '');
+    }
 }
 
 function return_custom_app_list_strings_file_contents($language, $custom_filename = '')
