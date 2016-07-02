@@ -53,7 +53,7 @@ class PMSEEngineFilterApi extends FilterApi
      * Mapping of fields to a query column in getQueryObjectPA()
      * @var array
      */
-    protected $queryObjectOrderByMap = [
+    protected static $queryObjectOrderByMap = [
         'pro_title' => 'process.name',
         'task_name' => 'activity.name',
         'cas_title' => 'inbox.cas_title',
@@ -529,8 +529,8 @@ class PMSEEngineFilterApi extends FilterApi
                 // Handle sorting fields based on the map, if a mapped field exists
                 // Default to the basic expectation first
                 $exp = $orderBy[0];
-                if (isset($this->queryObjectOrderByMap[$orderBy[0]])) {
-                    $exp = $this->queryObjectOrderByMap[$orderBy[0]];
+                if (isset(static::$queryObjectOrderByMap[$orderBy[0]])) {
+                    $exp = static::$queryObjectOrderByMap[$orderBy[0]];
                 }
 
                 // Get the sort direction now

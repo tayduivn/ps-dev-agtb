@@ -15,6 +15,8 @@ namespace Sugarcrm\Sugarcrm\JobQueue\Observer;
 use Psr\Log\LoggerInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Workload\WorkloadInterface;
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
 /**
  * Class Cache.
  * @package JobQueue
@@ -57,6 +59,11 @@ class Cache implements ObserverInterface
         if (is_file('config_override.php')) {
             require 'config_override.php';
         }
+
+        // We need to clear out any existing registered AWF triggered start events
+        // so they can continue to trigger on the next run.
+        Registry\Registry::getInstance()->drop('triggered_starts');
+
         \SugarConfig::getInstance()->clearCache();
         \BeanFactory::clearCache();
         sugar_cache_reset();
