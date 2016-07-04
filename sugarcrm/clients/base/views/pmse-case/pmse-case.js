@@ -378,7 +378,7 @@
         options = {
             showAlerts: true,
             success: successCallback,
-            error: _.bind(function(error) {
+            error: _.bind(function(model, error) {
                 if (error.status === 412 && !error.request.metadataRetry) {
                     this.handleMetadataSyncError(error);
                 } else if (error.status === 409) {

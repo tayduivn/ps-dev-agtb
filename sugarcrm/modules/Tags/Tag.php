@@ -11,7 +11,7 @@
  */
 
 /**
- * The Tag class handles operations related to the Tags functionality 
+ * The Tag class handles operations related to the Tags functionality
  **/
 class Tag extends Basic
 {
@@ -110,7 +110,13 @@ class Tag extends Basic
             // If there is an id property of the result then we have existing records
             // and need to bomb out now
             if (!empty($result[0]['id'])) {
-                throw new SugarApiExceptionNotAuthorized('EXCEPTION_DUPLICATE_TAG_FOUND', null, $this->module_dir);
+                throw new SugarApiExceptionNotAuthorized(
+                    'EXCEPTION_DUPLICATE_TAG_FOUND',
+                    null,
+                    $this->module_dir,
+                    null,
+                    'duplicate_tag'
+                );
             }
         }
     }
