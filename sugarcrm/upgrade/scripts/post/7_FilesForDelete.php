@@ -190,6 +190,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Calendar/views/view.createinvitee.php',
             'modules/Calendar/views/view.getgr.php',
             'modules/Calendar/views/view.getgrusers.php',
+            // BR-3766 - Remove unused non-INT flagged file
+            'modules/UpgradeWizard/populateColumns.php',
         );
 
         // must be upgrading from between 710 to 722
