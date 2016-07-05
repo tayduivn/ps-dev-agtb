@@ -234,8 +234,13 @@ class RecurringHelper
                     $sugarValue .= $this->dayMap->getSugarValue($day);
                 }
             } else {
+                $timezone = isset($value['timezone']) ? $value['timezone'][0] : null;
                 $utcStartDate = $dateTimeHelper->sugarDateToUTC($bean->date_start);
-                $userStartDate = $this->getSugarTimeDate()->tzUser($utcStartDate);
+                if ($timezone) {
+                    $userStartDate = $utcStartDate->setTimezone(new \DateTimeZone($timezone));
+                } else {
+                    $userStartDate = $this->getSugarTimeDate()->tzUser($utcStartDate);
+                }
                 $sugarValue = $userStartDate->getDayOfWeek();
             }
             if ($bean->repeat_dow != $sugarValue) {

@@ -76,6 +76,19 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
         $participants_links = json_encode($addressees);
 
         return array(
+            'DeleteChildWithoutIntervalSet' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('DeleteChildWithoutIntervalSet.before'),
+                'after' => static::getSourceIcsFile('DeleteChildWithoutIntervalSet.after'),
+                'expected' => array(
+                    array(
+                        array('delete', null, null, '2016-07-09 13:00:00', 1, $groupId),
+                        array(),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
             'Add invite only for parent' => array(
                 'participants_links' => $participants_links,
                 // event every day 7 times (1.03 Tue - 7.03 Mon). List invitees is empty.

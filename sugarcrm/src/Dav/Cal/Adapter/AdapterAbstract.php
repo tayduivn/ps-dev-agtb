@@ -438,6 +438,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         ($action == 'override' || $action == 'rebuild' ||
                             ($action == 'update' && $collectionChildrenCount != $sugarChildrenCount))
                     ) {
+                        $collection->resetChildrenChanges();
                         $collection->setSugarChildrenOrder(array($beanId));
                     }
                 } else {
@@ -1728,11 +1729,7 @@ abstract class AdapterAbstract implements AdapterInterface
         }
 
         $rRule = $this->getRecurringHelper()->arrayToRRule($value);
-        $isChanged = $collection->setRRule($rRule);
-        if ($isChanged) {
-            $collection->resetChildrenChanges();
-        }
-        return $isChanged;
+        return $collection->setRRule($rRule);
     }
 
     /**

@@ -1710,7 +1710,6 @@ class CalDavEventCollection extends SugarBean
             }
 
             if ($oldRRule->getObject()->getParts() != $currentRRule->getObject()->getParts()) {
-                $changedFields['rrule_action'] = 'updated';
                 if ($oldRRule->getFrequency() != $currentRRule->getFrequency()) {
                     $changedFields['rrule_frequency'] = array($currentRRule->getFrequency(), $oldRRule->getFrequency());
                 }
@@ -1739,6 +1738,10 @@ class CalDavEventCollection extends SugarBean
 
                 if ($oldRRule->getBySetPos() != $currentRRule->getBySetPos()) {
                     $changedFields['rrule_bysetpos'] = array($currentRRule->getBySetPos(), $oldRRule->getBySetPos());
+                }
+
+                if ($changedFields) {
+                    $changedFields['rrule_action'] = 'updated';
                 }
             }
         } elseif ($currentRRule) {
