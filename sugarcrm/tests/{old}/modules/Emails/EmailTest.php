@@ -461,6 +461,35 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         );
         //END SUGARCRM flav=ent ONLY
     }
+
+    /**
+     * This test proves that the `total_attachments` field increases and decreases when attachments are linked and
+     * unlinked, respectively.
+     */
+    public function testTotalAttachments()
+    {
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertSame(0, $this->email->total_attachments, 'Should not have any attachments yet');
+
+        $note = SugarTestNoteUtilities::createNote();
+        $this->email->load_relationship('attachments');
+        $this->email->attachments->add($note);
+
+        $this->assertSame(1, $this->email->total_attachments, 'Should have incremented the count');
+
+        // While unlinking an attachment, `One2MeBeanRelationship::remove` triggers the `after_relationship_delete`
+        // event. `SugarBean::call_custom_logic` is ultimately called, which calls `SugarBean::updateRelatedCalcFields`
+        // because the event is `after_relationship_delete`. The `attachments` link is associated with a calculated
+        // field, so the email is added to `SugarRelationship::$resaveQueue`. So the email is not saved and therefore
+        // the `total_attachments` count is not updated when an attachment is unlinked until
+        // `SugarRelationship::resaveRelatedBeans` is called, which `RelateRecordApi::deleteRelatedLink` does already.
+        $this->email->attachments->delete($this->email->id, $note);
+        SugarRelationship::resaveRelatedBeans();
+
+        $this->assertSame(0, $this->email->total_attachments, 'Should have decremented the count');
+    }
 }
 
 

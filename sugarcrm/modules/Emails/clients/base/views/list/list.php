@@ -31,7 +31,7 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                     'link' => 'true',
                     'readonly' => true,
                     'related_fields' => array(
-                        'attachments',
+                        'total_attachments',
                         'state',
                     ),
                 ),

@@ -5,6 +5,9 @@ describe('Emails.Field.Name', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('name', 'field', 'base', 'list', 'Emails');
+        SugarTest.testMetadata.set();
 
         field = SugarTest.createField('base', 'name', 'name', 'list', {}, 'Emails', null, null, true);
         sandbox = sinon.sandbox.create();
@@ -18,18 +21,22 @@ describe('Emails.Field.Name', function() {
         field = null;
         SugarTest.testMetadata.dispose();
         sandbox.restore();
+        Handlebars.templates = {};
     });
 
-    describe('initialize()', function() {
-        var attachments;
-        beforeEach(function() {
-            attachments = {
-                records: []
-            };
+    describe('render', function() {
+        it('should show a paperclip if attachments exist', function() {
+            field.model.set('total_attachments', 3);
+            field.render();
+
+            expect(field.$('.email-has-attachments .fa-paperclip').length).toBe(1);
         });
 
-        afterEach(function() {
-            attachments = null;
+        it('should not show a paperclip if attachments do not exist', function() {
+            field.model.set('total_attachments', 0);
+            field.render();
+
+            expect(field.$('.email-has-attachments .fa-paperclip').length).toBe(0);
         });
 
         it('should set hasAttachments to true if attachments exist', function() {

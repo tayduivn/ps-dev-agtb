@@ -17,29 +17,13 @@
     extendsFrom: 'BaseNameField',
 
     /**
-     * If the model has attachments or not
-     */
-    hasAttachments: false,
-
-    /**
      * @inheritdoc
-     */
-    initialize: function(options) {
-        var attachments;
-        this._super('initialize', [options]);
-
-        attachments = this.model.get('attachments');
-        if (attachments && attachments.records && attachments.records.length) {
-            this.hasAttachments = true;
-        }
-    },
-
-    /**
-     * @inheritdoc
+     *
+     * Returns "(no subject)" when the email has no subject and not in edit
+     * mode. This allows for the subject to be a link in a list view.
      */
     format: function(value) {
         if (_.isEmpty(value) && this.action !== 'edit') {
-            // the subject line is empty, show (no subject) instead of blank
             return app.lang.get('LBL_NO_SUBJECT', this.module);
         }
 

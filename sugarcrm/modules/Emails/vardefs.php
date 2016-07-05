@@ -515,6 +515,17 @@ $dictionary['Email'] = array(
             'type' => 'link',
             'vname' => 'LBL_ATTACHMENTS',
         ),
+        'total_attachments' => array(
+            'name' => 'total_attachments',
+            'vname' => 'LBL_TOTAL_ATTACHMENTS',
+            'type' => 'int',
+            'formula' => 'count($attachments)',
+            'calculated' => true,
+            'enforced' => true,
+            'studio' => false,
+            'workflow' => false,
+            'importable' => false,
+        ),
         'outbound_email_id' => array(
             'name' => 'outbound_email_id',
             'comment' => 'The configuration used to send an email, only used for emails sent using SugarCRM',
