@@ -109,7 +109,7 @@ describe('ProductTemplates.Base.Field.PricingFormula', function() {
         it('discount_price will equal 200', function() {
             field._setupProfitMarginFormula();
 
-            expect(field.model.get('discount_price')).toEqual(200);
+            expect(field.model.get('discount_price')).toEqual('200');
         });
     });
 
@@ -132,7 +132,7 @@ describe('ProductTemplates.Base.Field.PricingFormula', function() {
 
         it('discount_price will equal 150', function() {
             field._setupPercentageMarkupFormula();
-            expect(field.model.get('discount_price')).toEqual(150);
+            expect(field.model.get('discount_price')).toEqual('150');
         });
     });
 
@@ -144,7 +144,7 @@ describe('ProductTemplates.Base.Field.PricingFormula', function() {
 
         it('discount_price will equal 75', function() {
             field._setupPercentageDiscountFormula();
-            expect(field.model.get('discount_price')).toEqual(75);
+            expect(field.model.get('discount_price')).toEqual('75');
         });
     });
 

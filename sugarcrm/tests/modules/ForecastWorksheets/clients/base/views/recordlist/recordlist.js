@@ -596,16 +596,16 @@ describe('ForecastWorksheets.View.RecordList', function() {
         it('will return object with correct values', function() {
             totals = view.getCommitTotals();
 
-            expect(totals.likely_case).toEqual(1000);
-            expect(totals.overall_amount).toEqual(1500);
+            expect(totals.likely_case).toEqual('1000');
+            expect(totals.overall_amount).toEqual('1500');
         });
 
         it('will not include model that is outside timeperiod', function() {
             m1.set('date_closed', '2013-01-05');
             totals = view.getCommitTotals();
 
-            expect(totals.likely_case).toEqual(500);
-            expect(totals.overall_amount).toEqual(1000);
+            expect(totals.likely_case).toEqual('500');
+            expect(totals.overall_amount).toEqual('1000');
         });
 
         describe('filteredTotals', function() {
@@ -623,24 +623,24 @@ describe('ForecastWorksheets.View.RecordList', function() {
                 getStub.withArgs('selectedRanges').returns(['include']);
                 var totals = view.getCommitTotals();
 
-                expect(totals.filtered_amount).toEqual(1000);
-                expect(totals.overall_amount).toEqual(1500);
+                expect(totals.filtered_amount).toEqual('1000');
+                expect(totals.overall_amount).toEqual('1500');
             });
 
             it('will include all items when filter is include and exclude', function() {
                 getStub.withArgs('selectedRanges').returns(['include', 'exclude']);
                 var totals = view.getCommitTotals();
 
-                expect(totals.filtered_amount).toEqual(1500);
-                expect(totals.overall_amount).toEqual(1500);
+                expect(totals.filtered_amount).toEqual('1500');
+                expect(totals.overall_amount).toEqual('1500');
             });
 
             it('will include all items when filter is empty', function() {
                 getStub.withArgs('selectedRanges').returns([]);
                 var totals = view.getCommitTotals();
 
-                expect(totals.filtered_amount).toEqual(1500);
-                expect(totals.overall_amount).toEqual(1500);
+                expect(totals.filtered_amount).toEqual('1500');
+                expect(totals.overall_amount).toEqual('1500');
             });
         });
     });

@@ -319,11 +319,11 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 });
 
                 it('should increase field value by +.5%', function() {
-                    expect(field._fieldParsePercentage('+,5%')).toEqual('$1,00');
+                    expect(field._parsePercentage('+,5%')).toEqual('$1,01');
                 });
 
                 it('should decrease field value by -.5%', function() {
-                    expect(field._fieldParsePercentage('-,5%')).toEqual('$0,99');
+                    expect(field._parsePercentage('-,5%')).toEqual('$1,00');
                 });
 
                 it('should increase field value by +1000', function() {
@@ -392,11 +392,11 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 });
 
                 it('should increase field value by +.5%', function() {
-                    expect(field._fieldParsePercentage('+d5%')).toEqual('$1d00');
+                    expect(field._parsePercentage('+d5%')).toEqual('$1d01');
                 });
 
                 it('should decrease field value by -.5%', function() {
-                    expect(field._fieldParsePercentage('-d5%')).toEqual('$0d99');
+                    expect(field._parsePercentage('-d5%')).toEqual('$1d00');
                 });
 
                 it('should increase field value by +1000', function() {
@@ -439,11 +439,11 @@ describe('ForecastWorksheets.Base.Fields.Currency', function() {
                 });
 
                 it('should increase field value by +.5%', function() {
-                    expect(field._fieldParsePercentage('+.5%')).toEqual('$1.00');
+                    expect(field._parsePercentage('+.5%')).toEqual('$1.01');
                 });
 
                 it('should decrease field value by -.5%', function() {
-                    expect(field._fieldParsePercentage('-.5%')).toEqual('$0.99');
+                    expect(field._parsePercentage('-.5%')).toEqual('$1.00');
                 });
 
                 it('should increase field value by +50.8', function() {

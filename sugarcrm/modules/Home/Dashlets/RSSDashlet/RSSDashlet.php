@@ -141,11 +141,14 @@ class RSSDashlet extends Dashlet
             foreach ( $rssdoc->channel as $channel ) {
                 if ( isset($channel->item ) ) {
                     foreach ( $channel->item as $item ) {
+                        $link = htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8');
+                        $title = htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8');
+                        $description = htmlspecialchars($item->description, ENT_QUOTES, 'UTF-8');
                         $output .= <<<EOHTML
 <tr>
 <td>
-    <h3><a href="{$item->link}" target="_child">{$item->title}</a></h3>
-    {$item->description}
+    <h3><a href="{$link}" target="_child">{$title}</a></h3>
+    {$description}
 </td>
 </tr>
 EOHTML;
@@ -159,11 +162,14 @@ EOHTML;
                 if ( empty($link) ) {
                     $link = $entry->link[0]['href'];
                 }
+                $link = htmlspecialchars($link, ENT_QUOTES, 'UTF-8');
+                $title = htmlspecialchars($entry->title, ENT_QUOTES, 'UTF-8');
+                $summary = htmlspecialchars($entry->summary, ENT_QUOTES, 'UTF-8');
                 $output .= <<<EOHTML
 <tr>
 <td>
-    <h3><a href="{$link}" target="_child">{$entry->title}</a></h3>
-    {$entry->summary}
+    <h3><a href="{$link}" target="_child">{$title}</a></h3>
+    {$summary}
 </td>
 </tr>
 EOHTML;

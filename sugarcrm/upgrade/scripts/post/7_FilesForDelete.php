@@ -196,6 +196,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Calendar/views/view.getgrusers.php',
             // MACAROON-1385
             'modules/pmse_Inbox/engine/PMSEHandlers/PMSECronHandler.php',
+            // BR-3766 - Remove unused non-INT flagged file
+            'modules/UpgradeWizard/populateColumns.php',
         );
 
         // must be upgrading from between 710 to 722

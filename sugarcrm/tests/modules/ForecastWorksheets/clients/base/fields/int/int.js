@@ -42,7 +42,10 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
 
     describe('ClickToEdit _fieldValueChanged', function() {
         beforeEach(function() {
-            field.value = '1';
+            sandbox.stub(field.model, 'get', function() {
+                return field.value;
+            });
+            field.value = '50';
         });
         afterEach(function() {
             field.value = undefined;
@@ -54,7 +57,7 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
                     val: function() {
                         return '+1';
                     }
-                }
+                };
             });
             expect(field._fieldValueChanged(field)).toBeTruthy();
         });
@@ -65,7 +68,7 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
                     val: function() {
                         return '-1';
                     }
-                }
+                };
             });
             expect(field._fieldValueChanged(field)).toBeTruthy();
         });
@@ -74,9 +77,9 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
             sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '+1%';
+                        return '+10%';
                     }
-                }
+                };
             });
             expect(field._fieldValueChanged(field)).toBeTruthy();
         });
@@ -85,9 +88,9 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
             sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '-1%';
+                        return '-10%';
                     }
-                }
+                };
             });
             expect(field._fieldValueChanged(field)).toBeTruthy();
         });
@@ -96,9 +99,9 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
             sinon.collection.stub(field.$el, 'find', function() {
                 return {
                     val: function() {
-                        return '1';
+                        return '50';
                     }
-                }
+                };
             });
             expect(field._fieldValueChanged(field)).toBeFalsy();
         });

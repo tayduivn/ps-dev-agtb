@@ -433,9 +433,19 @@ SUGAR.mySugar = function() {
 				ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVED_LAYOUT'));
 				window.setTimeout('ajaxStatus.hideStatus()', 2000);
 			}
-			
-			url = 'index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=saveLayout&layout=' + order + '&selectedPage=' + activeTab;
-			var cObj = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});					  
+
+            YAHOO.util.Connect.asyncRequest('POST', 'index.php?' + SUGAR.util.paramsToUrl({
+                    'module': module,
+                    'action': 'DynamicAction',
+                    'DynamicAction': 'saveLayout',
+                    'selectedPage': activeTab,
+                    'to_pdf': 1
+                }), {
+                success: success,
+                failure: success
+            }, SUGAR.util.paramsToUrl({
+                'layout': order
+            }));
 		},
 
 		changeLayout: function(numCols) {
@@ -740,8 +750,20 @@ SUGAR.mySugar = function() {
 				SUGAR.mySugar.retrieveDashlet(data.responseText, url, finishRetrieve, true); // retrieve it from the server
 			}
 
-			var cObj = YAHOO.util.Connect.asyncRequest('GET','index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=addDashlet&activeTab=' + activeTab + '&id=' + id+'&type=' + type + '&type_module=' + encodeURIComponent(type_module), 
-													  {success: success, failure: success}, null);						  
+            YAHOO.util.Connect.asyncRequest('POST', 'index.php?' + SUGAR.util.paramsToUrl({
+                'module': module,
+                'action': 'DynamicAction',
+                'DynamicAction': 'addDashlet',
+                'activeTab': activeTab,
+                'id': id,
+                'to_pdf': 1
+            }), {
+                success: success,
+                failure: success
+            }, SUGAR.util.paramsToUrl({
+                'type': type,
+                'type_module': type_module
+            }));
 
 			return false;
 		},
