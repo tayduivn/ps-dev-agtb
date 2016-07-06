@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Notification\Carrier\CarrierInterface;
+
 require_once 'modules/NotificationCenter/clients/base/api/GlobalConfigApi.php';
 
 /**
@@ -118,19 +120,21 @@ class NotificationCenterConfigApi extends GlobalConfigApi
         foreach ($this->getCarrierRegistry()->getCarriers() as $module) {
             $carrier = $this->getCarrierRegistry()->getCarrier($module);
             $addressType = $carrier->getAddressType();
-            $options = new stdClass();
+            $addressTypeOptions = new stdClass();
             foreach ($addressType->getOptions($user) as $optionKey => $option) {
-                $options->{$optionKey} = $option;
+                $addressTypeOptions->{$optionKey} = $option;
             }
-
+            $carrierOptions = $carrier->getOptions();
+            if (!array_key_exists('deliveryDisplayStyle', $carrierOptions)) {
+                $carrierOptions['deliveryDisplayStyle'] = CarrierInterface::DELIVERY_DISPLAY_STYLE_NONE;
+            }
             $carriers[$module] = array(
                 // If personal is not yet set up, take it from global config.
                 'status' => array_key_exists($module, $carriersStatus) ?
                     (!empty($carriersStatus[$module])) :
                     $globalCarriers[$module]['status'],
-
-                'selectable' => $addressType->isSelectable(),
-                'options' => $options,
+                'options' => $carrierOptions,
+                'addressTypeOptions' => $addressTypeOptions,
             );
         }
         return $carriers;

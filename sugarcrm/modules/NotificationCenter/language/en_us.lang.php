@@ -67,7 +67,6 @@ $mod_strings = array(
     'LBL_RESET_SETTINGS_ALL_CONFIRMATION' => 'Are you sure you want to reset all your Notification Center settings to the system default?',
     'LBL_RESET_SETTINGS_EMITTER_CONFIRMATION' => 'Are you sure you want to reset your % settings to the system default?',
     'LBL_RESET_SETTINGS_SUCCESS' => 'Settings successfully have been reset to the system default.',
-    'LBL_LINK_TO_USER_PROFILE' => 'To change this delivery address, go to your <a href="#profile">user profile</a>.',
     'LBL_SELECT_SEND_ADDRESS' => 'Select address',
 );
 

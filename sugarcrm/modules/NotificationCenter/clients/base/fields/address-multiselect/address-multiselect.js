@@ -10,59 +10,37 @@
  */
 
 /**
- * @class View.Fields.Base.NotificationCenterAddressField
- * @alias SUGAR.App.view.fields.BaseNotificationCenterAddressField
- * @extends View.Fields.Base.BaseField
+ * @class View.Fields.Base.NotificationCenterAddressMultiselectField
+ * @alias SUGAR.App.view.fields.BaseNotificationCenterAddressMultiselectField
+ * @extends View.Fields.Base.NotificationCenterAddressBaseField
  */
 ({
+    extendsFrom: 'NotificationCenterAddressBaseField',
+
+    /**
+     * @property {string} Field selector.
+      */
     fieldTag: 'input.select2',
 
+    /**
+     * @property {Object} attached event list.
+     */
     events: {
         'click .btn[name=add]': 'addItem',
         'click .btn[name=remove]': 'removeItem'
     },
 
+    /**
+     * @property {string} selector for addresses values field
+     */
     appendAddressTag: 'input[name=append_address]',
-
-    items: null,
-
-    carrier: null,
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.items = options.def.options;
-        this.carrier = options.def.carrier;
         this._currentIndex = 0;
-
-        this.model.on('change:personal:carrier:' + this.carrier, this.showHideField, this);
-        this.model.on('reset:all', this.render, this);
-    },
-
-    /**
-     * @inheritdoc
-     */
-    render: function() {
-        this._super('render');
-        this.showHideField();
-    },
-
-    /**
-     * If carrier gets enabled, show its address field, otherwise hide it.
-     */
-    showHideField: function() {
-        var personal = this.model.get('personal')['carriers'],
-            global = this.model.get('global')['carriers'];
-
-        if (personal[this.carrier].status === true &&
-            global[this.carrier].status === true &&
-            global[this.carrier].isConfigured === true) {
-            this.show();
-        } else {
-            this.hide();
-        }
     },
 
     /**
@@ -88,12 +66,12 @@
      * Called to update value when a selection is made from options view dialog
      * @param {Object} model New value for address
      */
-    setValue: function (model) {
+    setValue: function(model) {
         if (!model) {
             return;
         }
-        var index = this._currentIndex,
-            address = this.value;
+        var index = this._currentIndex;
+        var address = this.value;
         address[index || 0].id = model.id;
         this._updateModelAndTriggerChange(address);
     },
@@ -101,11 +79,11 @@
     /**
      * @inheritdoc
      */
-    format: function (value) {
+    format: function(value) {
         value = app.utils.deepCopy(value);
         // Place the add button as needed
         if (_.isArray(value) && value.length > 0) {
-            _.each(value, function (address) {
+            _.each(value, function(address) {
                 delete address.remove_button;
                 delete address.add_button;
             });
@@ -130,7 +108,7 @@
     /**
      * @inheritdoc
      */
-    _render: function () {
+    _render: function() {
         var self = this;
         if (!this.items || _.isEmpty(this.items)) {
             return;
@@ -145,8 +123,8 @@
 
         $el.select2(select2Options)
             .on('change', function(e) {
-                var attributes = {},
-                    id = e.val;
+                var attributes = {};
+                var id = e.val;
                 if (_.isUndefined(id)) {
                     return;
                 }
@@ -169,14 +147,14 @@
                 this.value = [this.value];
             }
 
-            this.$(this.fieldTag).each(function (index, el) {
-                var plugin = $(el).data("select2");
+            this.$(this.fieldTag).each(function(index, el) {
+                var plugin = $(el).data('select2');
                 // If there is a plugin but no address index, set it
                 if (!_.isUndefined(plugin) && _.isUndefined(plugin.setAddressIndex)) {
-                    plugin.setAddressIndex = function () {
-                        self._currentIndex = $(this).data("index");
+                    plugin.setAddressIndex = function() {
+                        self._currentIndex = $(this).data('index');
                     };
-                    plugin.opts.element.on("select2-open", plugin.setAddressIndex);
+                    plugin.opts.element.on('select2-open', plugin.setAddressIndex);
                 }
             });
         }
@@ -185,11 +163,11 @@
     /**
      * Set up select2 options and properties.
      * @param {Object} optionsKeys keys of items of the select.
-     * @returns {Object} options of select2 plugin. For detailed information see corresponding section of select2 docs.
+     * @return {Object} options of select2 plugin. For detailed information see corresponding section of select2 docs.
      */
-    getSelect2Options: function (optionsKeys) {
+    getSelect2Options: function(optionsKeys) {
         var select2Options = {};
-        select2Options.allowClear = _.indexOf(optionsKeys, "") >= 0;
+        select2Options.allowClear = _.indexOf(optionsKeys, '') >= 0;
         select2Options.transformVal = _.identity;
 
         select2Options.width = this.def.enum_width ? this.def.enum_width : '100%';
@@ -211,13 +189,12 @@
      * @private
      */
     _initSelection: function(el, callback) {
-        var $el = $(el),
-            id = $el.val(),
-            text = this.items[id];
+        var $el = $(el);
+        var id = $el.val();
+        var text = this.items[id];
 
         return callback({id: id, text: text});
     },
-
 
     /**
      * Adapted from eachOptions helper in hbt-helpers.js
@@ -225,7 +202,7 @@
      * @param {Object} query Select2 query object
      * @private
      */
-    _query: function (query) {
+    _query: function(query) {
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
         var data = {
             results: [],
@@ -233,8 +210,8 @@
             more: false
         };
         if (_.isObject(options)) {
-            _.each(options, function (element, index) {
-                var text = "" + element;
+            _.each(options, function(element, index) {
+                var text = '' + element;
                 //additionally filter results based on query term
                 if (query.matcher(query.term, text)) {
                     data.results.push({id: index, text: text});
@@ -283,14 +260,12 @@
      * @param {Object} value
      * @private
      */
-    _updateModelAndTriggerChange: function (value) {
+    _updateModelAndTriggerChange: function(value) {
         var valueForModel = [];
         _.each(value, function(item) {
             valueForModel.push(item.id);
         });
-        var addresses = _.clone(this.model.get('selectedAddresses'));
-        addresses[this.carrier] = valueForModel;
-        this.model.set('selectedAddresses', addresses);
+        this.setSelectedAddresses(valueForModel);
         this.render();
     }
-})
+});

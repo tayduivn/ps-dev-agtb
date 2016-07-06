@@ -49,4 +49,15 @@ class CarrierSugarCarrier implements CarrierInterface
     {
         return new AddressTypeId();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOptions()
+    {
+        return array(
+            'deliveryDisplayStyle' => static::DELIVERY_DISPLAY_STYLE_NONE,
+            'deliveryBehavior' => static::DELIVERY_BEHAVIOR_SINGLE,
+        );
+    }
 }

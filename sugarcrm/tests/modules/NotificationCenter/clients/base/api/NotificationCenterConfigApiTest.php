@@ -82,10 +82,12 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             'getStatus',
             'getSubscriptionsRegistry',
             'getCarrierRegistry',
+            'getSingleDeliveryCarriers',
         ));
         $this->api->method('getStatus')->willReturn($this->notificationConfigStatus);
         $this->api->method('getSubscriptionsRegistry')->willReturn($this->subscriptionsRegistry);
         $this->api->method('getCarrierRegistry')->willReturn($this->carrierRegistry);
+        $this->api->method('getSingleDeliveryCarriers')->willReturn(array());
 
         $this->carriers = array(
             'Carrier' . rand(1000, 1999),
@@ -105,6 +107,7 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
                 $this->carrierStatus[] = array($carrier, false);
                 $this->carrierUserStatus[$carrier] = true;
             }
+            $carrierStub->method('getOptions')->willReturn(array());
             $this->carriersMap[] = array($carrier, $carrierStub);
             $carrierStub->addressType = $this->getMock('Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\AddressTypeInterface');
             $carrierStub->addressType->options = array(
@@ -113,10 +116,6 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             );
             $carrierStub->addressType->method('getOptions')->willReturnCallback(function() use ($carrierStub) {
                 return $carrierStub->addressType->options;
-            });
-            $carrierStub->addressType->selectable = ($k % 2 == 0);
-            $carrierStub->addressType->method('isSelectable')->willReturnCallback(function() use ($carrierStub) {
-                return $carrierStub->addressType->selectable;
             });
             $carrierStub->method('getAddressType')->willReturn($carrierStub->addressType);
         }
@@ -458,8 +457,10 @@ class NotificationCenterConfigApiTest extends \Sugar_PHPUnit_Framework_TestCase
             $this->assertArrayHasKey($carrier, $result['personal']['carriers']);
             $this->assertEquals($this->carrierUserStatus[$carrier], $result['personal']['carriers'][$carrier]['status']);
             if ($this->carriersMap[$k][1] instanceof CarrierInterface) {
-                $this->assertEquals($this->carriersMap[$k][1]->addressType->selectable, $result['personal']['carriers'][$carrier]['selectable']);
-                $this->assertEquals($this->carriersMap[$k][1]->addressType->options, json_decode(json_encode($result['personal']['carriers'][$carrier]['options']), true));
+                $this->assertEquals(
+                    $this->carriersMap[$k][1]->addressType->options,
+                    json_decode(json_encode($result['personal']['carriers'][$carrier]['addressTypeOptions']), true)
+                );
             }
         }
     }

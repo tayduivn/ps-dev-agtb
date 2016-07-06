@@ -9,20 +9,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('NotificationCenter.Field.Address', function() {
-    var app, field, sandbox,
-        module = 'NotificationCenter',
-        fieldType = 'address',
-        fieldDef,
-        layout,
-        carriers = {foo: {selectable: true, status: true}},
-        options = ['address1', 'address2'],
-        model;
+describe('NotificationCenter.Field.AddressMultiselect', function() {
+    var app;
+    var field;
+    var sandbox;
+    var module = 'NotificationCenter';
+    var fieldType = 'address-multiselect';
+    var fieldDef;
+    var layout;
+    var carriers = {foo: {options: {deliveryDisplayStyle: 'multiselect'}, status: true}};
+    var model;
 
     beforeEach(function() {
         app = SugarTest.app;
         sandbox = sinon.sandbox.create();
-        carriers = {foo: {status: false}};
         SugarTest.testMetadata.init();
         SugarTest.declareData('base', module, true, false);
         layout = SugarTest.createLayout('base', module, 'config-drawer', null, null, true);
@@ -33,10 +33,9 @@ describe('NotificationCenter.Field.Address', function() {
         fieldDef = {
             name: 'dummy',
             type: fieldType,
-            view: 'edit',
-            options: options,
-            carrier: 'foo'
+            view: 'edit'
         };
+        SugarTest.loadComponent('base', 'field', 'address-base', module);
         SugarTest.loadHandlebarsTemplate(fieldType, 'field', 'base', 'edit', module);
         SugarTest.testMetadata.set();
         field = SugarTest.createField('base', 'dummy', fieldType, 'edit', fieldDef, module, model, null, true);
@@ -58,45 +57,6 @@ describe('NotificationCenter.Field.Address', function() {
 
     it('should set "_currentIndex" property to 0', function() {
         expect(field._currentIndex).toEqual(0);
-    });
-
-    it('should call showHideField() on render', function() {
-        var method = sandbox.stub(field, 'showHideField');
-        field.render();
-        expect(method).toHaveBeenCalled();
-    });
-
-    describe('showHideField()', function() {
-        var global, personal;
-
-        beforeEach(function() {
-            global = {foo: {status: null}};
-            personal = {foo: {status: null}};
-        });
-
-        using('statues, isConfigured and action',
-            [
-                [true, true, true, 'show'],
-                [false, false, false, 'hide'],
-                [true, true, false, 'hide'],
-                [false, true, true, 'hide'],
-                [true, false, true, 'hide'],
-                [true, false, false, 'hide'],
-                [false, false, true, 'hide'],
-                [false, true, false, 'hide']
-            ],
-            function(globalStatus, personalStatus, isConfigured, action) {
-                it('should show or hide field according to global/personal carrier status & configuration state', function() {
-                    var method = sandbox.stub(field, action);
-                    global['foo']['status'] = globalStatus;
-                    global['foo']['isConfigured'] = isConfigured;
-                    personal['foo']['status'] = personalStatus;
-                    model.set('global', {carriers: global});
-                    model.set('personal', {carriers: personal});
-                    field.showHideField();
-                    expect(method).toHaveBeenCalled();
-                });
-            });
     });
 
     describe('getFormattedValue()', function() {
@@ -135,11 +95,12 @@ describe('NotificationCenter.Field.Address', function() {
     });
 
     describe('addItem()', function() {
-        var evt, method;
+        var evt;
+        var method;
 
         beforeEach(function() {
             evt = {
-                currentTarget: "<a data-index='0'></a>"
+                currentTarget: '<a data-index="0"></a>'
             };
             method = sandbox.stub(field, '_updateModelAndTriggerChange');
         });
@@ -159,9 +120,9 @@ describe('NotificationCenter.Field.Address', function() {
         });
     });
 
-
     describe('removeItem()', function() {
-        var evt, method;
+        var evt;
+        var method;
 
         beforeEach(function() {
             evt = {currentTarget: null};
@@ -169,7 +130,7 @@ describe('NotificationCenter.Field.Address', function() {
         });
 
         it('should should call _updateModelAndTriggerChange() with correct value', function() {
-            evt.currentTarget = "<a data-index='1'></a>";
+            evt.currentTarget = '<a data-index="1"></a>';
             field._currentIndex = 1;
             field.value = [{id: 'foo'}, {id: 'bar'}];
             field.removeItem(evt);
@@ -221,12 +182,11 @@ describe('NotificationCenter.Field.Address', function() {
             expect(render).toHaveBeenCalled();
         });
 
-        using('old current index, data-index, value, new current index list',
+        using('set value, expected selectedAddresses list',
             [
                 [[], {foo: []}],
                 [[{key: 0, id: 'email1'}], {foo: ['email1']}],
                 [[{key: 0, id: 'email1'}, {key: 1, id: 'email2'}], {foo: ['email1', 'email2']}]
-
             ],
             function(value, selectedAddresses) {
                 it('should populate model\'s selectedAddresses', function() {

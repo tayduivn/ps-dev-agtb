@@ -273,14 +273,4 @@ class EmailTest extends \PHPUnit_Framework_TestCase
         $result = $this->addressType->getTransportValue($this->user, $key);
         $this->assertEquals($expected, $result);
     }
-
-    /**
-     * isSelectable should return true for Email Address Type
-     *
-     * @covers Sugarcrm\Sugarcrm\Notification\Carrier\AddressType\Email::isSelectable
-     */
-    public function isSelectableReturnsTrue()
-    {
-        $this->assertTrue($this->addressType->isSelectable());
-    }
 }

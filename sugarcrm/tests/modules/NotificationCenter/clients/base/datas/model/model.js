@@ -318,73 +318,136 @@ describe('Data.Base.NotificationCenter', function() {
                 {
                     'case': 'Empty emitter & and selectable carrier',
                     emitters: {emitter1: {}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Empty emitter & and not selectable carrier',
                     emitters: {emitter1: {}},
-                    carriers: {foo: {selectable: false}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'none'}
+                        }
+                    },
                     result: {}
                 },
                 {
                     'case': 'Emitter with empty event',
                     emitters: {emitter1: {event1: {}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Emitter with "default" string filter',
                     emitters: {emitter1: {event1: {filter1: 'default'}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Emitter with filter that has empty marker',
                     emitters: {emitter1: {event1: {filter1: [['foo', '']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Emitter with filter that has empty and address marker',
                     emitters: {emitter1: {event1: {filter1: [['foo', ''], ['foo', '0']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Emitter with filter that has empty and 2 address markers',
                     emitters: {emitter1: {event1: {filter1: [['foo', ''], ['foo', '0'], ['foo', '1']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0, 1: 1}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        }
+                    },
                     result: {foo: ['0', '1']}
                 },
                 {
                     'case': 'Emitter with filter that has only address marker',
                     emitters:  {emitter1: {event1: {filter1: [['foo', '1']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0, 1: 1}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        }
+                    },
                     result: {foo: ['1']}
                 },
                 {
                     'case': 'Emitter with filter that has only 2 address markers',
                     emitters: {emitter1: {event1: {filter1: [['foo', '1']], filter2: [['foo', '1']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0, 1: 1}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        }
+                    },
                     result: {foo: ['1']}
                 },
                 {
                     'case': 'Emitter with filter that has 2 empty markers',
                     emitters: {emitter1: {event1: {filter1: [['foo', ''], ['bar', '']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}, bar: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        },
+                        bar: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0'], bar: ['0']}
                 },
                 {
                     'case': 'Emitter with 2 events with filters that have only empty markers',
                     emitters: {emitter1: {event1: {filter1: [['foo', '']]}, event2: {filter1: [['foo', '']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0}
+                        }
+                    },
                     result: {foo: ['0']}
                 },
                 {
                     'case': 'Emitter with 2 events with filters that have only address markers',
                     emitters: {emitter1: {event1: {filter1: [['foo', '0']]}, event2: {filter1: [['foo', '1']]}}},
-                    carriers: {foo: {selectable: true, options: {0: 0, 1: 1}}},
+                    carriers: {
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        }
+                    },
                     result: {foo: ['0', '1']}
                 },
                 {
@@ -394,7 +457,14 @@ describe('Data.Base.NotificationCenter', function() {
                         emitter2: {event1: {filter1: [['bar', '0']]}, event2: {filter1: [['foo', '1']]}}
                     },
                     carriers: {
-                        foo: {selectable: true, options: {0: 0, 1: 1}}, bar: {selectable: true, options: {0: 0, 1: 1}}
+                        foo: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        },
+                        bar: {
+                            options: {deliveryDisplayStyle: 'select'},
+                            addressTypeOptions: {0: 0, 1: 1}
+                        }
                     },
                     result: {foo: ['1'], bar: ['0']}
                 }
