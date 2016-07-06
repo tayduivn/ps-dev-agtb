@@ -162,7 +162,7 @@
         }
 
         if (!enable) {
-            this.model.off(null, this.copyChanged);
+            this.model.off(null, this.copyChanged, this);
             return;
         }
 
