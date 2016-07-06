@@ -70,6 +70,13 @@ $viewdefs['Quotes']['base']['view']['subpanel-list'] = array(
                 'event' => 'list:editrow:fire',
             ),
             array(
+                'type' => 'pdfaction',
+                'name' => 'download-pdf',
+                'label' => 'LBL_PDF_VIEW',
+                'action' => 'download',
+                'acl_action' => 'view',
+            ),
+            array(
                 'type' => 'unlink-action',
                 'icon' => 'fa-trash-o',
                 'label' => 'LBL_UNLINK_BUTTON',
