@@ -21,7 +21,6 @@ $dictionary['pmse_Project'] = array(
 		'fields'=>array (
   'prj_uid' => 
   array (
-    'required' => true,
     'name' => 'prj_uid',
     'vname' => 'LBL_PRJ_UID',
     'type' => 'id',

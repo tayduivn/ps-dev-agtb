@@ -44,7 +44,6 @@ $dictionary['pmse_Business_Rules'] = array(
             ),
         'rst_uid' =>
             array (
-                'required' => true,
                 'name' => 'rst_uid',
                 'vname' => 'LBL_RST_UID',
                 'type' => 'id',
