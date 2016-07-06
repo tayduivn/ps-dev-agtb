@@ -675,27 +675,45 @@ class AbstractRelationship
         // finally, wrap up with section 4, the indices on the join table
 
         $indexBase = $this->getValidDBName ( $relationshipName ) ;
-        $properties [ 'indices' ] [] = array ( 'name' => $indexBase . 'spk' , 'type' => 'primary' , 'fields' => array ( 'id' ) ) ;
+        $properties['indices'] = array(
+            array(
+                'name' => 'idx_' . $indexBase . '_pk',
+                'type' => 'primary',
+                'fields' => array('id'),
+            ),
+            array(
+                'name' => 'idx_' . $indexBase . '_ida1_deleted',
+                'type' => 'index',
+                'fields' => array($rel_properties['join_key_lhs'], 'deleted'),
+            ),
+            array(
+                'name' => 'idx_' . $indexBase . '_idb2_deleted',
+                'type' => 'index',
+                'fields' => array($rel_properties['join_key_rhs'], 'deleted'),
+            ),
+        );
 
-        switch ($relationshipType)
-        {
+        switch ($relationshipType) {
             case MB_ONETOONE:
-                $alternateKeys = array () ;
-                $properties [ 'indices' ] [] = array ( 'name' => $indexBase . '_ida1' , 'type' => 'index' , 'fields' => array ( $rel_properties [ 'join_key_lhs' ] ) ) ;
-                $properties [ 'indices' ] [] = array ( 'name' => $indexBase . '_idb2' , 'type' => 'index' , 'fields' => array ( $rel_properties [ 'join_key_rhs' ] ) ) ;
+                $alternateKeys = array();
                 break;
-            case MB_ONETOMANY :
-                $alternateKeys = array ( $rel_properties [ 'join_key_rhs' ] ) ;
-                $properties [ 'indices' ] [] = array ( 'name' => $indexBase . '_ida1' , 'type' => 'index' , 'fields' => array ( $rel_properties [ 'join_key_lhs' ] ) ) ;
+            case MB_ONETOMANY:
+                $alternateKeys = array($rel_properties['join_key_rhs']);
                 break;
             default:
-                $alternateKeys = array ( $rel_properties [ 'join_key_lhs' ] , $rel_properties [ 'join_key_rhs' ] ) ;
+                $alternateKeys = array($rel_properties['join_key_lhs'], $rel_properties['join_key_rhs']);
+                break;
         }
 
-        if (count($alternateKeys)>0)
-            $properties [ 'indices' ] [] = array ( 'name' => $indexBase . '_alt' , 'type' => 'alternate_key' , 'fields' => $alternateKeys ) ; // type must be set to alternate_key for Link.php to correctly update an existing record rather than inserting a copy - it uses the fields in this array as the keys to check if a duplicate record already exists
+        if ($alternateKeys) {
+            $properties['indices'][] = array(
+                'name' => $indexBase . '_alt',
+                'type' => 'alternate_key',
+                'fields' => $alternateKeys,
+            );
+        }
 
-        return $properties ;
+        return $properties;
     }
 
 
