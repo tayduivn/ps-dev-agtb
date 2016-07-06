@@ -1760,6 +1760,58 @@ class CalDavEventCollection extends SugarBean
     }
 
     /**
+     * Gets reminders diff structure.
+     *
+     * @param Structures\Event $currentEvent
+     * @param Structures\Event|null $oldEvent
+     * @return array
+     */
+    public function getRemindersDiff(Structures\Event $currentEvent, Structures\Event $oldEvent = null)
+    {
+        $reminders = array();
+        if ($oldEvent) {
+            /** @var  Structures\Reminder $currentReminder */
+            foreach ($currentEvent->getReminders() as $currentReminder) {
+                $oldReminder = $oldEvent->findReminderByUid($currentReminder->getUID());
+                if ($oldReminder) {
+                    if ($currentReminder->getTrigger() != $oldReminder->getTrigger() ||
+                        $currentReminder->getAction() != $oldReminder->getAction()
+                    ) {
+                        $reminders['changed'][] = array(
+                            array($currentReminder->getTrigger(), $currentReminder->getAction()),
+                            array($oldReminder->getTrigger(), $oldReminder->getAction()),
+                        );
+                    }
+                } else {
+                    $reminders['added'][] = array(
+                        array($currentReminder->getTrigger(), $currentReminder->getAction()),
+                    );
+                }
+            }
+
+            /** @var Structures\Reminder $oldReminder */
+            foreach ($oldEvent->getReminders() as $oldReminder) {
+                if (!$currentEvent->findReminderByUid($oldReminder->getUID())) {
+                    $reminders['deleted'][] = array(
+                        array($oldReminder->getTrigger(), $oldReminder->getAction()),
+                    );
+                }
+            }
+
+            return $reminders;
+        }
+
+        /** @var Structures\Reminder $reminder */
+        foreach ($currentEvent->getReminders() as $reminder) {
+            $reminders['added'][] = array(
+                array($reminder->getTrigger(), $reminder->getAction()),
+            );
+        }
+
+        return $reminders;
+    }
+
+    /**
      * Create event diff
      * @param string $data
      * @return mixed returns array with difference or false if data is the same as current object
@@ -1800,6 +1852,7 @@ class CalDavEventCollection extends SugarBean
 
         $changedFields = $this->getEventDiff($currentParent, $oldParent);
         $invites = $this->getParticipantsDiff($currentParent, $oldParent);
+        $reminders = $this->getRemindersDiff($currentParent, $oldParent);
 
         $filter = true;
         if (empty($data)) {
@@ -1808,11 +1861,12 @@ class CalDavEventCollection extends SugarBean
             });
         }
 
-        if ($filter && ($invites || $changedFields)) {
+        if ($filter && ($invites || $changedFields || $reminders)) {
             $result['parent'] = array(
                 $oldParent ? 'update' : 'override',
                 $changedFields,
                 $invites,
+                $reminders,
             );
         }
 
@@ -1828,6 +1882,7 @@ class CalDavEventCollection extends SugarBean
 
             $changedFields = $this->getEventDiff($currentChild, $oldChild);
             $invites = $this->getParticipantsDiff($currentChild, $oldChild);
+            $reminders = $this->getRemindersDiff($currentChild, $oldChild);
 
             $filter = true;
             if (!$oldChild) {
@@ -1836,7 +1891,7 @@ class CalDavEventCollection extends SugarBean
                 });
             }
 
-            if ($filter && ($invites || $changedFields)) {
+            if ($filter && ($invites || $changedFields || $reminders)) {
                 if ($currentChild->isVirtual()) {
                     $childKey = 'virtual';
                     $childAction = $oldChild ? 'update' : 'override';
@@ -1848,6 +1903,7 @@ class CalDavEventCollection extends SugarBean
                     $childAction,
                     $changedFields,
                     $invites,
+                    $reminders,
                 );
             }
         }
@@ -1859,6 +1915,7 @@ class CalDavEventCollection extends SugarBean
             if ($oldChild && !$oldChild->isDeleted()) {
                 $result['children'][$recurrenceId->asDb()] = array(
                     'delete',
+                    array(),
                     array(),
                     array(),
                 );
@@ -1880,6 +1937,7 @@ class CalDavEventCollection extends SugarBean
                         'restore',
                         $this->getEventDiff($currentChild, null),
                         $this->getParticipantsDiff($currentChild, null),
+                        $this->getRemindersDiff($currentChild, null),
                     );
                 }
             }

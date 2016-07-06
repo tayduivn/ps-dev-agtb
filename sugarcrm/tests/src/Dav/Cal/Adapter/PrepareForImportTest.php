@@ -89,6 +89,185 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                 ),
                 'groupId' => $groupId,
             ),
+            'NewEventWithReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => '',
+                'after' => static::getSourceIcsFile('EventWithReminders.after'),
+                'expected' => array(
+                    array(
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'timezone' => array('Europe/Minsk', null),
+                            'title' => array('test event'),
+                            'date_start' => array('2016-05-04 06:00:00'),
+                            'date_end' => array('2016-05-04 07:00:00'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'reminder_time' => array(300),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'NewEventWithNoneStandartReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => '',
+                'after' => static::getSourceIcsFile('EventWithChangedParentAndChildReminders.before'),
+                'expected' => array(
+                    array(
+                        array('override', null, null, null, null, $groupId),
+                        array(
+                            'timezone' => array('Europe/Minsk', null),
+                            'title' => array('test recurring with alarms'),
+                            'date_start' => array('2016-06-29 06:00:00'),
+                            'date_end' => array('2016-06-29 07:00:00'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'reminder_time' => array(1860),
+                            'rrule_action' => 'added',
+                            'rrule_frequency' => array('DAILY'),
+                            'rrule_interval' => array('1'),
+                            'rrule_count' => array('3'),
+                            'rrule_until' => array(null),
+                            'rrule_byday' => array(null),
+                            'rrule_bymonthday' => array(null),
+                            'rrule_bysetpos' => array(null),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('override', null, null, '2016-06-30 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring with alarms'),
+                            'date_start' => array('2016-06-30 06:00:00'),
+                            'date_end' => array('2016-06-30 07:00:00'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'reminder_time' => array(1860),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('override', null, null, '2016-07-01 06:00:00', 2, $groupId),
+                        array(
+                            'title' => array('test recurring with alarms'),
+                            'date_start' => array('2016-07-01 06:00:00'),
+                            'date_end' => array('2016-07-01 07:00:00'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'reminder_time' => array(1860),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'ChangedChildWithNoneStandartReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('EventWithChangedParentAndChildReminders.before'),
+                'after' => static::getSourceIcsFile('EventWithChangedParentAndChildReminders.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'reminder_time' => array(1980),
+                            'description' => array('new', null),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-06-30 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring with alarms 1', 'test recurring with alarms'),
+                            'reminder_time' => array(1800),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-07-01 06:00:00', 2, $groupId),
+                        array(
+                            'reminder_time' => array(1980),
+                            'description' => array('new', null),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'DeletedChildWithNoneStandartReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('EventWithChangedParentAndChildReminders.before'),
+                'after' => static::getSourceIcsFile('EventWithDeletedParentAndChildReminders.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'reminder_time' => array(0),
+                            'description' => array('new', null),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-06-30 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring with alarms 1', 'test recurring with alarms'),
+                            'reminder_time' => array(0),
+                        ),
+                        array(),
+                    ),
+                    array(
+                        array('update', null, null, '2016-07-01 06:00:00', 2, $groupId),
+                        array(
+                            'reminder_time' => array(0),
+                            'description' => array('new', null),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'EventWithChangedReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('EventWithReminders.before'),
+                'after' => static::getSourceIcsFile('EventWithReminders.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'reminder_time' => array(300),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'EventWithChangedParentAndChildReminders' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('EventWithReminders.before'),
+                'after' => static::getSourceIcsFile('EventWithReminders.after'),
+                'expected' => array(
+                    array(
+                        array('update', null, null, null, null, $groupId),
+                        array(
+                            'reminder_time' => array(300),
+                        ),
+                        array(),
+                    ),
+                ),
+                'groupId' => $groupId,
+            ),
+            'Event with not changed reminders' => array(
+                'participants_links' => $participants_links,
+                'before' => static::getSourceIcsFile('EventWithReminders.after'),
+                'after' => static::getSourceIcsFile('EventWithReminders.after'),
+                'expected' => array(),
+                'groupId' => $groupId,
+            ),
             'Add invite only for parent' => array(
                 'participants_links' => $participants_links,
                 // event every day 7 times (1.03 Tue - 7.03 Mon). List invitees is empty.
@@ -889,17 +1068,17 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
                         array(),
                     ),
                     array(
-                            array('override', null, null, '2016-05-21 06:00:00', 1, $groupId),
-                            array(
-                                'title' => array('test recurring splitted'),
-                                'description' => array(null),
-                                'location' => array(null),
-                                'status' => array(null),
-                                'date_start' => array('2016-05-21 06:00:00'),
-                                'date_end' => array('2016-05-21 07:00:00'),
-                            ),
-                            array(),
-                    )
+                        array('override', null, null, '2016-05-21 06:00:00', 1, $groupId),
+                        array(
+                            'title' => array('test recurring splitted'),
+                            'description' => array(null),
+                            'location' => array(null),
+                            'status' => array(null),
+                            'date_start' => array('2016-05-21 06:00:00'),
+                            'date_end' => array('2016-05-21 07:00:00'),
+                        ),
+                        array(),
+                    ),
                 ),
                 'groupId' => $groupId,
             ),

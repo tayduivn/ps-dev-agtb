@@ -231,21 +231,76 @@ class EventTest extends \PHPUnit_Framework_TestCase
                 'count' => 2,
                 'result' => array(
                     array(
+                        'getAction' => 'EMAIL',
+                        'getTrigger' => - 1200,
+                        'getDescription' => null,
+                    ),
+                    array(
                         'getAction' => 'DISPLAY',
                         'getTrigger' => 900,
                         'getDescription' => 'alarm test',
                     ),
-                    array(
-                        'getAction' => 'EMAIL',
-                        'getTrigger' => - 1200,
-                        'getDescription' => null,
-                    )
                 )
+            ),
+            array(
+                'vEvent' => $this->getEvent('allRemindersType'),
+                'count' => 3,
+                'result' => array(
+                    array(
+                        'getAction' => 'DISPLAY',
+                        'getTrigger' => - 300,
+                        'getDescription' => 'Event reminder',
+                        'getUid' => '4A50A0F1-3495-4E74-A11F-97BE26F0137E',
+                    ),
+                    array(
+                        'getAction' => 'DISPLAY',
+                        'getTrigger' => 0,
+                        'getDescription' => 'Event reminder',
+                        'getUid' => 'D566CFBE-FC94-43E4-B468-86AEEF738D2A',
+                    ),
+                    array(
+                        'getAction' => 'DISPLAY',
+                        'getTrigger' => 900,
+                        'getDescription' => 'Event reminder',
+                        'getUid' => '9E91E02F-5F6B-4645-9971-86935DFFACEF',
+                    ),
+                ),
             ),
             array(
                 'vEvent' => $this->getEvent('vemptyevent'),
                 'count' => 0,
                 'result' => array(),
+            ),
+        );
+    }
+
+    /**
+     * Provides data for find reminder by UID test.
+     *
+     * @return array
+     */
+    public function findReminderByUidProvider()
+    {
+        return array(
+            array(
+                'vEvent' => $this->getEvent('allRemindersType'),
+                'uid' => '9E91E02F-5F6B-4645-9971-86935DFFACEF',
+                'result' => array(
+                    'getAction' => 'DISPLAY',
+                    'getTrigger' => 900,
+                    'getDescription' => 'Event reminder',
+                    'getUid' => '9E91E02F-5F6B-4645-9971-86935DFFACEF',
+                ),
+            ),
+            array(
+                'vEvent' => $this->getEvent('allRemindersType'),
+                'uid' => '4A50A0F1-3495-4E74-A11F-97BE26F0137C',
+                'result' => null,
+            ),
+            array(
+                'vEvent' => $this->getEvent('vemptyevent'),
+                'uid' => '4A50A0F1-3495-4E74-A11F-97BE26F0137E',
+                'result' => null,
             ),
         );
     }
@@ -684,6 +739,16 @@ class EventTest extends \PHPUnit_Framework_TestCase
                 'changedVEvent' => $this->getEvent('Comparison/changedParticipantName'),
                 'result' => false,
             ),
+            'ReminderAdded' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/addedReminder'),
+                'result' => false,
+            ),
+            'ReminderChanged' => array(
+                'vEvent' => $this->getEvent('Comparison/original'),
+                'changedVEvent' => $this->getEvent('Comparison/changedReminder'),
+                'result' => false,
+            ),
         );
     }
 
@@ -879,6 +944,32 @@ class EventTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test for checking find reminder by it uid
+     *
+     * @param VEvent $VEvent
+     * @param string $uid
+     * @param array | null $expectedResult
+     *
+     * @covers       \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event::getReminders
+     *
+     * @dataProvider findReminderByUidProvider
+     */
+    public function testFindReminderByUid(VEvent $VEvent, $uid, $expectedResult)
+    {
+        $eventMock = $this->getEventMock($VEvent);
+
+        $result = $eventMock->findReminderByUid($uid);
+
+        if ($expectedResult) {
+            foreach ($expectedResult as $method => $value) {
+                $this->assertEquals($value, $result->$method());
+            }
+        } else {
+            $this->assertNull($result);
+        }
+    }
+
+    /**
      * @param VEvent $VEvent
      * @param string $newValue
      * @param bool $expectedResult
@@ -1070,7 +1161,7 @@ class EventTest extends \PHPUnit_Framework_TestCase
             $result = $eventMock->addReminder($reminder['seconds'], $reminder['action'], $reminder['description']);
             $this->assertInstanceOf('Sugarcrm\Sugarcrm\Dav\Cal\Structures\Reminder', $result);
             $this->assertEquals($reminder['action'], $result->getAction());
-            $this->assertEquals(0 - $reminder['seconds'], $result->getTrigger());
+            $this->assertEquals($reminder['seconds'], $result->getTrigger());
         }
     }
 

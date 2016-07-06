@@ -104,12 +104,7 @@ class Event
         if ($event) {
             $this->event = $event;
             $this->getParticipants();
-            if ($this->event->VALARM) {
-                $reminderClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Reminder');
-                foreach ($this->event->VALARM as $reminder) {
-                    $this->reminders[] = new $reminderClass($reminder, $this->dateTimeHelper);
-                }
-            }
+            $this->getReminders();
         }
     }
 
@@ -355,6 +350,21 @@ class Event
                 return false;
             }
             if (!$participant->isEqualTo($participantsToCompare[$foundIndex])) {
+                return false;
+            }
+        }
+
+        $reminders = $this->getReminders();
+        $remindersToCompare = $event->getReminders();
+
+        if (count($reminders) != count($remindersToCompare)) {
+            return false;
+        }
+
+        /** @var Reminder $reminder */
+        foreach ($reminders as $key => $reminder) {
+            $reminderToCompare = $remindersToCompare[$key];
+            if (!$reminder->isEqualTo($reminderToCompare)) {
                 return false;
             }
         }
@@ -618,14 +628,54 @@ class Event
 
 
     /**
-     * Get all reminders info
+     * Get all reminders info.
      *
-     * @return Reminders[]
+     * @return Reminders[] Sorting reminders array
      *
      */
     public function getReminders()
     {
+        if ($this->reminders) {
+            return $this->reminders;
+        }
+
+        if ($this->event->VALARM) {
+            $reminderClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Reminder');
+            foreach ($this->event->VALARM as $reminder) {
+                $reminderObject = new $reminderClass($reminder, $this->dateTimeHelper);
+                if (!is_null($reminderObject->getTrigger())) {
+                    $this->reminders[] = $reminderObject;
+                }
+            }
+        }
+
+        usort($this->reminders, function ($first, $second) {
+            if ($first->getTrigger() == $second->getTrigger()) {
+                return 0;
+            }
+
+            return $first->getTrigger() < $second->getTrigger() ? - 1 : 1;
+        });
+
         return $this->reminders;
+    }
+
+    /**
+     * Find reminder by it UID.
+     *
+     * @param string $uid
+     * @return Reminder
+     */
+    public function findReminderByUid($uid)
+    {
+        /** @var Reminder $reminder */
+        foreach ($this->getReminders() as $reminder) {
+            if ($reminder->getUID() == $uid) {
+                return $reminder;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -744,6 +794,36 @@ class Event
     }
 
     /**
+     * Sets values to existing reminder.
+     *
+     * @param Reminder $reminder
+     * @param $secondsBefore
+     * @param string $action
+     * @param string $description
+     * @return bool
+     */
+    public function setReminder(Reminder $reminder, $secondsBefore, $action = '', $description = '')
+    {
+        if (!$this->event) {
+            return false;
+        }
+
+        $isChanged = $reminder->setTrigger($secondsBefore);
+        if ($action) {
+            $isChanged |= $reminder->setAction($action);
+        }
+
+        if ($description) {
+            $isChanged |= $reminder->setDescription($description);
+        }
+        if ($isChanged) {
+            $this->setCustomized();
+        }
+
+        return $isChanged;
+    }
+
+    /**
      * Add new reminder to event
      * @param int $secondsBefore
      * @param string $action
@@ -764,7 +844,8 @@ class Event
         $reminder->setAction($action);
         $reminder->setTrigger($secondsBefore);
         $reminder->setDescription($description);
-        $this->reminders[] = $reminder;
+        $reminder->setUID(\create_guid());
+        $this->reminders = array();
         $this->setCustomized();
 
         return $reminder;
@@ -781,11 +862,11 @@ class Event
             return false;
         }
 
-        foreach ($this->reminders as $index => $current) {
+        foreach ($this->getReminders() as $index => $current) {
             if ($reminder === $current) {
                 $this->event->remove($reminder->getObject());
-                unset($this->reminders[$index]);
                 $this->setCustomized();
+                $this->reminders = array();
                 return true;
             }
         }
@@ -799,11 +880,11 @@ class Event
      */
     public function deleteAllReminders()
     {
-        if (!$this->event || !$this->reminders) {
+        if (!$this->event || !$this->getReminders()) {
             return false;
         }
 
-        foreach ($this->reminders as $index => $current) {
+        foreach ($this->getReminders() as $index => $current) {
             $this->event->remove($current->getObject());
         }
         $this->reminders = array();

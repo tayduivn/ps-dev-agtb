@@ -43,6 +43,7 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
                         'date_end' => array('2016-04-25 07:00:00'),
                     ),
                     array(),
+                    array(),
                 ),
                 'exportData' => array(
                     array('override', 'Meeting', $beanMeeting->id, null, null, '1'),
@@ -97,6 +98,7 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
                         'rrule_bysetpos' => array(null),
                     ),
                     array(),
+                    array(),
                 ),
                 'exportData' => array(
                     array('override', 'Meeting', $beanMeeting->id, null, array(
@@ -137,6 +139,7 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
                         'date_end' => array('2016-04-19 07:00:00'),
                         'status' => array('Planned'),
                     ),
+                    array(),
                     array(),
                 ),
                 'exportData' => array(
