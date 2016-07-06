@@ -24,7 +24,7 @@ $dictionary['pmse_Project'] = array(
     'required' => true,
     'name' => 'prj_uid',
     'vname' => 'LBL_PRJ_UID',
-    'type' => 'varchar',
+    'type' => 'id',
     'massupdate' => false,
     'no_default' => false,
     'comments' => '',
@@ -37,7 +37,6 @@ $dictionary['pmse_Project'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'calculated' => false,
-    'len' => '36',
     'size' => '20',
   ),
   'prj_target_namespace' => 

@@ -14,12 +14,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: contracts_opportunitiesMetaData.php 55782 2010-04-02 21:07:20Z clee $
 
 
-$dictionary['contracts_opportunities'] = array (
-	'table' => 'contracts_opportunities',
-	'fields' => array (
-		array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
-		array('name' => 'opportunity_id', 'type' => 'varchar', 'len' => '36'),
-		array('name' => 'contract_id', 'type' => 'varchar', 'len' => '36'),
+$dictionary['contracts_opportunities'] = array(
+    'table' => 'contracts_opportunities',
+    'fields' => array(
+        array('name' => 'id', 'type' => 'id'),
+        array('name' => 'opportunity_id', 'type' => 'id'),
+        array('name' => 'contract_id', 'type' => 'id'),
 		array('name' => 'date_modified', 'type' => 'datetime'),
 		array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
 	),
