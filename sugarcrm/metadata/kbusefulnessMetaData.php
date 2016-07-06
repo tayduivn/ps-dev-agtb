@@ -50,7 +50,8 @@ $dictionary['kbusefulness'] = array(
         ),
         'ssid' => array(
             'name' => 'ssid',
-            'type' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
             'isnull' => 'true',
         ),
 

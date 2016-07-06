@@ -15,15 +15,18 @@ $dictionary['projects_revenuelineitems'] = array(
     'fields' => array(
         array(
             'name' => 'id',
-            'type' => 'id',
+            'type' => 'varchar',
+            'len' => '36'
         ),
         array(
             'name' => 'rli_id',
-            'type' => 'id',
+            'type' => 'varchar',
+            'len' => '36'
         ),
         array(
             'name' => 'project_id',
-            'type' => 'id',
+            'type' => 'varchar',
+            'len' => '36'
         ),
         array(
             'name' => 'date_modified',

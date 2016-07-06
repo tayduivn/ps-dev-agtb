@@ -1321,15 +1321,18 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
                 'foo' => array (
                     'name' => 'foo',
-                    'type' => 'int',
+                    'type' => 'varchar',
+                    'len' => '255',
                     ),
                 'bar' => array (
-                    'name' => 'bar',
-                    'type' => 'short',
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
                     ),
                 'foobar' => array (
                     'name' => 'foobar',
-                    'type' => 'float',
+                    'type' => 'varchar',
+                    'len' => '255',
                     ),
         );
 
@@ -1353,12 +1356,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             }
         ));
 
-        $sql = SugarTestReflection::callProtectedMethod(
-            $dbmock,
-            'repairTableIndices',
-            array($tablename1, $db_columns, $new, false)
-        );
-
+        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableIndices', array($tablename1, $new, false));
         if (!empty($query)) {
             $this->assertContains("ALTER TABLE $tablename1", $sql);
             $this->assertContains($query, $sql);

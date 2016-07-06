@@ -1010,7 +1010,7 @@ $dictionary['User'] = array(
                 'status',
                 'last_name',
                 'first_name',
-                'id',
+                'id'
             )
         ) ,
         array(

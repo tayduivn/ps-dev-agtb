@@ -10,12 +10,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$dictionary['cases_bugs'] = array(
-    'table' => 'cases_bugs',
-    'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'case_id', 'type' => 'id'),
-        array('name' => 'bug_id', 'type' => 'id')
+$dictionary['cases_bugs'] = array ( 'table' => 'cases_bugs'
+                                  , 'fields' => array (
+       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
+      , array('name' =>'case_id', 'type' =>'varchar', 'len'=>'36')
+      , array('name' =>'bug_id', 'type' =>'varchar', 'len'=>'36')
       , array ('name' => 'date_modified','type' => 'datetime')
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required'=>false)
                                                       )                                  , 'indices' => array (

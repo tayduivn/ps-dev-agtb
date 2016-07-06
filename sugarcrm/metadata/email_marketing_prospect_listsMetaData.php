@@ -17,15 +17,18 @@ $dictionary['email_marketing_prospect_lists'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'prospect_list_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'email_marketing_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
         array (
 			'name' => 'date_modified',
@@ -67,4 +70,5 @@ $dictionary['email_marketing_prospect_lists'] = array (
 											'join_key_rhs'=>'prospect_list_id', 
 		),
 	)
-);
+)
+?>

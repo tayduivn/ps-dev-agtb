@@ -12,12 +12,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 // adding user-to-holiday relationship
-$dictionary['users_holidays'] = array(
+$dictionary['users_holidays'] = array (
     'table' => 'users_holidays',
-    'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'user_id', 'type' => 'id'),
-        array('name' => 'holiday_id', 'type' => 'id'),
+    'fields' => array (
+        array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
+        array('name' => 'user_id', 'type' => 'varchar', 'len' => '36'),
+        array('name' => 'holiday_id', 'type' => 'varchar', 'len' => '36'),
         array('name' => 'date_modified', 'type' => 'datetime'),
         array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
     ),

@@ -13,9 +13,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['contacts_users'] = array(
     'table' => 'contacts_users',
     'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'contact_id', 'type' => 'id'),
-        array('name' => 'user_id', 'type' => 'id'),
+        array('name' =>'id', 'type' =>'varchar', 'len'=>'36'),
+        array('name' =>'contact_id', 'type' =>'varchar', 'len'=>'36', ),
+        array('name' =>'user_id', 'type' =>'varchar', 'len'=>'36', ),
         array('name' => 'date_modified','type' => 'datetime'),
         array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0','required'=>false),
    ),
