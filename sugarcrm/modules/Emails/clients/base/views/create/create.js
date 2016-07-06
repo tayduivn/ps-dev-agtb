@@ -686,24 +686,6 @@
     },
 
     /**
-     * Open the drawer with the signature selection layout. The callback should take the data passed to it and insert
-     * the signature in the correct place.
-     *
-     * @private
-     */
-    launchSignatureDrawer: function() {
-        app.drawer.open(
-            {
-                layout: 'selection-list',
-                context: {
-                    module: 'UserSignatures'
-                }
-            },
-            _.bind(this._updateEditorWithSignature, this)
-        );
-    },
-
-    /**
      * Fetches the signature content using its ID and updates the editor with the content.
      *
      * @param {Data.Bean} model
