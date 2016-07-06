@@ -333,7 +333,6 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"].opt
                 }
 			} //End foreach field
 		}
-//var default_table_columns_<php echo $module_name; > = ["<php echo implode("\",\"",$module->default_table_columns); >"];
 ?>
 var default_table_columns_<?php echo $module_name; ?> = ["<?php echo implode("\",\"",array());?>"];
 
@@ -512,7 +511,6 @@ filter_defs['fullname'] = qualifiers_name;
 
 
 var qualifiers_name = new Array();
-//qualifiers_name = qualifiers_name.concat(qualifiers);
 var is_not_empty_def = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 var is_empty_def = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 var reports_to_def = {name:'reports_to',value:'<?php echo $mod_strings['LBL_REPORTS_TO']; ?>'};

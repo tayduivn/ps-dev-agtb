@@ -194,7 +194,6 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -202,7 +201,6 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -349,15 +347,12 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					//logThis('Copying file to destination: ' . $targetFile);
-
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -592,7 +587,6 @@ function deleteChance(){
 			$_SESSION['chance'] = '';
 		}
 		$_SESSION['chance'] = 'include/SugarObjects/templates/chance';
-		//rename('include/SugarObjects/templates/chance','include/SugarObjects/templates/chance_removeit');
 	}
 }
 
@@ -1013,7 +1007,7 @@ function checkSystemCompliance() {
 
 	// memory limit
 	$ret['memory_msg']     = "";
-	$memory_limit   = "-1";//ini_get('memory_limit');
+    $memory_limit = '-1';
 	$sugarMinMem = constant('SUGARCRM_MIN_MEM');
 	// logic based on: http://us2.php.net/manual/en/ini.core.php#ini.memory-limit
 	if( $memory_limit == "" ){          // memory_limit disabled at compile time, no memory limit
@@ -1526,7 +1520,6 @@ $uwMain = $upgrade_directories_not_found;
 		$_SESSION['unzip_dir'] = clean_path($unzip_dir);
 		$_SESSION['zip_from_dir'] = clean_path($zip_from_dir);
 
-	 //logThis('unzip done.');
 	} else {
 		$unzip_dir = $_SESSION['unzip_dir'];
 		$zip_from_dir = $_SESSION['zip_from_dir'];
@@ -1651,17 +1644,10 @@ function getChecklist($steps, $step) {
 			continue;
 		}
 
-		//$status = "<span class='error'>{$mod_strings['LBL_UW_INCOMPLETE']}</span>";
 		$desc_mod_pre = '';
 		$desc_mod_post = '';
-		/*
-		if(isset($_SESSION['step'][$steps['files'][$k]]) && $_SESSION['step'][$steps['files'][$k]] == 'success') {
-			//$status = $mod_strings['LBL_UW_COMPLETE'];
-		}
-		*/
 
 		if($k == $_REQUEST['step']) {
-			//$status = $mod_strings['LBL_UW_IN_PROGRESS'];
 			$desc_mod_pre = "<font color=blue><i>";
 			$desc_mod_post = "</i></font>";
 		}
@@ -1907,20 +1893,6 @@ function validate_manifest($manifest) {
 }
 }
 
-function unlinkUploadFiles() {
-	return;
-//	logThis('at unlinkUploadFiles()');
-//
-//	if(isset($_SESSION['install_file']) && !empty($_SESSION['install_file'])) {
-//		$upload = $_SESSION['install_file'];
-//
-//		if(is_file($upload)) {
-//			logThis('unlinking ['.$upload.']');
-//			@unlink($upload);
-//		}
-//	}
-}
-
 /**
  * deletes files created by unzipping a package
  */
@@ -1937,7 +1909,6 @@ function unlinkUWTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -1945,7 +1916,6 @@ function unlinkUWTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -2060,13 +2030,6 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-	/*
-	//CCL - Comment this block out, it is called in end.php
-	logThis('Rebuilding everything...', $path);
-	require_once('modules/Administration/QuickRepairAndRebuild.php');
-	$randc = new RepairAndClear();
-    $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -2132,10 +2095,6 @@ function executeConvertTablesSql($tables)
 function getFilesForPermsCheck() {
 	global $sugar_config;
 
-	logThis('Got JSON call to find all files...');
-	$filesNotWritable = array();
-	$filesNWPerms = array();
-
 	// add directories here that should be skipped when doing file permissions checks (cache/upload is the nasty one)
 	$skipDirs = array(
 		$sugar_config['upload_dir'],
@@ -2170,16 +2129,6 @@ function checkFiles($files, $echo=false) {
 		if($isWindows) {
 			if(!is_writable_windows($file)) {
 				logThis('WINDOWS: File ['.$file.'] not readable - saving for display');
-				// don't warn yet - we're going to use this to check against replacement files
-	// aw: commented out; it's a hack to allow upgrade wizard to continue on windows... will fix later
-				/*$filesNotWritable[$i] = $file;
-				$filesNWPerms[$i] = substr(sprintf('%o',fileperms($file)), -4);
-				$filesOut .= "<tr>".
-								"<td><span class='error'>{$file}</span></td>".
-								"<td>{$filesNWPerms[$i]}</td>".
-								"<td>".$mod_strings['ERR_UW_CANNOT_DETERMINE_USER']."</td>".
-								"<td>".$mod_strings['ERR_UW_CANNOT_DETERMINE_GROUP']."</td>".
-							  "</tr>";*/
 			}
 		} else {
 			if(!is_writable($file)) {
@@ -2222,7 +2171,6 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = "$base_upgrade_dir/patch/".basename(urldecode( $_REQUEST['install_file'] ));
     if(@unlink($delete_me)) {
-    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');
@@ -2420,7 +2368,6 @@ function initialize_session_vars(){
   	include($upgrade_progress_file);
   	if(isset($upgrade_config) && $upgrade_config != null && is_array($upgrade_config) && sizeof($upgrade_config) >0){
 	  	$currVarsArray=$upgrade_config[1]['upgrade_vars'];
-	  	//print_r($currVarsArray);
 	  	if(isset($currVarsArray) && $currVarsArray != null && is_array($currVarsArray) && sizeof($currVarsArray)>0){
 	  		foreach($currVarsArray as $key=>$val){
 	  			if($key != null && $val !=null){
@@ -2674,7 +2621,6 @@ function repairDBForUpgrade($execute=false,$path=''){
 		$sql .= $db->repairTable($focus, $execute);
 
 	}
-	//echo $sql;
 	$olddictionary = $dictionary;
 	unset ($dictionary);
 	include ('modules/TableDictionary.php');

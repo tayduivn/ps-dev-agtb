@@ -92,11 +92,9 @@ YAHOO.SUGAR.DragDropTable.prototype._deleteTrEl = function(row) {
         rowIndex = row;
     }
     if(YAHOO.lang.isNumber(rowIndex) && (rowIndex > -1) && (rowIndex < this._elTbody.rows.length)) {
-        // Cannot use tbody.deleteRow due to IE6 instability
-        //return this._elTbody.deleteRow(rowIndex);
         return this._elTbody.removeChild(this._elTbody.rows[row]);
     }
     else {
         return null;
     }
-}
+};

@@ -17,7 +17,7 @@ function remove_filter(spanfieldid) {
 	var selspan = document.getElementById(spanfieldid);
 	//hide the span 
 	selspan.setAttribute("style","visibility:hidden");
-	selspan.innerHTML='';//'&nbsp;'
+    selspan.innerHTML = '';
 
 	//and id to avail list.	
 	var ops=object_refs['field_avail_list'].options;
@@ -105,16 +105,6 @@ function get_dedup_fields()
    	   		}
    	   }
 	}
-	
-	//var selected_fields_obj = document.getElementById('field_include_list[]');
-
-	//for(i=0; i < selected_fields_obj.length; i++)
-	//{
-	//	document.DedupSetup.dedup_fields.value = document.DedupSetup.dedup_fields.value + selected_fields_obj.options[i].value;
-	//	if(i != (selected_fields_obj.length - 1)) { document.DedupSetup.dedup_fields.value += '#'; }
-	//}
-
-//	document.DedupSetup.submit();	
 }
 
 //-------------------------------------------------------------------
@@ -372,8 +362,6 @@ function addFieldRow(colName, colLabel) {
 	td5.appendChild(edit);	
 	row.appendChild(td5);
 
-	
-	//table.appendChild(row);
 	span1.appendChild(table);
 	div.appendChild(span1);	
 }

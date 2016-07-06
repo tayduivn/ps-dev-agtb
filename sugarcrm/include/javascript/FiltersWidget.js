@@ -1,5 +1,3 @@
-
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -14,11 +12,9 @@
 SUGAR.FiltersWidget = function() {
 	var imgPath;
 
-	//var operators = new Array('AND','OR');
 	var operators = [['AND','ANY'],['OR','ALL']];
 	var default_operator = operators[0];
 	var toolbar = '';
-	//var children = new Array();
 	
 	var panels = new Array();
 	var childHighestIndex = new Array();
@@ -26,7 +22,6 @@ SUGAR.FiltersWidget = function() {
 	return {
 		init: function(img_path) {
 			imgPath = img_path;
-		//	id = name;
 		},
 		getPanels: function() {
 			return panels;
@@ -46,7 +41,6 @@ SUGAR.FiltersWidget = function() {
 		},
 		
 		removeGroup: function(panelId, parentId){
-			//parentId = parentId.replace(/_body_div/, "");
 			//Perform cleanup.
 			var index = -1;
 			var children;
@@ -63,21 +57,6 @@ SUGAR.FiltersWidget = function() {
 			if (parentId == SUGAR.language.get('Reports','LBL_FILTER'))
 				childHighestIndex[parentId] = 0;
 			
-			//Delete all children
-			//todo: VERY expensive operation.
-			/*
-			var childrenPanelsArray = new Array();
-			SUGAR.FiltersWidget.getAllChildrenPanels(panelId, childrenPanelsArray);
-
-			var indexes = new Array();
-			for (var i = 0; i < childrenPanelsArray.length; i++) {
-				for (var j = 0; j < panels.length; j++) {
-					if (panels[j].id == childrenPanelsArray[i]) {
-						panels[j] = new Object();
-					}
-				} 
-			}
-			*/
 			//Remove the Panel from the UI
 			var panelElem = new YAHOO.widget.Module(panelId);
 			panelElem.destroy();
@@ -113,7 +92,6 @@ SUGAR.FiltersWidget = function() {
 		addGroupToPanel: function(panelId, parentId, comboValue){
 		    var id = "";
 		    if (!childHighestIndex[parentId]) {
-			   //children[parentId] = new Array();
 				childHighestIndex[parentId] = 1;
 				id = parentId + ".1";  
 		    }
@@ -226,4 +204,3 @@ SUGAR.FiltersWidget = function() {
 		}
 	};
 }();
-

@@ -271,7 +271,6 @@ SUGAR.tour = function() {
                     for(var i=0; i<modals.length; i++) {
                         var modalId =  (modals[i].target == undefined)? "tour_"+i+"_modal" : modals[i].target.replace("#","")+"_modal";
                         modalArray[i] = $('<div id="'+modalId+'" class="modal '+params.className+' tour slides"></div>').modal({backdrop: false}).draggable({handle: ".modal-header"});
-//                        modalArray[i].modal('show');
                         var modalContent = "<div class=\"modal-header\"><a class=\"close\" data-dismiss=\"modal\">×</a><h3>"+modals[i].title+"</h3></div>";
 
                         modalContent += "<div class=\"modal-body\">"+modals[i].content+"</div>" ;
@@ -320,9 +319,6 @@ SUGAR.tour = function() {
                                     $(".popover .pointer")
                                         .effect("custombounce", { times:1000, direction: bounce, distance: 50, gravity: false }, 2000,
                                         function(){
-
-//                                    $('.pointer').attr('style','');
-
                                         }
                                     );
                                 },
@@ -679,10 +675,6 @@ function addToValidatePrecision(formId, valueId, precisionId){
 	this.precision = document.getElementById(precisionId);
 }
 
-//function checkLength(value, referenceValue){
-//	return value
-//}
-
 function isValidPrecision(value, precision){
 	value = trim(value.toString());
 	if(precision == '')
@@ -876,10 +868,6 @@ function isValidEmail(emailStr) {
 			    emailStr = emailStr.replace (original, parsedResult);
             }
 	}
-
-	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
-	//if(!/[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?/.test(emailStr))
-	//	return false
 
 	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
 	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
@@ -1673,11 +1661,8 @@ function validate_form(formname, startsWith){
 		return false;
 	}
 
-//    disableOnUnloadEditView(form);
 	return true;
-
 }
-
 
 /**
  * This array is used to remember mark status of rows in browse mode
@@ -2163,145 +2148,6 @@ function snapshotForm(theForm) {
 
     return snapshotTxt;
 }
-
-// TODO remove this and check if there is more code that can be removed
-//function initEditView(theForm) {
-//    if (SUGAR.util.ajaxCallInProgress()) {
-//    	window.setTimeout(function(){initEditView(theForm);}, 100);
-//    	return;
-//    }
-//
-//    if ( theForm == null || theForm.id == null ) {
-//        // Not much we can do here.
-//        return;
-//    }
-//
-//    // we don't need to check if the data is changed in the search popup
-//    if (theForm.id == 'popup_query_form' || theForm.id == 'MassUpdate') {
-//    	return;
-//    }
-//	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
-//        editViewSnapshots = new Object();
-//    }
-//    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
-//    	SUGAR.loadedForms = new Object();
-//    }
-//
-//    editViewSnapshots[theForm.id] = snapshotForm(theForm);
-//    SUGAR.loadedForms[theForm.id] = true;
-//}
-// TODO remove this and check if there is more code that can be removed
-//function onUnloadEditView(theForm) {
-//
-//	var dataHasChanged = false;
-//    if ( typeof editViewSnapshots == 'undefined' ) {
-//        // No snapshots, move along
-//        return;
-//    }
-//
-//    if ( typeof theForm == 'undefined' ) {
-//        // Need to check all editViewSnapshots
-//        for ( var idx in editViewSnapshots ) {
-//
-//            theForm = document.getElementById(idx);
-//            // console.log('DEBUG: Checking all forms '+theForm.id);
-//            if ( theForm == null
-//                 || typeof editViewSnapshots[theForm.id] == 'undefined'
-//                 || editViewSnapshots[theForm.id] == null
-//                 || !SUGAR.loadedForms[theForm.id]) {
-//                continue;
-//            }
-//
-//            var snap = snapshotForm(theForm);
-//            if ( editViewSnapshots[theForm.id] != snap ) {
-//                dataHasChanged = true;
-//            }
-//        }
-//    } else {
-//        // Just need to check a single form for changes
-//		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
-//            return;
-//        }
-//
-//        // console.log('DEBUG: Checking one form '+theForm.id);
-//        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
-//            // Data has changed.
-//        	dataHasChanged = true;
-//        }
-//    }
-//
-//    if ( dataHasChanged == true ) {
-//    	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
-//    } else {
-//        return;
-//    }
-//
-//}
-// TODO remove this and check if there is more code that can be removed
-//function disableOnUnloadEditView(theForm) {
-//    // If you don't pass anything in, it disables all checking
-//    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
-//        window.onbeforeunload = null;
-//        editViewSnapshots = null;
-//
-//        // console.log('DEBUG: Disabling all edit view checks');
-//
-//    } else {
-//        // Otherwise, it just disables it for this form
-//        if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
-//            editViewSnapshots[theForm.id] = null;
-//        }
-//
-//        // console.log('DEBUG : Disabling just checks for '+theForm.id);
-//
-//    }
-//}
-
-// TODO remove this and check if there is more code that can be removed
-/*
-* save some forms using an ajax call
-* theForms - the ids of all of theh forms to save
-* savingStr - the string to display when saving the form
-* completeStr - the string to display when the form has been saved
-*/
-//function saveForms( savingStr, completeStr) {
-//	index = 0;
-//	theForms = ajaxFormArray;
-//	function success(data) {
-//		var theForm = document.getElementById(ajaxFormArray[0]);
-//		document.getElementById('multiedit_'+theForm.id).innerHTML = data.responseText;
-//		var saveAllButton = document.getElementById('ajaxsaveall');
-//		ajaxFormArray.splice(index, 1);
-//		if(saveAllButton && ajaxFormArray.length <= 1){
-//    		saveAllButton.style.visibility = 'hidden';
-//    	}
-//		index++;
-//		if(index == theForms.length){
-//			ajaxStatus.showStatus(completeStr);
-//    		window.setTimeout('ajaxStatus.hideStatus();', 2000);
-//    		if(saveAllButton)
-//    			saveAllButton.style.visibility = 'hidden';
-//    	}
-//
-//
-//	}
-//	if(typeof savingStr == 'undefined') SUGAR.language.get('app_strings', 'LBL_LOADING');
-//	ajaxStatus.showStatus(savingStr);
-//
-//	//loop through the forms saving each one
-//	for(i = 0; i < theForms.length; i++){
-//		var theForm = document.getElementById(theForms[i]);
-//		if(check_form(theForm.id)){
-//			theForm.action.value='AjaxFormSave';
-//			YAHOO.util.Connect.setForm(theForm);
-//			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
-//		}else{
-//			ajaxStatus.hideStatus();
-//		}
-//		lastSubmitTime = lastSubmitTime-2000;
-//	}
-//	return false;
-//}
 
 // -- start sugarListView class
 // js functions used for ListView
@@ -2886,8 +2732,6 @@ sugarListView.prototype.check_boxes = function() {
 						if(inputs_array[wp].value == checked_items[i]) {
 							checkedCount++;
 							inputs_array[wp].checked = true;
-                            //Bug#52748: Total # of checked items are calculated in back-end side
-							//sugarListView.prototype.check_item(inputs_array[wp], document.MassUpdate);
 						}
 					}
 				}
@@ -2985,7 +2829,6 @@ sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 			entireInput.type = 'hidden';
 			entireInput.value = 'index';
 			document.MassUpdate.appendChild(entireInput);
-			//confirm(no_record_txt);
 			if(document.MassUpdate.module!= 'undefined' && document.MassUpdate.module.value == 'Users' && (document.MassUpdate.UserType.value!='' || document.MassUpdate.status.value!='')) {
 				alert(SUGAR.language.get('Users','LBL_LAST_ADMIN_NOTICE'));
 				return false;
@@ -3183,7 +3026,6 @@ SUGAR.unifiedSearchAdvanced = function() {
 			SUGAR.unifiedSearchAdvanced.anim_open.duration = 0.75;
 			SUGAR.unifiedSearchAdvanced.anim_close = new YAHOO.util.Anim('unified_search_advanced_div', { height: {to: 0} } );
 			SUGAR.unifiedSearchAdvanced.anim_close.duration = 0.75;
-			//SUGAR.unifiedSearchAdvanced.anim_close.onComplete.subscribe(function() {SUGAR.unifiedSearchAdvanced.usa_div.style.display = 'none'});
 
 			SUGAR.unifiedSearchAdvanced.usa_img._x = YAHOO.util.Dom.getX(SUGAR.unifiedSearchAdvanced.usa_img);
 			SUGAR.unifiedSearchAdvanced.usa_img._y = YAHOO.util.Dom.getY(SUGAR.unifiedSearchAdvanced.usa_img);
@@ -3378,60 +3220,6 @@ SUGAR.util = function () {
 		 */
 		fillShortcuts: function(e, shortcutContent) {
 			return ;
-/*
-            // don't do this if leftCol isn't available
-            if (document.getElementById('leftCol') == undefined) { return; }
-
-	    	spans = document.getElementById('leftCol').getElementsByTagName('span');
-			hideCol = document.getElementById('HideMenu').getElementsByTagName('span');
-			w = spans.length + 1;
-			for(i in hideCol) {
-				spans[w] = hideCol[i];
-				w++;
-			}
-		    for(je in shortcutContent) {
-		    	for(wp in spans) {
-		    		if(typeof spans[wp].innerHTML != 'undefined' && spans[wp].innerHTML == ('wp_shortcut_fill_' + je)) {
-		    			if(typeof spans[wp].parentNode.parentNode == 'object') {
-		    				if(typeof spans[wp].parentNode.parentNode.onclick != 'undefined') {
-		    					spans[wp].parentNode.parentNode.onclick = null;
-		    				}
-		    				// If the wp_shortcut span is contained by an A tag, replace the A with a DIV.
-		    				if(spans[wp].parentNode.tagName == 'A' && !isIE) {
-		    					var newDiv = document.createElement('DIV');
-		    					var parentAnchor = spans[wp].parentNode;
-
-		    					spans[wp].parentNode.parentNode.style.display = 'none';
-
-		    					// Copy styles over to the new container div
-		    					if(window.getComputedStyle) {
-			    					var parentStyle = window.getComputedStyle(parentAnchor, '');
-			    					for(var styleName in parentStyle) {
-				    					if(typeof parentStyle[styleName] != 'function'
-	   			    				    && styleName != 'display'
-	   			    				    && styleName != 'borderWidth'
-				    				    && styleName != 'visibility') {
-				    				    	try {
-						    					newDiv.style[styleName] = parentStyle[styleName];
-						    				} catch(e) {
-						    					// Catches .length and .parentRule, and others
-						    				}
-					    				}
-				    				}
-				    			}
-
-			    				// Replace the A with the DIV
-		    					newDiv.appendChild(spans[wp]);
-		    					parentAnchor.parentNode.replaceChild(newDiv, parentAnchor);
-
-		    					spans[wp].parentNode.parentNode.style.display = '';
-		    				}
-		    			}
-			            spans[wp].innerHTML = shortcutContent[je]; // fill w/ content
-			            if(spans[wp].style) spans[wp].style.display = '';
-		    		}
-		    	}
-			}*/
 		},
 		/**
 		 * Make an AJAX request.
@@ -4684,7 +4472,6 @@ SUGAR.contextMenu.actions = function() {
 		}
 	};
 }();
-//if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', SUGAR.contextMenu.init);
 
 // initially from popup_parent_helper.js
 var popup_request_data;

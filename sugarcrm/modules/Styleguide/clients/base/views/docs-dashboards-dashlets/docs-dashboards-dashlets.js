@@ -27,8 +27,6 @@
             self.toggleSidebar(true);
         });
 
-        // app.events.trigger('app:dashletPreview:close');
-
         this.$('.dashlet-example').on('click.styleguide', function() {
             if ($(this).hasClass('active')) {
                 self.toggleSidebar(false);
@@ -48,7 +46,6 @@
 
     _dispose: function() {
         this.$('.dashlet-example').off('click.styleguide');
-        // app.events.trigger('app:dashletPreview:close');
         this._super('_dispose');
     },
 

@@ -140,11 +140,6 @@ YAHOO.extend(Studio2.ListDD, YAHOO.util.DDProxy, {
 			if(parent.id == 'Default'){
 				var cols = el.parentNode.getElementsByTagName("li");
 				if(cols.length > max_default_columns){
-					/**
-					 * Alert could be added but it will apear everytime when moving item over Defaults.
-					 * Even when trying to change schedule of components inside of tab.
-					 * alert('Maximum ' + max_default_columns + ' columns are allowed in Defaults tab!');
-					 */
 					return;
 				}	
 			}	

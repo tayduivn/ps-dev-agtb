@@ -65,11 +65,4 @@ $listViewDefs['Reports'] = array(
         'sortOrder' => 'desc',
         'label' => 'LBL_DATE_ENTERED',
         'default' => true),
-
-/*    'IS_PUBLISHED' => array(
-        'width' => '2',
-        'label' => 'LBL_LIST_PUBLISHED',
-        'align'   => 'right',
-        'default' => true),*/
 );
-?>

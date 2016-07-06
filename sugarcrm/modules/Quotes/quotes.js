@@ -42,10 +42,8 @@ function QuotesEditManager() {
             this.toggleTaxSelect(doc, count, true);
             this.setToReadOnly(doc.getElementById('cost_price_' + count));
             this.setToReadOnly(doc.getElementById('list_price_' + count));
-            //setToReadOnly(doc.getElementById('discount_price_'+ count ));
             this.setToReadOnly(doc.getElementById('tax_class_name_' + count));
             this.setToReadOnly(doc.getElementById('mft_part_num_' + count));
-            //setToReadOnly(doc.getElementById('pricing_formula_name_'+count));
         } else {
             this.toEdit(doc, count);
         }
@@ -65,8 +63,6 @@ function QuotesEditManager() {
         }
         this.setToEdit(doc.getElementById('tax_class_name_' + count));
         this.setToEdit(doc.getElementById('mft_part_num_' + count));
-        //setToEdit(doc.getElementById('pricing_formula_name_'+count));
-
     };
 
     this.setToEdit = function(element) {
@@ -79,10 +75,6 @@ function QuotesEditManager() {
         this.calculate(doc);
     };
 
-    /*function priceSelectChanged(doc, count){
-     doc.getElementById('pricing_formula_' + count).value = doc.getElementById('pricing_formula_select_name_' + count).options[doc.getElementById('pricing_formula_select_name_' + count).selectedIndex].value;
-     calculate(doc);
-     }*/
     this.selectTax = function(doc, count) {
         if (doc.getElementById('tax_class_name_' + count).value != '') {
             for (var i = 0; i < doc.getElementById('tax_class_select_name_' + count).options.length; i++) {
@@ -176,7 +168,6 @@ function QuotesEditManager() {
                 to_offset++;
             }
 
-
             //swap the table id's the use for getting table information
             var tempId = from_row.tableId;
             from_row.tableId = to_row.tableId;
@@ -192,8 +183,6 @@ function QuotesEditManager() {
             this.lookup_item('parent_group_position_' + from_count, document).value = to_position;
             this.lookup_item('parent_group_position_' + to_count, document).value = from_position;
 
-
-            //alert('t0 ' +to_row.tableId + ' == ' + this.lookup_item('parent_group_' + to_count , document).value);
             to_body.insertBefore(from_row, to_row);
 
             var insertTo = to_index + to_offset;
@@ -221,17 +210,10 @@ function QuotesEditManager() {
         if (hideselect) {
             doc.getElementById('taxselect' + count).style.display = 'none';
             doc.getElementById('taxinput' + count).style.display = 'inline';
-            //doc.getElementById('priceselect' + count).style.display = 'none';
-            //doc.getElementById('priceinput' + count).style.display = 'inline';
-
-
         } else {
             doc.getElementById('taxselect' + count).style.display = 'inline';
             this.selectTax(doc, count);
-            //priceSelectChanged(doc, count);
             doc.getElementById('taxinput' + count).style.display = 'none';
-            //doc.getElementById('priceselect' + count).style.display = 'inline';
-            //doc.getElementById('priceinput' + count).style.display = 'none';
             doc.getElementById('tax_class_' + count).value = doc.getElementById('tax_class_select_name_' + count).options[doc.getElementById('tax_class_select_name_' + count).selectedIndex].value;
         }
     };
@@ -1112,7 +1094,6 @@ function QuotesEditManager() {
             'id': 'taxinput' + this.count
         });
         $(divnoselect).hide();
-        //        divnoselect.style.display = 'none';>
         item_list_MSI['taxinput' + this.count] = divselect;
 
         var itemName = 'tax_class_name_' + this.count;
@@ -1223,10 +1204,6 @@ function QuotesEditManager() {
         item_list_MSI[itemName] = textEl;
         divselect.appendChild(textEl);
 
-        /*	var divselect = document.createElement('div');
-         divselect.setAttribute('width', '100');
-         divselect.setAttribute('id', 'discount_amount_select' + count);
-         item_list_MSI['discount_amount_select' + count] = divselect;*/
         var cell8 = row.insertCell(row.cells.length);
         cell8.width = 20;
 
@@ -1696,4 +1673,3 @@ function QuotesEditManager() {
         return inputEl[0];
     };
 }
-

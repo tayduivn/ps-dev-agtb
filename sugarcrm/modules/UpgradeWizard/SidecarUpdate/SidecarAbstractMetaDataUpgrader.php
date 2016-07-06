@@ -308,7 +308,6 @@ abstract class SidecarAbstractMetaDataUpgrader
             return false;
         }
         return $this->save($newname, $content);
-        //return true;
     }
 
     /**

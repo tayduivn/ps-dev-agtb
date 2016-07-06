@@ -195,7 +195,6 @@ if (!isset($displayColumns['LAST_RUN_DATE'])) {
 
 $lv->export = false;
 $lv->displayColumns = $displayColumns;
-//if(empty($_REQUEST['favorite'])) { // display search form for non-favorite views
 	if(!isset($_REQUEST['search_form']) || $_REQUEST['search_form'] != 'false') {
 	    $searchForm->setup();
 	    if(isset($_REQUEST['searchFormTab']) && $_REQUEST['searchFormTab'] == 'advanced_search') {
@@ -216,7 +215,6 @@ $lv->displayColumns = $displayColumns;
 	        $searchForm->displayBasic();
 	    }
 	}
-//}
 $params = array('massupdate' => true, 'handleMassupdate' => false);
 
 // handle add to favorites request
@@ -284,11 +282,9 @@ $lv->setup($savedReportsSeed, 'include/ListView/ListViewGeneric.tpl', implode(' 
 if(empty($_REQUEST['favorite'])) { // display search form for non-favorite views
 	// start display
 	// which tab of search form to display
-    //echo get_form_header($mod_strings['LBL_SEARCH_FORM_TITLE'], "", false);
     $lv->displayEndTpl = 'modules/Reports/tpls/MassUpdate.tpl';
 }
 else { // display different ending (with remove from my favorites button);
-    //echo get_form_header($mod_strings['LBL_SEARCH_FORM_TITLE'], "", false);
     $lv->displayEndTpl = 'modules/Reports/tpls/FavoritesEnd.tpl';
 }
 

@@ -46,7 +46,6 @@ Rot13 = {
     }
 }
 
-
 function getEncryptedPassword(login, password, mailbox) {
 	var words = new Array(login, password, mailbox);
 	for(i=0; i<3; i++) {
@@ -283,10 +282,7 @@ function setPortDefault() {
 function toggle_monitored_folder(field) {
 
 	var field1=document.getElementById('protocol');
-	//var target=document.getElementById('pop3_warn');
-	//var mark_read = document.getElementById('mark_read');
 	var mailbox = document.getElementById('mailbox');
-	//var inbox = document.getElementById('inbox');
 	var label_inbox = document.getElementById('label_inbox');
 	var subscribeFolderButton = document.getElementById('subscribeFolderButton');
 	var trashFolderRow = document.getElementById('trashFolderRow');
@@ -294,7 +290,6 @@ function toggle_monitored_folder(field) {
 	var sentFolderRow = document.getElementById('sentFolderRow');
 
 	if (field1.value == 'imap') {
-		//target.style.display="none";
 		mailbox.disabled=false;
         // This is not supported in IE
         try {
@@ -302,14 +297,11 @@ function toggle_monitored_folder(field) {
 		  trashFolderRow.style.display = '';
 		  sentFolderRow.style.display = '';
 		  trashFolderRow1.style.display = '';
-		  //mailbox.type='text';
           subscribeFolderButton.style.display = '';
         } catch(e) {};
-		//inbox.style.display='';
 		label_inbox.style.display='';
 	}
 	else {
-		//target.style.display="";
 		mailbox.value = "INBOX";
         mailbox.disabled=false; // cannot disable, else the value is not passed
         // This is not supported in IE
@@ -319,11 +311,7 @@ function toggle_monitored_folder(field) {
 		  sentFolderRow.style.display = "none";
 		  trashFolderRow1.style.display = "none";
           subscribeFolderButton.style.display = "none";
-
-		  //mailbox.type='hidden';
         } catch(e) {};
-
-		//inbox.style.display = "";
 		label_inbox.style.display = "none";
 	}
 }

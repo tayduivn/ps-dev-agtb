@@ -20,7 +20,6 @@ $queries = array(
     ),
     'counts'=>array(
         'New Deals'=>'SELECT count(id) val FROM opportunities where sales_stage = \'Prospecting\' and deleted=0',
-        //'Open Deals'=>'SELECT count(id) val FROM opportunities where sales_stage NOT IN (\'Closed Won\',\'Closed Lost\') and deleted=0',
         'Closed Won Deals'=>'SELECT count(id) val FROM opportunities where sales_stage = (\'Closed Won\') and deleted=0',
         'Closed Lost Deals'=>'SELECT count(id) val FROM opportunities where sales_stage = (\'Closed Lost\') and deleted=0',
         'Total Deals'=>'SELECT count(id) val FROM opportunities where deleted=0',

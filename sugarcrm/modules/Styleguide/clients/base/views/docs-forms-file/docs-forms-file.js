@@ -30,7 +30,6 @@
             if (this_container.next('.file-upload-status').length > 0) {
               this_container.next('.file-upload-status').remove();
             }
-            //this_container.append('<span class="file-upload-status">'+value+'</span>');
             this.$('<span class="file-upload-status ' + opts + ' ">' + value + '</span>').insertAfter(this_container);
           }
         },

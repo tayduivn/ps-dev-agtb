@@ -17,8 +17,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/JSON.php');
 
-//require_once('modules/UpgradeWizard/uw_utils.php');
-
 $json = getJSONobj();
 
 //Clean modules from cache
@@ -55,20 +53,5 @@ if(is_dir($cachedir)){
    }
 }
 
-$response = '';
-//$GLOBALS['log']->fatal('file name '.$file_name);
-//$GLOBALS['log']->fatal('file size loaded '.filesize($file_name));
-/*
-if($allModFiles != null){
-	foreach($allModFiles as $f){
-		$GLOBALS['log']->fatal('file name '.$f);
-		$response .= $f;
-	}
-}
-*/
-if (!empty($response)) {
-    echo $response;
-}
 sugar_cleanup();
 exit();
-?>

@@ -215,7 +215,6 @@
      * Checks to see if the chart is available and is displayed before resizing
      */
     resize: function() {
-        // If (this.chart_loaded && !this.sidebar_closed && !this.preview_open && !this.dashlet_collapsed) {
         if (!this.chart_loaded) {
             return;
         }

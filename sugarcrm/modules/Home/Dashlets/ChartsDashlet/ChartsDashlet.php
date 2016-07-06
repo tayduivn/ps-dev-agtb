@@ -112,7 +112,6 @@ class ChartsDashlet extends Dashlet {
 
 			$sugarChart = SugarChartFactory::getInstance();
 
-
 			$reporter = new Report($chartReport->content);
 			$reporter->is_saved_report = true;
 			$reporter->saved_report_id = $chartReport->id;

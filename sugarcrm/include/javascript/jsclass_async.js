@@ -88,7 +88,6 @@ SugarVCalClient.prototype.load = function(user_id, request_id) {
 // parse vCal freebusy info and return object
 SugarVCalClient.prototype.parseResults = function(textResult, adjusted) {
     var match = /FREEBUSY.*?\:([\w]+)\/([\w]+)/g;
-    //  datetime = new SugarDateTime();
     var result;
     var timehash = new Object();
     var dst_start;

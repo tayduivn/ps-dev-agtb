@@ -23,7 +23,6 @@ $report_smarty = new Sugar_Smarty();
 
 function template_list_view(&$reporter,&$args) {	
 	global $start_link_wrapper,$end_link_wrapper;	
-	//echo "template_list_view";
 	global $report_smarty;
     $reporter->validateBeforeDisplay();
     $reporter->run_query();
@@ -45,18 +44,6 @@ function template_list_view(&$reporter,&$args) {
 	$report_smarty->assign('args', $args);
 	$report_smarty->assign('list_type','list');
 	echo $report_smarty->fetch("modules/Reports/templates/_template_list_view.tpl");
-	/*
-	while (( $row = $reporter->get_next_row() ) != 0 ) {
-		$got_row = 1;
-		template_list_row($row,true);
-	} // while
-	if (!$got_row) {
-		echo template_no_results();
-	} // if
-	echo template_pagination_row($args);
-	echo template_end_table($args);
-	template_query_table($reporter); 
-	*/
 } // fn
 
 function template_pagination(&$args) {
@@ -134,23 +121,7 @@ function template_detail_and_total_list_view(&$reporter,&$args) {
 	$report_smarty->assign('args', $args);
 	template_header_row($header_row,$args);
 	
-	echo $report_smarty->fetch("modules/Reports/templates/_template_detail_and_total_list_view.tpl");	                               
-	/*                                                    
-	$got_row = 0;                                                                                   
-	while (( $row = $reporter->get_next_row() ) != 0 ) {
-		$got_row = 1;
-		template_list_row($row,true);
-	} // while
-    if (!$got_row) {
-   		echo template_no_results();
-    } // if	                                                                                   
-	echo template_end_table($args);
-	if ($reporter->has_summary_columns()) {
-		$reporter->run_total_query();
-		template_total_table($reporter);
-	} // if
-	template_query_table($reporter);
-	*/
+    echo $report_smarty->fetch("modules/Reports/templates/_template_detail_and_total_list_view.tpl");
 }
 
 
@@ -292,23 +263,6 @@ function template_summary_list_view(&$reporter,&$args) {
 			} // else
 		} // else
 	} // else
-
-	/*    	
-	$got_row = 0;
-	while (( $row = $reporter->get_summary_next_row() ) != 0 ) {	
-		$got_row = 1;
-		template_list_row($row,true);
-	} // while
-	if (! $got_row) {
-		echo template_no_results();
-	} // if	
-	echo template_end_table($args);	
-	if ($reporter->has_summary_columns()) {
-		$reporter->run_total_query();
-		template_total_table($reporter);
-	} // if	
-	template_query_table($reporter);
-	*/
 } 
 
 function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndColumnsData, &$columnData2, &$columnData3, &$maximumCellSize, &$legend, &$grandTotal) {
@@ -405,7 +359,6 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 	// generates row level summation and grand total
 	$grandTotal['Total'] = array();
 	$summary_column_label_to_name = getSummaryColumnLableToNameArray($summary_columns_array);
-	//_pp($summary_columns_array);
 	$isAverageExists = false;
 	$averageKey = "";
 	$sumKey = "";
@@ -668,11 +621,7 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 						    
 						    
 						} // if
-						
-					} else {
-						//_ppd("This should not happen");
-						//$rowsAndColumnsData[$i]['Total'][$key] = $value;
-					} // else
+                    }
 				} // for
 				
 			} // for
@@ -710,7 +659,6 @@ function getColumnDataAndFillRowsFor3By3GPBY($reporter, $header_row, &$rowsAndCo
 				} // for
 				
 			} // for
-			//$rowsAndColumnsData[$i]['Total']['Total'][$averageKey] = format_number(unformat_number($rowsAndColumnsData[$i]['Total']['Total'][$sumKey]) /  $rowsAndColumnsData[$i]['Total']['Total']['Count']);
 		}
 	} // for
 	$attributeInfo = $group_def_array[0];
@@ -903,7 +851,6 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 							if (!$rowsAndColumnsTotalSet) {
 								$rowsAndColumnsData[$i]['Total'][$key] = $value;
 							} // if
-						    //$grandTotal['Total'][$key] = $value;
 						} // if
 						
 						if (unformat_number($value, $useBaseCurrency) >
@@ -947,10 +894,7 @@ function getColumnDataAndFillRowsFor2By2GPBY($reporter, $header_row, &$rowsAndCo
 					    }
 					} // if
 					
-				} else {
-					//_ppd("This should not happen");
-					//$rowsAndColumnsData[$i]['Total'][$key] = $value;
-				} // else
+                }
 			} // for
 			
 		} // for
@@ -1224,43 +1168,6 @@ function template_summary_combo_view(&$reporter,&$args) {
 	
 	$report_smarty->assign('expandAll', $reportExpandAll);
 	echo $report_smarty->fetch("modules/Reports/templates/_template_summary_combo_view.tpl");
-	/*
- 	while (( $row = $reporter->get_summary_next_row() ) != 0 ) {
-		template_header_row($header_row, $args, true);
-		$divId = "combo_summary_div_". $count;
-		template_list_row($row, false, true, $divId);
-		echo template_end_table($args);
-		
-		echo "<div id='". $divId ."' style='padding-left: 30px;display:none'>";
-		template_header_row($columns_row, $args);
-  		if ($reporter->current_summary_row_count > 0) {
-  			for($i=0; $i < $reporter->current_summary_row_count; $i++ ) {
-				if (($column_row = $reporter->get_next_row() ) != 0 ) {
-					template_list_row($column_row);
-			   } else {
-			     break;
-			   } // else
-  			} // for
-
-  		} else {
-			echo template_no_results();
-  		}
-		echo template_end_table($args);
-		echo "</div>";
-		$count++;
-
-	} // while
-	
-  if ( ! isset($header_row[0]['norows']))
-  {
-    echo get_form_header( $mod_strings['LBL_GRAND_TOTAL'],"", false); 
-  }
-  if ( $reporter->has_summary_columns()) {
-	  template_total_table($reporter);
-  } // if
-
-  template_query_table($reporter); 
-  */
 } 
 
 
@@ -1273,30 +1180,6 @@ function template_total_view(&$reporter) {
 	template_query_table($reporter); */
 	echo $report_smarty->fetch("modules/Reports/templates/_template_total_view.tpl");
 }
-
-// Moved the code in corresponding template file
-/*
-function template_total_table(&$reporter) {
-	global $mod_strings;
-	$total_header_row = $reporter->get_total_header_row(); 
-	$total_row = $reporter->get_summary_total_row();
-	if ( isset($total_row['group_pos'])) {
-		$args['group_pos'] = $total_row['group_pos'];
-	} // if
-	if ( isset($total_row['group_column_is_invisible'])) {
-		$args['group_column_is_invisible'] = $total_row['group_column_is_invisible'];
-	} // if
- 	$reporter->layout_manager->setAttribute('no_sort',1);
-  	echo get_form_header( $mod_strings['LBL_GRAND_TOTAL'],"", false); 
-  	template_header_row1($total_header_row,$args);
-  	if (! empty($total_row)) {
-    	template_list_row1($total_row);
-  	} else {
-		echo template_no_results();
-  	}
-	echo template_end_table($args);
-} // fn
-*/
 
 function template_no_results() {
     global $mod_strings;
@@ -1311,7 +1194,6 @@ function template_list_view_no_results($args) {
 	}
 	$returnString = $returnString."</tr>";
 	return $returnString;
-	//return "<tr class=\"evenListRowS1\"><td>&nbsp;&nbsp;&nbsp;No results</td></tr>";
 } // fn
 
 function template_summary_view_no_results($args) {
@@ -1322,7 +1204,6 @@ function template_summary_view_no_results($args) {
 	}
 	$returnString = $returnString."</tr>";
 	return $returnString;
-	//return "<tr class=\"evenListRowS1\"><td>&nbsp;&nbsp;&nbsp;No results</td></tr>";
 } // fn
 
 function template_summary_combo_view_no_results($args) {
@@ -1333,18 +1214,11 @@ function template_summary_combo_view_no_results($args) {
 	}
 	$returnString = $returnString."</tr>";
 	return $returnString;
-	//return "<tr class=\"evenListRowS1\"><td>&nbsp;&nbsp;&nbsp;No results</td></tr>";
 } // fn
 
 
 function template_pagination_row(&$args) {
 	return "<tr class=\"pagination\"><td colspan='".count($args['reporter']->report_def['display_columns'])."'align=\"right\">".template_pagination($args)."</td></tr>";
-	/*
-?>
-<tr class="pagination">
-<td colspan="<?php echo count($args['reporter']->report_def['display_columns']); ?>" align="right"><?php echo template_pagination($args);?></td></tr>
-<?php
-*/
 }
 
 function template_end_table(&$args) {
@@ -1361,7 +1235,6 @@ function template_header_row(&$header_row, &$args, $isSummaryCombo=false) {
 	$report_smarty->assign('isSummaryCombo', $isSummaryCombo);
 	$report_smarty->assign('header_row', $header_row);
 	$report_smarty->assign('args', $args);
-	//echo $report_smarty->fetch("modules/Reports/templates/_template_header_row.tpl");
 	$oddRow = true;
 } // fn
 
@@ -1466,7 +1339,6 @@ function template_list_row(&$column_row,$equal_width=false, $isSummaryComboHeade
  	$report_smarty->assign('isSummaryComboHeader', $isSummaryComboHeader);
  	$report_smarty->assign('column_row', $column_row);
      		
-	//echo $report_smarty->fetch("modules/Reports/templates/_template_list_row.tpl");
 	$rownum++;
 } // fn
 

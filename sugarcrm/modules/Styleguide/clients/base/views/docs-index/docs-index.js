@@ -67,12 +67,6 @@
                         vP.title
                     ) +
                     '</h3><p>' + vP.description;
-                // if (vS.items) {
-                //     l = vS.items.length-1;
-                //     $.each(d.items, function (kP,vP) {
-                //         m += ' <a class="section-link" href="'+ (vP.url ? vP.url : self.fmtLink(kS,kP)) +'">'+ d2 +'</a>'+ (j===l?'.':', ');
-                //     });
-                // }
                 html += '</p></div>';
                 html += (i % 4 === 3 ? '</div>' : '');
 

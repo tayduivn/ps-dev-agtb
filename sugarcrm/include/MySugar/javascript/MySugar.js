@@ -329,7 +329,6 @@ SUGAR.mySugar = function() {
 						tabListContainerElem.setAttribute("class","active yui-module yui-scroll");
 					}
 
-	//			SUGAR.mySugar.togglePages(num_pages);
 				num_pages = num_pages + 1;			
 				
                 SUGAR.mySugar.togglePages(pageCount);
@@ -490,8 +489,6 @@ SUGAR.mySugar = function() {
 			
 			fillInConfigureDiv = function(data){
 				ajaxStatus.hideStatus();
-				// uncomment the line below to debug w/ FireBug
-				// console.log(data.responseText); 
 				var result = JSON.parse(data.responseText);
 				if (typeof result == 'undefined' || typeof result['header'] == 'undefined') {
 					result = new Array();
@@ -687,10 +684,6 @@ SUGAR.mySugar = function() {
 				alert(SUGAR.language.get('app_strings', 'LBL_MAX_DASHLETS_REACHED'));
 				return;
 			}			
-/*			if((columns[0].length + columns[1].length) >= SUGAR.mySugar.maxCount) {
-				alert(SUGAR.language.get('Home', 'LBL_MAX_DASHLETS_REACHED'));
-				return;
-			}*/
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_ADDING_DASHLET'));
 			var success = function(data) {
 
@@ -731,7 +724,6 @@ SUGAR.mySugar = function() {
 					
 					newLayout =	SUGAR.mySugar.getLayout(true);
 					SUGAR.mySugar.saveLayout(newLayout);	
-//					window.setTimeout('ajaxStatus.hideStatus()', 2000);
 				}
 				
 				if (type == 'module' || type == 'web'){
@@ -1158,7 +1150,6 @@ SUGAR.mySugar = function() {
 			  fixedcenter : true,
 			  draggable:false,
 			  visible : false, 
-			 // effect:[{effect:YAHOO.widget.ContainerEffect.SLIDETOP, duration:0.5},{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.5}],
 			  modal : true,
 			  close:false
 			 } );

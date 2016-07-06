@@ -259,11 +259,6 @@ $hidden_fields .= "<input type=\"hidden\" name=\"action\" value=\"index\">";
 $hidden_fields .= "<input type=\"hidden\" name=\"step\" value=\"{$_REQUEST['step']}\">";
 $hidden_fields .= "<input type=\"hidden\" name=\"run\" value=\"upload\">";
 $form2 = '';
-/*  Removing Install From Sugar tab from Upgradewizard.
-if(class_exists("PackageManagerDisplay")) {
-	$form2 = PackageManagerDisplay::buildPatchDisplay($form, $hidden_fields, 'index.php', array('patch', 'module'));
-}
-*/
 if($form2 == null){
 	$form2 = $form;
 }
@@ -286,7 +281,6 @@ $form3 =<<<eoq2
 </table>
 <script>
  function fileBrowseLoaded(){
- 	//alert(document.the_form.upgrade_zip.value.length);
  	if(escape(document.the_form.upgrade_zip.value).length == 0 || escape(document.the_form.upgrade_zip.value) == 'undefined'){
        document.the_form.upload_button.disabled= 'disabled';
  	}
@@ -300,8 +294,6 @@ $form3 =<<<eoq2
    var len = escape(document.the_form.upgrade_zip.value).length;
    var file_extn = escape(document.the_form.upgrade_zip.value).substr(len-3,len);
    if(file_extn.toLowerCase() !='zip'){
-   		//document.the_form.upgrade_zip.value = '';
-   		//document.getElementById("upgrade_zip").value = '';
    		alert('Not a zip file');
    		document.getElementById("upgrade_zip").value='';
    		document.getElementById("upload_button").disabled='disabled';
@@ -310,7 +302,6 @@ $form3 =<<<eoq2
 	var callback = {
 		 success:function(r) {
 		     var file_size = r.responseText;
-		     //alert(file_size.length);
 		     if(file_size.length >0){
 		       var msg = SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_SIZE');
 		       msg1 =SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_BIGGER_MSG');
@@ -329,7 +320,6 @@ $form3 =<<<eoq2
 		 }
 	}
 
-    //var file_name = document.getElementById('upgrade_zip').value;
 	var file_name = document.the_form.upgrade_zip.value;
 	postData = 'file_name=' + YAHOO.lang.JSON.stringify(file_name) + '&module=UpgradeWizard&action=UploadFileCheck&to_pdf=1';
 	YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
@@ -351,9 +341,6 @@ eoq5;
 $uwMain = $form2.$form3.$form5;
 ////	END UPLOAD FORM
 ///////////////////////////////////////////////////////////////////////////////
-//set the upgrade progress status. actually it should be set when a file is uploaded
-//set_upgrade_progress('upload','done');
-
 
 $showBack		= true;
 $showCancel		= true;
@@ -367,5 +354,3 @@ $stepRecheck	= $_REQUEST['step'];
 
 
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] = ($stop) ? 'failed' : 'success';
-
-?>

@@ -49,9 +49,9 @@ function set_campaignlog_and_save_background(popup_reply_data)
     var id = get_record_id();
 
     query_array.push('value=DetailView');
-    query_array.push('module='+module);    //query_array.push('module='+module);
+    query_array.push('module='+module);
     query_array.push('http_method=get');
-    query_array.push('return_module='+module);
+    query_array.push('return_module=' + module);
     query_array.push('return_id='+id);
     query_array.push('record='+id);
     query_array.push('isDuplicate=false');

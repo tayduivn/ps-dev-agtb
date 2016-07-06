@@ -485,8 +485,6 @@ SE.accounts = {
                     }
                 }
             }
-            //document.getElementById("mailsettings1").style.display = 'none';
-            //document.getElementById("mailsettings2").style.display = 'none';
             document.getElementById("mail_smtppass_label").innerHTML = mod_strings.LBL_GMAIL_SMTPPASS;
             document.getElementById("mail_smtpuser_label").innerHTML = mod_strings.LBL_GMAIL_SMTPUSER;
             break;
@@ -1086,9 +1084,6 @@ SE.accounts = {
 ////    END ACCOUNTS
 ///////////////////////////////////////////////////////////////////////////////
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 ////    CONTEXT MENU CALLS
 SE.contextMenus = {
@@ -1203,9 +1198,6 @@ SE.contextMenus = {
     markEmail : function(type) {
         SE.contextMenus.emailListContextMenu.hide();
 
-        //var dm = SE.grid.getStore();
-        //var uids = SE.grid.getSelectedRowIds();
-        //var indexes = SE.grid.getSelectedRowIndexes();
         var rows = SE.grid.getSelectedRows();
         if (rows.length == 0)
         	rows = [SE.contextMenus.currentRow];
@@ -1444,15 +1436,8 @@ SE.contextMenus.dv = {
     }
 
 };
-
-
-
-
-
 ////    END SE.contextMenus
 ///////////////////////////////////////////////////////////////////////////////
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    DETAIL VIEW
@@ -1695,7 +1680,6 @@ SE.detailView = {
             } else {
             	// open email as peer-tab to listView
             	SE.detailView.requestEmailContents(mboxStr, uid, mbox, ieId, AjaxObject.detailView.callback.emailDetail);
-               // AjaxObject.startRequest(AjaxObject.detailView.callback.emailDetail, null);
             }
         } else {
             // loading email into preview pane
@@ -1708,7 +1692,6 @@ SE.detailView = {
                 AjaxObject.forceAbort = true;
                 // open in preview window
                 SE.detailView.requestEmailContents(mboxStr, uid, mbox, ieId, AjaxObject.detailView.callback.emailPreview);
-               // AjaxObject.startRequest(AjaxObject.detailView.callback.emailPreview, null);
             }
         }
     },
@@ -1898,13 +1881,6 @@ SE.detailView = {
         );
 		menu.render(document.body);
 		menu.show();
-
-
-        /*
-        //#23108 jchi@07/17/2008
-        menu.render('quickCreateSpan'+ panelId);*/
-        //this.viewMenu = menu;
-        //this.viewMenu.show(context);
     },
     /**
      * Makes async call to get an email's headers
@@ -2005,7 +1981,6 @@ SE.folders = {
     buildTreeViewNode : function(name, id, is_group, is_dynamic, unseen, parentNode, expanded) {
         var node = new YAHOO.widget.TextNode(name, parentNode, true);
 
-        //node.href = " SE.listView.populateListFrameSugarFolder(YAHOO.namespace('frameFolders').selectednode, '" + id + "', 'false');";
         node.expanded = expanded;
         node.data = new Object;
         node.data['id'] = id;
@@ -2176,7 +2151,6 @@ SE.folders = {
      */
     setSugarFolders : function(delay) {
         this.removeSugarFolders();
-		//AjaxObject.forceAbort = true;
 		AjaxObject.startRequest(callbackRefreshSugarFolders, urlStandard + "&emailUIAction=refreshSugarFolders");
     },
 
@@ -2868,11 +2842,6 @@ SE.folders.checkEmail2 = function() {
  */
 SE.keys = {
     overall : function(e) {
-        //BEGIN SUGARCRM flav=int ONLY
-        if(typeof(console) != 'undefined' && console != null) {
-         //console.log('SE.overall keyCode: ' + e.browserEvent.keyCode);
-        }
-        //END SUGARCRM flav=int ONLY
         switch(e.charCode) {
             case 119: // "w"
                 if(e.ctrlKey || e.altKey) {
@@ -2977,10 +2946,8 @@ SE.listView = {
             var cm = SE.grid.getColumnModel();
             if (ds.baseParams.mbox == mod_strings.LBL_LIST_FORM_SENT_TITLE) {
                 cm.setColumnHeader(4, mod_strings.LBL_LIST_DATE_SENT);
-                //SE.grid.render();
             } else if (cm.config[4].header != app_strings.LBL_EMAIL_DATE_SENT_BY_SENDER){
                 cm.setColumnHeader(4, app_strings.LBL_EMAIL_DATE_SENT_BY_SENDER);
-                //SE.grid.render();
             }
         }
         var total = (typeof(ds.totalLength) != "undefined") ? " (" + ds.totalLength +" " + app_strings.LBL_EMAIL_MESSAGES +") " : "";
@@ -3059,11 +3026,6 @@ SE.listView = {
             SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_MOVE_TITLE, app_strings.LBL_EMAIL_ERROR_MOVE);
         } else {
             SUGAR.showMessageBox("Moving Email(s)", app_strings.LBL_EMAIL_ONE_MOMENT);
-            // remove rows from visibility
-            for(row in selectedRows) {
-                //SE.grid.getStore().remove(row);
-            }
-
             var baseUrl =    '&sourceIeId=' + sourceIeId +
                             '&sourceFolder=' + sourceFolder +
                             '&destinationIeId=' + destinationIeId +
@@ -3141,7 +3103,6 @@ SE.listView = {
                 var rows = SE.grid.getSelectedRows();
                 // iterate through dragged rows
                 for(i=0; i<rows.length; i++) {
-                    //var rowIndex = e.selModel.selectedRows[i].rowIndex;
                     var rowIndex = rows[i].rowIndex;
                     var dataModelRow = dm.data[rowIndex];
                     var sourceIeId = dataModelRow[7];

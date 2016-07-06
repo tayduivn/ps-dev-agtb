@@ -37,7 +37,6 @@
                     }
                 ]
             },
-            // "themes" : { "theme" : "default", "dots" : false },
             "plugins" : [ "json_data", "ui", "types" ]
         })
         .bind('loaded.jstree', function () {

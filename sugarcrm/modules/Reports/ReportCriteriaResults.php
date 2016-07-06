@@ -21,7 +21,6 @@ require_once('modules/Reports/templates/templates_reports.php');
 require_once('modules/Reports/templates/templates_reports_index.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once('modules/Reports/templates/templates_export.php');
-require_once('modules/Reports/templates/templates_chart.php');
 
 require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $current_user, $app_strings, $mod_strings;
@@ -58,14 +57,10 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	} // if
 	$args['reporter'] = new Report($saved_report_seed->content);
 	$args['reporter']->saved_report = $saved_report_seed;
-	//if (hasRuntimeFilter($args['reporter'])) {
 		$savedReportContent = $jsonObj->decode($saved_report_seed->content);
 		$newArray = array();
 		$newArray['filters_def'] = $savedReportContent['filters_def'];
 		$reportCache = saveReportFilters($saved_report_seed->id, $jsonObj->encode($newArray));
-	//} else {
-		//saveReportFilters($saved_report_seed->id, '');
-	//}
 
 	if ( isset($_REQUEST['filter_key']) && isset($_REQUEST['filter_value'])) {
 		$new_filter = array();
@@ -96,8 +91,6 @@ else if (isset($_REQUEST['record'])){
 	$report_def = InputValidation::getService()->getValidInputRequest('report_def', null, array());
 
     if (!empty($_REQUEST['reset_filters'])) {
-//        $rCache = new ReportCache();
- //       $rCache->delete($_REQUEST['record']);
         $newArray = array();
         $newArray['filters_def'] = $reportObj->report_def['filters_def'];
         $reportCache = saveReportFilters($_REQUEST['record'], $jsonObj->encode($newArray));
@@ -120,9 +113,6 @@ else if (isset($_REQUEST['record'])){
         $newArray['filters_def'] = $resuestFilterDef['filters_def'];
         $reportCache = saveReportFilters($_REQUEST['record'], $jsonObj->encode($newArray));
                 $args['reportCache'] = $reportCache;
-        //} else {
-                //saveReportFilters($saved_report_seed->id, '');
-        //}
 
         if (!empty($reporterName)) {
                 $args['reporter']->name = $reporterName;

@@ -210,21 +210,6 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
        array('name' => 'idx_savedreport_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
 ),
 'relationships'=>array(
-    /*
-	'reports_team_name_relationship' =>
-		array (
-			'lhs_module'        => 'Reports',
-            'lhs_table'         => 'saved_reports',
-            'lhs_key'           => 'team_set_id',
-            'rhs_module'        => 'Teams',
-            'rhs_table'         => 'teams',
-            'rhs_key'           => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table'        => 'team_sets',
-            'join_key_lhs'      => 'id',
-            'join_key_rhs'      => 'primary_team_id',
-		),
-    */
     'report_assigned_user' =>
         array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
               'rhs_module'=> 'Reports' , 'rhs_table'=> 'saved_reports', 'rhs_key' => 'assigned_user_id',

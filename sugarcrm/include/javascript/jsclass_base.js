@@ -128,8 +128,6 @@ SugarDateTime.prototype.getFormattedDate = function(date_obj) {
                 returnDate += " " + date_obj.getDate();
                 break;
             default:
-            // cn: use locale's date separator? probably not.
-            //returnDate += " " + userDateFormat.charAt(i);
         }
     }
 
@@ -161,8 +159,6 @@ SugarDateTime.getAMPM = function(date_obj) {
     return am_pm;
 }
 SugarDateTime.getFormattedHour = SugarDateTime.prototype.getFormattedHour;
-
-//mod.SugarDateTime.getFormattedDate = publ.getFormattedDate;
 
 // return the javascript Date object given a vCal UTC string
 SugarDateTime.prototype.parseUTCDate = function(date_string) {

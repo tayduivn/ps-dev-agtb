@@ -43,7 +43,6 @@
 
                 var cc_field = rliComponent.getComponent('panel-top').getField('collection-count');
                 // TODO: We can't use fetchCount, once the component has been "fetched" it uses the wrong collection count for the label
-                //cc_field.fetchCount();
 
                 app.api.count('Accounts', {
                     id: this.context.parent.get('modelId'),

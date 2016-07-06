@@ -524,10 +524,6 @@ SUGAR.gantt = function() {
             row.setAttribute('id', row_id);
         	row.setAttribute('height', mappedRow ? mappedRow.offsetHeight : 28);
 
-	        //row.setAttribute('onMouseOver', 'SUGAR.gantt.focusRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
-	        //row.setAttribute('onMouseOut', 'SUGAR.gantt.fadeRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
-	        //row.setAttribute('onClick', 'SUGAR.gantt.selectRow(\''+SUGAR.grid.getMappedRow(task_num)+'\')');
-
 	        // insert Left Cell
 	        var cellLeft = row.insertCell(0);
 	        cellLeft.innerHTML = '<div class="tasknum">'+task_num+'</div>';
@@ -536,10 +532,6 @@ SUGAR.gantt = function() {
 	        // insert Middle Cell
 	        var cellMiddle = row.insertCell(1);
 	        cellMiddle.setAttribute('id', 'task_'+SUGAR.grid.getMappedRow(task_num)+'_bar');
-
-	        /*cellMiddle.onmouseover = function() { SUGAR.gantt.taskOverLib(SUGAR.gantt.popupInfo(SUGAR.grid.getMappedRow(task_num)),
-	        															  document.getElementById("description_"+SUGAR.grid.getMappedRow(task_num)).value); }
-	        cellMiddle.onmouseout = function() { nd(); }*/
 
 	        // insert Right Cell
 	        var cellRight = row.insertCell(2);
@@ -733,5 +725,3 @@ SUGAR.gantt = function() {
 
 	};
 }(); // end gantt
-
-// -->

@@ -26,7 +26,6 @@
         var self = this,
             fieldTypeReq = this.context.get('content_name'),
             fieldTypes = fieldTypeReq === 'index' ? ['text', 'bool', 'date', 'datetimecombo', 'currency', 'email'] : [fieldTypeReq],
-                //'textarea','url','phone','password','full_name'
             fieldStates = ['detail', 'edit', 'error', 'disabled'],
             fieldLayouts = ['base', 'record', 'list'],
             fieldMeta = {};

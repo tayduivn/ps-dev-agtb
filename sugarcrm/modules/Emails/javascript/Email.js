@@ -72,24 +72,16 @@ function setDocument(target, documentId, documentName, docRevId) {
 }
 
 function setDocumentToCampaignTemplate(target, documentId, documentName,docRevId, documentType) {
-//	var docId = eval("window.opener.document.forms.EditView.documentId" + target);
-	var docId = window.opener.document.getElementById('documentId' + target);
-	//var docName = eval("window.opener.document.EditView.documentName" + target);
-	var docName = window.opener.document.getElementById('documentName' + target);
-	var docType = window.opener.document.getElementById('documentType' + target);
-
 	var docId = window.opener.document.getElementById('documentId');
 	var docName = window.opener.document.getElementById('documentName');
 	var docRevisionId = window.opener.document.getElementById('docRevId');
 	var docType = window.opener.document.getElementById('documentType');
 
     docId.value = documentId;
-    //docId.onchange('docUpload(); form_reset_doc();');
 	docName.value = documentName;
 	docRevisionId.value = docRevId;
 	docType.value = documentType;
 	docName.onchange('docUpload(); form_reset_doc();');
-	//alert(docName.onchange);
 	window.close();
 }
 
@@ -164,7 +156,6 @@ function addFile() {
 function multiFiles( list_target){
 	// Where to write the list
 	this.list_target = list_target;
-	//this.list_target = document.getElementById(list_target);
 	// How many elements?
 	this.count = 0;
 	this.id = 0;
@@ -193,7 +184,6 @@ function multiFiles( list_target){
                 // New file input
                 new_element = document.createElement('input');
                 new_element.type = 'file';
-                // new_element.name = 'email_attachment' +up++;
 
                 // Add new element
                 this.parentNode.insertBefore(new_element, this);
@@ -201,13 +191,8 @@ function multiFiles( list_target){
                 this.multi_selector.addElement(new_element);
                 // Update list
                 this.multi_selector.addListRow(this);
-                // Hide this: we can't use display:none because Safari doesn't like it
-                //this.style.display='none';
                 //display none works fine for FF and IE
                 this.style.display = 'none';
-                //later for Safari add following
-                //this.style.position = 'absolute';
-                //this.style.left = '-5000px';
             };
 			// File element counter
 			this.count++;
@@ -326,23 +311,11 @@ function multiFiles( list_target){
         };
 
 		// Set row value
-	/*
-		var oas = new ActiveXObject("Scripting.FileSystemObject");
-        var d = document.a.b.value;
-        var e = oas.getFile(d);
-        var f = e.size;
-        alert(f + " bytes");
-		alert(element);
-		*/
-        //new_row_file_name.value =element.value;
         new_row_file_name_tab = element.value.split("\\");
-        //alert(new_row_file_name_tab);
         nbr_elements = new_row_file_name_tab.length;
         new_row_file_name.value = new_row_file_name_tab[nbr_elements-1];
 
-		//new_row.innerHTML = element.value;
         //add all the elements
-        //new_row.appendChild(new_row_attach_file);
         new_row.appendChild(imgElement);
         new_row.appendChild(new_row_button_embed);
         new_row.appendChild(new_row_chk_box);
@@ -351,15 +324,12 @@ function multiFiles( list_target){
 		new_row.appendChild( new_row_button_remove);
 		// Add it to the list
 		this.list_target.appendChild( new_row );
-		//document.getElementById(list_target).appendChild(new_row);
 	};
 };
 
 
 function docUpload() {
 
-	//var theForm = document.getElementById('EditView');
-	//var theForm = document.getElementById('upload_form');
     //AJAX call begins
     var rets ='';
 	var callback = {
@@ -433,7 +403,6 @@ function docUpload() {
 
     var eai = document.createElement('input');
     eai.setAttribute('type', 'button');
-    //eai.setAttribute('onclick', 'deleteFile('+uploadIndex+');');
     eai.setAttribute('value', lbl_remove);
     eai.onclick=function(){
     	var filename = this.parentNode.childNodes[4].value;
@@ -519,7 +488,6 @@ function addUploadFiles(form_name) {
        for (var i=0; i<elems.length; i++) {
         //find out all the email_attachments and append to the EditView form
           var el = elems[i];
-          //var el = document.getElementsByName('checkBoxFile[]');
           if(el.id == 'checkBoxFile[]'){
 	        var eah = document.createElement('input');
             eah.setAttribute('id', 'embedded'+num);
@@ -540,14 +508,12 @@ function addUploadDocs(form_name) {
 		var elems = chForm.getElementsByTagName("input");
 		var elems1 = attDiv.getElementsByTagName("input");
         for (var i=0; i<elems1.length; i++) {
-        //if (elems[i].type == "file") {
          var el = elems1[i];
         if(el.id=='document[]') {
 	    theForm.appendChild(el);
 		 }
         }
         for (var i=0; i<elems.length; i++) {
-        //if (elems[i].type == "file") {
          var el = elems[i];
 
         if(el.id=='document[]') {
@@ -560,7 +526,6 @@ function addUploadDocs(form_name) {
 	}
 
 function form_reset_doc() {
-	// var theForm = document.getElementById('upload_form');
 	 var theForm = document.getElementById('upload_div');
 	 var elems = theForm.getElementsByTagName("input");
 	 for (var i=0; i<elems.length; i++) {
@@ -572,23 +537,15 @@ function form_reset_doc() {
 		        new_el.name = el.name;
 		        new_el.id = el.id;
 		        new_el.onchange = el.onchange;
-		        //new_el.disabled=true;
-		        //new_el.style.visibility="hidden";
 		        new_el.siz=true;
 		        el.parentNode.replaceChild(new_el, el);
-		        //   el.parentNode.insertBefore(new_el, el);
-		  //        el.parentNode.removeChild(el);
 		    }
 		    if(el.id == 'documentId') {
 		         var new_el =document.createElement('input');
 		         new_el.type = 'hidden';
 		         new_el.name = el.name;
 		         new_el.id = el.id;
-		         //new_el.onchange = el.onchange;
-		         //new_el.DISABLED='true';
 		         el.parentNode.replaceChild(new_el, el);
-		        //   el.parentNode.insertBefore(new_el, el);
-		          // el.parentNode.removeChild(el);
 		     }
 		 }
 	}

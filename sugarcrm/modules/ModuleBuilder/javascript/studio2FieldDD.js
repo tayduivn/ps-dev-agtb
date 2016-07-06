@@ -48,8 +48,6 @@ YAHOO.extend(Studio2.FieldDD, YAHOO.util.DDProxy, {
 			// Show the proxy element and animate it to the src element's location
         	YAHOO.util.Dom.setStyle(proxy, "visibility", "");
         	YAHOO.util.Dom.setStyle(srcEl, "display", ""); // display!=none for getXY to work
-        	//YAHOO.util.Dom.setStyle(proxy).alignTo(srcEl, 'tl', null, {
-				//callback: function(){
         	YAHOO.util.Dom.setStyle(proxyid, "visibility", "hidden");
 			if(typeof(YAHOO.util.Dom.get(thisid)) != 'undefined' && YAHOO.util.Dom.get(thisid)!=null) 
 				YAHOO.util.Dom.setStyle(thisid, "visibility", "");
@@ -233,12 +231,10 @@ YAHOO.extend(Studio2.FieldDD, YAHOO.util.DDProxy, {
 		if ((srcLocation != destLocation)) {
 			if (Studio2.isSpecial(srcEl) && ! Studio2.isSpecial(destEl))  {
 				Studio2.removeElement(srcEl);
-//				this.showAnimation = false;
 				return;
 			}
 			if (Studio2.isSpecial(destEl) && ! Studio2.isSpecial(srcEl))  {
 				Studio2.removeElement(destEl);
-//				this.showAnimation = false;
 				return;
 			}
 		}
@@ -258,7 +254,6 @@ YAHOO.extend(Studio2.FieldDD, YAHOO.util.DDProxy, {
 		if ( Studio2.isExpandable (srcEl ) && Studio2.isExpandable( destEl) ){
 			//src is dest now. copy dest's properties to src.
 			Studio2.swapStates( srcEl, destEl );
-			//srcEl.setAttribute("state", destEl.getAttribute("state"));
 		}
 		var registerSrc = !Studio2.isExpandable( srcEl );
 		var destExpandable = !Studio2.isSpecial(destEl) && ((null==destRightSibling && null==destLeftSibling)

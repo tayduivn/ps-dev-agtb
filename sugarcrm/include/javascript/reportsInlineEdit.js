@@ -1,4 +1,3 @@
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -122,4 +121,3 @@ SUGAR.reportsInlineEdit = function() {
 		}
 	};
 }();
-

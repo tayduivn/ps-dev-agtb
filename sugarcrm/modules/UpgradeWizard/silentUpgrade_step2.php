@@ -363,7 +363,6 @@ if(empty($errors)) {
 			$allModFiles = array();
 			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
-		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
 					unlink($file);
 		       	}
@@ -376,7 +375,6 @@ if(empty($errors)) {
 			$allModFiles = array();
 			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
-		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
 					unlink($file);
 		       	}
@@ -389,7 +387,6 @@ if(empty($errors)) {
 			$allModFiles = array();
 			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
-		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
 					unlink($file);
 		       	}
@@ -403,9 +400,7 @@ if(empty($errors)) {
 		$_REQUEST['silent'] = true;
 	}
 
-	 //logThis('Checking for leads_assigned_user relationship and if not found then create.', $path);
 	@createMissingRels();
-	 //logThis('Checked for leads_assigned_user relationship.', $path);
 	ob_end_clean();
 
 

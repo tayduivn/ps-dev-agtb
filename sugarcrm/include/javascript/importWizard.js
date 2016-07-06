@@ -15,11 +15,6 @@ SUGAR.importWizard = function() {
 	return {
 	
 		renderDialog: function(importModuleVAR,actionVar,sourceVar){
-			
-			//show loading panel
-			//SUGAR.importWizard.renderLoadingDialog();
-			
-			
 			// create dialog container div
 			var oBody = document.getElementsByTagName('BODY').item(0);
 			if ( !document.getElementById( "importWizardDialog" )) {
@@ -55,8 +50,6 @@ SUGAR.importWizard = function() {
 						oHead.appendChild( oScript);
 				}
 				
-				
-				
 				var success = function(data) {		
 					var response = YAHOO.lang.JSON.parse(data.responseText);
 					importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
@@ -73,9 +66,6 @@ SUGAR.importWizard = function() {
 				var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action='+actionVar+'&import_module='+importModuleVAR+'&source='+sourceVar, {success: success, failure: success});			
 				return false;
 			});
-			
-			
-			//document.getElementById('importWizardDialog_c').style.display = 'none';			
 		},
 		closeDialog: function() {
 			

@@ -456,16 +456,3 @@ function setSortByInfo(&$reporter, &$smarty) {
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
 
 } // fn
-
-/*
-function juliansort($a,$b)
-{
-	global $app_list_strings;
- 	if ($app_list_strings['moduleList'][$a] > $app_list_strings['moduleList'][$b])
- 	{
-  		return 1;
- 	}
- 	return -1;
-}
-*/
-?>

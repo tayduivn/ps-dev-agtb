@@ -25,10 +25,6 @@ $reporter = $args['reporter'];
 <input type="hidden" name="module" value="Reports">
 <input type="hidden" name="current_parent" value="index">
 <input type="hidden" name="current_parent_id" value="Reports">
-<!--
-<input type="hidden" name="account_id" value="Reports">
-<input type="hidden" name="account_name" value="Reports">
--->
 <input type="hidden" name="report_module" value="<?php echo $reporter->module; ?>">
 <td valign="top">
 <?php template_reports_tables($args); ?>
@@ -98,7 +94,6 @@ $classname = "";
 <b>Module:</b>
 <br>
 <script language="javascript">
-//var module_map_to_parent = {ReportAccount:"Accounts",ReportOpportunity:"Opportunities",ReportContact:"Contacts"};
 var current_module = "<?php echo $reporter->module; ?>";
 var module_defs = new Object();
 var previous_filters = new Object();
@@ -214,7 +209,6 @@ function table_changed(obj)
 	}
 
 	reload_columns();
-	//reload_joins();
 	deleteAllFilters();
 }
 
@@ -265,7 +259,6 @@ $table_columns = $reporter->focus->default_table_columns;
 }
 else
 {
-//print_r( $reporter->focus->default_table_columns);
 $table_columns = $_REQUEST['display_columns'];
 }
 
@@ -469,7 +462,6 @@ function addFilterInput(cell,default0,default1)
 
 	var count = 0;
 
-	//cell.innerHTML = "<td><table><tr></tr></table></td>";
 	cell.innerHTML = "<table><tr></tr></table>";
 	var row = cell.getElementsByTagName("tr")[0];
 
@@ -600,7 +592,6 @@ function button_change_onclick()
 function addFilterInputRelate(row,module_name,default0)
 {
         var cell = document.createElement('td');
-	//cell.innerHTML = "<input type=\"text\" readonly name=\"account_name1\" value=\"\"/> <input type=\"hidden\" name=\"account_id2\" value=\"\"/>";
 	var new_input = document.createElement("input");
 	new_input.setAttribute("type","text"); 
 	new_input.setAttribute("readonly","true"); 
@@ -702,7 +693,6 @@ function addFilter()
 	var new_button = document.createElement("input");
 	new_button.onclick= deleteFilter;
 	new_button.type= "button";
-//	new_button.style.class= "button";
 	new_button.value= "Remove";
 
         cell.appendChild(new_button);
@@ -892,9 +882,6 @@ function clear_form(form)
 <td valign="top">
 <b>Columns:</b>
 <br>
-<?php 
-//template_columns($args); 
-?>
 </td>
 <td valign="top">
 <b>Filter By:</b>
@@ -1432,6 +1419,3 @@ while (( $row = $reporter->get_next_row() ) != 0 )
 <?php
 
 } 
-
-
-?>

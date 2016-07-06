@@ -45,10 +45,6 @@ function ygDDSlot(id, sGroup) {
         if(id == 's_field_delete'){
             this.isValidHandle = false;
         }
-	// Specify that we want the drag frame centered around the cursor rather 
-	// than relative to the click location so that the miniature content
-	// channel appears in the location that was clicked
-	//this.centerFrame = true;
 }
 
 ygDDSlot.prototype = new YAHOO.util.DDProxy();
@@ -166,7 +162,6 @@ ygDDSlot.prototype.startDrag = function(x, y) {
 	dragEl.style.width = 	(clickElRegion.right - clickElRegion.left) + 'px';
 	clickEl.style.height = (clickElRegion.bottom - clickElRegion.top) + 'px';
 	
-	//clickEl.innerHTML = '&nbsp;';
 	clickEl.style.border = '2px dashed #cccccc';
 	clickEl.style.opacity = .5;
 	clickEl.style.filter = "alpha(opacity=10)";
@@ -176,7 +171,6 @@ ygDDSlot.prototype.startDrag = function(x, y) {
 ygDDSlot.prototype.endDrag = function(e) {
 	// disable moving the linked element
 	var clickEl = this.getEl();
-	//clickEl.innerHTML = this.clickContent
 
 	if(this.clickHeight) 
 	    clickEl.style.height = this.clickHeight;

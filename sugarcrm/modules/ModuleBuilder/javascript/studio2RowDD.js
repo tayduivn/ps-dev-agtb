@@ -47,7 +47,6 @@ YAHOO.extend(Studio2.RowDD, YAHOO.util.DDProxy, {
     endDrag: function(e) {
         Studio2.clearScrollObj();
         ModuleBuilder.state.markAsDirty();
- //   	alert("endDrag");
      
         var srcEl = this.getEl();
         var proxy = this.getDragEl();      
@@ -67,15 +66,9 @@ YAHOO.extend(Studio2.RowDD, YAHOO.util.DDProxy, {
        		// Show the proxy element and animate it to the src element's location
         	YAHOO.util.Dom.setStyle(proxy, 'visibility','');
         	YAHOO.util.Dom.setStyle(srcEl, "display","");
-        	//Dom.setStyle(proxy, "visibility", "");
-        	//Dom.setStyle(srcEl, "display",""); // display!=none for getXY to work
         
-        	/*Ext.get(proxy).alignTo(srcEl, 'tl', null, {
-				callback: function(){*/
         			YAHOO.util.Dom.setStyle(proxyid,"visibility","hidden");
         			YAHOO.util.Dom.setStyle(thisid,"visibility","");
-				//}
-			//});
         	
 			if (Studio2.isSpecial(srcEl)) {
 				if (Studio2.establishLocation(srcEl) == 'panels') {

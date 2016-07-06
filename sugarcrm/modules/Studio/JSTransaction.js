@@ -49,6 +49,3 @@ function JSTransaction(){
             redoFunction(transaction['data']);
         }
     }
-
-
-

@@ -81,17 +81,6 @@ ModuleBuilder.VisibilityEditor = function ( myData , targetId , returnFunction, 
 	 */
 	myEditorGrid.commit = function () {
 		var grid = {} ;
-		/*
-		for ( var row = 0 ; row < this.store.getCount() ; row++ ) {
-			var record = this.store.getAt ( row ) ;
-			columnArray = {} ;
-			for ( var column = 0 ; column < this.fields.length ; column++ ) {
-				var columnKey = this.fields[column] ;
-				columnArray [ columnKey ] = record.get( columnKey );
-			}
-			returnArray [ record.get( 'key' ) ] = columnArray ;
-		}
-		*/
 		for ( var column = 0 ; column < this.fields.length ; column++ ) {
 			var fieldKey = this.fields [ column ] ;
 			for ( var row = 0 ; row < this.store.getCount() ; row++ ) {
@@ -120,4 +109,4 @@ ModuleBuilder.VisibilityEditor = function ( myData , targetId , returnFunction, 
 			{text: SUGAR.language.get('app_strings','LBL_CANCEL_BUTTON_LABEL' ), handler: onCloseFunction }
 		]
 	});
-}
+};

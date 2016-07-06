@@ -575,8 +575,6 @@ SE.addressBook = {
 ////    END ADDRESS BOOK
 ///////////////////////////////////////////////////////////////////////////////
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 ////    AUTOCOMPLETE
 /**
@@ -675,7 +673,6 @@ SE.autoComplete = {
 	            var primary = this.getPrimaryAddress(contacts[id]);
 
 	            ret[ret.length] = contacts[id].name.replace(/<[\/]*b>/gi, '') + " <" + primary + ">";
-	            //ret[ret.length] = contacts[id].name + " <" + primary + ">";
 
 	            for(var emailIndex in contacts[id].email) {
 	                ret[ret.length] = contacts[id].email[emailIndex].email_address;
@@ -1272,7 +1269,6 @@ SE.composeLayout = {
             	} else if (node[1] == 'address-list') {
             		targetMailingList = SE.userPrefs.emailLists[node[0]];
             	}
-                //var targetMailingList = SE.userPrefs.emailLists[node[0]];
                 for(var displayName in targetMailingList) {
                     var listIds = targetMailingList[displayName];
                     if (typeof(listIds) != 'object') continue;
@@ -1692,7 +1688,6 @@ SE.composeLayout = {
                 "<br/>";
 
         basket.appendChild(documentCup);
-        //basket.innerHTML += out;
         return index;
     },
 
@@ -1734,7 +1729,6 @@ SE.composeLayout = {
             });
             SE.addFileDialog.setHeader(app_strings.LBL_EMAIL_ATTACHMENTS);
             SE.addFileDialog.render();
-           // SE.addFileDialog.addKeyListener(27, , SE.addFileDialog);
         }
     	Dom.removeClass("addFileDialog", "yui-hidden");
 
@@ -2198,7 +2192,6 @@ SE.composeLayout = {
         		break;
         	}
         }
-        //SE.innerLayout.getTab(idx).close();
     },
 
     /**

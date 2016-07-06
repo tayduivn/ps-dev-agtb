@@ -41,13 +41,6 @@
               .colorData('default')
               .yAxisTickFormat(function(d) { return '$' + d3.format(',.2s')(d); })
               .quotaTickFormat(function(d) { return '$' + d3.format(',.3s')(d); });
-              // override default barClick function
-              // .barClick( function(data,e,selection) {
-              //     //if only one bar series is disabled
-              //     d3.select('#vert2 svg')
-              //       .datum(forecast_data_Manager)
-              //       .call(chart);
-              //   })
 
         nv.utils.windowResize(this.chart2.update);
 

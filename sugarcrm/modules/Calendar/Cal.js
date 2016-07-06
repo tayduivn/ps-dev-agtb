@@ -217,17 +217,7 @@
 	
 	CAL.create_item = function (params){
 		var item = params.item;
-		
 		var id = params.id + params.id_suffix;
-		
-		//var content = "";
-		//if(params.type == "advanced"){
-			//content = "<div class='content' " + params.content_style + ">" + params.item_text + "</div>";
-		//}
-		
-		//var el = document.createElement("div");	
-		//el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_additional_details(" + '"' + id + '"'  +  ");' onmouseout='nd(400); SUGAR.util.clearAdditionalDetailsCall();' >&nbsp;&nbsp;</div><div>" + params.head_text + "</div>" + "</div>" + content; 
-		
 		var el = document.createElement("div");
 		var elHead = document.createElement("div");
 		elHead.setAttribute("class","head");
@@ -840,7 +830,6 @@
                 }
 
 				CAL.cut_record(item.record + id_suffix);				
-				//CAL.arrange_slot("t_" + time_cell + suffix);
 
 				// Bug59353 - fix of appointment overlaps to another user on shared Calendar
 				if (CAL.view == "shared"){
@@ -1776,7 +1765,6 @@
 			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
 		}
 		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
-			//CAL.get("form_settings").reset();
 		});
 		sd.style.display = "block";	 
 		CAL.sharedDialog.render();

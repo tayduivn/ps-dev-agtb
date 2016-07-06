@@ -100,7 +100,6 @@ class SidecarMetaDataUpgrader
             MB_WIRELESSLISTVIEW       => 'wireless.listviewdefs' ,
             MB_WIRELESSBASICSEARCH    => 'wireless.searchdefs' ,
             // Advanced is unneeded since it shares with basic
-            //MB_WIRELESSADVANCEDSEARCH => 'wireless.searchdefs' ,
         ),
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(

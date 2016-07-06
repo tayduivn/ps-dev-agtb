@@ -43,7 +43,6 @@ Studio2 = {
 		//	Activate the layout panels
 		var panels = document.getElementById('panels');
 		Dom.setStyle(panels, "visibility", "hidden");
-		//new Studio2.PanelDD(panels.id,'studio2.panels'); // add the main layout area into PANELS to allow for panel drags to empty areas
 		new DDTarget(panels.id, 'studio2.panels');
 		for (var i=0;i<panels.childNodes.length;i++) {
 			var panel = panels.childNodes[i];
@@ -187,7 +186,6 @@ Studio2 = {
 	*/
 
 	unregisterExpandableField:function( field ){
-		//_write_("received for unregister: "+field.id);
 		if(field==null || typeof(field) == 'undefined'){ return; }
 		if ( this.isExpandable(field) ) {
 			if (this.getColumnWidth( field ) > 1) { this.reduceFieldWidth( field ); }
@@ -198,7 +196,7 @@ Studio2 = {
 		}
 	},
 	isExpandable:function( field ){
-		return field.getAttribute("expandable")!=null && !this.isSpecial(field);//&& field.getAttribute("expandable") == "true";
+        return field.getAttribute('expandable') != null && !this.isSpecial(field);
 	},
 	swapStates:function( src, dest ){
 		var old_src= {state:src.getAttribute("state"), img: src.childNodes[1].src};
@@ -357,7 +355,6 @@ Studio2 = {
 		newPanel.id = Studio2.nextId();
 		// get the panelid for this panel - must be unique in the layout, even across saves
 		// our dynamically assigned DOM ids won't work as any panel given one of these DOM ids could find itself in conflict with a panel created in a later session
-		//var panelIdentifier = 'lbl_panel'+(Studio2.panelNumber ++) ;
 		var panelNumber = (Studio2.panelNumber ++) ;
 		var view = document.getElementById('prepareForSave').view.value;
 		var panelLabel = 'lbl_' + view +  '_panel' + panelNumber;
@@ -425,7 +422,6 @@ Studio2 = {
 		if (element.className.indexOf('le_field') != -1) {
 			if (! Studio2.isSpecial(element)) {
 				var destination = document.getElementById('availablefields');
-//				destination.appendChild(element.parentNode.removeChild(element));
 				destination.appendChild(element);
 				Studio2.resetFieldWidth(element);
 			} else {
@@ -462,7 +458,6 @@ Studio2 = {
 
 	resetFieldWidth: function(field) {
 		YAHOO.util.Dom.setStyle(field,'width',Studio2.fieldwidth + 'px');
-		//Dom.setStyle(field,'width',Studio2.fieldwidth + 'px' );
 	},
 
 	/* a hack function, purely because Firefox has a problem with field widths during the init function */
@@ -770,7 +765,6 @@ Studio2 = {
 
 									if (property.nodeName == 'SPAN') { // a property of a field
 										if (property.attributes.length > 0) {
-//										if (property.hasAttributes) {
 											var type = property.className;
 											if ((type.length>5) && (type.substr(0,5) == 'field') && (property.childNodes.length != 0)) {
 												var value = property.firstChild.nodeValue;

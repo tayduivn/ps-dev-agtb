@@ -14,10 +14,8 @@ var InlineEditor = YUI({combine: true, timeout: 10000, base:"include/javascript/
 	
 	Y.editInPlace = function(id){
 		this.editingId = id;
-		////console.log(this.editingId);
 		var node = Y.one(this.editingId);
 		var value = getEditor(node);
-		////console.log(value);
 		displayEditInPlace(null,{responseText:value}, {
 			id: node.getAttribute('id')
 		});
@@ -127,14 +125,11 @@ var InlineEditor = YUI({combine: true, timeout: 10000, base:"include/javascript/
 	Y.markAsEditable = function(id, field_id){
 		var node = Y.one('#' + id);
 		if(!node){
-			//console.log('did not find ' +  id);
 			return false;
 		}
 		if(node.onclick){
-			//console.log('what');
 			return false;
 		}
-		//console.log('settingup');
 		var parent = node.get('parentNode');
 		parent.addClass('editable');
 		parent.on("inline|click",  function(event){
@@ -144,7 +139,6 @@ var InlineEditor = YUI({combine: true, timeout: 10000, base:"include/javascript/
 	}
 	
 	Y.markListAsEditable = function(ids){
-		////console.log(ids);
 		for(i in ids){
 			if (ids[i].editInPlace) {
 				this.fields[i] = ids[i];

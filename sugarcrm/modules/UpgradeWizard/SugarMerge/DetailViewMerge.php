@@ -64,7 +64,6 @@ class DetailViewMerge extends EditViewMerge{
 
 		$this->customPanelIds = $this->getPanelIds($this->customData[$this->module][$this->viewDefs][$this->panelName]);
 		$this->newFields = $this->getFields($this->newData[$this->module][$this->viewDefs][$this->panelName]);
-		//echo var_export($this->newFields, true);
 		$this->newPanelIds = $this->getPanelIds($this->newData[$this->module][$this->viewDefs][$this->panelName]);
 		$this->mergeFields();
 		$this->mergeTemplateMeta();
@@ -72,4 +71,3 @@ class DetailViewMerge extends EditViewMerge{
 	}
 
 }
-?>

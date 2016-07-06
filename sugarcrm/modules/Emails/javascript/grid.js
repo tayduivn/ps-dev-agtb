@@ -161,7 +161,6 @@ function gridInit() {
 					params['mbox'] = test.substr(6);
 				}
 			}
-			//dataModel.initPaging(urlBase, SUGAR.email2.userPrefs.emailSettings.showNumInList);
 
 			// create the Grid
 			var grid = SUGAR.email2.grid = new YAHOO.SUGAR.SelectionGrid('emailGrid', colModel, dataModel, {

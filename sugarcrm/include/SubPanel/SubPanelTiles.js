@@ -85,9 +85,7 @@ function subp_nav_sidecar(m, i, a, link) {
         }
         //action is not create
         //TODO:`edit` is ignored today (see SP-1618) but we'll want to add action later e.g.:
-        //a = a === 'd' ? '' : 'edit';
-        a = '';
-        url = view.convertToSidecarUrl('index.php?module=' + m + '&action=' + a + '&record=' + i);
+        url = view.convertToSidecarUrl('index.php?module=' + m + '&action=' + '&record=' + i);
         app.router.navigate(url, {trigger: true});
         return false;
     }
@@ -307,11 +305,6 @@ function got_data(args, inline)
 		subpanel.style.display = '';
 		set_div_cookie(subpanel.cookie_name, '');
 
-		if (current_child_field != '' && child_field != current_child_field)
-		{
-			// commented out for now.  this was originally used by tab UI of subpanels
-			//hideSubPanel(current_child_field);
-		}
 		current_child_field = child_field;
 		//reinit action menus
 		$("ul.clickMenu").each(function(index, node){
@@ -352,7 +345,6 @@ function showSubPanel(child_field,url,force_load,layout_def_key)
 		}
 
 		current_subpanel_url = url;
-		// http_fetch_async(url,got_data,request_id++);
 		var returnstuff = http_fetch_sync(url+ '&inline=' + inline + '&ajaxSubpanel=true');
 		request_id++;
 		got_data(returnstuff, inline);
@@ -833,7 +825,6 @@ SUGAR.subpanelUtils.menu = function(){
 			openMenusDelay = eraseTimeout(openMenusDelay);
 			var menuName = id.replace(/Handle/i,'Menu');
 			var menu = getLayer(menuName);
-			//if (menu) menu.className = 'tbButtonMouseOverUp';
 			if (currentMenu){
 				closeAllMenus();
 			}

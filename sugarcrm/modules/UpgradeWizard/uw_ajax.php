@@ -665,8 +665,6 @@ function preflightCheckJsonGetSchemaErrors($persistence) {
 
 	// reset errors if Rechecking
 	if(isset($persistence['sql_errors']))
-		//unset($persistence['sql_errors']);
-
 	echo $out;
 
 	return $persistence;
@@ -820,8 +818,6 @@ function systemCheckJsonCheckFiles($persistence) {
 
 	$isWindows = is_windows();
 	foreach($persistence['files_to_check'] as $file) {
-	//	while($file = array_pop($persistence['files_to_check'])) {
-
 		// admin deletes a bad file mid-check:
 		if(!file_exists($file))
 			continue;

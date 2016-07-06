@@ -21,9 +21,6 @@ function email2init() {
     SUGAR.logger = new YAHOO.widget.LogReader();
 	//END SUGARCRM flav=int ONLY
 
-	//Init Tiny MCE
-    // var tinyConfig = "code,bold,italic,underline,strikethrough,separator,justifyleft,justifycenter,justifyright,justifyfull," +
-    //             "separator,bullist,numlist,outdent,indent,separator,forecolor,backcolor,fontselect,fontsizeselect";
     if (!SUGAR.util.isTouchScreen()) {
  	 tinyMCE.init({
  		 convert_urls : false,
@@ -61,9 +58,6 @@ function email2init() {
 	if (SUGAR.themes.tempHideLeftCol)
     	SUGAR.themes.tempHideLeftCol();
 
-	// add key listener for kb shortcust - disable backspace nav in mozilla/ie
-//	YAHOO.util.Event.addListener(window.document, 'keypress', SUGAR.email2.keys.overall);
-
 	// set defaults for YAHOO.util.DragDropManager
 	YAHOO.util.DDM.mode = 0; // point mode, default is point (0)
 
@@ -77,21 +71,7 @@ function email2init() {
     // initialize and display grid (grid.js)
     gridInit();
     
-    // initialize treeview for folders
-	//onloadTreeinit();
 	SUGAR.email2.folders.rebuildFolders(true);
-	
-	//SUGAR.email2.folders.retrieveTeamInfo();
-	
-    //Setup the Message Box overlay
-    /*Ext.MessageBox.maxWidth = 350;
-    Ext.MessageBox.minProgressWidth = 350;
-
-	///////////////////////////////////////////////////////////////////////////
-	////	CONTEXT MENUS
-	// detailView array
-	SUGAR.email2.contextMenus.detailViewContextMenus = new Object();
-*/
 	var SEC = SUGAR.email2.contextMenus; 
 	
 	//Grid menu
@@ -210,7 +190,6 @@ function email2init() {
 	});
     SEC.frameFoldersContextMenu.addItems([
 		{   text: "<img src='index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=icon_email_check.gif&v="+SUGAR.VERSION_MARK+"'/>" + app_strings.LBL_EMAIL_CHECK,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_ADD_FOLDER + "</i>",
 			onclick: {  fn: function() {
 		        var node = SUGAR.email2.clickedFolderNode;
 		        if (node.data.ieId) {
@@ -218,7 +197,6 @@ function email2init() {
 		    }}
 		},
 		{   text: app_strings.LBL_EMAIL_MENU_SYNCHRONIZE,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_ADD_FOLDER + "</i>",
 			onclick: {  fn: function() {
 		        var node = SUGAR.email2.clickedFolderNode;
 		        if (node.data.ieId) {
@@ -227,22 +205,18 @@ function email2init() {
 		},
 		{
 		    text: app_strings.LBL_EMAIL_MENU_ADD_FOLDER,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_ADD_FOLDER + "</i>",
 		    onclick: {  fn: SUGAR.email2.folders.folderAdd }
 		},
 		{
 		    text: app_strings.LBL_EMAIL_MENU_DELETE_FOLDER,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_DELETE_FOLDER + "</i>",
 		    onclick: {  fn: SUGAR.email2.folders.folderDelete }
 		},
 		{
 		    text: app_strings.LBL_EMAIL_MENU_RENAME_FOLDER,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_RENAME_FOLDER + "</i>",
 		    onclick: {  fn: SUGAR.email2.folders.folderRename }
 		 },
 		 {
 		    text: app_strings.LBL_EMAIL_MENU_EMPTY_TRASH,
-		    //helptext: "<i>" + app_strings.LBL_EMAIL_MENU_HELP_EMPTY_TRASH + "</i>",
 		    onclick: {  fn: SUGAR.email2.folders.emptyTrash }
 		  },
 		 {
@@ -331,8 +305,6 @@ function createTreePanel(treeData, params) {
 	var tree = new YAHOO.widget.TreeView(params.id);
 	var root = tree.getRoot();
 	
-	//if (treeData.nodes && treeData[0].id == "Home")
-	//	treeData = treeData[0];
 	return tree;
 }
 
@@ -343,8 +315,6 @@ function addChildNodes(parentNode, parentData) {
 	for (i in nodes) {
 		if (typeof(nodes[i]) == 'object') {
 			if (nodes[i].data) {
-                // See comment about href below.
-				// nodes[i].data.href = '#';
 				var node = new YAHOO.widget.TextNode(nodes[i].data, parentNode);
 				node.action = nodes[i].data.action;
 			} else {
@@ -357,10 +327,6 @@ function addChildNodes(parentNode, parentData) {
 				if (nodes[i].cls) {
 					nodes[i].className = nodes[i].cls;
 				}
-                // Previously, span was added in the label so it was rendering in the tree.
-                // Default behavior is to wrap in span if no href property, and since this href
-                // doesn't do anything, remove it so that it will be wrapped in spans.
-                // nodes[i].href = "#";
 				
 				// URL Decode the text, so it shows properly
 				nodes[i].text = unescape(nodes[i].text);

@@ -65,7 +65,6 @@ class ViewSchedule extends SugarView
         $smarty->assign('JS_CUSTOM_VERSION', $GLOBALS['sugar_config']['js_custom_version']);
         $smarty->assign('JS_LANGUAGE_VERSION',  $GLOBALS['sugar_config']['js_lang_version']);
 
-        //$this->_displayJavascript();
         $html = $smarty->fetch('modules/Reports/tpls/AddSchedule.tpl');
         echo $html ;
     }

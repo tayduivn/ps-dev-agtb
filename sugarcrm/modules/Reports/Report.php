@@ -181,7 +181,6 @@ class Report
             Report::cache_modules_def_js();
         }
 
-        //_pp($report_def_str);
         $mod_strings = return_module_language($current_language, 'Reports');
 
         $this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))
@@ -258,7 +257,6 @@ class Report
 
         if (!empty($this->report_def['full_table_list'])) {
             $this->full_table_list = $this->report_def['full_table_list'];
-            //_pp($this->full_table_list);
         }
         else
         {
@@ -297,7 +295,6 @@ class Report
                 $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
 
                 $tempFullTableList[$newIndex]['parent'] = 'self';
-                //$this->full_table_list[$old_link]['children'] = array();
 
                 if (isset($this->report_def['link_joins']) && is_array($this->report_def['link_joins']) && in_array($old_link, $this->report_def['link_joins']) || $relationship->relationship_type == 'one-to-many') {
                     $tempFullTableList[$newIndex]['optional'] = 1;
@@ -335,7 +332,6 @@ class Report
                     if (isset($table_data['optional']) && $table_data['optional'] == 1)
                         $tempFullTableList[$newIndex]['optional'] = 1;
                     unset($tempFullTableList[$newIndex]['children']);
-                    //unset($tempFullTableList[$newIndex]['label']);
                     unset($tempFullTableList[$newIndex]['value']);
                     $upgrade_lookup[$table_key] = $newIndex;
                 }
@@ -347,7 +343,6 @@ class Report
                     $tempFullTableList[$newIndex]['parent'] = $upgrade_lookup[$parentLink];
                     $tempFullTableList[$newIndex]['name'] = $tempFullTableList[$upgrade_lookup[$parentLink]]['name'] . " > " . $table_data['module'];
                     unset($tempFullTableList[$newIndex]['children']);
-                    //unset($tempFullTableList[$newIndex]['label']);
                     unset($tempFullTableList[$newIndex]['value']);
                     if (isset($table_data['optional']) && $table_data['optional'] == 1)
                         $tempFullTableList[$newIndex]['optional'] = 1;
@@ -363,7 +358,6 @@ class Report
                 if (isset($table_data['optional']) && $table_data['optional'] == 1)
                     $tempFullTableList[$newIndex]['optional'] = 1;
                 unset($tempFullTableList[$newIndex]['children']);
-                //unset($tempFullTableList[$newIndex]['label']);
                 unset($tempFullTableList[$newIndex]['value']);
                 $upgrade_lookup[$table_key] = $newIndex;
             }
@@ -665,7 +659,6 @@ class Report
                 $tmp[$table_data['module']][$field_def['name']] = 0;
                 $field_def['module'] = $this->full_table_list[$table_key]['bean_label'];
                 $field_def['real_table'] = $this->full_bean_list[$table_key]->table_name;
-                //if ( ! empty($field_def['source']) && $field_def['source'] == 'custom_fields' ) {
                 if (!empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
                                                                                                  && !empty($field_def['ext2']) && !empty($field_def['id']))) && !empty($field_def['real_table'])
                 ) {
@@ -1104,7 +1097,6 @@ class Report
         if (isset($field_def['rel_field'])) {
             $layout_def['rel_field'] = $field_def['rel_field'];
         }
-        //print "REGISTER:".$layout_def['name'].":". $layout_def['type']."<BR>";
     }
 
     function parseUIFiltersDef($filters_def_str, $panels_def_str)
@@ -1149,7 +1141,6 @@ class Report
 
     function filtersIterate($filters, &$where_clause)
     {
-        //$where_arr = array();
         $where_clause .= '(';
         $operator = $filters['operator'];
         $isSubCondition = 0;
@@ -1174,7 +1165,6 @@ class Report
                 }
                 $this->register_field_for_query($current_filter);
                 $select_piece = "(" . $this->layout_manager->widgetQuery($current_filter) . ")";
-                //$where_arr[count($where_arr)] = $select_piece;
                 $where_clause .= $select_piece;
             }
             if ($isSubCondition == 1) {
@@ -1316,13 +1306,6 @@ class Report
         if (empty($layout_def['name']))
             return $table_key;
 
-        // workaround for Bug Number: 7635
-        // column_key returns as             [column_key] => self:weighted_amount:weighted_amount
-        /*
-        if($layout_def['name'] == 'weighted_sum' || $layout_def['name'] == 'weighted_amount') {
-            return 'self';
-        }
-        */
         return $table_key . ":" . $layout_def['name'];
     }
 
@@ -1342,14 +1325,7 @@ class Report
 
     function getRelatedLinkAliasName($linked_field)
     {
-
-        /*
-        return str_replace('link_','l',
-                           str_replace('self_','',$linked_field)).'_l';
-                           */
         return $this->alias_lookup[$linked_field] . '_1';
-        //return $linked_field;
-
     }
 
     function has_summary_columns()
@@ -1604,7 +1580,6 @@ class Report
             }
         }
         $this->summary_order_by = '';
-        //$this->summary_order_by_arr= array();
 
         // Only do this for Summation reports.
         if ($this->report_def['report_type'] == 'summary' && empty($this->report_def['display_columns'])) {
@@ -1638,7 +1613,6 @@ class Report
         if (!empty($this->report_def['group_defs']) && is_array($this->report_def['group_defs'])) {
             $this->group_by_arr = array();
             $this->group_order_by_arr = array();
-            // $group_column = $this->report_def['group_defs'][0];
             foreach ($this->report_def['group_defs'] as $group_column)
             {
                 $this->layout_manager->setAttribute('context', 'GroupBy');
@@ -1744,7 +1718,6 @@ class Report
                 $link_name = $table_def['link_def']['name'];
                 $rel_name = $table_def['link_def']['relationship_name'];
                 $linked_fields = $this->full_bean_list[$table_def['parent']]->get_linked_fields();
-                //                    $link_name = '';
                 foreach ($linked_fields as $tmp_link_name => $link)
                 {
                     if ($link['name'] == $link_name) {
@@ -1804,7 +1777,6 @@ class Report
                             $focus, $params['join_table_alias']);
                         // End ACL check
                     }
-                    //echo("<br>Join for $link_name (parent: ".$table_def['parent']."):<br>".$this->from."<pre>".print_r($params,true)."</pre>");
                 }
                 else
                 {
@@ -1950,11 +1922,6 @@ class Report
         if (!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
             $groups = array();
             // FIXME: see if we need to handle NULLs on GROUP BY
-            //        foreach ( $this->group_by_arr as $group_by ) {
-            //            $groups[] = $this->db->convert($group_by, "IFNULL", array("''"));
-            //        }
-   			// to be sorted by the group by
-
             $query .= " GROUP BY " . join(",", $this->group_by_arr);
         }
 
@@ -1980,7 +1947,6 @@ class Report
     {
         $this->layout_manager->setAttribute('list_type', 'summary');
         // FIXME: this needs to be fixed.. turn on summary sorting
-        //  $this->layout_manager->setAttribute('no_sort','1');
         $header_row = $this->get_header_row_generic('summary_columns');
         return $header_row;
     }
@@ -2407,7 +2373,6 @@ class Report
 
             //  for charts
             if ($column_field_name == 'summary_columns' && $this->do_chart) {
-                //_pp($display);
                 $raw_value = "";
                 $keys = array_keys($fields);
                 foreach ($this->report_def['summary_columns'] as $index => $column) {
@@ -2422,7 +2387,6 @@ class Report
                     'key' => $display_column['column_key'],
                     'raw_value' => $raw_value
                 );
-                //_pp($cell_arr);
                 array_push($chart_cells, $cell_arr);
             }
 
@@ -2663,7 +2627,7 @@ class Report
         } else if(isset($field_def['rname']) && isset($extModule->field_defs[$field_def['rname']])) {
          	$select_piece = $secondaryTableAlias . ".{$field_def['rname']}";
         } else {
-            $select_piece = $secondaryTableAlias . '.name'; //. $secondaryTableAlias.'_name';
+            $select_piece = $secondaryTableAlias . '.name';
         }
 
         $select_piece .= $add_alias ? " {$secondaryTableAlias}_name" : ' ';

@@ -19,7 +19,6 @@ var delayTime = 75;					// ms for menu open delay
 
 
 function eraseTimeout(tId) {
-	//if (tId != null)
 	window.clearTimeout(tId);
 	return null;
 }
@@ -28,7 +27,6 @@ function tbButtonMouseOverOrig(id){
 	closeMenusDelay = eraseTimeout(closeMenusDelay);
 	var menuName = id.replace(/Handle/i,'Menu');
 	var menu = getLayer(menuName);
-	//if (menu) menu.className = 'tbButtonMouseOverUp';
 	if (currentMenu){
 		closeAllMenus();
 	}
@@ -44,7 +42,6 @@ function showMenu(id,top,left,leftOffset){
 	openMenusDelay = eraseTimeout(openMenusDelay);
 	var menuName = id.replace(/Handle/i,'Menu');
 	var menu = getLayer(menuName);
-	//if (menu) menu.className = 'tbButtonMouseOverUp';
 	if (currentMenu){
 		closeAllMenus();
 	}
@@ -55,10 +52,6 @@ function showSubMenu(id){
 	closeMenusDelay = eraseTimeout(closeMenusDelay);
 	var menuName = id.replace(/Handle/i,'Menu');
 	var menu = getLayer(menuName);
-//	if (currentMenu){
-//		closeMenus();
-//	}
-//	popupMenu(id, menu);
 	popupSubMenu(id, menu);
 }
 
@@ -91,7 +84,6 @@ function popupSubMenu(handleID, menu){
 	if (menu){
 		var menuHandle = getLayer(handleID);
 		var p=menuHandle;
-		//var top = p.offsetHeight, left = 0;
 		var top = 0, left = p.offsetWidth;
 		while(p&&p.tagName.toUpperCase()!='BODY'){
 			top+=p.offsetTop;
@@ -102,31 +94,13 @@ function popupSubMenu(handleID, menu){
 			top -= 3;
 			left -= 10;
 		}
-/*
-		if (menu.isSubMenu){
-			try{
-				if (blnNetscape6){
-					left+=(getLayer(menu.parentid).offsetWidth - 4);
-				}else{
-					left+=(getLayer(menu.parentid).clientWidth - 8);
-				}
-			}catch(e){
-			}
-		}else{
-			top += menuItem.offsetHeight;
-		}
-*/
-		//menu.x = left;
-		//menu.y = top;
 		setMenuVisible(menu, left, top, true);
-		//fixWidth(paneID, menu);
 	}
 }
 
 function closeMenusOrig(){
 	if (currentMenu){
 		setMenuVisibility(currentMenu, false);
-//		currentMenu = null;
 	}
 }
 
@@ -181,63 +155,29 @@ function closeAllMenus(){
 }
 
 function setMenuVisible(menu, x, y, isSubMenu){
-/*
-   var id = menu.id;
-   var left=0;
-   var top=0;
-   var menuItem = menu.getMenuItemElm();
-
-   if (menuItem && menu){
-      if (menu.isTopMenu){
-         menuItem.className = 'tbButtonMouseDown';
-      }
-   }
-*/
 	if (menu){
-		//menu.x = left;
-		//menu.y = top;
 		if (isSubMenu){
 			if (menu.getAttribute('parentid') == currentMenu.getAttribute('parentid')){
-				//menuStack.pop();
 				menuPop();
 				setMenuVisibility(currentMenu, false);
 			}
 		}else{
-			//menuStack.pop();
 			menuPop();
 			setMenuVisibility(currentMenu, false);
 		}
 		currentMenu = menu;
-		//menuStack.push(menu);
 		menuPush(menu);
 		setMenuVisibility(menu, true, x, y);
 	}
 }
 
 function getLayer(layerid){
-/*
-	if (document.layers && layerid){
-		if (document.layers[layerid]) return document.layers[layerid];
-	}
-	if (document.links && layerid){
-		if (document.links[layerid]) return document.links[layerid];
-	}
-	if (document.all && layerid){
-		if (document.all(layerid)) return document.all(layerid);
-	}
-*/
 	return document.getElementById(layerid);
 }
 
 function setMenuVisibility(menu, on, x, y){
 	var parent = menu;
 	if (menu){
-/*
-		menu.visible = on;
-		setLayer(menu.id, !menu.visible, menu.x, menu.y);
-		setLayer(menu.id, !menu.visible, 0, 0);
-		menu.visible = on;
-*/
 		setLayer(menu.id, !on, x, y);
 		if (is.ie){
 			if (!on){
@@ -248,50 +188,7 @@ function setMenuVisibility(menu, on, x, y){
 				hideElement("SELECT", x, y, menu.offsetWidth, menu.offsetHeight);
 			}
 		}
-/*
-		setLayer(menu.id, !menu.visible, 0, 0);
-		var menuWidth, menuHeight;
-		var menuLayer = getLayer(menu.id);
-		if (menuLayer){
-			if (blnIE55){
-				menuWidth = menuLayer.clientWidth;
-				menuHeight = menuLayer.clientHeight;
-			}else{
-				menuWidth = menuLayer.offsetWidth;
-				menuHeight = menuLayer.offsetHeight;
-			}
-			if (menu.x+menuWidth > clientWindowWidth){
-				menu.x = clientWindowWidth - menuWidth - 25;
-				if (menu.x < 10){
-					menu.x = 10;
-				}
-			}
-			if (menu.y+menuHeight > clientWindowHeight){
-				menu.y = clientWindowHeight - menuHeight - 25;
-				if (menu.y < 10){
-					menu.y = 10;
-				}
-			}
-			setLayer(menu.id, !menu.visible, menu.x, menu.y);
-		}
-*/
 	}
-/*
-	var parentid = menu.parentid;
-	while (parentid){
-		parent = getMenu(menu.paneID, parentid);
-		if (parent){
-			parent.visible = on;
-			setLayer(parent.id, !parent.visible, parent.x, parent.y);
-			parentid = parent.parentid;
-			if (on == false) currentMenu = parent;
-		}else{
-			parentid = null;
-		}
-	}
-	}
-	return parent;
-*/
 }
 
 function menuPop(){
@@ -347,15 +244,11 @@ function setLayerElm(layer, hideit, x, y){
 	if (layer && layer.style){
 		if (hideit){
 			layer.style.visibility='hidden';
-			//layer.style.display='none';
 		}else{
 			layer.style.display='block';
 			layer.style.visibility='visible';
 		}
 		if (x >=0 && x != ""){
-            //alert(layer.id+': '+x+', '+y+'\n'+layer.offsetLeft+', '+layer.offsetTop);
-			//layer.style.left=x;
-			//layer.style.top=y;
 			layer.style.left = x+'px';
 		}
 		if (y >= 0 && y != "") {
@@ -430,7 +323,6 @@ function hideElement(elmID,x,y,w,h){
 			;
 		else {
 			obj.style.visibility = "hidden";
-			//hiddenElmStack.push(obj);
 		}
 	}
 }
@@ -465,7 +357,6 @@ function Is (){
     this.moz1_1 = false;
     this.moz1_1up = false;
     if (this.nav6up){
-//    if (this.nav){
        myRegEx = new RegExp("rv:\\d*.\\d*.\\d*");
        //myFind = myRegEx.exec("; rv:9.10.5)");
        myFind = myRegEx.exec(agt);

@@ -34,14 +34,12 @@ StudioTabGroup.prototype.editTabGroupLabel = function (id, done){
 		document.getElementById('tabother_'+id).style.display = 'none';
 		document.getElementById('tablabel_'+id).focus();
 		this.lastEditTabGroupLabel = id;
-		//Ext.dd.DragDropMgr.lock();
 	}else{
 		this.lastEditTabGroupLabel = -1;
 		document.getElementById('tabname_'+id).innerHTML = escape(document.getElementById('tablabel_'+id).value);
 		document.getElementById('tabname_'+id).style.display = '';
 		document.getElementById('tablabel_'+id).style.display = 'none';
 		document.getElementById('tabother_'+id).style.display = '';
-		//Ext.dd.DragDropMgr.unlock();
 	}
 }
 
@@ -77,13 +75,11 @@ StudioTabGroup.prototype.editTabGroupLabel = function (id, done){
 					input.name= 'group_'+ j + '[]';
 					input.value = studiotabs.tabLabelToValue[studiotabs.subtabModules[items[i].id]];
 					form.appendChild(input);
-//					if(this.widths[items[i].id] != null) {
 					var winput = document.createElement('input');
 					winput.type='hidden';
 					winput.name= input.value + 'width';
 					winput.value = "width=" + document.getElementById(items[i].id+'width').innerHTML;
 					form.appendChild(winput);
-//					}
 				}
 				}
 		  	}

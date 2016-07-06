@@ -147,7 +147,6 @@ ygDDListStudio.prototype.onDrag = function(e, id) {
 };
 
 ygDDListStudio.prototype.onDragOver = function(e, id) {
-	// this.logger.debug(this.id.toString() + " onDragOver " + id);
 	var el;
 		 if(this.lastNode){
 			this.lastNode.parentNode.removeChild(this.lastNode);

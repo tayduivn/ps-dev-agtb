@@ -59,4 +59,3 @@ function validatePortalName(e) {
 	   var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php?module=Contacts&action=ValidPortalUsername&portal_name=' + portalName.value, {success: callbackFunction, failure: callbackFunction});
     }
 }
-

@@ -59,6 +59,5 @@ SUGAR.email2.templates['displayOneEmail'] =
 '				<tr>{email.attachments}</tr>' +
 '			</table>' +
 '			<div id="displayEmailFrameDiv{idx}" name="displayEmailFrameDiv{idx}"><iframe id="displayEmailFrame{idx}" src="modules/Emails/templates/_blank.html" width="100%" height="100%" frameborder="0"></iframe></div>' +
-//'                           {email.description}' +
 '</div>'
 ;

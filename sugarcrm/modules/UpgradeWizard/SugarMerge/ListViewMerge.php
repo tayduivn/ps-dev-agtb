@@ -123,7 +123,6 @@ class ListViewMerge extends EditViewMerge{
 				$loc = $this->customFields[$field]['loc'];
 				$loc['source'] = 'custom';	
 
-				//echo var_export($loc, true);
 				//but we still merge the meta data of the three
 				$this->mergedFields[$field] = array(
 					'data'=>$this->mergeField($this->originalFields[$field]['data'], $this->newFields[$field]['data'], $this->customFields[$field]['data']), 
@@ -141,7 +140,6 @@ class ListViewMerge extends EditViewMerge{
 					'loc'=>$this->customFields[$field]['loc']);
 				
 				$this->mergedFields[$field]['loc']['source'] = 'custom';
-				//echo var_export($this->mergedFields[$field], true);
 			}
 			
 			//then we clear out the field from 

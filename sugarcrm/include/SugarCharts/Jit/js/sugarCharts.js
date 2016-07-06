@@ -14,7 +14,6 @@
 function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
 
-    //Bug#45831
     if(document.getElementById(chartId) == null) {
         return false;
     }
@@ -370,23 +369,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         lineChart.loadJSON(data);
                         //end
 
-                        /*
-                         var list = $jit.id('id-list'),
-                         button = $jit.id('update'),
-                         orn = $jit.id('switch-orientation');
-                         //update json on click 'Update Data'
-                         $jit.util.addEvent(button, 'click', function() {
-                         var util = $jit.util;
-                         if(util.hasClass(button, 'gray')) return;
-                         util.removeClass(button, 'white');
-                         util.addClass(button, 'gray');
-                         barChart.updateJSON(json2);
-                         });
-                         */
                         //dynamically add legend to list
-
                         var list = SUGAR.charts.generateLegend(lineChart, chartId);
-
 
                         //save canvas to image for pdf consumption
                         $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
@@ -580,19 +564,6 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         funnelChart.loadJSON(data);
                         //end
 
-                        /*
-                         var list = $jit.id('id-list'),
-                         button = $jit.id('update'),
-                         orn = $jit.id('switch-orientation');
-                         //update json on click 'Update Data'
-                         $jit.util.addEvent(button, 'click', function() {
-                         var util = $jit.util;
-                         if(util.hasClass(button, 'gray')) return;
-                         util.removeClass(button, 'white');
-                         util.addClass(button, 'gray');
-                         barChart.updateJSON(json2);
-                         });
-                         */
                         //dynamically add legend to list
                         var list = SUGAR.charts.generateLegend(funnelChart, chartId);
 

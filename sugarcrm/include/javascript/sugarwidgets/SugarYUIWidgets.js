@@ -288,7 +288,6 @@ YAHOO.extend(sw.DragDropTable, YAHOO.widget.ScrollingDataTable, {
  */
 sw.RowDD = function(oDataTable, oRecord, elTr) {
 	if(oDataTable && oRecord && elTr) {
-		//sw.RowDD.superclass.constructor.call(this, elTr);
 		this.ddtable = oDataTable;
         this.table = oDataTable.getTableEl();
         this.row = oRecord;
@@ -302,7 +301,6 @@ sw.RowDD = function(oDataTable, oRecord, elTr) {
 
 
 YAHOO.extend(sw.RowDD, YAHOO.util.DDProxy, {
-//    _removeIdRegex : /(<.[^\/<]*)id\s*=\s*['|"]?\w*['|"]?([^>]*>)/gim,
     _removeIdRegex : new RegExp("(<.[^\\/<]*)id\\s*=\\s*['|\"]?\w*['|\"]?([^>]*>)", "gim"),
 
 	_resizeProxy: function() {
@@ -328,7 +326,6 @@ YAHOO.extend(sw.RowDD, YAHOO.util.DDProxy, {
 		if (clickEl.tagName.toUpperCase() == "TR")
             tableWrap = true;
 		dragEl.innerHTML = "<table>" + clickEl.innerHTML.replace(this._removeIdRegex, "$1$2") + "</table>";
-    	//Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
         Dom.addClass(dragEl, "yui-dt-liner");
         Dom.setStyle(dragEl, "height", (clickEl.clientHeight - 2) + "px");
         Dom.setStyle(dragEl, "backgroundColor", Dom.getStyle(clickEl, "backgroundColor"));
@@ -534,7 +531,6 @@ YAHOO.extend(sw.Tree, YAHOO.widget.TreeView, {
 	},
 	handleTreeNodeDataRequest : function(o) {
 		var parentNode = o.argument.parentNode;
-		//parent.tree.removeChildren(parentNode);
 		var resp = YAHOO.lang.JSON.parse(o.responseText);
 		if (resp.tree_data.nodes) {
 			for (var i = 0; i < resp.tree_data.nodes.length; i++) {

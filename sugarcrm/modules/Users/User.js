@@ -52,9 +52,6 @@ function checkInboundEmailSettings() {
 	} else if(port.value != '') {
 		doCheck = true;
 	}
-	/* else if(inbox.value != '') {
-		doCheck = true;
-	}*/
 
 	if(doCheck == true) {
 		if(url.value == '' || url.value == 'undefined') {

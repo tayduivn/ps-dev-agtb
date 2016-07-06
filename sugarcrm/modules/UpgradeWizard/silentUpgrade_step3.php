@@ -124,7 +124,6 @@ if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
     $allModFiles = array();
     $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'themes',$allModFiles);
     foreach($allModFiles as $file){
-        //$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
         if(file_exists($file)){
             unlink($file);
         }

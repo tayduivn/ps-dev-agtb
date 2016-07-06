@@ -106,15 +106,7 @@ function Datetimecombo (datetime, field, timeformat, tabindex, showCheckbox, che
  * using the eval() method when the widget is loaded.
  */
 Datetimecombo.prototype.jsscript = function(callback) {
-	//text = '\n<script language="javascript" type="text/html">';
 	text = '\nfunction update_' + this.fieldname + '(calendar) {';
-	/*
-	text += '\nif(calendar != null) {';
-	text += '\ncalendar.onUpdateTime();';
-	text += '\ncalendar.onSetTime();';
-	text += '\ncalendar.hide();';
-	text += '\n}'
-	*/
     text += '\nd = YAHOO.util.Selector.query("input#' + this.fieldname + '_date")[0].value;';
     text += '\nh = YAHOO.util.Selector.query("select#' + this.fieldname + '_hours")[0].value;';
     text += '\nm = YAHOO.util.Selector.query("select#' + this.fieldname + '_minutes")[0].value;';
@@ -128,7 +120,6 @@ Datetimecombo.prototype.jsscript = function(callback) {
     text += '\nYAHOO.util.Selector.query("select#' + this.fieldname + '")[0].value = newdate;';
     text += '\n' + callback;
     text += '\n}';
-    //text += '\n</script>';
     return text;
 }
 
@@ -175,7 +166,6 @@ Datetimecombo.prototype.html = function(callback) {
 	
 	if(this.showCheckbox) {
 	    text += '\n<input style="visibility:hidden;" type="checkbox" name="' + this.fieldname + '_flag" id="' + this.fieldname + '_flag" tabindex="' + this.tabindex + '" onchange="combo_' + this.fieldname + '.update(); ' + callback + '" ' + (this.checked ? 'CHECKED' : '') + '>';
-	    //text += '&nbsp;' + SUGAR.language.get("app_strings", "LBL_LINK_NONE");	
 	}
 
     text += '</span>';

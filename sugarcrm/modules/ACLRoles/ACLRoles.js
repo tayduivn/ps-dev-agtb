@@ -65,6 +65,4 @@ var aclviewer = function(){
 	
 			
 	};
-
-
 }();

@@ -126,8 +126,6 @@ function insert_variable_html(text) {
 	var inst = tinyMCE.getInstanceById("body_text");
 	if (inst)
                     inst.getWin().focus();
-	//var html = inst.getContent(true);
-	//inst.setContent(html + text);
 	inst.execCommand('mceInsertRawHTML', false, text);
 }
 

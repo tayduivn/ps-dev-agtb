@@ -18,7 +18,6 @@ var remove_all_fields = SUGAR.language.get('app_strings', 'LBL_REMOVE_ALL_LEAD_F
 function addGrids(form_name) {
     //check if any vals selected in grid3 and grid4
     // if none then prompt for validation
-    //alert(check_form('WebToLeadCreation'));
   if(!check_form('WebToLeadCreation')){
   	  return false;
   	//stop
@@ -31,7 +30,7 @@ function addGrids(form_name) {
       addCols(grid3,'colsFirst',webFormDiv);
       addCols(grid4,'colsSecond',webFormDiv);  
       return true;           
-  }      	                                       	  //return check_form(form_name);	
+    }
 }
 function checkFields(REQUIRED_LEAD_FIELDS,LEAD_SELECT_FIELDS){
      grid2 = SUGAR_GRID_grid0;
@@ -95,7 +94,6 @@ function askLeadQ(direction,REQUIRED_LEAD_FIELDS,LEAD_SELECT_FIELDS){
    	}
    	return retStr.substring(0,retStr.lastIndexOf(','));
  }
-//            grid4.render();
 
 function displayAddRemoveDragButtons(Add_All_Fields,Remove_All_Fields){
     var addRemove = document.getElementById("lead_add_remove_button");    

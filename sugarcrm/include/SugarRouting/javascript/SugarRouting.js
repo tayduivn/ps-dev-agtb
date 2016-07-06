@@ -9,26 +9,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-/*
-if(!SUGAR) {
-	SUGAR = new Object();
-}
-
-// lazy-load YUI XHR lib
-if(!YAHOO.util.Connect) {
-	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	script.src = 'include/javascript/yui/connection.js';
-	document.getElementsByTagName('head')[0].appendChild(script);
-}
-*/
-
-
-
 /**
  * Core SugarRouting UI and XHR class
  */
-
 SUGAR.routing = {
 	actions : new Object(),
 	rules : new Object(),
@@ -75,7 +58,6 @@ SUGAR.routing.handleDependentDropdown = function(el, focusDD) {
 	 */
 	var index = el.id.slice(el.id.indexOf("::") + 2, el.id.indexOf(":::"));
 	var actionIndex = index / 100;
-//	var elementRow = el.boxObject.parentBox;
 	var elementRow = el.parentNode;
 	var elementIndex = el.id.slice(el.id.indexOf(":::") + 3, el.id.indexOf(":-:"));
 
@@ -98,11 +80,7 @@ SUGAR.routing.handleDependentDropdown = function(el, focusDD) {
 			}
 		}
 		SUGAR.dependentDropdown.generateElement(focusElement, elementRow, index, elementIndex);
-	} else {
-		//BEGIN SUGARCRM flav=int ONLY
-		//debugger;
-		//END SUGARCRM flav=int ONLY
-	}
+    }
 }
 
 SUGAR.routing.utils = {
@@ -153,7 +131,6 @@ SUGAR.routing.xhr = {
 		// Failure handler
 		SUGAR.showMessageBox('Exception occurred...', o.statusText);
 		debugger;
-		//document.getElementById(this.target).innerHTML = o.statusText;
 	},
 
 	/**
@@ -542,7 +519,6 @@ SUGAR.routing.ui = {
 			var nextRow = row.nextSibling;
 	
 			var nextRowIndex = parseFloat(nextRow.id.substr(nextRow.id.search(/\d/)));
-			//var insertIndex = Math.floor(((nextRowIndex - focusRowIndex) / 2) + focusRowIndex);
 			var insertIndex = ((nextRowIndex - focusRowIndex) / 2) + focusRowIndex;
 		} else {
 			var insertIndex = focusRowIndex + 100;

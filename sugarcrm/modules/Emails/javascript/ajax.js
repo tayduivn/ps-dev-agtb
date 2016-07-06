@@ -289,7 +289,6 @@ var AjaxObject = {
         try {
             ret = YAHOO.lang.JSON.parse(o.responseText);
             SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-            //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
         } catch(err) {
             if (o.responseText) {
                 SUGAR.showMessageBox(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
@@ -334,7 +333,6 @@ var AjaxObject = {
 	/**
 	 */
 	settingsFolderRefresh : function(o) {
-		//SUGAR.email2.accounts.rebuildFolderList(); // refresh frameFolder
 		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		var user = document.getElementById('userFolders');
 
@@ -358,9 +356,6 @@ var AjaxObject = {
 				YAHOO.util.Connect.abort(this.currentRequestObject, null, false);
 			}
 		}
-		//BEGIN SUGARCRM flav=int ONLY
-		//this.trail.push(args);
-		//END SUGARCRM flav=int ONLY
 
         // add CSRF form token
         if (args && args.length > 0) {
@@ -524,7 +519,6 @@ AjaxObject.accounts = {
 	           SUGAR.hideMessageBox();
 	           SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_TIMEOUT, 'alert');
 	           SUGAR.email2.accounts.totalMsgCount = -1;
-               //SUGAR.email2.folders.rebuildFolders();
                done = true;
 	       }
 
@@ -956,8 +950,7 @@ AjaxObject.detailView = {
                 buttons : [{
                 	text: app_strings.LBL_EMAIL_ARCHIVE_TO_SUGAR, isDefault: true, handler: function(){
                 		AjaxObject.detailView.getImportAction(SED.importDialog.ret); }
-                }]//,
-                //scroll : true
+                }]
             });
             SED.importDialog.setHeader(app_strings.LBL_EMAIL_IMPORT_SETTINGS);
             SED.importDialog.setBody("");
@@ -975,7 +968,6 @@ AjaxObject.detailView = {
             SED.importDialog.renderEvent.subscribe(function() {
             	var iev = YAHOO.util.Dom.get("ImportEditView");
             	if (iev) {
-            		//this.body.style.height = (iev.clientHeight + 10) + "px";
             		this.body.style.width = "600px";
             	}
             }, SED.importDialog);
@@ -1000,7 +992,6 @@ AjaxObject.detailView = {
         var teamIdsArray = SUGAR.collection.prototype.getTeamIdsfromUI('ImportEditView', 'team_name');
 		if (teamIdsArray != null && teamIdsArray.length > 0)   {
             get = get + "&team_ids=" + teamIdsArray.join(",") + "&primary_team_id=" + SUGAR.collection.prototype.getPrimaryTeamidsFromUI('ImportEditView', 'team_name');
-            //var team_id = editView.team_id.value;
         }
         var selTeamIdsArray = SUGAR.collection.prototype.getSelectedTeamIdsFromUI('ImportEditView', 'team_name');
         if (selTeamIdsArray != null && selTeamIdsArray.length > 0) {
@@ -1008,7 +999,6 @@ AjaxObject.detailView = {
         }
         if (editView.assigned_user_id != null) {
             get = get + "&user_id=" + editView.assigned_user_id.value
-            //var user_id = editView.assigned_user_id.value;
         }
         var parent_id = editView.parent_id.value;
         var parent_type = editView.parent_type.value;
@@ -1158,10 +1148,6 @@ AjaxObject.detailView.callback = {
 		scope	: AjaxObject
 	}
 };
-
-
-
-
 
 AjaxObject.folders = {
 	/**
@@ -1338,7 +1324,6 @@ var callbackFolderDelete = {
 		        	SUGAR.email2.tree.removeNode(node, true);
 		    }
 			SUGAR.hideMessageBox();
-			//SUGAR.email2.folders.loadSettingFolder();
 		} else {
 			SUGAR.hideMessageBox();
 			SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorMessage, 'alert');
@@ -1376,7 +1361,6 @@ var callbackFolderUpdate = {
 };
 var callbackFolders = {
 	success	: AjaxObject.folders.rebuildFolders,
-	//success : void(true),
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
 	scope	: AjaxObject
@@ -1478,12 +1462,6 @@ var callbackDeleteSignature = {
 	timeout	: AjaxObject.timeout,
 	scope	: AjaxObject
 };
-/*var callbackMoveEmails = {
-    success : function(o) { SUGAR.email2.listView.moveEmailsCleanup(o) },
-    failure : AjaxObject.handleFailure,
-    timeout : AjaxObject.timeout,
-    scope   : AjaxObject
-}*/
 var callbackOutboundSave = {
 	success	: AjaxObject.accounts.saveOutboundCleanup,
 	failure	: AjaxObject.handleFailure,
@@ -1593,7 +1571,6 @@ var callbackReplyForward = {
 			}
 		}
 
-		//SUGAR.email2.innerLayout.regions.center.getPanel('composeLayout' + idx).setTitle(a.name);
 		if (a.parent_name != null && a.parent_name != "") {
 			document.getElementById('data_parent_name' + idx).value = a.parent_name;
 		}

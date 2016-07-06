@@ -111,7 +111,6 @@
         $('#states5').select2({
             width: '100%',
             minimumResultsForSearch: 7,
-            //closeOnSelect: false,
             containerCssClass: 'select2-choices-pills-close'
         });
 
@@ -125,13 +124,6 @@
             },
             escapeMarkup: function(m) { return m; }
         });
-
-        //
-        /*$("select.select2").each(function(){
-            $this = $(this),
-                ctor = getSelect2Constructor($this);
-            //$this.select2( ctor );
-        });*/
 
         $('.error .select .error-tooltip').tooltip({
             trigger: 'click',

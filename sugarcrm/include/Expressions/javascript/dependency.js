@@ -1115,7 +1115,6 @@ SUGAR.forms._performRangeReplace = function(expression)
 
 			// construct the range
 			var result = this.generateRange(prefix, this.valueReplace(start), this.valueReplace(end));
-			//var result = this.generateRange(prefix, start, end);
 
 			// now perform the replace
 			if ( typeof(end) == 'undefined' )

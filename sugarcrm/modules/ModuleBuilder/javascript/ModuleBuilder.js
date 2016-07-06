@@ -72,9 +72,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			Connect.method = 'POST';
 			Connect.timeout = 300000; 
 			
-			//Setup and read cookie settings
-			//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-			
 			if (SUGAR.themes.tempHideLeftCol)
 				SUGAR.themes.tempHideLeftCol();
 			
@@ -442,7 +439,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			save_url_for_current_view: null,
 			popup_window: null,
 			setupState: function(){
-				//ModuleBuilder.state.popup();
 				document.body.setAttribute("onclose", "ModuleBuilder.state.popup(); ModuleBuilder.state.popup_window.show()");
 				return;
 			},
@@ -896,7 +892,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					children[i].onmouseover = function(){
 						ModuleBuilder.helpToggle(this.id)
 					};
-					//children[i].onmouseover = function(){alert(this.id)};
 					children[i].onmouseout = function(){
 						ModuleBuilder.helpToggle('default')
 					};
@@ -1734,7 +1729,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
                         module:"ModuleBuilder",
                         action:"visibilityeditor",
                         onSave:"function(){Ext.getDom('"+ targetId + "').value = Ext.getCmp('visibilityEditor').commit();Ext.getCmp('visibilityEditorWindow').close();}",
-                        //onLoad:"function(){Ext.getCmp('visibilityEditorWindow').center();}",
                         onClose:"function(){Ext.getCmp('visibilityEditorWindow').close();}",
                         view_module:ModuleBuilder.module,
                         view_package:ModuleBuilder.MBpackage,

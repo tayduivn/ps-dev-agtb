@@ -32,17 +32,5 @@ $dashletData['MyReportsDashlet']['columns'] = array('name' => array('width'   =>
                                                                 'orderBy' => 'report_type',
                                                                 'related_fields' => array('report_type'),
                                                                 ),
-                                                         /*
-                                                          'team_name' => array('width'   => '15', 
-                                                                               'label'   => 'LBL_LIST_TEAM',
-                                                                               'default' => true,
-                                                                               'related_fields' => array('team_id'),
-                                                                               'orderBy' => 'team_id'),
-                                                          'assigned_user_name' => array('width'   => '8', 
-                                                                                        'label'   => 'LBL_LIST_ASSIGNED_USER',
-                                                                                        'default' => true,
-                                                                                        
-                                                                                        'orderBy' => 'assigned_user_id'),
-                                                           */
                                                            );
 ?>

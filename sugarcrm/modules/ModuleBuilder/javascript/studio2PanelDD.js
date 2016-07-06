@@ -51,7 +51,6 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
     endDrag: function(e) {
         ModuleBuilder.state.markAsDirty();
         Studio2.clearScrollObj();
-//  	alert("endDrag");
      
         var srcEl = this.getEl();
         var proxy = this.getDragEl();      
@@ -76,7 +75,6 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
         	YAHOO.util.Dom.setStyle(proxy, "visibility", "");
         	YAHOO.util.Dom.setStyle(srcEl, "display",""); // display!=none for getXY to work
 	        
-			//Ext.get(proxy).alignTo(srcEl, 'tl', null, {callback:function(){
         	YAHOO.util.Dom.setStyle(proxyid, "visibility", "hidden");
         	YAHOO.util.Dom.setStyle(thisid, "visibility", "");
 		
@@ -131,7 +129,6 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
     },
 
 	onInvalidDrop: function(e) {
-//		alert("invalid");
 		var srcEl = this.getEl();
 		var dragEl = this.getDragEl();
 		dragEl.innerHTML = '';
@@ -140,15 +137,12 @@ YAHOO.extend(Studio2.PanelDD, YAHOO.util.DDProxy, {
 	},
 	
     onDragDrop: function(e, id) {
-//		alert("ondragdrop");
-		
 		var srcEl = this.getEl();
 		var destEl = document.getElementById(id); // where this element is being dropped
 		
 		// if source was in a panel (not toolbox) and destination is the delete area then remove this element
 		if ((Studio2.establishLocation(srcEl) == 'panels') && (Studio2.establishLocation(destEl) == 'delete')) {
 			this.deletePanel = true;
-			//Studio2.removeElement(srcEl);
 		}
     },
 

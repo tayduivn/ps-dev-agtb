@@ -185,9 +185,7 @@
                     model.set({
                         parent_type : "Accounts",
                         parent_id : parentModel.get("account_id"),
-                        parent_name : parentModel.get("account_name")/*,
-                        contact_id : parentModel.get("id"),
-                        contact_name : parentModel.get("full_name")*/
+                        parent_name: parentModel.get('account_name')
                     });
                 }
             }

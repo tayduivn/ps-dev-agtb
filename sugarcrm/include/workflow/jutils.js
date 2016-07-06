@@ -59,11 +59,9 @@ function togglefields(rel_iframe, fields_iframe, base_module){
 		iframe_object.getElementById('target_dropdown').value !=''
 	
 	){
-		//alert('use_related_module');
 		var rel_value = iframe_object.getElementById('target_dropdown').value;
 		updatedroplist('fields_iframe', rel_value, 'rel_mod_fields', true);
 	} else {
-		//alert('use base_module' + get_value(base_module));
 		updatedroplist('fields_iframe', get_value(base_module), 'base_fields', true);
 	}
 
@@ -110,7 +108,6 @@ function copy_text(target_iframe, target_field){
 	}			
 	
 	var total_text = '{::'+ value_type + '::' + front_text + '::' + inner_text + '::}';
-	//alert(total_text);
 	this.document.getElementById(target_field).value = total_text;
 	
 //end function copy_text
@@ -156,7 +153,6 @@ function get_filter_selector(exp_meta_type, exp_id, lhs_module_id, lhs_field_id,
 function confirm_selected_radio(radioObj) {
 	var msg = SUGAR.language.get('WorkFlow', 'LBL_SELECT_OPTION');
 	
-	//var radioObj = document.EditView.user_type;
 	if(!radioObj)
 		return false;
 	var radioLength = radioObj.length;
@@ -213,7 +209,6 @@ function clear_field(target_field){
 
 
 function parse_multi_array(temp_array){
-	//var new_field = new_field;
 	var temp_array = temp_array;
     var new_value = '';
 	for (var i=0, l=temp_array.length;i<l;i++) {
@@ -231,7 +226,6 @@ function parse_multi_array(temp_array){
 
 
 function parse_multi_array_text(temp_array){
-	//var new_field = new_field;
 	var temp_array = temp_array;
     var new_value = '';
 	for (var i=0, l=temp_array.length;i<l;i++) {
@@ -288,7 +282,6 @@ function setup_radio_selection(radio_object){
 	for(var i = 0; i < radioLength; i++) {
 
 		if(radio_object[i].checked) {
-			//alert(radio_object[i].value);
 			this.document.getElementById('lang_' + radio_object[i].value).style.display= '';
 			var target_value = radio_object[i].value; 
 		} else {

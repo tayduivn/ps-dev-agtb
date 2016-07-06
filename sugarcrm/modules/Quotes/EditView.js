@@ -109,7 +109,6 @@ function confirm_address_update(popup_reply_data)
 			if(window.document.forms[form_name].elements[the_key]) {
 				
 				label_and_data = data_label + ' ' + window.document.forms[form_name].elements[the_key].value;				
-				
 				//Append to current_label_data_str only if the label and data are unique
 				if(!label_data_hash[data_label])
 				{
@@ -142,7 +141,6 @@ function insert_thousands_separator(num, sep_char)
 
 function set_product_return(popup_reply_data)
 {
-//	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	
 	var row_id = popup_reply_data.passthru_data.row_id;
@@ -210,5 +208,3 @@ function set_shipping_account_name(sqs_object_id) {
 		document.getElementById('shipping_account_name').value = document.getElementById('billing_account_name').value;
 	}
 }
-
-

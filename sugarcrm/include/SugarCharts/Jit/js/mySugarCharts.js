@@ -24,7 +24,6 @@ var activeTab = activePage,
 			for (id in charts[activeTab]){
 				if(id != 'undefined'){
 					chartFound = true;
-				//alert(charts[activeTab][id]['chartType']);
 					loadSugarChart(
 											 charts[activeTab][id]['chartId'], 
 											 charts[activeTab][id]['jsonFilename'],

@@ -20,7 +20,6 @@ require_once('modules/Reports/templates/templates_reports.php');
 require_once('modules/Reports/templates/templates_reports_index.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once('modules/Reports/templates/templates_export.php');
-require_once('modules/Reports/templates/templates_chart.php');
 
 require_once('modules/Reports/config.php');
 global $current_language, $report_modules, $modules_report, $mod_strings;

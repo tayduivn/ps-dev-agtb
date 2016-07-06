@@ -126,7 +126,6 @@ $saved_reports_seed = BeanFactory::getBean('Reports');
 			$module_value = 'value="'.$modules_report[$module_map[$_REQUEST['view']]].'"';
 		}	
 		echo '<form action="index.php"><input type=hidden name="module" value="Reports"/><input type=hidden name="report_module" '.$module_value.'/><input type=hidden name="action" value="index"/><input type=hidden name="page" value="report"/><input type=submit class=button name=\'Create Custom Report\' value=\''.$mod_strings['LBL_CREATE_CUSTOM_REPORT'].'\'></form>';
-		//echo get_form_header($my_header_title, $button_form, false);
 
 //my reports list	
 $ListView = new ListView();

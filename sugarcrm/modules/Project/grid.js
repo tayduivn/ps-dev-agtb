@@ -129,7 +129,6 @@ SUGAR.grid = function() {
 			toggleDisplay(div);
 
 			if (document.getElementById(divlink).style.display != 'none') {
-				//if (document.getElementById(input).value == "") {
 					divlinkVal = document.getElementById(divlink).innerHTML;
 					if (divlinkVal.search("Minus.gif") != -1) {
 						document.getElementById(divlink).innerHTML =
@@ -145,9 +144,6 @@ SUGAR.grid = function() {
 						document.getElementById(divlink).innerHTML = document.getElementById(input).value;
 						document.getElementById("description_divlink_input_" + row).value = document.getElementById(input).value;
 					}
-				//}
-				//else
-					//document.getElementById(divlink).innerHTML = '&nbsp;';
 
 				SUGAR.grid.indentRow(row, true);
 			}
@@ -273,7 +269,6 @@ SUGAR.grid = function() {
 				SUGAR.grid.getChildren(row, allChildren);
 				if (allChildren.length > 0) {
 					if (confirm(SUGAR.language.get('Project', 'NTC_DELETE_TASK_AND_SUBTASKS'))) {
-						//for (var i = 0; i < allChildren.length; i++)
 						for (var i = (allChildren.length - 1); i >= 0; i--)
 							SUGAR.grid.deleteRow(allChildren[i]);
 						SUGAR.grid.deleteRow(row);
@@ -371,7 +366,6 @@ SUGAR.grid = function() {
 						}
 					}
 					SUGAR.grid.cleanupPredecessorRow(i); //removes extra commas as a result of the predecessor row being deleted.
-					//SUGAR.grid.updatePredecessorsAndDependents(i);
 				}
 			}
 
@@ -446,7 +440,6 @@ SUGAR.grid = function() {
 			cell.style.backgroundColor = bg_color;
 			cell.style.cursor = "default";
 			cell.setAttribute('align', 'center');
-			//cell.onclick = function() {SUGAR.grid.toggleSelectRow(numRows);};
 			cell.onclick = function(event) {SUGAR.grid.clickedRow(numRows, event);};
 
 			cell.innerHTML =
@@ -616,31 +609,10 @@ SUGAR.grid = function() {
 			}
 		},
 
-	/*
-		buildPredecessorsAndDependents: function() {
-			var table = document.getElementById(gridName);
-			for (var i = 1; i <= totalRowsInGrid; i++) {
-				if (document.getElementById("predecessors_" + i)) {
-					var predecessorsVal = document.getElementById("predecessors_" + i).value;
-					if (predecessorsVal != "") {
-						predecessors[i] = predecessorsVal.split(",");
-						for (var j in predecessors[i]) {
-							predecessors[i][j] = SUGAR.grid.getMappedRow(parseInt(predecessors[i][j]));
-							if (! dependents[predecessors[i][j]]) {
-								dependents[predecessors[i][j]] = new Array();
-							}
-							dependents[predecessors[i][j]].push(i);
-						}
-					}
-				}
-			}
-		},
-		*/
 		updatePredecessorsAndDependents: function(row) {
 			var predecessorsVal = document.getElementById("predecessors_" + row).value;
 
 			for (i in predecessors[row]) {
-				//var mappedRow = SUGAR.grid.getMappedRow(predecessors[row][i]);
 				var mappedRow = predecessors[row][i];
 				if (dependents[mappedRow] && dependents[mappedRow].length > 0) {
 					for (j in dependents[mappedRow] ) {
@@ -657,7 +629,6 @@ SUGAR.grid = function() {
 				predecessors[row] = predecessorsVal.split(",");
 				for (j in predecessors[row]) {
 					predecessors[row][j] = SUGAR.grid.getMappedRow(parseInt(predecessors[row][j]));
-					//var mappedRow = SUGAR.grid.getMappedRow(predecessors[row][j]);
 					var mappedRow = predecessors[row][j];
 					if (! dependents[mappedRow]) {
 						dependents[mappedRow] = new Array();
@@ -684,7 +655,6 @@ SUGAR.grid = function() {
 					currentIndex++;
 			}
 			document.getElementById("predecessors_" + row).value = predecessorsArray.join(",");
-			//SUGAR.grid.updatePredecessorsAndDependents(row);
 		},
 
 		/**
@@ -693,8 +663,6 @@ SUGAR.grid = function() {
 		 */
 		updateRowWithPredecessorAtIndex: function(row, index, operation, value)
 		{
-//			var predecessorsVal = document.getElementById("predecessors_" + row).value;
-	//		var predecessorsArray = predecessorsVal.split(",");
 			var newVal = parseInt(SUGAR.grid.getActualRow(predecessors[row][index]));
 			var predsArr = predecessors[row].concat();
 			if (operation == 'insert')
@@ -708,8 +676,6 @@ SUGAR.grid = function() {
 			}
 			predsArr[index] = newVal;
 			document.getElementById("predecessors_" + row).value = predsArr.join(",");
-			//predecessors[row][index] = SUGAR.grid.getMappedRow(newVal);
-			//SUGAR.grid.updatePredecessorsAndDependents(row);
 		},
 
 		/**
@@ -800,7 +766,6 @@ SUGAR.grid = function() {
 					date = dateString.substr(3,2)
 
 				year = dateString.substr(6,4);
-				//dateObj = new Date(parseInt(dateString.substr(6,4)),parseInt(dateString.substr(0,2)) - 1,parseInt(dateString.substr(3,2)));
 			}
 			else if (calendar_dateformat == "%d-%m-%Y" || calendar_dateformat == "%d/%m/%Y" || calendar_dateformat == "%d.%m.%Y") {
 				// Need this as parseInt("09") returns 0 and not 9.
@@ -815,7 +780,6 @@ SUGAR.grid = function() {
 					date = dateString.substr(0,2)
 
 				year = dateString.substr(6,4);
-				//dateObj = new Date(parseInt(dateString.substr(6,4)),parseInt(dateString.substr(3,2)) - 1,parseInt(dateString.substr(0,2)));
 			}
 
 			return new Date(parseInt(year), parseInt(month) - 1, parseInt(date));
@@ -872,22 +836,6 @@ SUGAR.grid = function() {
 				return SUGAR.grid.calculateEndDateHours(dateStart, duration, row);
 			else if (document.getElementById("duration_unit_" + row).value == "Days")
 				return SUGAR.grid.calculateEndDateHours(dateStart, duration * workDayHours, row);
-
-			/*
-			var startDate = SUGAR.grid.getJSDate(dateStart);
-			var currDuration = 0;
-			var currDate = new Date(startDate);
-			while (currDuration < parseInt(duration)) {
-				// Check that the day is not a Saturday or Sunday
-				if (startDate.getDay() != 0 && startDate.getDay() != 6 ) {
-					currDuration++;
-					currDate = new Date(startDate);
-				}
-				startDate.setDate(startDate.getDate() + 1);
-			}
-			currDate = SUGAR.grid.getDisplayDate(currDate);
-			document.getElementById("date_finish_" + row).value = currDate;
-			*/
 		},
 
 		calculateEndDateHours: function(dateStart, duration, row)
@@ -908,17 +856,6 @@ SUGAR.grid = function() {
 					startTime = workDayStartTime;
 				}
 				currDuration++;
-/*
-				// Increment the day if we're the next business day.
-				if (currDuration % workDayHours == 1 && currDuration != 1) {
-					startDate.setDate(startDate.getDate() + 1);
-					startTime = workDayStartTime + 1;
-					while (!SUGAR.grid.isDuringWorkingHours(startTime) || SUGAR.grid.isHoliday(startDate, resource)) {
-						startDate.setDate(startDate.getDate() + 1);
-						startTime = workDayStartTime + 1;
-					}
-				}
-				else */
 					startTime++;
 			}
 			currDate = new Date(startDate);
@@ -1006,7 +943,6 @@ SUGAR.grid = function() {
 	  			selObj.removeAllRanges();
 			}
 			else { // IE Support
-				//var selRange = document.selection.createRange();
 				document.selection.empty();
 			}
 
@@ -1190,7 +1126,6 @@ SUGAR.grid = function() {
 			inputId = "description_" + parentRow;
 
 			// If the parent doesn't have any other children, we should get rid of any expand/collapse images
-			//if (allChildrenRowIndex == 0) {
 			if (!parentHasOtherChildren) {
 				document.getElementById(elementId).innerHTML = document.getElementById(inputId).value;
 				document.getElementById("description_divlink_input_" + parentRow).value = document.getElementById(inputId).value;
@@ -1227,7 +1162,6 @@ SUGAR.grid = function() {
 				newElementVal += "<img src='" + imagePathProjectMinus + "' onClick='javascript:SUGAR.grid.expandCollapseRow("+ row +")'>&nbsp;";
 				newElementVal += "<b>" + document.getElementById(inputId).value + "</b>";
 				document.getElementById(elementId).innerHTML = newElementVal;
-				//document.getElementById('description_divlink_input_' + row).value = newElementVal;
 
 				document.getElementById("date_start_" + row).setAttribute("readOnly", "true");
 				document.getElementById("date_finish_" + row).setAttribute("readOnly", "true");
@@ -1250,7 +1184,6 @@ SUGAR.grid = function() {
 				document.getElementById("predecessors_" + row).value = "";
 				document.getElementById("predecessors_" + row).removeAttribute("readOnly");
 				SUGAR.grid.indentRow(row, true);
-				//SUGAR.grid.calculateCumulativePercentComplete(row);
 			}
 
 			if (indentedRows[row].levelsIndented == 0) {
@@ -1306,14 +1239,6 @@ SUGAR.grid = function() {
 				SUGAR.grid.unSelectRow(SUGAR.grid.getMappedRow(tempArray[0]));
 				tempArray.splice(0,1);
 			}
-
-			/*
-			selectedRows.sort(SUGAR.grid.sortNumber);
-			while (selectedRows.length != 0) {
-				SUGAR.grid.addToIndent(selectedRows[0]);
-				SUGAR.grid.unSelectRow(selectedRows[0]);
-			}
-			*/
 		},
 
 		/**
@@ -1386,7 +1311,6 @@ SUGAR.grid = function() {
 				newParentElementVal += "<img src='" + imagePathProjectMinus + "' onClick='javascript:SUGAR.grid.expandCollapseRow("+ indentedRows[row].parentRow +")'>&nbsp;";
 				newParentElementVal += "<b>" + parentInputVal + "</b>";
 				document.getElementById(parentElementId).innerHTML = newParentElementVal;
-				//document.getElementById("description_divlink_input_" + indentedRows[row].parentRow).value = newParentElementVal;
 
 				document.getElementById("date_start_" + indentedRows[row].parentRow).setAttribute("readOnly", "true");
 				document.getElementById("date_finish_" + indentedRows[row].parentRow).setAttribute("readOnly", "true");
@@ -1430,8 +1354,6 @@ SUGAR.grid = function() {
 				newElementVal += elementVal;
 				document.getElementById(elementId).innerHTML = newElementVal;
 				document.getElementById('description_divlink_input_' + childRow).value = divlinkInputVal;
-				//document.getElementById('description_divlink_input_' + childRow).innerHTML = newElementVal;
-
 			}
 		},
 
@@ -1528,7 +1450,6 @@ SUGAR.grid = function() {
 		calculateDatesAfterAddingPredecessors: function(row) {
 			if (SUGAR.grid.isLoaded){
 				var resource = document.getElementById("resource_" + row).value;
-				//var resource = document.getElementById("resource_" + row).value;
 
 				if (predecessors[row] != null && predecessors[row].length > 0) {
 					for (var i = 0; i < predecessors[row].length; i++) {
@@ -1559,57 +1480,8 @@ SUGAR.grid = function() {
 					document.getElementById('date_start_' + row).value = startDate;
 					document.getElementById('time_start_' + row).value = startDateObj.time;
 					SUGAR.grid.calculateEndDate(document.getElementById('date_start_' + row).value, document.getElementById('duration_' + row).value, row);
-//					SUGAR.grid.updateAllDependentsAfterDateChanges(row);
-//					SUGAR.grid.updateAncestorsTimeData(row);
 					SUGAR.gantt.changeTask(row);
 				}
-
-				/*
-				var predecessorsVal = document.getElementById("predecessors_" + row).value;
-				var predecessorsArray = new Array();
-				var lastEndDate, endDate;
-				var lastEndIndex = row;
-				var resource = document.getElementById("resource_" + row).value;
-
-				if (predecessorsVal != "") {
-					predecessorsArray = predecessorsVal.split(",");
-				}
-				for (var i = 0; i < predecessorsArray.length; i++) {
-					var mappedRow = SUGAR.grid.getMappedRow(predecessorsArray[i]);
-					if (i == 0) {
-						lastEndDate = SUGAR.grid.getJSDate(document.getElementById('date_finish_' + mappedRow).value);
-						lastEndTime = document.getElementById('time_finish_' + mappedRow).value;
-						lastEndIndex = mappedRow;
-					}
-					endDate = SUGAR.grid.getJSDate(document.getElementById('date_finish_' + mappedRow).value);
-					endTime = document.getElementById('time_finish_' + mappedRow).value;
-
-					if (endDate.getTime() > lastEndDate.getTime()) {
-						lastEndDate = endDate;
-						lastEndIndex = mappedRow;
-					}
-					else if (endDate.getTime() == lastEndDate.getTime()) {
-						if (endTime > lastEndTime) {
-							lastEndDate = endDate;
-							lastEndIndex = mappedRow;
-						}
-					}
-				}
-				// Do the following only if we have predecessors.
-				if (predecessorsArray.length > 0) {
-					var startDate = SUGAR.grid.getJSDate(document.getElementById('date_finish_' + lastEndIndex).value);
-					var startTime = document.getElementById('time_finish_' + lastEndIndex).value;
-					startDateObj = SUGAR.grid.getNextValidDate(startDate, startTime, resource);
-					startDate = SUGAR.grid.getDisplayDate(startDateObj.date);
-					document.getElementById('date_start_' + row).value = startDate;
-					document.getElementById('time_start_' + row).value = startDateObj.time;
-					SUGAR.grid.calculateEndDate(document.getElementById('date_start_' + row).value, document.getElementById('duration_' + row).value, row);
-//					SUGAR.grid.updateAllDependentsAfterDateChanges(row);
-//					SUGAR.grid.updateAncestorsTimeData(row);
-					SUGAR.gantt.changeTask(row);
-
-				}
-				*/
 			}
 		},
 		updateAncestorDates: function(ancestorRow, childRow) {
@@ -1663,7 +1535,6 @@ SUGAR.grid = function() {
 				document.getElementById('time_start_' + startDateIndex).value;
 			document.getElementById('time_finish_' + ancestorRow).value =
 				document.getElementById('time_finish_' + endDateIndex).value;
-			//SUGAR.grid.calculateDuration(firstStartDate, lastEndDate, ancestorRow);
 			SUGAR.grid.calculateDuration(document.getElementById('date_start_' + ancestorRow).value, document.getElementById('date_finish_' + ancestorRow).value, ancestorRow);
 			SUGAR.gantt.changeTask(ancestorRow);
 			return changed;
@@ -1695,75 +1566,10 @@ SUGAR.grid = function() {
 					}
 				}
 			}
-//			extendedAncestors.sort(SUGAR.grid.sortNumber);
 			for (var i in extendedAncestors) {
 				SUGAR.grid.calculateParentDateDataAfterIndent(extendedAncestors[i]);
 			}
 		},
-		/**
-		 * updateAllDependentsAfterDateChanges: given a row, this function calculates and updates all
-		 * start and finish dates for rows that have this row as its predecessor.
-		 */
-		 /*
-		updateAllDependentsAfterDateChanges: function(row) {
-			var extendedDependents = new Array();
-			var extendendAncestors = new Array();
-
-			var allAncestors = new Array();
-			var ancestorLevels = 0;
-			SUGAR.grid.getAncestors(row, allAncestors, ancestorLevels);
-			if (allAncestors.length > 0) {
-				for (var j in allAncestors) {
-					if (SUGAR.grid.updateAncestorDates(allAncestors[j], row)){
-						//extendedDependents.push(allAncestors[j]);
-					}
-				}
-			}
-
-
-			for (var i in dependents[row]) {
-				SUGAR.grid.calculateDatesAfterAddingPredecessors(dependents[row][i]);
-				var allAncestors = new Array();
-				var ancestorLevels = 0;
-
-				SUGAR.grid.getAncestors(dependents[row][i], allAncestors, ancestorLevels);
-				if (allAncestors.length > 0) {
-					for (var j in allAncestors) {
-						if (SUGAR.grid.updateAncestorDates(allAncestors[j],dependents[row][i])){
-							//extendedDependents.push(allAncestors[j]);
-						}
-					}
-				}
-				if (dependents[dependents[row][i]] != null) {
-					for (var j in dependents[dependents[row][i]]) {
-						extendedDependents.push(dependents[dependents[row][i]][j]);
-					}
-				}
-			}
-
-			while (extendedDependents.length > 0) {
-				var firstDependent = extendedDependents.shift();
-				SUGAR.grid.calculateDatesAfterAddingPredecessors(firstDependent);
-
-				var allAncestors = new Array();
-				var ancestorLevels = 0;
-				SUGAR.grid.getAncestors(firstDependent, allAncestors, ancestorLevels);
-				if (allAncestors.length > 0) {
-					for (var j in allAncestors) {
-						if (SUGAR.grid.updateAncestorDates(allAncestors[j],firstDependent))	{
-						//	extendedDependents.push(allAncestors[j]);
-						}
-					}
-				}
-
-				if (dependents[firstDependent] != null) {
-					for (var j in dependents[firstDependent]) {
-						extendedDependents.push(dependents[firstDependent][j]);
-					}
-				}
-			}
-		},
-		*/
 
 		/**
 		 * calculateParentDateDataAfterIndent: given a parent row, this function calculates the start and end
@@ -2088,7 +1894,6 @@ SUGAR.grid = function() {
 		  		SUGAR.grid.clearStartTime(row);
 				SUGAR.grid.calculateDuration(obj.value, document.getElementById("date_finish_" + row).value, row);
 				SUGAR.grid.updateAllDependentsAfterDateChanges(row);
-				//SUGAR.grid.updateAncestorsTimeData(row);
 				SUGAR.gantt.changeTask(row);
 			}
 		},
@@ -2097,7 +1902,6 @@ SUGAR.grid = function() {
 			  	SUGAR.grid.clearFinishTime(row);
 				SUGAR.grid.calculateDuration(document.getElementById("date_start_" + row).value, obj.value, row);
 				SUGAR.grid.updateAllDependentsAfterDateChanges(row);
-				//SUGAR.grid.updateAncestorsTimeData(row);
 				SUGAR.gantt.changeTask(row);
 			}
 		},
@@ -2305,7 +2109,6 @@ SUGAR.grid = function() {
 				var ancestorLevels = 0;
 				SUGAR.grid.getAncestors(row, allAncestors, ancestorLevels);
 			}
-//			debugger
 			var predecessorsVal = document.getElementById('predecessors_' + row).value;
 			if (predecessorsVal == "")
 				return true;
@@ -2361,8 +2164,6 @@ SUGAR.grid = function() {
 		                 SUGAR.language.get('Project', 'LBL_HIDE_OPTIONAL_COLUMNS_BUTTON'),
 		                 SUGAR.language.get('Project', 'LBL_SHOW_OPTIONAL_COLUMNS_BUTTON'),
 		                 SUGAR.language.get('Project', 'LBL_VIEW_TASK_DETAILS_BUTTON'));
-		                 //SUGAR.language.get('Project', 'LBL_RECALCULATE_DATES_BUTTON'));
-
 
 		        var nMainMenuItems = aMainMenuItems.length;
 		        var oMenuItem;
@@ -2446,11 +2247,6 @@ SUGAR.grid = function() {
 				case 14: 	// View Task Details
 					SUGAR.grid.viewTaskDetails();
 					break;
-					/*
-				case 15: 	// Re-calculate dates
-					SUGAR.grid.reCalculateDates();
-					break;
-					*/
             }
         },
 
@@ -2537,7 +2333,6 @@ SUGAR.grid = function() {
 
 		setupDurationUnitsOptions: function (durationOptions) {
 			durationUnitsOptionsString = "";
-			//durationUnitsOptionsString += "<option value=''>----</option>";
 			for (var i = 0; i < durationOptions.length; i++) {
 				durationUnitsOptionsString += "<option value="+ durationOptions[i].key ;
 				if (i == 0)
@@ -2675,7 +2470,6 @@ SUGAR.grid = function() {
 		success: function(o) {
 			ajaxStatus.hideStatus();
 			var result = JSON.parse(o.responseText);
-//			debugger
 			for (var i = 1; i <= totalRowsInGrid; i++) {
 				if (result[i]) {
 					document.getElementById("obj_id_" + i).value = result[i];
@@ -2687,7 +2481,6 @@ SUGAR.grid = function() {
 
 		failure: function(o) {
 			ajaxStatus.hideStatus();
-			//debugger
 		},
 
 		validateGridForSave: function() {
@@ -2766,7 +2559,6 @@ SUGAR.grid = function() {
 					var button = document.createElement('input');
 					button.setAttribute('type', 'button');
 					button.setAttribute('id', 'view_filter_button');
-					//button.setAttribute('class', 'button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
                     button.onclick = function() {document.getElementById('EditViewGrid').submit();};
 					filterDiv.appendChild(button);
@@ -2783,7 +2575,6 @@ SUGAR.grid = function() {
 				if (document.getElementById('view_filter_button') == null) {
 					var button = document.createElement('input');
 					button.setAttribute('type', 'button');
-					//button.setAttribute('class', 'button');
 					button.setAttribute('id', 'view_filter_button');
 					button.setAttribute('value', SUGAR.language.get('Project', 'LBL_FILTER_VIEW'));
                     button.onclick = function() {document.getElementById('EditViewGrid').submit();};

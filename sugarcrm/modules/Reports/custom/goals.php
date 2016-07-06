@@ -55,7 +55,6 @@ $results = array();
                 var_dump($row);
                 $results[$queryName]['committed'] = floatval($row['val']);
                 $results[$queryName]['goal'] = $goalsper[$queryName];
-               // $results[$queryName]['percent'] = floatval($row['val'])/$goalsper[$queryName];
             } else {
                 $results[$queryName]['committed'] = floatval(0);
                 $results[$queryName]['goal'] = $goalsper[$queryName];
@@ -63,5 +62,3 @@ $results = array();
         }
     }
 $data = $results;
-//var_dump($data);
-//die("asdf");

@@ -85,7 +85,6 @@ SUGAR.forms.FormValidator.validateForm = function(formname) {
 	}
 
 	// if formname is the event, the switch to the name 		- bug: only works in Firefox, but not IE. fix is above.
-	// if ( formname instanceof Event ) 	formname = formname.target.name;
 
 	// define myself
 	var myself = SUGAR.forms.FormValidator;
@@ -255,7 +254,6 @@ SUGAR.forms.FormValidator.removeForm = function(formname) {
 	SUGAR.forms.FormValidator._removeListener(formname);
 }
 
-
 /**
  * Clears all previously displayed error messages.
  */
@@ -293,7 +291,6 @@ SUGAR.forms.FormValidator.renderError = function(element, msg) {
         element.parentNode.appendChild(err_node);
 	}
 }
-
 
 /**
  * FUNCTION ALIASES
@@ -354,9 +351,6 @@ SUGAR.forms.FormValidator.time = function(formname, name, options) {
 	SUGAR.forms.FormValidator.add(formname, name, "isValidTime($" + name + ")" , m);
 }
 
-
-
-
 SUGAR.forms.FormValidator.range = function(formname, name, options) {
 	var m = 'Out of range [' + options.min + ',' + options.max + ']';
 	if ( typeof(options) == 'object' && typeof(options.min) == 'number' && typeof(options.max) == 'number' ) {
@@ -379,13 +373,6 @@ SUGAR.forms.FormValidator.isbefore = function(formname, name, options) {
 	// implement
 }
 
-
-
-
-
-
-
-
 /**
  * @PRIVATE
  * Creates the entry for a form in the main map.
@@ -405,7 +392,6 @@ SUGAR.forms.FormValidator._addForm = function(formname)
 SUGAR.forms.FormValidator._addField = function(formname, name) {
 	var myself = SUGAR.forms.FormValidator;
 	var el = myself._retrieveElement(formname, name);
-	//if ( typeof(el) != 'undefined' )
 	myself.FORMS[formname][name] = {	conditions	: [],			// an array of validators
 										required	: false,		// required or not
 										element		: el
@@ -429,13 +415,11 @@ SUGAR.forms.FormValidator._test = function(condition, formname) {
 	// get the form list
 	var form = myself.FORMS[formname];
 
-	//condition = SUGAR.forms.evalVariableExpression(condition);
 	// now eval the condition
 	try {
-		var ev = SUGAR.forms.evalVariableExpression(condition);// parser.evaluate(condition);
+        var ev = SUGAR.forms.evalVariableExpression(condition);
 		return (ev.evaluate() == 'true');
 	} catch ( error )  {
-		//debugger;
 		if (console && console.log){ console.log('ERROR: ' + e );}
 		return false;
 	}
@@ -449,8 +433,6 @@ SUGAR.forms.FormValidator._test = function(condition, formname) {
  * TODO: (NOTE) Temporarily disabled so that Cancel can work.
  */
 SUGAR.forms.FormValidator._attachListener = function(formname) {
-	// YAHOO.util.Event.addListener(document.forms[formname], 'submit', SUGAR.forms.FormValidator.Validate, {obj: this, form: formname});
-	//document.forms[formname].onsubmit = SUGAR.forms.FormValidator.validateForm;
 }
 
 /**
@@ -458,7 +440,6 @@ SUGAR.forms.FormValidator._attachListener = function(formname) {
  * Removes a listener to from the form specified.
  */
 SUGAR.forms.FormValidator._removeListener = function(formname) {
-	// YAHOO.util.Event.removeListener(document.forms[formname], 'submit');
 	document.forms[formname].onsubmit = "";
 }
 
@@ -478,21 +459,14 @@ SUGAR.forms.FormValidator._registerElement = function(formname, name)
 {
 	var element = SUGAR.forms.FormValidator._retrieveElement(formname, name);
 
-	// if it's null, just exit
  	if ( element == null ) 	return;
 
-	// define a unique id
  	if ( element.id == '' ) {
  		element.id = formname + "_" + name;
  	}
- 	// returns the element id
+
  	return element.id;
 }
-
-
-
-
-
 
 /**
  * TODO: SUGAR INTEGRATION (HUGE)
@@ -500,27 +474,11 @@ SUGAR.forms.FormValidator._registerElement = function(formname, name)
  */
 SUGAR.forms.UnformatValue = function(value, type)
 {
-	// if no type defined, try a number, if not just a string
-	if ( typeof(type) == 'undefined' )
-	{
-		// test if value is a number or boolean
-		//if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(value) != null || value === "" ) {
-		//	return value;
-		//}
-
-		if ( value === "" ) {
-			return value;
-
-		// assume string
-		} else {
-			return '"' + value + '"';
-		}
-	}
+    // if no type defined, try a number, if not just a string
+    if (typeof(type) == 'undefined') {
+        return (value === '') ? value : '"' + value + '"';
+    }
 }
-
-
-
-
 
 /**
  * @STATIC
@@ -528,7 +486,9 @@ SUGAR.forms.UnformatValue = function(value, type)
  * a shade of light red and back.
  */
 SUGAR.forms.FlashField = function(field, to_color) {
-	if ( typeof(field) == 'undefined' /*|| ! (field instanceof HTMLElement)*/ )		return;
+    if (typeof(field) == 'undefined') {
+        return;
+    }
 
 	// store the original background color
 	var original = field.style.backgroundColor;

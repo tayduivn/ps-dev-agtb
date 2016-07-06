@@ -26,7 +26,6 @@ if(isset($_SESSION['install_file']) && file_exists(isset($_SESSION['install_file
 	@unlink(isset($_SESSION['install_file']));
 }
 unlinkUWTempFiles();
-unlinkUploadFiles();
 resetUwSession();
 
 $uwMain =<<<eoq

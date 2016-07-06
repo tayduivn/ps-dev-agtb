@@ -1,4 +1,3 @@
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -31,9 +30,6 @@ var all_fields = new Object();
 var full_table_list = new Object();
 full_table_list.self = new Object();
 full_table_list.self.parent = '';
-//full_table_list.self.value = document.EditView.self.options[document.EditView.self.options.selectedIndex].value;
-//full_table_list.self.module = document.EditView.self.options[document.EditView.self.options.selectedIndex].value;
-//full_table_list.self.label = document.EditView.self.options[document.EditView.self.options.selectedIndex].text;
 full_table_list.self.value = '';
 full_table_list.self.module = '';
 full_table_list.self.label = '';
@@ -42,8 +38,6 @@ full_table_list.self.children = new Object();
 function reload_joins() {
 	for ( var index in report_def.full_table_list ) {
 		var curr_table = report_def.full_table_list[index];
-		//var curr_select = document.getElementById(index);
-		//curr_select.value = curr_table.value;
 		full_table_list[index] = curr_table;
 	}
 }
@@ -117,7 +111,6 @@ function getSelectedLinkDefs(module) {
 	
 	var type = 'one';
 	for (i = 0 ; i < links.length ; i++) {
-	//for(var i in  links) {
 		if((full_table_list[links[i]] == null) || typeof full_table_list[links[i]].link_def == 'undefined') {
 			return new_links;
 		}
@@ -215,13 +208,6 @@ function reload_filters(filters) {
 		}
 		i++;
 	}
-			
-
-	/*		
-	for(index in report_def.filters_def) {
-		report_def.filters_def[index].column_name = getFieldKey(report_def.filters_def[index]);
-		addFilter(report_def.filters_def[index]);
-	}*/	
 }
 
 function getFieldKey(field_def) {
@@ -289,33 +275,24 @@ function addFilter(filter) {
 	cell.valign="top";
 	row.appendChild(cell);
 
-	if (isRuntimeFilter(filter)) {
-		//var cell = document.createElement('td');
-		//cell.innerHTML = "<h3>Please enter a value as its a runtime data<h3>";
-		//row.appendChild(cell);
-	} else {
-		row.style.display = "none";
-	}
-	/*
-	var cell = document.createElement('td');
-	cell.innerHTML = "<input type=button onclick=\"deleteFilter("+filters_count+");\" class=button value="+lbl_remove+">";
-	row.appendChild(cell);
-	*/
+    if (!isRuntimeFilter(filter)) {
+        row.style.display = 'none';
+    }
 
-	the_table.appendChild(row);
+    the_table.appendChild(row);
 }
 
 function isRuntimeFilter(filter) {
-	if (filter.runtime != null && filter.runtime == '1') {
-		return true;
-	} else {
-		return false;
-	} // else
+    if (filter.runtime != null && filter.runtime == '1') {
+        return true;
+    } else {
+        return false;
+    } // else
 }
 
 function getModuleNaeFromParts(parts) {
-	if (parts.length == 0) {
-		return parts[0];
+    if (parts.length == 0) {
+        return parts[0];
 	}
 	var moduleName = '';
 	for (i = 0 ; i < (parts.length - 1) ; i++) {
@@ -513,12 +490,6 @@ function addFilterQualify(cell, filter, row) {
 	cell.innerHTML = "&nbsp;>&nbsp;" + buildSelectHTML(select_html_info, false);
 
 	filter_row['qualify_select'] = cell.getElementsByTagName('select')[0];
-
-	//var filter_text_cell = document.createElement('td');
-	//filter_text_cell.innerHTML = "&nbsp;[&nbsp;" + filter_text_cell.innerHTML + selectedLabel + "&nbsp;]&nbsp;&nbsp;";
-	//row.appendChild(filter_text_cell);
-	
-	//cell.innerHTML = "&nbsp;[&nbsp;" + cell.innerHTML + selectedLabel + "&nbsp;]&nbsp;&nbsp;";
 }
 
 function filterTypeChanged(index) {
@@ -546,7 +517,6 @@ function addFilterInput(cell,filter) {
 	var qualifier_name = filter_row.qualify_select.options[filter_row.qualify_select.selectedIndex].value;
 	var module_select = filter_row.module_select;
 	var table_key = module_select.options[module_select.selectedIndex].value;
-	//filter.table_key = table_key;
 	var module_select = filters_arr[filters_count_map[current_filter_id]].module_select;
 	var table_key = module_select.options[module_select.selectedIndex].value;
 	if (table_key == 'self') {
@@ -1177,7 +1147,6 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 
 	var name_input = document.createElement("input");
 	name_input.setAttribute("type","text"); 
-	//name_input.setAttribute("readonly","true"); 
 	name_input.setAttribute("name", field_name_name);
 	name_input.setAttribute("id", field_name_name);
 	name_input.setAttribute("class", "sqsEnabled");
@@ -1195,7 +1164,6 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 	var cell = document.createElement('td');
 	var new_input = document.createElement("input");
 	new_input.title= lbl_select;
-//	new_input.accessKey="G";
 	new_input.type="button";
 	new_input.value=lbl_select; 
 	new_input.name=field.module;
@@ -1228,58 +1196,7 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 	var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_form=EditView&parent_module='+ module_name+'&parent_field='+sqs_field_name;
 	YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);	
 }
-/*
-function addFilterInputRelateType(row,field,filter) {
-	var filter_row = filters_arr[filters_count_map[current_filter_id]];
-	var module_name = field.ext2;
-	var field_name = field.name;
-	var field_id_name= module_name+":"+field.name+":id";
 
-	var cell = document.createElement('td');
-	var id_input = document.createElement("input");
-	id_input.setAttribute('type','hidden');
-	id_input.setAttribute("name", field_id_name);
-	id_input.setAttribute("id", field_id_name);
-	if ( typeof (filter.input_name0) == 'undefined') {
-		filter.input_name0 = '';
-	}
-	id_input.setAttribute("value",filter.input_name0); 
-	cell.appendChild(id_input);
-	filter_row.input_field0 = id_input;
-
-	var name_input = document.createElement("input");
-	name_input.setAttribute("type","text"); 
-	name_input.setAttribute("readonly","true"); 
-	name_input.setAttribute("name", field_name);
-	name_input.setAttribute("id", field_name);
-	if ( typeof (filter.input_name1) == 'undefined') {
-		filter.input_name1= '';
-	}
-	name_input.setAttribute("value",filter.input_name1); 
-	cell.appendChild(name_input);
-	filter_row.input_field1 = name_input;
-
-	row.appendChild(cell);
-
-	var cell = document.createElement('td');
-	var new_input = document.createElement("input");
-	new_input.title= lbl_select;
-	new_input.accessKey="G";
-	new_input.type="button";
-	new_input.value=lbl_select; 
-	new_input.name=field.module;
-	new_input.setAttribute("class","button"); 
-	new_input.onclick= function () { 	        
-		current_parent = name_input; 	 
-		current_parent_id = id_input; 	 
-		return	open_popup(module_name, 600, 400, "", true, false, { "call_back_function":"set_form_return_reports", "form_name":"EditView", "field_to_name_array":{ "id":"id", "name":"name" } });
-	}
-
-	cell.appendChild(new_input);
-
-	row.appendChild(cell);
-}		
-*/
 function set_form_return_reports(popup_reply_data) {
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
@@ -1294,7 +1211,6 @@ function set_form_return_reports(popup_reply_data) {
 function getModuleInFilter(filter) {
 	// select the first one if first time load
 	var selected_module = current_module;
-	//current_prefix = module_defs[selected_module].label;
 	current_prefix = 'self';
 	var view_join = filter.module_cell.getElementsByTagName('select')[0];
 	var selected_option = view_join.options[view_join.selectedIndex].value;
@@ -1378,13 +1294,6 @@ function save_filters(filters, returnObject) {
 		}
 		i++;
 	}
-			
-
-	/*		
-	for(index in report_def.filters_def) {
-		report_def.filters_def[index].column_name = getFieldKey(report_def.filters_def[index]);
-		addFilter(report_def.filters_def[index]);
-	}*/	
 }
 
 function validateFilterRow(filter, returnObject) {
@@ -1574,91 +1483,6 @@ function fill_form(type) {
 	form_obj.report_def.value = report_def_str;
 
 	return true;
-	/*
-	var filter_table = document.getElementById('filters');
-	var filters_def = new Array();
-
-	for(i=0; i < filter_table.rows.length;i++) {
-		// the module select is the first cell.. we dont need that
-		var cell0 = filter_table.rows[i].cells[2];
-		var cell1 = filter_table.rows[i].cells[4];
-		var cell2 = filter_table.rows[i].cells[6];
-	
-		var column_name = cell0.getElementsByTagName('select')[0].value;
-		var filter_def = new Object();
-		var field = all_fields[column_name].field_def;	
-		filter_def.name = field.name;
-		filter_def.table_key = all_fields[column_name].linked_field_name;
-
-		column_vname = all_fields[column_name].label_prefix+": "+ field['vname'];
-		filter_def.qualifier_name=cell1.getElementsByTagName('select')[0].value;
-		var input_arr = cell2.getElementsByTagName('input');
-
-		if ( typeof(input_arr[0]) !=  'undefined') {
-			filter_def.input_name0=input_arr[0].value;
-			if (input_arr[0].value == '') {
-				got_error = 1;
-				error_msgs += "\""+column_vname+"\""+lbl_missing_input_value+"\n";
-			}
-	
-			if ( typeof(input_arr[1]) != 'undefined') {
-				filter_def.input_name1=input_arr[1].value;
-				if (input_arr[1].value == '') {
-					got_error = 1;
-					error_msgs += "\"" + column_vname + "\""+lbl_missing_second_input_value+"\n";
-				}
-			}
-		} 
-		else {
-			var got_selected = 0;
-			var select_input = cell2.getElementsByTagName('select')[0];
-			filter_def.input_name0= new Array();
-			for (j=0;j<select_input.options.length;j++) {
-				if (select_input.options[j].selected == true) {
-					filter_def.input_name0.push(decodeURI(select_input.options[j].value));
-					got_selected = 1;
-				}
-			}
-			if (got_selected==0) {
-				error_msgs += "\"" +column_vname +"\": "+lbl_missing_second_input_value+"\n";
-				got_error = 1;
-			}
-		}
-
- 		if ( field.type == 'datetime' || field.type == 'date') {
-			if ( typeof(filter_def.input_name0) != 'undefined' && typeof(filter_def.input_name0) != 'array') {
-				var date_match = filter_def.input_name0.match(date_reg_format);
-				if ( date_match != null) {
-					filter_def.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']];
-				}
-			}			
-			if ( typeof(filter_def.input_name1) != 'undefined' && typeof(filter_def.input_name1) != 'array') {
-				var date_match = filter_def.input_name1.match(date_reg_format);
-				if ( date_match != null) {
-					filter_def.input_name1 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']];
-				}
-			}			
-		}
-		if (filter_table.rows[i].style.display != 'none') {
-			filter_def.runtime = 1;
-		}		
-		filters_def.push(filter_def);
-	}
-
-	if (got_error == 1) {
-		alert(error_msgs);
-		return false;
-	}
-	
-	report_def.filters_def = filters_def;
-	
-	//return false;
-
-	report_def_str = YAHOO.lang.JSON.stringify(report_def);
-	form_obj.report_def.value = report_def_str;
-
-	return true;
-	*/
 }
 
 function do_export() {

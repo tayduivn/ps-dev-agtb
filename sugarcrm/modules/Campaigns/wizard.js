@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
 	/*
 	 * this function hides a div element using the passed in id value
 	 */

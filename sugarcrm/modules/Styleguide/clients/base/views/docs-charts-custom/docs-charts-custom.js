@@ -118,32 +118,6 @@
           dateRange = [startDate, endDate];
 
       d3.json('styleguide/content/charts/data/bubble_data.json', function(data) {
-        /*var bubble_data = {
-              data: d3.nest()
-                      .key(function(d){ return d.assigned_user_name;})
-                      .entries(
-                          json.records
-                              .filter(function(d){
-                                  var oppDate = Date.parse(d.date_closed);
-                                  return  oppDate >= dateRange[0] && oppDate <= dateRange[1];
-                              })
-                              .slice(0,10)
-                              .map(function(d){
-                                  return {
-                                      id: d.id,
-                                      x: d.date_closed,
-                                      y: parseInt(d.amount,10),
-                                      shape: 'circle',
-                                      account_name: d.account_name,
-                                      assigned_user_name: d.assigned_user_name,
-                                      sales_stage: d.sales_stage,
-                                      probability: d.probability
-                                  };
-                              })
-                      ),
-              properties: { title: "Top 10 Opportunities", value: json.records.length }
-        };*/
-        //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
 
         var chart = nv.models.bubbleChart()
             .x(function(d) { return format.parse(d.x); })

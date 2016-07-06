@@ -84,10 +84,8 @@ function setvalue(source) {
 function toggle_template_type(istemplate) {
 	template_type = document.getElementById('template_type');
 	if (istemplate.checked) {
-		//template_type.enabled=true;
 		template_type.disabled=false;
 	} else {
-		//template_type.enabled=false;
 		template_type.disabled=true;
 	}
 }

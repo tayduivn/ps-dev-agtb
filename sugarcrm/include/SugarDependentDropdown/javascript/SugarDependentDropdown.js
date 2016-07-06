@@ -29,54 +29,10 @@ SUGAR.dependentDropdown.debugMode = true;
  * @param object HTML form element object
  */
 SUGAR.dependentDropdown.handleDependentDropdown = function(el) {
-	/**
-	 * 
-	 * 
-	 * PROTOTYPE THIS METHOD TO CUSTOMIZE RESPONSES FOR YOUR DEPENDENT DROPDOWNS
-	 * 
-	 * 
-	 * 
-	 */
-	/**
-	if(SUGAR.dependentDropdown.debugMode) SUGAR.dependentDropdown.utils.debugStack('handleDependentDropdown');
-	
-	/*
-	 * el.id example:
-	 * "criteriaGroup::0:::0:-:crit0id"
-	 * [grouping from metadata]::[index]:::[elementIndex]:-:[assignedID from metadata]
-	 * index is row-number
-	 * elementIndex is the index of the current element in this row
-	var index = el.id.slice(el.id.indexOf("::") + 2, el.id.indexOf(":::"));
-	var elementRow = el.boxObject.parentBox;
-	var elementIndex = el.id.slice(el.id.indexOf(":::") + 3, el.id.indexOf(":-:"));
-
-	elementIndex++;
-	var elementKey = "element" + elementIndex;
-	var focusElement = SUGAR.dependentDropdown.dropdowns[focusDD].elements[elementKey];
-	
-	if(focusElement) {
-		if(focusElement.handlers) {
-			try {
-				focusElement = focusElement.handlers[el.value];
-			} catch(e) {
-				if(SUGAR.dependentDropdown.dropdowns.debugMode) {
-					debugger;
-				}
-			}
-		}
-		SUGAR.dependentDropdown.generateElement(focusElement, elementRow, index, elementIndex);
-	} else {
-		//BEGIN SUGARCRM flav=int ONLY
-		//debugger;
-		//END SUGARCRM flav=int ONLY
-	}
-	*/
+    /**
+     * Prototype this method to customize responses for your dependent dropdowns
+     */
 }
-
-
-
-
-
 
 SUGAR.dependentDropdown.generateElement = function(focusElement, elementRow, index, elementIndex) {
 	if(SUGAR.dependentDropdown.debugMode) SUGAR.dependentDropdown.utils.debugStack('generateElement');
@@ -202,7 +158,6 @@ SUGAR.dependentDropdown.generateElement = function(focusElement, elementRow, ind
 		/* trigger dependent dropdown action to cascade dependencies */
 		try {
 			newElement.onchange();
-			//eval(focusElement.onchange); "this" has no reference
 		} catch(e) {
 			if(SUGAR.dependentDropdown.dropdowns.debugMode) {
 				debugger;
