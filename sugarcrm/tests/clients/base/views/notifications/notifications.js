@@ -72,12 +72,17 @@ describe('Notifications', function() {
         });
 
         describe('should bind listeners on app:socket events', function () {
+            var context;
+
             beforeEach(function () {
+                context = app.context.getContext();
+                context.set('model', null);
                 sinon.stub(app.events, 'on');
                 sinon.stub(view, 'socketOn');
                 sinon.stub(view, 'socketOff');
             });
             afterEach(function () {
+                context = null;
                 app.events.on.restore();
                 view.socketOn.restore();
                 view.socketOff.restore();
@@ -85,7 +90,7 @@ describe('Notifications', function() {
 
             it('should bind socketOn on app app:socket:connect', function () {
 
-                view.initialize({});
+                view.initialize({context: context});
 
                 sinon.assert.called(app.events.on);
                 sinon.assert.calledWith(app.events.on, 'app:socket:connect');
@@ -105,7 +110,7 @@ describe('Notifications', function() {
 
             it('should bind socketOff on app app:socket:disconnect', function () {
 
-                view.initialize({});
+                view.initialize({context: context});
 
                 sinon.assert.called(app.events.on);
                 sinon.assert.calledWith(app.events.on, 'app:socket:disconnect');
@@ -126,19 +131,24 @@ describe('Notifications', function() {
         });
 
         describe('should bind listener on app:notifications:markAs events', function () {
+            var context;
+
             beforeEach(function () {
+                context = app.context.getContext();
+                context.set('model', null);
                 sinon.stub(app.events, 'on');
                 sinon.stub(view, 'notificationMarkHandler');
             });
 
             afterEach(function () {
+                context = null;
                 app.events.on.restore();
                 view.notificationMarkHandler.restore();
             });
 
             it('should bind notificationMarkHandler on app app:notifications:markAs', function () {
 
-                view.initialize({});
+                view.initialize({context: context});
 
                 sinon.assert.called(app.events.on);
                 sinon.assert.calledWith(app.events.on, 'app:notifications:markAs');
