@@ -727,11 +727,11 @@ abstract class SugarRelationship
             $whereTable .= '.';
         }
 
-        $condition = new SugarQuery_Builder_Condition($query);
-        $condition->setField($whereTable . $optional_array['lhs_field'])
-            ->setOperator($optional_array['operator'])
-            ->setValues($optional_array['rhs_value']);
-        $query->where()->add($condition);
+        $query->where()->condition(
+            $whereTable . $optional_array['lhs_field'],
+            $optional_array['operator'],
+            $optional_array['rhs_value']
+        );
         return true;
     }
 
