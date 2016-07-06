@@ -17,15 +17,18 @@ $dictionary['prospect_lists_prospects'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'prospect_list_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'related_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'related_type',
@@ -137,4 +140,5 @@ $dictionary['prospect_lists_prospects'] = array (
 								)
 	)
 	
-);
+)
+?>

@@ -12,12 +12,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 // $Id: vardefs.php 13782 2006-06-06 17:58:55 +0000 (Tue, 06 Jun 2006) majed $
-$dictionary['projects_contacts'] = array(
+$dictionary['projects_contacts'] = array (
     'table' => 'projects_contacts',
-    'fields' => array(
-        array('name' => 'id', 'type' => 'id'),
-        array('name' => 'contact_id', 'type' => 'id'),
-        array('name' => 'project_id', 'type' => 'id'),
+    'fields' => array (
+        array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
+        array('name' => 'contact_id', 'type' => 'varchar', 'len' => '36'),
+        array('name' => 'project_id', 'type' => 'varchar', 'len' => '36'),
         array('name' => 'date_modified', 'type' => 'datetime'),
         array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
     ),

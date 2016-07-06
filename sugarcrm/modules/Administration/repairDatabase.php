@@ -100,13 +100,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
                         // has already been created with indices despite skip_index_rebuild
                         if ($tableExists) {
                             $compareIndices = isset($indices[$tableName]) ? $indices[$tableName] : array();
-                            $sql .= $db->alterTableIndices(
-                                $tableName,
-                                $focus->getFieldDefinitions(),
-                                $focus->getIndices(),
-                                $compareIndices,
-                                $execute
-                            );
+                            $sql .= $db->alterTableIndices($tableName, $focus->getIndices(), $compareIndices, $execute);
                         }
                         $repairedTables[$focus->table_name] = true;
                     }

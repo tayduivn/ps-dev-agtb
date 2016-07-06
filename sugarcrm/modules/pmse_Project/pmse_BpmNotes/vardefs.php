@@ -23,7 +23,7 @@ $dictionary['pmse_BpmNotes'] = array(
     'required' => true,
     'name' => 'cas_id',
     'vname' => 'Unique Identifier for this Case',
-    'type' => 'id',
+    'type' => 'varchar',
     'massupdate' => false,
     'default' => '',
     'no_default' => false,
@@ -37,6 +37,7 @@ $dictionary['pmse_BpmNotes'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'calculated' => false,
+    'len' => '36',
     'size' => '36',
   ),
 'cas_index' =>

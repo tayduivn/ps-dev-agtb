@@ -23,7 +23,7 @@ $dictionary['pmse_BpmProcessDefinition'] = array(
     'required' => true,
     'name' => 'prj_id',
     'vname' => 'Project Identifier',
-    'type' => 'id',
+    'type' => 'varchar',
     'massupdate' => false,
     'default' => '',
     'no_default' => false,
@@ -37,6 +37,7 @@ $dictionary['pmse_BpmProcessDefinition'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'calculated' => false,
+    'len' => '36',
     'size' => '36',
   ),
 'pro_module' =>

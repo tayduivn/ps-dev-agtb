@@ -35,7 +35,8 @@ $dictionary['SugarFavorites'] = array(
     'name' => 'record_id',
     'vname' => 'LBL_RECORD_ID',
     'type' => 'parent_type',
-    'dbType'=>'id',
+    'dbType'=>'varchar',
+  	'required'=>false,
   	'group'=>'record_name',
     'options'=> 'parent_type_display',
     'massupdate' => 0,
@@ -46,6 +47,7 @@ $dictionary['SugarFavorites'] = array(
     'duplicate_merge_dom_value' => '0',
     'audited' => 0,
     'reportable' => 0,
+    'len' => '36',
   ),
   'record_name'=>
   array(
@@ -99,4 +101,4 @@ $dictionary['SugarFavorites'] = array(
 	'optimistic_lock'=>true,
 );
 require_once('include/SugarObjects/VardefManager.php');
-VardefManager::createVardef('SugarFavorites', 'SugarFavorites', array('basic','assignable'));
+VardefManager::createVardef('SugarFavorites','SugarFavorites', array('basic','assignable'));

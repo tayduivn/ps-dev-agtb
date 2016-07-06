@@ -49,6 +49,9 @@ class PMSELogicHook
     {
         global $sugar_config;
 
-        return empty($GLOBALS['installing']) && empty($sugar_config['installer_locked']);
+        if( !isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == false ){
+            return false;
+        }
+        return true;
     }
 }

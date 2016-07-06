@@ -237,7 +237,7 @@ $vardefs = array(
         'date_modified' => array(
             'name' => 'idx_' . strtolower($table_name) . '_date_modfied',
             'type' => 'index',
-            'fields' => array('date_modified'),
+            'fields' => array('date_modified')
         ),
         'deleted' => array(
             'name' => 'idx_' . strtolower($table_name) . '_id_del',

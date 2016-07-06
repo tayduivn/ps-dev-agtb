@@ -17,15 +17,18 @@ $dictionary['acl_roles_users'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'role_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		),
 		array (
 			'name' => 'user_id',
-            'type' => 'id',
+			'type' => 'varchar',
+			'len' => '36',
 		)
       , array ('name' => 'date_modified','type' => 'datetime'),
 		array (

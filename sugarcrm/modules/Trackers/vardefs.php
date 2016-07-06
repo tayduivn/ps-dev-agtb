@@ -80,7 +80,8 @@ $dictionary['Tracker'] = array(
         'session_id'=>array(
             'name' => 'session_id',
             'vname' => 'LBL_SESSION_ID',
-            'type' => 'id',
+            'type' => 'varchar',
+            'len' => '36',
             'isnull' => 'true',
             'exportable' => false,
         ),

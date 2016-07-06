@@ -34,7 +34,8 @@ $dictionary["documents_quotes"] = array (
     0 => 
     array (
       'name' => 'id',
-      'type' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
     ),
     1 => 
     array (
@@ -52,12 +53,14 @@ $dictionary["documents_quotes"] = array (
     3 => 
     array (
       'name' => 'document_id',
-      'type' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
     ),
     4 => 
     array (
       'name' => 'quote_id',
-      'type' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
     ),
   ),
   'indices' => 
