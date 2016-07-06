@@ -62,7 +62,7 @@
 
         var carrier = this.carriers[this.def.name];
         if (carrier.options && carrier.options.deliveryDisplayStyle !== 'none') {
-            this.def.manageAddressesLabel = app.lang.get('LBL_LINK_TO_MANAGE_ADDRESSES', this.def.name);
+            this.def.manageAddressesLabel = app.lang.get('LBL_DELIVERY_OPTIONS_HELP_TEXT', this.def.name);
         }
 
         return carrier.status;

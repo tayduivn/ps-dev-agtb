@@ -28,15 +28,14 @@
     appendAddressTag: 'input[name=append_address]',
 
     /**
-     * We are dealing with specially formatted model's helper-attribute 'selectedAddresses'.
-     * So let's form this.value from that format.
+     * Form this.value from model's personal.selectedCarriersOptions.
      * @inheritdoc
      */
     getFormattedValue: function() {
         var value = null;
-        if (this.model.get('selectedAddresses')[this.carrier]) {
+        if (this.model.get('personal').selectedCarriersOptions[this.carrier]) {
             value = [];
-            _.each(this.model.get('selectedAddresses')[this.carrier], function(val, key) {
+            _.each(this.model.get('personal').selectedCarriersOptions[this.carrier], function(val, key) {
                 value = {
                     id: val,
                     key: key

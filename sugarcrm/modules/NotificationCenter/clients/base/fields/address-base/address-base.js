@@ -68,7 +68,7 @@
      */
     getFormattedValue: function() {
         var value = [];
-        var selectedValue = this.model.get('selectedAddresses')[this.carrier] || [];
+        var selectedValue = this.model.get('personal').selectedCarriersOptions[this.carrier] || [];
         _.each(this.items, function(val, key) {
             value.push({
                 id: key,
@@ -87,8 +87,6 @@
         if (!_.isArray(selectedValues)) {
             selectedValues = [selectedValues];
         }
-        var addresses = _.clone(this.model.get('selectedAddresses'));
-        addresses[this.carrier] = selectedValues;
-        this.model.set('selectedAddresses', addresses);
+        this.model.get('personal').selectedCarriersOptions[this.carrier] = selectedValues;
     }
 });

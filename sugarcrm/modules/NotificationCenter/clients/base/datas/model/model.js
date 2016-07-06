@@ -62,7 +62,23 @@
     },
 
     /**
+     * Reset selected Carriers Options to default.
+     * @private
+     */
+    _resetSelectedCarriersOptions: function() {
+        if (!this.get('personal')) {
+            return;
+        }
+
+        var carriers = this.get('personal').carriers;
+        _.each(this.get('personal').selectedCarriersOptions, function(options, name) {
+            this.get('personal').selectedCarriersOptions[name] = [_.first(_.keys(carriers[name].addressTypeOptions))];
+        }, this);
+    },
+
+    /**
      * Replace 'default' value to the current actual values of 'global' config.
+     * Set defaults for selectedCarriersOptions if no one found.
      */
     replaceDefaultToActualValues: function() {
         if (!this.get('personal')) {
@@ -74,6 +90,15 @@
                     this._copyFiltersFromDefault(emitterName, eventName);
                 }
             }, this);
+        }, this);
+
+        // set default selectedCarriersOptions if no one found
+        var carriers = this.get('personal').carriers;
+        var selectedCarriersOptions = this.get('personal').selectedCarriersOptions;
+        _.each(carriers, function(carrier, name) {
+            if (carriers[name].options.deliveryDisplayStyle !== 'none' && !selectedCarriersOptions[name]) {
+                selectedCarriersOptions[name] = [_.first(_.keys(carrier.addressTypeOptions))];
+            }
         }, this);
     },
 
@@ -116,58 +141,13 @@
         if (emitterName === 'all') {
             this._copyCarriersStatusFromDefault();
             this._copyFiltersFromDefault();
-            this.setSelectedAddresses();
+            this._resetSelectedCarriersOptions();
         } else {
             this._copyFiltersFromDefault(emitterName);
         }
 
         this.trigger('reset:' + emitterName);
         return true;
-    },
-
-    /**
-     * Extract all active delivery addresses and form model's "selectedAddresses" attribute.
-     */
-    setSelectedAddresses: function() {
-        if (!this.get('personal')) {
-            return;
-        }
-
-        var allCarriers = this.get('personal').carriers;
-        var addresses = {};
-
-        // Prepare addresses
-        _.each(allCarriers, function(carrier, name) {
-            if (carrier.options.deliveryDisplayStyle !== 'none') {
-                addresses[name] = [];
-            }
-        });
-
-        // Find and fill selected addresses for each enabled carrier.
-        _.each(this.get('personal')['config'], function(emitter) {
-            _.each(emitter, function(event) {
-                var firstFilter = _.first(_.values(event));
-                if (_.isArray(firstFilter)) {
-                    _.each(firstFilter, function(carrierArray) {
-                        var carrierName = _.first(carrierArray),
-                            address = _.last(carrierArray);
-                        if (address !== '' && allCarriers[carrierName].options.deliveryDisplayStyle !== 'none' &&
-                            !_.contains(addresses[carrierName], address)) {
-                            addresses[carrierName].push(address);
-                        }
-                    });
-                }
-            });
-        });
-
-        // If no addresses were selected by user, put the first one as default.
-        _.each(allCarriers, function(carrier, name) {
-            if (carrier.options.deliveryDisplayStyle !== 'none' && addresses[name].length === 0) {
-                addresses[name].push(_.first(_.keys(carrier.addressTypeOptions)));
-            }
-        });
-
-        this.set('selectedAddresses', addresses);
     },
 
     /**
@@ -179,7 +159,7 @@
         }
 
         // Eliminate empty and duplicate values.
-        var addresses = this.get('selectedAddresses');
+        var addresses = this.get('personal').selectedCarriersOptions;
         _.each(addresses, function(val, key, list) {
             list[key] = _.uniq(_.filter(val, function(el) {return el !== ''}));
         });

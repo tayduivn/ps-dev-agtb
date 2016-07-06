@@ -59,14 +59,14 @@ describe('NotificationCenter.Field.AddressRadio', function() {
 
     describe('bindDomChange()', function() {
         afterEach(function() {
-            field.model.set('selectedAddresses', {foo: []});
+            field.model.get('personal').selectedCarriersOptions = {foo: []};
         });
 
-        it('should set checked addresses from selected addresses of a model', function() {
-            field.model.set('selectedAddresses', {foo: []});
+        it('should set checked addresses from selectedCarriersOptions of a model', function() {
+            field.model.get('personal').selectedCarriersOptions = {foo: []};
             field.render();
             field.$(field.fieldTag).eq(0).click().trigger('change');
-            expect(model.get('selectedAddresses')).toEqual({foo: ['0']});
+            expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['0']});
         });
     });
 });

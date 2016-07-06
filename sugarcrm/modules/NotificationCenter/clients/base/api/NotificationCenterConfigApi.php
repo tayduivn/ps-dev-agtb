@@ -58,9 +58,13 @@ class NotificationCenterConfigApi extends GlobalConfigApi
     public function updateUserConfig(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('personal'));
-        $this->requireArgs($args['personal'], array('carriers', 'config'));
+        $this->requireArgs($args['personal'], array('carriers', 'config', 'selectedCarriersOptions'));
         $this->updatePersonalCarriers($api->user, $args['personal']['carriers']);
         $this->getSubscriptionsRegistry()->setUserConfiguration($api->user->id, $args['personal']['config']);
+        $this->getSubscriptionsRegistry()->setUserDefaultCarriersOptions(
+            $api->user->id,
+            $args['personal']['selectedCarriersOptions']
+        );
         return $this->getUserConfig($api, $args);
     }
 
@@ -102,8 +106,9 @@ class NotificationCenterConfigApi extends GlobalConfigApi
             ),
             'personal' => array(
                 'carriers' => $this->getPersonalCarriers($api->user),
-                'config' => $subscriptionsRegistry->getUserConfiguration($api->user->id)
-            )
+                'config' => $subscriptionsRegistry->getUserConfiguration($api->user->id),
+                'selectedCarriersOptions' => $subscriptionsRegistry->getUserDefaultCarriersOptions($api->user->id),
+            ),
         );
     }
 

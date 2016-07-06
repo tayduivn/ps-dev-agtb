@@ -60,7 +60,6 @@
                 success: function(data) {
                     _.each(data, function(val, key) { self.model.set(key, val); }, self);
                     self.model.replaceDefaultToActualValues();
-                    self.model.setSelectedAddresses();
                     self.render();
                 }
             }

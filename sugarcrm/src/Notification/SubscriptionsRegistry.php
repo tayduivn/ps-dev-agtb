@@ -54,7 +54,7 @@ class SubscriptionsRegistry
     public function getGlobalConfiguration()
     {
         $result = $this->getTree();
-        $beans = $this->getBeans($this->getSugarQuery());
+        $beans = $this->getSubscriptionBeans();
 
         foreach ($beans as $bean) {
             if ($this->isValidBeanForTree($result, $bean)) {
@@ -219,6 +219,30 @@ class SubscriptionsRegistry
     }
 
     /**
+     * Get beans that represent stored selected carriers' options.
+     * @param string $userId User id.
+     * @return \NotificationCenterSubscription[] selected carriers' options beans.
+     */
+    protected function getDefaultCarriersOptionsBeans($userId)
+    {
+        $query = $this->getSugarQuery($userId);
+        $query->where()->isEmpty('event_name');
+        return $this->getBeans($query);
+    }
+
+    /**
+     * Get beans that represent stored carriers' subscriptions.
+     * @param string|null $userId User id.
+     * @return \NotificationCenterSubscription[] carriers' subscriptions.
+     */
+    protected function getSubscriptionBeans($userId = null)
+    {
+        $query = $this->getSugarQuery($userId);
+        $query->where()->isNotEmpty('event_name');
+        return $this->getBeans($query);
+    }
+
+    /**
      * Create new empty bean of NotificationCenterSubscription
      *
      * @return \NotificationCenterSubscription new Bean
@@ -302,7 +326,7 @@ class SubscriptionsRegistry
     public function getUserConfiguration($userId)
     {
         $result = $this->getTree();
-        $beans = $this->getBeans($this->getSugarQuery($userId));
+        $beans = $this->getSubscriptionBeans($userId);
 
         foreach ($beans as $bean) {
             if ($this->isValidBeanForTree($result, $bean)) {
@@ -319,6 +343,24 @@ class SubscriptionsRegistry
         $this->fillDefaultConfig($result);
 
         $this->logger->debug("NC: User($userId) configuration: " . var_export($result, true));
+
+        return $result;
+    }
+
+    /**
+     * Get user's selected carriers' options (i.e. carriers' selected addresses).
+     *
+     * @param string $userId User's id.
+     * @return array selected carriers' options.
+     */
+    public function getUserDefaultCarriersOptions($userId)
+    {
+        $result = new \stdClass();
+        $beans = $this->getDefaultCarriersOptionsBeans($userId);
+
+        foreach ($beans as $bean) {
+            $result->{$bean->carrier_name}[] = $bean->carrier_option;
+        }
 
         return $result;
     }
@@ -361,7 +403,7 @@ class SubscriptionsRegistry
      */
     protected function setConfiguration($userId, $config, $delCarrierOption)
     {
-        $beans = $this->getBeans($this->getSugarQuery($userId));
+        $beans = $this->getSubscriptionBeans($userId);
         $beans = $this->removeBeansWithDisabledCarrier($beans);
 
         $tree = $this->getTree();
@@ -401,6 +443,32 @@ class SubscriptionsRegistry
         }
 
         $this->deleteConfigBeans($beans);
+    }
+
+    /**
+     * Set user's selected carriers' options.
+     *
+     * @param string $userId User's id.
+     * @param array $config selected options for each carrier.
+     */
+    public function setUserDefaultCarriersOptions($userId, $config)
+    {
+        $carriers = array();
+        foreach ($config as $carrier => $options) {
+            foreach ($options as $selectedOption) {
+                $carriers[] = array($carrier, $selectedOption);
+            }
+        }
+
+        $existingBeans = $this->getDefaultCarriersOptionsBeans($userId);
+
+        $path = $this->pathToBranch('', '', '');
+        if ($userId) {
+            $path += array('user_id' => $userId);
+        }
+        $diff = $this->getDiff($existingBeans, $carriers);
+
+        $this->processDiff($path, $diff['delete'], $diff['insert']);
     }
 
     /**
@@ -703,7 +771,8 @@ class SubscriptionsRegistry
             foreach ($data as $userId => $userData) {
                 $userConfig = $this->calculateUserConfig(
                     $userData[$filterName],
-                    array_key_exists($filterName, $globalConfig) ? $globalConfig[$filterName] : array()
+                    array_key_exists($filterName, $globalConfig) ? $globalConfig[$filterName] : array(),
+                    $userId
                 );
                 $this->logger->debug(
                     "NC: Config for User($userId) & filter = '$filterName' is " . var_export($userConfig, true)
@@ -766,9 +835,10 @@ class SubscriptionsRegistry
      *
      * @param array $userData user config data
      * @param array $globalData global config data
+     * @param string $userId User id
      * @return array calculated user configuration
      */
-    protected function calculateUserConfig(array $userData, array $globalData)
+    protected function calculateUserConfig(array $userData, array $globalData, $userId)
     {
         $config = array();
         if (array_key_exists('main', $userData)) {
@@ -782,6 +852,13 @@ class SubscriptionsRegistry
                 $config = $globalData['main'];
             } elseif (array_key_exists('bean', $globalData)) {
                 $config = $globalData['bean'];
+            }
+            // User may have saved default Carriers options before any event subscription. Use them as default.
+            $defaultOptions = $this->getUserDefaultCarriersOptions($userId);
+            foreach ($config as $carrierName => $carrierOptions) {
+                if (!empty($defaultOptions->$carrierName)) {
+                    $config[$carrierName] = $defaultOptions->$carrierName;
+                }
             }
         }
 
