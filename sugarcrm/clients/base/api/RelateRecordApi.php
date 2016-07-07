@@ -350,6 +350,17 @@ class RelateRecordApi extends SugarApi
         $this->updateBean($relatedBean, $api, $args);
         $relatedBean->retrieve($args['remote_id']);
 
+        //if a filename guid exists, then use moduleapi to make final move from tmp dir if applicable
+        if (isset($args['filename_guid'])) {
+            $moduleApi = $this->getModuleApi($api, $linkName);
+            $relArgs = array(
+                'module' => $relatedBean->module_name,
+                'record' => $relatedBean->id,
+                'filename_guid' => $args['filename_guid'],
+            );
+            $moduleApi->updateRecord($api, $relArgs);
+        }
+
         $relatedArray = array();
 
         // Make sure there is a related object
