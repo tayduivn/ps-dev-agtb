@@ -429,7 +429,7 @@
         if (this.$el) {
             var $titleEl = this.$('h4.dashlet-title');
             if($titleEl.length) {
-                $titleEl.html(title);
+                $titleEl.text(title);
             }
         }
     },
