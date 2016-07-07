@@ -172,7 +172,7 @@ describe("Record View", function () {
                 case_number: 123,
                 description: 'Description'
             });
-            view.model.set('_locked_fields', ['name']);
+            view.model.set('locked_fields', ['name']);
             view._handleLockedFields();
 
             var actualFieldLength = _.keys(view.editableFields).length;
