@@ -27,11 +27,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-
-        this.meta.description = (this.model.get('configMode') === 'user') ?
-            'LBL_CARRIER_DELIVERY_USER_DESC' :
-            'LBL_CARRIER_DELIVERY_ADMIN_DESC';
-
+        this.meta.description = 'LBL_CARRIER_DELIVERY_DESC_' + this.model.get('configMode').toUpperCase();
         this.before('render', function() { this.populateCarriers(); }, this);
     },
 

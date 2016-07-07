@@ -168,21 +168,26 @@
      * @private
      */
     _getLabelAndDescriptionMeta: function() {
-        var module, title, desc;
+        var module;
+        var title;
+        var desc;
+        var section;
+
+        section = this.model.get('configMode').toUpperCase();
         switch(this.meta.emitter) {
             case 'ApplicationEmitter':
-                title = 'LBL_APPLICATION_EMITTER_TITLE';
-                desc = 'LBL_APPLICATION_EMITTER_DESC';
+                title = 'LBL_APPLICATION_EMITTER_TITLE_' + section;
+                desc = 'LBL_APPLICATION_EMITTER_DESC_' + section;
                 module = this.module;
                 break;
             case 'BeanEmitter':
-                title = 'LBL_BEAN_EMITTER_TITLE';
-                desc = (this.model.get('configMode') === 'user') ? 'LBL_BEAN_EMITTER_DESC_USER' : 'LBL_BEAN_EMITTER_DESC_ADMIN';
+                title = 'LBL_BEAN_EMITTER_TITLE_' + section;
+                desc = 'LBL_BEAN_EMITTER_DESC_' + section;
                 module = this.module;
                 break;
             default: // Module Emitter case
-                title = 'LBL_EMITTER_TITLE';
-                desc = (this.model.get('configMode') === 'user') ? 'LBL_EMITTER_DESC_USER' : 'LBL_EMITTER_DESC_ADMIN';
+                title = 'LBL_EMITTER_TITLE_' + section;
+                desc = 'LBL_EMITTER_DESC_' + section;
                 module = this.meta.emitter;
         }
 
