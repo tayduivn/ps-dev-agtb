@@ -441,7 +441,7 @@ class ModuleApi extends SugarApi {
                 $filename = $bean->id;
                 $mimeType = get_file_mime_type($filepath, 'application/octet-stream');
                 $sf = $sfh->getSugarField($def['type']);
-                $extension = pathinfo($fieldName, PATHINFO_EXTENSION);
+                $extension = pathinfo($bean->$fieldName, PATHINFO_EXTENSION);
 
                 if (in_array($mimeType, $sf::$imageFileMimeTypes) &&
                     !verify_image_file($filepath)

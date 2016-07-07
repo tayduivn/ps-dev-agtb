@@ -77,7 +77,7 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
      * @param array $args
      * @return array The API response from deleting the Emails record.
      */
-    protected function deleteRecord($id, array $args)
+    protected function deleteRecord($id, $args = array())
     {
         $args['module'] = 'Emails';
         $args['record'] = $id;
@@ -189,6 +189,33 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Asserts that each attachment's corresponding file exists.
+     *
+     * @param array $attachments The records from the response retrieved using
+     * {@link EmailsApiIntegrationTestCase::getRelatedRecords()}.
+     */
+    protected function assertFiles(array $attachments)
+    {
+        foreach ($attachments as $attachment) {
+            if (empty($attachment['upload_id'])) {
+                $this->assertFileExists(
+                    "upload://{$attachment['id']}",
+                    "The file {$attachment['id']} should exist"
+                );
+            } else {
+                $this->assertFileExists(
+                    "upload://{$attachment['upload_id']}",
+                    "The file {$attachment['upload_id']} should exist"
+                );
+                $this->assertFileNotExists(
+                    "upload://{$attachment['id']}",
+                    "The file {$attachment['id']} should not exist"
+                );
+            }
+        }
+    }
+
+    /**
      * Retrieves the specified collection for an Emails record using {@link RelateCollectionApi::getCollection()} as a
      * convenience for use in assertions.
      *
@@ -208,6 +235,25 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
         );
         $api = new RelateCollectionApi();
         return $api->getCollection($this->service, $args);
+    }
+
+    /**
+     * Retrieves an Emails record's linked beans using {@link RelateApi::filterRelated()} as a convenience for use in
+     * assertions.
+     *
+     * @param string $id The ID of the Emails record.
+     * @param string $link The name of the link field.
+     * @return array
+     */
+    protected function getRelatedRecords($id, $link)
+    {
+        $args = array(
+            'module' => 'Emails',
+            'record' => $id,
+            'link_name' => $link,
+        );
+        $api = new RelateApi();
+        return $api->filterRelated($this->service, $args);
     }
 
     /**

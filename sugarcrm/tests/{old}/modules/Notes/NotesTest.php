@@ -49,13 +49,15 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query('DELETE FROM contacts WHERE id =\''.$contact_id.'\'');
     }
 
-    public function testSave_FileSizeDefaultsToZero()
+    public function testSave_NoFile_FileMetadataIsDefaulted()
     {
         $note = SugarTestNoteUtilities::createNote();
+        $this->assertEmpty($note->file_mime_type, 'Should not store a mime type when there is no file');
+        $this->assertEmpty($note->file_ext, 'Should not store an extension when there is no file');
         $this->assertSame(0, $note->file_size);
     }
 
-    public function testSave_EmailAttachmentFileFound_FileSizeIsSaved()
+    public function testSave_FileFound_FileMetadataIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
 
@@ -63,14 +65,16 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         file_put_contents($file, $note->id);
         $filesize = filesize($file);
 
-        $note->email_type = 'Emails';
-        $note->email_id = create_guid();
+        $note->filename = 'quote.pdf';
         $note->save(false);
 
-        $this->assertSame($filesize, $note->file_size);
+        // Note: We can't test that the right mime type is stored because the file is fake. But it shouldn't be empty.
+        $this->assertNotEmpty($note->file_mime_type, 'Should have stored the mime type');
+        $this->assertSame('pdf', $note->file_ext, 'Incorrect extension');
+        $this->assertSame($filesize, $note->file_size, 'Incorrect file size');
     }
 
-    public function testSave_EmailAttachmentFileFoundAtUploadId_FileSizeIsSaved()
+    public function testSave_FileFoundAtUploadId_FileMetadataIsSaved()
     {
         $note = SugarTestNoteUtilities::createNote();
         $note->upload_id = create_guid();
@@ -79,17 +83,19 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         file_put_contents($file, $note->upload_id);
         $filesize = filesize($file);
 
-        $note->email_type = 'Emails';
-        $note->email_id = create_guid();
+        $note->filename = 'quote.pdf';
         $note->save(false);
 
-        $this->assertSame($filesize, $note->file_size);
+        // Note: We can't test that the right mime type is stored because the file is fake. But it shouldn't be empty.
+        $this->assertNotEmpty($note->file_mime_type, 'Should have stored the mime type');
+        $this->assertSame('pdf', $note->file_ext, 'Incorrect extension');
+        $this->assertSame($filesize, $note->file_size, 'Incorrect file size');
     }
 
-    public function testSave_EmailAttachmentFileUploaded_FileSizeIsSaved()
+    public function testSave_FileFoundInTemporaryLocation_FileMetadataIsSaved()
     {
         $filename = create_guid();
-        $file = "upload://{$filename}";
+        $file = "upload://tmp/{$filename}";
         file_put_contents($file, $filename);
         $filesize = filesize($file);
 
@@ -100,38 +106,17 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $uploadFile->method('get_temp_file_location')->willReturn($file);
 
         $note = BeanFactory::newBean('Notes');
-        $note->email_type = 'Emails';
-        $note->email_id = create_guid();
         $note->file = $uploadFile;
+        $note->filename = 'quote.pdf';
         $note->save(false);
         SugarTestNoteUtilities::setCreatedNotes(array($note->id));
 
-        $this->assertSame($filesize, $note->file_size);
+        // Note: We can't test that the right mime type is stored because the file is fake. But it shouldn't be empty.
+        $this->assertNotEmpty($note->file_mime_type, 'Should have stored the mime type');
+        $this->assertSame('pdf', $note->file_ext, 'Incorrect extension');
+        $this->assertSame($filesize, $note->file_size, 'Incorrect file size');
 
         unlink($file);
-    }
-
-    public function testSave_EmailAttachmentFileNotFound_FileSizeIsZero()
-    {
-        $note = SugarTestNoteUtilities::createNote();
-        $note->email_type = 'Emails';
-        $note->email_id = create_guid();
-        $note->save(false);
-
-        $this->assertSame(0, $note->file_size);
-    }
-
-    public function testSave_NotAnEmailAttachmentButFileFound_FileSizeIsSaved()
-    {
-        $note = SugarTestNoteUtilities::createNote();
-
-        $file = "upload://{$note->id}";
-        file_put_contents($file, $note->id);
-        $filesize = filesize($file);
-
-        $note->save(false);
-
-        $this->assertSame($filesize, $note->file_size);
     }
 
     public function testMarkDeleted()
@@ -177,8 +162,8 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'filename' => 'foo.jpg',
                 'file_mime_type' => 'image/jpg',
+                'file_ext' => 'jpg',
                 'file_size' => 111,
-                'file_source' => 'Uploaded',
                 'email_type' => 'Emails',
                 'email_id' => create_guid(),
             )
@@ -190,6 +175,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
         $this->assertEmpty($note->filename, 'The filename should be empty');
         $this->assertEmpty($note->file_mime_type, 'The file_mime_type should be empty');
+        $this->assertEmpty($note->file_ext, 'The file_ext should be empty');
         $this->assertEmpty($note->file_size, 'The file_size should be empty');
         $this->assertEmpty($note->file_source, 'The file_source should be empty');
         $this->assertEmpty($note->email_type, 'The email_type should be empty');
@@ -209,8 +195,9 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 'filename' => 'foo.jpg',
                 'file_mime_type' => 'image/jpg',
+                'file_ext' => 'jpg',
                 'file_size' => 111,
-                'file_source' => 'Uploaded',
+                'file_source' => 'EmailTemplates',
                 'email_type' => 'Emails',
                 'email_id' => create_guid(),
                 'upload_id' => $filename,
@@ -223,6 +210,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
         $this->assertEmpty($note->filename, 'The filename should be empty');
         $this->assertEmpty($note->file_mime_type, 'The file_mime_type should be empty');
+        $this->assertEmpty($note->file_ext, 'The file_ext should be empty');
         $this->assertEmpty($note->file_size, 'The file_size should be empty');
         $this->assertEmpty($note->file_source, 'The file_source should be empty');
         $this->assertEmpty($note->email_type, 'The email_type should be empty');

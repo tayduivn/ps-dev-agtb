@@ -48,7 +48,7 @@
     {
       "assigned_user_id": "seed_will_id",
       "name": "This Name Field Is Being Updated",
-      "state": "Draft",
+      "state": "Draft"
     }
 </pre>
 
@@ -273,12 +273,92 @@
     {
       "contacts_to": {
         "delete": [
-          "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+          "afe9702e-53a3-0efb-6bbe-56c3580885ef"
         ]
       },
       "email_addresses_bcc": {
         "delete": [
+          "afe9702e-53a3-0efb-6bbe-56c3580885ef"
+        ]
+      }
+    }
+</pre>
+
+<h3>Attachments</h3>
+<span class="lead">
+    Specify the attachments of an email. The attachments cannot be changed when an email is archived.
+</span>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Action</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <code>add</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            Unsupported. Existing Notes records cannot be attached to an email.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>create</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of objects representing the Notes record data. <b>filename_guid</b> is used to specify the temporary
+            file ID for an uploaded file that should be attached as a Notes record. <b>upload_id</b> is used to specify
+            the ID of an existing file that the Notes record should reference as the attachment. This allows files to be
+            shared by multiple records. When using <b>upload_id</b>, the <b>file_source</b> should be provided to
+            indicate from where the file originated. The value should be the module of the record that shares its ID
+            with the file. So when an attachment comes from an email template, the <b>file_source</b> should be
+            <b>EmailTemplates</b>. And when an attachment comes from a document, the <b>file_source</b> should be
+            <b>DocumentRevisions</b>.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <code>delete</code>
+        </td>
+        <td>
+            List
+        </td>
+        <td>
+            List of record IDs.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<pre class="pre-scrollable">
+    {
+      "attachments": {
+        "create": [
+          {
+            "filename_guid": "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+            "name": "Quote.pdf",
+            "filename": "Quote.pdf"
+          },
+          {
+            "upload_id": "a028341c-ba92-9343-55e7-56cf5beda121",
+            "name": "Contract.pdf",
+            "filename": "Contract.pdf",
+            "file_source": "DocumentRevisions"
+          }
+        ],
+        "delete": [
           "afe9702e-53a3-0efb-6bbe-56c3580885ef",
+          "18a72782-4514-11e6-a5f7-3c15c2d582c6"
         ]
       }
     }

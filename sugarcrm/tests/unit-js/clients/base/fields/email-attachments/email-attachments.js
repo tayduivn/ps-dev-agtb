@@ -39,15 +39,14 @@ describe('Base.EmailAttachments', function() {
                 name: 'Disclosure Agreement.pdf',
                 filename: 'Disclosure Agreement.pdf',
                 file_mime_type: 'application/pdf',
-                file_size: 158589,
-                file_source: 'Uploaded'
+                file_size: 158589
             }, {
                 id: _.uniqueId(),
                 name: 'logo.jpg',
-                filname: 'logo.jpg',
+                filename: 'logo.jpg',
                 file_mime_type: 'image/jpg',
                 file_size: 158589,
-                file_source: 'Document'
+                file_source: 'DocumentRevisions'
             }];
 
             model.set('id', _.uniqueId());
@@ -81,39 +80,38 @@ describe('Base.EmailAttachments', function() {
     describe('getting the formatted value', function() {
         it('should return an array of objects without any attachments that are to be unlinked', function() {
             var value;
+            var file1Guid = _.uniqueId();
             var file1 = new Backbone.Model({
                 _action: 'create',
                 _url: null,
-                _file: _.uniqueId(),
+                id: file1Guid,
+                filename_guid: file1Guid,
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded',
                 file_size: 158589
             });
             var file2 = new Backbone.Model({
                 _url: 'url/to/download/file',
-                _file: _.uniqueId(),
+                id: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded',
                 file_size: 158589
             });
             var file3 = new Backbone.Model({
                 _action: 'placeholder',
                 _url: null,
-                _file: _.uniqueId(),
+                id: _.uniqueId(),
                 name: 'quote.pdf'
             });
             var file4 = new Backbone.Model({
                 _action: 'delete',
                 _url: 'url/to/download/file',
-                _file: _.uniqueId(),
+                id: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_source: 'Uploaded',
                 file_size: 158589
             });
             var file1Json = file1.toJSON();
@@ -155,35 +153,50 @@ describe('Base.EmailAttachments', function() {
         });
 
         it('should set the create property on the model value', function() {
-            var file = new Backbone.Model({
+            var file1Id = _.uniqueId();
+            var file1 = new Backbone.Model({
                 _action: 'create',
                 _url: null,
-                _file: _.uniqueId(),
+                id: file1Id,
+                filename_guid: file1Id,
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_source: 'Uploaded'
+                file_mime_type: 'application/pdf'
             });
+            var file2 = new Backbone.Model({
+                _action: 'create',
+                _url: null,
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'logo.jpg',
+                filename: 'logo.jpg',
+                file_mime_type: 'image/jpg',
+                file_source: 'EmailTemplates'
+            });
+            var attachments;
 
-            field._attachments.add(file);
+            field._attachments.add([file1, file2]);
 
-            expect(field.model.get(field.name).create.length).toEqual(1);
-            expect(_.first(field.model.get(field.name).create)._file).toEqual(file.get('_file'));
+            attachments = field.model.get(field.name).create;
+            expect(attachments.length).toEqual(2);
+            expect(attachments[0].filename_guid).toEqual(file1Id);
+            expect(attachments[0].id).toBeUndefined();
+            expect(attachments[1].upload_id).toEqual(file2.get('upload_id'));
+            expect(attachments[1].id).toBeUndefined();
         });
 
         it('should set the delete property on the model value', function() {
             var file = new Backbone.Model({
                 _action: 'delete',
                 _url: null,
-                _file: _.uniqueId(),
+                id: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_source: 'Uploaded'
+                file_mime_type: 'application/pdf'
             });
 
             field._attachments.add(file);
-            expect(field.model.get(field.name)['delete']).toEqual([file.get('_file')]);
+            expect(field.model.get(field.name)['delete']).toEqual([file.get('id')]);
         });
     });
 
@@ -204,12 +217,11 @@ describe('Base.EmailAttachments', function() {
             var $file;
             var file = new Backbone.Model({
                 _url: 'url/to/download/file',
-                _file: _.uniqueId(),
+                id: _.uniqueId(),
                 name: 'quote.pdf',
                 filename: 'quote.pdf',
                 file_mime_type: 'application/pdf',
-                file_size: 158589,
-                file_source: 'Uploaded'
+                file_size: 158589
             });
             field._attachments.add(file);
             sandbox.stub(app.api, 'fileDownload');
@@ -307,12 +319,13 @@ describe('Base.EmailAttachments', function() {
                     expect(field._attachments.length).toBe(1);
                     attachment = field._attachments.at(0);
                     expect(attachment.get('_action')).toBe('create');
-                    expect(attachment.get('_file')).toBe(id);
+                    expect(attachment.get('id')).toBe(id);
+                    expect(attachment.get('filename_guid')).toBe(id);
                     expect(attachment.get('name')).toBe(fileName);
                     expect(attachment.get('filename')).toBe(fileName);
                     expect(attachment.get('file_mime_type')).toBe('application/pdf');
                     expect(attachment.get('file_size')).toBe(158589);
-                    expect(attachment.get('file_source')).toBe('Uploaded');
+                    expect(attachment.get('file_source')).toBeUndefined();
                 });
             });
 
@@ -414,12 +427,13 @@ describe('Base.EmailAttachments', function() {
                 attachment = field._attachments.at(0);
                 expect(attachment.get('_action')).toBe('create');
                 expect(attachment.get('_url')).toBeNull();
-                expect(attachment.get('_file')).toBe(doc.get('document_revision_id'));
+                expect(attachment.get('id')).toBe(doc.get('document_revision_id'));
+                expect(attachment.get('upload_id')).toBe(doc.get('document_revision_id'));
                 expect(attachment.get('name')).toBe('Contract.pdf');
                 expect(attachment.get('filename')).toBe('Contract.pdf');
                 expect(attachment.get('file_mime_type')).toBe('application/pdf');
                 expect(attachment.get('file_size')).toBe(158589);
-                expect(attachment.get('file_source')).toBe('Document');
+                expect(attachment.get('file_source')).toBe('DocumentRevisions');
 
                 app.drawer = null;
             });
@@ -437,28 +451,29 @@ describe('Base.EmailAttachments', function() {
                 }, {
                     id: _.uniqueId(),
                     name: 'NDA.pdf',
-                    filname: 'NDA.pdf',
+                    filename: 'NDA.pdf',
                     file_mime_type: 'application/pdf',
                     file_size: 158589
                 }, {
                     id: _.uniqueId(),
                     name: 'logo.jpg',
-                    filname: 'logo.jpg',
+                    filename: 'logo.jpg',
                     file_mime_type: 'image/jpg',
                     file_size: 158589
                 }];
 
                 // New uploaded attachment should still be linked after adding
                 // template attachments.
+                var file1Guid = _.uniqueId();
                 var file1 = new Backbone.Model({
                     _action: 'create',
                     _url: null,
-                    _file: _.uniqueId(),
+                    id: file1Guid,
+                    filename_guid: file1Guid,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
 
                 // Placeholder attachment should still remain after adding
@@ -467,7 +482,7 @@ describe('Base.EmailAttachments', function() {
                 var file2 = new Backbone.Model({
                     _action: 'placeholder',
                     _url: null,
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
                     name: 'quote.pdf'
                 });
 
@@ -476,12 +491,11 @@ describe('Base.EmailAttachments', function() {
                 var file3 = new Backbone.Model({
                     _action: 'delete',
                     _url: 'url/to/download/file',
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
 
                 // Existing template attachment to be removed should still be
@@ -489,12 +503,13 @@ describe('Base.EmailAttachments', function() {
                 var file4 = new Backbone.Model({
                     _action: 'delete',
                     _url: 'url/to/download/file',
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
                     file_size: 158589,
-                    file_source: 'Template'
+                    file_source: 'EmailTemplates'
                 });
 
                 // New template attachment should be removed before adding
@@ -504,34 +519,37 @@ describe('Base.EmailAttachments', function() {
                 var file5 = new Backbone.Model({
                     _action: 'create',
                     _url: null,
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
                     file_size: 158589,
-                    file_source: 'Template'
+                    file_source: 'EmailTemplates'
                 });
 
                 // Existing template attachments should be unlinked.
                 var file6 = new Backbone.Model({
                     _url: 'url/to/download/file',
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
                     file_size: 158589,
-                    file_source: 'Template'
+                    file_source: 'EmailTemplates'
                 });
 
                 // Existing template attachments should be unlinked.
                 var file7 = new Backbone.Model({
                     _url: 'url/to/download/file',
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
                     file_size: 158589,
-                    file_source: 'Template'
+                    file_source: 'EmailTemplates'
                 });
 
                 field._attachments.add([file1, file2, file3, file4, file5, file6, file7]);
@@ -564,43 +582,44 @@ describe('Base.EmailAttachments', function() {
 
                 expect(field._attachments.length).toBe(9);
 
-                attachment = field._attachments.where({_file: file1.get('_file')});
+                attachment = field._attachments.where({id: file1.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('create');
 
-                attachment = field._attachments.where({_file: file2.get('_file')});
+                attachment = field._attachments.where({id: file2.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('placeholder');
 
-                attachment = field._attachments.where({_file: file3.get('_file')});
+                attachment = field._attachments.where({id: file3.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('delete');
 
-                attachment = field._attachments.where({_file: file4.get('_file')});
+                attachment = field._attachments.where({id: file4.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('delete');
 
-                attachment = field._attachments.where({_file: file5.get('_file')});
+                attachment = field._attachments.where({id: file5.get('id')});
                 expect(attachment).toEqual([]);
 
-                attachment = field._attachments.where({_file: file6.get('_file')});
+                attachment = field._attachments.where({id: file6.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('delete');
 
-                attachment = field._attachments.where({_file: file7.get('_file')});
+                attachment = field._attachments.where({id: file7.get('id')});
                 attachment = _.first(attachment);
                 expect(attachment.get('_action')).toBe('delete');
 
                 _.each(templateAttachments, function(templateAttachment) {
-                    var attachment = field._attachments.where({_file: templateAttachment.id});
+                    var attachment = field._attachments.where({id: templateAttachment.id});
                     attachment = _.first(attachment);
                     expect(attachment.get('_action')).toBe('create');
                     expect(attachment.get('_url')).toBeNull();
+                    expect(attachment.get('upload_id')).toBe(templateAttachment.id);
                     expect(attachment.get('name')).toBe(templateAttachment.filename);
                     expect(attachment.get('filename')).toBe(templateAttachment.filename);
                     expect(attachment.get('file_mime_type')).toBe(templateAttachment.file_mime_type);
                     expect(attachment.get('file_size')).toBe(templateAttachment.file_size);
-                    expect(attachment.get('file_source')).toBe('Template');
+                    expect(attachment.get('file_source')).toBe('EmailTemplates');
                 });
             });
         });
@@ -618,12 +637,11 @@ describe('Base.EmailAttachments', function() {
                 var file = new Backbone.Model({
                     _action: 'create',
                     _url: null,
-                    _file: id,
+                    id: id,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
 
                 field._attachments.add(file);
@@ -636,12 +654,11 @@ describe('Base.EmailAttachments', function() {
             it('should remove an existing attachment', function() {
                 var file = new Backbone.Model({
                     _url: 'url/to/download/file',
-                    _file: id,
+                    id: id,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
 
                 field._attachments.add(file);
@@ -656,7 +673,7 @@ describe('Base.EmailAttachments', function() {
                 var file = new Backbone.Model({
                     _action: 'placeholder',
                     _url: null,
-                    _file: id,
+                    id: id,
                     name: 'quote.pdf'
                 });
 
@@ -671,21 +688,20 @@ describe('Base.EmailAttachments', function() {
                 var create = new Backbone.Model({
                     _action: 'create',
                     _url: null,
-                    _file: id,
+                    id: id,
+                    filename_guid: id,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
                 var existing = new Backbone.Model({
                     _url: 'url/to/download/file',
-                    _file: _.uniqueId(),
+                    id: _.uniqueId(),
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
                 var attachment;
 
@@ -696,28 +712,28 @@ describe('Base.EmailAttachments', function() {
                 expect(field._attachments.length).toBe(1);
 
                 attachment = field._attachments.at(0);
-                expect(attachment.get('_file')).toBe(existing.get('_file'));
+                expect(attachment.get('id')).toBe(existing.get('id'));
             });
 
             it('should unlink only the specified attachment', function() {
+                var createId = _.uniqueId();
                 var create = new Backbone.Model({
                     _action: 'create',
                     _url: null,
-                    _file: _.uniqueId(),
+                    id: createId,
+                    filename_guid: createId,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
                 var existing = new Backbone.Model({
                     _url: 'url/to/download/file',
-                    _file: id,
+                    id: id,
                     name: 'quote.pdf',
                     filename: 'quote.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'Uploaded'
+                    file_size: 158589
                 });
                 var attachment;
 
@@ -728,10 +744,10 @@ describe('Base.EmailAttachments', function() {
                 expect(field._attachments.length).toBe(2);
 
                 attachment = field._attachments.at(0);
-                expect(attachment.get('_file')).toBe(create.get('_file'));
+                expect(attachment.get('id')).toBe(createId);
 
                 attachment = field._attachments.at(1);
-                expect(attachment.get('_file')).toBe(id);
+                expect(attachment.get('id')).toBe(id);
                 expect(attachment.get('_action')).toBe('delete');
             });
         });

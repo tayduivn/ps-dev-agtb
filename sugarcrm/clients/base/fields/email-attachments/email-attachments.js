@@ -127,7 +127,8 @@
                 value.create = _.map(link, function(attachment) {
                     return _.pick(
                         attachment.attributes,
-                        '_file',
+                        'filename_guid',
+                        'upload_id',
                         'name',
                         'filename',
                         'file_mime_type',
@@ -139,7 +140,7 @@
 
             if (unlink.length > 0) {
                 value.delete = _.map(unlink, function(attachment) {
-                    return attachment.get('_file');
+                    return attachment.get('id');
                 });
             }
 
@@ -174,9 +175,9 @@
 
         $el.on('select2-removed', _.bind(function(event) {
             var add = this._attachments.reject(function(attachment) {
-                return attachment.get('_file') === event.val;
+                return attachment.get('id') === event.val;
             });
-            var remove = this._attachments.where({_file: event.val});
+            var remove = this._attachments.where({id: event.val});
 
             add = add.concat(this._prepareAttachmentsForRemoval(remove));
             this._attachments.reset(add, {merge: true});
@@ -214,17 +215,6 @@
             },
             width: 'off',
             /**
-             * Use `_file` as an choice's ID.
-             *
-             * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
-             *
-             * @param {Object} choice
-             * @return {null|string|number}
-             */
-            id: function(choice) {
-                return _.isEmpty(choice) ? null : choice._file;
-            },
-            /**
              * Formats an attachment object for rendering.
              *
              * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
@@ -241,7 +231,7 @@
                     $selection += '<span class="ellipsis-extra">(' + choice.file_size + ')</span>';
                 }
 
-                $selection = '<span data-id="' + choice._file + '">' + $selection + '</span>';
+                $selection = '<span data-id="' + choice.id + '">' + $selection + '</span>';
 
                 return $selection;
             },
@@ -398,7 +388,7 @@
             };
             var file = new Backbone.Model({
                 _url: app.api.buildFileURL(urlAttributes, urlOptions),
-                _file: model.get('id'),
+                id: model.get('id'),
                 name: model.get('filename'),
                 filename: model.get('filename'),
                 file_mime_type: model.get('file_mime_type'),
@@ -518,12 +508,12 @@
         file = new Backbone.Model({
             _action: 'create',
             _url: null,
-            _file: guid,
+            id: guid,
+            filename_guid: guid,
             name: data.record.filename,
             filename: data.record.filename,
             file_mime_type: data.record.file_mime_type,
-            file_size: data.record.file_size,
-            file_source: 'Uploaded'
+            file_size: data.record.file_size
         });
         this._attachments.add(file);
     },
@@ -631,12 +621,13 @@
         file = new Backbone.Model({
             _action: 'create',
             _url: null,
-            _file: doc.get('document_revision_id'),
+            id: doc.get('document_revision_id'),
+            upload_id: doc.get('document_revision_id'),
             name: doc.get('filename'),
             filename: doc.get('filename'),
             file_mime_type: doc.get('latest_revision_file_mime_type'),
             file_size: doc.get('latest_revision_file_size'),
-            file_source: 'Document'
+            file_source: 'DocumentRevisions'
         });
         this._attachments.add(file, {merge: true});
     },
@@ -703,7 +694,7 @@
         existing = this._attachments.groupBy('file_source');
 
         _.each(existing, function(attachments, source) {
-            if (source === 'Template') {
+            if (source === 'EmailTemplates') {
                 // Remove all existing attachments that came from an email
                 // template. The returned attachments are to be merged so they
                 // can be unlinked.
@@ -720,12 +711,13 @@
             var file = new Backbone.Model({
                 _action: 'create',
                 _url: null,
-                _file: model.get('id'),
+                id: model.get('id'),
+                upload_id: model.get('id'),
                 name: model.get('filename'),
                 filename: model.get('filename'),
                 file_mime_type: model.get('file_mime_type'),
                 file_size: model.get('file_size'),
-                file_source: 'Template'
+                file_source: 'EmailTemplates'
             });
             add.push(file);
         });
@@ -772,7 +764,7 @@
                     unlink.push(attachment);
                     break;
                 case 'placeholder':
-                    this._removePlaceholderAttachment(attachment.get('_file'));
+                    this._removePlaceholderAttachment(attachment.get('id'));
                     break;
                 case 'create':
                 default:
@@ -808,8 +800,8 @@
         var id = this._placeholders++;
         var file = new Backbone.Model({
             _action: 'placeholder',
-            _file: id,
             _url: null,
+            id: id,
             name: name
         });
 
@@ -834,7 +826,7 @@
     _removePlaceholderAttachment: function(placeholder) {
         var attachment = this._attachments.where({
             _action: 'placeholder',
-            _file: placeholder
+            id: placeholder
         });
         var request;
 

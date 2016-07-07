@@ -43,14 +43,23 @@ $dictionary['Note'] = array(
     'len' => '100',
     'comment' => 'Attachment MIME type',
     'importable' => false,
+            'duplicate_on_record_copy' => 'always',
   ),
+        'file_ext' => array(
+            'name' => 'file_ext',
+            'vname' => 'LBL_FILE_EXTENSION',
+            'type' => 'varchar',
+            'len' => 100,
+            'duplicate_on_record_copy' => 'always',
+        ),
         'file_source' => array(
             'name' => 'file_source',
             'vname' => 'LBL_FILE_SOURCE',
             'type' => 'varchar',
             'len' => '32',
-            'comment' => 'Attachment File Source',
+            'comment' => 'The name of the module where the attachment originated',
             'importable' => false,
+            'duplicate_on_record_copy' => 'always',
         ),
         'file_size' => array(
             'name' => 'file_size',
@@ -59,6 +68,7 @@ $dictionary['Note'] = array(
             'comment' => 'Attachment File Size',
             'importable' => false,
             'default' => 0,
+            'duplicate_on_record_copy' => 'always',
         ),
   'file_url'=>
   array(
@@ -80,6 +90,7 @@ $dictionary['Note'] = array(
     'reportable'=>true,
     'comment' => 'File name associated with the note (attachment)',
     'importable' => false,
+            'duplicate_on_record_copy' => 'always',
   ),
     'upload_id' => array(
         'name' => 'upload_id',
@@ -87,6 +98,7 @@ $dictionary['Note'] = array(
         'required' => false,
         'reportable' => false,
         'comment' => 'File id under uploads/ dir. Set only for email attachments',
+            'duplicate_on_record_copy' => 'always',
     ),
         'email_type' => array(
             'comment' => "The module of the record to which this note's file is attached (Emails or EmailTemplates)",
@@ -360,6 +372,15 @@ $dictionary['Note'] = array(
     'relationship'=> 'emails_notes_rel',
     'source'=> 'non-db',
   ),
+        'email_attachment_for' => array(
+            'bean_name' => 'Email',
+            'module' => 'Emails',
+            'name' => 'email_attachment_for',
+            'relationship' => 'emails_attachments',
+            'source' => 'non-db',
+            'type' => 'link',
+            'vname' => 'LBL_EMAIL_ATTACHMENT_FOR',
+        ),
   'projects' =>
   array (
     'name' => 'projects',

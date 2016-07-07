@@ -61,13 +61,16 @@ class SugarTestNoteUtilities
 
     /**
      * Cleans created Notes.
+     *
+     * If you created a Notes record where upload_id references a file by a different ID, then you'll need to delete
+     * that file separately.
      */
     public static function removeAllCreatedNotes()
     {
         $ids = self::getCreatedNoteIds();
         $GLOBALS['db']->query('DELETE FROM notes WHERE id IN (\'' . implode("', '", $ids) . '\')');
         foreach (static::$createdNotes as $note) {
-            $file = 'upload://' . $note->getUploadId();
+            $file = "upload://{$note->id}";
 
             if (file_exists($file)) {
                 unlink($file);

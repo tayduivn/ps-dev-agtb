@@ -419,26 +419,6 @@ class EmailsApi extends ModuleApi
 
         foreach ($data as $linkName => $records) {
             switch ($linkName) {
-                case 'attachments':
-                    $relate[$linkName] = array();
-
-                    foreach ($records as $record) {
-                        $sourceFile = $this->getAttachmentSource($record);
-
-                        if (!empty($sourceFile)) {
-                            unset($record['_file']);
-                            $destinationFile = $this->setupAttachmentNoteRecord($bean, $record);
-
-                            $uploaded = (!empty($record['file_source']) &&
-                                $record['file_source'] === Email::EMAIL_ATTACHMENT_UPLOADED);
-
-                            if ($this->moveOrCopyAttachment($sourceFile, $destinationFile, $uploaded)) {
-                                $relate[$linkName][] = $record;
-                            }
-                        }
-                    }
-
-                    break;
                 case in_array($linkName, $skip):
                     // Creating records over these links is not supported.
                     break;
@@ -471,79 +451,6 @@ class EmailsApi extends ModuleApi
         }
 
         return false;
-    }
-
-    /**
-     * Returns the qualified upload source file if the attachment record is valid or null.
-     *
-     * An attachment record is valid if an attachment file is specified and it exists in the upload or upload/tmp
-     * directory.
-     *
-     * @param array $record
-     * @return null|string
-     */
-    protected function getAttachmentSource(array $record)
-    {
-        if (!empty($record['_file'])) {
-            $guid = preg_replace('/[^a-z0-9\-]/', '', $record['_file']);
-
-            foreach (array('', 'tmp/') as $loc) {
-                $source = "upload://{$loc}{$guid}";
-
-                if (file_exists($source)) {
-                    return $source;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Specs out a new Notes object in the array format that {@link ModuleApi::createBean()} expects.
-     *
-     * @param SugarBean $bean
-     * @param array $record The data for the Notes record. This method generates the ID.
-     * @return string The location of the file for the subsequent move or copy.
-     */
-    protected function setupAttachmentNoteRecord(SugarBean $bean, array &$record)
-    {
-        $record['id'] = create_guid();
-        $record['email_id'] = $bean->id;
-        $record['email_type'] = $bean->module_dir;
-
-        return "upload://{$record['id']}";
-    }
-
-    /**
-     * Puts the file in the correct place to be used as an attachment.
-     *
-     * Moves the file if it was uploaded. Otherwise, to avoid duplication of read-only attachment files, this method
-     * first tries to hard link the file and copies the file to the destination if hard linking fails.
-     *
-     * @param string $source
-     * @param string $destination
-     * @param bool $uploaded
-     * @return bool
-     */
-    protected function moveOrCopyAttachment($source, $destination, $uploaded = false)
-    {
-        $source = UploadFile::realpath($source);
-        $destination = UploadFile::realpath($destination);
-
-        if ($uploaded) {
-            $result = rename($source, $destination);
-        } elseif (link($source, $destination)) {
-            $result = true;
-        } else {
-            $result = copy($source, $destination);
-        }
-
-        if (!$result) {
-            $GLOBALS['log']->error("Failed to link/copy file from {$source} to {$destination}");
-        }
-
-        return $result;
     }
 
     /**

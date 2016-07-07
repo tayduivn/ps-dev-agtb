@@ -41,6 +41,7 @@ class Note extends SugarBean
     var $contact_phone;
     var $contact_email;
     var $file_mime_type;
+    public $file_ext;
     public $file_source;
     public $file_size;
     var $module_dir = "Notes";
@@ -80,7 +81,10 @@ class Note extends SugarBean
             $filePath = "upload://{$file}";
         }
 
-        $this->file_size = file_exists($filePath) ? filesize($filePath) : 0;
+        $hasFile = file_exists($filePath);
+        $this->file_mime_type = $hasFile ? get_file_mime_type($filePath, 'application/octet-stream') : '';
+        $this->file_ext = $hasFile ? pathinfo($this->filename, PATHINFO_EXTENSION) : '';
+        $this->file_size = $hasFile ? filesize($filePath) : 0;
 
         return parent::save($check_notify);
     }
@@ -145,6 +149,7 @@ class Note extends SugarBean
         }
 
         $this->filename = '';
+        $this->file_ext = '';
         $this->file_mime_type = '';
         $this->file = '';
         $this->file_size = '';

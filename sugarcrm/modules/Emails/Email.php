@@ -16,10 +16,6 @@ class Email extends SugarBean {
     const EMAIL_STATE_DRAFT = 'Draft';
     const EMAIL_STATE_ARCHIVED = 'Archived';
 
-    const EMAIL_ATTACHMENT_UPLOADED = 'Uploaded';
-    const EMAIL_ATTACHMENT_DOCUMENT = 'Document';
-    const EMAIL_ATTACHMENT_TEMPLATE = 'Template';
-
     public $emailStates = array(
         self::EMAIL_STATE_READY,
         self::EMAIL_STATE_DRAFT,
@@ -1270,6 +1266,9 @@ class Email extends SugarBean {
 
         if (static::inOperation('saving_related')) {
             $message = 'In operation saving_related, so attachment Notes/%s is not saved in %s.';
+            $GLOBALS['log']->debug(sprintf($message, $attachment->id, __METHOD__));
+        } elseif (static::inOperation('updating_relationships')) {
+            $message = 'In operation updating_relationships, so attachment Notes/%s is not saved in %s.';
             $GLOBALS['log']->debug(sprintf($message, $attachment->id, __METHOD__));
         } else {
             $message = 'Attachment Notes/%s is being saved in %s.';
