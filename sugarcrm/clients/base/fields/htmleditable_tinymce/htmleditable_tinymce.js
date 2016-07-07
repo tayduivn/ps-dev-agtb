@@ -181,7 +181,7 @@
                 self._htmleditor.on('init', function(event) {
                     self.setEditorContent(self.getFormattedValue());
                     $(event.target.getWin()).blur(function(e){ // Editor window lost focus, update model immediately
-                        self._saveEditor();
+                        self._saveEditor(true);
                     });
                 });
                 self._htmleditor.on('deactivate', function(ed){

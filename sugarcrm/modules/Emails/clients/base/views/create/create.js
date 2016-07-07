@@ -491,7 +491,16 @@
         if (value instanceof Backbone.Collection) {
             return value.length !== 0;
         } else {
-            return !_.isEmpty($.trim(value));
+            if (_.isEqual(fieldName, 'description_html')) {
+                // When fetching tinyMCE content, convert to jQuery Object
+                // and return only if text is not empty. By wrapping the value
+                // in <div> tags we remove the error if the value contains
+                // no HTML markup
+                value = value || '';
+                return !_.isEmpty($.trim($('<div>' + value + '</div>').text()));
+            } else {
+                return !_.isEmpty($.trim(value));
+            }
         }
     },
 
