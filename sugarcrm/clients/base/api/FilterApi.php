@@ -558,8 +558,12 @@ class FilterApi extends SugarApi
         if (!empty($options['order_by'])) {
             self::addOrderBy($q, $options['order_by']);
         }
-        // Add an extra record to the limit so we can detect if there are more records to be found
-        $q->limit($options['limit'] + 1);
+
+        // nagative limit means no limit
+        if ($options['limit'] >= 0) {
+            // Add an extra record to the limit so we can detect if there are more records to be found
+            $q->limit($options['limit'] + 1);
+        }
         $q->offset($options['offset']);
 
         return $q;
