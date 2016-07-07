@@ -1012,7 +1012,7 @@ class CalDavEventCollection extends SugarBean
                                  ->findSugarLinkByEmail($email);
                 }
                 
-                if (!$link) {
+                if (!$link && !$email) {
                     $link = $this->getPrincipalManager()
                         ->setOutputFormat(new Principal\Search\Format\ArrayStrategy())
                         ->findSugarLinkByDisplayName($displayName);
