@@ -114,6 +114,11 @@ include("metadata/kbusefulnessMetaData.php");
 // SugarCacheDb
 include "metadata/key_value_cacheMetaData.php";
 
+//BEGIN SUGARCRM flav=ent ONLY
+// Locked fields
+include "metadata/locked_field_bean_relMetaData.php";
+//END SUGARCRM flav=ent ONLY
+
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {
     require $defs;

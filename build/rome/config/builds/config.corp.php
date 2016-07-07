@@ -142,6 +142,11 @@ $config['blackList']['corp'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
 
+// Locked fields implementation for ENT and above
+'sugarcrm/include/SugarObjects/implements/lockable_fields' => 1,
+'sugarcrm/metadata/locked_field_bean_relMetaData.php' => 1,
+'sugarcrm/modules/pmse_Project/pmse_BpmProcessDefinition/LockedFieldsRelatedModulesUtilities.php' => 1,
+
 'sugarcrm/clients/portal'=>1,
 'sugarcrm/portal2' =>1,
 'sugarcrm/tests/clients/portal'=>1,

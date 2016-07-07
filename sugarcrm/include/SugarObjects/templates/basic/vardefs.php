@@ -308,6 +308,9 @@ $vardefs = array(
         'following',
         'favorite',
         'taggable',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'lockable_fields',
+        //END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,
