@@ -85,19 +85,17 @@
 
         this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
 
-        if (this.model.isNotEmpty) {
-            prepopulateValues = this.context.get('prepopulate');
-            if (!_.isEmpty(prepopulateValues)) {
-                this.prepopulate(prepopulateValues);
-            }
-            this._addRecipientOptions();
-
-            if (this.model.isNew()) {
-                this._updateEditorWithSignature(this._lastSelectedSignature);
-            }
-
-            this._setAttachmentVisibility();
+        prepopulateValues = this.context.get('prepopulate');
+        if (!_.isEmpty(prepopulateValues)) {
+            this.prepopulate(prepopulateValues);
         }
+        this._addRecipientOptions();
+
+        if (this.model.isNew()) {
+            this._updateEditorWithSignature(this._lastSelectedSignature);
+        }
+
+        this._setAttachmentVisibility();
 
         this.notifyConfigurationStatus();
     },
@@ -128,7 +126,8 @@
     },
 
     /**
-     * Prepopulate fields on the email compose screen that are passed in on the context when opening this view
+     * Prepopulate fields on the email compose screen that are passed in on the
+     * context when opening this view
      * TODO: Refactor once we have custom module specific models
      * @param {Object} values
      */
