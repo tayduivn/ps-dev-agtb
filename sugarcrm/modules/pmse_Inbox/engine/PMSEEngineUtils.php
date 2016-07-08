@@ -60,6 +60,7 @@ class PMSEEngineUtils
         'BR' => array(
             'duration_hours',
             'kbdocument_body',
+            'revision',
             'duration_minutes',
             'repeat_type',
             'viewcount',
@@ -74,15 +75,18 @@ class PMSEEngineUtils
         // Add related record Activity item in Process Definitions
         'AC' => array(
             'kbdocument_body',
+            'revision',
             'viewcount',
         ),
         // Process Definitions
         'PD' => array(
             'kbdocument_body',
+            'revision',
             'viewcount',
         ),
         'GT' => array(
             'kbdocument_body',
+            'revision',
             'viewcount',
         ),
         // Change field action... this used to be the same as Add Related Record
@@ -92,6 +96,7 @@ class PMSEEngineUtils
             'system_generated_password',
             'duns_num',
             'kbdocument_body',
+            'revision',
             'viewcount',
             'created_by',
             'modified_user_id',

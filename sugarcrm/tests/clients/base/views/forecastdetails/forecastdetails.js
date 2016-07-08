@@ -603,7 +603,7 @@ describe("Base.View.Forecastdetails", function() {
 
                 it("should return the right likely value", function() {
                     result = view.mapAllTheThings(data, fromModel);
-                    expect(result.likely).toEqual(data.likely_adjusted);
+                    expect(result.likely).toEqual(data.likely_adjusted.toString());
                 });
 
             });
@@ -632,7 +632,7 @@ describe("Base.View.Forecastdetails", function() {
 
                 it("should return the right likely value", function() {
                     result = view.mapAllTheThings(data, fromModel);
-                    expect(result.likely).toEqual(data.likely_case);
+                    expect(result.likely).toEqual(data.likely_case.toString());
                 });
 
             });

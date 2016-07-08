@@ -268,7 +268,7 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
         it('should change quota', function() {
             m.set({quota: 45});
             view.mgrWorksheetChanged(m);
-            expect(view.serverData.quota).toEqual(45);
+            expect(view.serverData.quota).toEqual('45');
         });
     });
 
