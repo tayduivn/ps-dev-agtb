@@ -81,10 +81,11 @@ class Note extends SugarBean
             $filePath = "upload://{$file}";
         }
 
-        $hasFile = file_exists($filePath);
-        $this->file_mime_type = $hasFile ? get_file_mime_type($filePath, 'application/octet-stream') : '';
-        $this->file_ext = $hasFile ? pathinfo($this->filename, PATHINFO_EXTENSION) : '';
-        $this->file_size = $hasFile ? filesize($filePath) : 0;
+        if (file_exists($filePath)) {
+            $this->file_mime_type = get_file_mime_type($filePath, 'application/octet-stream');
+            $this->file_ext = pathinfo($this->filename, PATHINFO_EXTENSION);
+            $this->file_size = filesize($filePath);
+        }
 
         return parent::save($check_notify);
     }
