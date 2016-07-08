@@ -97,7 +97,7 @@ class ImportFileSplitter
             return false;
         $importFile = new ImportFile($this->_sourceFile,$delimiter,$enclosure,false);
         $filecount = 0;
-        $fw = sugar_fopen("{$this->_sourceFile}-{$filecount}","w");
+        $fw = sugar_fopen("{$this->_sourceFile}-{$filecount}", "w");
         $count = 0;
         $rows = '';
         // skip first row if we have a header row
@@ -114,7 +114,7 @@ class ImportFileSplitter
                 $rows = '';
                 fclose($fw);
                 $filecount++;
-                $fw = sugar_fopen("{$this->_sourceFile}-{$filecount}","w");
+                $fw = sugar_fopen("{$this->_sourceFile}-{$filecount}", "w");
                 $count = 0;
             }
             $rows .= $row;
