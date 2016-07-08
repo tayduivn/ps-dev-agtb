@@ -1140,7 +1140,7 @@
         if (field.view.meta && field.view.meta.useTabsAndPanels) {
             // If field's panel is a tab, switch to the tab that contains the field with the error
             if (fieldTab.length > 0) {
-                tabLink = this.$('[href="#'+fieldTab.attr('id')+'"].[data-toggle="tab"]');
+                tabLink = this.$('[href="#' + fieldTab.attr('id') + '"][data-toggle="tab"]');
                 tabLink.tab('show');
                 // Put a ! next to the tab if one doesn't already exist
                 if (tabLink.find('.fa-exclamation-circle').length === 0) {
