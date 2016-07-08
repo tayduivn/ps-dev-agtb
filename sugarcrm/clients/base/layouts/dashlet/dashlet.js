@@ -87,7 +87,7 @@
             if(toolbar !== "no") {
                 components.push({
                     view: {
-                        type: 'dashlet-toolbar',
+                        name: 'dashlet-toolbar',
                         label: label,
                         toolbar: toolbar
                     },
