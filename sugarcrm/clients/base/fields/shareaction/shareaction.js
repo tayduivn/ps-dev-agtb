@@ -133,6 +133,17 @@
     },
 
     /**
+     * If there is a default signature in email compose, it should be placed
+     * below the share content in the email body.
+     *
+     * @return {Object}
+     * @protected
+     */
+    _retrieveEmailOptionsFromLink: function() {
+        return {_signatureLocation: 'below'};
+    },
+
+    /**
      * Retrieve a mailto URL to launch an external mail client with share info
      * (used by bwc)
      */

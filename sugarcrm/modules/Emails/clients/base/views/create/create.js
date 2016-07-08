@@ -16,7 +16,6 @@
 ({
     extendsFrom: 'CreateView',
 
-    _lastSelectedSignature: null,
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
     ATTACHMENT_FIELD_HEIGHT: 44,
@@ -25,9 +24,30 @@
     STATE_DRAFT: 'Draft',
     STATE_READY: 'Ready',
 
+    //Constants dealing with where to insert content into the email body
+    ABOVE_CONTENT: 'above',
+    BELOW_CONTENT: 'below',
+    CURSOR_LOCATION: 'cursor',
+
     sendButtonName: 'send_button',
     cancelButtonName: 'cancel_button',
     saveAsDraftButtonName: 'draft_button',
+
+    /**
+     * Keep track of the last selected signature so it can be re-inserted in
+     * the case where a template is inserted.
+     *
+     * @property {Object}
+     */
+    _lastSelectedSignature: null,
+
+    /**
+     * Keep track of the reply content so it can be re-inserted in the case
+     * where a template is inserted.
+     *
+     * @property {string}
+     */
+    _replyContent: null,
 
     /**
      * @property {RegExp}
@@ -45,18 +65,26 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        var defaultSignature;
+
         this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleRecipientOptionClick'
         });
-        this.context.on('tinymce:selected_signature:clicked', this._updateEditorWithSignature, this);
+        this.context.on('tinymce:selected_signature:clicked', this._insertSignatureAtCursor, this);
         this.context.on('tinymce:template:clicked', this._launchTemplateDrawer, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
         this.model.on('change:attachments', this._setAttachmentVisibility, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
         app.drawer.on('drawer:resize', this.resizeEditor, this);
 
-        this._lastSelectedSignature = app.user.getPreference('signature_default');
+        //Set the default signature as the last selected signature for later
+        //insertion.
+        defaultSignature = app.user.getPreference('signature_default');
+        if (!(defaultSignature instanceof app.Bean)) {
+            defaultSignature = app.data.createBean('UserSignatures', defaultSignature);
+        }
+        this._lastSelectedSignature = defaultSignature;
     },
 
     /**
@@ -92,7 +120,8 @@
         this._addRecipientOptions();
 
         if (this.model.isNew()) {
-            this._updateEditorWithSignature(this._lastSelectedSignature);
+            this._signatureLocation = this._signatureLocation || this.BELOW_CONTENT;
+            this._insertSignature(this._lastSelectedSignature, this._signatureLocation);
         }
 
         this._setAttachmentVisibility();
@@ -135,6 +164,11 @@
         var self = this;
         _.defer(function() {
             _.each(values, function(value, fieldName) {
+                if (fieldName === '_signatureLocation') {
+                    self._signatureLocation = value;
+                    return;
+                }
+
                 switch (fieldName) {
                     case 'related':
                         self._populateForModules(value);
@@ -149,6 +183,12 @@
                         self.model.set(fieldName, value);
                 }
             });
+
+            //Restore the signature if setting body content and a default
+            //signature exists
+            if (values.description_html && self._lastSelectedSignature) {
+                self._insertSignature(self._lastSelectedSignature, self._signatureLocation);
+            }
         });
     },
 
@@ -602,7 +642,7 @@
             this.trigger('email_attachments:template:add', template);
 
             // currently adds the html signature even when the template is text-only
-            this._updateEditorWithSignature(this._lastSelectedSignature);
+            this._insertSignature(this._lastSelectedSignature, this.BELOW_CONTENT);
         }
     },
 
@@ -694,54 +734,39 @@
     },
 
     /**
-     * Fetches the signature content using its ID and updates the editor with the content.
+     * Inserts the signature at the current cursor location in the editor.
      *
-     * @param {Data.Bean} model
+     * @param {string} signature
+     * @private
      */
-    _updateEditorWithSignature: function(model) {
-        var signature;
-
-        if (model && model.id) {
-            signature = app.data.createBean('UserSignatures', {id: model.id});
-
-            signature.fetch({
-                success: _.bind(function(model) {
-                    if (this.disposed === true) {
-                        // If view is already disposed, bail out.
-                        return;
-                    }
-                    if (this._insertSignature(model)) {
-                        this._lastSelectedSignature = model;
-                    }
-                }, this),
-                error: _.bind(function(error) {
-                    this._showServerError(error);
-                }, this)
-            });
-        }
+    _insertSignatureAtCursor: function(signature) {
+        this._insertSignature(signature, this.CURSOR_LOCATION);
     },
 
     /**
      * Inserts the signature into the editor.
      *
      * @param {Data.Bean} signature
+     * @param {string} location Whether to insert above content, below, or at
+     *   the cursor location
      * @return {boolean}
      * @private
      */
-    _insertSignature: function(signature) {
+    _insertSignature: function(signature, location) {
         var htmlBodyObj;
         var emailBody;
         var signatureOpenTag;
         var signatureCloseTag;
+        var formattedSignature;
         var signatureContent;
 
         if (_.isObject(signature) && signature.get('signature_html')) {
             signatureOpenTag = '<div class="signature keep">';
             signatureCloseTag = '</div>';
-            signatureContent = this._formatSignature(signature.get('signature_html'));
+            formattedSignature = this._formatSignature(signature.get('signature_html'));
+            signatureContent = signatureOpenTag + formattedSignature + signatureCloseTag;
 
-            // insert signature at cursor location
-            emailBody = this._insertInEditor(signatureOpenTag + signatureContent + signatureCloseTag);
+            emailBody = this._insertInEditor(signatureContent, location);
             htmlBodyObj = $('<div>' + emailBody + '</div>');
 
             // Mark each signature to either keep or remove
@@ -766,6 +791,7 @@
             emailBody = htmlBodyObj.html();
             this.model.set('description_html', emailBody);
 
+            this._lastSelectedSignature = signature;
             return true;
         }
 
@@ -776,24 +802,39 @@
      * Inserts the content into the tinyMCE editor at the cursor location.
      *
      * @param {string} content
+     * @param {string} location Whether to insert above content, below, or at
+     *   the cursor location
      * @return {string} the content of the editor
      * @private
      */
-    _insertInEditor: function(content) {
+    _insertInEditor: function(content, location) {
+        var emailBody = this.model.get('description_html') || '';
         var editor = this.getField('description_html').getEditor();
 
-        if (!_.isEmpty(content) && !_.isNull(editor)) {
-            editor.execCommand(
-                'mceInsertContent',
-                false,
-                '<div></div>' + content + '<div></div>'
-            );
-
-            return editor.getContent();
+        if (_.isEmpty(content)) {
+            //nothing to insert
+            return emailBody;
         }
 
-        // No content for signature found or no editor instance found, return the model html_body
-        return this.model.get('description_html');
+        //Add empty divs so user can place cursor on line before or after
+        content = '<div></div>' + content + '<div></div>';
+
+        if (location === this.CURSOR_LOCATION) {
+            if (_.isNull(editor)) {
+                //no editor, so not able to insert at cursor
+                return emailBody;
+            }
+
+            editor.execCommand('mceInsertContent', false, content);
+
+            emailBody = editor.getContent();
+        } else if (location === this.BELOW_CONTENT) {
+            emailBody += content;
+        } else {
+            emailBody = content + emailBody;
+        }
+
+        return emailBody;
     },
 
     /**

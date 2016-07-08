@@ -16,23 +16,6 @@ describe('Emails.Views.Create', function() {
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
 
-        // set UserSignatures metadata
-        SugarTest.testMetadata.updateModuleMetadata('UserSignatures', {
-            fields: {
-                name: {
-                    name: 'name',
-                    vname: 'LBL_NAME',
-                    type: 'varchar',
-                    len: 255,
-                    comment: 'Name of this bean'
-                }
-            },
-            favoritesEnabled: true,
-            views: [],
-            layouts: [],
-            _hash: 'bc6fc50d9d0d3064f5d522d9e15968fa'
-        });
-
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         context = app.context.getContext();
@@ -715,18 +698,18 @@ describe('Emails.Views.Create', function() {
         });
 
         describe('replacing templates', function() {
-            var updateEditorWithSignatureStub;
+            var insertSignatureStub;
 
             beforeEach(function() {
                 sandbox.spy(view, 'trigger');
-                updateEditorWithSignatureStub = sandbox.stub(view, '_updateEditorWithSignature');
+                insertSignatureStub = sandbox.stub(view, '_insertSignature');
                 view.model.off('change');
             });
 
             it('should not populate editor if template parameter is not an object', function() {
                 view._insertTemplate(null);
                 expect(view.trigger).not.toHaveBeenCalledWith('email_attachments:template:add', null);
-                expect(updateEditorWithSignatureStub.callCount).toBe(0);
+                expect(insertSignatureStub.callCount).toBe(0);
                 expect(view.model.get('name')).toBeUndefined();
                 expect(view.model.get('description_html')).toBeUndefined();
             });
@@ -743,7 +726,7 @@ describe('Emails.Views.Create', function() {
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(updateEditorWithSignatureStub.callCount).toBe(1);
+                expect(insertSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBeUndefined();
                 expect(view.model.get('description_html')).toBe(bodyHtml);
             });
@@ -762,7 +745,7 @@ describe('Emails.Views.Create', function() {
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(updateEditorWithSignatureStub.callCount).toBe(1);
+                expect(insertSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBe(subject);
                 expect(view.model.get('description_html')).toBe(bodyHtml);
             });
@@ -784,12 +767,12 @@ describe('Emails.Views.Create', function() {
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(updateEditorWithSignatureStub.callCount).toBe(1);
+                expect(insertSignatureStub.callCount).toBe(1);
                 expect(view.model.get('name')).toBe(subject);
                 expect(view.model.get('description_html')).toBe(bodyText);
             });
 
-            it('should call to insert the signature that was marked as the last one selected', function() {
+            it('should call to insert the last selected signature below the template', function() {
                 var bodyHtml = '<h1>Test</h1>';
                 var subject = 'This is my subject';
                 var templateModel = app.data.createBean(
@@ -806,99 +789,12 @@ describe('Emails.Views.Create', function() {
 
                 view._insertTemplate(templateModel);
                 expect(view.trigger).toHaveBeenCalledWith('email_attachments:template:add', templateModel);
-                expect(updateEditorWithSignatureStub).toHaveBeenCalledWith(signature);
+                expect(insertSignatureStub).toHaveBeenCalledWith(signature, view.BELOW_CONTENT);
             });
         });
     });
 
     describe('Signatures', function() {
-        var ajaxSpy;
-
-        beforeEach(function() {
-            ajaxSpy = sandbox.spy($, 'ajax');
-            view.model.off('change');
-
-            sandbox.stub(view, '_insertInEditor', function() {
-                return view.model.get('description_html');
-            });
-        });
-
-        it('should retrieve a signature when the signature ID is present', function() {
-            var id = 'abcd';
-            var signature = app.data.createBean('UserSignatures', {id: id});
-
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith('GET', /.*rest\/v10\/UserSignatures\/.*/,
-                [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-
-            view._updateEditorWithSignature(signature);
-            expect(ajaxSpy.getCall(0).args[0].url).toContain('rest/v10/UserSignatures');
-        });
-
-        it('should not retrieve a signature when the signature ID is not present', function() {
-            var signature = app.data.createBean('UserSignatures');
-
-            view._updateEditorWithSignature(signature);
-            expect(ajaxSpy.callCount).toBe(0);
-        });
-
-        it('should change the last selected signature, on success, to the one that is retrieved', function() {
-            var id = 'abcd';
-            var signature = app.data.createBean('UserSignatures', {id: id});
-            var results = {
-                id: id,
-                name: 'Signature A',
-                signature: 'Regards',
-                signature_html: '&lt;p&gt;Regards&lt;/p&gt;'
-            };
-
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [
-                200,
-                {'Content-Type': 'application/json'},
-                JSON.stringify(results)
-            ]);
-
-            view._lastSelectedSignature = null;
-            view._updateEditorWithSignature(signature);
-            SugarTest.server.respond();
-
-            expect(view._lastSelectedSignature.attributes).toEqual(results);
-        });
-
-        it('should not change the last selected signature, on success, when no signature is returned', function() {
-            var id = 'abcd';
-            var signature = app.data.createBean('UserSignatures', {id: id});
-            var results = [];
-
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [
-                200,
-                {'Content-Type': 'application/json'},
-                JSON.stringify(results)
-            ]);
-
-            view._lastSelectedSignature = null;
-            view._updateEditorWithSignature(signature);
-            SugarTest.server.respond();
-
-            expect(view._lastSelectedSignature).toBeNull();
-        });
-
-        it('should not change the last selected signature on error', function() {
-            var id = 'abcd';
-            var signature = app.data.createBean('UserSignatures', {id: id});
-
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith('GET', new RegExp('.*rest\/v10\/UserSignatures\/' + id + '.*'), [404, {}, '']);
-
-            view._lastSelectedSignature = null;
-            view._updateEditorWithSignature(signature);
-            SugarTest.server.respond();
-
-            expect(view._lastSelectedSignature).toBeNull();
-        });
-
         describe('signature helpers', function() {
             dataProvider = [
                 {
@@ -1008,6 +904,56 @@ describe('Emails.Views.Create', function() {
                 expect(actualReturn).toBe(true);
                 expect(view.model.get('description_html')).toBe(expectedBody);
             });
+        });
+    });
+
+    describe('InsertInEditor', function() {
+        var existingContent;
+        var divSpacer = '<div></div>';
+        var mockEditor;
+
+        beforeEach(function() {
+            mockEditor = {
+                execCommand: sandbox.stub(),
+                getContent: sandbox.stub()
+            };
+            sandbox.stub(view, 'getField', function() {
+                return {
+                    getEditor: function() {
+                        return mockEditor;
+                    }
+                };
+            });
+
+            existingContent = '<p>My Existing Content</p>';
+            view.model.set('description_html', existingContent);
+        });
+
+        it('should insert content above existing email body', function() {
+            var newContent = 'My New Content';
+            var actual = view._insertInEditor(newContent, view.ABOVE_CONTENT);
+            var expected = divSpacer + newContent + divSpacer + existingContent;
+            expect(actual).toEqual(expected);
+        });
+
+        it('should insert content below existing email body', function() {
+            var newContent = 'My New Content';
+            var actual = view._insertInEditor(newContent, view.BELOW_CONTENT);
+            var expected = existingContent + divSpacer + newContent + divSpacer;
+            expect(actual).toEqual(expected);
+        });
+
+        it('should use TinyMCE function for inserting content at the cursor location', function() {
+            var newContent = 'My New Content';
+            view._insertInEditor(newContent, view.CURSOR_LOCATION);
+            expect(mockEditor.execCommand).toHaveBeenCalled();
+        });
+
+        it('should leave email body alone if no content to add', function() {
+            var newContent = '';
+            var actual = view._insertInEditor(newContent, view.ABOVE_CONTENT);
+            var expected = existingContent;
+            expect(actual).toEqual(expected);
         });
     });
 
