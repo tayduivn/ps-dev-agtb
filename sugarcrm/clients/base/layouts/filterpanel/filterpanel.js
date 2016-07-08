@@ -42,12 +42,10 @@
      *     <pre><code>
      *         'layout' => array(
      *              'type' =>'filterpanel',
-     *              'meta' => array(
-     *                  'filter_options' => array(
-     *                      'auto_apply' => false,
-     *                      'stickiness' => false,
-     *                      'show_actions' => false,
-     *                  ),
+     *              'filter_options' => array(
+     *                  'auto_apply' => false,
+     *                  'stickiness' => false,
+     *                  'show_actions' => false,
      *              ),
      *          ),
      *     </code></pre>

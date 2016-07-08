@@ -26,8 +26,8 @@ $viewdefs['base']['layout']['records'] = array(
                                     'view' => 'list-headerpane',
                                 ),
                                 array(
-                                    'layout' => array(
-                                        'type' => 'filterpanel',
+                                    'layout' => 'filterpanel',
+                                    'xmeta' => array(
                                         'last_state' => array(
                                             'id' => 'list-filterpanel',
                                             'defaults' => array(

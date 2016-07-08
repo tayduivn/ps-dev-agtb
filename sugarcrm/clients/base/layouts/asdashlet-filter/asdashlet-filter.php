@@ -14,42 +14,7 @@
 $viewdefs['base']['layout']['asdashlet-filter'] = array(
     'components' => array(
         array(
-            'layout' => array(
-                'type' => 'filterpanel',
-                'meta' => array(
-                    'availableToggles' => array(
-                        array(
-                            'name' => 'activitystream',
-                            'icon' => 'fa-clock-o',
-                            'label' => 'LBL_ACTIVITY_STREAM',
-                        ),
-                    ),
-                    'components' => array(
-                        array(
-                            'layout' => array(
-                                'type' =>'filter',
-                                'meta' => array(
-                                    'components' => array(
-                                        array(
-                                            'view' => 'filter-filter-dropdown'
-                                        ),
-                                    ),
-                                    'last_state' => array(
-                                        'id' => 'filter',
-                                    ),
-                                    'layoutType' => 'records',
-                                ),
-                            ),
-                        ),
-                        array(
-                            'view' => 'filter-rows',
-                        ),
-                        array(
-                            'view' => 'filter-actions',
-                        ),
-                    ),
-                ),
-            ),
+            'layout' => 'filterpanel',
             'context' => array(
                 'module' => 'Activities',
             ),

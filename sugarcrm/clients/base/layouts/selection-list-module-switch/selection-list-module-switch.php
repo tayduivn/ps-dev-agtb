@@ -35,23 +35,19 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => array(
-                                                    'type' =>'filter',
-                                                    'meta' => array(
+                                                    'name' => 'simple-list-filter',
+                                                    'xmeta' => array(
                                                         'components' => array(
                                                             array(
-                                                                'view' => 'filter-module-dropdown-selection-list'
+                                                                'view' => 'filter-module-dropdown-selection-list',
                                                             ),
                                                             array(
-                                                                'view' => 'filter-filter-dropdown'
+                                                                'view' => 'filter-filter-dropdown',
                                                             ),
                                                             array(
-                                                                'view' => 'filter-quicksearch'
+                                                                'view' => 'filter-quicksearch',
                                                             ),
                                                         ),
-                                                        'last_state' => array(
-                                                            'id' => 'filter',
-                                                        ),
-                                                        'layoutType' => 'records',
                                                     ),
                                                 ),
                                             ),
