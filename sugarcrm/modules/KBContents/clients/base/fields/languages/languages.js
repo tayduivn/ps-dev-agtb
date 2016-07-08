@@ -10,7 +10,7 @@
  */
 
 ({
-    extendsFrom: 'FieldSet',
+    extendsFrom: 'FieldsetField',
 
     events: {
         'click .btn[data-action=add-field]': 'addItem',
