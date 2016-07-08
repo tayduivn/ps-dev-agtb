@@ -42,7 +42,7 @@ describe('ForecastWorksheets.Base.Field.Int', function () {
 
     describe('ClickToEdit _fieldValueChanged', function() {
         beforeEach(function() {
-            sandbox.stub(field.model, 'get', function() {
+            sinon.collection.stub(field.model, 'get', function() {
                 return field.value;
             });
             field.value = '50';
