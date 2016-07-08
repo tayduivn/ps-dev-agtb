@@ -559,6 +559,12 @@ class TemplateField{
      */
     protected function applyVardefRules()
     {
+        // Expected behavior of calculated fields without formula are like non-calculated fields
+        if (!empty($this->calculated) && empty($this->formula)) {
+            unset($this->calculated);
+            $this->enforced = '';
+        }
+
         if (!empty($this->calculated) && !empty($this->formula)
             && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
         {
