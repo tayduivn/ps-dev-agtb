@@ -38,7 +38,7 @@ class MaxRelatedDateExpression extends DateExpression
         
         //if the field or relationship isn't defined, bail
         if (!is_array($linkField) || empty($linkField)) {
-           return $ret; 
+            return '';
         }           
                         
         foreach ($linkField as $bean) {
