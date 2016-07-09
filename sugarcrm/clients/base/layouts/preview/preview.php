@@ -12,7 +12,8 @@
  */
 
 $viewdefs['base']['layout']['preview'] = array(
-    'init_components' => array(
+    'lazy_loaded' => 'true',
+    'components' => array(
         array(
             'view' => 'preview-header',
         ),

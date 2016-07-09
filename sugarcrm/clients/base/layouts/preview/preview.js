@@ -95,8 +95,7 @@
     },
 
     /**
-     * Initializes the preview panel, using the components specified in
-     * `this.meta.init_components`.
+     * Initializes the preview layout components using the correct module.
      *
      * @private
      * @param {Data.Bean} model The {@link Data.Bean model} being previewed.
@@ -125,7 +124,7 @@
         if (!hasComponents || modelChanged) {
             this._disposeComponents();
             this.context.set(attrs);
-            this.initComponents(this.meta.init_components, this.context, model.module);
+            this.initComponents(this._componentsMeta, this.context, model.module);
             if (hasComponents) {
                 // In case we already have components, reload the
                 // data to remove previous load data (e.g. fetchCalled, etc)
