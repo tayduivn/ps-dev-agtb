@@ -54,6 +54,12 @@ abstract class SugarApi {
             if ( ! in_array('id',$fieldList ) ) {
                 $fieldList[] = 'id';
             }
+
+            //BEGIN SUGARCRM flav=ent ONLY
+            if (!in_array('locked_fields', $fieldList)) {
+                $fieldList[] = 'locked_fields';
+            }
+            //END SUGARCRM flav=ent ONLY
         } else {
             $fieldList = array();
         }

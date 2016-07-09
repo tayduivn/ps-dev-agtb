@@ -491,7 +491,7 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(array('retrieveBean', 'getBpmFlow', 'handleTerminatedFlowRelatedBeans'))
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
@@ -500,9 +500,18 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
                 ->setMethods(array('save', 'retrieve_by_string_fields'))
                 ->getMock();
 
-        $caseFlowHandlerMock->expects($this->once())
+        $caseFlowHandlerMock->expects($this->any())
                 ->method('retrieveBean')
+                ->with($this->equalTo('pmse_BpmFlow'))
                 ->will($this->returnValue($flowMock));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('getBpmFlow')
+                ->will($this->returnValue($flowMock));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('handleTerminatedFlowRelatedBeans')
+                ->will($this->returnValue(true));
 
         $flowMock->expects($this->once())
                 ->method('retrieve_by_string_fields');
@@ -604,7 +613,6 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCloseThreadByCaseIndex()
     {
-        global $db;
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
                 ->setMethods(array('Query', 'fetchByAssoc'))
@@ -635,20 +643,22 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCloseCase()
     {
-        global $db;
-
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('query', 'fetchByAssoc'))
                 ->getMock();
 
         $db->expects($this->once())
-                ->method('Query');
+                ->method('query');
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(array('retrieveBean', 'getDb'))
                 ->getMock();
+
+        $caseFlowHandlerMock->expects($this->any())
+            ->method('getDb')
+            ->will($this->returnValue($db));
 
         $casId = 1;
         $caseFlowHandlerMock->closeCase($casId);
@@ -656,20 +666,41 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testTerminateCaseFlow()
     {
-        global $db;
-
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $db->expects($this->once())
                 ->method('Query');
 
+        $flowMock = $this->getMockBuilder('pmse_BpmFlow')
+                ->disableAutoload()
+                ->disableOriginalConstructor()
+                ->getMock();
+        $flowMock->table_name = 'foo';
+
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(array('retrieveBean', 'getDb', 'getBpmFlow', 'handleTerminatedFlowRelatedBeans'))
                 ->getMock();
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('handleTerminatedFlowRelatedBeans')
+                ->will($this->returnValue(true));
+
+        $caseFlowHandlerMock->expects($this->any())
+            ->method('getDb')
+            ->will($this->returnValue($db));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('retrieveBean')
+                ->with($this->equalTo('pmse_BpmFlow'))
+                ->will($this->returnValue($flowMock));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('getBpmFlow')
+                ->will($this->returnValue($flowMock));
 
         $casId = 1;
         $caseFlowHandlerMock->terminateCaseFlow($casId);
@@ -677,20 +708,41 @@ class PMSECaseFlowHandlerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetCloseStatusForThisThread()
     {
-        global $db;
-
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $db->expects($this->once())
                 ->method('Query');
 
+        $flowMock = $this->getMockBuilder('pmse_BpmFlow')
+                ->disableAutoload()
+                ->disableOriginalConstructor()
+                ->getMock();
+        $flowMock->table_name = 'foo';
+
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(array('retrieveBean', 'getDb', 'getBpmFlow', 'handleTerminatedFlowRelatedBeans'))
                 ->getMock();
+
+        $caseFlowHandlerMock->expects($this->any())
+            ->method('getDb')
+            ->will($this->returnValue($db));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('handleTerminatedFlowRelatedBeans')
+                ->will($this->returnValue(true));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('retrieveBean')
+                ->with($this->equalTo('pmse_BpmFlow'))
+                ->will($this->returnValue($flowMock));
+
+        $caseFlowHandlerMock->expects($this->any())
+                ->method('getBpmFlow')
+                ->will($this->returnValue($flowMock));
 
         $casId = 1;
         $casThreadIndex = 1;

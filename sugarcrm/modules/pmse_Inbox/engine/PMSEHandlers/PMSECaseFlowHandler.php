@@ -19,11 +19,26 @@ use Sugarcrm\Sugarcrm\ProcessManager;
 
 class PMSECaseFlowHandler
 {
+    /**
+     * pmse_BpmFlow bean
+     * @var pmse_BpmFlow
+     */
     protected $bpmFlow;
+
+    /**
+     * pmse_BpmnFlow bean
+     * @var pmse_BpmnFlow
+     */
     protected $bpmnFlow;
+
+    /**
+     * SugarQuery object
+     * @var SugarQuery
+     */
     protected $sugarQueryObject;
 
     /**
+     * DBManager object
      * @var DBManager
      */
     protected $db;
@@ -473,7 +488,138 @@ class PMSECaseFlowHandler
         }
         $flowBean->save();
 
+        // If this is a new flow, handle the setting of locked fields
+        if (empty($flowId)) {
+            $this->setLockedFieldsOnBean($flowData);
+        }
+
         return $flowBean->toArray();
+    }
+
+    /**
+     * Sets the locked field relationship on the target bean if need be
+     * @param array $flowData
+     */
+    public function setLockedFieldsOnBean(array $flowData)
+    {
+        // Only set this for new flows, since it will be removed when the case is
+        // terminated
+        if (isset($flowData['cas_flow_status']) && $flowData['cas_flow_status'] === 'NEW') {
+            $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $flowData['pro_id']);
+            // See if there locked fields for this process
+            if (!empty($pd->pro_locked_variables)) {
+                // There are, so check if we need to add this PD rel to the target bean
+                $target = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+
+                // If there is a target record found, handle adding the relationship
+                if ($target->id) {
+                    // Get our locked field rel field
+                    $relField = $target->field_defs['locked_fields']['link'];
+
+                    // Try to load the relationship field...
+                    if ($target->load_relationship($relField)) {
+                        // And if it works, get our current related PDs and...
+                        $current = $target->$relField->getBeans();
+
+                        // Add this pd to it if it is not already related
+                        if (!isset($current[$pd->id])) {
+                            $target->$relField->add($pd);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the locked field relationship from a target bean if need be
+     * @param SugarBean $bean
+     * @param string $proId
+     */
+    public function deleteLockFieldsFromBean(SugarBean $bean, $proId)
+    {
+        $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $proId);
+
+        // See if there locked fields for this process
+        if (!empty($pd->pro_locked_variables)) {
+            // Get our locked field rel field
+            $relField = $bean->field_defs['locked_fields']['link'];
+
+            // Try to load the relationship field...
+            if ($bean->load_relationship($relField)) {
+                // And if it works, get our current related PDs and...
+                $current = $bean->$relField->getBeans();
+
+                // Delete this pd from it if it is related
+                if (isset($current[$pd->id])) {
+                    if (!$bean->$relField->delete($bean->id, $pd->id)) {
+                        // Log the failure
+                        $msg = sprintf(
+                            "Failed to delete locked fields rel of PD %s from %s",
+                            $pd->id,
+                            $bean->module_dir
+                        );
+
+                        LoggerManager::getLogger()->fatal($msg);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handles removal of locked field relationship from a bean
+     * @param int $casId Case ID
+     */
+    public function handleTerminatedFlowRelatedBeans($casId)
+    {
+        // We need the flow bean for SugarQuery
+        $flow = $this->retrieveBean('pmse_BpmFlow');
+
+        // Get the query object
+        $q = $this->retrieveSugarQueryObject();
+
+        // We only need these fields for checking/handling
+        $fields = array(
+            'pro_id',
+            'cas_flow_status',
+            'cas_sugar_module',
+            'cas_sugar_object_id',
+        );
+
+        // Build the query
+        $q->select($fields);
+        $q->from($flow)
+          ->where()
+          ->equals('cas_id', $casId);
+
+        // Get our rows of the flow
+        $rows = $q->execute();
+
+        // And get our count for comparison
+        $c = count($rows);
+
+        // We really only want to do this if there are rows, which there should
+        // always be
+        if ($c) {
+            // Set a check value here to see if all rows are closed/terminated
+            $v = 0;
+
+            // Loop and check
+            foreach ($rows as $row) {
+                if (in_array($row['cas_flow_status'], array('CLOSED', 'TERMINATED'))) {
+                    $v++;
+                }
+            }
+
+            // If the number of closed/terminated matches the numer of rows, they
+            // are all closed, so we need to remove the locked fields rel from the
+            // target bean
+            if ($v === $c) {
+                $bean = $this->retrieveBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
+                $this->deleteLockFieldsFromBean($bean, $row['pro_id']);
+            }
+        }
     }
 
     public function processFlowData($flowData)
@@ -579,13 +725,17 @@ class PMSECaseFlowHandler
 
     public function closeFlow($casId, $casIndex)
     {
-        $today = TimeDate::getInstance()->nowDb();
         $flowBean = $this->retrieveBean('pmse_BpmFlow');
         $params = array('cas_id' => $casId, 'cas_index' => $casIndex);
         $flowBean->retrieve_by_string_fields($params);
         $flowBean->cas_flow_status = 'CLOSED';
-        $flowBean->cas_finish_date = $today;
-        return $flowBean->save();
+        $flowBean->cas_finish_date = TimeDate::getInstance()->nowDb();
+        $return = $flowBean->save();
+
+        // Handle checking for locked field relationship
+        $this->handleTerminatedFlowRelatedBeans($casId);
+
+        return $return;
     }
 
     /**
@@ -627,7 +777,8 @@ class PMSECaseFlowHandler
      */
     public function closeThreadByCaseIndex($cas_id, $cas_index)
     {
-        global $db;
+        $db = $this->getDb();
+
         //get current values
         $flowBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $flowBean->retrieve_by_string_fields(array('cas_id' => $cas_id, 'cas_index' => $cas_index));
@@ -652,7 +803,8 @@ class PMSECaseFlowHandler
      */
     public function changeCaseStatus($cas_id, $status = 'IN PROGRESS')
     {
-        global $db;
+        $db = $this->getDb();
+
         $query = "update pmse_inbox set " .
             " cas_status = '{$status}' " .
             " where cas_id = $cas_id  AND cas_status<>'COMPLETED' AND cas_status<>'TERMINATED'";
@@ -671,7 +823,8 @@ class PMSECaseFlowHandler
      */
     public function closeCase($cas_id, $status = 'COMPLETED')
     {
-        global $db;
+        $db = $this->getDb();
+
         $today = TimeDate::getInstance()->nowDb();
         $query = "update pmse_inbox set " .
             " cas_status = '{$status}', " .
@@ -683,21 +836,88 @@ class PMSECaseFlowHandler
     }
 
     /**
-     * Set the terminated status to the cas_flow_status field.
-     * @global type $db
-     * @param type $cas_id
+     * Updates the bpm_flow table with data from $data based on criteria in $where
+     * @param array $data
+     * @param array $where
+     * @return boolean
      */
-    public function terminateCaseFlow($cas_id)
+    protected function updateFlowData(array $data, array $where)
     {
-        global $db;
-        $today = TimeDate::getInstance()->nowDb();
-        $query = "update pmse_bpm_flow set " .
-            " cas_finish_date = '" . $today . "', " .
-            " cas_finished    = 1, " .
-            " cas_flow_status = 'TERMINATED' " .
-            " where cas_id = $cas_id AND cas_flow_status <> 'CLOSED' AND cas_flow_status <> 'TERMINATED'";
-        $db->query($query, true, "Error updating bpm_flow record");
-        //$this->bpmLog('DEBUG', "[$cas_id][] Activities has been marked as terminate");
+        // We'll need this bean
+        $flow = $this->getBpmFlow();
+
+        // And we'll need the DBManager as well
+        $db = $this->getDb();
+
+        // Build the SET SQL
+        $sets = array();
+        foreach ($data as $k => $v) {
+            // Non numeric values must be quoted
+            $set = is_numeric($v) ? $v : $db->quoted($v);
+            $sets[] = "$k = $set";
+        }
+        $setSql = implode(',', $sets);
+
+        // Build the WHERE SQL
+        $wheres = array();
+        foreach ($where as $v) {
+            if (!isset($v[0], $v[1])) {
+                continue;
+            }
+
+            // DB quote non numeric values
+            $val = is_numeric($v[1]) ? $v[1] : $db->quoted($v[1]);
+
+            // If there was a third element passed in the array, that is the operator
+            $op = isset($v[2]) ? $v[2] : '=';
+
+            // Finish the expression
+            $wheres[] = "{$v[0]} $op $val";
+        }
+
+        // Support only AND operators for now
+        $whereSql = implode(' AND ', $wheres);
+
+        $sql = "UPDATE {$flow->table_name}
+                SET
+                    $setSql";
+
+        if (!empty($wheres)) {
+            $sql .= "WHERE $whereSql";
+        }
+
+        // Run the query now
+        $db->query($sql, true, 'Error updating the BPM Flow table');
+
+        // Send back a result, for now will always be true
+        return true;
+    }
+
+    /**
+     * Set the terminated status to the cas_flow_status field.
+     * @param type $casId
+     */
+    public function terminateCaseFlow($casId)
+    {
+        $data = array(
+            'cas_finish_date' => TimeDate::getInstance()->nowDb(),
+            'cas_finished' => 1,
+            'cas_flow_status' => 'TERMINATED',
+        );
+
+        $where = array(
+            array('cas_id', $casId),
+            array('cas_flow_status', 'CLOSED', '!='),
+            array('cas_flow_status', 'TERMINATED', '!='),
+        );
+
+        // Handle the update of the flow
+        $return = $this->updateFlowData($data, $where);
+
+        // Handle checking for locked field relationship
+        $this->handleTerminatedFlowRelatedBeans($casId);
+
+        return $return;
     }
 
     /**
@@ -707,22 +927,31 @@ class PMSECaseFlowHandler
      * @param type $cas_thread_index
      * @return boolean
      */
-    public function setCloseStatusForThisThread($cas_id, $cas_thread_index)
+    public function setCloseStatusForThisThread($casId, $casThreadIndex)
     {
-        global $db;
-        $today = TimeDate::getInstance()->nowDb();
-        $query = "update pmse_bpm_flow set " .
-            " cas_finish_date = '$today', " .
-            " cas_finished    = 1, " .
-            " cas_flow_status = 'TERMINATED' " .
-            " where cas_id = $cas_id and cas_thread = $cas_thread_index AND cas_flow_status  <> 'CLOSED'";
-        $db->query($query, true, "Error updating bpm_flow record ");
-        return true;
+        $data = array(
+            'cas_finish_date' => TimeDate::getInstance()->nowDb(),
+            'cas_finished' => 1,
+            'cas_flow_status' => 'TERMINATED',
+        );
+
+        $where = array(
+            array('cas_id', $casId),
+            array('cas_thread', $casThreadIndex),
+            array('cas_flow_status', 'CLOSED', '!='),
+        );
+
+        // Handle the update of the flow
+        $return = $this->updateFlowData($data, $where);
+
+        // Handle checking for locked field relationship
+        $this->handleTerminatedFlowRelatedBeans($casId);
+
+        return $return;
     }
 
     /**
      * Save the Form Action data if a form has been sent or a Business rule been executed.
-     * @global type $current_user
      * @global type $current_user
      * @param type $params
      */
@@ -787,7 +1016,6 @@ class PMSECaseFlowHandler
 
         $currentDate = new DateTime();
         $formActionBeanObject->frm_date = $currentDate->format('Y-m-d H:i:s');
-        global $current_user;
 
         $formActionBeanObject->user_id = $current_user->id;
         if (!isset($params['form_user_id'])) {
