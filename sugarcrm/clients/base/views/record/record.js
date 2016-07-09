@@ -193,11 +193,9 @@
      * changes.
      * Hide the wrapper if no access to edit.
      *
-     * @param {Object} diff The diff object of fields and whether or not they
-     *   had ACL changes.
+     * @param {Object} diff The diff object of fields with ACL changes.
      */
     handleAclChange: function(diff) {
-        var fields = _.keys(diff);
         var editAccess = app.acl.hasAccessToModel('edit', this.model);
 
         this._setNoEditFields();
