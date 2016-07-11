@@ -236,7 +236,7 @@
             query: term
         };
         this.context.get("collection").resetPagination();
-        this.context.resetLoadFlag(false);
+        this.context.resetLoadFlag({recursive: false});
         this.context.set('skipFetch', false);
         this.context.loadData(options);
     },
@@ -299,7 +299,7 @@
             app.user.lastState.set(this.orderByLastStateKey, this.orderBy);
         }
         // refetch the collection
-        this.context.resetLoadFlag(false);
+        this.context.resetLoadFlag({recursive: false});
         this.context.set('skipFetch', false);
         this.context.loadData(options);
     },

@@ -168,7 +168,7 @@
         sortOptions.module_list = modules;
         sortOptions.offset = 0;
         sortOptions.update = false;
-        this.context.resetLoadFlag(false);
+        this.context.resetLoadFlag({recursive: false});
         this.context.set('skipFetch', false);
         this.context.loadData(sortOptions);
     },
