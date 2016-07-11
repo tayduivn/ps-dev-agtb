@@ -65,7 +65,7 @@ describe('NotificationCenter.Field.AddressRadio', function() {
         it('should set checked addresses from selectedCarriersOptions of a model', function() {
             field.model.get('personal').selectedCarriersOptions = {foo: []};
             field.render();
-            field.$(field.fieldTag).eq(0).click().trigger('change');
+            field.$(field.fieldTag).eq(0).prop('checked', true).trigger('change');
             expect(model.get('personal').selectedCarriersOptions).toEqual({foo: ['0']});
         });
     });
