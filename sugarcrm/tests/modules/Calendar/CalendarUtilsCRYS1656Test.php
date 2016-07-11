@@ -28,10 +28,13 @@ class CalendarUtilsCRYS1656Test extends \PHPUnit_Framework_TestCase
      */
     public function compareBeforeAfterInvitesProvider()
     {
-        $id = create_guid();
+        $id1 = \Sugarcrm\Sugarcrm\Util\Uuid::uuid4();
+        $id2 = \Sugarcrm\Sugarcrm\Util\Uuid::uuid4();
         $module = 'Users';
-        $email = 'email-' . $id . '@example.com';
-        $name = 'name-' . $id;
+        $email1 = 'email-' . $id1 . '@example.com';
+        $name1 = 'name-' . $id1;
+        $name2 = 'name-' . $id2;
+        $email2 = 'email-' . $id2 . '@example.com';
 
         return array(
             // the organizer adds the invitee to the call
@@ -40,225 +43,227 @@ class CalendarUtilsCRYS1656Test extends \PHPUnit_Framework_TestCase
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
+                        $name1,
                     )
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             // the organizer changes the call, the invitee doesn't change the status
-            'does not return invite when organiser changes call and invitee has status "none"' => array(
+            'return invite when organiser changes call and invites status not changed' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(
+                    $id1 => $module,
+                ),
             ),
             // the invitee changes the status
             'does not return invite when invitee changes status from "none" to "accept"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "none" to "decline"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "none" to "tentative"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "accept" to "tentative"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
+                        $name1,
                     )
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
+                        $name1,
                     )
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "accept" to "decline"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "decline" to "accept"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "decline" to "tentative"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "tentative" to "accept"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
-                'expected' => array()
+                'expected' => array(),
             ),
             'does not return invite when invitee changes status from "tentative" to "decline"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array()
             ),
@@ -267,201 +272,238 @@ class CalendarUtilsCRYS1656Test extends \PHPUnit_Framework_TestCase
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when invitee has "decline" status and organizer changes call' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when invitee has "tentative" status and organizer changes call' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             // the organizer re-invites the invitee
             'returns invite when organizer re-invites invitee with status "accept"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when organizer re-invites invitee with status "decline"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when organizer re-invites invitee with status "tentative"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             // the organiser removes the invitee from the call
             'returns invite when organizer removes invitee with status "none"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'none',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when organizer removes invitee with status "accept"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'accept',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when organizer removes invitee with status "decline"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'decline',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
             ),
             'returns invite when organizer removes invitee with status "tentative"' => array(
                 'inviteesBefore' => array(
                     array(
                         $module,
-                        $id,
-                        $email,
+                        $id1,
+                        $email1,
                         'tentative',
-                        $name,
-                    )
+                        $name1,
+                    ),
                 ),
                 'inviteesAfter' => array(),
                 'expected' => array(
-                    $id => $module,
-                )
+                    $id1 => $module,
+                ),
+            ),
+            'returns invite when one of use change status' => array(
+                'inviteesBefore' => array(
+                    array(
+                        $module,
+                        $id1,
+                        $email1,
+                        'none',
+                        $name1,
+                    ),
+                    array(
+                        $module,
+                        $id2,
+                        $email2,
+                        'none',
+                        $name2,
+                    ),
+                ),
+                'inviteesAfter' => array(
+                    array(
+                        $module,
+                        $id1,
+                        $email1,
+                        'accept',
+                        $name1,
+                    ),
+                    array(
+                        $module,
+                        $id2,
+                        $email2,
+                        'none',
+                        $name2,
+                    ),
+                ),
+                'expected' => array(
+                    $id2 => $module,
+                ),
             ),
         );
     }

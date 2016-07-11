@@ -817,20 +817,10 @@ class Meeting extends SugarBean {
 			return parent::get_notification_recipients();
 		}
 
-        $inviteesBefore = $this->inviteesNotification ?: array();
-        $inviteesAfter = \CalendarUtils::getInvitees($this);
-
-        $mergedInvitees = CalendarUtils::compareBeforeAfterInvites($inviteesBefore, $inviteesAfter);
-
-        if (!$this->ignoreOrganizerNotification &&
-            !empty($this->created_by) &&
-            !isset($mergedInvitees[$this->created_by])
-        ) {
-            $mergedInvitees[$this->created_by] = 'Users';
-        }
+        $inviteesList = CalendarUtils::buildInvitesList($this);
 
         $list = array();
-        foreach ($mergedInvitees as $id => $module) {
+        foreach ($inviteesList as $id => $module) {
             $notify_user = BeanFactory::getBean($module, $id);
             if(!empty($notify_user->id)) {
                 $notify_user->new_assigned_user_name = $notify_user->full_name;

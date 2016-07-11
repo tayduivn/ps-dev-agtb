@@ -177,9 +177,6 @@ class Handler implements RunnableInterface
         }
         $this->logger->debug("CalDav: Importing event's Sugar Bean is {$bean->module_name}({$bean->id})");
 
-        $bean->send_invites_uid = $calDavBean->event_uid;
-        $this->logger->debug("CalDav: Set bean's send_invites_uid to event_uid = {$calDavBean->event_uid}");
-
         $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
         if (!$adapter) {
             throw new JQLogicException('Bean ' . $bean->module_name . ' does not have CalDav adapter');
@@ -191,6 +188,10 @@ class Handler implements RunnableInterface
         $this->hookHandler->getExportNotifier()->attach($this->listener);
 
         $bean = $adapter->getBeanForImport($bean, $calDavBean, $importData);
+
+        $bean->send_invites_uid = $calDavBean->event_uid;
+        $this->logger->debug("CalDav: Set bean's send_invites_uid to event_uid = {$calDavBean->event_uid}");
+
         $result = $adapter->import($importData, $bean);
         if ($result != AdapterInterface::NOTHING) {
             switch ($result) {
