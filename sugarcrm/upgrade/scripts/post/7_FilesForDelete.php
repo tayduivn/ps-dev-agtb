@@ -376,6 +376,12 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/views/create-actions';
         }
 
+        if (version_compare($this->from_version, '7.8', '<')) {
+            $files[] = 'modules/pmse_Inbox/engine/Crypt.php';
+            $files[] = 'modules/pmse_Inbox/engine/PMSEAccessManager.php';
+            $files[] = 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
+            $files[] = 'modules/pmse_Project/pmse_BpmAccessManagement';
+        }
         $this->fileToDelete($files);
     }
 

@@ -45,5 +45,4 @@ $pmseModulesList = array (
     'pmse_BpmConfig',
     'pmse_BpmGroup',
     'pmse_BpmGroupUser',
-    'pmse_BpmAccessManagement',
 );

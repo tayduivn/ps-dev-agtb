@@ -202,7 +202,6 @@ $beanList['pmse_BpmProcessDefinition'] = 'pmse_BpmProcessDefinition';
 $beanList['pmse_BpmConfig'] = 'pmse_BpmConfig';
 $beanList['pmse_BpmGroup'] = 'pmse_BpmGroup';
 $beanList['pmse_BpmGroupUser'] = 'pmse_BpmGroupUser';
-$beanList['pmse_BpmAccessManagement'] = 'pmse_BpmAccessManagement';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
@@ -365,7 +364,6 @@ $beanFiles['pmse_BpmProcessDefinition'] = 'modules/pmse_Project/pmse_BpmProcessD
 $beanFiles['pmse_BpmConfig'] = 'modules/pmse_Project/pmse_BpmConfig/pmse_BpmConfig.php';
 $beanFiles['pmse_BpmGroup'] = 'modules/pmse_Project/pmse_BpmGroup/pmse_BpmGroup.php';
 $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_BpmGroupUser.php';
-$beanFiles['pmse_BpmAccessManagement'] = 'modules/pmse_Project/pmse_BpmAccessManagement/pmse_BpmAccessManagement.php';
 //END SUGARCRM flav=ent ONLY
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
@@ -426,7 +424,6 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'pmse_BpmConfig',
     'pmse_BpmGroup',
     'pmse_BpmGroupUser',
-    'pmse_BpmAccessManagement',
     //END SUGARCRM flav=ent ONLY
     );
 $adminOnlyList = array(

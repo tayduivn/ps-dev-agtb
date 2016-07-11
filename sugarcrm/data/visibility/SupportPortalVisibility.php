@@ -166,7 +166,6 @@ class SupportPortalVisibility extends SugarVisibility
             case 'pmse_Business_Rules':
             case 'pmse_Emails_Templates':
             case 'pmse_Project':
-            case 'pmse_Project/pmse_BpmAccessManagement':
             case 'pmse_Project/pmse_BpmActivityDefinition':
             case 'pmse_Project/pmse_BpmActivityStep':
             case 'pmse_Project/pmse_BpmActivityUser':

@@ -166,8 +166,6 @@
         <testsuite name="ProcessAuthor">
             <directory>./pmse/modules</directory>
             <exclude>./pmse/modules/mockClasses</exclude>
-            <exclude>./pmse/modules/pmse_Inbox/engine/CryptTest.php</exclude>
-            <exclude>./pmse/modules/pmse_Inbox/engine/PMSEAccessManagerTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEElements/PMSEChangeFieldTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEEngineUtilsTest.php</exclude>
             <exclude>./pmse/modules/pmse_Inbox/engine/PMSEHandlers/PMSEBeanHandlerTest.php</exclude>
