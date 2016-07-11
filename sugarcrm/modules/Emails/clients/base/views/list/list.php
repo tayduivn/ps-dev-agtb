@@ -22,6 +22,7 @@ $viewdefs['Emails']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'readonly' => true,
+                    'sortable' => false,
                     'fields' => array('name', 'email_address_used', 'email'),
                 ),
                 array(
