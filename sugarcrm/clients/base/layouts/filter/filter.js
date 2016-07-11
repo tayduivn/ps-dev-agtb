@@ -465,12 +465,12 @@
             ctxCollection.resetPagination();
 
             options = _.extend(options, ctx.get('collectionOptions'));
-            ctx.resetLoadFlag(false);
+            ctx.resetLoadFlag({recursive: false});
             ctx.set('skipFetch', true);
             ctx.loadData(options);
 
             // We need to reset twice so we can trigger the other bulk call.
-            ctx.resetLoadFlag(false);
+            ctx.resetLoadFlag({recursive: false});
             options.success = _.bind(function(hasAmount, properties) {
                 if (!this.disposed) {
                     ctx.trigger('refresh:count', hasAmount, properties);
@@ -506,7 +506,7 @@
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
 
-            ctx.resetLoadFlag(false);
+            ctx.resetLoadFlag({recursive: false});
             if (!_.isEmpty(ctx._recordListFields)) {
                 ctx.set('fields', ctx._recordListFields);
             }

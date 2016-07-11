@@ -176,7 +176,7 @@
                 //Don't show alerts for this request, background update
                 showAlerts: false
             };
-            context.resetLoadFlag(false);
+            context.resetLoadFlag({recursive: false});
             context.set('skipFetch', false);
             context.loadData(options);
         }

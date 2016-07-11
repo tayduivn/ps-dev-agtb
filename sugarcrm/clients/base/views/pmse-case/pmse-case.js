@@ -358,7 +358,11 @@
                 // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {
                     if (child.get('isSubpanel') && !child.get('hidden')) {
-                        child.get('collapsed') ? child.resetLoadFlag(false) : child.reloadData({recursive: false});
+                        if (child.get('collapsed')) {
+                            child.resetLoadFlag({recursive: false});
+                        } else {
+                            child.reloadData({recursive: false});
+                        }
                     }
                 });
                 if (this.createMode) {
