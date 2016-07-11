@@ -688,7 +688,18 @@
             });
 
             _.each(attachments, function(attachment) {
-                totalBytes += attachment.get('file_size');
+                var fileSize = attachment.get('file_size');
+
+                if (!_.isNumber(fileSize)) {
+                    try {
+                        fileSize = parseInt(fileSize, 10);
+                    } catch (err) {
+                        // If failed conversion, treat attachment as 0 filesize
+                        fileSize = 0;
+                    }
+                }
+
+                totalBytes += fileSize;
             });
         }
 

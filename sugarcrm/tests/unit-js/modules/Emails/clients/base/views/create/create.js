@@ -622,7 +622,8 @@ describe('Emails.Views.Create', function() {
                 var attachmentModel2 = new Bean({
                     id: _.uniqueId(),
                     _action: 'create',
-                    file_size: 4000000
+                    file_size: '4000000',
+                    file_source: 'DocumentRevisions'
                 });
                 var attachmentModel3 = new Bean({
                     id: _.uniqueId(),
