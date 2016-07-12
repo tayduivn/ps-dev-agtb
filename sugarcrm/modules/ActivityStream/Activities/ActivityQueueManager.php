@@ -22,7 +22,7 @@ class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync', 'kbusefulness', 'usefulness');
     public static $linkModuleBlacklist = array('ActivityStream/Activities', 'ACLRoles', 'Teams',
-        'KBArticles', 'KBDocuments'
+        'KBArticles', 'KBDocuments', 'pmse_Project/pmse_BpmProcessDefinition',
     );
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs',
