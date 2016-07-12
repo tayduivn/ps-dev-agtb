@@ -164,11 +164,6 @@
         var self = this;
         _.defer(function() {
             _.each(values, function(value, fieldName) {
-                if (fieldName === '_signatureLocation') {
-                    self._signatureLocation = value;
-                    return;
-                }
-
                 switch (fieldName) {
                     case 'related':
                         self._populateForModules(value);
@@ -179,8 +174,19 @@
                     case 'bcc':
                         self.model.get(fieldName).add(value);
                         break;
+                    case '_signatureLocation':
+                        self._signatureLocation = value;
+                        break;
+                    case '_isReply':
+                        self._isReply = value;
+                        break;
                     default:
                         self.model.set(fieldName, value);
+                }
+
+                //Show CC or BCC fields if they are being prepopulated
+                if (fieldName === 'cc' || fieldName === 'bcc') {
+                    self._initRecipientOption(fieldName);
                 }
             });
 
@@ -188,6 +194,10 @@
             //signature exists
             if (values.description_html && self._lastSelectedSignature) {
                 self._insertSignature(self._lastSelectedSignature, self._signatureLocation);
+            }
+
+            if (self._isReply) {
+                self._focusEditor();
             }
         });
     },
@@ -940,5 +950,25 @@
 
         //set the new height for the editor
         $editor.height(newEditorHeight);
+    },
+
+    /**
+     * Focus the email body editor at the top of the content.
+     *
+     * @private
+     */
+    _focusEditor: function() {
+        var editor = this.getField('description_html').getEditor();
+
+        if (!editor) {
+            //Editor not initialized yet, retry when it is intialized
+            this.context.once('tinymce:oninit', this._focusEditor, this);
+            return false;
+        }
+
+        $(editor).focus();
+        editor.selection.select(editor.getBody(), true);
+        editor.selection.collapse(true);
+        return true;
     }
 })

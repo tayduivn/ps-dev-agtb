@@ -108,6 +108,8 @@ describe('Emails.Views.Create', function() {
         var populateForModulesStub;
         var flag;
         var mockCollection;
+        var insertSignatureStub;
+        var focusEditorStub;
 
         beforeEach(function() {
             flag = false;
@@ -125,6 +127,9 @@ describe('Emails.Views.Create', function() {
             modelSetStub = sandbox.stub(view.model, 'set', function() {
                 flag = true;
             });
+
+            insertSignatureStub = sandbox.stub(view, '_insertSignature');
+            focusEditorStub = sandbox.stub(view, '_focusEditor');
         });
 
         it('Should trigger recipient add on context if to, cc, or bcc value is passed in.', function() {
@@ -162,6 +167,43 @@ describe('Emails.Views.Create', function() {
 
             runs(function() {
                 expect(modelSetStub.calledOnce).toBe(true);
+            });
+        });
+
+        it('should insert the signature if an email body was populated and a signature was inserted', function() {
+            view._lastSelectedSignature = {
+                id: '123',
+                signature_html: 'my signature'
+            };
+            runs(function() {
+                view.prepopulate({
+                    description_html: 'my content'
+                });
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'signature should have been inserted but timeout expired', 1000);
+
+            runs(function() {
+                expect(insertSignatureStub).toHaveBeenCalled();
+            });
+        });
+
+        it('should focus the editor if prepopulating for a reply email', function() {
+            runs(function() {
+                view.prepopulate({
+                    description_html: 'my reply content',
+                    _isReply: true
+                });
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'editor should have been focused but timeout expired', 1000);
+
+            runs(function() {
+                expect(focusEditorStub).toHaveBeenCalled();
             });
         });
     });
