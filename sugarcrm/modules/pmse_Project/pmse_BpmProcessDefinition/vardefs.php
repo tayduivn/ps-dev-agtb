@@ -172,11 +172,9 @@ $dictionary['pmse_BpmProcessDefinition'] = array(
         'method' => 'getRelatedFields',
     ),
     'ignore_templates' => array(
+        'taggable',
         'lockable_fields',
     ),
 );
 
-VardefManager::createVardef(
-    'pmse_BpmProcessDefinition',
-    'pmse_BpmProcessDefinition'
-);
+VardefManager::createVardef('pmse_BpmProcessDefinition', 'pmse_BpmProcessDefinition');
