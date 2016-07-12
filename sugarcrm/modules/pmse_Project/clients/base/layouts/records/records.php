@@ -47,6 +47,7 @@ $viewdefs['pmse_Project']['base']['layout']['records'] = array(
                                             array(
                                                 'layout' => 'filter',
                                                 'targetEl' => '.filter',
+                                                'loadModule' => 'Filters',
                                                 'position' => 'prepend',
                                             ),
                                             array(

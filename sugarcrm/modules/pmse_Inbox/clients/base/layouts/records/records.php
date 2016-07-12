@@ -46,6 +46,7 @@ $viewdefs['pmse_Inbox']['base']['layout']['records'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
                                             ),

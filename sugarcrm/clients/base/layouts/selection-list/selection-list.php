@@ -34,7 +34,8 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => 'simple-list-filter',
+                                                'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

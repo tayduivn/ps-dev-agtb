@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['shortcuts-config-headerpane'] = array(
+$viewdefs['base']['view']['shortcuts-config-headerpane'] = array(
     'type' => 'list-headerpane',
     'fields' => array(
         array(

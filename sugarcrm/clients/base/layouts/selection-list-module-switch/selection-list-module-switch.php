@@ -34,19 +34,18 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => array(
-                                                    'name' => 'simple-list-filter',
-                                                    'xmeta' => array(
-                                                        'components' => array(
-                                                            array(
-                                                                'view' => 'filter-module-dropdown-selection-list',
-                                                            ),
-                                                            array(
-                                                                'view' => 'filter-filter-dropdown',
-                                                            ),
-                                                            array(
-                                                                'view' => 'filter-quicksearch',
-                                                            ),
+                                                'layout' => 'filter',
+                                                'loadModule' => 'Filters',
+                                                'xmeta' => array(
+                                                    'components' => array(
+                                                        array(
+                                                            'view' => 'filter-module-dropdown-selection-list',
+                                                        ),
+                                                        array(
+                                                            'view' => 'filter-filter-dropdown',
+                                                        ),
+                                                        array(
+                                                            'view' => 'filter-quicksearch',
                                                         ),
                                                     ),
                                                 ),

@@ -59,6 +59,7 @@ $viewdefs['base']['layout']['pmse-case'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

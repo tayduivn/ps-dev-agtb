@@ -26,8 +26,8 @@ $viewdefs['base']['layout']['records'] = array(
                                     'view' => 'list-headerpane',
                                 ),
                                 array(
-                                    'layout' => 'filterpanel',
-                                    'xmeta' => array(
+                                    'layout' => array(
+                                        'type' => 'filterpanel',
                                         'last_state' => array(
                                             'id' => 'list-filterpanel',
                                             'defaults' => array(
@@ -50,6 +50,7 @@ $viewdefs['base']['layout']['records'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

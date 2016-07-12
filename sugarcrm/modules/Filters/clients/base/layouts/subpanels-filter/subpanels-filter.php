@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,9 +11,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['simple-list-filter'] = array(
-    'type' =>'filter',
+$viewdefs['Filters']['base']['layout']['subpanels-filter'] = array(
+    'type' => 'filter',
     'components' => array(
+        array(
+            'view' => 'filter-module-dropdown',
+        ),
         array(
             'view' => 'filter-filter-dropdown',
         ),
@@ -23,5 +27,4 @@ $viewdefs['base']['layout']['simple-list-filter'] = array(
     'last_state' => array(
         'id' => 'filter',
     ),
-    'layoutType' => 'records',
 );
