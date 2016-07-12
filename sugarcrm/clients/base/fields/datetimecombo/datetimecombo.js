@@ -147,6 +147,13 @@
      */
     _setupTimePicker: function() {
         var options;
+        var localeData = app.date.localeData();
+        var lang = {
+            am: localeData.meridiem(1, 00, true),
+            pm: localeData.meridiem(13, 00, true),
+            AM: localeData.meridiem(1, 00, false),
+            PM: localeData.meridiem(13, 00, false)
+        };
 
         this.def.time || (this.def.time = {});
 
@@ -160,7 +167,8 @@
                 false :
                 !!this.def.time.disable_text_input,
             className: this.def.time.css_class || 'prevent-mousedown',
-            appendTo: this.$el
+            appendTo: this.$el,
+            lang: lang
         };
 
         this._enableDuration(options);
