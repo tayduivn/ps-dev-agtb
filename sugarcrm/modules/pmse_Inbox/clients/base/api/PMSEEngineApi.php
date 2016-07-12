@@ -20,6 +20,7 @@ require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 /*
  * Record List API implementation
@@ -346,11 +347,12 @@ class PMSEEngineApi extends SugarApi
     public function engineRoute($api, $args)
     {
         // Needed to tell the save process to ignore locked field enforcement
-        // @TODO Use the Registry for this if it is still needed after refactor
-        $args['skip_locked_fields'] = 1;
+        Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
+
         // The handler will call to the preprocessor in this step
         $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Direct');
         $h->executeRequest($args, false, null, strtoupper($args['frm_action']));
+
         // return the success request array
         return array('success' => true);
     }

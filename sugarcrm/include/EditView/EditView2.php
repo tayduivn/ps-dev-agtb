@@ -96,7 +96,7 @@ class EditView
         }
 
         // So we can send down locked status of fields
-        $this->lockedFields = $this->focus->getLockedFields(false);
+        $this->lockedFields = $this->focus->getLockedFields();
 
         if (empty($GLOBALS['sugar_config']['showDetailData']))
         {

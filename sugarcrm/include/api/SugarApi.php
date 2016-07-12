@@ -86,9 +86,6 @@ abstract class SugarApi {
             $data['_module'] = $bean->module_name;
         }
 
-        // Handle lock fields application
-        $data['_locked_fields'] = $bean->getLockedFields();
-
         return $data;
     }
 
