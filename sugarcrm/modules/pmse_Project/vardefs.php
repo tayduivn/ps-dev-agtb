@@ -19,7 +19,7 @@ $dictionary['pmse_Project'] = array(
 	'activity_enabled'=>true,
 		'duplicate_merge'=>true,
 		'fields'=>array (
-  'prj_uid' => 
+  'prj_uid' =>
   array (
     'name' => 'prj_uid',
     'vname' => 'LBL_PRJ_UID',
@@ -38,7 +38,7 @@ $dictionary['pmse_Project'] = array(
     'calculated' => false,
     'size' => '20',
   ),
-  'prj_target_namespace' => 
+  'prj_target_namespace' =>
   array (
     'required' => false,
     'name' => 'prj_target_namespace',
@@ -59,7 +59,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_expression_language' => 
+  'prj_expression_language' =>
   array (
     'required' => false,
     'name' => 'prj_expression_language',
@@ -80,7 +80,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_type_language' => 
+  'prj_type_language' =>
   array (
     'required' => false,
     'name' => 'prj_type_language',
@@ -101,7 +101,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_exporter' => 
+  'prj_exporter' =>
   array (
     'required' => false,
     'name' => 'prj_exporter',
@@ -122,7 +122,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_exporter_version' => 
+  'prj_exporter_version' =>
   array (
     'required' => false,
     'name' => 'prj_exporter_version',
@@ -143,7 +143,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_author' => 
+  'prj_author' =>
   array (
     'required' => false,
     'name' => 'prj_author',
@@ -164,7 +164,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_author_version' => 
+  'prj_author_version' =>
   array (
     'required' => false,
     'name' => 'prj_author_version',
@@ -185,7 +185,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'prj_original_source' => 
+  'prj_original_source' =>
   array (
     'required' => false,
     'name' => 'prj_original_source',
@@ -206,7 +206,7 @@ $dictionary['pmse_Project'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'name' => 
+  'name' =>
   array (
     'name' => 'name',
     'vname' => 'LBL_NAME',
@@ -214,7 +214,7 @@ $dictionary['pmse_Project'] = array(
     'dbType' => 'varchar',
     'len' => '255',
     'unified_search' => false,
-    'full_text_search' => 
+    'full_text_search' =>
     array (
       'boost' => '3',
     ),
@@ -244,7 +244,7 @@ $dictionary['pmse_Project'] = array(
         'default' => 'INACTIVE',
         'duplicate_on_record_copy' => 'no',
       ),
-  'prj_module' => 
+  'prj_module' =>
   array (
     'required' => true,
     'name' => 'prj_module',
@@ -298,6 +298,7 @@ $dictionary['pmse_Project'] = array(
     // default instead of basic.
     'ignore_templates' => array(
         'taggable',
+        'lockable_fields',
     ),
 );
 if (!class_exists('VardefManager')){

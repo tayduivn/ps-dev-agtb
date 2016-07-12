@@ -272,6 +272,7 @@ $dictionary['pmse_Emails_Templates'] = array(
     // default instead of basic.
     'ignore_templates' => array(
         'taggable',
+        'lockable_fields',
     ),
 );
 if (!class_exists('VardefManager')){

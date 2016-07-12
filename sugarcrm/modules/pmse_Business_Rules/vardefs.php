@@ -298,6 +298,7 @@ $dictionary['pmse_Business_Rules'] = array(
     // default instead of basic.
     'ignore_templates' => array(
         'taggable',
+        'lockable_fields',
     ),
 );
 

@@ -20,7 +20,7 @@ $dictionary['pmse_Inbox'] = array(
     'reassignable' => false,
 		'duplicate_merge'=>true,
 		'fields'=>array (
-  'cas_id' => 
+  'cas_id' =>
   array (
     'required' => true,
     'name' => 'cas_id',
@@ -46,7 +46,7 @@ $dictionary['pmse_Inbox'] = array(
     'min' => false,
     'max' => false,
   ),
-  'cas_parent' => 
+  'cas_parent' =>
   array (
     'required' => true,
     'name' => 'cas_parent',
@@ -71,7 +71,7 @@ $dictionary['pmse_Inbox'] = array(
     'min' => false,
     'max' => false,
   ),
-  'cas_status' => 
+  'cas_status' =>
   array (
     'required' => true,
     'name' => 'cas_status',
@@ -93,7 +93,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '32',
     'size' => '20',
   ),
-  'pro_id' => 
+  'pro_id' =>
   array (
     'required' => true,
     'name' => 'pro_id',
@@ -113,7 +113,7 @@ $dictionary['pmse_Inbox'] = array(
     'calculated' => false,
     'size' => '20',
   ),
-  'cas_title' => 
+  'cas_title' =>
   array (
     'required' => true,
     'name' => 'cas_title',
@@ -134,7 +134,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'pro_title' => 
+  'pro_title' =>
   array (
     'required' => false,
     'name' => 'pro_title',
@@ -155,7 +155,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'cas_custom_status' => 
+  'cas_custom_status' =>
   array (
     'required' => false,
     'name' => 'cas_custom_status',
@@ -176,7 +176,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '32',
     'size' => '20',
   ),
-  'cas_init_user' => 
+  'cas_init_user' =>
   array (
     'required' => false,
     'name' => 'cas_init_user',
@@ -197,7 +197,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '36',
     'size' => '20',
   ),
-  'cas_create_date' => 
+  'cas_create_date' =>
   array (
     'required' => false,
     'name' => 'cas_create_date',
@@ -220,7 +220,7 @@ $dictionary['pmse_Inbox'] = array(
     'dbType' => 'datetime',
     'display_default' => 'now&12:00am',
   ),
-  'cas_update_date' => 
+  'cas_update_date' =>
   array (
     'required' => false,
     'name' => 'cas_update_date',
@@ -242,7 +242,7 @@ $dictionary['pmse_Inbox'] = array(
     'enable_range_search' => false,
     'dbType' => 'datetime',
   ),
-  'cas_finish_date' => 
+  'cas_finish_date' =>
   array (
     'required' => false,
     'name' => 'cas_finish_date',
@@ -264,7 +264,7 @@ $dictionary['pmse_Inbox'] = array(
     'enable_range_search' => false,
     'dbType' => 'datetime',
   ),
-  'cas_pin' => 
+  'cas_pin' =>
   array (
     'required' => false,
     'name' => 'cas_pin',
@@ -286,7 +286,7 @@ $dictionary['pmse_Inbox'] = array(
     'len' => '10',
     'size' => '20',
   ),
-  'cas_assigned_status' => 
+  'cas_assigned_status' =>
   array (
     'required' => false,
     'name' => 'cas_assigned_status',
@@ -379,6 +379,7 @@ $dictionary['pmse_Inbox'] = array(
     // default instead of basic.
     'ignore_templates' => array(
         'taggable',
+        'lockable_fields',
     ),
 );
 if (!class_exists('VardefManager')){
