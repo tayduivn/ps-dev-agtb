@@ -37,15 +37,6 @@ $viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'type' => 'news',
-                                'label' => 'LBL_DASHLET_NEWS_FEED_NAME',
-                            ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' => array(
                                 'type' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
                             ),

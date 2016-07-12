@@ -280,7 +280,10 @@ function process_action_new($focus, $action_array){
 function should_save_new_bean($focus, $action_array)
 {
     if (!empty($action_array['trigger_id'])) {
-        if (isset($focus->workflow_trigger_guid) && $focus->workflow_trigger_guid == $action_array['trigger_id']) {
+        if (isset($focus->workflow_trigger_guid) &&
+            $focus->workflow_trigger_guid == $action_array['trigger_id'] &&
+            isset($focus->workflow_action_guids) &&
+            in_array($action_array['action_id'], $focus->workflow_action_guids)) {
             return false;
         }
     }
@@ -299,6 +302,12 @@ function mark_trigger_bean_with_trigger_id($focus, $action_array)
 {
     if (!empty($action_array['trigger_id'])) {
         $focus->workflow_trigger_guid = $action_array['trigger_id'];
+        if (!isset($focus->workflow_action_guids)) {
+            $focus->workflow_action_guids = array();
+        }
+        if (!in_array($action_array['action_id'], $focus->workflow_action_guids)) {
+            $focus->workflow_action_guids[] = $action_array['action_id'];
+        }
     }
 }
 

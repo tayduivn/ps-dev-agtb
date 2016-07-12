@@ -13,22 +13,6 @@
 
 $viewdefs['base']['view']['news'] = array(
     'dashlets' => array(
-        array(
-            'label' => 'LBL_DASHLET_NEWS_NAME',
-            'description' => 'LBL_DASHLET_NEWS_DESCRIPTION',
-            'config' => array(
-                'limit' => '3',
-            ),
-            'preview' => array(
-                'limit' => '3',
-            ),
-            'filter' => array(
-                'module' => array(
-                    'Accounts',
-                ),
-                'view' => 'record'
-            ),
-        ),
     ),
     'config' => array(
         'fields' => array(
