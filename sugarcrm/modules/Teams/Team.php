@@ -487,7 +487,7 @@ class Team extends SugarBean
 
         // Since we added implicit membership we need to update the focuses global membership to indicate
         // it has implicit membership.
-        $result = $managers_membership->retrieve_by_user_and_team($manager->id, 1);
+        $result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->global_team);
         if($result)
         {
             if(!$managers_membership->implicit_assign)
