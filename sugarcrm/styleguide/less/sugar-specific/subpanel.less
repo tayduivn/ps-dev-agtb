@@ -91,6 +91,11 @@
       .calcWidth(~"100% - 1px");
       box-sizing: border-box;
       &:focus {
+        // Default
+        outline: 3px solid #589bda;
+        // Firefox
+        outline: 3px auto -moz-mac-focusring;
+        // Webkit
         outline: 3px auto -webkit-focus-ring-color;
         outline-offset: -3px;
       }

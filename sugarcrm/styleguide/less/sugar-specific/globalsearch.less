@@ -277,13 +277,8 @@
   position: absolute;
   top: 8px;
   right: 4px;
-  .btn:focus{
-    outline-offset: -2px;
-    outline-width: 1px;
-    outline-style: dotted;
-    outline-color: rgb(85, 85, 85);
-    outline-color: -moz-mac-focusring;
-    outline-color: -webkit-focus-ring-color;
+  .btn:focus:not(.disabled):not(:active) {
+    .tab-focus();
   }
   > .btn .fa-search {
     display: inline-block;
