@@ -799,7 +799,11 @@ protected function checkQuery($sql, $object_name = false)
 				    $val = $data[$field];
 				}
 			} else {
+				if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+					$val = $fieldDef['default'];
+				} else {
 					$val = null;
+				}
 			}
 
 			//handle auto increment values here - we may have to do something like nextval for oracle
@@ -812,7 +816,9 @@ protected function checkQuery($sql, $object_name = false)
 				$values['deleted'] = (int)$val;
 			} else {
 				// need to do some thing about types of values
-                                $values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+				if(!is_null($val) || !empty($fieldDef['required'])) {
+					$values[$field] = $this->massageValue($val, $fieldDef, $usePreparedStatements);
+				}
 			}
 		}
 
@@ -2804,74 +2810,95 @@ protected function checkQuery($sql, $object_name = false)
 	    return " WHERE $where";
 	}
 
-    /**
-     * Helper function for massageValue used to abstract logic for empty values.
-     *
-     * @param array $fieldDef Field definition.
-     * @param bool $forPrepared Whether used in prepared statements or not.
-     * @return mixed
-     */
-    protected function massageEmptyValue($fieldDef, $forPrepared)
-    {
-        // Required fields are not supposed to have NULLs in database
-        if (!empty($fieldDef['required'])) {
-            return $this->emptyValue($this->getFieldType($fieldDef), $forPrepared);
-        } else {
-            return $forPrepared ? null : "NULL";
-        }
-    }
+	/**
+	 * Outputs a correct string for the sql statement according to value
+	 *
+	 * @param  mixed $val
+	 * @param  array $fieldDef field definition
+	 * @return mixed
+	 */
+	public function massageValue($val, $fieldDef, $forPrepared = false)
+	{
+		$type = $this->getFieldType($fieldDef);
 
-    /**
-     * Outputs a correct string for the sql statement according to value.
-     *
-     * @param mixed $val Value to massage.
-     * @param array $fieldDef Field definition.
-     * @param bool $forPrepared Whether used in prepared statements or not.
-     *
-     * @return mixed
-     */
-    public function massageValue($val, $fieldDef, $forPrepared = false)
-    {
-        $type = $this->getFieldType($fieldDef);
+		if(isset($this->type_class[$type])) {
+			// handle some known types
+			switch($this->type_class[$type]) {
+				case 'bool':
+					if (!empty($fieldDef['required']) && $val === ''){
+						if (isset($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					return intval($val);
+				case 'int':
+					if (!empty($fieldDef['required']) && $val === ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					return intval($val);
+				case 'bigint' :
+					$val = (float)$val;
+					if (!empty($fieldDef['required']) && $val == false){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					return $val;
+				case 'float':
+					if (!empty($fieldDef['required'])  && $val == ''){
+						if (isset($fieldDef['default']) && is_numeric($fieldDef['default'])){
+							return $fieldDef['default'];
+						}
+						return 0;
+					}
+					if (empty($val)){
+						return 0;
+					}
+					return floatval($val);
+				case 'time':
+				case 'date':
+					// empty date can't be '', so convert it to either NULL or empty date value
+					if($val == '') {
+						if (!empty($fieldDef['required'])) {
+							if (isset($fieldDef['default'])) {
+								return $fieldDef['default'];
+							}
+							return $this->emptyValue($type, $forPrepared);
+						}
+						return $forPrepared?null:"NULL";
+					}
+					break;
+			}
+		} else {
+		    if(!empty($val) && !empty($fieldDef['len']) && strlen($val) > $fieldDef['len']) {
+			    $val = $this->truncate($val, $fieldDef['len']);
+			}
+		}
 
-        if (isset($this->type_class[$type])) {
-            // handle some known types
-            switch ($this->type_class[$type]) {
-                case 'bool':
-                    return ($val === '' || is_null($val))
-                            ? $this->massageEmptyValue($fieldDef, $forPrepared) : intval($val);
-                case 'int':
-                    return ($val === '' || is_null($val))
-                            ? $this->massageEmptyValue($fieldDef, $forPrepared) : intval($val);
-                case 'bigint':
-                    $val = (float)$val;
-                    return ($val === false || is_null($val))
-                            ? $this->massageEmptyValue($fieldDef, $forPrepared) : $val;
-                case 'float':
-                    return ($val === '' || is_null($val))
-                            ? $this->massageEmptyValue($fieldDef, $forPrepared) : floatval($val);
-                case 'time':
-                case 'date':
-                    // empty date can't be '', so convert it to either NULL or empty date value
-                    if ($val === '' || is_null($val)) {
-                        return $this->massageEmptyValue($fieldDef, $forPrepared);
-                    }
-                    break;
-            }
-        } elseif (!empty($val) && !empty($fieldDef['len']) && strlen($val) > $fieldDef['len']) {
-            $val = $this->truncate($val, $fieldDef['len']);
-        }
-
-        if (is_null($val)) {
-            return $this->massageEmptyValue($fieldDef, $forPrepared);
-        }
-
-        if ($type == "datetimecombo") {
+		if ( is_null($val) ) {
+			if(!empty($fieldDef['required'])) {
+				if (isset($fieldDef['default']) && !empty($fieldDef['default'])){
+					return $fieldDef['default'];
+				}
+				return $this->emptyValue($type, $forPrepared);
+			} else {
+				return $forPrepared?null:"NULL";
+			}
+		}
+        if($type == "datetimecombo") {
             $type = "datetime";
         }
-
-        return $forPrepared ? $val : $this->convert($this->quoted($val), $type);
-    }
+        if ($forPrepared) {
+            return $val;
+        } else {
+		    return $this->convert($this->quoted($val), $type);
+        }
+	}
 
 	/**
 	 * Massages the field defintions to fill in anything else the DB backend may add
@@ -3973,30 +4000,21 @@ protected function checkQuery($sql, $object_name = false)
 		return "CASE ".implode("\n", $order_by_arr)." ELSE $i END $order_dir\n";
 	}
 
-    /**
-     * Return representation of an empty value depending on type.
-     * The value is fully quoted, converted, etc.
-     *
-     * @param string $type Type of value.
-     * @param bool $forPrepared Whether used in prepared statements or not.
-     * @return mixed Empty value.
+	/**
+	 * Return representation of an empty value depending on type
+	 * The value is fully quoted, converted, etc.
+	 * @param string $type
+	 * @param bool $forPrepared Is it going to be used for prepared statement?
+     * @return mixed Empty value
      */
-    public function emptyValue($type, $forPrepared = false)
-    {
-        if (isset($this->type_class[$type])) {
-            switch ($this->type_class[$type]) {
-                case 'bool':
-                case 'int':
-                case 'float':
-                case 'bigint':
-                    return 0;
-                case 'date':
-                    return $forPrepared ? null : "NULL";
-            }
-        }
+	public function emptyValue($type, $forPrepared = false)
+	{
+		if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'bool' || $this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
+			return 0;
+		}
 
-        return $forPrepared ? "" : "''";
-    }
+		return $forPrepared?"":"''";
+	}
 
 	/**
 	 * List of available collation settings
