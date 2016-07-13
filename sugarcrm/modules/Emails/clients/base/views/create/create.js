@@ -199,6 +199,7 @@
                 self._insertSignature(self._lastSelectedSignature, self._signatureLocation);
             }
 
+            //Reply has special requirement to focus editor at top of content
             if (self._isReply) {
                 self._focusEditor();
             }
@@ -637,11 +638,14 @@
      */
     _insertTemplate: function(template) {
         var subject;
+        var replyContent;
 
         if (_.isObject(template)) {
+            replyContent = this._getReplyContent();
             subject = template.get('subject');
 
-            if (subject) {
+            //Only use the subject if its not a reply
+            if (subject && !replyContent) {
                 this.model.set('name', subject);
             }
 
@@ -654,9 +658,32 @@
 
             this.trigger('email_attachments:template:add', template);
 
-            // currently adds the html signature even when the template is text-only
-            this._insertSignature(this._lastSelectedSignature, this.BELOW_CONTENT);
+            if (this._lastSelectedSignature) {
+                // currently adds the html signature even when the template is text-only
+                this._insertSignature(this._lastSelectedSignature, this.BELOW_CONTENT);
+            }
+
+            if (replyContent) {
+                this._insertInEditor(replyContent, this.BELOW_CONTENT);
+            }
         }
+    },
+
+    /**
+     * Check email body and pull out any reply content from a draft email.
+     *
+     * @return {string} The reply content.
+     * @protected
+     */
+    _getReplyContent: function() {
+        var replyContent = '';
+        var body = this.model.get('description_html') || '';
+        var $replyContent = $('<div>' + body + '</div>').find('div.replycontent');
+
+        if ($replyContent.length > 0) {
+            replyContent = $replyContent[0].outerHTML;
+        }
+        return replyContent;
     },
 
     /**
@@ -761,8 +788,8 @@
      * Inserts the signature into the editor.
      *
      * @param {Data.Bean} signature
-     * @param {string} location Whether to insert above content, below, or at
-     *   the cursor location
+     * @param {string} location Whether to insert the new content above existing
+     *   content, below existing content, or at the cursor location.
      * @return {boolean}
      * @private
      */
@@ -813,20 +840,19 @@
     },
 
     /**
-     * Inserts the content into the tinyMCE editor at the cursor location.
+     * Inserts the content into the tinyMCE editor at the specified location.
      *
      * @param {string} content
-     * @param {string} location Whether to insert above content, below, or at
-     *   the cursor location
+     * @param {string} location Whether to insert the new content above existing
+     *   content, below existing content, or at the cursor location.
      * @return {string} the content of the editor
      * @private
      */
     _insertInEditor: function(content, location) {
         var emailBody = this.model.get('description_html') || '';
-        var editor = this.getField('description_html').getEditor();
+        var editor;
 
         if (_.isEmpty(content)) {
-            //nothing to insert
             return emailBody;
         }
 
@@ -834,8 +860,10 @@
         content = '<div></div>' + content + '<div></div>';
 
         if (location === this.CURSOR_LOCATION) {
+            editor = this.getField('description_html').getEditor();
+
+            //if no editor, not able to insert at cursor
             if (_.isNull(editor)) {
-                //no editor, so not able to insert at cursor
                 return emailBody;
             }
 
@@ -847,6 +875,8 @@
         } else {
             emailBody = content + emailBody;
         }
+
+        this.model.set('description_html', emailBody);
 
         return emailBody;
     },
@@ -948,6 +978,7 @@
     /**
      * Focus the email body editor at the top of the content.
      *
+     * @return {boolean}
      * @private
      */
     _focusEditor: function() {

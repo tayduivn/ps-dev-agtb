@@ -1035,6 +1035,68 @@ describe('Emails.Views.Create', function() {
                 expect(insertSignatureStub).toHaveBeenCalledWith(signature, view.BELOW_CONTENT);
             });
         });
+        describe('adding templates to reply emails', function() {
+            var insertSignatureStub;
+
+            beforeEach(function() {
+                view._lastSelectedSignature = new app.Bean({id: 'abcd'});
+                insertSignatureStub = sandbox.stub(view, '_insertSignature');
+                view.model.set('description_html',
+                    '<div>My Content</div><div class="replycontent">My Reply Content</div>'
+                );
+            });
+
+            it('should not update subject if the email is a reply', function() {
+                var originalSubject = 'Original Subject';
+                var subject = 'Template Subject';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
+                        id: '1234',
+                        subject: subject
+                    }
+                );
+                view.model.set('name', originalSubject);
+                view._insertTemplate(templateModel);
+                expect(view.model.get('name')).toEqual(originalSubject);
+            });
+
+            it('should insert the reply content back after the template is inserted', function() {
+                var bodyHtml = '<h1>Template Content</h1>';
+                var templateModel = app.data.createBean(
+                    'EmailTemplates',
+                    {
+                        id: '1234',
+                        body_html: bodyHtml
+                    }
+                );
+                var expected = '<h1>Template Content</h1>' +
+                    '<div></div><div class="replycontent">My Reply Content</div><div></div>';
+                view._insertTemplate(templateModel);
+                expect(view.model.get('description_html')).toEqual(expected);
+            });
+        });
+    });
+
+    describe('_getReplyContent', function() {
+        it('should return reply content when it exists', function() {
+            var actual;
+            var expected = '<div class="replycontent">My Reply Content</div>';
+            view.model.set('description_html',
+                '<div>My Content</div>' + expected
+            );
+
+            actual = view._getReplyContent();
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return an empty string when reply content does not exists', function() {
+            var actual;
+            view.model.set('description_html', '<div>My Content</div>');
+
+            actual = view._getReplyContent();
+            expect(actual).toEqual('');
+        });
     });
 
     describe('Signatures', function() {

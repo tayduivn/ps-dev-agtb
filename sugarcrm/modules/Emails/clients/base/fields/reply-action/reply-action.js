@@ -23,6 +23,13 @@
     plugins: ['EmailClientLaunch'],
 
     /**
+     * Class to add to div wrapper around reply content for later identifying
+     * the portion of the email body which is the reply content. ie., when
+     * inserting templates into an email but maintaining reply content.
+     */
+    REPLY_CLASS: 'replycontent',
+
+    /**
      * Template for reply header.
      */
     tplHeaderHtml: null,
@@ -30,8 +37,11 @@
     /**
      * @inheritdoc
      *
-     * Adds the share options for use when launching the email client and
-     * refreshes the share options if the model data changes. The contents
+     * Sets up the reply content to be used when the user clicks on the Reply or
+     * Reply All button. Also listens for changes to the model to update the
+     * reply content. The reply content is built ahead of the button click
+     * to support the option of doing a mailto link which needs to be built and
+     * set in the DOM at render time.
      */
     initialize: function(options) {
         this._super('initialize', [options]);
@@ -46,7 +56,8 @@
     },
 
     /**
-     * Set recipients, subject and body settings for the EmailClientLaunch plugin to use
+     * Sets up the email options for the EmailClientLaunch plugin to use -
+     * passing to the email compose drawer or building up the mailto link.
      *
      * @protected
      */
@@ -55,12 +66,14 @@
         var subject = this._getReplySubject(this.model.get('name'));
         var replyHeader = this.tplHeaderHtml(this._getReplyHeaderParams());
         var replyBody = this._getReplyBody();
+        var descriptionHtml = '<div></div><div class="' + this.REPLY_CLASS + '">' +
+            replyHeader + replyBody + '</div>';
 
         this.addEmailOptions({
             to: replyRecipients.to,
             cc: replyRecipients.cc,
             name: subject,
-            description_html: replyHeader + replyBody,
+            description_html: descriptionHtml,
             parent_type: this.model.get('parent_type'),
             parent_id: this.model.get('parent_id'),
             parent_name: this.model.get('parent_name'),
@@ -115,8 +128,8 @@
      * @protected
      */
     _getReplySubject: function(subject) {
-        subject = subject || '';
         var pattern = /^((?:re|fwd): *)*/i;
+        subject = subject || '';
         return 'Re: ' + subject.replace(pattern, '');
     },
 
@@ -137,7 +150,7 @@
     },
 
     /**
-     * Given a list of people, format a text only for use in a reply header
+     * Given a list of people, format a text only list for use in a reply header
      *
      * @param {Collection} collection A list of models
      * @protected
@@ -171,13 +184,15 @@
      *
      * Ensure the result is a defined string and strip any signature wrapper
      * tags to ensure it doesn't get stripped if we insert a signature above
-     * the reply content.
+     * the reply content. Also strip any reply content class if this is a
+     * reply to a previous reply.
      *
      * @return {string}
      * @private
      */
     _getReplyBody: function() {
         var body = (this.model.get('description_html') || '');
-        return body.replace('<div class="signature">', '<div>');
+        body = body.replace('<div class="signature">', '<div>');
+        return body.replace('<div class="' + this.REPLY_CLASS + '">', '<div>');
     }
 })

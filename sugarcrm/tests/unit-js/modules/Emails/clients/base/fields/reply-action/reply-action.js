@@ -212,6 +212,16 @@ describe('Emails.Field.ReplyAction', function() {
             expect(actual).toEqual(expected);
         });
 
+        it('should strip the reply content class from any div tags', function() {
+            var original = 'My Content <div class="replycontent">My Reply Content</div>';
+            var expected = 'My Content <div>My Reply Content</div>';
+            var actual;
+
+            field.model.set('description_html', original);
+            actual = field._getReplyBody();
+            expect(actual).toEqual(expected);
+        });
+
         it('should return an empty string if email body is not set', function() {
             field.model.unset('description_html');
             expect(field._getReplyBody()).toEqual('');
