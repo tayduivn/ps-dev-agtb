@@ -226,6 +226,7 @@ class Importer
         );
 
         $fields_order = $this->getImportColumnsOrder($focus->getFieldDefinitions());
+        $importFields = array();
         foreach ($fields_order as $fieldNum) {
             // loop if this column isn't set
             if ( !isset($this->importColumns[$fieldNum]) )
@@ -233,6 +234,8 @@ class Importer
 
             // get this field's properties
             $field           = $this->importColumns[$fieldNum];
+            $this->correctRealNameFieldDef($focus, array($field));
+            $importFields[] = $field;
             $fieldDef        = $focus->getFieldDefinition($field);
             $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $focus->module_dir)." (".$fieldDef['name'].")";
             $defaultRowValue = '';
@@ -525,6 +528,7 @@ class Importer
                     else
                     {
                         $focus = $clonedBean;
+                        $this->correctRealNameFieldDef($focus, $importFields);
                         $newRecord = FALSE;
                     }
                 }
@@ -1392,5 +1396,31 @@ class Importer
         }
 
         return $result;
+    }
+
+    /**
+     * Replaces user_name with full name when use_real_name preference setting is enabled and this is a user name field
+     * and vice versa when use_real_name preference setting is disabled
+     *
+     * @param SugarBean $focus
+     * @param $importFields
+     */
+    protected function correctRealNameFieldDef(SugarBean $focus, $importFields)
+    {
+        global $current_user;
+
+        $useRealNames = $current_user->getPreference('use_real_names');
+
+        foreach ($importFields as $fieldName) {
+            if (!empty($focus->field_defs[$fieldName]['type']) &&
+                $focus->field_defs[$fieldName]['type'] == 'relate' &&
+                !empty($focus->field_defs[$fieldName]['module']) &&
+                $focus->field_defs[$fieldName]['module'] == 'Users' &&
+                !empty($focus->field_defs[$fieldName]['rname']) &&
+                in_array($focus->field_defs[$fieldName]['rname'], array('full_name', 'user_name'))
+            ) {
+                $focus->field_defs[$fieldName]['rname'] = $useRealNames ? 'full_name' : 'user_name';
+            }
+        }
     }
 }
