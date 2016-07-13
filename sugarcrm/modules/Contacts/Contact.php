@@ -347,7 +347,7 @@ class Contact extends Person {
 		}
 
 		$this->load_relationship('user_sync');
-		if ($this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user'])) {
+        if ($this->user_sync->_relationship->relationship_exists($GLOBALS['current_user'], $this)) {
 			$this->sync_contact = true;
 		} else {
 			$this->sync_contact = false;
@@ -381,8 +381,8 @@ class Contact extends Person {
         if ($filter_fields && !empty($filter_fields['sync_contact'])) {
             $this->load_relationship('user_sync');
             $temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists(
-                $this,
-                $GLOBALS['current_user']
+                $GLOBALS['current_user'],
+                $this
             ) ? 1 : 0;
         }
 
