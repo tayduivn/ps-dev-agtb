@@ -82,8 +82,16 @@ class SugarTestKBContentUtilities
 
 class KBContentMock extends KBContent
 {
+    public $updatedCategories = array();
+
     public function resetActiveRevision()
     {
         $this->resetActiveRev();
+    }
+
+    public function updateCategoryExternalVisibility($categoryId)
+    {
+        $this->updatedCategories[] = $categoryId;
+        parent::updateCategoryExternalVisibility($categoryId);
     }
 }
