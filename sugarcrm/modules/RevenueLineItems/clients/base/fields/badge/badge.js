@@ -17,4 +17,8 @@
 ({
     extendsFrom: 'RowactionField',
     showNoData: false,
-})
+
+    bindDataChange: function() {
+        this.model.on('change:' + this.name, this.render, this);
+    }
+});
