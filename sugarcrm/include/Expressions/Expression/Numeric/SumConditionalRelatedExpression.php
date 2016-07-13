@@ -94,7 +94,12 @@ class SumConditionalRelatedExpression extends NumericExpression
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate(),
             condition_field = params[2].evaluate(),
+
+            //_.contains expects this to be an array, so convert it if it isn't already.
             condition_values = params[3].evaluate();
+            if (!_.isArray(condition_values)) {
+                condition_values = [condition_values];
+            }
 
         var model = this.context.relatedModel || this.context.model,  // the model
             // has the model been removed from it's collection
