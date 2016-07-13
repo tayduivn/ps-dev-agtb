@@ -17,6 +17,7 @@ use Sugarcrm\Sugarcrm\Session\SessionStorage;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator;
 
 /**
  * SugarCRM application
@@ -1041,7 +1042,7 @@ EOF;
     public function createLoginVars()
     {
         $ret = array();
-        $req = $this->getRequestVars();
+        $req = $this->filterCsrfToken($this->getRequestVars());
         foreach (array_keys($req) as $var) {
             if(!empty($this->controller->$var)){
                 $ret["login_" . $var] = $this->controller->$var;
@@ -1137,5 +1138,18 @@ EOF;
         }
 
         return $url;
+    }
+
+    /**
+     * Filter csrf_token from request array
+     * @param array $request
+     * @return array
+     */
+    protected function filterCsrfToken(array $request)
+    {
+        if (isset($request[CsrfAuthenticator::FORM_TOKEN_FIELD])) {
+            unset($request[CsrfAuthenticator::FORM_TOKEN_FIELD]);
+        }
+        return $request;
     }
 }
