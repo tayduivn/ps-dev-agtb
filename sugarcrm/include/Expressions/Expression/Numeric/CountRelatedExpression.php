@@ -56,7 +56,9 @@ class CountRelatedExpression extends NumericExpression
             current_value = 0,
             relatedColl = this.context.model.getRelatedCollection(linkField);
 
-        if (relatedColl.dataFetched) {
+        // if the model is new, it will never have the dataFetched flag set on it, so we should always use what
+        // was returned by the call above.
+        if (relatedColl.dataFetched || this.context.model.isNew()) {
             current_value = relatedColl.length;
         } else if (this.context.model.has(linkField)) {
             // check the case where related data still hasn't been loaded
