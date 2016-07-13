@@ -12,9 +12,16 @@
  * @class View.Views.Base.NewsView
  * @alias SUGAR.App.view.views.BaseNewsView
  * @extends View.View
+ * @deprecated Since 7.7.2. Will be removed in 7.8.
  */
 ({
     plugins: ['Dashlet'],
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        app.logger.warn('View.Views.Base.NewsView is deprecated since 7.7.2. Will be removed in 7.8.');
+    },
+
     initDashlet: function() {
         if(this.meta.config) {
             var limit = this.settings.get("limit") || "5";
