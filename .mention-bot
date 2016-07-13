@@ -418,6 +418,7 @@
 
             "sugarcrm/tests/include/javascript/sugar7/shortcuts.js",
             "sugarcrm/tests/include/javascript/sugar7/accessibility/**",
+            "sugarcrm/tests/include/javascript/sugar7/nested-link.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/AddAsInvitee.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/Chart.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/DragdropAttachments.js",
@@ -429,6 +430,7 @@
             "sugarcrm/tests/include/javascript/sugar7/plugins/ShortcutSession.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/Tinymce.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/VirtualCollection.js",
+            "sugarcrm/tests/include/javascript/sugar7/plugins/NestedCollection.js",
 
             "sugarcrm/tests/modules/ActivityStream/**",
             "sugarcrm/tests/modules/Calendar/**",

@@ -115,6 +115,46 @@ fixtures.metadata = {
         "contacts_accounts": {
             lhs_module:"Accounts",
             rhs_module:"Contacts"
+        },
+        emails_attachments: {
+            lhs_module: 'Emails',
+            rhs_module: 'Notes'
+        },
+        emails_users_to: {
+            lhs_module: 'Emails',
+            rhs_module: 'Users'
+        },
+        emails_contacts_to: {
+            lhs_module: 'Emails',
+            rhs_module: 'Contacts'
+        },
+        emails_leads_to: {
+            lhs_module: 'Emails',
+            rhs_module: 'Leads'
+        },
+        emails_users_cc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Users'
+        },
+        emails_contacts_cc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Contacts'
+        },
+        emails_leads_cc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Leads'
+        },
+        emails_users_bcc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Users'
+        },
+        emails_contacts_bcc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Contacts'
+        },
+        emails_leads_bcc: {
+            lhs_module: 'Emails',
+            rhs_module: 'Leads'
         }
     },
     "currencies": {
@@ -844,6 +884,141 @@ fixtures.metadata = {
                     "name": "name",
                     "type": "name",
                     "required": true
+                }
+            }
+        },
+        "Notes": {
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "vname": "LBL_NOTE_SUBJECT",
+                    "dbType": "varchar",
+                    "type": "name",
+                    "len": "255",
+                    "required": true
+                }
+            }
+        },
+        "Emails": {
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "vname": "LBL_SUBJECT",
+                    "type": "name",
+                    "dbType": "varchar",
+                    "required": false,
+                    "len": "255"
+                },
+                "to": {
+                    "name": "to",
+                    "links": [
+                        "users_to",
+                        "contacts_to",
+                        "leads_to"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_TO"
+                },
+                "users_to": {
+                    "name": "users_to",
+                    "relationship": "emails_users_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO"
+                },
+                "contacts_to": {
+                    "name": "contacts_to",
+                    "relationship": "emails_contacts_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO"
+                },
+                "leads_to": {
+                    "name": "leads_to",
+                    "relationship": "emails_leads_to",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_TO"
+                },
+                "cc": {
+                    "name": "cc",
+                    "links": [
+                        "users_cc",
+                        "contacts_cc",
+                        "leads_cc"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_CC"
+                },
+                "users_cc": {
+                    "name": "users_cc",
+                    "relationship": "emails_users_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "contacts_cc": {
+                    "name": "contacts_cc",
+                    "relationship": "emails_contacts_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "leads_cc": {
+                    "name": "leads_cc",
+                    "relationship": "emails_leads_cc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_CC"
+                },
+                "bcc": {
+                    "name": "bcc",
+                    "links": [
+                        "users_bcc",
+                        "contacts_bcc",
+                        "leads_bcc"
+                    ],
+                    "order_by": "name:asc",
+                    "source": "non-db",
+                    "studio": false,
+                    "type": "collection",
+                    "vname": "LBL_BCC"
+                },
+                "users_bcc": {
+                    "name": "users_bcc",
+                    "relationship": "emails_users_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "contacts_bcc": {
+                    "name": "contacts_bcc",
+                    "relationship": "emails_contacts_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "leads_bcc": {
+                    "name": "leads_bcc",
+                    "relationship": "emails_leads_bcc",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_BCC"
+                },
+                "attachments": {
+                    "bean_name": "Note",
+                    "module": "Notes",
+                    "name": "attachments",
+                    "relationship": "emails_attachments",
+                    "source": "non-db",
+                    "type": "link",
+                    "vname": "LBL_ATTACHMENTS"
                 }
             }
         }

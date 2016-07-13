@@ -12,9 +12,16 @@
 --}}
 {{#each value}}
     <div class="square-pill">
-        <a href="javascript:void(0);" data-url="{{_url}}" data-action="download">
-            <span class="ellipsis-value ellipsis_inline">{{name}}</span>
-            <span class="ellipsis-extra">({{file_size}})</span>
-        </a>
+        {{#if file_url}}
+            <a href="javascript:void(0);" data-url="{{file_url}}" data-action="download">
+                <span class="ellipsis-value ellipsis_inline">{{name}}</span>
+                <span class="ellipsis-extra">({{file_size}})</span>
+            </a>
+        {{else}}
+            <div rel="tooltip" title="{{str 'ERR_NO_SUCH_FILE'}}">
+                <span class="ellipsis-value ellipsis_inline">{{name}}</span>
+                <span class="ellipsis-extra">({{file_size}})</span>
+            </div>
+        {{/if}}
     </div>
 {{/each}}

@@ -30,24 +30,13 @@
     _fileTag: 'input[type=file]',
 
     /**
-     * Notes records that will be linked or unlinked as attachments of an
-     * email. Models with `_action: create` will be linked as attachments.
-     * Models with `_action: delete` are existing attachments that will be
-     * unlinked. Models with `_action: placeholder` are shown in the UI while
-     * the user waits for an attachment to be added asynchronously. Once the
-     * real model is ready to be added, the placeholder model is removed.
+     * A collection of models that represent promises for an attachment that is
+     * being retrieved asynchronously. Each placeholder model's cid can be used
+     * to determine which request is associated with that placeholder.
      *
-     * @property {Backbone.Collection}
+     * @property {Data.BeanCollection}
      */
-    _attachments: null,
-
-    /**
-     * Each placeholder model is assigned a unique number that can be used to
-     * determine which request is associated with that placeholder.
-     *
-     * @property {number}
-     */
-    _placeholders: 0,
+    _placeholders: null,
 
     /**
      * Keeps track of active requests so that they can be aborted if the user
@@ -66,13 +55,11 @@
      * Adds events for uploading a file when the file input changes and
      * downloading a file when a file link is clicked in detail mode.
      *
-     * Adds listeners for the `email_attachments:file:pick`,
-     * `email_attachments:document:pick`, and `email_attachments:template:add`
-     * events that are triggered on the view to add attachments.
-     * `email_attachments:file:pick` will launch the file picker dialog.
-     * `email_attachments:document:pick` will launch a drawer for selecting a
-     * Document. `email_attachments:template:add` will fetch the attachments
-     * from a template, so that they can be copied to the email.
+     * Adds listeners for the `email_attachments:file:pick` and
+     * `email_attachments:document:pick` events that are triggered on the view
+     * to add attachments. `email_attachments:file:pick` will launch the file
+     * picker dialog. `email_attachments:document:pick` will launch a drawer
+     * for selecting a Document.
      *
      * Kicks off a fetch of the existing attachments when the model is not new.
      */
@@ -93,67 +80,48 @@
         this.listenTo(this.view, 'email_attachments:document:pick', function() {
             this._openDocumentPicker();
         });
-        this.listenTo(this.view, 'email_attachments:template:add', function(template) {
-            this._fetchTemplateAttachments(template);
-        });
 
+        this._placeholders = app.data.createBeanCollection('Notes');
         this._requests = {};
-        this._attachments = new Backbone.Collection();
 
-        if (!this.model.isNew()) {
-            this._fetchExistingAttachments();
+        if (this.model.isNew()) {
+            // Create a new collection.
+            this.model.set(this.name, []);
+        } else if (this.model.get(this.name) instanceof app.NestedLink) {
+            // The data was fetched before the field was created. Therefore,
+            // the attribute is already a `NestedLink`.
+            this.model.get(this.name).fetch({all: true});
+        } else {
+            // The data was not fetched before the field was created. Wait for
+            // the data to be fetched and the attribute to become a
+            // `NestedLink` before attempting to fetch the remainder of the
+            // attachments. The `sync` event is never silenced, so it is
+            // guaranteed to be received. And the `sync` event is triggered
+            // after the fetched data has been placed on the model, which
+            // guarantees that a `NestedLink` instance has been assigned to
+            // this field's attribute, provided that the field was requested.
+            this.model.once('sync', function() {
+                if (this.model && this.model.get(this.name) instanceof app.NestedLink) {
+                    this.model.get(this.name).fetch({all: true});
+                }
+            }, this);
         }
     },
 
     /**
      * @inheritdoc
-     *
-     * Updates the model with the latest value when changes are made to
-     * `_attachments`.
      */
     bindDataChange: function() {
-        /**
-         * Calculates the value for the model, which contains the attachments
-         * to be linked and unlinked on save.
-         *
-         * @return {Object}
-         */
-        var value = _.bind(function() {
-            var value = {};
-            var link = this._attachments.where({_action: 'create'});
-            var unlink = this._attachments.where({_action: 'delete'});
-
-            if (link.length > 0) {
-                value.create = _.map(link, function(attachment) {
-                    return _.pick(
-                        attachment.attributes,
-                        'filename_guid',
-                        'upload_id',
-                        'name',
-                        'filename',
-                        'file_mime_type',
-                        'file_size',
-                        'file_source'
-                    );
-                });
-            }
-
-            if (unlink.length > 0) {
-                value.delete = _.map(unlink, function(attachment) {
-                    return attachment.get('id');
-                });
-            }
-
-            return value;
-        }, this);
-
         if (this.model) {
             this.listenTo(this.model, 'change:' + this.name, this._smartRender);
         }
 
-        if (this._attachments) {
-            this.listenTo(this._attachments, 'add remove reset', function() {
-                this.model.set(this.name, value());
+        if (this._placeholders) {
+            this.listenTo(this._placeholders, 'update', function() {
+                // Triggering a change for the attribute causes the field to be
+                // rendered -- using `EmailAttachmentsField#_smartRender` --
+                // with the updated placeholders.
+                this.model.trigger('change:' + this.name);
             });
         }
     },
@@ -174,14 +142,19 @@
         });
 
         $el.on('select2-removed', _.bind(function(event) {
-            var add = this._attachments.reject(function(attachment) {
-                return attachment.get('id') === event.val;
-            });
-            var remove = this._attachments.where({id: event.val});
-
-            add = add.concat(this._prepareAttachmentsForRemoval(remove));
-            this._attachments.reset(add, {merge: true});
+            this.model.get(this.name).remove(event.val) || this._placeholders.remove(event.val);
         }, this));
+    },
+
+    /**
+     * Returns `true` if there are any attachments or placeholders.
+     * {@link BaseEmailsCreateView} uses this method to determine whether to
+     * hide or show the field as it changes.
+     *
+     * @return {boolean}
+     */
+    isEmpty: function() {
+        return this.model.get(this.name).isEmpty() && this._placeholders.isEmpty();
     },
 
     /**
@@ -209,11 +182,27 @@
         this.$(this.fieldTag).select2({
             multiple: true,
             data: this.getFormattedValue(),
+            initSelection: _.bind(function(element, callback) {
+                callback(this.getFormattedValue());
+            }, this),
             containerCssClass: 'select2-choices-pills-close',
             containerCss: {
                 width: '100%'
             },
             width: 'off',
+            /**
+             * Use `cid` as a choice's ID. Some models are not yet synchronized
+             * and can only be identified by their `cid`. All models have a
+             * `cid`.
+             *
+             * See [Select2 Documentation](https://select2.github.io/select2/#documentation).
+             *
+             * @param {Object} choice
+             * @return {null|string|number}
+             */
+            id: function(choice) {
+                return _.isEmpty(choice) ? null : choice.cid;
+            },
             /**
              * Formats an attachment object for rendering.
              *
@@ -222,19 +211,19 @@
              * @param {Object} choice
              * @return {string}
              */
-            formatSelection: function(choice) {
+            formatSelection: _.bind(function(choice) {
                 var $selection = '<span class="ellipsis-value ellipsis_inline">' + choice.name + '</span>';
 
-                if (choice._action === 'placeholder') {
+                if (this._placeholders.get(choice.cid)) {
                     $selection += '<span class="ellipsis-extra"><i class="fa fa-refresh fa-spin"></i></span>';
                 } else {
                     $selection += '<span class="ellipsis-extra">(' + choice.file_size + ')</span>';
                 }
 
-                $selection = '<span data-id="' + choice.id + '">' + $selection + '</span>';
+                $selection = '<span data-id="' + choice.cid + '">' + $selection + '</span>';
 
                 return $selection;
-            },
+            }, this),
             /**
              * Don't escape a choice's markup since we built the HTML.
              *
@@ -246,7 +235,7 @@
             escapeMarkup: function(markup) {
                 return markup;
             }
-        });
+        }).select2('val', []);
 
         select2Input = this.$('.select2-input');
 
@@ -292,17 +281,35 @@
      * @inheritdoc
      *
      * Select2 expects an array of objects to display. The attachments marked
-     * for removal are discarded and the attributes of the remaining
-     * attachments are returned.
+     * for removal are excluded. The attributes of the remaining attachments
+     * and placeholders are returned. Each model's `cid` is returned as that is
+     * the `id` that Select2 is using. Each model's `file_url` is returned if
+     * the attachment has an `id`. The model's `file_size` is returned as a
+     * human- readable string, by way of {@link Utils#getReadableFileSize}.
      */
     format: function(value) {
-        return this._attachments.filter(function(attachment) {
-            return attachment.get('_action') !== 'delete';
-        }).map(function(attachment) {
-            var json = attachment.toJSON();
-            json.file_size = app.utils.getReadableFileSize(json.file_size);
+        var urlAttributes = {
+            module: 'Notes',
+            field: 'filename'
+        };
+        var urlOptions = {
+            htmlJsonFormat: false,
+            passOAuthToken: false,
+            cleanCache: true,
+            forceDownload: true
+        };
 
-            return json;
+        value = value instanceof app.NestedLink ? value.models : value;
+
+        return _.map(_.union(value || [], this._placeholders.models), function(model) {
+            var attachment = _.extend({cid: model.cid}, model.toJSON());
+
+            attachment.file_url = attachment.id ?
+                app.api.buildFileURL(_.extend({}, urlAttributes, {id: attachment.id}), urlOptions) :
+                null;
+            attachment.file_size = app.utils.getReadableFileSize(attachment.file_size);
+
+            return attachment;
         });
     },
 
@@ -334,74 +341,6 @@
     },
 
     /**
-     * Retrieves all existing attachments for an email. This is used when
-     * editing or viewing an existing email.
-     *
-     * FIXME: This should go away once we can retrieve attachments as a part of the record.
-     *
-     * @private
-     */
-    _fetchExistingAttachments: function() {
-        var def = [{
-            //FIXME: email_type should be Emails
-            email_id: {
-                '$equals': this.model.get('id')
-            }
-        }];
-        var notes = app.data.createBeanCollection('Notes');
-
-        notes.fetch({
-            filter: {
-                filter: def
-            },
-            success: _.bind(this._handleExistingAttachmentsFetchSuccess, this)
-        });
-    },
-
-    /**
-     * Handles a successful response from the API for retrieving an email's
-     * existing attachments. The models are converted to Backbone.Model objects
-     * that are added to `_attachments`.
-     *
-     * @param {Object} data The data from a successful API response.
-     * @param {Array} data.models The models retrieved from the API.
-     * @private
-     */
-    _handleExistingAttachmentsFetchSuccess: function(data) {
-        var added = [];
-
-        if (this.disposed === true) {
-            return;
-        }
-
-        _.each(data.models, function(model) {
-            var urlAttributes = {
-                module: 'Notes',
-                id: model.get('id'),
-                field: 'filename'
-            };
-            var urlOptions = {
-                htmlJsonFormat: false,
-                passOAuthToken: false,
-                cleanCache: true,
-                forceDownload: true
-            };
-            var file = new Backbone.Model({
-                _url: app.api.buildFileURL(urlAttributes, urlOptions),
-                id: model.get('id'),
-                name: model.get('filename'),
-                filename: model.get('filename'),
-                file_mime_type: model.get('file_mime_type'),
-                file_size: model.get('file_size'),
-                file_source: model.get('file_source')
-            });
-            added.push(file);
-        });
-
-        this._attachments.reset(added, {merge: true});
-    },
-
-    /**
      * Makes a request to download the file based on the URL identified in the
      * attributes of the current target of the event.
      *
@@ -410,13 +349,11 @@
      * @private
      */
     _downloadFile: function(event) {
-        var url;
+        var url = this.$(event.currentTarget).data('url');
 
         if (this.disposed === true) {
             return;
         }
-
-        url = this.$(event.currentTarget).data('url');
 
         if (!_.isEmpty(url)) {
             app.api.fileDownload(url, {}, {iframe: this.getFieldElement()});
@@ -461,15 +398,14 @@
         }
 
         placeholder = this._addPlaceholderAttachment(val.split('\\').pop());
-
         note = app.data.createBean('Notes');
-        this._requests[placeholder] = note.uploadFile('filename', $file, {
+        this._requests[placeholder.cid] = note.uploadFile('filename', $file, {
             success: _.bind(this._handleFileUploadSuccess, this),
             error: _.bind(this._handleFileUploadError, this),
             complete: _.bind(function() {
                 // Clear the file input field.
                 $file.val(null);
-                this._handleRequestComplete(placeholder);
+                this._removePlaceholderAttachment(placeholder);
             }, this)
         }, ajaxParams);
     },
@@ -477,9 +413,8 @@
     /**
      * Handles a successful response from the API for uploading the file.
      *
-     * The record from the response is converted to a Backbone.Model object
-     * that is added to `_attachments`. An error is shown to the user if the
-     * record does not have a GUID.
+     * The relevant data is taken from the record and added as an attachment.
+     * An error is shown to the user if the record does not have a GUID.
      *
      * @param {Object} data The data from a successful API response.
      * @param {Object} data.record The record representing the temporary Notes
@@ -489,13 +424,12 @@
      */
     _handleFileUploadSuccess: function(data) {
         var file;
-        var guid = data.record && data.record.id;
 
         if (this.disposed === true) {
             return;
         }
 
-        if (!guid) {
+        if (!data.record || !data.record.id) {
             app.logger.error('Temporary file has no GUID.');
             app.alert.show('upload_error', {
                 level: 'error',
@@ -505,17 +439,15 @@
             return;
         }
 
-        file = new Backbone.Model({
-            _action: 'create',
-            _url: null,
-            id: guid,
-            filename_guid: guid,
-            name: data.record.filename,
-            filename: data.record.filename,
+        file = {
+            filename_guid: data.record.id,
+            name: data.record.filename || data.record.name,
+            filename: data.record.filename || data.record.name,
             file_mime_type: data.record.file_mime_type,
-            file_size: data.record.file_size
-        });
-        this._attachments.add(file);
+            file_size: data.record.file_size,
+            file_ext: data.record.file_ext
+        };
+        this.model.get(this.name).add(file, {merge: true});
     },
 
     /**
@@ -572,9 +504,9 @@
      * selected, then the Document is fetched.
      *
      * The Document must be fetched because it is unlikely that the model
-     * retrieved for {@link SelectionListView} contains all of the data that is
-     * needed. A placeholder attachment is added to the Select2 field while the
-     * Document is being retrieved.
+     * retrieved for {@link BaseSelectionListView} contains all of the data that
+     * is needed. A placeholder attachment is added to the Select2 field while
+     * the Document is being retrieved.
      *
      * @param {Object} [selection] The attributes from the selected Document.
      * @param {string} [selection.id] The ID of the selected Document.
@@ -592,11 +524,10 @@
 
             placeholderName = app.utils.getRecordName(doc) || selection.value || app.lang.getModuleName(doc.module);
             placeholder = this._addPlaceholderAttachment(placeholderName);
-
-            this._requests[placeholder] = doc.fetch({
+            this._requests[placeholder.cid] = doc.fetch({
                 success: _.bind(this._handleDocumentFetchSuccess, this),
                 complete: _.bind(function() {
-                    this._handleRequestComplete(placeholder);
+                    this._removePlaceholderAttachment(placeholder);
                 }, this)
             });
         }
@@ -605,8 +536,7 @@
     /**
      * Handles a successful response from the API for fetching the Document.
      *
-     * The fetched model is converted to a Backbone.Model object that is added
-     * to `_attachments`.
+     * The relevant data is taken from the record and added as an attachment.
      *
      * @param {Object} doc The fetched record.
      * @private
@@ -618,229 +548,45 @@
             return;
         }
 
-        file = new Backbone.Model({
-            _action: 'create',
-            _url: null,
-            id: doc.get('document_revision_id'),
+        file = {
             upload_id: doc.get('document_revision_id'),
-            name: doc.get('filename'),
-            filename: doc.get('filename'),
+            name: doc.get('filename') || doc.get('name'),
+            filename: doc.get('filename') || doc.get('name'),
             file_mime_type: doc.get('latest_revision_file_mime_type'),
             file_size: doc.get('latest_revision_file_size'),
+            file_ext: doc.get('latest_revision_file_ext'),
             file_source: 'DocumentRevisions'
-        });
-        this._attachments.add(file, {merge: true});
-    },
-
-    /**
-     * Retrieves all of an email template's attachments so they can be added to
-     * the email.
-     *
-     * A single placeholder attachment -- representing all of an email
-     * template's attachments -- is added to the Select2 field while the
-     * attachments are being retrieved.
-     *
-     * @param {Data.Bean} template The email template whose attachments are to
-     * be added.
-     * @private
-     */
-    _fetchTemplateAttachments: function(template) {
-        var def;
-        var notes = app.data.createBeanCollection('Notes');
-        var placeholder;
-
-        if (this.disposed === true) {
-            return;
-        }
-
-        placeholder = this._placeholders++;
-        def = [{
-            //FIXME: email_type should be EmailTemplates
-            email_id: {
-                '$equals': template.get('id')
-            }
-        }];
-        this._requests[placeholder] = notes.fetch({
-            filter: {
-                filter: def
-            },
-            success: _.bind(this._handleTemplateAttachmentsFetchSuccess, this),
-            complete: _.bind(function() {
-                this._handleRequestComplete(placeholder);
-            }, this)
-        });
-    },
-
-    /**
-     * Handles a successful response from the API for retrieving an email
-     * template's attachments. The models are converted to Backbone.Model
-     * objects that are added to `_attachments`.
-     *
-     * Before adding the new attachments to `_attachments`, all existing
-     * attachments that came from another email template are removed.
-     *
-     * @param {Object} data The data from a successful API response.
-     * @param {Array} data.models The models retrieved from the API.
-     * @private
-     */
-    _handleTemplateAttachmentsFetchSuccess: function(data) {
-        var add = [];
-        var existing;
-
-        if (this.disposed === true) {
-            return;
-        }
-
-        existing = this._attachments.groupBy('file_source');
-
-        _.each(existing, function(attachments, source) {
-            if (source === 'EmailTemplates') {
-                // Remove all existing attachments that came from an email
-                // template. The returned attachments are to be merged so they
-                // can be unlinked.
-                add = add.concat(this._prepareAttachmentsForRemoval(attachments));
-            } else {
-                // Keep attachments that are not from an email template. The
-                // ones that are to be removed will still be unlinked on save.
-                add = add.concat(attachments);
-            }
-        }, this);
-
-        // Add the attachments from the new email template.
-        _.each(data.models, function(model) {
-            var file = new Backbone.Model({
-                _action: 'create',
-                _url: null,
-                id: model.get('id'),
-                upload_id: model.get('id'),
-                name: model.get('filename'),
-                filename: model.get('filename'),
-                file_mime_type: model.get('file_mime_type'),
-                file_size: model.get('file_size'),
-                file_source: 'EmailTemplates'
-            });
-            add.push(file);
-        });
-
-        this._attachments.reset(add, {merge: true});
-    },
-
-    /**
-     * When a request completes, the request is no longer tracked in
-     * `_requests` and the associated placeholder attachment is removed.
-     *
-     * @param {number} placeholder The unique ID for the request associated
-     * with the placeholder attachment.
-     * @private
-     */
-    _handleRequestComplete: function(placeholder) {
-        delete this._requests[placeholder];
-        this._removePlaceholderAttachment(placeholder);
-    },
-
-    /**
-     * Prepares the specified attachments to be removed via a reset.
-     *
-     * Attachments with `_action: create` have not yet been linked, so they can
-     * be safely removed. Attachments with `_action: placeholder` are removed
-     * with {@link #_removePlaceholderAttachment}. Attachments with
-     * `_action:delete` left in a state to be unlinked. Attachments without an
-     * `_action` attribute are marked to be unlinked.
-     *
-     * @param {Array} attachments
-     * @return {Array} The attachments that are to be unlinked. These must be
-     * merged when `_attachments` is reset.
-     * @private
-     */
-    _prepareAttachmentsForRemoval: function(attachments) {
-        var unlink = [];
-
-        _.each(attachments, function(attachment) {
-            var action = attachment.get('_action');
-
-            switch (action) {
-                case 'delete':
-                    // No change. Leave it to be unlinked.
-                    unlink.push(attachment);
-                    break;
-                case 'placeholder':
-                    this._removePlaceholderAttachment(attachment.get('id'));
-                    break;
-                case 'create':
-                default:
-                    // Exclude this attachment from the merge and the reset
-                    // operation will remove it.
-                    break;
-            }
-
-            // An attachment that has already been linked does not have an
-            // action. The attachment must be updated to add the "delete"
-            // action so that it will be unlinked.
-            if (_.isEmpty(action)) {
-                attachment.set('_action', 'delete');
-                unlink.push(attachment);
-            }
-        }, this);
-
-        return unlink;
+        };
+        this.model.get(this.name).add(file, {merge: true});
     },
 
     /**
      * Adds a placeholder attachment to the Select2 field.
      *
-     * Adding a placeholder attachment does not trigger a change on the model.
-     * So a {@link #_smartRender render} is forced to make the placeholder
-     * appear.
-     *
      * @param {string} name The display name for the placeholder attachment.
-     * @return {number} A unique ID for the placeholder attachment.
+     * @return {Data.Bean} The placeholder model.
      * @private
      */
     _addPlaceholderAttachment: function(name) {
-        var id = this._placeholders++;
-        var file = new Backbone.Model({
-            _action: 'placeholder',
-            _url: null,
-            id: id,
-            name: name
-        });
-
-        this._attachments.add(file);
-        this._smartRender();
-
-        return id;
+        return this._placeholders.add({name: name});
     },
 
     /**
      * Removes a placeholder attachment from the Select2 field and aborts the
-     * request associated with the placeholder, if it is active.
+     * associated request, if it is active.
      *
-     * Removing a placeholder attachment does not trigger a change on the
-     * model. So a {@link #_smartRender render} is forced to make the
-     * placeholder disappear.
-     *
-     * @param {number} placeholder The unique ID for the placeholder
-     * attachment.
+     * @param {Data.Bean} placeholder The placeholder model.
      * @private
      */
     _removePlaceholderAttachment: function(placeholder) {
-        var attachment = this._attachments.where({
-            _action: 'placeholder',
-            id: placeholder
-        });
-        var request;
+        var request = this._requests[placeholder.cid];
 
-        if (attachment.length > 0) {
-            this._attachments.remove(attachment);
-            this._smartRender();
-        }
-
-        // Abort the request if it is still active.
-        request = this._requests[placeholder];
+        this._placeholders.remove(placeholder);
 
         if (request && request.uid) {
+            // Abort the request if it is still active.
             app.api.abortRequest(request.uid);
-            delete this._requests[placeholder];
+            delete this._requests[placeholder.cid];
         }
     }
 })

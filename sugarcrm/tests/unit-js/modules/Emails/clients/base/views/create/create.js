@@ -12,18 +12,17 @@ describe('Emails.Views.Create', function() {
         app.drawer = {on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop, reset: $.noop};
 
         SugarTest.testMetadata.init();
+        SugarTest.declareData('base', 'Emails', true, false);
+        SugarTest.loadPlugin('NestedCollection');
+        SugarTest.loadPlugin('VirtualCollection');
         SugarTest.loadHandlebarsTemplate('create', 'view', 'base', 'recipient-options', moduleName);
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
 
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
-        context = app.context.getContext();
-        context.set({
-            module: moduleName,
-            create: true
-        });
-        context.prepare();
+        app.data.declareModels();
+        context = app.context.getContext({module: 'Emails'});
+        context.prepare(true);
 
         view = SugarTest.createView('base', moduleName, viewName, null, context, true);
 
@@ -107,7 +106,6 @@ describe('Emails.Views.Create', function() {
         var modelSetStub;
         var populateForModulesStub;
         var flag;
-        var mockCollection;
         var insertSignatureStub;
         var focusEditorStub;
 
@@ -121,8 +119,7 @@ describe('Emails.Views.Create', function() {
                 flag = true;
             });
 
-            mockCollection = {add: sandbox.stub()};
-            view.model.set({to: mockCollection, cc: mockCollection, bcc: mockCollection});
+            view.model.set({to: [], cc: [], bcc: []});
 
             modelSetStub = sandbox.stub(view.model, 'set', function() {
                 flag = true;
@@ -133,12 +130,42 @@ describe('Emails.Views.Create', function() {
         });
 
         it('Should trigger recipient add on context if to, cc, or bcc value is passed in.', function() {
+            var to = view.model.get('to');
+            var cc = view.model.get('cc');
+            var bcc = view.model.get('bcc');
+
+            sandbox.spy(to, 'add');
+            sandbox.spy(cc, 'add');
+            sandbox.spy(bcc, 'add');
+
             view.prepopulate({
-                to: [{email: 'to@foo.com'}, {email: 'too@foo.com'}],
-                cc: [{email: 'cc@foo.com'}],
-                bcc: [{email: 'bcc@foo.com'}]
+                to: [
+                    app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'to@foo.com'
+                    }),
+                    app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'too@foo.com'
+                    })
+                ],
+                cc: [
+                    app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'cc@foo.com'
+                    })
+                ],
+                bcc: [
+                    app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'bcc@foo.com'
+                    })
+                ]
             });
-            expect(mockCollection.add.callCount).toBe(3); // once for each recipient type passed in
+
+            expect(to.add).toHaveBeenCalledOnce();
+            expect(cc.add).toHaveBeenCalledOnce();
+            expect(bcc.add).toHaveBeenCalledOnce();
         });
 
         it('should call _populateRelated if related value passed', function() {
@@ -368,7 +395,19 @@ describe('Emails.Views.Create', function() {
             ],
             function(value, result) {
                 it('should add recipient options on render and initialize cc/bcc fields appropriately', function() {
-                    view.model.set(value);
+                    // Convert arrays into beans that the VirtualCollection
+                    // plugin expects.
+                    _.each(value, function(val, key) {
+                        var models = _.map(val, function(email) {
+                            return app.data.createBean('Contacts', {
+                                id: _.uniqueId(),
+                                email: email
+                            });
+                        });
+
+                        view.model.set(key, models);
+                    });
+
                     view._render();
 
                     // check buttons
@@ -432,7 +471,10 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when to, subject and html_body fields are populated', function() {
-            view.model.set('to', 'foo@bar.com');
+            view.model.set('to', app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                email: 'foo@bar.com'
+            }));
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
@@ -443,7 +485,10 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when cc, subject and html_body fields are populated', function() {
-            view.model.set('cc', 'foo@bar.com');
+            view.model.set('cc', app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                email: 'foo@bar.com'
+            }));
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
@@ -454,7 +499,10 @@ describe('Emails.Views.Create', function() {
         });
 
         it('should send email when bcc, subject and html_body fields are populated', function() {
-            view.model.set('bcc', 'foo@bar.com');
+            view.model.set('bcc', app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                email: 'foo@bar.com'
+            }));
             view.model.set('name', 'foo');
             view.model.set('description_html', 'bar');
 
@@ -530,7 +578,10 @@ describe('Emails.Views.Create', function() {
             ],
             function(subject, htmlBody, textBody) {
                 it('should show confirmation alert when content has variables and related to is not set', function() {
-                    view.model.set('to', 'foo@bar.com');
+                    view.model.set('to', app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'foo@bar.com'
+                    }));
                     view.model.set('name', subject);
                     view.model.set('description_html', htmlBody);
                     view.model.set('description', textBody);
@@ -568,7 +619,10 @@ describe('Emails.Views.Create', function() {
             ],
             function(subject, htmlBody, textBody) {
                 it('should send email when content has variables and related to is set', function() {
-                    view.model.set('to', 'foo@bar.com');
+                    view.model.set('to', app.data.createBean('Contacts', {
+                        id: _.uniqueId(),
+                        email: 'foo@bar.com'
+                    }));
                     view.model.set('name', subject);
                     view.model.set('description_html', htmlBody);
                     view.model.set('description', textBody);
@@ -583,7 +637,10 @@ describe('Emails.Views.Create', function() {
         );
 
         it('should send email when content does not have variables', function() {
-            view.model.set('to', 'foo@bar.com');
+            view.model.set('to', app.data.createBean('Contacts', {
+                id: _.uniqueId(),
+                email: 'foo@bar.com'
+            }));
             view.model.set('name', 'Read this!');
             view.model.set('description_html', '<b>What do you think?</b>');
             view.model.set('description', 'What do you think?');
@@ -591,6 +648,259 @@ describe('Emails.Views.Create', function() {
 
             expect(saveStub).toHaveBeenCalled();
             expect(alertShowStub).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('tinyMCE field population', function() {
+        it('should return false when HTML body contains only HTML tags', function() {
+            view.model.set('description_html', '<div><span><b></b></span></div>');
+            var populated = view.isFieldPopulated('description_html');
+
+            expect(populated).toBe(false);
+        });
+
+        it('should return true when HTML body contains HTML tags and text', function() {
+            view.model.set('description_html', '<div><span><b>Hello World</b></span></div>');
+            var populated = view.isFieldPopulated('description_html');
+
+            expect(populated).toBe(true);
+        });
+
+        it('should return false when HTML body is undefined', function() {
+            view.model.set('description_html', undefined);
+            var populated = view.isFieldPopulated('description_html');
+
+            expect(populated).toBe(false);
+        });
+    });
+
+    describe('managing attachments', function() {
+        beforeEach(function() {
+            // Seed the model with an empty set of attachments.
+            view.model.set('attachments', [], {silent: true});
+        });
+
+        it(
+            'should call _setAttachmentVisibility and _checkAttachmentLimit when the attachments field changes',
+            function() {
+                sandbox.spy(view, '_setAttachmentVisibility');
+                sandbox.spy(view, '_checkAttachmentLimit');
+
+                view.model.get('attachments').add({
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: 10000,
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                });
+
+                expect(view._setAttachmentVisibility).toHaveBeenCalled();
+                expect(view._checkAttachmentLimit).toHaveBeenCalled();
+            }
+        );
+
+        describe('showing or hiding the attachments field', function() {
+            var spyAddClass;
+            var spyRemoveClass;
+            var field;
+
+            beforeEach(function() {
+                var $el;
+
+                spyAddClass = sandbox.spy();
+                spyRemoveClass = sandbox.spy();
+
+                $el = {
+                    closest: function() {
+                        return {
+                            addClass: spyAddClass,
+                            removeClass: spyRemoveClass
+                        };
+                    }
+                };
+
+                field = {
+                    getFieldElement: function() {
+                        return $el;
+                    },
+                    isEmpty: $.noop
+                };
+
+                sandbox.stub(view, 'getField').withArgs('attachments').returns(field);
+            });
+
+            it('should show the attachments field', function() {
+                sandbox.stub(field, 'isEmpty').returns(false);
+
+                view.model.trigger('change:attachments');
+
+                expect(spyAddClass).toHaveBeenCalledWith('single');
+                expect(spyRemoveClass).toHaveBeenCalledWith('hidden');
+            });
+
+            it('should hide the attachments field', function() {
+                sandbox.stub(field, 'isEmpty').returns(true);
+
+                view.model.trigger('change:attachments');
+
+                expect(spyAddClass).toHaveBeenCalledWith('hidden');
+                expect(spyRemoveClass).toHaveBeenCalledWith('single');
+            });
+        });
+
+        describe('warning the user about attachments exceeding the aggregate file size limit', function() {
+            beforeEach(function() {
+                sandbox.stub(app.alert, 'show');
+                app.config.maxAggregateEmailAttachmentsBytes = 10000000;
+
+                // Seed the model with an empty set of attachments.
+                view.model.set('attachments', [], {silent: true});
+            });
+
+            using(
+                'attachments over limit',
+                [
+                    {
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 11000000,
+                        file_ext: 'pdf'
+                    },
+                    [{
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }, {
+                        upload_id: _.uniqueId(),
+                        name: 'logo.jpg',
+                        filename: 'logo.jpg',
+                        file_mime_type: 'image/jpg',
+                        file_size: '4000000',
+                        file_source: 'DocumentRevisions',
+                        file_ext: 'jpg'
+                    }, {
+                        filename_guid: _.uniqueId(),
+                        name: 'NDA.pdf',
+                        filename: 'NDA.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }]
+                ],
+                function() {
+                    // This is a hack to allow an array to be passed as a
+                    // single argument.
+                    var attachments = [].slice.call(arguments);
+
+                    // When only one argument was passed, then we want the true
+                    // argument instead of an array containing the argument.
+                    if (arguments.length === 1) {
+                        attachments = attachments[0];
+                    }
+
+                    it('should show warning when the attachments total over 10MB in file size', function() {
+                        view.model.get('attachments').add(attachments);
+
+                        expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
+                    });
+                }
+            );
+
+            using(
+                'attachments under limit',
+                [
+                    {
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 9000000,
+                        file_ext: 'pdf'
+                    },
+                    [{
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 6000000,
+                        file_ext: 'pdf'
+                    }, {
+                        upload_id: _.uniqueId(),
+                        name: 'logo.jpg',
+                        filename: 'logo.jpg',
+                        file_mime_type: 'image/jpg',
+                        file_size: '1000000',
+                        file_source: 'DocumentRevisions',
+                        file_ext: 'jpg'
+                    }, {
+                        filename_guid: _.uniqueId(),
+                        name: 'NDA.pdf',
+                        filename: 'NDA.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 2000000,
+                        file_ext: 'pdf'
+                    }]
+                ],
+                function() {
+                    // This is a hack to allow an array to be passed as a
+                    // single argument.
+                    var attachments = [].slice.call(arguments);
+
+                    // When only one argument was passed, then we want the true
+                    // argument instead of an array containing the argument.
+                    if (arguments.length === 1) {
+                        attachments = attachments[0];
+                    }
+
+                    it('should not show warning when the attachments total less than 10MB in file size', function() {
+                        view.model.get('attachments').add(attachments);
+
+                        expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
+                    });
+                }
+            );
+
+            it(
+                'should not show warning with multiple attachments totaling over 10MB when one is queued for removal',
+                function() {
+                    var attachments = view.model.get('attachments');
+                    var data = [{
+                        filename_guid: _.uniqueId(),
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }, {
+                        upload_id: _.uniqueId(),
+                        name: 'logo.jpg',
+                        filename: 'logo.jpg',
+                        file_mime_type: 'image/jpg',
+                        file_size: '4000000',
+                        file_source: 'DocumentRevisions',
+                        file_ext: 'jpg'
+                    }, {
+                        filename_guid: _.uniqueId(),
+                        name: 'NDA.pdf',
+                        filename: 'NDA.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 4000000,
+                        file_ext: 'pdf'
+                    }];
+
+                    attachments.add(data, {silent: true});
+                    attachments.remove(attachments.at(2));
+
+                    expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
+                }
+            );
         });
     });
 
@@ -628,116 +938,6 @@ describe('Emails.Views.Create', function() {
                 expect(view._insertTemplate).toHaveBeenCalled();
                 expect(app.alert.show).not.toHaveBeenCalled();
             });
-        });
-
-        describe('inserting attachments', function() {
-            beforeEach(function() {
-                sandbox.stub(app.alert, 'show');
-                app.config.maxAggregateEmailAttachmentsBytes = 10000000;
-            });
-
-            it('should show warning with a single attachment totaling over 10MB', function() {
-                var Bean = SUGAR.App.Bean;
-                var attachmentModel = new Bean({
-                    id: _.uniqueId(),
-                    _action: 'create',
-                    file_size: 11000000
-                });
-
-                sandbox.stub(view, 'getField')
-                    .withArgs('attachments')
-                    .returns({
-                        _attachments: app.data.createBeanCollection('Notes', attachmentModel)
-                    });
-
-                view._checkAttachmentLimit();
-                expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
-            });
-
-            it('should show warning with multiple attachments totaling over 10MB', function() {
-                var Bean = SUGAR.App.Bean;
-                var attachmentModel = new Bean({
-                    id: _.uniqueId(),
-                    _action: 'create',
-                    file_size: 4000000
-                });
-                var attachmentModel2 = new Bean({
-                    id: _.uniqueId(),
-                    _action: 'create',
-                    file_size: '4000000',
-                    file_source: 'DocumentRevisions'
-                });
-                var attachmentModel3 = new Bean({
-                    id: _.uniqueId(),
-                    _action: 'create',
-                    file_size: 4000000
-                });
-
-                sandbox.stub(view, 'getField')
-                    .withArgs('attachments')
-                    .returns({
-                        _attachments: app.data.createBeanCollection('Notes', [
-                            attachmentModel,
-                            attachmentModel2,
-                            attachmentModel3
-                        ])
-                    });
-
-                view._checkAttachmentLimit();
-                expect(app.alert.show).toHaveBeenCalledWith('email-attachment-status');
-            });
-
-            it('should not show warning with an attachment under 10MB', function() {
-                var Bean = SUGAR.App.Bean;
-                var attachmentModel = new Bean({
-                    id: _.uniqueId(),
-                    _action: 'create',
-                    file_size: 9000000
-                });
-
-                sandbox.stub(view, 'getField')
-                    .withArgs('attachments')
-                    .returns({
-                        _attachments: app.data.createBeanCollection('Notes', attachmentModel)
-                    });
-
-                view._checkAttachmentLimit();
-                expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
-            });
-
-            it('should not show warning with multiple attachments totaling over 10MB when one is queued for removal',
-                function() {
-                    var Bean = SUGAR.App.Bean;
-                    var attachmentModel = new Bean({
-                        id: _.uniqueId(),
-                        _action: 'create',
-                        file_size: 4000000
-                    });
-                    var attachmentModel2 = new Bean({
-                        id: _.uniqueId(),
-                        _action: 'create',
-                        file_size: 4000000
-                    });
-                    var attachmentModel3 = new Bean({
-                        id: _.uniqueId(),
-                        _action: 'delete',
-                        file_size: 4000000
-                    });
-
-                    sandbox.stub(view, 'getField')
-                        .withArgs('attachments')
-                        .returns({
-                            _attachments: app.data.createBeanCollection('Notes', [
-                                attachmentModel,
-                                attachmentModel2,
-                                attachmentModel3
-                            ])
-                        });
-
-                    view._checkAttachmentLimit();
-                    expect(app.alert.show).not.toHaveBeenCalledWith('email-attachment-status');
-                }
-            );
         });
 
         describe('replacing templates', function() {

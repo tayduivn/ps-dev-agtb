@@ -1,26 +1,43 @@
-describe('Base.EmailAttachments', function() {
+describe('BaseEmailAttachmentsField', function() {
     var app;
+    var clock;
     var context;
     var field;
     var model;
     var sandbox;
+    var timestamp;
 
     beforeEach(function() {
         sandbox = sinon.sandbox.create();
 
-        app = SugarTest.app;
         SugarTest.testMetadata.init();
+        SugarTest.declareData('base', 'Emails', true, false);
+        SugarTest.loadPlugin('NestedCollection');
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('email-attachments', 'field', 'base', 'edit');
         SugarTest.testMetadata.set();
-        app.data.declareModel('Notes', {});
+
+        app = SugarTest.app;
+        app.data.declareModels();
 
         context = app.context.getContext({module: 'Emails'});
-        context.prepare();
+        context.prepare(true);
         model = context.get('model');
+
+        // Use a fake timer because there appears to be a bug with PhantomJS
+        // that causes the first call to `new Date()` to return the Epoch and
+        // every subsequent call to return the correct date.
+        // `SUGAR.Api#buildFileURL` uses `new Date()` to add a cache buster to
+        // the URL when `cleanCache: true` is passed as an option. The value of
+        // that query string parameter is very unreliable when comparing
+        // strings, due to the aforementioned bug. The fake timer works around
+        // the bug when a specific date is created for the start of the timer.
+        timestamp = (new Date(2016, 7, 22, 0, 26, 17)).getTime();
+        clock = sinon.useFakeTimers(timestamp);
     });
 
     afterEach(function() {
+        clock.restore();
         sandbox.restore();
 
         field.dispose();
@@ -31,210 +48,145 @@ describe('Base.EmailAttachments', function() {
         Handlebars.templates = {};
     });
 
-    describe('an existing email', function() {
-        it('should initialize with existing attachments', function() {
-            var notes = app.data.createBeanCollection('Notes');
-            var attachments = [{
-                id: _.uniqueId(),
-                name: 'Disclosure Agreement.pdf',
-                filename: 'Disclosure Agreement.pdf',
-                file_mime_type: 'application/pdf',
-                file_size: 158589
-            }, {
-                id: _.uniqueId(),
-                name: 'logo.jpg',
-                filename: 'logo.jpg',
-                file_mime_type: 'image/jpg',
-                file_size: 158589,
-                file_source: 'DocumentRevisions'
-            }];
-
-            model.set('id', _.uniqueId());
-            sandbox.stub(app.data, 'createBeanCollection').withArgs('Notes').returns(notes);
-            sandbox.stub(notes, 'fetch', function(options) {
-                expect(options.filter).toEqual({
-                    filter: [{
-                        email_id: {
-                            '$equals': model.get('id')
-                        }
-                    }]
+    describe('creating the field', function() {
+        describe('creating a new email', function() {
+            it('should initialize an empty attachments collection', function() {
+                field = SugarTest.createField({
+                    name: 'attachments',
+                    type: 'email-attachments',
+                    viewName: 'edit',
+                    module: 'Emails',
+                    model: model,
+                    context: context
                 });
 
-                notes.add(attachments);
-                options.success(notes);
+                expect(model.get('attachments').length).toBe(0);
+            });
+        });
+
+        describe('opening an existing email', function() {
+            var data;
+
+            beforeEach(function() {
+                data = {
+                    next_offset: -1,
+                    records: [{
+                        id: _.uniqueId(),
+                        upload_id: '',
+                        name: 'Disclosure Agreement.pdf',
+                        filename: 'Disclosure Agreement.pdf',
+                        file_mime_type: 'application/pdf',
+                        file_size: 158589,
+                        file_source: '',
+                        file_ext: 'pdf'
+                    }, {
+                        id: _.uniqueId(),
+                        upload_id: _.uniqueId(),
+                        name: 'logo.jpg',
+                        filename: 'logo.jpg',
+                        file_mime_type: 'image/jpg',
+                        file_size: 158589,
+                        file_source: 'DocumentRevisions',
+                        file_ext: 'jpg'
+                    }]
+                };
+
+                model.set('id', _.uniqueId());
+
+                sandbox.spy(model, 'once').withArgs('sync');
             });
 
-            field = SugarTest.createField({
-                name: 'attachments',
-                type: 'email-attachments',
-                viewName: 'detail',
-                module: 'Emails',
-                model: model,
-                context: context
-            });
+            using('view modes', ['detail', 'edit'], function(mode) {
+                it('should fetch all attachments when the field is created', function() {
+                    var attachments;
 
-            expect(field._attachments.length).toBe(attachments.length);
+                    // The data is loaded before the field is created.
+                    model.set('attachments', data);
+                    attachments = model.get('attachments');
+
+                    sandbox.stub(attachments, 'fetch', function(options) {
+                        expect(options.all).toBe(true);
+                    });
+
+                    field = SugarTest.createField({
+                        name: 'attachments',
+                        type: 'email-attachments',
+                        viewName: mode,
+                        module: 'Emails',
+                        model: model,
+                        context: context
+                    });
+
+                    // The next_offset is already -1, so there are no more
+                    // attachments to fetch. But the function call was made.
+                    expect(attachments.length).toBe(2);
+
+                    // Listening to the `sync` event once was not needed.
+                    expect(model.once).not.toHaveBeenCalled();
+                });
+
+                it('should fetch all attachments when the data is loaded', function() {
+                    var attachments;
+
+                    field = SugarTest.createField({
+                        name: 'attachments',
+                        type: 'email-attachments',
+                        viewName: mode,
+                        module: 'Emails',
+                        model: model,
+                        context: context
+                    });
+
+                    // The data is loaded after the field is created.
+                    model.set('attachments', data);
+                    attachments = model.get('attachments');
+
+                    sandbox.stub(attachments, 'fetch', function(options) {
+                        expect(options.all).toBe(true);
+                    });
+
+                    model.trigger('sync', model, data, {});
+
+                    // The next_offset is already -1, so there are no more
+                    // attachments to fetch. But the function call was made.
+                    expect(attachments.length).toBe(2);
+
+                    // Listening to the `sync` event once was needed.
+                    expect(model.once).toHaveBeenCalled();
+                });
+            });
         });
     });
 
-    describe('getting the formatted value', function() {
-        it('should return an array of objects without any attachments that are to be unlinked', function() {
-            var value;
-            var file1Guid = _.uniqueId();
-            var file1 = new Backbone.Model({
-                _action: 'create',
-                _url: null,
-                id: file1Guid,
-                filename_guid: file1Guid,
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_size: 158589
-            });
-            var file2 = new Backbone.Model({
-                _url: 'url/to/download/file',
-                id: _.uniqueId(),
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_size: 158589
-            });
-            var file3 = new Backbone.Model({
-                _action: 'placeholder',
-                _url: null,
-                id: _.uniqueId(),
-                name: 'quote.pdf'
-            });
-            var file4 = new Backbone.Model({
-                _action: 'delete',
-                _url: 'url/to/download/file',
-                id: _.uniqueId(),
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_size: 158589
-            });
-            var file1Json = file1.toJSON();
-            var file2Json = file2.toJSON();
-            var file3Json = file3.toJSON();
+    describe('editing a draft', function() {
+        var attachments;
 
-            // The file sizes that SUGAR.App.utils#getReadableFileSize will
-            // return.
-            file1Json.file_size = '159K';
-            file2Json.file_size = '159K';
-            file3Json.file_size = '0K';
-
-            field = SugarTest.createField({
-                name: 'attachments',
-                type: 'email-attachments',
-                viewName: 'detail',
-                module: 'Emails',
-                model: model,
-                context: context
-            });
-
-            field._attachments.add([file1, file2, file3, file4]);
-
-            value = field.getFormattedValue();
-            expect(value).toEqual([file1Json, file2Json, file3Json]);
-        });
-    });
-
-    describe('setting up the model value', function() {
         beforeEach(function() {
-            field = SugarTest.createField({
-                name: 'attachments',
-                type: 'email-attachments',
-                viewName: 'detail',
-                module: 'Emails',
-                model: model,
-                context: context
-            });
-        });
+            var data = {
+                next_offset: -1,
+                records: [{
+                    id: _.uniqueId(),
+                    name: 'Disclosure Agreement.pdf',
+                    filename: 'Disclosure Agreement.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_ext: 'pdf'
+                }, {
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: 158589,
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                }]
+            };
 
-        it('should set the create property on the model value', function() {
-            var file1Id = _.uniqueId();
-            var file1 = new Backbone.Model({
-                _action: 'create',
-                _url: null,
-                id: file1Id,
-                filename_guid: file1Id,
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf'
-            });
-            var file2 = new Backbone.Model({
-                _action: 'create',
-                _url: null,
-                id: _.uniqueId(),
-                upload_id: _.uniqueId(),
-                name: 'logo.jpg',
-                filename: 'logo.jpg',
-                file_mime_type: 'image/jpg',
-                file_source: 'EmailTemplates'
-            });
-            var attachments;
+            model.set('id', _.uniqueId());
+            model.set('attachments', data);
+            attachments = model.get('attachments');
 
-            field._attachments.add([file1, file2]);
-
-            attachments = field.model.get(field.name).create;
-            expect(attachments.length).toEqual(2);
-            expect(attachments[0].filename_guid).toEqual(file1Id);
-            expect(attachments[0].id).toBeUndefined();
-            expect(attachments[1].upload_id).toEqual(file2.get('upload_id'));
-            expect(attachments[1].id).toBeUndefined();
-        });
-
-        it('should set the delete property on the model value', function() {
-            var file = new Backbone.Model({
-                _action: 'delete',
-                _url: null,
-                id: _.uniqueId(),
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf'
-            });
-
-            field._attachments.add(file);
-            expect(field.model.get(field.name)['delete']).toEqual([file.get('id')]);
-        });
-    });
-
-    describe('detail mode', function() {
-        beforeEach(function() {
-            field = SugarTest.createField({
-                name: 'attachments',
-                type: 'email-attachments',
-                viewName: 'detail',
-                module: 'Emails',
-                model: model,
-                context: context
-            });
-            field.render();
-        });
-
-        it('should download an attachment', function() {
-            var $file;
-            var file = new Backbone.Model({
-                _url: 'url/to/download/file',
-                id: _.uniqueId(),
-                name: 'quote.pdf',
-                filename: 'quote.pdf',
-                file_mime_type: 'application/pdf',
-                file_size: 158589
-            });
-            field._attachments.add(file);
-            sandbox.stub(app.api, 'fileDownload');
-
-            $file = field.$('[data-action=download]');
-            $file.click();
-
-            expect(app.api.fileDownload).toHaveBeenCalledWith(file.get('_url'));
-        });
-    });
-
-    describe('edit mode', function() {
-        beforeEach(function() {
             field = SugarTest.createField({
                 name: 'attachments',
                 type: 'email-attachments',
@@ -246,6 +198,90 @@ describe('Base.EmailAttachments', function() {
             field.render();
         });
 
+        it('should format the value', function() {
+            var $file = $('<input/>', {value: 'quote.pdf'});
+            var urlEndpoint = '/file/filename?force_download=1&' + timestamp + '=1&platform=base';
+            var expected;
+
+            // Add some attachments.
+            attachments.add([{
+                filename_guid: _.uniqueId(),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_ext: 'pdf'
+            }, {
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_source: 'DocumentRevisions',
+                file_ext: 'pdf'
+            }, {
+                id: _.uniqueId(),
+                upload_id: _.uniqueId(),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_source: 'DocumentRevisions',
+                file_ext: 'pdf'
+            }]);
+
+            // Remove a previously linked attachment.
+            attachments.remove(attachments.at(1));
+
+            // Remove one of the new attachments, before it is linked.
+            attachments.remove(attachments.at(2));
+
+            // Don't allow the success callback to be called for the request.
+            sandbox.stub(app.api, 'file');
+
+            sandbox.stub(field, '_getFileInput').returns($file);
+            field.$('input[type=file]').change();
+
+            expected = [{
+                cid: attachments.at(0).cid,
+                id: attachments.at(0).get('id'),
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: '159K',
+                file_ext: 'pdf',
+                file_url: app.api.serverUrl + '/Notes/' + attachments.at(0).get('id') + urlEndpoint
+            }, {
+                cid: attachments.at(1).cid,
+                filename_guid: attachments.at(1).get('filename_guid'),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: '159K',
+                file_ext: 'pdf',
+                file_url: null
+            }, {
+                cid: attachments.at(2).cid,
+                id: attachments.at(2).get('id'),
+                upload_id: attachments.at(2).get('upload_id'),
+                name: 'quote.pdf',
+                filename: 'quote.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: '159K',
+                file_source: 'DocumentRevisions',
+                file_ext: 'pdf',
+                file_url: app.api.serverUrl + '/Notes/' + attachments.at(2).get('id') + urlEndpoint
+            }, {
+                cid: field._placeholders.at(0).cid,
+                name: field._placeholders.at(0).get('name'),
+                file_size: '0K',
+                file_url: null
+            }];
+
+            expect(field.getFormattedValue()).toEqual(expected);
+        });
+
         it('should not allow the dropdown to open', function() {
             var event = $.Event('select2-opening');
             sandbox.spy(event, 'preventDefault');
@@ -254,7 +290,7 @@ describe('Base.EmailAttachments', function() {
             expect(event.preventDefault).toHaveBeenCalled();
         });
 
-        describe('add an attachment', function() {
+        describe('uploading an attachment', function() {
             it('should open the file dialog', function() {
                 sandbox.stub(field, '_openFilePicker');
                 field.view.trigger('email_attachments:file:pick');
@@ -264,9 +300,9 @@ describe('Base.EmailAttachments', function() {
             it('should add an uploaded file', function() {
                 var fileName = 'quote.pdf';
                 var $file = $('<input/>', {value: fileName});
-                var attachment;
                 var id = _.uniqueId();
-                var flag;
+                var attachment;
+                var json;
 
                 sandbox.stub(field, '_getFileInput').returns($file);
                 sandbox.stub(app.api, 'file', function(method, data, $files, callbacks, options) {
@@ -280,10 +316,9 @@ describe('Base.EmailAttachments', function() {
                             file_mime_type: 'application/pdf',
                             file_size: 158589,
                             filename: fileName,
-                            _module: 'Notes'
+                            file_ext: 'pdf'
                         }
                     };
-                    var placeholder;
 
                     expect(method).toBe('create');
                     expect(data.id).toBe('temp');
@@ -294,56 +329,64 @@ describe('Base.EmailAttachments', function() {
                     expect(options.deleteIfFails).toBe(true);
                     expect(options.htmlJsonFormat).toBe(true);
 
-                    expect(field._attachments.length).toBe(1);
-                    placeholder = field._attachments.at(0);
-                    expect(placeholder.get('_action')).toBe('placeholder');
-                    expect(placeholder.get('name')).toBe(fileName);
+                    // The uploaded attachment doesn't yet exist.
+                    expect(attachments.length).toBe(2);
+
+                    // A placeholder currently exists in the uploaded
+                    // attachment's place.
+                    expect(field._placeholders.length).toBe(1);
+                    expect(field._placeholders.at(0).get('name')).toBe(fileName);
 
                     callbacks.success(response);
                     callbacks.complete();
-
-                    flag = true;
                 });
 
-                runs(function() {
-                    flag = false;
-                    field.$('input[type=file]').change();
-                });
+                field.$('input[type=file]').change();
 
-                waitsFor(function() {
-                    return flag;
-                }, 'The file to be uploaded', 100);
+                // The file input field should be cleared.
+                expect($file.val()).toEqual('');
 
-                runs(function() {
-                    expect($file.val()).toEqual('');
-                    expect(field._attachments.length).toBe(1);
-                    attachment = field._attachments.at(0);
-                    expect(attachment.get('_action')).toBe('create');
-                    expect(attachment.get('id')).toBe(id);
-                    expect(attachment.get('filename_guid')).toBe(id);
-                    expect(attachment.get('name')).toBe(fileName);
-                    expect(attachment.get('filename')).toBe(fileName);
-                    expect(attachment.get('file_mime_type')).toBe('application/pdf');
-                    expect(attachment.get('file_size')).toBe(158589);
-                    expect(attachment.get('file_source')).toBeUndefined();
-                });
+                // The placeholder should no longer exist.
+                expect(field._placeholders.length).toBe(0);
+
+                // The uploaded attachment should now exist.
+                expect(attachments.length).toBe(3);
+
+                attachment = attachments.at(2);
+                expect(attachment.get('id')).toBeUndefined();
+                expect(attachment.get('filename_guid')).toBe(id);
+                expect(attachment.get('name')).toBe(fileName);
+                expect(attachment.get('filename')).toBe(fileName);
+                expect(attachment.get('file_mime_type')).toBe('application/pdf');
+                expect(attachment.get('file_size')).toBe(158589);
+                expect(attachment.get('file_ext')).toBe('pdf');
+                expect(attachment.get('file_source')).toBeUndefined();
+
+                json = model.toJSON();
+                expect(json.attachments.create.length).toBe(1);
+                expect(json.attachments.create).toEqual([{
+                    filename_guid: id,
+                    name: fileName,
+                    filename: fileName,
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_ext: 'pdf'
+                }]);
+                expect(json.attachments.add).toBeUndefined();
+                expect(json.attachments.delete).toBeUndefined();
             });
 
             it('should alert the user when the uploaded file is too large', function() {
                 var fileName = 'quote.pdf';
                 var $file = $('<input/>', {value: fileName});
-                var error = {
-                    error: 'request_too_large'
-                };
-                var flag;
+                var error = {error: 'request_too_large'};
+                var json;
 
                 sandbox.spy(app.alert, 'show');
                 sandbox.spy(app.error, 'handleHttpError');
                 sandbox.spy(app.lang, 'get');
                 sandbox.stub(field, '_getFileInput').returns($file);
                 sandbox.stub(app.api, 'file', function(method, data, $files, callbacks, options) {
-                    var placeholder;
-
                     expect(method).toBe('create');
                     expect(data.id).toBe('temp');
                     expect(data.module).toBe('Notes');
@@ -353,37 +396,41 @@ describe('Base.EmailAttachments', function() {
                     expect(options.deleteIfFails).toBe(true);
                     expect(options.htmlJsonFormat).toBe(true);
 
-                    expect(field._attachments.length).toBe(1);
-                    placeholder = field._attachments.at(0);
-                    expect(placeholder.get('_action')).toBe('placeholder');
-                    expect(placeholder.get('name')).toBe(fileName);
+                    // The uploaded attachment doesn't yet exist.
+                    expect(attachments.length).toBe(2);
+
+                    // A placeholder currently exists in the uploaded
+                    // attachment's place.
+                    expect(field._placeholders.length).toBe(1);
+                    expect(field._placeholders.at(0).get('name')).toBe(fileName);
 
                     callbacks.error(error);
                     callbacks.complete();
-
-                    flag = true;
                 });
 
-                runs(function() {
-                    flag = false;
-                    field.$('input[type=file]').change();
-                });
+                field.$('input[type=file]').change();
 
-                waitsFor(function() {
-                    return flag;
-                }, 'The file to be uploaded', 100);
+                expect(error.handled).toBe(true);
+                expect(app.alert.show).toHaveBeenCalled();
+                expect(app.lang.get).toHaveBeenCalledWith('ERROR_MAX_FILESIZE_EXCEEDED');
+                expect(app.error.handleHttpError).toHaveBeenCalledWith(error);
 
-                runs(function() {
-                    expect($file.val()).toEqual('');
-                    expect(field._attachments.length).toBe(0);
-                    expect(error.handled).toBe(true);
-                    expect(app.alert.show).toHaveBeenCalled();
-                    expect(app.lang.get).toHaveBeenCalledWith('ERROR_MAX_FILESIZE_EXCEEDED');
-                    expect(app.error.handleHttpError).toHaveBeenCalledWith(error);
-                });
+                // The file input field should be cleared.
+                expect($file.val()).toEqual('');
+
+                // The placeholder should no longer exist.
+                expect(field._placeholders.length).toBe(0);
+
+                // The uploaded attachment is not added due to the error.
+                expect(attachments.length).toBe(2);
+
+                json = model.toJSON();
+                expect(json.attachments).toBeUndefined();
             });
+        });
 
-            it('should add a document', function() {
+        describe('attaching a document', function() {
+            it("should add a document's file", function() {
                 var selection = {
                     id: _.uniqueId(),
                     name: 'Contract',
@@ -391,6 +438,7 @@ describe('Base.EmailAttachments', function() {
                 };
                 var doc;
                 var attachment;
+                var json;
 
                 app.drawer = {
                     open: sandbox.stub().callsArgWith(1, selection)
@@ -403,18 +451,21 @@ describe('Base.EmailAttachments', function() {
                 });
                 sandbox.stub(app.data, 'createBean').withArgs('Documents').returns(doc);
                 sandbox.stub(doc, 'fetch', function(options) {
-                    var placeholder;
+                    // The document attachment doesn't yet exist.
+                    expect(attachments.length).toBe(2);
 
-                    expect(field._attachments.length).toBe(1);
-                    placeholder = field._attachments.at(0);
-                    expect(placeholder.get('_action')).toBe('placeholder');
-                    expect(placeholder.get('name')).toBe('Contract');
+                    // A placeholder currently exists in the document
+                    // attachment's place.
+                    expect(field._placeholders.length).toBe(1);
+                    expect(field._placeholders.at(0).get('name')).toBe('Contract');
 
                     doc.set({
                         document_revision_id: _.uniqueId(),
+                        name: 'Contract.pdf',
                         filename: 'Contract.pdf',
                         latest_revision_file_mime_type: 'application/pdf',
-                        latest_revision_file_size: 158589
+                        latest_revision_file_size: 158589,
+                        latest_revision_file_ext: 'pdf'
                     });
 
                     options.success(doc);
@@ -423,332 +474,272 @@ describe('Base.EmailAttachments', function() {
 
                 field.view.trigger('email_attachments:document:pick');
 
-                expect(field._attachments.length).toBe(1);
-                attachment = field._attachments.at(0);
-                expect(attachment.get('_action')).toBe('create');
-                expect(attachment.get('_url')).toBeNull();
-                expect(attachment.get('id')).toBe(doc.get('document_revision_id'));
+                // The placeholder should no longer exist.
+                expect(field._placeholders.length).toBe(0);
+
+                // The document attachment should now exist.
+                expect(attachments.length).toBe(3);
+
+                attachment = attachments.at(2);
+                expect(attachment.get('id')).toBeUndefined();
                 expect(attachment.get('upload_id')).toBe(doc.get('document_revision_id'));
                 expect(attachment.get('name')).toBe('Contract.pdf');
                 expect(attachment.get('filename')).toBe('Contract.pdf');
                 expect(attachment.get('file_mime_type')).toBe('application/pdf');
                 expect(attachment.get('file_size')).toBe(158589);
+                expect(attachment.get('file_ext')).toBe('pdf');
                 expect(attachment.get('file_source')).toBe('DocumentRevisions');
+
+                json = model.toJSON();
+                expect(json.attachments.create.length).toBe(1);
+                expect(json.attachments.create).toEqual([{
+                    upload_id: doc.get('document_revision_id'),
+                    name: 'Contract.pdf',
+                    filename: 'Contract.pdf',
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_ext: 'pdf',
+                    file_source: 'DocumentRevisions'
+                }]);
+                expect(json.attachments.add).toBeUndefined();
+                expect(json.attachments.delete).toBeUndefined();
 
                 app.drawer = null;
             });
-
-            it('should add attachments from a template', function() {
-                var template;
-                var notes;
-                var attachment;
-                var templateAttachments = [{
-                    id: _.uniqueId(),
-                    name: 'Disclosure Agreement.pdf',
-                    filename: 'Disclosure Agreement.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                }, {
-                    id: _.uniqueId(),
-                    name: 'NDA.pdf',
-                    filename: 'NDA.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                }, {
-                    id: _.uniqueId(),
-                    name: 'logo.jpg',
-                    filename: 'logo.jpg',
-                    file_mime_type: 'image/jpg',
-                    file_size: 158589
-                }];
-
-                // New uploaded attachment should still be linked after adding
-                // template attachments.
-                var file1Guid = _.uniqueId();
-                var file1 = new Backbone.Model({
-                    _action: 'create',
-                    _url: null,
-                    id: file1Guid,
-                    filename_guid: file1Guid,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-
-                // Placeholder attachment should still remain after adding
-                // template attachments. This placeholder could be for a
-                // document that has not yet finished fetching.
-                var file2 = new Backbone.Model({
-                    _action: 'placeholder',
-                    _url: null,
-                    id: _.uniqueId(),
-                    name: 'quote.pdf'
-                });
-
-                // Existing uploaded attachment to be removed should still be
-                // unlinked after adding template attachments.
-                var file3 = new Backbone.Model({
-                    _action: 'delete',
-                    _url: 'url/to/download/file',
-                    id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-
-                // Existing template attachment to be removed should still be
-                // unlinked after adding template attachments.
-                var file4 = new Backbone.Model({
-                    _action: 'delete',
-                    _url: 'url/to/download/file',
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'EmailTemplates'
-                });
-
-                // New template attachment should be removed before adding
-                // attachments from another template. This case occurs when
-                // the user changes templates multiple times during a single
-                // editing session.
-                var file5 = new Backbone.Model({
-                    _action: 'create',
-                    _url: null,
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'EmailTemplates'
-                });
-
-                // Existing template attachments should be unlinked.
-                var file6 = new Backbone.Model({
-                    _url: 'url/to/download/file',
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'EmailTemplates'
-                });
-
-                // Existing template attachments should be unlinked.
-                var file7 = new Backbone.Model({
-                    _url: 'url/to/download/file',
-                    id: _.uniqueId(),
-                    upload_id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589,
-                    file_source: 'EmailTemplates'
-                });
-
-                field._attachments.add([file1, file2, file3, file4, file5, file6, file7]);
-
-                app.data.declareModel('EmailTemplates', {});
-                template = app.data.createBean('EmailTemplates', {
-                    id: _.uniqueId(),
-                    name: 'We have quite the offer for you!'
-                });
-                notes = app.data.createBeanCollection('Notes');
-                sandbox.stub(app.data, 'createBeanCollection').withArgs('Notes').returns(notes);
-                sandbox.stub(notes, 'fetch', function(options) {
-                    // No placeholder attachment.
-                    expect(field._attachments.length).toBe(7);
-                    expect(options.filter).toEqual({
-                        filter: [{
-                            email_id: {
-                                '$equals': template.get('id')
-                            }
-                        }]
-                    });
-
-                    notes.add(templateAttachments);
-
-                    options.success(notes);
-                    options.complete();
-                });
-
-                field.view.trigger('email_attachments:template:add', template);
-
-                expect(field._attachments.length).toBe(9);
-
-                attachment = field._attachments.where({id: file1.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('create');
-
-                attachment = field._attachments.where({id: file2.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('placeholder');
-
-                attachment = field._attachments.where({id: file3.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('delete');
-
-                attachment = field._attachments.where({id: file4.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('delete');
-
-                attachment = field._attachments.where({id: file5.get('id')});
-                expect(attachment).toEqual([]);
-
-                attachment = field._attachments.where({id: file6.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('delete');
-
-                attachment = field._attachments.where({id: file7.get('id')});
-                attachment = _.first(attachment);
-                expect(attachment.get('_action')).toBe('delete');
-
-                _.each(templateAttachments, function(templateAttachment) {
-                    var attachment = field._attachments.where({id: templateAttachment.id});
-                    attachment = _.first(attachment);
-                    expect(attachment.get('_action')).toBe('create');
-                    expect(attachment.get('_url')).toBeNull();
-                    expect(attachment.get('upload_id')).toBe(templateAttachment.id);
-                    expect(attachment.get('name')).toBe(templateAttachment.filename);
-                    expect(attachment.get('filename')).toBe(templateAttachment.filename);
-                    expect(attachment.get('file_mime_type')).toBe(templateAttachment.file_mime_type);
-                    expect(attachment.get('file_size')).toBe(templateAttachment.file_size);
-                    expect(attachment.get('file_source')).toBe('EmailTemplates');
-                });
-            });
         });
 
-        describe('remove an attachment', function() {
-            var id;
-            var event;
-
-            beforeEach(function() {
-                id = _.uniqueId();
-                event = $.Event('select2-removed', {val: id});
-            });
-
+        describe('removing an attachment', function() {
             it('should remove a new attachment', function() {
-                var file = new Backbone.Model({
-                    _action: 'create',
-                    _url: null,
-                    id: id,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
+                var fileName = 'quote.pdf';
+                var $file = $('<input/>', {value: fileName});
+                var json;
+
+                sandbox.stub(field, '_getFileInput').returns($file);
+                sandbox.stub(app.api, 'file', function(method, data, $files, callbacks, options) {
+                    var response = {
+                        filename: {
+                            guid: fileName
+                        },
+                        record: {
+                            id: _.uniqueId(),
+                            deleted: false,
+                            file_mime_type: 'application/pdf',
+                            file_size: 158589,
+                            filename: fileName,
+                            file_ext: 'pdf'
+                        }
+                    };
+
+                    callbacks.success(response);
+                    callbacks.complete();
                 });
 
-                field._attachments.add(file);
-                expect(field._attachments.length).toBe(1);
+                field.$('input[type=file]').change();
 
-                field.$(field.fieldTag).trigger(event);
-                expect(field._attachments.length).toBe(0);
+                // The uploaded attachment should now exist.
+                expect(attachments.length).toBe(3);
+
+                json = model.toJSON();
+                expect(json.attachments.create.length).toBe(1);
+                expect(json.attachments.create).toEqual([{
+                    filename_guid: attachments.at(2).get('filename_guid'),
+                    name: fileName,
+                    filename: fileName,
+                    file_mime_type: 'application/pdf',
+                    file_size: 158589,
+                    file_ext: 'pdf'
+                }]);
+                expect(json.attachments.add).toBeUndefined();
+                expect(json.attachments.delete).toBeUndefined();
+
+                field.$(field.fieldTag).trigger($.Event('select2-removed', {val: attachments.at(2).cid}));
+
+                // The uploaded attachment should no longer exist.
+                expect(attachments.length).toBe(2);
+
+                json = model.toJSON();
+                expect(json.attachments).toBeUndefined();
             });
 
             it('should remove an existing attachment', function() {
-                var file = new Backbone.Model({
-                    _url: 'url/to/download/file',
-                    id: id,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
+                var json;
+                var id = attachments.at(0).get('id');
 
-                field._attachments.add(file);
-                expect(field._attachments.length).toBe(1);
+                expect(attachments.length).toBe(2);
 
-                field.$(field.fieldTag).trigger(event);
-                expect(field._attachments.length).toBe(1);
-                expect(field._attachments.at(0).get('_action')).toBe('delete');
+                json = model.toJSON();
+                expect(json.attachments).toBeUndefined();
+
+                field.$(field.fieldTag).trigger($.Event('select2-removed', {val: attachments.at(0).cid}));
+
+                expect(attachments.length).toBe(1);
+
+                json = model.toJSON();
+                expect(json.attachments.create).toBeUndefined();
+                expect(json.attachments.add).toBeUndefined();
+                expect(json.attachments.delete).toEqual([id]);
             });
 
             it('should remove a placeholder attachment', function() {
-                var file = new Backbone.Model({
-                    _action: 'placeholder',
-                    _url: null,
-                    id: id,
-                    name: 'quote.pdf'
-                });
+                var $file = $('<input/>', {value: 'quote.pdf'});
+                var placeholder;
 
-                field._attachments.add(file);
-                expect(field._attachments.length).toBe(1);
+                // Don't allow the success callback to be called for the request.
+                sandbox.stub(app.api, 'file');
 
-                field.$(field.fieldTag).trigger(event);
-                expect(field._attachments.length).toBe(0);
+                sandbox.stub(field, '_getFileInput').returns($file);
+                field.$('input[type=file]').change();
+                placeholder = field._placeholders.at(0);
+
+                expect(field._placeholders.length).toBe(1);
+                expect(placeholder.get('name')).toBe('quote.pdf');
+
+                field.$(field.fieldTag).trigger($.Event('select2-removed', {val: placeholder.cid}));
+
+                expect(field._placeholders.length).toBe(0);
+                expect(field._requests[placeholder.cid]).toBeUndefined();
             });
+        });
+    });
 
-            it('should remove only the specified attachment', function() {
-                var create = new Backbone.Model({
-                    _action: 'create',
-                    _url: null,
-                    id: id,
-                    filename_guid: id,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-                var existing = new Backbone.Model({
-                    _url: 'url/to/download/file',
+    describe('viewing an archived email', function() {
+        var attachments;
+
+        beforeEach(function() {
+            var data = {
+                next_offset: -1,
+                records: [{
                     id: _.uniqueId(),
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
+                    upload_id: '',
+                    name: 'Disclosure Agreement.pdf',
+                    filename: 'Disclosure Agreement.pdf',
                     file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-                var attachment;
+                    file_size: 158589,
+                    file_source: '',
+                    file_ext: 'pdf'
+                }, {
+                    id: _.uniqueId(),
+                    upload_id: _.uniqueId(),
+                    name: 'logo.jpg',
+                    filename: 'logo.jpg',
+                    file_mime_type: 'image/jpg',
+                    file_size: 158589,
+                    file_source: 'DocumentRevisions',
+                    file_ext: 'jpg'
+                }]
+            };
 
-                field._attachments.add([create, existing]);
-                expect(field._attachments.length).toBe(2);
+            model.set('id', _.uniqueId());
+            model.set('attachments', data);
+            attachments = model.get('attachments');
 
-                field.$(field.fieldTag).trigger(event);
-                expect(field._attachments.length).toBe(1);
+            field = SugarTest.createField({
+                name: 'attachments',
+                type: 'email-attachments',
+                viewName: 'detail',
+                module: 'Emails',
+                model: model,
+                context: context
+            });
+        });
 
-                attachment = field._attachments.at(0);
-                expect(attachment.get('id')).toBe(existing.get('id'));
+        it('should format the value', function() {
+            var urlEndpoint = '/file/filename?force_download=1&' + timestamp + '=1&platform=base';
+            var expected = [{
+                cid: attachments.at(0).cid,
+                id: attachments.at(0).get('id'),
+                upload_id: '',
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: '159K',
+                file_source: '',
+                file_ext: 'pdf',
+                file_url: app.api.serverUrl + '/Notes/' + attachments.at(0).get('id') + urlEndpoint
+            }, {
+                cid: attachments.at(1).cid,
+                id: attachments.at(1).get('id'),
+                upload_id: attachments.at(1).get('upload_id'),
+                name: 'logo.jpg',
+                filename: 'logo.jpg',
+                file_mime_type: 'image/jpg',
+                file_size: '159K',
+                file_source: 'DocumentRevisions',
+                file_ext: 'jpg',
+                file_url: app.api.serverUrl + '/Notes/' + attachments.at(1).get('id') + urlEndpoint
+            }];
+
+            expect(field.getFormattedValue()).toEqual(expected);
+        });
+
+        it('should download an attachment', function() {
+            var url = app.api.serverUrl +
+                '/Notes/' +
+                attachments.at(0).get('id') +
+                '/file/filename?force_download=1&' +
+                timestamp +
+                '=1&platform=base';
+
+            sandbox.stub(app.api, 'fileDownload');
+
+            field.render();
+            field.$('[data-action=download]').first().click();
+
+            expect(app.api.fileDownload).toHaveBeenCalledWith(url);
+        });
+    });
+
+    describe('checking if the field is empty', function() {
+        beforeEach(function() {
+            field = SugarTest.createField({
+                name: 'attachments',
+                type: 'email-attachments',
+                viewName: 'edit',
+                module: 'Emails',
+                model: model,
+                context: context
+            });
+            field.render();
+        });
+
+        it('should return true', function() {
+            expect(field.isEmpty()).toBe(true);
+        });
+
+        it('should return false', function() {
+            model.get('attachments').add({
+                filename_guid: _.uniqueId(),
+                name: 'Disclosure Agreement.pdf',
+                filename: 'Disclosure Agreement.pdf',
+                file_mime_type: 'application/pdf',
+                file_size: 158589,
+                file_ext: 'pdf'
             });
 
-            it('should unlink only the specified attachment', function() {
-                var createId = _.uniqueId();
-                var create = new Backbone.Model({
-                    _action: 'create',
-                    _url: null,
-                    id: createId,
-                    filename_guid: createId,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-                var existing = new Backbone.Model({
-                    _url: 'url/to/download/file',
-                    id: id,
-                    name: 'quote.pdf',
-                    filename: 'quote.pdf',
-                    file_mime_type: 'application/pdf',
-                    file_size: 158589
-                });
-                var attachment;
+            expect(field.isEmpty()).toBe(false);
+        });
 
-                field._attachments.add([create, existing]);
-                expect(field._attachments.length).toBe(2);
+        it('should return false when there is a placeholder', function() {
+            var $file = $('<input/>', {value: 'quote.pdf'});
+            var flag;
 
-                field.$(field.fieldTag).trigger(event);
-                expect(field._attachments.length).toBe(2);
+            // Don't allow the success callback to be called for the request.
+            sandbox.stub(field, '_getFileInput').returns($file);
+            sandbox.stub(app.api, 'file', function() {
+                flag = true;
+            });
 
-                attachment = field._attachments.at(0);
-                expect(attachment.get('id')).toBe(createId);
+            runs(function() {
+                flag = false;
+                field.$('input[type=file]').change();
+            });
 
-                attachment = field._attachments.at(1);
-                expect(attachment.get('id')).toBe(id);
-                expect(attachment.get('_action')).toBe('delete');
+            waitsFor(function() {
+                return flag;
+            }, 'The file to be uploaded', 100);
+
+            runs(function() {
+                expect(field.isEmpty()).toBe(false);
             });
         });
     });

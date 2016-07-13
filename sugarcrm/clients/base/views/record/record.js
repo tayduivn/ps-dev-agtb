@@ -789,9 +789,9 @@
 
     /**
      * Clones the attributes that are collections by way of the
-     * {@link VirtualCollection} plugin.
+     * {@link VirtualCollection} and {@link NestedCollection} plugins.
      *
-     * This guarantees that all related models in nested collection are copied
+     * This guarantees that all related models in nested collections are copied
      * instead of only the ones that have already been fetched.
      *
      * All models of the collection on the source model are fetched
@@ -805,81 +805,132 @@
      * @private
      */
     _copyNestedCollections: function(source, target) {
-        var collections, view;
+        var collections;
+        var view;
+        var links;
 
-        // only model's that utilize the VirtualCollection plugin support this
-        // functionality
-        if (!_.isFunction(source.getCollectionFieldNames)) {
-            return;
-        }
-
-        // avoid using the ambiguous `this` since there are references to many
+        // Avoid using the ambiguous `this` since there are references to many
         // objects in this method: view, field, model, collection, source,
         // target, etc.
         view = this;
 
-        /**
-         * Removes the `_action` attribute from a model when cloning it.
-         *
-         * @param {Data.Bean} model
-         * @return {Data.Bean}
-         */
-        function cloneModel(model) {
-            var attributes = _.chain(model.attributes).clone().omit('_action').value();
-            return app.data.createBean(model.module, attributes);
-        }
-
-        /**
-         * Copies all of the models from a collection to the same collection on
-         * the target model.
-         *
-         * @param collection
-         */
-        function copyCollection(collection) {
-            var field, relatedFields, options;
-
+        // Only model's that utilize the VirtualCollection plugin support this
+        // functionality.
+        if (_.isFunction((source.getCollectionFieldNames))) {
             /**
-             * Adds all of the records from the source collection to the same
-             * collection on the target model.
+             * Removes the `_action` attribute from a model when cloning it.
              *
-             * @param {VirtualCollection} sourceCollection
-             * @param {Object} [options]
+             * @param {Data.Bean} model
+             * @return {Data.Bean}
              */
-            function done(sourceCollection, options) {
-                var targetCollection = target.get(collection.fieldName);
+            function cloneModel(model) {
+                var attributes = _.chain(model.attributes).clone().omit('_action').value();
+                return app.data.createBean(model.module, attributes);
+            }
 
-                if (!targetCollection) {
-                    return;
+            // Get all attributes from the source model that are fields of type
+            // `collection`.
+            collections = _.intersection(source.getCollectionFieldNames(), _.keys(source.attributes));
+
+            // Copies all of the models from a collection field to the same
+            // collection field on the target model.
+            _.each(collections, function(name) {
+                var collection = source.get(name);
+                var field;
+                var relatedFields;
+                var options;
+
+                /**
+                 * Adds all of the records from the source collection to the
+                 * same collection on the target model.
+                 *
+                 * @param {VirtualCollection} sourceCollection
+                 * @param {Object} [options]
+                 */
+                function done(sourceCollection, options) {
+                    var targetCollection = target.get(collection.fieldName);
+
+                    if (!targetCollection) {
+                        return;
+                    }
+
+                    targetCollection.add(sourceCollection.map(cloneModel));
                 }
 
-                targetCollection.add(sourceCollection.map(cloneModel));
-            }
+                field = view.getField(collection.fieldName, source);
+                relatedFields = [];
 
-            field = view.getField(collection.fieldName, source);
-            relatedFields = [];
+                if (field.def.fields) {
+                    relatedFields = _.map(field.def.fields, function(def) {
+                        return _.isObject(def) ? def.name : def;
+                    });
+                }
 
-            if (field.def.fields) {
-                relatedFields = _.map(field.def.fields, function(def) {
-                    return _.isObject(def) ? def.name : def;
-                });
-            }
+                options = {success: done};
 
-            options = {success: done};
+                // request the related fields from the field definition if possible
+                if (relatedFields.length > 0) {
+                    options.fields = relatedFields;
+                }
 
-            // request the related fields from the field definition if possible
-            if (relatedFields.length > 0) {
-                options.fields = relatedFields;
-            }
-
-            collection.fetchAll(options);
+                collection.fetchAll(options);
+            });
         }
 
-        // get all attributes from the source model that are collections
-        collections = _.intersection(source.getCollectionFieldNames(), _.keys(source.attributes));
+        // Only model's that utilize the NestedCollection plugin support this
+        // functionality.
+        if (_.isFunction((source.getNestedCollectionFieldNames))) {
+            // Get all attributes from the source model that are fields of type
+            // `link`.
+            links = _.intersection(source.getNestedCollectionFieldNames('link'), _.keys(source.attributes));
 
-        _.each(collections, function(name) {
-            copyCollection(source.get(name));
-        });
+            // Copies all of the models from a link field to the same link
+            // field on the target model.
+            _.each(links, function(name) {
+                var field;
+                var relatedFields;
+                var options;
+
+                /**
+                 * Adds all of the records from the source collection to the
+                 * same collection on the target model.
+                 *
+                 * @param {NestedLink} sourceCollection
+                 * @param {Object} [options]
+                 */
+                function done(sourceCollection, options) {
+                    var targetCollection = target.get(name);
+
+                    if (!targetCollection) {
+                        return;
+                    }
+
+                    targetCollection.add(sourceCollection.toJSON());
+                }
+
+                field = view.getField(name, source);
+                relatedFields = [];
+
+                if (field.def.fields) {
+                    relatedFields = _.map(field.def.fields, function(def) {
+                        return _.isObject(def) ? def.name : def;
+                    });
+                }
+
+                options = {
+                    all: true,
+                    success: done
+                };
+
+                // Request the related fields from the field definition if
+                // possible.
+                if (relatedFields.length > 0) {
+                    options.fields = relatedFields;
+                }
+
+                source.get(name).fetch(options);
+            });
+        }
     },
 
     editClicked: function() {

@@ -74,7 +74,10 @@
         this.context.on('tinymce:selected_signature:clicked', this._insertSignatureAtCursor, this);
         this.context.on('tinymce:template:clicked', this._launchTemplateDrawer, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
-        this.model.on('change:attachments', this._setAttachmentVisibility, this);
+        this.model.on('change:attachments', function() {
+            this._setAttachmentVisibility();
+            this._checkAttachmentLimit();
+        }, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
         app.drawer.on('drawer:resize', this.resizeEditor, this);
 
@@ -661,12 +664,17 @@
      */
     _setAttachmentVisibility: function() {
         var field = this.getField('attachments');
-        var $el = field.getFieldElement();
-        var $row = $el.closest('.row-fluid');
-        var attachments = this.model.get('attachments');
+        var $el;
+        var $row;
 
-        //FIXME: Remove the check of field._attachments length after MAR-4031
-        if (_.isEmpty(attachments) && field._attachments.length === 0) {
+        if (!field) {
+            return;
+        }
+
+        $el = field.getFieldElement();
+        $row = $el.closest('.row-fluid');
+
+        if (field.isEmpty()) {
             $row.addClass('hidden');
             $row.removeClass('single');
         } else {
@@ -674,7 +682,6 @@
             $row.addClass('single');
         }
 
-        this._checkAttachmentLimit();
         this.resizeEditor();
     },
 
@@ -686,34 +693,20 @@
      * @private
      */
     _calculateTotalAttachments: function() {
-        var field = this.getField('attachments');
-        var attachments;
-        var totalBytes = 0;
+        return this.model.get('attachments').reduce(function(memo, attachment) {
+            var fileSize = attachment.get('file_size');
 
-        if (!_.isUndefined(field._attachments)) {
-            attachments = field._attachments.filter(function(attachment) {
-                // Ensure the attachment isn't queued for removal
-                var action = attachment.get('_action');
-                return (action === 'create' || _.isEmpty(action));
-            });
-
-            _.each(attachments, function(attachment) {
-                var fileSize = attachment.get('file_size');
-
-                if (!_.isNumber(fileSize)) {
-                    try {
-                        fileSize = parseInt(fileSize, 10);
-                    } catch (err) {
-                        // If failed conversion, treat attachment as 0 filesize
-                        fileSize = 0;
-                    }
+            if (!_.isNumber(fileSize)) {
+                try {
+                    fileSize = parseInt(fileSize, 10);
+                } catch (err) {
+                    // If failed conversion, treat attachment as 0 filesize
+                    fileSize = 0;
                 }
+            }
 
-                totalBytes += fileSize;
-            });
-        }
-
-        return totalBytes;
+            return memo + fileSize;
+        }, 0);
     },
 
     /**

@@ -632,16 +632,16 @@
   border: 1px solid darken(@grayLighter, 10%);
   border-radius: 3px;
   cursor: default;
-  a {
+  div, a {
     max-width: 100%;
     color: inherit;
     font-size: 13px;
     font-weight: normal;
     line-height: 20px;
-    &:hover {
-      color: @grayDarker;
-      text-decoration: none;
-    }
+  }
+  a:hover {
+    color: @grayDarker;
+    text-decoration: none;
   }
   span.fa {
     position: absolute;

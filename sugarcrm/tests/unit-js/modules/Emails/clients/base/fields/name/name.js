@@ -38,26 +38,6 @@ describe('Emails.Field.Name', function() {
 
             expect(field.$('.email-has-attachments .fa-paperclip').length).toBe(0);
         });
-
-        it('should set hasAttachments to true if attachments exist', function() {
-            attachments.records.push('recordId1');
-            field.initialize({
-                model: new Backbone.Model({
-                    attachments: attachments
-                })
-            });
-
-            expect(field.hasAttachments).toBeTruthy();
-        });
-
-        it('should set hasAttachments to false if attachments do not exist', function() {
-            field.initialize({
-                model: new Backbone.Model({
-                    attachments: attachments
-                })
-            });
-            expect(field.hasAttachments).toBeFalsy();
-        });
     });
 
     describe('format()', function() {
