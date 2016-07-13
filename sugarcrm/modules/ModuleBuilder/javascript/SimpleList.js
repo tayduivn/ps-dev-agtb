@@ -56,64 +56,80 @@ if(typeof(SimpleList) == 'undefined'){
     			|| (typeof value != "number" && value == "");
     },
     addToList : function(event, form){
-    	var drop_name = document.getElementById('drop_name');
-    	var drop_value = document.getElementById('drop_value');
+        var dropName = document.getElementById('drop_name');
+        var dropValue = document.getElementById('drop_value');
+        dropName.value = trim(dropName.value);
+        dropValue.value = trim(dropValue.value);
+
     	//Validate the dropdown key manually
     	removeFromValidate('dropdown_form', 'drop_name');
-    	if(!SimpleList.isValidDropDownKey(YAHOO.lang.escapeHTML(drop_name.value))) {
+        if (!SimpleList.isValidDropDownKey(YAHOO.lang.escapeHTML(dropName.value))) {
 			addToValidate('dropdown_form', 'drop_name', 'error', false, SUGAR.language.get('ModuleBuilder', 'LBL_JS_VALIDATE_KEY_WITH_SPACE'));
     	}
     	
     	if (!check_form("dropdown_form")) return;
 
+        if ((!SimpleList.isBlank(YAHOO.lang.escapeHTML(dropName.value)) &&
+            SimpleList.isBlank(YAHOO.lang.escapeHTML(dropValue.value))) ||
+            (SimpleList.isBlank(YAHOO.lang.escapeHTML(dropName.value)) &&
+            !SimpleList.isBlank(YAHOO.lang.escapeHTML(dropValue.value)))) {
+            alert(SUGAR.language.get('ModuleBuilder', 'LBL_DROPDOWN_BLANK_WARNING'));
+            return;
+        }
+
         var ul1=YAHOO.util.Dom.get("ul1");
 
         var items = ul1.getElementsByTagName("li");
         for (i=0;i<items.length;i=i+1) {
-            if((SimpleList.isBlank(items[i].id) && SimpleList.isBlank(YAHOO.lang.escapeHTML(drop_name.value))) || items[i].id == YAHOO.lang.escapeHTML(drop_name.value)){
+            if ((SimpleList.isBlank(items[i].id) &&
+                SimpleList.isBlank(YAHOO.lang.escapeHTML(dropName.value))) ||
+                items[i].id == YAHOO.lang.escapeHTML(dropName.value)) {
                 alert(SUGAR.language.get('ModuleBuilder', 'LBL_DROPDOWN_KEY_EXISTS'));
-                return;
-            }
-            if((!SimpleList.isBlank(YAHOO.lang.escapeHTML(drop_name.value)) && SimpleList.isBlank(YAHOO.lang.escapeHTML(drop_value.value))) || (SimpleList.isBlank(YAHOO.lang.escapeHTML(drop_name.value)) && !SimpleList.isBlank(YAHOO.lang.escapeHTML(drop_value.value)))){
-                alert(SUGAR.language.get('ModuleBuilder', 'LBL_DROPDOWN_BLANK_WARNING'));
                 return;
             }
         }
 
         liObj = document.createElement('li');
         liObj.className = "draggable";
-        if(YAHOO.lang.escapeHTML(drop_name.value) == '' || !YAHOO.lang.escapeHTML(drop_name.value)){
+        if (YAHOO.lang.escapeHTML(dropName.value) == '' || !YAHOO.lang.escapeHTML(dropName.value)) {
             liObj.id = SUGAR.language.get('ModuleBuilder', 'LBL_BLANK');
-        }else{
-            liObj.id = YAHOO.lang.escapeHTML(drop_name.value);
+        } else {
+            liObj.id = YAHOO.lang.escapeHTML(dropName.value);
         }
 
         var text1 = document.createElement('input');
         text1.type = 'hidden';
         text1.id = 'value_' + liObj.id;
         text1.name = 'value_' + liObj.id;
-        text1.value = YAHOO.lang.escapeHTML(drop_value.value);
+        text1.value = YAHOO.lang.escapeHTML(dropValue.value);
 
-        var html = "<table width='100%'><tr><td class='first'><b>"+liObj.id+"</b><input id='value_"+liObj.id+"' value=\""+YAHOO.lang.escapeHTML(drop_value.value)+"\" type = 'hidden'><span class='fieldValue' id='span_"+liObj.id+"'>";
-        if(drop_value.value == ""){
-            html += "[" + SUGAR.language.get('ModuleBuilder', 'LBL_BLANK') + "]";
-        }else{
-            html += "["+YAHOO.lang.escapeHTML(drop_value.value)+"]";
+        var html = '<table width=\'100%\'><tr><td class=\'first\'><b>' + liObj.id +
+            '</b><input id=\'value_' + liObj.id + '\' value="' +
+            YAHOO.lang.escapeHTML(dropValue.value) +
+            '" type = \'hidden\'><span class=\'fieldValue\' id=\'span_' + liObj.id + '\'>';
+        if (dropValue.value == '') {
+            html += '[' + SUGAR.language.get('ModuleBuilder', 'LBL_BLANK') + ']';
+        } else {
+            html += '[' + YAHOO.lang.escapeHTML(dropValue.value) + ']';
         }
-        html += "</span>";
-        html += "<span class='fieldValue' id='span_edit_"+liObj.id+"' style='display:none'>";
-        html += "<input type='text' id='input_"+liObj.id+"' value=\""+YAHOO.lang.escapeHTML(drop_value.value)+"\" onchange='SimpleList.setDropDownValue(\""+liObj.id+"\", unescape(this.value), true)' >";
-        html += "</span>";
-        html += "</td><td align='right'><a href='javascript:void(0)' onclick='SimpleList.editDropDownValue(\""+liObj.id+"\", true)'>"+SimpleList.editImage+"</a>";
-        html += "&nbsp;<a href='javascript:void(0)' onclick='SimpleList.deleteDropDownValue(\""+liObj.id+"\", true)'>"+SimpleList.deleteImage+"</a>";
-        html += "</td></tr></table>";
+        html += '</span>';
+        html += '<span class=\'fieldValue\' id=\'span_edit_' + liObj.id + '\' style=\'display:none\'>';
+        html += '<input type=\'text\' id=\'input_' + liObj.id + '\' value="' +
+            YAHOO.lang.escapeHTML(dropValue.value) + '" onchange=\'SimpleList.setDropDownValue("' +
+            liObj.id + '\', unescape(this.value), true)\' >';
+        html += '</span>';
+        html += '</td><td align=\'right\'><a href=\'javascript:void(0)\' onclick=\'SimpleList.editDropDownValue("' +
+            liObj.id + '", true)\'>' + SimpleList.editImage + '</a>';
+        html += '&nbsp;<a href=\'javascript:void(0)\' onclick=\'SimpleList.deleteDropDownValue("' +
+            liObj.id + '", true)\'>' + SimpleList.deleteImage + '</a>';
+        html += '</td></tr></table>';
 
         liObj.innerHTML = html;
         ul1.appendChild(liObj);
         new Studio2.ListDD(liObj, 'drpdwn', false);
-        drop_value.value = "";
-        drop_name.value = "";
-        drop_name.focus();
+        dropValue.value = '';
+        dropName.value = '';
+        dropName.focus();
 
         SimpleList.jstransaction.record('deleteDropDown',{'id': liObj.id });
 
