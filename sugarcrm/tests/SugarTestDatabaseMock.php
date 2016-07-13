@@ -44,7 +44,8 @@ class SugarTestDatabaseMock extends DBManager
      * is left empty
      *
      * @param String $id Id of the Spy
-     * @param String $match RegExp for what we want to match on
+     * @param mixed $match  String type - RegExp for what we want to match on
+     *                      Array type - parts of query that should be checked
      * @param array|Closure|boolean $rows What should be returned when we get a match, defaults to `false` which will
      *                                    make the query return boolean `true` if the match is made and not set any
      *                                    rows, if a Closure is passed in, it will call it and return the results
@@ -53,6 +54,9 @@ class SugarTestDatabaseMock extends DBManager
      */
     public function addQuerySpy($id, $match, $rows = false)
     {
+        if (!is_array($match)) {
+            $match = array($match);
+        }
         $this->query_spies[$id] = array(
             'match' => $match,
             'rows' => $rows
@@ -110,7 +114,14 @@ class SugarTestDatabaseMock extends DBManager
         $sql = preg_replace('/\s\s+/', ' ', $sql);
         $matches = array();
         foreach ($this->query_spies as $responseKey => $possibleResponse) {
-            if (preg_match($possibleResponse['match'], $sql, $matches)) {
+            $isMatched = true;
+            foreach ($possibleResponse['match'] as $regExp) {
+                if (!preg_match($regExp, $sql, $matches)) {
+                    $isMatched = false;
+                    break;
+                }
+            }
+            if ($isMatched) {
                 $response = $possibleResponse;
                 break;
             }

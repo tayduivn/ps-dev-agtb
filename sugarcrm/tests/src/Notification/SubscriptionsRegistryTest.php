@@ -135,6 +135,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $callFilter->method('__toString')->willReturn('CallFilterCRYS1301');
         $callFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
             $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+            return $query->getFromAlias();
         });
 
         /** @var SubscriptionFilterInterface|\PHPUnit_Framework_MockObject_MockObject $meetingFilter */
@@ -148,6 +149,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $meetingFilter->method('__toString')->willReturn('MeetingFilterCRYS1301');
         $meetingFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
             $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+            return $query->getFromAlias();
         });
 
         /** @var SubscriptionFilterInterface|\PHPUnit_Framework_MockObject_MockObject $meetingFilter */
@@ -159,6 +161,7 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
         $userFilter->method('__toString')->willReturn('UserFilterCRYS1301');
         $userFilter->method('filterQuery')->willReturnCallback(function ($event, \SugarQuery $query) {
             $query->from(\BeanFactory::getBean('UsersCRYS1301'), array('team_security' => false));
+            return $query->getFromAlias();
         });
 
         $this->subscriptionsRegistry = $this->getMock(
@@ -1651,18 +1654,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/^SELECT FROM notification_subscription$/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND notification_subscription.type = 'application'",
-                            "AND notification_subscription.emitter_module_name = ''",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301'"
-                        )
-                    ) . '/'
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'application'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'ApplicationEventUseEmptyMainGlobal' => array(
@@ -1691,18 +1696,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/^SELECT FROM notification_subscription$/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND notification_subscription.type = 'application'",
-                            "AND notification_subscription.emitter_module_name = ''",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301'"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'application'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'ApplicationEventUseBeanGlobal' => array(
@@ -1737,18 +1744,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/^SELECT FROM notification_subscription$/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND notification_subscription.type = 'application'",
-                            "AND notification_subscription.emitter_module_name = ''",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301'"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'application'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'BeanEventNotUseGlobal' => array(
@@ -1784,33 +1793,33 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/SELECT FROM notification_subscription/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            "%s %s %s %s %s %s %s",
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301')"
-                        )
-                    ) . '/',
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            "%s %s %s %s %s %s %s",
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'MeetingFilterCRYS1301')"
-                        )
-                    ) . '/',
-
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'MeetingFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'BeanEventUseMainGlobal' => array(
@@ -1852,32 +1861,33 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/SELECT FROM notification_subscription/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301')"
-                        )
-                    ) . '/',
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'MeetingFilterCRYS1301')"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'MeetingFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'BeanEventUseBeanGlobal' => array(
@@ -1919,32 +1929,33 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/SELECT FROM notification_subscription/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301')"
-                        )
-                    ) . '/',
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            '%s %s %s %s %s %s %s',
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND ((notification_subscription.type = 'bean'",
-                            "AND notification_subscription.emitter_module_name = '')",
-                            "OR (notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''))",
-                            "AND notification_subscription.filter_name = 'MeetingFilterCRYS1301')"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'bean'")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.emitter_module_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'MeetingFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'eventInterfaceUseMainGlobal' => array(
@@ -1980,18 +1991,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-                'expectedGlobalQuery' => '/SELECT FROM notification_subscription/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            "%s %s %s %s %s",
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301')"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
             'eventInterfaceUseBeanGlobal' => array(
@@ -2027,19 +2040,20 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
                         ),
                     ),
                 ),
-
-                'expectedGlobalQuery' => '/SELECT FROM notification_subscription/',
+                'expectedGlobalQuery' => array(
+                    "/^".preg_quote("SELECT")."/",
+                    "/".preg_quote("FROM notification_subscription")."/",
+                ),
                 'expectedUserQuery' => array(
-                    '/(.+)' . preg_quote(
-                        sprintf(
-                            "%s %s %s %s %s",
-                            "LEFT JOIN notification_subscription ON (notification_subscription.user_id = AND",
-                            "notification_subscription.deleted = 0 AND notification_subscription.event_name = ''",
-                            "AND notification_subscription.type = 'module'",
-                            "AND notification_subscription.emitter_module_name = ''",
-                            "AND notification_subscription.filter_name = 'CallFilterCRYS1301')"
-                        )
-                    ) . '/',
+                    array(
+                        "/^".preg_quote("SELECT")."/",
+                        "/".preg_quote("FROM users")."/",
+                        "/".preg_quote("LEFT JOIN notification_subscription")."/",
+                        "/".preg_quote("notification_subscription.user_id = users.id")."/",
+                        "/".preg_quote("notification_subscription.type = 'module'")."/",
+                        "/".preg_quote("notification_subscription.event_name = ''")."/",
+                        "/".preg_quote("notification_subscription.filter_name = 'CallFilterCRYS1301'")."/",
+                    ),
                 ),
             ),
         );
@@ -2070,13 +2084,13 @@ class SubscriptionsRegistryTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $this->db->addQuerySpy(
             'get_global_config',
-            "{$expectedGlobalQuery}",
+            $expectedGlobalQuery,
             $executedGlobalResults
         );
         foreach ($expectedUserQuery as $i => $query) {
             $this->db->addQuerySpy(
                 "get_user_config{$i}",
-                "{$query}",
+                $query,
                 $executedUsersResults[$i]
             );
         }
@@ -2313,6 +2327,7 @@ class NotificationCenterSubscriptionCRYS1301 extends \NotificationCenterSubscrip
      */
     public function __construct()
     {
+        parent::__construct();
         $this->added_custom_field_defs = false;
     }
 
