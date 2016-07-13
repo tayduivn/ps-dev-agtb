@@ -69,6 +69,11 @@ class CountConditionalRelatedExpression extends NumericExpression
             relationship = params[0].evaluate(),
             condition_field = params[1].evaluate(),
             condition_values = params[2].evaluate();
+            
+        //_.contains expects this to be an array, so convert it if it isn't already.
+        if (!_.isArray(condition_values)) {
+            condition_values = [condition_values];
+        }
 
         var model = this.context.relatedModel || this.context.model,  // the model
             // has the model been removed from it's collection
@@ -105,11 +110,6 @@ class CountConditionalRelatedExpression extends NumericExpression
             this.context.previous_values[target + '--' + model.get('id')] = new_value;
 
             if (new_value == previous_value && !hasModelBeenRemoved) {
-                return;
-            }
-
-            // if the previous_value was not valid, it should just bail out
-            if (!_.contains(condition_values, previous_value)) {
                 return;
             }
 
