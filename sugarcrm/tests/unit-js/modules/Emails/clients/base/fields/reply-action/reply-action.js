@@ -122,6 +122,32 @@ describe('Emails.Field.ReplyAction', function() {
                 ]
             });
         });
+
+        it('should correctly return email address only recipients during reply all', function() {
+            var actual;
+            var emailAddressRecipient = app.data.createBean('EmailAddresses', {
+                email_address_used: 'foo@bar.com'
+            });
+            var from = app.data.createMixedBeanCollection([recipients[0]]);
+            var to;
+
+            emailAddressRecipient.module = 'EmailAddresses';
+            to = app.data.createMixedBeanCollection([emailAddressRecipient]);
+
+            field.model.set({
+                from: from,
+                to: to
+            });
+
+            actual = field._getReplyRecipients(true);
+            expect(actual).toEqual({
+                to: [
+                    {bean: recipients[0]},
+                    {email: 'foo@bar.com'}
+                ],
+                cc: []
+            });
+        });
     });
 
     describe('_getReplySubject', function() {
