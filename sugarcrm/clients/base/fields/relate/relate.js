@@ -56,10 +56,6 @@
  * )
  * ```
  *
- * TODO: there is a conflict in the link property of `this.def.link` that
- * should be populated from the view/field metadata with the `vardefs` one
- * which needs to be addressed.
- *
  * TODO: we have a mix of properties here with camelCase and underscore.
  * Needs to be addressed.
  *
@@ -107,6 +103,14 @@
         this._maxSelectedRecords = 20;
 
         this._super('initialize', [options]);
+
+        if (_.property('link')(this.def) && !_.isBoolean(this.def.link)) {
+            app.logger.warn('The `link` property passed in the viewDefs must be a boolean. Hence, `link`' +
+                ' will be set to `true` by default.');
+        }
+
+        // A relate field displays a link by default.
+        this.viewDefs = _.defaults(this.viewDefs || {}, {link: true});
         /**
          * The template used for a pill in case of multiselect field.
          *
@@ -471,17 +475,24 @@
      * extend this one from other "link" field
      */
     buildRoute: function(module, id) {
+        if (_.isUndefined(id) || !this.viewDefs.link) {
+            return;
+        }
+
         var oldModule = module;
         // This is a workaround until bug 61478 is resolved to keep parity with 6.7
         if (module === 'Users' && this.context.get('module') !== 'Users') {
             module = 'Employees';
         }
 
-        if (_.isEmpty(module) || (!_.isUndefined(this.def.link) && !this.def.link)) {
+        if (_.isEmpty(module)) {
             return;
         }
-        var action = (this.def.link && this.def.route)? this.def.route.action :"view";
-        if (!_.isEmpty(id) && app.acl.hasAccess(action, oldModule)) {
+
+        var relatedRecord = this.model.get(this.fieldDefs.link);
+        var action = this.viewDefs.route ? this.viewDefs.route.action : 'view';
+
+        if (relatedRecord && app.acl.hasAccess(action, oldModule, {acls: relatedRecord._acl})) {
             this.href = '#' + app.router.buildRoute(module, id);
         } else {
             // if no access to module, remove the href
@@ -495,7 +506,7 @@
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
     _getRelateId: function () {
-        return this.model.get(this.def.id_name);
+        return _.property('id')(this.model.get(this.fieldDefs.link));
     },
 
     /**
@@ -547,7 +558,8 @@
             // FIXME we need to iterate over the populated_ that is causing
             // unsaved warnings when doing the auto populate.
         }
-        if (!this.def.isMultiSelect) {
+
+        if (!this.def.isMultiSelect && this.action !== 'edit' && !this.context.get('create')) {
             this._buildRoute();
         }
 
@@ -601,16 +613,16 @@
         if (updateRelatedFields) {
             // TODO: move this to SidecarExpressionContext
             // check if link field is currently populated
-            if (this.model.get(this.def.link)) {
+            if (this.model.get(this.fieldDefs.link)) {
                 // unset values of related bean fields in order to make the model load
                 // the values corresponding to the currently selected bean
-                this.model.unset(this.def.link);
+                this.model.unset(this.fieldDefs.link);
             } else {
                 // unsetting what is not set won't trigger "change" event,
                 // we need to trigger it manually in order to notify subscribers
                 // that another related bean has been chosen.
                 // the actual data will then come asynchronously
-                this.model.trigger('change:' + this.def.link);
+                this.model.trigger('change:' + this.fieldDefs.link);
             }
             this.updateRelatedFields(models[0]);
         }
@@ -780,14 +792,14 @@
 
         // No module in the field def, so check if there is a module in the def
         // for the link field
-        var link = this.def.link && this.model.fields && this.model.fields[this.def.link] || {};
+        var link = this.fieldDefs.link && this.model.fields && this.model.fields[this.fieldDefs.link] || {};
         if (link.module) {
             return link.module;
         }
 
         // At this point neither the def nor link field def have a module... let
         // metadata manager try find it
-        return app.data.getRelatedModule(this.model.module, this.def.link);
+        return app.data.getRelatedModule(this.model.module, this.fieldDefs.link);
     },
     getPlaceHolder: function () {
         var searchModule = this.getSearchModule(),
