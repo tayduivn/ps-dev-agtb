@@ -25,5 +25,15 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total:',
     'LBL_QUOTE_BUNDLE_POSITION' => 'Quote Bundle Position',
     'EXCEPTION_INVALID_QUOTE_ID' => 'Quote ID is missing from the payload',
-    'EXCEPTION_NOT_FOUND_QUOTE' =>  'The Quote you requested was not found'
+    'EXCEPTION_NOT_FOUND_QUOTE' =>  'The Quote you requested was not found',
+    'LBL_ADDITIONAL_GROUP_DISCOUNT' => 'Additional Group Discount',
+    'LBL_GROUP_TOTAL' => 'Group Total',
+    'LBL_QUOTE_DATA_GROUP_HEADER' => 'Group Header',
+    'LBL_QUOTE_DATA_GROUP_FOOTER' => 'Group Footer',
+    'LBL_CREATE_QLI_BUTTON_LABEL' => 'Quoted Line Item',
+    'LBL_CREATE_QLI_BUTTON_TOOLTIP' => 'Create Quoted Line Item',
+    'LBL_CREATE_COMMENT_BUTTON_LABEL' => 'Comment',
+    'LBL_CREATE_COMMENT_BUTTON_TOOLTIP' => 'Create Comment',
+    'LBL_EDIT_BUNDLE_BUTTON_TOOLTIP' => 'Edit the group name',
+    'LBL_DELETE_BUNDLE_BUTTON_TOOLTIP' => 'Delete the group',
 );

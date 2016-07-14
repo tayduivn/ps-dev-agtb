@@ -42,11 +42,13 @@ class QuotesRelateApi extends RelateApi
         $restResp = parent::filterRelated($api, $args);
         foreach($restResp['records'] as $key => $bundle) {
             $productBundleBean = BeanFactory::getBean('ProductBundles', $bundle['id']);
-            $productBundle = $this->formatBean($api, $args, $productBundleBean);
-            $records = $this->formatBeans($api, $args, $productBundleBean->getLineItems());
+            $local_args = array_diff_key($args, array('view' => '', 'fields' => ''));
+            $productBundle = $this->formatBean($api, $local_args, $productBundleBean);
+            $records = $this->formatBeans($api, $local_args, $productBundleBean->getLineItems());
             $productBundle['related_records'] = $records;
             $restResp['records'][$key] = $productBundle;
         }
+        $restResp['records'] = array_reverse($restResp['records']);
         return $restResp;
     }
 }

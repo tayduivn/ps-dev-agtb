@@ -8,6 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Views.Base.Quotes.RecordView
+ * @alias SUGAR.App.view.views.BaseQuotesRecordView
+ * @extends View.Views.Base.RecordView
+ */
 ({
     extendsFrom: 'RecordView',
 
@@ -17,28 +22,5 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
         this._super('initialize', [options]);
-    },
-
-    /**
-     * @inheritdoc
-     */
-    _render: function() {
-        // render the main Quote Record
-        this._super('_render');
-
-        // create the record-totals View
-        var $totalsEl = app.view.createView({
-            context: this.context,
-            type: 'record-totals',
-            module: this.module,
-            layout: this.layout,
-            model: this.model
-        });
-
-        // render record-totals View
-        $totalsEl.render();
-
-        // Add the record-totals View as the first item inside the .record div
-        this.$('.record').prepend($totalsEl.$el);
     }
-});
+})

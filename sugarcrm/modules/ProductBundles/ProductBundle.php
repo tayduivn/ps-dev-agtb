@@ -528,4 +528,25 @@ class ProductBundle extends SugarBean
         return !$quote->isClosed();
 
     }
+
+    /**
+     * @see SugarBean::save_relationship_changes
+     */
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
+        list($new_rel_id, $new_rel_link) = $this->set_relationship_info($exclude);
+        $new_rel_id = $this->handle_preset_relationships($new_rel_id, $new_rel_link, $exclude);
+        $this->handle_remaining_relate_fields($exclude);
+        $this->update_parent_relationships($exclude);
+
+        //skip only if this is inserting a new quote relationship, let set_productbundle_quote_relationship()
+        //handle creating new productbundle_quote relationships
+        if ($is_update || (!$is_update && strtolower($new_rel_link) != 'quotes')) {
+            $this->handle_request_relate($new_rel_id, $new_rel_link);
+        }
+    }
+
+    public function get_summary_text() {
+        return $this->name;
+    }
 }

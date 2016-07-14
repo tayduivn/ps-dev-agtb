@@ -176,36 +176,283 @@
   overflow-y: hidden;
 }
 
-.recordTotalsWrapper {
-    margin-bottom: 55px;
-}
+.quote-data-container {
+  border-top: 2px #759EEF solid;
 
-.totalsRow {
+  .quote-data-grand-totals-header-wrapper {
+    border-bottom: 2px #759EEF solid;
     width: 100%;
     display: table;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    border-bottom: 1px solid #DDDDDD;
 
-    .totalsRowItem {
-        display: table-cell;
-        height: 38px;
-        padding: 5px;
-        text-align: right;
-        border-right: 1px solid #DDDDDD;
-        width: 16%;
-        white-space: nowrap;
+    .btn-group.open .btn.dropdown-toggle {
+      background: #555555;
+    }
+    .quote-totals-row-item {
+      display: table-cell;
+      padding: 5px;
+      text-align: right;
+      border-right: 1px solid #DDDDDD;
+      white-space: nowrap;
+      width: 16%;
 
-        .totalsRowValue {
-            font-weight: bold;
-            line-height: 24px;
-            font-size: 16px;
+      .quote-totals-row-value {
+        font-weight: bold;
+        line-height: 18px;
+        font-size: 14px;
+      }
+    }
+    .quote-totals-row-item:last-child {
+      border-right: none;
+      width: 20%;
+    }
+
+    .quote-data-panel-controls {
+      position: absolute;
+      left: 0;
+      min-width: 72px;
+      width: 72px;
+      border-right: @tableBorder;
+
+      a.btn {
+        padding: 5px 0px;
+        margin: 0px;
+        width: 71px;
+        line-height: 36px;
+        background: #FFFFFF;
+        border: none;
+      }
+      .btn.checkall {
+        padding: 8px 5px 8px 6px;
+        border: none;
+        background: #FFFFFF;
+        input {
+          top: 0px;
+          margin: 8px;
         }
+      }
+      > span {
+        z-index: 11;
+        &:after {
+          .right-shadow(46px);
+        }
+      }
     }
+    .actions ul.dropdown-menu {
+      top: 46px;
+    }
+  }
+  .actions ul.dropdown-menu {
+    text-align: left;
+    left: 10px;
+    top: 36px;
 
-    .totalsRowItem:last-child {
-        border-right: none;
-        width: 20%;
+    a {
+      font-weight: bold;
+      display: block;
+      padding: 8px 10px;
+      clear: both;
+      line-height: 18px;
+      color: @gray;
+      white-space: nowrap;
+      margin: 0;
+      border-top: 1px solid @grayLighter;
+      width: -moz-available !important;
+      text-align: left;
+      label {
+        padding-left: 0;
+      }
     }
+  }
+  .quote-data-list-table {
+    th,
+    td {
+      &:first-child {
+        width: 55px;
+        min-width: 55px;
+        height: 28px;
+        text-align: center;
+        overflow-x: visible;
+      }
+    }
+    th:first-child {
+      padding: 0;
+      vertical-align: top;
+      > span {
+        overflow: visible;
+        width: 55px;
+        height: 100%;
+        border-right: @tableBorder;
+        background-color: inherit;
+        z-index: 999;
+        padding: 0px 16px 0px 0px;
+      }
+      .btn.checkall {
+        padding: 8px 6px;
+        border: none;
+        background: #FFFFFF;
+        input {
+          top: 0px;
+          margin: 8px;
+        }
+      }
+    }
+    td:first-child {
+      > span {
+        position: absolute;
+        display: inline-block;
+        width: 55px;
+        height: 28px;
+        margin-top: -18px;
+        left: 0;
+        background-color: inherit;
+        overflow: visible;
+        padding: 0px 16px 0px 0px;
+        font-size: 0;
+        .fieldset-field {
+          display: inline-block;
+          padding: 0;
+        }
+        // single search and select
+        input[type=checkbox],
+        input[type=radio] {
+          margin: 8px;
+        }
+        .btn.btn-invisible {
+          margin: 0;
+          &.active {
+            background-color: transparent !important;
+          }
+        }
+        span.list,
+        span.edit {
+          display: block;
+          white-space: nowrap;
+        }
+      }
+    }
+    th:first-child {
+      border-right: @tableBorder;
+      > span {
+        z-index: 11;
+        &:after {
+          .right-shadow(43px);
+        }
+      }
+    }
+    td:first-child:not(.two-dropdowns) {
+      border-right: @tableBorder;
+      > span {
+        &:after {
+          .right-shadow(37px);
+        }
+      }
+    }
+    thead.quote-data-list-header {
+      .btn-group:not(.open) > .btn + .dropdown-toggle {
+        padding: 12px 10px;
+        border: none;
+        background: #FFFFFF;
+      }
+      .btn-group.open .btn.dropdown-toggle {
+        background: #555555;
+        padding: 11px 9px;
+      }
+    }
+    tbody.quote-data-group {
+      border-top: 2px #759EEF solid;
+
+      .btn-group > .btn + .dropdown-toggle {
+        padding: 9px 10px;
+      }
+      tr.quote-data-group-header td,
+      tr.quote-data-group-footer td,
+      tr.product-bundle-notes-row td:not(:first-child) {
+        background: @grayLighter;
+      }
+      tr.quote-data-group-header,
+      tr.quote-data-group-list {
+        .btn {
+          border: none;
+        }
+      }
+      tr.quote-data-group-header {
+        td.two-dropdowns {
+          border-right: @tableBorder;
+          padding: 0px;
+          margin: 0px;
+          vertical-align: top;
+          text-align: left;
+
+          > span {
+            position: relative;
+            margin: 0px;
+            padding: 0px;
+            width: 34px;
+
+            a {
+              padding: 9px 11px;
+            }
+          }
+
+          span.fieldset:last-child {
+            &:after {
+              .right-shadow(37px);
+            }
+          }
+        }
+      }
+      tr.quote-data-group-list {
+        .btn-group:not(.open) .bt {
+          background: #FFFFFF;
+        }
+        .btn-group.open .btn.dropdown-toggle {
+          background: #555555;
+        }
+      }
+    }
+  }
+  .quote-data-group-footer,
+  .quote-data-grand-totals-footer {
+    .footer-fields {
+      width: 45%;
+      float: right;
+
+      .quote-footer-item {
+        text-align: right;
+        padding: 2px 10px 2px 0px;
+
+        &.grand-total {
+          border-top: 2px #759EEF solid;
+
+          .quote-footer-label {
+            font-weight: bold;
+          }
+        }
+        .quote-footer-label,
+        .quote-footer-value {
+          width: 45%;
+          display: inline-block;
+        }
+        .quote-footer-value {
+          font-weight: bold;
+        }
+        &.quote-footer-input-item {
+          input {
+            width: 30%;
+            font-weight: bold;
+            text-align: right;
+            padding: 2px;
+          }
+          input:first-child {
+            margin-right: 15px;
+          }
+        }
+      }
+    }
+  }
+  .quote-data-grand-totals-footer::after {
+    content:"";
+    display:block;
+    clear:both;
+  }
 }

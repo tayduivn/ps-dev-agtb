@@ -659,6 +659,13 @@ $renamedefs = array(
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
+        'ProductBundles' => array(
+            array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_INVALID_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'EXCEPTION_NOT_FOUND_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_CREATE_QLI_BUTTON_LABEL', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_CREATE_QLI_BUTTON_TOOLTIP', 'type' => 'singular', 'source' => 'Products'),
+        ),
         'ProductTemplates' => array(
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'RevenueLineItems'),
@@ -704,6 +711,11 @@ $renamedefs = array(
             array('name' => 'LBL_QUOTES_NAME', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'EXCEPTION_QUOTE_ALREADY_CONVERTED', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_QUOTE_HEADER_TOTALS', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_QUOTE_DATA_GRAND_TOTALS_HEADER', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_QUOTE_DATA_GRAND_TOTALS_FOOTER', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_CREATE_QLI_BUTTON_LABEL', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_CREATE_QLI_BUTTON_TOOLTIP', 'type' => 'singular', 'source' => 'Products'),
         ),
         'Quotas' => array(
             array('name' => 'LNK_FORECAST_LIST', 'type' => 'singular', 'source' => 'Forecasts'),
@@ -908,11 +920,6 @@ $renamedefs = array(
             array('name' => 'LBL_SEARCH_TP_NAME', 'type' => 'singular', 'source' => 'TimePeriods'),
             array('name' => 'ERR_TIME_PERIOD_DATE_RANGE', 'type' => 'singular', 'source' => 'TimePeriods'),
             array('name' => 'LBL_LIST_WARNING', 'type' => 'singular', 'source' => 'TimePeriods'),
-        ),
-        'ProductBundles' => array(
-            array('name' => 'LBL_QUOTE_BUNDLE_POSITION', 'type' => 'singular', 'source' => 'Quotes'),
-            array('name' => 'EXCEPTION_INVALID_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
-            array('name' => 'EXCEPTION_NOT_FOUND_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
         ),
     ),
     'global' => array(

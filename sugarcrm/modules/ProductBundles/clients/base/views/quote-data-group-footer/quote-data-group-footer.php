@@ -9,20 +9,21 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['base']['view']['record-totals'] = array(
+$viewdefs['ProductBundles']['base']['view']['quote-data-group-footer'] = array(
     'panels' => array(
         array(
-            'name' => 'panel_header',
-            'label' => 'LBL_PANEL_1',
+            'name' => 'panel_quote_data_group_footer',
+            'label' => 'LBL_QUOTE_DATA_GROUP_FOOTER',
             'fields' => array(
-                'subtotal',
-                'discount',
-                'new_sub',
-                'tax',
-                'shipping',
                 array(
-                    'name' => 'total',
-                    'label' => 'LBL_LIST_GRAND_TOTAL',
+                    'name' => 'additional_group_discount',
+                    'type' => 'quote-footer-input',
+                    'label' => 'LBL_ADDITIONAL_GROUP_DISCOUNT',
+                ),
+                array(
+                    'name' => 'subtotal',
+                    'label' => 'LBL_GROUP_TOTAL',
+                    'type' => 'quote-footer',
                 ),
             ),
         ),

@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.CurrencyTypeDropdownField
- * @alias SUGAR.App.view.fields.BaseCurrencyTypeDropdownField
+ * @class View.Fields.Base.Quotes.CurrencyTypeDropdownField
+ * @alias SUGAR.App.view.fields.BaseQuotesCurrencyTypeDropdownField
  * @extends View.Fields.Base.EnumField
  */
 ({
