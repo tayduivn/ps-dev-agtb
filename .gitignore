@@ -8,6 +8,7 @@ sidecar/src/config.js
 sidecar/src/config_si.php
 sidecar/minified
 sidecar/docs
+sugarcrm/docs
 sidecar/extensions/nomad/compiled/*.js
 sidecar/extensions/portal/config.js
 sugarcrm/clients/forecasts/config.js

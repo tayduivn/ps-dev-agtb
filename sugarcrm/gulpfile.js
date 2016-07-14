@@ -300,6 +300,24 @@ gulp.task('check-license', function(done) {
     });
 });
 
+gulp.task('jsduck', function() {
+    var firstPartyFiles = getFirstPartyFiles();
+    var GJSDuck = require('gulp-jsduck');
+    var options = [
+        '--out',
+        'docs',
+        '--title=SugarCRM Javascript Documentation',
+        '--color',
+        '--head-html=<link rel=\"stylesheet\" href=\"../styleguide/assets/css/jsduck.css\" type=\"text/css\">',
+        '--builtin-classes',
+        '--external=jQuery', // FIXME SC-5047: we may need to add more types here
+    ];
+    var gjsduck = new GJSDuck(options);
+
+    return gulp.src(firstPartyFiles)
+        .pipe(gjsduck.doc());
+});
+
 gulp.task('find-todos', function(done) {
     var teams = require('./gulp/plugins/team/team.js');
     commander
