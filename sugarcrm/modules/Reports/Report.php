@@ -1897,10 +1897,12 @@ class Report
 
         $where_auto = " " . $this->focus->table_name . ".deleted=0 \n";
 
+        // related custom fields could have record in the {MODULE}_cstm table and at the same time could not have
+        // record in the related module table. So we need to check for NULL value.
         foreach($this->extModules as $tableAlias => $extModule) {
             if (isset($extModule->deleted)) {
-               $where_auto .= " AND " . $tableAlias . ".deleted=0 \n";             
-            }            
+                $where_auto .= ' AND ' . $this->db->convert($tableAlias . '.deleted', 'IFNULL', array(0)) . "=0 \n";
+            }
         }
         
         // Start ACL check
