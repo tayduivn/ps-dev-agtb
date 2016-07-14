@@ -1042,7 +1042,7 @@ describe('Emails.Views.Create', function() {
                 view._lastSelectedSignature = new app.Bean({id: 'abcd'});
                 insertSignatureStub = sandbox.stub(view, '_insertSignature');
                 view.model.set('description_html',
-                    '<div>My Content</div><div class="replycontent">My Reply Content</div>'
+                    '<div>My Content</div><div id="replycontent">My Reply Content</div>'
                 );
             });
 
@@ -1071,7 +1071,7 @@ describe('Emails.Views.Create', function() {
                     }
                 );
                 var expected = '<h1>Template Content</h1>' +
-                    '<div></div><div class="replycontent">My Reply Content</div><div></div>';
+                    '<div></div><div id="replycontent">My Reply Content</div><div></div>';
                 view._insertTemplate(templateModel);
                 expect(view.model.get('description_html')).toEqual(expected);
             });
@@ -1081,7 +1081,7 @@ describe('Emails.Views.Create', function() {
     describe('_getReplyContent', function() {
         it('should return reply content when it exists', function() {
             var actual;
-            var expected = '<div class="replycontent">My Reply Content</div>';
+            var expected = '<div id="replycontent">My Reply Content</div>';
             view.model.set('description_html',
                 '<div>My Content</div>' + expected
             );
@@ -1260,6 +1260,13 @@ describe('Emails.Views.Create', function() {
             var expected = existingContent;
             expect(actual).toEqual(expected);
         });
+
+        it('should default to cursor location if no location specified', function() {
+            var newContent = 'My New Content';
+            view._insertInEditor(newContent);
+            expect(mockEditor.execCommand).toHaveBeenCalled();
+        });
+
     });
 
     describe('InitializeSendEmailModel', function() {

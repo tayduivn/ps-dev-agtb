@@ -42,14 +42,6 @@
     _lastSelectedSignature: null,
 
     /**
-     * Keep track of the reply content so it can be re-inserted in the case
-     * where a template is inserted.
-     *
-     * @property {string}
-     */
-    _replyContent: null,
-
-    /**
      * @property {RegExp}
      * Used for determining if an email's content contains variables.
      */
@@ -678,7 +670,7 @@
     _getReplyContent: function() {
         var replyContent = '';
         var body = this.model.get('description_html') || '';
-        var $replyContent = $('<div>' + body + '</div>').find('div.replycontent');
+        var $replyContent = $('<div>' + body + '</div>').find('div#replycontent');
 
         if ($replyContent.length > 0) {
             replyContent = $replyContent[0].outerHTML;
@@ -788,8 +780,9 @@
      * Inserts the signature into the editor.
      *
      * @param {Data.Bean} signature
-     * @param {string} location Whether to insert the new content above existing
-     *   content, below existing content, or at the cursor location.
+     * @param {string} [location="cursor"] Whether to insert the new content
+     *   above existing content, below existing content, or at the cursor
+     *   location. Defaults to being inserted at the cursor position.
      * @return {boolean}
      * @private
      */
@@ -843,8 +836,9 @@
      * Inserts the content into the tinyMCE editor at the specified location.
      *
      * @param {string} content
-     * @param {string} location Whether to insert the new content above existing
-     *   content, below existing content, or at the cursor location.
+     * @param {string} [location="cursor"] Whether to insert the new content
+     *   above existing content, below existing content, or at the cursor
+     *   location. Defaults to being inserted at the cursor position.
      * @return {string} the content of the editor
      * @private
      */
@@ -855,6 +849,9 @@
         if (_.isEmpty(content)) {
             return emailBody;
         }
+
+        //Default to the cursor location
+        location = location || this.CURSOR_LOCATION;
 
         //Add empty divs so user can place cursor on line before or after
         content = '<div></div>' + content + '<div></div>';
@@ -872,7 +869,7 @@
             emailBody = editor.getContent();
         } else if (location === this.BELOW_CONTENT) {
             emailBody += content;
-        } else {
+        } else if (location === this.ABOVE_CONTENT) {
             emailBody = content + emailBody;
         }
 

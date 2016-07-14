@@ -23,16 +23,20 @@
     plugins: ['EmailClientLaunch'],
 
     /**
-     * Class to add to div wrapper around reply content for later identifying
+     * ID to add to the div wrapper around reply content for later identifying
      * the portion of the email body which is the reply content. ie., when
      * inserting templates into an email but maintaining reply content.
+     *
+     * @private
      */
-    REPLY_CLASS: 'replycontent',
+    REPLY_CONTENT_ID: 'replycontent',
 
     /**
      * Template for reply header.
+     *
+     * @private
      */
-    tplHeaderHtml: null,
+    _tplHeaderHtml: null,
 
     /**
      * @inheritdoc
@@ -46,7 +50,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this.tplHeaderHtml = app.template.getField(this.type, 'reply-header-html', this.module);
+        this._tplHeaderHtml = app.template.getField(this.type, 'reply-header-html', this.module);
 
         //Use field template from emailaction
         this.type = 'emailaction';
@@ -64,9 +68,9 @@
     _setReplyContent: function() {
         var replyRecipients = this._getReplyRecipients(this.def.reply_all);
         var subject = this._getReplySubject(this.model.get('name'));
-        var replyHeader = this.tplHeaderHtml(this._getReplyHeaderParams());
+        var replyHeader = this._tplHeaderHtml(this._getReplyHeaderParams());
         var replyBody = this._getReplyBody();
-        var descriptionHtml = '<div></div><div class="' + this.REPLY_CLASS + '">' +
+        var descriptionHtml = '<div></div><div id="' + this.REPLY_CONTENT_ID + '">' +
             replyHeader + replyBody + '</div>';
 
         this.addEmailOptions({
@@ -88,6 +92,8 @@
      * @param {boolean} all Whether this is reply to all (true) or just a standard
      *   reply (false).
      * @return {Object} To and Cc values for the reply email.
+     * @return {Array} return.to The to values for the reply email.
+     * @return {Array} return.cc The cc values for the reply email.
      * @protected
      */
     _getReplyRecipients: function(all) {
@@ -191,12 +197,12 @@
      * the reply content. Also strip any reply content class if this is a
      * reply to a previous reply.
      *
-     * @return {string}
+     * @return {string} The reply body
      * @private
      */
     _getReplyBody: function() {
         var body = (this.model.get('description_html') || '');
         body = body.replace('<div class="signature">', '<div>');
-        return body.replace('<div class="' + this.REPLY_CLASS + '">', '<div>');
+        return body.replace('<div id="' + this.REPLY_CONTENT_ID + '">', '<div>');
     }
 })
