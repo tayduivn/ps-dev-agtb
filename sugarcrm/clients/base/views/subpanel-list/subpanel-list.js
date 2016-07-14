@@ -66,9 +66,9 @@
      */
     _initializeMetadata: function(options) {
         return  _.extend({},
-            app.metadata.getView(null, 'subpanel-list', true),
-            app.metadata.getView(options.module, 'record-list', true),
-            app.metadata.getView(options.module, 'subpanel-list', true)
+            app.metadata.getView(null, 'subpanel-list'),
+            app.metadata.getView(options.module, 'record-list'),
+            app.metadata.getView(options.module, 'subpanel-list')
         );
     },
 
