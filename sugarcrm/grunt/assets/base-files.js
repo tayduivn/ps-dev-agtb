@@ -21,6 +21,7 @@
     'sidecar/lib/handlebars/handlebars.js',
     'sidecar/lib/sugarapi/sugarapi.js',
     'sidecar/minified/sidecar.min.js',
+    {'pattern': 'sidecar/minified/sidecar.min.js.map', 'included': false},
     'include/javascript/sugar7/hbs-helpers.js',
     'include/javascript/modernizr.js',
     'include/javascript/nprogress/nprogress.js',
