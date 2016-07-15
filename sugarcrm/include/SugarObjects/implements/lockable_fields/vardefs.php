@@ -57,4 +57,9 @@ $vardefs = array(
             'relationship_role_column_value' => $module,
         ),
     ),
+//BEGIN SUGARCRM flav=ent
+    'acls' => array(
+        'SugarACLLockedFields' => true,
+    ),
+//END SUGARCRM flav=ent
 );

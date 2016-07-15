@@ -336,6 +336,12 @@ class SugarBean
     public $name_format_map = array();
 
     /**
+     * Locked fields
+     * @var array
+     */
+    protected $lockedFields = null;
+
+    /**
      * Specification of fields containing names of related users
      *
      * @var array
@@ -8113,7 +8119,11 @@ class SugarBean
      */
     public function getLockedFields()
     {
-        $locked = array();
+        if ($this->lockedFields !== null) {
+            return $this->lockedFields;
+        }
+
+        $this->lockedFields = array();
 
         // Check to see if this bean implements locked fields
         if (isset($this->field_defs['locked_fields']['link'])) {
@@ -8131,15 +8141,15 @@ class SugarBean
                     if (!empty($relBean->pro_locked_variables)) {
                         $merge = json_decode(html_entity_decode($relBean->pro_locked_variables));
                     }
-                    $locked = array_merge($locked, $merge);
+                    $this->lockedFields = array_merge($this->lockedFields, $merge);
                 }
 
                 // And make it unique before sending it back
-                $locked = array_unique($locked);
+                $this->lockedFields = array_unique($this->lockedFields);
             }
         }
 
-        return $locked;
+        return $this->lockedFields;
     }
 
     /**
