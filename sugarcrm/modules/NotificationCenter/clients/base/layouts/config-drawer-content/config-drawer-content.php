@@ -10,15 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['NotificationCenter']['base']['layout']['config-drawer-content'] = array(
-    // All components except the first one are generated dynamically.
+    // All components are generated dynamically.
     // See NotificationCenterConfigDrawerContentLayout::_createViews.
-    'components' => array(
-        array(
-            'view' => array(
-                'name' => 'config-carriers',
-                'type' => 'config-carriers',
-                'label' => 'LBL_CARRIER_DELIVERY_OPTION_TITLE',
-            ),
-        ),
-    ),
+    'components' => array(),
 );

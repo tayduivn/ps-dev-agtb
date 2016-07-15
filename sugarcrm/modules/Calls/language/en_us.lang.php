@@ -181,14 +181,15 @@ To create a {{calls_singular_module}}:
 3. Click "Save" to finalize the new record and return to the previous page.',
 
     // Notification Center Strings
-    'LBL_EMITTER_TITLE' => 'Notifications for {{plural_module_name}}',
-    'LBL_EMITTER_HELP_ADMIN' =>
+    'LBL_EMITTER_TITLE_GLOBAL' => 'Notifications for {{plural_module_name}}',
+    'LBL_EMITTER_TITLE_USER' => 'Notifications for {{plural_module_name}}',
+    'LBL_EMITTER_HELP_GLOBAL' =>
         'Configure the types of notifications and the delivery methods available ' .
         'for the {{plural_module_name}} module.<br/><br/>' .
         'If you would like to give your users a particular option, click the corresponding checkbox in the delivery ' .
         'method column.<br/><br/>' .
         'It is also possible to enable/disable all notification delivery methods by clicking the leftmost checkbox.',
-    'LBL_EMITTER_HELP' =>
+    'LBL_EMITTER_HELP_USER' =>
         'You can configure delivery of notifications for the {{plural_module_name}} module.<br/><br/>' .
         'If you want to receive a reminder by a particular method, click the corresponding checkbox ' .
         'in the delivery method column.<br/><br/>' .
@@ -196,7 +197,7 @@ To create a {{calls_singular_module}}:
         'Please note, some notification methods may be unavailable because your administrator ' .
         'has disabled these options.',
 
-    'LBL_EMITTER_DESC_ADMIN' => 'Select the types of notifications and delivery methods available for users.',
+    'LBL_EMITTER_DESC_GLOBAL' => 'Select the types of notifications and delivery methods available for users.',
     'LBL_EMITTER_DESC_USER' => 'Select the types of notifications you would like to receive. ' .
         'You can also select the delivery method for each notification.',
     // Event remind

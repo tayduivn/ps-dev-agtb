@@ -13,15 +13,15 @@ describe('NotificationCenter.Layout.ConfigDrawerContent', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        var context = app.context.getContext();
+        context.set({
+            model: app.data.createBean('NotificationCenter', {configMode: 'global'})
+        });
         var meta = {
-            components: [{
-                view: {
-                    name: 'config-carriers',
-                    type: 'config-carriers'
-                }
-            }]
+            components: []
         };
-        layout = SugarTest.createLayout('base', 'NotificationCenter', 'config-drawer-content', meta, null, true);
+
+        layout = SugarTest.createLayout('base', 'NotificationCenter', 'config-drawer-content', meta, context, true);
         sandbox = sinon.sandbox.create();
     });
 
@@ -76,29 +76,33 @@ describe('NotificationCenter.Layout.ConfigDrawerContent', function() {
 
     describe('_switchHowToData()', function() {
         var module;
+        var suffix;
 
         beforeEach(function() {
             layout.currentHowToData = {};
             module = layout.module;
             layout.model.set('configMode', 'user');
+            suffix = '-' + app.utils.generateUUID();
         });
 
         it('should set currentHowToData properly for Carriers', function() {
-            layout._switchHowToData('config-carriers');
-            expect(layout.currentHowToData.title).toEqual(app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', module));
-            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_CARRIER_DELIVERY_OPTION_HELP', module));
+            layout._switchHowToData('config-carriers' + suffix);
+            expect(layout.currentHowToData.title).toEqual(
+                app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE_USER', module)
+            );
+            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_CARRIER_DELIVERY_OPTION_HELP_USER', module));
         });
 
         it('should set currentHowToData properly for Application Emitter', function() {
-            layout._switchHowToData('config-ApplicationEmitter');
-            expect(layout.currentHowToData.title).toEqual(app.lang.get('LBL_APPLICATION_EMITTER_TITLE', module));
-            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_APPLICATION_EMITTER_HELP', module));
+            layout._switchHowToData('config-ApplicationEmitter' + suffix);
+            expect(layout.currentHowToData.title).toEqual(app.lang.get('LBL_APPLICATION_EMITTER_TITLE_USER', module));
+            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_APPLICATION_EMITTER_HELP_USER', module));
         });
 
         it('should set currentHowToData properly for Bean Emitter', function() {
-            layout._switchHowToData('config-BeanEmitter');
-            expect(layout.currentHowToData.title).toEqual(app.lang.get('LBL_APPLICATION_EMITTER_TITLE', module));
-            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_BEAN_EMITTER_HELP', module));
+            layout._switchHowToData('config-BeanEmitter' + suffix);
+            expect(layout.currentHowToData.title).toEqual(app.lang.get('LBL_BEAN_EMITTER_TITLE_USER', module));
+            expect(layout.currentHowToData.text).toEqual(app.lang.get('LBL_BEAN_EMITTER_HELP_USER', module));
         });
 
         using('config-module views and module names',
@@ -106,9 +110,9 @@ describe('NotificationCenter.Layout.ConfigDrawerContent', function() {
             function(viewName, moduleName) {
                 it('should extract module name from view name correctly', function() {
                     var appLangGet = sandbox.spy(app.lang, 'get');
-                    layout._switchHowToData(viewName);
-                    expect(appLangGet).toHaveBeenCalledWith('LBL_EMITTER_TITLE', moduleName);
-                    expect(appLangGet).toHaveBeenCalledWith('LBL_EMITTER_HELP', moduleName);
+                    layout._switchHowToData(viewName + suffix);
+                    expect(appLangGet).toHaveBeenCalledWith('LBL_EMITTER_TITLE_USER', moduleName);
+                    expect(appLangGet).toHaveBeenCalledWith('LBL_EMITTER_HELP_USER', moduleName);
                 });
             });
     });

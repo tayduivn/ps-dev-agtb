@@ -21,6 +21,14 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        // Mandatory Carriers view.
+        this.meta.components.push({
+            view: {
+                name: 'config-carriers-' + app.utils.generateUUID(),
+                type: 'config-carriers',
+                label: 'LBL_CARRIER_DELIVERY_OPTION_TITLE_' + this.model.get('configMode').toUpperCase()
+            }
+        });
         this.before('render', function() { this._createViews(); }, this);
     },
 
@@ -59,7 +67,7 @@
         _.each(emitters, function(val, key) {
             this.meta.components.push({
                 view: {
-                    name: 'config-' + key,
+                    name: 'config-' + key + '-' + app.utils.generateUUID(),
                     type: 'config-emitter',
                     emitter: key
                 }
@@ -77,40 +85,39 @@
      * @inheritdoc
      */
     _switchHowToData: function(helpId) {
-        var title, text, helpLabel, additionalText;
+        var title;
+        var text;
+        var additionalText;
+        var section;
+
+        section = this.model.get('configMode').toUpperCase();
 
         additionalText = {
             sendFor: app.lang.get('LBL_SEND_NOTIFICATION_FOR', this.module),
-            deliverySection: app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', this.module)
+            deliverySection: app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE_' + section, this.module)
         };
+
+        // Cut unique random generated id.
+        helpId = helpId.substring(0, helpId.length - (app.utils.generateUUID().length + 1));
 
         switch(helpId) {
             case 'config-carriers':
-                title = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE', this.module);
-                helpLabel = 'LBL_CARRIER_DELIVERY_OPTION_HELP';
-                if (this.model.get('configMode') !== 'user') {
-                    helpLabel += '_ADMIN';
-                }
-                text = app.lang.get(helpLabel, this.module, additionalText);
+                title = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_TITLE_' + section, this.module);
+                text = app.lang.get('LBL_CARRIER_DELIVERY_OPTION_HELP_' + section, this.module, additionalText);
                 break;
             case 'config-ApplicationEmitter':
-                title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
-                text = app.lang.get('LBL_APPLICATION_EMITTER_HELP', this.module, additionalText);
+                title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE_' + section, this.module);
+                text = app.lang.get('LBL_APPLICATION_EMITTER_HELP_' + section, this.module, additionalText);
                 break;
             case 'config-BeanEmitter':
-                title = app.lang.get('LBL_APPLICATION_EMITTER_TITLE', this.module);
-                text = app.lang.get('LBL_BEAN_EMITTER_HELP', this.module, additionalText);
+                title = app.lang.get('LBL_BEAN_EMITTER_TITLE_' + section, this.module);
+                text = app.lang.get('LBL_BEAN_EMITTER_HELP_' + section, this.module, additionalText);
                 break;
             default: // Module Emitter case
                 var module = helpId.substring(7);
                 additionalText.plural_module_name = app.lang.getModuleName(module, {plural: true});
-
-                helpLabel = 'LBL_EMITTER_HELP';
-                if (this.model.get('configMode') !== 'user') {
-                    helpLabel += '_ADMIN';
-                }
-                title = app.lang.get('LBL_EMITTER_TITLE', module, additionalText);
-                text = app.lang.get(helpLabel, module, additionalText);
+                title = app.lang.get('LBL_EMITTER_TITLE_' + section, module, additionalText);
+                text = app.lang.get('LBL_EMITTER_HELP_' + section, module, additionalText);
         }
 
         this.currentHowToData.title = title;
