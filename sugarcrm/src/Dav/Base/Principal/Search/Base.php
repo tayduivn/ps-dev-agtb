@@ -110,6 +110,10 @@ abstract class Base implements SearchInterface
     public function searchPrincipals(array $searchProperties, $test = 'allof')
     {
         $focus = $this->getBean();
+        if (!$focus->ACLAccess('list')) {
+            return array();
+        }
+
         $query = $this->getSugarQuery();
         $searchFields = $this->getNameFormatFields($focus);
 
