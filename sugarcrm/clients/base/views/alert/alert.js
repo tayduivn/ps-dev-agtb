@@ -158,56 +158,113 @@
     /**
      * Gets the HTML string for alert given options.
      *
-     * @param {Object} options The options object passed to the alert object when it was
-     *   created. See {@link #initialize} documentation to know the available
-     *   options.
+     * @param {Object} [options] The options object passed to the alert object
+     *   when it was created. See {@link #initialize} documentation to know the
+     *   available options.
+     * @param {string|string[]} [options.messages] The message(s) to be
+     *   displayed in the alert dialog.
      * @param {Object} [templateOptions] Optional template options to be passed
      *   to the template.
      * @return {string} The generated template.
      * @private
      */
     _getAlertTemplate: function(options, templateOptions) {
-        var template;
-        var level = options.level;
-        var alertClasses = this.getAlertClasses(level);
-        var alertIcon = this.getAlertIcon(level);
-        var title = options.title || this.getDefaultTitle(level);
-
-        switch (level) {
-            case this.LEVEL.PROCESS:
-                //Cut ellipsis at the end of the string
-                title = title.substr(-3) === '...' ? title.substr(0, title.length - 3) : title;
-                template = app.template.getView(this.name + '.process');
-                break;
-            case this.LEVEL.SUCCESS:
-            case this.LEVEL.WARNING:
-            case this.LEVEL.INFO:
-            case this.LEVEL.ERROR:
-                template = app.template.getView(this.name + '.error');
-                break;
-            case this.LEVEL.CONFIRMATION:
-                template = app.template.getView(this.name + '.confirmation');
-                break;
-            default:
-                template = app.template.empty;
-        }
+        options = options || {};
+        var alert = this._getAlertProps(options);
+        var template = alert.templateName ? app.template.getView(alert.templateName) : app.template.empty;
         var seed = _.extend({}, {
-            alertClass: alertClasses,
-            alertIcon: alertIcon,
-            title: this.getTranslatedLabels(title),
+            alertClass: alert.cssClass,
+            alertIcon: alert.icon,
+            title: this.getTranslatedLabels(alert.title),
             messages: this.getTranslatedLabels(options.messages),
             closeable: _.isUndefined(options.closeable) || options.closeable,
             alert: this
         }, templateOptions);
+
         return template(seed);
     },
 
     /**
+     * From the given `options`, this method returns an object with
+     * corresponding alert properties.
+     *
+     * @private
+     * @param {Object} [options] Alert options like `title`, `level`, etc.
+     * @param {string} [options.level] Alert level e.g. 'success', 'error' etc.
+     * @param {string} [options.title] Custom alert title to be used.
+     * @return {Object} Alert properties to be used when rendering the alert
+     *   template.
+     */
+    _getAlertProps: function(options) {
+        var title = options.title || '';
+        var defaultTemplateName = this.name + '.error';
+
+        switch (options.level) {
+            case this.LEVEL.PROCESS:
+                // Remove ellipsis from the end of the string.
+                title = title.substr(-3) === '...' ? title.substr(0, title.length - 3) : title;
+
+                return {
+                    title: title || 'LBL_ALERT_TITLE_LOADING',
+                    templateName: this.name + '.process',
+                    cssClass: 'alert-process',
+                    icon: ''
+                };
+            case this.LEVEL.SUCCESS:
+                return {
+                    title: title || 'LBL_ALERT_TITLE_SUCCESS',
+                    templateName: defaultTemplateName,
+                    cssClass: 'alert-success',
+                    icon: 'fa-check-circle'
+                };
+            case this.LEVEL.WARNING:
+                return {
+                    title: title || 'LBL_ALERT_TITLE_WARNING',
+                    templateName: defaultTemplateName,
+                    cssClass: 'alert-warning',
+                    icon: 'fa-exclamation-triangle'
+                };
+            case this.LEVEL.INFO:
+                return {
+                    title: title || 'LBL_ALERT_TITLE_NOTICE',
+                    templateName: defaultTemplateName,
+                    cssClass: 'alert-info',
+                    icon: 'fa-info-circle'
+                };
+            case this.LEVEL.ERROR:
+                return {
+                    title: title || 'LBL_ALERT_TITLE_ERROR',
+                    templateName: defaultTemplateName,
+                    cssClass: 'alert-danger',
+                    icon: 'fa-exclamation-circle'
+                };
+            case this.LEVEL.CONFIRMATION:
+                return {
+                    title: title || 'LBL_ALERT_TITLE_WARNING',
+                    templateName: this.name + '.confirmation',
+                    cssClass: 'alert-warning',
+                    icon: 'fa-exclamation-triangle'
+                };
+            default:
+                return {
+                    title: title,
+                    cssClass: '',
+                    icon: 'fa-info-circle'
+                };
+        }
+    },
+
+    /**
      * Get CSS classes given alert level
+     *
+     * @deprecated Deprecated since 7.9. Will be removed in 7.10.
      * @param {String} level
      * @return {String}
      */
     getAlertClasses: function(level) {
+        app.logger.warn('The View.Views.Base.AlertView#getAlertClasses has been deprecated since 7.9.0 and will be ' +
+            'removed in 7.10. Please use View.Views.Base.AlertView#_getAlertProps instead.');
+
         switch (level) {
             case this.LEVEL.PROCESS:
                 return 'alert-process';
@@ -227,35 +284,16 @@
     },
 
     /**
-     * Get icons given alert level
-     * @param {String} level
-     * @return {String}
-     */
-    getAlertIcon: function(level) {
-        switch (level) {
-            case this.LEVEL.PROCESS:
-                return '';
-            case this.LEVEL.SUCCESS:
-                return 'fa-check-circle';
-            case this.LEVEL.WARNING:
-                return 'fa-exclamation-triangle';
-            case this.LEVEL.INFO:
-                return 'fa-info-circle';
-            case this.LEVEL.ERROR:
-                return 'fa-exclamation-circle';
-            case this.LEVEL.CONFIRMATION:
-                return 'fa-exclamation-triangle';
-            default:
-                return 'fa-info-circle';
-        }
-    },
-
-    /**
      * Get the default title given alert level
+     *
+     * @deprecated Deprecated since 7.9. Will be removed in 7.10.
      * @param {String} level
      * @return {String}
      */
     getDefaultTitle: function(level) {
+        app.logger.warn('The View.Views.Base.AlertView#getDefaultTitle has been deprecated since 7.9.0 and will be ' +
+            'removed in 7.10. Please use View.Views.Base.AlertView#_getAlertProps instead.');
+
         switch (level) {
             case this.LEVEL.PROCESS:
                 return 'LBL_ALERT_TITLE_LOADING';
