@@ -125,7 +125,7 @@ class SugarUploadS3 extends UploadStream
      */
     public function isUploadUrl($path)
     {
-        return substr($path, strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
+        return substr($path, 0, strlen(self::STREAM_NAME)+3) == self::STREAM_NAME."://";
     }
 
     public function dir_closedir()
@@ -176,7 +176,7 @@ class SugarUploadS3 extends UploadStream
         if($this->isUploadUrl($path_to)) {
             if($this->isUploadURL($path_from)) {
                 // from S3 to S3 - copy there
-                $this->s3->copyObject($this->urlToObject(path_from), $this->urlToObject(path_to));
+                $this->s3->copyObject($this->urlToObject($path_from), $this->urlToObject($path_to));
             } else {
                 // from local to S3 - just register the copy, parent did the local part
                 $this->registerFile($path);
