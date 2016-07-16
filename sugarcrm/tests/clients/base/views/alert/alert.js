@@ -50,27 +50,88 @@ describe("Alert View", function() {
     });
 
     describe('_getAlertTemplate()', function() {
-        it("Should return the correct class when success level is given", function() {
-            sinonSandbox.stub(app.metadata, 'getStrings', function() {
-                return {
-                    FOO: 'foo',
-                    BAR: 'bar'
-                }
-            });
+        using('different alert options', [
+            {
+                // process with custom title
+                options: {
+                    level: 'process',
+                    title: 'FOO',
+                },
+                selectors: ['.alert-process'],
+                expected: {
+                    title: 'FOO',
+                },
+            },
+            {
+                options: {
+                    level: 'process',
+                },
+                selectors: ['.alert-process'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_LOADING',
+                },
+            },
+            {
+                options: {
+                    level: 'success',
+                },
+                selectors: ['.alert-success', '.fa-check-circle'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_SUCCESS',
+                },
+            },
+            {
+                options: {
+                    level: 'warning',
+                },
+                selectors: ['.alert-warning', '.fa-exclamation-triangle'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_WARNING',
+                },
+            },
+            {
+                options: {
+                    level: 'info',
+                },
+                selectors: ['.alert-info', '.fa-info-circle'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_NOTICE',
+                },
+            },
+            {
+                options: {
+                    level: 'error',
+                },
+                selectors: ['.alert-danger', '.fa-exclamation-circle'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_ERROR',
+                },
+            },
+            {
+                options: {
+                    level: 'confirmation',
+                },
+                selectors: ['.alert-warning', '.fa-exclamation-triangle'],
+                expected: {
+                    title: 'LBL_ALERT_TITLE_WARNING',
+                },
+            },
+        ], function(provider) {
+            it('should have the appropriate alert class, title, and icons', function() {
+                var result = view._getAlertTemplate(provider.options);
+                var $result = $('<div/>').append(result);
 
-            var dataProvider = {};
-            dataProvider[view.LEVEL.SUCCESS] = 'alert-success';
-            dataProvider[view.LEVEL.PROCESS] = 'alert-process';
-            dataProvider[view.LEVEL.WARNING] = 'alert-warning';
-            dataProvider[view.LEVEL.INFO] = 'alert-info';
-            dataProvider[view.LEVEL.ERROR] = 'alert-danger';
-            dataProvider[view.LEVEL.CONFIRMATION] = 'alert-warning';
+                _.each(provider.selectors, function(selector) {
+                    expect($result.find(selector).length).toBeTruthy();
+                });
 
-            _.each(dataProvider, function(className, level) {
-                var options = {level: level, messages: 'BAR', title: 'FOO'};
-                var result = view._getAlertTemplate(options);
-                expect($('<div></div>').append(result).find('.alert').hasClass(className)).toBe(true);
+                expect(result.indexOf(provider.expected.title)).not.toBe(-1);
             });
+        });
+
+        it('Should return an empty string when no options are passed', function() {
+            var result = view._getAlertTemplate();
+            expect(result).toBe('');
         });
 
         it("Should return the default title if title is not given", function() {
