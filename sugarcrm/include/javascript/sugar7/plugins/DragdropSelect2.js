@@ -257,7 +257,9 @@
                         });
 
                         sourceCollection.remove(draggedItems);
-                        targetCollection.add(draggedItems);
+                        targetCollection.add(_.map(draggedItems, function(model) {
+                            return model.clone();
+                        }));
                     }
                 });
             },

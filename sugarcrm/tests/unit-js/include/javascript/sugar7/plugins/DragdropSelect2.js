@@ -248,14 +248,14 @@ describe('DragdropSelect2 Plugin', function() {
             dropHandler(mockEvent, {helper: $helper.get(0)});
 
             //only item2 should remain in sourceCollection
-            expect(sourceCollection.contains(item1)).toBe(false);
-            expect(sourceCollection.contains(item2)).toBe(true);
-            expect(sourceCollection.contains(item3)).toBe(false);
+            expect(sourceCollection.get(item1.id)).toBeUndefined();
+            expect(sourceCollection.get(item2.id)).not.toBeUndefined();
+            expect(sourceCollection.get(item3.id)).toBeUndefined();
 
             //item1 and item3 should now be in targetCollection
-            expect(targetCollection.contains(item1)).toBe(true);
-            expect(targetCollection.contains(item2)).toBe(false);
-            expect(targetCollection.contains(item3)).toBe(true);
+            expect(targetCollection.get(item1.id)).not.toBeUndefined();
+            expect(targetCollection.get(item2.id)).toBeUndefined();
+            expect(targetCollection.get(item3.id)).not.toBeUndefined();
         });
     });
 });
