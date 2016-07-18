@@ -63,6 +63,17 @@ class SugarSearchEngineHighlighter
             $first = true;
 
             foreach ($fragments as $fragment) {
+
+                // check if $fragment is an array
+                // E.g. if $field = 'email', $fragment could be an array.
+                // make sure to use its value only
+                if (is_array($fragment) && count($fragment) == 1) {
+                    $fragment = $fragment[0];
+                }
+                if (!is_string($fragment)) {
+                    continue;
+                }
+
                 if (!$first) {
                     $ret[$field]['text'] .= self::$fragmentSep . $fragment;
                 } else {
