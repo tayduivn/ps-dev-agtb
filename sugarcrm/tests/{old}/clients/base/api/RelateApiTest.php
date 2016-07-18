@@ -120,7 +120,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $reply = $this->relateApi->filterRelatedCount(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
         $this->assertArrayHasKey('record_count', $reply);
-        $this->assertEquals(1, $reply['record_count']);
+        $this->assertSame(1, $reply['record_count']);
     }
 
     protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
@@ -192,7 +192,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
                   'filter' => array(array('first_name' => array('$starts' => "RelateApi"))),
                   'fields' => 'id,name', 'order_by' => 'name:ASC'));
         $this->assertArrayHasKey('record_count', $reply);
-        $this->assertEquals(1, $reply['record_count']);
+        $this->assertSame(1, $reply['record_count']);
     }
 
     /**

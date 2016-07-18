@@ -353,7 +353,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name'
             )
         );
-        $this->assertEquals(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
+        $this->assertSame(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
     /**
@@ -454,7 +454,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name',
             )
         );
-        $this->assertEquals(11, $reply['record_count'], 'SimpleJoin: Returned too many results');
+        $this->assertSame(11, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
     public function testOrFilter()
@@ -496,7 +496,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 'order_by' => 'name:ASC'
             )
         );
-        $this->assertEquals(2, $reply['record_count'], 'SimpleJoin: Returned too many results');
+        $this->assertSame(2, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
 
     public function testAndFilter()
@@ -776,7 +776,7 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
+        $this->assertSame(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
     }
 
     public function testOwnerFilter()

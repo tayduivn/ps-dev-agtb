@@ -458,12 +458,11 @@ class FilterApi extends SugarApi
      * Returns the number of records for the module and filter provided:
      *
      * Example:
-     *     {'record_count': '50'}
+     *     {"record_count": 50}
      *
      * @param ServiceBase $api
      * @param array $args
-     * @return Object The number of filtered/unfiltered records for the module
-     *   provided.
+     * @return array The number of filtered/unfiltered records for the module provided.
      * @throws SugarApiExceptionError If retrieving a predefined filter failed.
      * @throws SugarApiExceptionInvalidParameter if any of the parameters are
      *  invalid.
@@ -480,7 +479,12 @@ class FilterApi extends SugarApi
         $q->orderByReset();
         $q->limit = null;
 
-        return reset($q->execute());
+        $stmt = $q->compile()->execute();
+        $count = (int) $stmt->fetchColumn();
+
+        return array(
+            'record_count' => $count,
+        );
     }
 
     /**

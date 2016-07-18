@@ -88,6 +88,7 @@
             <directory>./upgrade/</directory>
             <directory>./install/</directory>
             <directory>./jssource/</directory>
+            <directory>./src/Dbal</directory>
             <directory>./ModuleInstall/</directory>
             <directory>./HealthCheck/</directory>
         </testsuite>
