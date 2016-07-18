@@ -105,11 +105,21 @@
         return {};
     },
 
+    /**
+     * Initiates validation on the model with fields that the user has edit
+     * access to.
+     */
     saveModel: function() {
         this.setDisabled(true);
+
         var fieldsToValidate = this.view.getFields(this.module, this.model);
+        fieldsToValidate = _.pick(fieldsToValidate, function(vardef, fieldName) {
+            return app.acl.hasAccessToModel('edit', this.model, fieldName);
+        }, this);
+
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
+
     cancelEdit: function() {
         if (this.isDisabled()) {
             this.setDisabled(false);
