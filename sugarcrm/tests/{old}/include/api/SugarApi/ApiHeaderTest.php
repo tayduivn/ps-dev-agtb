@@ -63,7 +63,7 @@ class ApiHeaderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new RestServiceMock();
 
-        $headers = $api->getRequest()->request_headers;
+        $headers = $api->getRequest()->getRequestHeaders();
 
         $this->assertNotEmpty($headers, "The Request Headers Are Empty");
     }

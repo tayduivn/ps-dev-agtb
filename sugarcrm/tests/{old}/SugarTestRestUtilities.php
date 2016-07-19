@@ -36,4 +36,8 @@ class SugarTestRestServiceMock extends RestService
 {
     public function execute() {}
     protected function handleException(Exception $exception) {}
+    public function getVersion()
+    {
+        return 10;
+    }
 }

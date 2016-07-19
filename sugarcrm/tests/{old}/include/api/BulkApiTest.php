@@ -34,17 +34,30 @@ class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
         $requests = array(
-          array('url' => '/v10/me', 'method' => 'GET'),
-          array('url' => '/v10/lang/en_us', 'method' => 'GET'),
-          array('url' => '/v10/404', 'method' => 'GET'), // no such route
-          array('url' => '/v10/Accounts/x123-456x', 'method' => 'PUT'), // no such record
-          array('url' => "/v10/Users/{$GLOBALS['current_user']->id}?test=1"), // implied GET
-          array('url' => "/v10/Users/{$GLOBALS['current_user']->id}/link"), // missing param
-          array('url' => "/v10/Users", "method" => 'POST', 'data' => "b;ah"), // bad JSON
-          array('url' => "/v10/Users", "method" => 'POST', 'data' => json_encode(array("id" => $GLOBALS['current_user']->id, "name" => "test"))), // unauthorized
-          // queries
-          array('url' => "/v10/Users?fields=name,date_modified,id&filter=[{\"id\":\"{$GLOBALS['current_user']->id}\"}]", "method" => "GET"),
-          array('url' => "/v07/me"), // bad version
+            array('url' => '/v10/me', 'method' => 'GET'),
+            array('url' => '/v10/lang/en_us', 'method' => 'GET'),
+            array('url' => '/v10/404', 'method' => 'GET'), // no such route
+            array('url' => '/v10/Accounts/x123-456x', 'method' => 'PUT'), // no such record
+            array('url' => "/v10/Users/{$GLOBALS['current_user']->id}?test=1"), // implied GET
+            array('url' => "/v10/Users/{$GLOBALS['current_user']->id}/link"), // missing param
+            array('url' => "/v10/Users", "method" => 'POST', 'data' => "b;ah"), // bad JSON
+            array('url' => "/v10/Users", "method" => 'POST', 'data' => json_encode(array("id" => $GLOBALS['current_user']->id, "name" => "test"))), // unauthorized
+            // queries
+            array('url' => "/v10/Users?fields=name,date_modified,id&filter=[{\"id\":\"{$GLOBALS['current_user']->id}\"}]", "method" => "GET"),
+            array('url' => "/v07/me"), // bad version format
+            array('url' => "/v11.7/me"), // bad version format
+            array('url' => '/me', 'method' => 'GET'), // no version in url
+            array('url' => '/lang/en_us', 'method' => 'GET'), // no version in url
+            // invalid, both Header and url have version
+            array(
+                'url' => "/v10/me",
+                'headers' => array('ACCEPT' => 'application/vnd.sugarcrm.core; version=10'),
+            ),
+            // valid, header version but no url version
+            array(
+                'url' => "/me",
+                'headers' => array('ACCEPT' => 'application/vnd.sugarcrm.core+xml; version=10'),
+            ),
         );
         $apiClass = new BulkApi();
         $args = array("requests" => $requests);
@@ -82,8 +95,14 @@ class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("200", $result[8]['status'], "Bad status for request 8");
         $this->assertEquals(-1, $result[8]['contents']['next_offset'], "Bad next offset for request 8");
         $this->assertEquals($GLOBALS['current_user']->id, $result[8]['contents']['records'][0]['id'], "Bad fetched ID for request 8");
-        // bad version
+        // bad versions
         $this->assertEquals("301", $result[9]['status'], "Bad status for request 9");
+        $this->assertEquals("301", $result[10]['status'], "Bad status for request 10");
+        $this->assertEquals("301", $result[11]['status'], "Bad status for request 11");
+        $this->assertEquals("301", $result[12]['status'], "Bad status for request 12");
+        // header versions
+        $this->assertEquals("301", $result[13]['status'], "Bad status for request 13");
+        $this->assertEquals("200", $result[14]['status'], "Bad status for request 14");
     }
 
     /**
@@ -94,11 +113,10 @@ class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
         $requests = array(
-                array('Xurl' => '/v10/me', 'method' => 'GET'),
+            array('Xurl' => '/v10/me', 'method' => 'GET'),
         );
         $apiClass = new BulkApi();
         $args = array("requests" => $requests);
-        $result = $apiClass->bulkCall($api, $args);
-
+        $apiClass->bulkCall($api, $args);
     }
 }

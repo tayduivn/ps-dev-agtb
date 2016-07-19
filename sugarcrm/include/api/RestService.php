@@ -125,10 +125,15 @@ class RestService extends ServiceBase
         $this->response = $this->getResponse();
         try {
             $this->request = $this->getRequest();
-            $this->request_headers = $this->request->request_headers;
+            $this->request_headers = $this->request->getRequestHeaders();
 
-            if ($this->min_version > $this->request->version || $this->max_version < $this->request->version) {
-                throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
+            // invalid if the request version is out of supported version range
+            if ($this->min_version > $this->getVersion()
+                || $this->max_version < $this->getVersion()) {
+                throw new SugarApiExceptionIncorrectVersion(
+                    "Please change your requested API version to an integer value " .
+                    "between {$this->min_version} and {$this->max_version}."
+                );
             }
 
             $authenticateUser = $this->authenticateUser();
@@ -293,13 +298,22 @@ class RestService extends ServiceBase
             if ($route != false) {
                 $url = $this->resourceURIBase;
                 if (isset($options['relative']) && $options['relative'] == false) {
-                    $url = $req->getResourceURIBase();
+                    $url = $req->getResourceURIBase($this->getVersion());
                 }
                 return $url . implode('/', $resource);
             }
         }
 
         return '';
+    }
+
+    /**
+     * get version from RestRequest, get the request version from Request obj
+     * @return int|null
+     */
+    public function getVersion()
+    {
+        return $this->getRequest()->getVersion();
     }
 
     /**
@@ -336,7 +350,7 @@ class RestService extends ServiceBase
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
 
-        return $this->dict->lookupRoute($req->path, $req->version, $req->method, $req->platform);
+        return $this->dict->lookupRoute($req->path, $this->getVersion(), $req->method, $req->platform);
     }
 
     /**
@@ -607,7 +621,7 @@ class RestService extends ServiceBase
     public function setHeader($header, $info)
     {
         if (empty($this->response)) {
-           return false;
+            return false;
         }
 
         return $this->response->setHeader($header, $info);
@@ -634,7 +648,7 @@ class RestService extends ServiceBase
     public function sendHeaders()
     {
         if (empty($this->response)) {
-           return false;
+            return false;
         }
 
         return $this->response->sendHeaders();
@@ -658,11 +672,8 @@ class RestService extends ServiceBase
                 $apiBase = 'rest/';
             }
 
-            // Get our version
-            preg_match('#v(?>\d+)/#', $_SERVER['REQUEST_URI'], $m);
-            if (isset($m[0])) {
-                $apiBase .= $m[0];
-            }
+            // using version to get right url base
+            $apiBase .= 'v' . $this->getVersion();
 
             // This is for our URI return value
             $siteUrl = '';
@@ -715,7 +726,7 @@ class RestService extends ServiceBase
     public function generateETagHeader($etag, $cache_age = null)
     {
         if (empty($this->response)) {
-           return false;
+            return false;
         }
 
         return $this->response->generateETagHeader($etag, $cache_age);
@@ -727,7 +738,7 @@ class RestService extends ServiceBase
     public function fileResponse($filename)
     {
         if (empty($this->response)) {
-           return false;
+            return false;
         }
         $this->response->setType(RestResponse::FILE)->setFilename($filename);
         $this->response->setHeader("Pragma", "public");
@@ -769,16 +780,15 @@ class RestService extends ServiceBase
         $pathVars = $this->request->getPathVars($route);
 
         $getVars = $this->request->getQueryVars();
-        if ( !empty($getVars)) {
+        if (!empty($getVars)) {
             // This has some get arguments, let's parse those in
-            if ( !empty($route['jsonParams']) ) {
-                foreach ( $route['jsonParams'] as $fieldName ) {
-                    if ( isset($getVars[$fieldName])
-                         && !empty($getVars[$fieldName])
-                         && is_string($getVars[$fieldName])
-                         &&  isset($getVars[$fieldName]{0})
-                         && ( $getVars[$fieldName]{0} == '{'
-                               || $getVars[$fieldName]{0} == '[' )) {
+            if (!empty($route['jsonParams'])) {
+                foreach ($route['jsonParams'] as $fieldName) {
+                    if (!empty($getVars[$fieldName])
+                        && is_string($getVars[$fieldName])
+                        && isset($getVars[$fieldName]{0})
+                        && ($getVars[$fieldName]{0} == '{'
+                            || $getVars[$fieldName]{0} == '[')) {
                         // This may be JSON data
                         $jsonData = @json_decode($getVars[$fieldName],true,32);
                         if (json_last_error() !== 0) {
