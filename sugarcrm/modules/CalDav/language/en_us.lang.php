@@ -45,7 +45,7 @@ $mod_strings = array(
     'LBL_SCHEDULING_SIZE' => 'Size in bytes',
 
     'LBL_TITLE' => 'CalDav',
-    'LBL_MODULE_NAME' => 'CalDav',
+    'LBL_MODULE_NAME' => 'Calendar Sync Settings',
 
     'LBL_CALDAV_ENABLE_SYNC' => 'Enable calendar sync',
     'LBL_CALDAV_ENABLE_SYNC_DESC_ADMIN' => 'Enable calendar sync will allow your users to sync their '
