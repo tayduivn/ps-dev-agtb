@@ -4750,6 +4750,9 @@ Sincerely, SugarCRM',
     //Sidecar expression context
     'ERR_ASSIGNTO_ACTION' => 'Error occurred during AssignTo action.',
 
+    //Generic error for displaying that the user does not have access to something
+    'ERR_NO_ACCESS' => 'You do not have access to "{{name}}". Please contact your Administrator.',
+
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
     'LBL_QUARTER_TIMEPERIOD_FORMAT' => '{1} Q{0}',

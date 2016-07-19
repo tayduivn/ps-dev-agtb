@@ -572,7 +572,12 @@
         app.drawer.open({
                 layout: 'selection-list',
                 context: {
-                    module: 'EmailTemplates'
+                    module: 'EmailTemplates',
+                    fields: [
+                        'subject',
+                        'body',
+                        'body_html'
+                    ]
                 }
             },
             _.bind(this._templateDrawerCallback, this)
@@ -588,14 +593,22 @@
     _templateDrawerCallback: function(model) {
         var emailTemplate;
 
+        // This is an edge case where user has List but not View permission.
+        // Search & Select will return only id and name if View permission is
+        // not permitted for this record. Display appropriate error.
+        if (model && _.isUndefined(model.subject)) {
+            app.alert.show('no_access_error',
+                {
+                    level: 'error',
+                    messages: app.lang.get('ERR_NO_ACCESS', this.module, {name: model.value})
+                }
+            );
+            return;
+        }
+
         if (model) {
-            emailTemplate = app.data.createBean('EmailTemplates', {id: model.id});
-            emailTemplate.fetch({
-                success: _.bind(this._confirmTemplate, this),
-                error: _.bind(function(error) {
-                    this._showServerError(error);
-                }, this)
-            });
+            emailTemplate = app.data.createBean('EmailTemplates', model);
+            this._confirmTemplate(emailTemplate);
         }
     },
 
