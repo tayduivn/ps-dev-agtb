@@ -2536,6 +2536,7 @@ class ModuleInstaller{
             'disable_global_search',
             'disable_manifest_logichooks',
             'uninstall_layoutfields',
+            'disable_module',
             'reset_opcodes',
             'reset_file_cache',
         );
@@ -2573,6 +2574,17 @@ class ModuleInstaller{
 
         }else{
             die("No manifest.php Defined In $this->base_dir/manifest.php");
+        }
+    }
+
+    /**
+     * Remove module from module list
+     */
+    protected function disable_module()
+    {
+        global $moduleList;
+        foreach ($this->modulesInPackage as $module) {
+            unset($moduleList[array_search($module, $moduleList)]);
         }
     }
 
