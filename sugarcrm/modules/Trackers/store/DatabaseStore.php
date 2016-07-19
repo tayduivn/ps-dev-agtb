@@ -25,40 +25,23 @@
  */
 class DatabaseStore implements Store {
 
-    public function flush($monitor) {
+    /** {@inheritDoc} */
+    public function flush($monitor)
+    {
+        $values = $monitor->toArray();
+        $values = array_filter($values);
 
-       $metrics = $monitor->getMetrics();
-       $columns = array();
-       $values = array();
-       $db = DBManagerFactory::getInstance();
-       foreach($metrics as $name=>$metric) {
-       	  if(!empty($monitor->$name)) {
-       	  	 $columns[] = $name;
-       	  	 if($metrics[$name]->_type == 'int') {
-       	  	    $values[] = intval($monitor->$name);
-       	  	 } else if($metrics[$name]->_type == 'double') {
-                $values[] = floatval($monitor->$name);
-             } else if ($metrics[$name]->_type == 'datetime') {
-             	$values[] = $db->convert($GLOBALS['db']->quoted($monitor->$name), "datetime");
-       	  	 } else {
-                $values[] = $db->quoted($monitor->$name);
-             }
-       	  }
-       } //foreach
+        if (count($values) < 1) {
+            return;
+        }
 
-       if(empty($values)) {
-       	  return;
-       }
+        $dictionary = array();
+        require $monitor->metricsFile;
 
-       $id = $db->getAutoIncrementSQL($monitor->table_name,'id');
-       if(!empty($id)) {
-       	  $columns[] = 'id';
-       	  $values[] = $id;
-       }
-
-       $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
-	   $db->query($query);
+        DBManagerFactory::getInstance()->insertParams(
+            $monitor->table_name,
+            $dictionary[$monitor->name]['fields'],
+            $values
+        );
     }
 }
-
-?>

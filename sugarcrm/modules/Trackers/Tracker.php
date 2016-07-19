@@ -14,6 +14,8 @@
 // The contents of this file (particularly the logpage() method) is required in combination with mvc_utils.php - do not remove without good reason
 //END SUGARCRM flav=int ONLY
 
+use Doctrine\DBAL\Connection;
+
 class Tracker extends SugarBean
 {
     var $module_dir = 'Trackers';
@@ -56,17 +58,40 @@ class Tracker extends SugarBean
             $GLOBALS['log']->info(string_format($GLOBALS['app_strings']['LBL_BREADCRUMBSTACK_CREATED'], array($user_id)));
         } else {
 			$breadCrumb = $_SESSION['breadCrumbs'];
-	        $module_query = '';
-	        if(!empty($modules)) {
-	           $history_max_viewed = 10;
-	           $module_query = is_array($modules) ? ' AND module_name IN (\'' . implode("','" , $modules) . '\')' :  ' AND module_name = \'' . $modules . '\'';
-	        } else {
-	           $history_max_viewed = (!empty($GLOBALS['sugar_config']['history_max_viewed']))? $GLOBALS['sugar_config']['history_max_viewed'] : 50;
-	        }
 
-	        $query = 'SELECT item_id, item_summary, module_name, id FROM ' . $this->table_name . ' WHERE id = (SELECT MAX(id) as id FROM ' . $this->table_name . ' WHERE user_id = \'' . $user_id . '\' AND deleted = 0 AND visible = 1' . $module_query . ')';
-	        $result = $this->db->limitQuery($query,0,$history_max_viewed,true,$query);
-	        while(($row = $this->db->fetchByAssoc($result))) {
+            if (!empty($modules)) {
+                $history_max_viewed = 10;
+            } elseif (!empty($GLOBALS['sugar_config']['history_max_viewed'])) {
+                $history_max_viewed = $GLOBALS['sugar_config']['history_max_viewed'];
+            } else {
+                $history_max_viewed = 50;
+            }
+
+            $conn = $this->db->getConnection();
+            $qbSubquery = $conn->createQueryBuilder();
+            $expr = $qbSubquery->expr();
+            $qbSubquery->select('MAX(id) AS id')
+                ->from($this->table_name)
+                ->where($expr->eq('user_id', $qbSubquery->createPositionalParameter($user_id)))
+                ->andWhere($expr->eq('deleted', 0))
+                ->andWhere($expr->eq('visible', 1));
+
+            if (!empty($modules)) {
+                $qbSubquery->andWhere($expr->in(
+                    'module_name',
+                    $qbSubquery->createPositionalParameter((array) $modules, Connection::PARAM_STR_ARRAY)
+                ));
+            }
+
+            $qb = $conn->createQueryBuilder();
+            $qb->select(array('id', 'item_id', 'item_summary', 'module_name'))
+                ->from($this->table_name)
+                ->setMaxResults($history_max_viewed)
+                ->where('id IN (' . $qb->importSubQuery($qbSubquery) . ')');
+
+            $stmt = $qb->execute();
+
+            while ($row = $stmt->fetch()) {
 	               $breadCrumb->push($row);
 	        }
         }
@@ -78,8 +103,12 @@ class Tracker extends SugarBean
 
     function makeInvisibleForAll($item_id)
     {
-        $query = "UPDATE $this->table_name SET visible = 0 WHERE item_id = '$item_id' AND visible = 1";
-        $this->db->query($query, true);
+        $builder = $this->db->getConnection()->createQueryBuilder();
+        $query = $builder->update($this->table_name)
+            ->set('visible', 0)
+            ->where($builder->expr()->eq('item_id', $builder->createPositionalParameter($item_id)))
+            ->andWhere($builder->expr()->eq('visible', 1));
+        $query->execute();
         if(!empty($_SESSION['breadCrumbs'])){
             $breadCrumbs = $_SESSION['breadCrumbs'];
             $breadCrumbs->popItem($item_id);
