@@ -77,7 +77,7 @@ class LeadConvertApi extends ModuleApi
         else {
             $request = array(
                 array(
-                    'url'    => "/{$version}/{$module}",
+                    'url'    => "/v{$version}/{$module}",
                     'method' => 'POST',
                     'data'   => json_encode($data),
                 )
