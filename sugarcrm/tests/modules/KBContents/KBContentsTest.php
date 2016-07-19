@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 require_once 'modules/KBContents/KBContentsApiHelper.php';
 
 class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
@@ -358,6 +360,26 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->save();
         $this->bean->retrieve();
         $this->assertNotEmpty($this->bean->active_date);
+    }
+
+    /**
+     * Test that we don't try to call updateCategoryExternalVisibility for empty category_id
+     */
+    public function testUpdateCategoryExternalVisibilityCallsOnSave()
+    {
+        //Prepare bean
+        $this->bean->category_id = '';
+        $this->bean->save();
+        $this->bean->retrieve();
+
+        // Update bean by random category info
+        $this->bean->category_name = 'SugarCategory_' . Uuid::uuid1();
+        $this->bean->category_id = Uuid::uuid1();
+
+        // Save updated bean
+        $this->bean->save();
+
+        $this->assertNotContains('', $this->bean->updatedCategories);
     }
 
     public function testNextAvailableLanguageTakenWhenSavingNewLocalization()

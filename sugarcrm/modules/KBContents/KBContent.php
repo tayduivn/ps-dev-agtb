@@ -301,7 +301,8 @@ class KBContent extends SugarBean {
             $this->updateCategoryExternalVisibility($this->category_id);
         }
         if (isset($dataChanges['category_id'])) {
-            if ($dataChanges['category_id']['before'] != $dataChanges['category_id']['after']) {
+            if ($dataChanges['category_id']['before']
+                    && ($dataChanges['category_id']['before'] != $dataChanges['category_id']['after'])) {
                 $this->updateCategoryExternalVisibility($dataChanges['category_id']['before']);
             }
         }

@@ -71,6 +71,9 @@ class EAPMController extends SugarController
                 SugarApplication::appendErrorMessage(translate('LBL_APPLICATION_FOUND_NOTICE', $this->bean->module_dir));
                 $this->bean->id = $eapmBean->id;
             }
+        } elseif (!empty($_POST['application'])) {
+            $this->failed = true;
+            return $this->failed(translate('LBL_CHANGE_APPLICATION_ERROR', $this->bean->module_dir));
         }
         $this->bean->validated = false;
         $this->bean->save_cleanup();
