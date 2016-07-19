@@ -10,6 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @deprecated Since 7.8
+ * Class BypassRelationshipUpdateException
+ */
 class BypassRelationshipUpdateException extends Exception
 {
     /*

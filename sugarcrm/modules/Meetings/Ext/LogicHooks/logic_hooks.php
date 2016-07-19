@@ -10,13 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['before_relationship_update'][] = array(
-    1,
-    'MeetingsAcceptStatus',
-    'include/CalendarEvents/CalendarEventsHookManager.php',
-    'CalendarEventsHookManager',
-    'beforeRelationshipUpdate',
-);
 $hook_array['after_relationship_update'][] = array(
     1,
     'AfterMeetingsRelationshipsUpdate',

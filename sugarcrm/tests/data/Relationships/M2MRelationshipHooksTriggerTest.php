@@ -102,8 +102,6 @@ class M2MRelationshipHooksTriggerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->call->users->add($this->user);
         $this->call->set_accept_status($this->user, 'none');
 
-        $this->relationship->expects($this->atLeastOnce())->method('callBeforeUpdate');
-        $this->relationship->expects($this->atLeastOnce())->method('callAfterUpdate');
         $this->relationship->expects($this->never())->method('callBeforeAdd');
         $this->relationship->expects($this->never())->method('callAfterAdd');
         $this->relationship->expects($this->never())->method('callBeforeDelete');

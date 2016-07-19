@@ -126,21 +126,6 @@ class M2MRelationship extends SugarRelationship
             }
         } else {
             $isUpdate = true;
-            try {
-                if (!empty($additionalFields['accept_status'])) {
-                    $lhs->updateAcceptStatus = $additionalFields['accept_status'];
-                    $rhs->updateAcceptStatus = $additionalFields['accept_status'];
-                }
-                $this->callBeforeUpdate($lhs, $rhs, $lhsLinkName);
-                $this->callBeforeUpdate($rhs, $lhs, $rhsLinkName);
-                unset($lhs->updateAcceptStatus);
-                unset($rhs->updateAcceptStatus);
-            } catch (BypassRelationshipUpdateException $e) {
-                /* Quietly abort this Update */
-                unset($lhs->updateAcceptStatus);
-                unset($rhs->updateAcceptStatus);
-                return true;
-            }
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
