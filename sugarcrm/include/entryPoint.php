@@ -117,9 +117,11 @@ require_once 'include/SugarCache/SugarCache.php';
 require_once 'include/utils/autoloader.php';
 SugarAutoLoader::init();
 
-if (empty($GLOBALS['installing'])) {
-    $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
+if (!empty($GLOBALS['installing'])) {
+    LoggerManager::setLogger('default', NullLogger::class);
 }
+
+$GLOBALS['log'] = LoggerManager::getLogger();
 
 if (!empty($sugar_config['xhprof_config'])) {
     SugarXHprof::getInstance()->start();
