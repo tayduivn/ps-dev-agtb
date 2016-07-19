@@ -35,4 +35,11 @@
     #content > div {
       overflow-x: hidden;
     }
+    /* iPad/iPhone hack SC-5843 */
+    &.touch .main-content {
+      direction: ltr;
+    }
+    &.touch .dataTable {
+      direction: rtl
+    }
 }
