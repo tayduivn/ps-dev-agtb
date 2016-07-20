@@ -51,7 +51,6 @@
     "sidecar/docs/",
     "sidecar/lib/async/",
     "sidecar/lib/backbone/",
-    "sidecar/lib/codecov/",
     "sidecar/lib/crosstab/",
     "sidecar/lib/handlebars/",
     "sidecar/lib/jasmine/",
