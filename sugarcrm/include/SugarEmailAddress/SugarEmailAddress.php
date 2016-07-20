@@ -787,15 +787,18 @@ class SugarEmailAddress extends SugarBean
         $address = $this->db->quote($this->_cleanAddress($addr));
         $addressCaps = strtoupper($address);
 
+        $conn = $this->db->getConnection();
         // determine if we have a matching email address
-        $q = "SELECT * FROM " . $this->table_name . " WHERE email_address_caps = '{$addressCaps}' and deleted=0";
-        $r = $this->db->query($q);
-        $duplicate_email = $this->db->fetchByAssoc($r);
+        $stmt = $conn->executeQuery(
+            sprintf('SELECT * FROM %s WHERE email_address_caps = ? and deleted = ?', $this->table_name),
+            array($addressCaps, 0)
+        );
+        $duplicate_email = $stmt->fetch();
 
         // check if we are changing an email address, where workflow might be in play
         if ($id) {
-            $r = $this->db->query("SELECT * FROM " . $this->table_name . " WHERE id='".$this->db->quote($id)."'");
-            $current_email = $this->db->fetchByAssoc($r);
+            $stmt = $conn->executeQuery(sprintf('SELECT * FROM %s WHERE id = ?', $this->table_name), array($id));
+            $current_email = $stmt->fetch();
         }
         else {
             $current_email = null;
@@ -821,35 +824,39 @@ class SugarEmailAddress extends SugarBean
             }
         }
 
+        $now = TimeDate::getInstance()->nowDb();
         // determine how we are going to put in this address - UPDATE or INSERT
         if (!empty($duplicate_email['id'])) {
-
+            $guid =  $duplicate_email['id'];
             // address_caps matches - see if we're changing fields
             if ($duplicate_email['invalid_email'] != $new_invalid ||
                 $duplicate_email['opt_out'] != $new_opt_out ||
                 (trim($duplicate_email['email_address']) != $address)) {
-                $upd_q = 'UPDATE ' . $this->table_name . ' ' .
-                    'SET email_address=\'' . $address . '\', ' .
-                    'invalid_email=' . $new_invalid . ', ' .
-                    'opt_out=' . $new_opt_out . ', ' .
-                    'date_modified=' . $this->db->now() . ' ' .
-                    'WHERE id=\'' . $this->db->quote($duplicate_email['id']) . '\'';
-                $upd_r = $this->db->query($upd_q);
+                $this->db->updateParams($this->table_name, $this->field_defs, array(
+                    'email_address' => $address,
+                    'invalid_email' => $new_invalid,
+                    'opt_out' => $new_opt_out,
+                    'date_modified' => $now,
+                ), array('id' => $guid));
             }
-            return $duplicate_email['id'];
-        }
-        else {
+        } elseif (!empty($address)) {
             // no case-insensitive address match - it's new, or undeleted.
+            $guid = create_guid();
+            $this->db->insertParams($this->table_name, $this->field_defs, array(
+                'id' => $guid,
+                'email_address' => $address,
+                'email_address_caps' => $addressCaps,
+                'date_created' => $now,
+                'date_modified' => $now,
+                'deleted' => 0,
+                'invalid_email' => $new_invalid,
+                'opt_out' => $new_opt_out,
+            ));
+        } else {
             $guid = '';
-            if (!empty($address)) {
-                $guid = create_guid();
-                $now = TimeDate::getInstance()->nowDb();
-                $qa = "INSERT INTO " . $this->table_name . " (id, email_address, email_address_caps, date_created, date_modified, deleted, invalid_email, opt_out)
-                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '$now', '$now', 0 , $new_invalid, $new_opt_out)";
-                $this->db->query($qa);
-            }
-            return $guid;
         }
+        
+        return $guid;
     }
 
     /**

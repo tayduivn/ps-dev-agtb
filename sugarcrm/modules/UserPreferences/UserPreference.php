@@ -222,24 +222,25 @@ class UserPreference extends SugarBean
         if (!isset($user->user_preferences) || !is_array($user->user_preferences)) {
             $user->user_preferences = array();
         }
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query(
-            "SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' "
-            . "AND category = " . $db->quoted($category) . " AND deleted = 0",
-            false,
-            'Failed to load user preferences'
+        $conn = DBManagerFactory::getInstance()->getConnection();
+        $stmt = $conn->executeQuery(
+            'SELECT contents FROM user_preferences WHERE assigned_user_id = ? AND category = ? AND deleted = 0',
+            array(
+                $user->id,
+                $category,
+            )
         );
-        $row = $GLOBALS['db']->fetchByAssoc($result);
+        $contents = $stmt->fetchColumn();
 
         $value = array();
-        if ($row) {
-            $value = unserialize(base64_decode($row['contents']));
+        if ($contents) {
+            $value = unserialize(base64_decode($contents));
         }
 
         $this->storeToCache($value, $category);
         $user->user_preferences[$category] = $value;
 
-        return !empty($row);
+        return !empty($contents);
     }
 
     protected function storeToCache($value, $category = null)
