@@ -45,13 +45,23 @@ class PMSELogicHook
         return $handler->terminateCaseAfterDelete($bean, $event, $arguments);
     }
 
+    /**
+     * Checks to see if Sugar is installed. Returns false when Sugar is in the process
+     * of installation
+     * @return boolean
+     */
     protected function isSugarInstalled()
     {
         global $sugar_config;
 
-        if( !isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == false ){
+        // During installation, the `installing` variable is set, so if this is
+        // not empty, then we are in the middle of installation, or not installed
+        if (!empty($GLOBALS['installing'])) {
             return false;
         }
-        return true;
+
+        // When installed, sugar sets `installer_locked` in the config to true,
+        // so if `installer_locked` is not empty then we are installed
+        return !empty($sugar_config['installer_locked']);
     }
 }

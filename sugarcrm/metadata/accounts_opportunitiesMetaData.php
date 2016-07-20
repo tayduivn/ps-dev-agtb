@@ -10,11 +10,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$dictionary['accounts_opportunities'] = array ( 'table' => 'accounts_opportunities'
-      , 'fields' => array (
-       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'opportunity_id', 'type' =>'varchar', 'len'=>'36', )
-      , array('name' =>'account_id', 'type' =>'varchar', 'len'=>'36', )
+$dictionary['accounts_opportunities'] = array(
+    'table' => 'accounts_opportunities',
+    'fields' => array(
+        array('name' => 'id', 'type' => 'id'),
+        array('name' => 'opportunity_id', 'type' => 'id'),
+        array('name' => 'account_id', 'type' => 'id')
       , array ('name' => 'date_modified','type' => 'datetime')
       , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required'=>false)
       )                                  

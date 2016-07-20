@@ -7437,7 +7437,7 @@ class SugarBean
             if ($this->is_relate_field($field)) {
 
                 //check to see if the related field name is part of the passed in 'where' statement
-                $inWhere = (!empty($where) && strpos($where,"$field ") !== false);
+                $inWhere = (!empty($where) && preg_match("/(^|\W)$field($|\W)/", $where));
 
                 //in some cases, the field is composed of table'.'field rname, check to see if this is one of those cases
                 if(!$inWhere &&

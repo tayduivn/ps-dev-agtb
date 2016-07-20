@@ -11,14 +11,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['product_bundle_note'] = array (
-	'table' => 'product_bundle_note',
-	'fields' => array (
-       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
-      , array ('name' => 'date_modified','type' => 'datetime')
-      , array('name' =>'deleted', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required' => false,)
-      , array('name' =>'bundle_id', 'type' =>'varchar', 'len'=>'36', )
-      , array('name' =>'note_id', 'type' =>'varchar', 'len'=>'36', )
+$dictionary['product_bundle_note'] = array(
+    'table' => 'product_bundle_note',
+    'fields' => array(
+        array('name' => 'id', 'type' => 'id'),
+        array('name' => 'date_modified', 'type' => 'datetime'),
+        array('name' => 'deleted', 'type' => 'bool', 'len' => '1', 'default' => '0', 'required' => false),
+        array('name' => 'bundle_id', 'type' => 'id'),
+        array('name' => 'note_id', 'type' => 'id')
       , array('name' =>'note_index', 'type' =>'int', 'len'=>'11', 'default'=>'0', 'required' => false,)      
 	),
 	'indices' => array (

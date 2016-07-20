@@ -17,18 +17,15 @@ $dictionary['acl_roles_actions'] = array (
 	'fields' => array (
 		array (
 			'name' => 'id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'role_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'action_id',
-			'type' => 'varchar',
-			'len' => '36',
+            'type' => 'id',
 		),
 		array (
 			'name' => 'access_override',
@@ -73,6 +70,4 @@ $dictionary['acl_roles_actions'] = array (
 							  'relationship_type'=>'many-to-many',
 							  'join_table'=> 'acl_roles_actions', 'join_key_lhs'=>'role_id', 'join_key_rhs'=>'action_id')),
 
-)
-
-?>
+);

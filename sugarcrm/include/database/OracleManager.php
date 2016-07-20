@@ -57,6 +57,7 @@ class OracleManager extends DBManager
         'limit_subquery' => true,
         "recursive_query" => true,
         "prepared_statements" => true,
+        "case_insensitive" => true,
     );
 
     public $preparedStatementClass = 'OraclePreparedStatement';
@@ -1481,8 +1482,10 @@ class OracleManager extends DBManager
             $columns[] = 'i.index_name';
         }
 
+        $columns[] = 'i.index_type';
         $columns[] = 'c.constraint_type';
         $columns[] = 'ic.column_name';
+        $columns[] = 'die.column_expression';
 
         $owner = strtoupper($this->configOptions['db_schema_name']);
 
@@ -1493,6 +1496,12 @@ INNER JOIN all_ind_columns ic
         AND ic.index_owner = i.owner
             AND ic.table_name = i.table_name
                 AND ic.table_owner = i.table_owner
+LEFT JOIN dba_ind_expressions die
+    ON die.index_owner = i.owner
+    AND die.index_name = i.index_name
+    AND die.table_owner = i.table_owner
+    AND die.table_name = i.table_name
+    AND die.column_position = ic.column_position
 LEFT JOIN all_constraints c
     ON c.index_name = i.index_name
         AND c.owner = i.owner';
@@ -1512,7 +1521,7 @@ LEFT JOIN all_constraints c
             $where[] = 'i.index_name = ' . $this->quoted($query_index_name);
         }
 
-        $where[] = 'i.index_type = \'NORMAL\'';
+        $where[] = 'i.index_type IN (\'NORMAL\', \'FUNCTION-BASED NORMAL\')';
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
@@ -1530,7 +1539,7 @@ LEFT JOIN all_constraints c
         $result = $this->query($query);
 
         $data = array();
-        while ($row = $this->fetchByAssoc($result)) {
+        while ($row = $this->fetchByAssoc($result, false)) {
             if (!$filterByTable) {
                 $table_name = strtolower($row['table_name']);
             }
@@ -1549,7 +1558,16 @@ LEFT JOIN all_constraints c
 
             $data[$table_name][$index_name]['name'] = $index_name;
             $data[$table_name][$index_name]['type'] = $type;
-            $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
+
+            if ($row['index_type'] == 'FUNCTION-BASED NORMAL' && $row['column_expression']) {
+                // oracle returns expressions with fields wrapped with '"'
+                // we have to get rid of them to match the vardef index definitions
+                $data[$table_name][$index_name]['fields'][] = strtolower(
+                    preg_replace('/"(\w+)"/', '$1', $row['column_expression'])
+                );
+            } else {
+                $data[$table_name][$index_name]['fields'][] = strtolower($row['column_name']);
+            }
         }
 
         return $data;
@@ -2186,32 +2204,83 @@ LEFT JOIN all_constraints c
     }
 
     /**
-     * Converts both column name and search string to upper case for case insensitive search.
-     *
-     * @param  string $name column name
-     * @param  string $value search string
-     * @return string
+     * @inheritdoc
      */
-    public function getLikeSQL($name, $value)
+    protected function massageIndexDefs($fieldDefs, $indices)
     {
-        if (!empty($GLOBALS['sugar_config']['oracle_enable_ci'])) {
-            $name = 'UPPER('.$name.')';
-            $value = strtoupper($value);
-        }
-        return parent::getLikeSQL($name, $value);
+        $indices = parent::massageIndexDefs($fieldDefs, $indices);
+        return array_merge($indices, $this->generateCaseInsensitiveIndices($fieldDefs, $indices));
     }
-    
+
     /**
-     * Check if this DB supports certain capability
-     * See $this->capabilities for the list
-     * @param string $cap
-     * @return bool
+     * Generate indices to support case-insensitive search as oracle
+     * does not support case insensitive collation
+     *
+     * @param $fieldDefs
+     * @param $indices
+     * @return array
      */
-    public function supports($cap)
+    protected function generateCaseInsensitiveIndices($fieldDefs, $indices)
     {
-        if ($cap == 'case_insensitive') {
-            return !empty($GLOBALS['sugar_config']['oracle_enable_ci']);
+        $result = array();
+        // TODO: Remove this call in 7.9 (see BR-2859)
+        $fieldDefs = $this->normalizeFieldDefs($fieldDefs);
+
+        foreach ($indices as $key => $index) {
+            // skip if it's primary or unique index as they can't be function-based
+            if ($index['type'] != 'index') {
+                continue;
+            }
+
+            if (!is_array($index['fields'])) {
+                $index['fields'] = array($index['fields']);
+            }
+
+            $wrappedFields = array();
+            $hasWrappedFields = false;
+            foreach ($index['fields'] as $field) {
+                $fieldDef = isset($fieldDefs[$field]) ? $fieldDefs[$field] : false;
+
+                // skip indices with non-db fields
+                if ($fieldDef && isset($fieldDef['source']) && $fieldDef['source'] == 'non-db') {
+                    continue 2;
+                }
+
+                if ($fieldDef
+                    && !in_array($fieldDef['type'], array('id', 'enum'))
+                    && $this->getTypeClass($this->getFieldType($fieldDef)) == 'string'
+                ) {
+                    $wrappedFields[] = 'UPPER(' . $field . ')';
+                    $hasWrappedFields = true;
+                } else {
+                    $wrappedFields[] = $field;
+                }
+            }
+
+            if ($hasWrappedFields) {
+                $index['name'] = $index['name'] . '_ci';
+                $index['fields'] = $wrappedFields;
+                $result[] = $index;
+            }
         }
-        return parent::supports($cap);
+
+        return $result;
+    }
+
+    /**
+     * Normalize field defs
+     * TODO: Remove this method in 7.9 (see BR-2859)
+     *
+     * @param $fieldDefs
+     * @return array
+     */
+    private function normalizeFieldDefs($fieldDefs)
+    {
+        $result = array();
+        foreach ($fieldDefs as $fieldDef) {
+            $result[$fieldDef['name']] = $fieldDef;
+        }
+
+        return $result;
     }
 }

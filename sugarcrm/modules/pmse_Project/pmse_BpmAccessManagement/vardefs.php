@@ -23,7 +23,7 @@ $dictionary['pmse_BpmAccessManagement'] = array(
     'required' => true,
     'name' => 'acm_uid',
     'vname' => 'Access management id',
-    'type' => 'varchar',
+    'type' => 'id',
     'massupdate' => false,
     'default' => '',
     'no_default' => false,
@@ -37,7 +37,6 @@ $dictionary['pmse_BpmAccessManagement'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'calculated' => false,
-    'len' => '36',
     'size' => '36',
   ),
 'acm_key' =>

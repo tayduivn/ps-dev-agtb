@@ -31,8 +31,7 @@ $dictionary["documents_revenuelineitems"] = array(
     'fields' => array(
         0 => array(
             'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
+            'type' => 'id',
         ),
         1 => array(
             'name' => 'date_modified',
@@ -47,13 +46,11 @@ $dictionary["documents_revenuelineitems"] = array(
         ),
         3 => array(
             'name' => 'document_id',
-            'type' => 'varchar',
-            'len' => 36,
+            'type' => 'id',
         ),
         4 => array(
             'name' => 'rli_id',
-            'type' => 'varchar',
-            'len' => 36,
+            'type' => 'id',
         ),
     ),
     'indices' => array(
