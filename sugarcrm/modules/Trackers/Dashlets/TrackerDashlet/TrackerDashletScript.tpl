@@ -17,7 +17,7 @@ if(typeof TrackerDashlet == 'undefined') { // since the dashlet can be included 
 function TrackerDashlet() {
 
    function queryReturned(data) {
-	    eval(data.responseText);
+        eval ('result = '+data.responseText);
        	ajaxStatus.showStatus('{/literal}{$saved}{literal}');
        	if(typeof result != 'undefined') {
 			var colModel = new Array();
