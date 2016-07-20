@@ -80,16 +80,13 @@ class TeamSet extends SugarBean{
     */
     public function getTeams($team_set_id){
         ///TODO CONCAT
-        $sql = sprintf(
-            'SELECT teams.id, teams.name, teams.name_2 FROM teams
+        $sql = 'SELECT teams.id, teams.name, teams.name_2 FROM teams
             INNER JOIN team_sets_teams ON team_sets_teams.team_id = teams.id
-            WHERE team_sets_teams.team_set_id = %s',
-            $this->db->quoted($team_set_id)
-        );
-        $result = $this->db->query($sql);
+            WHERE team_sets_teams.team_set_id = ?';
+        $stmt = $this->db->getConnection()->executeQuery($sql, array($team_set_id));
         $teams = array();
 
-        while($row = $this->db->fetchByAssoc($result)){
+        while ($row = $stmt->fetch()) {
             $team = BeanFactory::getBean('Teams');
             $team->populateFromRow($row, true);
             $teams[$team->id] = $team;
