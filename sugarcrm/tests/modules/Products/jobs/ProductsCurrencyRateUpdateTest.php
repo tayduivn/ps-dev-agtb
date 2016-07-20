@@ -66,7 +66,7 @@ class ProductsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->db->addQuerySpy(
             'get_rate',
-            "/SELECT currencies.conversion_rate conversion_rate FROM currencies WHERE currencies.deleted = 0 AND currencies.id = 'abc'/",
+            array("/SELECT currencies.conversion_rate/", "/currencies.deleted = 0/", "/currencies.id = 'abc'/"),
             array(array('1.234'))
         );
 

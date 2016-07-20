@@ -56,7 +56,7 @@ class ForecastWorksheetsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         if ($parent_deleted === 0) {
             $this->db->addQuerySpy(
                 'product_delete',
-                '/products.deleted = 0 AND products.id = \'' . $product_id . '\'/',
+                array('/products.deleted = 0/', '/products.id = \'' . $product_id . '\'/'),
                 array(
                     array(
                         'id' => $product_id,

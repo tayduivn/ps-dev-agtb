@@ -90,7 +90,8 @@ class BeanIteratorTest extends \Sugar_PHPUnit_Framework_TestCase
         foreach ($expectedIds as $id) {
             $foundIdsList[] = array('id' => $id);
         }
-        $this->db->addQuerySpy('fill_ids', "/^SELECT meetings.id id FROM meetings/", $foundIdsList);
+
+        $this->db->addQuerySpy('fill_ids', array('/^SELECT meetings.id/', '/FROM meetings/'), $foundIdsList);
 
         foreach ($this->beanIterator as $bean) {
             $this->assertInstanceOf(__NAMESPACE__ . '\MeetingCRYS1301', $bean);
