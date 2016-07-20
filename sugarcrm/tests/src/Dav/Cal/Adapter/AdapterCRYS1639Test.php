@@ -65,13 +65,36 @@ class AdapterCRYS1639Test extends \PHPUnit_Framework_TestCase
      */
     public static function prepareForImportProvider()
     {
-        $addressees = array(
-            'test_' . rand(1000, 1999) . '@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
-            'test_' . rand(2000, 2999) . '@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
-            'test_' . rand(3000, 3999) . '@test.com' => array('beanName' => 'Addressees', 'beanId' => create_guid()),
+        $randomDataHashes = array(
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1(), rand(1000, 1999)),
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1(), rand(2000, 2999)),
+            array(\Sugarcrm\Sugarcrm\Util\Uuid::uuid1(), rand(3000, 3999)),
         );
 
-        $groupId = create_guid();
+        $addressees = array(
+            'parent' => array(
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[0][0],
+                    'email' => 'test_1@test.com',
+                    'displayName' => 'Custom Lead',
+                ),
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[1][0],
+                    'email' => 'test_2@test.com',
+                    'displayName' => 'Custom Lead',
+                ),
+                array(
+                    'beanName' => 'Addressees',
+                    'beanId' => $randomDataHashes[2][0],
+                    'email' => 'test_3@test.com',
+                    'displayName' => 'Custom Lead',
+                ),
+            ),
+        );
+
+        $groupId = \Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
 
         $participants_links = json_encode($addressees);
 

@@ -117,15 +117,30 @@ class Event
         $participantClass = \SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\Dav\\Cal\\Structures\\Participant');
         /** @var \Sugarcrm\Sugarcrm\Dav\Cal\Structures\Participant $participant */
         $participant = new $participantClass($node);
-        $participantsHelper = new DavHelper\ParticipantsHelper();
-        $participantHash = $participantsHelper->participantHash($participant);
-        if (isset($this->participantsLinks[$participantHash])) {
-            $linkInfo = $this->participantsLinks[$participantHash];
-            $participant->setBeanName($linkInfo['beanName']);
-            $participant->setBeanId($linkInfo['beanId']);
-            $this->logger->debug(
-                "CalDav: Created Participant '$participantHash' for {$linkInfo['beanName']}({$linkInfo['beanId']})"
-            );
+        if ($participant->isOrganizer()) {
+            return $participant;
+        }
+
+        foreach ($this->participantsLinks as &$participantsLink) {
+            if (isset($participantsLink['participant']) &&
+                ($participant->getBeanId() != $participantsLink['participant']->getBeanId() &&
+                    $participant->getBeanName() != $participantsLink['participant']->getBeanName())
+            ) {
+                continue;
+            }
+
+            $email = $participant->getEmail();
+            if (($email && $participantsLink['email'] == $email) ||
+                (!$email && $participantsLink['displayName'] == $participant->getDisplayName())
+            ) {
+                $participant->setBeanName($participantsLink['beanName']);
+                $participant->setBeanId($participantsLink['beanId']);
+                $participantsLink['participant'] = $participant;
+                $this->logger->debug(
+                    "CalDav: Created Participant for {$participantsLink['beanName']}({$participantsLink['beanId']})"
+                );
+                break;
+            }
         }
 
         return $participant;
@@ -302,16 +317,21 @@ class Event
             return false;
         }
 
-        $participantsHelper = new DavHelper\ParticipantsHelper();
-        $participantHash = $participantsHelper->participantHash($participant);
-        $this->participantsLinks[$participantHash] = array(
-            'beanName' => $participant->getBeanName(),
-            'beanId' => $participant->getBeanId(),
-        );
-
         $participant->setType($type);
+
+        if ((!$this->getOrganizer() || ($this->getOrganizer()->getEmail() !== $participant->getEmail())) &&
+            $type == 'ATTENDEE') {
+            $this->participantsLinks[] = array(
+                'beanName' => $participant->getBeanName(),
+                'beanId' => $participant->getBeanId(),
+                'email' => $participant->getEmail(),
+                'displayName' => $participant->getDisplayName(),
+            );
+
+            $this->participants[] = $participant;
+        }
+
         $this->event->add($participant->getObject());
-        $this->participants = array();
         $this->setCustomized();
         return true;
     }

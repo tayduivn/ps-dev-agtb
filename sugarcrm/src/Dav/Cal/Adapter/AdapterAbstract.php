@@ -242,6 +242,7 @@ abstract class AdapterAbstract implements AdapterInterface
                         }
                     }
                 }
+
                 break;
             case 'delete':
                 if ($bean->updateChildrenStrategy &
@@ -275,6 +276,13 @@ abstract class AdapterAbstract implements AdapterInterface
         $changedFields = array_intersect_key($changedFields, $changedFieldsFilter);
         $this->logger->debug('CalDav: Event changed fields are: ' . var_export($changedFields, true));
 
+        if ($changedInvitees && $action !== 'rebuild') {
+            $changedInvitees = $this->prepareInviteesForExport(
+                \CalendarUtils::getInvitees($bean),
+                $changedInvitees
+            );
+        }
+
         foreach ($changedInvitees as $inviteeAction => &$invitees) {
             foreach ($invitees as $key => $invitee) {
                 if ($invitee[1] == $bean->created_by && $invitee[0] == 'Users') {
@@ -294,6 +302,34 @@ abstract class AdapterAbstract implements AdapterInterface
 
         return array($beanData, $changedFields, $changedInvitees);
     }
+
+    /**
+     * Prepare invitees for export.
+     *
+     * @param array $currentInvitees
+     * @param array $changedInvitees
+     * @return array
+     */
+    protected function prepareInviteesForExport($currentInvitees, $changedInvitees)
+    {
+        $uniqueInvitees = array();
+        foreach ($currentInvitees as $invitee) {
+            if ($invitee[2]) {
+                $hashInvitee = $invitee[2];
+            } else {
+                $hashInvitee = $invitee[4];
+            }
+            
+            if (in_array($hashInvitee, $uniqueInvitees)) {
+                $changedInvitees['deleted'][] = $invitee;
+            } else {
+                $uniqueInvitees[] = $hashInvitee;
+            }
+        }
+
+        return $changedInvitees;
+    }
+
     /**
      * @inheritDoc
      */
@@ -884,6 +920,7 @@ abstract class AdapterAbstract implements AdapterInterface
                     $sugarId,
                     null,
                     $childIndex ? $childIndex : null,
+                    null,
                 ),
                 array(),
                 array(),
@@ -984,10 +1021,15 @@ abstract class AdapterAbstract implements AdapterInterface
             if (empty($exportInvitees[$action])) {
                 continue;
             }
-            foreach ($list as $k => $importInvitee) {
-                foreach ($exportInvitees[$action] as $exportInvitee) {
+
+            $list = array_unique($list, SORT_REGULAR);
+            $importInvitees[$action] = $list;
+
+            foreach ($list as $iListKey => $importInvitee) {
+                foreach ($exportInvitees[$action] as $eListKey => $exportInvitee) {
                     if ($exportInvitee[0] == $importInvitee[0] && $exportInvitee[1] == $importInvitee[1]) {
-                        unset($importInvitees[$action][$k]);
+                        unset($importInvitees[$action][$iListKey]);
+                        unset($exportInvitees[$action][$eListKey]);
                         continue;
                     }
                 }
@@ -995,6 +1037,27 @@ abstract class AdapterAbstract implements AdapterInterface
             if (!$importInvitees[$action]) {
                 unset($importInvitees[$action]);
             }
+        }
+
+        $importInvitees['deleted'] = isset($importInvitees['added']) ? $importInvitees['added'] : array();
+
+        if (isset($exportInvitees['deleted'])) {
+            $mapInviteesDeleted = array_map(function ($invitee) {
+                return $invitee[0] . ':' . $invitee[1];
+            }, $exportInvitees['deleted']);
+
+            $currentInvitees = \CalendarUtils::getInvitees(\BeanFactory::getBean($exportBean[1], $exportBean[2]));
+            foreach ($currentInvitees as $invitee) {
+                if (array_search($invitee[0] . ':' . $invitee[1], $mapInviteesDeleted) !== false) {
+                    $importInvitees['deleted'][] = $invitee;
+                }
+            }
+
+            $importInvitees['deleted'] = array_unique($importInvitees['deleted'], SORT_REGULAR);
+        }
+
+        if (empty($importInvitees['deleted'])) {
+            unset($importInvitees['deleted']);
         }
 
         if ($importFields || $importInvitees) {
@@ -1725,23 +1788,39 @@ abstract class AdapterAbstract implements AdapterInterface
                 foreach ($value['added'] as $k => $invitee) {
                     $foundParticipant = $event->getParticipantByBean($invitee[0], $invitee[1]);
                     if ($foundParticipant) {
-                        $indexes[] = $invitee[1];
+                        $indexes[] = serialize(array(
+                            $foundParticipant->getBeanId(),
+                            $foundParticipant->getBeanName(),
+                            $foundParticipant->getEmail(),
+                        ));
                         $value['changed'][] = $invitee;
                         unset($value['added'][$k]);
                     }
                 }
             }
             foreach ($event->getParticipants() as $k => $participant) {
-                if (!in_array($participant->getBeanId(), $indexes)) {
+                if (!in_array(serialize(array(
+                    $participant->getBeanId(),
+                    $participant->getBeanName(),
+                    $participant->getEmail(),
+                )), $indexes)) {
                     $value['deleted'][] = array($participant->getBeanName(), $participant->getBeanId(), $participant->getEmail());
                 }
             }
             $value = array_filter($value);
         }
 
+        $hashes = array();
         if (isset($value['added'])) {
             foreach ($value['added'] as $k => $invitee) {
-                if ($event->setParticipant($participantHelper->sugarArrayToParticipant($invitee))) {
+                $participant = $participantHelper->sugarArrayToParticipant($invitee);
+                $hash = $invitee[0] . ':' . $invitee[1];
+                if (in_array($hash, $hashes)) {
+                    continue;
+                }
+                $hashes[] = $hash;
+
+                if ($event->setParticipant($participant)) {
                     $result = true;
                 } else {
                     unset($value['added'][$k]);
