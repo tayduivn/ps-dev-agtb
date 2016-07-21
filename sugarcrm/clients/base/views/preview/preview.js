@@ -402,7 +402,7 @@
             data.direction === 'left' ? currIndex -= 1 : currIndex += 1;
 
             //Reset the preview
-            app.events.trigger('preview:render', this.collection.models[currIndex], null, true);
+            app.events.trigger('preview:render', this.collection.models[currIndex], this.collection, true);
             this.switching = false;
         }
     },
