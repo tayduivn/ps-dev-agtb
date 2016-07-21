@@ -53,6 +53,7 @@ $mod_strings = array (
   'LBL_API_OAUTHTOKEN' => 'OAuth Token',
   'LBL_AUTH_UNSUPPORTED' => "This authorization method is not supported by the application",
   'LBL_AUTH_ERROR' => 'The attempt to connect to this account failed.',
+  'LBL_CHANGE_APPLICATION_ERROR' => 'User is not allowed to change the application name.',
   'LBL_VALIDATED' => 'Connected',
   'LBL_ACTIVE' => 'Active',
   'LBL_OAUTH_NAME' => '%s',
