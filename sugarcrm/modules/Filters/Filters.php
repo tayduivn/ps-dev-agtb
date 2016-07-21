@@ -15,6 +15,7 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 class Filters extends Basic
 {
     public $module_dir = 'Filters';
+    public $module_name = 'Filters';
     public $object_name = 'Filters';
     public $table_name = 'filters';
     public $importable = false;
@@ -61,13 +62,5 @@ class Filters extends Basic
             return array();
         }
         return $filtersMetadata['operators']['meta'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getModuleName()
-    {
-        return get_class($this);
     }
 }

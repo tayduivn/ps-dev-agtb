@@ -8083,7 +8083,13 @@ class SugarBean
      */
     public function getModuleName()
     {
-        return $this->module_name;
+        $properties = (new ReflectionClass($this))->getDefaultProperties();
+        if (!empty($properties['module_name'])) { // changed in child class
+            $moduleName = $properties['module_name'];
+        } else { // default case, empty SugarBean::module_name
+            $moduleName = $this->module_name;
+        }
+        return $moduleName;
     }
 
     /**
