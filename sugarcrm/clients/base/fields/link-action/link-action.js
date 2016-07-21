@@ -103,14 +103,14 @@
                 //Show alerts for this request
                 showAlerts: true,
                 relate: true,
-                success: _.bind(function(model) {
+                success: _.bind(function() {
                     //We've just linked a related, however, the list of records from
                     //loadData will come back in DESC (reverse chronological order
                     //with our newly linked on top). Hence, we reset pagination here.
                     this.context.get('collection').resetPagination();
                     this.context.set('collapsed', false);
                 }, this),
-                error: function(error) {
+                error: function() {
                     app.alert.show('server-error', {
                         level: 'error',
                         messages: 'ERR_GENERIC_SERVER_ERROR'

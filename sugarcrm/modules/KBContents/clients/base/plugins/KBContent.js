@@ -167,7 +167,7 @@
                             self._onCreateRevision(prefill, parentModel);
                         }
                     },
-                    error: function(error) {
+                    error: function() {
                         app.alert.show('server-error', {
                             level: 'error',
                             messages: 'ERR_GENERIC_SERVER_ERROR'
@@ -405,7 +405,7 @@
                                     });
                                 }
                             },
-                            error: function(error) {
+                            error: function() {
                                 app.alert.show('template-load-error', {
                                     level: 'error',
                                     messages: app.lang.get('LBL_TEMPLATE_LOAD_ERROR', 'KBContentTemplates')

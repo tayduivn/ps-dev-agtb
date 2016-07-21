@@ -77,7 +77,7 @@
                     self.renderPost(model);
                 });
             },
-            error: function(error) {
+            error: function() {
                 self.collection.dataFetched = true;
                 self.collection.reset();
             }

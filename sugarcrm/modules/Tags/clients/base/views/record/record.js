@@ -37,9 +37,8 @@
 
     /**
      * Handle fetch error
-     * @param {object} e
      */
-    handleTagError: function(e) {
+    handleTagError: function() {
         app.alert.show('collections_error', {
             level: 'error',
             messages: 'LBL_TAG_FETCH_ERROR'

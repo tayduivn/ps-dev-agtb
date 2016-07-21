@@ -104,7 +104,7 @@
 
                 self.context.trigger('search:fire:new');
             },
-            error: function(e) {
+            error: function() {
                 app.alert.show('collections_error', {
                     level: 'error',
                     messages: 'LBL_TAG_FETCH_ERROR'

@@ -283,7 +283,7 @@
                     var filterDef = filter && filter.get('filter_definition');
                     this._displayDashlet(filterDef);
                 }, this),
-                error: _.bind(function(err) {
+                error: _.bind(function() {
                     if (this.disposed) {
                         return;
                     }

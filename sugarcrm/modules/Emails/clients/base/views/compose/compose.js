@@ -521,7 +521,7 @@
             var emailTemplate = app.data.createBean('EmailTemplates', { id: model.id });
             emailTemplate.fetch({
                 success: _.bind(this.confirmTemplate, this),
-                error: _.bind(function(error) {
+                error: _.bind(function(model, error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -580,7 +580,7 @@
                         this.insertTemplateAttachments(data.models);
                     }
                 }, this),
-                error: _.bind(function(error) {
+                error: _.bind(function(collection, error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -642,7 +642,7 @@
                         type: this.ATTACH_TYPE_SUGAR_DOCUMENT
                     });
                 }, this),
-                error: _.bind(function(error) {
+                error: _.bind(function(model, error) {
                     this._showServerError(error);
                 }, this)
             });
@@ -700,7 +700,7 @@
                         this._lastSelectedSignature = model;
                     }
                 }, this),
-                error: _.bind(function(error) {
+                error: _.bind(function(model, error) {
                     this._showServerError(error);
                 }, this)
             });

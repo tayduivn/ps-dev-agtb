@@ -122,7 +122,7 @@
                     options.complete();
                 }
             },
-            error: _.bind(function(error) {
+            error: _.bind(function(collection, error) {
                 if (error.code === 'not_authorized') {
                     this.$el.find('.block-footer').html(app.lang.get('LBL_NO_DATA_AVAILABLE', this.module));
                 }
