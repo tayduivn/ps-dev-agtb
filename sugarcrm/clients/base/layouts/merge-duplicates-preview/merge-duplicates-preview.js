@@ -1,5 +1,3 @@
-<?php
-
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,19 +8,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+/**
+ * @class View.Layouts.Base.MergeDuplicatesPreviewLayout
+ * @alias SUGAR.App.view.layouts.BaseMergeDuplicatesPreviewLayout
+ * @extends View.Layout
+ */
+({
+    extendsFrom: 'PreviewLayout',
 
-$viewdefs['portal']['layout']['preview'] = array(
-    'lazy_loaded' => true,
-    'components' =>
-    array(
-        array(
-            'view' => 'preview-header',
-        ),
-        array(
-            'view' => 'preview',
-        ),
-    ),
-    'type' => 'preview',
-    'span' => 12,
-);
-
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.context.set('skipFetch', true);
+    }
+});

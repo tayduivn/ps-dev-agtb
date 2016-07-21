@@ -30,9 +30,7 @@
          *
          * @type {Core.Context}
          */
-        if (!this.context.parent) {
-            this.context = this.context.getChildContext({});
-        }
+        this.context = this.context.getChildContext({});
     },
 
     /**

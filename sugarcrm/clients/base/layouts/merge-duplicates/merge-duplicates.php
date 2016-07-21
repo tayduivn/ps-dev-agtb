@@ -41,8 +41,8 @@ $viewdefs['base']['layout']['merge-duplicates'] = array(
                             'components' => array(
                                 array(
                                     'layout' => 'preview',
-                                    'context' => array(
-                                        'skipFetch' => true,
+                                    'xmeta' => array(
+                                        'type' => 'merge-duplicates-preview',
                                     ),
                                 ),
                             ),

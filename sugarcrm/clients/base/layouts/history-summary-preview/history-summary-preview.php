@@ -11,7 +11,8 @@
  */
 $viewdefs['base']['layout']['history-summary-preview'] = array(
     'type' => 'preview',
-    'init_components' => array(
+    'lazy_loaded' => true,
+    'components' => array(
         array(
             'view' => 'history-summary-preview-header',
         ),
