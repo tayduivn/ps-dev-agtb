@@ -410,7 +410,7 @@
                     callback(false);
                 }
             }, this),
-            error = _.bind(function (e) {
+            error = _.bind(function(model, e) {
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {
@@ -451,7 +451,7 @@
                     callback(false);
                 }
             }, this),
-            error = _.bind(function (e) {
+            error = _.bind(function(model, e) {
                 if (e.status == 412 && !e.request.metadataRetry) {
                     this.handleMetadataSyncError(e);
                 } else {

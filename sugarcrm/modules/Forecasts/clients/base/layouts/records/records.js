@@ -443,7 +443,7 @@
                 });
             }
         }, this),
-            error: _.bind(function(error){
+            error: _.bind(function(model, error) {
                 //if the metadata error comes back, we saved successfully, so we need to clear the is_dirty flag so the
                 //page can reload
                 if (error.status === 412) {

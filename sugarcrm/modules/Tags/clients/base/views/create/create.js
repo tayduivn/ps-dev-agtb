@@ -26,15 +26,77 @@
     initialize: function(options) {
         this._super("initialize", [options]);
 
+        this.alerts = _.extend({}, this.alerts, {
+            showMessageFromServerError: function(error) {
+                if (!this instanceof app.view.View) {
+                    app.logger.error('This method should be invoked by Function.prototype.call(),' +
+                        'passing in as argument an instance of this view.');
+                    return;
+                }
+                var name = 'server-error';
+                this._viewAlerts.push(name);
+                app.alert.show(name, {
+                    level: 'warning',
+                    messages: error.message ? error.message : 'ERR_GENERIC_SERVER_ERROR',
+                    autoClose: true,
+                    autoCloseDelay: 9000
+                });
+            }
+        });
+
         // Uncomment this line to add back Save and Create Another functionality
         //this.context.on('button:' + this.saveAndCreateAnotherButtonName + ':click', this.saveAndCreateAnother, this);
+    },
+
+    /**
+     * Create new record
+     * @param callback
+     */
+    createRecordWaterfall: function(callback) {
+        var success = _.bind(function() {
+            var acls = this.model.get('_acl');
+            if (!_.isEmpty(acls) && acls.access === 'no' && acls.view === 'no') {
+                //This happens when the user creates a record he won't have access to.
+                //In this case the POST request returns a 200 code with empty response and acls set to no.
+                this.alerts.showSuccessButDeniedAccess.call(this);
+                callback(false);
+            } else {
+                this._dismissAllAlerts();
+                app.alert.show('create-success', {
+                    level: 'success',
+                    messages: this.buildSuccessMessage(this.model),
+                    autoClose: true,
+                    autoCloseDelay: 10000,
+                    onLinkClick: function() {
+                        app.alert.dismiss('create-success');
+                    }
+                });
+                callback(false);
+            }
+        }, this);
+        var error = _.bind(function(model, error) {
+            if (error.status == 412 && !error.request.metadataRetry) {
+                this.handleMetadataSyncError(error);
+            } else {
+                if (error.code === 'duplicate_tag') {
+                    this.alerts.showMessageFromServerError.call(this, error);
+                } else if (error.status == 403) {
+                    this.alerts.showNoAccessError.call(this);
+                } else {
+                    this.alerts.showServerError.call(this);
+                }
+                callback(true);
+            }
+        }, this);
+
+        this.saveModel(success, error);
     },
 
     /**
      * Save and reload drawer to allow another save
      */
     saveAndCreateAnother: function() {
-        this.initiateSave(_.bind(function () {
+        this.initiateSave(_.bind(function() {
             //reload the drawer
             if (app.drawer) {
                 app.drawer.load({
