@@ -51,7 +51,6 @@ $vardef_meta_array = array(
                 'pmse_bpmconfig_link',
                 'pmse_bpmgroup_link',
                 'pmse_bpmgroupuser_link',
-                'pmse_bpmaccessmanagement_link',
             ),
         ),
     ),
