@@ -13,7 +13,7 @@
 require_once('modules/Configurator/Configurator.php');
 require_once 'modules/Administration/QuickRepairAndRebuild.php';
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as AdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry as CalDavAdapterRegistry;
 use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AclInterface;
 use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
 
@@ -230,10 +230,9 @@ class CalDavApi extends SugarApi
      */
     public function getSupportedCalDavModules()
     {
-        $adapterFactory = $this->getAdapterFactory();
         $modules = array();
 
-        foreach ($adapterFactory->getSupportedModules() as $module) {
+        foreach ($this->getAdapterRegistry()->getSupportedModules() as $module) {
             if (\SugarACL::checkAccess($module, 'access')) {
                 $modules[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
             }
@@ -349,13 +348,12 @@ class CalDavApi extends SugarApi
     }
 
     /**
-     * Return DavCal adapter factory.
+     * Factory method for Adapter Registry.
      *
-     * @return AdapterFactory
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry
      */
-    protected function getAdapterFactory()
+    protected function getAdapterRegistry()
     {
-        $adapters = new AdapterFactory();
-        return $adapters;
+        return CalDavAdapterRegistry::getInstance();
     }
 }

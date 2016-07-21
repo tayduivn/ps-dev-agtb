@@ -12,8 +12,8 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Hook;
 
-use \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
-use \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\JobQueue\Manager\Manager as JQManager;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry as CalDavAdapterRegistry;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ExportNotifier;
 use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Notifier\ImportNotifier;
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
@@ -82,11 +82,14 @@ class Handler
             $this->logger->notice("CalDav: EventCollection($collection->id) is not importable");
             return false;
         }
-        $adapter = $this->getAdapterFactory()->getAdapter($collection->parent_type);
-        if (!$adapter) {
-            $this->logger->warning("CalDav: No adapter for $collection->parent_type");
+
+        $adapterFactory = $this->getAdapterRegistry()->getFactory($collection->parent_type);
+        if (!$adapterFactory) {
+            $this->logger->debug("CalDav: Adapter factory for module $collection->parent_type has not found");
             return false;
         }
+
+        $adapter = $adapterFactory->getAdapter();
 
         $preparedDataSet = $adapter->prepareForImport($collection, $previousData);
 
@@ -135,11 +138,13 @@ class Handler
             return false;
         }
 
-        $adapter = $this->getAdapterFactory()->getAdapter($bean->module_name);
-        if (!$adapter) {
-            $this->logger->warning("CalDav: No adapter for $bean->module_name");
+        $adapterFactory = $this->getAdapterRegistry()->getFactory($bean->module_name);
+        if (!$adapterFactory) {
+            $this->logger->debug("CalDav: Adapter factory for module $bean->module_name has not found");
             return false;
         }
+
+        $adapter = $adapterFactory->getAdapter();
 
         $preparedDataSet = $conflictSolver ?
             $adapter->prepareForRebuild($bean, $previousData) :
@@ -238,11 +243,13 @@ class Handler
     }
 
     /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory
+     * Factory method for Adapter Registry.
+     *
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry
      */
-    protected function getAdapterFactory()
+    protected function getAdapterRegistry()
     {
-        return CalDavAdapterFactory::getInstance();
+        return CalDavAdapterRegistry::getInstance();
     }
 
     /**

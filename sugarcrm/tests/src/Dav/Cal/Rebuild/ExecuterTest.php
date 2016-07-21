@@ -22,9 +22,9 @@ class ExecuterTest extends \Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $adapterFactory = null;
+    protected $adapterRegistry = null;
 
     /**
      * @var \Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\Executer|\PHPUnit_Framework_MockObject_MockObject
@@ -59,13 +59,13 @@ class ExecuterTest extends \Sugar_PHPUnit_Framework_TestCase
         $this->hookHandler = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler');
         $this->bean->method('getCalDavHook')->willReturn($this->hookHandler);
 
-        $this->adapterFactory = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory');
-        $this->adapterFactory->method('getSupportedModules')->willReturn($this->supportedModules);
+        $this->adapterRegistry = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry');
+        $this->adapterRegistry->method('getSupportedModules')->willReturn($this->supportedModules);
         $this->reExporter = $this->getMock(
             'Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\Executer',
-            array('getCalDavAdapterFactory', 'getBeanIterator')
+            array('getAdapterRegistry', 'getBeanIterator')
         );
-        $this->reExporter->method('getCalDavAdapterFactory')->willReturn($this->adapterFactory);
+        $this->reExporter->method('getAdapterRegistry')->willReturn($this->adapterRegistry);
 
     }
 

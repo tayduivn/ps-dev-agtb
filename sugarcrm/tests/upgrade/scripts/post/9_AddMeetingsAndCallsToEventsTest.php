@@ -30,9 +30,9 @@ class SugarUpgradeAddMeetingsAndCallsToEventsTest extends \UpgradeTestCase
     protected $calDavUpgrader = null;
 
     /**
-     * @var \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $adapterFactory = null;
+    protected $adapterRegistry = null;
 
     /**
      * @var \Sugarcrm\Sugarcrm\JobQueue\Manager\Manager|\PHPUnit_Framework_MockObject_MockObject
@@ -67,15 +67,15 @@ class SugarUpgradeAddMeetingsAndCallsToEventsTest extends \UpgradeTestCase
         $this->jobQueueManager = $this->getMock('Sugarcrm\Sugarcrm\JobQueue\Manager\Manager', array('CalDavRebuild'));
         $this->configurator = $this->getMock('Configurator');
         $this->configurator->config = array('caldav_enable_sync' => false);
-        $this->adapterFactory = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory');
-        $this->adapterFactory->method('getSupportedModules')->willReturn($this->supportedModules);
+        $this->adapterRegistry = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry');
+        $this->adapterRegistry->method('getSupportedModules')->willReturn($this->supportedModules);
 
         $this->calDavUpgrader = $this->getMock(
             'SugarUpgradeAddMeetingsAndCallsToEvents',
-            array('getCalDavAdapterFactory', 'getConfigurator', 'getJQManager'),
+            array('getConfigurator', 'getJQManager', 'getAdapterRegistry'),
             array($this->upgrader)
         );
-        $this->calDavUpgrader->method('getCalDavAdapterFactory')->willReturn($this->adapterFactory);
+        $this->calDavUpgrader->method('getAdapterRegistry')->willReturn($this->adapterRegistry);
         $this->calDavUpgrader->method('getConfigurator')->willReturn($this->configurator);
         $this->calDavUpgrader->method('getJQManager')->willReturn($this->jobQueueManager);
 
@@ -105,7 +105,6 @@ class SugarUpgradeAddMeetingsAndCallsToEventsTest extends \UpgradeTestCase
     {
         $this->calDavUpgrader->from_version = $version;
         $this->configurator->config = array('caldav_enable_sync' => $enable);
-        $this->adapterFactory->method('getSupportedModules')->willReturn($this->supportedModules);
 
         if ($queued) {
             $this->jobQueueManager->expects($this->once())->method('CalDavRebuild');

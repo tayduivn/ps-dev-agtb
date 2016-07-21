@@ -12,9 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTests\Dav\Cal\Adapter;
 
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter as MeetingsDataAdapter;
+
 /**
  * Class AdapterCRYS1399Test
- * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract
+ * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter
  */
 class PrepareForImportTest extends \PHPUnit_Framework_TestCase
 {
@@ -1214,7 +1216,7 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
     /**
      * Checking the data preparation for imports.
      *
-     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract::prepareForImport
+     * @covers       Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter::prepareForImport
      * @dataProvider prepareForImportProvider
      * @param string $participantsLinks
      * @param string $before
@@ -1227,8 +1229,10 @@ class PrepareForImportTest extends \PHPUnit_Framework_TestCase
         $before = preg_replace('/\n */', "\n", trim($before));
         $after = preg_replace('/\n */', "\n", trim($after));
 
-        /** @var \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings|\PHPUnit_Framework_MockObject_MockObject $mockAdapter */
-        $mockAdapter = $this->getMock('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings', array('createGroupId'));
+        /** @var \PHPUnit_Framework_MockObject_MockObject|MeetingsDataAdapter $mockAdapter */
+        $mockAdapter = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter', array(
+            'createGroupId'
+        ));
         $mockAdapter->method('createGroupId')->willReturn($groupId);
 
         $collection = new \CalDavEventCollection();

@@ -12,11 +12,11 @@
 
 namespace Sugarcrm\SugarcrmTests\Dav\Cal\Adapter;
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter as MeetingsDataAdapter;
 
 /**
  * Class AdapterCRYS1607Test
- * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract
+ * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractAdapter
  */
 class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
 {
@@ -164,7 +164,7 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * Test verify data for export after import.
      *
-     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\AdapterAbstract::verifyExportAfterImport
+     * @covers Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter::verifyExportAfterImport
      * @dataProvider verifyExportAfterImportProvider
      * @param array $importData
      * @param array $exportData
@@ -173,8 +173,8 @@ class AdapterCRYS1607Test extends \Sugar_PHPUnit_Framework_TestCase
      */
     public function testVerifyExportAfterImport($importData, $exportData, $bean, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Meetings $mockAdapter */
-        $mockAdapter = $this->getMock('\Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Meetings', null);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|MeetingsDataAdapter $mockAdapter */
+        $mockAdapter = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\MeetingsAdapter\DataAdapter', null);
         $actual = $mockAdapter->verifyExportAfterImport($importData, $exportData, $bean);
         $this->assertEquals($expected, $actual);
     }

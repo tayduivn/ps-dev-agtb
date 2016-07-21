@@ -10,21 +10,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper;
 
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper as ParticipantsHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper as DateTimeHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Helper\RecurringHelper;
 use Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status as CalDavStatus;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\DataAdapterInterface;
 use Sugarcrm\Sugarcrm\Dav\Cal\Structures\Event;
 use Sugarcrm\Sugarcrm\Logger\LoggerTransition;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception\ImportException;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Exception\ExportException;
 
 /**
  * Abstract class for iCal adapters common functionality
  *
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
+ * Class AbstractDataAdapter
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper
  */
-abstract class AdapterAbstract implements AdapterInterface
+abstract class AbstractDataAdapter implements DataAdapterInterface
 {
     /**
      * Storage for prevent infinity email sending

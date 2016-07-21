@@ -10,14 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter;
+namespace Sugarcrm\Sugarcrm\Dav\Cal\Adapter\CallsAdapter;
+
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Helper\AbstractDataAdapter;
 
 /**
  * Class for processing Calls by iCal protocol
  *
- * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter
+ * Class DataAdapter
+ * @package Sugarcrm\Sugarcrm\Dav\Cal\Adapter\CallsAdapter
  */
-class Calls extends AdapterAbstract
+class DataAdapter extends AbstractDataAdapter
 {
     /**
      * Location should be ignored for Calls.

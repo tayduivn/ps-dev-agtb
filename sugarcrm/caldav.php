@@ -16,6 +16,12 @@ if (!defined('sugarEntry')) {
 define('ENTRY_POINT_TYPE', 'api');
 require_once 'include/entryPoint.php';
 
+if (empty($current_language)) {
+    $current_language = $sugar_config['default_language'];
+}
+$app_list_strings = return_app_list_strings_language($current_language);
+$app_strings = return_application_language($current_language);
+
 $serverHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ServerHelper();
 $server = $serverHelper->setUp();
 

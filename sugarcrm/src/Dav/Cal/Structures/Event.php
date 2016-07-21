@@ -493,6 +493,27 @@ class Event
     }
 
     /**
+     * Get module name for event.
+     *
+     * @return null|string
+     */
+    public function getSugarModule()
+    {
+        return $this->getStringProperty('X-SUGAR-MODULE');
+    }
+
+    /**
+     * Gets module's custom property for event.
+     *
+     * @param string $name
+     * @return null|string
+     */
+    public function getCustomProperty($name)
+    {
+        return $this->getStringProperty('X-SUGAR-MODULE-' . $name);
+    }
+
+    /**
      * Get event visibility (PUBLIC, PRIVATE, CONFIDENTIAL)
      * @return null|string
      */
@@ -799,6 +820,29 @@ class Event
     public function setUrl($url)
     {
         return $this->setStringProperty('URL', $url);
+    }
+
+    /**
+     * Set module name for event.
+     *
+     * @param string $module
+     * @return bool
+     */
+    public function setSugarModule($module)
+    {
+        return $this->setStringProperty('X-SUGAR-MODULE', $module);
+    }
+
+    /**
+     * Sets module's custom parameter for event.
+     *
+     * @param string $name
+     * @param string $value
+     * @return bool
+     */
+    public function setCustomProperty($name, $value)
+    {
+        return $this->setStringProperty('X-SUGAR-MODULE-' . $name, $value);
     }
 
     /**

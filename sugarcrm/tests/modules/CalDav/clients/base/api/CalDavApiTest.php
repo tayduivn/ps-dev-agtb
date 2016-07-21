@@ -44,9 +44,9 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected $api = null;
 
     /**
-     * @var Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory|PHPUnit_Framework_MockObject_MockObject
+     * @var Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry|PHPUnit_Framework_MockObject_MockObject
      */
-    protected $adapterFactory = null;
+    protected $adapterRegistry = null;
 
     /**
      * @var Sugarcrm\Sugarcrm\JobQueue\Manager\Manager|PHPUnit_Framework_MockObject_MockObject
@@ -71,16 +71,16 @@ class CalDavApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('mod_strings', array('CalDav'));
 
         $this->jobQueueManager = $this->getMock('Sugarcrm\Sugarcrm\JobQueue\Manager\Manager', array('CalDavRebuild'));
-        $this->adapterFactory = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory');
-        $this->adapterFactory->method('getSupportedModules')->willReturn($this->supportedModules);
+        $this->adapterRegistry = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry');
+        $this->adapterRegistry->method('getSupportedModules')->willReturn($this->supportedModules);
         $this->configurator = $this->getMock('Configurator');
 
         $this->calDavApi = $this->getMock(
             'CalDavApi',
-            array('clearMetaDataAPICache', 'getConfigurator', 'getAdapterFactory', 'getJQManager')
+            array('clearMetaDataAPICache', 'getConfigurator', 'getAdapterRegistry', 'getJQManager')
         );
         $this->calDavApi->method('getConfigurator')->willReturn($this->configurator);
-        $this->calDavApi->method('getAdapterFactory')->willReturn($this->adapterFactory);
+        $this->calDavApi->method('getAdapterRegistry')->willReturn($this->adapterRegistry);
         $this->calDavApi->method('getJQManager')->willReturn($this->jobQueueManager);
         $this->api = $this->getMock('RestService');
         $this->api->user = $GLOBALS['current_user'];

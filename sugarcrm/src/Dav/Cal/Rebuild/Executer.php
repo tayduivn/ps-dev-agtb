@@ -13,7 +13,7 @@
 
 namespace Sugarcrm\Sugarcrm\Dav\Cal\Rebuild;
 
-use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Factory as CalDavAdapterFactory;
+use Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry as CalDavAdapterRegistry;
 use Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface;
 
 /**
@@ -33,7 +33,7 @@ class Executer implements RunnableInterface
     public function getBeans()
     {
         $appendIterator = new \AppendIterator();
-        foreach ($this->getCalDavAdapterFactory()->getSupportedModules() as $module) {
+        foreach ($this->getAdapterRegistry()->getSupportedModules() as $module) {
             $appendIterator->append($this->getBeanIterator($module));
         }
         return $appendIterator;
@@ -51,13 +51,13 @@ class Executer implements RunnableInterface
     }
 
     /**
-     * Returns factory class to get list of supported modules.
+     * Factory method for Adapter Registry.
      *
-     * @return CalDavAdapterFactory
+     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Adapter\Registry
      */
-    protected function getCalDavAdapterFactory()
+    protected function getAdapterRegistry()
     {
-        return new CalDavAdapterFactory();
+        return CalDavAdapterRegistry::getInstance();
     }
 
     /**
