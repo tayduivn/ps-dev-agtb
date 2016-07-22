@@ -95,6 +95,8 @@ $dictionary['ACLRole'] = array('table' => 'acl_roles', 'comment' => 'ACL Role de
   	'name' => 'users',
     'type' => 'link',
     'relationship' => 'acl_roles_users',
+      'link_file' => 'modules/ACLRoles/UserLink.php',
+      'link_class' => 'UserLink',
     'source'=>'non-db',
 	'vname'=>'LBL_USERS',
   ),
