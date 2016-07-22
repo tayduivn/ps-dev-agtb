@@ -135,26 +135,19 @@ class TeamSet extends SugarBean{
             return $teamSetIdFromMD5;
         }
 
-        $sql = sprintf(
-            'SELECT id FROM %s WHERE team_md5 = %s',
-            $this->table_name,
-            $this->db->quoted($team_md5)
-        );
-        $result = $this->db->query($sql);
-        $row = $this->db->fetchByAssoc($result);
+        $sql = "SELECT id FROM $this->table_name WHERE team_md5 = ?";
+        $stmt = $this->db->getConnection()->executeQuery($sql, [$team_md5]);
+        $row = $stmt->fetch();
         if (!$row){
             //we did not find a set with this combination of teams
             //so we should create the set and associate the teams with the set and return the set id.
             if(count($team_ids) == 1) {
                 $this->new_with_id = true;
                 $this->id = $team_ids[0];
-                if ($this->db->getOne(
-                    sprintf(
-                        "SELECT id FROM %s WHERE id='%s'",
-                        $this->table_name,
-                        $this->db->quote($this->id)
-                    ))
-                ) {
+                if ($this->db->getConnection()->fetchColumn(
+                    "SELECT id FROM $this->table_name WHERE id = ?",
+                    [$this->id]
+                )) {
                     $GLOBALS['log']->error("Detected duplicate team set for $this->id");
                     // Reset new_with_id so we overwrite this wrong set
                     $this->new_with_id = false;
@@ -225,12 +218,10 @@ class TeamSet extends SugarBean{
     */
     public function removeTeamFromSet($team_id){
         $GLOBALS['log']->info("Removing team_id: {$team_id} from team set: {$this->id}");
-        $sqlDelete = sprintf(
-            'DELETE FROM team_sets_teams WHERE team_id = %s AND team_set_id = %s',
-            $this->db->quoted($team_id),
-            $this->db->quoted($this->id)
+        $this->db->getConnection()->delete(
+            'team_sets_teams',
+            ['team_id' => $team_id, 'team_set_id' => $this->id]
         );
-        //$this->db->query($sqlDelete,true,"Error deleting team id from team_sets_teams: ");
 
         //have to recalc the md5 hash and the count
         $stats = $this->_getStatistics($this->getTeamIds($this->id));
@@ -252,7 +243,6 @@ class TeamSet extends SugarBean{
     private function _addTeamToSet($team_id){
         if($this->load_relationship('teams')){
             $this->teams->add($team_id);
-            $GLOBALS['db']->query($insertQuery);
         }
     }
 
@@ -280,18 +270,11 @@ class TeamSet extends SugarBean{
         if($cachedResults)
             return $cachedResults;
 
-        $results = array();
-        $sql = sprintf(
-            'SELECT tst.team_set_id from team_sets_teams tst
+        $sql = 'SELECT tst.team_set_id from team_sets_teams tst
             INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
-            AND team_memberships.user_id = %s AND team_memberships.deleted=0 group by tst.team_set_id',
-            $GLOBALS['db']->quoted($user_id)
-        );
-        $rs = $GLOBALS['db']->query($sql, TRUE, "Error retrieving team set ids for user.");
-        while($row = $GLOBALS['db']->fetchByAssoc($rs))
-        {
-            $results[] = $row['team_set_id'];
-        }
+            AND team_memberships.user_id = ? AND team_memberships.deleted=0 group by tst.team_set_id';
+        $stmt = $GLOBALS['db']->getConnection()->executeQuery($sql, [$user_id]);
+        $results = $stmt->fetchAll(\PDO::FETCH_COLUMN);
         sugar_cache_put($cacheKey, $results);
         return $results;
     }
@@ -304,31 +287,25 @@ class TeamSet extends SugarBean{
     */
     function isUserAMember($user_id, $team_set_id = '', $team_ids = array()){
         // determine whether the user is already on the team
-        $sql = '';
         if(!empty($team_set_id)){
-            $sql = sprintf(
-                'SELECT team_memberships.id FROM team_memberships
+            $sql = 'SELECT team_memberships.id FROM team_memberships
                 INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id
-                WHERE user_id = %s AND team_sets_teams.team_set_id = %s AND team_memberships.deleted = 0',
-                $this->db->quoted($user_id),
-                $this->db->quoted($team_set_id)
-            );
+                WHERE user_id = ? AND team_sets_teams.team_set_id = ? AND team_memberships.deleted = 0';
+            $result = $this->db->getConnection()->fetchColumn($sql, [$user_id, $team_set_id]);
         }elseif(!empty($team_ids)){
-            $team_id_str = "'" . implode("','", $team_ids) . "'";
-            $sql = sprintf(
-                'SELECT team_memberships.id FROM team_memberships
-                WHERE user_id = %s AND team_id IN (%s) AND team_memberships.deleted = 0',
-                $this->db->quoted($user_id),
-                implode(',', array_map(array($this->db, 'quoted'), $team_ids))
+            $sql = 'SELECT team_memberships.id FROM team_memberships
+                WHERE user_id = ? AND team_id IN (?) AND team_memberships.deleted = 0';
+            $stmt = $this->db->getConnection()->executeQuery(
+                $sql,
+                [$user_id, $team_ids],
+                [null, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
             );
+            $result = $stmt->fetchColumn();
         }else{
             return false;
         }
 
-        $result = $this->db->query($sql, TRUE, "Error finding team memberships: ");
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
+        if ($result != null) {
             return true;
         }
         return false;

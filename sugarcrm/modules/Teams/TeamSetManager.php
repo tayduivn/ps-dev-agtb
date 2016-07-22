@@ -427,8 +427,8 @@ class TeamSetManager {
 	/**
 	 * Return a comma delimited list of teams for display purposes
 	 *
-	 * @param id $team_set_id
-	 * @param id $primary_team_id
+     * @param string $team_set_id
+     * @param string $primary_team_id
 	 * @param boolean $for_display
 	 * @return string
 	 */
