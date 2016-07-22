@@ -91,6 +91,8 @@
                                 </th>
                             </tr>
                         </table>
+                        <!-- field to stop firefox autofill -->
+                        <input style="display:none;" type="password" name="stopautofill" />
                             <!-- hide field if user is admin -->
                             <div id='generate_password_old_password' {if ($IS_ADMIN)} style='display:none' {/if}>
                                  <table width='100%' cellspacing='0' cellpadding='0' border='0' >
