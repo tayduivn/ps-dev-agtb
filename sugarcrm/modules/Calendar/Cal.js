@@ -1764,8 +1764,6 @@
 			var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.sharedDialog.cancel();} } );
 			CAL.sharedDialog.cfg.queueProperty("keylisteners", listeners);
 		}
-		CAL.sharedDialog.cancelEvent.subscribe(function(e, a, o){
-		});
 		sd.style.display = "block";	 
 		CAL.sharedDialog.render();
 		CAL.sharedDialog.show();
