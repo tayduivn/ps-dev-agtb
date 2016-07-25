@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 require_once 'include/EditView/EditView2.php';
 require_once 'modules/ActivityStream/Activities/Activity.php';
@@ -402,6 +403,10 @@ class MassUpdate
 
 							} // if
 	                    } // if
+
+                        // Before calling save, we need to clear out any existing registered AWF
+                        // triggered start events so they can continue to trigger.
+                        Registry\Registry::getInstance()->drop('triggered_starts');
 
 						$newbean->save($check_notify);
 						if (!empty($email_address_id)) {
