@@ -466,8 +466,6 @@ class Team extends SugarBean
             {
                 // We already have an implicit assignment.  It must have come from another person that reports to the focus.  Stop.
                 $GLOBALS['log']->debug("Found existing implicit assignment $manager->id is a member of $this->id");
-                $managers_membership->explicit_assign = true;
-                $managers_membership->save();
                 return;
             }
             if($managers_membership->explicit_assign)
