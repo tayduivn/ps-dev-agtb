@@ -149,7 +149,7 @@
                     success: _.bind(function(data) {
                         this.createTree(data.jsonTree, this.$treeContainer, this.loadPluginsList());
                     }, this),
-                    error: _.bind(function(error) {
+                    error: _.bind(function(collection, error) {
                         this._alertError(error, _.bind(function() {
                             this.createTree([], this.$treeContainer, this.loadPluginsList());
                         }, this));

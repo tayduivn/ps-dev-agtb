@@ -198,12 +198,12 @@
                     // Show alerts for this request
                     showAlerts: true,
                     relate: true,
-                    success: function(model) {
+                    success: function() {
                         self.context.resetLoadFlag();
                         self._prepContextForLoad();
                         self.context.loadData();
                     },
-                    error: function(error) {
+                    error: function() {
                         app.alert.show('server-error', {
                             level: 'error',
                             messages: 'ERR_GENERIC_SERVER_ERROR'

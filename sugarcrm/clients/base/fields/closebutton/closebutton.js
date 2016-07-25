@@ -111,7 +111,7 @@
                     self.openDrawerToCreateNewRecord();
                 }
             },
-            error: function(error) {
+            error: function(model, error) {
                 self.showErrorMessage();
                 app.logger.error('Record failed to close. ' + error);
 

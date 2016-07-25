@@ -62,7 +62,7 @@
                             self.primaryRecord.trigger('duplicate:format:field');
                             self.primaryRecord.trigger('mergeduplicates:primary:saved');
                         },
-                        error: function(error) {
+                        error: function(model, error) {
                             if (error.status === 409) {
                                 app.utils.resolve409Conflict(error, self.primaryRecord, function(model, isDatabaseData) {
                                     if (model) {

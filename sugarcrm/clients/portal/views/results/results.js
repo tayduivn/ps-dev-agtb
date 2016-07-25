@@ -33,7 +33,7 @@
                 cb(collection);
             },
             module_list: mlist,
-            error:function(error) {
+            error: function() {
                 cb(null); // lets callback know to dismiss the alert
             }
         };

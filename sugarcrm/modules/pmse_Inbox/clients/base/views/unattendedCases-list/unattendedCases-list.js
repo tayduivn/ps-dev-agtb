@@ -42,12 +42,8 @@
             });
     },
     reloadList: function() {
-        var self = this;
-        self.context.reloadData({
+        this.context.reloadData({
             recursive:false,
-            error:function(error){
-                console.log(error);
-            }
         });
     }
 })

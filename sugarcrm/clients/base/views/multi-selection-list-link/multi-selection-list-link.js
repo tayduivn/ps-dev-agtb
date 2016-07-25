@@ -42,7 +42,7 @@
     _refreshList: function() {
         this.context.reloadData({
             recursive: false,
-            error: function(error) {
+            error: function() {
                 app.alert.show('server-error', {
                     level: 'error',
                     messages: 'ERR_GENERIC_SERVER_ERROR'

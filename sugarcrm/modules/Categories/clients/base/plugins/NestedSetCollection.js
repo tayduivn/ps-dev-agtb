@@ -323,7 +323,7 @@
                             }
                             app.events.trigger('app:nestedset:sync:complete', self);
                         }, this),
-                        error: _.bind(function(error) {
+                        error: _.bind(function(collection, error) {
                             if (_.isFunction(options.error)) {
                                 options.error(error);
                             }
