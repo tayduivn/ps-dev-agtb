@@ -259,12 +259,10 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $userInvitees = array();
             $contactInvitees = array();
             $leadInvitees = array();
-            $addresseesInvitees = array();
            
                 $existingUserInvitees = array();
             $existingContacts = array();
             $existingLeads =  array();
-            $existingAddressees =  array();
 
             if (!empty($_POST['user_invitees'])) {
                $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
@@ -303,24 +301,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 } 
             }
 
-            if (!empty($_POST['addressees_invitees'])) {
-                $addresseesInvitees = explode(',', trim($_POST['addressees_invitees'], ','));
-            }
-
-            if (!empty($_POST['existing_addressees_invitees'])) {
-                $existingAddressees =  explode(",", trim($_POST['existing_addressees_invitees'], ','));
-            }
-
-            if (!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Addressees') {
-                $addresseesInvitees[] = $_POST['parent_id'];
-            }
-
-            if ($relate_to == 'Addressees') {
-                if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $addresseesInvitees)) {
-                    $addresseesInvitees[] = $_REQUEST['relate_id'];
-                }
-            }
-
             // Call the Meeting module's save function to handle saving other fields besides
             // the users and contacts relationships
             $focus->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
@@ -328,7 +308,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $focus->users_arr = $userInvitees;
             $focus->contacts_arr = $contactInvitees;
             $focus->leads_arr = $leadInvitees;
-            $focus->addressees_arr = $addresseesInvitees;
 
             $focus->save(true);
             $return_id = $focus->id;
@@ -357,8 +336,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 
             //BEGIN SUGARCRM flav!=sales ONLY
             $focus->setLeadInvitees($focus->leads_arr, $existingLeads);
-            //END SUGARCRM flav!=sales ONLY
-            $focus->setAddresseeInvitees($focus->addressees_arr, $existingAddressees);
 
             // Bug #49195 : update vcal
             vCal::cache_sugar_vcal($current_user);

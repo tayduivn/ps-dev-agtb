@@ -76,7 +76,6 @@ class Call extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-	public $addressees_arr = array();
 	var $default_call_name_values = array('Assemble catalogs', 'Make travel arrangements', 'Send a letter', 'Send contract', 'Send fax', 'Send a follow-up letter', 'Send literature', 'Send proposal', 'Send quote');
 	var $minutes_value_default = 15;
 	var $minutes_values = array('0'=>'00','15'=>'15','30'=>'30','45'=>'45');
@@ -84,7 +83,6 @@ class Call extends SugarBean {
 	var $rel_users_table = "calls_users";
 	var $rel_contacts_table = "calls_contacts";
     var $rel_leads_table = "calls_leads";
-	public $rel_addressees_table = "calls_addressees";
 	var $module_dir = 'Calls';
 	var $object_name = "Call";
 	var $new_schema = true;
@@ -102,30 +100,9 @@ class Call extends SugarBean {
 										'assigned_user_id'	=> 'users',
 										'note_id'			=> 'notes',
                                         'lead_id'			=> 'leads',
-                                        'addressee_id'      => 'addressees',
 								);
 
 	public $send_invites = false;
-
-    /**
-     * UID for invitation to specify the same event.
-     * @var string
-     */
-    public $send_invites_uid = '';
-
-    /**
-     * Helper-field to store invites for notification.
-     * Is not a sugar-field, is not persisted anywhere.
-     * @var null|array
-     */
-    public $inviteesNotification = null;
-
-    /**
-     * Helper-field to store information to change all recurrence or only participants or only parent.
-     * Is not a sugar-field, is not persisted anywhere.
-     * @var int
-     */
-    public $updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
 
     /**
      * Parent id of recurring.
@@ -145,12 +122,6 @@ class Call extends SugarBean {
      */
     public $recurrence_id = null;
 
-    /**
-     * Flag whether or not to ignore sending notification organizer.
-     * @var boolean
-     */
-    public $ignoreOrganizerNotification = false;
-
 	public function __construct() {
 		parent::__construct();
 		global $app_list_strings;
@@ -169,15 +140,11 @@ class Call extends SugarBean {
 	}
 
     // save date_end by calculating user input
-    public function save($check_notify = false, $options = array())
+    public function save($check_notify = false)
     {
         global $timedate, $current_user;
 
 		$isUpdate = $this->isUpdate();
-
-        if ($isUpdate && is_null($this->inviteesNotification)) {
-            $this->inviteesNotification = CalendarUtils::getInvitees($this);
-        }
 
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
@@ -246,23 +213,6 @@ class Call extends SugarBean {
                 $GLOBALS['current_user'] : BeanFactory::getBean('Users', $this->assigned_user_id);
             $this->set_accept_status($organizer, 'accept');
         }
-
-        
-        if (empty($options['disableCalDavHook'])) {
-            if ($isUpdate) {
-                $GLOBALS['log']->debug(
-                    "CalDav: $this->object_name update: sending $this->object_name($this->id) to export"
-                );
-                $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
-            } else {
-                $GLOBALS['log']->debug(
-                    "CalDav: $this->object_name create: sending $this->object_name($this->id) to export"
-                );
-                $this->getCalDavHook()->export($this);
-            }
-        }
-
-        $this->inviteesNotification = null;
 
         return $return_id;
 	}
@@ -478,21 +428,6 @@ class Call extends SugarBean {
 		return $call_fields;
 	}
 
-    /**
-     * @inheritdoc
-     */
-    protected function getTemplateNameForNotificationEmail()
-    {
-        if ($this->current_notify_user) {
-            $emailInvitee = $this->current_notify_user->emailAddress->getPrimaryAddress($this->current_notify_user);
-            if (CalDavEventCollection::isInviteCanceled($this, $emailInvitee)) {
-                return 'CallCanceled';
-            }
-        }
-
-        return parent::getTemplateNameForNotificationEmail();
-    }
-
 	function set_notification_body($xtpl, $call) {
 		global $sugar_config;
 		global $app_list_strings;
@@ -505,14 +440,12 @@ class Call extends SugarBean {
 
 
 		// Assumes $call dates are in user format
-        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
-        $calldate = $dateTimeHelper->sugarDateToUTC($call->date_start);
+        $calldate = $timedate->fromDb($call->date_start);
 		$xOffset = $timedate->asUser($calldate, $notifyUser).' '.$timedate->userTimezoneSuffix($calldate, $notifyUser);
 
 		$propertyUrlUserId = array_search(strtolower(get_class($call->current_notify_user)), array(
 			'contact_id' => 'contact',
 			'lead_id' => 'lead',
-			'addressee_id' => 'addressee',
 		));
 
 		if ($propertyUrlUserId === false) {
@@ -605,10 +538,6 @@ class Call extends SugarBean {
       $relate_values = array('lead_id'=>$user->id,'call_id'=>$this->id);
       $data_values = array('accept_status'=>$status);
       $this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
-    } elseif ($user->object_name == 'Addressee') {
-        $relate_values = array('addressee_id' => $user->id, 'call_id' => $this->id);
-        $data_values = array('accept_status' => $status);
-        $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
     }
   }
 
@@ -729,14 +658,7 @@ class Call extends SugarBean {
             return null;
         }
         CalendarUtils::correctRecurrences($this, $id);
-        $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
-        if ($this->send_invites) {
-            $this->_sendNotifications(true);
-        }
-        if (!$deletedStatus && $this->deleted) {
-            $this->getCalDavHook()->export($this, array('delete'));
-        }
     }
 
     /**
@@ -752,11 +674,7 @@ class Call extends SugarBean {
             return null;
         }
         CalendarUtils::correctDeletedRecurrence($this);
-        $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
-        if ($deletedStatus && !$this->deleted) {
-            $this->getCalDavHook()->export($this);
-        }
     }
 
     /**
@@ -828,18 +746,6 @@ class Call extends SugarBean {
     }
 
     /**
-     * Stores addressee invitees.
-     *
-     * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddressees
-     */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
-    {
-        $this->addressees_arr = $addresseeInvitees;
-        $this->upgradeAttachInvitees('addressees', $addresseeInvitees, $existingAddressees);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function loadFromRow($arr, $convert = false)
@@ -859,65 +765,12 @@ class Call extends SugarBean {
     }
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function create_notification_email($notify_user)
-	{
-		// reset acceptance status for non organizer if date is changed
-		if (($notify_user->id != $GLOBALS['current_user']->id) && $this->date_changed) {
-			$this->set_accept_status($notify_user, 'none');
-		}
-
-		$mailer = parent::create_notification_email($notify_user);
-
-		$path = SugarConfig::getInstance()->get('upload_dir', 'upload/') . $this->id;
-
-        $emailInvitee = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-        $organizerEmail = BeanFactory::getBean('InboundEmail')->getCalDavHandlerEmail();
-
-        // Trying to get real UID of event. It will be set later in prepareForInvite.
-        // We need to fetch it and change only for events, that came from calendar app.
-        if (empty($this->send_invites_uid)) {
-            $eventBean = BeanFactory::newBean('CalDavEvents')->findByParentModuleAndId('Calls', $this->id);
-            if ($eventBean && !empty($eventBean->event_uid)) {
-                $this->send_invites_uid = $eventBean->event_uid;
-            } else {
-                $this->send_invites_uid = $this->id;
-            }
-        }
-        $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);
-
-		if ($content && file_put_contents($path, $content)) {
-			$attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
-			$mailer->addAttachment($attachment);
-		}
-
-		return $mailer;
-	}
-
-	/**
 	 * @param boolean $fill_additional_column_fields
 	 */
 	public function setFillAdditionalColumnFields($fill_additional_column_fields)
 	{
 		$this->fill_additional_column_fields = $fill_additional_column_fields;
 	}
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
-     */
-    public function getCalDavHook()
-    {
-        return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
-    }
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
-     */
-    public function getParticipantsHelper()
-    {
-        return new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper();
-    }
 
     /**
      * Handles invitees list when Call is assigned to a user.

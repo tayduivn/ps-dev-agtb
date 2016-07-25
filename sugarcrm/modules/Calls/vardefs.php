@@ -271,16 +271,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
         'vname'=>'LBL_LEADS',
   ),
-        'addressees' =>
-            array (
-                'name' => 'addressees',
-                'type' => 'link',
-                'relationship' => 'calls_addressees',
-                'source'=>'non-db',
-                'vname'=>'LBL_ADDRESSEES',
-                'visible' => false,
-                'workflow' => false,
-            ),
     // Bug #42619 Missed back-relation from Project module
     'project'=> array (
         'name' => 'project',
@@ -637,7 +627,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'contacts',
                 'leads',
                 'users',
-                'addressees'
             ),
             'order_by' => 'name:asc',
             'studio' => false,
