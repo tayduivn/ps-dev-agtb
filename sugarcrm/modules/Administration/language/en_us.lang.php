@@ -411,8 +411,8 @@ $mod_strings = array (
     'LBL_LOGIN_SUGAR_SERVER_DESC'          => '- The User Name of the person who will operate this offline client',
     'LBL_LOGIN_SUGAR_SERVER'                => 'End User Name:',
     'LBL_MAILBOX_DESC' => 'Configure the IMAP account Sugar uses to receive ' .
-        'system emails (i.e. group inboxes including automatic case creation, ' .
-        'campaign bounce handling, and CalDAV).',
+        'system emails (i.e. group inboxes including automatic case creation and ' .
+        'campaign bounce handling).',
     'LBL_MANAGE_CONTRACTEMPLATES_TITLE'=>'Contract Types',
     'LBL_MANAGE_CURRENCIES' => 'Currencies',
     'LBL_MANAGE_GROUPS_TITLE'   => 'Manage Groups',
