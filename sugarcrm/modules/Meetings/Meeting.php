@@ -285,9 +285,10 @@ class Meeting extends SugarBean {
             $api->logoff();
         }
 
-        $this->handleInviteesForUserAssign();
-
         $return_id = parent::save($check_notify);
+
+        // This function requires that the ID be set and therefore must come after parent::save()
+        $this->handleInviteesForUserAssign($isUpdate);
 
         if ($this->update_vcal) {
             $assigned_user = BeanFactory::getBean('Users', $this->assigned_user_id);
@@ -1020,8 +1021,9 @@ class Meeting extends SugarBean {
      * Handles invitees list when Meeting is assigned to a user.
      * - new user should be added to invitees, if it is not already there;
      * - on create when current user assigns Meeting not to himself, add current user to invitees.
+     * @param boolean $isUpdate Value captured prior to SugarBean Save
      */
-    protected function handleInviteesForUserAssign()
+    protected function handleInviteesForUserAssign($isUpdate)
     {
         $this->load_relationship('users');
         $existingUsers = $this->users->get();
@@ -1030,7 +1032,7 @@ class Meeting extends SugarBean {
             $this->users->add($this->assigned_user_id);
         }
 
-        if (!$this->isUpdate() && isset($GLOBALS['current_user']->id) &&
+        if (!$isUpdate && isset($GLOBALS['current_user']->id) &&
             $this->assigned_user_id !== $GLOBALS['current_user']->id &&
             !in_array($GLOBALS['current_user']->id, $existingUsers)) {
             $this->users->add($GLOBALS['current_user']->id);

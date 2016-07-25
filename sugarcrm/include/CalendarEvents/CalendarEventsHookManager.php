@@ -28,6 +28,7 @@ class CalendarEventsHookManager
     );
 
     /**
+     * @deprecated Since 7.8
      * CalendarEvents initialization hook
      *
      * Serve "before_relationship_update" hook handling

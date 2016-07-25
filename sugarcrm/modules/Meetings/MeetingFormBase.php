@@ -261,7 +261,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $leadInvitees = array();
             $addresseesInvitees = array();
            
-            $existingUsers = array();
+                $existingUserInvitees = array();
             $existingContacts = array();
             $existingLeads =  array();
             $existingAddressees =  array();
@@ -270,7 +270,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
             }
             if (!empty($_POST['existing_invitees'])) {
-               $existingUsers =  explode(",", trim($_POST['existing_invitees'], ','));
+                    $existingUserInvitees = explode(",", trim($_POST['existing_invitees'], ','));
             }
            
             if (!empty($_POST['contact_invitees'])) {
@@ -339,6 +339,18 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
                 $_REQUEST['return_action'] = 'EditView';
                 handleRedirect('', 'Meetings');
             }
+
+                // Collect existing users after calling save()
+                // Note: some users may have been added/removed as part of save()
+                $focus->load_relationship('users');
+                $existingUsers = array();
+                foreach ($focus->users->get() as $userId) {
+                    $existingUsers[$userId] = true;
+                }
+                // Fold in any User Ids that may have peen Posted on the Request
+                foreach ($existingUserInvitees as $userId) {
+                    $existingUsers[$userId] = true;
+                }
 
             $focus->setUserInvitees($userInvitees, $existingUsers);
             $focus->setContactInvitees($contactInvitees, $existingContacts);
