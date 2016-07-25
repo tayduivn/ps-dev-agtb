@@ -3213,15 +3213,6 @@ SUGAR.util = function () {
 			return leftColTd;
 		},
 		/**
-		 * Fills the shortcut menu placeholders w/ actual content
-		 * Call this on load event
-		 *
-		 * @param shortcutContent Array array of content to fill in
-		 */
-		fillShortcuts: function(e, shortcutContent) {
-			return ;
-		},
-		/**
 		 * Make an AJAX request.
 		 *
 		 * @param	url				string	resource to load

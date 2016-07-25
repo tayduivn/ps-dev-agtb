@@ -135,15 +135,6 @@ echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSear
 
 echo $lv->display();
 
-$savedSearch = BeanFactory::getBean('SavedSearch');
-$json = getJSONobj();
-// fills in saved views select box on shortcut menu
-$savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('Project')));
-$str = "<script>
-YAHOO.util.Event.addListener(window, 'load', SUGAR.util.fillShortcuts, $savedSearchSelects);
-</script>";
-echo $str;
-
 // awu: Bug 11452 - removing export for non-admin users without a mass update form
 // faking a massupdate form, which is expected on page load
 if (!is_admin($current_user)){

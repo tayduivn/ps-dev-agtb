@@ -290,15 +290,6 @@ else { // display different ending (with remove from my favorites button);
 
 echo $lv->display();
 
-$savedSearch = BeanFactory::getBean('SavedSearch');
-$json = getJSONobj();
-// fills in saved views select box on shortcut menu
-$savedSearchSelects = $json->encode(array($GLOBALS['app_strings']['LBL_SAVED_SEARCH_SHORTCUT'] . '<br>' . $savedSearch->getSelect('Reports')));
-$str = "<script>
-YAHOO.util.Event.addListener(window, 'load', SUGAR.util.fillShortcuts, $savedSearchSelects);
-</script>";
-echo $str;
-
 echo <<<EOQ
 <script>
 function schedulePOPUP(id){
