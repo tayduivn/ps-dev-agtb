@@ -84,8 +84,6 @@ SUGAR.forms.FormValidator.validateForm = function(formname) {
 		formname = this.getAttribute('name');
 	}
 
-	// if formname is the event, the switch to the name 		- bug: only works in Firefox, but not IE. fix is above.
-
 	// define myself
 	var myself = SUGAR.forms.FormValidator;
 

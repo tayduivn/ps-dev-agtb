@@ -84,7 +84,6 @@ function subp_nav_sidecar(m, i, a, link) {
             return false;
         }
         //action is not create
-        //TODO:`edit` is ignored today (see SP-1618) but we'll want to add action later e.g.:
         url = view.convertToSidecarUrl('index.php?module=' + m + '&action=' + '&record=' + i);
         app.router.navigate(url, {trigger: true});
         return false;

@@ -1920,8 +1920,6 @@ class Report
         // to be sorted by the group by
 
         if (!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
-            $groups = array();
-            // FIXME: see if we need to handle NULLs on GROUP BY
             $query .= " GROUP BY " . join(",", $this->group_by_arr);
         }
 
@@ -1946,7 +1944,6 @@ class Report
     function get_summary_header_row()
     {
         $this->layout_manager->setAttribute('list_type', 'summary');
-        // FIXME: this needs to be fixed.. turn on summary sorting
         $header_row = $this->get_header_row_generic('summary_columns');
         return $header_row;
     }

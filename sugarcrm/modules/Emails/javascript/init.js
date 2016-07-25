@@ -17,10 +17,6 @@
 
 
 function email2init() {
-    //BEGIN SUGARCRM flav=int ONLY
-    SUGAR.logger = new YAHOO.widget.LogReader();
-	//END SUGARCRM flav=int ONLY
-
     if (!SUGAR.util.isTouchScreen()) {
  	 tinyMCE.init({
  		 convert_urls : false,

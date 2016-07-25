@@ -81,8 +81,6 @@ SugarWidgetListView.prototype.display = function() {
         html += '<td>'+bean.fields.account_name+'</td>';
 		html += '<td align="right">';
 		hidden = 'visible';
-		if(!disabled) {
-		}
 		html += '<input type="button" id="invitees_add_'+(i+1)+'" class="button" onclick="this.disabled=true;SugarWidgetSchedulerAttendees.form_add_attendee('+i+');" value="'+GLOBAL_REGISTRY['meeting_strings']['LBL_ADD_BUTTON']+'"/ style="visibility: '+hidden+'"/>';
 		html += '</td>';
 
