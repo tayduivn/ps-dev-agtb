@@ -130,13 +130,9 @@ class Audit extends SugarBean
         $fieldDefs = $this->fieldDefs;
         $return = array();
 
+        $aclCheckContext = array('bean' => $bean);
         while ($row = $db->fetchByAssoc($results)) {
-            if (!ACLField::hasAccess(
-                $row['field_name'],
-                $bean->module_dir,
-                $GLOBALS['current_user']->id,
-                $bean->isOwner($GLOBALS['current_user']->id)
-            )) {
+            if (!SugarACL::checkField($bean->module_dir, $row['field_name'], 'access', $aclCheckContext)) {
                 continue;
             }
 
