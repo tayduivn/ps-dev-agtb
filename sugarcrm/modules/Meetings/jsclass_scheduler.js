@@ -34,7 +34,6 @@ SugarWidgetListView.prototype.load = function(parentNode) {
 SugarWidgetListView.prototype.display = function() {
 
 	if(typeof GLOBAL_REGISTRY['result_list'] == 'undefined') {
-		this.display_loading();
 		return;
 	}
 
@@ -97,10 +96,6 @@ SugarWidgetListView.prototype.display = function() {
 	//this.parentNode.innerHTML = html;
 
 	div.innerHTML = html;
-}
-
-SugarWidgetListView.prototype.display_loading = function() {
-
 }
 
 //////////////////////////////////////////////////

@@ -222,12 +222,6 @@
             'modules/Emails/javascript/composeEmailTemplate.js' => 'include/javascript/sugar_grp_quickcomp.js',
             'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_quickcomp.js',
             ),
-
-            $sugar_grp_jsolait = array(
-                'include/javascript/jsclass_base.js'    => 'include/javascript/sugar_grp_jsolait.js',
-                'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
-                'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
-            ),
            $sugar_grp_sidecar = array_merge(
                 array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
                'sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'include/javascript/sugar_sidecar.min.js'),
