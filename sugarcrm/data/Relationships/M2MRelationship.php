@@ -125,6 +125,8 @@ class M2MRelationship extends SugarRelationship
                 $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
             }
         } else {
+            $this->callBeforeUpdate($lhs, $rhs, $lhsLinkName);
+            $this->callBeforeUpdate($rhs, $lhs, $rhsLinkName);
             $isUpdate = true;
         }
 
