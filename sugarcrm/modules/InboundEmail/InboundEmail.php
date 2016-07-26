@@ -1918,7 +1918,10 @@ class InboundEmail extends SugarBean {
         } else {
             $connectString = $this->getConnectString('', $mbox);
             //Remove Folder cache
-            unlink("{$this->EmailCachePath}/{$this->id}/folders/folders.php");
+            $emailCacheKeyMap = sugar_cache_retrieve('email_cache_key_map');
+            sugar_cache_clear($emailCacheKeyMap[$this->id]['folders']['folders.php']);
+            unset($emailCacheKeyMap[$this->id]['folders']['folders.php']);
+            sugar_cache_put('email_cache_key_map', $emailCacheKeyMap);
             if (imap_unsubscribe($this->conn, imap_utf7_encode($connectString))) {
                 if (imap_deletemailbox($this->conn, $connectString)) {
                     $this->mailbox = str_replace(("," . $mbox), "", $this->mailbox);

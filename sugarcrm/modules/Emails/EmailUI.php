@@ -1071,12 +1071,6 @@ eoq;
 			mkdir_recursive(clean_path("{$cacheRoot}/attachments"));
 	}
 
-	function deleteEmailCacheForFolders($cacheRoot) {
-		$filePath = $cacheRoot."/folders/folders.php";
-		if (file_exists($filePath)) {
-			unlink($filePath);
-		}
-	}
 	///////////////////////////////////////////////////////////////////////////
 	////	IMAP FUNCTIONS
 	/**
@@ -1136,9 +1130,8 @@ eoq;
 					$cacheRoot = sugar_cached("modules/Emails/{$personalAccount->id}");
 					$this->preflightEmailCache($cacheRoot);
 
-					if($this->validCacheFileExists($personalAccount->id, 'folders', "folders.php")) {
-						$mailboxes = $this->getMailBoxesFromCacheValue($personalAccount);
-					} else {
+                    $mailboxes = $this->getMailBoxesFromCacheValue($personalAccount);
+                    if (!$mailboxes) {
 						$mailboxes = $personalAccount->getMailboxes();
 					}
 
@@ -1177,9 +1170,8 @@ eoq;
 				$this->preflightEmailCache($cacheRoot);
 				//$groupAccount->connectMailserver();
 
-				if($this->validCacheFileExists($groupAccount->id, 'folders', "folders.php")) {
-					$mailboxes = $this->getMailBoxesFromCacheValue($groupAccount);
-				} else {
+                $mailboxes = $this->getMailBoxesFromCacheValue($groupAccount);
+                if (!$mailboxes) {
 					$mailboxes = $groupAccount->getMailBoxesForGroupAccount();
 				}
 
@@ -1215,11 +1207,16 @@ eoq;
 	}
 
 	function getMailBoxesFromCacheValue($mailAccount) {
+        $mailboxes = null;
 		$foldersCache = $this->getCacheValue($mailAccount->id, 'folders', "folders.php", 'foldersCache');
-		$mailboxes = $foldersCache['mailboxes'];
-		$mailboxesArray = $mailAccount->generateFlatArrayFromMultiDimArray($mailboxes, $mailAccount->retrieveDelimiter());
-		$mailAccount->saveMailBoxFolders($mailboxesArray);
-		$this->deleteEmailCacheForFolders($cacheRoot);
+        if (!empty($foldersCache)) {
+            $mailboxes = $foldersCache['mailboxes'];
+            $mailboxesArray = $mailAccount->generateFlatArrayFromMultiDimArray(
+                $mailboxes,
+                $mailAccount->retrieveDelimiter()
+            );
+            $mailAccount->saveMailBoxFolders($mailboxesArray);
+        }
 		return $mailboxes;
 	} // fn
 
@@ -1332,10 +1329,9 @@ eoq;
 	}
 
 	function createCopyOfInboundAttachment($ie, $ret, $uid) {
-		global $sugar_config;
 
-        if ($this->mboxCacheExists($ie->id, $ie->mailbox, $uid)) {
-            $metaOut = $this->getMboxCacheValue($ie->id, $ie->mailbox, $uid);
+        $metaOut = $this->getMboxCacheValue($ie->id, $ie->mailbox, $uid);
+        if (!empty($metaOut)) {
             $meta = $metaOut['meta']['email'];
 			if (isset($meta['attachments'])) {
 				$attachmentHtmlData = $meta['attachments'];
@@ -2099,20 +2095,16 @@ function getAssignedEmailsCountForUsers($userIds) {
 } // fn
 
 function getLastRobin($ie) {
-	$lastRobin = "";
-	if($this->validCacheFileExists($ie->id, 'folders', "robin.cache.php")) {
-		$lastRobin = $this->getCacheValue($ie->id, 'folders', "robin.cache.php", 'robin');
-	} // if
+        $lastRobin = $this->getCacheValue($ie->id, 'folders', "robin.cache.php", 'robin');
+        if (!$lastRobin) {
+            $lastRobin = "";
+        }
+
 	return $lastRobin;
 } // fn
 
 function setLastRobin($ie, $lastRobin) {
-    global $sugar_config;
-    $cacheFolderPath = sugar_cached("modules/Emails/{$ie->id}/folders");
-    if (!file_exists($cacheFolderPath)) {
-    	mkdir_recursive($cacheFolderPath);
-    }
-	$this->writeCacheFile('robin', $lastRobin, $ie->id, 'folders', "robin.cache.php");
+        $this->writeCacheEntry('robin', $lastRobin, $ie->id, 'folders', "robin.cache.php");
 } // fn
 
 	/**
@@ -2134,8 +2126,8 @@ function getSingleMessage($ie) {
 		$ie->mailbox = $mbox;
 
 
-        if ($this->mboxCacheExists($ieId, $mbox, $uid)) {
-            $out = $this->getMboxCacheValue($ieId, $mbox, $uid);
+        $out = $this->getMboxCacheValue($ieId, $mbox, $uid);
+        if (!empty($out)) {
 			$noCache = false;
 
 			// something fubar'd the cache?
@@ -2758,16 +2750,20 @@ eoq;
 	}
 
 	function clearInboundAccountCache($ieId) {
-		global $sugar_config;
-		$cacheRoot = sugar_cached("modules/Emails/{$ieId}");
-		$files = findAllFiles($cacheRoot."/messages/", array());
-		foreach($files as $file) {
-			unlink($file);
-		} // fn
-		$files = findAllFiles($cacheRoot."/attachments/", array());
-		foreach($files as $file) {
-			unlink($file);
-		} // for
+        $emailCacheKeyMap = sugar_cache_retrieve('email_cache_key_map');
+        $messages = $emailCacheKeyMap[$ieId]['messages'];
+        foreach ($messages as $msg) {
+            sugar_cache_clear($emailCacheKeyMap[$ieId]['messages'][$msg]);
+        }
+        unset($emailCacheKeyMap[$ieId]['messages']);
+
+        $attachments = $emailCacheKeyMap[$ieId]['attachments'];
+        foreach ($attachments as $attachment) {
+            sugar_cache_clear($emailCacheKeyMap[$ieId]['attachments'][$attachment]);
+        }
+        unset($emailCacheKeyMap[$ieId]['attachments']);
+
+        sugar_cache_put('email_cache_key_map', $emailCacheKeyMap);
 	} // fn
 
 	/**
@@ -3123,42 +3119,6 @@ eoq;
     }
 
 	/**
-	 * Validates existence and expiration of a cache file
-	 * @param string $ieId
-	 * @param string $type Type of cache file: folders, messages, etc.
-	 * @param string $file The cachefile name
-	 * @param int refreshOffset Refresh time in secs.
-	 * @return mixed.
-	 */
-	function validCacheFileExists($ieId, $type, $file, $refreshOffset=-1) {
-		global $sugar_config;
-
-		if($refreshOffset == -1) {
-			$refreshOffset = $this->cacheTimeouts[$type]; // use defaults
-		}
-
-        $cacheFilename = $this->getCacheFilePath($ieId, $type, $file);
-        if (file_exists($cacheFilename)) {
-			return true;
-		}
-
-		return false;
-	}
-
-    /**
-     * Checks existence of a cache entry for Mbox and Message id
-     * @param string $ieId Inbound Email Id
-     * @param string $mbox Mailbox folder label
-     * @param string $uid Unique ID of message
-     * @return boolean
-     */
-    public function mboxCacheExists($ieId, $mbox, $uid)
-    {
-        $filename = $this->getMboxCacheFilename($mbox, $uid);
-        return $this->validCacheFileExists($ieId, 'messages', $filename);
-    }
-
-	/**
 	 * retrieves the cached value
 	 * @param string $ieId
 	 * @param string $type Type of cache file: folders, messages, etc.
@@ -3167,22 +3127,12 @@ eoq;
 	 * @return mixed
 	 */
 	function getCacheValue($ieId, $type, $file, $key) {
-		global $sugar_config;
+        $emailCacheKey = $this->getEmailCacheKey($ieId, $type, $file);
+        $entry = sugar_cache_retrieve($emailCacheKey);
 
-        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
-		$cacheFile = array();
-
-		if(file_exists($cacheFilePath)) {
-			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile
-
-			if(isset($cacheFile[$key])) {
-                $ret = Serialized::unserialize($cacheFile[$key]);
-				return $ret;
-			}
-		} else {
-			$GLOBALS['log']->debug("EMAILUI: cache file not found [ {$cacheFilePath} ] - creating blank cache file");
-			$this->writeCacheFile('retArr', array(), $ieId, $type, $file);
-		}
+        if ($entry && isset($entry[$key])) {
+            return $entry[$key];
+        }
 
 		return null;
 	}
@@ -3201,25 +3151,19 @@ eoq;
     }
 
 	/**
-	 * retrieves the cache file last touched time
+     * retrieves the cache entry last touched time
 	 * @param string $ieId
 	 * @param string $type Type of cache file: folders, messages, etc.
 	 * @param string $file The cachefile name
 	 * @return string
 	 */
 	function getCacheTimestamp($ieId, $type, $file) {
-		global $sugar_config;
+        $emailCacheKey = $this->getEmailCacheKey($ieId, $type, $file);
+        $entry = sugar_cache_retrieve($emailCacheKey);
 
-        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
-		$cacheFile = array();
-
-		if(file_exists($cacheFilePath)) {
-			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
-
-			if(isset($cacheFile['timestamp'])) {
-				$GLOBALS['log']->debug("EMAILUI: found timestamp [ {$cacheFile['timestamp']} ]");
-				return $cacheFile['timestamp'];
-			}
+        if ($entry && isset($entry['timestamp'])) {
+                $GLOBALS['log']->debug("EMAILUI: found timestamp [ {$entry['timestamp']} ]");
+                return $entry['timestamp'];
 		}
 
 		return '';
@@ -3233,41 +3177,42 @@ eoq;
 	 * @param string $file The cachefile name
 	 */
 	function setCacheTimestamp($ieId, $type, $file) {
-		global $sugar_config;
+        $emailCacheKey = $this->getEmailCacheKey($ieId, $type, $file);
+        $entry = sugar_cache_retrieve($emailCacheKey);
 
-        $cacheFilePath = $this->getCacheFilePath($ieId, $type, $file);
-		$cacheFile = array();
-
-		if(file_exists($cacheFilePath)) {
-			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile['timestamp']
-
-			if(isset($cacheFile['timestamp'])) {
-				$cacheFile['timestamp'] = strtotime('now');
-				$GLOBALS['log']->debug("EMAILUI: setting updated timestamp [ {$cacheFile['timestamp']} ]");
-				return $this->_writeCacheFile($cacheFile, $cacheFilePath);
-			}
+        if ($entry && isset($entry['timestamp'])) {
+            $entry['timestamp'] = strtotime('now');
+            $GLOBALS['log']->debug("EMAILUI: setting updated timestamp [ {$entry['timestamp']} ]");
+            return sugar_cache_put($emailCacheKey, $entry);
 		}
 	}
 
+    private function getEmailCacheKey($ieId, $type, $file)
+    {
+        return "emails_{$ieId}_{$type}_{$file}";
+    }
 
 	/**
-	 * Writes caches to flat file in cache dir.
+     * Writes $var to cache along with current timestamp
 	 * @param string $key Key to the main cache entry (not timestamp)
 	 * @param mixed $var Variable to be cached
 	 * @param string $ieId I-E focus ID
 	 * @param string $type Folder in cache
 	 * @param string $file Cache file name
 	 */
-	function writeCacheFile($key, $var, $ieId, $type, $file) {
-		global $sugar_config;
-
-        $the_file = $this->getCacheFilePath($ieId, $type, $file);
+    public function writeCacheEntry($key, $var, $ieId, $type, $file)
+    {
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;
-		$array[$key] = serialize($var); // serialized since varexport_helper() can't handle PHP objects
+        $array[$key] = $var;
+        $emailCacheKey = $this->getEmailCacheKey($ieId, $type, $file);
+        sugar_cache_put($emailCacheKey, $array);
 
-		return $this->_writeCacheFile($array, $the_file);
+        // store $emailCacheKey to be used in cleaning up cache
+        $emailCacheKeyMap = sugar_cache_retrieve('email_cache_key_map');
+        $emailCacheKeyMap[$ieId][$type][$file] = $emailCacheKey;
+        sugar_cache_put('email_cache_key_map', $emailCacheKeyMap);
 	}
 
     /**
@@ -3281,36 +3226,8 @@ eoq;
     public function writeMboxCacheValue($ieId, $mbox, $uid, $var)
     {
         $filename = $this->getMboxCacheFilename($mbox, $uid);
-        return $this->writeCacheFile('out', $var, $ieId, 'messages', $filename);
+        return $this->writeCacheEntry('out', $var, $ieId, 'messages', $filename);
     }
-
-	/**
-	 * Performs the actual file write.  Abstracted from writeCacheFile() for
-	 * flexibility
-	 * @param array $array The array to write to the cache
-	 * @param string $file Full path (relative) with cache file name
-	 * @return bool
-	 */
-	function _writeCacheFile($array, $file) {
-		global $sugar_config;
-
-		$arrayString = var_export_helper($array);
-
-		$date = date("r");
-	    $the_string =<<<eoq
-<?php // created: {$date}
-	\$cacheFile = {$arrayString};
-?>
-eoq;
-	    if($fh = @sugar_fopen($file, "w")) {
-	        fputs($fh, $the_string);
-	        fclose($fh);
-	        return true;
-	    } else {
-	    	$GLOBALS['log']->debug("EMAILUI: Could not write cache file [ {$file} ]");
-	        return false;
-	    }
-	}
 
     /**
      * Delete a cache entry
@@ -3322,11 +3239,13 @@ eoq;
     public function deleteMboxCache($ieId, $mbox, $uid)
     {
         $filename = $this->getMboxCacheFilename($mbox, $uid);
-        $cacheFilename = $this->getCacheFilePath($ieId, 'messages', $filename);
-        if (file_exists($cacheFilename)) {
-            $msgCacheFile = FileLoader::validateFilePath($cacheFilename);
-            unlink($msgCacheFile);
-        }
+        $emailCacheKey = $this->getEmailCacheKey($ieId, 'messages', $filename);
+        sugar_cache_clear($emailCacheKey);
+
+        $emailCacheKeyMap = sugar_cache_retrieve('email_cache_key_map');
+        unset($emailCacheKeyMap[$ieId]['messages'][$filename]);
+
+        sugar_cache_put('email_cache_key_map', $emailCacheKeyMap);
     }
 
 	/**
