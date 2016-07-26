@@ -46,6 +46,7 @@ $viewdefs['pmse_Business_Rules']['base']['layout']['records'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                                 'targetEl' => '.filter',
                                                 'position' => 'prepend',
                                             ),

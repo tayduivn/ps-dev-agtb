@@ -34,24 +34,19 @@ $viewdefs['base']['layout']['selection-list-module-switch'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => array(
-                                                    'type' =>'filter',
-                                                    'meta' => array(
-                                                        'components' => array(
-                                                            array(
-                                                                'view' => 'filter-module-dropdown-selection-list'
-                                                            ),
-                                                            array(
-                                                                'view' => 'filter-filter-dropdown'
-                                                            ),
-                                                            array(
-                                                                'view' => 'filter-quicksearch'
-                                                            ),
+                                                'layout' => 'filter',
+                                                'loadModule' => 'Filters',
+                                                'xmeta' => array(
+                                                    'components' => array(
+                                                        array(
+                                                            'view' => 'filter-module-dropdown-selection-list',
                                                         ),
-                                                        'last_state' => array(
-                                                            'id' => 'filter',
+                                                        array(
+                                                            'view' => 'filter-filter-dropdown',
                                                         ),
-                                                        'layoutType' => 'records',
+                                                        array(
+                                                            'view' => 'filter-quicksearch',
+                                                        ),
                                                     ),
                                                 ),
                                             ),

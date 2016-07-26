@@ -34,23 +34,8 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => array(
-                                                    'type' =>'filter',
-                                                    'meta' => array(
-                                                        'components' => array(
-                                                            array(
-                                                                'view' => 'filter-filter-dropdown'
-                                                            ),
-                                                            array(
-                                                                'view' => 'filter-quicksearch'
-                                                            ),
-                                                        ),
-                                                        'last_state' => array(
-                                                            'id' => 'filter',
-                                                        ),
-                                                        'layoutType' => 'records',
-                                                    ),
-                                                ),
+                                                'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

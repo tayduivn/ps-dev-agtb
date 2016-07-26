@@ -48,6 +48,7 @@ $viewdefs['Styleguide']['base']['layout']['records'] = array(
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'loadModule' => 'Filters',
                                             ),
                                             array(
                                                 'view' => 'filter-rows',

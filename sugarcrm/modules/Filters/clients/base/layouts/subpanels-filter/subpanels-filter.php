@@ -11,17 +11,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['base']['layout']['dashablelist-filter'] = array(
+$viewdefs['Filters']['base']['layout']['subpanels-filter'] = array(
+    'type' => 'filter',
     'components' => array(
         array(
-            'layout' => 'filterpanel',
-            'xmeta' => array(
-                'filter_options' => array(
-                    'auto_apply' => false,
-                    'stickiness' => false,
-                    'show_actions' => false,
-                ),
-            ),
+            'view' => 'filter-module-dropdown',
         ),
+        array(
+            'view' => 'filter-filter-dropdown',
+        ),
+        array(
+            'view' => 'filter-quicksearch',
+        ),
+    ),
+    'last_state' => array(
+        'id' => 'filter',
     ),
 );
