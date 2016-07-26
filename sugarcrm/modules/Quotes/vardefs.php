@@ -70,6 +70,13 @@ $dictionary['Quote'] = array(
             'source' => 'non-db',
             'comment' => 'Tax Rate Name',
         ),
+        'taxrates' => array(
+            'name' => 'taxrates',
+            'type' => 'link',
+            'relationship' => 'taxrate_quotes',
+            'vname' => 'LBL_TAXRATE',
+            'source' => 'non-db',
+        ),
         'show_line_nums' => array(
             'name' => 'show_line_nums',
             'vname' => 'LBL_SHOW_LINE_NUMS',

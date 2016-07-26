@@ -47,7 +47,25 @@ $dictionary['TaxRate'] = array(
             'module' => 'ProductBundles',
             'bean_name' => 'ProductBundle',
             'source' => 'non-db'
-        )
+        ),
+        'quotes' => array(
+            'name' => 'quotes',
+            'type' => 'link',
+            'relationship' => 'taxrate_quotes',
+            'vname' => 'LBL_TAXRATE',
+            'source' => 'non-db',
+        ),
+    ),
+    'relationships' => array(
+        'taxrate_quotes' => array(
+            'lhs_module' => 'TaxRates',
+            'lhs_table' => 'taxrates',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Quotes',
+            'rhs_table' => 'quotes',
+            'rhs_key' => 'quote_id',
+            'relationship_type' => 'one-to-many',
+        ),
     ),
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule' => 'Quotes', 'allowUserRead' => true))
 );
