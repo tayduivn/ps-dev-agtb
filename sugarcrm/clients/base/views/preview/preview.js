@@ -223,13 +223,18 @@
      * of if statements.
      */
     showPreviousNextBtnGroup: function () {
-        if (!this.model || !this.layout || !this.collection) {
+        if (!this.model || !this.layout) {
             return;
         }
+
         var collection = this.collection;
-        if (!collection.size()) {
+        if (!collection || !collection.size()) {
             this.layout.hideNextPrevious = true;
+            // Need to rerender the preview header
+            this.layout.trigger('preview:pagination:update');
+            return;
         }
+
         var recordIndex = collection.indexOf(collection.get(this.model.id));
         this.layout.previous = collection.models[recordIndex-1] ? collection.models[recordIndex-1] : undefined;
         this.layout.next = collection.models[recordIndex+1] ? collection.models[recordIndex+1] : undefined;
