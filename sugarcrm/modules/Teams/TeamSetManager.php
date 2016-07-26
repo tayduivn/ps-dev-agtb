@@ -479,51 +479,6 @@ class TeamSetManager {
     }
 
     /**
-     * Rebuild the team_sets_teams relationship and remove any teams that have been deleted from the system from the team set
-     * Go through each team set and check if each team on the set is still in the teams table.
-     *
-     * @return the team sets that have been affected as well as the team ids within those team sets
-     */
-    public static function rebuildTeamSets(){
-
-		$teamSet = BeanFactory::getBean('TeamSets');
-		$sql = "SELECT id FROM $teamSet->table_name WHERE deleted = 0";
-
-		$result = $teamSet->db->query($sql);
-		$affectedTeamSets = array();
-		while($row = $teamSet->db->fetchByAssoc($result)){
-			$team_set_id = $row['id'];
-			$teamSetTeamIds = $teamSet->getTeams($team_set_id);
-
-            $teamSqlNoDelete = sprintf(
-                'SELECT team_id FROM team_sets_teams team_set_id = %s',
-                $teamSet->db->quoted($team_set_id)
-            );
-			$resultNoDelete = $teamSet->db->query($teamSqlNoDelete);
-			$teamIdsNoDelete = array();
-			while($rowNoDelete = $teamSet->db->fetchByAssoc($resultNoDelete)){
-	    		$teamIdsNoDelete[] = $rowNoDelete['id'];
-	    	}
-
-	    	//no we have a set of teams actually in the table: $teamIdsNoDelete
-	    	//and a list of teams joined against the teams table: $teamSetTeamIds
-	    	//let's compare them and see if there are any differences.
-	    	$diff = array_diff($teamIdsNoDelete, $teamSetTeamIds);
-	    	if(!empty($diff)){
-	    		$affectedTeamSets[$team_set_id] = array();
-	    		//remove any of these teams from the set.
-	    		foreach($diff as $team_id){
-	    			$teamSet->id = $team_set_id;
-	    			$teamSet->removeTeamFromSet($team_id);
-	    			//TODO we can remove the team_set_id from the WHERE if we don't care about reassignment
-	    			$affectedTeamSets[$team_set_id][] = $team_id;
-	    		}
-	    	}
-		}
-		return $affectedTeamSets;
-    }
-
-    /**
      * Given a particular team id, remove the team from all team sets that it belongs to
      *
      * @param string $team_id The team's id to remove from the team sets

@@ -255,14 +255,6 @@ class TeamSet extends SugarBean{
     private function _addTeamToSet($team_id){
         if($this->load_relationship('teams')){
             $this->teams->add($team_id);
-        }else{
-            $guid = create_guid();
-            $insertQuery = sprintf(
-                'INSERT INTO team_sets_teams (id, team_set_id, team_id) VALUES (%s, %s, %s)',
-                $this->db->quoted($guid),
-                $this->db->quoted($this->id),
-                $this->db->quoted($team_id)
-            );
             $GLOBALS['db']->query($insertQuery);
         }
     }
@@ -369,82 +361,4 @@ class TeamSet extends SugarBean{
         } // if
         return $usersArray;
     } // fn
-
-    /**
-    * This is used in Reports to give faster performance so we do not have to perform the subquery. We might come back to this
-    * if we can find a way to speed up the subquery.
-    *
-    * @param string $user_id
-    * @return bool
-    */
-    public function populateUserTempTable($current_user){
-        if(!is_admin($current_user)){
-            $user_id = $current_user->id;
-            $selectQuery = sprintf(
-                'SELECT tst.team_set_id, tst.date_modified FROM team_sets_teams tst
-                INNER JOIN team_memberships ON tst.team_id = team_memberships.team_id
-                AND team_memberships.user_id = %s AND team_memberships.deleted = 0
-                group by tst.team_set_id ORDER BY date_modified DESC',
-                $this->db->quoted($current_user->id)
-            );
-
-            $foundInCache = false;
-
-            $teamSetsUsers = sugar_cache_retrieve('TeamSetsUsersCache');
-            if ( $teamSetsUsers != null && !empty($teamSetsUsers[$user_id])) {
-                $foundInCache = true;
-            }
-
-			$cachedfile = sugar_cached('modules/Teams/TeamSetsUsersCache.php');
-            if (!$foundInCache && file_exists($cachedfile) ) {
-                require_once($cachedfile);
-                if(!empty($teamSetsUsers[$user_id])){
-                        $foundInCache = true;
-                }
-            }
-
-            $result = $this->db->query($selectQuery, TRUE, "Error finding team memberships: ");
-            $row = $this->db->fetchByAssoc($result);
-
-            if($foundInCache){
-                //check if the date_modified of the first record is later than the last cache for this user.
-                if($row['date_modified'] <= $teamSetsUsers[$user_id]){
-                    return true;
-                }
-            }else{
-                $teamSetsUsers[$user_id] = $row['date_modified'];
-                sugar_cache_put('TeamSetsUsersCache',$teamSetsUsers);
-
-                if ( ! file_exists($cachedfile) ) { mkdir_recursive(dirname($cachedfile)); }
-
-                $fd = fopen($cachedfile,'w');
-                fwrite($fd,"<?php\n\n".'$teamSetsUsers = '.var_export($teamSetsUsers,true).";\n ?>");
-                fclose($fd);
-            }
-
-            //delete everything for this user first
-            $delQuery = sprintf(
-                'DELETE FROM team_sets_users WHERE user_id = %s',
-                $this->db->quoted($user_id)
-            );
-            $this->db->query($delQuery);
-
-            //now update the table
-            $insertQuery = "INSERT INTO team_sets_users (team_set_id, user_id) VALUES ";
-            $isFirst = true;
-            while($row = $this->db->fetchByAssoc($result)){
-                if(!$isFirst){
-                    $insertQuery .= ",";
-                }
-                $isFirst = false;
-                $insertQuery .= sprintf(
-                    '(%s, %s)',
-                    $this->db->quoted($row['team_set_id']),
-                    $this->db->quoted($user_id)
-                );
-            }
-            $this->db->query($insertQuery, TRUE, "Error finding team memberships: ");
-        }
-        return true;
-    }
 }
