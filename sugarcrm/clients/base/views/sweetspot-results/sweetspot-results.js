@@ -18,8 +18,7 @@
     tagName: 'ul',
 
     events: {
-        'click a[href]': 'triggerHide',
-        'click a[data-callback]': 'triggerAction'
+        'click li[data-sweetaction] > a': 'triggerAction',
     },
 
     /**
@@ -270,23 +269,32 @@
 
         this.triggerHide();
 
-        var $action = this.$('.active > a');
-        var route = $action.attr('href');
+        var $action;
+        if (evt) {
+            evt.preventDefault();
+            // When the user clicks on an action, we need to select that action
+            // instead of the active one.
+            $action = this.$(evt.currentTarget);
+        } else {
+            $action = this.$('.active > a');
+        }
+
+        var route = $action.data('route');
         if (route) {
+            var openwindow = $action.data('openwindow');
+            if (openwindow) {
+                // If the there is an `openwindow` property configured on the action
+                // metadata, open this action in a new browser window.
+                window.open(route, '_blank');
+                return;
+            }
+
             app.router.navigate(route, {trigger: true});
         }
 
-        var action;
-        if (evt) {
-            // When the user clicks on an action, we need to select that action
-            // instead of the active one.
-            action = this.$(evt.currentTarget).data('callback');
-        } else {
-            action = $action.data('callback');
-        }
-
-        if (action) {
-            this.layout.triggerSystemAction(action);
+        var callback = $action.data('callback');
+        if (callback) {
+            this.layout.triggerSystemAction(callback);
         }
     },
 

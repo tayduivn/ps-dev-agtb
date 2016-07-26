@@ -11,7 +11,9 @@
  */
 --}}
 <li data-sweetaction="true">
-    <a{{#if route}} href="{{route}}" track="click:sweetspot-action-{{route}}"{{/if}}{{#if callback}} data-callback="{{callback}}"{{/if}}>
+    <a{{#if route}} href="{{route}}" data-route="{{route}}" track="click:sweetspot-action-{{route}}"{{/if}}
+      {{#if openwindow}} data-openwindow="true"{{/if}}
+      {{#if callback}} data-callback="{{callback}}"{{/if}}>
         {{#if label}}
         <span class="label label-module label-module-md label-{{module}}" rel="tooltip" data-title="{{module}}">{{label}}</span>
         {{/if}}

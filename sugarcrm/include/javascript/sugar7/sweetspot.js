@@ -109,14 +109,20 @@
                         weight = 30;
                         name = app.lang.get(action.label, module)
                     }
-                    actions[jsFunc]({
+                    var actionObj = {
                         module: module,
                         label: app.lang.getModuleIconLabel(module),
                         name: name,
                         route: action.route,
                         icon: action.icon,
-                        weight: weight
-                    });
+                        weight: weight,
+                    };
+
+                    if (action.openwindow) {
+                        actionObj.openwindow = action.openwindow;
+                    }
+
+                    actions[jsFunc](actionObj);
                 });
             });
             var profileActions = app.metadata.getView(null, 'profileactions');
@@ -125,12 +131,18 @@
                     return;
                 }
 
-                actions.push({
+                var profileActionObj = {
                     name: app.lang.get(action.label),
                     route: action.route,
                     icon: action.icon,
                     weight: 10
-                });
+                };
+
+                if (action.openwindow) {
+                    profileActionObj.openwindow = action.openwindow;
+                }
+
+                actions.push(profileActionObj);
             });
             return actions;
         };
