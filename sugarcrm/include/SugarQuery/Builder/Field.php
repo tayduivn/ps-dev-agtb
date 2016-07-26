@@ -245,10 +245,13 @@ class SugarQuery_Builder_Field
                     }
                     //Now actually join the related table
                     $jta = $this->query->getJoinTableAlias($this->def['name']);
-                    $join = $this->query->joinTable($farBean->table_name, array('joinType' => 'LEFT', 'alias' => $jta))
+                    $this->query->joinTable($farBean->table_name, array(
+                        'joinType' => 'LEFT',
+                        'bean' => $farBean,
+                        'alias' => $jta,
+                    ))
                         ->on()->equalsField("{$idField->table}.{$this->def['id_name']}", "{$jta}.id")
                         ->equals("{$jta}.deleted", 0);
-                    $join->bean = $farBean;
                 }
             }
             if (!empty($this->def['link']) && !$this->query->getJoinAlias($this->def['link'])) {

@@ -22,20 +22,18 @@ class SugarTestLeadUtilities
         $time = mt_rand();
         $lead = new Lead();
 
-        if (isset($leadValues['first_name'])) {
-            $lead->first_name = $leadValues['first_name'];
-        } else {
-            $lead->first_name = 'SugarLeadFirst' . $time;
-        }
-        if (isset($leadValues['last_name'])) {
-            $lead->last_name = $leadValues['last_name'];
-        } else {
-            $lead->last_name = 'SugarLeadLast';
-        }
-        if (isset($leadValues['email'])) {
-            $lead->email1 = $leadValues['email'];
-        } else {
-            $lead->email1 = 'lead@'. $time. 'sugar.com';
+        $leadValues = array_merge(array(
+            'first_name' => 'SugarLeadFirst' . $time,
+            'last_name' => 'SugarLeadLast' . $time,
+            'email' => 'lead@'. $time. 'sugar.com',
+        ), $leadValues);
+
+        // for backward compatibility with existing tests
+        $leadValues['email1'] = $leadValues['email'];
+        unset($leadValues['email']);
+
+        foreach ($leadValues as $property => $value) {
+            $lead->$property = $value;
         }
 
         if(!empty($id))

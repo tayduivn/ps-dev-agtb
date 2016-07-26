@@ -16,6 +16,8 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestCaseUtilities::removeAllCreatedCases();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestContactUtilities::removeAllCreatedContacts();
 
         SugarBean::clearLoadedDef('Case');
         SugarBean::clearLoadedDef('Contact');
@@ -75,6 +77,29 @@ class FieldTest extends Sugar_PHPUnit_Framework_TestCase
         $queryDeleted->where()->in('account_id', array($account->id));
         $result = $queryDeleted->execute();
         $this->assertEmpty($result, 'Deleted account should not be selected');
+    }
+
+    public function testGetRelatedFullNameFieldWithoutLink()
+    {
+        $contact = SugarTestContactUtilities::createContact();
+        $lead = SugarTestLeadUtilities::createLead(null, array(
+            'reports_to_id' => $contact->id,
+        ));
+
+        $query = new SugarQuery();
+        $query->select('id', 'report_to_name');
+        $query->from($lead, array(
+            'team_security' => false,
+        ));
+        $query->where()->equals('id', $lead->id);
+        $result = $query->execute();
+
+        $this->assertCount(1, $result);
+
+        $row = array_shift($result);
+        $this->assertEquals($lead->id, $row['id']);
+        $this->assertEquals($contact->first_name, $row['rel_report_to_name_first_name']);
+        $this->assertEquals($contact->last_name, $row['rel_report_to_name_last_name']);
     }
 
     public function testGetFieldDef()
