@@ -3604,7 +3604,7 @@ eoq;
         );
 
         $num = 0;
-        $recipients = $this->getEmailRecipients($role);
+        $recipients = $this->getAllEmailRecipients($role);
 
         foreach ($recipients['records'] as $recipient) {
             $bean = BeanFactory::retrieveBean(
@@ -3643,29 +3643,75 @@ eoq;
     }
 
     /**
-     * Returns recipients with the specified role.
+     * Returns all recipients with the specified role.
      *
      * @param string $role Can be "to", "cc", or "bcc".
      * @return array
      */
-    protected function getEmailRecipients($role)
+    protected function getAllEmailRecipients($role)
     {
-        //FIXME: This is a temporary solution.
-        // It will not retrieve all recipients if there are more than five.
-        // It returns data like an API response instead of beans.
+        $recipients = array();
+        $offset = array();
+
+        do {
+            $args = array();
+            if (!empty($offset)) {
+                $args['offset'] = $offset;
+            }
+            $result = $this->getEmailRecipients($role, $args);
+            $offset = $result['next_offset'];
+            $recipients = array_merge($recipients, $result['records']);
+        } while ($this->hasMoreRecipients($result));
+
+        return array(
+            'records' => $recipients,
+            'next_offset' => $offset,
+        );
+    }
+
+    /**
+     * Returns recipients with the specified role.
+     *
+     * @param string $role Can be "to", "cc", or "bcc".
+     * @param array $args Additional arguments to pass to the Collection Api
+     * @return array
+     */
+    protected function getEmailRecipients($role, $args)
+    {
+        $limit = 20;
         $service = new RestService();
         $service->user = $GLOBALS['current_user'];
         $api = new RelateCollectionApi();
-        $args = array(
+        $limit = $api->checkMaxListLimit($limit);
+        $args = array_merge(array(
             'module' => $this->module_dir,
             'record' => $this->id,
             'collection_name' => $role,
             'fields' => array(
                 'email_address_used',
             ),
-        );
+            'max_num' => $limit,
+        ), $args);
 
         return $api->getCollection($service, $args);
+    }
+
+    /**
+     * Determine if the given recipient result set has more recipients to
+     * retrieve.
+     *
+     * @param array $result Recipient results containing a `next_offset`
+     * @return bool
+     */
+    protected function hasMoreRecipients($result)
+    {
+        $offsets = $result['next_offset'];
+        foreach ($offsets as $key => $value) {
+            if ($value > -1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

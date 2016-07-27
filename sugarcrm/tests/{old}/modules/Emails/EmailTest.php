@@ -463,6 +463,71 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::getAllEmailRecipients
+     * @covers ::hasMoreRecipients
+     */
+    public function testGetAllEmailRecipients_LessRecipientsThanMaxBatch_RetrievesAllRecipientsOneCall()
+    {
+        $numberRecipients = 6;
+        $mockRecords = array();
+
+        for ($i = 1; $i <= $numberRecipients; $i++) {
+            $mockRecords[] = array('id' => $i);
+        }
+        $mockResult = array(
+            'records' => $mockRecords,
+            'next_offset' => array(
+                'foo' => -1,
+                'bar' => -1,
+            ),
+        );
+
+        $mockEmail = $this->getMock('Email', array('getEmailRecipients'));
+        $mockEmail->expects($this->once())
+            ->method('getEmailRecipients')
+            ->will($this->returnValue($mockResult));
+
+        $result = SugarTestReflection::callProtectedMethod($mockEmail, 'getAllEmailRecipients', array('to'));
+        $this->assertEquals($result['records'], $mockRecords, 'records returned are not correct');
+    }
+
+    /**
+     * @covers ::getAllEmailRecipients
+     * @covers ::hasMoreRecipients
+     */
+    public function testGetAllEmailRecipients_MoreRecipientsThanMaxBatch_RetrievesAllRecipientsOneCall()
+    {
+        $numberRecipients = 26;
+        $mockRecords = array();
+
+        for ($i = 1; $i <= $numberRecipients; $i++) {
+            $mockRecords[] = array('id' => $i);
+        }
+        $mockResult1 = array(
+            'records' => array_slice($mockRecords, 0, 20),
+            'next_offset' => array(
+                'foo' => -1,
+                'bar' => 20,
+            ),
+        );
+        $mockResult2 = array(
+            'records' => array_slice($mockRecords, 20),
+            'next_offset' => array(
+                'foo' => -1,
+                'bar' => -1,
+            ),
+        );
+
+        $mockEmail = $this->getMock('Email', array('getEmailRecipients'));
+        $mockEmail->expects($this->exactly(2))
+            ->method('getEmailRecipients')
+            ->will($this->onConsecutiveCalls($mockResult1, $mockResult2));
+
+        $result = SugarTestReflection::callProtectedMethod($mockEmail, 'getAllEmailRecipients', array('to'));
+        $this->assertEquals($result['records'], $mockRecords, 'number of records returned is not correct');
+    }
+
+    /**
      * This test proves that the `total_attachments` field increases and decreases when attachments are linked and
      * unlinked, respectively.
      */
