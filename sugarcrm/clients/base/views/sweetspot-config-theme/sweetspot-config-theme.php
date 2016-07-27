@@ -16,7 +16,7 @@ $viewdefs['base']['view']['sweetspot-config-theme'] = array(
             'name' => 'theme',
             'type' => 'enum',
             'label' => 'LBL_SWEETSPOT_THEME_SELECT',
-            'enum_width' => 'auto',
+            'enum_width' => 'resolve',
             'options' => 'sweetspot_theme_options',
         ),
     ),
