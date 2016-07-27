@@ -603,14 +603,20 @@ describe('Sugar Socket Server Client', function() {
             });
         });
         describe('authorize', function() {
-            var token, channels, IOStub;
+            var token;
+            var channels;
+            var IOStub;
+            var location;
 
             beforeEach(function() {
                 token = Math.random();
                 channels = Math.random();
+                location = {
+                    origin: Math.random(),
+                    pathname: Math.random()
+                };
 
-                app.config.siteUrl = Math.random();
-                app.config.serverUrl = Math.random();
+                app.config.serverUrl = 'path\/to\/instace\/rest\/v10';
                 app.api = {
                     getOAuthToken: scope.stub().returns(token)
                 };
@@ -620,6 +626,7 @@ describe('Sugar Socket Server Client', function() {
                 };
 
                 scope.stub(app.socket, '_currentChannels').returns(channels);
+                scope.stub(app.socket, '_getLocation').returns(location);
                 scope.stub(app.socket, 'socket').returns(IOStub);
             });
 
@@ -633,7 +640,7 @@ describe('Sugar Socket Server Client', function() {
                 app.socket.authorize();
                 sinon.assert.calledOnce(IOStub.emit);
                 var actual = IOStub.emit.getCall(0).args[1];
-                expect(actual.siteUrl).toBe(app.config.siteUrl);
+                expect(actual.siteUrl).toBe(location.origin + location.pathname);
             });
             it('passes correct serverUrl to message', function() {
                 app.socket.authorize();
