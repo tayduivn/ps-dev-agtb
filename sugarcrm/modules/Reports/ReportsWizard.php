@@ -19,8 +19,8 @@ require_once('modules/Reports/templates/templates_reports.php');
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-if(!empty($args['reporter']->saved_report)) {
-    $context = array("bean" => $args['reporter']->saved_report);
+if (!empty($this->bean)) {
+    $context = array('bean' => $this->bean);
 } else {
     $context = array();
 }
