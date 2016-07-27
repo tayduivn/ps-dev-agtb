@@ -8216,7 +8216,7 @@ $app_strings = array (
   'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activity Stream',
-  'LBL_COPYRIGHT' => 'Copyright © 2004-2015 SugarCRM Inc. All Rights Reserved.',
+  'LBL_COPYRIGHT' => 'Copyright © 2004-2016 SugarCRM Inc. All Rights Reserved.',
     'LBL_TRADEMARK' => 'Sugar and SugarCRM are trademarks owned by SugarCRM Inc. '.
         'All other trademarks are the property of their respective owners.',
     'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
