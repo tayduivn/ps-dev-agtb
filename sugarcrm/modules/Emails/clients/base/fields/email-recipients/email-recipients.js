@@ -46,6 +46,10 @@
                 // create a new virtual collection
                 this.model.set(this.name, []);
             }
+        } else if (!this.model.get(this.name)) {
+            this.model.once('sync', this._fetchAllRecipients, this);
+        } else {
+            this._fetchAllRecipients();
         }
 
         this.select2ResultTemplate = app.template.getField(
@@ -621,5 +625,35 @@
                 addRecipients(recipients);
             }
         );
+    },
+
+    /**
+     * Retrieves all records for the to/cc/bcc field if they exceed the maximum
+     * config setting from the application
+     *
+     * @private
+     */
+    _fetchAllRecipients: function() {
+        var collection;
+
+        if (this.model && !this.disposed) {
+            try {
+                collection = this._getFieldValue();
+            } catch (e) {
+                // create a new virtual collection
+                this.model.set(this.name, []);
+                collection = this.model.get(this.name);
+            }
+
+            collection.fetchAll({
+                fields: ['name', 'email_address_used'],
+                success: _.bind(function() {
+                    if (this.action === 'edit' && !this.disposed) {
+                        // format the recipients and put them in the DOM
+                        this._updateSelect2(this.getFormattedValue());
+                    }
+                }, this)
+            });
+        }
     }
 })

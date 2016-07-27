@@ -720,4 +720,45 @@ describe('Emails.fields.email-recipients', function() {
             expect(renderStub.callCount).toEqual(2);
         });
     });
+
+    describe('fetching all recipients when the field is created', function() {
+        var collection;
+
+        beforeEach(function() {
+            model.set('id', _.uniqueId());
+            model.unset('to');
+
+            field = SugarTest.createField({
+                client: 'base',
+                name: 'to',
+                type: 'email-recipients',
+                viewName: 'edit',
+                module: context.get('module'),
+                model: model,
+                context: context,
+                loadFromModule: true
+            });
+
+            collection = {
+                fetchAll: sandbox.stub().yieldsTo('success')
+            };
+            sandbox.stub(field, '_getFieldValue').returns(collection);
+            sandbox.stub(field, 'getFormattedValue');
+            sandbox.stub(field, '_updateSelect2');
+        });
+
+        it('should update the dom', function() {
+            field.action = 'edit';
+            field.model.trigger('sync');
+            expect(collection.fetchAll).toHaveBeenCalled();
+            expect(field._updateSelect2).toHaveBeenCalled();
+        });
+
+        it('should not update the dom', function() {
+            field.action = 'detail';
+            field.model.trigger('sync');
+            expect(collection.fetchAll).toHaveBeenCalled();
+            expect(field._updateSelect2).not.toHaveBeenCalled();
+        });
+    });
 });
