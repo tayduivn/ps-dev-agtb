@@ -38,13 +38,35 @@
      */
     loadData: function(options, setFields) {
         var self = this,
-            sep = '/',
-            pmseInboxUrl = app.api.buildURL(this.module + '/case/' + this.inboxId + sep + this.flowId, '', {}, {});
+            pmseInboxUrl = app.api.buildURL(this.module + '/case/' + this.inboxId + '/' + this.flowId);
 
-        app.api.call('READ', pmseInboxUrl, {}, {
+        app.api.call('read', pmseInboxUrl, {}, {
             success: function (data) {
+                // Make sure we have an options object to work with
+                var options = options || {};
+
+                // This allows us to define our own endpoint setter, which is needed
+                // for case view to force consuming our own endpoint
+                options.endpoint = function(method, model, options, callbacks) {
+                    var casModule = data.case.flow.cas_sugar_module;
+                    var casModuleId = data.case.flow.cas_sugar_object_id;
+
+                    // This is the endpoint URL we want to consume
+                    var url = app.api.buildURL('pmse_Inbox/caseRecord/' + casModule + '/' + casModuleId);
+
+                    // For some reason, options contains a method property that
+                    // is causing the subsequent success call to be a READ HTTP
+                    // Request Type. So delete the method property of options to
+                    // force a GET request to be made.
+                    delete options.method;
+
+                    // Send back the data from our own endpoint
+                    return app.api.call('read', url, {}, callbacks, options);
+                }
+
                 self.initCaseView(data, [options, setFields])
             },
+
             error: function (error) {
                 app.error.handleNotFoundError();
             }
@@ -111,10 +133,6 @@
         this.recordContext = context;
         this.recordModel = context.get('model');
 
-        // Override Data.Bean#getLockedFields to return an empty array
-        this.recordModel.getLockedFields = function() {
-            return [];
-        };
         // Get the current module specific record layout and view
         var origRecordLayout = app.metadata.getLayout(this.recordModule, 'record');
         var origRecordView = app.metadata.getView(this.recordModule, 'record');
@@ -123,7 +141,7 @@
         if (!record) {
             app.logger.fatal('Record not found.');
         }
-        
+
         // Override the templates and buttons to use Process Author's templates and buttons
         var recordMeta = _.extend({}, origRecordView, {
             template: 'pmse-case',

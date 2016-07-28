@@ -339,7 +339,7 @@ class RestService extends ServiceBase
      * @param  RestRequest $req REST request data
      * @return mixed
      */
-    protected function findRoute(RestRequest $req)
+    public function findRoute(RestRequest $req)
     {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');

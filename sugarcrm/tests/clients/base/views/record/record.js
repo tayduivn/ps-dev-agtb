@@ -164,7 +164,7 @@ describe("Record View", function () {
             expect(actual_button_length).toBe(2);
         });
 
-        it('Should not have the locked fields as editable', function() {
+        it('Should have locked fields', function() {
 
             view.render();
             view.model.set({
@@ -173,10 +173,10 @@ describe("Record View", function () {
                 description: 'Description'
             });
             view.model.set('locked_fields', ['name']);
-            view._handleLockedFields();
+            view.handleLockedFields();
 
-            var actualFieldLength = _.keys(view.editableFields).length;
-            expect(actualFieldLength).toBe(7);
+            var hasLockedFields = view.hasLockedFields();
+            expect(hasLockedFields).toBe(true);
         });
 
         it("Should hide 4 editable fields", function () {

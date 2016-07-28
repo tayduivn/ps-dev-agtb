@@ -157,7 +157,6 @@
         this.on('editable:mousedown', this.handleMouseDown, this);
         this.on('field:error', this.handleFieldError, this);
         this.model.on('acl:change', this.handleAclChange, this);
-        this.model.on('fields:lock:change', this._handleLockedFields, this);
 
         //event register for preventing actions
         // when user escapes the page without confirming deleting
@@ -219,45 +218,70 @@
 
     /**
      * Go through the field controllers and set the locked states accordingly.
-     *
-     * @private
      */
-    _handleLockedFields: function() {
-        this._hasLockedFields = false;
+    handleLockedFields: function() {
+        var self = this;
 
-        _.each(this.$('.record-edit-link-wrapper[data-name], .record-lock-link-wrapper[data-name]'), function(el) {
+        // Reset the locked field state
+        this._setLockedFieldFlag(false);
+
+
+        // Loop and check locked field state of each field
+        _.each(this.$('.record-lock-link-wrapper[data-name]'), function(el) {
             var $el = $(el);
             var fieldName = $el.data('name');
+
+            // No field name, nothing to do
             if (fieldName == '') {
-                // skip the empty filler fields
                 return;
             }
-            if ($el.hasClass('record-edit-link-wrapper')) {
-                var field = this.getField(fieldName);
-                var isReadOnly = field.def.readonly ||
-                    (field.def.type !== 'fieldset' && field.isLocked()) ||
-                    _.indexOf(this.noEditFields, field.def.name) >= 0 ||
-                    field.parent;
-                $el.toggleClass('hide', isReadOnly ? true : false);
-            } else {
-                var isLocked = this.model.isFieldLocked(fieldName);
-                this._hasLockedFields = this._hasLockedFields || isLocked;
-                $el.toggleClass('hide', !isLocked);
-                if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
-                    var field = this.getField(fieldName);
-                    _.defer(function (field) {
-                        if (field.disposed) {
-                            return;
-                        }
-                        field.setMode('detail');
-                    }, field);
-                }
+
+            // Get the field object
+            var field = this.getField(fieldName);
+
+            // Is the current field locked?
+            var isLocked = _.contains(this.model.get('locked_fields'), fieldName);
+
+            // Set the flag that says if we have locked fields
+            this._setLockedFieldFlag(this.hasLockedFields() || isLocked);
+
+            // If the field is locked and we are in edit mode...
+            if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
+                _.defer(function (field) {
+                    if (field.disposed) {
+                        return;
+                    }
+
+                    // Toggles the field state from edit to not edit
+                    self.toggleField(field, false);
+                }, field);
             }
+
+            // Handle toggling the class
+            $el.toggleClass('hide', !isLocked);
         }, this);
-        if (this._hasLockedFields) {
+
+        // Show the locked field warning if there is one
+        if (this.hasLockedFields()) {
             this.warnLockedFields();
         }
-        this.setEditableFields();
+    },
+
+    /**
+     * Returns the flag that tells whether this object has locked fields or not
+     * @return {boolean}
+     */
+    hasLockedFields: function() {
+        return this._hasLockedFields;
+    },
+
+    /**
+     * Sets the locked field flag
+     * @param {boolean} setFlag
+     * @private
+     */
+    _setLockedFieldFlag: function(setFlag) {
+        this._hasLockedFields = setFlag;
     },
 
     /**
@@ -571,9 +595,10 @@
 
         var previousField, firstField;
         _.each(this.fields, function(field) {
+            var isLocked = _.contains(this.model.get('locked_fields'), field.def.name);
 
             var readonlyField = field.def.readonly ||
-                (field.def.type !== 'fieldset' && field.isLocked()) ||
+                (field.def.type !== 'fieldset' && isLocked) ||
                 _.indexOf(this.noEditFields, field.def.name) >= 0 ||
                 field.parent || (field.name && this.buttons[field.name]);
 
@@ -633,6 +658,8 @@
     },
 
     bindDataChange: function() {
+        // Handle locked field changes
+        this.model.on('change:locked_fields', this.handleLockedFields, this);
         this.model.on('change', function() {
             if (this.inlineEditMode) {
                 this.setButtonStates(this.STATE.EDIT);
@@ -838,7 +865,7 @@
     toggleEdit: function(isEdit) {
         var self = this;
         this.$('.record-lock-link').toggleClass('record-lock-link-on', isEdit);
-        if (this._hasLockedFields) {
+        if (this.hasLockedFields()) {
             this.warnLockedFields();
         }
         this.toggleFields(this.editableFields, isEdit, function() {

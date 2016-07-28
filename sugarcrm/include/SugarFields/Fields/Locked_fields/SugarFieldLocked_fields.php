@@ -46,26 +46,33 @@ class SugarFieldLocked_fields extends SugarFieldRelatecollection
                 $data[$fieldName] = array();
             }
         } else {
-            // Get the necessary information from the relate collection parent
-            // This is the expection from the ModuleApi
-            list ($relName, $fields, $limit) = $this->parseProperties($properties);
+            // This block is the expectation from the ModuleApi
 
-            // This should never be the case, but to be safe...
-            if (!in_array($this->relateKey, $fields)) {
-                $fields[] = $this->relateKey;
+            // If the skip flag is set, it will be true, so check if it is true
+            // to determine if we need to even set locked fields
+            if (Registry\Registry::getInstance()->get('skip_locked_field_checks') === true) {
+                $data[$fieldName] = array();
+            } else {
+                // Get the necessary information from the relate collection parent
+                list ($relName, $fields, $limit) = $this->parseProperties($properties);
+
+                // This should never be the case, but to be safe...
+                if (!in_array($this->relateKey, $fields)) {
+                    $fields[] = $this->relateKey;
+                }
+
+                // Get the related records
+                $linked =  $this->getLinkedRecords($bean, $relName, $fields, $limit);
+
+                // Loop and set, making sure to handle the necessary logic for locked fields
+                $locked = array();
+                foreach ($linked as $key => $value) {
+                    $locked = array_merge($locked, json_decode(html_entity_decode($value[$this->relateKey])));
+                }
+
+                // To make sure the client has no hiccups with dupes
+                $data[$fieldName] = array_unique($locked);
             }
-
-            // Get the related records
-            $linked =  $this->getLinkedRecords($bean, $relName, $fields, $limit);
-
-            // Loop and set, making sure to handle the necessary logic for locked fields
-            $locked = array();
-            foreach ($linked as $key => $value) {
-                $locked = array_merge($locked, json_decode(html_entity_decode($value[$this->relateKey])));
-            }
-
-            // To make sure the client has no hiccups with dupes
-            $data[$fieldName] = array_unique($locked);
         }
     }
 
