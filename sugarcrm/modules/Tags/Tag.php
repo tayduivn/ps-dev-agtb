@@ -148,7 +148,7 @@ class Tag extends Basic
         $sql = "SELECT tags.id, tags.name, tbr.bean_id as {$tableAlias}";
         $sql .= " FROM tags INNER JOIN tag_bean_rel tbr ON tags.id=tbr.tag_id";
         $sql .= " WHERE tbr.bean_module = '{$focus->module_name}' AND tbr.bean_id in ($ids) AND tbr.deleted=0";
-        $sql .= " ORDER BY tags.name ASC";
+        $sql .= " ORDER BY tags.name_lower ASC";
 
         $result = $this->db->query($sql);
         $returnArray = array();
