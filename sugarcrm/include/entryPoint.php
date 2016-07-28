@@ -106,12 +106,6 @@ if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 	    exit ();
 }
 
-if (!empty($sugar_config['xhprof_config']))
-{
-    require_once 'include/SugarXHprof/SugarXHprof.php';
-    SugarXHprof::getInstance()->start();
-}
-
 require_once('include/utils.php');
 require_once 'include/dir_inc.php';
 
@@ -127,6 +121,14 @@ require_once 'include/utils/encryption_utils.php';
 require_once 'include/SugarCache/SugarCache.php';
 require_once 'include/utils/autoloader.php';
 SugarAutoLoader::init();
+
+if (empty($GLOBALS['installing'])) {
+    $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
+}
+
+if (!empty($sugar_config['xhprof_config'])) {
+    SugarXHprof::getInstance()->start();
+}
 
 register_shutdown_function('sugar_cleanup');
 
@@ -160,7 +162,6 @@ if (!defined('SUGAR_PATH')) {
 if(empty($GLOBALS['installing'])){
 ///////////////////////////////////////////////////////////////////////////////
 ////	SETTING DEFAULT VAR VALUES
-$GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 $error_notice = '';
 $use_current_user_login = false;
 

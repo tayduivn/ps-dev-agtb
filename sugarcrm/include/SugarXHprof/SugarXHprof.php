@@ -46,6 +46,7 @@
  * @see SugarXHprof::$mongodb_options       for $sugar_config['xhprof_config']['mongodb_options']
  */
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
 class SugarXHprof
 {
@@ -204,6 +205,13 @@ class SugarXHprof
             if (is_dir(static::$log_to) == false || is_writable(static::$log_to) == false) {
                 static::$enable = false;
             }
+        }
+
+        // enable SugarXhprofLogger class for Doctrine
+        if (static::$enable && empty($GLOBALS['installing'])) {
+            $logger = DBManagerFactory::getDbalLogger();
+            $decorator = new XhprofLogger(static::$instance, $logger);
+            DBManagerFactory::setDbalLogger($decorator);
         }
     }
 
@@ -457,21 +465,18 @@ class SugarXHprof
      *
      * @param $sql
      * @param $time
-     * @param bool|array $boundData
      */
-    public function trackSQL($sql, $time, $boundData = false)
+    public function trackSQL($sql, $time)
     {
         if ($this->isEnabled() && static::$track_sql) {
             $this->sqlTracker['summary_time'] += $time;
-            if ($boundData) {
-                $sql .= ' with ' . var_export($boundData, true);
-            }
 
             $this->sqlTracker['sql'][] = array(
                 $sql,
                 $time,
-                static::$track_sql_backtrace ? $this->xhpTrace(debug_backtrace(),
-                    $this->sqlTracker['backtrace_calls']) : null
+                static::$track_sql_backtrace
+                    ? $this->xhpTrace(debug_backtrace(), $this->sqlTracker['backtrace_calls'])
+                    : null,
             );
         }
     }

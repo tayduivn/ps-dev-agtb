@@ -13,6 +13,7 @@
 
 use Doctrine\DBAL\DriverManager as DoctrineDriverManager;
 use Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger;
+use Doctrine\DBAL\Logging\SQLLogger;
 
 /**
  * Database driver factory
@@ -22,6 +23,9 @@ use Sugarcrm\Sugarcrm\Dbal\Logging\SugarLogger;
 class DBManagerFactory
 {
     static $instances = array();
+
+    /** @var SQLLogger instance of Doctrine Dbal logger class */
+    protected static $dbalLogger;
 
     /**
      * Returns a reference to the DB object of specific type
@@ -192,11 +196,36 @@ class DBManagerFactory
             'connection' => $instance->getDatabase(),
         ));
 
-        $logger = new SugarLogger($GLOBALS['log']);
+        $logger = self::getDbalLogger();
         $conn->getConfiguration()->setSQLLogger($logger);
 
         return $conn;
     }
+
+    /**
+     * Get DbalLogger instance
+     *
+     * @return SQLLogger
+     */
+    public static function getDbalLogger()
+    {
+        if (!self::$dbalLogger) {
+            self::$dbalLogger = new SugarLogger($GLOBALS['log']);
+        }
+
+        return self::$dbalLogger;
+    }
+
+    /**
+     * Set Dbal logger instance for DBManagerFactory class
+     *
+     * @param SQLLogger $logger
+     */
+    public static function setDbalLogger(SQLLogger $logger)
+    {
+        self::$dbalLogger = $logger;
+    }
+
 
     /**
      * Disconnect all DB connections in the system
