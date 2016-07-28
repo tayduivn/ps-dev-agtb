@@ -13,28 +13,6 @@
         app.lang = _.extend(app.lang, {
 
             /**
-             * Retrieves module singular from name.
-             *
-             * @deprecated Deprecated since 7.6.0. Use
-             *   {@link Core.Language#getModuleName} instead. Will be removed
-             *   in 7.8.0.
-             * @param {String} module Module name.
-             * @return {String} Module singular form.
-             */
-            getModuleSingular: function(module) {
-                app.logger.warn('The `app.lang.getModuleSingular` function has been deprecated since 7.6.0. Please ' +
-                    + 'upgrade your code to use `app.lang.getModuleName`.');
-
-                var modString = app.metadata.getStrings('mod_strings')[module],
-                    moduleSingular = (modString ? modString['LBL_MODULE_NAME_SINGULAR'] : '') ||
-                        app.lang.getAppListStrings('moduleListSingular')[module] ||
-                        app.lang.getAppListStrings('moduleList')[module] ||
-                        module;
-
-                return moduleSingular;
-            },
-
-            /**
              * Gets the letters used for the icons shown in various headers for
              * each module, based on the translated singular module name.
              *
