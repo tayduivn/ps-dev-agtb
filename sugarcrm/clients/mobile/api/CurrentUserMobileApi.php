@@ -14,7 +14,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/CurrentUserApi.php';
 
 class CurrentUserMobileApi extends CurrentUserApi {
+
     /**
+     * Get the user hash
+     * 
      * @param User $user
      *
      * @return string
