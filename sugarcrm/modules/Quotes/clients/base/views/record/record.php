@@ -214,6 +214,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
         array(
             'name' => 'panel_shipping_body',
             'label' => 'LBL_SHIPPING_BODY',
+            'panelDefault' => 'collapsed',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -306,7 +307,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
         array(
             'name' => 'panel_setting_body',
             'label' => 'LBL_QUOTESETTINGS',
-            'hide' => true,
+            'panelDefault' => 'collapsed',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -330,7 +331,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'label' => 'LBL_RECORD_SHOWMORE',
-            'hide' => true,
+            'panelDefault' => 'collapsed',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
