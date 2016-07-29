@@ -1125,6 +1125,12 @@ class Email extends SugarBean {
 
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
+            // Overrides SugarBean behavior to use Global as the default team.
+            if ($this->state === static::EMAIL_STATE_ARCHIVED && empty($this->team_id)) {
+                $this->team_id = '1';
+                $this->team_set_id = '1';
+            }
+
             // Set date_sent.
             if ($this->state === static::EMAIL_STATE_DRAFT) {
                 // Always update the timestamp when saving a draft.

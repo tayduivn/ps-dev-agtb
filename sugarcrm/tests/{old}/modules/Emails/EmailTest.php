@@ -67,6 +67,17 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($this->email->date_sent);
     }
 
+    public function testSaveArchivedEmail_EmptyTeamId_TeamAndTeamsetAreSetToGlobal()
+    {
+        $this->email->state = Email::EMAIL_STATE_ARCHIVED;
+        $this->email->team_id = null;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertEquals('1', $this->email->team_id, "Actual team_id doesn't match Expected team_id");
+        $this->assertEquals('1', $this->email->team_set_id, "Actual team_set_id doesn't match Expected team_set_id");
+    }
+
 	public function testSafeAttachmentName ()
 	{
 		$extArray[] = '0.py';
