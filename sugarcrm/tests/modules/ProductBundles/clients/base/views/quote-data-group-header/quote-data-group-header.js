@@ -61,4 +61,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             expect(view.setElement).toHaveBeenCalled();
         });
     });
+
+    describe('_onDeleteBundleBtnClicked()', function() {
+        it('should trigger quotes:group:delete event', function() {
+            sinon.collection.spy(view.context, 'trigger');
+            view._onDeleteBundleBtnClicked();
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:delete');
+        });
+    });
 });

@@ -50,8 +50,14 @@
      * @override
      */
     _renderHtml: function() {
-        // get the last table row with calss quote-data-group-list and place
-        // this template after it
-        $(_.last(this.$('tr.quote-data-group-list'))).after(this.template(this));
+        var $els = this.$('tr.quote-data-group-list');
+        if ($els.length) {
+            // get the last table row with calss quote-data-group-list and place
+            // this template after it  quote-data-group-header
+            $(_.last($els)).after(this.template(this));
+        } else {
+            // the list is empty so just add the footer after the header
+            $(this.$('tr.quote-data-group-header')).after(this.template(this));
+        }
     }
 })

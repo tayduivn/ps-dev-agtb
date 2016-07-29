@@ -231,4 +231,9 @@ $mod_strings = array (
     'LBL_DISCOUNT_PRICE' => 'Unit Price',
     'LBL_DISCOUNT_AMOUNT' => 'Discount',
     'LBL_LINE_ITEM_TOTAL' => 'Line Item Total',
+    'LBL_DELETING_BUNDLE_CONFIRM_MSG' => 'Are you sure you want to delete the Group {{groupName}}?',
+    'LBL_DELETING_BUNDLE_ALERT_MSG' => 'Deleting the Group {{groupName}}',
+    'LBL_DELETED_BUNDLE_SUCCESS_MSG' => 'Group successfully deleted',
+    'LBL_ADDING_BUNDLE_ALERT_MSG' => 'Creating a new Group',
+    'LBL_ADDED_BUNDLE_SUCCESS_MSG' => 'Group successfully created',
 );

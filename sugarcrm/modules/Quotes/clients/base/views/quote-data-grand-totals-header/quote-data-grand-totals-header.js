@@ -149,6 +149,6 @@
      * @private
      */
     _onCreateGroupBtnClicked: function(evt) {
-
+        this.context.trigger('quotes:group:create');
     }
 })

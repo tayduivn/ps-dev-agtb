@@ -96,6 +96,6 @@
      * @private
      */
     _onDeleteBundleBtnClicked: function(evt) {
-
+        this.context.trigger('quotes:group:delete', this.layout);
     }
 })

@@ -39,16 +39,24 @@ class QuotesRelateApi extends RelateApi
      */
     public function filterRelated(ServiceBase $api, array $args)
     {
-        $restResp = parent::filterRelated($api, $args);
+        $local_args = array_diff_key($args, array('view' => '', 'fields' => ''));
+        $restResp = parent::filterRelated($api, $local_args);
         foreach($restResp['records'] as $key => $bundle) {
             $productBundleBean = BeanFactory::getBean('ProductBundles', $bundle['id']);
-            $local_args = array_diff_key($args, array('view' => '', 'fields' => ''));
-            $productBundle = $this->formatBean($api, $local_args, $productBundleBean);
             $records = $this->formatBeans($api, $local_args, $productBundleBean->getLineItems());
-            $productBundle['related_records'] = $records;
-            $restResp['records'][$key] = $productBundle;
+            $restResp['records'][$key]['related_records'] = $records;
         }
-        $restResp['records'] = array_reverse($restResp['records']);
+
+        if (is_array($restResp['records'])) {
+            function compareProductBundlesByIndex($pb1, $pb2)
+            {
+                if ($pb1['position'] == $pb2['position']) {
+                    return 0;
+                }
+                return ($pb1['position'] < $pb2['position']) ? -1 : 1;
+            }
+            usort($restResp['records'], 'compareProductBundlesByIndex');
+        }
         return $restResp;
     }
 }

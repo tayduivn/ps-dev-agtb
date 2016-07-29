@@ -97,4 +97,13 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
             });
         });
     });
+
+    describe('_onCreateGroupBtnClicked()', function() {
+        it('should trigger quotes:group:create event', function() {
+            sinon.collection.spy(view.context, 'trigger');
+            view._onCreateGroupBtnClicked();
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:create');
+        });
+    });
 });

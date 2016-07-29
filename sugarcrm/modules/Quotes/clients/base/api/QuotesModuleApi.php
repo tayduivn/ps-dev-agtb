@@ -11,7 +11,8 @@
  */
 
 require_once 'clients/base/api/ModuleApi.php';
-class QuoteModuleApi extends ModuleApi
+require_once 'modules/Quotes/clients/base/api/QuotesRelateApi.php';
+class QuotesModuleApi extends ModuleApi
 {
     public function registerApiRest()
     {
