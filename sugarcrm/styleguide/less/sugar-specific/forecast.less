@@ -365,8 +365,7 @@
         padding: 9px 10px;
       }
       tr.quote-data-group-header td,
-      tr.quote-data-group-footer td,
-      tr.product-bundle-notes-row td:not(:first-child) {
+      tr.quote-data-group-footer td {
         background: @grayLighter;
       }
       tr.quote-data-group-header,
@@ -451,6 +450,8 @@
   }
   .quote-data-group-footer,
   .quote-data-grand-totals-footer {
+    margin-bottom: 15px;
+
     .footer-fields {
       width: 45%;
       float: right;
@@ -461,6 +462,7 @@
 
         &.grand-total {
           border-top: 2px #759EEF solid;
+          padding-top: 8px;
 
           .quote-footer-label {
             font-weight: bold;
