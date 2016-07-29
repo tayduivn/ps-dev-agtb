@@ -212,6 +212,28 @@ function sugar_file_get_contents($filename, $use_include_path=false, $context=nu
 }
 
 /**
+ * Get the directory name
+ *
+ * This function is similar to dirname, but dirname does not handle stream path properly.
+ *
+ * @param string $fileName - The name of the file to check
+ * @return string - directory name
+ */
+function sugarDirname($fileName)
+{
+    if (strpos($fileName, '://') === false) {
+        // regular path, not stream
+        return dirname($fileName);
+    }
+
+    // stream, find the last /
+    $pos = strrpos($fileName, '/');
+    $dirName = substr($fileName, 0, $pos + 1);
+
+    return $dirName;
+}
+
+/**
  * sugar_touch
  * Attempts to set the access and modification times of the file named in the filename
  * parameter to the value given in time . Note that the access time is always modified,
@@ -233,7 +255,7 @@ function sugar_touch($filename, $time=null, $atime=null) {
         $dirmode = null;
     }
 
-    $result = sugar_mkdir(dirname($filename), $dirmode, true);
+    $result = sugar_mkdir(sugarDirname($filename), $dirmode, true);
 
     if (!$result) {
         return $result;
