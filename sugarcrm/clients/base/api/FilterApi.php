@@ -507,7 +507,7 @@ class FilterApi extends SugarApi
             $options['select'][] = 'deleted';
         }
 
-        $q = new SugarQuery(DBManagerFactory::getInstance('listviews'));
+        $q = static::newSugarQuery(DBManagerFactory::getInstance('listviews'));
         $q->from($seed, $queryOptions);
         $q->distinct(false);
         $fields = array();
@@ -1209,5 +1209,15 @@ class FilterApi extends SugarApi
             }
         }
         return $options;
+    }
+
+    /**
+     * Creat new SugarQuery object
+     * @param DBManager $db
+     * @return SugarQuery
+     */
+    protected static function newSugarQuery(DBManager $db)
+    {
+        return new SugarQuery($db);
     }
 }
