@@ -71,7 +71,8 @@ $dictionary['ProductBundleNote'] = array(
             'name' => 'description',
             'vname' => 'LBL_DESCRIPTION',
             'type' => 'text',
-            'comment' => 'Note content'
+            'comment' => 'Note content',
+            'required' => true,
         ),
         'product_bundles' => array(
             'name' => 'product_bundles',

@@ -10,15 +10,24 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr class="quote-data-group-list product-bundle-notes-row">
-    {{#each view.leftColumns}}
-        <td>
-            {{field ../view model=../model template=../view.viewName}}
-        </td>
-    {{/each}}
-    <td colspan="{{listColSpan}}">
-        <div>
-            {{model.attributes.description}}
-        </div>
+<tr class="quote-data-group-list product-bundle-notes-row" name="{{model.module}}_{{model.id}}">>
+    <td>
+        <span class="left-column-save-cancel">
+            {{#each view.leftSaveCancelColumn}}
+                {{field ../view model=../model template=../view.viewName}}
+            {{/each}}
+        </span>
+        <span class="left-column-buttons">
+            {{#each view.leftColumns}}
+                {{field ../view model=../model template=../view.viewName}}
+            {{/each}}
+        </span>
     </td>
+    {{#each model.fields}}
+        {{#eq name 'description'}}
+            <td colspan="{{../../view.listColSpan}}">
+                {{field ../../view model=../../model template=../../view.viewName}}
+            </td>
+        {{/eq}}
+    {{/each}}
 </tr>

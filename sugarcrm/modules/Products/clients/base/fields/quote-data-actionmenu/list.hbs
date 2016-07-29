@@ -17,5 +17,6 @@
        rel="tooltip" title="{{str 'LBL_LISTVIEW_ACTIONS'}}"
        role="button" tabindex="{{tabIndex}}" aria-label="{{str 'LBL_LISTVIEW_ACTIONS'}}">
         <span class="fa fa-ellipsis-v"></span></a>
-    <ul data-menu="dropdown" class="dropdown-menu" role="menu"></ul>
+    <ul data-menu="dropdown" class="dropdown-menu" role="menu"
+        data-row-module="{{../model.module}}" data-row-model-id="{{../model.id}}"></ul>
 {{/if}}

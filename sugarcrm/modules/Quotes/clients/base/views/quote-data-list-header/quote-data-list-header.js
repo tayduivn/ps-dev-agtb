@@ -56,6 +56,11 @@
         this._super('initialize', [options]);
         this.leftColumns = [];
 
+        var qliListMetadata = app.metadata.getView('Products', 'quote-data-group-list');
+        if (qliListMetadata && qliListMetadata.panels) {
+            this.meta.panels = qliListMetadata.panels;
+        }
+
         this.addMultiSelectionAction();
         this._fields = _.flatten(_.pluck(this.meta.panels, 'fields'));
     },

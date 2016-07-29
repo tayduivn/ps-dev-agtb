@@ -35,7 +35,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        var listMeta = app.metadata.getView('Quotes', 'quote-data-list-header');
+        var listMeta = app.metadata.getView('Products', 'quote-data-group-list');
         if (listMeta && listMeta.panels && listMeta.panels[0].fields) {
             this.listColSpan = listMeta.panels[0].fields.length;
         }

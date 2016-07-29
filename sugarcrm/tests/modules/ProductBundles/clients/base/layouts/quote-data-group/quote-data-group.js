@@ -28,12 +28,26 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
     });
 
     describe('initialize()', function() {
+        var lastCall;
+
         it('should have className', function() {
             expect(layout.className).toBe('quote-data-group');
         });
 
         it('should have tagName', function() {
             expect(layout.tagName).toBe('tbody');
+        });
+
+        it('should call app.metadata.getView with first param Products module', function() {
+            layout.initialize({});
+            lastCall = app.metadata.getView.lastCall;
+            expect(lastCall.args[0]).toBe('Products');
+        });
+
+        it('should call app.metadata.getView with second param quote-data-group-list', function() {
+            layout.initialize({});
+            lastCall = app.metadata.getView.lastCall;
+            expect(lastCall.args[1]).toBe('quote-data-group-list');
         });
 
         it('should set listColSpan if metadata exists', function() {

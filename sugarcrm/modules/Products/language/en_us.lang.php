@@ -169,4 +169,5 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_PRODUCT_POSITION' => 'Product Bundle Position',
+    'LBL_PRODUCTS_QUOTE_DATA_LIST' => 'Quoted Line Items Quote Data List',
 );
