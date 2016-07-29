@@ -406,6 +406,7 @@ class UserPreference extends SugarBean
         $home_dashlets = $this->getPreference('dashlets', 'home');
         $ut = $this->getPreference('ut');
         $timezone = $this->getPreference('timezone');
+        $hideTabs = $this->canEditTabs() ? array() : $this->getPreference('hide_tabs');
 
         $query = "UPDATE user_preferences SET deleted = 1 WHERE assigned_user_id = '" . $user->id . "'";
         if ($category) {
@@ -431,8 +432,23 @@ class UserPreference extends SugarBean
             $this->setPreference('ut', $ut);
             $this->setPreference('timezone', $timezone);
             $this->setPreference('reminder_time', 1800);
+            $this->setPreference('hide_tabs', $hideTabs);
             $this->savePreferencesToDB();
         }
+    }
+
+    /**
+     * Check if current user can edit displayed modules
+     *
+     * @return bool
+     */
+    protected function canEditTabs()
+    {
+        if ($GLOBALS['current_user']->isAdminForModule('Users')) {
+            return true;
+        }
+        $tabs = new TabController();
+        return $tabs->get_users_can_edit();
     }
 
     /**
