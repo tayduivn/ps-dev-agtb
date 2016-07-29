@@ -52,7 +52,6 @@ $mod_strings = array (
     'LBL_BUNDLE_NAME' => 'Group Name:',
     'LBL_BUNDLE_STAGE' => 'Group Stage:',
     'LBL_BUNDLE_DISCOUNT'=> 'Discount:',
-    'LBL_CALC_GRAND' => 'Display Grand Total:',
     'LBL_CHECK_DATA'=>"Invalid Data Input: please check your data and make sure you have valid numbers (0-9 or '.')",
     'LBL_CITY' => 'City:',
     'LBL_CONTACT_NAME' => 'Contact Name:',

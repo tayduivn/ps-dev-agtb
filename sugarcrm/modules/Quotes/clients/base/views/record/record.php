@@ -202,7 +202,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                         'new_sub',
                         'tax',
                         'shipping',
-                        'calc_grand_total',
                     ),
                 ),
                 'purchase_order_num',
@@ -325,7 +324,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                 'taxrate_name',
                 'shipper_name',
                 'show_line_nums',
-                'calc_grand_total',
             ),
         ),
         array(

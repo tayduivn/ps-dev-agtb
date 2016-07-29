@@ -32,7 +32,6 @@ $fields_array['Quote'] = array ('column_fields' => Array("id"
 		, "total"
 		, "total_usdollar"
 		,'show_line_nums'
-		, 'calc_grand_total'
 		, "date_entered"
 		, "date_modified"
 		, "modified_user_id"

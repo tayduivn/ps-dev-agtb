@@ -85,21 +85,6 @@ $dictionary['Quote'] = array(
                 ),
             ),
         ),
-        'calc_grand_total' => array(
-            'name' => 'calc_grand_total',
-            'vname' => 'LBL_CALC_GRAND',
-            'type' => 'bool',
-            'reportable' => false,
-            'default' => 1,
-            'hideacl' => true,
-            'massupdate' => false,
-            'processes' => array(
-                'types' => array(
-                    'RR' => false,
-                    'ALL' => true,
-                ),
-            ),
-        ),
         'name' => array(
             'name' => 'name',
             'vname' => 'LBL_QUOTE_NAME',
