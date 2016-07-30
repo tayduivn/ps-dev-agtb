@@ -25,6 +25,7 @@
             checkConnector: function (name, successCall, errorCall, connectorCriteria) {
                 var connectors,
                     connector = null;
+                var self = this;
                 var successCallWrapper = _.bind(function () {
                     this.checkConnector(name, successCall, errorCall, connectorCriteria);
                 }, this);
@@ -47,7 +48,9 @@
                     else {
                         if (pinged === false) {
                             pinged = true;
-                            this.getConnectors(name, successCallWrapper);
+                            _.defer(function() {
+                                self.getConnectors(name, successCallWrapper);
+                            });
                         }
                         else {
                             pinged = false;
