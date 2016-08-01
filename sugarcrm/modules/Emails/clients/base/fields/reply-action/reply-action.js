@@ -81,6 +81,7 @@
             parent_type: this.model.get('parent_type'),
             parent_id: this.model.get('parent_id'),
             parent_name: this.model.get('parent_name'),
+            team_name: this.model.get('team_name'),
             _signatureLocation: 'above',
             _isReply: true
         });

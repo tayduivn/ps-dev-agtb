@@ -150,6 +150,26 @@ describe('Emails.Field.ReplyAction', function() {
         });
     });
 
+    describe('getting the team names', function() {
+        var teams = [
+            {id: 'West', name: 'West', primary: false},
+            {id: 'East', name: 'East', primary: true}
+        ];
+
+        beforeEach(function() {
+            field.model.set('team_name', teams);
+        });
+
+        afterEach(function() {
+            field.model.unset('team_name');
+        });
+
+        it('should return the original teams in the team_name field if reply', function() {
+            field.model.trigger('change');
+            expect(field.model.get('team_name')).toEqual(teams);
+        });
+    });
+
     describe('_getReplySubject', function() {
         using('original subjects', [
             {
