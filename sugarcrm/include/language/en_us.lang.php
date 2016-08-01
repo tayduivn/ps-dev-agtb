@@ -8218,7 +8218,8 @@ $app_strings = array (
   'LBL_ACTIVITIES' => 'Activity Stream',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2016 SugarCRM Inc. All Rights Reserved.',
     'LBL_TRADEMARK' => 'SugarCRM, Sugar and the 3-D Cube are registered trademarks of SugarCRM Inc. '.
-        'All other company and product names used or appearing in this product may be trademarks of the respective companies with which they are associated.',
+        'All other company and product names used or appearing in this product may be trademarks of the '.
+        'respective companies with which they are associated.',
     'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
     'LBL_SEND_INVITE' => 'Send invite',
   'LBL_INVITEES' => 'Guests',
@@ -9396,7 +9397,8 @@ $app_strings = array (
     'LBL_SUGAR_COPYRIGHT_SUB' =>
         '&copy; 2004-2016 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> '.
         'All Rights Reserved.<br />SugarCRM, Sugar and the 3-D Cube are registered trademarks of SugarCRM Inc. '.
-        'All other company and product names used or appearing in this product may be trademarks of the respective companies with which they are associated.',
+        'All other company and product names used or appearing in this product may be trademarks of the '.
+        'respective companies with which they are associated.',
 
     // GENERIC JOB NOTIFICATIONS LABELS
     'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
