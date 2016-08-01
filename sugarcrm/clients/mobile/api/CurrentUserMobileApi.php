@@ -17,7 +17,7 @@ class CurrentUserMobileApi extends CurrentUserApi {
 
     /**
      * Get the user hash
-     * 
+     *
      * @param User $user
      *
      * @return string
