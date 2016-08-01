@@ -129,6 +129,8 @@
                     if (frame.length === 1 &&
                         app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === bwcUrl
                     ) {
+                        // close any drawers
+                        app.drawer.reset();
                         // update hash link only
                         return;
                     }
