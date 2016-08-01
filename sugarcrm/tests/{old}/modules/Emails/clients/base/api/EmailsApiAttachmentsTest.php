@@ -188,7 +188,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $attachments = $this->getRelatedRecords($record['id'], 'attachments');
         $this->assertCount(2, $attachments['records'], 'Should have two attachments');
-        $this->assertFiles($attachments);
+        $this->assertFiles($attachments['records']);
 
         $this->deleteRecord($record['id']);
 
