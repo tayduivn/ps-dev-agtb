@@ -56,6 +56,7 @@ abstract class AbstractMetaDataImplementation
     MB_POPUPSEARCH              => 'popupMeta',
     MB_POPUPLIST                => 'popupMeta',
     MB_LISTVIEW                 => 'listViewDefs',
+    MB_SIDECARQUOTEDATAGROUPLIST => 'viewdefs',
     MB_SIDECARLISTVIEW          => 'viewdefs',
     MB_SIDECARPOPUPVIEW         => 'viewdefs',
     MB_SIDECARDUPECHECKVIEW     => 'viewdefs',
