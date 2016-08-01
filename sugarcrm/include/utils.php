@@ -427,7 +427,7 @@ function get_sugar_config_defaults()
         'systexpirationlogin' => '',
         ) : $passwordsetting,
         //END SUGARCRM flav=com ONLY
-    'snip_url' => 'http://ease.sugarcrm.com:20010/',
+    'snip_url' => 'https://ease.sugarcrm.com/',
     'passwordsetting' => array (
         'minpwdlength' => '',
         'maxpwdlength' => '',
