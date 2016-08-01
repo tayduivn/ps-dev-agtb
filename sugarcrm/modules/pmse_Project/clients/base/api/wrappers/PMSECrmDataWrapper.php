@@ -1634,6 +1634,13 @@ class PMSECrmDataWrapper implements PMSEObservable
                 if (isset($field['len'])) {
                     $tmpField['len'] = $field['len'];
                 }
+
+                // For dependent field relationships like a dependent parent child dropdown pass some additional
+                // information along so that we are able to lock the parent field as well when the child is locked.
+                if (isset($field['visibility_grid']) && (isset($field['visibility_grid']['trigger']))) {
+                    $tmpField['trigger'] = $field['visibility_grid']['trigger'];
+                }
+
                 $output[] = $tmpField;
             }
         }
