@@ -832,8 +832,18 @@ class M2MRelationship extends SugarRelationship
 
     public function getFields()
     {
-        if (!empty($this->def['fields']))
+        global $dictionary;
+        
+        if (isset($this->def['fields'])) {
             return $this->def['fields'];
+        }
+        
+        // in case if relationship uses another entity's table
+        $table = $this->getRelationshipTable();
+        if (isset($dictionary[$table])) {
+            return $dictionary[$table]['fields'];
+        }
+        
         return $this->getStandardFields();
     }
 
@@ -854,18 +864,10 @@ class M2MRelationship extends SugarRelationship
 
         return $fields;
     }
-
-    protected function getAdditionalFields(){
-        $ret = array();
-        if (!empty($this->def['fields']))
-        {
-            $standardFields = $this->getStandardFields();
-            foreach($this->def['fields'] as $def){
-                if (!isset($standardFields[$def['name']]))
-                    $ret[$def['name']] = $def;
-            }
-        }
-        return $ret;
+    
+    protected function getAdditionalFields()
+    {
+        return array_diff_key($this->getFields(), $this->getStandardFields());
     }
 
     /**

@@ -23,6 +23,7 @@ class M2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('dictionary');
         $this->opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $this->contact = SugarTestContactUtilities::createContact();
         $this->opportunity2 = SugarTestOpportunityUtilities::createOpportunity();
@@ -161,5 +162,38 @@ class M2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(REL_TYPE_MANY, $relationship->getType(REL_LHS));
         $this->assertEquals(REL_TYPE_MANY, $relationship->getType(REL_RHS));
+    }
+    
+    /**
+     * provider for testGetFields
+     * @return array
+     */
+    public function providerTestGetFields()
+    {
+        global $dictionary;
+        $template = [
+            'name'=>'opportunities_contacts',
+            'lhs_module' => 'opportunities',
+            'rhs_module' => 'contacts',
+        ];
+        return [
+            [array_merge($template, ['fields' => ['test']]), ['test']],
+            [
+                array_merge($template, ['table' => 'opportunities_contacts']),
+                $dictionary['opportunities_contacts']['fields'],
+            ],
+        ];
+    }
+    
+    /**
+     * @covers M2MRelationship::getFields
+     * @dataProvider providerTestGetFields
+     * @param array $def
+     * @param array $result
+     */
+    public function testGetFields($def, $result)
+    {
+        $rel = new M2MRelationship($def);
+        $this->assertEquals($result, $rel->getFields());
     }
 }

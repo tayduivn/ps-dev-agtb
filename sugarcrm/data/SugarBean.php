@@ -6435,46 +6435,50 @@ class SugarBean
     * 	RELATIONSHIP HANDLING
     */
 
-    function set_relationship($table, $relate_values, $check_duplicates = true,$do_update=false,$data_values=null)
-    {
-        $where = '';
+    public function set_relationship(
+        $table,
+        array $relate_values,
+        $check_duplicates = true,
+        $do_update = false,
+        array $data_values = array()
+    ) {
+        global $dictionary;
+        $fieldDefs = $dictionary[$table]['fields'];
 
 		// make sure there is a date modified
-		$date_modified = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
+        $date_modified = TimeDate::getInstance()->nowDb();
 
         $row=null;
         if($check_duplicates)
         {
-            $query = "SELECT * FROM $table ";
-            $where = "WHERE deleted = '0'  ";
-            foreach($relate_values as $name=>$value)
-            {
-                $where .= " AND $name = '$value' ";
+            $builder = $this->db->getConnection()->createQueryBuilder();
+            $expr = $builder->expr();
+            $builder->select('*')->from($table);
+            foreach ($relate_values as $name => $value) {
+                $builder->andWhere($expr->eq($name, $builder->createPositionalParameter($value)));
             }
-            $query .= $where;
-            $row=$this->db->fetchOne($query, false, "Looking For Duplicate Relationship:" . $query);
+            $builder->andWhere($expr->eq('deleted', 0));
+            $row = $builder->execute()->fetch();
         }
 
         if(!$check_duplicates || empty($row) )
         {
-            unset($relate_values['id']);
-            if ( isset($data_values))
-            {
-                $relate_values = array_merge($relate_values,$data_values);
-            }
-            $query = "INSERT INTO $table (id, ". implode(',', array_keys($relate_values)) . ", date_modified) VALUES ('" . create_guid() . "', " . "'" . implode("', '", $relate_values) . "', ".$date_modified.")" ;
+            $values = array_merge($data_values, $relate_values, array(
+                'id' => create_guid(),
+                'date_modified' => $date_modified,
+            ));
 
-            $this->db->query($query, false, "Creating Relationship:" . $query);
+            $this->db->insertParams($table, $fieldDefs, $values);
         }
         else if ($do_update)
         {
-            $conds = array();
-            foreach($data_values as $key=>$value)
-            {
-                array_push($conds,$key."='".$this->db->quote($value)."'");
-            }
-            $query = "UPDATE $table SET ". implode(',', $conds).",date_modified=".$date_modified." ".$where;
-            $this->db->query($query, false, "Updating Relationship:" . $query);
+            $data_values['date_modified'] = $date_modified;
+            $this->db->updateParams($table, $fieldDefs, $data_values, array_merge(
+                $relate_values,
+                array(
+                    'deleted' => 0,
+                )
+            ));
         }
     }
 

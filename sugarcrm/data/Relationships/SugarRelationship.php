@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Doctrine\DBAL\Query\QueryBuilder;
+
 global $dictionary;
 //Load all relationship metadata
 include_once("modules/TableDictionary.php");
@@ -217,7 +219,7 @@ abstract class SugarRelationship
     /**
      * @param array $row values to be inserted into the relationship
      *
-     * @return bool|void null if new row was inserted and true if an existing row was updated
+     * @return int The number of affected rows
      */
     protected function addRow(array $row)
     {
@@ -230,47 +232,34 @@ abstract class SugarRelationship
             );
         }
 
-        $values = array();
-        foreach ($this->getFields() as $def) {
-            $field = $def['name'];
-            if (isset($row[$field])) {
-                $values[$field] = "'{$row[$field]}'";
-            }
-        }
-        $columns = implode(',', array_keys($values));
-        $values = implode(',', $values);
-        if (!empty($values)) {
-            $query = "INSERT INTO {$this->getRelationshipTable(
-            )} ($columns) VALUES ($values)";
-            return DBManagerFactory::getInstance()->query($query);
-        }
-
-        return false;
+        return DBManagerFactory::getInstance()->insertParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            $row
+        );
     }
 
     /**
-     * @param $id id of row to update
-     * @param $values values to insert into row
+     * @param string $id id of row to update
+     * @param array $values values to insert into row
      *
-     * @return resource result of update satatement
+     * @return int The number of affected rows
      */
-    protected function updateRow($id, $values)
+    protected function updateRow($id, array $values)
     {
-        $newVals = array();
         //Unset the ID since we are using it to update the row
         if (isset($values['id'])) {
             unset($values['id']);
         }
-        foreach ($values as $field => $val) {
-            $newVals[] = "$field='$val'";
-        }
 
-        $newVals = implode(",", $newVals);
-
-        $query = "UPDATE {$this->getRelationshipTable(
-        )} set $newVals WHERE id='$id'";
-
-        return DBManagerFactory::getInstance()->query($query);
+        return DBManagerFactory::getInstance()->updateParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            $values,
+            array(
+                'id' => $id,
+            )
+        );
     }
 
     /**
@@ -278,26 +267,23 @@ abstract class SugarRelationship
      *
      * @param $where array of field=>value pairs to match
      *
-     * @return bool|resource
+     * @return int The number of affected rows
      */
     protected function removeRow($where)
     {
         if (empty($where)) {
-            return false;
+            return 0;
         }
 
-        $date_modified = TimeDate::getInstance()->getNow()->asDb();
-        $stringSets = array();
-        foreach ($where as $field => $val) {
-            $stringSets[] = "$field = '$val'";
-        }
-        $whereString = "WHERE " . implode(" AND ", $stringSets);
-
-        $query = "UPDATE {$this->getRelationshipTable(
-        )} set deleted=1 , date_modified = '$date_modified' $whereString";
-
-        return DBManagerFactory::getInstance()->query($query);
-
+        return DBManagerFactory::getInstance()->updateParams(
+            $this->getRelationshipTable(),
+            $this->getFields(),
+            array(
+                'deleted' => 1,
+                'date_modified' => TimeDate::getInstance()->nowDb(),
+            ),
+            $where
+        );
     }
 
     /**
@@ -318,18 +304,18 @@ abstract class SugarRelationship
         $leftID = $row[$leftIDName];
         $rightID = $row[$rightIDName];
         //Check the relationship role as well
-        $roleCheck = $this->getRoleWhere('', false, true);
+        $builder = DBManagerFactory::getConnection()->createQueryBuilder();
+        $expr = $builder->expr();
+        $table = $this->getRelationshipTable();
+        $builder->select('*')
+            ->from($table)
+            ->where($expr->eq($leftIDName, $builder->createPositionalParameter($leftID)))
+            ->andWhere($expr->eq($rightIDName, $builder->createPositionalParameter($rightID)))
+            ->andWhere($expr->eq('deleted', 0));
+        $this->applyQueryBuilderFilter($builder, $table, false, true);
 
-        $query = "SELECT * FROM {$this->getRelationshipTable(
-        )} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
-
-        $db = DBManagerFactory::getInstance();
-        $row = $db->fetchOne($query);
-        if (!empty($row)) {
-            return $row;
-        } else {
-            return false;
-        }
+        $stmt = $builder->execute();
+        return $stmt->fetch();
     }
 
     /**
@@ -345,6 +331,63 @@ abstract class SugarRelationship
             return array($this->def['relationship_role_column'] => $this->def["relationship_role_column_value"]);
         }
         return array();
+    }
+
+    /**
+     * Applies relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     * @param bool $ignoreRole Whether the role filter needs to be ignored
+     * @param bool $ignorePrimary Whether the filter by primary flag needs to be ignored
+     */
+    protected function applyQueryBuilderFilter(
+        QueryBuilder $builder,
+        $tableAlias,
+        $ignoreRole = false,
+        $ignorePrimary = false
+    ) {
+        if (!$ignoreRole && !$this->ignore_role_filter) {
+            $this->applyQueryBuilderRoleFilter($builder, $tableAlias);
+        }
+
+        if (!$ignorePrimary && !empty($this->primaryOnly)) {
+            $this->applyQueryBuilderPrimaryFilter($builder, $tableAlias);
+        }
+    }
+
+    /**
+     * Applies role-specific relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     */
+    protected function applyQueryBuilderRoleFilter(QueryBuilder $builder, $tableAlias)
+    {
+        $expr = $builder->expr();
+        foreach ($this->getRelationshipRoleColumns() as $column => $value) {
+            $field = sprintf('%s.%s', $tableAlias, $column);
+            if ($value) {
+                $cond = $expr->eq($field, $builder->createPositionalParameter($value));
+            } else {
+                $cond = $expr->isNull($field);
+            }
+            $builder->andWhere($cond);
+        }
+    }
+
+    /**
+     * Applies primary flag relationship filter to the query
+     *
+     * @param QueryBuilder $builder Query builder
+     * @param string $tableAlias Relationship table alias
+     */
+    protected function applyQueryBuilderPrimaryFilter(QueryBuilder $builder, $tableAlias)
+    {
+        if (!empty($this->def['primary_flag_column'])) {
+            $field = sprintf('%s.%s', $tableAlias, $this->def['primary_flag_column']);
+            $builder->andWhere($builder->expr()->eq($field, 1));
+        }
     }
 
     /**
