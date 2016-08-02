@@ -77,6 +77,7 @@ class UsersController extends SugarController
         {
             $u = BeanFactory::getBean('Users', $_REQUEST['record']);
             $u->status = 'Inactive';
+            $u->deleted = 1;
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
