@@ -339,28 +339,12 @@
                 }
             },
             {
-                name: "record",
-                route: ":module/:id"
+                name: 'record',
+                route: ':module/:id(/:action)'
             },
             {
-                name: "record",
-                route: ":module/:id/:action"
-            },
-            {
-                name: "record_layout",
-                route: ":module/:id/layout/:view",
-                callback: function(module, id, view) {
-                    // FIXME: We shouldn't be calling private methods like this.
-                    // Will be addressed in SC-2761.
-                    if (!app.router._moduleExists(module)) {
-                        return;
-                    }
-                    app.router.record(module, id, null, view);
-                }
-            },
-            {
-                name: "record_layout_action",
-                route: ":module/:id/layout/:view/:action",
+                name: 'recordLayoutAction',
+                route: ':module/:id/:layout/:view(/:action)',
                 callback: function(module, id, layout, action) {
                     // FIXME: We shouldn't be calling private methods like this.
                     // Will be addressed in SC-2761.
