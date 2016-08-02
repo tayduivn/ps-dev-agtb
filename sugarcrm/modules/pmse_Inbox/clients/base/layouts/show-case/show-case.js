@@ -62,7 +62,7 @@
 
                     // Send back the data from our own endpoint
                     return app.api.call('read', url, {}, callbacks, options);
-                }
+                };
 
                 self.initCaseView(data, [options, setFields])
             },

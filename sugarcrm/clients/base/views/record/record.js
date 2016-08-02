@@ -225,7 +225,6 @@
         // Reset the locked field state
         this._setLockedFieldFlag(false);
 
-
         // Loop and check locked field state of each field
         _.each(this.$('.record-lock-link-wrapper[data-name]'), function(el) {
             var $el = $(el);
@@ -247,7 +246,7 @@
 
             // If the field is locked and we are in edit mode...
             if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
-                _.defer(function (field) {
+                _.defer(function(field) {
                     if (field.disposed) {
                         return;
                     }
