@@ -46,19 +46,6 @@
      */
     bindDataChange: function() {
         /**
-         * Sets the value of the Select2 element and rebuilds the tooltips for all recipients.
-         * @param {Array} recipients the return value for
-         *   {@link #format}.
-         */
-        var updateTheDom = _.bind(function(recipients) {
-            // put the formatted recipients in the DOM
-            this.getFieldElement().select2('data', recipients);
-            // rebuild the tooltips
-            if (!this.def.readonly) {
-                this.setDragDropPluginEvents(this.getFieldElement());
-            }
-        }, this);
-        /**
          * Sets up event handlers that allow external forces to manipulate the contents of the collection, while
          * maintaining the requirement for storing formatted recipients.
          */
@@ -76,7 +63,7 @@
                 // value in the DOM
                 value.on('remove', function(models, collection) {
                     // format the recipients and put them in the DOM
-                    updateTheDom(this.format(this.model.get(this.name)));
+                    this._updateTheDom(this.format(this.model.get(this.name)));
                 }, this);
                 // on "reset" we want to replace all models in the collection with their formatted versions
                 value.on('reset', function(collection) {
@@ -84,7 +71,7 @@
                     // do this silently so we don't trigger another reset event and end up in an infinite loop
                     collection.reset(recipients, {silent: true});
                     // put the newly formatted recipients in the DOM
-                    updateTheDom(recipients);
+                    this._updateTheDom(recipients);
                 }, this);
             }
         }, this);
@@ -111,6 +98,21 @@
                 value.reset(recipients.clone().models);
             }
         }, this);
+    },
+
+    /**
+     * Sets the value of the Select2 element, decorates any invalid recipients,
+     * and rebuilds the tooltips for all recipients.
+     *
+     * @param {Array} recipients the return value for {@link #format}.
+     */
+    _updateTheDom: function(recipients) {
+        // put the formatted recipients in the DOM
+        this.getFieldElement().select2('data', recipients);
+        this._decorateInvalidRecipients();
+        if (!this.def.readonly) {
+            this.setDragDropPluginEvents(this.getFieldElement());
+        }
     },
 
     /**
@@ -241,7 +243,8 @@
             return template({
                 id: recipient.id,
                 name: value,
-                email: recipient.email
+                email: recipient.email,
+                invalid: recipient._invalid
             });
         }
         return value;
@@ -378,8 +381,9 @@
             // we are assuming that email addresses stored in the database have already been validated
             if (event.object.id == event.object.email) {
                 // this option must be a new email address that the application does not recognize
-                // so validate it
-                isValidChoice = this._validateEmailAddress(event.object.email);
+                // so mark it as valid and kick off an async validation
+                isValidChoice = true;
+                this._validateEmailAddress(event.object);
             } else {
                 // the application should recognize the email address, so no need to validate it again
                 // just assume it's a valid choice and we'll deal with the consequences later (server-side)
@@ -478,7 +482,8 @@
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || formattedRecipient.module,
                 email: recipient.get('email') || formattedRecipient.email,
                 locked: this.recipientsLocked(),
-                name: recipient.get('name') || recipient.get('full_name') || formattedRecipient.name
+                name: recipient.get('name') || recipient.get('full_name') || formattedRecipient.name,
+                _invalid: recipient.get('_invalid')
             };
             // don't bother with the recipient unless an id is present
             if (!_.isEmpty(formattedRecipient.id)) {
@@ -505,29 +510,57 @@
     },
 
     /**
-     * Validates an email address on the server.
+     * Validates an email address on the server asynchronously.
      *
-     * @param {String} emailAddress
-     * @return {boolean}
+     * Marks the recipient as invalid if it is not a valid email address.
+     *
+     * @param {Object} recipient
+     * @param {string} recipient.id
+     * @param {string} recipient.email
      * @private
      */
-    _validateEmailAddress: function(emailAddress) {
-        var isValid = false,
-            callbacks = {},
-            options = {
-                // execute the api call synchronously so that the method doesn't return before the response is known
-                async: false
-            },
-            url = app.api.buildURL('Mail', 'address/validate');
+    _validateEmailAddress: function(recipient) {
+        var callbacks = {};
+        var url = app.api.buildURL('Mail', 'address/validate');
 
-        callbacks.success = function(result) {
-            isValid = result[emailAddress];
-        };
-        callbacks.error = function() {
-            isValid = false;
-        };
-        app.api.call('create', url, [emailAddress], callbacks, options);
+        callbacks.success = _.bind(function(result) {
+            if (!result[recipient.email] && !this.disposed) {
+                this._markRecipientInvalid(recipient.id);
+            }
+        }, this);
+        callbacks.error = _.bind(function() {
+            if (!this.disposed) {
+                this._markRecipientInvalid(recipient.id);
+            }
+        }, this);
 
-        return isValid;
+        app.api.call('create', url, [recipient.email], callbacks);
+    },
+
+    /**
+     * Mark the given recipient as invalid in the collection and update select2.
+     *
+     * @param {string} recipientId
+     * @private
+     */
+    _markRecipientInvalid: function(recipientId) {
+        var recipients = this.model.get(this.name);
+        var recipient = recipients.get(recipientId);
+        recipient.set('_invalid', true);
+        this._updateTheDom(this.format(recipients));
+    },
+
+    /**
+     * Decorate any invalid recipients in this field.
+     * @private
+     */
+    _decorateInvalidRecipients: function() {
+        var self = this;
+        var $invalidRecipients = this.$('.select2-search-choice [data-invalid="true"]');
+        $invalidRecipients.each(function() {
+            var $choice = $(this).closest('.select2-search-choice');
+            $choice.addClass('select2-choice-danger');
+            $(this).attr('data-title', app.lang.get('ERR_INVALID_EMAIL_ADDRESS', self.module));
+        });
     }
 })

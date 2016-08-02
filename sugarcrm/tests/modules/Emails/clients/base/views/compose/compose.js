@@ -434,6 +434,17 @@ describe("Emails.Views.Compose", function() {
             to_addresses = undefined;
         });
 
+        it('should display error alert on save if there are invalid recipient email addresses', function() {
+            var expectedStatus = 'ready';
+            var toAddresses = new Backbone.Collection([{id: '1234', email: 'foo&bar.com', _invalid: true}]);
+
+            view.model.set('to_addresses', toAddresses);
+            view.saveModel(expectedStatus, 'pending message', 'success message');
+
+            expect(apiCallStub).not.toHaveBeenCalled();
+            expect(alertShowStub.firstCall.args[0]).toEqual('mail_invalid_recipients');
+        });
+
         it('should show pending message before call, then after call dismiss that message and show success', function() {
             var pending = 'pending message',
                 success = 'success message';

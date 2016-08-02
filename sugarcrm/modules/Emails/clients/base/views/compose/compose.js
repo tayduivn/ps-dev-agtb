@@ -453,6 +453,15 @@
         var myURL,
             sendModel = this.initializeSendEmailModel();
 
+        if (this._hasInvalidRecipients(sendModel)) {
+            app.alert.show('mail_invalid_recipients', {
+                level: 'error',
+                messages: app.lang.get('ERR_INVALID_RECIPIENTS', this.module)
+            });
+            this.setMainButtonsDisabled(false);
+            return;
+        }
+
         this.setMainButtonsDisabled(true);
         app.alert.show('mail_call_status', {level: 'process', title: pendingMessage});
 
@@ -493,6 +502,26 @@
         } else {
             return !_.isEmpty($.trim(value));
         }
+    },
+
+    /**
+     * Check if the recipients in any of the recipient fields are invalid.
+     *
+     * @param {Backbone.Model} model
+     * @return {boolean} Return true if there are invalid recipients in any of
+     *   the fields. Return false otherwise.
+     * @private
+     */
+    _hasInvalidRecipients: function(model) {
+        return _.some(['to_addresses', 'cc_addresses', 'bcc_addresses'], function(fieldName) {
+            var recipients = model.get(fieldName);
+            if (!recipients) {
+                return false;
+            }
+            return _.some(recipients.models, function(recipient) {
+                return recipient.get('_invalid');
+            });
+        }, this);
     },
 
     /**
