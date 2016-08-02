@@ -454,8 +454,10 @@ $mod_strings = array (
     'LBL_MANUAL_VALIDATION5'=> 'After you import the validation key, you have completed the manual validation process.  Your system will update the validation key expiration date, which is the date when you need re-validate.',
     'LBL_MANUFACTURERS_TITLE' => 'Manufacturers',
     'LBL_MANUFACTURERS' => 'Set up the list of manufacturers',
-    'LBL_MASS_EMAIL_CONFIG_DESC'=> 'Configure email settings',
-    'LBL_MASS_EMAIL_CONFIG_TITLE'=>'Email Settings',
+    'LBL_MASS_EMAIL_CONFIG_DESC' => 'Configure the email account Sugar uses to send system emails ' .
+        '(e.g. notifications, campaigns, scheduled reports etc.),' .
+        ' email options for the organization and email security.',
+    'LBL_MASS_EMAIL_CONFIG_TITLE'=>'System Email Settings',
     'LBL_MASS_EMAIL_MANAGER_DESC'=> 'Manage the outbound email queue',
     'LBL_MASS_EMAIL_MANAGER_HEADER'=>'Campaign Email Management',
     'LBL_MASS_EMAIL_MANAGER_TITLE'=> 'Email Queue',
