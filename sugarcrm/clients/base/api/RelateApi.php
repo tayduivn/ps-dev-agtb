@@ -154,7 +154,12 @@ class RelateApi extends FilterApi {
         $q->limit = null;
         $q->orderByReset();
 
-        return reset($q->execute());
+        $stmt = $q->compile()->execute();
+        $count = (int) $stmt->fetchColumn();
+
+        return array(
+            'record_count' => $count,
+        );
     }
 
 }
