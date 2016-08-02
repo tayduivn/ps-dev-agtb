@@ -132,15 +132,20 @@ class PMSEExpressionEvaluator
 
     public function checkDateEvaluation($key, $firstToken, $operator, $secondToken)
     {
-        if ((strtolower($firstToken->expSubtype)=='date' || strtolower($firstToken->expSubtype)=='datetime') &&
-            strtolower($secondToken->expSubtype)=='timespan') {
-            switch ($operator->expValue) {
-                case '+':
-                    $key = 'dateAdd';
-                    break;
-                case '-':
-                    $key = 'dateSubstract';
-                    break;
+        if (strtolower($firstToken->expSubtype)=='date' ||
+            strtolower($firstToken->expSubtype)=='datetime') {
+            if (strtolower($secondToken->expSubtype)=='date' ||
+                strtolower($secondToken->expSubtype)=='datetime') {
+                $key = 'dateDateOp';
+            } elseif (strtolower($secondToken->expSubtype)=='timespan') {
+                $key = 'dateSpanOp';
+            }
+        } elseif (strtolower($firstToken->expSubtype)=='timespan') {
+            if (strtolower($secondToken->expSubtype)=='date' ||
+                strtolower($secondToken->expSubtype)=='datetime') {
+                $key = 'spanDateOp';
+            } elseif (strtolower($secondToken->expSubtype)=='timespan') {
+                $key = 'spanSpanOp';
             }
         }
         return $key;
@@ -211,11 +216,17 @@ class PMSEExpressionEvaluator
             case 'add_substract':
                 $result = $this->executeAddSubstractOp($firstOperand, $operator, $secondOperand);
                 break;
-            case 'dateAdd':
-                $result = $this->executeDateOp($firstOperand, $operator, $secondOperand);
+            case 'dateDateOp':
+                $result = $this->executeDateDateOp($firstOperand, $operator, $secondOperand);
                 break;
-            case 'dateSubstract':
-                $result = $this->executeDateOp($firstOperand, $operator, $secondOperand);
+            case 'dateSpanOp':
+                $result = $this->executeDateSpanOp($firstOperand, $operator, $secondOperand);
+                break;
+            case 'spanDateOp':
+                $result = $this->executeSpanDateOp($firstOperand, $operator, $secondOperand);
+                break;
+            case 'spanSpanOp':
+                $result = $this->executeSpanSpanOp($firstOperand, $operator, $secondOperand);
                 break;
             case 'relation':
                 $result = $this->executeRelationsOp(
@@ -277,6 +288,11 @@ class PMSEExpressionEvaluator
                 $token->expValue = $dateTimeObject->format('c');
                 $token->expLabel = $dateTimeObject->format('Y-m-d H:i:s');
                 $token->expSubtype = 'date';
+                break;
+            case is_a($token->expValue, 'DateInterval'):
+                $dateIntervalObject = $token->expValue;
+                $token->expLabel = $dateIntervalObject->format('P%yY%mM%dDT%hH%iM%sS');
+                $token->expSubtype = 'timespan';
                 break;
         }
         return $token;
@@ -407,23 +423,114 @@ class PMSEExpressionEvaluator
         return $resultCurrency;
     }
 
-    public function executeDateOp($value1, $operator, $value2)
+    /*
+     * A function that calculates the interval between two dates
+     *
+     * @param string    $value1     A string representation of a DateTime value
+     * @param string    $operator   '-' is the only logical choice here
+     * @param string    $value2     A string representation of a DateTime value
+     *
+     * @return DateInterval     The difference between the two DateTime values (signed)
+     */
+    public function executeDateDateOp($value1, $operator, $value2)
+    {
+        $intervalObject = null;
+        if ($operator == '-') {
+            $valueObject1 = new DateTime($value1);
+            $valueObject2 = new DateTime($value2);
+            $intervalObject = $valueObject2->diff($valueObject1);
+        }
+        return $intervalObject;
+    }
+
+    /*
+     * A function that calculates a date plus/minus an interval
+     *
+     * @param string                $value1     A string representation of a DateTime value
+     * @param string                $operator   '+' or '-'
+     * @param DateInterval/string   $value2     A DateInterval object or a string representation
+     *                                          of a DateInterval value
+     *
+     * @return DateTime     The resulting DateTime value
+     */
+    public function executeDateSpanOp($value1, $operator, $value2)
     {
         $dateObject = new DateTime($value1);
+        $intervalObject = $this->processDateInterval($value2);
         if ($operator == '+') {
-            $dateObject->add(new DateInterval($this->processDateInterval($value2)));
+            $dateObject->add($intervalObject);
         } elseif ($operator == '-') {
-            $dateObject->sub(new DateInterval($this->processDateInterval($value2)));
+            $dateObject->sub($intervalObject);
         }
         return $dateObject;
     }
 
+    /*
+     * A function that calculates the sum of an interval and a date
+     *
+     * @param DateInterval/string   $value1     A DateInterval object or a string representation
+     *                                          of a DateInterval value
+     * @param string                $operator   '+' is the only logical choice here
+     * @param string                $value2     A string representation of a DateTime value
+     *
+     * @return DateTime     The sum of the DateInterval and the DateTime values
+     */
+    public function executeSpanDateOp($value1, $operator, $value2)
+    {
+        $dateObject = null;
+        if ($operator == '+') {
+            $dateObject = new DateTime($value2);
+            $intervalObject = $this->processDateInterval($value1);
+            $dateObject->add($intervalObject);
+        }
+        return $dateObject;
+    }
+
+    /*
+     * A function that calculates the sum of/difference between two intervals
+     *
+     * @param DateInterval/string   $value1     A DateInterval object or a string representation
+     *                                          of a DateInterval value
+     * @param string                $operator   '+' or '-'
+     * @param DateInterval/string   $value1     A DateInterval object or a string representation
+     *                                          of a DateInterval value
+     *
+     * @return DateInterval     The sum of/difference between the two DateInterval values (signed)
+     */
+    public function executeSpanSpanOp($value1, $operator, $value2)
+    {
+        $intervalObject1 = $this->processDateInterval($value1);
+        $intervalObject2 = $this->processDateInterval($value2);
+        $now = new \DateTime();
+        $new = clone $now;
+        $new = $new->add($intervalObject1);
+        if ($operator == '+') {
+            $new = $new->add($intervalObject2);
+        } elseif ($operator == '-') {
+            $new = $new->sub($intervalObject2);
+        }
+        return $now->diff($new);
+    }
+
+    /*
+     * A function the converts the internal string representation of a DateInterval value
+     * (such as '1y', '2m', '3w', '4d') into the corresponding DateInterval object
+     *
+     * @param DateInterval/string   $interval   A DateInterval object or a string representation
+     *                                          of a DateInterval value
+     *
+     * @return DateInterval     The corresponding DateInterval object
+     */
     public function processDateInterval($interval)
     {
-        $pattern = "/(\d*)(y|min|m|w|d|h)/";
-        preg_match($pattern, $interval, $matches);
-        $result= $this->processDateUnit($matches[1], $matches[2]);
-        return $result;
+        if (is_a($interval, 'DateInterval')) {
+            return $interval;
+        } else {
+            $pattern = "/(\d*)(y|min|m|w|d|h)/";
+            preg_match($pattern, $interval, $matches);
+            $result = new DateInterval($this->processDateUnit($matches[1], $matches[2]));
+            return $result;
+        }
     }
 
     public function processDateUnit($value, $unit)
