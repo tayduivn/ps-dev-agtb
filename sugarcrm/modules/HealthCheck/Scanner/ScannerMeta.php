@@ -527,20 +527,6 @@ class HealthCheckScannerMeta
             //@codingStandardsIgnoreEnd
         ),
 
-        543 => array(
-            'report' => 'noCSPRNGfound',
-            'bucket' => self::MANUAL,
-            //@codingStandardsIgnoreStart
-            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_No_Suitable_CSPRNG/',
-            //@codingStandardsIgnoreEnd
-        ),
-        544 => array(
-            'report' => 'noRandomCompat',
-            'bucket' => self::MANUAL,
-            //@codingStandardsIgnoreStart
-            'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_No_Suitable_CSPRNG/',
-            //@codingStandardsIgnoreEnd
-        ),
         // Bucket G
         901 => array(
             'report' => 'alreadyUpgraded',
