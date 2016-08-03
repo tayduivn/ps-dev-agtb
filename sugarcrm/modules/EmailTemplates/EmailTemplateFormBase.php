@@ -167,9 +167,9 @@ EOQ;
 
 		if(!empty($focus->id)) {
 			$note = BeanFactory::getBean('Notes');
-			$where = "notes.parent_id='{$focus->id}'";
+            $where = sprintf(' notes.parent_id = %s', $focus->db->quoted($focus->id));
 			if(!empty($_REQUEST['old_id'])) { // to support duplication of email templates
-				$where .= " OR notes.parent_id='".$_REQUEST['old_id']."'";
+                $where .= sprintf(' OR notes.parent_id = %s', $focus->db->quoted($_REQUEST['old_id']));
 			}
 			$notes_list = $note->get_full_list("", $where, true);
 		}
@@ -319,4 +319,3 @@ EOQ;
 	}
 
 }
-?>
