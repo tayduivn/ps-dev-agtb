@@ -454,4 +454,55 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(REL_TYPE_MANY, $link2->getType());
     }
+
+    /**
+     * The bug described below only occurred when a {@link Link2} instance was used in the following sequence:
+     *
+     * 1. {@link Link2::resetLoaded}
+     * 2. {@link Link2::get}
+     * 3. {@link Link2::getBeans} with parameters
+     * 4. {@link Link2::getBeans} without parameters
+     *
+     * We start with a link that hasn't been loaded. I chose to explicitly reset the loaded flag. Next we call
+     * {@link Link2::get} to return the IDs of any linked records. This has the effect of changing
+     * {@link Link2::loaded} to `true` while {@link Link2::$beans} is `null`. Next we call {@link Link2::getBeans} with
+     * parameters. Before fixing this bug, this had the effect of changing {@link Link2::$beans} to an empty array. Next
+     * we call {@link Link2::getBeans} without parameters. The {@link Link2} instance believed it had been loaded
+     * because {@link Link2::beansAreLoaded} returns `true` when {@link Link2::$beans} is an array. We're simultaneously
+     * using {@link Link2::$loaded} and {@link Link2::beansAreLoaded} to indicate if a link has been loaded, but they
+     * aren't always in sync. So the current state of {@link Link2::$beans} was returned instead of executing the query
+     * and populating {@link Link2::$beans} with its results.
+     *
+     * After fixing this bug, calling {@link Link2::getBeans} with parameters will not change {@link Link2::$beans} to
+     * an empty array. This allows {@link Link2::beansAreLoaded} to return `false` when we call {@link Link2::getBeans}
+     * without parameters, so {@link Link2::$beans} will be populated with the data from {@link Link2::$rows} before it
+     * is returned.
+     *
+     * @covers Link2::get
+     * @covers Link2::getBeans
+     */
+    public function testGetBeans_SequenceShouldReturnTheCorrectBeans()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $account->load_relationship('contacts');
+        $contact1 = SugarTestContactUtilities::createContact();
+        $account->contacts->add($contact1);
+        $contact2 = SugarTestContactUtilities::createContact();
+        $account->contacts->add($contact2);
+        $account->contacts->resetLoaded();
+        $ids = $account->contacts->get();
+        $this->assertCount(2, $ids, 'Should have returned the IDs of the related contacts');
+        $beans = $account->contacts->getBeans(
+            array(
+                'where' => array(
+                    'lhs_field' => 'id',
+                    'operator' => '=',
+                    'rhs_value' => $contact1->id,
+                ),
+            )
+        );
+        $this->assertCount(1, $beans, "Should have returned the related bean with id={$contact1->id}");
+        $beans = $account->contacts->getBeans();
+        $this->assertCount(2, $beans, 'Should have returned the two related beans');
+    }
 }
