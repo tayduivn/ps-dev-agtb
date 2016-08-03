@@ -84,6 +84,33 @@
 
     /**
      * @inheritdoc
+     * The EmailsApi is using a 451 http status code to report those errors for which the desired behavior is to
+     * display (return) an appropriate error message to end user and provide useful information as to what the
+     * issue is that was encountered such that it can be corrected. Existing errors in the 400-499 range are being
+     * haandled by core sugar code at a level that prevents these errors to be handled by Email compose because it is
+     * in a drawer, a limitation that we expect to address in the future.
+     */
+    saveModel: function(success, error) {
+        var onError = _.bind(function(model, e) {
+            if (e && e.status == 451) {
+                // Mark the error as having been handled
+                e.handled = true;
+                this.enableButtons();
+                app.alert.show(e.error, {
+                    level: 'error',
+                    autoClose: false,
+                    messages: e.message
+                });
+            } else if (error) {
+                error(model, e);
+            }
+        }, this);
+
+        this._super('saveModel', [success, onError]);
+    },
+
+    /**
+     * @inheritdoc
      */
     delegateButtonEvents: function() {
         this.context.on('button:' + this.sendButtonName + ':click', this.send, this);

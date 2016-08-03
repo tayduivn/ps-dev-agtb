@@ -223,6 +223,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::callProtectedMethod($api, 'unlinkRelatedRecords', array($this->service, $email, $args));
     }
 
+    /**
+     * @covers ::sendEmail
+     */
     public function testSendEmail_UsesSpecifiedConfiguration()
     {
         $config = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
@@ -243,6 +246,10 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
     }
 
+
+    /**
+     * @covers ::sendEmail
+     */
     public function testSendEmail_UsesSystemConfiguration()
     {
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
@@ -260,7 +267,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException SugarApiExceptionError
+     * @covers ::sendEmail
+     * @expectedException SugarApiException
      */
     public function testSendEmail_NoConfiguration()
     {
@@ -277,12 +285,11 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::sendEmail
      * @expectedException SugarApiExceptionError
      */
     public function testSendEmail_UnknownError()
     {
-        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
-
         $email = $this->getMockBuilder('Email')
             ->disableOriginalConstructor()
             ->setMethods(array('sendEmail'))
@@ -293,6 +300,76 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+    }
+
+    public function smtpServerErrorProvider()
+    {
+        return array(
+            array(
+                MailerException::FailedToSend,
+                'smtp_server_error',
+            ),
+            array(
+                MailerException::FailedToConnectToRemoteServer,
+                'smtp_server_error',
+            ),
+            array(
+                MailerException::InvalidConfiguration,
+                'smtp_server_error',
+            ),
+            array(
+                MailerException::InvalidHeader,
+                'smtp_payload_error',
+            ),
+            array(
+                MailerException::InvalidEmailAddress,
+                'smtp_payload_error',
+            ),
+            array(
+                MailerException::InvalidAttachment,
+                'smtp_payload_error',
+            ),
+            array(
+                MailerException::FailedToTransferHeaders,
+                'smtp_payload_error',
+            ),
+            array(
+                MailerException::ExecutableAttachment,
+                'smtp_payload_error',
+            ),
+        );
+    }
+
+    /**
+     * @covers ::sendEmail
+     * @dataProvider smtpServerErrorProvider
+     */
+    public function testSendEmail_SmtpError($errorCode, $expectedErrorLabel)
+    {
+        $email = $this->getMockBuilder('Email')
+            ->disableOriginalConstructor()
+            ->setMethods(array('sendEmail'))
+            ->getMock();
+        $email->expects($this->once())
+            ->method('sendEmail')
+            ->willThrowException(new MailerException('something happened', $errorCode));
+
+        $api = new EmailsApi();
+
+        try {
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+        } catch (SugarApiException $e) {
+            $this->assertEquals(
+                451,
+                $e->httpCode,
+                'Should map this MailerException to a SugarApiException with code 451'
+            );
+            $this->assertEquals(
+                $expectedErrorLabel,
+                $e->errorLabel,
+                "Should classify this error as a {$expectedErrorLabel}"
+            );
+        }
     }
 
     /**

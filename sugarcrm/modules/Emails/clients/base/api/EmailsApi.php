@@ -486,8 +486,32 @@ class EmailsApi extends ModuleApi
 
             $email->sendEmail($config);
         } catch (MailerException $e) {
-            //FIXME: Each MailerException code maps to a different SugarApiException.
-            throw new SugarApiExceptionError($e->getUserFriendlyMessage());
+            switch ($e->getCode()) {
+                case MailerException::FailedToSend:
+                case MailerException::FailedToConnectToRemoteServer:
+                case MailerException::InvalidConfiguration:
+                    throw new SugarApiException(
+                        $e->getUserFriendlyMessage(),
+                        null,
+                        'Emails',
+                        451,
+                        'smtp_server_error'
+                    );
+                case MailerException::InvalidHeader:
+                case MailerException::InvalidEmailAddress:
+                case MailerException::InvalidAttachment:
+                case MailerException::FailedToTransferHeaders:
+                case MailerException::ExecutableAttachment:
+                    throw new SugarApiException(
+                        $e->getUserFriendlyMessage(),
+                        null,
+                        'Emails',
+                        451,
+                        'smtp_payload_error'
+                    );
+                default:
+                    throw new SugarApiExceptionError($e->getUserFriendlyMessage());
+            }
         } catch (Exception $e) {
             throw new SugarApiExceptionError('Failed to send the email: ' . $e->getMessage());
         }
