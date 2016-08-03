@@ -1974,10 +1974,6 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expected = "P5M4D";
         $result = $expressionEvaluatorMock->executeSpanSpanOp($interval1, $operator, $interval2);
         $this->assertEquals($expected, $result->format('P%mM%dD'));
-        $operator = '-';
-        $expected = "P4M26D";
-        $result = $expressionEvaluatorMock->executeSpanSpanOp($interval1, $operator, $interval2);
-        $this->assertEquals($expected, $result->format('P%mM%dD'));
     }
 
     public function testEvalEqualArrays()
