@@ -996,8 +996,8 @@ class Link {
 			//look for key in  $join_key_values, if found add to filter criteria else abort duplicate checking.
 			if (isset($join_key_values[$field])) {
 
-				$this->_duplicate_where .= $delimiter.' '.$field."='".$join_key_values[$field]."'";
-				$delimiter='AND';
+                $this->_duplicate_where .= $delimiter.' '.$field." = ". $this->_db->quoted($join_key_values[$field]);
+                $delimiter = ' AND ';
 			} else {
 				$GLOBALS['log']->error('Duplicate checking aborted, Please supply a value for this column '.$field);
 				return false;
