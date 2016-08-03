@@ -41,6 +41,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'reply-action',
                     'event' => 'button:reply_button:click',
                     'label' => 'LBL_BUTTON_REPLY',
+                    'acl_module' => 'Emails',
                     'acl_action' => 'create',
                 ),
                 array(
@@ -48,6 +49,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'reply-action',
                     'event' => 'button:reply_all_button:click',
                     'label' => 'LBL_BUTTON_REPLY_ALL',
+                    'acl_module' => 'Emails',
                     'acl_action' => 'create',
                     'reply_all' => true,
                 ),
@@ -56,6 +58,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'type' => 'rowaction',
                     'event' => 'button:forward_button:click',
                     'label' => 'LBL_BUTTON_FORWARD',
+                    'acl_module' => 'Emails',
                     'acl_action' => 'create',
                 ),
                 array(
