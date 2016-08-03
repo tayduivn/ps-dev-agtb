@@ -598,10 +598,10 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 	$attachments = "<input type='hidden' name='removeAttachment' id='removeAttachment' value=''>\n";
 	$ids = '';
 
-	$focusId = empty($focus->id) ? $_REQUEST['record'] : $focus->id;
-	$note = BeanFactory::getBean('Notes');
-	$where = "notes.parent_id='{$focusId}' AND notes.filename IS NOT NULL";
-	$notes_list = $note->get_full_list("", $where,true);
+        $focusId = empty($focus->id) ? $recordId : $focus->id;
+        $note = BeanFactory::getBean('Notes');
+        $where = sprintf('notes.parent_id = %s AND notes.filename IS NOT NULL', $focus->db->quoted($focusId));
+        $notes_list = $note->get_full_list("", $where, true);
 
 	if(!isset($notes_list)) {
 		$notes_list = array();
