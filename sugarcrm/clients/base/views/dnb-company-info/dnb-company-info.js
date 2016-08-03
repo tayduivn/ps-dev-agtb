@@ -263,7 +263,7 @@
             this.$(this.selectors.load).toggleClass('hide', false);
             this.$(this.selectors.rslt).toggleClass('hide', true);
             this.companyList = null;
-            tester = new RegExp(/\*$/, 'i');
+            tester = /\*$/;
             companyName = tester.test(companyName) ? companyName : companyName + '*';
             var balParams = {
                 'OrganizationName': companyName
