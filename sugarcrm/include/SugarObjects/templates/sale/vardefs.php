@@ -166,6 +166,7 @@ $vardefs = array(
     ),
     'uses' => array(
         'taggable',
+        'currency',
     ),
     'duplicate_check' => array(
         'enabled' => true,
@@ -178,7 +179,4 @@ $vardefs = array(
             )
         )
     ),
-    'uses' => array(
-        'currency'
-    )
 );

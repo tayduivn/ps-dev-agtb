@@ -35,7 +35,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'len' => '20',
     'source'=>'non-db',
   ),
-  //bug 39559 
+  //bug 39559
   'set_accept_links' => array (
     'name' => 'set_accept_links',
     'vname' => 'LBL_ACCEPT_LINK',
@@ -60,10 +60,10 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting password',
-    //BEGIN SUGARCRM flav=com ONLY  
+    //BEGIN SUGARCRM flav=com ONLY
     'studio' => 'false',
-    //END SUGARCRM flav=com ONLY    
-	//BEGIN SUGARCRM flav!=com ONLY    
+    //END SUGARCRM flav=com ONLY
+	//BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
     'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
     //END SUGARCRM flav!=com ONLY
@@ -95,9 +95,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL',
-    //BEGIN SUGARCRM flav=com ONLY  
+    //BEGIN SUGARCRM flav=com ONLY
     'studio' => 'false',
-    //END SUGARCRM flav=com ONLY  
+    //END SUGARCRM flav=com ONLY
     //BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
     'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
@@ -131,7 +131,12 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
     'default' => 0,
   ),
   'duration_minutes' =>
@@ -147,7 +152,12 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
     'default' => 0,
   ),
   'date_start' =>
@@ -269,7 +279,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'default'=> -1,
     'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
     'studio' => array('recordview' => false, 'wirelesseditview' => false),
-  ),  
+  ),
   'email_reminder_checked' => array(
     'name' => 'email_reminder_checked',
     'vname' => 'LBL_EMAIL_REMINDER',
@@ -278,7 +288,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'comment' => 'checkbox indicating whether or not the email reminder value is set (Meta-data only)',
     'massupdate' => false,
     'studio' => false,
-   ),  
+   ),
   'email_reminder_time' =>
   array (
     'name' => 'email_reminder_time',
@@ -294,8 +304,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'importable' => false,
     'hideacl' => true,
     'workflow' => false,
-  ),  
-  'email_reminder_sent' => array( 
+  ),
+  'email_reminder_sent' => array(
     'name' => 'email_reminder_sent',
     'vname' => 'LBL_EMAIL_REMINDER_SENT',
     'default' => 0,
@@ -306,7 +316,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'workflow' => false,
     'reportable' => false,
     'hideacl' => true,
-   ), 
+   ),
    'outlook_id' =>
   array (
     'name' => 'outlook_id',
@@ -325,7 +335,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'len' => '11',
     'reportable' => false,
     'default'=>0,
-    'comment' => 'Meeting update sequence for meetings as per iCalendar standards', 
+    'comment' => 'Meeting update sequence for meetings as per iCalendar standards',
       'studio' => false,
   ),
   'contact_name' =>
@@ -515,7 +525,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'massupdate' => false,
 		'reportable' => false,
 		'studio' => 'false',
-	),	
+	),
 	'repeat_interval' =>
 	array(
 		'name' => 'repeat_interval',
@@ -528,7 +538,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'massupdate' => false,
 		'reportable' => false,
 		'studio' => 'false',
-	),	
+	),
 	'repeat_dow' =>
 	array(
 		'name' => 'repeat_dow',
@@ -540,7 +550,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'massupdate' => false,
 		'reportable' => false,
 		'studio' => 'false',
-	),	
+	),
 	'repeat_until' =>
 	array(
 		'name' => 'repeat_until',
@@ -551,7 +561,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 		'massupdate' => false,
 		'reportable' => false,
 		'studio' => 'false',
-	),	
+	),
 	'repeat_count' =>
 	array(
 		'name' => 'repeat_count',
