@@ -262,8 +262,13 @@ class HistoryApi extends RelateApi
         );
 
         foreach ($q->execute() as $row) {
-            $beans[$row['id']] = BeanFactory::getBean($row['module'], $row['id']);
-            $beans['_rows'][$row['id']] = $row;
+            /** @var SugarBean $bean */
+            $bean = BeanFactory::getBean($row['module']);
+            $bean->populateFromRow($row);
+            if ($bean->ACLAccess('list')) {
+                $beans[$row['id']] = $bean;
+                $beans['_rows'][$row['id']] = $row;
+            }
         }
 
         $rows = $beans['_rows'];
