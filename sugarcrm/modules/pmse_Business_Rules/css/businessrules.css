@@ -532,6 +532,11 @@ table.decision-table-index span {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
+  min-height: 18px;
+}
+
+.adam.list-panel > .list-item:first-child {
+  min-height: 0;
 }
 
 .adam.list-panel > .list-item:nth-child(odd) {
