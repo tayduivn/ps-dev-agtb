@@ -185,6 +185,30 @@
          *
          * Otherwise, `models` is nothing and the collection is initialized
          * without any models.
+         *
+         * Note:
+         * {@link SUGAR.expressions.SidecarExpressionContext#setRelatedFields}
+         * is incompatible with this plugin. If your module has a calculated
+         * field associated with a link field, then Sugar Logic will attempt to
+         * set the attribute on the model. We don't want to replace a
+         * collection that already exist at the attribute, so we treat setting
+         * the collection to the same instance as a noop.
+         *
+         * {@link SUGAR.expressions.SidecarExpressionContext#setRelatedFields}
+         * actually patches its data onto the existing collection, so there is
+         * no loss of state. And the first time it happens, the patched data is
+         * accurate and available as a property on the collection. However, any
+         * subsequent actions that trigger Sugar Logic to update the model
+         * result in no change because
+         * {@link SUGAR.expressions.SidecarExpressionContext#updateRelatedFieldValue}
+         * passes data to
+         * {@link SUGAR.expressions.SidecarExpressionContext#setRelatedFields}
+         * in a format that is not expected. That format is the collection
+         * instance instead of the object that Sugar Logic attempted to store
+         * at that attribute the first time. This does no harm and the
+         * NestedCollection plugin continues to work as expected. The impact is
+         * that you can't rely on SugarLogic associated with link fields when
+         * also using the NestedCollection plugin.
          */
         BeanOverrides.prototype.set = function(attr, options) {
             if (!this.model._changing) {
@@ -194,13 +218,19 @@
 
             _.each(attr, function(models, key) {
                 var collection;
-                var previous;
+                var previous = this.get(key);
                 var localOptions = _.extend({}, options, {
                     link: {
                         name: key,
                         bean: this
                     }
                 });
+
+                if (previous instanceof app.NestedLink && previous === models) {
+                    // No change. Someone is trying to set the collection to
+                    // the same collection.
+                    return;
+                }
 
                 if (!_.isArray(models)) {
                     if (models instanceof Backbone.Collection) {
@@ -222,18 +252,15 @@
 
                 collection = new app.NestedLink(models, localOptions);
 
-                previous = this.get(key);
                 this.attributes[key] = collection;
                 this.setDefault(key, collection);
 
-                // Has the attribute changed since the last time it has been
-                // set?
-                if (!_.isEqual(app.utils.deepCopy(previous), app.utils.deepCopy(this.get(key)))) {
-                    this.changed[key] = collection;
+                // The instance stored on the attribute is new, so treat this
+                // as a change to the attribute even if the data is the same.
+                this.changed[key] = collection;
 
-                    if (!localOptions.silent) {
-                        this.trigger('change:' + key, collection);
-                    }
+                if (!localOptions.silent) {
+                    this.trigger('change:' + key, collection);
                 }
             }, this.model);
 

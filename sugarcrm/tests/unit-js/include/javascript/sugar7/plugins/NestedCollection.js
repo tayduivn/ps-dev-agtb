@@ -137,6 +137,27 @@ describe('Plugins.NestedCollection', function() {
             expect(model.getDefault(link)).toBe(collection);
         });
 
+        it('should do nothing when setting the attribute to the same collection', function() {
+            var spy = sandbox.spy();
+            var response = {
+                records: attachments,
+                next_offset: -1
+            };
+            var collection;
+
+            model.set(link, response);
+            collection = model.get(link);
+
+            model.on('change', spy);
+            model.on('change:' + link, spy);
+
+            model.set(link, collection);
+
+            expect(model.get(link)).toBe(collection);
+            expect(model.getDefault(link)).toBe(collection);
+            expect(spy).not.toHaveBeenCalled();
+        });
+
         it('should set non-collection attributes as usual', function() {
             var attributes = {name: 'foo'};
 
