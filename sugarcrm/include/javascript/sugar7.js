@@ -344,7 +344,7 @@
             },
             {
                 name: 'recordLayoutAction',
-                route: ':module/:id/:layout/:view(/:action)',
+                route: ':module/:id/layout/:layout(/:action)',
                 callback: function(module, id, layout, action) {
                     // FIXME: We shouldn't be calling private methods like this.
                     // Will be addressed in SC-2761.
