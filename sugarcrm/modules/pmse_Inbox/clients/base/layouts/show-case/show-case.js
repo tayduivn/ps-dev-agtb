@@ -23,6 +23,7 @@
     initialize: function(options) {
         this.inboxId = options.context.get('modelId');
         this.flowId = options.context.get('action');
+        this.recordAction = options.context.get('record') || 'detail';
         this._super('initialize', [options]);
         this.context.set('skipFetch', true);
     },
@@ -105,6 +106,7 @@
         context.prepare();
         context.set('case', this.case);
         context.set('layout', 'record');
+        context.set('action', this.recordAction);
 
         this.recordContext = context;
         this.recordModel = context.get('model');
