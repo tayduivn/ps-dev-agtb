@@ -246,9 +246,9 @@ describe('EmailClientLaunch Plugin', function() {
                 body: 'Bar!'
             };
             var url = field._buildMailToURL({
-                subject: expectedParams.subject,
-                text_body: expectedParams.body,
-                html_body: '<b>' + expectedParams.body + '</b>'
+                name: expectedParams.subject,
+                description: expectedParams.body,
+                description_html: '<b>' + expectedParams.body + '</b>'
             });
             expect(url).toEqual('mailto:?' + $.param(expectedParams));
         });

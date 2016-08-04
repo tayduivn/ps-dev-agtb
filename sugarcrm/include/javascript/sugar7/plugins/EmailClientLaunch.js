@@ -175,8 +175,8 @@
 
                 formattedOptions.cc = this._formatRecipientsToString(options.cc);
                 formattedOptions.bcc = this._formatRecipientsToString(options.bcc);
-                formattedOptions.subject = options.subject;
-                formattedOptions.body = options.text_body;
+                formattedOptions.subject = options.name;
+                formattedOptions.body = options.description;
 
                 _.each(['cc', 'bcc', 'subject', 'body'], function(option) {
                     var param;
