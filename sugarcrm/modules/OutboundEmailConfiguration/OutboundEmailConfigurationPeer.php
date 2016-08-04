@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once "OutboundSmtpEmailConfiguration.php"; // also imports OutboundEmailConfiguration.php
+// also imports OutboundEmailConfiguration.php
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 // external imports
 require_once "include/OutboundEmail/OutboundEmail.php";
