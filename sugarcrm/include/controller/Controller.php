@@ -151,11 +151,13 @@ class Controller extends SugarBean {
 			
 		} else {
 		//this is a new component, set the x or y value to the max + 1
-
-				$query = "SELECT MAX(".$this->focus->controller_def['start_var'].") max_start from ".$this->focus->table_name."
-						  WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
-						  AND ".$this->focus->table_name.".deleted='0'
-						 ";
+            $query = sprintf(
+                'SELECT MAX(%s) max_start FROM %s WHERE %s = %s AND deleted=0',
+                $this->focus->controller_def['start_var'],
+                $this->focus->table_name,
+                $this->focus->controller_def['parent_var'],
+                $this->db->quoted($parent_id)
+            );
 				$row = $this->db->fetchOne($query,true," Error capturing max start order: ");
 
 			if(!is_null($row['max_start'])){		
@@ -200,7 +202,7 @@ class Controller extends SugarBean {
 
         $qb->execute();
 	}
-	
+
 	function get_affected_id($parent_id, $list_order_x="", $list_order_y=""){	
         $qb = $this->db->getConnection()->createQueryBuilder();
 
@@ -240,11 +242,14 @@ function check_wall($magnitude, $direction, $parent_id){
 	
 //If down or Right, then check max list_order value
 	if($direction=="Down" || $direction =="Right"){
+            $query = sprintf(
+                'SELECT MAX(%s) max_start FROM %s WHERE %s = %s AND deleted=0',
+                $this->focus->controller_def['start_var'],
+                $this->focus->table_name,
+                $this->focus->controller_def['parent_var'],
+                $this->db->quoted($parent_id)
+            );
 
-		$query = "SELECT MAX(".$this->focus->controller_def['start_var'].") max_start from ".$this->focus->table_name."
-				  WHERE ".$this->focus->controller_def['parent_var']."='$parent_id'
-				  AND ".$this->focus->table_name.".deleted='0'
-						 ";
 		$row = $this->db->fetchOne($query,true," Error capturing max start order: ");
 
 			if($this->focus->controller_def['start_axis']=="x")	{
@@ -297,10 +302,16 @@ function delete_adjust_order($parent_id){
 	$variable_name = $this->focus->controller_def['start_var'];
 	$current_position = $this->focus->$variable_name;
 
-	$query =  "UPDATE ".$this->focus->table_name." ";
-	$query .= "SET ".$this->focus->controller_def['start_var']." = ".$this->focus->controller_def['start_var']." - 1 ";
-	$query .= "WHERE ".$this->focus->controller_def['start_var']." > ".$current_position." AND deleted=0 ";
-	$query .= "AND ".$this->focus->controller_def['parent_var']." = '".$parent_id."'";
+        $query = sprintf(
+            'UPDATE %s SET %s = %s - 1 WHERE %s > %s AND deleted = 0 AND %s = %s',
+            $this->focus->table_name,
+            $this->focus->controller_def['start_var'],
+            $this->focus->controller_def['start_var'],
+            $this->focus->controller_def['start_var'],
+            $current_position,
+            $this->focus->controller_def['parent_var'],
+            $this->db->quoted($parent_id)
+        );
 
 	$result = $this->db->query($query,true," Error updating the delete_adjust_order: ");
 //end delete_adjust_order	
