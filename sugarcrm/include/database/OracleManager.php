@@ -102,6 +102,7 @@ class OracleManager extends DBManager
         'encrypt'  => 'varchar2(255)',
         'file'     => 'varchar2(255)',
         'decimal_tpl' => 'number(%d, %d)',
+        'smallint' => 'number(5)',
             );
 
     /**
