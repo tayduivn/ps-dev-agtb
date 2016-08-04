@@ -798,6 +798,9 @@ protected function checkQuery($sql, $object_name = false)
 				    // if it's not for prep, massageValue will decode it
 				    $val = $data[$field];
 				}
+                if ($val === '' && $this->isNullable($fieldDef)) {
+                    $val = null;
+                }
 			} else {
 					$val = null;
 			}
@@ -2659,7 +2662,7 @@ protected function checkQuery($sql, $object_name = false)
             }
 
             //Required fields should never be null (but they can be empty values)
-            if (strlen($val) == 0 && empty($fieldDef['required'])) {
+            if ($val === '' && $this->isNullable($fieldDef)) {
                 $val = null;
             }
 
