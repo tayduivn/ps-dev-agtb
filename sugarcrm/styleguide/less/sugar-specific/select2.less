@@ -94,6 +94,15 @@
       outline: ~"thin dotted \9";
       background: @blue;
     }
+    &.select2-choice-danger {
+      background-color: @btnDangerBackground;
+      span:before {
+        content: "\f06a";
+        font-family: 'FontAwesome';
+        color: @white;
+        padding-right: 3px;
+      }
+    }
   }
 
   &.select2-choices-pills .select2-search-choice {
