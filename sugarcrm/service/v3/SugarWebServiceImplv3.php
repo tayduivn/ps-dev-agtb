@@ -10,8 +10,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('service/core/SugarWebServiceImpl.php');
-require_once('SugarWebServiceUtilv3.php');
+require_once 'service/core/SugarWebServiceImpl.php';
+require_once 'service/v3/SugarWebServiceUtilv3.php';
 
 use  Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 

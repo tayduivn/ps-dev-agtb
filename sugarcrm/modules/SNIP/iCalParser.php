@@ -276,7 +276,7 @@ class vTimeZone extends vBasic{
 	static public function guessTimezone($tz)
 	{
 		if(empty(self::$winZones)) {
-			require 'windowsZones.php';
+            require 'modules/SNIP/windowsZones.php';
 			self::$winZones = $windowsZones;
 		}
 		if(isset(self::$winZones[$tz])) {
