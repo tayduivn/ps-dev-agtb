@@ -20,6 +20,7 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
+    'LBL_RECORD_CONTAIN_LOCK_FIELD' => 'The imported record is participating in a process and cannot be edited because some fields are locked for editing by the process.',
     'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'number of errors were found.  View error tab for rows that were not imported due to error',
     'LBL_UPDATE_SUCCESSFULLY' => 'records updated successfully',
     'LBL_SUCCESSFULLY_IMPORTED' => 'records were created',

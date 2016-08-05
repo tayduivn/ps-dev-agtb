@@ -55,7 +55,7 @@ class SugarACLLockedFields extends SugarACLStrategy
         }
 
         // to get bean object
-        $bean = SugarACL::loadBean($module, $context);
+        $bean = static::loadBean($module, $context);
         if (empty($bean)) {
             return true;
         }
@@ -68,5 +68,22 @@ class SugarACLLockedFields extends SugarACLStrategy
         }
 
         return true;
+    }
+
+    /**
+     * Load bean from context
+     * @static
+     * @param string $module
+     * @param array $context
+     * @return SugarBean
+     */
+    public static function loadBean($module, $context = array())
+    {
+        $bean = null;
+        if (isset($context['bean']) && $context['bean'] instanceof SugarBean
+            && $context['bean']->module_dir == $module) {
+            $bean = $context['bean'];
+        }
+        return $bean;
     }
 }

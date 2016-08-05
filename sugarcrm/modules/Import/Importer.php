@@ -225,6 +225,21 @@ class Importer
             'non-primary' => array()
         );
 
+        $importRequiredFields = $focus->get_import_required_fields();
+
+        // to get a list of locked fields for this imported record
+        $lockedFields = array();
+        $fieldNum = array_search('id', $this->importColumns);
+        if ($fieldNum) {
+            $importedId = strip_tags(trim($row[$fieldNum]));
+            if ($importedId) {
+                $importedBean = BeanFactory::getBean($this->bean->module_dir, $importedId);
+                if ($importedBean) {
+                    $lockedFields = $importedBean->getLockedFields();
+                }
+            }
+        }
+
         $fields_order = $this->getImportColumnsOrder($focus->getFieldDefinitions());
         $importFields = array();
         foreach ($fields_order as $fieldNum) {
@@ -296,8 +311,7 @@ class Importer
                 continue;
 
             // If the field is required and blank then error out
-            if ( array_key_exists($field,$focus->get_import_required_fields()) && empty($rowValue) && $rowValue!='0')
-            {
+            if (array_key_exists($field, $importRequiredFields) && empty($rowValue) && $rowValue != '0') {
                 $this->importSource->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
                 $do_save = false;
             }
@@ -433,6 +447,17 @@ class Importer
             // if the parent type is in singular form, get the real module name for parent_type
             if (isset($fieldDef['type']) && $fieldDef['type']=='parent_type') {
                 $rowValue = get_module_from_singular($rowValue);
+            }
+
+            // do not import if the record contains locked fields
+            if (in_array($field, $lockedFields)) {
+                $do_save = false;
+                $this->importSource->writeError(
+                    $mod_strings['LBL_RECORD_CONTAIN_LOCK_FIELD'],
+                    $field,
+                    $rowValue
+                );
+                break;
             }
 
             $focus->$field = $rowValue;
