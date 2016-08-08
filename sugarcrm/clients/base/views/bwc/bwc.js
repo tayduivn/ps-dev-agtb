@@ -301,6 +301,85 @@
     },
 
     /**
+     * Opens the Compose Email drawer, passing in the parent model to which the
+     * email should be related, as well other prefills, like the subject and
+     * body.
+     *
+     * @param {Object} [options] Data for the email from the compose package.
+     * @param {Object} [options.subject] Populate the email with this subject.
+     * @param {Object} [options.body] Populate the email with this body.
+     * @param {Object} [options.to_email_addrs] Populate the email with these
+     * recipients. This comes in as a string of email addresses separated by
+     * commas. Each address may contain a name and the address may be between
+     * <>. When a name is present, we do not know which module it comes from.
+     * Therefore, we extract the email address and prepopulate the email with
+     * only email addresses. This limitation only exists for the BWC flow.
+     * @param {Object} [options.attachments] Populate the email with these
+     * attachments.
+     */
+    openComposeEmailDrawer: function(options) {
+        var prepopulate = {
+            related: this.context.get('model')
+        };
+        var emailAddressRegex;
+
+        options = app.utils.deepCopy(options) || {};
+
+        if (!_.isEmpty(options.subject)) {
+            prepopulate.name = options.subject;
+        }
+
+        if (!_.isEmpty(options.body)) {
+            prepopulate.description_html = options.body;
+        }
+
+        if (!_.isEmpty(options.to_email_addrs)) {
+            emailAddressRegex = /.*\s*<(.*)>/;
+            prepopulate.to = [];
+            options.to_email_addrs = options.to_email_addrs.split(/\s*,\s*/);
+
+            _.each(options.to_email_addrs, function(address) {
+                var open = address.indexOf('<');
+                var close = address.indexOf('>');
+                var matches;
+
+                if (open > -1 && close > -1 && open < close) {
+                    matches = emailAddressRegex.exec(address);
+                    address = matches[1];
+                }
+
+                prepopulate.to.push(app.data.createBean('EmailAddresses', {email_address: address}));
+            });
+        }
+
+        if (!_.isEmpty(options.attachments)) {
+            prepopulate.attachments = [];
+
+            _.each(options.attachments, function(attachment) {
+                prepopulate.attachments.push({
+                    upload_id: attachment.id,
+                    name: attachment.filename,
+                    filename: attachment.filename
+                });
+            });
+        }
+
+        app.drawer.open({
+            layout: 'create',
+            context: {
+                create: true,
+                module: 'Emails',
+                prepopulate: prepopulate
+            }
+        }, _.bind(function(context, model) {
+            // Reload the BWC to update subpanels.
+            if (model) {
+                this.$('iframe').get(0).contentWindow.location.reload(true);
+            }
+        }, this));
+    },
+
+    /**
      * Opens the Archive Email drawer, passing in the parent model to relate to
      * Reloads the BWC page if email created so it appears in the subpanel
      */

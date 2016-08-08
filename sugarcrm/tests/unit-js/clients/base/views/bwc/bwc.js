@@ -9,7 +9,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Base.View.Bwc', function() {
-    var view, app, iframeStub;
+    var view;
+    var app;
+    var iframeStub;
+    var sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -22,7 +25,9 @@ describe('Base.View.Bwc', function() {
         context.prepare();
         view = SugarTest.createView('base', module, 'bwc', null, context);
 
-        iframeStub = sinon.collection.stub(view, '$');
+        sandbox = sinon.sandbox.create();
+
+        iframeStub = sandbox.stub(view, '$');
         iframeStub.withArgs('iframe').returns({
             get: function() {
                 return {
@@ -37,20 +42,16 @@ describe('Base.View.Bwc', function() {
         view.dispose();
         app.view.reset();
         SugarTest.testMetadata.dispose();
-        sinon.collection.restore();
+        sandbox.restore();
     });
 
     describe('Warning unsaved changes', function() {
-        var navigateStub, alertShowStub;
+        var navigateStub;
 
         beforeEach(function() {
-            navigateStub = sinon.collection.stub(app.router, 'navigate');
-            alertShowStub = sinon.collection.stub(app.alert, 'show');
-            sinon.collection.stub(Backbone.history, 'getFragment');
-        });
-
-        afterEach(function() {
-            alertShowStub.restore();
+            navigateStub = sandbox.stub(app.router, 'navigate');
+            sandbox.stub(app.alert, 'show');
+            sandbox.stub(Backbone.history, 'getFragment');
         });
 
         it('serialize form elements', function() {
@@ -153,7 +154,9 @@ describe('Base.View.Bwc', function() {
 
         it('convertToSidecarUrl should put BWC module URLs through bwc/ route', function() {
             var href = 'index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1';
-            sinon.collection.stub(app.metadata, "getModule", function(){return {isBwcEnabled: true}});
+            sandbox.stub(app.metadata, 'getModule', function() {
+                return {isBwcEnabled: true};
+            });
             var result = view.convertToSidecarUrl(href);
             expect(result).toEqual("bwc/index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1")
         });
@@ -168,7 +171,9 @@ describe('Base.View.Bwc', function() {
 
         it('convertToSidecarLink should leave Administration module URLs alone', function() {
             var href = 'index.php?module=Administration&action=Languages&view=default';
-            sinon.collection.stub(app.metadata, "getModule", function(){return {isBwcEnabled: true}});
+            sandbox.stub(app.metadata, 'getModule', function() {
+                return {isBwcEnabled: true};
+            });
             var ele = document.createElement("A");
             ele.setAttribute("href", href);
             view.convertToSidecarLink(ele);
@@ -204,5 +209,106 @@ describe('Base.View.Bwc', function() {
 
             delete window.parent.SUGAR;
         });
+    });
+
+    describe('send an email from a bwc module', function() {
+        beforeEach(function() {
+            view.model.set({
+                id: _.uniqueId(),
+                name: 'Foo Bar'
+            });
+
+            app.drawer = {
+                open: sandbox.spy()
+            };
+        });
+
+        afterEach(function() {
+            app.drawer = null;
+        });
+
+        it('should open the compose email drawer', function() {
+            var composePackage = {
+                attachments: {
+                    123: {
+                        id: 123,
+                        filename: 'foobar.jpg'
+                    },
+                    456: {
+                        id: 456,
+                        filename: 'bizbaz.pdf'
+                    }
+                },
+                body: 'blah blah blah',
+                email_id: '',
+                parent_id: view.model.get('id'),
+                parent_name: view.model.get('name'),
+                parent_type: view.model.module,
+                subject: 'check this out!',
+                to_email_addrs: ''
+            };
+
+            view.openComposeEmailDrawer(composePackage);
+
+            expect(app.drawer.open).toHaveBeenCalledOnce();
+            expect(app.drawer.open.args[0][0].layout).toBe('create');
+            expect(app.drawer.open.args[0][0].context.create).toBe(true);
+            expect(app.drawer.open.args[0][0].context.module).toBe('Emails');
+            expect(app.drawer.open.args[0][0].context.prepopulate.name).toBe(composePackage.subject);
+            expect(app.drawer.open.args[0][0].context.prepopulate.description_html).toBe(composePackage.body);
+            expect(app.drawer.open.args[0][0].context.prepopulate.related).toBe(view.model);
+            expect(app.drawer.open.args[0][0].context.prepopulate.attachments.length).toBe(2);
+            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[0]).toEqual({
+                upload_id: 123,
+                name: 'foobar.jpg',
+                filename: 'foobar.jpg'
+            });
+            expect(app.drawer.open.args[0][0].context.prepopulate.attachments[1]).toEqual({
+                upload_id: 456,
+                name: 'bizbaz.pdf',
+                filename: 'bizbaz.pdf'
+            });
+        });
+
+        using(
+            'to_email_addrs',
+            [
+                [
+                    'Billy Bob <bb@foo.com>',
+                    'bb@foo.com'
+                ],
+                [
+                    '<bb@foo.com>',
+                    'bb@foo.com'
+                ],
+                [
+                    'Billy Bob <bb@foo.com>, Cathy Cobb <cc@foo.com>, Susie Q <sq@foo.com>',
+                    'bb@foo.com|cc@foo.com|sq@foo.com'
+                ],
+                [
+                    '<bb@foo.com>, <cc@foo.com>',
+                    'bb@foo.com|cc@foo.com'
+                ],
+                [
+                    'bb@foo.com, cc@foo.com',
+                    'bb@foo.com|cc@foo.com'
+                ]
+            ],
+            function(toEmailAddrs, expected) {
+                it('should pass email addresses to the email compose drawer', function() {
+                    var actual;
+                    var composePackage = {
+                        to_email_addrs: toEmailAddrs
+                    };
+
+                    view.openComposeEmailDrawer(composePackage);
+
+                    actual = _.map(app.drawer.open.args[0][0].context.prepopulate.to, function(recipient) {
+                        return recipient.get('email_address');
+                    }).join('|');
+                    expect(actual).toBe(expected);
+                });
+            }
+        );
     });
 });

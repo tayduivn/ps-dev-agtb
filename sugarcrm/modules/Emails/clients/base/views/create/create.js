@@ -194,6 +194,7 @@
                     case 'to':
                     case 'cc':
                     case 'bcc':
+                    case 'attachments':
                         self.model.get(fieldName).add(value);
                         break;
                     case '_signatureLocation':
