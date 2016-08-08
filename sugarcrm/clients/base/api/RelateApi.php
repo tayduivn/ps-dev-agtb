@@ -129,6 +129,9 @@ class RelateApi extends FilterApi {
         }
         self::addFilters($args['filter'], $q->where(), $q);
 
+        if (!sizeof($q->order_by)) {
+            self::addOrderBy($q, $this->defaultOrderBy);
+        }
         return array($args, $q, $options, $linkSeed);
     }
 
