@@ -2395,7 +2395,10 @@ $sugar_demodata['email_seed_data_subjects'] = array(
 	'Demo', 
 	'Introduce all players', 
 );
-$sugar_demodata['email_seed_data_descriptions'] = 'Meeting to discuss project plan and hash out the details of implementation';
+$sugar_demodata['email_seed_data_descriptions'] = 'Important Meeting to discuss ' .
+    'project plan and hash out the details of implementation';
+$sugar_demodata['email_seed_data_description_html'] = '<p><strong>Important</strong> ' .
+    'Meeting to discuss project plan and hash out the details of implementation.</p>';
 $sugar_demodata['email_seed_data_types'] = array(
     'inbound',
     'draft',
