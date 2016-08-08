@@ -871,11 +871,8 @@ class ModuleBuilderController extends SugarController
 
     public function action_saveProperty()
     {
-        $module = $this->request->getValidInputRequest(
-            'subpanel',
-            'Assert\ComponentName',
-            $this->request->getValidInputRequest('view_module', 'Assert\ComponentName')
-        );
+        $subpanel = $this->request->getValidInputRequest('subpanel', 'Assert\ComponentName');
+        $module = $subpanel ? $subpanel : $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
 
         $viewPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
         $parser = new ParserLabel ($module, $viewPackage);
