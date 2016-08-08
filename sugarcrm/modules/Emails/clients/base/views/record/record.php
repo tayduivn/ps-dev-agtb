@@ -147,6 +147,9 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly' => true,
                     'span' => 12,
+                    'related_fields' => array(
+                        'description',
+                    ),
                 ),
                 array(
                     'name' => 'attachments',

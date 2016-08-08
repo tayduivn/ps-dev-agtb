@@ -17,7 +17,7 @@ describe('Emails.Field.ReplyAction', function() {
 
         //used by formatDate in the reply header template
         user.setPreference('datepref', 'Y-m-d');
-        user.setPreference('timepref', 'h:i:s');
+        user.setPreference('timepref', 'H:i');
 
         model = app.data.createBean('Emails');
 
@@ -177,6 +177,10 @@ describe('Emails.Field.ReplyAction', function() {
                 reply: 'Re: '
             },
             {
+                original: undefined,
+                reply: 'Re: '
+            },
+            {
                 original: 'My Subject',
                 reply: 'Re: My Subject'
             },
@@ -225,6 +229,50 @@ describe('Emails.Field.ReplyAction', function() {
         });
     });
 
+    describe('_getReplyHeader', function() {
+        using('various reply header parameters', [
+            {
+                params: {
+                    from: 'A',
+                    date: '2001-01-01 01:01:01',
+                    to: 'B, C',
+                    cc: 'D',
+                    name: 'My Subject'
+                },
+                replyHeader: '-----\n' +
+                    'From: A\n' +
+                    'Date: 2001-01-01 01:01\n' +
+                    'To: B, C\n' +
+                    'Cc: D\n' +
+                    'Subject: My Subject\n'
+            },
+            {
+                params: {
+                    from: 'A',
+                    to: 'B, C',
+                    name: 'My Subject'
+                },
+                replyHeader: '-----\n' +
+                    'From: A\n' +
+                    'To: B, C\n' +
+                    'Subject: My Subject\n'
+            },
+            {
+                params: {},
+                replyHeader: '-----\n' +
+                    'From: \n' +
+                    'To: \n' +
+                    'Subject: \n'
+            }
+        ], function(data) {
+            it('should build the appropriate reply header', function() {
+                var actual = field._getReplyHeader(data.params);
+                expect(actual).toEqual(data.replyHeader);
+            });
+        });
+
+    });
+
     describe('_formatEmailList', function() {
         it('should return empty string if recipient list is empty', function() {
             var actual = field._formatEmailList([]);
@@ -247,14 +295,14 @@ describe('Emails.Field.ReplyAction', function() {
         });
     });
 
-    describe('_getReplyBody', function() {
+    describe('_getReplyBodyHtml', function() {
         it('should strip the signature class from any div tags', function() {
             var original = 'My Content <div class="signature">My Signature</div>';
             var expected = 'My Content <div>My Signature</div>';
             var actual;
 
             field.model.set('description_html', original);
-            actual = field._getReplyBody();
+            actual = field._getReplyBodyHtml();
             expect(actual).toEqual(expected);
         });
 
@@ -264,13 +312,13 @@ describe('Emails.Field.ReplyAction', function() {
             var actual;
 
             field.model.set('description_html', original);
-            actual = field._getReplyBody();
+            actual = field._getReplyBodyHtml();
             expect(actual).toEqual(expected);
         });
 
         it('should return an empty string if email body is not set', function() {
             field.model.unset('description_html');
-            expect(field._getReplyBody()).toEqual('');
+            expect(field._getReplyBodyHtml()).toEqual('');
         });
     });
 });

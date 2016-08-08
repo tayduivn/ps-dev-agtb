@@ -50,13 +50,8 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
-        this._tplHeaderHtml = app.template.getField(this.type, 'reply-header-html', this.module);
-
         //Use field template from emailaction
         this.type = 'emailaction';
-
-        this._setReplyContent();
-        this.model.on('change', this._setReplyContent, this);
     },
 
     /**
@@ -65,18 +60,23 @@
      *
      * @protected
      */
-    _setReplyContent: function() {
+    _updateEmailOptions: function() {
         var replyRecipients = this._getReplyRecipients(this.def.reply_all);
         var subject = this._getReplySubject(this.model.get('name'));
-        var replyHeader = this._tplHeaderHtml(this._getReplyHeaderParams());
+        var replyHeader = this._getReplyHeader(this._getReplyHeaderParams());
+        var tplHeaderHtml = this._getHeaderHtmlTemplate();
+        var replyHeaderHtml = tplHeaderHtml(this._getReplyHeaderParams());
         var replyBody = this._getReplyBody();
+        var replyBodyHtml = this._getReplyBodyHtml();
+        var description = '\n' + replyHeader + '\n' + replyBody;
         var descriptionHtml = '<div></div><div id="' + this.REPLY_CONTENT_ID + '">' +
-            replyHeader + replyBody + '</div>';
+            replyHeaderHtml + replyBodyHtml + '</div>';
 
         this.addEmailOptions({
             to: replyRecipients.to,
             cc: replyRecipients.cc,
             name: subject,
+            description: description,
             description_html: descriptionHtml,
             parent_type: this.model.get('parent_type'),
             parent_id: this.model.get('parent_id'),
@@ -85,6 +85,18 @@
             _signatureLocation: 'above',
             _isReply: true
         });
+    },
+
+    /**
+     * Return the HTML reply header template if it exists, or retrieves it.
+     *
+     * @return {Function}
+     * @private
+     */
+    _getHeaderHtmlTemplate: function() {
+        this._tplHeaderHtml = this._tplHeaderHtml ||
+            app.template.getField(this.type, 'reply-header-html', this.module);
+        return this._tplHeaderHtml;
     },
 
     /**
@@ -141,7 +153,7 @@
     _getReplySubject: function(subject) {
         var pattern = /^((?:re|fwd): *)*/i;
         subject = subject || '';
-        return 'Re: ' + subject.replace(pattern, '');
+        return 'Re: ' + (subject.replace(pattern, '') || '');
     },
 
     /**
@@ -158,6 +170,37 @@
             cc: this._formatEmailList(this.model.get('cc')),
             name: this.model.get('name')
         };
+    },
+
+    /**
+     * Build the reply header for text only emails.
+     *
+     * @param {Object} params
+     * @param {string} params.from
+     * @param {string} [params.date] Date original email was sent
+     * @param {string} params.to
+     * @param {string} [params.cc]
+     * @param {string} params.name The subject of the original email.
+     * @return {string}
+     * @private
+     */
+    _getReplyHeader: function(params) {
+        var date = app.date(params.date).formatUser();
+        var header = '-----\n' + 'From: ' + (params.from || '') + '\n';
+
+        if (params.date) {
+            header += 'Date: ' + date + '\n';
+        }
+
+        header += 'To: ' + (params.to || '') + '\n';
+
+        if (params.cc) {
+            header += 'Cc: ' + params.cc + '\n';
+        }
+
+        header += 'Subject: ' + (params.name || '') + '\n';
+
+        return header;
     },
 
     /**
@@ -191,7 +234,17 @@
     },
 
     /**
-     * Retrieve the reply body.
+     * Retrieve the plain text version of the reply body.
+     *
+     * @return {string} The reply body
+     * @private
+     */
+    _getReplyBody: function() {
+        return this.model.get('description') || '';
+    },
+
+    /**
+     * Retrieve the HTML version of the reply body.
      *
      * Ensure the result is a defined string and strip any signature wrapper
      * tags to ensure it doesn't get stripped if we insert a signature above
@@ -201,7 +254,7 @@
      * @return {string} The reply body
      * @private
      */
-    _getReplyBody: function() {
+    _getReplyBodyHtml: function() {
         var body = (this.model.get('description_html') || '');
         body = body.replace('<div class="signature">', '<div>');
         return body.replace('<div id="' + this.REPLY_CONTENT_ID + '">', '<div>');
