@@ -373,6 +373,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/views/pmse-case/tabspanels.hbs';
             $files[] = 'clients/base/layouts/create-actions';
             $files[] = 'clients/base/views/create-actions';
+            $files[] = 'clients/base/views/news';
         }
 
         if (version_compare($this->from_version, '7.8', '<')) {
