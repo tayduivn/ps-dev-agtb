@@ -94,7 +94,11 @@ class Manufacturer extends SugarBean {
 
 	function clear_product_manufacturer_relationship($manufacturer_id)
 	{
-		$query = "UPDATE $this->rel_products set manufacturer_id='' where (manufacturer_id='$manufacturer_id') and deleted=0";
+        $query = sprintf(
+            "UPDATE %s SET manufacturer_id = '' WHERE manufacturer_id = %s AND deleted = 0",
+            $this->rel_products,
+            $this->db->quoted($manufacturer_id)
+        );
 		$this->db->query($query,true,"Error clearing manufacturer to manufacturer relationship: ");
 	}
 
