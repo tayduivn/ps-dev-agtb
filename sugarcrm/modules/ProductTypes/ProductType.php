@@ -84,7 +84,11 @@ class ProductType extends SugarBean {
 
 	function clear_product_producttype_relationship($producttype_id)
 	{
-		$query = "UPDATE $this->rel_products set type_id='' where (type_id='$producttype_id') and deleted=0";
+        $query = sprintf(
+            "UPDATE %s SET type_id = '' WHERE type_id = %s and deleted = 0",
+            $this->rel_products,
+            $this->db->quoted($producttype_id)
+        );
 		$this->db->query($query,true,"Error clearing producttype to producttype relationship: ");
 	}
 
