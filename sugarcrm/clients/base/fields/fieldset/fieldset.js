@@ -327,21 +327,6 @@
      * Keep empty because you cannot set a value of a type `fieldset`.
      */
     bindDataChange: function() {
-        var removeNoData = _.debounce(function() {
-            if (this.disposed) {
-                return;
-            }
-
-            if (this.action === 'nodata') {
-                this.setMode('detail');
-            }
-        }, 100);
-
-        _.each(this.def.fields, function(field) {
-            if (field.name) {
-                this.model.on('change:' + field.name, removeNoData, this);
-            }
-        }, this);
     },
 
     /**
