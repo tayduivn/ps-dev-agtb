@@ -157,14 +157,23 @@ function get_report_schedule_for_user($report_id, $user_id=''){
 			global $current_user;
 			$user_id = $current_user->id;
 		}
-	$query = "SELECT * FROM $this->table_name WHERE report_id='$report_id' AND user_id='$user_id' AND deleted=0";
+        $query = sprintf(
+            'SELECT * FROM %s WHERE report_id = %s AND user_id = %s AND deleted = 0',
+            $this->table_name,
+            $this->db->quoted($report_id),
+            $this->db->quoted($user_id)
+        );
 	$results = $this->db->query($query);
 	$row = $this->db->fetchByAssoc($results);
 	return $this->fromConvertReportScheduleDBRow($row);
 }
 
 function get_report_schedule($report_id){
-	$query = "SELECT * FROM $this->table_name WHERE report_id='$report_id' AND deleted=0";
+        $query = sprintf(
+            'SELECT * FROM %s WHERE report_id = %s AND deleted = 0',
+            $this->table_name,
+            $this->db->quoted($report_id)
+        );
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
