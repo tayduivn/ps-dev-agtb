@@ -144,7 +144,11 @@ class TeamsController extends SugarController {
 
                 // remove TBA values from disabled modules
                 foreach ($disabledModules as $moduleName) {
-                    $tbaConfigurator->removeAllTBAValuesFromBean(BeanFactory::getBean($moduleName));
+                    // $moduleBean might be null, e.g. custom module is disabled
+                    $moduleBean = BeanFactory::getBean($moduleName);
+                    if ($moduleBean) {
+                        $tbaConfigurator->removeAllTBAValuesFromBean($moduleBean);
+                    }
                 }
             } elseif (TeamBasedACLConfigurator::isEnabledGlobally()) {
                 // $enabled is false and TBA is enabled here, so TBA is becoming disabled
