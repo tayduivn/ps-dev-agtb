@@ -48,6 +48,7 @@
     "sidecar/docs/",
     "sidecar/lib/async/",
     "sidecar/lib/backbone/",
+    "sidecar/lib/big/",
     "sidecar/lib/codecov/",
     "sidecar/lib/crosstab/",
     "sidecar/lib/handlebars/",
