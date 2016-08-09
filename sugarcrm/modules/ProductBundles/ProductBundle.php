@@ -287,11 +287,15 @@ class ProductBundle extends SugarBean
         if (empty($bundle_id)) {
             $bundle_id = $this->id;
         }
-        $query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('" . create_guid(
-            ) . "','$product_index', '$product_id', '$bundle_id', " . db_convert(
-                "'" . TimeDate::getInstance()->nowDb() . "'",
-                'datetime'
-            ) . ")";
+        $query = sprintf(
+            'INSERT INTO %s (id, product_index, product_id, bundle_id, date_modified) VALUES (%s, %s, %s, %s, %s)',
+            $this->rel_products,
+            $this->db->quoted(create_guid()),
+            $this->db->quoted($product_index),
+            $this->db->quoted($product_id),
+            $this->db->quoted($bundle_id),
+            db_convert("'" . TimeDate::getInstance()->nowDb() . "'", 'datetime')
+        );
         $this->db->query($query, true, "Error setting product to product bundle relationship: " . "<BR>$query");
         $GLOBALS['log']->debug("Setting product to product bundle relationship for $product_id and $bundle_id");
         return true;
