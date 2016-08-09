@@ -634,6 +634,7 @@
             relatedRecords = relatedRecords[0];
         }
         // Silently set related records keeping backward compatibility.
+        // FIXME: We will remove this once BR-4577 is implemented.
         this.model.set(values, {silent: true});
         // Properly set related records in the model.
         this.model.set(this.fieldDefs.link, relatedRecords);
