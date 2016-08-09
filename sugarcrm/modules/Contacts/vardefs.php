@@ -172,6 +172,7 @@ $dictionary['Contact'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'group' => 'portal',
+            'group_label' => 'LBL_PORTAL',
             'comment' => 'Name as it appears in the portal',
             'studio' => array(
                 'portalrecordview' => false,
