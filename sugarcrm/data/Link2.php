@@ -405,9 +405,11 @@ class Link2 {
      * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
      * <li><b>order_by:</b> field to order the result set by</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
+     * @param array $retrieveParams Array of options to send to retrieveBean
      * @return array of SugarBeans related through this link.
      */
-    function getBeans($params = array()) {
+    public function getBeans($params = array(), $retrieveParams = array())
+    {
         //Some depricated code attempts to pass in the old format to getBeans with a large number of useless paramters.
         //reset the parameters if they are not in the new array format.
     	if (!is_array($params))
@@ -444,7 +446,7 @@ class Link2 {
             {
                 if (empty($this->beans[$id]))
                 {
-                    $tmpBean = BeanFactory::retrieveBean($rel_module, $id);
+                    $tmpBean = BeanFactory::retrieveBean($rel_module, $id, $retrieveParams);
                     if ($tmpBean) {
                         $result[$id] = $tmpBean;
                     }

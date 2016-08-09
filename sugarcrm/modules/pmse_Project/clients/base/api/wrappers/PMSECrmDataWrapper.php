@@ -1404,13 +1404,9 @@ class PMSECrmDataWrapper implements PMSEObservable
                     $updateDefaultForm = true;
                 }
 
-                if ($key == 'pro_locked_variables') {
-                    $processDefinitionBean->$key = htmlentities($value, ENT_QUOTES);
-                } else {
-                    $processDefinitionBean->$key = $value;
-                    $projectBean->$key = $value;
-                    $processBean->$key = $value;
-                }
+                $processDefinitionBean->$key = $value;
+                $projectBean->$key = $value;
+                $processBean->$key = $value;
             }
 
             if (isset($args['name']) || isset($args['description'])) {
@@ -1424,8 +1420,6 @@ class PMSECrmDataWrapper implements PMSEObservable
             $res['success'] = true;
         }
         if ($updateDefaultForm) {
-            //$this->getDynaformBean();
-            //$this->dynaformBean->generateDefaultDynaform($processDefinitionBean->pro_module, $args, true);
             $this->defaultDynaform->generateDefaultDynaform($processDefinitionBean->pro_module, $args, true);
         }
         $this->notify();
@@ -1597,7 +1591,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
                 $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-                
+
                 // Handle field typing, starting with the vardef type for this field
                 $tmpField['type'] = $field['type'];
 
