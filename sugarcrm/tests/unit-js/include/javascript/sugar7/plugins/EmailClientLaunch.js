@@ -139,6 +139,13 @@ describe('EmailClientLaunch Plugin', function() {
             expect(_.first(validRecipients).get('email')).toEqual('foo3@bar.com');
         });
 
+        it('should specify valid email address for bean recipients with email_address_used', function() {
+            var bean = new Backbone.Model({email_address_used: 'foo1@bar.com'});
+            var recipients = [{bean: bean}];
+            var validRecipients = field._retrieveValidRecipients(recipients);
+            expect(_.first(validRecipients).get('email')).toEqual('foo1@bar.com');
+        });
+
         it('should leave bean recipients that have email address specified', function() {
             var emails = [
                 {email_address: 'foo@bar.com', primary_address: true, invalid_email: false, opt_out: false}
@@ -268,10 +275,12 @@ describe('EmailClientLaunch Plugin', function() {
 
         it('should return emails passed in different forms', function() {
             var bean;
+            var bean2;
             var actual;
             var email1 = 'foo1@bar.com';
             var email2 = 'foo2@bar.com';
             var email3 = 'foo3@bar.com';
+            var email4 = 'foo4@bar.com';
 
             bean = new Backbone.Model({
                 email: [{
@@ -281,12 +290,16 @@ describe('EmailClientLaunch Plugin', function() {
                     opt_out: false
                 }]
             });
+            bean2 = new Backbone.Model({
+                email_address_used: email4
+            });
             actual = field._formatRecipientsToString([
                 email1,
                 {email: email2},
-                {bean: bean}
+                {bean: bean},
+                {bean: bean2}
             ]);
-            expect(actual).toEqual(email1 + ',' + email2 + ',' + email3);
+            expect(actual).toEqual(email1 + ',' + email2 + ',' + email3 + ',' + email4);
         });
 
         it('should not return emails in bean form if no valid email on bean', function() {

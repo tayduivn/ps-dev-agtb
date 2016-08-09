@@ -84,8 +84,7 @@
 
                     if (recipient.bean) {
                         validRecipient = recipient.bean.clone();
-                        validRecipient.set('email', recipient.email ||
-                            app.utils.getPrimaryEmailAddress(recipient.bean));
+                        validRecipient.set('email', this._getEmailAddress(recipient));
                     } else {
                         module = recipient.module || 'EmailAddresses';
                         validRecipient = app.data.createBean(module, recipient);
@@ -162,7 +161,11 @@
              * Build a mailto: url using the given options
              *
              * @param {Object} [options] Optional email field values to pass to the email client
-             *   Accepted attributes: to (array), cc (array), bcc (array), subject, html_body
+             * @param {Array} [options.to]
+             * @param {Array} [options.cc]
+             * @param {Array} [options.bcc]
+             * @param {string} [options.name] Subject
+             * @param {string} [options.description] Text Body
              */
             _buildMailToURL: function(options) {
                 var mailToUrl = 'mailto:',
@@ -209,21 +212,9 @@
 
                 if (_.isArray(recipients)) {
                     _.each(recipients, function(recipient) {
-                        //recipient could just be a string
-                        if (_.isString(recipient)) {
-                            emails.push(recipient);
-
-                        //recipient could be an object with email attribute
-                        } else if (recipient.email) {
-                            emails.push(recipient.email);
-
-                        //recipient could be an object with bean that may contain an email address
-                        } else if (recipient.bean) {
-                            //attempt to pull primary (if valid) or first valid email on bean
-                            email = app.utils.getPrimaryEmailAddress(recipient.bean);
-                            if (email) {
-                                emails.push(email);
-                            }
+                        email = this._getEmailAddress(recipient);
+                        if (email) {
+                            emails.push(email);
                         }
                     }, this);
                 } else {
@@ -231,6 +222,27 @@
                 }
 
                 return emails.join(emailDelim);
+            },
+
+            /**
+             * Retrieve the best email address off the recipient
+             *
+             * @param {string|Object} recipient
+             * @return {string}
+             * @private
+             */
+            _getEmailAddress: function(recipient) {
+                var email;
+
+                if (_.isString(recipient)) {
+                    email = recipient;
+                } else if (recipient.email) {
+                    email = recipient.email;
+                } else if (recipient.bean) {
+                    email = recipient.bean.get('email_address_used') ||
+                        app.utils.getPrimaryEmailAddress(recipient.bean);
+                }
+                return email;
             },
 
             /**
