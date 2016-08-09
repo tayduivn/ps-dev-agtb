@@ -107,7 +107,10 @@ class ProductTemplate extends SugarBean {
 	function clear_note_product_template_relationship($product_template_id)
 	{
         $GLOBALS['log']->deprecated('ProductTemplate::clear_note_product_template_relationship() has been deprecated in 7.8');
-		$query = "UPDATE notes set parent_id='', parent_type='' where (parent_id='$product_template_id') and deleted=0";
+        $query = sprintf(
+            "UPDATE notes SET parent_id='', parent_type='' WHERE parent_id = %s AND deleted = 0",
+            $this->db->quoted($product_template_id)
+        );
 		$this->db->query($query,true,"Error clearing note to product_template relationship: ");
 	}
 
