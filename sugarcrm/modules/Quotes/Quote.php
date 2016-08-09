@@ -375,8 +375,8 @@ class Quote extends SugarBean
     public function build_generic_where_clause($the_query_string)
     {
         $where_clauses = array();
-        $the_query_string = $GLOBALS['db']->quote($the_query_string);
-        array_push($where_clauses, "quotes.name like '$the_query_string%'");
+        $the_query_string = $GLOBALS['db']->quoted($the_query_string);
+        array_push($where_clauses, "quotes.name like " . $this->db->quoted($the_query_string. "%"));
 
         $the_where = "";
         foreach ($where_clauses as $clause) {
@@ -417,9 +417,9 @@ class Quote extends SugarBean
 
         foreach ($fromid as $f) {
             if (!empty($idequals)) {
-                $idequals .= ' or ';
+                $idequals .= ' OR ';
             }
-            $idequals .= "currency_id='$f'";
+            $idequals .= " currency_id = " . $this->db->quoted($f);
         }
 
         if (!empty($idequals)) {
@@ -427,7 +427,8 @@ class Quote extends SugarBean
             $result = $this->db->query($query);
 
             while ($row = $this->db->fetchByAssoc($result)) {
-                $query = "update " . $this->table_name . " set currency_id='" . $currency->id . "', tax_usdollar='" . $currency->convertToDollar(
+                $query = "update " . $this->table_name . " set currency_id = " . $this->db->quoted($currency->id) .
+                    ", tax_usdollar='" . $currency->convertToDollar(
                         $row['tax']
                     ) . "', subtotal_usdollar='" . $currency->convertToDollar(
                         $row['subtotal']
@@ -435,7 +436,7 @@ class Quote extends SugarBean
                         $row['total']
                     ) . "', shipping_usdollar='" . $currency->convertToDollar(
                         $row['shipping']
-                    ) . "' where id='" . $row['id'] . "';";
+                    ) . "' where id=" . $this->db->quoted($row['id']) . ";";
                 $this->db->query($query);
             }
         }
