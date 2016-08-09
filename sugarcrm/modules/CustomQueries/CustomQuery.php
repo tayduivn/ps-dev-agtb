@@ -279,11 +279,10 @@ class CustomQuery extends SugarBean {
 	//find data sets where query is linked and custom layout is enabled
 
 		//disable any custom layouts
-		$query = "	SELECT id FROM data_sets
-					WHERE query_id='$query_id'
-					AND custom_layout='Enabled'
-					AND deleted=0
-					";
+        $query = sprintf(
+            "SELECT id FROM data_sets WHERE query_id = %s AND custom_layout = 'Enabled' AND deleted = 0",
+            $this->db->quoted($query_id)
+        );
         $result = $this->getSlaveDb()->query($query, true, "Error selecting related datasets: ");
 		$GLOBALS['log']->debug("selecting related datasets: result is ".print_r($result,true));
 		//if($this->db->getRowCount($result) > 0){
@@ -300,11 +299,10 @@ class CustomQuery extends SugarBean {
 		//}
 
 		//remove query_id
-		$query = "	UPDATE data_sets
-					SET query_id=''
-					WHERE query_id='$query_id'
-					AND deleted=0
-					";
+        $query = sprintf(
+            "UPDATE data_sets SET query_id = '' WHERE query_id = %s AND deleted = 0",
+            $this->db->quoted($query_id)
+        );
 		$this->db->query($query,true,"Error deleting query_id from datasets: ");
 
 	}
