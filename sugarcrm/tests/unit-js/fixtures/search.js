@@ -47,7 +47,8 @@ fixtures.search = {
     },
     model2: {
         id: 2,
-        name: 'bbb',
+        first_name: 'bbb',
+        last_name: 'ccc',
         _module: 'module2',
         _highlights: {
             first_name: ['highlight3']
@@ -59,7 +60,7 @@ fixtures.search = {
     getModule2_return: {
         nameFormat: {'f': 'first_name', 'l': 'last_name'},
         fields: {
-            name: {vname: 'name'},
+            full_name: {vname: 'full_name'},
             first_name: {vname: 'first'},
             last_name: {vname: 'last'}
         }
@@ -69,9 +70,7 @@ fixtures.search = {
             {
                 name: 'primary',
                 fields: [
-                    {name: 'name'},
-                    {name: 'first_name'},
-                    {name: 'last_name'}
+                    {name: 'full_name'}
                 ]
             },
             {
@@ -83,4 +82,4 @@ fixtures.search = {
             'actions': true
         }
     }
-}
+};

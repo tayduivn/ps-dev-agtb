@@ -155,6 +155,12 @@ describe('View.Views.Base.SearchListView', function() {
                 highlights: [],
                 modelFields: null,
                 expectedPrimaryFields: [
+                    {
+                        // We don't ever reject primary fields
+                        name: 'name',
+                        primary: true,
+                        ellipsis: false
+                    }
                 ],
                 expectedSecondaryFields: [
                 ]

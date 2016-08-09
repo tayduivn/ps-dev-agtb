@@ -137,10 +137,10 @@ describe('Sugar7 search utils', function() {
                 var primaryFields = app.utils.GlobalSearch.highlightFields(model, fieldsMeta.primaryFields);
                 var secondaryFields = app.utils.GlobalSearch.highlightFields(model, fieldsMeta.secondaryFields, true);
 
-                expect(primaryFields.name.ellipsis).toBeFalsy();
-                expect(primaryFields.name.name).toEqual('name');
-                expect(primaryFields.name.primary).toBeTruthy();
-                expect(primaryFields.name.highlighted).toBeTruthy();
+                expect(primaryFields.full_name.ellipsis).toBeFalsy();
+                expect(primaryFields.full_name.name).toEqual('full_name');
+                expect(primaryFields.full_name.primary).toBeTruthy();
+                expect(primaryFields.full_name.highlighted).toBeTruthy();
 
                 expect(secondaryFields.first_name).toBeUndefined();
                 expect(secondaryFields.last_name).toBeUndefined();

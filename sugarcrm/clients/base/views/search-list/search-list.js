@@ -73,7 +73,6 @@
             model.secondaryFields = gsUtils.highlightFields(model, moduleMeta.secondaryFields, true);
             model.viewAccess = app.acl.hasAccessToModel('view', model);
 
-            this._rejectEmptyFields(model, model.primaryFields);
             this._rejectEmptyFields(model, model.secondaryFields);
 
             model.primaryFields = this._sortHighlights(model.primaryFields);
@@ -115,9 +114,6 @@
      */
     _rejectEmptyFields: function(model, viewDefs) {
         _.each(viewDefs, function(field) {
-            if (field.type === 'avatar' || field.highlighted) {
-                return;
-            }
             var fieldValue = model.get(field.name);
             // _.isEmpty() returns true for any number, so checking for _.isNumber() as well
             if (_.isEmpty(fieldValue) && !_.isNumber(fieldValue)) {

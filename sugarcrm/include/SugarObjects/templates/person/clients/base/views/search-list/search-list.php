@@ -23,10 +23,14 @@ $viewdefs[$module_name]['base']['view']['search-list'] = array(
                     'css_class' => 'pull-left',
                 ),
                 array(
-                    'name' => 'name',
-                    'type' => 'name',
+                    'name' => 'full_name',
+                    'type' => 'fullname',
+                    'fields' => array(
+                        'salutation',
+                        'first_name',
+                        'last_name',
+                    ),
                     'link' => true,
-                    'label' => 'LBL_SUBJECT',
                 ),
             ),
         ),

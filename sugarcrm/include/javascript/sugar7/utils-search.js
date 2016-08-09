@@ -27,22 +27,6 @@
                         if (model.formatted) {
                             return;
                         }
-                        var module = app.metadata.getModule(model.get('_module'));
-                        var nameFormatValues = _.values(module.nameFormat);
-                        var personModuleType = !!nameFormatValues.length;
-                        var attrs = {};
-                        _.each(model.toJSON(), function(val, key) {
-                            attrs[key] = Handlebars.Utils.escapeExpression(val);
-                        });
-
-                        // If it's a Person module type, we build the name and
-                        // set it in the model.
-                        if (personModuleType && !model.get('name')) {
-                            var name = new Handlebars.SafeString(
-                                app.utils.formatNameModel(model.get('_module'), attrs));
-
-                            model.set('name', name);
-                        }
 
                         var highlights = model.get('_highlights');
                         if (!highlights) {
@@ -51,8 +35,33 @@
                             model.formatted = true;
                             return;
                         }
-                        var formattedHighlights = _.map(highlights, function(val, key) {
 
+                        var moduleMeta = app.metadata.getModule(model.get('_module'));
+                        var nameFormatValues = _.values(moduleMeta.nameFormat);
+
+                        if (nameFormatValues.length) {
+                            var personAttrs = _.pick(model.attributes, nameFormatValues);
+                            _.each(personAttrs, function(val, key) {
+                                personAttrs[key] = Handlebars.Utils.escapeExpression(val);
+                            });
+
+                            if (!highlights.full_name) {
+                                var fullname = app.utils.formatNameModel(
+                                    model.get('_module'),
+                                    _.extend({}, personAttrs, highlights)
+                                );
+
+                                // Add the full_name to the highlights, and
+                                // format it like it came from the server.
+                                highlights.full_name = [fullname];
+
+                                // Remove the other person attributes since
+                                // they're all encapsulated in full_name.
+                                highlights = _.omit(highlights, _.keys(personAttrs));
+                            }
+                        }
+
+                        var formattedHighlights = _.map(highlights, function(val, key) {
                             // The `email` highlight contains an array following this
                             // format: {primary: {...}, secondary: {...}}.
                             // Here we'll keep the value of the primary and will
@@ -68,11 +77,11 @@
                             } else {
                                 val = new Handlebars.SafeString(_.first(val));
                             }
-                            attrs[key] = val;
+
                             return {
                                 name: key,
                                 value: val,
-                                label: label || module.fields[key].vname,
+                                label: label || moduleMeta.fields[key].vname,
                                 link: linkableHighlights,
                                 highlighted: true
                             };
@@ -94,22 +103,7 @@
                                 name: 'secondaryEmail',
                                 type: 'email',
                                 value: new Handlebars.SafeString(highlightedSecondaryEmail.join(', ')),
-                                label: module.fields['email'].vname,
-                                link: linkableHighlights,
-                                highlighted: true
-                            });
-                        }
-
-                        // For Person module type we build the name and push
-                        // it in the highlights.
-                        if (personModuleType) {
-                            var personName = new Handlebars.SafeString(
-                                    app.utils.formatNameModel(model.get('_module'), attrs));
-
-                            formattedHighlights.push({
-                                name: 'name',
-                                value: personName,
-                                label: module.fields.name.vname,
+                                label: moduleMeta.fields.email.vname,
                                 link: linkableHighlights,
                                 highlighted: true
                             });
@@ -215,16 +209,6 @@
                         // viewdef for this field or if we want to add it if it doesn't exist
                         // (This is the case for secondary fields).
                         if (!addOrPatchExisting) {
-                            return;
-                        }
-
-                        // For person type modules.
-                        //nameFormatValues is equal to
-                        // ["first_name", "last_name", "salutation", "title"] if
-                        // model.module is a Person type. It's an empty array otherwise.
-                        var nameFormatValues = _.values(app.metadata.getModule(model.module).nameFormat);
-                        // We skip the highlight if the field is part of the `name` field.
-                        if (_.contains(nameFormatValues, field.name) && !hasViewDefs) {
                             return;
                         }
 
