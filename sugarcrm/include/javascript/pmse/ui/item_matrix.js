@@ -21,6 +21,8 @@ var ItemMatrixField = function (options, parent) {
     this.searchValue = null;
     this.visualStyle = null;
     this.nColumns = null;
+    this.lockedFieldsTrigger = {};
+    this.unlockedFieldsTrigger = {};
     ItemMatrixField.prototype.initObject.call(this, options);
 };
 
@@ -131,13 +133,31 @@ ItemMatrixField.prototype.setVisualStyle = function (vStyle) {
 };
 
 ItemMatrixField.prototype.addLockedFields = function (fieldName) {
-    this.lockedFields.push(fieldName);
+    if (this.lockedFields.indexOf(fieldName) == -1) {
+        this.lockedFields.push(fieldName);
+    }
+    // if this field triggers another field then we need to lock that field too.
+    if (this.lockedFieldsTrigger[fieldName]) {
+        $('.item-matrix-field[name=\'' + this.lockedFieldsTrigger[fieldName] + '\']').attr('checked', 'checked');
+        if (this.lockedFields.indexOf(this.lockedFieldsTrigger[fieldName]) == -1) {
+            this.lockedFields.push(this.lockedFieldsTrigger[fieldName]);
+        }
+    }
     return this;
 };
 
 ItemMatrixField.prototype.removeLockedFields = function (fieldName) {
     var index = this.lockedFields.indexOf(fieldName);
+    var index2;
     this.lockedFields.splice(index, 1);
+    // if this field triggers another field then we need to remove that locked field too
+    if (this.unlockedFieldsTrigger[fieldName]) {
+        $('.item-matrix-field[name=\'' + (this.unlockedFieldsTrigger[fieldName]) + '\']').removeAttr('checked');
+        index2 = this.lockedFields.indexOf(this.unlockedFieldsTrigger[fieldName]);
+        if (index2 != -1) {
+            this.lockedFields.splice(this.lockedFields.indexOf(this.unlockedFieldsTrigger[fieldName]), 1);
+        }
+    }
     return this;
 };
 /**
@@ -147,6 +167,9 @@ ItemMatrixField.prototype.removeLockedFields = function (fieldName) {
  */
 ItemMatrixField.prototype.setList = function (data, selected) {
     var i, opt = '';
+    this.lockedFieldsTrigger = {};
+    this.unlockedFieldsTrigger = {};
+
     if (this.html) {
         $(this.controlObject).empty();
         this.lockedFields = [];
@@ -154,6 +177,13 @@ ItemMatrixField.prototype.setList = function (data, selected) {
             opt += '<div class="row">';
         }
         for (i = 0; i < data.length; i += 1) {
+            // If there is a 'trigger' field in the object, then this field triggers another field to be locked as well.
+            // We also need to save data to be able to unlock the dependent field in case the
+            // original field is unchecked.
+            if ((data[i].trigger) && (data[i].value)) {
+                this.lockedFieldsTrigger[data[i].value] = data[i].trigger;
+                this.unlockedFieldsTrigger[data[i].trigger] = data[i].value;
+            }
             opt += this.generateOption(data[i], selected);
             if ((i + 1) % this.nColumns === 0) {
                 opt += '</div><div class="row">';
