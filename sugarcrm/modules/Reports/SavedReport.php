@@ -230,8 +230,8 @@ class SavedReport extends Basic
                     $this->schedules_table.active as active,
                     $this->schedules_table.next_run as next_run
                     from ".$this->schedules_table."
-					where ".$this->schedules_table.".report_id = '".$this->id."'
-					and ".$this->schedules_table.".user_id = '".$current_user->id."'
+                    WHERE ".$this->schedules_table.".report_id = " . $this->db->quoted($this->id) . "
+                    AND ".$this->schedules_table.".user_id = " . $this->db->quoted($current_user->id) . "
 					and ".$this->schedules_table.".deleted=0
 					";
 		$result = $this->db->query($query,true," Error filling in additional schedule query detail fields: ");
