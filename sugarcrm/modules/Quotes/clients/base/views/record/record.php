@@ -176,14 +176,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                         'true' => 'label-success',
                     ),
                 ),
-                array(
-                    'name' => 'quote_stage',
-                    'type' => 'event-status',
-                    'enum_width' => 'auto',
-                    'dropdown_width' => 'auto',
-                    'dropdown_class' => 'select2-menu-only',
-                    'container_class' => 'select2-menu-only',
-                ),
             ),
         ),
         array(
@@ -207,7 +199,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                 'purchase_order_num',
                 'payment_terms',
                 'date_quote_expected_closed',
-
+                'quote_stage',
             ),
         ),
         array(
