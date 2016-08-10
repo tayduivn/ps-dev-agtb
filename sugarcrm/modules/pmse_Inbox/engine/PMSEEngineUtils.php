@@ -1124,26 +1124,8 @@ class PMSEEngineUtils
     {
         // First things first... if we are explicitly directed to do something
         // based on the vardefs, do that thing first
-        if (isset($def['processes'])) {
-            // If a field is explicitly marked for processes, handle it
-            if (is_bool($def['processes'])) {
-                return $def['processes'];
-            }
-
-            // If the marker is a string or an array, it is mapped to a method
-            if (is_string($def['processes'])) {
-                $def['processes'] = array($def['processes']);
-            }
-
-            // For a field validation list, run through until you hit a false,
-            // otherwise let the rest of the validation processes run
-            foreach ($def['processes'] as $method) {
-                if (method_exists(__CLASS__, $method)) {
-                    if (self::$method() === false) {
-                        return false;
-                    }
-                }
-            }
+        if (($vardefCheck = self::isValidFieldVardef($def, $type)) !== null) {
+            return $vardefCheck;
         }
 
         // If the field is to blacklisted, handle that now
@@ -1167,16 +1149,63 @@ class PMSEEngineUtils
             return false;
         }
 
-        if (in_array($type, array('AC', 'CF', 'BR')) && isset($def['formula'])) {
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && !empty($def['calculated'])) {
             return false;
         }
 
-        if (in_array($type, array('RR', 'AC', 'CF', 'BR')) && !empty($def['readonly'])) {
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && isset($def['formula'])) {
+            return false;
+        }
+
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && !empty($def['readonly'])) {
             return false;
         }
 
         // At this point all we are left with is checking if it is studio valid
         return self::isValidStudioField($def);
+    }
+
+    /**
+     * Checks the vardef for a processes property and handles it accordingly
+     * @param array $def Field vardef
+     * @param string $type Type, if any, of the field validator
+     * @return boolean
+     */
+    protected static function isValidFieldVardef($def, $type = '')
+    {
+        if (isset($def['processes'])) {
+            // If a field is explicitly marked for processes, handle it
+            if (is_bool($def['processes'])) {
+                return $def['processes'];
+            }
+
+            // Check for types setting
+            if ($type === '') {
+                $type = 'ALL';
+            }
+
+            if (is_array($def['processes'])) {
+                if (isset($def['processes']['types'][$type]) && is_bool($def['processes']['types'][$type])) {
+                    return $def['processes']['types'][$type];
+                }
+            } elseif (is_string($def['processes'])) {
+                // If the marker is a string or an array, it is mapped to a method
+                $def['processes'] = array($def['processes']);
+
+                // For a field validation list, run through until you hit a false,
+                // otherwise let the rest of the validation processes run
+                foreach ($def['processes'] as $method) {
+                    if (method_exists(__CLASS__, $method)) {
+                        if (self::$method() === false) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Default return, means nothing was done here
+        return null;
     }
 
     /**
