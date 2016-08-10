@@ -197,7 +197,7 @@ class Tag extends Basic
         $sql .= " WHERE tag_id= ? ";
         $db = DBManagerFactory::getInstance();
         $conn = $db->getConnection();
-        $conn->executeQuery(sql, array($date_modified, $id));
+        $conn->executeQuery($sql, array($date_modified, $id));
         parent::mark_deleted($id);
     }
 
