@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
 use Sugarcrm\Sugarcrm\Util\Runner\Dot as TriggerRepairRunner;
 use Sugarcrm\Sugarcrm\Trigger\Repair\Repair as TriggerRepair;
-use Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\Executer as DavCalExporter;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'modules/Configurator/Configurator.php';
@@ -430,23 +429,6 @@ class AdministrationController extends SugarController
         if (is_admin($GLOBALS['current_user'])) {
             ob_flush();
             $runner = new TriggerRepairRunner(new TriggerRepair());
-            $runner->run();
-            echo "<br />{$GLOBALS['mod_strings']['LBL_DONE']}";
-            ob_flush();
-        }
-    }
-
-    /**
-     * action_callRebuildReminders
-     *
-     * Re-export calls and meetings to external application.
-     */
-    public function action_callReExportEvents()
-    {
-        $this->view = 'ajax';
-        if (is_admin($GLOBALS['current_user'])) {
-            ob_flush();
-            $runner = new TriggerRepairRunner(new DavCalExporter());
             $runner->run();
             echo "<br />{$GLOBALS['mod_strings']['LBL_DONE']}";
             ob_flush();

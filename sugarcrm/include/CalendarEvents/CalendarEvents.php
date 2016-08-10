@@ -13,10 +13,6 @@
 /**
  * @var CalendarEvents
  */
-
-use Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler as CalDavHook;
-use Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper;
-
 class CalendarEvents
 {
     public static $old_assigned_user_id = null;
@@ -30,21 +26,6 @@ class CalendarEvents
         'Calls',
         'Tasks',
     );
-
-    /**
-     *  Update only current event in iCal.
-     */
-    const UPDATE_CURRENT = 1;
-
-    /**
-     *  Update only participants in all recurrence children in iCal.
-     */
-    const UPDATE_PARTICIPANTS = 2;
-
-    /**
-     *  Update only fields in all recurrence children in iCal.
-     */
-    const UPDATE_FIELDS = 4;
 
     /**
      * @param SugarBean $bean
@@ -872,7 +853,6 @@ class CalendarEvents
         $options = array()
     ) {
         $changeWasMade = false;
-        $inviteesChanges = array();
         if (in_array($event->status, array('Held', 'Not Held'))) {
             $GLOBALS['log']->debug(
                 sprintf(
@@ -896,25 +876,8 @@ class CalendarEvents
                 )
             );
             $event->update_vcal = false;
-            if ($this->isEventRecurring($event) && !$event->repeat_parent_id) {
-                $event->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS;
-            }
-
             $event->set_accept_status($invitee, $status);
             $changeWasMade = true;
-            $inviteesChanges = array(
-                'changed' => array(
-                    array(
-                        $invitee->module_name,
-                        $invitee->id,
-                        $invitee->emailAddress->getPrimaryAddress($invitee),
-                        $status,
-                        $GLOBALS['locale']->formatName($invitee),
-                    ),
-                ),
-            );
-            $calDavHook = new CalDavHook();
-            $calDavHook->export($event, array('update', array(), $inviteesChanges));
         }
 
         if ($this->isEventRecurring($event)) {
@@ -928,8 +891,7 @@ class CalendarEvents
                 $invitee,
                 $status,
                 $options,
-                &$changeWasMade,
-                $inviteesChanges
+                &$changeWasMade
             ) {
                 $child = BeanFactory::retrieveBean($event->module_name, $row['id'], $options);
 
@@ -944,11 +906,6 @@ class CalendarEvents
                     ));
                     $child->update_vcal = false;
                     $child->set_accept_status($invitee, $status);
-                    if ($inviteesChanges) {
-                        $child->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
-                        $calDavHook = new CalDavHook();
-                        $calDavHook->export($child, array('update', array(), $inviteesChanges));
-                    }
                     $changeWasMade = true;
                 } else {
                     $GLOBALS['log']->error("Could not set acceptance status for {$event->module_name}/{$row['id']}");

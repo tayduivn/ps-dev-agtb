@@ -47,12 +47,6 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$lead->account_name = 'MeetingTest Lead Account';
 		$lead->save();
 		$this->lead = $lead;
-
-        $addressee = BeanFactory::newBean('Addressees');
-        $addressee->first_name = 'AddresseeTest';
-        $addressee->last_name = 'Addressee';
-        $addressee->save();
-        $this->addressee = $addressee;
 	}
 
 	public function tearDown(){
@@ -68,9 +62,6 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		$GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead->id}'");
 		unset($this->lead);
-
-        $GLOBALS['db']->query("DELETE FROM addressees WHERE id = " . $GLOBALS['db']->quoted($this->addressee->id));
-        unset($this->addressee);
 
         SugarTestHelper::tearDown();
 	}
@@ -107,10 +98,6 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$relate_values = array('user_id'=>$current_user->id,'meeting_id'=> $meeting->id);
 		$data_values = array('accept_status'=> 'accept');
 		$meeting->set_relationship($meeting->rel_users_table, $relate_values, true, true, $data_values);
-
-        $relate_values = array('addressee_id' => $this->addressee->id, 'meeting_id' => $meeting->id);
-        $data_values = array('accept_status' => 'accept');
-        $meeting->set_relationship($meeting->rel_addressees_table, $relate_values, true, true, $data_values);
 
 		$invitesAfter = CalendarUtils::getInvitees($meeting);
 
@@ -152,13 +139,6 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
                 '',
                 'accept',
                 $locale->formatName($current_user)
-            ),
-            array(
-                'Addressees',
-                $this->addressee->id,
-                '',
-                'accept',
-                $locale->formatName($this->addressee)
             ),
         );
 

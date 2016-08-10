@@ -40,14 +40,3 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
 );
-
-$configurator = new \Configurator();
-if ($configurator->config['caldav_enable_sync']) {
-    $viewdefs[$module_name]['base']['menu']['header'][] = array(
-        'route' => '#CalDav/config/user',
-        'label' => 'LBL_CALDAV_USER_CONFIG',
-        'acl_action' => 'create',
-        'acl_module' => $module_name,
-        'icon' => 'fa-cog',
-    );
-}

@@ -191,11 +191,6 @@
             <file>./modules/Calls/CallEmitterTest.php</file>
             <file>./modules/Meetings/MeetingEmitterTest.php</file>
         </testsuite>
-        <testsuite name="CalDav">
-            <directory>./src/Dav</directory>
-            <directory>./modules/Addressees</directory>
-            <directory>./modules/CalDav</directory>
-        </testsuite>
         <testsuite name="TbACL">
             <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>
             <file>./data/visibility/ACLVisibilityTest.php</file>

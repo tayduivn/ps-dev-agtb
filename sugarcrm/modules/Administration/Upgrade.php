@@ -116,21 +116,6 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
 <tr>
     <td scope="row"><?php
         echo SugarThemeRegistry::current()->getImage(
-            'Rebuild',
-            'align="absmiddle" border="0"',
-            null,
-            null,
-            '.gif',
-            $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_TITLE']
-        );
-        ?>&nbsp;<a href="./index.php?module=Administration&action=ReExportEvents"><?php
-            echo $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_TITLE'];
-            ?></a></td>
-    <td> <?php echo $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_DESC_SHORT'] ; ?> </td>
-</tr>
-<tr>
-    <td scope="row"><?php
-        echo SugarThemeRegistry::current()->getImage(
             'Repair',
             'align="absmiddle" border="0"',
             null,
