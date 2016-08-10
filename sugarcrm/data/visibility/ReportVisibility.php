@@ -37,7 +37,12 @@ class ReportVisibility extends SugarVisibility
         $disallowed_modules = $this->getDisallowedModules();
 
         if($disallowed_modules) {
-            $where_clause = "$table_alias.module NOT IN ('".join("','", $disallowed_modules)."')";
+            $db = DBManagerFactory::getInstance();
+            $literals = array();
+            foreach ($disallowed_modules as $module) {
+                $literals[] = $db->quoted($module);
+            }
+            $where_clause = $table_alias . '.module NOT IN (' . implode(', ', $literals) .')';
             if(!empty($query)) {
                 $query .= " AND $where_clause";
             } else {
