@@ -759,9 +759,7 @@
             this.value = $(e.currentTarget).val();
             // We use "silent" update because we don't need re-render the field.
             model.set(this.name, this.unformat($(e.currentTarget).val()), {silent: true});
-            // FIXME: SC-5519 will remove passing this.model as an argument to the
-            // change trigger. See: https://github.com/jashkenas/backbone/pull/3834.
-            model.trigger('change', model);
+            model.trigger('change');
         };
 
         //If the operation is $between we need to set two inputs.
@@ -892,9 +890,7 @@
         // To handle case: value is an object with 'currency_id' = 'xyz' and 'likely_case' = ''
         // For currency fields, when value becomes an object, trigger change
         if (!_.isEmpty(modelValue) && modelValue !== $row.data('value')) {
-            // FIXME: SC-5519 will remove passing this.model as an argument to the
-            // change trigger. See: https://github.com/jashkenas/backbone/pull/3834.
-            model.trigger('change', model);
+            model.trigger('change');
         }
     },
 
