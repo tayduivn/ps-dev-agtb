@@ -1280,6 +1280,7 @@ function handle_set_relationship($set_relationship_value, $session='')
     global  $beanList, $beanFiles;
     $error = new SoapError();
 
+    $db = DBManagerFactory::getInstance();
     $module1 = $set_relationship_value['module1'];
     $module1_id = $set_relationship_value['module1_id'];
     $module2 = $set_relationship_value['module2'];
@@ -1311,14 +1312,22 @@ function handle_set_relationship($set_relationship_value, $session='')
                 $pb = BeanFactory::getBean($module2, $module2_id);
 
                 // Check if this relationship already exists
-                $query = "SELECT count(*) AS count FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND bundle_id = '{$module2_id}' AND deleted = '0'";
+                $query = sprintf(
+                    'SELECT count(*) AS count FROM product_bundle_quote
+                     WHERE quote_id = %s AND bundle_id = %s AND deleted = 0',
+                    $db->quoted($module1_id),
+                    $db->quoted($module2_id)
+                );
                 $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
                 $row = $GLOBALS['db']->fetchByAssoc($result);
                 if(isset($row['count']) && $row['count'] > 0){
                     return $error->get_soap_array();
                 }
 
-                $query = "SELECT MAX(bundle_index)+1 AS idx FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND deleted='0'";
+                $query = sprintf(
+                    'SELECT MAX(bundle_index)+1 AS idx FROM product_bundle_quote WHERE quote_id = %s AND deleted = 0',
+                    $db->quoted($module1_id)
+                );
                 $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
                 $GLOBALS['log']->debug("*********** Getting max bundle_index");
                 $GLOBALS['log']->debug($query);
@@ -1338,14 +1347,22 @@ function handle_set_relationship($set_relationship_value, $session='')
                 $pb = BeanFactory::getBean($module1, $module1_id);
 
                 // Check if this relationship already exists
-                $query = "SELECT count(*) AS count FROM product_bundle_product WHERE bundle_id = '{$module1_id}' AND product_id = '{$module2_id}' AND deleted = '0'";
+                $query = sprintf(
+                    'SELECT count(*) AS count FROM product_bundle_product
+                     WHERE bundle_id = %s AND product_id = %s AND deleted = 0',
+                    $db->quoted($module1_id),
+                    $db->quoted($module2_id)
+                );
                 $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
                 $row = $GLOBALS['db']->fetchByAssoc($result);
                 if(isset($row['count']) && $row['count'] > 0){
                     return $error->get_soap_array();
                 }
 
-                $query = "SELECT MAX(product_index)+1 AS idx FROM product_bundle_product WHERE bundle_id='{$module1_id}'";
+                $query = sprintf(
+                    'SELECT MAX(product_index)+1 AS idx FROM product_bundle_product WHERE bundle_id = %s',
+                    $db->quoted($module1_id)
+                );
                 $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
                 $GLOBALS['log']->debug("*********** Getting max bundle_index");
                 $GLOBALS['log']->debug($query);
