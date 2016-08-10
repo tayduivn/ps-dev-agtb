@@ -207,11 +207,13 @@ class InboundEmail extends SugarBean {
 	function mark_answered($mailid, $type = 'smtp') {
 		switch ($type) {
 			case 'smtp' :
-				$q = "update email_cache set answered = 1 WHERE imap_uid = $mailid and ie_id = '{$this->id}'";
+                $q = "update email_cache set answered = 1 WHERE imap_uid = $mailid and ie_id = ".
+                    $this->db->quoted($this->id);
 				$this->db->query($q);
 				break;
 			case 'pop3' :
-				$q = "update email_cache set answered = 1 WHERE message_id = '$mailid' and ie_id = '{$this->id}'";
+                $q = "update email_cache set answered = 1 WHERE message_id = " .
+                    $this->db->quoted($mailid) . " and ie_id = ". $this->db->quoted($this->id);
 				$this->db->query($q);
 				break;
 		}
@@ -278,7 +280,7 @@ class InboundEmail extends SugarBean {
 		global $app_strings;
 
 			if (empty($this->id)) {
-				$q = "SELECT raw_source FROM emails_text WHERE email_id = '{$uid}'";
+                $q = "SELECT raw_source FROM emails_text WHERE email_id = ". $this->db->quoted($uid);
 				$r = $this->db->query($q);
 				$a = $this->db->fetchByAssoc($r);
 				$ret = array();
@@ -387,7 +389,7 @@ class InboundEmail extends SugarBean {
 	 */
 	function getCacheTimestamp($mbox) {
 		$key = $this->db->quote("{$this->id}_{$mbox}");
-		$q = "SELECT ie_timestamp FROM inbound_email_cache_ts WHERE id = '{$key}'";
+        $q = "SELECT ie_timestamp FROM inbound_email_cache_ts WHERE id = ". $this->db->quoted($key);
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 
@@ -407,9 +409,9 @@ class InboundEmail extends SugarBean {
 		$tsOld = $this->getCacheTimestamp($mbox);
 
 		if($tsOld < 0) {
-			$q = "INSERT INTO inbound_email_cache_ts (id, ie_timestamp) VALUES ('{$key}', {$ts})";
+            $q = "INSERT INTO inbound_email_cache_ts (id, ie_timestamp) VALUES (". $this->db->quoted($key) .", {$ts})";
 		} else {
-			$q = "UPDATE inbound_email_cache_ts SET ie_timestamp = {$ts} WHERE id = '{$key}'";
+            $q = "UPDATE inbound_email_cache_ts SET ie_timestamp = {$ts} WHERE id = " . $this->db->quoted($key);
 		}
 
 		$r = $this->db->query($q, true);
@@ -423,7 +425,8 @@ class InboundEmail extends SugarBean {
 	 * @return int
 	 */
 	function getCacheUnreadCount($mbox) {
-		$q = "SELECT count(*) c FROM email_cache WHERE mbox = '{$mbox}' AND seen = 0 AND ie_id = '{$this->id}'";
+        $q = "SELECT count(*) c FROM email_cache WHERE mbox = " . $this->db->quoted($mbox) .
+            " AND seen = 0 AND ie_id = ". $this->db->quoted($this->id);
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 
@@ -436,7 +439,8 @@ class InboundEmail extends SugarBean {
 	 * @return int
 	 */
 	function getCacheCount($mbox) {
-		$q = "SELECT count(*) c FROM email_cache WHERE mbox = '{$mbox}' AND ie_id = '{$this->id}'";
+        $q = "SELECT count(*) c FROM email_cache WHERE mbox = " . $this->db->quoted($mbox) .
+            " AND ie_id = ". $this->db->quoted($this->id);
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 
@@ -444,7 +448,8 @@ class InboundEmail extends SugarBean {
 	}
 
     function getCacheUnread($mbox) {
-        $q = "SELECT count(*) c FROM email_cache WHERE mbox = '{$mbox}' AND ie_id = '{$this->id}' AND seen = '0'";
+        $q = "SELECT count(*) c FROM email_cache WHERE mbox = " . $this->db->quoted($mbox) .
+            " AND ie_id = " . $this->db->quoted($this->id) . " AND seen = '0'";
         $r = $this->db->query($q);
         $a = $this->db->fetchByAssoc($r);
 
@@ -480,7 +485,8 @@ class InboundEmail extends SugarBean {
 						$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ] ");
 					} // if
 				} // if
-				$q = "DELETE from email_cache where imap_uid = {$msgNo} AND msgno = {$msgNo} AND ie_id = '{$this->id}' AND message_id = '{$msgId}'";
+                $q = "DELETE from email_cache where imap_uid = {$msgNo} AND msgno = {$msgNo} AND ie_id = " .
+                    $this->db->quoted($this->id) . " AND message_id = " . $this->db->quoted($msgId);
 				$r = $this->db->query($q);
 			} // if
 		} // for
@@ -495,7 +501,8 @@ class InboundEmail extends SugarBean {
 			return array();
 		}
 
-		$q = "SELECT * FROM email_cache WHERE ie_id = '{$this->id}' AND mbox = '{$mbox}' AND ";
+        $q = "SELECT * FROM email_cache WHERE ie_id = " . $this->db->quoted($this->id) .
+            " AND mbox = " . $this->db->quoted($mbox) . " AND ";
 		$startIndex = 0;
 		$endIndex = 5;
 
@@ -516,7 +523,7 @@ class InboundEmail extends SugarBean {
 					$extraWhere = $extraWhere . ",";
 				} // if
 				$i++;
-				$extraWhere = "{$extraWhere} '{$UID}'";
+                $extraWhere = "{$extraWhere} " . $this->db->quoted($UID);
 			} // foreach
 			$newQuery = $q . $extraWhere . ")";
 			$r = $this->db->query($newQuery);
@@ -600,7 +607,8 @@ class InboundEmail extends SugarBean {
 			$order = "";
 		}
 
-		$q = "SELECT * FROM email_cache WHERE ie_id = '{$this->id}' AND mbox = '{$mbox}' {$order}";
+        $q = "SELECT * FROM email_cache WHERE ie_id = " . $this->db->quoted($this->id) . " AND mbox = " .
+            $this->db->quoted($mbox) . " {$order}";
 
 		if(!empty($limit)) {
 			$start = ( $page - 1 ) * $limit;
@@ -685,7 +693,7 @@ class InboundEmail extends SugarBean {
 		$this->currentCache = null;
 
 		$table = 'email_cache';
-		$where = "WHERE ie_id = '{$this->id}' AND mbox = '{$mbox}'";
+        $where = "WHERE ie_id = " . $this->db->quoted($this->id) . " AND mbox = " . $this->db->quoted($mbox);
 
 		// handle removed rows
 		if(!empty($remove)) {
@@ -695,7 +703,7 @@ class InboundEmail extends SugarBean {
 					$removeIds .= ",";
 				}
 
-				$removeIds .= "'{$overview->imap_uid}'";
+                $removeIds .= $this->db->quoted($overview->imap_uid);
 			}
 
 			$q = "DELETE FROM {$table} {$where} AND imap_uid IN ({$removeIds})";
@@ -766,11 +774,11 @@ class InboundEmail extends SugarBean {
 							if(isset($overview->uid) && !empty($overview->uid)) {
 								$this->imap_uid = $overview->uid;
 							}
-							$values .= "'{$this->imap_uid}'";
+                            $values .= $this->db->quoted($this->imap_uid);
 						break;
 
 						case "ie_id":
-							$values .= "'{$this->id}'";
+                            $values .= $this->db->quoted($this->id);
 						break;
 
 						case "toaddr":
@@ -805,7 +813,7 @@ class InboundEmail extends SugarBean {
                         break;
 
 						case "mbox":
-							$values .= "'{$mbox}'";
+                            $values .= $this->db->quoted($mbox);
 						break;
 
 						default:
@@ -864,7 +872,9 @@ class InboundEmail extends SugarBean {
 					}
 				}
 
-				$q .= $set . " WHERE ie_id = '{$this->id}' AND mbox = '{$overview->mbox}' AND imap_uid = '{$overview->imap_uid}'";
+                $q .= $set . " WHERE ie_id = " . $this->db->quoted($this->id) . " AND mbox = " .
+                    $this->db->quoted($overview->mbox) . " AND imap_uid = " .
+                    $this->db->quoted($overview->imap_uid);
 				$GLOBALS['log']->info("INBOUNDEMAIL-CACHE: update query [ {$q} ]");
 				$r = $this->db->query($q, true, $q);
 			}
@@ -1182,7 +1192,8 @@ class InboundEmail extends SugarBean {
 		$newArray = array();
 		foreach($diff as $msgNo => $msgId) {
 			if (in_array($msgId, $cacheUIDLs)) {
-				$q1 = "UPDATE email_cache SET imap_uid = {$msgNo}, msgno = {$msgNo} WHERE ie_id = '{$this->id}' AND message_id = '{$msgId}'";
+                $q1 = "UPDATE email_cache SET imap_uid = {$msgNo}, msgno = {$msgNo} WHERE ie_id = " .
+                    $this->db->quoted($this->id) . " AND message_id = " . $this->db->quoted($msgId);
 				$this->db->query($q1);
 			} else {
 				$newArray[$msgNo] = $msgId;
@@ -1197,7 +1208,7 @@ class InboundEmail extends SugarBean {
 	 * @return array
 	 */
 	function pop3_getCacheUidls() {
-		$q = "SELECT msgno, message_id FROM email_cache WHERE ie_id = '{$this->id}'";
+        $q = "SELECT msgno, message_id FROM email_cache WHERE ie_id = " . $this->db->quoted($this->id);
 		$r = $this->db->query($q);
 
 		$ret = array();
@@ -2067,7 +2078,8 @@ class InboundEmail extends SugarBean {
 				$bean->mailbox = $mbox;
 				$searchOverviews = array();
 				if ($bean->protocol == 'pop3') {
-					$pop3Criteria = "SELECT * FROM email_cache WHERE ie_id = '{$bean->id}' AND mbox = '{$mbox}'";
+                    $pop3Criteria = "SELECT * FROM email_cache WHERE ie_id = " . $this->db->quoted($bean->id) .
+                        " AND mbox = " .$this->db->quoted($mbox);
 					$pop3Criteria .= (!empty($subject)) ? ' AND subject like "%'.$bean->db->quote($subject).'%"' : "";
 					$pop3Criteria .= (!empty($from)) ? ' AND fromaddr like "%'.$from.'%"' : "";
 					$pop3Criteria .= (!empty($to)) ? ' AND toaddr like "%'.$to.'%"' : "";
@@ -2162,7 +2174,8 @@ class InboundEmail extends SugarBean {
 	 * @return bool True on success
 	 */
 	function deletePersonalEmailAccount($id, $user_name) {
-		$q = "SELECT ie.id FROM inbound_email ie LEFT JOIN users u ON ie.group_id = u.id WHERE u.user_name = '{$user_name}'";
+        $q = "SELECT ie.id FROM inbound_email ie LEFT JOIN users u ON ie.group_id = u.id WHERE u.user_name = " .
+            $this->db->quoted($user_name);
 		$r = $this->db->query($q, true);
 
 		while($a = $this->db->fetchByAssoc($r)) {
@@ -2312,7 +2325,8 @@ class InboundEmail extends SugarBean {
 	 * Determines if this instance of I-E is for a Group Inbox or Personal Inbox
 	 */
 	function handleIsPersonal() {
-		$qp = 'SELECT users.id, users.user_name FROM users WHERE users.is_group = 0 AND users.deleted = 0 AND users.status = \'active\' AND users.id = \''.$this->group_id.'\'';
+        $qp = 'SELECT users.id, users.user_name FROM users WHERE users.is_group = 0 AND users.deleted = 0
+            AND users.status = \'active\' AND users.id = '.$this->db->quoted($this->group_id);
 		$rp = $this->db->query($qp, true);
 		$personalBox = array();
 		while($ap = $this->db->fetchByAssoc($rp)) {
@@ -2326,7 +2340,8 @@ class InboundEmail extends SugarBean {
 	}
 
 	function getUserNameFromGroupId() {
-		$r = $this->db->query('SELECT users.user_name FROM users WHERE deleted=0 AND id=\''.$this->group_id.'\'', true);
+        $r = $this->db->query('SELECT users.user_name FROM users WHERE deleted=0 AND id='.
+            $this->db->quoted($this->group_id), true);
 		while($a = $this->db->fetchByAssoc($r)) {
 			return $a['user_name'];
 		}
@@ -2604,7 +2619,8 @@ class InboundEmail extends SugarBean {
 	 * @return	boolean		false if NO DUPE IS FOUND
 	 */
 	function groupUserDupeCheck() {
-		$q = "SELECT u.id FROM users u WHERE u.deleted=0 AND u.is_group=1 AND u.user_name = '".$this->name."'";
+        $q = "SELECT u.id FROM users u WHERE u.deleted=0 AND u.is_group=1 AND u.user_name = ".
+            $this->db->quoted($this->name);
 		$r = $this->db->query($q, true);
 		$uid = '';
 		while($a = $this->db->fetchByAssoc($r)) {
@@ -3732,7 +3748,8 @@ class InboundEmail extends SugarBean {
 		} // if
 		$this->compoundMessageId = md5($this->compoundMessageId);
 
-		$query = 'SELECT count(emails.id) AS c FROM emails WHERE emails.message_id = \''.$this->compoundMessageId.'\' and emails.deleted = 0';
+        $query = 'SELECT count(emails.id) AS c FROM emails WHERE emails.message_id = '.
+            $this->db->quoted($this->compoundMessageId).' and emails.deleted = 0';
 		$r = $this->db->query($query, true);
 		$a = $this->db->fetchByAssoc($r);
 
@@ -3837,7 +3854,8 @@ class InboundEmail extends SugarBean {
 		if ($this->protocol == 'pop3') {
 			if($this->pop3_open()) {
 				// get the UIDL from database;
-				$query = "SELECT msgno FROM email_cache WHERE ie_id = '{$this->id}' AND message_id = '{$messageId}'";
+                $query = "SELECT msgno FROM email_cache WHERE ie_id = ". $this->db->quoted($this->id) .
+                    " AND message_id = " . $this->db->quoted($messageId);
 				$r = $this->db->query($query);
 				$a = $this->db->fetchByAssoc($r);
 				$msgNo = $a['msgno'];
@@ -3921,7 +3939,8 @@ class InboundEmail extends SugarBean {
 			$dupeCheckResult = $this->importDupeCheck($header->message_id, $header, $fullHeader);
 			if (!$dupeCheckResult && !empty($this->compoundMessageId)) {
 				// we have a duplicate email
-				$query = 'SELECT id FROM emails WHERE emails.message_id = \''.$this->compoundMessageId.'\' and emails.deleted = 0';
+                $query = 'SELECT id FROM emails WHERE emails.message_id = '.
+                    $this->db->quoted($this->compoundMessageId).' and emails.deleted = 0';
 				$r = $this->db->query($query, true);
 				$a = $this->db->fetchByAssoc($r);
 
@@ -3976,10 +3995,12 @@ class InboundEmail extends SugarBean {
 			$q = "";
 			if ($this->isPop3Protocol()) {
 				$this->email->name = $app_strings['LBL_EMAIL_ERROR_MESSAGE_DELETED'];
-				$q = "DELETE FROM email_cache WHERE message_id = '{$uid}' AND ie_id = '{$this->id}' AND mbox = '{$this->mailbox}'";
+                $q = "DELETE FROM email_cache WHERE message_id = ". $this->db->quoted($uid) . " AND ie_id = " .
+                    $this->db->quoted($this->id) . " AND mbox = " . $this->db->quoted($this->mailbox);
 			} else {
 				$this->email->name = $app_strings['LBL_EMAIL_ERROR_IMAP_MESSAGE_DELETED'];
-				$q = "DELETE FROM email_cache WHERE imap_uid = {$uid} AND ie_id = '{$this->id}' AND mbox = '{$this->mailbox}'";
+                $q = "DELETE FROM email_cache WHERE imap_uid = {$uid} AND ie_id = " . $this->db->quoted($this->id) .
+                    " AND mbox = " . $this->db->quoted($this->mailbox);
 			} // else
 			// delete local cache
 			$r = $this->db->query($q);
@@ -4428,8 +4449,8 @@ class InboundEmail extends SugarBean {
 							0,
 							\''.$timedate->nowDb().'\',
 							\''.$timedate->nowDb().'\',
-							\''.$addr.'\',
-		                    \''.$this->id.'\') ', true);
+                            '.$this->db->quoted($addr).',
+                            '.$this->db->quoted($this->id).') ', true);
 	}
 
 
@@ -4446,7 +4467,8 @@ class InboundEmail extends SugarBean {
 		$q_clean = 'UPDATE inbound_email_autoreply SET deleted = 1 WHERE date_entered < \''.$timedate->getNow()->modify("-24 hours")->asDb().'\'';
 		$r_clean = $this->db->query($q_clean, true);
 
-		$q = 'SELECT count(*) AS c FROM inbound_email_autoreply WHERE deleted = 0 AND autoreplied_to = \''.$from.'\' AND ie_id = \''.$this->id.'\'';
+        $q = 'SELECT count(*) AS c FROM inbound_email_autoreply WHERE deleted = 0 AND autoreplied_to = '.
+            $this->db->quoted($from).' AND ie_id = '.$this->db->quoted($this->id);
 		$r = $this->db->query($q, true);
 		$a = $this->db->fetchByAssoc($r);
 
@@ -4908,7 +4930,8 @@ eoq;
 	 * @return 	boolean false if none returned
 	 */
 	function retrieveByGroupId($groupId) {
-		$q = 'SELECT id FROM inbound_email WHERE group_id = \''.$groupId.'\' AND deleted = 0 AND status = \'Active\'';
+        $q = 'SELECT id FROM inbound_email WHERE group_id = '.
+            $this->db->quoted($groupId).' AND deleted = 0 AND status = \'Active\'';
 		$r = $this->db->query($q, true);
 
 		$beans = array();
@@ -4929,7 +4952,8 @@ eoq;
 	    if($user == null)
 	       $user = $GLOBALS['current_user'];
 
-	    $query = "SELECT count(*) as c FROM inbound_email WHERE deleted=0 AND is_personal='1' AND group_id='{$user->id}' AND status='Active'";
+        $query = "SELECT count(*) as c FROM inbound_email WHERE deleted=0 AND is_personal='1' AND group_id=" .
+            $this->db->quoted($user->id) . " AND status='Active'";
 
 	    $rs = $this->db->query($query);
 		$row = $this->db->fetchByAssoc($rs);
@@ -4943,8 +4967,9 @@ eoq;
 	 * @return 	boolean false if none returned
 	 */
 	function retrieveByGroupFolderId($groupFolderId) {
-		$q = 'SELECT id FROM inbound_email WHERE groupfolder_id = \''.$groupFolderId.'\' AND deleted = 0 ';
-		$r = $this->db->query($q, true);
+        $q = 'SELECT id FROM inbound_email WHERE groupfolder_id = '.
+            $this->db->quoted($groupFolderId).' AND deleted = 0 ';
+        $r = $this->db->query($q, true);
 
 		$beans = array();
 		while($a = $this->db->fetchByAssoc($r)) {
@@ -5402,7 +5427,7 @@ eoq;
 	 * @param string id GUID
 	 */
 	function hardDelete($id) {
-		$q = "DELETE FROM inbound_email WHERE id = '{$id}'";
+        $q = "DELETE FROM inbound_email WHERE id = " . $this->db->quoted($id);
 		$r = $this->db->query($q, true);
 	}
 
@@ -5506,7 +5531,8 @@ eoq;
 	 * @return UIDL for the message
 	 */
 	function getUIDLForMessage($msgNo) {
-		$query = "SELECT message_id FROM email_cache WHERE ie_id = '{$this->id}' AND msgno = '{$msgNo}'";
+        $query = "SELECT message_id FROM email_cache WHERE ie_id = " .
+            $this->db->quoted($this->id) . " AND msgno = " . $this->db->quoted($msgNo);
 		$r = $this->db->query($query);
 		$a = $this->db->fetchByAssoc($r);
 		return $a['message_id'];
@@ -5546,7 +5572,8 @@ eoq;
 	 * @return UIDL for the message
 	 */
 	function getMsgnoForMessageID($messageid) {
-		$query = "SELECT msgno FROM email_cache WHERE ie_id = '{$this->id}' AND message_id = '{$messageid}'";
+        $query = "SELECT msgno FROM email_cache WHERE ie_id = " .
+            $this->db->quoted($this->id) ." AND message_id = " . $this->db->quoted($messageid);
 		$r = $this->db->query($query);
 		$a = $this->db->fetchByAssoc($r);
 		return $a['message_id'];
@@ -5792,7 +5819,8 @@ eoq;
 		$attachments = '';
 		if ($mbox == "sugar::Emails") {
 
-			$q = "SELECT id, filename, file_mime_type FROM notes WHERE parent_id = '{$uid}' AND deleted = 0";
+            $q = "SELECT id, filename, file_mime_type FROM notes WHERE parent_id = " .
+                $this->db->quoted($uid) . " AND deleted = 0";
 			$r = $this->db->query($q);
 			$i = 0;
 			while($a = $this->db->fetchByAssoc($r)) {
@@ -6154,7 +6182,7 @@ eoq;
 	}
 
 	function validCacheExists($mbox) {
-		$q = "SELECT count(*) c FROM email_cache WHERE ie_id = '{$this->id}'";
+        $q = "SELECT count(*) c FROM email_cache WHERE ie_id = " . $this->db->quoted($this->id);
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 		$count = $a['c'];
@@ -6309,12 +6337,12 @@ eoq;
 		}
 		$this->mailboxarray = explode(",", $value);
 		$value = $this->db->quoted($value);
-		$query = "update inbound_email set mailbox = $value where id ='{$this->id}'";
+        $query = "update inbound_email set mailbox = $value where id = " . $this->db->quoted($this->id);
 		$this->db->query($query);
 	}
 
 	function insertMailBoxFolders($value) {
-		$query = "select value from config where category='InboundEmail' and name='{$this->id}'";
+        $query = "select value from config where category='InboundEmail' and name=" . $this->db->quoted($this->id);
 		$r = $this->db->query($query);
 		$a = $this->db->fetchByAssoc($r);
 		if (empty($a['value'])) {
@@ -6324,13 +6352,13 @@ eoq;
 			$this->mailboxarray = explode(",", $value);
 			$value = $this->db->quoted($value);
 
-			$query = "INSERT INTO config VALUES('InboundEmail', '{$this->id}', $value)";
+            $query = "INSERT INTO config VALUES('InboundEmail', " . $this->db->quoted($this->id) . ", $value)";
 			$this->db->query($query);
 		} // if
 	}
 
 	function saveMailBoxValueOfInboundEmail() {
-		$query = "update Inbound_email set mailbox = '{$this->email_user}'";
+        $query = "update Inbound_email set mailbox = " . $this->db->quoted($this->email_user);
 		$this->db->query($query);
 	}
 
@@ -6494,9 +6522,11 @@ eoq;
                         $query = array();
                         foreach(array_slice($tmpMsgs, -$limit, $limit) as $k1 => $v1)
                         {
-                            $query[] = $v1['msgId'];
+                            $query[] = $this->db->quoted($v1['msgId']);
                         }
-                        $query = 'SELECT count(emails.message_id) as cnt, emails.message_id AS mid FROM emails WHERE emails.message_id IN ("' . implode('","', $query) . '") and emails.deleted = 0 group by emails.message_id';
+                        $query = 'SELECT count(emails.message_id) as cnt, emails.message_id AS mid FROM emails
+                            WHERE emails.message_id IN (' . implode(',', $query) . ') and emails.deleted = 0
+                            group by emails.message_id';
                         $r = $this->db->query($query);
                         $tmp = array();
                         while($a = $this->db->fetchByAssoc($r))
