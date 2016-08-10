@@ -53,13 +53,13 @@ require_once('include/formbase.php');
 
  	$query="SELECT email_marketing_prospect_lists.id from email_marketing_prospect_lists ";
  	$query.=" left join email_marketing on email_marketing.id=email_marketing_prospect_lists.email_marketing_id";
-	$query.=" where email_marketing.campaign_id='$record'";
- 	$query.=" and email_marketing_prospect_lists.prospect_list_id='$linked_id'";
+    $query.=" where email_marketing.campaign_id=" . $focus->db->quoted($record);
+    $query.=" and email_marketing_prospect_lists.prospect_list_id=" . $focus->db->quoted($linked_id);
 
  	$result=$focus->db->query($query);
 	while (($row=$focus->db->fetchByAssoc($result)) != null) {
 			$del_query =" update email_marketing_prospect_lists set email_marketing_prospect_lists.deleted=1, email_marketing_prospect_lists.date_modified=".$focus->db->convert("'".TimeDate::getInstance()->nowDb()."'",'datetime');
- 			$del_query.=" WHERE  email_marketing_prospect_lists.id='{$row['id']}'";
+        $del_query.=" WHERE  email_marketing_prospect_lists.id=" . $focus->db->quoted($row['id']);
 		 	$focus->db->query($del_query);
 	}
  	$focus->db->query($query);
