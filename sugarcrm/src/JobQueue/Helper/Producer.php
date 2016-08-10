@@ -168,9 +168,7 @@ class Producer
             $sql = "UPDATE {$this->bean->table_name}
                     SET percent_complete = {$percentage}
                     WHERE id = {$this->db->quoted($this->bean->id)}";
-            if ($this->db->query($sql)) {
-                $this->resolutionHelper->sendProgressMessage($this->bean);
-            }
+            $this->db->query($sql);
         }
     }
 }

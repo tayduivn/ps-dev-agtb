@@ -40,21 +40,9 @@ class Call extends SugarBean {
 	var $direction;
 	var $reminder_time;
 	var $reminder_time_options;
-    /**
-     * @deprecated Since 7.8 the decision to remind about a Call is set up in Notification Center.
-     */
 	var $reminder_checked;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_time;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_checked;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_sent;
 	var $required;
 	var $accept_status;

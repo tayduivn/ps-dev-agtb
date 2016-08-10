@@ -39,10 +39,6 @@
             <directory>include/</directory>
             <directory>clients/</directory>
         </testsuite>
-        <testsuite name="Notification">
-            <file>./src/Trigger/CallMeetingReminderTest.php</file>
-            <directory>./src/Notification</directory>
-        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">

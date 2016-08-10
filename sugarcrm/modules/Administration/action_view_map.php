@@ -20,7 +20,3 @@ $action_view_map['backups'] = 'backups';
 $action_view_map['globalsearchsettings'] = 'globalsearchsettings';
 $action_view_map['unifiedsearchsettings'] = 'unifiedsearchsettings';
 $action_view_map['languages'] = 'languages';
-if (0) { // CRYS-1567-fix
-    $action_view_map['websockets'] = 'websockets';
-    $action_view_map['triggerserver'] = 'triggerserver';
-}

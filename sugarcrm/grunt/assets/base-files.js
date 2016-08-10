@@ -33,7 +33,6 @@
     'include/javascript/sugar7/utils.js',
     'include/javascript/sugar7/language.js',
     'include/javascript/sugar7/tooltip.js',
-    'include/javascript/sugar7/socket.js',
     'include/javascript/sugar7/help.js',
     'include/javascript/sugar7/underscore-mixins.js',
     'include/javascript/sugar7/utils-filters.js',
