@@ -16,6 +16,45 @@
 ({
     extendsFrom: 'RecordView',
 
+    STATE_DRAFT: 'Draft',
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        if (this.model.get('state') === this.STATE_DRAFT) {
+            this._alertUserDraftState();
+        }
+
+        this.listenTo(this.model, 'change:state', this._alertUserDraftState);
+    },
+
+    /*
+    * Alerts the user that the draft email was opened in the record view route.
+    * Allows the user to click and open the draft in the compose drawer.
+     */
+    _alertUserDraftState: function() {
+        var model = this.model;
+
+        app.alert.dismiss('email-draft-alert');
+
+        if (model.get('state') === this.STATE_DRAFT) {
+            app.alert.show('email-draft-alert', {
+                level: 'warning',
+                autoClose: false,
+                title: ' ',
+                messages: app.lang.get('LBL_OPEN_DRAFT_ALERT', this.module, {subject: model.get('name')}),
+                onLinkClick: function(event) {
+                    var route =  '#' + app.router.buildRoute(model.module + '/drafts', model.get('id'));
+                    app.alert.dismiss('email-draft-alert');
+                    app.router.navigate(route, {trigger: true});
+                }
+            });
+        }
+    },
+
     /**
      * @inheritdoc
      * When record name is empty, return (no subject)

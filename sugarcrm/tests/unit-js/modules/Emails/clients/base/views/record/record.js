@@ -1,7 +1,6 @@
 describe('Emails.Views.Record', function() {
     var app;
     var view;
-    var dataProvider;
     var sandbox;
 
     beforeEach(function() {
@@ -51,6 +50,40 @@ describe('Emails.Views.Record', function() {
             view.model.set('name', recordName);
             var name = view._getNameForMessage(view.model);
             expect(name).toBe(recordName);
+        });
+    });
+
+    describe('alert the user that the email is a draft', function() {
+        beforeEach(function() {
+            sandbox.stub(app.alert, 'show');
+        });
+
+        it('should alert the user when state changes to draft on the model', function() {
+            view.model.set('state', view.STATE_DRAFT);
+            expect(app.alert.show).toHaveBeenCalled();
+        });
+
+        it('should alert the user when the model is synced and state becomes draft', function() {
+            sandbox.stub(view.model, 'sync', function(method, model, options) {
+                options.success({state: view.STATE_DRAFT});
+            });
+            view.model.save();
+            expect(app.alert.show).toHaveBeenCalled();
+        });
+
+        it('should alert the user when the model starts with state equal to draft', function() {
+            var context = app.context.getContext();
+
+            context.set({
+                module: 'Emails',
+                create: true
+            });
+            context.prepare();
+            context.get('model').set('state', view.STATE_DRAFT);
+
+            view = SugarTest.createView('base', 'Emails', 'record', null, context, true);
+
+            expect(app.alert.show).toHaveBeenCalled();
         });
     });
 });

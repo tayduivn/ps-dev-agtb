@@ -97,6 +97,9 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 array(
                     'name' => 'name',
                     'readonly' => true,
+                    'related_fields' => array(
+                        'state',
+                    ),
                 ),
                 array(
                     'name' => 'favorite',

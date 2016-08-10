@@ -207,6 +207,9 @@ $mod_strings = array(
     'WARNING_UPLOAD_DIR_NOT_WRITABLE' => 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" ' .
         'was detected.  Please correct this in your php.ini file.',
     'LBL_MESSAGE_UID' => 'Message UID',
+    'LBL_OPEN_DRAFT_ALERT' => 'Email is a draft. Click '.
+        '<a href="javascript:void(0);" data-action="email-draft">"{{subject}}"</a>'.
+        '  to edit.',
 
     // for All emails
     'LBL_BUTTON_RAW_TITLE' => 'Show Raw Message',
