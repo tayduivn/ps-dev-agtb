@@ -99,50 +99,6 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
 </tr>
 <?php } ?>
 <tr>
-    <td scope="row"><?php
-        echo SugarThemeRegistry::current()->getImage(
-            'Rebuild',
-            'align="absmiddle" border="0"',
-            null,
-            null,
-            '.gif',
-            $mod_strings['LBL_REBUILD_REMINDERS_TITLE']
-        );
-        ?>&nbsp;<a href="./index.php?module=Administration&action=RebuildReminders"><?php
-            echo $mod_strings['LBL_REBUILD_REMINDERS_TITLE'];
-            ?></a></td>
-    <td> <?php echo $mod_strings['LBL_REBUILD_REMINDERS_DESC_SHORT'] ; ?> </td>
-</tr>
-<tr>
-    <td scope="row"><?php
-        echo SugarThemeRegistry::current()->getImage(
-            'Rebuild',
-            'align="absmiddle" border="0"',
-            null,
-            null,
-            '.gif',
-            $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_TITLE']
-        );
-        ?>&nbsp;<a href="./index.php?module=Administration&action=ReExportEvents"><?php
-            echo $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_TITLE'];
-            ?></a></td>
-    <td> <?php echo $mod_strings['LBL_REBUILD_EXPORT_CAL_DAV_DESC_SHORT'] ; ?> </td>
-</tr>
-<tr>
-    <td scope="row"><?php
-        echo SugarThemeRegistry::current()->getImage(
-            'Repair',
-            'align="absmiddle" border="0"',
-            null,
-            null,
-            '.gif',
-            $mod_strings['LBL_REPAIR_JS_FILES_TITLE']
-        ); ?>&nbsp;<a href="./index.php?module=Administration&action=RepairJSFile&type=repair"><?php
-            echo $mod_strings['LBL_REPAIR_JS_FILES_TITLE']; ?></a>
-    </td>
-    <td> <?php echo $mod_strings['LBL_REPAIR_JS_FILES_DESC_SHORT']; ?> </td>
-</tr>
-<tr>
     <td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Repair','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_REPAIR_FIELD_CASING_TITLE']); ?>&nbsp;<a href="./index.php?module=Administration&action=RepairFieldCasing&type=repair"><?php echo $mod_strings['LBL_REPAIR_FIELD_CASING_TITLE']; ?></a></td>
     <td> <?php echo $mod_strings['LBL_REPAIR_FIELD_CASING_DESC_SHORT'] ; ?> </td>
 </tr>

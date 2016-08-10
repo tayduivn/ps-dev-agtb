@@ -295,12 +295,6 @@ class MetaDataManager
             'max_repeat_count' => true,
         ),
         'site_url' => true,
-        'websockets' => array(
-            'client' => array(
-                'url' => true,
-                'balancer' => true,
-            ),
-        ),
         'lead_conv_activity_opt' => true,
         'team_based_acl' => array(
             'enabled' => true,

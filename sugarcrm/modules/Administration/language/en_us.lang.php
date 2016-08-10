@@ -659,12 +659,6 @@ $mod_strings = array (
     'LBL_REBUILD_WORKFLOW' => 'Rebuild WorkFlow',
     'LBL_REBUILD_WORKFLOW_CACHE' => 'Rebuilding Workflow Cache...<BR>',
     'LBL_REBUILD_WORKFLOW_COMPILING' => 'Compiling Plugins... <BR>',
-    'LBL_REBUILD_REMINDERS_TITLE' => 'Rebuild Reminders',
-    'LBL_REBUILD_REMINDERS_DESC_SHORT' => 'Rebuild call and meeting reminders',
-    'LBL_REBUILD_REMINDERS_STARTED' => 'Started Rebuild Reminders',
-    'LBL_REBUILD_EXPORT_CAL_DAV_TITLE' => 'Rebuild CalDav records',
-    'LBL_REBUILD_EXPORT_CAL_DAV_DESC_SHORT' => 'Going through all caldav related records and rebuild them',
-    'LBL_REBUILD_EXPORT_CAL_DAV_STARTED' => 'Rebuilding records',
     'LBL_REBUILD' => 'Rebuild',
     'LBL_REGEX_HELP_TITLE'		=>'Regex Description',
     'LBL_REGEX_HELP_TEXT'		=>'<b>Regular Expressions </b> provide a concise and flexible means for identifying
@@ -1176,36 +1170,9 @@ For more information, refer to the <a href="http://www.sugarcrm.com/crm/product_
     'LBL_SPRITES_ADDED' => 'Added sprite {0}',
     'LBL_SPRITES_EXCLUDING_FILE' => 'Excluding file: {0}',
 
-    // Web Sockets
-    'LBL_WEB_SOCKET_CONFIGURATION_CLIENT' => 'WebSocket Client Side',
-    'LBL_WEB_SOCKET_CONFIGURATION_SERVER' => 'WebSocket Server Side',
-    'LBL_WEB_SOCKET_CONFIGURATION_URL' => 'URL',
-    'LBL_WEB_SOCKET_CONFIGURATION_SECURED' => 'Secure connection',
-    'LBL_WEB_SOCKET_CONFIGURATION' => 'WebSocket Configuration',
-    'LBL_WEB_SOCKET_CONFIGURATION_DESC' => 'Here you can specify client and server URLs to web socket server.',
-
-    'ERR_WEB_SOCKET_CLIENT_URL'         => 'WebSocket Client URL required',
-    'ERR_WEB_SOCKET_SERVER_URL'         => 'WebSocket Server URL required',
-    'ERR_WEB_SOCKET_CLIENT_ERROR'       => 'Unable to connect to WebSocket Client URL',
-    'ERR_WEB_SOCKET_SERVER_ERROR'       => 'Unable to connect to WebSocket Server URL',
-    'ERR_WEB_SOCKET_SERVER_LOCALHOST'   => 'URL of the instance points to local host but Socket Server is located remotely and can\'t reach the instance.',
-    'ERR_WEB_SOCKET_CLIENT_LOCALHOST'   => 'Client URL of Socket Server points to local host. It will work only on local machine.',
-
     // Team-Based Permissions
     'LBL_TBA_CONFIGURATION' => 'Team-based Permissions',
     'LBL_TBA_CONFIGURATION_DESC' => 'Enable team access, and manage access by module.',
-
-    //Trigger Server
-    'LBL_TRIGGER_SERVER_CONFIGURATION'      => 'Trigger Server Configuration',
-    'LBL_TRIGGER_SERVER_CONFIGURATION_URL'  => 'Trigger Server URL',
-    'LBL_TRIGGER_SERVER_CONFIGURATION_DESC' => 'Here you can specify URL to trigger server.',
-    'ERR_TRIGGER_SERVER_URL_INVALID'        => 'Please provide correct Trigger Server URL',
-    'ERR_TRIGGER_SERVER_ERROR'              => 'Unable to connect to Trigger Server',
-    'ERR_TRIGGER_SERVER_LOCALHOST'      => 'URL of the instance points to local host but Trigger Server is located remotely and can\'t reach the instance.',
-
-    // Notification Center
-    'LBL_NOTIFICATIONS_CONFIGURATION' => 'Notification Settings',
-    'LBL_NOTIFICATIONS_CONFIGURATION_DESC' => 'Define how users get notifications delivered and choose the events to show notifications for.',
 
     //FTS
     'LBL_FTS_TYPE' => 'System Type',
