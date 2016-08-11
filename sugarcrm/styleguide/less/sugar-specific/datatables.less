@@ -741,12 +741,12 @@ FLEXLIST GENERIC */
   /*DUPLICATES*/
   .dataTable.duplicates {
     tr {
-      border-top-color: @warningBorder;
-      border-bottom-color: @warningBorder;
+      border-top-color: lighten(@warningBorder, 5%);
+      border-bottom-color: lighten(@warningBorder, 5%);
     }
     th {
-      background-color: @warningBackground;
-      border-right-color: @warningBorder;
+      background-color: @confirmationBackground;
+      border-right-color: lighten(@warningBorder, 5%);
       &:first-child {
         .btn.checkall:only-child {
           margin-left: 0;
@@ -754,11 +754,16 @@ FLEXLIST GENERIC */
       }
     }
 
-    tbody > tr:not(.current):nth-child(odd) > td {
-      background-color: darken(@warningBackground,5%);
+    tbody > tr.current > td {
+      background-color: @dropdownLinkBackgroundHover;
     }
+
+    tbody > tr:not(.current):nth-child(odd) > td {
+      background-color: darken(@confirmationBackground,5%);
+    }
+
     tbody > tr:not(.current):nth-child(even) > td {
-      background-color: @warningBackground;
+      background-color: @confirmationBackground;
     }
 
   // &.table-striped tbody > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
