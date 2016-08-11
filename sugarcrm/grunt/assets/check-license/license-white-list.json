@@ -52,6 +52,7 @@
     "sidecar/lib/async/",
     "sidecar/lib/backbone/",
     "sidecar/lib/bigjs/",
+    "sidecar/lib/codecov/",
     "sidecar/lib/crosstab/",
     "sidecar/lib/handlebars/",
     "sidecar/lib/jasmine/",
