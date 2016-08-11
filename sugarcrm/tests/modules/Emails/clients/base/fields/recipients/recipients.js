@@ -624,19 +624,10 @@ describe("Emails.fields.recipients", function() {
                 '<div class="select2-search-choice">' +
                 '<span data-id="3" data-invalid="true" data-title="foo3">' +
                 '</span></div>';
-            var expectedHtml =
-                '<div class="select2-search-choice select2-choice-danger">' +
-                '<span data-id="1" data-invalid="true" data-title="ERR_INVALID_EMAIL_ADDRESS"></span>' +
-                '</div>' +
-                '<div class="select2-search-choice">' +
-                '<span data-id="2" data-invalid="" data-title="foo2"></span>' +
-                '</div>' +
-                '<div class="select2-search-choice select2-choice-danger">' +
-                '<span data-id="3" data-invalid="true" data-title="ERR_INVALID_EMAIL_ADDRESS"></span>' +
-                '</div>';
             field.$el = $('<div>' + originalHtml + '</div>');
             field._decorateInvalidRecipients();
-            expect(field.$el.html()).toEqual(expectedHtml);
+            expect(field.$('.select2-choice-danger').length).toEqual(2);
+            expect(field.$('[data-title="ERR_INVALID_EMAIL_ADDRESS"]').length).toEqual(2);
         });
     });
 });
