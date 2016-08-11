@@ -81,11 +81,6 @@ gulp.task('karma', function(done) {
         karmaOptions.browsers = commander.browsers;
     }
 
-    if (commander.ciCoverage) {
-        commander.ci = true;
-        commander.coverage = true;
-    }
-
     if (commander.coverage) {
 
         eval('karmaOptions.preprocessors = ' + fs.readFileSync('grunt/assets/default-pre-processors.js', 'utf-8'));
