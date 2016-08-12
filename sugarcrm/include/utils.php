@@ -501,6 +501,8 @@ function get_sugar_config_defaults()
             'error_number_of_cycles' =>  '10',
             'error_timeout' => '40',
         ),
+        'sugar_min_int' => -2147483648,
+        'sugar_max_int' => 2147483647,
     );
 
     if (empty($locale)) {

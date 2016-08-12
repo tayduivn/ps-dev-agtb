@@ -138,29 +138,38 @@ class SugarFieldInt extends SugarFieldBase
      */
     public function apiValidate(SugarBean $bean, array $params, $field, $properties)
     {
-        // check range
-        $fieldRange = $this->getFieldRange($properties);
-
-        if (!empty($fieldRange) && isset($params[$field])) {
-            return $params[$field] <= $fieldRange['max_value'] && $params[$field] >= $fieldRange['min_value'];
+        if (isset($params[$field])) {
+            $fieldRange = $this->getFieldRange($properties);
+            return ((!is_numeric($fieldRange['min_value']) || $params[$field] >= $fieldRange['min_value']) &&
+                (!is_numeric($fieldRange['max_value']) || $params[$field] <= $fieldRange['max_value']));
         }
 
         return parent::apiValidate($bean, $params, $field, $properties);
     }
 
     /**
-     * Gets field range based on both db and php limits.
+     * Gets field range based on db, vardef, and configs.
      * @param array $vardef
      * @return array | boolean
      */
     protected function getFieldRange($vardef)
     {
+        // config
+        $minValue = SugarConfig::getInstance()->get('sugar_min_int');
+        $maxValue = SugarConfig::getInstance()->get('sugar_max_int');
+        // db
         $fieldRange = $GLOBALS['db']->getFieldRange($vardef);
-
         if (!empty($fieldRange)) {
-            return array('min_value' => max(-PHP_INT_MAX,  $fieldRange['min_value']), 'max_value' => min(PHP_INT_MAX, $fieldRange['max_value']));
+            $minValue = !is_numeric($minValue) ? $fieldRange['min_value'] : max($minValue, $fieldRange['min_value']);
+            $maxValue = !is_numeric($maxValue) ? $fieldRange['max_value'] : min($maxValue, $fieldRange['max_value']);
         }
-
-        return false;
+        // vardef
+        if (isset($vardef['min']) && is_int($vardef['min'])) {
+            $minValue = !is_numeric($minValue) ? $vardef['min'] : max($minValue, $vardef['min']);
+        }
+        if (isset($vardef['max']) && is_int($vardef['max'])) {
+            $maxValue = !is_numeric($maxValue) ? $vardef['max'] : min($maxValue, $vardef['max']);
+        }
+        return array('min_value' => $minValue, 'max_value' => $maxValue);
     }
 }

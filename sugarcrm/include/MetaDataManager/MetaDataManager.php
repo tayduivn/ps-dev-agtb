@@ -2097,6 +2097,12 @@ class MetaDataManager
         $connectors = ConnectorUtils::getConnectors();
         $configs['connectors'] = $this->getFilteredConnectorList($connectors);
 
+        if (isset($sugarConfig['sugar_min_int']) && is_numeric($sugarConfig['sugar_min_int'])) {
+            $configs['sugarMinInt'] = $sugarConfig['sugar_min_int'];
+        }
+        if (isset($sugarConfig['sugar_max_int']) && is_numeric($sugarConfig['sugar_max_int'])) {
+            $configs['sugarMaxInt'] = $sugarConfig['sugar_max_int'];
+        }
         return $configs;
     }
 
