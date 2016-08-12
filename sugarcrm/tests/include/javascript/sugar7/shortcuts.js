@@ -2,13 +2,13 @@ describe('Shortcuts', function() {
     var app,
         view,
         mousetrapBindStub,
-        mousetrapUnbindStub,
-        View = Backbone.View;
+        mousetrapUnbindStub;
 
     beforeEach(function() {
         app = SugarTest.app;
 
-        view = new View();
+        view = app.view.createView({type: 'base'});
+        view2 = app.view.createView({type: 'base'});
 
         mousetrapBindStub = sinon.stub();
         mousetrapUnbindStub = sinon.stub();
@@ -25,6 +25,9 @@ describe('Shortcuts', function() {
         app.shortcuts._globalShortcuts = {};
         app.shortcuts._enable = false;
         Mousetrap = undefined;
+
+        view.dispose();
+        view2.dispose();
     });
 
     describe('createSession', function() {
@@ -152,8 +155,6 @@ describe('Shortcuts', function() {
         });
 
         it('should register the shortcut for the session that is tied to the component layout', function() {
-            var view2 = new View();
-
             app.shortcuts.createSession(['foo'], view);
             app.shortcuts.saveSession();
             app.shortcuts.createSession(['foo'], view2);
@@ -169,7 +170,7 @@ describe('Shortcuts', function() {
         });
 
         it('should not register shortcut keys if the component is a dashlet', function() {
-            view.layout = new View({
+            view.layout = app.view.createView({
                 type: 'dashlet'
             });
             app.shortcuts.createSession(['foo'], view);
@@ -181,6 +182,8 @@ describe('Shortcuts', function() {
             });
             expect(app.shortcuts.getCurrentSession()._shortcuts.bar).toBeUndefined();
             expect(mousetrapBindStub.called).toBe(false);
+
+            view.layout.dispose();
         });
 
         it('should register shortcut keys if the same key has already been bound', function() {
@@ -278,8 +281,6 @@ describe('Shortcuts', function() {
         });
 
         it('should unregister the shortcut for the session that is tied to the component layout', function() {
-            var view2 = new View();
-
             app.shortcuts.createSession(['foo'], view);
             app.shortcuts.saveSession();
             app.shortcuts.createSession(['foo'], view2);
@@ -327,11 +328,6 @@ describe('Shortcuts', function() {
     });
 
     describe('saveSession and restoreSession', function() {
-        var view2;
-
-        beforeEach(function() {
-            view2 = new View();
-        });
 
         it('should restore all shortcut bindings', function() {
             app.shortcuts.createSession(['a','b'], view);
@@ -377,6 +373,7 @@ describe('Shortcuts', function() {
 
         it('should not restore shortcut session that is tied to a disposed layout', function() {
             var firstSession;
+            var view3 = app.view.createView({type: 'base'});
 
             app.shortcuts.createSession(['foo'], view);
 
@@ -385,13 +382,15 @@ describe('Shortcuts', function() {
             app.shortcuts.saveSession();
             app.shortcuts.createSession(['foo'], view2);
             app.shortcuts.saveSession();
-            app.shortcuts.createSession(['foo'], new View());
+            app.shortcuts.createSession(['foo'], view3);
 
             view2.disposed = true;
             app.shortcuts.restoreSession();
 
             expect(app.shortcuts.getCurrentSession()).toBe(firstSession);
             expect(firstSession.isActive()).toBe(true);
+
+            view3.dispose();
         });
 
         it('should not restore shortcut session when there are no saved sessions to restore', function() {
@@ -416,8 +415,8 @@ describe('Shortcuts', function() {
 
     describe('_getShortcutSessionForComponent', function() {
         it('should get the shortcut session that the component is tied to', function() {
-            var result, session,
-                view2 = new View();
+            var result;
+            var session;
 
             view2.layout = view;
             app.shortcuts.createSession(['foo'], view);
@@ -428,25 +427,28 @@ describe('Shortcuts', function() {
         });
 
         it('should get the shortcut session even if the session is saved and not active', function() {
-            var result, session,
-                view2 = new View();
+            var result;
+            var session;
+            var view3 = app.view.createView({type: 'base'});
 
             view2.layout = view;
             app.shortcuts.createSession(['foo'], view);
             session = app.shortcuts.getCurrentSession();
             app.shortcuts.saveSession();
-            app.shortcuts.createSession(['foo'], new View());
+            app.shortcuts.createSession(['foo'], view3);
 
             result = app.shortcuts._getShortcutSessionForComponent(view2);
 
             expect(result).toBe(session);
+
+            view3.dispose();
         });
 
         it('should return undefined when it cannot find the shortcut session', function() {
             var result;
 
             app.shortcuts.createSession(['foo'], view);
-            result = app.shortcuts._getShortcutSessionForComponent(new View());
+            result = app.shortcuts._getShortcutSessionForComponent(view2);
 
             expect(result).toBeUndefined();
         });
@@ -455,16 +457,17 @@ describe('Shortcuts', function() {
     describe('deleteSavedSession', function() {
         it('should remove the session that the layout is tied to', function() {
             var firstSession, secondSession;
+            var view3 = app.view.createView({type: 'base'});
 
             app.shortcuts.createSession(['foo'], view);
             firstSession = app.shortcuts.getCurrentSession();
 
             app.shortcuts.saveSession();
-            app.shortcuts.createSession(['foo'], new View());
+            app.shortcuts.createSession(['foo'], view2);
             secondSession = app.shortcuts.getCurrentSession();
 
             app.shortcuts.saveSession();
-            app.shortcuts.createSession(['foo'], new View());
+            app.shortcuts.createSession(['foo'], view3);
 
             expect(app.shortcuts._savedSessions.length).toBe(2);
             expect(app.shortcuts._savedSessions[0]).toBe(firstSession);
@@ -473,6 +476,8 @@ describe('Shortcuts', function() {
             app.shortcuts.deleteSavedSession(view);
             expect(app.shortcuts._savedSessions.length).toBe(1);
             expect(app.shortcuts._savedSessions[0]).toBe(secondSession);
+
+            view3.dispose();
         });
     });
 
