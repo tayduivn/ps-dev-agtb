@@ -3,12 +3,12 @@ describe('Filter Quick Search View', function() {
     var view, app, parentLayout, filtersBeanPrototype;
 
     beforeEach(function() {
-        parentLayout = new Backbone.View();
+        app = SUGAR.App;
+        parentLayout = app.view.createLayout({type: 'base'});
         SugarTest.app.data.declareModels();
         SugarTest.declareData('base', 'Filters');
         view = SugarTest.createView('base', 'Accounts', 'filter-quicksearch', {}, false, false, parentLayout);
         view.layout = parentLayout;
-        app = SUGAR.App;
         filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
     });
 
@@ -16,6 +16,8 @@ describe('Filter Quick Search View', function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
+        view.dispose();
+        parentLayout.dispose();
         view = null;
         parentLayout = null;
     });

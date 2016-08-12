@@ -1,5 +1,7 @@
 describe('Base.View.FilterRows', function() {
     var view, layout, app;
+    var parentLayout;
+    var filterLayout;
 
     beforeEach(function() {
         app = SUGAR.App;
@@ -12,8 +14,10 @@ describe('Base.View.FilterRows', function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
-        layout = SugarTest.createLayout('base', "Cases", "filterpanel", {}, null, null, { layout: new Backbone.View() });
-        layout._components.push(SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() }));
+        parentLayout = app.view.createLayout({type: 'base'});
+        layout = SugarTest.createLayout('base', 'Cases', 'filterpanel', {}, null, null, {layout: parentLayout});
+        filterLayout = SugarTest.createLayout('base', 'Cases', 'filter', {}, null, null, {layout: layout});
+        layout._components.push(filterLayout);
         view = SugarTest.createView("base", "Cases", "filter-rows", null, null, null, layout);
         view.layout = layout;
         view.context.editingFilter = new Backbone.Model();
@@ -24,6 +28,8 @@ describe('Base.View.FilterRows', function() {
         SugarTest.testMetadata.dispose();
         view.dispose();
         layout.dispose();
+        parentLayout.dispose();
+        filterLayout.dispose();
         app.cache.cutAll();
         Handlebars.templates = {};
     });

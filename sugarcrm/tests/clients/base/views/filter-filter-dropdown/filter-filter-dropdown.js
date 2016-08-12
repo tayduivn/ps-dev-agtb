@@ -1,29 +1,32 @@
 describe('Base.View.FilterFilterDropdown', function() {
     var view, layout, app, sinonSandbox;
+    var parentLayout;
+    var filterpanel;
 
     beforeEach(function () {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-filter-dropdown');
         SugarTest.testMetadata.set();
-        var filterpanel = SugarTest.createLayout(
+
+        parentLayout = app.view.createLayout({type: 'base'});
+        filterpanel = SugarTest.createLayout(
             'base',
             'Cases',
             'filterpanel',
             {},
             null,
             null,
-            {layout: new Backbone.View()}
+            {layout: parentLayout}
         );
         SugarTest.declareData('base', 'Filters');
-        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
+        layout = SugarTest.createLayout('base', 'Cases', 'filter', {}, null, null, {layout: filterpanel});
         sinon.collection.stub(app.BeanCollection.prototype, 'fetch', function(options) {
             options.success();
         });
         layout.filters = app.data.createBeanCollection('Filters');
         layout.filters.setModuleName('Cases');
         layout.filters.load();
-        layout.layout = filterpanel;
         view = SugarTest.createView("base", "Cases", "filter-filter-dropdown", null, null, null, layout);
         view.layout = layout;
         sinonSandbox = sinon.sandbox.create();
@@ -33,6 +36,9 @@ describe('Base.View.FilterFilterDropdown', function() {
         sinon.collection.restore();
         sinonSandbox.restore();
         view.dispose();
+        layout.dispose();
+        parentLayout.dispose();
+        filterpanel.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();

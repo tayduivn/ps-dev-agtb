@@ -1,6 +1,7 @@
 describe('KBContents.Base.Views.FilterModuleDropdown', function() {
 
     var app, view, sandbox, context, layout, moduleName = 'KBContents';
+    var parentLayout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -24,6 +25,7 @@ describe('KBContents.Base.Views.FilterModuleDropdown', function() {
             moduleName
         );
         SugarTest.testMetadata.set();
+        parentLayout = app.view.createLayout({type: 'base'});
         layout = SugarTest.createLayout(
             'base',
             moduleName,
@@ -32,7 +34,7 @@ describe('KBContents.Base.Views.FilterModuleDropdown', function() {
             null,
             null,
             {
-                layout: new Backbone.View()
+                layout: parentLayout
             }
         );
         view = SugarTest.createView(
@@ -52,6 +54,7 @@ describe('KBContents.Base.Views.FilterModuleDropdown', function() {
         app.view.reset();
         view.dispose();
         layout.dispose();
+        parentLayout.dispose();
         SugarTest.testMetadata.dispose();
         Handlebars.templates = {};
         view = null;

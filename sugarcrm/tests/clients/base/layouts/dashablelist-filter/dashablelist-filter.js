@@ -28,10 +28,15 @@ describe('Base.Layout.DashablelistFilter', function() {
     });
 
     describe('DashablelistFilter', function() {
+        var parentLayout;
 
         beforeEach(function() {
-            parentLayout = new Backbone.View();
+            parentLayout = app.view.createLayout({type: 'base', name: 'dashablelist-filter-parent-layout'});
             layout = SugarTest.createLayout('base', 'Accounts', 'dashablelist-filter', {}, false, false, {layout: parentLayout});
+        });
+
+        afterEach(function() {
+            parentLayout.dispose();
         });
 
         describe('initComponents', function() {
