@@ -14,7 +14,7 @@
     "karma-jasmine": "~0.1.5",
     "karma-junit-reporter": "~0.3.8",
     "karma-phantomjs-launcher": "^1.0.1",
-    "karma-safari-launcher": "~0.1.1",
+    "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^0.3.1",
     "lodash": "~2.4.1",
     "socket.io": "0.9.16"
