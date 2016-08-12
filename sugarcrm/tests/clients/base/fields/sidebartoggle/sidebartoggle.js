@@ -12,7 +12,7 @@ describe('Base.Field.Sidebartoggle', function() {
         SugarTest.loadComponent('base', 'field', 'sidebartoggle');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
-        defaultLayout = new Backbone.View();
+        defaultLayout = app.view.createView({type: 'base'});
         defaultLayout.isSidePaneVisible = $.noop;
         field = SugarTest.createField('base', null, 'sidebartoggle', 'record', def);
         sinon.collection.stub(field, 'closestComponent').withArgs('sidebar').returns(defaultLayout);
@@ -20,6 +20,7 @@ describe('Base.Field.Sidebartoggle', function() {
     afterEach(function() {
         sinon.collection.restore();
         field.dispose();
+        defaultLayout.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
