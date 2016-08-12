@@ -9,7 +9,7 @@
     "gulp": "^3.9.0",
     "karma": "~0.12.16",
     "karma-chrome-launcher": "^1.0.1",
-    "karma-coverage": "~0.2.4",
+    "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "~0.1.5",
     "karma-junit-reporter": "~0.3.8",
