@@ -83,6 +83,8 @@ describe('Base.Layout.Subpanels', function() {
                 });
 
             expect(layoutComponentOrder).toEqual(metaComponentOrder);
+
+            testLayout.dispose();
         });
 
         it('should support sortable on the metadata order', function() {
@@ -105,6 +107,8 @@ describe('Base.Layout.Subpanels', function() {
 
             expect(sortableStub).toHaveBeenCalled();
             expect(layoutComponentOrder).toEqual(testOrder);
+
+            testLayout.dispose();
         });
     });
 
@@ -242,6 +246,7 @@ describe('Base.Layout.Subpanels', function() {
 
         beforeEach(function() {
             layout = SugarTest.createLayout('base', module, 'subpanels');
+            sinon.collection.stub(layout, 'createComponentFromDef');
             //Mock sidecar calls
             hiddenPanelsStub = sinon.collection.stub(app.metadata, 'getHiddenSubpanels', function() {
                 return {0: 'bugs', 1: 'contacts'};
@@ -255,7 +260,7 @@ describe('Base.Layout.Subpanels', function() {
                     return linkName;
                 }
             });
-            superStub = sinon.collection.stub(layout, '_super');
+            addComponent = sinon.collection.stub(layout, 'addComponent');
             reorderStub = sinon.collection.stub(layout, 'reorderSubpanels', function(obj) {
                 return obj;
             });
@@ -281,7 +286,6 @@ describe('Base.Layout.Subpanels', function() {
             function reset() {
                 hiddenPanelsStub.reset();
                 relationshipStub.reset();
-                superStub.reset();
             }
             var returnedComponents = layout._pruneHiddenComponents(components);
             expect(returnedComponents).toEqual(filteredComponents);
@@ -338,20 +342,18 @@ describe('Base.Layout.Subpanels', function() {
             layout.model = null;//so we don't try to dispose bogus
         });
         it('Should disable toggle buttons if all subpanels are hidden', function() {
-            layout.layout = new Backbone.View({
-                trigger: function(){}
-            });
+            layout.layout = app.view.createLayout({type: 'base'});
             var stub = sinon.collection.stub(layout.layout, 'trigger');
             layout._disableSubpanelToggleButton([1,2,3]);
             expect(stub).not.toHaveBeenCalled();
+            layout.layout.dispose();
         });
         it('Should not disable toggle buttons if unless all subpanels are hidden', function() {
-            layout.layout = new Backbone.View({
-                trigger: function(){}
-            });
+            layout.layout = app.view.createLayout({type: 'base'});
             var stub = sinon.collection.stub(layout.layout, 'trigger');
             layout._disableSubpanelToggleButton([]);
             expect(stub).toHaveBeenCalled();
+            layout.layout.dispose();
         });
         it('Should hide hidden subpanels and also hide ACL forbidden subpanels', function() {
             layout.model = {
@@ -370,23 +372,12 @@ describe('Base.Layout.Subpanels', function() {
                 {context: {link: 'cases'}, layout: 'subpanel'}, //Should be ACL forbidden
                 {context: {link: 'accounts'}, layout: 'subpanel'}
             ];
-            var hiddenComponent = [
-                {context: {link: 'bugs'}, layout: 'subpanel'}
-            ];
-            var aclForbiddenComponent = [
-                {context: {link: 'contacts'}, layout: 'subpanel'}
-            ];
             var filteredComponents = [
                 {context: {link: 'accounts'}, layout: 'subpanel'}
             ];
-            function reset() {
-                hiddenPanelsStub.reset();
-                relationshipStub.reset();
-                superStub.reset();
-            }
+
             layout._addComponentsFromDef(components);
-            expect(superStub.called).toBe(true);
-            expect(superStub.args[0][1][0]).toEqual(filteredComponents);
+            expect(addComponent.calledWith(sinon.match.any, filteredComponents[0])).toBe(true);
             layout.model = null;//so we don't try to dispose bogus
         });
 
