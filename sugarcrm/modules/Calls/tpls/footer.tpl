@@ -43,7 +43,6 @@ SUGAR.util.doWhen(function() {
 {literal}
 SUGAR.calls = {};
 var callsLoader = new YAHOO.util.YUILoader({
-    require : ["sugar_grp_jsolait"],
     // Bug #48940 Skin always must be blank
     skin: {
         base: 'blank',
@@ -66,13 +65,6 @@ var callsLoader = new YAHOO.util.YUILoader({
 			}
 		}
 	}
-});
-callsLoader.addModule({
-    name :"sugar_grp_jsolait",
-    type : "js",
-    fullpath: "cache/include/javascript/sugar_grp_jsolait.js",
-    varName: "global_rpcClient",
-    requires: []
 });
 callsLoader.insert();
 YAHOO.util.Event.onContentReady("{/literal}{{$form_name}}{literal}",function() {

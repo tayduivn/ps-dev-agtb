@@ -104,7 +104,6 @@ class SugarWidgetSubPanelTopScheduleCallButton extends SugarWidgetSubPanelTopBut
             }
         }
         $button .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js') . "\n";
-        $button .= getVersionedScript('cache/include/javascript/sugar_grp_jsolait.js') . "\n";
 
         return $button;
     }

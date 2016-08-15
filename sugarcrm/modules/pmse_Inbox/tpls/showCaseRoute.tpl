@@ -105,6 +105,5 @@
 <script type="text/javascript" src="{sugar_getjspath file='modules/pmse_Inbox/js/notes.js'}"></script>
 {if ($caseData.cas_sugar_module == "Documents")}
     <script type="text/javascript" src="{sugar_getjspath file="modules/Documents/documents.js"}"></script>
-    <script type="text/javascript" src="{sugar_getjspath file="cache/include/javascript/sugar_grp_jsolait.js"}"></script>
     <script type="text/javascript" src="{sugar_getjspath file="include/javascript/popup_parent_helper.js"}"></script>
 {/if}
