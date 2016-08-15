@@ -279,9 +279,15 @@
      * @inheritdoc
      */
     setViewName: function(view) {
+        // Get our locked fields for checking
+        var lockedFields = this.model.get('locked_fields') || [];
+
         this._super('setViewName', [view]);
         _.each(this.fields, function(field) {
-            if (view === 'edit' && field.isLocked()) {
+            // Is this field locked?
+            var isLocked = _.contains(lockedFields, field.name);
+
+            if (view === 'edit' && isLocked) {
                 return;
             }
             field.setViewName(view);

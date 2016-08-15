@@ -154,13 +154,22 @@ class FilterApi extends SugarApi
 
     protected static $current_user;
 
-    // id and date_modified should always be in the response
-    // user fields are needed for ACLs since they check owners
+    /**
+     * List of fields that are mandatory for all filters
+     * @var array
+     */
     protected static $mandatory_fields = array(
+        // id and date_modified should always be in the response
         'id',
         'date_modified',
+        // user fields are needed for ACLs since they check owners
         'assigned_user_id',
-        'created_by'
+        'created_by',
+        //BEGIN SUGARCRM flav=ent ONLY
+        // Locked fields are necessary to enforce data integrity for processes on
+        // on the client
+        'locked_fields',
+        //END SUGARCRM flav=ent ONLY
     );
 
     public function __construct()
@@ -745,8 +754,14 @@ class FilterApi extends SugarApi
             return $rc_beans;
         }
 
-        // Grab the string of bean_ids for use in the IN clause
-        $bean_ids = "'" . implode("','", array_keys($beans)) . "'";
+        // Grab the string of bean_ids for use in the IN clause, making sure to
+        // quote them according their own DB
+        $bean_ids = array_keys($beans);
+        array_walk($bean_ids, function (&$val, $key, $db) {
+            $val = $db->quoted($val);
+        }, DBManagerFactory::getInstance());
+        $bean_ids = implode(",", $bean_ids);
+
         foreach ($options['relate_collections'] as $name => $def) {
             // Parent bean
             $bean = BeanFactory::getBean($options['module']);

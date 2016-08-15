@@ -22,7 +22,7 @@ class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync', 'kbusefulness', 'usefulness');
     public static $linkModuleBlacklist = array('ActivityStream/Activities', 'ACLRoles', 'Teams',
-        'KBArticles', 'KBDocuments'
+        'KBArticles', 'KBDocuments', 'pmse_Project/pmse_BpmProcessDefinition',
     );
     public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs',
@@ -187,6 +187,25 @@ class ActivityQueueManager
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
+
+        // Submodules break this paradigm pretty badly, so until there is a mechanism
+        // to handle $module_dir = $path/$sub_path this will have to do.
+        // @see SugarRelationship::getCustomLogicArguments() as well
+        if (!$lhs || !$rhs) {
+            // Get the logger so we can inform the system
+            $log = LoggerManager::getLogger();
+
+            if (!$lhs) {
+                $log->warn("Could not get LHS bean for {$args['module']}->id = {$args['id']}");
+            }
+
+            if (!$rhs) {
+                $log->warn("Could not get RHS bean for {$args['related_module']}->id = {$args['related_id']}");
+            }
+
+            return false;
+        }
+
         if (empty($lhs->name) && !empty($args['name'])) {
             $lhs->name = $args['name'];
         }
@@ -231,6 +250,25 @@ class ActivityQueueManager
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
+
+        // Submodules break this paradigm pretty badly, so until there is a mechanism
+        // to handle $module_dir = $path/$sub_path this will have to do.
+        // @see SugarRelationship::getCustomLogicArguments() as well
+        if (!$lhs || !$rhs) {
+            // Get the logger so we can inform the system
+            $log = LoggerManager::getLogger();
+
+            if (!$lhs) {
+                $log->warn("Could not get LHS bean for {$args['module']}->id = {$args['id']}");
+            }
+
+            if (!$rhs) {
+                $log->warn("Could not get RHS bean for {$args['related_module']}->id = {$args['related_id']}");
+            }
+
+            return false;
+        }
+
         $data               = array(
             'object'       => self::getBeanAttributes($lhs),
             'subject'      => self::getBeanAttributes($rhs),

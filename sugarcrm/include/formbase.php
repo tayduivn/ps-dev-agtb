@@ -544,9 +544,8 @@ function save_from_report($report_id,$parent_id, $module_name, $relationship_att
  */
 function handleLockedFieldEdits($focus)
 {
-    // Needed to handle process management locked fields, sending a false to the
-    // locked field getter since BWC needs to have the data return set unencoded
-    $locked = $focus->isUpdate() ? $focus->getLockedFields(false) : array();
+    // Needed to handle process management locked fields
+    $locked = $focus->isUpdate() ? $focus->getLockedFields() : array();
 
     $errors = array();
     foreach ($locked as $field) {

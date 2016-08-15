@@ -336,6 +336,12 @@ class SugarBean
     public $name_format_map = array();
 
     /**
+     * Locked fields
+     * @var array
+     */
+    protected $lockedFields = null;
+
+    /**
      * Specification of fields containing names of related users
      *
      * @var array
@@ -8108,82 +8114,42 @@ class SugarBean
     }
 
     /**
-     * Gets locked fields for a record
-     * @param bool $encode Flag that is sent to the DBManager to handle encoding
+     * Gets the locked fields for a bean, if there are any
      * @return array
      */
-    public function getLockedFields($encode = true)
+    public function getLockedFields()
     {
-        $return = array();
-        //BEGIN SUGARCRM flav=ent ONLY
-        if (empty($return)) {
-            $return = \PMSEEngineUtils::getLockedFields($this, $encode);
-        }
-        //END SUGARCRM flav=ent ONLY
-        return $return;
-    }
-
-    /**
-     * Checks to see if a locked field has changed value
-     * @param string $field The field name to check
-     * @param array $data The submitted data array
-     * @return boolean
-     */
-    public function lockedFieldHasChanged($field, $data)
-    {
-        // If this bean has this field then we can actually try it
-        if (isset($this->field_defs[$field])) {
-            $eval = ProcessManager\Factory::getFieldEvaluator($this->field_defs[$field]);
-            $eval->init($this, $field, $data);
-            return $eval->hasChanged();
+        if ($this->lockedFields !== null) {
+            return $this->lockedFields;
         }
 
-        return false;
-    }
+        $this->lockedFields = array();
 
-    /**
-     * Gets a locked field error message based on the number of error fields found
-     * @param array $errors Array of error fields
-     * @return string
-     */
-    public function getLockedFieldErrorMessage(array $errors = array())
-    {
-        // Default is an empty string
-        $message = '';
+        // Check to see if this bean implements locked fields
+        if (isset($this->field_defs['locked_fields']['link'])) {
+            // Load the relationship for locked fields
+            $relField = $this->field_defs['locked_fields']['link'];
 
-        // Handle assembly of the error message now
-        $count = count($errors);
-        if ($count) {
-            // Single field errors are handled here...
-            if ($count === 1) {
-                $message = sprintf(
-                    translate('EXCEPTION_FIELD_IS_LOCKED_FOR_EDIT'),
-                    $errors[0]
-                );
-            } else {
-                // Multi field errors are handled here...
-                $list = '';
-                for ($i = 0; $i < $count; $i++) {
-                    // Last iteration gets decorated differently
-                    if ($i === $count - 1) {
-                        $list .= 'and ' . $errors[$i];
-                    } else {
-                        if ($i < ($count - 2)) {
-                            $list .= $errors[$i] . ', ';
-                        } else {
-                            $list .= $errors[$i] . ' ';
-                        }
+            // If there is a relationship, grab the beans from it
+            if ($this->load_relationship($relField)) {
+                $relBeans = $this->$relField->getBeans();
+
+                // And from each bean, get the locked fields property, making sure
+                // to transform it into an array
+                foreach ($relBeans as $relBean) {
+                    $merge = array();
+                    if (!empty($relBean->pro_locked_variables)) {
+                        $merge = json_decode(html_entity_decode($relBean->pro_locked_variables));
                     }
+                    $this->lockedFields = array_merge($this->lockedFields, $merge);
                 }
 
-                $message = sprintf(
-                    translate('EXCEPTION_FIELDS_ARE_LOCKED_FOR_EDIT'),
-                    $list
-                );
+                // And make it unique before sending it back
+                $this->lockedFields = array_unique($this->lockedFields);
             }
         }
 
-        return $message;
+        return $this->lockedFields;
     }
 
     /**

@@ -538,7 +538,7 @@
     editClicked: function(model, field) {
         // If a field is locked, we don't allow inline editing. Instead show an alert that links
         // to the record view in edit mode to make changes there.
-        if (!_.isEmpty(model.getLockedFields())) {
+        if (!_.isEmpty(model.get('locked_fields'))) {
             var route = app.router.buildRoute(model.module, model.id, 'edit');
             var recordName = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
             var message = app.lang.get(
