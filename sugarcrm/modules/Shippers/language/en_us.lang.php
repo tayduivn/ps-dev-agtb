@@ -25,6 +25,7 @@ $mod_strings = array (
   'LBL_LIST_FORM_TITLE' => 'Shipping Provider List',
   'LBL_NEW_FORM_TITLE' => 'New Shipping Provider',
   'LBL_SHIPPER' => 'Shipping Provider:',
+  'LBL_FILTER_ACTIVE' => 'Active Shipping Providers',
   'LBL_LIST_NAME' => 'Shipping Provider',
   'LBL_NAME' => 'Shipping Provider:',
   'LBL_LIST_LIST_ORDER' => 'Order',

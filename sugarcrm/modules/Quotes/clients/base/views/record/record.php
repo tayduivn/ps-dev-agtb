@@ -313,8 +313,13 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                'taxrate_name',
-                'shipper_name',
+                array(
+                    'name' => 'taxrate_name',
+                    'initial_filter' => 'active_taxrates',
+                    'filter_populate' => array(
+                        'module' => array('TaxRates'),
+                    ),
+                ),
                 'show_line_nums',
             ),
         ),
@@ -333,7 +338,13 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                 'original_po_date',
                 'date_quote_closed',
                 'date_order_shipped',
-                'shipper_name',
+                array(
+                    'name' => 'shipper_name',
+                    'initial_filter' => 'active_shippers',
+                    'filter_populate' => array(
+                        'module' => array('Shippers'),
+                    ),
+                ),
                 'order_stage',
                 'team_name',
                 'assigned_user_name',
