@@ -52,9 +52,25 @@
             this._fetchAllRecipients();
         }
 
+        this._initSelect2Templates();
+    },
+
+    /**
+     * Initialize selection and result templates for Select2.
+     *
+     * @param {string} [type] Field type where these templates are located
+     * @protected
+     */
+    _initSelect2Templates: function(type) {
+        type = type || this.type;
         this.select2ResultTemplate = app.template.getField(
-            this.type,
+            type,
             'select2-result',
+            this.module
+        );
+        this.select2SelectionTemplate = app.template.getField(
+            type,
+            'select2-selection',
             this.module
         );
     },
@@ -177,38 +193,16 @@
      * @private
      */
     _render: function() {
-        var $controlsEl;
         var $recipientsField;
 
-        if (this.$el) {
-            $controlsEl = this.$el.closest('.controls');
-            if ($controlsEl.length) {
-                $controlsEl.addClass('controls-one btn-fit');
-            }
-        }
+        this._addAddressBookIconPadding();
+
         this._super('_render');
 
         $recipientsField = this.$(this.fieldTag);
 
         if ($recipientsField.length > 0) {
-            $recipientsField.select2({
-                allowClear: true,
-                multiple: true,
-                width: 'off',
-                containerCssClass: 'select2-choices-pills-close',
-                containerCss: {'width': '100%'},
-                minimumInputLength: 1,
-                query: _.bind(function(query) {
-                    this._loadOptions(query);
-                }, this),
-                id: _.bind(this._getSelect2Id, this),
-                createSearchChoice: _.bind(this._createOption, this),
-                formatSelection: _.bind(this._formatSelection, this),
-                formatResult: _.bind(this._formatResult, this),
-                formatSearching: _.bind(this._formatSearching, this),
-                formatInputTooShort: _.bind(this._formatInputTooShort, this),
-                selectOnBlur: true
-            });
+            $recipientsField.select2(this._getSelect2Options());
 
             if (!!this.def.disabled) {
                 $recipientsField.select2('disable');
@@ -220,6 +214,51 @@
 
             this._updateSelect2(this.getFormattedValue());
         }
+    },
+
+    /**
+     * Add appropriate classes to leave padding for the Address Book icon to
+     * be inserted after the field.
+     *
+     * @protected
+     */
+    _addAddressBookIconPadding: function() {
+        var $controlsEl;
+
+        if (this.$el) {
+            $controlsEl = this.$el.closest('.controls');
+            if ($controlsEl.length) {
+                $controlsEl.addClass('controls-one btn-fit');
+            }
+        }
+    },
+
+    /**
+     * Build the Select2 initialization options.
+     *
+     * @return {Object} Any acceptable Select2 options that can be passed in
+     *   during initialization described in the library's documentation.
+     * @protected
+     */
+    _getSelect2Options: function() {
+        return {
+            allowClear: true,
+            multiple: true,
+            width: 'off',
+            containerCssClass: 'select2-choices-pills-close',
+            containerCss: {'width': '100%'},
+            minimumInputLength: 1,
+            query: _.bind(function(query) {
+                this._loadOptions(query);
+            }, this),
+            id: _.bind(this._getSelect2Id, this),
+            createSearchChoice: _.bind(this._createOption, this),
+            formatSelection: _.bind(this._formatSelection, this),
+            formatResult: _.bind(this._formatResult, this),
+            formatSearching: _.bind(this._formatSearching, this),
+            formatInputTooShort: _.bind(this._formatInputTooShort, this),
+            selectOnBlur: true
+        };
     },
 
     /**
@@ -311,9 +350,8 @@
      */
     _formatSelection: function(recipient) {
         var value = recipient.get('name') || recipient.get('email_address');
-        var template = app.template.getField(this.type, 'select2-selection', this.module);
-        if (template) {
-            return template({
+        if (this.select2SelectionTemplate) {
+            return this.select2SelectionTemplate({
                 id: this._getSelect2Id(recipient),
                 name: value,
                 email: recipient.get('email_address')

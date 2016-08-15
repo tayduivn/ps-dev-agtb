@@ -57,8 +57,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        var defaultSignature;
-
         this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleRecipientOptionClick'
@@ -73,8 +71,18 @@
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
         app.drawer.on('drawer:resize', this.resizeEditor, this);
 
-        //Set the default signature as the last selected signature for later
-        //insertion.
+        this._initializeDefaultSignature();
+    },
+
+    /**
+     * Set the default signature as the last selected signature for later
+     * insertion.
+     *
+     * @protected
+     */
+    _initializeDefaultSignature: function() {
+        var defaultSignature;
+
         defaultSignature = app.user.getPreference('signature_default');
         if (!(defaultSignature instanceof app.Bean)) {
             defaultSignature = app.data.createBean('UserSignatures', defaultSignature);

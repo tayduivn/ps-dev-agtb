@@ -110,7 +110,7 @@
                 module: 'Emails',
                 prepopulate: {
                     related: this.model,
-                    to_addresses: [{bean: this.model}]
+                    to: this.model
                 }
             }
         }, function(model) {

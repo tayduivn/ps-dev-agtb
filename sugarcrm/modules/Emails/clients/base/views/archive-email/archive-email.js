@@ -26,11 +26,6 @@
             'click [name=archive_button]': 'archive'
         });
         this._super('initialize', [options]);
-
-        if (!this.model.has('assigned_user_id')) {
-            this.model.set('assigned_user_id', app.user.id);
-            this.model.set('assigned_user_name', app.user.get('full_name'));
-        }
     },
 
     /**
@@ -53,7 +48,7 @@
     /**
      * Archive email if validation passes.
      */
-    archive: function(event) {
+    archive: function() {
         this.setMainButtonsDisabled(true);
         this.model.doValidate(this.getFieldsToValidate(), _.bind(function(isValid) {
             if (isValid) {
@@ -80,50 +75,17 @@
      * Call archive api.
      */
     archiveEmail: function() {
-        var archiveUrl = app.api.buildURL('Mail/archive'),
-            alertKey = 'mail_archive',
-            archiveEmailModel = this.initializeSendEmailModel();
-
-        app.alert.show(alertKey, {level: 'process', title: app.lang.get('LBL_EMAIL_ARCHIVING', this.module)});
-
-        app.api.call('create', archiveUrl, archiveEmailModel, {
-            success: _.bind(function() {
-                app.alert.dismiss(alertKey);
-                app.alert.show(alertKey, {
-                    autoClose: true,
-                    level: 'success',
-                    messages: app.lang.get('LBL_EMAIL_ARCHIVED', this.module)
-                });
-                app.drawer.close(this.model);
-            }, this),
-            error: function(error) {
-                var msg = {level: 'error'};
-                if (error && _.isString(error.message)) {
-                    msg.messages = error.message;
-                }
-                app.alert.dismiss(alertKey);
-                app.alert.show(alertKey, msg);
-            },
-            complete: _.bind(function() {
-                if (!this.disposed) {
-                    this.setMainButtonsDisabled(false);
-                }
-            }, this)
-        });
+        this.model.set('state', 'Archived');
+        this.save();
     },
 
     /**
-     * Get model that will be used to archive the email.
-     * @return {Backbone.Model}
+     * @inheritdoc
+     *
+     * Build the appropriate success message for an archvived email.
      */
-    initializeSendEmailModel: function() {
-        var model = this._super('initializeSendEmailModel');
-        model.set({
-            'date_sent': this.model.get('date_sent'),
-            'from_address': this.model.get('from_address'),
-            'status': 'archive'
-        });
-        return model;
+    buildSuccessMessage: function() {
+        return app.lang.get('LBL_EMAIL_ARCHIVED', this.module);
     },
 
     /**
@@ -138,5 +100,10 @@
      * No need to warn of configuration status for archive email because no
      * email is being sent.
      */
-    notifyConfigurationStatus: $.noop
+    notifyConfigurationStatus: $.noop,
+
+    /**
+     * No need to insert the default signature for archive email.
+     */
+    _initializeDefaultSignature: $.noop
 })

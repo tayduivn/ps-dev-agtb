@@ -23,75 +23,53 @@ describe('Emails.Field.From', function() {
         SugarTest.testMetadata.dispose();
     });
 
-    describe('format()', function() {
+    describe('format', function() {
         using('Different Model Values', [
             {
-                value: new Backbone.Collection([{
+                value: [new Backbone.Model({
                     name: 'Will Westin',
-                    email_address_used: 'will@example.com'
-                }]),
-                expectedFormattedValue: 'Will Westin',
+                    email_address: 'will@example.com'
+                })],
                 expectedTooltipText: 'Will Westin <will@example.com>'
             },
             {
-                value: new Backbone.Collection([{
+                value: [new Backbone.Model({
                     name: '',
-                    email_address_used: 'will@example.com'
-                }]),
-                expectedFormattedValue: 'will@example.com',
+                    email_address: 'will@example.com'
+                })],
                 expectedTooltipText: 'will@example.com'
             },
             {
-                value: new Backbone.Collection([{
-                    email_address_used: 'will@example.com'
-                }]),
-                expectedFormattedValue: 'will@example.com',
+                value: [new Backbone.Model({
+                    email_address: 'will@example.com'
+                })],
                 expectedTooltipText: 'will@example.com'
             },
             {
-                value: new Backbone.Collection([{
+                value: [new Backbone.Model({
                     name: 'Will Westin',
-                    email_address_used: ''
-                }]),
-                expectedFormattedValue: 'Will Westin',
+                    email_address: ''
+                })],
                 expectedTooltipText: 'Will Westin'
             },
             {
-                value: new Backbone.Collection([{
-                    name: 'Will Westin',
-                    email_address_used: '',
-                    email: [{
-                        email_address: 'primary@valid.com',
-                        primary_address: true,
-                        invalid_email: false,
-                        opt_out: false
-                    }]
-                }]),
-                expectedFormattedValue: 'Will Westin',
-                expectedTooltipText: 'Will Westin <primary@valid.com>'
-            },
-            {
-                value: new Backbone.Collection([{
+                value: [new Backbone.Model({
                     name: 'Will Westin'
-                }]),
-                expectedFormattedValue: 'Will Westin',
+                })],
                 expectedTooltipText: 'Will Westin'
             },
             {
-                value: new Backbone.Collection([{}]),
-                expectedFormattedValue: '',
+                value: [],
                 expectedTooltipText: ''
             },
             {
                 value: null,
-                expectedFormattedValue: '',
                 expectedTooltipText: ''
             }
         ], function(data) {
-            it('should set instance variables and return formatted value properly', function() {
-                var actual = field.format(data.value);
+            it('should set tooltip instance variable properly', function() {
+                field.format(data.value);
 
-                expect(actual).toEqual(data.expectedFormattedValue);
                 expect(field.tooltipText).toEqual(data.expectedTooltipText);
             });
         });
