@@ -649,6 +649,7 @@
             if (recipients && recipients.length > 0) {
                 this.model.get(this.name).add(recipients.models);
             }
+            this.context.trigger('address-book-state', 'closed');
         }, this);
 
         app.drawer.open(
@@ -663,6 +664,7 @@
                 addRecipients(recipients);
             }
         );
+        this.context.trigger('address-book-state', 'open');
     },
 
     /**

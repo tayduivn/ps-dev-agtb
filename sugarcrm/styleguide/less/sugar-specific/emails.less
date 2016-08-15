@@ -1,52 +1,7 @@
 //email create recipient select2
 .record {
-  div[data-name="to"].controls {
-    padding-right: 103px;
-    .select2-container {
-      margin-bottom: 4px;
-      .select2-choices {
-        max-height: 45px;
-        overflow-y: auto;
-        .border-radius(@baseBorderRadius);
-      }
-      .select2-search-field input {
-        padding: 0 6px;
-        position: absolute;
-        height: 22px;
-        min-height: 22px;
-        margin: 0;
-      }
-    }
-    .compose-recipient-options {
-      position: absolute;
-      z-index: 2;
-      padding: 0;
-      top: 0;
-      right: 0;
-      background-color: @white;
-      .btn {
-        position: relative;
-        right: 0;
-      }
-    }
-  }
-  div[data-name="cc"].controls,
-  div[data-name="bcc"].controls {
-    .select2-container {
-      margin-bottom: 4px;
-      .select2-choices {
-        max-height: 45px;
-        overflow-y: auto;
-        .border-radius(@baseBorderRadius);
-      }
-    }
-  }
   div[data-type="email-recipients"] {
-    &.controls.btn-fit {
-      .btn.address-book {
-        top: 0;
-        right: -36px;
-      }
+    .controls.btn-fit {
       .select2-container {
         .select2-choices {
           max-height: 45px;
@@ -58,6 +13,7 @@
           position: absolute;
           height: 22px;
           min-height: 22px;
+          margin: 0;
         }
         &.drop-highlight {
           .select2-choices {
@@ -87,6 +43,73 @@
         padding: 0;
         min-height: 26px;
       }
+    }
+  }
+}
+
+.record-cell .normal > span.email-recipients.fieldset {
+  display: table;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.email-recipients.fieldset {
+  .fieldset-group {
+    display: table-row;
+    &.hide {
+      display: none;
+    }
+  }
+  .fieldset-label,
+  .fieldset-field {
+    display: table-cell;
+    vertical-align: top;
+    box-sizing: border-box;
+  }
+  .fieldset-label {
+    padding: 8px 6px 8px 7px;
+    font-size: 11px;
+    line-height: 12px;
+    color: @gray;
+  }
+  .fieldset-field {
+    width: 100%;
+    padding-bottom: 8px;
+    &.detail {
+      padding-bottom: 4px;
+      padding-left: 8px;
+      vertical-align: middle;
+      font-size: 12px;
+      .scroll {
+        display: block;
+        max-height: 45px;
+        overflow: auto;
+      }
+    }
+    .controls .select2-container {
+      .select2-choices {
+        max-height: 45px;
+        overflow-y: auto;
+        .border-radius(@baseBorderRadius);
+      }
+    }
+  }
+  &.edit {
+    div[data-type="enum"].fieldset-field {
+      position: relative;
+      padding-right: 72px;
+      min-height: 28px;
+    }
+  }
+  .compose-recipient-options {
+    position: absolute;
+    z-index: 2;
+    padding: 0;
+    top: 0;
+    right: 0;
+    background-color: @white;
+    .btn {
+      position: relative;
+      right: 0;
     }
   }
 }

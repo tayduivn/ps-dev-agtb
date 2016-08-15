@@ -15,7 +15,6 @@ describe('Emails.Views.Create', function() {
         SugarTest.declareData('base', 'Emails', true, false);
         SugarTest.loadPlugin('NestedCollection');
         SugarTest.loadPlugin('VirtualCollection');
-        SugarTest.loadHandlebarsTemplate('create', 'view', 'base', 'recipient-options', moduleName);
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
 
@@ -353,109 +352,6 @@ describe('Emails.Views.Create', function() {
             view._populateForCases(relatedModel);
             expect(view.model.get('name')).toEqual('[CASE:100] My Case');
             expect(view.model.get('to').length).toEqual(2);
-        });
-    });
-
-    describe('Recipient Options', function() {
-        var toggleFieldVisibilitySpy;
-        var isRecipientOptionButtonActive;
-
-        beforeEach(function() {
-            toggleFieldVisibilitySpy = sandbox.spy(view, '_toggleFieldVisibility');
-            sandbox.stub(view, '_renderRecipientOptions', function() {
-                var template = app.template.getView('create.recipient-options', view.module);
-                view.$el.append(template({'module': view.module}));
-            });
-            sandbox.stub(view, '_setAttachmentVisibility');
-        });
-
-        isRecipientOptionButtonActive = function(fieldName) {
-            var selector = '[data-toggle-field="' + fieldName + '"]';
-            return view.$(selector).hasClass('active');
-        };
-
-        using('CC/BCC values',
-            [
-                [
-                    {cc: [], bcc: []},
-                    {ccActive: false, bccActive: false}
-                ],
-                [
-                    {cc: ['foo@bar.com'], bcc: []},
-                    {ccActive: true, bccActive: false}
-                ],
-                [
-                    {cc: [], bcc: ['foo@bar.com']},
-                    {ccActive: false, bccActive: true}
-                ],
-                [
-                    {cc: ['foo@bar.com'], bcc: ['bar@foo.com']},
-                    {ccActive: true, bccActive: true}
-                ]
-            ],
-            function(value, result) {
-                it('should add recipient options on render and initialize cc/bcc fields appropriately', function() {
-                    // Convert arrays into beans that the VirtualCollection
-                    // plugin expects.
-                    _.each(value, function(val, key) {
-                        var models = _.map(val, function(email) {
-                            return app.data.createBean('Contacts', {
-                                id: _.uniqueId(),
-                                email: email
-                            });
-                        });
-
-                        view.model.set(key, models);
-                    });
-
-                    view._render();
-
-                    // check buttons
-                    expect(isRecipientOptionButtonActive('cc')).toBe(result.ccActive);
-                    expect(isRecipientOptionButtonActive('bcc')).toBe(result.bccActive);
-
-                    // check field visibility
-                    expect(toggleFieldVisibilitySpy.firstCall.args).toEqual(['cc', result.ccActive]);
-                    expect(toggleFieldVisibilitySpy.secondCall.args).toEqual(['bcc', result.bccActive]);
-                });
-            }
-        );
-
-        it('should toggle recipient option between active/inactive state when active flag not specified', function() {
-            var fieldName = 'cc';
-            view._render();
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
-            view.toggleRecipientOption(fieldName);
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
-            view.toggleRecipientOption(fieldName);
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
-        });
-
-        it('should set recipient option to active when active flag is true', function() {
-            var fieldName = 'cc';
-            view._render();
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
-            view.toggleRecipientOption(fieldName, true);
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
-            view.toggleRecipientOption(fieldName, true);
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(true);
-        });
-
-        it('should set recipient option to inactive when active flag is false', function() {
-            var fieldName = 'cc';
-            view._render();
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
-            view.toggleRecipientOption(fieldName, false);
-            expect(isRecipientOptionButtonActive(fieldName)).toBe(false);
-        });
-
-        it('should toggle recipient option between active/inactive state when cc/bcc buttons clicked', function() {
-            view._render();
-            expect(isRecipientOptionButtonActive('bcc')).toBe(false);
-            view.$('[data-toggle-field="bcc"]').click();
-            expect(isRecipientOptionButtonActive('bcc')).toBe(true);
-            view.$('[data-toggle-field="bcc"]').click();
-            expect(isRecipientOptionButtonActive('bcc')).toBe(false);
         });
     });
 

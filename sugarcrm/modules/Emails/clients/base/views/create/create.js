@@ -19,7 +19,6 @@
     MIN_EDITOR_HEIGHT: 300,
     EDITOR_RESIZE_PADDING: 5,
     ATTACHMENT_FIELD_HEIGHT: 44,
-    FIELD_PANEL_BODY_SELECTOR: '.row-fluid.panel_body',
 
     STATE_DRAFT: 'Draft',
     STATE_READY: 'Ready',
@@ -58,12 +57,11 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.events = _.extend({}, this.events, {
-            'click [data-toggle-field]': '_handleRecipientOptionClick'
-        });
+
         this.context.on('tinymce:selected_signature:clicked', this._insertSignatureAtCursor, this);
         this.context.on('tinymce:template:clicked', this._launchTemplateDrawer, this);
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
+        this.context.on('recipients-email:resize-editor', this.resizeEditor, this);
         this.model.on('change:attachments', function() {
             this._setAttachmentVisibility();
             this._checkAttachmentLimit();
@@ -130,16 +128,9 @@
      * @inheritdoc
      */
     _render: function() {
-        var $controls;
         var prepopulateValues;
 
         this._super('_render');
-
-        $controls = this.$('.control-group:not(.hide) .control-label');
-        if ($controls.length) {
-            $controls.first().addClass('begin-fieldgroup');
-            $controls.last().addClass('end-fieldgroup');
-        }
 
         this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
 
@@ -147,7 +138,6 @@
         if (!_.isEmpty(prepopulateValues)) {
             this.prepopulate(prepopulateValues);
         }
-        this._addRecipientOptions();
 
         if (this.model.isNew()) {
             this._signatureLocation = this._signatureLocation || this.BELOW_CONTENT;
@@ -213,11 +203,6 @@
                         break;
                     default:
                         self.model.set(fieldName, value);
-                }
-
-                //Show CC or BCC fields if they are being prepopulated
-                if (fieldName === 'cc' || fieldName === 'bcc') {
-                    self._initRecipientOption(fieldName);
                 }
             });
 
@@ -305,96 +290,6 @@
                 }, this),
                 fields: ['name']
             });
-        }
-    },
-
-    /**
-     * Add Cc/Bcc toggle buttons
-     * Initialize whether to show/hide fields and toggle show/hide buttons appropriately
-     */
-    _addRecipientOptions: function() {
-        this._renderRecipientOptions('to');
-        this._initRecipientOption('cc');
-        this._initRecipientOption('bcc');
-    },
-
-    /**
-     * Render the sender option buttons and place them in the given container
-     *
-     * @param {string} container Name of field that will contain the sender option buttons
-     * @private
-     */
-    _renderRecipientOptions: function(container) {
-        var field = this.getField(container);
-        var $panelBody;
-        var recipientOptionTemplate;
-
-        if (field) {
-            $panelBody = field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR);
-            recipientOptionTemplate = app.template.getView('create.recipient-options', this.module);
-
-            $(recipientOptionTemplate({'module': this.module}))
-                .insertAfter($panelBody.find('div span.normal'));
-        }
-    },
-
-    /**
-     * Check if the given field has a value
-     * Hide the field if there is no value prepopulated
-     *
-     * @param {string} fieldName Name of the field to initialize active state on
-     * @private
-     */
-    _initRecipientOption: function(fieldName) {
-        var fieldValue = this.model.get(fieldName) || [];
-        this.toggleRecipientOption(fieldName, (fieldValue.length > 0));
-    },
-
-    /**
-     * Toggle the state of the given field
-     * Sets toggle button state and visibility of the field
-     *
-     * @param {string} fieldName Name of the field to toggle
-     * @param {boolean} [active] Whether toggle button active and field shown
-     */
-    toggleRecipientOption: function(fieldName, active) {
-        var toggleButtonSelector = '[data-toggle-field="' + fieldName + '"]';
-        var $toggleButton = this.$(toggleButtonSelector);
-
-        // if explicit active state not set, toggle to opposite
-        if (_.isUndefined(active)) {
-            active = !$toggleButton.hasClass('active');
-        }
-
-        $toggleButton.toggleClass('active', active);
-        this._toggleFieldVisibility(fieldName, active);
-    },
-
-    /**
-     * Event Handler for toggling the Cc/Bcc options on the page.
-     *
-     * @param {Event} event click event
-     * @private
-     */
-    _handleRecipientOptionClick: function(event) {
-        var $toggleButton = $(event.currentTarget);
-        var fieldName = $toggleButton.data('toggle-field');
-
-        this.toggleRecipientOption(fieldName);
-        this.resizeEditor();
-    },
-
-    /**
-     * Show/hide a field section on the form
-     *
-     * @param {string} fieldName Name of the field to show/hide
-     * @param {boolean} show Whether to show or hide the field
-     * @private
-     */
-    _toggleFieldVisibility: function(fieldName, show) {
-        var field = this.getField(fieldName);
-        if (field) {
-            field.$el.closest(this.FIELD_PANEL_BODY_SELECTOR).toggleClass('hide', !show);
         }
     },
 
