@@ -38,11 +38,13 @@ public function getDuplicateQuery($focus, $prefix='')
 
     $query .= " WHERE leads.deleted != 1 AND (leads.status <> 'Converted' OR leads.status IS NULL) AND ";
 
+        $db = DBManagerFactory::getInstance();
     //Use the first and last name from the $_POST to filter.  If only last name supplied use that
 	if(isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0) {
-		$query .= " (leads.first_name='". $_POST[$prefix.'first_name'] . "' AND leads.last_name = '". $_POST[$prefix.'last_name'] ."')";
+            $query .= " (leads.first_name = " . $db->quoted($_POST[$prefix.'first_name']) .
+            " AND leads.last_name = " . $db->quoted($_POST[$prefix.'last_name']) . ")";
 	} else {
-		$query .= " leads.last_name = '". $_POST[$prefix.'last_name'] ."'";
+            $query .= " leads.last_name = " . $db->quoted($_POST[$prefix.'last_name']);
 	}
     return $query;
 }
