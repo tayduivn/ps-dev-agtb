@@ -59,6 +59,26 @@ describe('Base.Field.Relate', function() {
         app.routing.stop();
     });
 
+    describe('_getPopulateMetadata', function() {
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            sinon.collection.stub(field, 'getSearchModule', function() {});
+            sinon.collection.stub(app.metadata, 'getModule', function() {});
+            field.initialize(field.options);
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        it('should call getSearchModule', function() {
+            expect(field.getSearchModule).toHaveBeenCalled();
+        });
+        it('should call app.metadata.getModule', function() {
+            expect(app.metadata.getModule).toHaveBeenCalled();
+        });
+    });
+
     describe('getSearchModule', function() {
         beforeEach(function() {
             // For testing, reset the module and link name on the field def

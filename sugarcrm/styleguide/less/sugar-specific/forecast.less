@@ -424,6 +424,28 @@
             }
           }
         }
+        .quantity .input-append.error .add-on {
+          left: -45px;
+        }
+        &.product-bundle-notes-row.tr-inline-edit {
+          td:first-child:not(.two-dropdowns) {
+            border-right: @tableBorder;
+            > span {
+              &:after {
+                top: -18px;
+                height: 73px;
+              }
+            }
+          }
+          .description-textarea {
+            padding-right: 18px;
+
+            textarea {
+              width: 100%;
+              resize: none;
+            }
+          }
+        }
       }
     }
   }

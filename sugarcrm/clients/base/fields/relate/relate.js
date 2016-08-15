@@ -119,7 +119,7 @@
          */
         this._select2formatSelectionTemplate = app.template.getField('relate', 'pill', this.module);
 
-        var populateMetadata = app.metadata.getModule(this.getSearchModule());
+        var populateMetadata = this._getPopulateMetadata();
 
         if (_.isEmpty(populateMetadata)) {
             return;
@@ -132,6 +132,16 @@
         }, this);
 
         this._createSearchCollection();
+    },
+
+    /**
+     * Gets the proper module's metadata to use during auto populating fields
+     *
+     * @return {*|Object}
+     * @protected
+     */
+    _getPopulateMetadata: function() {
+        return app.metadata.getModule(this.getSearchModule());
     },
 
     /**
@@ -289,87 +299,14 @@
         var self = this;
         var $dropdown = this.$(this.fieldTag);
 
-        var loadingLabel = app.lang.get('LBL_LOADING', this.module);
-
-        var inList = this.view.name === 'recordlist';
-        $dropdown.select2({
-            width: inList ? 'off' : '100%',
-            dropdownCssClass: _.bind(this._buildCssClasses, this),
-            multiple: !!this.def.isMultiSelect,
-            containerCssClass: _.bind(this._buildCssClasses, this),
-            separator: this._separator,
-            initSelection: _.bind(this._onInitSelect, this),
-            formatInputTooShort: function() {
-                return '';
-            },
-            formatSelection: _.bind(this._onFormatSelection, this),
-            formatSearching: loadingLabel,
-            placeholder: this.getPlaceHolder(),
-            allowClear: self._allow_single_deselect,
-            minimumInputLength: self._minChars,
-            maximumSelectionSize: 20,
-            query: _.bind(this.search, this)
-        }).on('select2-open', _.bind(this._onSelect2Open, this))
+        $dropdown.select2(this._getSelect2Options())
+            .on('select2-open', _.bind(this._onSelect2Open, this))
             .on('searchmore', function() {
                 $(this).select2('close');
                 self.openSelectDrawer();
-            }).on('change', function(e) {
-                var plugin = $(this).data('select2'),
-                    id = e.val;
+            })
+            .on('change', _.bind(this._onSelect2Change, this));
 
-                if (_.isUndefined(id)) {
-                    return;
-                }
-
-                // For multiselect fields, we update the data-rname attributes
-                // so it stays in sync with the id list, and allows us to use
-                // 'setValue' method. The use of 'setValue' method is required
-                // to re-render the field.
-                if (self.def.isMultiSelect) {
-                    var dataRname = plugin.opts.element.data('rname');
-                    dataRname = dataRname ? dataRname.split(self._separator) : [];
-                    var ids = $(this).select2('val');
-
-                    if (e.added) {
-                        dataRname.push(e.added.text);
-                    } else if (e.removed) {
-                        dataRname = _.without(dataRname, e.removed.text);
-                    } else {
-                        return;
-                    }
-                    var models = _.map(ids, function(id, index) {
-                        return {id: id, value: dataRname[index]};
-                    });
-
-                    self.setValue(models);
-                    return;
-                }
-
-                var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname'),
-                    collection = plugin.context,
-                    attributes = {};
-                if (collection && !_.isEmpty(id)) {
-                    // if we have search results use that to set new values
-                    var model = collection.get(id);
-                    attributes.id = model.id;
-                    attributes.value = model.get('name');
-                    _.each(model.attributes, function(value, field) {
-                        if (app.acl.hasAccessToModel('view', model, field)) {
-                            attributes[field] = attributes[field] || model.get(field);
-                        }
-                    });
-                } else if (e.currentTarget.value && value) {
-                    // if we have previous values keep them
-                    attributes.id = value;
-                    attributes.value = e.currentTarget.value;
-                } else {
-                    // default to empty
-                    attributes.id = '';
-                    attributes.value = '';
-                }
-
-                self.setValue(attributes);
-            });
         var plugin = $dropdown.data('select2');
         if (plugin && plugin.focusser) {
             plugin.focusser.on('select2-focus', _.bind(_.debounce(this.handleFocus, 0), this));
@@ -405,6 +342,97 @@
             query: _.bind(this.search, this)
         });
         $dropdown.select2('disable');
+    },
+
+    /**
+     * Handler for when the select2 dropdown change event
+     *
+     * @param e
+     * @private
+     */
+    _onSelect2Change: function(e) {
+        var plugin = $(e.target).data('select2');
+        var id = e.val;
+
+        if (_.isUndefined(id)) {
+            return;
+        }
+
+        // For multiselect fields, we update the data-rname attributes
+        // so it stays in sync with the id list, and allows us to use
+        // 'setValue' method. The use of 'setValue' method is required
+        // to re-render the field.
+        if (this.def.isMultiSelect) {
+            var dataRname = plugin.opts.element.data('rname');
+            dataRname = dataRname ? dataRname.split(this._separator) : [];
+            var ids = $(this).select2('val');
+
+            if (e.added) {
+                dataRname.push(e.added.text);
+            } else if (e.removed) {
+                dataRname = _.without(dataRname, e.removed.text);
+            } else {
+                return;
+            }
+            var models = _.map(ids, function(id, index) {
+                return {id: id, value: dataRname[index]};
+            });
+
+            this.setValue(models);
+            return;
+        }
+
+        var value = (id) ? plugin.selection.find('span').text() : $(this).data('rname');
+        var collection = plugin.context;
+        var attributes = {};
+        if (collection && !_.isEmpty(id)) {
+            // if we have search results use that to set new values
+            var model = collection.get(id);
+            attributes.id = model.id;
+            attributes.value = model.get('name');
+            _.each(model.attributes, function(value, field) {
+                if (app.acl.hasAccessToModel('view', model, field)) {
+                    attributes[field] = attributes[field] || model.get(field);
+                }
+            });
+        } else if (e.currentTarget.value && value) {
+            // if we have previous values keep them
+            attributes.id = value;
+            attributes.value = e.currentTarget.value;
+        } else {
+            // default to empty
+            attributes.id = '';
+            attributes.value = '';
+        }
+
+        this.setValue(attributes);
+    },
+
+    /**
+     * Entry point for child classes to hook in and add/update to the base select2 options
+     *
+     * @return {{}}
+     * @protected
+     */
+    _getSelect2Options: function() {
+        return _.extend({}, {
+            width: this.view.name === 'recordlist' ? 'off' : '100%',
+            dropdownCssClass: _.bind(this._buildCssClasses, this),
+            multiple: !!this.def.isMultiSelect,
+            containerCssClass: _.bind(this._buildCssClasses, this),
+            separator: this._separator,
+            initSelection: _.bind(this._onInitSelect, this),
+            formatInputTooShort: function() {
+                return '';
+            },
+            formatSelection: _.bind(this._onFormatSelection, this),
+            formatSearching: app.lang.get('LBL_LOADING', this.module),
+            placeholder: this.getPlaceHolder(),
+            allowClear: self._allow_single_deselect,
+            minimumInputLength: self._minChars,
+            maximumSelectionSize: 20,
+            query: _.bind(this.search, this)
+        });
     },
 
     /**

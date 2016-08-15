@@ -23,7 +23,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
                 fields: ['field1', 'field2']
             }]
         };
-        view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-header', viewMeta, null, true, layout);
+        view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-header',
+            viewMeta, null, true, layout);
         sinon.collection.stub(view, 'setElement');
     });
 
@@ -68,6 +69,26 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             view._onDeleteBundleBtnClicked();
 
             expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:delete');
+        });
+    });
+
+    describe('_onCreateQLIBtnClicked()', function() {
+        it('should trigger quotes:group:delete event', function() {
+            sinon.collection.spy(view.context, 'trigger');
+            view.model.set('id', 'viewModel1');
+            view._onCreateQLIBtnClicked();
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:create:qli:viewModel1');
+        });
+    });
+
+    describe('_onCreateCommentBtnClicked()', function() {
+        it('should trigger quotes:group:delete event', function() {
+            sinon.collection.spy(view.context, 'trigger');
+            view.model.set('id', 'viewModel1');
+            view._onCreateCommentBtnClicked();
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:create:note:viewModel1');
         });
     });
 });

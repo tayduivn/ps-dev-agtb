@@ -112,6 +112,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_SUBTOTAL',
             'type' => 'currency',
             'len' => '26,6',
+            'default' => '0',
             'related_fields' => array(
                 'currency_id',
                 'base_rate',
@@ -309,6 +310,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_DISCOUNT_PRICE',
             'type' => 'currency',
             'len' => '26,6',
+            'default' => '0',
             'audited' => true,
             'comment' => 'Discounted price ("Unit Price" in Quote)',
             'related_fields' => array(
@@ -322,6 +324,7 @@ $dictionary['Product'] = array(
             'dbType' => 'currency',
             'type' => 'discount',
             'len' => '26,6',
+            'default' => '0',
             'precision' => '6',
             'comment' => 'Discounted amount',
             'related_fields' => array(

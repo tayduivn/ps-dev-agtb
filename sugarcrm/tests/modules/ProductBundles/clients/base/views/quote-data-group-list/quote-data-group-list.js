@@ -2,7 +2,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     var app;
     var view;
     var viewMeta;
+    var viewContext;
+    var viewContextOnSpy;
     var viewLayoutModel;
+    var viewLayoutRowCollection;
     var layout;
     var layoutDefs;
     var pbnMetadata;
@@ -12,11 +15,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         app = SugarTest.app;
         viewLayoutModel = new Backbone.Model({
             related_records: [
-                new Backbone.Model({id: 'test1'}),
-                new Backbone.Model({id: 'test2'}),
-                new Backbone.Model({id: 'test3'})
+                {id: 'test1', position: 0},
+                {id: 'test2', position: 1},
+                {id: 'test3', position: 2}
             ]
         });
+        viewLayoutRowCollection = new Backbone.Collection();
         layoutDefs = {
             'components': [
                 {'layout': {'span': 4}},
@@ -26,6 +30,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         layout = SugarTest.createLayout('base', 'ProductBundles', 'default', layoutDefs);
         layout.model = viewLayoutModel;
         layout.listColSpan = 3;
+        layout.rowCollection = viewLayoutRowCollection;
         viewMeta = {
             selection: {
                 type: 'multi',
@@ -44,7 +49,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         pbnMetadata = {
             panels: [{
-                fields: ['field1']
+                fields: [{
+                    name: 'description',
+                    rows: 3
+                }]
             }]
         };
 
@@ -56,13 +64,21 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             }]
         };
 
+        viewContext = app.context.getContext();
+        viewContext.set({
+            module: 'Quotes'
+        });
+        viewContext.prepare();
+
+        viewContextOnSpy = sinon.collection.stub(viewContext, 'on', function() {});
+
         sinon.collection.stub(app.metadata, 'getView')
             .withArgs('ProductBundleNotes').returns(pbnMetadata)
             .withArgs('Products').returns(prodMetadata);
 
-        view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-list', viewMeta, null, true, layout);
+        view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-list',
+            viewMeta, viewContext, true, layout);
         sinon.collection.stub(view, 'setElement');
-
     });
 
     afterEach(function() {
@@ -89,14 +105,36 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         describe('setting fields', function() {
+            var viewModel;
             beforeEach(function() {
+                viewContextOnSpy.reset();
+                viewModel = new Backbone.Model({
+                    id: 'viewId1'
+                });
                 view.initialize({
+                    context: viewContext,
                     meta: viewMeta,
-                    model: new Backbone.Model(),
+                    model: viewModel,
                     layout: {
                         listColSpan: 2
                     }
                 });
+            });
+
+            it('should add listener on context for quotes:group:create:qli:<modelId>', function() {
+                expect(view.context.on.args[0][0]).toBe('quotes:group:create:qli:viewId1');
+            });
+
+            it('should add listener on context for quotes:group:create:note:<modelId>', function() {
+                expect(view.context.on.args[1][0]).toBe('quotes:group:create:note:viewId1');
+            });
+
+            it('should add listener on context for editablelist:cancel:<modelId>', function() {
+                expect(view.context.on.args[2][0]).toBe('editablelist:cancel:viewId1');
+            });
+
+            it('should add listener on context for editablelist:save:<modelId>', function() {
+                expect(view.context.on.args[3][0]).toBe('editablelist:save:viewId1');
             });
 
             it('should call setElement', function() {
@@ -107,8 +145,19 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(view.pbnListMetadata).toBe(pbnMetadata);
             });
 
-            it('should set this.pbnListMetadata to be the Products metadata', function() {
+            it('should set this.qliListMetadata to be the Products metadata', function() {
                 expect(view.qliListMetadata).toBe(prodMetadata);
+            });
+
+            it('should initialize newIdsToSave', function() {
+                expect(view.newIdsToSave).toEqual([]);
+            });
+
+            it('should initialize pbnDescriptionMetadata', function() {
+                expect(view.pbnDescriptionMetadata).toEqual({
+                    name: 'description',
+                    rows: 3
+                });
             });
 
             it('should set this._fields to be the Products metadata fields', function() {
@@ -164,6 +213,250 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                     expect(view.leftSaveCancelColumn[0].fields[1].icon).toBe('fa-check-circle');
                 });
             });
+        });
+    });
+
+    describe('onCancelRowEdit()', function() {
+        var rowModel1;
+        var rowModel2;
+
+        beforeEach(function() {
+            rowModel1 = new Backbone.Model({
+                id: 'rowModel1'
+            });
+
+            rowModel2 = new Backbone.Model({
+                id: 'rowModel2'
+            });
+            rowModel2._notSaved = true;
+            view.newIdsToSave.push('rowModel2');
+            view.rowCollection.add(rowModel1);
+            view.rowCollection.add(rowModel2);
+        });
+
+        afterEach(function() {
+            rowModel1 = null;
+            rowModel2 = null;
+            view.rowCollection = null;
+        });
+
+        it('should only remove the rowModel from the collection when _notSaved = true', function() {
+            view.onCancelRowEdit(rowModel1);
+            expect(view.newIdsToSave.length).toBe(1);
+            expect(view.rowCollection.length).toBe(5);
+        });
+
+        it('should remove the rowModel from the collection since _notSaved = true', function() {
+            view.onCancelRowEdit(rowModel2);
+            expect(view.newIdsToSave.length).toBe(0);
+            expect(view.rowCollection.length).toBe(4);
+        });
+    });
+
+    describe('onSaveRowEdit()', function() {
+        var rowModel;
+        var rowModelId;
+        var oldModelId;
+        var attrStub;
+
+        beforeEach(function() {
+            attrStub = sinon.collection.stub();
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    length: 1,
+                    attr: attrStub
+                };
+            });
+            sinon.collection.stub(view, '_setRowFields', function() {});
+            sinon.collection.stub(view, 'toggleRow', function() {});
+
+            oldModelId = 'oldRowModel1';
+            rowModelId = 'rowModel1';
+            rowModel = new Backbone.Model({
+                id: rowModelId
+            });
+            rowModel.module = 'Products';
+        });
+
+        afterEach(function() {
+            rowModel = null;
+            oldModelId = null;
+        });
+
+        describe('model has _notSaved = true', function() {
+            it('should remove _notSaved from the model if it exists', function() {
+                rowModel._notSaved = true;
+                view.onSaveRowEdit(rowModel, rowModelId);
+                expect(rowModel._notSaved).toBeUndefined();
+            });
+
+            it('should remove the model from toggledModels', function() {
+                rowModel._notSaved = true;
+                view.toggledModels[rowModel.id] = rowModel;
+                view.onSaveRowEdit(rowModel, rowModelId);
+                expect(view.toggledModels[rowModel.id]).toBeUndefined();
+            });
+        });
+
+        describe('model id == oldModelId', function() {
+            it('should do nothing if model id is the same as oldModelId', function() {
+                view.onSaveRowEdit(rowModel, rowModelId);
+                expect(view.$).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('model id != oldModelId', function() {
+            beforeEach(function() {
+                view.onSaveRowEdit(rowModel, oldModelId);
+            });
+
+            it('should get the table row if model id is not oldModelId', function() {
+                expect(view.$).toHaveBeenCalledWith('tr[name=Products_oldRowModel1]');
+            });
+            it('should change the table row name attr', function() {
+                expect(attrStub).toHaveBeenCalledWith('name', 'Products_rowModel1');
+            });
+            it('should call _setRowFields', function() {
+                expect(view._setRowFields).toHaveBeenCalled();
+            });
+            it('should call toggleRow', function() {
+                expect(view.toggleRow).toHaveBeenCalledWith('Products', 'rowModel1', false);
+            });
+        });
+    });
+
+    describe('onAddNewItemToGroup()', function() {
+        var linkName;
+        var groupModel;
+        var relatedModel;
+        var relatedModelId;
+
+        beforeEach(function() {
+            linkName = 'products';
+            groupModel = new Backbone.Model();
+            relatedModelId = 'newModelUUID1';
+            relatedModel = new Backbone.Model();
+
+            sinon.collection.stub(view, 'createLinkModel', function() {
+                return relatedModel;
+            });
+            sinon.collection.stub(app.utils, 'generateUUID', function() {
+                return relatedModelId;
+            });
+
+            view.onAddNewItemToGroup(groupModel, linkName);
+        });
+
+        afterEach(function() {
+            view.newIdsToSave = [];
+        });
+
+        it('should add the new model id to newIdsToSave', function() {
+            expect(view.newIdsToSave).toContain(relatedModelId);
+        });
+
+        it('should set the new related model id to the new guid', function() {
+            expect(relatedModel.get('id')).toBe(relatedModelId);
+        });
+
+        it('should set the new relatedModel position to be the max of the rowCollection models positions', function() {
+            expect(relatedModel.get('position')).toBe(3);
+        });
+
+        it('should set the new relatedModel modelView to be edit', function() {
+            expect(relatedModel.modelView).toBe('edit');
+        });
+
+        it('should set the new relatedModel _notSaved to be true', function() {
+            expect(relatedModel._notSaved).toBeTruthy();
+        });
+
+        it('should add the new relatedModel to toggledModels', function() {
+            expect(view.toggledModels[relatedModelId]).toEqual(relatedModel);
+        });
+
+        it('should add the new relatedModel to rowCollection', function() {
+            expect(view.rowCollection.contains(relatedModel)).toBeTruthy();
+        });
+    });
+
+    describe('buildRowsData()', function() {
+        var record1;
+        var record2;
+        var productModel;
+        var pbnModel;
+
+        beforeEach(function() {
+            productModel = new Backbone.Model();
+            pbnModel = new Backbone.Model();
+            pbnModel.fields = {
+                description: {
+                    name: 'description',
+                    rows: 3
+                }
+            };
+
+            record1 = {
+                id: 'recordId1',
+                position: 0,
+                _module: 'Products'
+            };
+            record2 = {
+                id: 'recordId2',
+                position: 1,
+                _module: 'ProductBundleNotes'
+            };
+            view.model.set('related_records', [record1, record2]);
+            view.rowCollection = new Backbone.Collection();
+
+            sinon.collection.stub(app.data, 'createBean', function(module, options) {
+                if (module === 'Products') {
+                    return productModel.set(options);
+                } else {
+                    return pbnModel.set(options);
+                }
+            });
+
+            view.buildRowsData();
+        });
+
+        it('should set modelView to list for Products beans', function() {
+            expect(view.rowCollection.models[0].modelView).toBe('list');
+        });
+
+        it('should set modelView to list for ProductBundleNotes beans', function() {
+            expect(view.rowCollection.models[1].modelView).toBe('list');
+        });
+
+        it('should set description fields for ProductBundleNotes beans', function() {
+            expect(view.rowCollection.models[1].fields.description.rows).toBe(3);
+        });
+    });
+
+    describe('_render()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super', function() {});
+            sinon.collection.stub(view, '_setRowFields', function() {});
+            sinon.collection.stub(view, 'toggleRow', function() {});
+        });
+
+        it('should call _setRowFields', function() {
+            view._render();
+            expect(view._setRowFields).toHaveBeenCalled();
+        });
+
+        it('should call toggleRow if toggledModels has data', function() {
+            view.toggledModels = {
+                id1: new Backbone.Model({module: 'Products'})
+            };
+            view._render();
+            expect(view.toggleRow).toHaveBeenCalled();
+        });
+
+        it('should not call toggleRow if toggledModels is empty', function() {
+            view.toggledModels = {};
+            view._render();
+            expect(view.toggleRow).not.toHaveBeenCalled();
         });
     });
 
@@ -247,17 +540,33 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             rowModelId = null;
         });
 
-        it('should add the toggled model to toggledModels on isEdit = true', function() {
-            expect(view.toggledModels[rowModelId]).toEqual(rowModel);
+        describe('when isEdit is true', function() {
+            it('should add the toggled model to toggledModels', function() {
+                expect(view.toggledModels[rowModelId]).toEqual(rowModel);
+            });
+
+            it('should set modelView to edit on the toggledModel', function() {
+                expect(view.toggledModels[rowModelId].modelView).toEqual('edit');
+            });
         });
 
-        it('should delete the toggled model from toggledModels on isEdit = false', function() {
-            // set the model first then remove it
-            expect(view.toggledModels[rowModelId]).toEqual(rowModel);
+        describe('when isEdit is false', function() {
+            it('should delete the toggled model from toggledModels', function() {
+                // set the model first then remove it
+                expect(view.toggledModels[rowModelId]).toEqual(rowModel);
 
-            // then remove it
-            view.toggleRow(rowModule, rowModelId, false);
-            expect(view.toggledModels[rowModelId]).toBeUndefined();
+                // then remove it
+                view.toggleRow(rowModule, rowModelId, false);
+                expect(view.toggledModels[rowModelId]).toBeUndefined();
+
+            });
+
+            it('should set modelView on the toggled model when removing', function() {
+                expect(rowModel.modelView).toBe('edit');
+
+                view.toggleRow(rowModule, rowModelId, false);
+                expect(rowModel.modelView).toBe('list');
+            });
         });
 
         it('should call this.$ with module and id', function() {
@@ -407,6 +716,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         it('should return the Products metadata fieldnames', function() {
             expect(view.getFieldNames('Products')).toEqual(['field1', 'field2']);
         });
+
         it('should return the ProductBundleNotes metadata fieldnames', function() {
             expect(view.getFieldNames('ProductBundleNotes')).toEqual(['field3', 'field4']);
         });

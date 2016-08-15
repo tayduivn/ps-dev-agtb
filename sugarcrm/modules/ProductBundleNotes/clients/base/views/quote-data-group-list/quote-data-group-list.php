@@ -17,8 +17,7 @@ $viewdefs['ProductBundleNotes']['base']['view']['quote-data-group-list'] = array
             'fields' => array(
                 array(
                     'name' => 'description',
-                    'label' => 'LBL_DESCRIPTION',
-                    'type' => 'text',
+                    'rows' => 3,
                 ),
             ),
         ),

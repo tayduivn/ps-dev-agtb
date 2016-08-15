@@ -70,7 +70,8 @@ $dictionary['ProductBundleNote'] = array(
         'description' => array(
             'name' => 'description',
             'vname' => 'LBL_DESCRIPTION',
-            'type' => 'text',
+            'type' => 'textarea',
+            'dbType' => 'text',
             'comment' => 'Note content',
             'required' => true,
         ),

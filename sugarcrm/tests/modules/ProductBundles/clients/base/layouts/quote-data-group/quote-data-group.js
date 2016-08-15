@@ -38,6 +38,11 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             expect(layout.tagName).toBe('tbody');
         });
 
+        it('should have rowCollection set to an empty backbone collection', function() {
+            layout.initialize({});
+            expect(layout.rowCollection instanceof Backbone.Collection).toBeTruthy();
+        });
+
         it('should call app.metadata.getView with first param Products module', function() {
             layout.initialize({});
             lastCall = app.metadata.getView.lastCall;

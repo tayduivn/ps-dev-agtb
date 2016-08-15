@@ -2,18 +2,21 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
     var app;
     var field;
     var fieldDef;
+    var fieldType = 'quote-data-editablelistbutton';
+    var fieldModule = 'ProductBundleNotes';
 
     beforeEach(function() {
         app = SugarTest.app;
         fieldDef = {
-            type: 'quote-data-editablelistbutton',
+            type: fieldType,
             label: 'testLbl',
             css_class: '',
             buttons: ['button1'],
             no_default_action: true
         };
-        field = SugarTest.createField('base', 'quote-data-editablelistbutton', 'quote-data-editablelistbutton',
-            'detail', fieldDef, 'ProductBundleNotes', null, null, true);
+
+        field = SugarTest.createField('base', fieldType, fieldType, 'detail',
+            fieldDef, fieldModule, null, null, true);
 
         sinon.collection.stub(field, '_super', function() {});
     });
@@ -59,16 +62,9 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
         var fieldTemplate;
         beforeEach(function() {
             fieldTemplate = function fieldTemplate() {};
-            sinon.collection.stub(app.view.Field.prototype._loadTemplate, 'call', function(ctx) {
-                ctx.template = fieldTemplate;
+            sinon.collection.stub(app.template, 'getField', function() {
+                return fieldTemplate;
             });
-        });
-
-        it('should call Field.prototype._loadTemplate not super', function() {
-            field.view.action = 'list';
-            field.action = 'edit';
-            field._loadTemplate();
-            expect(app.view.Field.prototype._loadTemplate.call).toHaveBeenCalled();
         });
 
         it('should set template to empty when in edit mode', function() {
@@ -88,6 +84,7 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
 
     describe('cancelEdit()', function() {
         var lastCall;
+        var lastCallCtxTrigger;
         beforeEach(function() {
             field.model.module = 'TestModule';
             field.model.id = 'testId';
@@ -99,10 +96,15 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             sinon.collection.stub(field.model, 'revertAttributes', function() {});
             field.view.clearValidationErrors = function() {};
             field.view.toggleRow = function() {};
+            field.view.model = new Backbone.Model({
+                id: 'viewId1'
+            });
             sinon.collection.stub(field.view, 'toggleRow', function() {});
+            sinon.collection.stub(field.view.context, 'trigger', function() {});
 
             field.cancelEdit();
             lastCall = field.view.toggleRow.lastCall;
+            lastCallCtxTrigger = field.view.context.trigger.lastCall;
         });
 
         afterEach(function() {
@@ -123,6 +125,37 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
 
         it('should call toggleRow with third param false', function() {
             expect(lastCall.args[2]).toBeFalsy();
+        });
+
+        it('should trigger editablelist:cancel:<viewModelId> on view context', function() {
+            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:cancel:viewId1');
+        });
+    });
+
+    describe('_save()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(field.model, 'save', function() {});
+            field.getCustomSaveOptions = function() {};
+            field.model.id = 'fieldId1';
+            field.model.set('id', 'fieldId1');
+        });
+
+        it('should unset id if model._notSaved is true', function() {
+            field.model._notSaved = true;
+            field._save();
+            expect(field.model.id).toBeUndefined();
+        });
+
+        it('should unset id on model if model._notSaved is true', function() {
+            field.model._notSaved = true;
+            field._save();
+            expect(field.model.get('id')).toBeUndefined();
+        });
+
+        it('should not unset id if model._notSaved is false', function() {
+            field._save();
+            expect(field.model.id).toBe('fieldId1');
+            expect(field.model.get('id')).toBe('fieldId1');
         });
     });
 });

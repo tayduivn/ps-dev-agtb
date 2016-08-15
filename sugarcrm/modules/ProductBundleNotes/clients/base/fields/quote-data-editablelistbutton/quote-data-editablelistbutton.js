@@ -30,12 +30,19 @@
     },
 
     /**
+     * Overriding and not calling parent _loadTemplate as those are based off view/actions and we
+     * specifically need it based off the modelView set by the parent layout for this row model
+     *
      * @inheritdoc
+     * @override
      */
     _loadTemplate: function() {
-        app.view.Field.prototype._loadTemplate.call(this);
+        this.tplName = this.model.modelView || 'list';
+
         if (this.view.action === 'list' && _.indexOf(['edit', 'disabled'], this.action) < 0) {
             this.template = app.template.empty;
+        } else {
+            this.template = app.template.getField(this.type, this.tplName, this.module);
         }
     },
 
@@ -53,10 +60,10 @@
         // this is the only line I had to change
         this.view.toggleRow(this.model.module, this.model.id, false);
 
-        // trigger a cancel event across the parent context so listening components
+        // trigger a cancel event across the view context so listening components
         // know the changes made in this row are being reverted
-        if (this.context.parent) {
-            this.context.parent.trigger('editablelist:cancel', this.model);
+        if (this.view.context) {
+            this.view.context.trigger('editablelist:cancel:' + this.view.model.get('id'), this.model);
         }
     },
 
@@ -65,10 +72,13 @@
      */
     _save: function() {
         var self = this;
+        var oldModelId = this.model.get('id');
         var successCallback = function(model) {
             self.changed = false;
-            // this is the only line I had to change
-            self.view.toggleRow(model.module, model.id, false);
+            model.modelView = 'list';
+            if (self.view.context) {
+                self.view.context.trigger('editablelist:save:' + self.view.model.get('id'), model, oldModelId);
+            }
         };
         var options = {
             success: successCallback,
@@ -108,6 +118,10 @@
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
 
+        if (this.model._notSaved) {
+            this.model.id = null;
+            this.model.unset('id');
+        }
         this.model.save({}, options);
     }
 });

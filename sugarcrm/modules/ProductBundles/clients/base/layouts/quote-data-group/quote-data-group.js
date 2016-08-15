@@ -30,14 +30,24 @@
     listColSpan: 0,
 
     /**
+     * Collection of data for the list rows
+     * @type Backbone.Collection
+     */
+    rowCollection: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        this.rowCollection = new Backbone.Collection();
+
         var listMeta = app.metadata.getView('Products', 'quote-data-group-list');
         if (listMeta && listMeta.panels && listMeta.panels[0].fields) {
             this.listColSpan = listMeta.panels[0].fields.length;
         }
+
+        this.rowCollection.on('add remove', this.render, this);
     }
 })
