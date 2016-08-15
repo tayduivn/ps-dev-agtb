@@ -27,7 +27,7 @@ function checkForDuplicates($prefix){
 	$query = '';
 	$baseQuery = 'select id, name, website, billing_address_city  from accounts where deleted!=1 and ';
 	if(!empty($_POST[$prefix.'name'])){
-		$query = $baseQuery ."  name like '".$_POST[$prefix.'name']."%'";
+            $query = $baseQuery ."  name like " . $focus->db->quoted($_POST[$prefix.'name']."%");
 	}
 
 	if(!empty($_POST[$prefix.'billing_address_city']) || !empty($_POST[$prefix.'shipping_address_city'])){
@@ -35,16 +35,20 @@ function checkForDuplicates($prefix){
 		$temp_query = '';
 		if(!empty($_POST[$prefix.'billing_address_city'])){
 			if(empty($temp_query)){
-				$temp_query =  "  billing_address_city like '".$_POST[$prefix.'billing_address_city']."%'";
+                    $temp_query =  "  billing_address_city like ".
+                    $focus->db->quoted($_POST[$prefix.'billing_address_city']."%");
 			}else {
-				$temp_query .= "or billing_address_city like '".$_POST[$prefix.'billing_address_city']."%'";
+                    $temp_query .= "or billing_address_city like ".
+                    $focus->db->quoted($_POST[$prefix.'billing_address_city']."%");
 			}
 		}
 		if(!empty($_POST[$prefix.'shipping_address_city'])){
 			if(empty($temp_query)){
-				$temp_query = "  shipping_address_city like '".$_POST[$prefix.'shipping_address_city']."%'";
+                    $temp_query = "  shipping_address_city like ".
+                    $focus->db->quoted($_POST[$prefix.'shipping_address_city']."%");
 			}else {
-				$temp_query .= "or shipping_address_city like '".$_POST[$prefix.'shipping_address_city']."%'";
+                    $temp_query .= "or shipping_address_city like ".
+                    $focus->db->quoted($_POST[$prefix.'shipping_address_city']."%");
 			}
 		}
 		if(empty($query)){
