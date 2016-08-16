@@ -30,7 +30,8 @@ class ScanTeams{
     {
 		$query = "SELECT count(*) missing_count FROM users
 					WHERE deleted = 0 AND status='Active' AND is_group = 0 AND  id NOT IN
-					(SELECT user_id FROM team_memberships WHERE team_id = '$global_id' AND deleted = 0 AND explicit_assign=1)";
+                    (SELECT user_id FROM team_memberships WHERE team_id = " .
+            $GLOBALS['db']->quoted($global_id) . " AND deleted = 0 AND explicit_assign=1)";
 		$result = $GLOBALS['db']->query($query);
 		$row = $GLOBALS['db']->fetchByAssoc($result);
 		if(empty($row['missing_count'])){
@@ -349,7 +350,7 @@ function clear_global_team_access($global_team_id=1) {
     $user = BeanFactory::getBean('Users');
 
     //delete all records for membership into global team.
-    $query="delete from team_memberships where team_id='{$global_team_id}'" ;
+    $query="delete from team_memberships where team_id= ". $user->db->quoted($global_team_id);
     $user->db->query($query);
 }
 
@@ -360,7 +361,8 @@ function clear_implicit_access($private_teams_only, $global_team_id=1) {
     if ($private_teams_only) {
         $tf = "  team_id in (select id from teams where private=1)";
     } else {
-        $tf = " team_id not in (select id from teams where private=1) and team_id != '$global_team_id'";
+        $tf = " team_id not in (select id from teams where private=1) and team_id != " .
+            $user->db->quoted($global_team_id);
     }
 
     $query="delete from team_memberships where explicit_assign=0" . ' and ' . $tf;
@@ -382,7 +384,7 @@ function clear_implicit_access($private_teams_only, $global_team_id=1) {
 
         $result=$user->db->query($query);
         while (($row=$user->db->fetchByAssoc($result))!= null) {
-            $d_query="update team_memberships set deleted=1 where id='{$row['id']}'";
+            $d_query="update team_memberships set deleted=1 where id=" . $user->db->quoted($row['id']);
             $user->db->query($d_query);
         }
      }
@@ -435,14 +437,17 @@ function process_all_team_access($user,$add_to_global_team=false,$private_team=f
         $GLOBALS['log']->debug("RepairTeams:Processing Implicit team access for $user->user_name");
 
         $team = BeanFactory::getBean('Teams');
-        $query = "select distinct team_id from team_memberships where deleted=0 and user_id='{$user->id}' and explicit_assign=1 and team_id not in (select id from teams where private=1 and deleted=0) and team_id != '{$user->global_team}'";
+        $query = "select distinct team_id from team_memberships where deleted=0 and user_id= ".
+            $user->db->quoted($user->id) . " and explicit_assign=1 and team_id not in (select id from teams
+            where private=1 and deleted=0) and team_id != " . $user->db->quoted($user->global_team);
         $result = $user->db->query($query,true,"Error finding the full membership list for a user: ");
         while (($row=$user->db->fetchByAssoc($result))!=null)
         {
             $GLOBALS['log']->debug("RepairTeams:Processing Implicit team. User:{$user->user_name} Team:{$row['team_id']}");
 
             //delete current users membership record for the selected team.
-            $d_query="update team_memberships set deleted=1 where user_id='{$user->id}' and team_id='{$row['team_id']}' ";
+            $d_query="update team_memberships set deleted=1 where user_id=". $user->db->quoted($user->id) .
+                " and team_id= " .$user->db->quoted($row['team_id']);
             $user->db->query($d_query);
 
             //re-add the membership so it cascades.
