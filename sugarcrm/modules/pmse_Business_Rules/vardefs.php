@@ -45,7 +45,7 @@ $dictionary['pmse_Business_Rules'] = array(
             'required' => true,
             'name' => 'rst_uid',
             'vname' => 'LBL_RST_UID',
-            'type' => 'id',
+            'type' => 'varchar',
             'massupdate' => false,
             'no_default' => false,
             'comments' => '',
@@ -58,6 +58,7 @@ $dictionary['pmse_Business_Rules'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'calculated' => false,
+            'len' => '36',
             'size' => '20',
         ),
         'rst_type' => array(
