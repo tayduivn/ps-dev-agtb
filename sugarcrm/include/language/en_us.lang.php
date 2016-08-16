@@ -10811,6 +10811,7 @@ Sincerely, SugarCRM',
         'Invalid number of records passed. The valid range is from {{minRecords}} to {{maxRecords}} records.',
     'LBL_MERGE_NO_ACCESS' =>
         'You have no access to perform this action. At least one record must be editable.',
+    'LBL_MERGE_LOCKED' => 'Some of the records selected for merge contain fields that are locked for editing by a process and cannot be merged at this time.',
     'LBL_MERGE_NO_ACCESS_TO_A_FEW_RECORDS' =>
         'One or more selected records cannot be deleted. ' .
         'Those records have been removed from the list to merge.',
