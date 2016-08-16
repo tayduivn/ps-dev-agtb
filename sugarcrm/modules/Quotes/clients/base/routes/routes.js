@@ -10,22 +10,18 @@
  */
 (function(app) {
     app.events.on('router:init', function(router) {
+        var routes = [{
+            name: 'quotesCompatibility',
+            route: 'Quotes/create',
+            callback: function() {
+                var options = {
+                    layout: 'bwc',
+                    url: 'index.php?module=Quotes&action=EditView&return_module=Quotes'
+                };
 
-        var routes = [
-            {
-                name: 'quotesCompatibility',
-                route: 'Quotes/create',
-                callback: function() {
-                    var options = {
-                        layout: 'bwc',
-                        url: 'index.php?module=Quotes&action=EditView' +
-                            '&return_module=Quotes',
-                    };
-
-                    app.controller.loadView(options);
-                }
+                app.controller.loadView(options);
             }
-        ];
+        }];
 
         /*
          * Triggering the event on init will go over all those listeners

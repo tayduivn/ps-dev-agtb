@@ -52,10 +52,14 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
                 }]
             }]
         };
+        sinon.collection.stub(app.currency, 'formatAmountLocale', function() {
+            return '$0.00';
+        });
         view = SugarTest.createView('base', 'Quotes', 'quote-data-grand-totals-header', viewMeta, null, true);
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         view.dispose();
         view = null;
     });
@@ -69,12 +73,12 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
             expect(view.panelFields).toEqual([{
                 name: 'deal_tot',
                 label: 'LBL_DEAL_TOT',
-                value: '0.00'
+                value: '$0.00'
             },
             {
                 name: 'new_sub',
                 label: 'LBL_NEW_SUB',
-                value: '0.00'
+                value: '$0.00'
             }]);
         });
 
@@ -87,12 +91,12 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
                 deal_tot: {
                     name: 'deal_tot',
                     label: 'LBL_DEAL_TOT',
-                    value : '0.00'
+                    value: '$0.00'
                 },
                 new_sub: {
                     name: 'new_sub',
                     label: 'LBL_NEW_SUB',
-                    value : '0.00'
+                    value: '$0.00'
                 }
             });
         });

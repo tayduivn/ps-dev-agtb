@@ -8,35 +8,53 @@ describe('Quotes.Routes', function() {
     beforeEach(function() {
         app = SugarTest.app;
         app.controller.loadAdditionalComponents(app.config.additionalComponents);
+        // FIXME: SC-4677, load additionalComponents in tests
+        // "Before Route Show Wizard Check" dependency
         loadViewStub = sinon.collection.stub(app.controller, 'loadView');
         buildKeyStub = sinon.collection.stub(app.user.lastState, 'buildKey');
         getStub = sinon.collection.stub(app.user.lastState, 'get');
         setStub = sinon.collection.stub(app.user.lastState, 'set');
-        sinon.sandbox.stub(app.api, 'isAuthenticated').returns(true);
 
         SugarTest.loadFile('../modules/Quotes/clients/base/routes', 'routes', 'js', function(d) {
-            app.events.off('router:init');
             eval(d);
-            app.events.trigger('router:init');
+            app.routing.start();
         });
-
-        app.routing.start();
-
     });
 
     afterEach(function() {
         sinon.collection.restore();
+        app.routing.stop();
+        app.events.off('router:init');
     });
 
-    it('should load the create view in bwc mode', function() {
-        var options = {
+    describe('Routes', function() {
+        var mockKey = 'foo:key';
+        var oldIsSynced;
+
+        beforeEach(function() {
+            oldIsSynced = app.isSynced;
+            app.isSynced = true;
+            sinon.collection.stub(app.router, 'index');
+            sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
+            sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
+            sinon.collection.stub(app, 'sync');
+            buildKeyStub.returns(mockKey);
+        });
+
+        afterEach(function() {
+            app.isSynced = oldIsSynced;
+            app.router.navigate('', {trigger: true});
+            Backbone.history.stop();
+        });
+
+        it('should load the create view in bwc mode', function() {
+            var options = {
                 layout: 'bwc',
                 url: 'index.php?module=Quotes&action=EditView&return_module=Quotes'
             };
 
-        app.router.navigate('Quotes/create', {trigger: true});
-        expect(app.controller.loadView).toHaveBeenCalledWith(options);
-
+            app.router.navigate('Quotes/create', {trigger: true});
+            expect(app.controller.loadView).toHaveBeenCalledWith(options);
+        });
     });
-
 });

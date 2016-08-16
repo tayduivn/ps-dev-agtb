@@ -1,28 +1,16 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
-describe('Base.Fields.CurrencyTypeDropdown', function() {
-    var app,
-        moduleName,
-        metadata,
-        field,
-        model,
-        defaultCurrenciesObj;
+describe('Quotes.Base.Fields.CurrencyTypeDropdown', function() {
+    var app;
+    var moduleName = 'Quotes';
+    var metadata;
+    var field;
+    var model;
+    var defaultCurrenciesObj;
 
     beforeEach(function() {
         app = SugarTest.app;
 
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
-
-        moduleName = 'Opportunities';
 
         metadata = {
             fields: {
@@ -97,20 +85,15 @@ describe('Base.Fields.CurrencyTypeDropdown', function() {
         app.user.setPreference('decimal_separator', '.');
         app.user.setPreference('number_grouping_separator', ',');
 
-        field = SugarTest.createField('base',
-            'currency_id',
-            'currency-type-dropdown',
-            'edit',
-            fieldDef,
-            moduleName,
-            model
-        );
+        field = SugarTest.createField('base', 'currency_id', 'currency-type-dropdown', 'edit',
+            fieldDef, moduleName, model, undefined, true);
     });
 
     afterEach(function() {
         sinon.collection.restore();
-        moduleName = null;
         metadata = null;
+        field.dispose();
+        field = null;
         SugarTest.testMetadata.dispose();
     });
 
@@ -146,20 +129,10 @@ describe('Base.Fields.CurrencyTypeDropdown', function() {
             expect(field.def.options).toBe(options.def.options);
         });
 
-        it('should set enum_width default to 100%', function() {
-            field.initialize(options);
-            expect(field.def.enum_width).toBe('100%');
-        });
-
         it('should set enum_width based on passed in options', function() {
             options.def.enum_width = '50%';
             field.initialize(options);
             expect(field.def.enum_width).toBe(options.def.enum_width);
-        });
-
-        it('should set searchBarThreshold default to 100%', function() {
-            field.initialize(options);
-            expect(field.def.searchBarThreshold).toBe(7);
         });
 
         it('should set searchBarThreshold based on passed in options', function() {
@@ -236,7 +209,6 @@ describe('Base.Fields.CurrencyTypeDropdown', function() {
             sinon.collection.stub(field.model, 'isCopy', function() {
                 return false;
             });
-            field.model.set({currency_id: undefined});
 
             field.initialize(options);
             expect(field.model.get('currency_id')).toBe(app.user.getPreference('currency_id'));
@@ -255,59 +227,6 @@ describe('Base.Fields.CurrencyTypeDropdown', function() {
                 conversionRate = app.metadata.getCurrency(currencyID).conversion_rate;
             field.initialize(options);
             expect(field.model.get('base_rate')).toBe(conversionRate);
-        });
-
-        it('should set fieldName on model if field.name is different from currency_id name', function() {
-            sinon.collection.stub(field.model, 'isNew', function() {
-                return false;
-            });
-            sinon.collection.stub(field.model, 'isCopy', function() {
-                return false;
-            });
-            field.model.set({currency_id: undefined});
-
-            field.name = 'TEST2';
-            field.initialize(options);
-            expect(field.model.get(field.name)).toBe(app.user.getPreference('currency_id'));
-        });
-    });
-
-    describe('getFormattedValue()', function() {
-        var result,
-            currencyID;
-
-        afterEach(function() {
-            result = null;
-            currencyID = null;
-        });
-
-        it('should return formatted value when currency id field exists on model', function() {
-            currencyID = field.model.get(field.currencyIdFieldName);
-            result = field.getFormattedValue();
-            expect(result).toBe(defaultCurrenciesObj[currencyID]);
-        });
-
-        it('should return undefined value when currency id field does NOT exist on model', function() {
-            field.currencyIdFieldName = 'TEST3';
-            currencyID = field.model.get(field.currencyIdFieldName);
-            result = field.getFormattedValue();
-            expect(result).toBeUndefined();
-        });
-    });
-
-    describe('format()', function() {
-        var result,
-            currencyID;
-
-        afterEach(function() {
-            result = null;
-            currencyID = null;
-        });
-
-        it('should return the proper currency template from currenciesTpls', function() {
-            currencyID = '-98';
-            result = field.format(currencyID);
-            expect(result).toBe(defaultCurrenciesObj[currencyID]);
         });
     });
 });
