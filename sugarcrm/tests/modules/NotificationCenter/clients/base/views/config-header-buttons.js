@@ -88,6 +88,7 @@ describe('NotificationCenter.View.ConfigHeaderButtons', function() {
             server.respondWith("PUT", urlRegExp, [200, {  "Content-Type": "application/json"}, JSON.stringify({})]);
             updateAddresses = sandbox.stub(view.model, 'updateCarriersAddresses');
             sandbox.stub(view, 'showSavedConfirmation');
+            sandbox.stub(app, 'sync');
         });
 
         it('should ask model to update carriers\' addresses', function() {
