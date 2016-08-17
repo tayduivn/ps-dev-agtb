@@ -22,9 +22,12 @@ class KBContentsApiHelper extends SugarBeanApiHelper {
     {
         if ($this->api->action == 'view' && !empty($this->api->getRequest()->args['viewed'])) {
             $bean->viewcount = $bean->viewcount + 1;
-            $query = "UPDATE {$bean->table_name}
-                set viewcount = {$bean->viewcount}
-                where id = {$bean->db->quoted($bean->id)}";
+            $query = sprintf(
+                'UPDATE %s SET viewcount = %d WHERE id = %s',
+                $bean->table_name,
+                intval($bean->viewcount),
+                $bean->db->quoted($bean->id)
+            );
             $bean->db->query($query);
         }
         $result = parent::formatForApi($bean, $fieldList, $options);
