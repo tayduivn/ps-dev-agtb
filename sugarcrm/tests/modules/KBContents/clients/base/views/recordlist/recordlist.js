@@ -9,8 +9,9 @@ describe('KBContents.Base.Views.RecordList', function() {
             module: moduleName
         });
         context.set('model', app.data.createBean(moduleName));
-        context.parent = new Backbone.Model();
-        context.parent.set('module', moduleName);
+        context.parent = app.context.getContext({
+            module: moduleName
+        });
         SugarTest.loadFile(
             '../modules/KBContents/clients/base/plugins',
             'KBContent',
