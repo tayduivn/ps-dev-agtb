@@ -84,7 +84,7 @@ foreach ($_POST['mass'] as $message_id) {
 	if ($marketing->all_prospect_lists == 1) {
 		$query="SELECT prospect_lists.id prospect_list_id from prospect_lists ";
 		$query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
-		$query.=" WHERE plc.campaign_id='{$campaign->id}'";
+        $query.=" WHERE plc.campaign_id=" . $campaign->db->quoted($campaign->id);
 		$query.=" AND prospect_lists.deleted=0";
 		$query.=" AND plc.deleted=0";
 		if ($test) {
@@ -95,7 +95,8 @@ foreach ($_POST['mass'] as $message_id) {
 	} else {
 		$query="select email_marketing_prospect_lists.* FROM email_marketing_prospect_lists ";
 		$query.=" inner join prospect_lists on prospect_lists.id = email_marketing_prospect_lists.prospect_list_id";
-		$query.=" WHERE prospect_lists.deleted=0 and email_marketing_id = '$message_id' and email_marketing_prospect_lists.deleted=0";
+        $query.=" WHERE prospect_lists.deleted=0 and email_marketing_id = " . $campaign->db->quoted($message_id) .
+            " and email_marketing_prospect_lists.deleted=0";
 
 		if ($test) {
 			$query.=" AND prospect_lists.list_type='test'";
@@ -108,21 +109,25 @@ foreach ($_POST['mass'] as $message_id) {
 		$prospect_list_id=$row['prospect_list_id'];
 
 		//delete all messages for the current campaign and current email marketing message.
-		$delete_emailman_query="delete from emailman where campaign_id='{$campaign->id}' and marketing_id='{$message_id}' and list_id='{$prospect_list_id}'";
+        $delete_emailman_query="delete from emailman where campaign_id=".$campaign->db->quoted($campaign->id) .
+            " and marketing_id=" . $campaign->db->quoted($message_id) .
+            " and list_id=".$campaign->db->quoted($prospect_list_id);
 		$campaign->db->query($delete_emailman_query);
         $auto = $campaign->db->getAutoIncrementSQL("emailman", "id");
 
 		$insert_query= "INSERT INTO emailman (date_entered, user_id, campaign_id, marketing_id,list_id, related_id, related_type, send_date_time";
 		$insert_query.= empty($auto)?"":",id";
 		$insert_query.=')';
-		$insert_query.= " SELECT $current_date,'{$current_user->id}',plc.campaign_id,'{$message_id}',plp.prospect_list_id, plp.related_id, plp.related_type,{$send_date_time}";
+        $insert_query.= " SELECT $current_date,".$campaign->db->quoted($current_user->id).",plc.campaign_id,".
+            $campaign->db->quoted($message_id).",plp.prospect_list_id, plp.related_id, plp.related_type,".
+            $campaign->db->quoted($send_date_time);
 		$insert_query.= empty($auto)?"":",$auto";
 		$insert_query.= " FROM prospect_lists_prospects plp ";
 		$insert_query.= "INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = plp.prospect_list_id ";
-		$insert_query.= "WHERE plp.prospect_list_id = '{$prospect_list_id}' ";
+        $insert_query.= "WHERE plp.prospect_list_id = ".$campaign->db->quoted($prospect_list_id);
 		$insert_query.= "AND plp.deleted=0 ";
 		$insert_query.= "AND plc.deleted=0 ";
-		$insert_query.= "AND plc.campaign_id='{$campaign->id}'";
+        $insert_query.= "AND plc.campaign_id=".$campaign->db->quoted($campaign->id);
 
 		$campaign->db->query($insert_query);
 	}
