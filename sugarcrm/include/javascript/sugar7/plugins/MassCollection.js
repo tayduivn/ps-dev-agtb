@@ -335,6 +335,10 @@
                     }, this)
                 };
 
+                _.extend(this.massCollection, {
+                    orderBy: this.context.get('collection').orderBy,
+                });
+
                 this.massCollection.trigger('massupdate:estimate');
                 this.massCollection.fetch(options);
             },
