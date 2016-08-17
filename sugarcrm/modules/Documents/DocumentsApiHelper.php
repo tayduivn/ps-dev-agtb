@@ -31,11 +31,13 @@ class DocumentsApiHelper extends SugarBeanApiHelper
             $db = DBManagerFactory::getInstance();
             
             // Get the revision ID so that it can be set into the bean
-            $sql = "SELECT document_revision_id 
-                    FROM {$bean->table_name} 
-                    WHERE id = '{$bean->id}'";
+            $query = sprintf(
+                'SELECT document_revision_id FROM %s WHERE id = %s',
+                $bean->table_name,
+                $db->quoted($bean->id)
+            );
             
-            $rs = $db->query($sql);
+            $rs = $db->query($query);
             $row = $db->fetchByAssoc($rs);
             if (isset($row['document_revision_id'])) {
                 // Set the revision and setup everything else for a document that
