@@ -102,22 +102,22 @@
                                     {assign var=val value=$options[$id]}
                                     {assign var=is_blank value=false}
                                 {/if}
-                            <li class="draggable{if !$checked} deleted{/if}" id="{$id}">
+                            <li class="draggable{if !$checked} deleted{/if}" id="{$id|escape:'html':'UTF-8'}">
                                 <table width='100%'>
                                     <tr>
                                         <td class="first">
                                             {if $is_blank}
-                                                {$val}
+                                                {$val|escape:'html':'UTF-8'}
                                             {else}
-                                                <b>{$id}</b>
+                                                <b>{$id|escape:'html':'UTF-8'}</b>
                                             {/if}
-                                            <span class='fieldValue' id='span_{$id}'>[{$val}]</span>
+                                            <span class='fieldValue' id='span_{$id|escape:'html':'UTF-8'}'>[{$val|escape:'html':'UTF-8'}]</span>
                                         </td>
                                         <td align='right'>
-                                            <input id='value_{$id}' value='{$options[$id]|escape}' type='hidden'>
-                                            <input type="hidden" value="0" name="dropdown_keys[{$id}]">
+                                            <input id='value_{$id|escape:'html':'UTF-8'}' value='{$options[$id]|escape:'html':'UTF-8'}' type='hidden'>
+                                            <input type="hidden" value="0" name="dropdown_keys[{$id|escape:'html':'UTF-8'}]">
                                             <input type="checkbox" value="1" {if $checked}checked{/if}
-                                                   name="dropdown_keys[{$id}]">
+                                                   name="dropdown_keys[{$id|escape:'html':'UTF-8'}]">
                                         </td>
                                     </tr>
                                 </table>
