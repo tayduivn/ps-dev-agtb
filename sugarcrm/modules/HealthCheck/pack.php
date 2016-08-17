@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'pack_sortinghat.php';
+require_once 'modules/HealthCheck/pack_sortinghat.php';
 
 function packHealthCheck(ZipArchive $zip, $manifest = array(), $installdefs = array(), $params = array())
 {
