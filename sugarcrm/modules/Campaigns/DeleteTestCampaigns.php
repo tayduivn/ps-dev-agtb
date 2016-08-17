@@ -33,27 +33,29 @@ function deleteTestRecords($focus)
 
     $res = $focus->db->query("SELECT DISTINCT campaign_log.related_id emailid, prospect_lists.id as listid FROM campaign_log
             JOIN prospect_lists on campaign_log.list_id = prospect_lists.id
-            WHERE campaign_log.campaign_id = '{$focus->id}' AND prospect_lists.list_type='test'");
+            WHERE campaign_log.campaign_id = ".$focus->db->quoted($focus->id)." AND prospect_lists.list_type='test'");
     $test_ids = array();
     $test_list_ids = array();
     while($row = $focus->db->fetchByAssoc($res)) {
-       $test_ids[] = $row['emailid'];
-       $test_list_ids[$row['listid']] = true;
+            $test_ids[] = $focus->db->quoted($row['emailid']);
+            $test_list_ids[] = $focus->db->quoted($row['listid']);
     }
-    $test_list_ids = array_keys($test_list_ids);
     unset($res);
     if(!empty($test_ids)) {
-        $joinedIds = join("','", $test_ids);
-        $focus->db->query("UPDATE emails SET deleted=1 WHERE id IN ('".$joinedIds."')");
-        $focus->db->query("UPDATE emails_text SET deleted=1 WHERE email_id IN ('".$joinedIds."')");
-        $focus->db->query("UPDATE folders_rel SET deleted=1 WHERE polymorphic_module = 'Emails' AND polymorphic_id IN ('".$joinedIds."')");
+            $joinedIds = join(",", $test_ids);
+            $focus->db->query("UPDATE emails SET deleted=1 WHERE id IN (".$joinedIds.")");
+            $focus->db->query("UPDATE emails_text SET deleted=1 WHERE email_id IN (".$joinedIds.")");
+            $focus->db->query("UPDATE folders_rel SET deleted=1 WHERE polymorphic_module = 'Emails' AND
+                polymorphic_id IN (".$joinedIds.")");
     }
 
     if(!empty($test_list_ids)) {
-        $query = "DELETE FROM emailman WHERE campaign_id = '{$focus->id}' AND list_id IN ('".join("','", $test_list_ids)."')";
+            $query = "DELETE FROM emailman WHERE campaign_id = ".$focus->db->quoted($focus->id).
+            " AND list_id IN (".join(",", $test_list_ids).")";
         $focus->db->query($query);
 
-        $query = "UPDATE campaign_log SET deleted=1 WHERE campaign_id = '{$focus->id}' AND list_id IN ('".join("','", $test_list_ids)."')";
+            $query = "UPDATE campaign_log SET deleted=1 WHERE campaign_id = ".$focus->db->quoted($focus->id).
+            " AND list_id IN (".join(",", $test_list_ids).")";
 
         $focus->db->query($query);
     }
