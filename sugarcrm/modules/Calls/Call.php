@@ -288,7 +288,7 @@ class Call extends SugarBean {
 
 		if (!empty($this->contact_id)) {
 			$query  = "SELECT first_name, last_name FROM contacts ";
-			$query .= "WHERE id='$this->contact_id' AND deleted=0";
+            $query .= "WHERE id=" . $this->db->quoted($this->contact_id) . " AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in additional detail fields: ");
 
 			// Get the contact name.
