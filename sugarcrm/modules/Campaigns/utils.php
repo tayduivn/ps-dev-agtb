@@ -167,7 +167,8 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
         }
 
         //retrieve campaign log.
-        $trkr_query = "select * from campaign_log where target_tracker_key='$identifier' and related_id = '$clicked_url_key'";
+        $trkr_query = "select * from campaign_log where target_tracker_key= " .
+            $db->quoted($identifier) . " and related_id = " . $db->quoted($clicked_url_key);
         $current_trkr=$db->query($trkr_query);
         $row=$db->fetchByAssoc($current_trkr);
 
@@ -177,7 +178,8 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
 
 
                 //retrieve campaign id
-                $trkr_query = "select ct.campaign_id from campaign_trkrs ct, campaigns c where c.id = ct.campaign_id and ct.id = '$clicked_url_key'";
+                $trkr_query = "select ct.campaign_id from campaign_trkrs ct, campaigns c
+                    where c.id = ct.campaign_id and ct.id = " . $db->quoted($clicked_url_key);
                 $current_trkr=$db->query($trkr_query);
                 $row=$db->fetchByAssoc($current_trkr);
 
@@ -188,14 +190,14 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 $data['target_id']="'" . create_guid() . "'";
                 $data['target_type']= "'Prospects'";
                 $data['id']="'" . create_guid() . "'";
-                $data['campaign_id']="'" . $row['campaign_id'] . "'";
-                $data['target_tracker_key']="'" . $identifier . "'";
-                $data['activity_type']="'" .  $activity . "'";
+                $data['campaign_id']= $db->quoted($row['campaign_id']);
+                $data['target_tracker_key']= $db->quoted($identifier);
+                $data['activity_type'] = $db->quoted($activity);
                 $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
                 $data['hits']=1;
                 $data['deleted']=0;
                 if (!empty($clicked_url_key)) {
-                    $data['related_id']="'".$clicked_url_key."'";
+                    $data['related_id']= $db->quoted($clicked_url_key);
                     $data['related_type']="'".'CampaignTrackers'."'";
                 }
 
@@ -212,7 +214,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 //campaign log already exists, so just set the return array and update hits column
                 $return_array['target_id']= $row['target_id'];
                 $return_array['target_type']= $row['target_type'];
-                $query1="update campaign_log set hits=hits+1 where id='{$row['id']}'";
+                $query1="update campaign_log set hits=hits+1 where id=" . $db->quoted($row['id']);
                 $current=$db->query($query1);
 
 
@@ -225,15 +227,17 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
 
 
 
-    $query1="select * from campaign_log where target_tracker_key='$identifier' and activity_type='$activity'";
+    $query1="select * from campaign_log where target_tracker_key= " . $db->quoted($identifier) . " and activity_type=" .
+        $db->quoted($activity);
     if (!empty($clicked_url_key)) {
-        $query1.=" AND related_id='$clicked_url_key'";
+        $query1.=" AND related_id=" . $db->quoted($clicked_url_key);
     }
     $current=$db->query($query1);
     $row=$db->fetchByAssoc($current);
 
         if ($row==null) {
-            $query="select * from campaign_log where target_tracker_key='$identifier' and activity_type='targeted'";
+            $query="select * from campaign_log where target_tracker_key=" . $db->quoted($identifier) .
+                " and activity_type='targeted'";
             $targeted=$db->query($query);
             $row=$db->fetchByAssoc($targeted);
 
@@ -246,18 +250,18 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
             }
             elseif ($row){
                 $data['id']="'" . create_guid() . "'";
-                $data['campaign_id']="'" . $row['campaign_id'] . "'";
-                $data['target_tracker_key']="'" . $identifier . "'";
-                $data['target_id']="'" .  $row['target_id'] . "'";
-                $data['target_type']="'" .  $row['target_type'] . "'";
-                $data['activity_type']="'" .  $activity . "'";
+                $data['campaign_id'] = $db->quoted($row['campaign_id']);
+                $data['target_tracker_key'] = $db->quoted($identifier);
+                $data['target_id'] = $db->quoted($row['target_id']);
+                $data['target_type'] = $db->quoted($row['target_type']);
+                $data['activity_type'] = $db->quoted($activity);
                 $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
-                $data['list_id']="'" .  $row['list_id'] . "'";
-                $data['marketing_id']="'" .  $row['marketing_id'] . "'";
+                $data['list_id'] = $db->quoted($row['list_id']);
+                $data['marketing_id'] = $db->quoted($row['marketing_id']);
                 $data['hits']=1;
                 $data['deleted']=0;
                 if (!empty($clicked_url_key)) {
-                    $data['related_id']="'".$clicked_url_key."'";
+                    $data['related_id'] = $db->quoted($clicked_url_key);
                     $data['related_type']="'".'CampaignTrackers'."'";
                 }
 
@@ -282,14 +286,14 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
             $return_array['target_id']= $row['target_id'];
             $return_array['target_type']= $row['target_type'];
 
-            $query1="update campaign_log set hits=hits+1 where id='{$row['id']}'";
+            $query1="update campaign_log set hits=hits+1 where id=".$db->quoted($row['id']);
             $current=$db->query($query1);
 
         }
         //check to see if this is a removal action
         if ($row  && $activity == 'removed' ) {
             //retrieve campaign and check it's type, we are looking for newsletter Campaigns
-            $query = "SELECT campaigns.* FROM campaigns WHERE campaigns.id = '".$row['campaign_id']."' ";
+            $query = "SELECT campaigns.* FROM campaigns WHERE campaigns.id = " . $db->quoted($row['campaign_id']);
             $result = $db->query($query);
             if(!empty($result))
             {
@@ -970,7 +974,8 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
             //retrieve the target beans and create campaign log entry
             foreach($target_ids as $id){
                  //perform duplicate check
-                 $dup_query = "select id from campaign_log where campaign_id = '$campaign_id' and target_id = '$id'";
+                 $dup_query = "select id from campaign_log where campaign_id = " . $focus->db->quoted($campaign_id) .
+                     " and target_id = " . $focus->db->quoted($id);
                  $dup_result = $focus->db->query($dup_query);
                  $row = $focus->db->fetchByAssoc($dup_result);
 
