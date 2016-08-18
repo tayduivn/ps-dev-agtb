@@ -244,7 +244,7 @@
             var isLocked = _.contains(lockedFields, fieldName);
 
             // Special handling for fieldsets
-            if (field.type === 'fieldset') {
+            if (field.fields) {
                 // Some fieldsets have fields that are only for viewing, like the
                 // `copy` field on alternate addresses. Those should be filtered
                 // out of the fields list.
@@ -601,7 +601,7 @@
                 }
 
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.type === 'fieldset') {
+                if (field.fields) {
                     // Some fieldsets have fields that are only for viewing, like the
                     // `copy` field on alternate addresses. Those should be filtered
                     // out of the fields list.
