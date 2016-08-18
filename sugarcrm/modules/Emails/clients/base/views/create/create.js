@@ -359,6 +359,23 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Verify that the email does not have any invalid recipients before continuing with the save
+     */
+    save: function() {
+        if (this._hasInvalidRecipients(this.model)) {
+            app.alert.show('mail_invalid_recipients', {
+                level: 'error',
+                messages: app.lang.get('ERR_INVALID_RECIPIENTS', this.module)
+            });
+            return;
+        }
+
+        this._super('save');
+    },
+
+    /**
      * Save the email as a draft for later sending
      */
     saveAsDraft: function() {
@@ -478,6 +495,26 @@
                 return !_.isEmpty($.trim(value));
             }
         }
+    },
+
+    /**
+     * Check if the recipients in any of the recipient fields are invalid.
+     *
+     * @param {Backbone.Model} model
+     * @return {boolean} Return true if there are invalid recipients in any of
+     *   the fields. Return false otherwise.
+     * @private
+     */
+    _hasInvalidRecipients: function(model) {
+        return _.some(['from', 'to', 'cc', 'bcc'], function(fieldName) {
+            var recipients = model.get(fieldName);
+            if (!recipients) {
+                return false;
+            }
+            return _.some(recipients.models, function(recipient) {
+                return recipient.get('_invalid');
+            });
+        }, this);
     },
 
     /**

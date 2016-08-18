@@ -165,6 +165,7 @@
     _updateSelect2: function(recipients) {
         // put the formatted recipients in the DOM
         this.$(this.fieldTag).select2('data', recipients);
+        this._decorateInvalidRecipients();
 
         if (!this.def.readonly) {
             this.setDragDropPluginEvents(this.$(this.fieldTag));
@@ -354,7 +355,8 @@
             return this.select2SelectionTemplate({
                 id: this._getSelect2Id(recipient),
                 name: value,
-                email: recipient.get('email_address')
+                email: recipient.get('email_address'),
+                invalid: recipient.get('_invalid')
             });
         }
         return value;
@@ -467,13 +469,8 @@
     bindDomChange: function() {
         var self = this;
         this.$(this.fieldTag)
-            .on('change', function(event) {
+            .on('change', function() {
                 var value = $(this).select2('data');
-                if (event.removed) {
-                    value = _.filter(value, function(d) {
-                        return d.id !== event.removed.id;
-                    });
-                }
                 self.model.get(self.name).reset(value);
             })
             .on('select2-selecting', _.bind(this._handleEventOnSelected, this));
@@ -495,19 +492,12 @@
         // since this event is fired twice, we only want to perform validation
         // on the first event event.object is not available on the second event
         if (event.object) {
+            isValidChoice = true;
             // the object will have an id if it came from the database and we
             // are assuming that email addresses stored in the database have
-            // already been validated
+            // already been validated - if no id, kick off an async validation.
             if (_.isEmpty(event.object.get('id'))) {
-                // this option must be a new email address that the application
-                // does not recognize
-                // so validate it
-                isValidChoice = this._validateEmailAddress(event.object.get('email_address'));
-            } else {
-                // the application should recognize the email address, so no
-                // need to validate it again just assume it's a valid choice and
-                // we'll deal with the consequences later (server-side)
-                isValidChoice = true;
+                this._validateEmailAddress(event.object);
             }
         }
 
@@ -585,7 +575,8 @@
                 id: recipient.get('id') || attributes.id,
                 module: recipient.get('module') || recipient.module || recipient.get('_module') || attributes.module,
                 email_address: emailAddress,
-                name: app.utils.getRecordName(recipient) || attributes.name
+                name: app.utils.getRecordName(recipient) || attributes.name,
+                _invalid: recipient.get('_invalid')
             };
 
             // extract the primary email address for the recipient
@@ -607,31 +598,66 @@
     },
 
     /**
-     * Validates an email address on the server.
+     * Validates an email address on the server asynchronously.
      *
-     * @param {string} emailAddress
-     * @return {boolean}
+     * Marks the recipient as invalid if it is not a valid email address.
+     *
+     * @param {Object} recipient
+     * @param {string} recipient.id
+     * @param {string} recipient.email
      * @private
      */
-    _validateEmailAddress: function(emailAddress) {
-        var isValid = false;
+    _validateEmailAddress: function(recipient) {
         var callbacks = {};
-        var options = {
-            // execute the api call synchronously so that the method doesn't
-            // return before the response is known
-            async: false
-        };
         var url = app.api.buildURL('Emails', 'address/validate');
+        var email = recipient.get('email_address');
 
-        callbacks.success = function(result) {
-            isValid = result[emailAddress];
-        };
-        callbacks.error = function() {
-            isValid = false;
-        };
-        app.api.call('create', url, [emailAddress], callbacks, options);
+        callbacks.success = _.bind(function(result) {
+            if (!result[email] && !this.disposed) {
+                this._markRecipientInvalid(recipient);
+            }
+        }, this);
+        callbacks.error = _.bind(function() {
+            if (!this.disposed) {
+                this._markRecipientInvalid(recipient);
+            }
+        }, this);
 
-        return isValid;
+        app.api.call('create', url, [email], callbacks);
+    },
+
+    /**
+     * Mark the given recipient as invalid in the collection and update select2.
+     *
+     * @param {Data.Bean} recipient
+     * @private
+     */
+    _markRecipientInvalid: function(recipient) {
+        var id = this._getSelect2Id(recipient);
+        var recipients = this.model.get(this.name);
+
+        recipient = _.find(recipients.models, function(model) {
+            return this._getSelect2Id(model) === id;
+        }, this);
+
+        if (recipient) {
+            recipient.set('_invalid', true);
+            this._updateSelect2(this.format(recipients));
+        }
+    },
+
+    /**
+     * Decorate any invalid recipients in this field.
+     * @private
+     */
+    _decorateInvalidRecipients: function() {
+        var self = this;
+        var $invalidRecipients = this.$('.select2-search-choice [data-invalid="true"]');
+        $invalidRecipients.each(function() {
+            var $choice = $(this).closest('.select2-search-choice');
+            $choice.addClass('select2-choice-danger');
+            $(this).attr('data-title', app.lang.get('ERR_INVALID_EMAIL_ADDRESS', self.module));
+        });
     },
 
     /**

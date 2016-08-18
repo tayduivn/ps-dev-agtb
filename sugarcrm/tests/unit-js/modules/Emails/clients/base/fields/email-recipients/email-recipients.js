@@ -288,38 +288,15 @@ describe('Emails.fields.email-recipients', function() {
                 expect(actual).toBeTruthy();
             });
 
-            describe('unknown email addresses must be validated', function() {
-                var validateEmailAddressStub;
-
-                beforeEach(function() {
-                    validateEmailAddressStub = sinon.stub(field, '_validateEmailAddress');
-                });
-
-                afterEach(function() {
-                    validateEmailAddressStub.restore();
-                });
-
-                it('Should return true when new email address and the email address is valid.', function() {
-                    var recipient = app.data.createBean('Users', {email_address: 'foo@bar.com'});
-                    var event = {object: recipient};
-                    var actual;
-
-                    validateEmailAddressStub.returns(true);
-
-                    actual = field._handleEventOnSelected(event);
-                    expect(actual).toBeTruthy();
-                });
-
-                it('Should return false when new email address and the email address is invalid.', function() {
-                    var recipient = app.data.createBean('Users', {email_address: 'foo-bar.com'});
-                    var event = {object: recipient};
-                    var actual;
-
-                    validateEmailAddressStub.returns(false);
-
-                    actual = field._handleEventOnSelected(event);
-                    expect(actual).toBeFalsy();
-                });
+            it('Should return true and kick off email validation when ' +
+                'event.object exists and id and email are equal', function() {
+                var validateEmailAddressStub = sinon.stub(field, '_validateEmailAddress');
+                var recipient = app.data.createBean('EmailAddresses', {email: 'foo@bar.com'});
+                var event = {object: recipient};
+                var actual = field._handleEventOnSelected(event);
+                expect(actual).toBeTruthy();
+                expect(validateEmailAddressStub).toHaveBeenCalled();
+                validateEmailAddressStub.restore();
             });
         });
 
@@ -509,6 +486,23 @@ describe('Emails.fields.email-recipients', function() {
                 expected: {id: 'abcd', module: 'Contacts', name: 'Will Westin'}
             },
             {
+                message: 'should return an object with the invalid property set to true',
+                recipient: new Backbone.Model(
+                    {
+                        module: 'Contacts',
+                        name: 'Will Westin',
+                        email: 'will@example.com',
+                        _invalid: true
+                    }
+                ),
+                expected: {
+                    module: 'Contacts',
+                    name: 'Will Westin',
+                    email_address: 'will@example.com',
+                    _invalid: true
+                }
+            },
+            {
                 message: 'should find the primary email address when the recipient has an more than one email',
                 recipient: new Backbone.Model(
                     {
@@ -654,70 +648,77 @@ describe('Emails.fields.email-recipients', function() {
 
     describe('validate an email address', function() {
         var apiCallStub;
+        var recipient;
+
+        beforeEach(function() {
+            recipient = new Backbone.Model({
+                id: '123',
+                email: 'foo@bar.com'
+            });
+            field.model.get(field.name).add(recipient);
+        });
 
         afterEach(function() {
             apiCallStub.restore();
         });
 
-        it('Should return false when the api call results in an error.', function() {
-            var actual;
+        it('Should mark recipient as invalid when the api call returns invalid.', function() {
+            var model;
+
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                var result = {};
+                result[recipient.email] = false;
+                callbacks.success(result);
+            });
+
+            field._validateEmailAddress(recipient);
+            model = field.model.get(field.name).get(recipient.id);
+            expect(model.get('_invalid')).toEqual(true);
+        });
+
+        it('Should not mark recipient as invalid when the api call returns valid.', function() {
+            var model;
+
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
+                var result = {};
+                result[recipient.email] = true;
+                callbacks.success(result);
+            });
+
+            field._validateEmailAddress(recipient);
+            model = field.model.get(field.name).get(recipient.id);
+            expect(model.get('_invalid')).toBeUndefined();
+        });
+
+        it('Should mark recipient as invalid when the api call returns an error.', function() {
+            var model;
 
             apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
                 callbacks.error();
             });
 
-            actual = field._validateEmailAddress('foo');
-            expect(actual).toBeFalsy();
-        });
-
-        it('Should return false when the api call is successful and returns false.', function() {
-            var emailAddress = 'foo@bar.';
-            var actual;
-
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                var result = {};
-                result[emailAddress] = false;
-                callbacks.success(result);
-            });
-
-            actual = field._validateEmailAddress(emailAddress);
-            expect(actual).toBeFalsy();
-        });
-
-        it('Should return true when the api call is successful and returns true.', function() {
-            var emailAddress = 'foo@bar.com';
-            var actual;
-
-            apiCallStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks) {
-                var result = {};
-                result[emailAddress] = true;
-                callbacks.success(result);
-            });
-
-            actual = field._validateEmailAddress(emailAddress);
-            expect(actual).toBeTruthy();
+            field._validateEmailAddress(recipient);
+            model = field.model.get(field.name).get(recipient.id);
+            expect(model.get('_invalid')).toEqual(true);
         });
     });
 
-    describe('rendering when the field changes on the model', function() {
-        var renderStub;
-
-        beforeEach(function() {
-            renderStub = sandbox.stub(field, 'render');
-        });
-
-        it('should not do a full re-render when in edit mode', function() {
-            field.setMode('edit');
-            field.model.trigger('change:' + this.name);
-
-            expect(renderStub.callCount).toEqual(1);
-        });
-
-        it('should do a full re-render when in detail mode', function() {
-            field.setMode('detail');
-            field.model.trigger('change:' + field.name);
-
-            expect(renderStub.callCount).toEqual(2);
+    describe('Decorating invalid recipients', function() {
+        it('Should decorate invalid recipients and update the tooltip text', function() {
+            var originalHtml =
+                '<div class="select2-search-choice">' +
+                '<span data-id="1" data-invalid="true" data-title="foo1"></span>' +
+                '</div>' +
+                '<div class="select2-search-choice">' +
+                '<span data-id="2" data-invalid="" data-title="foo2">' +
+                '</span></div>' +
+                '<div class="select2-search-choice">' +
+                '<span data-id="3" data-invalid="true" data-title="foo3">' +
+                '</span></div>';
+            field.$el = $('<div>' + originalHtml + '</div>');
+            field._decorateInvalidRecipients();
+            expect(field.$('.select2-choice-danger').length).toEqual(2);
+            expect(field.$('[data-title="ERR_INVALID_EMAIL_ADDRESS"]').length).toEqual(2);
         });
     });
 

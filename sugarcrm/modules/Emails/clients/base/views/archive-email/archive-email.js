@@ -49,12 +49,9 @@
      * Archive email if validation passes.
      */
     archive: function() {
-        this.setMainButtonsDisabled(true);
         this.model.doValidate(this.getFieldsToValidate(), _.bind(function(isValid) {
             if (isValid) {
                 this.archiveEmail();
-            } else {
-                this.setMainButtonsDisabled(false);
             }
         }, this));
     },
@@ -86,14 +83,6 @@
      */
     buildSuccessMessage: function() {
         return app.lang.get('LBL_EMAIL_ARCHIVED', this.module);
-    },
-
-    /**
-     * Disable/enable archive button.
-     * @param {boolean} disabled
-     */
-    setMainButtonsDisabled: function(disabled) {
-        this.getField('archive_button').setDisabled(disabled);
     },
 
     /**

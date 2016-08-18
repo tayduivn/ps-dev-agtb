@@ -16,7 +16,6 @@ describe('Archive Email View', function() {
         view = SugarTest.createView('base', 'Emails', 'archive-email', null, null, true);
 
         sandbox = sinon.sandbox.create();
-        sandbox.stub(view, 'setMainButtonsDisabled');
     });
 
     afterEach(function() {
@@ -49,18 +48,6 @@ describe('Archive Email View', function() {
             view.archive();
 
             expect(view.save.calledOnce).toBe(false);
-        });
-
-        it('should first disable the archive button and then enable it back when validation fails', function() {
-            sinon.collection.stub(view.model, 'doValidate', function(fields, callback) {
-                callback(false);
-            });
-
-            view.archive();
-
-            expect(view.setMainButtonsDisabled.calledTwice).toBe(true);
-            expect(view.setMainButtonsDisabled.getCall(0).args[0]).toBe(true);
-            expect(view.setMainButtonsDisabled.getCall(1).args[0]).toBe(false);
         });
     });
 });
