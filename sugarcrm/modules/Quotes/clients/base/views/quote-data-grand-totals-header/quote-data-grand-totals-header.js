@@ -51,6 +51,13 @@
     panelFieldsObj: undefined,
 
     /**
+     * Holder for the debounce render call  that is inited below
+     *
+     * @type Function
+     */
+    debouceRender: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -59,6 +66,7 @@
         this.panelFields = [];
         this.panelFieldNames = [];
         this.panelFieldsObj = {};
+        this.debouceRender = _.debounce(_.bind(this.render, this), 100);
         this._super('initialize', [options]);
 
         this.initPanelFieldNames();
@@ -88,23 +96,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        this.model.on('change', this.onChangeCheckRender, this);
-    },
-
-    /**
-     * Handles when the model changes, checks to see if any of the changed fields on the model were
-     * fields used in this view.  If so, triggers the view to re-render only if one of the fields changed.
-     *
-     * @param {Data.Bean} model
-     */
-    onChangeCheckRender: function(model) {
-        var needsRender = _.some(_.keys(model.changed), function(key) {
-            return _.contains(this.panelFieldNames, key);
-        }, this);
-
-        if (needsRender) {
-            this.render();
-        }
+        this.model.on('change:' + _.unique(this.panelFieldNames).join(' change:'), this.debouceRender, this);
     },
 
     /**

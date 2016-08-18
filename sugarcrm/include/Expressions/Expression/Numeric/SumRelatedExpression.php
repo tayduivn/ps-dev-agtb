@@ -96,7 +96,12 @@ class SumRelatedExpression extends NumericExpression
             all_values = this.context.getRelatedField(relationship, 'rollupSum', rel_field + '_values') || {},
             new_value = model.get(rel_field) || '',
             rollup_value = '0';
-
+            
+        // this needs to be an object, not an array
+        if (_.isArray(all_values) && _.isEmpty(all_values)) {
+            all_values = {};
+        }
+        
         if (isCurrency) {
             new_value = App.currency.convertToBase(
                 new_value,

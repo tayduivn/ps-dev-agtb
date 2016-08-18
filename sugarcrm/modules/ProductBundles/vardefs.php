@@ -150,7 +150,7 @@ $dictionary['ProductBundle'] = array(
                 'tax',
                 'shipping',
             ),
-            'formula' => 'currencyAdd($new_sub, $tax, $shipping)',
+            'formula' => 'currencyAdd($new_sub, $tax, ifElse(isNumeric($shipping), $shipping, 0))',
             'calculated' => true,
             'enforced' => true,
         ),

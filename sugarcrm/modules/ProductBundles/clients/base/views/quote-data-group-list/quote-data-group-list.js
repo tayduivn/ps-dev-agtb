@@ -28,19 +28,15 @@
     plugins: [
         'Editable',
         'ErrorDecoration',
-        'LinkedModel'
+        'LinkedModel',
+        'MassCollection',
+        'SugarLogic'
     ],
 
     /**
      * @inheritdoc
      */
     className: 'quote-data-group-list',
-
-    /**
-     * Collection of data for the list rows
-     * @type Backbone.Collection
-     */
-    rowCollection: undefined,
 
     /**
      * Array of fields to use in the template
@@ -94,6 +90,20 @@
     newIdsToSave: undefined,
 
     /**
+     * Track all the SugarLogic Contexts that we create for each record in bundle
+     *
+     * @type {Object}
+     */
+    sugarLogicContexts: {},
+
+    /**
+     * Track the module dependencies for the line item, so we dont have to fetch them every time
+     *
+     * @type {Object}
+     */
+    moduleDependencies: {},
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -107,7 +117,8 @@
 
         // make sure we're using the layout's model
         options.model = options.model || options.layout.model;
-        this.rowCollection = options.rowCollection || options.layout.rowCollection;
+        // get the product_bundle_items collection from the model
+        options.collection = options.model.get('product_bundle_items');
         this.listColSpan = options.layout.listColSpan;
 
         this._super('initialize', [options]);
@@ -132,12 +143,77 @@
         this.el = this.layout.el;
         this.setElement(this.el);
 
-        this.buildRowsData();
-
         this.context.on('quotes:group:create:qli:' + this.model.get('id'), this.onAddNewItemToGroup, this);
         this.context.on('quotes:group:create:note:' + this.model.get('id'), this.onAddNewItemToGroup, this);
         this.context.on('editablelist:cancel:' + this.model.get('id'), this.onCancelRowEdit, this);
         this.context.on('editablelist:save:' + this.model.get('id'), this.onSaveRowEdit, this);
+
+        // for each item in the collection, setup SugarLogic
+        this.collection.each(this.setupSugarLogicForModel, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.collection.on('add', this.setupSugarLogicForModel, this);
+    },
+
+    /**
+     * Load and cache SugarLogic dependencies for a module
+     *
+     * @param {Data.Bean} model
+     * @return {Array}
+     * @private
+     */
+    _getSugarLogicDependenciesForModel: function(model) {
+        var module = model.module;
+        if (_.isUndefined(this.moduleDependencies[module])) {
+            var dependencies;
+            var moduleMetadata;
+            //TODO: These dependencies would normally be filtered by view action. Need to make that logic
+            // external from the Sugarlogic plugin. Probably somewhere in the SidecarExpressionContext class...
+            // first get the module from the metadata
+            moduleMetadata = app.metadata.getModule(module) || {};
+            // load any dependencies found there
+            dependencies = moduleMetadata.dependencies || [];
+            // now lets check the record view to see if it has any local ones on it.
+            if (moduleMetadata.views && moduleMetadata.views.record) {
+                var recordMetadata = moduleMetadata.views.record.meta;
+                if (!_.isUndefined(recordMetadata.dependencies)) {
+                    dependencies = dependencies.concat(recordMetadata.dependencies);
+                }
+            }
+
+            // cache the results so we don't have to do this expensive lookup any more
+            this.moduleDependencies[module] = dependencies;
+        }
+
+        return this.moduleDependencies[module];
+    },
+
+    /**
+     * Setup dependencies for a specific model.
+     *
+     * @param {Data.Bean} model
+     * @param {Data.Collection} collection
+     * @param {Object} options
+     */
+    setupSugarLogicForModel: function(model, collection, options) {
+        var slContext;
+        var dependencies = this._getSugarLogicDependenciesForModel(model);
+        if (_.size(dependencies) > 0) {
+
+            app.logger.debug('Setting up SugarLogic for "' + model.get('id') + '" with module of "' +
+                model.module + '" with "' + dependencies.length + '" dependencies');
+
+            slContext = this.initSugarLogicForModelWithDeps(
+                model,
+                dependencies,
+                _.has(this.toggledModels, model.get('id'))
+            );
+            this.sugarLogicContexts[model.get('id')] = slContext;
+        }
     },
 
     /**
@@ -146,9 +222,15 @@
      * @param {Data.Bean} rowModel The row collection model that was created and now canceled
      */
     onCancelRowEdit: function(rowModel) {
-        if (rowModel._notSaved) {
-            this.newIdsToSave = _.without(this.newIdsToSave, rowModel.get('id'));
-            this.rowCollection.remove(rowModel);
+        if (rowModel.has('_notSaved')) {
+            var rowId = rowModel.get('id');
+            this.newIdsToSave = _.without(this.newIdsToSave, rowId);
+            this.collection.remove(rowModel);
+
+            if (!_.isUndefined(this.sugarLogicContexts[rowId])) {
+                // cleanup any sugarlogic contexts
+                this.sugarLogicContexts[rowId].dispose();
+            }
         }
     },
 
@@ -158,16 +240,16 @@
      * also resets the rowFields with the new model's ID so rows toggle properly
      *
      * @param {Data.Bean} rowModel
-     * @param oldModelId
+     * @param {string} oldModelId
      */
     onSaveRowEdit: function(rowModel, oldModelId) {
         var $oldRow;
         var modelId = rowModel.get('id');
         var modelModule = rowModel.module;
 
-        if (rowModel.hasOwnProperty('_notSaved')) {
+        if (rowModel.has('_notSaved')) {
             // if the rowModel still has _notSaved on it, remove it
-            delete rowModel._notSaved;
+            rowModel.unset('_notSaved');
 
             if (this.toggledModels[oldModelId]) {
                 delete this.toggledModels[oldModelId];
@@ -202,12 +284,9 @@
         // save the new model ID
         this.newIdsToSave.push(newRelatedModelId);
 
-        // set the new model ID on the model
-        relatedModel.set('id', newRelatedModelId);
-
-        if (this.rowCollection.length) {
+        if (this.collection.length) {
             // get the model with the highest position
-            maxPositionModel = _.max(this.rowCollection.models, function(model) {
+            maxPositionModel = _.max(this.collection.models, function(model) {
                 return +model.get('position');
             });
 
@@ -215,40 +294,21 @@
             position = +maxPositionModel.get('position') + 1;
         }
 
-        // set the new position for the row model
-        relatedModel.set('position', position);
+        // set a few items on the model
+        relatedModel.set({
+            'position': position,
+            id: newRelatedModelId,
+            _notSaved: true
+        });
 
         // this model's fields should be set to render
         relatedModel.modelView = 'edit';
-
-        // Set _notSaved flag on model so when we save we can remove the fake ID
-        relatedModel._notSaved = true;
 
         // add model to toggledModels to be toggled next render
         this.toggledModels[relatedModel.id] = relatedModel;
 
         // adding to the collection will trigger the render
-        this.rowCollection.add(relatedModel);
-    },
-
-    /**
-     * Iterates through related_records on the model and builds this.rowCollection
-     */
-    buildRowsData: function() {
-        var bundleItems = this.model.get('product_bundle_items');
-        if (bundleItems && bundleItems.records) {
-            _.each(bundleItems.records, function(record) {
-                var bean = app.data.createBean(record._module, record);
-                // reset modelView back to list
-                bean.modelView = 'list';
-
-                if (record._module === 'ProductBundleNotes' && bean.fields && bean.fields.description) {
-                    bean.fields.description = _.extend(bean.fields.description, this.pbnDescriptionMetadata);
-                }
-
-                this.rowCollection.add(bean);
-            }, this);
-        }
+        this.collection.add(relatedModel);
     },
 
     /**
@@ -316,7 +376,7 @@
         var toggleModel;
 
         if (isEdit) {
-            toggleModel = this.rowCollection.get(rowModelId);
+            toggleModel = this.collection.get(rowModelId);
             toggleModel.modelView = 'edit';
             this.toggledModels[rowModelId] = toggleModel;
         } else {
@@ -328,6 +388,10 @@
 
         this.$('tr[name=' + rowModule + '_' + rowModelId + ']').toggleClass('tr-inline-edit', isEdit);
         this.toggleFields(this.rowFields[rowModelId], isEdit);
+
+        if (isEdit) {
+            this.context.trigger('list:editrow:fire');
+        }
     },
 
     /**
@@ -453,7 +517,12 @@
      * @inheritdoc
      */
     _dispose: function() {
+        _.each(this.sugarLogicContexts, function(slContext) {
+            slContext.dispose();
+        });
         this._super('_dispose');
         this.rowFields = null;
+        this.sugarLogicContexts = {};
+        this.moduleDependencies = {};
     }
 })

@@ -89,6 +89,11 @@ class MaxRelatedExpression extends NumericExpression
             new_value = model.get(rel_field) || '',
             finite_values = {},
             rollup_value = '0';
+            
+        // this needs to be an object, not an array
+        if (_.isArray(all_values) && _.isEmpty(all_values)) {
+            all_values = {};
+        }
 
         if (isCurrency) {
             new_value = App.currency.convertToBase(

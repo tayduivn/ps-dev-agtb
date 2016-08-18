@@ -100,6 +100,10 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
                 }
             });
         });
+
+        it('should create a debouceRender method', function() {
+            expect(_.isFunction(view.debouceRender)).toBeTruthy();
+        });
     });
 
     describe('_onCreateGroupBtnClicked()', function() {

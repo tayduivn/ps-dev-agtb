@@ -131,7 +131,7 @@
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
 
-        if (this.model._notSaved) {
+        if (this.model.has('_notSaved')) {
             this.model.id = null;
             this.model.unset('id');
         }

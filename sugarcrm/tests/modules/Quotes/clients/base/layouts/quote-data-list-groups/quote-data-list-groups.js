@@ -74,32 +74,26 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bundle2;
         var bundle3;
         beforeEach(function() {
-            bundle1 = {
+            bundle1 = new Backbone.Model({
                 id: 'testId1',
                 name: 'testName1'
-            };
-            bundle2 = {
+            });
+            bundle2 = new Backbone.Model({
                 id: 'testId2',
                 name: 'testName2'
-            };
-            bundle3 = {
+            });
+            bundle3 = new Backbone.Model({
                 id: 'testId3',
                 name: 'testName3'
-            };
-            quoteData = {
-                records: [
-                    bundle1,
-                    bundle2
-                ]
-            };
+            });
+            quoteData = new Backbone.Collection([
+                bundle1,
+                bundle2
+            ]);
 
             sinon.collection.spy(layout, '_addQuoteGroupToLayout');
             sinon.collection.spy(layout, 'render');
-            layout.model.set('product_bundles', quoteData);
-        });
-
-        it('should set this.records to quoteData.records', function() {
-            expect(layout.records).toEqual(quoteData.records);
+            layout.model.set('bundles', quoteData);
         });
 
         it('should set this.groupIds with quoteData record IDs', function() {
@@ -119,15 +113,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout._addQuoteGroupToLayout.restore();
             sinon.collection.spy(layout, '_addQuoteGroupToLayout');
 
-            quoteData = {
-                records: [
-                    bundle1,
-                    bundle2,
-                    bundle3
-                ]
-            };
+            quoteData = new Backbone.Collection([
+                bundle1,
+                bundle2,
+                bundle3
+            ]);
 
-            layout.model.set('product_bundles', quoteData);
+            layout.model.set('bundles', quoteData);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle1);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle2);
             expect(layout._addQuoteGroupToLayout).toHaveBeenCalledWith(bundle3);
@@ -142,7 +134,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var initComponentsSpy;
         beforeEach(function() {
             initComponentsSpy = sinon.collection.spy();
-            sinon.collection.stub(app.data, 'createBean', function() {});
+            sinon.collection.spy(layout.context, 'getChildContext');
             sinon.collection.stub(app.view, 'createLayout', function() {
                 return {
                     initComponents: initComponentsSpy
@@ -153,8 +145,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout._addQuoteGroupToLayout({});
         });
 
-        it('should call app.data.createBean', function() {
-            expect(app.data.createBean).toHaveBeenCalled();
+        it('should call layout.context.getChildContext', function() {
+            expect(layout.context.getChildContext).toHaveBeenCalled({module: 'ProductBundles'});
         });
 
         it('should call app.view.createLayout', function() {
@@ -172,15 +164,17 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_onCreateQuoteGroup()', function() {
         var callArgs;
+        var bundles;
         beforeEach(function() {
-            layout.records = [{
+            bundles = new Backbone.Collection([{
                 id: 'testId1',
                 position: 0
             }, {
                 id: 'testId2',
                 position: 1
-            }];
+            }]);
             layout.model.set('id', 'testQuoteLayoutId');
+            layout.model.set('bundles', bundles);
 
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(app.api, 'relationships', function() {});
@@ -219,28 +213,41 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should call app.api.relationships with proper link payload position', function() {
             expect(callArgs.args[2].related.position).toBe(2);
         });
+
+        it('should call app.api.relationships with payload position of 0 when no bundles exist', function() {
+            layout.model.set('bundles', new Backbone.Collection());
+            layout._onCreateQuoteGroup();
+
+            callArgs = app.api.relationships.lastCall;
+
+            expect(callArgs.args[2].related.position).toBe(0);
+        });
     });
 
     describe('_onCreateQuoteGroupSuccess()', function() {
         var newBundleData;
+        var bundles;
         beforeEach(function() {
-            layout.records = [{
+            bundles = new Backbone.Collection([{
                 id: 'testId1',
                 position: 0
             }, {
                 id: 'testId2',
                 position: 1
-            }];
+            }]);
+            layout.model.set('bundles', bundles);
             newBundleData = {
                 related_record: {
                     id: 'testId3',
-                    position: 2
+                    position: 2,
+                    product_bundle_items: []
                 }
             };
             sinon.collection.stub(app.alert, 'dismiss', function() {});
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(layout, '_addQuoteGroupToLayout', function() {});
             sinon.collection.stub(layout, 'render', function() {});
+            sinon.collection.spy(bundles, 'add');
 
             layout._onCreateQuoteGroupSuccess(newBundleData);
         });
@@ -258,15 +265,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should add the newBundleData to records', function() {
-            expect(layout.records[2].id).toBe('testId3');
+            expect(layout.model.get('bundles').at(2).get('id')).toBe('testId3');
         });
 
-        it('should call _addQuoteGroupToLayout', function() {
-            expect(layout._addQuoteGroupToLayout).toHaveBeenCalledWith(newBundleData.related_record);
-        });
-
-        it('should call render', function() {
-            expect(layout.render).toHaveBeenCalled();
+        it('should call add on bundles collection', function() {
+            expect(bundles.add).toHaveBeenCalledWith(newBundleData.related_record);
         });
     });
 
@@ -279,11 +282,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         beforeEach(function() {
             groupId = 'testId1';
             groupName = 'testName1';
-            groupToDelete = {
+            groupToDelete = new Backbone.Model({
                 id: groupId,
                 name: groupName
-            };
+            });
             layout.model.set('id', 'testQuoteLayoutId');
+            layout.model.set('bundles', new Backbone.Collection(groupToDelete));
             sinon.collection.stub(app.alert, 'dismiss', function() {});
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(app.api, 'records', function() {});
@@ -326,10 +330,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             disposeStub = sinon.collection.stub();
             groupId = 'testId1';
             groupToDelete = {
-                id: groupId,
+                model: new Backbone.Model({
+                    id: groupId
+                }),
                 dispose: disposeStub
             };
-            layout.records = [groupToDelete, {id: 'testId2'}];
+            layout.model.set('bundles', new Backbone.Collection([groupToDelete.model, {id: 'testId2'}]));
             layout.groupIds = [groupId, 'testId2'];
 
             sinon.collection.stub(app.alert, 'dismiss', function() {});
@@ -351,8 +357,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should remove the group from this.records', function() {
-            expect(layout.records.length).toBe(1);
-            expect(layout.records[0].id).toBe('testId2');
+            var bundles = layout.model.get('bundles');
+            expect(bundles.length).toBe(1);
+            expect(bundles.at(0).get('id')).toBe('testId2');
         });
 
         it('should call groupToDelete.dispose()', function() {

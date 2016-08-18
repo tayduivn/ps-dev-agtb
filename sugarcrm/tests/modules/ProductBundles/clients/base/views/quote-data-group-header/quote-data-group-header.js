@@ -1,3 +1,14 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+
 describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
     var app;
     var view;
@@ -65,10 +76,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
 
     describe('_onDeleteBundleBtnClicked()', function() {
         it('should trigger quotes:group:delete event', function() {
-            sinon.collection.spy(view.context, 'trigger');
+            view.context.parent = SugarTest.app.context.getContext();
+            sinon.collection.spy(view.context.parent, 'trigger');
             view._onDeleteBundleBtnClicked();
 
-            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:delete');
+            expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:group:delete');
         });
     });
 

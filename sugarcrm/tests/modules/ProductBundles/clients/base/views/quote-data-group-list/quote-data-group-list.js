@@ -5,7 +5,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     var viewContext;
     var viewContextOnSpy;
     var viewLayoutModel;
-    var viewLayoutRowCollection;
     var layout;
     var layoutDefs;
     var pbnMetadata;
@@ -14,13 +13,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     beforeEach(function() {
         app = SugarTest.app;
         viewLayoutModel = new Backbone.Model({
-            product_bundle_items: [
-                {id: 'test1', position: 0},
-                {id: 'test2', position: 1},
-                {id: 'test3', position: 2}
-            ]
+            product_bundle_items: new Backbone.Collection([
+                {id: 'test1', _module: 'Products', position: 0},
+                {id: 'test2', _module: 'Products', position: 1},
+                {id: 'test3', _module: 'Products', position: 2}
+            ])
         });
-        viewLayoutRowCollection = new Backbone.Collection(viewLayoutModel.get('product_bundle_items'));
         layoutDefs = {
             'components': [
                 {'layout': {'span': 4}},
@@ -30,7 +28,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         layout = SugarTest.createLayout('base', 'ProductBundles', 'default', layoutDefs);
         layout.model = viewLayoutModel;
         layout.listColSpan = 3;
-        layout.rowCollection = viewLayoutRowCollection;
         viewMeta = {
             selection: {
                 type: 'multi',
@@ -100,8 +97,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.el).toBe(layout.el);
         });
 
-        it('should set rowCollection based on related_records', function() {
-            expect(view.rowCollection.length).toBe(3);
+        it('should set collection based on product_bundle_items from the model', function() {
+            expect(view.collection.length).toBe(3);
         });
 
         describe('setting fields', function() {
@@ -216,6 +213,96 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
     });
 
+    describe('bindDataChange()', function() {
+        it('will add a listener to the collection for add', function() {
+            sinon.collection.stub(view.collection, 'on');
+            view.bindDataChange();
+            expect(view.collection.on).toHaveBeenCalledWith('add', view.setupSugarLogicForModel, view);
+        });
+    });
+
+    describe('_getSugarLogicDependenciesForModel()', function() {
+        var model;
+        beforeEach(function() {
+            model = new Backbone.Model();
+            model.module = 'Products';
+        });
+
+        afterEach(function() {
+            model = null;
+        });
+
+        it('will find the module in metadata and return the dependencies', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    dependencies: [{dependency: true}]
+                };
+            });
+            var dep = view._getSugarLogicDependenciesForModel(model);
+            expect(app.metadata.getModule).toHaveBeenCalledWith('Products');
+
+            expect(dep.length).toEqual(1);
+        });
+
+        it('will load any dependencies from the record view', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    dependencies: [{dependency: true}],
+                    views: {
+                        record: {
+                            meta: {
+                                dependencies: [{dependency1: true}]
+                            }
+                        }
+                    }
+                };
+            });
+
+            var dep = view._getSugarLogicDependenciesForModel(model);
+            expect(app.metadata.getModule).toHaveBeenCalledWith('Products');
+
+            expect(dep.length).toEqual(2);
+        });
+
+        it('will load dependencies from cache', function() {
+            sinon.collection.spy(app.metadata, 'getModule');
+            view.moduleDependencies.Products = [{dependency: true}];
+            expect(app.metadata.getModule).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('setupSugarLogicForModel', function() {
+        var model;
+        beforeEach(function() {
+            // this is needed since we can't load the SugarLogic plugin in tests
+            view.initSugarLogicForModelWithDeps = function() {};
+            model = new Backbone.Model({id: 'asdf'});
+        });
+        it('will not setup dependencies when size is 0', function() {
+            sinon.collection.stub(view, '_getSugarLogicDependenciesForModel', function() {
+                return [];
+            });
+            sinon.collection.spy(view, 'initSugarLogicForModelWithDeps');
+            view.setupSugarLogicForModel(model);
+            expect(view.initSugarLogicForModelWithDeps).not.toHaveBeenCalled();
+        });
+
+        it('it will init dependencies for the model', function() {
+            var deps = [{'dependency': true}];
+            sinon.collection.stub(view, '_getSugarLogicDependenciesForModel', function() {
+                return deps;
+            });
+            var ret = {
+                dispose: function() {}
+            };
+            sinon.collection.stub(view, 'initSugarLogicForModelWithDeps', function() {
+                return ret;
+            });
+            view.setupSugarLogicForModel(model);
+            expect(view.initSugarLogicForModelWithDeps).toHaveBeenCalled(model, deps, true);
+        });
+    });
+
     describe('onCancelRowEdit()', function() {
         var rowModel1;
         var rowModel2;
@@ -228,28 +315,27 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             rowModel2 = new Backbone.Model({
                 id: 'rowModel2'
             });
-            rowModel2._notSaved = true;
+            rowModel2.set('_notSaved', true);
             view.newIdsToSave.push('rowModel2');
-            view.rowCollection.add(rowModel1);
-            view.rowCollection.add(rowModel2);
+            view.collection.add(rowModel1);
+            view.collection.add(rowModel2);
         });
 
         afterEach(function() {
             rowModel1 = null;
             rowModel2 = null;
-            view.rowCollection = null;
         });
 
         it('should only remove the rowModel from the collection when _notSaved = true', function() {
             view.onCancelRowEdit(rowModel1);
             expect(view.newIdsToSave.length).toBe(1);
-            expect(view.rowCollection.length).toBe(5);
+            expect(view.collection.length).toBe(5);
         });
 
         it('should remove the rowModel from the collection since _notSaved = true', function() {
             view.onCancelRowEdit(rowModel2);
             expect(view.newIdsToSave.length).toBe(0);
-            expect(view.rowCollection.length).toBe(4);
+            expect(view.collection.length).toBe(4);
         });
     });
 
@@ -285,13 +371,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         describe('model has _notSaved = true', function() {
             it('should remove _notSaved from the model if it exists', function() {
-                rowModel._notSaved = true;
+                rowModel.set('_notSaved', true);
                 view.onSaveRowEdit(rowModel, rowModelId);
                 expect(rowModel._notSaved).toBeUndefined();
             });
 
             it('should remove the model from toggledModels', function() {
-                rowModel._notSaved = true;
+                rowModel.set('_notSaved', true);
                 view.toggledModels[rowModel.id] = rowModel;
                 view.onSaveRowEdit(rowModel, rowModelId);
                 expect(view.toggledModels[rowModel.id]).toBeUndefined();
@@ -359,7 +445,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(relatedModel.get('id')).toBe(relatedModelId);
         });
 
-        it('should set the new relatedModel position to be the max of the rowCollection models positions', function() {
+        it('should set the new relatedModel position to be the max of the collection models positions', function() {
             expect(relatedModel.get('position')).toBe(3);
         });
 
@@ -368,70 +454,15 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         it('should set the new relatedModel _notSaved to be true', function() {
-            expect(relatedModel._notSaved).toBeTruthy();
+            expect(relatedModel.get('_notSaved')).toBeTruthy();
         });
 
         it('should add the new relatedModel to toggledModels', function() {
             expect(view.toggledModels[relatedModelId]).toEqual(relatedModel);
         });
 
-        it('should add the new relatedModel to rowCollection', function() {
-            expect(view.rowCollection.contains(relatedModel)).toBeTruthy();
-        });
-    });
-
-    describe('buildRowsData()', function() {
-        var record1;
-        var record2;
-        var productModel;
-        var pbnModel;
-
-        beforeEach(function() {
-            productModel = new Backbone.Model();
-            pbnModel = new Backbone.Model();
-            pbnModel.fields = {
-                description: {
-                    name: 'description',
-                    rows: 3
-                }
-            };
-
-            record1 = {
-                id: 'recordId1',
-                position: 0,
-                _module: 'Products'
-            };
-            record2 = {
-                id: 'recordId2',
-                position: 1,
-                _module: 'ProductBundleNotes'
-            };
-            view.model.set('product_bundle_items', {
-                records: [record1, record2]
-            });
-            view.rowCollection = new Backbone.Collection();
-
-            sinon.collection.stub(app.data, 'createBean', function(module, options) {
-                if (module === 'Products') {
-                    return productModel.set(options);
-                } else {
-                    return pbnModel.set(options);
-                }
-            });
-
-            view.buildRowsData();
-        });
-
-        it('should set modelView to list for Products beans', function() {
-            expect(view.rowCollection.models[0].modelView).toBe('list');
-        });
-
-        it('should set modelView to list for ProductBundleNotes beans', function() {
-            expect(view.rowCollection.models[1].modelView).toBe('list');
-        });
-
-        it('should set description fields for ProductBundleNotes beans', function() {
-            expect(view.rowCollection.models[1].fields.description.rows).toBe(3);
+        it('should add the new relatedModel to collection', function() {
+            expect(view.collection.contains(relatedModel)).toBeTruthy();
         });
     });
 
@@ -520,7 +551,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 id: rowModelId,
                 module: rowModule
             });
-            view.rowCollection.add(rowModel);
+            view.collection.add(rowModel);
 
             view.rowFields[rowModelId] = rowModel;
 

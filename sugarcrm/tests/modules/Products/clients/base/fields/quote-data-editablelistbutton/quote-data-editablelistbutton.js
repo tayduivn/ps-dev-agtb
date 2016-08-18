@@ -141,13 +141,13 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
         });
 
         it('should unset id if model._notSaved is true', function() {
-            field.model._notSaved = true;
+            field.model.set('_notSaved', true);
             field._save();
             expect(field.model.id).toBeUndefined();
         });
 
         it('should unset id on model if model._notSaved is true', function() {
-            field.model._notSaved = true;
+            field.model.set('_notSaved', true);
             field._save();
             expect(field.model.get('id')).toBeUndefined();
         });

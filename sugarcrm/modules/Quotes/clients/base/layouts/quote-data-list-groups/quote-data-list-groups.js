@@ -52,7 +52,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        this.model.on('change:product_bundles', this._onProductBundleChange, this);
+        this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
     },
@@ -60,15 +60,18 @@
     /**
      * Handler for when quote_data changes on the model
      */
-    _onProductBundleChange: function(model, productBundles) {
-        this.records = productBundles.records;
-
+    _onProductBundleChange: function(productBundles) {
         // fixme: SFA-4399 will add "groupless" rows in here before the groups
+        // after adding and deleting the change event is like ite change for the model, where the
+        // model is the first param and not the actual value it's self.
+        if (productBundles instanceof Backbone.Model) {
+            productBundles = productBundles.get('bundles');
+        }
 
-        _.each(this.records, function(bundleData) {
-            if (!_.contains(this.groupIds, bundleData.id)) {
-                this.groupIds.push(bundleData.id);
-                this._addQuoteGroupToLayout(bundleData);
+        productBundles.each(function(bundle) {
+            if (!_.contains(this.groupIds, bundle.get('id'))) {
+                this.groupIds.push(bundle.get('id'));
+                this._addQuoteGroupToLayout(bundle);
             }
         }, this);
 
@@ -81,21 +84,19 @@
      * @param {Object} [bundleData] The ProductBundle data object - defaults to empty Object
      * @private
      */
-    _addQuoteGroupToLayout: function(bundleData) {
-        bundleData = bundleData || {};
-
-        var groupModel = app.data.createBean('ProductBundles', bundleData);
+    _addQuoteGroupToLayout: function(bundle) {
+        var pbContext = this.context.getChildContext({module: 'ProductBundles'});
+        pbContext.prepare();
         var groupLayout = app.view.createLayout({
-            context: this.context,
+            context: pbContext,
             meta: this.quoteDataGroupMeta,
             type: 'quote-data-group',
             layout: this,
-            module: 'Quotes',
-            loadModule: 'ProductBundles',
-            model: groupModel
+            module: 'ProductBundles',
+            model: bundle
         });
 
-        groupLayout.initComponents(undefined, undefined, 'ProductBundles');
+        groupLayout.initComponents(undefined, pbContext, 'ProductBundles');
         this.addComponent(groupLayout);
     },
 
@@ -106,9 +107,16 @@
      * @private
      */
     _onCreateQuoteGroup: function() {
-        var highestPositionBundle = _.max(this.records, function(record) {
-            return record.position;
+        var bundles = this.model.get('bundles');
+        var nextPosition = 0;
+        var highestPositionBundle = bundles.max(function(bundle) {
+            return bundle.get('position');
         });
+
+        // handle on the off chance that no bundles exist on the quote.
+        if (!_.isEmpty(highestPositionBundle)) {
+            nextPosition = parseInt(highestPositionBundle.get('position')) + 1;
+        }
 
         app.alert.show('adding_bundle_alert', {
             level: 'info',
@@ -120,7 +128,7 @@
             'id': this.model.get('id'),
             'link': 'product_bundles',
             'related': {
-                position: highestPositionBundle.position + 1
+                position: nextPosition
             }
         }, null, {
             success: _.bind(this._onCreateQuoteGroupSuccess, this)
@@ -142,9 +150,13 @@
             messages: app.lang.get('LBL_ADDED_BUNDLE_SUCCESS_MSG', 'Quotes')
         });
 
-        this.records.push(newBundleData.related_record);
-        this._addQuoteGroupToLayout(newBundleData.related_record);
-        this.render();
+        var bundles = this.model.get('bundles');
+        // make sure that the product_bundle_items array is there
+        if (_.isUndefined(newBundleData.related_record.product_bundle_items)) {
+            newBundleData.related_record.product_bundle_items = [];
+        }
+        // now add the new record to the bundles collection
+        bundles.add(newBundleData.related_record);
     },
 
     /**
@@ -207,19 +219,9 @@
             messages: app.lang.get('LBL_DELETED_BUNDLE_SUCCESS_MSG', 'Quotes')
         });
 
-        var removeIndex = -1;
-        this.records = _.each(this.records, function(record, index) {
-            if (record.id === groupId) {
-                removeIndex = index;
-            }
-        });
+        var bundles = this.model.get('bundles');
+        bundles.remove(groupToDelete.model);
 
-        if (removeIndex !== -1) {
-            // remove the record from this.records
-            this.records.splice(removeIndex, 1);
-        }
-
-        // remove the id from this.groupIds
         this.groupIds = _.without(this.groupIds, groupId);
 
         // dispose the group

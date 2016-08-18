@@ -765,6 +765,14 @@ $dictionary['Quote'] = array(
             'rel_fields' => array('bundle_index' => array('type' => 'integer')),
             'source' => 'non-db',
         ),
+        'bundles' => array(
+            'name' => 'bundles',
+            'type' => 'collection',
+            'vname' => 'LBL_PRODUCT_BUNDLES',
+            'links' => array('product_bundles'),
+            'source' => 'non-db',
+            'order_by' => 'position:asc',
+        ),
         'opportunities' => array(
             'name' => 'opportunities',
             'type' => 'link',

@@ -38,11 +38,6 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             expect(layout.tagName).toBe('tbody');
         });
 
-        it('should have rowCollection set to an empty backbone collection', function() {
-            layout.initialize({});
-            expect(layout.rowCollection instanceof Backbone.Collection).toBeTruthy();
-        });
-
         it('should call app.metadata.getView with first param Products module', function() {
             layout.initialize({});
             lastCall = app.metadata.getView.lastCall;
@@ -58,6 +53,14 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         it('should set listColSpan if metadata exists', function() {
             layout.initialize({});
             expect(layout.listColSpan).toBe(4);
+        });
+    });
+
+    describe('bindDataChange()', function() {
+        it('will subscribe the model to listen for a change on product_bundle_items and call render', function() {
+            sinon.collection.stub(layout.model, 'on');
+            layout.bindDataChange();
+            expect(layout.model.on).toHaveBeenCalledWith('change:product_bundle_items', layout.render, layout);
         });
     });
 });

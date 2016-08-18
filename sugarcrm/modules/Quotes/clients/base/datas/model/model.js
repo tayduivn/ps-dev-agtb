@@ -1,4 +1,3 @@
-{{!--
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,8 +8,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#each collection.models}}
-    {{partial 'row' ../this module=this.module view=../this model=this fields=../_fields listColSpan=../listColSpan}}
-{{/each}}
-
+/**
+ * @class Model.Datas.Base.QuotesModel
+ * @alias SUGAR.App.model.datas.BaseQuotesModel
+ * @extends Model.Bean
+ */
+({
+    plugins: ['VirtualCollection']
+})
