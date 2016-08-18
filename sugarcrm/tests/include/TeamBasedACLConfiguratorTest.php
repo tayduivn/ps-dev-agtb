@@ -251,21 +251,4 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($fallbackModuleAccess, $actualActions[$extraModule]['module'][$action]['aclaccess']);
         $this->assertEquals(ACL_ALLOW_SELECTED_TEAMS, $actualActions[$this->module]['module'][$action]['aclaccess']);
     }
-
-    /**
-     * Test removeAllTBAValuesFromBean method.
-     */
-    public function testRemoveAllTBAValuesFromBean()
-    {
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('removeAllTBAValuesFromTable'));
-        $this->tbaConfig
-            ->expects($this->once())
-            ->method('removeAllTBAValuesFromTable');
-        $beanList = array(
-            'Users' => 'User', // does implement tba
-            'Unknowns' => 'Unknown', // does not exist
-            'Addressees' => 'Addressee', // does not implement tba
-        );
-        $this->tbaConfig->removeAllTBAValuesFromBeans($beanList);
-    }
 }

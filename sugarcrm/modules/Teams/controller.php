@@ -153,7 +153,7 @@ class TeamsController extends SugarController {
                 $tbaConfigurator->setGlobal(false);
 
                 // clear ALL TBA data
-                $tbaConfigurator->removeAllTBAValuesFromBeans($GLOBALS['beanList']);
+                $tbaConfigurator->removeTBAValuesFromAllTables(array());
             }
 
             echo json_encode(array('status' => true));
