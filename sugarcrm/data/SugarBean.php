@@ -8123,33 +8123,104 @@ class SugarBean
             return $this->lockedFields;
         }
 
+        // Set the locked field array now
         $this->lockedFields = array();
 
-        // Check to see if this bean implements locked fields
-        if (isset($this->field_defs['locked_fields']['link'])) {
-            // Load the relationship for locked fields
-            $relField = $this->field_defs['locked_fields']['link'];
+        // Get the related beans
+        $relBeans = $this->getLockedFieldRelBeans();
 
+        // And from each bean, get the locked fields property, making sure to transform
+        // it into an array
+        foreach ($relBeans as $relBean) {
+            $merge = empty($relBean->pro_locked_variables) ? array() : json_decode($relBean->pro_locked_variables);
+            $this->lockedFields = array_merge($this->lockedFields, $merge);
+        }
+
+        // Make the field list unique
+        $this->lockedFields = array_unique($this->lockedFields);
+
+        // Send it back
+        return $this->lockedFields;
+    }
+
+    /**
+     * Adds a process definition bean as a relate bean to this bean
+     * @param pmse_BpmProcessDefinition $pd
+     */
+    public function addLockedFields(pmse_BpmProcessDefinition $pd)
+    {
+        // Only add a related record if we have a record to start with
+        if ($this->id) {
+            // Get our locked field rel field
+            $relField = $this->getLockedFieldRelField();
+
+            // Try to load the relationship field...
+            if ($this->load_relationship($relField)) {
+                // And if it works, get our current related PDs and...
+                $current = $this->getLockedFieldRelBeans();
+
+                // Add the pd to it if it is not already related
+                if (!isset($current[$pd->id])) {
+                    $this->$relField->add($pd);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes a process definition bean relationship from this bean
+     * @param  pmse_BpmProcessDefinition $pd
+     */
+    public function removeLockedFields(pmse_BpmProcessDefinition $pd)
+    {
+        // Only handle this if we have a record to start with
+        if ($this->id) {
+            // Get our current related PDs
+            $current = $this->getLockedFieldRelBeans();
+
+            // Delete this pd from it if it is related
+            if (isset($current[$pd->id])) {
+                // Get our locked field rel field
+                $relField = $this->getLockedFieldRelField();
+
+                if (!$this->$relField->delete($this->id, $pd->id)) {
+                    // Log the failure
+                    $msg = sprintf(
+                        "Failed to delete locked fields rel of PD %s from %s",
+                        $pd->id,
+                        $this->module_dir
+                    );
+
+                    LoggerManager::getLogger()->fatal($msg);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets related process definition beans, if there are any
+     * @return array
+     */
+    public function getLockedFieldRelBeans()
+    {
+        // Check to see if this bean implements locked fields
+        if ($relField = $this->getLockedFieldRelField()) {
             // If there is a relationship, grab the beans from it
             if ($this->load_relationship($relField)) {
-                $relBeans = $this->$relField->getBeans();
-
-                // And from each bean, get the locked fields property, making sure
-                // to transform it into an array
-                foreach ($relBeans as $relBean) {
-                    $merge = array();
-                    if (!empty($relBean->pro_locked_variables)) {
-                        $merge = json_decode(html_entity_decode($relBean->pro_locked_variables));
-                    }
-                    $this->lockedFields = array_merge($this->lockedFields, $merge);
-                }
-
-                // And make it unique before sending it back
-                $this->lockedFields = array_unique($this->lockedFields);
+                return $this->$relField->getBeans([], ['encode' => false]);
             }
         }
 
-        return $this->lockedFields;
+        return array();
+    }
+
+    /**
+     * Gets the locked field link field
+     * @return string
+     */
+    protected function getLockedFieldRelField()
+    {
+        return isset($this->field_defs['locked_fields']['link']) ? $this->field_defs['locked_fields']['link'] : '';
     }
 
     /**

@@ -505,29 +505,14 @@ class PMSECaseFlowHandler
         // Only set this for new flows, since it will be removed when the case is
         // terminated
         if (isset($flowData['cas_flow_status']) && $flowData['cas_flow_status'] === 'NEW') {
+            // There are, so check if we need to add this PD rel to the target bean
+            $target = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+
+            // Get the process definition bean
             $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $flowData['pro_id']);
-            // See if there locked fields for this process
-            if (!empty($pd->pro_locked_variables)) {
-                // There are, so check if we need to add this PD rel to the target bean
-                $target = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
 
-                // If there is a target record found, handle adding the relationship
-                if ($target->id) {
-                    // Get our locked field rel field
-                    $relField = $target->field_defs['locked_fields']['link'];
-
-                    // Try to load the relationship field...
-                    if ($target->load_relationship($relField)) {
-                        // And if it works, get our current related PDs and...
-                        $current = $target->$relField->getBeans();
-
-                        // Add this pd to it if it is not already related
-                        if (!isset($current[$pd->id])) {
-                            $target->$relField->add($pd);
-                        }
-                    }
-                }
-            }
+            // Add the bean for relationship now
+            $target->addLockedFields($pd);
         }
     }
 
@@ -538,33 +523,11 @@ class PMSECaseFlowHandler
      */
     public function deleteLockFieldsFromBean(SugarBean $bean, $proId)
     {
+        // Get the process definition bean
         $pd = $this->retrieveBean('pmse_BpmProcessDefinition', $proId);
 
-        // See if there locked fields for this process
-        if (!empty($pd->pro_locked_variables)) {
-            // Get our locked field rel field
-            $relField = $bean->field_defs['locked_fields']['link'];
-
-            // Try to load the relationship field...
-            if ($bean->load_relationship($relField)) {
-                // And if it works, get our current related PDs and...
-                $current = $bean->$relField->getBeans();
-
-                // Delete this pd from it if it is related
-                if (isset($current[$pd->id])) {
-                    if (!$bean->$relField->delete($bean->id, $pd->id)) {
-                        // Log the failure
-                        $msg = sprintf(
-                            "Failed to delete locked fields rel of PD %s from %s",
-                            $pd->id,
-                            $bean->module_dir
-                        );
-
-                        LoggerManager::getLogger()->fatal($msg);
-                    }
-                }
-            }
-        }
+        // And remove it from the target bean
+        $bean->removeLockedFields($pd);
     }
 
     /**
