@@ -135,7 +135,6 @@
 
         // Get the current module specific record layout and view
         var origRecordLayout = app.metadata.getLayout(this.recordModule, 'record');
-        var origRecordView = app.metadata.getView(this.recordModule, 'record');
 
         var record = this._getChildComponent('view', 'record', origRecordLayout);
         if (!record) {
@@ -143,16 +142,9 @@
         }
 
         // Override the templates and buttons to use Process Author's templates and buttons
-        var recordMeta = _.extend({}, origRecordView, {
+        record.xmeta = {
             template: 'pmse-case',
             buttons: data.case.buttons
-         });
-
-        // Set the record view meta
-        record.view = {
-            name: 'record',
-            type: 'record',
-            meta: recordMeta
         };
 
         // Set this layout's meta to create a record layout inside it
