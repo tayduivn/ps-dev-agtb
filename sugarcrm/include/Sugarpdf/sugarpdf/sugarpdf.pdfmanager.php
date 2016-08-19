@@ -216,6 +216,19 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $contact->retrieve($focus->billing_contact_id);
 
                 if(!empty($contact->email1) || !empty($contact->email2)) {
+                    if ($email_object->load_relationship('contacts_to')) {
+                        $options = array();
+                        $primaryEmail = $contact->emailAddress->getPrimaryAddress($contact);
+
+                        if (!empty($primaryEmail)) {
+                            $primaryEmailGuid = $contact->emailAddress->getEmailGUID($primaryEmail);
+                            if (!empty($primaryEmailGuid)) {
+                                $options['email_address_id'] = $primaryEmailGuid;
+                            }
+                        }
+                        $email_object->contacts_to->add($contact->id, $options);
+                    };
+
                     //contact email is set
                     $email_object->to_addrs_ids = $focus->billing_contact_id;
                     $email_object->to_addrs_names = $focus->billing_contact_name.";";
@@ -237,6 +250,19 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
                 $acct->retrieve($focus->billing_account_id);
 
                 if(!empty($acct->email1) || !empty($acct->email2)) {
+                    if ($email_object->load_relationship('accounts_to')) {
+                        $options = array();
+                        $primaryEmail = $acct->emailAddress->getPrimaryAddress($acct);
+
+                        if (!empty($primaryEmail)) {
+                            $primaryEmailGuid = $acct->emailAddress->getEmailGUID($primaryEmail);
+                            if (!empty($primaryEmailGuid)) {
+                                $options['email_address_id'] = $primaryEmailGuid;
+                            }
+                        }
+                        $email_object->accounts_to->add($acct->id, $options);
+                    };
+
                     //acct email is set
                     $email_object->to_addrs_ids = $focus->billing_account_id;
                     $email_object->to_addrs_names = $focus->billing_account_name.";";
@@ -303,6 +329,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         @unlink($source);
 
         $note->save();
+        $email_object->attachments->add($note);
 
         //return the email id
         return $email_id;
