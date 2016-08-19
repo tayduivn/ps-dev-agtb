@@ -112,6 +112,12 @@ $vardefs = array(
                         ),
                     ),
                 ),
+                'processes' => array(
+                    'types' => array(
+                        'RR' => false,
+                        'ALL' => true,
+                    ),
+                ),
             ),
         'modified_by_name' => array(
                 'name' => 'modified_by_name',
@@ -154,6 +160,12 @@ $vardefs = array(
                             'type' => 'MyItems',
                             'label' => 'LBL_AGG_CREATED_BY_ME',
                         ),
+                    ),
+                ),
+                'processes' => array(
+                    'types' => array(
+                        'RR' => false,
+                        'ALL' => true,
                     ),
                 ),
             ),
@@ -296,6 +308,9 @@ $vardefs = array(
         'following',
         'favorite',
         'taggable',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'lockable_fields',
+        //END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,

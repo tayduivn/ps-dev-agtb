@@ -427,11 +427,10 @@ class DynamicField {
                 if ($field['type'] == 'html' || $field['type'] == 'parent') {
                     continue;
                 }
+                //Change the field to be marked as a db field instead of custom for the scope of this query
+                $fields[$name] = array_merge($field, array('source' => 'db'));
+                $hasCustomFields = true;
                 if (isset($this->bean->$name)) {
-                    //Change the field to be marked as a db field instead of custom for the scope of this query
-                    $fields[$name] = array_merge($field, array('source' => 'db'));
-                    $hasCustomFields = true;
-
                     if (in_array(
                         $field['type'],
                         array(

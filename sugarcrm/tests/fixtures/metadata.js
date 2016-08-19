@@ -501,6 +501,7 @@ tmpMetadata = {
                     name: "account_name",
                     id_name: "account_id",
                     type: "relate",
+                    link: 'accounts',
                     module: "Accounts",
                     vname: "LBL_ACCOUNT_NAME"
                 },

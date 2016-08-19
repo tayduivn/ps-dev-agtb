@@ -25,6 +25,9 @@
     initialize: function(options) {
         this._super('initialize', [options]);
 
+        //FIXME: BR-4575 will remove this.
+        this.fieldDefs = _.extend(this.fieldDefs || {}, {link: 'parent'});
+
         /**
          * A hash of available modules in the parent type dropdown matching
          * the modules names with their label.
@@ -101,9 +104,6 @@
             this.$(this.typeFieldTag).select2('disable');
         }
         return this;
-    },
-    _getRelateId: function() {
-        return this.model.get("parent_id");
     },
     format: function(value) {
         var module;

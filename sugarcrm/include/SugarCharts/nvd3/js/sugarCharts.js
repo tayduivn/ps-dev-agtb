@@ -163,8 +163,13 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                         .showTitle(params.show_title)
                         .tooltips(params.show_tooltips)
                         .tooltipContent(function(key, x, y, e, graph) {
-                            return '<h3>' + key + '</h3>' +
-                                '<p>' + y + '</p>';
+                            var content = '';
+                            var percentString = '';
+                            if (x < 100) {
+                                percentString = ' - ' + x + '%';
+                            }
+                            content = '<h3>' + key + '</h3>' + '<p>' + y + percentString + '</p>';
+                            return content;
                         })
                         .direction(params.direction)
                         .showLegend(params.show_legend)

@@ -229,12 +229,6 @@ class SugarBeanApiHelper
             throw new \SugarApiExceptionInvalidParameter($msg);
         }
 
-        // Ensure that the client isn't trying to edit fields that are locked by
-        // a process, but only if we do not explicitly say not to
-        if (empty($options['skip_locked_fields'])) {
-            $this->handleLockedFieldEdits($bean, $submittedData);
-        }
-
         // Some of the SugarFields require ID's, so lets set it up
         if (empty($bean->id)) {
             $bean->id = create_guid();
@@ -374,37 +368,6 @@ class SugarBeanApiHelper
             $cts = "client TS is {$timedate->asIso($ts_client)}";
             $sts = "server TS is {$timedate->asIso($ts_server)}";
             throw new \SugarApiExceptionEditConflict("Edit conflict - $cts, $sts");
-        }
-    }
-
-    /**
-     * Handles checking locked fields for editing
-     * @param SugarBean $bean The bean being edited
-     * @param array $data Submitted data
-     * @return null
-     * @throws SugarApiExceptionFieldEditDisabled
-     */
-    public function handleLockedFieldEdits(\SugarBean $bean, array $data)
-    {
-        // Set up the error fields collection now
-        $errors = array();
-
-        // Get our locked fields for this record if there are any
-        $locked = $bean->isUpdate() ? $bean->getLockedFields() : array();
-
-        // Now see if any of the locked fields are being edited
-        foreach ($locked as $field) {
-            if ($bean->lockedFieldHasChanged($field, $data)) {
-                $errors[] = $field;
-            }
-        }
-
-        // And finally handle the error message if there is one
-        if ($errors) {
-            $message = $bean->getLockedFieldErrorMessage($errors);
-            if (!empty($message)) {
-                throw new \SugarApiExceptionFieldEditDisabled($message);
-            }
         }
     }
 }

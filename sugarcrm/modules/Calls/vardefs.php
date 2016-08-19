@@ -36,7 +36,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
     'default' => 0,
   ),
   'duration_minutes' =>
@@ -53,7 +58,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
   ),
 
    'date_start' =>
@@ -192,7 +202,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
     'studio' => array('recordview' => false, 'wirelesseditview' => false),
   ),
-  'email_reminder_sent' => array( 
+  'email_reminder_sent' => array(
     'name' => 'email_reminder_sent',
     'vname' => 'LBL_EMAIL_REMINDER_SENT',
     'default' => 0,
@@ -219,7 +229,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '20',
     'source'=>'non-db',
   ),
-  //bug 39559 
+  //bug 39559
   'set_accept_links' => array (
     'name' => 'set_accept_links',
     'vname' => 'LBL_ACCEPT_LINK',
@@ -430,7 +440,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_interval' =>
   array(
     'name' => 'repeat_interval',
@@ -443,7 +453,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_dow' =>
   array(
     'name' => 'repeat_dow',
@@ -455,7 +465,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_until' =>
   array(
     'name' => 'repeat_until',
@@ -466,7 +476,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_count' =>
   array(
     'name' => 'repeat_count',

@@ -13,20 +13,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class TrackerReporter{
 
-	private $default_queries = array(
-	                    'all' => array(
-							"ShowLastModifiedRecords" => "", //See function below
-                       		"ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 and ts.date_end > {0} order by ts.date_end desc",
-                    	    "ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
-							"ShowTopUser" => "", //See function below
-							"ShowMyWeeklyActivities" => "", //See function below
-							"ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' group by module_name order by total_count desc",
-							"ShowTop3ModulesUsed" => "", //See function below
-                            "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions where user_id = '{0}' and date_start > {1}",
-							"ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"
-	                    ),
-    );
-	private $queries;
+    private $default_queries;
+    private $queries;
 
     //Customize sort types for non-string values.  Strings are used by default
     public $sort_types = array(
@@ -49,6 +37,7 @@ class TrackerReporter{
 	public function __construct()
 	{
 		//here we should check if anything exists in custom/Tracker dir.
+        $this->default_queries = $this->returnDefaultQueries();
 		if(SugarAutoLoader::existing('custom/modules/Trackers/tracker_reporter.php')){
 			require_once('custom/modules/Trackers/tracker_reporter.php');
 			//merge queries from custom file
@@ -79,6 +68,33 @@ class TrackerReporter{
 		return $this->execute($this->setup($method, $args));
 	}
 
+    /*
+     * returns default queries to be used by tracker dashlet
+     */
+    private function returnDefaultQueries()
+    {
+        return array(
+            'all' => array(
+                "ShowLastModifiedRecords" => "", //See function below
+                "ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end "
+                    . " as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 "
+                    . " order by ts.date_end desc",
+                "ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions "
+                    . " where active = 1 " ,
+                "ShowTopUser" => "", //See function below
+                "ShowMyWeeklyActivities" => "", //See function below
+                "ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker "
+                    . " where user_id = '{0}' and module_name != 'UserPreferences' group by module_name "
+                    . " order by total_count desc ",
+                "ShowTop3ModulesUsed" => "", //See function below
+                "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions "
+                    . " where user_id = '{0}' and date_start > {1} ",
+                "ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) "
+                    . " as total_login_time from tracker_sessions t, users u where t.user_id = u.id "
+                    . " and t.date_start > {0} group by u.user_name",
+            ),
+        );
+    }
 
 	/**
 	 * Show last 10 modified records in the system
@@ -364,7 +380,8 @@ class TrackerReporter{
 		//get methods
 		$methods = get_class_methods($this);
 		$methods = array_merge($methods, $this->included_methods);
-		$blackList = array('__construct', '__call', 'getQueries', 'getComboData', 'execute', 'setup', 'getFileMethods', 'getDateDependentQueries', 'convertSecondsToTime', '_getTranslatedModuleName');
+        $blackList = array('__construct', '__call', 'getQueries', 'getComboData', 'execute', 'setup', 'getFileMethods',
+            'getDateDependentQueries', 'convertSecondsToTime', '_getTranslatedModuleName','returnDefaultQueries');
 		$queryMethods = array();
 		for($i = 0; $i < count($methods); $i++){
 			if(!in_array($methods[$i], $blackList))

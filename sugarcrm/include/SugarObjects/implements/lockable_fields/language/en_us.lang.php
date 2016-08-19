@@ -1,4 +1,4 @@
-{{!--
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,15 +9,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#if responseData.results}}
-{{#each responseData.results}}
-    <div class="news-article">
-        <h5><a href="{{this.unescapedUrl}}">{{{this.titleNoFormatting}}}</a>
-        </h5> ({{{this.publisher}}})
-        <p>{{{this.content}}}</p>
-    </div>
-{{/each}}
-{{else}}
-    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
-{{/if}}
+
+$mod_strings = array(
+    'LBL_LOCKED_FIELDS_LINK' => 'Fields locked for editing',
+    'LBL_LOCKED_FIELDS' => 'Fields locked for editing',
+);

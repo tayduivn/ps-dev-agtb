@@ -62,6 +62,12 @@ $dictionary['Quote'] = array(
             'hideacl' => true,
             'reportable' => false,
             'massupdate' => false,
+            'processes' => array(
+                'types' => array(
+                    'RR' => false,
+                    'ALL' => true,
+                ),
+            ),
         ),
         'calc_grand_total' => array(
             'name' => 'calc_grand_total',
@@ -71,6 +77,12 @@ $dictionary['Quote'] = array(
             'default' => 1,
             'hideacl' => true,
             'massupdate' => false,
+            'processes' => array(
+                'types' => array(
+                    'RR' => false,
+                    'ALL' => true,
+                ),
+            ),
         ),
         'name' => array(
             'name' => 'name',

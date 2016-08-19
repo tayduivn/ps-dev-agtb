@@ -928,7 +928,6 @@ $renamedefs = array(
         array('name' => 'LBL_ACCESSKEY_CLEAR_ACCOUNTS_TITLE', 'type' => 'singular', 'source' => 'Accounts'),
         array('name' => 'LBL_ACCESSKEY_CLEAR_ACCOUNTS_LABEL', 'type' => 'singular', 'source' => 'Accounts'),
         array('name' => 'LBL_SHIP_TO_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'),
-        array('name' => 'LBL_DASHLET_NEWS_DESCRIPTION', 'type' => 'singular', 'source' => 'Accounts'),
         array('name' => 'LBL_DASHLET_OPPORTUNITY_DESCRIPTION', 'type' => 'singular', 'source' => 'Accounts'),
 
         // Calls

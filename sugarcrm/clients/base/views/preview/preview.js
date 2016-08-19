@@ -468,6 +468,9 @@
      * @param {boolean} activate `true` to show lock icon on locked fields
      */
     toggleLocks: function(activate) {
+        // Get the locked fields from the model
+        var lockedFields = this.model.get('locked_fields') || [];
+
         if (!this._hasLockedFields) {
             return;
         }
@@ -476,7 +479,7 @@
             this.warnLockedFields();
         }
         _.each(this.fields, function(field) {
-            if (field.isLocked()) {
+            if (_.contains(lockedFields, field.name)) {
                 this.$('.preview-lock-link-wrapper[data-name=' + field.name + ']').toggleClass('hide', !activate);
             }
         }, this);
@@ -489,12 +492,16 @@
      * is allowed
      */
     setEditableFields: function() {
+        // Get the locked fields from the model
+        var lockedFields = this.model.get('locked_fields') || [];
+
         // Clear any old locked fields that may have been set
         this._hasLockedFields = false;
+
         // we only want to edit non readonly fields
         this.editableFields = _.reject(this.fields, function(field) {
             // Locked fields should not be editable
-            if (field.isLocked()) {
+            if (_.contains(lockedFields, field.name)) {
                 this._hasLockedFields = true;
                 return true;
             }

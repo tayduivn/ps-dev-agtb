@@ -4,6 +4,7 @@ describe('Base.Field.Relate', function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'field', 'relate');
         SugarTest.loadHandlebarsTemplate('relate', 'field', 'base', 'overwrite-confirmation');
         SugarTest.testMetadata.set();
         app = SugarTest.app;
@@ -285,25 +286,74 @@ describe('Base.Field.Relate', function() {
 
             field.dispose();
         });
-        it("should build route using check access", function () {
-            var aclHasAccessStub = sinon.collection.stub(app.acl, 'hasAccess').returns(false);
-            var field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
+    });
 
-            field.module = 'Accounts';
-            field.model = app.data.createBean('Accounts', {account_id: '1234', account_name: 'bob'});
-            field.buildRoute('Users', '1');
+    describe('buildRoute', function() {
+        using('different related records', [
+            {
+                name: 'bob',
+                id: '1234',
+                module: 'Contacts',
+                varfefsLink: 'accounts',
+                expectedHref: '#Contacts/1234'
+            },
+            {
+                name: 'bob',
+                id: '1234',
+                module: 'Contacts',
+                varfefsLink: 'accounts',
+                view_access: 'no',
+                expectedHref: void 0
+            },
+            {
+                name: 'bob',
+                id: '1234',
+                module: 'Contacts',
+                varfefsLink: 'accounts',
+                link: false,
+                expectedHref: void 0
+            },
+            {
+                name: 'bob',
+                module: 'Contacts',
+                varfefsLink: 'accounts',
+                id: void 0,
+                expectedHref: void 0
+            },
+        ],
+        function(data) {
+            it('should build the link according to the record acls', function() {
+                var attrs = {};
+                attrs[data.varfefsLink] = {
+                    _acl: {
+                        fields: [],
+                        view: data.view_access,
+                    },
+                    name: data.name,
+                    id: data.id
+                };
+                app.data.declareModel(data.module, app.metadata.getModule(data.module), 'base');
 
-            expect(aclHasAccessStub).toHaveBeenCalled();
-            expect(field.href).toBeUndefined();
+                var model = app.data.createBean(data.module, attrs);
+                var parentView= app.view.createView({type: 'base'});
+                var field = app.view.createField({
+                    viewDefs: {
+                        link: data.link,
+                        name: 'account_name',
+                        type: 'relate',
+                    },
+                    def: {},
+                    model: model,
+                    module: data.module,
+                    view: parentView
+                });
 
-            aclHasAccessStub.restore();
-            aclHasAccessStub = sinon.collection.stub(app.acl, 'hasAccess').returns(true);
+                field.buildRoute(data.module, data.id);
 
-            field.buildRoute('Users', '1');
-            expect(aclHasAccessStub).toHaveBeenCalled();
-            expect(field.href).toBeDefined();
+                expect(field.href).toEqual(data.expectedHref);
 
-            field.dispose();
+                field.dispose();
+            });
         });
     });
 
@@ -527,7 +577,14 @@ describe('Base.Field.Relate', function() {
 
         beforeEach(function() {
             sinon.collection.stub(app.metadata, 'getModule').returns({fields: {}});
-            field = SugarTest.createField('base', 'account_name', 'relate', 'edit');
+            var model = app.data.createBean('Accounts', {account_id: '1234', account_name: 'bob', accounts: {
+                        _acl: {fields: []},
+                        name: 'bob',
+                        id: '1234'
+                    },
+                }
+            );
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef, null, model);
 
             sinon.collection.stub(field, 'getSearchModule').returns('Contacts');
             field.initialize(field.options);

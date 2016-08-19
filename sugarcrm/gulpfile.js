@@ -13,8 +13,6 @@ var _ = require('lodash');
 var commander = require('commander');
 var fs = require('fs');
 var gulp = require('gulp');
-var gutil = require('gulp-util');
-var karma = require('karma').server;
 var os = require('os');
 
 function splitByCommas(val) {
@@ -22,6 +20,8 @@ function splitByCommas(val) {
 }
 
 gulp.task('karma', function(done) {
+
+    var Server = require('karma').Server;
 
     // get command-line arguments (only relevant for karma tests)
     commander
@@ -81,11 +81,6 @@ gulp.task('karma', function(done) {
         karmaOptions.browsers = commander.browsers;
     }
 
-    if (commander.ciCoverage) {
-        commander.ci = true;
-        commander.coverage = true;
-    }
-
     if (commander.coverage) {
 
         eval('karmaOptions.preprocessors = ' + fs.readFileSync('grunt/assets/default-pre-processors.js', 'utf-8'));
@@ -116,17 +111,17 @@ gulp.task('karma', function(done) {
 
         karmaOptions.junitReporter = {
             outputDir: path,
-            outputFile: '/test-results.xml',
-            useBrowserName: false
+            outputFile: 'test-results.xml',
+            useBrowserName: false,
         };
     }
 
-    return karma.start(karmaOptions, function(exitStatus) {
+    new Server(karmaOptions, function(exitStatus) {
         // Karma's return status is not compatible with gulp's streams
         // See: http://stackoverflow.com/questions/26614738/issue-running-karma-task-from-gulp
         // or: https://github.com/gulpjs/gulp/issues/587 for more information
         done(exitStatus ? 'There are failing unit tests' : undefined);
-    });
+    }).start();
 });
 
 gulp.task('check-license', function(done) {
