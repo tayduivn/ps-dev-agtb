@@ -47,6 +47,7 @@ class UpgradeDropdownsHelper
             //END SUGARCRM flav=pro ONLY
             //'moduleList', // We may want to put this in at a later date
             //'moduleListSingular', // Same with this
+            'sweetspot_theme_options',
         );
 
         $dropdowns = array();

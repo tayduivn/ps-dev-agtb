@@ -31,6 +31,7 @@ class DropDownBrowser
         'generic_timeperiod_options',
         'moduleList', // We may want to put this in at a later date
         'moduleListSingular', // Same with this
+        'sweetspot_theme_options',
     );
 
     function getNodes()
