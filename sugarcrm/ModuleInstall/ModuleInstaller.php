@@ -945,7 +945,7 @@ class ModuleInstaller{
                 }
             }
         }
-        $this->rebuild_extensions();
+        $this->rebuild_extensions($this->modulesInPackage);
     }
 
     function install_dashlets()
@@ -1877,7 +1877,7 @@ class ModuleInstaller{
 
     function rebuild_vardefs($modules = array())
     {
-        $this->rebuildExt("Vardefs", 'vardefs.ext.php', null, null, $modules);
+        $this->rebuildExt("Vardefs", 'vardefs.ext.php', $modules);
         if (!empty($modules)) {
             foreach($modules as $module) {
                 VardefManager::clearVardef($module);
@@ -2641,6 +2641,7 @@ class ModuleInstaller{
             if ($save_table_dictionary) {
                 $this->rebuild_tabledictionary();
             }
+            SugarRelationshipFactory::deleteCache();
         }
     }
 
