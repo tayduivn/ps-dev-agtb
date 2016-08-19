@@ -57,6 +57,10 @@ class pmse_BpmProcessDefinition extends pmse_BpmProcessDefinition_sugar
             return array();
         }
 
+        if (!PMSEEngineUtils::doesModuleHaveLockedFields($focus->getModuleName())) {
+            return array();
+        }
+
         // We need to make a reasonable assumption here that ids will either be
         // an imploded string of ids or an array of ids. If an array, make it a
         // string of DB quoted ids.

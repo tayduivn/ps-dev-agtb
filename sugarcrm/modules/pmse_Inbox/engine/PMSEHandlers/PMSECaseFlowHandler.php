@@ -550,6 +550,7 @@ class PMSECaseFlowHandler
                 // Add the pd to it if it is not already related
                 if (!isset($current[$pd->id])) {
                     $bean->$relField->add($pd);
+                    PMSEEngineUtils::markModuleHavingLockedFields($bean->getModuleName());
                 }
             }
         }
@@ -582,6 +583,8 @@ class PMSECaseFlowHandler
 
                     LoggerManager::getLogger()->fatal($msg);
                 }
+
+                PMSEEngineUtils::resetModuleLockedFieldsCache($bean->getModuleName());
             }
         }
     }

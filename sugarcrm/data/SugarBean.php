@@ -8155,7 +8155,10 @@ class SugarBean
     public function getLockedFieldRelBeans()
     {
         // Check to see if this bean implements locked fields
-        if ($relField = $this->getLockedFieldRelField()) {
+        if ($this->id
+            && ($relField = $this->getLockedFieldRelField())
+            && PMSEEngineUtils::doesModuleHaveLockedFields($this->getModuleName())
+        ) {
             // If there is a relationship, grab the beans from it
             if ($this->load_relationship($relField)) {
                 return $this->$relField->getBeans([], ['encode' => false]);
