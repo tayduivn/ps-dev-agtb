@@ -58,7 +58,6 @@
             <directory>./modules/Import/</directory>
             <directory>./modules/ModuleBuilder/</directory>
             <directory>./modules/MySettings/</directory>
-            <directory>./modules/Notifications/</directory>
             <directory>./modules/OAuthKeys/</directory>
             <directory>./modules/SNIP/</directory>
             <directory>./modules/SavedSearch/</directory>
@@ -177,19 +176,6 @@
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEActivityDefinitionWrapperTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapperTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEProjectWrapperTest.php</exclude>
-        </testsuite>
-        <testsuite name="NotificationCenter">
-            <directory>./src/Notification</directory>
-            <directory>./src/Socket</directory>
-            <directory>./src/Trigger</directory>
-            <directory>./modules/NotificationCenter</directory>
-            <directory>./modules/CarrierSugar</directory>
-            <directory>./modules/CarrierEmail</directory>
-            <file>./clients/base/api/ReminderApiTest.php</file>
-            <file>./clients/base/api/TokenVerificationApiTest.php</file>
-            <file>./modules/Administration/controllerCRYS1262Test.php</file>
-            <file>./modules/Calls/CallEmitterTest.php</file>
-            <file>./modules/Meetings/MeetingEmitterTest.php</file>
         </testsuite>
         <testsuite name="TbACL">
             <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>

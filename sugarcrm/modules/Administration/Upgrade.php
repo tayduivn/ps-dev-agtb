@@ -101,21 +101,6 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
 <tr>
     <td scope="row"><?php
         echo SugarThemeRegistry::current()->getImage(
-            'Rebuild',
-            'align="absmiddle" border="0"',
-            null,
-            null,
-            '.gif',
-            $mod_strings['LBL_REBUILD_REMINDERS_TITLE']
-        );
-        ?>&nbsp;<a href="./index.php?module=Administration&action=RebuildReminders"><?php
-            echo $mod_strings['LBL_REBUILD_REMINDERS_TITLE'];
-            ?></a></td>
-    <td> <?php echo $mod_strings['LBL_REBUILD_REMINDERS_DESC_SHORT'] ; ?> </td>
-</tr>
-<tr>
-    <td scope="row"><?php
-        echo SugarThemeRegistry::current()->getImage(
             'Repair',
             'align="absmiddle" border="0"',
             null,

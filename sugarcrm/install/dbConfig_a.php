@@ -418,23 +418,6 @@ $out4 .= <<<FTSTEST
     postData += "&setup_fts_port=" + $('#setup_fts_port').val();
 FTSTEST;
 
-if (0) { // CRYS-1567-fix
-    $out4 .= <<<WSTEST
-        postData += "&websockets_client_protocol=" + $('input[name=websockets_client_protocol]:checked').val();
-        postData += "&websockets_client_host=" + $('#websockets_client_host').val();
-        postData += "&websockets_client_port=" + $('#websockets_client_port').val();
-        postData += "&websockets_server_protocol=" + $('input[name=websockets_server_protocol]:checked').val();
-        postData += "&websockets_server_host=" + $('#websockets_server_host').val();
-        postData += "&websockets_server_port=" + $('#websockets_server_port').val();
-WSTEST;
-    
-    $out4 .= <<<TSTEST
-        postData += "&trigger_server_protocol=" + $('input[name=trigger_server_protocol]:checked').val();
-        postData += "&trigger_server_host=" + $('#trigger_server_host').val();
-        postData += "&trigger_server_port=" + $('#trigger_server_port').val();
-TSTEST;
-}
-
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
                 postData += "&to_pdf=1&sugar_body_only=1";
@@ -535,10 +518,6 @@ if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
     echo $out3;
 
     echo $outFTS;
-}
-if (0) {
-    $sugar_smarty->display("install/templates/websocketConfig.tpl");
-    $sugar_smarty->display("install/templates/triggerServerConfig.tpl");
 }
 echo $out4;
 

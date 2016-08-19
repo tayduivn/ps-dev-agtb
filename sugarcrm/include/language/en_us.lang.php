@@ -111,12 +111,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
-    'NotificationCenter' => 'Notification Center',
-    'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
-    'CarrierEmail' => 'Email Carrier',
-    'CarrierSugar' => 'Sugar Carrier',
-    'TriggerServer' => 'Trigger Server',
-    'WebSockets' => 'WebSockets',
   ),
 
     'moduleIconList' =>
@@ -231,12 +225,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag',
     'Categories' => 'Category',
-    'NotificationCenter' => 'Notification Center',
-    'NotificationCenterSubscriptions' => 'Notification Center Subscription',
-    'CarrierEmail' => 'Email Carrier',
-    'CarrierSugar' => 'Sugar Carrier',
-    'TriggerServer' => 'Trigger Server',
-    'WebSockets' => 'WebSockets',
   ),
 
 /*
@@ -8967,8 +8955,6 @@ $app_strings = array (
     'LBL_CONTRACTS'=>'Contracts',
     'LBL_COUNTRY' => 'Country:',
     'LBL_RESET_BUTTON_LABEL' => 'Reset',
-    'LBL_RESET_ALL_BUTTON_LABEL' => 'Reset all',
-    'LBL_RESET_TO_DEFAULT_BUTTON_LABEL' => 'Reset to default',
     'LBL_CREATE_BUTTON_LABEL' => 'Create',
     'LBL_CREATED_BY_USER'=>'Created by User',
     'LBL_CREATED_USER'=>'Created by User',
@@ -11769,6 +11755,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
 
     // notifications
+    'TPL_NOTIFICATION_TITLE' => '{{moduleName}} starts at {{startTime}}',
+
     'LBL_CALENDAR_START_DATE' => "Start Date",
     'LBL_CALENDAR_END_DATE' => "End Date",
     'LBL_CALENDAR_DURATION' => "Duration",
@@ -12801,11 +12789,6 @@ $app_list_strings['notifications_severity_list'] = array(
     'success' => 'Success',
     'warning' => 'Warning',
 );
-
-    $app_list_strings['notifications_on_sugarcrm_type_list'] = array(
-        '' => '',
-        'alert' => 'Alert',
-    );
 
 $app_list_strings['web_hook_request_method_list'] = array(
     'POST' => 'POST',

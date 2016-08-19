@@ -710,12 +710,6 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
-$modInvisList[] = 'CarrierSugar';
-$modInvisList[] = 'CarrierEmail';
-$modInvisList[] = 'NotificationCenterSubscriptions';
-
-$beanList['NotificationCenterSubscriptions'] = 'NotificationCenterSubscription';
-$beanFiles['NotificationCenterSubscription'] = 'modules/NotificationCenter/NotificationCenterSubscription.php';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';
