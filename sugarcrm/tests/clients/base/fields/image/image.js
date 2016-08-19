@@ -108,9 +108,10 @@ describe("image field", function() {
             stub.restore();
         });
 
-        it("should trigger change with a param for the record view", function() {
-            var triggerSpy = sinon.spy(model, "trigger");
+        it('should generate an image preview when we select an image', function() {
             var attrStub = sinon.stub(jQuery, 'attr');
+            var $preview = $('<div/>').addClass('image_preview').appendTo(field.$el);
+
             field.model.uploadFile = function() {};
             var uploadFileStub = sinon.stub(field.model, "uploadFile", function(fieldName, $files, callbacks, options) {
                 // Force production code's success hook to fire passing our fake meta
@@ -120,9 +121,10 @@ describe("image field", function() {
                     }
                 });
             });
+
             field.selectImage();
-            expect(triggerSpy).toHaveBeenCalledWith("change", "image");
-            triggerSpy.restore();
+
+            expect($preview.children().length).toBeTruthy();
             attrStub.restore();
         });
 

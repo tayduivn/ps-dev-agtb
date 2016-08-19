@@ -48,7 +48,6 @@ use Psr\Log\LoggerInterface;
 /**
  * Class Manager
  * @package JobQueue
- * @method calDavHandler(string $calDavCollectionId)
  */
 class Manager extends AbstractManager
 {
@@ -83,8 +82,6 @@ class Manager extends AbstractManager
         'MassUpdate' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\MassUpdate',
         'ExportRecords' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportRecords',
         'ExportToCSV' => 'Sugarcrm\Sugarcrm\JobQueue\Handler\ExportToCSV',
-        'CalDavHandler' => 'Sugarcrm\Sugarcrm\Dav\Cal\JobQueue\Handler',
-        'CalDavRebuild' => 'Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\JobQueue',
         'NotificationEvent' => 'Sugarcrm\Sugarcrm\Notification\Handler\EventHandler',
         'NotificationCarrierBulkMessage' => 'Sugarcrm\Sugarcrm\Notification\Handler\CarrierBulkMessageHandler',
         'NotificationSend' => 'Sugarcrm\Sugarcrm\Notification\Handler\SendHandler',
@@ -112,7 +109,6 @@ class Manager extends AbstractManager
             'priority' => 0,
             'on' => array(), // Handlers to perform, false - all.
             'off' => array(  // Handlers to exclude.
-                'CalDavHandler',
                 'NotificationEvent',
                 'NotificationCarrierBulkMessage',
                 'NotificationSend',
@@ -128,7 +124,6 @@ class Manager extends AbstractManager
             'class' => 'Sugarcrm\Sugarcrm\JobQueue\Observer\State',
             'priority' => -100,
             'off' => array(  // Handlers to exclude.
-                'CalDavHandler',
                 'NotificationEvent',
                 'NotificationCarrierBulkMessage',
                 'NotificationSend',

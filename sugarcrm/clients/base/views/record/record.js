@@ -633,7 +633,7 @@
     },
 
     bindDataChange: function() {
-        this.model.on('change', function(fieldType) {
+        this.model.on('change', function() {
             if (this.inlineEditMode) {
                 this.setButtonStates(this.STATE.EDIT);
             }

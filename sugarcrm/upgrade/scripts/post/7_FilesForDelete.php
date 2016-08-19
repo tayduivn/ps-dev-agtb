@@ -109,7 +109,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'styleguide/less/twitter-bootstrap/tiptip.less',
             'styleguide/less/twitter-bootstrap/toggle.less',
             // BR 796 api files
-            'clients/mobile/api/CurrentUserMobileApi.php',
             'clients/mobile/api/MetadataMobileApi.php',
             'clients/portal/api/MetadataPortalApi.php',
             'clients/base/views/activitystream-bottom/activitystream-bottom.php',

@@ -252,6 +252,7 @@ ExpressionContainer.prototype.handleClick = function (element) {
         switch (parentVariable.fieldType) {
             case "DropDown":
             case "Checkbox":
+            case 'Radio':
                 this.handleDropDownBuilder(globalParent, parentVariable, element);
                 break;
             case "user":

@@ -101,6 +101,7 @@ class SugarACLTeamBased extends SugarACLStrategy
                 }
                 break;
             case 'write':
+            case 'save':
             case 'edit':
                 if ($access == ACL_SELECTED_TEAMS_READ_OWNER_WRITE) {
                     // Not owner.

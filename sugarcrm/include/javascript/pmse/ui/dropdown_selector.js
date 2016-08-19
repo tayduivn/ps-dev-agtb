@@ -132,9 +132,6 @@ DropdownSelector.prototype.setValues = function (combo) {
 
 DropdownSelector.prototype.setValue = function (value) {
     this.value = value;
-    if (this.html) {
-        console.log('Update Value visually');
-    }
     return this;
 };
 

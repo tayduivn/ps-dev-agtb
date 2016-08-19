@@ -245,10 +245,12 @@ if (!$focus->is_group && !$focus->portal_only) {
         }
     }
 
-    if (isset($HIDE_ARR['hide_tabs'])) {
-        $tabs->set_user_tabs($HIDE_ARR['hide_tabs'], $focus, 'hide');
-    } else {
-        $tabs->set_user_tabs(array(), $focus, 'hide');
+    if ($current_user->isAdminForModule('Users') || $tabs->get_users_can_edit()) {
+        if (isset($HIDE_ARR['hide_tabs'])) {
+            $tabs->set_user_tabs($HIDE_ARR['hide_tabs'], $focus, 'hide');
+        } else {
+            $tabs->set_user_tabs(array(), $focus, 'hide');
+        }
     }
 
     if (is_admin($current_user)) {

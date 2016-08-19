@@ -63,6 +63,31 @@ class SugarUpgradeConfigSettings extends UpgradeScript
         $this->upgrader->config['default_theme'] = 'RacerX';
 
         $this->removeMassActionsDefaultSettings();
+        $this->fixConfigSettings($defaultSettings);
+    }
+
+    /**
+     * Overwrites some existing config keys for specific versions
+     *
+     * @param array $config Default Sugar config
+     */
+    private function fixConfigSettings($config)
+    {
+        $data = array(
+            '7.8' => array(
+                'snip_url',
+            ),
+        );
+        
+        foreach ($data as $version => $config_keys) {
+            if (version_compare($this->from_version, $version, '<')) {
+                foreach ($config_keys as $key) {
+                    if (isset($config[$key])) {
+                        $this->upgrader->config[$key] = $config[$key];
+                    }
+                }
+            }
+        }
     }
 
     /**

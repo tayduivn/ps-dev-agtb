@@ -416,6 +416,9 @@ $mod_strings = array (
     'ERR_MISSING_CREDENTIALS' => 'error: missing credentials',
     'ERR_NO_UID' => 'error: no UID',
     'ERR_NO_IEID' => 'error: no ieID',
+    'ERR_INVALID_RECIPIENTS' => 'There are one or more recipients with an invalid email address. ' .
+        'Please correct this and try again.',
+    'ERR_INVALID_EMAIL_ADDRESS' => 'Invalid Email Address',
 
     // Mail API Messages
     'LBL_MAILAPI_NO_RECIPIENTS'           => 'no recipients specified',

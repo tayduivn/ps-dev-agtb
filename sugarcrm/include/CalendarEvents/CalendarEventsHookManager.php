@@ -20,11 +20,9 @@ class CalendarEventsHookManager
         'meetings_users' => true,
         'meetings_contacts' => true,
         'meetings_leads' => true,
-        'meetings_addressees' => true,
         'calls_users' => true,
         'calls_contacts' => true,
         'calls_leads' => true,
-        'calls_addressees' => true,
     );
 
     /**
@@ -42,103 +40,5 @@ class CalendarEventsHookManager
         ) {
             throw new BypassRelationshipUpdateException();
         }
-    }
-
-    /**
-     * CalendarEvents after relationships update hook.
-     * Serve "after_relationship_update" hook handling.
-     *
-     * @param SugarBean|Meeting|Call $bean
-     * @param string $event
-     * @param array $args
-     */
-    public function afterRelationshipUpdate(SugarBean $bean, $event, $args)
-    {
-        $relationship = $args['relationship'];
-        if (!empty($this->inviteeRelationships[$relationship])) {
-            $inviteeInfo = $this->getInviteeInfo($bean, $args);
-            if ($inviteeInfo) {
-                $inviteesChanges = array('changed' => array($inviteeInfo['info']));
-                $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
-            }
-        }
-    }
-
-    /**
-     * CalendarEvents after relationships add hook.
-     * Serve "after_relationship_add" hook handling.
-     *
-     * @param SugarBean|Meeting|Call $bean
-     * @param string $event
-     * @param array $args
-     */
-    public function afterRelationshipAdd(SugarBean $bean, $event, $args)
-    {
-        $relationship = $args['relationship'];
-        if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $inviteeInfo = $this->getInviteeInfo($bean, $args);
-            if ($inviteeInfo) {
-                $inviteesChanges = array('added' => array($inviteeInfo['info']));
-                $bean->getCalDavHook()->export($bean, array('update', array(), $inviteesChanges));
-            }
-        }
-    }
-
-    /**
-     * CalendarEvents after relationships delete hook.
-     * Serve "after_relationship_delete" hook handling.
-     *
-     * @param SugarBean|Meeting|Call $bean
-     * @param string $event
-     * @param array $args
-     */
-    public function afterRelationshipDelete(SugarBean $bean, $event, $args)
-    {
-        $relationship = $args['relationship'];
-        if (!empty($this->inviteeRelationships[$relationship]) && $bean->isUpdate()) {
-            $inviteeInfo = $this->getInviteeInfo($bean, $args);
-            if ($inviteeInfo) {
-                $inviteesChanges = array('deleted' => array($inviteeInfo['info']));
-                $updateAction = $inviteeInfo['deleted'] ? 'participant-delete' : 'update';
-                $bean->getCalDavHook()->export($bean, array($updateAction, array(), $inviteesChanges));
-            }
-        }
-    }
-
-    /**
-     * Extract and get info about current changed invitee.
-     *
-     * @param SugarBean $bean Primary bean object.
-     * @param array $args Arguments of relationship modification action.
-     * @return array Invitee information.
-     */
-    protected function getInviteeInfo($bean, $args)
-    {
-        $link = $args['link'];
-        $bean->load_relationship($link);
-        $bean->$link->load();
-        $acceptStatus = 'none';
-        if (isset($bean->$link->rows[$args['related_id']])) {
-            $acceptStatus = $bean->$link->rows[$args['related_id']]['accept_status'];
-        }
-        $inviteeBean = BeanFactory::getBean($args['related_module'], $args['related_id'], array(
-            'strict_retrieve' => true,
-            'deleted' => false,
-        ));
-
-        if (!$inviteeBean) {
-            return array();
-        }
-
-        return array(
-            'deleted' => $inviteeBean->deleted,
-            'info' => array(
-                $inviteeBean->module_name,
-                $inviteeBean->id,
-                $inviteeBean->emailAddress->getPrimaryAddress($inviteeBean),
-                $acceptStatus,
-                $GLOBALS['locale']->formatName($inviteeBean)
-            ),
-        );
     }
 }

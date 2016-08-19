@@ -127,13 +127,26 @@ class nvd3Reports extends nvd3
         // store last grouped field
         $lastgroupfield = end($this->group_by);
 
-        if (isset($this->reporter->focus->field_defs[$lastgroupfield]) &&
-            ($this->reporter->focus->field_defs[$lastgroupfield]['type'] === "date"
-            || $this->reporter->focus->field_defs[$lastgroupfield]['type'] === "datetime")) {
+        if ($this->isDateSort($lastgroupfield)) {
             usort($super_set, array($this, "runDateSort"));
         } else {
             asort($super_set);
         }
+    }
+
+    /**
+     * Checks if the field is a date and needs to be sorted as a date
+     * @param $field
+     * @return bool
+     */
+    protected function isDateSort($field)
+    {
+        if (isset($this->reporter->focus->field_defs[$field])) {
+            $dateTypes = array('date', 'datetime', 'datetimecombo');
+            $type = $this->reporter->focus->field_defs[$field]['type'];
+            return in_array($type, $dateTypes);
+        }
+        return false;
     }
 
     /**

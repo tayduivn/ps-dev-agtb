@@ -14,7 +14,6 @@
 require_once 'modules/Meetings/Meeting.php';
 require_once 'modules/Meetings/MeetingFormBase.php';
 require_once 'include/externalAPI/ExternalAPIFactory.php';
-require_once 'tests/SugarTestAddresseeUtilities.php';
 
 
 class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
@@ -56,7 +55,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestAddresseeUtilities::removeAllCreatedAddressees();
 
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
@@ -195,27 +193,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $meeting->get_notification_recipients();
         $expected = array($contacts[0]->id, $contacts[1]->id, $GLOBALS['current_user']->id);
         $this->assertEquals($expected, array_keys($actual), '', 0.0, 10, true);
-    }
-
-    public function testIgnoreOrganizerNotification()
-    {
-        $contacts = array(
-            SugarTestContactUtilities::createContact(),
-            SugarTestContactUtilities::createContact(),
-        );
-
-        $currentUser = $GLOBALS['current_user']->id;
-        $meeting = SugarTestMeetingUtilities::createMeeting();
-        SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $currentUser);
-        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[0]->id);
-        SugarTestMeetingUtilities::addMeetingContactRelation($meeting->id, $contacts[1]->id);
-
-        $meeting->ignoreOrganizerNotification = true;
-
-        $actual = $meeting->get_notification_recipients();
-        $this->assertArrayNotHasKey($currentUser, $actual, 'The current user should not be in the list.');
-        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
-        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }
 
     /**

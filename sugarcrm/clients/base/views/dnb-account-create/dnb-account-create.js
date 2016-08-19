@@ -195,7 +195,7 @@
             this.$('.clearDNBResults').removeClass('enabled');
             this.$('.clearDNBResults').addClass('disabled');
             this.companyList = null;
-            tester = new RegExp(/\*$/, 'i');
+            tester = /\*$/;
             searchString = tester.test(searchString) ? searchString : searchString + '*';
             var balParams = {
                 'OrganizationName': searchString

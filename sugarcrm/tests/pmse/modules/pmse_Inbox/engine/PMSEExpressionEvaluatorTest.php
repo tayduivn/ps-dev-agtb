@@ -1901,7 +1901,7 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $expected = "P4D";
 
         $result = $expressionEvaluatorMock->processDateInterval($interval);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $result->format('P%dD'));
     }
 
     public function testProcessDateIntervalMonths()
@@ -1913,21 +1913,67 @@ class PMSEExpressionEvaluatorTest extends PHPUnit_Framework_TestCase
         $interval = "5m";
         $expected = "P5M";
         $result = $expressionEvaluatorMock->processDateInterval($interval);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $result->format('P%mM'));
     }
 
-    public function testExecuteDateSubstractOp()
+    public function testExecuteDateDateOp()
     {
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
-                ->disableOriginalConstructor()
-                ->setMethods(null)
-                ->getMock();
-        $date = "2014-10-16T00:00:00-07:00";
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $date1 = "2014-10-16T00:00:00-07:00";
         $operator = '-';
+        $date2 = "2014-05-16T00:00:00-07:00";
+        $expected = "P5M";
+        $result = $expressionEvaluatorMock->executeDateDateOp($date1, $operator, $date2);
+        $this->assertEquals($expected, $result->format('P%mM'));
+    }
+
+    public function testExecuteDateSpanOp()
+    {
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $date = "2014-10-16T00:00:00-07:00";
         $interval = "5m";
-        $expected = "2014-05-16 00:00:00";
-        $result = $expressionEvaluatorMock->executeDateOp($date, $operator, $interval);
+        $operator = '+';
+        $expected = "2015-03-16 00:00:00";
+        $result = $expressionEvaluatorMock->executeDateSpanOp($date, $operator, $interval);
         $this->assertEquals($expected, $result->format('Y-m-d H:i:s'));
+        $operator = '-';
+        $expected = "2014-05-16 00:00:00";
+        $result = $expressionEvaluatorMock->executeDateSpanOp($date, $operator, $interval);
+        $this->assertEquals($expected, $result->format('Y-m-d H:i:s'));
+    }
+
+    public function testExecuteSpanDateOp()
+    {
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $date = "2014-10-16T00:00:00-07:00";
+        $interval = "5m";
+        $operator = '+';
+        $expected = "2015-03-16 00:00:00";
+        $result = $expressionEvaluatorMock->executeSpanDateOp($interval, $operator, $date);
+        $this->assertEquals($expected, $result->format('Y-m-d H:i:s'));
+    }
+
+    public function testExecuteSpanSpanOp()
+    {
+        $expressionEvaluatorMock = $this->getMockBuilder('PMSEExpressionEvaluator')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $interval1 = "5m";
+        $interval2 = "4d";
+        $operator = '+';
+        $expected = "P5M4D";
+        $result = $expressionEvaluatorMock->executeSpanSpanOp($interval1, $operator, $interval2);
+        $this->assertEquals($expected, $result->format('P%mM%dD'));
     }
 
     public function testEvalEqualArrays()
