@@ -1,14 +1,3 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
-
 describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
     var app;
     var view;
@@ -50,6 +39,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             expect(view.model).toBe(viewLayoutModel);
         });
 
+        it('should have the correct saveIconCssClass', function() {
+            expect(view.saveIconCssClass).toBe('.group-loading-icon');
+        });
+
         it('should set listColSpan to be the layout listColSpan', function() {
             expect(view.listColSpan).toBe(layout.listColSpan);
         });
@@ -58,19 +51,120 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             expect(view.el).toBe(layout.el);
         });
 
-        it('should call setElement', function() {
-            view.initialize({
-                meta: {
-                    panels: [{
-                        fields: ['field1', 'field2']
-                    }]
-                },
-                model: new Backbone.Model(),
-                layout: {
-                    listColSpan: 2
-                }
+        describe('when calling initialize', function() {
+            var initOptions;
+            beforeEach(function() {
+                initOptions = {
+                    meta: {
+                        panels: [{
+                            fields: ['field1', 'field2']
+                        }]
+                    },
+                    model: new Backbone.Model(),
+                    layout: {
+                        listColSpan: 2
+                    }
+                };
+
+                sinon.collection.stub(view.layout, 'on', function() {});
             });
-            expect(view.setElement).toHaveBeenCalled();
+
+            afterEach(function() {
+                initOptions = null;
+            });
+
+            it('should call setElement', function() {
+                view.initialize(initOptions);
+                expect(view.setElement).toHaveBeenCalled();
+            });
+
+            it('should set groupSaveCt = 0', function() {
+                view.initialize(initOptions);
+                expect(view.groupSaveCt).toBe(0);
+            });
+
+            it('should call layout.on with quotes:group:save:start', function() {
+                view.initialize(initOptions);
+                expect(view.layout.on.args[0][0]).toBe('quotes:group:save:start');
+            });
+
+            it('should call layout.on with quotes:group:save:stop', function() {
+                view.initialize(initOptions);
+                expect(view.layout.on.args[1][0]).toBe('quotes:group:save:stop');
+            });
+        });
+    });
+
+    describe('_onGroupSaveStart()', function() {
+        var showStub;
+        beforeEach(function() {
+            showStub = sinon.collection.stub();
+
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    show: showStub
+                };
+            });
+
+            view._onGroupSaveStart();
+        });
+
+        it('should increment the groupSaveCt counter', function() {
+            expect(view.groupSaveCt).toBe(1);
+        });
+
+        it('should call this.$(this.saveIconCssClass)', function() {
+            expect(view.$.args[0][0]).toBe(view.saveIconCssClass);
+        });
+
+        it('should call show on the saveIconCssClass element', function() {
+            expect(showStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('_onGroupSaveStop()', function() {
+        var hideStub;
+        beforeEach(function() {
+            hideStub = sinon.collection.stub();
+
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    hide: hideStub
+                };
+            });
+        });
+
+        it('should decrement the groupSaveCt counter', function() {
+            view.groupSaveCt = 3;
+            view._onGroupSaveStop();
+
+            expect(view.groupSaveCt).toBe(2);
+        });
+
+        describe('when groupSaveCt = 0', function() {
+            beforeEach(function() {
+                view.groupSaveCt = 1;
+                view._onGroupSaveStop();
+            });
+
+            it('should call this.$(this.saveIconCssClass)', function() {
+                expect(view.$.args[0][0]).toBe(view.saveIconCssClass);
+            });
+
+            it('should call show on the saveIconCssClass element', function() {
+                expect(hideStub).toHaveBeenCalled();
+            });
+        });
+
+        describe('when groupSaveCt goes below 0 in some freak async accident', function() {
+            beforeEach(function() {
+                view.groupSaveCt = -10;
+                view._onGroupSaveStop();
+            });
+
+            it('should reset groupSaveCt to 0', function() {
+                expect(view.groupSaveCt).toBe(0);
+            });
         });
     });
 

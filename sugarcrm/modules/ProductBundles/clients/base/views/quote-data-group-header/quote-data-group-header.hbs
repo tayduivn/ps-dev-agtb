@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr class="flex-list-row-header quote-data-group-header">
+<tr class="flex-list-row-header quote-data-group-header ui-not-droppable">
     <td class="two-dropdowns"{{#if name}} data-fieldname="{{name}}"{{/if}}>
         {{#each meta.buttons}}
                {{field ../this model=../model template='list'}}
@@ -18,7 +18,10 @@
     </td>
     {{#each _fields}}
         <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}" colspan="{{../listColSpan}}">
-            {{field ../this model=../model template=../viewName}}
+            <div class="quote-data-group-title">
+                <span class="group-loading-icon"><i class="fa fa-refresh fa-spin"></i></span>
+                {{field ../this model=../model template=../viewName}}
+            </div>
         </td>
     {{/each}}
 </tr>

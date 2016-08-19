@@ -40,12 +40,19 @@
     quoteDataGroupMeta: undefined,
 
     /**
+     * The Element tag to apply jQuery.Sortable on
+     */
+    sortableTag: 'tbody',
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         this.groupIds = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
+
+        this.before('render', this.beforeRender, this);
     },
 
     /**
@@ -55,6 +62,289 @@
         this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        var sortableItems;
+
+        this._super('_render');
+
+        sortableItems = this.$(this.sortableTag);
+        if (sortableItems.length) {
+            _.each(sortableItems, function(sortableItem) {
+                $(sortableItem).sortable({
+                    // allow draggable items to be connected with other tbody elements
+                    connectWith: 'tbody',
+                    // allow drag to only go in Y axis direction
+                    axis: 'y',
+                    // the items to make sortable
+                    items: 'tr.sortable',
+                    // make the "helper" row (the row the user actually drags around) a clone of the original row
+                    helper: 'clone',
+                    // adds a slow animation when "dropping" a group, removing this causes the row
+                    // to immediately snap into place wherever it's sorted
+                    revert: true,
+                    // the CSS class to apply to the placeholder underneath the helper clone the user is dragging
+                    placeholder: 'ui-state-highlight',
+                    // handler for when dragging starts
+                    start: _.bind(this._onDragStart, this),
+                    // handler for when dragging stops; the "drop" event
+                    stop: _.bind(this._onDragStop, this),
+                    // handler for when dragging an item into a group
+                    over: _.bind(this._onGroupDragTriggerOver, this),
+                    // handler for when dragging an item out of a group
+                    out: _.bind(this._onGroupDragTriggerOut, this),
+                    // the cursor to use when dragging
+                    cursor: 'move'
+                }).disableSelection();
+            }, this);
+        }
+    },
+
+    /**
+     * Event handler for the sortstart "drag" event
+     *
+     * @param {jQuery.Event} evt The jQuery sortstart event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @private
+     */
+    _onDragStart: function(evt, ui) {
+        // clear the current displayed tooltip
+        app.tooltip.clear();
+        // disable any future tooltips from appearing until drag stop has occurred
+        app.tooltip._disable();
+    },
+
+    /**
+     * Event handler for the sortstop "drop" event
+     *
+     * @param {jQuery.Event} evt The jQuery sortstop event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @private
+     */
+    _onDragStop: function(evt, ui) {
+        var $item = $(ui.item.get(0));
+        var oldGroupId = $item.data('group-id');
+        var newGroupId = $($item.parent()).data('group-id');
+        var triggerOldGroup = false;
+        var oldGroup;
+        var newGroup;
+        var rowId;
+        var rowModel;
+        var bulkSaveRequests = [];
+        var url;
+        var linkName;
+
+        // make sure item was dropped in a different group than it started in
+        if (oldGroupId !== newGroupId) {
+            // since the groups are different, also trigger events for the old group
+            triggerOldGroup = true;
+
+            // get the old and new quote-data-group components
+            oldGroup = this._getComponentByGroupId(oldGroupId);
+            newGroup = this._getComponentByGroupId(newGroupId);
+
+            // get the row id from the name="Products_modelID" attrib
+            rowId = $item.attr('name').split('_')[1];
+
+            // get the row model from the old group's collection
+            rowModel = oldGroup.collection.get(rowId);
+
+            // remove the rowModel from the old group silently so it doesn't cause a render yet
+            oldGroup.collection.remove(rowModel);
+
+            // add rowModel to the new group
+            newGroup.collection.add(rowModel);
+
+            // get the requests from updated rows for old and new group
+            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(oldGroup));
+            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(newGroup));
+
+            linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
+            url = app.api.buildURL('ProductBundles/' + newGroupId + '/link/' + linkName + '/' + rowId);
+
+            // add the group switching call to the beginning of the bulk requests
+            bulkSaveRequests.unshift({
+                url: url.substr(4),
+                method: 'POST',
+                data: {
+                    id: newGroupId,
+                    link: linkName,
+                    relatedId: rowModel.get('id'),
+                    related: {
+                        position: rowModel.get('position')
+                    }
+                }
+            });
+        } else {
+            // item was sorted in the same group
+            newGroup = this._getComponentByGroupId(newGroupId);
+            // get the requests from updated rows
+            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(newGroup));
+        }
+
+        // only make the bulk call if there are actual requests, if user drags row
+        // but puts it in same place there should be no updates
+        if (!_.isEmpty(bulkSaveRequests)) {
+            if (triggerOldGroup) {
+                // trigger group changed for old group to check themselves
+                oldGroup.trigger('quotes:group:changed');
+                // trigger save start for the old group
+                oldGroup.trigger('quotes:group:save:start');
+            }
+
+            // trigger group changed for new group to check themselves
+            newGroup.trigger('quotes:group:changed');
+            // trigger save start for the new group
+            newGroup.trigger('quotes:group:save:start');
+
+            app.api.call('create', app.api.buildURL(null, 'bulk'), {
+                requests: bulkSaveRequests
+            }, {
+                success: _.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup)
+            });
+        }
+
+        // re-enable tooltips in the app
+        app.tooltip._enable();
+    },
+
+    /**
+     * The success event handler for when a user reorders or moves an item to a different group
+     *
+     * @param {View.QuoteDataGroupLayout} oldGroup The old QuoteDataGroupLayout
+     * @param {View.QuoteDataGroupLayout} newGroup The new QuoteDataGroupLayout
+     * @param {Array} bulkResponses The responses from each of the bulk requests
+     * @protected
+     */
+    _onSaveUpdatedGroupSuccess: function(oldGroup, newGroup, bulkResponses) {
+        if (oldGroup) {
+            oldGroup.trigger('quotes:group:save:stop');
+        }
+        newGroup.trigger('quotes:group:save:stop');
+
+        _.each(bulkResponses, _.bind(function(oldGroup, newGroup, data) {
+            var record = data.contents.related_record;
+            var model;
+            if (oldGroup) {
+                // if oldGroup exists, check if the record is in the oldGroup
+                model = oldGroup.collection.get(record.id);
+                if (model) {
+                    model.set(record);
+                }
+            }
+
+            if (newGroup) {
+                // check if the record is in the newGroup
+                model = newGroup.collection.get(record.id);
+                if (model) {
+                    model.set(record);
+                }
+            }
+        }, this, oldGroup, newGroup), this);
+    },
+
+    /**
+     * Iterates through all rows in a group and updates the positions for the rows if necessary
+     *
+     * @param {View.QuoteDataGroupLayout} dataGroup The group component
+     * @return {Array}
+     * @protected
+     */
+    _updateRowPositions: function(dataGroup) {
+        var retCalls = [];
+        var rows = dataGroup.$('tr.quote-data-group-list:not(:hidden):not(.empty-row)');
+        var $row;
+        var rowNameSplit;
+        var rowId;
+        var rowModule;
+        var rowModel;
+        var url;
+        var linkName;
+
+        _.each(rows, _.bind(function(dataGroup, retObj, row, index) {
+            $row = $(row);
+            rowNameSplit = $row.attr('name').split('_');
+            rowModule = rowNameSplit[0];
+            rowId = rowNameSplit[1];
+
+            rowModel = dataGroup.collection.get(rowId);
+            if (rowModel.get('position') != index) {
+                linkName = rowModule === 'Products' ? 'products' : 'product_bundle_notes';
+                url = app.api.buildURL('ProductBundles/' + dataGroup.groupId + '/link/' + linkName + '/' + rowId);
+                retCalls.push({
+                    url: url.substr(4),
+                    method: 'PUT',
+                    data: {
+                        position: index
+                    }
+                });
+
+                rowModel.set('position', index);
+            }
+        }, this, dataGroup, retCalls), this);
+
+        return retCalls;
+    },
+
+    /**
+     * Gets a quote-data-group component by the group ID
+     *
+     * @param {string} groupId The group's id
+     * @protected
+     */
+    _getComponentByGroupId: function(groupId) {
+        return _.find(this._components, function(group) {
+            return group.groupId === groupId;
+        });
+    },
+
+    /**
+     * Handles when user drags an item into/over a group
+     *
+     * @param {jQuery.Event} evt The jQuery sortover event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @protected
+     */
+    _onGroupDragTriggerOver: function(evt, ui) {
+        var groupId = $(evt.target).data('group-id');
+        var group = this._getComponentByGroupId(groupId);
+        if (group) {
+            group.trigger('quotes:sortable:over', evt, ui);
+        }
+    },
+
+    /**
+     * Handles when user drags an item out of a group
+     *
+     * @param {jQuery.Event} evt The jQuery sortout event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @private
+     */
+    _onGroupDragTriggerOut: function(evt, ui) {
+        var groupId = $(evt.target).data('group-id');
+        var group = this._getComponentByGroupId(groupId);
+        if (group) {
+            group.trigger('quotes:sortable:out', evt, ui);
+        }
+    },
+
+    /**
+     * Removes the sortable plugin from any rows that have the plugin added
+     * so we don't add plugin multiple times and for dispose cleanup
+     */
+    beforeRender: function() {
+        var groups = this.$(this.sortableTag);
+        if (groups.length) {
+            _.each(groups, function(group) {
+                if ($(group).hasClass('ui-sortable')) {
+                    $(group).sortable('destroy');
+                }
+            }, this);
+        }
     },
 
     /**
@@ -226,5 +516,13 @@
 
         // dispose the group
         groupToDelete.dispose();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.beforeRender();
+        this._super('_dispose');
     }
 })

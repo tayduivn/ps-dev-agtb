@@ -275,7 +275,9 @@ class RelateRecordApi extends SugarApi
             if (!$relatedBean || $relatedBean->deleted) {
                 throw new SugarApiExceptionNotFound('Could not find the related bean');
             }
-            $primaryBean->$linkName->add(array($relatedBean), $additionalValues);
+
+            $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
+            $primaryBean->$linkName->add(array($relatedBean), array_merge($relatedData, $additionalValues));
 
             $result['related_records'][] = $this->formatBean($api, $args, $relatedBean);
         }

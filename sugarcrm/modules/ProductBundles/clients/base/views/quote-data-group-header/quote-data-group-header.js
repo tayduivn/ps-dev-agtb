@@ -42,6 +42,16 @@
     listColSpan: 0,
 
     /**
+     * The CSS class for the save icon
+     */
+    saveIconCssClass: '.group-loading-icon',
+
+    /**
+     * How many times the group has been called to start or stop saving
+     */
+    groupSaveCt: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -57,6 +67,36 @@
         // ninjastuff
         this.el = this.layout.el;
         this.setElement(this.el);
+
+        this.groupSaveCt = 0;
+        this.layout.on('quotes:group:save:start', this._onGroupSaveStart, this);
+        this.layout.on('quotes:group:save:stop', this._onGroupSaveStop, this);
+    },
+
+    /**
+     * Handles displaying the loading icon when a group starts saving
+     *
+     * @private
+     */
+    _onGroupSaveStart: function() {
+        this.groupSaveCt++;
+        this.$(this.saveIconCssClass).show();
+    },
+
+    /**
+     * Handles hiding the loading icon when a group save is complete
+     *
+     * @private
+     */
+    _onGroupSaveStop: function() {
+        this.groupSaveCt--;
+        if (this.groupSaveCt === 0) {
+            this.$(this.saveIconCssClass).hide();
+        }
+
+        if (this.groupSaveCt < 0) {
+            this.groupSaveCt = 0;
+        }
     },
 
     /**

@@ -36,4 +36,6 @@ $mod_strings = array (
     'LBL_CREATE_COMMENT_BUTTON_TOOLTIP' => 'Create Comment',
     'LBL_EDIT_BUNDLE_BUTTON_TOOLTIP' => 'Edit the group name',
     'LBL_DELETE_BUNDLE_BUTTON_TOOLTIP' => 'Delete the group',
+    'LBL_QUOTE_DATA_EMPTY_ROW_WITH_GROUP' => 'Use the + create menu to add a line item, or note to this group.',
+    'LBL_QUOTE_DATA_EMPTY_ROW_GROUPLESS' => 'Use the + create menu to add a line item, note, or group to this Quote.',
 );

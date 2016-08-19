@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $dictionary['product_bundle_note'] = array(
     'table' => 'product_bundle_note',
     'fields' => array(
@@ -87,6 +86,7 @@ $dictionary['product_bundle_note'] = array(
             'join_table' => 'product_bundle_note',
             'join_key_lhs' => 'bundle_id',
             'join_key_rhs' => 'note_id',
+            'true_relationship_type' => 'one-to-many',
         ),
     ),
 );

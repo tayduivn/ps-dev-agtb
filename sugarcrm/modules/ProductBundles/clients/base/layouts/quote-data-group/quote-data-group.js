@@ -30,10 +30,21 @@
     listColSpan: 0,
 
     /**
+     * This is the ProductBundle ID from the model set here on the component
+     * for easier access by parent layouts
+     */
+    groupId: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        // set the groupID to the model ID
+        this.groupId = this.model.get('id');
+        // set this collection to the product_bundle_items collection
+        this.collection = this.model.get('product_bundle_items');
 
         var listMeta = app.metadata.getView('Products', 'quote-data-group-list');
         if (listMeta && listMeta.panels && listMeta.panels[0].fields) {
@@ -41,7 +52,23 @@
         }
     },
 
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         this.model.on('change:product_bundle_items', this.render, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        // add the group id to the bundle level tbody
+        this.$el.attr('data-group-id', this.groupId);
+
+        // set the product bundle ID on all the QLI/Notes rows
+        this.$('tr.quote-data-group-list').attr('data-group-id', this.groupId);
     }
 })

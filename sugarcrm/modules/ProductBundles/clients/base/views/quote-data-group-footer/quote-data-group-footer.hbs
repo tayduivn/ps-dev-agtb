@@ -10,7 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr class="quote-data-group-footer">
+<tr class="quote-data-group-list empty-row">
+    <td colspan="{{listColSpan}}">
+        <div class="empty-row-droppable droppable">
+            {{str 'LBL_QUOTE_DATA_EMPTY_ROW_WITH_GROUP' 'ProductBundles'}}
+        </div>
+    </td>
+</tr>
+<tr class="quote-data-group-list sortable ui-sortable hidden" name="emptyRow">
+    <td colspan="{{listColSpan}}">&nbsp;</td>
+</tr>
+<tr class="quote-data-group-footer ui-not-droppable">
     <td class="quote-data-group-footer" colspan="{{listColSpan}}">
         <div class="footer-fields">
             {{#each meta.panels}}
