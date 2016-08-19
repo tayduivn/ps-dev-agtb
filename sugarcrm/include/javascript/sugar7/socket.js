@@ -276,11 +276,20 @@
          */
         authorize: function() {
             this.socket().emit('OAuthToken', {
-                'siteUrl': this._app.config.siteUrl,
+                'siteUrl': this._getLocation().origin + this._getLocation().pathname,
                 'serverUrl': this._app.config.serverUrl,
                 'token': this._app.api.getOAuthToken(),
                 'channels': this._currentChannels()
             });
+        },
+
+        /**
+         * Return window.location.
+         * @private
+         * @return {Location} Return window.location.
+         */
+        _getLocation: function() {
+            return window.location;
         },
 
         /**
