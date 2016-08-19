@@ -111,7 +111,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
-    'Addressees' => 'Addressees',
   ),
 
     'moduleIconList' =>
@@ -226,7 +225,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag',
     'Categories' => 'Category',
-    'Addressees' => 'Addressee',
   ),
 
 /*
@@ -1037,7 +1035,6 @@ $app_list_strings = array (
                                      'pick'     => '--None--',
                                      'createcase'  => 'Create Case',
                                      'bounce'   => 'Bounce Handling',
-                                     'caldav'   => 'CalDAV Handling',
     ),
     'dom_email_distribution'=> array(''             => '--None--',
                                      'direct'       => 'Direct Assign',
@@ -11864,7 +11861,6 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
-    'LBL_DAFAULT_CALDAV_NAME' => 'Default',
     'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
 );
 
@@ -12891,24 +12887,3 @@ $app_list_strings['business_rule_type_list'] = array(
     'single' => 'Single-Hit',
 );
 //END SUGARCRM flav=ent ONLY
-
-$app_list_strings['moduleList']['CalDav'] = 'CalDav';
-$app_list_strings['moduleListSingular']['CalDav'] = 'CalDav';
-
-$app_list_strings['caldav_oldest_sync_date'] = array(
-    '2 weeks' => '2 weeks',
-    '1 month' => '1 month',
-    '3 month' => '3 months',
-    '6 month' => '6 months',
-    0 => 'All events',
-);
-
-$app_list_strings['caldav_queue_action'] = array(
-    'import' => 'Import',
-    'export' => 'Export',
-);
-
-$app_list_strings['caldav_queue_status'] = array(
-    'queued' => 'Queued',
-    'completed' => 'Completed',
-);

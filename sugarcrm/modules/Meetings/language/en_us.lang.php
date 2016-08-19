@@ -54,7 +54,6 @@ $mod_strings = array (
 	'LBL_LIST_SUBJECT' => 'Subject',
 	'LBL_LIST_TIME' => 'Start Time',
 	'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
-	'LBL_ADDRESSEES_SUBPANEL_TITLE' => 'Addressees',
 	'LBL_LOCATION' => 'Location:',
 	'LBL_MEETING' => 'Meeting:',
 	'LBL_MINSS_ABBREV' => 'm',

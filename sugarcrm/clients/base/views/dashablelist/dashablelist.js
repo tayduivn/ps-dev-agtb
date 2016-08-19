@@ -88,7 +88,7 @@
      *
      * @property {Array}
      */
-    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates', 'Addressees'],
+    moduleBlacklist: ['Home', 'Forecasts', 'ProductCategories', 'ProductTemplates'],
 
     /**
      * Module Additions

@@ -177,11 +177,6 @@
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSECrmDataWrapperTest.php</exclude>
             <exclude>./pmse/modules/pmse_Project/clients/base/api/wrappers/PMSEProjectWrapperTest.php</exclude>
         </testsuite>
-        <testsuite name="CalDav">
-            <directory>./src/Dav</directory>
-            <directory>./modules/Addressees</directory>
-            <directory>./modules/CalDav</directory>
-        </testsuite>
         <testsuite name="TbACL">
             <file>./clients/base/api/TeamBasedACLExportApiTest.php</file>
             <file>./data/visibility/ACLVisibilityTest.php</file>

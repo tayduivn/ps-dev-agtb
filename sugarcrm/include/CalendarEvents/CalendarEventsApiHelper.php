@@ -83,7 +83,6 @@ class CalendarEventsApiHelper extends SugarBeanApiHelper
         $bean->users_arr = $this->getInvitees($bean, 'users', $submittedData);
         $bean->leads_arr = $this->getInvitees($bean, 'leads', $submittedData);
         $bean->contacts_arr = $this->getInvitees($bean, 'contacts', $submittedData);
-        $bean->addressees_arr = $this->getInvitees($bean, 'addressees', $submittedData);
 
         return $data;
     }
