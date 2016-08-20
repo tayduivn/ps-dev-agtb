@@ -8119,6 +8119,11 @@ class SugarBean
      */
     public function getLockedFields()
     {
+        // if no id, return immediately, do not cache
+        if (empty($this->id)) {
+            return array();
+        }
+
         if ($this->lockedFields !== null) {
             return $this->lockedFields;
         }
