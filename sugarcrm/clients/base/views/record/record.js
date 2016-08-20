@@ -245,7 +245,19 @@
 
             // Special handling for fieldsets
             if (field.type === 'fieldset') {
-                var hasLockedFieldSetField = _.some(field.fields, function(fieldSetField) {
+                // Some fieldsets have fields that are only for viewing, like the
+                // `copy` field on alternate addresses. Those should be filtered
+                // out of the fields list.
+                var fieldSetFields = _.filter(field.fields, function(fieldSetField) {
+                    return !_.isUndefined(self.model.get(fieldSetField.name));
+                });
+
+                // A fieldset is locked when all of its actual fields are locked
+                isLocked = _.every(fieldSetFields, function(fieldSetField) {
+                    return _.contains(lockedFields, fieldSetField.name);
+                });
+
+                var hasLockedFieldSetField = _.some(fieldSetFields, function(fieldSetField) {
                     return _.contains(lockedFields, fieldSetField.name);
                 });
 
@@ -574,6 +586,7 @@
      * @private
      */
     _setNoEditFields: function(panels) {
+        var self = this;
         panels = panels || this.meta.panels;
 
         delete this.noEditFields;
@@ -589,7 +602,14 @@
 
                 // disable the pencil icon if the user doesn't have ACLs
                 if (field.type === 'fieldset') {
-                    if (field.readonly || _.every(field.fields, function(f) {
+                    // Some fieldsets have fields that are only for viewing, like the
+                    // `copy` field on alternate addresses. Those should be filtered
+                    // out of the fields list.
+                    var fieldSetFields = _.filter(field.fields, function(fieldSetField) {
+                        return !_.isUndefined(self.model.get(fieldSetField.name));
+                    });
+
+                    if (field.readonly || _.every(fieldSetFields, function(f) {
                         return !app.acl.hasAccessToModel('edit', this.model, f.name);
                     }, this)) {
                         this.noEditFields.push(field.name);

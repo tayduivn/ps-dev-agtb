@@ -60,13 +60,23 @@ class SugarACLLockedFields extends SugarACLStrategy
             return true;
         }
 
-        // check if this field is a locked field
+        // Get our locked field array for checking
         $lockedFields = $bean->getLockedFields();
-        if (!empty($lockedFields) && in_array($context['field'], $lockedFields)) {
-            // it is a locked field
-            return false;
+
+        // If there are locked fields...
+        if (!empty($lockedFields)) {
+            // See if the requested field is in the locked list. If it is, return false.
+            if (in_array($context['field'], $lockedFields)) {
+                return false;
+            }
+
+            // Handle group fields, since individual fields of a group lock the group
+            if ($this->isGroupLocked($context['field'], $lockedFields, $bean->field_defs)) {
+                return false;
+            }
         }
 
+        // Default is true
         return true;
     }
 
@@ -85,5 +95,40 @@ class SugarACLLockedFields extends SugarACLStrategy
             $bean = $context['bean'];
         }
         return $bean;
+    }
+
+    /**
+     * Checks to see if a field is in a group field that might also be locked
+     * @param string $field The field to check
+     * @param array $lockedFields The locked fields array
+     * @param array $defs The beans field def array
+     * @return boolean true if the field is grouped and locked
+     */
+    protected function isGroupLocked($field, array $lockedFields, array $defs)
+    {
+        // Loop over each field to see if it is a group field
+        foreach ($defs as $def) {
+            // And check to see if the group is the same as the requested field
+            if (isset($def['group']) && $def['group'] === $field) {
+                $groupSet = array();
+                // Now find all fields in the group
+                foreach ($defs as $d) {
+                    if ((isset($d['group']) && $d['group'] === $def['group']) || $d['name'] === $def['group']) {
+                        $groupSet[] = $d['name'];
+                    }
+                }
+
+                // Only compare if there is a need to
+                if (!empty($groupSet)) {
+                    $check = array_intersect($groupSet, $lockedFields);
+                    // If any of the fields in the group are also in the lockedFields array...
+                    if (!empty($check)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
