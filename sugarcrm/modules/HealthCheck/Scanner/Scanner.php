@@ -871,12 +871,14 @@ class HealthCheckScanner
         // Check the Elastic Search Customization
         $this->checkCustomElastic();
 
-
         // Check Process Author unserialization
         $this->checkPAUnserialization();
 
         // Check Process Author invalid fields in activities and business rules
         $this->checkPAInvalidFields();
+
+        // Check Process Author locked fields
+        $this->checkPALockedFields();
 
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
@@ -894,6 +896,105 @@ class HealthCheckScanner
 
         restore_error_handler();
         return $this->logMeta;
+    }
+
+    /**
+     * Checks Process Author locked fields.
+     * If any field group is partially locked, it will notify with a Bucket F red flag.
+     */
+    protected function checkPALockedFields()
+    {
+        // Make sure we need to run this first
+        list($version, $flavor) = $this->getVersionAndFlavor();
+
+        // Only run this for 7.6.0 and above
+        if (version_compare($version, '7.6.0.0', '>=')) {
+            // And only run this for ENT or ULT flavors
+            if (in_array(strtolower($flavor), array('ent', 'ult'))) {
+                $warnings = $this->checkLockedFieldGroups();
+                foreach ($warnings as $warning) {
+                    $this->updateStatus('invalidAWFLockedFieldGroup', $warning['group'], $warning['pd'], $warning['module'], $warning['fields']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether there is any field group that is only partially locked.
+     * Used by HealthCheck to ensure that upgraded process definitions will function
+     * properly concerning locked fields.
+     * @return array List of warnings
+     */
+    protected function checkLockedFieldGroups()
+    {
+        $durationModules = ['Calls', 'Meetings'];
+        $durationFields = ['duration_hours', 'duration_minutes', 'date_end'];
+        $durationGroup = 'duration';
+
+        $warnings = [];
+
+        // Add a logger for this step
+        $this->log('Checking for any field group that is only partially locked.');
+
+        // Build the query and run it
+        $sql = 'SELECT id, name, pro_module, pro_locked_variables'
+            . ' FROM pmse_bpm_process_definition'
+            . ' WHERE deleted = 0';
+        $result = $this->db->query($sql);
+
+        // Loop and check now, making sure to send a false flag to fetchByAssoc
+        // to ensure that the data in the row does not get html encoded on fetch
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            $lockedFields = json_decode(html_entity_decode($row['pro_locked_variables']));
+            if ($lockedFields) {
+                $bean = BeanFactory::getBean($row['pro_module']);
+                $checkDuration = in_array($row['pro_module'], $durationModules);
+                // tally the locked fields in each group
+                $locked = [];
+                foreach ($lockedFields as $lockedField) {
+                    $def = $bean->field_defs[$lockedField];
+                    if (isset($def['group'])) {
+                        if (isset($locked[$def['group']])) {
+                            $locked[$def['group']][] = $lockedField;
+                        } else {
+                            $locked[$def['group']] = array($lockedField);
+                        }
+                    }
+                    if ($checkDuration && in_array($lockedField, $durationFields)) {
+                        if (isset($locked[$durationGroup])) {
+                            $locked[$durationGroup][] = $lockedField;
+                        } else {
+                            $locked[$durationGroup] = array($lockedField);
+                        }
+                    }
+                }
+                // tally the number of fields in each group
+                foreach ($locked as $group => $fields) {
+                    if ($checkDuration && $group == $durationGroup) {
+                        $total = count($durationFields);
+                    } else {
+                        $total = 0;
+                        foreach ($bean->field_defs as $def) {
+                            if (isset($def['group']) && $def['group'] == $group) {
+                                $this->log($group . ' => ' . $def['name']);
+                                $total++;
+                            }
+                        }
+                    }
+                    if ($total > count($fields)) {
+                        // Add this failure to the stack
+                        $warnings[] = array(
+                            'fields' => implode(',', $fields),
+                            'group' => $group,
+                            'pd' => $row['name'],
+                            'module' => $row['pro_module'],
+                        );
+                    }
+                }
+            }
+        }
+
+        return $warnings;
     }
 
     /**
