@@ -33,10 +33,8 @@
      *
      * @param {Object} [options] Options that are passed to
      *   collection/model's fetch method.
-     * @param {boolean} [setFields=true] If `true`, the layout will update
-     *   the set of fields used on the current context.
      */
-    loadData: function(options, setFields) {
+    loadData: function(options) {
         var self = this,
             pmseInboxUrl = app.api.buildURL(this.module + '/case/' + this.inboxId + '/' + this.flowId);
 
@@ -64,7 +62,7 @@
                     return app.api.call('read', url, {}, callbacks, options);
                 };
 
-                self.initCaseView(data, [options, setFields])
+                self.initCaseView(data, [options]);
             },
 
             error: function (error) {

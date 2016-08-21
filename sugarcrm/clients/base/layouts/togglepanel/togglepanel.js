@@ -35,10 +35,10 @@
     /**
      * @inheritdoc
      */
-    loadData: function(options, setFields) {
+    loadData: function(options) {
         var allComponents = this._components;
         this._components = this.getNonToggleComponents();
-        this._super('loadData', [options, setFields]);
+        this._super('loadData', [options]);
         this._components = allComponents;
     },
 
