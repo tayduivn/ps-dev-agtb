@@ -231,7 +231,7 @@ class Quota extends SugarBean
         // Get the user's full name to display in the table
         $qry = "SELECT U.first_name, U.last_name " .
             "FROM users U " .
-            "WHERE U.id = '" . $user_id . "' ";
+            "WHERE U.id = " . $this->db->quoted($user_id);
 
         $result = $this->db->query($qry, true, " Error filling in additional detail fields: ");
 
