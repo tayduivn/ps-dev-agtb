@@ -133,8 +133,12 @@ class DataSet extends SugarBean {
 
 
 	function get_custom_query(){
-
-		$query = "SELECT cq.name from $this->rel_custom_queries cq, $this->table_name p1 where cq.id = p1.query_id and p1.id = '$this->id' and p1.deleted=0 and cq.deleted=0";
+        $query = sprintf(
+            'SELECT cq.name FROM %s cq, %s p1 WHERE cq.id = p1.query_id AND p1.id=%s AND p1.deleted=0 AND cq.deleted=0',
+            $this->rel_custom_queries,
+            $this->table_name,
+            $this->db->quoted($this->id)
+        );
 		$result = $this->db->query($query,true," Error filling in additional custom query detail fields: ");
 
 		// Get the id and the name.
@@ -151,7 +155,11 @@ class DataSet extends SugarBean {
 	}
 
 	function get_parent_dataset(){
-		$query = "SELECT $this->table_name.id, $this->table_name.name from $this->table_name where $this->table_name.id = '$this->parent_id' AND $this->table_name.deleted=0 ";
+        $query = sprintf(
+            'SELECT id, name FROM %s WHERE id = %s AND deleted = 0',
+            $this->table_name,
+            $this->db->quoted($this->parent_id)
+        );
 		$result = $this->db->query($query,true," Error filling in additional parent detail fields: ");
 
 		// Get the id and the name.
