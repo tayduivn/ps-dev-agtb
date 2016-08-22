@@ -54,13 +54,6 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sfh = new SugarFieldHandler();
 
-    // Need to handle process management locked fields unless we are coming from
-    // a PMSE case form
-    $fromCase = InputValidation::getService()->getValidInputRequest('from_process_case');
-    if (empty($fromCase)) {
-        handleLockedFieldEdits($focus);
-    }
-
 	foreach($focus->field_defs as $field=>$def) {
         if ( $field == 'id' && !empty($focus->id) ) {
             // Don't try and overwrite the ID
@@ -113,7 +106,8 @@ function populateFromPostACL(SugarBean $focus)
 
     foreach (array_keys($focus->field_defs) as $field) {
         $fieldAccess = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $isOwner);
-        if (!in_array($fieldAccess, array(2, 4))) {
+        $aclStrategyAccess = $focus->ACLFieldAccess($field, 'save', array());
+        if (!in_array($fieldAccess, array(2, 4)) || !$aclStrategyAccess) {
             $focus->$field = $defaultBean->$field;
         }
     }
@@ -535,30 +529,5 @@ function save_from_report($report_id,$parent_id, $module_name, $relationship_att
     while($row = $report->db->fetchByAssoc($result))
     {
         $focus->$relationship_attr_name->add($row['primaryid']);
-    }
-}
-
-/**
- * Checks a bean for locked fields and if there are any edited, throws an error
- * @param SugarBean $focus The Sugar Bean object
- */
-function handleLockedFieldEdits($focus)
-{
-    // Needed to handle process management locked fields
-    $locked = $focus->isUpdate() ? $focus->getLockedFields() : array();
-
-    $errors = array();
-    foreach ($locked as $field) {
-        if ($focus->lockedFieldHasChanged($field, $_POST)) {
-            $errors[] = $field;
-        }
-    }
-
-    // Handle messaging for this issue if there are errors to handle
-    if ($errors) {
-        $message = $focus->getLockedFieldErrorMessage($errors);
-        if (!empty($message)) {
-            sugar_die($message);
-        }
     }
 }

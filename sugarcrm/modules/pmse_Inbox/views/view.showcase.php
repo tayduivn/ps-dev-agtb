@@ -15,6 +15,7 @@ require_once 'include/EditView/EditView2.php';
 require_once 'modules/pmse_Inbox/engine/PMSE.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class pmse_InboxViewShowCase extends SugarView
 {
@@ -76,6 +77,9 @@ class pmse_InboxViewShowCase extends SugarView
     public function displayDataForm($module = '', $id = '', $viewMode = 'bpm', $readonly = false)
     {
         if (!empty($module) && !empty($id)) {
+            // No need for locked fields on the AWF case
+            Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
+
             $this->bean = BeanFactory::getBean($module, $id);
             $altViewMode = array();
             if (is_array($viewMode)) {
