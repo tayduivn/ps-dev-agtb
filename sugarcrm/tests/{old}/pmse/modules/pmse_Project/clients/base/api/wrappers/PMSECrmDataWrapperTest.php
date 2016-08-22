@@ -1548,7 +1548,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $act01 = array(
@@ -1596,7 +1596,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $act01 = array(
@@ -1651,7 +1651,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $act01 = array(
@@ -1699,7 +1699,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $act01 = array(
@@ -1752,7 +1752,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $exception = new Exception('Some Message');
@@ -1784,7 +1784,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(array('Query', 'fetchByAssoc', 'quoted'))
                 ->getMock();
 
         $args = array(

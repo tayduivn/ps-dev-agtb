@@ -1425,21 +1425,21 @@ class PMSECrmDataWrapper implements PMSEObservable
             global $db;
 
             //$get_projID_query = "select prj_id from bpmn_project where prj_uid = '$res->targetProcess'";
-            $get_projID_query = "select id from pmse_project where id = '$res->targetProcess';";
+            $get_projID_query = "select id from pmse_project where id = " . $db->quoted($res->targetProcess);
             $result = $db->Query($get_projID_query);
             $row = $db->fetchByAssoc($result);
 //            $projId = $row['prj_id'];
             $projId = $row['id'];
 
             //$get_proID_query = "select pro_id from bpmn_process where prj_id = $projId";
-            $get_proID_query = "select id from pmse_bpmn_process where prj_id = '$projId';";
+            $get_proID_query = "select id from pmse_bpmn_process where prj_id = " . $db->quoted($projId);
             $result = $db->Query($get_proID_query);
             $row = $db->fetchByAssoc($result);
 //            $proId = $row['pro_id'];
             $proId = $row['id'];
 
             //$get_actIds = "select act_id from bpm_activity_definition where pro_id = $proId;";
-            $get_actIds = "select id from pmse_bpm_activity_definition where pro_id = '$proId';";
+            $get_actIds = "select id from pmse_bpm_activity_definition where pro_id = " . $db->quoted($proId);
             $result = $db->Query($get_actIds);
             $row = $db->fetchByAssoc($result);
             $activity = array();
@@ -1450,7 +1450,8 @@ class PMSECrmDataWrapper implements PMSEObservable
             }
 
 //            $get_act_types = "select act_id, act_script_type from bpmn_activity where pro_id = $proId;";
-            $get_act_types = "select id, act_script_type from pmse_bpmn_activity where pro_id = '$proId';";
+            $get_act_types = "select id, act_script_type from pmse_bpmn_activity where pro_id = " .
+                $db->quoted($proId);
             $result = $db->Query($get_act_types);
             $row = $db->fetchByAssoc($result);
             while (is_array($row)) {
@@ -1482,7 +1483,15 @@ class PMSECrmDataWrapper implements PMSEObservable
                     }
                 }
 //                $update_activity = "update bpm_activity_definition set act_field_module = '$res->newModule', act_fields = '$cleanActivityFiels', act_readonly_fields = '', act_required_fields = '' where pro_id = $proId and act_id = $actId;";
-                $update_activity = "update pmse_bpm_activity_definition set act_field_module = '$res->newModule', act_fields = '$cleanActivityFiels', act_readonly_fields = '', act_required_fields = '' where pro_id = $proId and id = '$actId';";
+                //@codingStandardsIgnoreStart
+                $update_activity = sprintf(
+                    'UPDATE pmse_bpm_activity_definition SET act_field_module = %s, act_fields = %s, act_readonly_fields = "", act_required_fields = "" WHERE pro_id = %s and id = %s;',
+                    $db->quoted($res->newModule),
+                    $db->quoted($cleanActivityFiels),
+                    $proId,
+                    $db->quoted($actId)
+                );
+                //@codingStandardsIgnoreEnd
                 $resultUpdate = $db->Query($update_activity);
             }
             //cleaning gateways
