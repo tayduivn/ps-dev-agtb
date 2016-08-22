@@ -310,13 +310,25 @@ class PMSEUserAssignmentHandler
      */
     public function roundTripReassign($caseData)
     {
+        $db = DBManagerFactory::getInstance();
         $caseBean = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
         $caseBean->retrieve_by_string_fields(array(
                 'cas_id' => $caseData['cas_id'],
                 'cas_index' => $caseData['cas_index']
             ));
         $previousFlow = $this->retrieveBean('pmse_BpmFlow'); //new BpmFlow();
-        $where = 'bpmn_id=\'' . $caseBean->bpmn_id . '\' AND cas_id=' . $caseData['cas_id'] . ' AND bpmn_type=\'' . $caseBean->bpmn_type . '\' AND bpmn_id=\'' . $caseBean->bpmn_id . '\' AND cas_reassign_level=' . ($caseBean->cas_reassign_level - 1) . ' AND cas_index=(SELECT max(cas_index) FROM pmse_bpm_flow WHERE cas_id=' . $caseData['cas_id'] . ' AND cas_thread=' . $caseData['cas_thread'] . ' AND cas_reassign_level=' . ($caseBean->cas_reassign_level - 1) . ')';
+        $where = sprintf(
+            'bpmn_id=%s AND cas_id=%d AND bpmn_type=%s AND bpmn_id=%s AND cas_reassign_level=%d AND cas_index=
+                (SELECT max(cas_index) FROM pmse_bpm_flow WHERE cas_id=%d AND cas_thread=%d AND cas_reassign_level=%d)',
+            $db->quoted($caseBean->bpmn_id),
+            $caseData['cas_id'],
+            $db->quoted($caseBean->bpmn_type),
+            $db->quoted($caseBean->bpmn_id),
+            ($caseBean->cas_reassign_level - 1),
+            $caseData['cas_id'],
+            $caseData['cas_thread'],
+            ($caseBean->cas_reassign_level - 1)
+        );
         $previousFlowRecord = $previousFlow->get_full_list('', $where);
         //$previousFlowRecord = $this->wrapper->getSelectRows($previousFlow, '', $where);
         $previousFlowRecord = $previousFlowRecord[0];
