@@ -1317,7 +1317,7 @@ eoq;
 		// $ret['uid'] is the draft Email object's GUID
 		$ret['attachments'] = array();
 
-		$q = "SELECT id, filename FROM notes WHERE parent_id = '{$ret['uid']}' AND deleted = 0";
+        $q = "SELECT id, filename FROM notes WHERE parent_id = '{$ret['uid']}' AND deleted = 0";
 		$r = $db->query($q);
 
 		while($a = $db->fetchByAssoc($r)) {
@@ -2084,7 +2084,11 @@ function distDirect($user, $mailIds) {
 function getAssignedEmailsCountForUsers($userIds) {
 	$counts = array();
 	foreach($userIds as $id) {
-		$r = $this->db->query("SELECT count(*) AS c FROM emails WHERE assigned_user_id = '$id' AND status = 'unread'");
+            $query = sprintf(
+                'SELECT count(*) AS c FROM emails WHERE assigned_user_id = %s AND status = "unread"',
+                $this->db->quoted($id)
+            );
+            $r = $this->db->query($query);
 		$a = $this->db->fetchByAssoc($r);
 		$counts[$id] = $a['c'];
 	} // foreach
