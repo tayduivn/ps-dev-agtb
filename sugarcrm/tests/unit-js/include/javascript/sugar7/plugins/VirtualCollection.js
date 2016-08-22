@@ -9,7 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 describe('Plugins.VirtualCollection', function() {
-    var app, attribute, collection, contacts, context, model, module, sandbox;
+    var app;
+    var attribute;
+    var collection;
+    var contacts;
+    var newContacts;
+    var context;
+    var model;
+    var module;
+    var sandbox;
 
     module = 'Meetings';
 
@@ -20,6 +28,11 @@ describe('Plugins.VirtualCollection', function() {
         {_module: 'Contacts', id: '4', name: 'Katie Ross'},
         {_module: 'Contacts', id: '5', name: 'Brad Harris'},
         {_module: 'Contacts', id: '6', name: 'Thomas Wallace'}
+    ];
+
+    newContacts = [
+        {_module: 'Contacts', name: 'Nelly NewContact'},
+        {_module: 'Contacts', name: 'Ned NewContact'}
     ];
 
     beforeEach(function() {
@@ -233,7 +246,7 @@ describe('Plugins.VirtualCollection', function() {
             expect(collection._triggerChange).toHaveBeenCalled();
             expect(collection.length).toBe(3);
             expect(collection.links.contacts.length).toBe(1);
-            expect(collection.links.contacts.first().get('_action')).toEqual('create');
+            expect(collection.links.contacts.first().get('_action')).toEqual('add');
         });
 
         it('should add a model that was marked for removal', function() {
@@ -247,6 +260,13 @@ describe('Plugins.VirtualCollection', function() {
 
             expect(collection.length).toBe(2);
             expect(collection.links.contacts.length).toBe(0);
+        });
+
+        it('should add models that have no id as "create"', function() {
+            collection.add(newContacts);
+
+            expect(collection.links.contacts.length).toBe(2);
+            expect(collection.links.contacts.first().get('_action')).toEqual('create');
         });
 
         it('should not add a model that already exists in the collection', function() {
@@ -263,7 +283,7 @@ describe('Plugins.VirtualCollection', function() {
 
             expect(collection.get(contact.id).get('name')).toEqual(contact.name);
             expect(collection.links.contacts.length).toBe(1);
-            expect(collection.links.contacts.first().get('_action')).toEqual('update');
+            expect(collection.links.contacts.first().get('_action')).toEqual('add');
         });
 
         it('should not merge a model that already exists in the collection', function() {
@@ -352,8 +372,8 @@ describe('Plugins.VirtualCollection', function() {
             expect(collection.links.contacts.get('2').get('_action')).toEqual('delete');
             expect(collection.links.contacts.get('3').get('_action')).toEqual('delete');
             expect(collection.links.contacts.get('4').get('_action')).toEqual('delete');
-            expect(collection.links.contacts.get('5').get('_action')).toEqual('create');
-            expect(collection.links.contacts.get('6').get('_action')).toEqual('create');
+            expect(collection.links.contacts.get('5').get('_action')).toEqual('add');
+            expect(collection.links.contacts.get('6').get('_action')).toEqual('add');
         });
 
         it('should replace some of the models', function() {
@@ -366,8 +386,8 @@ describe('Plugins.VirtualCollection', function() {
             expect(collection.links.contacts.get('1').get('_action')).toEqual('delete');
             expect(collection.links.contacts.get('2').get('_action')).toEqual('delete');
             expect(collection.links.contacts.get('3').get('_action')).toEqual('delete');
-            expect(collection.links.contacts.get('5').get('_action')).toEqual('create');
-            expect(collection.links.contacts.get('6').get('_action')).toEqual('create');
+            expect(collection.links.contacts.get('5').get('_action')).toEqual('add');
+            expect(collection.links.contacts.get('6').get('_action')).toEqual('add');
         });
 
         it('should revert the collection to its original state', function() {
@@ -715,6 +735,7 @@ describe('Plugins.VirtualCollection', function() {
         describe('calling toJSON() on the model', function() {
             it('should return an object with links when only the link fields are specified', function() {
                 collection.add(_.rest(contacts, 4));
+                collection.add(newContacts[0]);
                 collection.remove([3]);
                 collection.add({_module: 'Accounts', id: '10', name: 'Foo Bar'});
 
@@ -722,11 +743,17 @@ describe('Plugins.VirtualCollection', function() {
                     fields: ['contacts', 'accounts']
                 })).toEqual({
                     contacts: {
-                        add: ['5','6'],
+                        create: [
+                            {_module: 'Contacts', name: 'Nelly NewContact'}
+                        ],
+                        add: [
+                            {_module: 'Contacts', id: '5', name: 'Brad Harris'},
+                            {_module: 'Contacts', id: '6', name: 'Thomas Wallace'}
+                        ],
                         delete: ['3']
                     },
                     accounts: {
-                        add: ['10']
+                        add: [{_module: 'Accounts', id: '10', name: 'Foo Bar'}]
                     }
                 });
             });
@@ -740,7 +767,7 @@ describe('Plugins.VirtualCollection', function() {
                     fields: ['accounts']
                 })).toEqual({
                     accounts: {
-                        add: ['10']
+                        add: [{_module: 'Accounts', id: '10', name: 'Foo Bar'}]
                     }
                 });
             });
