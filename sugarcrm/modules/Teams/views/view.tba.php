@@ -66,11 +66,15 @@ class TeamsViewTBA extends SugarView
     {
         $tbaConfigurator = new TeamBasedACLConfigurator();
         $modules = $tbaConfigurator->getListOfPublicTBAModules();
-
         // sort modules by module label
         $modulesTitles = array();
         foreach ($modules as $name) {
-            $modulesTitles[$name] = $GLOBALS['app_list_strings']['moduleList'][$name];
+            $beanList = array_keys($GLOBALS['beanList']);
+
+            // Prevent empty tabs if module is disabled
+            if (in_array($name, $beanList)) {
+                $modulesTitles[$name] = $GLOBALS['app_list_strings']['moduleList'][$name];
+            }
         }
         asort($modulesTitles);
 
