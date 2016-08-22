@@ -112,7 +112,8 @@ class Lead extends Person {
 	function get_account()
 	{
 		if(isset($this->account_id) && !empty($this->account_id)){
-			$query = "SELECT name , assigned_user_id account_name_owner FROM accounts WHERE id='{$this->account_id}'";
+            $query = "SELECT name , assigned_user_id account_name_owner FROM accounts WHERE id=" .
+                $this->db->quoted($this->account_id);
 
 	        //requireSingleResult has beeen deprecated.
 			//$result = $this->db->requireSingleResult($query);
