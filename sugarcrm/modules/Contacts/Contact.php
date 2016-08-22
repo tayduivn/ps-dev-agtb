@@ -304,17 +304,17 @@ class Contact extends Person {
 		// retrieve the account information and the information about the person the contact reports to.
 		$query = "SELECT acc.id, acc.name, con_reports_to.first_name, con_reports_to.last_name
 		from contacts
-		left join accounts_contacts a_c on a_c.contact_id = '".$this->id."' and a_c.deleted=0
+        left join accounts_contacts a_c on a_c.contact_id = ".$this->db->quoted($this->id)." and a_c.deleted=0
 		left join accounts acc on a_c.account_id = acc.id and acc.deleted=0
 		left join contacts con_reports_to on con_reports_to.id = contacts.reports_to_id
-		where contacts.id = '".$this->id."'";
+        where contacts.id = ".$this->db->quoted($this->id);
 		// Bug 43196 - If a contact is related to multiple accounts, make sure we pull the one we are looking for
 		// Bug 44730  was introduced due to this, fix is to simply clear any whitespaces around the account_id first
 
         $clean_account_id = trim($this->account_id);
 
         if ( !empty($clean_account_id) ) {
-		    $query .= " and acc.id = '{$this->account_id}'";
+            $query .= " and acc.id = ".$this->db->quoted($this->account_id);
 		}
         else { // get primary account
             $query .= " and a_c.primary_account = 1";
