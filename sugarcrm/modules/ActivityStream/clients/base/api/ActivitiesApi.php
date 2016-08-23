@@ -203,9 +203,11 @@ class ActivitiesApi extends FilterApi
             $previewCheckResult = self::$previewCheckResults[$previewCheckKey];
         } else {
             $previewCheckBean = $this->getEmptyBean($module);
-            $previewCheckBean->id = $id;
-            //check if user has access - also checks if record is deleted
-            $previewCheckResult['preview_enabled'] = $previewCheckBean->checkUserAccess($user);
+            if (!empty($previewCheckBean)) {
+                $previewCheckBean->id = $id;
+                //check if user has access - also checks if record is deleted
+                $previewCheckResult['preview_enabled'] = $previewCheckBean->checkUserAccess($user);
+            }
             //currently only one error reason, but may be others in the future
             $previewCheckResult['preview_disabled_reason'] = $previewCheckResult['preview_enabled'] ? '' : 'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS';
         }

@@ -61,9 +61,9 @@ class Bug51264Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $contact = new Contact();
         $contact->id = '0000000000000000';
-        $contact->email1 = $this->contact->email1;
+        $contact->email = $this->contact->email1;
         $idc = new ImportDuplicateCheck($contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email1::email1'));
+        $result = $idc->isADuplicateRecord(array('special_idx_email::email'));
         $this->assertTrue($result);
     }
 
@@ -86,9 +86,9 @@ class Bug51264Test extends Sugar_PHPUnit_Framework_TestCase
     public function testIsADuplicateRecord()
     {
         $contact = new Contact();
-        $contact->email1 = $this->contact->email1;
+        $contact->email = $this->contact->email1;
         $idc = new ImportDuplicateCheck($contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email1::email1'));
+        $result = $idc->isADuplicateRecord(array('special_idx_email::email'));
         $this->assertTrue($result);
     }
 }

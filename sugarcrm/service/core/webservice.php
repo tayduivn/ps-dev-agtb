@@ -20,8 +20,8 @@ chdir(dirname(__FILE__).'/../../');
 define('ENTRY_POINT_TYPE', 'api');
 require('include/entryPoint.php');
 require_once('soap/SoapError.php');
-require_once('SoapHelperWebService.php');
-require_once('SugarRestUtils.php');
+require_once 'service/core/SoapHelperWebService.php';
+require_once 'service/core/SugarRestUtils.php';
 require_once($webservice_path);
 require_once($registry_path);
 if(isset($webservice_impl_class_path))

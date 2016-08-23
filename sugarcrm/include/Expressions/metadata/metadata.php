@@ -282,7 +282,7 @@ $val_meta = array(
 );
 
 
-require_once("./metatojs.php");
+require_once "include/Expressions/metadata/metatojs.php";
 
 //echo getJSFromDDMeta($dd_meta);
 echo getJSFromDDMeta($dep_meta);

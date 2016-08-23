@@ -149,7 +149,7 @@ function smarty_function_sugar_action_menu($params, &$smarty)
                 $menus
             )
         );
-        require_once('function.sugar_menu.php');
+        require_once 'include/SugarSmarty/plugins/function.sugar_menu.php';
         return smarty_function_sugar_menu($action_menu, $smarty);
 
     }
