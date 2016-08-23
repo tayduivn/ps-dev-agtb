@@ -1494,8 +1494,10 @@ function getActiveWorkFlowCount() {
      */
     public function deleteSchedules()
     {
-        $query =  "SELECT id FROM workflow_schedules WHERE workflow_schedules.workflow_id = '" . $this->db->quote($this->id) . "'";
-        $result = $this->db->query($query, true, "Error getting workflow_schedules for workflow_id: " . $this->id);
+        //@codingStandardsIgnoreStart
+        $query =  "SELECT id FROM workflow_schedules WHERE workflow_schedules.workflow_id = " . $this->db->quoted($this->id);
+        $result = $this->db->query($query, true, "Error getting workflow_schedules for workflow_id: " . $this->db->quote($this->id));
+        //@codingStandardsIgnoreEnd
 
         // Remove each workflow schedule by id
         $removeExpired = array();
