@@ -782,7 +782,7 @@
         ]);
 
         layout.removeComponent(0);
-        layout.loadData({}, false);
+        layout.loadData();
         layout.render();
     },
 
