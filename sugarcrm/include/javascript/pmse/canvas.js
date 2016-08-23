@@ -549,9 +549,12 @@ AdamCanvas.prototype.getContextMenu = function () {
          val.getData({call_type:'RR'}, {
             success: function (modulesFields) {
                 hiddenNameModule.setValue(value);
-                //if (typeof initial !== "undefined") {
                 if (initial !== undefined) {
-                    itemMatrix.setList(modulesFields.result, PROJECT_LOCKED_VARIABLES);
+                    var lockedFields = AdamCanvas.prototype.expandLockedFields(
+                                           PROJECT_LOCKED_VARIABLES,
+                                           modulesFields.groupFieldsMap
+                                       );
+                    itemMatrix.setList(modulesFields.result, lockedFields);
                 } else {
                     itemMatrix.setList(modulesFields.result);
                 }
@@ -1625,4 +1628,27 @@ AdamCanvas.prototype.bpmnValidation = function () {
         shape.attachErrorToShape(objArray);
     }
     return this;
+};
+
+/*
+ * Add group locked fields to existing locked fields
+ * @returns {Array}
+ */
+AdamCanvas.prototype.expandLockedFields = function(lockedFields, groupFieldsMap) {
+    var retLockedFields = [];
+
+    lockedFieldsLength = lockedFields.length;
+    for (i = 0; i < lockedFieldsLength; i++) {
+        // If there is a group field for existing locked field then add that group field
+        // to the list of locked fields
+        if ((groupFieldsMap[lockedFields[i]]) && (_.indexOf(retLockedFields, groupFieldsMap[lockedFields[i]]) == -1)) {
+            retLockedFields.push(groupFieldsMap[lockedFields[i]]);
+        };
+        // add the existing locked field back into the return array of locked fields
+        if ($.inArray(lockedFields[i], retLockedFields) == -1) {
+            retLockedFields.push(lockedFields[i]);
+        };
+    };
+
+    return retLockedFields;
 };

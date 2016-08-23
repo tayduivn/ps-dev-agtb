@@ -1398,6 +1398,13 @@ class PMSECrmDataWrapper implements PMSEObservable
             $processDefinitionBean->retrieve_by_string_fields(
                 array('prj_id' => $projectBean->id, 'id' => $processBean->id)
             );
+            // If there are group fields (e.g: billing_address) in the definition then we need to expand the group field
+            // to lock the individual fields which make up the group field.
+            $args['pro_locked_variables'] = $this->getMultiLockedFieldsFromGroupField(
+                $processDefinitionBean->pro_module,
+                $args['pro_locked_variables']
+            );
+
             foreach ($args as $key => $value) {
 
                 if ($key == 'pro_module' && ($processDefinitionBean->$key != $value)) {
@@ -1580,53 +1587,83 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         global $app_list_strings;
         $output = array();
+        $groupFields = array();
+        $groupFieldsMap = array();
+
         $moduleBean = $this->getModuleFilter($newModuleFilter);
         $fieldsData = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
+
         foreach ($fieldsData as $field) {
-            //$retrieveId = isset($additionalArgs['retrieveId']) && !empty($additionalArgs['retrieveId']) && $field['name'] == 'id' ? $additionalArgs['retrieveId'] : false;
+            $tmpField = array();
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                if (PMSEEngineUtils::specialFields($field, $type)){
-                    $field = array_merge($field, $this->replaceItemsValues($field));
-                }
-                $tmpField = array();
-                $tmpField['value'] = $field['name'];
-                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
-
-                // Handle field typing, starting with the vardef type for this field
-                $tmpField['type'] = $field['type'];
-
-                // If there is a known type for this type, use THAT
-                if (isset($fieldTypes[$field['type']])) {
-                    $tmpField['type'] = $fieldTypes[$field['type']];
-                }
-
-                $tmpField['optionItem'] = 'none';
-                if (in_array($field['type'], array('enum', 'radioenum', 'multienum'))) {
-                    if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
-                        if (PMSEEngineUtils::specialFields($field, $type)) {
-                            $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
-                        } else {
-                            $tmpField['optionItem'] = $moduleApi->getEnumValues(
-                                array(),
-                                array(
-                                    "module" => $newModuleFilter,
-                                    "field" => $field["name"]
-                                ));
-                        }
-                    } else {
-                        $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                // If this field is part of a group
+                if (!empty($field['group'])) {
+                    // If the group field for this field exists in vardefs then we can skip this field
+                    // since it will be covered by the other field
+                    // example : phone_alternate has phone_office as its group field and phone_office is defined
+                    // in vardefs
+                    if (!empty($fieldsData[$field['group']])) {
+                        $groupFields[$field['group']] = true;
                     }
-                }
+                    // If this group field has not been covered before then process it
+                    if (empty($groupFields[$field['group']])) {
+                        $tmpField['value'] = $field['group'];
+                        if (!empty($field['group_label'])) {
+                            // use group_label as the label if defined
+                            $tmpField['text'] = $this->getFormattedFieldLabel($field['group_label'], $newModuleFilter);
+                        } else {
+                            // If there is no label defined at all then default to group field as being the label
+                            $tmpField['text'] = $field['group'];
+                        }
+                        // mark the group as being covered so that if any other field has the same group then we
+                        // can skip it
+                        $groupFields[$field['group']] = true;
+                    }
+                    $groupFieldsMap[$field['name']] = $field['group'];
+                } else {
+                    if (PMSEEngineUtils::specialFields($field, $type)) {
+                        $field = array_merge($field, $this->replaceItemsValues($field));
+                    }
+                    $tmpField['value'] = $field['name'];
+                    $tmpField['text'] = $this->getFormattedFieldLabel($field['vname'], $newModuleFilter);
 
-                if ($field['type'] == 'bool') {
-                    $tmpField['optionItem'] = array("TRUE" =>true, "FALSE" => false);
-                }
+                    // Handle field typing, starting with the vardef type for this field
+                    $tmpField['type'] = $field['type'];
 
-                if (isset($field['required'])) {
-                    $tmpField['required'] = $field['required'];
-                }
-                if (isset($field['len'])) {
-                    $tmpField['len'] = $field['len'];
+                    // If there is a known type for this type, use THAT
+                    if (isset($fieldTypes[$field['type']])) {
+                        $tmpField['type'] = $fieldTypes[$field['type']];
+                    }
+
+                    $tmpField['optionItem'] = 'none';
+                    if (in_array($field['type'], array('enum', 'radioenum', 'multienum'))) {
+                        if (!isset($field['options']) || !isset($app_list_strings[$field['options']])) {
+                            if (PMSEEngineUtils::specialFields($field, $type)) {
+                                $tmpField['optionItem'] = $this->gatewayModulesMethod($field);
+                            } else {
+                                $tmpField['optionItem'] = $moduleApi->getEnumValues(
+                                    array(),
+                                    array(
+                                        "module" => $newModuleFilter,
+                                        "field" => $field["name"],
+                                    )
+                                );
+                            }
+                        } else {
+                            $tmpField['optionItem'] = $app_list_strings[$field['options']];
+                        };
+                    }
+
+                    if ($field['type'] == 'bool') {
+                        $tmpField['optionItem'] = array("TRUE" => true, "FALSE" => false);
+                    }
+
+                    if (isset($field['required'])) {
+                        $tmpField['required'] = $field['required'];
+                    }
+                    if (isset($field['len'])) {
+                        $tmpField['len'] = $field['len'];
+                    }
                 }
 
                 // For dependent field relationships like a dependent parent child dropdown pass some additional
@@ -1635,7 +1672,9 @@ class PMSECrmDataWrapper implements PMSEObservable
                     $tmpField['trigger'] = $field['visibility_grid']['trigger'];
                 }
 
-                $output[] = $tmpField;
+                if (!empty($tmpField)) {
+                    $output[] = $tmpField;
+                }
             }
         }
 
@@ -1646,6 +1685,7 @@ class PMSECrmDataWrapper implements PMSEObservable
         array_multisort($text, SORT_ASC, $output);
 
         $res['result'] = $output;
+        $res['groupFieldsMap'] = $groupFieldsMap;
         return $res;
     }
 
@@ -1689,7 +1729,7 @@ class PMSECrmDataWrapper implements PMSEObservable
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, 'AC') || $retrieveId)) {
                 $tmpField = array();
                 $tmpField['value'] = $field['name'];
-                $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
+                $tmpField['text'] = $this->getFormattedFieldLabel($field['vname'], $newModuleFilter);
                 $tmpField['type'] = isset($fieldTypes[$field['type']]) ? $fieldTypes[$field['type']] : ucfirst(
                     $field['type']
                 );
@@ -1726,11 +1766,8 @@ class PMSECrmDataWrapper implements PMSEObservable
                 if (isset($field['vname']) && isset($newfield)) {
                     $tmpField = array();
                     $tmpField['value'] = isset($newfield['value']) ? $newfield['value'] : $field['name'];
-                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] : str_replace(
-                        ':',
-                        '',
-                        translate($field['vname'], $newModuleFilter)
-                    );
+                    $tmpField['text'] = isset($newfield['text']) ? $newfield['text'] :
+                                            $this->getFormattedFieldLabel($field['vname'], $newModuleFilter);
                     $tmpField['type'] = isset($fieldTypes[$newfield['type']]) ? $fieldTypes[$newfield['type']] : ucfirst(
                         $newfield['type']
                     );
@@ -1789,7 +1826,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 if ($field['type'] == 'date' || $field['type'] == 'datetimecombo' || $field['type'] == 'datetime') {
                     $tmpField = array();
                     $tmpField['value'] = $field['name'];
-                    $tmpField['text'] = str_replace(':', '', translate($field['vname'], $newModuleFilter));
+                    $tmpField['text'] = $this->getFormattedFieldLabel($field['vname'], $newModuleFilter);
                     $output[] = $tmpField;
                 }
             }
@@ -2343,4 +2380,53 @@ class PMSECrmDataWrapper implements PMSEObservable
 
         return $res;
     }
+
+    /*
+     * Given a group field get the multiple fields which are part of that group
+     * @param string $module module name
+     * @param string $proLockedVariables locked fields json string
+     * @return string json string of expanded locked fields
+     */
+    public function getMultiLockedFieldsFromGroupField($module, $proLockedVariables)
+    {
+        $groupFieldsArray = array();
+        $newLockedFieldsStr = '';
+
+        $moduleBean = BeanFactory::getBean($module);
+        $fieldsDataArray = isset($moduleBean->field_defs) ? $moduleBean->field_defs : array();
+        $lockedVarsArray = json_decode($proLockedVariables);
+        foreach ($fieldsDataArray as $key => $fieldsArray) {
+            if (!empty($fieldsArray['group']) && (in_array($fieldsArray['group'], $lockedVarsArray))) {
+                $groupFieldsArray[$fieldsArray['group']][] =  $fieldsArray['name'];
+                if ((!empty($fieldsDataArray[$fieldsArray['group']])) &&
+                    (array_search($fieldsArray['group'], $groupFieldsArray) === false)) {
+                    $groupFieldsArray[$fieldsArray['group']][] = $fieldsArray['group'];
+                }
+            }
+        }
+        if (!empty($groupFieldsArray)) {
+            foreach ($groupFieldsArray as $groupField => $comboFieldsArray) {
+                $index = array_search($groupField, $lockedVarsArray);
+                if ($index !== false) {
+                    unset($lockedVarsArray[$index]);
+                }
+                foreach ($comboFieldsArray as $comboField) {
+                    $lockedVarsArray[] = $comboField;
+                }
+            }
+        }
+
+        if (!empty($lockedVarsArray)) {
+            $newLockedFieldsStr = json_encode(array_values($lockedVarsArray));
+        }
+
+
+        return $newLockedFieldsStr;
+    }
+
+    public function getFormattedFieldLabel($fieldLabel, $module)
+    {
+        return str_replace(':', '', translate($fieldLabel, $module));
+    }
+
 }

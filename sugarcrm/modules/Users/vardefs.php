@@ -368,6 +368,7 @@ $dictionary['User'] = array(
             'dbType' => 'varchar',
             'len' => '150',
             'group' => 'address',
+            'group_label' => 'LBL_ADDRESS',
         ) ,
         'address_city' => array(
             'name' => 'address_city',
