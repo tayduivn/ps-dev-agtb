@@ -179,19 +179,25 @@
 
         this.model.relatedAttributes = this.model.relatedAttributes || {};
 
-        var assignedUserField = _.find(fields, function(field) {
+        var assignedUserFieldDefs = _.find(fields, function(field) {
             return field.type === 'relate' &&
                 (field.name === 'assigned_user_id' || field.id_name === 'assigned_user_id');
         });
-        if (assignedUserField) {
+        if (assignedUserFieldDefs) {
             // set the default assigned user as current user, unless we are copying another record
             var isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
             if (!isDuplicate) {
+                //FiXME BR-4577 will remove this.
                 this.model.setDefault({
                     'assigned_user_id': app.user.id,
                     'assigned_user_name': app.user.get('full_name')
                 });
+                var assignedUser = {};
+                assignedUser.id = app.user.id;
+                assignedUser[assignedUserFieldDefs.rname] = app.user.get('full_name');
+                this.model.setDefault(assignedUserFieldDefs.link, assignedUser);
             }
+
             this.model.relatedAttributes.assigned_user_id = app.user.id;
             this.model.relatedAttributes.assigned_user_name = app.user.get('full_name');
         }
@@ -331,7 +337,7 @@
             // reset the hasSubpanelModels flag
             this.hasSubpanelModels = false;
         }
-        
+
         this.createMode = true;
         if (!this.disposed) {
             this.render();
