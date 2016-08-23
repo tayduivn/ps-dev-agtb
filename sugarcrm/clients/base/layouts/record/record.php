@@ -59,7 +59,10 @@ $viewdefs['base']['layout']['record'] = array(
                                         ),
                                         'components' => array(
                                             array(
-                                                'layout' => 'subpanels-filter',
+                                                'layout' => 'filter',
+                                                'xmeta' => array(
+                                                    'layoutType' => '',
+                                                ),
                                                 'loadModule' => 'Filters',
                                             ),
                                             array(
