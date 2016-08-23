@@ -52,7 +52,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        this.model.on('change:quote_data', this._onQuoteDataChange, this);
+        this.model.on('change:product_bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
     },
@@ -60,8 +60,8 @@
     /**
      * Handler for when quote_data changes on the model
      */
-    _onQuoteDataChange: function(model, quoteData) {
-        this.records = quoteData.records;
+    _onProductBundleChange: function(model, productBundles) {
+        this.records = productBundles.records;
 
         // fixme: SFA-4399 will add "groupless" rows in here before the groups
 

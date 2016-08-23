@@ -351,6 +351,14 @@ $dictionary['ProductBundle'] = array(
             'rel_fields' => array('note_index' => array('type' => 'integer')),
             'vname' => 'LBL_NOTES',
         ),
+        'product_bundle_items' => array(
+            'name' => 'product_bundle_items',
+            'type' => 'collection',
+            'vname' => 'LBL_PRODUCT_BUNDLES',
+            'links' => array('products','product_bundle_notes'),
+            'source' => 'non-db',
+            'order_by' => 'position:asc',
+        ),
         'position' => array(
             'massupdate' => false,
             'name' => 'position',

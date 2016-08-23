@@ -235,18 +235,20 @@
      * Iterates through related_records on the model and builds this.rowCollection
      */
     buildRowsData: function() {
-        var bean;
-        _.each(this.model.get('related_records'), function(record) {
-            bean = app.data.createBean(record._module, record);
-            // reset modelView back to list
-            bean.modelView = 'list';
+        var bundleItems = this.model.get('product_bundle_items');
+        if (bundleItems && bundleItems.records) {
+            _.each(bundleItems.records, function(record) {
+                var bean = app.data.createBean(record._module, record);
+                // reset modelView back to list
+                bean.modelView = 'list';
 
-            if (record._module === 'ProductBundleNotes' && bean.fields && bean.fields.description) {
-                bean.fields.description = _.extend(bean.fields.description, this.pbnDescriptionMetadata);
-            }
+                if (record._module === 'ProductBundleNotes' && bean.fields && bean.fields.description) {
+                    bean.fields.description = _.extend(bean.fields.description, this.pbnDescriptionMetadata);
+                }
 
-            this.rowCollection.add(bean);
-        }, this);
+                this.rowCollection.add(bean);
+            }, this);
+        }
     },
 
     /**

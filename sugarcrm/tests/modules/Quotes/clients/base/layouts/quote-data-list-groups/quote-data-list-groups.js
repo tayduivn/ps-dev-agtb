@@ -68,7 +68,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
     });
 
-    describe('_onQuoteDataChange()', function() {
+    describe('_onProductBundleChange()', function() {
         var quoteData;
         var bundle1;
         var bundle2;
@@ -95,7 +95,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             sinon.collection.spy(layout, '_addQuoteGroupToLayout');
             sinon.collection.spy(layout, 'render');
-            layout.model.set('quote_data', quoteData);
+            layout.model.set('product_bundles', quoteData);
         });
 
         it('should set this.records to quoteData.records', function() {
@@ -127,7 +127,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 ]
             };
 
-            layout.model.set('quote_data', quoteData);
+            layout.model.set('product_bundles', quoteData);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle1);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle2);
             expect(layout._addQuoteGroupToLayout).toHaveBeenCalledWith(bundle3);

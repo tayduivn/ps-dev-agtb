@@ -14,13 +14,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     beforeEach(function() {
         app = SugarTest.app;
         viewLayoutModel = new Backbone.Model({
-            related_records: [
+            product_bundle_items: [
                 {id: 'test1', position: 0},
                 {id: 'test2', position: 1},
                 {id: 'test3', position: 2}
             ]
         });
-        viewLayoutRowCollection = new Backbone.Collection();
+        viewLayoutRowCollection = new Backbone.Collection(viewLayoutModel.get('product_bundle_items'));
         layoutDefs = {
             'components': [
                 {'layout': {'span': 4}},
@@ -406,7 +406,9 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 position: 1,
                 _module: 'ProductBundleNotes'
             };
-            view.model.set('related_records', [record1, record2]);
+            view.model.set('product_bundle_items', {
+                records: [record1, record2]
+            });
             view.rowCollection = new Backbone.Collection();
 
             sinon.collection.stub(app.data, 'createBean', function(module, options) {
