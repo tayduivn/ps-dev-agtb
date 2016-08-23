@@ -34,5 +34,22 @@ class UserBasedRelationship extends One2MRelationship
 
         return $sugar_query;
     }
-}
 
+    /**
+     * Don't delete existing relationships.
+     * {@inheritdoc}
+     */
+    public function add($lhs, $rhs, $additionalFields = array())
+    {
+        $success = true;
+
+        // Add relationship
+        if (M2MRelationship::add($lhs, $rhs, $additionalFields) === false) {
+            $success = false;
+            LoggerManager::getLogger()->error("Warning: failed calling M2MRelationship::add() for relationship".
+                " {$this->name} within UserBasedRelationship->add().");
+        }
+
+        return $success;
+    }
+}

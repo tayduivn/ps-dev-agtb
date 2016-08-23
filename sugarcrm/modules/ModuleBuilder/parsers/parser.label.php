@@ -215,9 +215,9 @@ class ParserLabel extends ModuleBuilderParser
                 // Get the current $mod_strings
                 include $filename;
             }
-
+            $mod_lang_strings = return_module_language($language, $moduleName);
             foreach($labels as $key => $value) {
-                if (!isset($mod_strings[$key]) || strcmp($value, $mod_strings[$key]) != 0) {
+                if (!isset($mod_lang_strings[$key]) || strcmp($value, $mod_lang_strings[$key]) != 0) {
                     // Must match encoding used in view.labels.php
                     $mod_strings[$key] = to_html(strip_tags(from_html($value)));
                     $changed = true;

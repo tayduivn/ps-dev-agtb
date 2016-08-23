@@ -11,13 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Socket\Client as SugarSocketClient;
-use Sugarcrm\Sugarcrm\Trigger\Client as TriggerServerClient;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\AdminSettings;
-use Sugarcrm\Sugarcrm\Util\Runner\Dot as TriggerRepairRunner;
-use Sugarcrm\Sugarcrm\Trigger\Repair\Repair as TriggerRepair;
-use Sugarcrm\Sugarcrm\Dav\Cal\Rebuild\Executer as DavCalExporter;
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'modules/Configurator/Configurator.php';
@@ -206,140 +201,6 @@ class AdministrationController extends SugarController
     }
 
     /**
-     * This method handles the saving websockets configuration.
-     */
-    public function action_saveWebSocketsConfiguration()
-    {
-        $websocket_client_url = InputValidation::getService()->getValidInputRequest('websocket_client_url', array(
-            'Assert\Url' => array(
-                'protocols' => array('http', 'https'),
-            )
-        ));
-        $websocket_server_url = InputValidation::getService()->getValidInputRequest('websocket_server_url', array(
-            'Assert\Url' => array(
-                'protocols' => array('http', 'https'),
-            )
-        ));
-
-        $siteUrl = $GLOBALS['sugar_config']['site_url'];
-
-        $result = array();
-        $warnings = array();
-        $errors = array();
-        $clientSettings = array('isBalancer' => false);
-
-        if (!empty($websocket_client_url) || !empty($websocket_server_url)) {
-            if (empty($websocket_client_url)) {
-                $errors['ERR_WEB_SOCKET_CLIENT_URL'] = translate('ERR_WEB_SOCKET_CLIENT_URL', 'Administration');
-            } else {
-                $clientSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_client_url);
-                if (!$clientSettings['available'] || $clientSettings['type'] != 'client') {
-                    $errors['ERR_WEB_SOCKET_CLIENT_ERROR'] = translate('ERR_WEB_SOCKET_CLIENT_ERROR', 'Administration');
-                } else {
-                    if (in_array(parse_url($websocket_client_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
-                    ) {
-                        $warnings[] = translate('ERR_WEB_SOCKET_CLIENT_LOCALHOST', 'Administration');
-                    }
-                }
-            }
-
-            if (empty($websocket_server_url)) {
-                $errors['ERR_WEB_SOCKET_SERVER_URL'] = translate('ERR_WEB_SOCKET_SERVER_URL', 'Administration');
-            } else {
-                $serverSettings = SugarSocketClient::getInstance()->checkWSSettings($websocket_server_url);
-                if (!$serverSettings['available'] || $serverSettings['type'] != 'server') {
-                    $errors['ERR_WEB_SOCKET_SERVER_ERROR'] = translate('ERR_WEB_SOCKET_SERVER_ERROR', 'Administration');
-                } else {
-                    if (in_array(parse_url($siteUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
-                        && !in_array(parse_url($websocket_server_url, PHP_URL_HOST), array('localhost', '127.0.0.1'))
-                    ) {
-                        $warnings['ERR_WEB_SOCKET_SERVER_LOCALHOST'] = translate('ERR_WEB_SOCKET_SERVER_LOCALHOST', 'Administration');
-                    }
-
-                }
-            }
-        }
-
-        if ($warnings) {
-            $result['warnMsg'] = implode('<br />', $warnings);
-        }
-        if (!$errors) {
-            $result['status'] = true;
-
-            $cfg = $this->getConfigurator();
-            $cfg->config['websockets'] = array(
-                'server' => array(
-                    'url' => $websocket_server_url
-                ),
-                'client' => array(
-                    'url' => $websocket_client_url,
-                    'balancer' => $clientSettings['isBalancer']
-                ),
-            );
-            $cfg->handleOverride();
-        } else {
-            $result['status'] = false;
-            $result['errMsg'] = implode(PHP_EOL, $errors);
-        }
-
-        echo json_encode($result);
-    }
-
-    /**
-     * This method handles the saving trigger server configuration.
-     */
-    public function action_saveTriggerServerConfiguration()
-    {
-        $triggerServerUrl = InputValidation::getService()->getValidInputRequest('trigger_server_url', array(
-            'Assert\Url' => array(
-                'protocols' => array('http', 'https'),
-            )
-        ));
-        
-        $siteUrl = $GLOBALS['sugar_config']['site_url'];
-
-        $result = array();
-        $warnings = array();
-        $errors = array();
-
-        if(!empty($triggerServerUrl)) {
-            if (!filter_var($triggerServerUrl, FILTER_VALIDATE_URL)) {
-                $errors['ERR_TRIGGER_SERVER_URL_INVALID'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_URL_INVALID'];
-            } else {
-                $isTriggerServerSettingsValid = TriggerServerClient::getInstance()->checkTriggerServerSettings($triggerServerUrl);
-                if (!$isTriggerServerSettingsValid) {
-                    $errors['ERR_TRIGGER_SERVER_ERROR'] = $GLOBALS['mod_strings']['ERR_TRIGGER_SERVER_ERROR'];
-
-                } else {
-                    if (in_array(parse_url($siteUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
-                        && !in_array(parse_url($triggerServerUrl, PHP_URL_HOST), array('localhost', '127.0.0.1'))
-                    ) {
-                        $warnings['ERR_TRIGGER_SERVER_LOCALHOST'] = translate('ERR_TRIGGER_SERVER_LOCALHOST');
-                    }
-                }
-            }
-        }
-
-        if ($warnings) {
-            $result['warnMsg'] = implode('<br />', $warnings);
-        }
-        if (!$errors) {
-            $result['status'] = true;
-
-            $cfg = $this->getConfigurator();
-            $cfg->config['trigger_server'] = array(
-                'url' => $triggerServerUrl
-            );
-            $cfg->handleOverride();
-        } else {
-            $result['status'] = false;
-            $result['errMsg'] = implode(PHP_EOL, $errors);
-        }
-
-        echo json_encode($result);
-    }
-
-    /**
      * Get the list of modules from the request parameters.
      * @param $modules string the
      * @return array
@@ -416,40 +277,6 @@ class AdministrationController extends SugarController
             echo "true";
         } catch (Exception $ex) {
             echo "false";
-        }
-    }
-
-    /**
-     * action_callRebuildReminders
-     *
-     * Clean legacy job queue reminders and re-create new.
-     */
-    public function action_callRebuildReminders()
-    {
-        $this->view = 'ajax';
-        if (is_admin($GLOBALS['current_user'])) {
-            ob_flush();
-            $runner = new TriggerRepairRunner(new TriggerRepair());
-            $runner->run();
-            echo "<br />{$GLOBALS['mod_strings']['LBL_DONE']}";
-            ob_flush();
-        }
-    }
-
-    /**
-     * action_callRebuildReminders
-     *
-     * Re-export calls and meetings to external application.
-     */
-    public function action_callReExportEvents()
-    {
-        $this->view = 'ajax';
-        if (is_admin($GLOBALS['current_user'])) {
-            ob_flush();
-            $runner = new TriggerRepairRunner(new DavCalExporter());
-            $runner->run();
-            echo "<br />{$GLOBALS['mod_strings']['LBL_DONE']}";
-            ob_flush();
         }
     }
 

@@ -78,6 +78,11 @@ class SugarACLUsers extends SugarACLStrategy
 
         $current_user = $this->getCurrentUser($context);
 
+        // We have to deny access on attempt to export data from users module if $current_user is not an admin
+        if ($module == 'Users' && $view == 'export' && !$current_user->isAdminForModule($module)) {
+            return false;
+        }
+
         $bean = self::loadBean($module, $context);
 
         $myself = $this->myselfCheck($bean, $current_user);

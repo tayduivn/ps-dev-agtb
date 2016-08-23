@@ -147,6 +147,9 @@ class VardefManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'following',
                     'favorite',
                     'taggable',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'lockable_fields',
+                    //END SUGARCRM flav=ent ONLY
                 ),
             ),
         );
@@ -222,6 +225,9 @@ class VardefManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'following',
                     'favorite',
                     'taggable',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'lockable_fields',
+                    //END SUGARCRM flav=ent ONLY
                     'assignable',
                     'team_security',
                     'email_address',

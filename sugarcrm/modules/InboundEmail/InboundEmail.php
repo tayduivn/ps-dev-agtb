@@ -2806,18 +2806,6 @@ class InboundEmail extends SugarBean {
 		return false;
 	} // fn
 
-    /**
-     * Constructs an attachment from the SugarBean that is passed in.
-     * Need to mock result of AttachmentPeer in UTs.
-     *
-     * @param SugarBean $bean
-     * @return Attachment
-     */
-    protected function getAttachmentFromNoteBean($bean)
-    {
-        return AttachmentPeer::attachmentFromSugarBean($bean);
-    }
-
 	/**
 	 * handles functionality specific to the Mailbox type (Cases, bounced
 	 * campaigns, etc.)
@@ -2851,109 +2839,8 @@ class InboundEmail extends SugarBean {
 				$GLOBALS['log']->debug('looking for a case for '.$email->name);
 				$this->handleCaseAssignment($email);
 				break;
-            case 'caldav':
-                $this->handleCalDAV($email);
-                break;
 		}
 	}
-
-    /**
-     * Handler email with a type "сalDAV".
-     *
-     * @param Email $email
-     */
-    public function handleCalDAV(Email $email)
-    {
-        $email->load_relationship('notes');
-        $notes = $email->notes->getBeans();
-
-        if (!$notes) {
-            $this->parseAndUpdateStatusForInvitee($email->description, $email->from_addr);
-        } else {
-            foreach ($notes as $noteBean) {
-                $attach = $this->getAttachmentFromNoteBean($noteBean);
-                if (substr($attach->getName(), -4) === '.ics') {
-                    $content = $this->getContentFile($attach->getPath());
-                    if ($content) {
-                        $this->parseAndUpdateStatusForInvitee($content, $email->from_addr);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns a file data on success, false otherwise.
-     * Need to mock result of sugar_file_get_content in UTs.
-     *
-     * @param $pathToFile
-     * @return bool|string
-     */
-    protected function getContentFile($pathToFile)
-    {
-        return sugar_file_get_contents($pathToFile);
-    }
-
-
-
-    /**
-     * Update status the invite by parse input string.
-     *
-     * @param string $content It contains the ics
-     * @param string $emailAddress E-mail user that updates status
-     */
-    public function parseAndUpdateStatusForInvitee($content, $emailAddress)
-    {
-        /** @var CalDavEventCollection $eventCollection */
-        $eventCollection = BeanFactory::getBean('CalDavEvents');
-        $eventCollection->setData($content);
-
-        $event = $eventCollection->getParent();
-
-        if (isset($event->getObject()->{'X-SUGAR-ID'}) && isset($event->getObject()->{'X-SUGAR-NAME'})) {
-            $entityId = $event->getObject()->{'X-SUGAR-ID'}->getValue();
-            $moduleName = $event->getObject()->{'X-SUGAR-NAME'}->getValue();
-
-            $bean = BeanFactory::getBean($moduleName, $entityId);
-            if ($bean instanceof Call || $bean instanceof Meeting) {
-                $eventCollection->sync();
-                $participants = $event->getParticipants();
-                foreach ($participants as $participant) {
-                    $email = $participant->getEmail();
-                    if ($email == $emailAddress) {
-                        $map = SugarAutoLoader::customClass('Sugarcrm\Sugarcrm\Dav\Base\Mapper\Status\AcceptedMap');
-                        $map = new $map;
-                        $status = $map->getSugarValue($participant->getStatus());
-
-                        $inviteBean = BeanFactory::getBean(
-                            $participant->getBeanName(),
-                            $participant->getBeanId(),
-                            array(
-                                'disable_row_level_security' => true,
-                                'strict_retrieve' => true,
-                            )
-                        );
-                        $this->updateStatusForInvitee($bean, $inviteBean, $status);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Update a status of a invitee.
-     *
-     * @param SugarBean $event
-     * @param SugarBean $invitee
-     * @param string $status
-     * @return bool
-     */
-    public function updateStatusForInvitee(SugarBean $event, SugarBean $invitee, $status)
-    {
-        $calEvents = new \CalendarEvents;
-        return $calEvents->updateAcceptStatusForInvitee($event, $invitee, $status);
-    }
 
 	function isMailBoxTypeCreateCase() {
 		return ($this->mailbox_type == 'createcase' && !empty($this->groupfolder_id));
@@ -4287,12 +4174,10 @@ class InboundEmail extends SugarBean {
 				$this->imagePrefix = "cid:";
 			}
 			// handle multi-part email bodies
-            if ($structure->subtype == 'CALENDAR') {
-                $email->description = $this->getMessageText($msgNo, 'CALENDAR', $structure, $fullHeader, $clean_email);
-            } else {
-                $email->description_html= $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
-                $email->description = $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
-            }
+            // runs through handleTranserEncoding() already
+            $email->description_html = $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader, $clean_email);
+            // runs through handleTranserEncoding() already
+            $email->description = $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader, $clean_email);
 			$this->imagePrefix = $oldPrefix;
             if (empty($email->description)) {
                 $email->description = strip_tags($email->description_html);
@@ -5287,57 +5172,6 @@ eoq;
 			    $this->protocol	= $exServ[3];
 		}
 	}
-
-    /**
-     * Get one active email-address with type mailbox "CalDAV"
-     *
-     * @return InboundEmail|null
-     * @throws SugarQueryException
-     */
-    public function getOneCalDAVInbound() {
-
-        $query = $this->getSugarQuery();
-        $query->from($this);
-        $query->where()->equals('mailbox_type', 'caldav');
-        $query->where()->equals('status', 'Active');
-        $query->limit(1);
-        $data = $this->fetchFromQuery($query);
-
-        if (empty($data)) {
-            return null;
-        }
-
-        return array_shift($data);
-    }
-
-    /**
-     * Return email-address for handler CalDAV replies.
-     *
-     * @return string|null
-     */
-    public function getCalDavHandlerEmail()
-    {
-        $inboundEmail = $this->getOneCalDAVInbound();
-        if ($inboundEmail) {
-            $inboundEmail = unserialize(base64_decode($inboundEmail->stored_options));
-            if (!empty($inboundEmail['from_addr'])) {
-                return $inboundEmail['from_addr'];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Return SugarQuery object
-     * Need to mock result of SugarQuery in UTs
-     *
-     * @return SugarQuery
-     */
-    public function getSugarQuery()
-    {
-        return new SugarQuery();
-    }
 
 
 

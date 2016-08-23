@@ -348,8 +348,7 @@ ENDQ;
         $this->emailBean->addVisibilityFrom($q, array('where_condition' => true));
 
         $q .= <<<ENDW
- WHERE emails.deleted=0 AND emails.type NOT IN ('out', 'draft') AND emails.status NOT IN ('sent', 'draft')
- AND coalesce(emails.intent, ' ') != 'caldav'
+ WHERE emails.deleted=0 AND emails.type NOT IN ('out', 'draft') AND emails.status NOT IN ('sent', 'draft') 
 AND EXISTS (
 SELECT 1 FROM emails_email_addr_rel eear
  JOIN email_addr_bean_rel eabr ON eabr.email_address_id=eear.email_address_id AND eabr.bean_id = '{$current_user->id}'
@@ -643,8 +642,7 @@ ENDW;
 		$bean->disable_row_level_security = true;
 
         // need space in coalesce for oracle to avoid to null conversion
-        $rootWhere = "AND coalesce(i.mailbox_type, ' ') != 'caldav'" .
-            " AND (f.parent_folder IS NULL OR f.parent_folder = '')";
+        $rootWhere = "AND (f.parent_folder IS NULL OR f.parent_folder = '')";
 
 		if($subscribed) {
 			$q = $this->coreSubscribed.$teamSecurityClause.$this->coreWhereSubscribed."'{$user->id}' ".$rootWhere.$this->coreOrderBy;

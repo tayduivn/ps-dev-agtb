@@ -949,39 +949,6 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, $message);
     }
 
-    /**
-     * @covers \CalendarEventsApi::createBean
-     */
-    public function testCreateBeanCausesExportWithoutAnyInvitesData()
-    {
-        $args = array(
-            'module' => 'Meetings',
-            'name' => 'Test Meeting',
-            'date_start' => $this->dateTimeAsISO(date('Y-m-d H:i:s')),
-            'duration_minutes' => '10',
-            'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
-
-        $calDavHandler = $this->getMock('Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler', array('export'));
-        $calDavHandler->expects($this->once())
-            ->method('export')
-            ->will($this->returnCallback(
-                function ($bean, $diffArray) {
-                    $actualArgs = array($bean, $diffArray);
-                    $this->assertNotEquals(
-                        array(),
-                        $actualArgs[1],
-                        'Second arg (array with diff data) should not be passed to export on the first bean save.'
-                    );
-                }
-            ));
-
-        CalendarEventsApiTestMockMeetingCRYS1341::$calDavHandler = $calDavHandler;
-        BeanFactory::setBeanClass('Meetings', 'CalendarEventsApiTestMockMeetingCRYS1341');
-
-        $this->calendarEventsApi->createBean($this->api, $args);
-    }
-
     private function dateTimeAsISO($dbDateTime)
     {
         global $timedate;
@@ -1059,15 +1026,5 @@ class CalendarEventsApiTest_CalendarEvents extends CalendarEvents
     protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray)
     {
         $this->eventsCreated = parent::saveRecurring($parentBean, $repeatDateTimeArray);
-    }
-}
-
-class CalendarEventsApiTestMockMeetingCRYS1341 extends Meeting
-{
-    public static $calDavHandler = null;
-
-    public function getCalDavHook()
-    {
-        return self::$calDavHandler;
     }
 }

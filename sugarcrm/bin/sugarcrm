@@ -39,6 +39,10 @@ if (file_exists('config.php')) {
     include 'config.php';
 }
 
+if (file_exists('config_override.php')) {
+    include 'config_override.php';
+}
+
 // determine if sugar has been installed or not
 if (!empty($sugar_config['dbconfig']['db_name'])) {
     define('ENTRY_POINT_TYPE', 'api');

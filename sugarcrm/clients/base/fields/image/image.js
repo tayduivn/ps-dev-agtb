@@ -191,9 +191,6 @@
                         self.model.unset(self.name);
                         self.model.set(self.name + '_guid', fileId);
                     }
-
-                    //Trigger a change event with param "image" so the view can detect that the dom changed.
-                    self.model.trigger("change", "image");
                 },
                 error: function(resp) {
                     var errors = errors || {},

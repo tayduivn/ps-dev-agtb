@@ -14,10 +14,6 @@
  * @extends View.Layout
  */
 ({
-    events: {
-        'click .closeSubdetail': 'hidePreviewPanel'
-    },
-
     /**
      * @inheritdoc
      */

@@ -54,7 +54,6 @@ $mod_strings = array (
 	'LBL_LIST_SUBJECT' => 'Subject',
 	'LBL_LIST_TIME' => 'Start Time',
 	'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
-	'LBL_ADDRESSEES_SUBPANEL_TITLE' => 'Addressees',
 	'LBL_LOCATION' => 'Location:',
 	'LBL_MEETING' => 'Meeting:',
 	'LBL_MINSS_ABBREV' => 'm',
@@ -68,14 +67,15 @@ $mod_strings = array (
 	'LBL_SEQUENCE' => 'Meeting update sequence',
 	'LBL_PHONE' => 'Phone Office:',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
-    'LBL_EMAIL_REMINDER_TIME' => 'Email reminder time',
     'LBL_EMAIL_REMINDER_SENT' => 'Email reminder sent',
 	'LBL_REMINDER' => 'Reminders:',
 	'LBL_REMINDER_POPUP' => 'Popup',
 	'LBL_REMINDER_EMAIL' => 'Email',
     'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_POPUP_REMINDER' => 'Popup Reminder',
+    'LBL_POPUP_REMINDER_TIME' => 'Popup Reminder Time',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
+    'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
     'LBL_REMOVE' => 'rem',
 	'LBL_SCHEDULING_FORM_TITLE' => 'Scheduling',
 	'LBL_SEARCH_BUTTON'=> 'Search',
@@ -214,29 +214,4 @@ To create a {{meetings_singular_module}}:
     - Click "Select an Attendee" to add an existing user, contact, or lead to the {{meetings_singular_module}}.
     - Click the plus icon to the right of "Select an Attendee" to create a {{meetings_singular_module}} attendee as a new Sugar record.
 3. Click "Save" to finalize the new record and return to the previous page.',
-
-  // Notification Center Strings
-    'LBL_EMITTER_TITLE_GLOBAL' => 'Notifications for {{plural_module_name}}',
-    'LBL_EMITTER_TITLE_USER' => 'Notifications for {{plural_module_name}}',
-    'LBL_EMITTER_HELP_GLOBAL' =>
-        'Configure the types of notifications and the delivery methods available '.
-        'for the {{plural_module_name}} module.<br/><br/>' .
-        'If you would like to give your users a particular option, click the corresponding checkbox ' .
-        'in the delivery method column.<br/><br/>' .
-        'It is also possible to enable/disable all notification delivery methods by clicking the leftmost checkbox.',
-    'LBL_EMITTER_HELP_USER' =>
-        'You can configure delivery of notifications for the {{plural_module_name}} module.<br/><br/>' .
-        'If you want to receive a reminder by a particular method, click the corresponding checkbox ' .
-        'in the delivery method column.<br/><br/>' .
-        'It is also possible to enable/disable all reminder methods by clicking the leftmost checkbox.<br/><br/>' .
-        'Please note, some notification methods may be unavailable because your administrator ' .
-        'has disabled these options.',
-    'LBL_EMITTER_DESC_GLOBAL' => 'Select the types of notifications and delivery methods available for users.',
-    'LBL_EMITTER_DESC_USER' => 'Select the types of notifications you would like to receive. ' .
-        'You can also select the delivery method for each notification.',
-  // Event remind
-    'LBL_EVENT_REMINDER_ABOUT' => 'Reminder about {{singular_module_name}}',
-    'LBL_EVENT_REMINDER_TITLE' => 'Reminder about %s',
-    'LBL_EVENT_REMINDER_TEXT' => 'You have meeting "%1$s" at %2$s: %3$s',
-    'LBL_EVENT_REMINDER_HTML' => 'You have meeting <a href="%3$s">%1$s</a> at %2$s.',
 );

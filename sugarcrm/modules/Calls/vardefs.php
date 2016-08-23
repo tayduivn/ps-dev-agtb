@@ -36,7 +36,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
     'default' => 0,
   ),
   'duration_minutes' =>
@@ -53,7 +58,12 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => true,
+    'processes' => array(
+        'types' => array(
+            'RR' => false,
+            'ALL' => true,
+        ),
+    ),
   ),
 
    'date_start' =>
@@ -160,7 +170,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   'reminder_time' =>
   array (
     'name' => 'reminder_time',
-    'vname' => 'LBL_REMINDER_TIME',
+    'vname' => 'LBL_POPUP_REMINDER_TIME',
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'reminder_time_options',
@@ -190,12 +200,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'default'=> -1,
     'comment' => 'Specifies when a email reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start',
-    'studio' => false,
-    'importable' => false,
-    'hideacl' => true,
-    'workflow' => false,
+    'studio' => array('recordview' => false, 'wirelesseditview' => false),
   ),
-  'email_reminder_sent' => array( 
+  'email_reminder_sent' => array(
     'name' => 'email_reminder_sent',
     'vname' => 'LBL_EMAIL_REMINDER_SENT',
     'default' => 0,
@@ -203,9 +210,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Whether email reminder is already sent',
     'studio' => false,
     'massupdate'=> false,
-    'workflow' => false,
-    'reportable' => false,
-    'hideacl' => true,
    ), 
   'outlook_id' =>
   array (
@@ -225,7 +229,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '20',
     'source'=>'non-db',
   ),
-  //bug 39559 
+  //bug 39559
   'set_accept_links' => array (
     'name' => 'set_accept_links',
     'vname' => 'LBL_ACCEPT_LINK',
@@ -271,16 +275,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
         'vname'=>'LBL_LEADS',
   ),
-        'addressees' =>
-            array (
-                'name' => 'addressees',
-                'type' => 'link',
-                'relationship' => 'calls_addressees',
-                'source'=>'non-db',
-                'vname'=>'LBL_ADDRESSEES',
-                'visible' => false,
-                'workflow' => false,
-            ),
     // Bug #42619 Missed back-relation from Project module
     'project'=> array (
         'name' => 'project',
@@ -446,7 +440,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_interval' =>
   array(
     'name' => 'repeat_interval',
@@ -459,7 +453,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_dow' =>
   array(
     'name' => 'repeat_dow',
@@ -471,7 +465,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_until' =>
   array(
     'name' => 'repeat_until',
@@ -482,7 +476,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'massupdate' => false,
     'reportable' => false,
     'studio' => 'false',
-  ),  
+  ),
   'repeat_count' =>
   array(
     'name' => 'repeat_count',
@@ -637,7 +631,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
                 'contacts',
                 'leads',
                 'users',
-                'addressees'
             ),
             'order_by' => 'name:asc',
             'studio' => false,

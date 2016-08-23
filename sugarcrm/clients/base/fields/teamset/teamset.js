@@ -462,9 +462,7 @@
             delete team.remove_button;
         });
         this.model.unset(this.name, {silent: true}).set(this.name, value);//force changedAttributes
-        // FIXME: SC-5519 will remove passing this.model as an argument to the
-        // change trigger. See: https://github.com/jashkenas/backbone/pull/3834.
-        this.model.trigger('change', this.model);
+        this.model.trigger('change');
     },
     addItem: _.debounce(function (evt) {
         var index = $(evt.currentTarget).data('index');

@@ -412,81 +412,85 @@ class DynamicField {
      *
      * @param boolean $isUpdate
      */
-     public function save($isUpdate){
-         $hasCustomFields = false;
-         $db = DBManagerFactory::getInstance();
-         if ($this->bean->hasCustomFields() && isset($this->bean->id)) {
-             $fields = array('id_c' => array('name' =>'id_c', 'type' => 'id'));
-             $values = array('id_c' => $this->bean->id);
-             foreach ($this->bean->field_defs as $name => $field) {
+    public function save($isUpdate)
+    {
+        $hasCustomFields = false;
+        $db = DBManagerFactory::getInstance();
 
-                 if (empty($field['source']) || $field['source'] != 'custom_fields') {
-                     continue;
-                 }
-                 if ($field['type'] == 'html' || $field['type'] == 'parent') {
-                     continue;
-                 }
-                 if (isset($this->bean->$name)) {
-                     //Change the field to be marked as a db field instead of custom for the scope of this query
-                     $fields[$name] = array_merge($field, array('source' => 'db'));
-                     $hasCustomFields = true;
+        if ($this->bean->hasCustomFields() && isset($this->bean->id)) {
+            $fields = array('id_c' => array('name' =>'id_c', 'type' => 'id'));
+            $values = array('id_c' => $this->bean->id);
+            foreach ($this->bean->field_defs as $name => $field) {
+                if (empty($field['source']) || $field['source'] != 'custom_fields') {
+                    continue;
+                }
+                if ($field['type'] == 'html' || $field['type'] == 'parent') {
+                    continue;
+                }
+                //Change the field to be marked as a db field instead of custom for the scope of this query
+                $fields[$name] = array_merge($field, array('source' => 'db'));
+                $hasCustomFields = true;
+                if (isset($this->bean->$name)) {
+                    if (in_array(
+                        $field['type'],
+                        array(
+                            'int', 'float', 'double', 'uint', 'ulong', 'long', 'short', 'tinyint', 'currency',
+                            'decimal')
+                    )) {
+                        if (!isset($this->bean->$name) || !is_numeric($this->bean->$name)) {
+                            if ($field['required']) {
+                                $this->bean->$name = 0;
+                            } else {
+                                $this->bean->$name = null;
+                            }
+                        }
+                    }
+                    if ($field['type'] == 'bool') {
+                        if ($this->bean->$name === false) {
+                            $this->bean->$name = '0';
+                        } elseif ($this->bean->$name === true) {
+                            $this->bean->$name = '1';
+                        }
+                    }
 
-                     if (in_array($field['type'], array(
-                             'int', 'float', 'double', 'uint', 'ulong', 'long', 'short', 'tinyint', 'currency',
-                             'decimal'
-                         )
-                     )) {
-                         if (!isset($this->bean->$name) || !is_numeric($this->bean->$name)) {
-                             if ($field['required']) {
-                                 $this->bean->$name = 0;
-                             }
-                         }
-                     }
-                     if ($field['type'] == 'bool') {
-                         if ($this->bean->$name === false) {
-                             $this->bean->$name = '0';
-                         } elseif ($this->bean->$name === true) {
-                             $this->bean->$name = '1';
-                         }
-                     }
-
-                     if (($field['type'] == 'date' || $field['type'] == 'datetimecombo') && (empty($this->bean->$name) || $this->bean->$name == '1900-01-01')) {
-                         $this->bean->$name = ''; // do not set it to string 'NULL'
-                     }
-                     $values[$name] = $this->bean->$name;
-                 }
-             }
-             if (!$hasCustomFields) {
-                 return null;
-             }
-             //Verify if this record has an existing entry in the custom table
-             if ($isUpdate) {
-                 $checkquery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                 if (!$GLOBALS['db']->getOne($checkquery)) {
-                     $isUpdate = false;
-                 }
-             }
-             if ($isUpdate) {
-                 $db->updateParams(
-                     $this->bean->table_name . "_cstm",
-                     $fields,
-                     $values,
-                     array('id_c' => $values['id_c']),
-                     null,
-                     true,
-                     $db->usePreparedStatements
-                 );
-             } else {
-                 $db->insertParams(
-                     $this->bean->table_name . "_cstm",
-                     $fields,
-                     $values,
-                     null,
-                     true,
-                     $db->usePreparedStatements
-                 );
-             }
-         }
+                    if (($field['type'] == 'date' || $field['type'] == 'datetimecombo')
+                    && (empty($this->bean->$name) || $this->bean->$name == '1900-01-01')) {
+                        $this->bean->$name = ''; // do not set it to string 'NULL'
+                    }
+                    $values[$name] = $this->bean->$name;
+                }
+            }
+            if (!$hasCustomFields) {
+                return null;
+            }
+            //Verify if this record has an existing entry in the custom table
+            if ($isUpdate) {
+                $checkquery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
+                if (!$GLOBALS['db']->getOne($checkquery)) {
+                    $isUpdate = false;
+                }
+            }
+            if ($isUpdate) {
+                $db->updateParams(
+                    $this->bean->table_name . "_cstm",
+                    $fields,
+                    $values,
+                    array('id_c' => $values['id_c']),
+                    null,
+                    true,
+                    $db->usePreparedStatements
+                );
+            } else {
+                $db->insertParams(
+                    $this->bean->table_name . "_cstm",
+                    $fields,
+                    $values,
+                    null,
+                    true,
+                    $db->usePreparedStatements
+                );
+            }
+        }
     }
     /**
      * Deletes the field from fields_meta_data and drops the database column then it rebuilds the cache

@@ -243,7 +243,8 @@
     _delegateEvents: function() {
         this.layout.on('mergeduplicates:save:fire', this.triggerSave, this);
 
-        app.events.on('preview:render', this._onPreviewRender, this);
+        app.events.on('preview:open', _.bind(this._onPreviewToggle, this, true), this);
+        app.events.on('preview:close', _.bind(this._onPreviewToggle, this, false), this);
         this.on('render', this._showAlertIfIdentical, this);
     },
 
@@ -743,32 +744,26 @@
     },
 
     /**
-     * Event listener for `preview:render` event.
-     *
-     * @param {Data.Bean} model Model for the object to preview.
-     * @param {Data.BeanCollection} collection Collection of related objects to the current model.
-     * @param {boolean} [fetch] Indicates if the model needs to be synched with server to populate with latest data.
-     * @param {number|string} [previewId] Identifier use to determine event origin.
-     * @private
-     */
-    _onPreviewRender: function(model, collection, fetch, previewId) {
-        if (this.model && model && (this.model.get('id') == model.get('id') && previewId == this.previewId)) {
-            this.isPreviewOpen = false;
-        } else {
-            this.isPreviewOpen = true;
-        }
-        this.$('[data-mode=preview]').toggleClass('on', this.isPreviewOpen);
-    },
-
-    /**
-     * Event listeners for `preview:open` and `preview:close` events
+     * Event handler for `preview:open` and `preview:close` events.
      *
      * @param {boolean} open Flag indicating the desired state of the preview
-     * @deprecated Since 7.8. Will be removed in 7.9. 
+     * @deprecated Since 7.8. Will be removed in 7.9.
      */
     onPreviewToggle: function(open) {
         app.logger.warn('`View.Views.Base.MergeDuplicatesView#onPreviewToggle` has been deprecated since 7.8 and' +
             ' will be removed in 7.9.');
+        this.isPreviewOpen = open;
+        this.$('[data-mode=preview]').toggleClass('on', open);
+    },
+
+    /**
+     * Event handler for `preview:open` and `preview:close` events.
+     *
+     * @param {boolean} open Flag indicating the desired state of the preview
+     * @deprecated Since 7.8. Will be removed in 7.9.
+     * @private
+     */
+    _onPreviewToggle: function(open) {
         this.isPreviewOpen = open;
         this.$('[data-mode=preview]').toggleClass('on', open);
     },
@@ -795,6 +790,7 @@
         var module = model.module || model.get('module');
         var previewCollection = app.data.createBeanCollection(module, [model]);
         app.events.trigger('preview:render', model, previewCollection, false);
+        app.events.trigger('preview:open', true);
     },
 
     /**

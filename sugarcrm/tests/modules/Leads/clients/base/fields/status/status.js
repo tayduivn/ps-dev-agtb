@@ -20,6 +20,7 @@ describe('Leads Status Field', function() {
             model: model,
             loadFromModule: true
         });
+        sinon.stub(field, 'loadEnumOptions');
     });
 
     afterEach(function() {

@@ -54,6 +54,12 @@ abstract class SugarApi {
             if ( ! in_array('id',$fieldList ) ) {
                 $fieldList[] = 'id';
             }
+
+            //BEGIN SUGARCRM flav=ent ONLY
+            if (!in_array('locked_fields', $fieldList)) {
+                $fieldList[] = 'locked_fields';
+            }
+            //END SUGARCRM flav=ent ONLY
         } else {
             $fieldList = array();
         }
@@ -79,9 +85,6 @@ abstract class SugarApi {
         if (!empty($bean->module_name)) {
             $data['_module'] = $bean->module_name;
         }
-
-        // Handle lock fields application
-        $data['_locked_fields'] = $bean->getLockedFields();
 
         return $data;
     }

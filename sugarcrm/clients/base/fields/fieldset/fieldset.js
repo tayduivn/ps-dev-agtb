@@ -279,9 +279,15 @@
      * @inheritdoc
      */
     setViewName: function(view) {
+        // Get our locked fields for checking
+        var lockedFields = this.model.get('locked_fields') || [];
+
         this._super('setViewName', [view]);
         _.each(this.fields, function(field) {
-            if (view === 'edit' && field.isLocked()) {
+            // Is this field locked?
+            var isLocked = _.contains(lockedFields, field.name);
+
+            if (view === 'edit' && isLocked) {
                 return;
             }
             field.setViewName(view);
@@ -327,21 +333,6 @@
      * Keep empty because you cannot set a value of a type `fieldset`.
      */
     bindDataChange: function() {
-        var removeNoData = _.debounce(function() {
-            if (this.disposed) {
-                return;
-            }
-
-            if (this.action === 'nodata') {
-                this.setMode('detail');
-            }
-        }, 100);
-
-        _.each(this.def.fields, function(field) {
-            if (field.name) {
-                this.model.on('change:' + field.name, removeNoData, this);
-            }
-        }, this);
     },
 
     /**

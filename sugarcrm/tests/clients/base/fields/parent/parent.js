@@ -1,6 +1,6 @@
 describe('Base.Field.Parent', function() {
 
-    var app, field;
+    var app, field, parentRecord;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -11,7 +11,7 @@ describe('Base.Field.Parent', function() {
             "rname": "name",
             "vname": "LBL_ACCOUNT_NAME",
             "type": "relate",
-            "link": "accounts",
+            "link": "parent",
             "table": "accounts",
             "join_name": "accounts",
             "isnull": "true",
@@ -26,7 +26,18 @@ describe('Base.Field.Parent', function() {
 
         SugarTest.loadComponent("base", "field", "relate");
         field = SugarTest.createField("base","parent_name", "parent", "edit", fieldDef);
-        field.model = new Backbone.Model({parent_type: "Contacts", parent_id: "111-222-33333", parent_name: "blob"});
+        parentRecord = {
+            type: 'Contacts',
+            id: '111-222-33333',
+            name: 'blob'
+        }
+
+        field.model = app.data.createBean('Tasks', {
+            parent: parentRecord,
+            parent_type: 'Contacts',
+            parent_name: 'blob',
+            parent_id: '111-222-33333'
+        });
 
         if (!$.fn.select2) {
             $.fn.select2 = function(options) {
@@ -73,11 +84,11 @@ describe('Base.Field.Parent', function() {
         expect(actual_name).toEqual(expected_name);
         expect(actual_module).toEqual(expected_module);
     });
-    it("should deal get related module for parent", function() {
-        var actual_id = field.model.get('parent_id'),
-            actual_module = field.model.get('parent_type'),
-            _relatedModuleSpy = sinon.collection.spy(field, 'getSearchModule'),
-            _relateIdSpy = sinon.collection.spy(field, '_getRelateId');
+    it("should get related module for parent", function() {
+        var actual_id = parentRecord.id;
+        var actual_module = parentRecord.type;
+        var _relatedModuleSpy = sinon.collection.spy(field, 'getSearchModule');
+        var _relateIdSpy = sinon.collection.spy(field, '_getRelateId');
 
         field.format();
         expect(_relatedModuleSpy).toHaveBeenCalled();

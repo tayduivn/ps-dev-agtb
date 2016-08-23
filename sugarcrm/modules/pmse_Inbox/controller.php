@@ -13,6 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 class pmse_InboxController extends SugarController
 {
@@ -41,6 +42,9 @@ class pmse_InboxController extends SugarController
      */
     public function action_routeCase()
     {
+        // Needed to tell the save process to ignore locked field enforcement
+        Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
+
         $data = $_REQUEST;
         $data['frm_action'] = $data['Type'];
         $data['taskName'] = '';
@@ -48,7 +52,7 @@ class pmse_InboxController extends SugarController
         $result = $engineApi->engineRoute(array(), $data);
         header('Location: index.php');
     }
-    
+
     public function action_showPNG()
     {
         header('Content-Type: image/png');

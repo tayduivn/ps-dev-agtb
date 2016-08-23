@@ -41,6 +41,7 @@ $job_strings = array (
     6 => 'processWorkflow',
 	7 => 'processQueue',
     9 => 'updateTrackerSessions',
+    12 => 'sendEmailReminders',
     15 => 'cleanJobQueue',
     //Add class to build additional TimePeriods as necessary
     16 => 'class::SugarJobCreateNextTimePeriod',
@@ -477,6 +478,17 @@ function updateTrackerSessions() {
 	$GLOBALS['log']->info("----->Scheduler is about to update tracker_sessions table by running the query $query");
 	$db->query($query);
 	return true;
+}
+
+/**
+ * Job 12
+ */
+function sendEmailReminders()
+{
+    $GLOBALS['log']->info('----->Scheduler fired job of type sendEmailReminders()');
+    require_once "modules/Activities/EmailReminder.php";
+    $reminder = new EmailReminder();
+    return $reminder->process();
 }
 
 /**

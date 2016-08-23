@@ -100,20 +100,6 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
-    {
-        $currentUpdateChildrenStrategy = $bean->updateChildrenStrategy;
-        parent::saveBean($bean, $api, $args);
-        $bean = $this->loadBean($api, array(
-            'module' => $bean->module_name,
-            'record' => $bean->id,
-        ));
-        $bean->updateChildrenStrategy = $currentUpdateChildrenStrategy;
-    }
-
-    /**
      * Updates either a single event record or a set of recurring events based on all_recurrences flag
      * @param $api
      * @param $args
@@ -136,7 +122,6 @@ class CalendarEventsApi extends ModuleApi
 
         if ($this->getCalendarEvents()->isEventRecurring($bean)) {
             if (isset($args['all_recurrences']) && $args['all_recurrences'] === 'true') {
-                $bean->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS;
                 $updateResult = $this->updateRecurringCalendarEvent($bean, $api, $args);
             } else {
                 // when updating a single occurrence of a recurring meeting without the
@@ -235,7 +220,6 @@ class CalendarEventsApi extends ModuleApi
 
             $bean = $this->loadBean($api, $parentArgs, 'delete');
         }
-        $bean->updateChildrenStrategy = \CalendarEvents::UPDATE_PARTICIPANTS | \CalendarEvents::UPDATE_FIELDS;
 
         // Turn off The Cache Updates while deleting the multiple recurrences.
         // The current Cache Enabled status is returned so it can be appropriately

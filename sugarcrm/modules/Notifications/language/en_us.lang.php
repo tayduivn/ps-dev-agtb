@@ -50,7 +50,4 @@ $mod_strings = array(
     'LBL_PARENT_ID' => 'Parent ID',
     'LBL_READ' => 'Read',
     'LBL_UNREAD' => 'Unread',
-    'LBL_TYPE' => 'On SugarCRM notification type',
-    'LBL_ON_SUGARCRM_ALERT_SHOW_MORE' => '<a href="#{{url}}">Show more</a>',
-    'LBL_SETTINGS' => 'Settings',
 );

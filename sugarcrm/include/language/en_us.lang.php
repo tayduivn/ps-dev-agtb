@@ -111,13 +111,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
-    'NotificationCenter' => 'Notification Center',
-    'NotificationCenterSubscriptions' => 'Notification Center Subscriptions',
-    'CarrierEmail' => 'Email Carrier',
-    'CarrierSugar' => 'Sugar Carrier',
-    'TriggerServer' => 'Trigger Server',
-    'WebSockets' => 'WebSockets',
-    'Addressees' => 'Addressees',
   ),
 
     'moduleIconList' =>
@@ -232,13 +225,6 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag',
     'Categories' => 'Category',
-    'NotificationCenter' => 'Notification Center',
-    'NotificationCenterSubscriptions' => 'Notification Center Subscription',
-    'CarrierEmail' => 'Email Carrier',
-    'CarrierSugar' => 'Sugar Carrier',
-    'TriggerServer' => 'Trigger Server',
-    'WebSockets' => 'WebSockets',
-    'Addressees' => 'Addressee',
   ),
 
 /*
@@ -1049,7 +1035,6 @@ $app_list_strings = array (
                                      'pick'     => '--None--',
                                      'createcase'  => 'Create Case',
                                      'bounce'   => 'Bounce Handling',
-                                     'caldav'   => 'CalDAV Handling',
     ),
     'dom_email_distribution'=> array(''             => '--None--',
                                      'direct'       => 'Direct Assign',
@@ -8216,9 +8201,10 @@ $app_strings = array (
   'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activity Stream',
-  'LBL_COPYRIGHT' => 'Copyright © 2004-2015 SugarCRM Inc. All Rights Reserved.',
-    'LBL_TRADEMARK' => 'Sugar and SugarCRM are trademarks owned by SugarCRM Inc. '.
-        'All other trademarks are the property of their respective owners.',
+  'LBL_COPYRIGHT' => 'Copyright © 2004-2016 SugarCRM Inc. All Rights Reserved.',
+    'LBL_TRADEMARK' => 'SugarCRM, Sugar and the 3-D Cube are registered trademarks of SugarCRM Inc. '.
+        'All other company and product names used or appearing in this product may be trademarks of the '.
+        'respective companies with which they are associated.',
     'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
     'LBL_SEND_INVITE' => 'Send invite',
   'LBL_INVITEES' => 'Guests',
@@ -8969,8 +8955,6 @@ $app_strings = array (
     'LBL_CONTRACTS'=>'Contracts',
     'LBL_COUNTRY' => 'Country:',
     'LBL_RESET_BUTTON_LABEL' => 'Reset',
-    'LBL_RESET_ALL_BUTTON_LABEL' => 'Reset all',
-    'LBL_RESET_TO_DEFAULT_BUTTON_LABEL' => 'Reset to default',
     'LBL_CREATE_BUTTON_LABEL' => 'Create',
     'LBL_CREATED_BY_USER'=>'Created by User',
     'LBL_CREATED_USER'=>'Created by User',
@@ -9395,8 +9379,9 @@ $app_strings = array (
 
     'LBL_SUGAR_COPYRIGHT_SUB' =>
         '&copy; 2004-2016 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> '.
-        'All Rights Reserved.<br />Sugar and SugarCRM are trademarks owned by SugarCRM Inc. '.
-        'All other trademarks are the property of their respective owners.',
+        'All Rights Reserved.<br />SugarCRM, Sugar and the 3-D Cube are registered trademarks of SugarCRM Inc. '.
+        'All other company and product names used or appearing in this product may be trademarks of the '.
+        'respective companies with which they are associated.',
 
     // GENERIC JOB NOTIFICATIONS LABELS
     'LBL_JOB_NOTIFICATION_SUBJECT_GENERIC' => 'Scheduled Job Completed',
@@ -9737,9 +9722,6 @@ Sincerely, SugarCRM',
         " \nPlease update or remove this dashlet.",
     'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
 
-    'LBL_DASHLET_NEWS_NAME' => 'News',
-    'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
-
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account.  Requires D&B subscription.',
     /*DNB Account Create Dashlet*/
@@ -9809,7 +9791,6 @@ Sincerely, SugarCRM',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',
-    'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
     'LBL_DASHLET_ATTACHMENTS_DESCRIPTION' => 'Notes & Attachments belongs to the record',
@@ -11770,6 +11751,8 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_START_AND_END_DATE_DETAIL_VIEW' => 'Start & End Date',
 
     // notifications
+    'TPL_NOTIFICATION_TITLE' => '{{moduleName}} starts at {{startTime}}',
+
     'LBL_CALENDAR_START_DATE' => "Start Date",
     'LBL_CALENDAR_END_DATE' => "End Date",
     'LBL_CALENDAR_DURATION' => "Duration",
@@ -11874,7 +11857,6 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
     'LBL_FIELD_TRIMMED' => 'Field was trimmed, due to exceeding the maximum character limit.',
-    'LBL_DAFAULT_CALDAV_NAME' => 'Default',
     'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
 );
 
@@ -12804,11 +12786,6 @@ $app_list_strings['notifications_severity_list'] = array(
     'warning' => 'Warning',
 );
 
-    $app_list_strings['notifications_on_sugarcrm_type_list'] = array(
-        '' => '',
-        'alert' => 'Alert',
-    );
-
 $app_list_strings['web_hook_request_method_list'] = array(
     'POST' => 'POST',
     'GET' => 'GET',
@@ -12906,24 +12883,3 @@ $app_list_strings['business_rule_type_list'] = array(
     'single' => 'Single-Hit',
 );
 //END SUGARCRM flav=ent ONLY
-
-$app_list_strings['moduleList']['CalDav'] = 'CalDav';
-$app_list_strings['moduleListSingular']['CalDav'] = 'CalDav';
-
-$app_list_strings['caldav_oldest_sync_date'] = array(
-    '2 weeks' => '2 weeks',
-    '1 month' => '1 month',
-    '3 month' => '3 months',
-    '6 month' => '6 months',
-    0 => 'All events',
-);
-
-$app_list_strings['caldav_queue_action'] = array(
-    'import' => 'Import',
-    'export' => 'Export',
-);
-
-$app_list_strings['caldav_queue_status'] = array(
-    'queued' => 'Queued',
-    'completed' => 'Completed',
-);

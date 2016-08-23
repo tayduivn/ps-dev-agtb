@@ -20,6 +20,7 @@ require_once 'modules/pmse_Inbox/engine/PMSEEngineUtils.php';
 require_once 'modules/pmse_Inbox/engine/PMSELogger.php';
 
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 
 /*
  * Record List API implementation
@@ -191,6 +192,13 @@ class PMSEEngineApi extends SugarApi
                 'keepSession' => true,
 //                'shortHelp' => 'Retrieve information of the process record',
             ),
+            // PMSE specific endpoint that allows bypassing of locked field ACLs
+            'getCaseRecord' => array(
+                'reqType' => 'GET',
+                'path' => array('pmse_Inbox', 'caseRecord', '?', '?'),
+                'pathVars' => array('', '', 'module', 'record'),
+                'method' => 'getCaseRecord',
+            ),
             'cancelCases' => array(
                 'reqType' => 'PUT',
                 'path' => array('pmse_Inbox', 'cancelCases'),
@@ -346,11 +354,12 @@ class PMSEEngineApi extends SugarApi
     public function engineRoute($api, $args)
     {
         // Needed to tell the save process to ignore locked field enforcement
-        // @TODO Use the Registry for this if it is still needed after refactor
-        $args['skip_locked_fields'] = 1;
+        Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
+
         // The handler will call to the preprocessor in this step
         $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Direct');
         $h->executeRequest($args, false, null, strtoupper($args['frm_action']));
+
         // return the success request array
         return array('success' => true);
     }
@@ -1181,6 +1190,49 @@ class PMSEEngineApi extends SugarApi
         $returnArray['case']['flowId'] = $args['idflow'];
         $returnArray['case']['inboxId'] = $args['id'];
         return $returnArray;
+    }
+
+    /**
+     * Gets a case record and bypasses locked field ACLs to allow for edits in
+     * case management
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     */
+    public function getCaseRecord($api, $args)
+    {
+        // Tell the Locked Field ACLs to not set
+        Registry\Registry::getInstance()->set('skip_locked_field_checks', true);
+
+        // See if we can intelligently find the right ModuleApi to load. Start by
+        // getting a clone of the request object
+        $apiReq = $api->getRequest();
+        $req = clone $apiReq;
+
+        // This will need to be removed from the current path
+        $remove = 'pmse_Inbox/caseRecord/';
+
+        // Change the path to be the module api path
+        $req->parsePath(str_replace($remove, '', $req->getRawPath()));
+
+        // Get the route, if there is one, otherwise use some defaults
+        $route = $api->findRoute($req);
+
+        // Fallback to ModuleApi::retrieveRecord when necessary, which should
+        // cover a bulk of use cases
+        $class = 'ModuleApi';
+        $method = 'retrieveRecord';
+
+        // This mimics logic from ServiceBase, but does away with exceptions since
+        // if these criteria aren't met, we can simply fall back to ModuleApi
+        if (!empty($route) && SugarAutoLoader::requireWithCustom($route['file']) && class_exists($route['className'])) {
+            $class = $route['className'];
+            $method = $route['method'];
+        }
+
+        // Create our object and consume it
+        $moduleApi = new $class;
+        return $moduleApi->$method($api, $args);
     }
 
     public function overrideButtons($flow, $listButtons)

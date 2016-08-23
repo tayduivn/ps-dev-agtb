@@ -1124,26 +1124,8 @@ class PMSEEngineUtils
     {
         // First things first... if we are explicitly directed to do something
         // based on the vardefs, do that thing first
-        if (isset($def['processes'])) {
-            // If a field is explicitly marked for processes, handle it
-            if (is_bool($def['processes'])) {
-                return $def['processes'];
-            }
-
-            // If the marker is a string or an array, it is mapped to a method
-            if (is_string($def['processes'])) {
-                $def['processes'] = array($def['processes']);
-            }
-
-            // For a field validation list, run through until you hit a false,
-            // otherwise let the rest of the validation processes run
-            foreach ($def['processes'] as $method) {
-                if (method_exists(__CLASS__, $method)) {
-                    if (self::$method() === false) {
-                        return false;
-                    }
-                }
-            }
+        if (($vardefCheck = self::isValidFieldVardef($def, $type)) !== null) {
+            return $vardefCheck;
         }
 
         // If the field is to blacklisted, handle that now
@@ -1167,16 +1149,63 @@ class PMSEEngineUtils
             return false;
         }
 
-        if (in_array($type, array('AC', 'CF', 'BR')) && isset($def['formula'])) {
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && !empty($def['calculated'])) {
             return false;
         }
 
-        if (in_array($type, array('RR', 'AC', 'CF', 'BR')) && !empty($def['readonly'])) {
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && isset($def['formula'])) {
+            return false;
+        }
+
+        if (in_array($type, array('AC', 'CF', 'BR', 'RR')) && !empty($def['readonly'])) {
             return false;
         }
 
         // At this point all we are left with is checking if it is studio valid
         return self::isValidStudioField($def);
+    }
+
+    /**
+     * Checks the vardef for a processes property and handles it accordingly
+     * @param array $def Field vardef
+     * @param string $type Type, if any, of the field validator
+     * @return boolean
+     */
+    protected static function isValidFieldVardef($def, $type = '')
+    {
+        if (isset($def['processes'])) {
+            // If a field is explicitly marked for processes, handle it
+            if (is_bool($def['processes'])) {
+                return $def['processes'];
+            }
+
+            // Check for types setting
+            if ($type === '') {
+                $type = 'ALL';
+            }
+
+            if (is_array($def['processes'])) {
+                if (isset($def['processes']['types'][$type]) && is_bool($def['processes']['types'][$type])) {
+                    return $def['processes']['types'][$type];
+                }
+            } elseif (is_string($def['processes'])) {
+                // If the marker is a string or an array, it is mapped to a method
+                $def['processes'] = array($def['processes']);
+
+                // For a field validation list, run through until you hit a false,
+                // otherwise let the rest of the validation processes run
+                foreach ($def['processes'] as $method) {
+                    if (method_exists(__CLASS__, $method)) {
+                        if (self::$method() === false) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Default return, means nothing was done here
+        return null;
     }
 
     /**
@@ -1598,80 +1627,6 @@ class PMSEEngineUtils
 
         // Send back if we are admin only and the user is able to admin this module
         return !empty($sugar_config['admin_export_only']) && $nonAdmin;
-    }
-
-    /**
-     * Gets locked fields for a record
-     * @param \SugarBean $bean SugarBean object
-     * @param bool $encode Flag that is sent to the DBManager to handle encoding
-     * @return array
-     */
-    public static function getLockedFields(\SugarBean $bean, $encode = true)
-    {
-        // Get our module name since we will need that
-        $module = \BeanFactory::getModuleName($bean);
-
-        // If we do not have a module or a record no need to proceed
-        if (empty($module) || empty($bean->id)) {
-            return array();
-        }
-
-        // Declare our return
-        $return = array();
-
-        // We need this as the primary bean for the query
-        $pd = \BeanFactory::getBean('pmse_BpmProcessDefinition');
-
-        // We need this to join on for the record check
-        $flow = \BeanFactory::newBean('pmse_BpmFlow');
-
-        // Start building our query now
-        $q = new \SugarQuery();
-
-        // We really only need the locked variables if there are any
-        $q->select(
-            array(
-                array('pd.pro_locked_variables', 'defs'),
-            )
-        );
-
-        // We are selecting from the Process Definitions table
-        $q->from($pd, array('alias' => 'pd'));
-
-        // And joining the flow table
-        $q->joinTable($flow->getTableName(), array('alias' => 'f'))
-          ->on()
-          ->equalsField('f.pro_id', 'pd.id')
-          ->equals('pd.pro_module', $module)
-          ->equals('f.cas_sugar_object_id', $bean->id)
-          ->notIn('f.cas_flow_status', array('CLOSED', 'TERMINATED'))
-          ->isNotEmpty('pd.pro_locked_variables');
-
-        $rows = $q->execute('array', $encode);
-
-        // Loop our rows and merge the results
-        foreach ($rows as $row) {
-            $return = array_merge($return, static::getLockedFieldsFromDef($row['defs']));
-        }
-
-        // Send back just the array values
-        return array_values($return);
-    }
-
-    /**
-     * Gets a decoded array of data from a locked field def encoded string
-     * @param string $def Encoded string of locked field data
-     * @return array
-     */
-    protected static function getLockedFieldsFromDef($def)
-    {
-        $ret = array();
-        $fields = json_decode(html_entity_decode($def, ENT_QUOTES));
-        foreach ($fields as $field) {
-            $ret[$field] = $field;
-        }
-
-        return $ret;
     }
 
     /**

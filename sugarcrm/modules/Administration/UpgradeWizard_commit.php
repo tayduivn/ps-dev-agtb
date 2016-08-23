@@ -179,11 +179,9 @@ if ($install_type != "module") {
 	$zip_to_dir = $request->getValidInputRequest('zip_to_dir', null, '.');
 }
 $remove_tables = $request->getValidInputRequest('remove_tables', null, 'true');
-$overwrite_files = $request->getValidInputRequest('radio_overwrite', null, true);
 
-if($overwrite_files){
- $overwrite_files = (($overwrite_files == 'do_not_overwrite') ? false : true);
-}
+$overwrite = $request->getValidInputRequest('radio_overwrite');
+$overwrite_files = $overwrite ? ($overwrite != 'do_not_overwrite') : true;
 
 //rrs
 $author = '';

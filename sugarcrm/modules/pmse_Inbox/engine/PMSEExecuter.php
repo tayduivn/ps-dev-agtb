@@ -181,11 +181,10 @@ class PMSEExecuter
 
     /**
      * Gets a proper PMSEElement class name from a script type or activity type
-     * @param string $base
-     * @param string $sep
+     * @param string $base The string to manipulate
      * @return string
      */
-    protected function getElementName($base, $sep = '_')
+    protected function getElementName($base)
     {
         // Empty is invalid
         if (empty($base)) {
@@ -198,7 +197,13 @@ class PMSEExecuter
         }
 
         // Return a ACTION_TYPE to ActionType conversion
-        return str_replace($sep, '', ucwords(strtolower($base), $sep));
+        return preg_replace_callback(
+            '/_(.?)/',
+            function ($data) {
+                return strtoupper($data[1]);
+            },
+            ucfirst(strtolower($base))
+        );
     }
 
     /**

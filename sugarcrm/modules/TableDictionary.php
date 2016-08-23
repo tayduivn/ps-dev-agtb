@@ -19,7 +19,6 @@ include("metadata/accounts_opportunitiesMetaData.php");
 include("metadata/calls_contactsMetaData.php");
 include("metadata/calls_usersMetaData.php");
 include("metadata/calls_leadsMetaData.php");
-include("metadata/calls_addresseesMetaData.php");
 include("metadata/cases_bugsMetaData.php");
 include("metadata/contacts_bugsMetaData.php");
 include("metadata/contacts_casesMetaData.php");
@@ -33,7 +32,6 @@ include("metadata/import_mapsMetaData.php");
 include("metadata/meetings_contactsMetaData.php");
 include("metadata/meetings_usersMetaData.php");
 include("metadata/meetings_leadsMetaData.php");
-include("metadata/meetings_addresseesMetaData.php");
 include("metadata/opportunities_contactsMetaData.php");
 include("metadata/user_feedsMetaData.php");
 include("metadata/users_passwordLinkMetaData.php");
@@ -113,6 +111,11 @@ include("metadata/kbusefulnessMetaData.php");
 
 // SugarCacheDb
 include "metadata/key_value_cacheMetaData.php";
+
+//BEGIN SUGARCRM flav=ent ONLY
+// Locked fields
+include "metadata/locked_field_bean_relMetaData.php";
+//END SUGARCRM flav=ent ONLY
 
 $defs = SugarAutoLoader::loadExtension('tabledictionary');
 if($defs) {

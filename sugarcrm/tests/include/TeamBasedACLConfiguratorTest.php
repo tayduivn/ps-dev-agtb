@@ -264,7 +264,6 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
         $beanList = array(
             'Users' => 'User', // does implement tba
             'Unknowns' => 'Unknown', // does not exist
-            'Addressees' => 'Addressee', // does not implement tba
         );
         $this->tbaConfig->removeAllTBAValuesFromBeans($beanList);
     }
