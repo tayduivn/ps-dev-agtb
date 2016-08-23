@@ -22,38 +22,39 @@ class ProspectFormBase  {
 function checkForDuplicates($prefix){
 	global $local_log;
 	require_once('include/formbase.php');
-	
+        $db = DBManagerFactory::getInstance();
 	$focus = BeanFactory::getBean('Prospects');
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
 	$query = '';
 	$baseQuery = 'select id,first_name, last_name, title, email1, email2  from prospects where deleted!=1 and (';
+    //@codingStandardsIgnoreStart
 	if(!empty($_POST[$prefix.'first_name']) && !empty($_POST[$prefix.'last_name'])){
-		$query = $baseQuery ."  (first_name like '". $_POST[$prefix.'first_name'] . "%' and last_name = '". $_POST[$prefix.'last_name'] ."')";
+        $query = $baseQuery ."  (first_name like ". $db->quoted($_POST[$prefix.'first_name']."%") . " and last_name = ". $db->quoted($_POST[$prefix.'last_name']) .")";
 	}else{
-			$query = $baseQuery ."  last_name = '". $_POST[$prefix.'last_name'] ."'";
+        $query = $baseQuery ."  last_name = ". $db->quoted($_POST[$prefix.'last_name']) ."";
 	}
 	if(!empty($_POST[$prefix.'email1'])){
 		if(empty($query)){
-		$query = $baseQuery. "  email1='". $_POST[$prefix.'email1'] . "' or email2 = '". $_POST[$prefix.'email1'] ."'";
+            $query = $baseQuery. "  email1=". $db->quoted($_POST[$prefix.'email1']) . " or email2 = ". $db->quoted($_POST[$prefix.'email1']);
 		}else {
-			$query .= "or email1='". $_POST[$prefix.'email1'] . "' or email2 = '". $_POST[$prefix.'email1'] ."'";
+            $query .= "or email1=". $db->quoted($_POST[$prefix.'email1']) . " or email2 = ". $db->quoted($_POST[$prefix.'email1']);
 		}
 	}
 	if(!empty($_POST[$prefix.'email2'])){
 		if(empty($query))	{
-			$query = $baseQuery. "  email1='". $_POST[$prefix.'email2'] . "' or email2 = '". $_POST[$prefix.'email2'] ."'";
+            $query = $baseQuery. "  email1=". $db->quoted($_POST[$prefix.'email2']) . " or email2 = ". $db->quoted($_POST[$prefix.'email2']);
 		}else{
-			$query .= "or email1='". $_POST[$prefix.'email2'] . "' or email2 = '". $_POST[$prefix.'email2'] ."'";
+            $query .= "or email1=". $db->quoted($_POST[$prefix.'email2']) . " or email2 = ". $db->quoted($_POST[$prefix.'email2']);
 		}
 
 	}
+    //@codingStandardsIgnoreEnd
 
 	if(!empty($query)){
 		$rows = array();
-		
-		$db = DBManagerFactory::getInstance();
+
 		$result = $db->query($query.');');
         while($row = $db->fetchByAssoc($result)) {
             $rows[] = $row;
