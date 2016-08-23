@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Since 7.9. Use {@link View.Views.Base.Emails.CreateView} instead.
+ * @deprecated Use {@link View.Views.Base.Emails.CreateView} instead.
  *
  * @class View.Views.Base.Emails.ComposeView
  * @alias SUGAR.App.view.views.BaseEmailsComposeView
@@ -35,8 +35,9 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        app.logger.warn('Warning: View.Views.Base.Emails.ComposeView is deprecated since 7.9.0 and will be ' +
-            'removed in 7.11.0. Use View.Views.Base.Emails.CreateView instead.');
+        app.logger.warn(
+            'Warning: View.Views.Base.Emails.ComposeView is deprecated. Use View.Views.Base.Emails.CreateView instead.'
+        );
 
         this.events = _.extend({}, this.events, {
             'click [data-toggle-field]': '_handleSenderOptionClick'

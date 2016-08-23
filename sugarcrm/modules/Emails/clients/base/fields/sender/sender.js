@@ -12,7 +12,7 @@
  * @class View.Fields.Base.Emails.SenderField
  * @alias SUGAR.App.view.fields.BaseEmailsSenderField
  * @extends View.Fields.Base.BaseField
- * @deprecated Since 7.9.
+ * @deprecated This view is no longer used and is not recommended.
  */
 ({
     fieldTag: 'input.select2',

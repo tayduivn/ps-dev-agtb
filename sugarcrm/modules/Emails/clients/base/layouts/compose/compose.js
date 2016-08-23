@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @deprecated Since 7.9. Use {@link View.Layouts.Base.CreateLayout} instead.
+ * @deprecated Use {@link View.Layouts.Base.CreateLayout} instead.
  *
  * @class View.Layouts.Base.Emails.ComposeLayout
  * @alias SUGAR.App.view.views.BaseEmailsComposeLayout

@@ -43,13 +43,15 @@ class Email extends SugarBean {
 	var $name;
     /**
      * @var string
-     * @deprecated 7.9 Will be removed in a future release.
+     * @deprecated {@link Email::$type} and {@link Email::$status} have been merged into one field named
+     * {@link Email::$state}.
      */
     var $type = 'archived';
     var $date_sent;
     /**
      * @var string
-     * @deprecated 7.9 Will be removed in a future release.
+     * @deprecated {@link Email::$type} and {@link Email::$status} have been merged into one field named
+     * {@link Email::$state}.
      */
 	var $status;
 	var $intent;
@@ -418,7 +420,7 @@ class Email extends SugarBean {
 	/**
 	 * Returns true or false if this email is a draft.
 	 *
-     * @deprecated 7.9 Will be removed in a future release.
+     * @deprecated Check if {@link Email::$state} equals {@link Email::EMAIL_STATE_DRAFT} instead.
 	 * @param array $request
 	 * @return bool True indicates this email is a draft.
 	 */
@@ -1646,13 +1648,14 @@ class Email extends SugarBean {
     /**
      * retrieves Notes that belong to this Email and stuffs them into the "attachments" attribute
      *
-     * @deprecated 7.9 This method is no longer used. {@link Email::attachments} is now a link, while this method
-     * assumes that it is an array. Use "$attachments = $bean->get_linked_beans('attachments', 'Note');" from now on.
+     * @deprecated {@link Email::$attachments} is now a link, while this method assumes that it is an array. Use
+     * `$attachments = $bean->get_linked_beans('attachments', 'Note');` instead.
      */
     protected function getNotes($id, $duplicate = false)
     {
-        $GLOBALS['log']->warn('Email::getNotes() has been deprecated as of 7.9.0. Please use Email::get_linked_beans(' .
-            "'attachments', 'Note') instead.");
+        LoggerManager::getLogger()->deprecated(
+            "Email::getNotes() has been deprecated. Use Email::get_linked_beans('attachments', 'Note') instead."
+        );
 
         $exRemoved = array();
         if (isset($_REQUEST['removeAttachment'])) {
