@@ -313,14 +313,11 @@ class Opportunity extends SugarBean
 
             while ($row = $this->db->fetchByAssoc($result)) {
                 $query = sprintf(
-                    "update opportunities set currency_id='%s',
-                                        amount_usdollar='%s',
-                                        base_rate='%s'
-                                        where id='%s';",
-                    $currency->id,
-                    SugarCurrency::convertAmountToBase($row['amount'], $currency->id),
-                    $currency->conversion_rate,
-                    $row['id']
+                    "UPDATE opportunities SET currency_id = %s, amount_usdollar = %s, base_rate = %s WHERE id = %s;",
+                    $this->db->quoted($currency->id),
+                    $this->db->quoted(SugarCurrency::convertAmountToBase($row['amount'], $currency->id)),
+                    $this->db->quoted($currency->conversion_rate),
+                    $this->db->quoted($row['id'])
                 );
                 $this->db->query($query);
             }
