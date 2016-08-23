@@ -311,7 +311,8 @@ class ProductBundle extends SugarBean
         }
 
         $query = "INSERT INTO $this->rel_notes (id,bundle_id,note_id,note_index, date_modified) VALUES ('" . create_guid(
-            ) . "','" . $bundle_id . "','" . $note_id . "','" . $note_index . "', " . db_convert(
+        ) . "'," . $this->db->quoted($bundle_id) . "," . $this->db->quoted($note_id) . "," .
+            $this->db->quoted($note_index) . ", " . db_convert(
                 "'" . TimeDate::getInstance()->nowDb() . "'",
                 'datetime'
             ) . ")";
@@ -330,7 +331,7 @@ class ProductBundle extends SugarBean
      */
     public function clear_product_bundle_note_relationship($bundle_id = '')
     {
-        $query = "DELETE FROM $this->rel_notes WHERE (bundle_id='$bundle_id') AND deleted=0";
+        $query = "DELETE FROM $this->rel_notes WHERE (bundle_id=".$this->db->quoted($bundle_id).") AND deleted=0";
 
         $this->db->query($query, true, "Error clearing note to product to product bundle relationship");
         return true;
@@ -343,7 +344,7 @@ class ProductBundle extends SugarBean
      */
     public function clear_productbundle_quote_relationship($bundle_id)
     {
-        $query = "delete from $this->rel_quotes where (bundle_id='$bundle_id') and deleted=0";
+        $query = "delete from $this->rel_quotes where (bundle_id=".$this->db->quoted($bundle_id).") and deleted=0";
         $this->db->query($query, true, "Error clearing product bundle to quote relationship: ");
         return true;
     }
