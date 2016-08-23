@@ -266,17 +266,6 @@ class PMSEProjectImporter extends PMSEImporter
                 $processDefinitionBean->$key = $value;
             }
         }
-
-        // if exported version is unkown or older than 7.8.0.0,
-        // let's decode pro_locked_variables before save
-        if (empty($this->metadata) || empty($this->metadata['SugarCRMVersion']) ||
-                version_compare($this->metadata['SugarCRMVersion'], '7.8.0.0', '<')) {
-            if (!empty($processDefinitionBean->pro_locked_variables)) {
-                $processDefinitionBean->pro_locked_variables =
-                    html_entity_decode($processDefinitionBean->pro_locked_variables, ENT_QUOTES);
-            }
-        }
-
         $processDefinitionBean->id = $keysArray['pro_id'];
         $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->new_with_id = true;
