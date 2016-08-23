@@ -566,6 +566,79 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $this->email->total_attachments, 'Should have decremented the count');
     }
+
+    public function willCalculateHtmlBodyProvider()
+    {
+        return array(
+            array(null),
+            array(''),
+        );
+    }
+
+    /**
+     * @dataProvider willCalculateHtmlBodyProvider
+     * @param null|string $html
+     */
+    public function testSave_WillCalculateHtmlBody($html)
+    {
+        $this->email->state = 'Archived';
+        $this->email->description = "This is a text body\nWith more
+ than...\r\n\r\n... one line";
+        $this->email->description_html = $html;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertSame('This is a text body&lt;br /&gt;With more&lt;br /&gt;' .
+            ' than...&lt;br /&gt;&lt;br /&gt;... one line', $this->email->description_html);
+    }
+
+    public function willNotCalculateHtmlBodyProvider()
+    {
+        return array(
+            array(
+                'Archived',
+                'This is a text body',
+                'This is an &lt;b&gt;html&lt;/b&gt; body',
+            ),
+            array(
+                'Archived',
+                '',
+                null,
+            ),
+            array(
+                'Archived',
+                '',
+                'This is an &lt;b&gt;html&lt;/b&gt; body',
+            ),
+            array(
+                'Archived',
+                null,
+                'This is an &lt;b&gt;html&lt;/b&gt; body',
+            ),
+            array(
+                'Draft',
+                'This is a text body',
+                null,
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider willNotCalculateHtmlBodyProvider
+     * @param string $state
+     * @param null|string $plain
+     * @param null|string $html
+     */
+    public function testSave_WillNotCalculateHtmlBody($state, $plain, $html)
+    {
+        $this->email->state = $state;
+        $this->email->description = $plain;
+        $this->email->description_html = $html;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertSame($html, $this->email->description_html);
+    }
 }
 
 

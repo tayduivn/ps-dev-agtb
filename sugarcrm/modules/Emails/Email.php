@@ -1114,6 +1114,15 @@ class Email extends SugarBean {
 				$this->id = create_guid();
 				$this->new_with_id = true;
 			}
+
+            // Copy plain-text email body to HTML field column
+            if ($this->state === static::EMAIL_STATE_ARCHIVED &&
+                empty($this->description_html) &&
+                !empty($this->description)
+            ) {
+                $this->description_html = str_replace(array("\r\n", "\n", "\r"), '<br />', $this->description);
+            }
+
 			$this->from_addr_name = $this->cleanEmails($this->from_addr_name);
 			$this->to_addrs_names = $this->cleanEmails($this->to_addrs_names);
 			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
@@ -1122,7 +1131,8 @@ class Email extends SugarBean {
 			$this->description = SugarCleaner::cleanHtml($this->description);
             $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
             $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
-			$this->saveEmailText();
+            
+            $this->saveEmailText();
 			$this->saveEmailAddresses();
 
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
