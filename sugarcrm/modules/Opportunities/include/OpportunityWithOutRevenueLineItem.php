@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'OpportunitySetup.php';
+require_once 'modules/Opportunities/include/OpportunitySetup.php';
 
 /**
  * Class OpportunityWithOutRevenueLineItem
