@@ -10,11 +10,31 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-                                                                                      // OutboundEmailConfiguration and
-                                                                                      // OutboundSmtpEmailConfiguration
-
+/**
+ * Class OutboundEmailConfigurationApi
+ * @deprecated This API is no longer needed.
+ */
 class OutboundEmailConfigurationApi extends ModuleApi
 {
+    /**
+     * {@inheritdoc}
+     *
+     * Logs a deprecation warning.
+     *
+     * @deprecated This class is no longer used and is not recommended.
+     */
+    public function __construct()
+    {
+        LoggerManager::getLogger()->deprecated(
+            'OutboundEmailConfigurationApi and all of its endpoints have been deprecated.'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated All /OutboundEmailConfiguration endpoints have been deprecated.
+     */
     public function registerApiRest() {
         $api = array(
             "outboundEmailConfigurationList" => array(
@@ -23,7 +43,8 @@ class OutboundEmailConfigurationApi extends ModuleApi
                 "pathVars"  => array("", ""),
                 "method"    => "listConfigurations",
                 "shortHelp" => "A list of outbound email configurations",
-                "longHelp"  => "include/api/html/modules/OutboundEmailConfiguration/OutboundEmailConfiguration.html#listConfigurations"
+                'longHelp'  => '',
+                'maxVersion' => 10,
             ),
         );
 
@@ -31,12 +52,17 @@ class OutboundEmailConfigurationApi extends ModuleApi
     }
 
     /**
+     * @deprecated Use GET /Emails/enum/outbound_email_id instead.
      * @param ServiceBase $api
      * @param array $args
      * @return array
      */
     public function listConfigurations(ServiceBase $api, array $args)
     {
+        LoggerManager::getLogger()->deprecated(
+            'GET /OutboundEmailConfiguration/list has been deprecated. Use GET /Emails/enum/outbound_email_id instead.'
+        );
+
         $list = array();
 
         $configs = OutboundEmailConfigurationPeer::listValidMailConfigurations($GLOBALS["current_user"]);

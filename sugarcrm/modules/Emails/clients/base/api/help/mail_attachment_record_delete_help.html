@@ -40,4 +40,15 @@
             Added <code>/Mail/attachment/:file_guid</code> DELETE endpoint.
         </td>
     </tr>
+    <tr>
+        <td>
+            v11
+        </td>
+        <td>
+            Deprecated <code>/Mail/attachment/:file_guid</code> DELETE endpoint. Use
+            <code>/Notes/:id/file/filename</code> DELETE endpoint to delete a file from the filesystem. Use
+            <code>/Emails/:record/link/attachments/:remote_id</code> DELETE endpoint to remove an attachment from an
+            email. Note that removing an attachment from an email will also delete it from the filesystem.
+        </td>
+    </tr>
 </table>
