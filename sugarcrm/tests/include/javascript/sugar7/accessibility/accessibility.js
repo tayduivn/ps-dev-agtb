@@ -100,13 +100,10 @@ describe('accessibility', function() {
     });
 
     describe('label compliance', function() {
-        var field, sidecarFieldBefore;
+        var field;
 
         beforeEach(function() {
-            // mock out Field so we have an instance of Field
-            sidecarFieldBefore = app.view.Field;
-            app.view.Field = Backbone.View;
-            field = new app.view.Field();
+            field = SugarTest.createField('base', 'label', 'label');
 
             // set test values
             field.fieldTag = 'input';
@@ -115,8 +112,7 @@ describe('accessibility', function() {
         });
 
         afterEach(function() {
-            // restore original Field definition
-            app.view.Field = sidecarFieldBefore;
+            field.dispose();
         });
 
         it('should add aria-label for an input field', function() {

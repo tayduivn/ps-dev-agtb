@@ -262,8 +262,8 @@ describe('favorite field', function() {
                 return {activityStreamEnabled:true};
             });
         //Fake layouts
-        field.view = new Backbone.View();
-        field.view.layout = new Backbone.View();
+        field.view = app.view.createView({type: 'base'});
+        field.view.layout = app.view.createLayout({type: 'base'});
         field.view.layout.layout = SugarTest.createLayout('base', 'Accounts', 'filterpanel', {});
         field.view.layout.layout.name = 'filterpanel';
         applyLastFilterStub = sinon.stub(field.view.layout.layout, 'applyLastFilter');
@@ -273,6 +273,10 @@ describe('favorite field', function() {
 
         expect(applyLastFilterStub).toHaveBeenCalled();
         expect(applyLastFilterStub).toHaveBeenCalledWith(field.collection, 'favorite');
+
+        field.view.dispose();
+        field.view.layout.dispose();
+        field.view.layout.layout.dispose();
 
         getModuleStub.restore();
     });

@@ -552,16 +552,16 @@ describe('Base.Layout.Filter', function() {
         });
         it('should get relevant context lists for activities', function() {
             layout.showingActivities = true;
-            var activityView = new Backbone.View();
-            activityView.name = 'activitystream';
-            var ctxt = app.context.getContext();
-            ctxt.set({
-                collection: new Backbone.Collection(),
+            var ctxt = app.context.getContext({
+                collection: app.data.createBeanCollection(),
                 module: moduleName,
                 layout: 'filter'
             });
             ctxt.prepare();
-            activityView.context = ctxt;
+            var activityView = app.view.createView({
+                name: 'activitystream',
+                context: ctxt,
+            });
             layout.layout._components = [activityView];
             var expectedList = [ctxt];
             sinon.mock(parentLayout, 'getActivityContext', function() {

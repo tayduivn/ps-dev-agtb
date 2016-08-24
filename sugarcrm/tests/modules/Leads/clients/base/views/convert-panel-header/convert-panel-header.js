@@ -2,6 +2,7 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
     var app, view,
         dupeCheckResults = '.dupecheck-results',
         associateButton = '[name="associate_button"]';
+    var parentLayout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -13,11 +14,22 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
+        parentLayout = app.view.createLayout({type: 'base'});
+        parentLayout = _.extend(parentLayout, {
+            TOGGLE_CREATE: 'create',
+            TOGGLE_DUPECHECK: 'dupecheck',
+
+            currentState: {
+                complete: false,
+                dupeSelected: false
+            },
+            currentToggle: 'dupecheck'
+        });
         view = SugarTest.createView('base', 'Leads', 'convert-panel-header', {
             module: 'Foos',
             moduleSingular: 'Foo',
             required: false
-        }, null, true, createMockLayout());
+        }, null, true, parentLayout);
         view.render();
 
         this.addMatchers({
@@ -33,6 +45,8 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        view.dispose();
+        parentLayout.dispose();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
     });
@@ -214,19 +228,5 @@ describe("Leads.Base.View.ConvertPanelHeader", function() {
     var resetPanel = function() {
         view.layout.currentState.complete = false;
         view.handlePanelReset();
-    };
-
-    var createMockLayout = function() {
-        var MockLayout = Backbone.View.extend({
-            TOGGLE_CREATE: 'create',
-            TOGGLE_DUPECHECK: 'dupecheck',
-
-            currentState: {
-                complete: false,
-                dupeSelected: false
-            },
-            currentToggle: 'dupecheck'
-        });
-        return new MockLayout();
     };
 });

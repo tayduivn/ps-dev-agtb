@@ -3,7 +3,7 @@ describe('EmailClientLaunch Plugin', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = new Backbone.View();
+        field = SugarTest.createField('base', 'label', 'label');
         field.plugins = ['EmailClientLaunch'];
         SugarTest.loadPlugin('EmailClientLaunch');
         SugarTest.app.plugins.attach(field, 'field');
@@ -16,6 +16,7 @@ describe('EmailClientLaunch Plugin', function() {
     });
 
     afterEach(function() {
+        field.dispose();
         app.drawer = originalDrawer;
         app.user.set('preferences', userPrefs);
     });
