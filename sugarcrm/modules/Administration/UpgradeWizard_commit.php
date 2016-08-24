@@ -170,6 +170,9 @@ if(strpos($install_file,'upload://') === 0){
 $id_name = $request->getValidInputRequest('id_name', null, '');
 $s_manifest = $request->getValidInputRequest('s_manifest', null, '');
 $s_patch = $request->getValidInputRequest('patch');
+if ($s_patch) {
+    $s_patch = base64_encode(serialize($s_patch));
+}
 $previous_version = $request->getValidInputRequest('previous_version', null, '');
 $previous_id = $request->getValidInputRequest('previous_id', null, '');
 
