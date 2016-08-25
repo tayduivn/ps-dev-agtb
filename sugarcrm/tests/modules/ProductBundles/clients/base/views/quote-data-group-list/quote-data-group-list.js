@@ -479,7 +479,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 return {
                     length: 1,
                     data: dataStub
-                }
+                };
             });
 
             sinon.collection.stub(view, 'toggleRow', function() {});

@@ -18,8 +18,8 @@
      * @inheritdoc
      */
     events: {
-        'click [name="edit_row_button"]' : '_onEditRowBtnClicked',
-        'click [name="delete_row_button"]' : '_onDeleteRowBtnClicked'
+        'click [name="edit_row_button"]': '_onEditRowBtnClicked',
+        'click [name="delete_row_button"]': '_onDeleteRowBtnClicked'
     },
 
     /**

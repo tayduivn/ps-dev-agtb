@@ -1,6 +1,6 @@
 describe('ProductBundles.Base.Fields.QuoteGroupTitle', function() {
-    var field,
-        fieldDef;
+    var field;
+    var fieldDef;
     beforeEach(function() {
         fieldDef = {
             type: 'quote-group-title',

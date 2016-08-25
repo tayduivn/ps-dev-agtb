@@ -25,20 +25,20 @@
     /**
      * The currency ID field name to use on the model when changing currency ID
      * Defaults to 'currency_id' if no currency_field exists in metadata
-     * @type {String}
+     * @type {string}
      */
     currencyIdFieldName: undefined,
 
     /**
      * The base rate field name to use on the model
      * Defaults to 'base_rate' if no base_rate_field exists in metadata
-     * @type {String}
+     * @type {string}
      */
     baseRateFieldName: undefined,
 
     /**
      * The last known record currency id
-     * @type {String}
+     * @type {string}
      */
     _lastCurrencyId: undefined,
 
@@ -63,8 +63,8 @@
         // check to make sure this is a new model or currency_id has not been set, and the model is not a copy
         // so we don't overwrite the models previously entered values
         if ((this.model.isNew() && !this.model.isCopy())) {
-            var currencyFieldValue = app.user.getPreference('currency_id'),
-                baseRateFieldValue = app.metadata.getCurrency(currencyFieldValue).conversion_rate;
+            var currencyFieldValue = app.user.getPreference('currency_id');
+            var baseRateFieldValue = app.metadata.getCurrency(currencyFieldValue).conversion_rate;
 
             // set the currency_id to the user's preferred currency
             this.model.set(this.currencyIdFieldName, currencyFieldValue);

@@ -24,4 +24,3 @@ $viewdefs['Quotes']['base']['layout']['extra-info'] = array(
         ),
     ),
 );
-

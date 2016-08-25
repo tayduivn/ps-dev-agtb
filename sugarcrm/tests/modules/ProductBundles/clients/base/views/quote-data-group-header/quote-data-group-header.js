@@ -1,10 +1,10 @@
 describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
-    var app,
-        view,
-        viewMeta,
-        viewLayoutModel,
-        layout,
-        layoutDefs;
+    var app;
+    var view;
+    var viewMeta;
+    var viewLayoutModel;
+    var layout;
+    var layoutDefs;
 
     beforeEach(function() {
         app = SugarTest.app;

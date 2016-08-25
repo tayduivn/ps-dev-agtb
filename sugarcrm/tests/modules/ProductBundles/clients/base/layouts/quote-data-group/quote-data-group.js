@@ -1,6 +1,6 @@
 describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
-    var app,
-        layout;
+    var app;
+    var layout;
 
     beforeEach(function() {
         app = SugarTest.app;

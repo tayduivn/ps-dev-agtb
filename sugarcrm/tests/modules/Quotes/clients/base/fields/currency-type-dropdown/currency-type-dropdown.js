@@ -223,8 +223,8 @@ describe('Quotes.Base.Fields.CurrencyTypeDropdown', function() {
             });
             field.model.set({currency_id: undefined});
 
-            var currencyID = app.user.getPreference('currency_id'),
-                conversionRate = app.metadata.getCurrency(currencyID).conversion_rate;
+            var currencyID = app.user.getPreference('currency_id');
+            var conversionRate = app.metadata.getCurrency(currencyID).conversion_rate;
             field.initialize(options);
             expect(field.model.get('base_rate')).toBe(conversionRate);
         });

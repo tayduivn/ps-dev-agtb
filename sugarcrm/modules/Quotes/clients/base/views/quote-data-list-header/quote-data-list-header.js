@@ -18,8 +18,8 @@
      * @inheritdoc
      */
     events: {
-        'click [name="group_button"]' : '_onCreateGroupBtnClicked',
-        'click [name="massdelete_button"]' : '_onDeleteBtnClicked'
+        'click [name="group_button"]': '_onCreateGroupBtnClicked',
+        'click [name="massdelete_button"]': '_onDeleteBtnClicked'
     },
 
     /**

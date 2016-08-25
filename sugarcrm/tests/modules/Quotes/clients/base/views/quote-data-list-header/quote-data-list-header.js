@@ -1,7 +1,7 @@
 describe('Quotes.Base.Views.QuoteDataListHeader', function() {
-    var app,
-        view,
-        viewMeta;
+    var app;
+    var view;
+    var viewMeta;
 
     beforeEach(function() {
         app = SugarTest.app;

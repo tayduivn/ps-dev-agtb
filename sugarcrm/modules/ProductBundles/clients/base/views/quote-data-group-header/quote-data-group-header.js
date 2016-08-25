@@ -18,10 +18,10 @@
      * @inheritdoc
      */
     events: {
-        'click [name="create_qli_button"]' : '_onCreateQLIBtnClicked',
-        'click [name="create_comment_button"]' : '_onCreateCommentBtnClicked',
-        'click [name="edit_bundle_button"]' : '_onEditBundleBtnClicked',
-        'click [name="delete_bundle_button"]' : '_onDeleteBundleBtnClicked'
+        'click [name="create_qli_button"]': '_onCreateQLIBtnClicked',
+        'click [name="create_comment_button"]': '_onCreateCommentBtnClicked',
+        'click [name="edit_bundle_button"]': '_onEditBundleBtnClicked',
+        'click [name="delete_bundle_button"]': '_onDeleteBundleBtnClicked'
     },
 
     /**

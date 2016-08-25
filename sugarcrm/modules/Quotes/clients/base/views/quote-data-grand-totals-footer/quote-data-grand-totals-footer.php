@@ -41,7 +41,7 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                     'name' => 'total',
                     'label' => 'LBL_LIST_GRAND_TOTAL',
                     'type' => 'quote-footer',
-                    'css_class' => 'grand-total'
+                    'css_class' => 'grand-total',
                 ),
             ),
         ),

@@ -18,9 +18,9 @@
      * @inheritdoc
      */
     events: {
-        'click [name="create_qli_button"]' : '_onCreateQLIBtnClicked',
-        'click [name="create_comment_button"]' : '_onCreateCommentBtnClicked',
-        'click [name="create_group_button"]' : '_onCreateGroupBtnClicked'
+        'click [name="create_qli_button"]': '_onCreateQLIBtnClicked',
+        'click [name="create_comment_button"]': '_onCreateCommentBtnClicked',
+        'click [name="create_group_button"]': '_onCreateGroupBtnClicked'
     },
 
     /**

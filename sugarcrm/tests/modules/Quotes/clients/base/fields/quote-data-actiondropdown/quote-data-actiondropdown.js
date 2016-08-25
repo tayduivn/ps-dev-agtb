@@ -1,6 +1,6 @@
 describe('Quotes.Base.Fields.QuoteDataActiondropdown', function() {
-    var field,
-        fieldDef;
+    var field;
+    var fieldDef;
     beforeEach(function() {
         fieldDef = {
             type: 'quote-data-actiondropdown',

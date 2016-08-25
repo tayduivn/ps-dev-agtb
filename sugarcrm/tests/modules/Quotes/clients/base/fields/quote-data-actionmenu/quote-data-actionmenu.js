@@ -1,6 +1,6 @@
 describe('Quotes.Base.Fields.QuoteDataActionmenu', function() {
-    var field,
-        fieldDef;
+    var field;
+    var fieldDef;
     beforeEach(function() {
         fieldDef = {
             type: 'quote-data-actionmenu',

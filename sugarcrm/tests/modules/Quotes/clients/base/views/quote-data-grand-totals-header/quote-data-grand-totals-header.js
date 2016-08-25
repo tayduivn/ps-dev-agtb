@@ -1,9 +1,9 @@
 describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
-    var app,
-        view,
-        viewMeta,
-        viewModel,
-        ctx;
+    var app;
+    var view;
+    var viewMeta;
+    var viewModel;
+    var ctx;
 
     beforeEach(function() {
         app = SugarTest.app;

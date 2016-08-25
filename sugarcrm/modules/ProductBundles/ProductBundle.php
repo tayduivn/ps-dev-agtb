@@ -529,7 +529,8 @@ class ProductBundle extends SugarBean
 
     }
 
-    public function get_summary_text() {
+    public function get_summary_text()
+    {
         return $this->name;
     }
 }

@@ -1,6 +1,6 @@
 describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
-    var app,
-        layout;
+    var app;
+    var layout;
 
     beforeEach(function() {
         app = SugarTest.app;
