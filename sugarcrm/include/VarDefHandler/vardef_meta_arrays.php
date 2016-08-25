@@ -211,6 +211,7 @@ $vardef_meta_array = array(
                 'archived_emails',
                 'reportees',
                 'tasks_parent',
+                'locked_fields_link',
             ),
             'module' => array(
                 'Forecasts',
@@ -261,6 +262,7 @@ $vardef_meta_array = array(
                 'queueitems',
                 'log_entries',
                 'contract_types',
+                'locked_fields_link',
             ),
             'module' => array(
                 'Users',
@@ -299,7 +301,8 @@ $vardef_meta_array = array(
                 'queueitems',
                 'log_entries',
                 'contract_types',
-                'reports_to_link'
+                'reports_to_link',
+                'locked_fields_link',
             ),
             'module' => array(
                 'Users',
