@@ -544,7 +544,8 @@
                     fields: [
                         'subject',
                         'body',
-                        'body_html'
+                        'body_html',
+                        'text_only'
                     ]
                 }
             },
@@ -623,7 +624,7 @@
             }
 
             //TODO: May need to move over replaces special characters.
-            if (template.get('text_only') === 1) {
+            if (template.get('text_only')) {
                 this.model.set('description_html', template.get('body'));
             } else {
                 this.model.set('description_html', template.get('body_html'));
