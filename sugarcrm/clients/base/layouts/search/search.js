@@ -177,8 +177,7 @@
      *
      * @inheritdoc
      */
-    loadData: function(options, setFields) {
-        setFields = false;
+    loadData: function(options) {
         options = options || {};
 
         options.module_list = this.context.get('module_list') || [];
@@ -192,6 +191,6 @@
             options.apiOptions.useNewApi = true;
         }
 
-        this._super('loadData', [options, setFields]);
+        this._super('loadData', [options]);
     }
 })

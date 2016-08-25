@@ -414,6 +414,7 @@ $dictionary['Lead'] = array(
             'type' => 'varchar',
             'len' => '255',
             'group' => 'portal',
+            'group_label' => 'LBL_PORTAL',
             'comment' => 'Portal user name when lead created via lead portal',
             'studio' => true,
         ),

@@ -9,7 +9,7 @@ xdescribe("Base.Layout.Modal", function() {
         SugarTest.loadComponent("base", "layout", "modal");
         SugarTest.loadComponent("base", "view", "modal-header");
         SugarTest.loadComponent("base", "view", "modal-confirm");
-        parent = new Backbone.View();
+        parent = app.view.createLayout({type: 'base'});
         if (!$.fn.modal) {
             $.fn.modal = function(options) {};
         }
@@ -22,6 +22,7 @@ xdescribe("Base.Layout.Modal", function() {
         $.fn.modal = null;
         layout.context = null;
         layout.dispose();
+        parent.dispose();
         layout = null;
         parent = null;
         actual = null;

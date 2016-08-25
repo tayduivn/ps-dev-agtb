@@ -57,6 +57,11 @@
                     return;
                 }
 
+                if (this._hasLockedFields(models) === true) {
+                    this._showLockedAlert();
+                    return;
+                }
+
                 if (this._validateSize(models) === false) {
                     this._showSizeAlert();
                     return;
@@ -119,6 +124,19 @@
             },
 
             /**
+             * Check if there is at least one model that contains locked fields.
+             *
+             * @param {Array} models Array of merging record set.
+             * @return {boolean} `true` if non empty locked_fields is found, `false` otherwise.
+             * @protected
+             */
+            _hasLockedFields: function(models) {
+                return _.some(models, function(model) {
+                    return !_.isEmpty(model.get('locked_fields'));
+                });
+            },
+
+            /**
              * Display error message when there are no editable records.
              * @protected
              */
@@ -126,6 +144,18 @@
                 var msg = app.lang.get('LBL_MERGE_NO_ACCESS', this.module);
                 app.alert.show('no-record-to-edit', {
                     level: 'error',
+                    messages: msg
+                });
+            },
+
+            /**
+             * Display error message when there are locked fields.
+             */
+            _showLockedAlert: function() {
+                var msg = app.lang.get('LBL_MERGE_LOCKED', this.module);
+                app.alert.show('contains-locked-fields', {
+                    level: 'warning',
+                    autoclose: false,
                     messages: msg
                 });
             },

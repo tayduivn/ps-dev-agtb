@@ -526,6 +526,11 @@ class HealthCheckScannerMeta
             'kb'     => 'https://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Invalid_Process_Author_Field_Use/',
             //@codingStandardsIgnoreEnd
         ),
+        545 => array(
+            'report' => 'invalidAWFLockedFieldGroup',
+            'bucket' => self::MANUAL,
+            //'kb'     => '',
+        ),
 
         // Bucket G
         901 => array(

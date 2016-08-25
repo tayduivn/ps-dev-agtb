@@ -3,16 +3,17 @@ describe('Base.View.FilteredListView', function() {
     var view, app, parentLayout;
 
     beforeEach(function() {
-        parentLayout = new Backbone.View();
+        app = SUGAR.App;
+        parentLayout = app.view.createLayout({type: 'base'});
         SugarTest.loadComponent('base', 'view', 'list');
         view = SugarTest.createView('base', 'Accounts', 'filtered-list', {}, false, false, parentLayout);
         view.collection = new Backbone.Collection();
-        app = SUGAR.App;
     });
 
     afterEach(function() {
         sinon.collection.restore();
         view.dispose();
+        parentLayout.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};

@@ -655,9 +655,10 @@ class TeamBasedACLConfigurator
             }
             $objName = BeanFactory::getObjectName($name);
             VardefManager::loadVardef($name, $objName);
-            $dictionary = $GLOBALS['dictionary'][$objName];
-            if ((!empty($dictionary['hidden_to_role_assignment']) && $dictionary['hidden_to_role_assignment']) ||
-                    !self::implementsTBA($name)) {
+            // $objName might be false, e.g. custom module is disabled.
+            $dictionary = isset($GLOBALS['dictionary'][$objName]) ? $GLOBALS['dictionary'][$objName] : null;
+            if ($dictionary && ((!empty($dictionary['hidden_to_role_assignment'])
+                        && $dictionary['hidden_to_role_assignment']) || !self::implementsTBA($name))) {
                 unset($actionsList[$name]);
             }
         }

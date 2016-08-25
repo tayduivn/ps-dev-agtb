@@ -1,15 +1,16 @@
 describe('Base.Layout.Default', function() {
-    var layout, app, def, moduleName;
+    var layout;
+    var app;
+    var moduleName = 'Accounts';
+    var def = {
+        'components': [
+            {'layout': {'span': 4}},
+            {'layout': {'span': 8}},
+        ],
+    };
 
     beforeEach(function() {
         app = SugarTest.app;
-        moduleName = 'Accounts';
-        def = {
-            'components': [
-                {'layout': {'span': 4}},
-                {'layout': {'span': 8}}
-            ]
-        };
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'layout', 'default');
         SugarTest.testMetadata.set();
@@ -28,14 +29,23 @@ describe('Base.Layout.Default', function() {
 
     describe('listeners', function() {
         var toggleSidePaneStub;
+        var testLayout;
 
         beforeEach(function() {
-            toggleSidePaneStub = sinon.collection.stub(layout, 'toggleSidePane');
-            layout.initialize({ meta: def });
+            testLayout = app.view.createLayout({
+                name: 'default',
+                module: moduleName,
+            });
+            toggleSidePaneStub = sinon.collection.stub(testLayout, 'toggleSidePane');
+        });
+
+        afterEach(function() {
+            testLayout.dispose();
         });
 
         it('should toggle side pane when "sidebar:toggle" is triggered', function() {
-            layout.trigger('sidebar:toggle');
+            testLayout.initialize({});
+            testLayout.trigger('sidebar:toggle');
             expect(toggleSidePaneStub).toHaveBeenCalled();
         });
     });
@@ -70,13 +80,24 @@ describe('Base.Layout.Default', function() {
         });
 
         describe('when the default hide is set to "1"', function() {
+            var testLayout;
+            var testDef = _.extend({}, def, {default_hide: '1'});
+
             beforeEach(function (){
-                def['default_hide'] = '1';
-                layout.initialize({ meta: def });
+                testLayout = app.view.createLayout({
+                    name: 'default',
+                    module: moduleName,
+                    meta: testDef,
+                });
             });
+
+            afterEach(function() {
+                testLayout.dispose();
+            });
+
             it('should default false', function() {
                 lastState = undefined;
-                expect(layout.isSidePaneVisible()).toBeFalsy();
+                expect(testLayout.isSidePaneVisible()).toBeFalsy();
             });
         });
     });
@@ -145,16 +166,33 @@ describe('Base.Layout.Default', function() {
         });
 
         describe('when the last state key is manually defined', function(){
+            var testLayout;
+            var _toggleStub;
+            var testDef = _.extend({}, def, {hide_key: 'hide-test'});
+
             beforeEach(function () {
                 validHideLastStateKey = moduleName + ':default:hide-test';
-                def['hide_key'] = 'hide-test';
-                layout.initialize({meta: def, module: moduleName});
+                testLayout = app.view.createLayout({
+                    name: 'default',
+                    module: moduleName,
+                    meta: testDef,
+                });
+
+                sinon.collection.stub(testLayout, 'isSidePaneVisible', function() {
+                    return isSidePaneVisible;
+                });
+                _toggleStub = sinon.collection.stub(testLayout, '_toggleVisibility');
             });
+
+            afterEach(function() {
+                testLayout.dispose();
+            });
+
             it('should use the defined last state key', function () {
                 isSidePaneVisible = undefined;
-                layout.toggleSidePane();
+                testLayout.toggleSidePane();
                 expect(lastStateSetStub).toHaveBeenCalledWith(validHideLastStateKey, '0');
-                expect(_toggleVisibilityStub).toHaveBeenCalled();
+                expect(_toggleStub).toHaveBeenCalled();
             });
         })
     });

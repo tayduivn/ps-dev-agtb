@@ -73,7 +73,7 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
 
-        $this->assertTrue(isset($indexes['special_idx_email1']));
+        $this->assertTrue(isset($indexes['special_idx_email']));
         $this->assertTrue(isset($indexes['special_idx_email2']));
     }
     
@@ -125,11 +125,11 @@ class ImportDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         $id = $focus->save(false);
         
         $focus = BeanFactory::getBean('Contacts');
-        $focus->email1 = $email;
+        $focus->email = $email;
         
         $idc = new ImportDuplicateCheck($focus);
         
-        $this->assertTrue($idc->isADuplicateRecord(array('special_idx_email1')));
+        $this->assertTrue($idc->isADuplicateRecord(array('special_idx_email')));
         
         $focus->mark_deleted($id);
     }

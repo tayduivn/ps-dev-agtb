@@ -114,10 +114,7 @@ describe("Base.Layout.Togglepanel", function () {
             ]);
         });
         it('should add toggle components to the togglable component lists', function () {
-            var mockComponent = new Backbone.View();
-            mockComponent.name = mockComponent.type = 'test1';
-            mockComponent.dispose = function () {
-            };
+            var mockComponent = app.view.createView({type: 'test1', name: 'test1'});
             layout.options.meta.availableToggles = [
                 {
                     'name': 'test1',
@@ -127,17 +124,16 @@ describe("Base.Layout.Togglepanel", function () {
             ];
             layout._placeComponent(mockComponent);
 
-            expect(layout.componentsList[mockComponent.type]).toEqual(mockComponent);
+            expect(layout.componentsList[mockComponent.name]).toEqual(mockComponent);
+
+            mockComponent.dispose();
         });
 
         describe('getNonToggleComponents', function() {
             it('should only return components that cannot be toggled', function() {
-                var actual,
-                    nonTogglable= new Backbone.View(),
-                    togglable = new Backbone.View();
-
-                nonTogglable.dispose = $.noop;
-                togglable.dispose = $.noop;
+                var actual;
+                var nonTogglable = app.view.createView({type: 'base'});
+                var togglable = app.view.createView({type: 'base'});
 
                 layout._components = [nonTogglable, togglable];
                 layout.componentsList = [togglable];
@@ -146,6 +142,9 @@ describe("Base.Layout.Togglepanel", function () {
 
                 expect(actual.length).toBe(1);
                 expect(actual[0].cid).toBe(nonTogglable.cid);
+
+                nonTogglable.dispose();
+                togglable.dispose();
             });
         });
     });

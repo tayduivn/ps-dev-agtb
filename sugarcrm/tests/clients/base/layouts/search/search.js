@@ -57,8 +57,7 @@ describe('View.Layouts.Base.SearchLayout', function() {
 
         it('sets the right options', function() {
             var options = {};
-            var setFields = false;
-            layout.loadData(options, setFields);
+            layout.loadData(options);
 
             expect(options.apiOptions).toEqual({data: {tag_filters: [sampleTag.id]},
                 fetchWithPost: true, useNewApi: true});

@@ -1,7 +1,9 @@
 describe("Taggable Plugin", function() {
     var plugin, filtersBeanPrototype;
+    var app;
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.loadPlugin('Taggable');
         plugin = SugarTest.app.plugins._get('Taggable', 'view');
         SugarTest.app.data.declareModels();
@@ -191,12 +193,12 @@ describe("Taggable Plugin", function() {
         var view;
 
         beforeEach(function() {
-            view = new Backbone.View();
+            view = app.view.createView({type: 'base'});
             _.extend(view, plugin);
         });
 
         afterEach(function() {
-            view.undelegateEvents();
+            view.dispose();
         });
 
         it("Should create a new dropdown if none already exists", function() {

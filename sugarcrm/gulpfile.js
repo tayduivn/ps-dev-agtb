@@ -61,7 +61,8 @@ gulp.task('karma', function(done) {
         karmaOptions.browsers = [];
         karmaOptions.singleRun = false;
         karmaOptions.autoWatch = true;
-        return karma.start(karmaOptions);
+        new Server(karmaOptions).start();
+        return;
     } else if (commander.dev) {
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;

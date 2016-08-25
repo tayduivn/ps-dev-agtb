@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'CategoriesExceptionInterface.php';
+require_once 'modules/Categories/exception/CategoriesExceptionInterface.php';
 
 /**
  * Class CategoriesRuntimeException

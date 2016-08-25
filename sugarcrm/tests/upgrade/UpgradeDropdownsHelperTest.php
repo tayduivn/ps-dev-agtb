@@ -67,6 +67,7 @@ class UpgradeDropdownsHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('forecasts_timeperiod_options_dom'),
             array('generic_timeperiod_options'),
             //END SUGARCRM flav=pro ONLY
+            array('sweetspot_theme_options'),
         );
     }
 

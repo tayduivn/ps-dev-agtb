@@ -35,21 +35,21 @@
     hiddenPanelExists: false,
 
     initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-        this.action = 'detail';
-        this._delegateEvents();
-        this.delegateButtonEvents();
-
         // Use preview view if available, otherwise fallback to record view
         var viewName = 'preview';
-        var previewMeta = app.metadata.getView(this.module, 'preview');
-        var recordMeta = app.metadata.getView(this.module, 'record');
+        var previewMeta = app.metadata.getView(options.module, 'preview');
+        var recordMeta = app.metadata.getView(options.module, 'record');
 
         if (_.isEmpty(previewMeta) || _.isEmpty(previewMeta.panels)) {
             viewName = 'record';
         }
+
+        this._super('initialize', [options]);
+        this.meta = _.extend(this.meta, this._previewifyMetadata(_.extend({}, recordMeta, previewMeta)));
         this.context.set('dataView', viewName);
-        this.meta = this._previewifyMetadata(_.extend({}, recordMeta, previewMeta));
+        this.action = 'detail';
+        this._delegateEvents();
+        this.delegateButtonEvents();
 
         /**
          * An array of the {@link #alerts alert} names in this view.

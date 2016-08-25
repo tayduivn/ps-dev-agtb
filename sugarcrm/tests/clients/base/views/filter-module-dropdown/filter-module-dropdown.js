@@ -1,12 +1,14 @@
 describe('Base.View.FilterModuleDropdown', function() {
     var view, layout, app;
+    var parentLayout;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-module-dropdown');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', 'Cases', 'filter', {}, null, null, { layout: new Backbone.View() });
+        parentLayout = app.view.createLayout({type: 'base'});
+        layout = SugarTest.createLayout('base', 'Cases', 'filter', {}, null, null, {layout: parentLayout});
         layout.filters = app.data.createBeanCollection('Filters');
         layout.filters.setOption('moduleName', 'Cases');
         view = SugarTest.createView('base', 'Cases', 'filter-module-dropdown', null, null, null, layout);
@@ -16,6 +18,7 @@ describe('Base.View.FilterModuleDropdown', function() {
     afterEach(function() {
         view.dispose();
         layout.dispose();
+        parentLayout.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();

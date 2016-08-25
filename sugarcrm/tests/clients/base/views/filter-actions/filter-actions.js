@@ -3,7 +3,8 @@ describe('Base.View.FilterActions', function() {
     var view, app, parentLayout;
 
     beforeEach(function() {
-        parentLayout = new Backbone.View();
+        app = SUGAR.App;
+        parentLayout = app.view.createLayout({type: 'base'});
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('filter-actions', 'view', 'base');
         SugarTest.testMetadata.set();
@@ -11,7 +12,6 @@ describe('Base.View.FilterActions', function() {
         view.layout = parentLayout;
         view.initialize(view.options);
         view.render();
-        app = SUGAR.App;
     });
 
     afterEach(function() {
@@ -21,7 +21,9 @@ describe('Base.View.FilterActions', function() {
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();
         view.dispose();
+        parentLayout.dispose();
         view = null;
+        parentLayout = null;
     });
 
     it('should call set filter name on filter:create:open', function() {
