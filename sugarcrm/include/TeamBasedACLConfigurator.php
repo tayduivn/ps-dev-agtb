@@ -626,15 +626,25 @@ class TeamBasedACLConfigurator
     }
 
     /**
-     * Sets acl_team_set_id to NULL for ALL records for beans db tables.
-     * @param array $beanList A $moduleName => $beanName array
+     * Make sure that we remove team based acl settings from all existing tables.
+     * Might be useful if module is disabled.
+     * @param array $exclude_tables
      */
-    public function removeAllTBAValuesFromBeans(array $beanList)
+    public function removeTBAValuesFromAllTables(array $exclude_tables)
     {
-        foreach ($beanList as $moduleName => $beanName) {
-            if (self::implementsTBA($moduleName)) {
-                $bean = BeanFactory::newBeanByName($beanName);
-                $this->removeAllTBAValuesFromTable($bean->getTableName());
+        $db = DBManagerFactory::getInstance();
+
+        //Get all tables schemas
+        $all_tables = $db->getTablesArray();
+
+        foreach ($all_tables as $table_name) {
+            // Do nothing If $table_name is in exclude list
+            if (!in_array($table_name, $exclude_tables)) {
+                // Get table's columns
+                $columns = $db->get_columns($table_name);
+                if (!empty($columns['acl_team_set_id'])) {
+                    $this->removeAllTBAValuesFromTable($table_name);
+                }
             }
         }
     }
