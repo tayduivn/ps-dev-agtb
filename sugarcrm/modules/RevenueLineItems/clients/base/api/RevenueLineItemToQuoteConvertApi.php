@@ -172,7 +172,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
             $mod_strings = return_module_language($GLOBALS['current_language'], 'RevenueLineItems');
             $msg = str_replace('<br />', "\n", $mod_strings['LBL_CONVERT_INVALID_RLI']);
 
-            foreach($errors as $id => $error) {
+            foreach ($errors as $id => $error) {
                 $msg .= "[{$id}]: {$error}\n";
             }
 
@@ -184,7 +184,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
         $product_bundle->id = create_guid();
         $product_bundle->new_with_id = true;
 
-        foreach($rli_to_convert as $key => $rli) {
+        foreach ($rli_to_convert as $key => $rli) {
             /* @var $product Product */
             $product = $rli->convertToQuotedLineItem();
 

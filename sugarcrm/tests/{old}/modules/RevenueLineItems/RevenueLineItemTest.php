@@ -428,7 +428,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
             ->setMethods(null)
             ->getMock();
 
-        foreach($fields as $field => $value) {
+        foreach ($fields as $field => $value) {
             $rli->$field = $value;
         }
 
@@ -448,25 +448,22 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(
                 array(
-                    'category_id' => 'test_cat_id'
+                    'category_id' => 'test_cat_id',
                 ),
-                false
+                false,
             ),
             array(
                 array(
-                    'quote_id' => 'test_quote_id'
+                    'quote_id' => 'test_quote_id',
                 ),
-                false
+                false,
             ),
             array(
                 array(
-                    'id' => 'test'
+                    'id' => 'test',
                 ),
-                true
-            )
+                true,
+            ),
         );
     }
-
 }
-
-

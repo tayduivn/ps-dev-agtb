@@ -786,6 +786,10 @@ $renamedefs = array(
             array('name' => 'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'SAVE_RLI_QUOTE_NOTICE', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES', 'type' => 'plural', 'source' => 'Opportunities'),
+            array('name' => 'LBL_CONVERT_RLI_TO_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_CONVERT_RLI_TO_QUOTE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED', 'type' => 'singular',
+                'source' => 'RevenueLineItems'),
         ),
         'Reports' => array(
             array('name' => 'LNK_NEW_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),

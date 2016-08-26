@@ -463,7 +463,7 @@ class RevenueLineItem extends SugarBean
         $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
         if (empty($this->product_template_id) && !empty($this->category_id)) {
             return $mod_strings['LBL_CONVERT_INVALID_RLI_PRODUCT'];
-        } else if (!empty($this->quote_id)) {
+        } elseif (!empty($this->quote_id)) {
             return $mod_strings['LBL_CONVERT_INVALID_RLI_ALREADYQUOTED'];
         }
 
