@@ -8149,60 +8149,6 @@ class SugarBean
     }
 
     /**
-     * Adds a process definition bean as a relate bean to this bean
-     * @param pmse_BpmProcessDefinition $pd
-     */
-    public function addLockedFields(pmse_BpmProcessDefinition $pd)
-    {
-        // Only add a related record if we have a record to start with
-        if ($this->id) {
-            // Get our locked field rel field
-            $relField = $this->getLockedFieldRelField();
-
-            // Try to load the relationship field...
-            if ($this->load_relationship($relField)) {
-                // And if it works, get our current related PDs and...
-                $current = $this->getLockedFieldRelBeans();
-
-                // Add the pd to it if it is not already related
-                if (!isset($current[$pd->id])) {
-                    $this->$relField->add($pd);
-                }
-            }
-        }
-    }
-
-    /**
-     * Removes a process definition bean relationship from this bean
-     * @param  pmse_BpmProcessDefinition $pd
-     */
-    public function removeLockedFields(pmse_BpmProcessDefinition $pd)
-    {
-        // Only handle this if we have a record to start with
-        if ($this->id) {
-            // Get our current related PDs
-            $current = $this->getLockedFieldRelBeans();
-
-            // Delete this pd from it if it is related
-            if (isset($current[$pd->id])) {
-                // Get our locked field rel field
-                $relField = $this->getLockedFieldRelField();
-
-                if (!$this->$relField->delete($this->id, $pd->id)) {
-                    // Log the failure
-                    $msg = sprintf(
-                        "Failed to delete locked fields rel of PD %s from %s",
-                        $pd->id,
-                        $this->module_dir
-                    );
-
-                    LoggerManager::getLogger()->fatal($msg);
-                }
-            }
-        }
-    }
-
-    /**
      * Gets related process definition beans, if there are any
      * @return array
      */
@@ -8223,7 +8169,7 @@ class SugarBean
      * Gets the locked field link field
      * @return string
      */
-    protected function getLockedFieldRelField()
+    public function getLockedFieldRelField()
     {
         return isset($this->field_defs['locked_fields']['link']) ? $this->field_defs['locked_fields']['link'] : '';
     }
