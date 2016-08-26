@@ -44,7 +44,7 @@ class OutboundEmailConfigurationApi extends ModuleApi
                 "method"    => "listConfigurations",
                 "shortHelp" => "A list of outbound email configurations",
                 'longHelp'  => '',
-                'maxVersion' => 10,
+                'maxVersion' => 11,
             ),
         );
 
@@ -52,7 +52,8 @@ class OutboundEmailConfigurationApi extends ModuleApi
     }
 
     /**
-     * @deprecated Use GET /Emails/enum/outbound_email_id instead.
+     * @deprecated GET /OutboundEmailConfiguration/list has been deprecated and will not be available after v11. Use GET
+     * /Emails/enum/outbound_email_id instead.
      * @param ServiceBase $api
      * @param array $args
      * @return array
@@ -60,7 +61,8 @@ class OutboundEmailConfigurationApi extends ModuleApi
     public function listConfigurations(ServiceBase $api, array $args)
     {
         LoggerManager::getLogger()->deprecated(
-            'GET /OutboundEmailConfiguration/list has been deprecated. Use GET /Emails/enum/outbound_email_id instead.'
+            'GET /OutboundEmailConfiguration/list has been deprecated and will not be available after v11. Use GET ' .
+            '/Emails/enum/outbound_email_id instead.'
         );
 
         $list = array();
