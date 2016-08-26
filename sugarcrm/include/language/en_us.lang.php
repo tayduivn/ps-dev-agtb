@@ -9216,6 +9216,7 @@ $app_strings = array (
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
+    'LBL_QUOTE_TO_OPPORTUNITY_STATUS' => 'Creating Opportunity...',
     'LBL_QUOTES_SHIP_TO'=>'Quotes Ship to',
     'LBL_QUOTES'=>'Quotes',
 

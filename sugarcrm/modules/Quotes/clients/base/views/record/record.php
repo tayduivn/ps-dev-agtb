@@ -70,9 +70,9 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                     'type' => 'convert-to-opportunity',
                     'event' => 'button:convert_to_opportunity:click',
                     'name' => 'convert_to_opportunity_button',
-                    'label' => 'LBL_CONVERT_TO_OPPORTUNITY',
+                    'label' => 'LBL_QUOTE_TO_OPPORTUNITY_LABEL',
                     'acl_module' => 'Opportunities',
-                    'acl_action' => 'edit',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'divider',
