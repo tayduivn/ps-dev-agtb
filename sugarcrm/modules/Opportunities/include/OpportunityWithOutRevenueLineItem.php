@@ -627,4 +627,12 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $jq = new SugarJobQueue();
         $jq->submitJob($job);
     }
+
+    /**
+     * Update the field in the Products Module
+     */
+    protected function fixProductsModule()
+    {
+        $this->fixProductsModuleField('revenuelineitem_name', 'massupdate', false);
+    }
 }
