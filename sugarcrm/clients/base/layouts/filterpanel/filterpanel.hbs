@@ -13,8 +13,7 @@
 <div class="search-filter">
     <div class="control-group">
         <div class="filter controls controls-two btn-group-fit{{#if meta.refresh_button}} has-refresh{{/if}}">
-        {{!-- FIXME: Having both 'filter' and 'subpanels-filter' is temporary and will be removed when filterpanel controller will be fixed/deprecated --}}
-            {{component this 'filter'}}{{component this 'subpanels-filter'}}
+            {{component this 'filter'}}
             <div class="toggle-actions actions">
                 {{#if meta.refresh_button}}
                     <div class="btn-group refresh" data-action="refreshList">
