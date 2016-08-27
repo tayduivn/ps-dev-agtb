@@ -68,6 +68,7 @@ class TemplateField{
     // THIS NEEDS TO BE NULL UNLESS IT IS TO BE USED SO IT DOESN'T SAVE AS AN EMPTY
     // VALUE IN DynamicField::saveExtendedAttributes() WHICH USES isset() RATHER THAN empty()
     var $group = null;
+    public $group_label = null;
 	var $vardef_map = array(
 		'name'=>'name',
 		'label'=>'vname',
@@ -97,6 +98,7 @@ class TemplateField{
         // Bug 58560 - Add a group index here so it gets written to the custom vardefs
         // for cases such as address fields
         'group' => 'group',
+        'group_label' => 'group_label',
 		'calculated' => 'calculated',
         'formula' => 'formula',
         'enforced' => 'enforced',
@@ -364,7 +366,7 @@ class TemplateField{
             if ($array['calculated'] && $array['enforced']) {
                 $array['default'] = null;
                 $array['massupdate'] = false;
-                // Need to set it on the object as well, since some child classes 
+                // Need to set it on the object as well, since some child classes
                 // use that instead of the return of this method
                 $this->default = null;
                 $this->massupdate = false;
@@ -384,6 +386,10 @@ class TemplateField{
         // Bug 61736 - Address fields in undeployed modules do not have a group property
         if (!empty($this->group)) {
             $array['group'] = $this->group;
+        }
+
+        if (!empty($this->group_label)) {
+            $array['group_label'] = $this->group_label;
         }
 
         if (!empty($this->options)) {
@@ -486,7 +492,7 @@ class TemplateField{
 
     /**
      * This function supports setting the values of all TemplateField instances.
-     * 
+     *
      * @param $row The Array key/value pairs from fields_meta_data table
      */
     function populateFromRow($row=array()) {
@@ -554,7 +560,7 @@ class TemplateField{
 	}
 
     /**
-     * Applies rules for type specific fields vardefs. This can be overridden in 
+     * Applies rules for type specific fields vardefs. This can be overridden in
      * child classes.
      */
     protected function applyVardefRules()
@@ -646,9 +652,9 @@ class TemplateField{
 	}
 
     /**
-     * Gets mapping of fields_meta_data to DynamicField properties. This can be 
+     * Gets mapping of fields_meta_data to DynamicField properties. This can be
      * overridden or extended in child classes.
-     * 
+     *
      * @return array
      */
     public function getFieldMetaDataMapping()
