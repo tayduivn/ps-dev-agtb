@@ -37,6 +37,10 @@ describe('Base.Layout.Filter', function() {
             );
         });
 
+        afterEach(function() {
+            parentLayout.dispose();
+        });
+
         describe('events', function() {
             it('should call apply on filter:apply', function() {
                 var stub = sinon.collection.stub(layout, 'applyFilter');

@@ -526,6 +526,10 @@ describe("Base.Layout.Dashboard", function() {
             });
         });
 
+        afterEach(function() {
+            parentLayout.dispose();
+        });
+
         it('will set type to dashboard when undefined', function() {
             layout.navigateLayout('hello-world');
             expect(_componentDef[0].layout.components[0].view).toEqual('dashboard-headerpane');
