@@ -619,7 +619,8 @@ class TeamBasedACLConfigurator
      */
     public function removeAllTBAValuesFromBean(SugarBean $bean)
     {
-        if (!self::implementsTBA($bean->getModuleName())) {
+        if (!self::implementsTBA($bean->getModuleName())
+            || in_array($bean->getModuleName(), self::$alwaysEnabledModules)) {
             return;
         }
         $this->removeAllTBAValuesFromTable($bean->getTableName());
