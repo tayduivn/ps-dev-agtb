@@ -66,6 +66,8 @@ class SugarACLUsers extends SugarACLStrategy
      */
     public function checkAccess($module, $view, $context)
     {
+        global $sugar_config;
+
         if($module != 'Users' && $module != 'Employees') {
             // how'd you get here...
             return false;
@@ -78,8 +80,9 @@ class SugarACLUsers extends SugarACLStrategy
 
         $current_user = $this->getCurrentUser($context);
 
-        // We have to deny access on attempt to export data from users module if $current_user is not an admin
-        if ($module == 'Users' && $view == 'export' && !$current_user->isAdminForModule($module)) {
+        // Deny access to export if it disabled globally or user is not an admin
+        if ($view == 'export' && (!empty($sugar_config['disable_export'])
+                || !$current_user->isAdminForModule($module))) {
             return false;
         }
 
