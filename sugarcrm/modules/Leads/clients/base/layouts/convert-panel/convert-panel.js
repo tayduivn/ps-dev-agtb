@@ -677,8 +677,8 @@
      */
     turnOffUnsavedChanges: function() {
         var defaults = _.extend({}, this.createView.model._defaults, this.createView.model.getDefault());
-        this.createView.model.clear({silent: true});
-        this.createView.model.set(defaults, {silent: true});
+
+        this.createView.model.attributes = defaults;
     },
 
     /**
