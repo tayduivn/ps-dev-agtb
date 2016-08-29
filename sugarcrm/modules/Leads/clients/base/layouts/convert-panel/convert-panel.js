@@ -693,6 +693,7 @@
      * @inheritdoc
      */
     _dispose: function() {
+        this.createView.model.off('change', this.runPostCompletionValidation, this);
         this.createView.off(null, null, this);
         this.duplicateView.off(null, null, this);
         this.duplicateView.context.off(null, null, this);
