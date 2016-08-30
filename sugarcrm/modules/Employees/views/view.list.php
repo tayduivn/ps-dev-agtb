@@ -20,9 +20,6 @@ class EmployeesViewList extends ViewList
  		$this->lv = new ListViewSmarty();
  		$this->lv->delete = false;
  		$this->lv->email = false;
- 		if (!$GLOBALS['current_user']->isAdminForModule('Users')){
-            $this->lv->multiSelect = false;
-        }
  	}
 
     /**
@@ -94,19 +91,24 @@ EOHTML;
 
 	public function listViewProcess()
 	{
+        global $current_user;
+
 		$this->processSearchForm();
 		$this->lv->searchColumns = $this->searchForm->searchColumns;
 
 		if(!$this->headers)
 			return;
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
+
 			$this->lv->ss->assign("SEARCH",true);
 
-			$tplFile = 'include/ListView/ListViewGeneric.tpl';
-			if (!$GLOBALS['current_user']->isAdminForModule('Users')){
-				$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
-			}
-			if(!empty($this->where)){
+            $tplFile = 'include/ListView/ListViewGeneric.tpl';
+            if (!$current_user->isAdminForModule('Users')) {
+                $this->lv->multiSelect = false;
+                $tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
+            }
+
+            if (!empty($this->where)) {
 			    $this->where .= " AND ";
 			}
             $this->where .= "(users.status <> 'Reserved' or users.status is null) ";
