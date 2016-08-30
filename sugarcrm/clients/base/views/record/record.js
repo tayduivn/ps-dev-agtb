@@ -142,9 +142,7 @@
         };
         this.createMode = this.context.get('create') ? true : false;
 
-        // Even in createMode we want it to start in detail so that we, later, respect
-        // this.editableFields (the list after pruning out readonly fields, etc.)
-        this.action = 'detail';
+        this.action = this.context.get('action') || 'detail';
 
         this.context.on('change:record_label', this.setLabel, this);
         this.context.set('viewed', true);
@@ -440,17 +438,12 @@
             }
         }, this);
 
-        this.initButtons();
-        this.setEditableFields();
-
-        if (this.context.get('action') === 'edit') {
+        if (this.action === 'edit') {
             this.setButtonStates(this.STATE.EDIT);
             this.toggleEdit(true);
         } else {
             this.setButtonStates(this.STATE.VIEW);
             if (this.createMode) {
-                // RecordView starts with action as detail; once this.editableFields has been set (e.g.
-                // readonly's pruned out), we can call toggleEdit - so only fields that should be are editable
                 this.toggleEdit(true);
             }
         }
@@ -462,6 +455,19 @@
             this.handleActiveTab();
             this.overflowTabs();
         }
+    },
+
+    _renderField: function(field, $fieldEl) {
+        // When we render the view, we need to enforce `action`
+        // and `options.viewname` to be 'detail' if the field is non editable.
+        // This is due to how View.Field#_loadTemplate currently works.
+        // FIXME SC-6037: Will remove this hack.
+        if (!_.contains(this.editableFields, field)) {
+            field.action = 'detail';
+            field.options.viewName = 'detail';
+        }
+
+        this._super('_renderField', [field, $fieldEl]);
     },
 
     /**
@@ -689,6 +695,8 @@
     _renderHtml: function() {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
+        this.initButtons();
+        this.setEditableFields();
         this.adjustHeaderpane();
     },
 
@@ -841,6 +849,7 @@
 
     editClicked: function() {
         this.setButtonStates(this.STATE.EDIT);
+        this.action = 'edit';
         this.toggleEdit(true);
         this.setRoute('edit');
     },
@@ -881,6 +890,7 @@
 
     cancelClicked: function() {
         this.setButtonStates(this.STATE.VIEW);
+        this.action = 'detail';
         this.handleCancel();
         this.clearValidationErrors(this.editableFields);
         this.setRoute();
@@ -964,6 +974,7 @@
 
         if (!this.disposed) {
             this.setButtonStates(this.STATE.VIEW);
+            this.action = 'detail';
             this.setRoute();
             this.unsetContextAction();
             this.toggleEdit(false);

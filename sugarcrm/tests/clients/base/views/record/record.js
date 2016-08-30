@@ -371,7 +371,7 @@ describe("Record View", function () {
             it('Should enter in edit mode if typed url is like /:record/edit', function() {
                 var toggleStub = sinon.collection.stub(view, 'toggleEdit'),
                     setButtonStatesStub = sinon.collection.stub(view, 'setButtonStates');
-                view.context.set('action', 'edit');
+                view.action = 'edit';
                 view.render();
 
                 expect(toggleStub).toHaveBeenCalledWith(true);
