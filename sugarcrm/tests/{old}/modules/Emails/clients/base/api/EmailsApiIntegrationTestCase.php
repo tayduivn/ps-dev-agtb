@@ -166,7 +166,7 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
         // Testing for these attributes is unnecessary.
         foreach ($collection['records'] as &$record) {
             unset($record['_acl']);
-            unset($record['_locked_fields']);
+            unset($record['locked_fields']);
         }
 
         /**
