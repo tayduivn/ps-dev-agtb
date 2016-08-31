@@ -15745,6 +15745,9 @@ var jCore = (function ($, window) {
         $canvas.on("contextmenu", function (e) {
             e.preventDefault();
         });
+        /* Activate Keyboard Events */
+        $(document).on('keydown', onCanvasKeyDown)
+            .on('keyup', onCanvasKeyUp);
 
         this.updateBehaviors();
         return this;
@@ -17409,11 +17412,6 @@ var jCore = (function ($, window) {
                 break;
         }
     }
-    /**
-     * KEYBOARD EVENTS
-     */
-    $(document).on('keydown', onCanvasKeyDown)
-        .on('keyup', onCanvasKeyUp);
 
     return {
         ArrayList: ArrayList,
