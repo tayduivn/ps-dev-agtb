@@ -192,6 +192,16 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,
                 'object(s) not allowed',
             ),
+            array(
+                'a:2:{s:3:"foo";s:3:"bar";s:3:"baz";r:4;}',
+                PhpSerialized::ERROR_REFERENCE_NOT_ALLOWED,
+                'reference(s) not allowed',
+            ),
+            array(
+                'a:2:{s:3:"foo";s:3:"bar";s:3:"baz";R:1;}',
+                PhpSerialized::ERROR_REFERENCE_NOT_ALLOWED,
+                'reference(s) not allowed',
+            ),
         );
     }
 }
