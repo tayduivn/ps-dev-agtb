@@ -30,6 +30,8 @@ $vardefs = array(
                 'enabled' => false,
                 'searchable' => false,
             ),
+            // This field should not show in the field matrix for roles
+            'hideacl' => true,
         ),
         'locked_fields_link' => array(
             'name' => 'locked_fields_link',
