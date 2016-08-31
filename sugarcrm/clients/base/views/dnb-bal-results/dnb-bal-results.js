@@ -38,7 +38,9 @@
         app.events.on('dnbbal:invoke', this.invokeBAL, this);
         var originalMeta = app.metadata.getView('','dnb-bal-results');
         if (originalMeta.import_enabled_modules) {
-            this.import_enabled_modules = originalMeta.import_enabled_modules;
+            this.import_enabled_modules = _.filter(originalMeta.import_enabled_modules, function(module) {
+                return app.acl.hasAccess('edit', module);
+            });
         }
         this.paginationCallback = this.baseContactsBAL;
         this.rowTmpl = app.template.get(this.name + '.dnb-contact-row');
