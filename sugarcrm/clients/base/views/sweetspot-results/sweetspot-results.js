@@ -198,6 +198,7 @@
                 $list.append(this._resultPartial(result));
             }, this);
             if (options.showMore) {
+                options.searchRoute = '#search/' + options.term + '?';
                 $list.append(this._showMoreTpl(options));
             }
         }
