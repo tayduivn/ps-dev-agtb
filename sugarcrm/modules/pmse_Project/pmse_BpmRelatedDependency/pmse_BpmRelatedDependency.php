@@ -56,6 +56,7 @@ class pmse_BpmRelatedDependency extends pmse_BpmRelatedDependency_sugar {
     {
         parent::mark_deleted($id);
         PMSEEngineUtils::resetActiveProcessesModulesCache();
+        $this->resetModuleRelatedDependenciesCache();
     }
 
     /**
@@ -65,6 +66,37 @@ class pmse_BpmRelatedDependency extends pmse_BpmRelatedDependency_sugar {
     {
         $result = parent::save($check_notify);
         PMSEEngineUtils::resetActiveProcessesModulesCache();
+        $this->resetModuleRelatedDependenciesCache();
         return $result;
+    }
+
+    /**
+     * Get module related dependencies cache key
+     *
+     * @param string $module
+     * @return string
+     */
+    public function getModuleRelatedDependenciesCacheKey($module)
+    {
+        return "pmse_module_related_dependencies_$module";
+    }
+
+    /**
+     * Reset module related dependencies cache
+     */
+    public function resetModuleRelatedDependenciesCache()
+    {
+        $modules = [];
+        if ($this->evn_module) {
+            $modules[] = $this->evn_module;
+        }
+
+        if ($this->rel_element_module) {
+            $modules[] = $this->rel_element_module;
+        }
+
+        foreach ($modules as $module) {
+            unset(SugarCache::instance()->{$this->getModuleRelatedDependenciesCacheKey($module)});
+        }
     }
 }

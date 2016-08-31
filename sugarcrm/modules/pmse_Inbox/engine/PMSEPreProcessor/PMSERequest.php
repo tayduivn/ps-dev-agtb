@@ -109,7 +109,7 @@ class PMSERequest
 
     /**
      *
-     * @return type
+     * @return SugarBean
      */
     public function getBean()
     {

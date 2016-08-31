@@ -38,7 +38,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-
+        SugarTestHelper::tearDown();
     }
     
     public function testGetFlowDataListDirect()
@@ -64,10 +64,14 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
     
     public function testGetFlowDataListHook()
     {
+        /** @var PMSERequest $request */
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
         $request->setArguments($arguments);
         $request->setType('hook');
+
+        $bean = BeanFactory::getBean('Accounts');
+        $request->setBean($bean);
         
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
@@ -84,6 +88,7 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
 
         $preProcessorMock->expects($this->once())
                 ->method('getAllEvents')
+                ->with($bean)
                 ->will($this->returnValue(array($second, $third, $first, $fourth, $fifth, $sixth)));
         
         $result = $preProcessorMock->getFlowDataList($request);
@@ -149,66 +154,62 @@ class PMSEPreProcessorTest extends PHPUnit_Framework_TestCase
         
         $this->assertEquals(array(), $result);
     }
-    
-    public function testGetAllEvents()
+
+
+    /**
+     * @dataProvider getAllEventsProvider
+     */
+    public function testGetAllEvents($relatedDependencies, $flows, $expectedCount)
     {
-        
-        $beanMock = $this->getMockBuilder('SugarBean')
-                ->disableOriginalConstructor()
-                ->setMethods(array())
-                ->getMock();
-        $beanMock->id = 'abc123';
-        $beanMock->module_name = 'Leads';
-        
-        $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-                ->disableOriginalConstructor()
-                ->setMethods(array('select', 'where', 'from', 'joinRaw', 'queryAnd', 'addRaw', 'compileSql', 'execute'))
-                ->getMock();
-        
-        $sugarQueryMock->expects($this->once())
-                ->method('where')
-                ->will($this->returnValue($sugarQueryMock));
-        
-        $sugarQueryMock->expects($this->once())
-                ->method('queryAnd')
-                ->will($this->returnValue($sugarQueryMock));
-        
-        $sugarQueryMock->expects($this->once())
-                ->method('execute')
-                ->will($this->returnValue('QUERY_RESULT'));
-        
-        $selectMock = $this->getMockBuilder('Select')
-                ->disableOriginalConstructor()
-                ->setMethods(array('fieldRaw'))
-                ->getMock();
-        
-        $sugarQueryMock->select = $selectMock;
-        
-        $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
-                ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQuery'))
-                ->getMock();
-        
-        $preProcessorMock->expects($this->once())
-                ->method('retrieveSugarQuery')
-                ->will($this->returnValue($sugarQueryMock));
-        
-        $sugarBeanMock = $this->getMockBuilder('SugarBean')
-                ->disableAutoload()
-                ->disableOriginalConstructor()
-                ->setMethods(NULL)
-                ->getMock();
-        
-        $preProcessorMock->expects($this->once())
-                ->method('retrieveBean')
-                ->will($this->returnValue($sugarBeanMock));
-        
-        $preProcessorMock->setLogger($this->loggerMock);
-        
-        $result = $preProcessorMock->getAllEvents($beanMock);
-        $this->assertEquals('QUERY_RESULT', $result);
+        /** @var pmse_BpmRelatedDependency $relatedDependencyBean */
+        $relatedDependencyBean = BeanFactory::getBean('pmse_BpmRelatedDependency');
+        $relatedDependencyBean->evn_module = 'Accounts';
+        $relatedDependencyBean->resetModuleRelatedDependenciesCache();
+
+        /** @var SugarTestDatabaseMock $db */
+        $db = SugarTestHelper::setUp('mock_db');
+        $db->addQuerySpy('related_dependencies', '/FROM pmse_bpm_related_dependency/i', $relatedDependencies);
+        $db->addQuerySpy('flows', '/FROM pmse_bpm_flow/i', $flows);
+
+        $preProcessor = PMSEPreProcessor::getInstance();
+        $result = $preProcessor->getAllEvents(BeanFactory::getBean('Accounts'));
+
+        $this->assertEquals($expectedCount, count($result));
     }
-    
+
+    public function getAllEventsProvider()
+    {
+        return [
+            [
+                [],
+                [],
+                0,
+            ],
+            [
+                [
+                    ['rel_element_id' => 'id1', 'evn_type' => 'START'],
+                    ['rel_element_id' => 'id2', 'evn_type' => 'GLOBAL_TERMINATE'],
+                    ['rel_element_id' => 'id3', 'evn_type' => 'INTERMEDIATE'],
+                ],
+                [],
+                2,
+            ],
+            [
+                [
+                    ['rel_element_id' => 'id1', 'evn_type' => 'START'],
+                    ['rel_element_id' => 'id2', 'evn_type' => 'GLOBAL_TERMINATE'],
+                    ['rel_element_id' => 'id3', 'evn_type' => 'INTERMEDIATE'],
+                ],
+                [
+                    ['bpmn_id' => 'id1'],
+                    ['bpmn_id' => 'id2', 'cas_flow_status' => null],
+                    ['bpmn_id' => 'id3', 'cas_flow_status' => 'WAITING'],
+                ],
+                3,
+            ],
+        ];
+    }
+
     public function testGetFlowsByCasId()
     {                     
         

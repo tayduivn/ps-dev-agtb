@@ -69,7 +69,7 @@ class PMSEPreProcessor
 
     /**
      *
-     * @return type
+     * @return PMSEPreProcessor
      * @codeCoverageIgnore
      */
     public static function getInstance()
@@ -81,10 +81,10 @@ class PMSEPreProcessor
     }
 
     /**
-     *
-     * @param type $module
-     * @param type $id
+     * @param string $module
+     * @param string $id
      * @codeCoverageIgnore
+     * @return null|SugarBean
      */
     public function retrieveBean($module, $id = null)
     {
@@ -330,82 +330,91 @@ class PMSEPreProcessor
 
     /**
      * Optimized version of get all events method.
-     * @param type $bean
-     * @return type
+     * @param SugarBean $bean
+     * @return array
      */
-    public function getAllEvents($bean = '')
+    public function getAllEvents(SugarBean $bean)
     {
-        $fields = array(
-            'evn_id',
-            'evn_uid',
-            'prj_id',
-            'pro_id',
-            'evn_type',
-            'evn_marker',
-            'evn_is_interrupting',
-            'evn_attached_to',
-            'evn_cancel_activity',
-            'evn_activity_ref',
-            'evn_wait_for_completion',
-            'evn_error_name',
-            'evn_error_code',
-            'evn_escalation_name',
-            'evn_escalation_code',
-            'evn_condition',
-            'evn_message',
-            'evn_operation_name',
-            'evn_operation_implementation',
-            'evn_time_date',
-            'evn_time_cycle',
-            'evn_time_duration',
-            'evn_behavior',
-            'evn_status',
-            'evn_type',
-            'evn_module',
-            'evn_criteria',
-            'evn_params',
-            'evn_script',
-            'rel_process_module',
-            'rel_element_relationship',
-            'rel_element_module',
-            'pro_module',
-            'pro_status',
-            'pro_locked_variables',
-            'pro_terminate_variables',
-            'date_entered',
-        );
+        $db = DBManagerFactory::getInstance();
+        $dependencies = $this->getModuleRelatedDependencies($bean->getModuleName());
 
-        $relatedDependency = $this->retrieveBean('pmse_BpmRelatedDependency');
-        $q = $this->retrieveSugarQuery();
-        $q->select($fields);
-        $q->from($relatedDependency, array('alias' => 'hp'));
-        $q->joinRaw("LEFT JOIN pmse_bpm_flow flow ON rel_element_id = flow.bpmn_id AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')",
-            array('alias' => 'flow'));
-        $q->where()->queryAnd()
-            ->addRaw("(".
-                // Where for Start Events
-                "(evn_type = 'START' AND evn_module = '$bean->module_name')".
-                " OR ".
-                // Where for Terminate Process
-                "(evn_type = 'GLOBAL_TERMINATE' AND (flow.cas_flow_status IS NULL OR flow.cas_flow_status != 'WAITING') ".
-                " AND  rel_element_module='$bean->module_name')".
-                " OR ".
-                // Where for Receive Message
-                "(evn_type = 'INTERMEDIATE'" .
-                " AND evn_marker = 'MESSAGE'" .
-                " AND evn_behavior = 'CATCH'" .
-                " AND flow.cas_flow_status = 'WAITING'" .
-                " AND rel_element_module = '$bean->module_name')".
-                ") " .
-                "AND pro_status != 'INACTIVE' AND (hp.deleted IS NULL OR hp.deleted=0)");
+        $relElementIds = array_reduce($dependencies, function ($carry, $item) use ($db) {
+            $carry[] = $db->quoted($item['rel_element_id']);
+            return $carry;
+        }, []);
 
-        $q->select->fieldRaw('flow.id, flow.cas_id, flow.cas_index, flow.bpmn_id, flow.bpmn_type, flow.cas_user_id, flow.cas_thread, flow.cas_sugar_module, flow.cas_sugar_object_id');
-        $query = $q->compileSql();
-        $start = microtime(true);
-        $rows = $q->execute();
-        $time = (microtime(true) - $start) * 1000;
-        $this->logger->debug('Query in order to retrieve all valid start and receive message events: ' . $query . ' \n in ' . $time . ' milliseconds');
-        return $rows;
+        $flowFields = ['id', 'cas_id', 'cas_index', 'bpmn_id', 'bpmn_type', 'cas_user_id',
+            'cas_thread', 'cas_sugar_module', 'cas_sugar_object_id', 'cas_flow_status'];
+
+        $flows = [];
+        if ($relElementIds) {
+            $result = $db->query("SELECT " . implode(',', $flowFields) . "
+                FROM pmse_bpm_flow
+                WHERE bpmn_id IN (" . implode(',', $relElementIds) . ")
+                    AND (cas_flow_status IS NULL OR cas_flow_status='WAITING')");
+
+            while ($row = $db->fetchByAssoc($result)) {
+                $flows[] = $row;
+            }
+        }
+
+        $events = [];
+        foreach ($dependencies as $dependency) {
+            $relatedFlows = array_filter($flows, function ($flow) use ($dependency) {
+                return $flow['bpmn_id'] == $dependency['rel_element_id'];
+            });
+
+            if (!$relatedFlows) {
+                $relatedFlows = [array_combine($flowFields, array_pad([], count($flowFields), null))];
+            }
+
+            foreach ($relatedFlows as $relatedFlow) {
+                if ($dependency['evn_type'] == 'START'
+                    || $dependency['evn_type'] == 'GLOBAL_TERMINATE' && !$relatedFlow['cas_flow_status']
+                    || $dependency['evn_type'] == 'INTERMEDIATE' && $relatedFlow['cas_flow_status'] == 'WAITING'
+                ) {
+                    $events[] = array_merge($dependency, $relatedFlow);
+                }
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * Get module related dependencies
+     *
+     * @param $module
+     * @return array
+     */
+    protected function getModuleRelatedDependencies($module)
+    {
+        $key = BeanFactory::getBean('pmse_BpmRelatedDependency')->getModuleRelatedDependenciesCacheKey($module);
+        if (!isset(SugarCache::instance()->$key)) {
+            $db = DBManagerFactory::getInstance();
+            $result = $db->query("SELECT *
+                FROM pmse_bpm_related_dependency
+                WHERE deleted = 0
+                    AND pro_status != 'INACTIVE'
+                    AND(
+                        evn_type = 'START' AND evn_module = '$module'
+                        OR evn_type = 'GLOBAL_TERMINATE' AND rel_element_module = '$module'
+                        OR evn_type = 'INTERMEDIATE'
+                            AND evn_marker = 'MESSAGE'
+                            AND evn_behavior = 'CATCH'
+                            AND rel_element_module = '$module'
+                    )
+            ");
+
+            $dependencies = array();
+            while ($row = $db->fetchByAssoc($result)) {
+                $dependencies[] = $row;
+            }
+
+            SugarCache::instance()->$key = $dependencies;
+        }
+
+        return SugarCache::instance()->$key;
     }
 
     /**
@@ -473,7 +482,7 @@ class PMSEPreProcessor
     /**
      *
      * @param PMSERequest $request
-     * @return type
+     * @return array
      */
     public function getFlowDataList(PMSERequest $request)
     {
