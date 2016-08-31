@@ -5,9 +5,9 @@ describe("Base.Layout.Toggle", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        viewA = app.view.createView({name:'view-a', el: '<div data-name="view-a"></div>'});
-        viewB = app.view.createView({name:'view-b', el: '<div data-name="view-b"></div>'});
-        viewC = app.view.createView({name:'view-c', el: '<div data-name="view-c"></div>'});
+        viewA = app.view.createView({name: 'view-a', el: '<div data-name="view-a"></div>'});
+        viewB = app.view.createView({name: 'view-b', el: '<div data-name="view-b"></div>'});
+        viewC = app.view.createView({name: 'view-c', el: '<div data-name="view-c"></div>'});
         sinon.collection.stub(viewA, 'render');
         sinon.collection.stub(viewB, 'render');
         sinon.collection.stub(viewC, 'render');

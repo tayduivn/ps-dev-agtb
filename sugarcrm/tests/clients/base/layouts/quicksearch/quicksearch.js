@@ -5,9 +5,9 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        viewA = app.view.createView({name:'view-a'});
-        viewB = app.view.createView({name:'view-b'});
-        viewC = app.view.createView({name:'view-c'});
+        viewA = app.view.createView({name: 'view-a'});
+        viewB = app.view.createView({name: 'view-b'});
+        viewC = app.view.createView({name: 'view-c'});
         sinon.collection.stub(viewA, 'trigger');
         sinon.collection.stub(viewB, 'trigger');
         sinon.collection.stub(viewC, 'trigger');
