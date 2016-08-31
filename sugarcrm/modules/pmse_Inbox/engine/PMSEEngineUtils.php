@@ -1669,4 +1669,60 @@ class PMSEEngineUtils
     {
         unset(SugarCache::instance()->{static::MODULES_WHITELIST_CACHE_KEY});
     }
+
+    /**
+     * Caches the fact that the module has records with locked fields
+     *
+     * @param $moduleName
+     */
+    public static function markModuleHavingLockedFields($moduleName)
+    {
+        SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)} = true;
+    }
+
+    /**
+     * Checks whether the module has records with locked fields
+     *
+     * @param $moduleName
+     * @return bool
+     */
+    public static function doesModuleHaveLockedFields($moduleName)
+    {
+        if (!isset(SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)})) {
+            $db = DBManagerFactory::getInstance();
+
+            $query = sprintf(
+                "SELECT id FROM locked_field_bean_rel "
+                . "WHERE bean_module='%s' AND deleted = 0",
+                $db->quote($moduleName)
+            );
+            $query = $db->limitQuerySql($query, 0, 1);
+            $result = $db->fetchOne($query);
+
+            SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)} = (bool) $result;
+        }
+
+        return SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)};
+    }
+
+    /**
+     * Resets the cached information whether the module has records with locked fields
+     *
+     * @param $moduleName
+     */
+    public static function resetModuleLockedFieldsCache($moduleName)
+    {
+        unset(SugarCache::instance()->{static::getModuleLockedFieldsCacheKey($moduleName)});
+    }
+
+    /**
+     * Returns the locked fields cache key for the module
+     *
+     * @param $moduleName
+     * @return string
+     */
+    protected static function getModuleLockedFieldsCacheKey($moduleName)
+    {
+        return "pmse_{$moduleName}_module_has_records_with_locked_fields";
+    }
 }
