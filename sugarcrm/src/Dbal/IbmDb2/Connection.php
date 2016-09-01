@@ -21,6 +21,11 @@ use Sugarcrm\Sugarcrm\Dbal\SetConnectionTrait;
  */
 class Connection extends BaseConnection
 {
+    /**
+     * @var \Doctrine\DBAL\Driver\IBMDB2\DB2Statement[]
+     */
+    protected $statements = array();
+
     use SetConnectionTrait;
 
     /**
@@ -33,14 +38,23 @@ class Connection extends BaseConnection
 
     /**
      * {@inheritdoc}
+     *
+     * Reuse existing statements
      */
     public function prepare($sql)
     {
-        $stmt = @db2_prepare($this->conn, $sql);
-        if (!$stmt) {
-            throw new DB2Exception(db2_stmt_errormsg());
+        $hash = md5($sql);
+        if (isset($this->statements[$hash])) {
+            $stmt = $this->statements[$hash];
+        } else {
+            $db2Stmt = @db2_prepare($this->conn, $sql);
+            if (!$db2Stmt) {
+                throw new DB2Exception(db2_stmt_errormsg());
+            }
+
+            $stmt = $this->statements[$hash] = new Statement($db2Stmt);
         }
 
-        return new Statement($stmt);
+        return $stmt;
     }
 }

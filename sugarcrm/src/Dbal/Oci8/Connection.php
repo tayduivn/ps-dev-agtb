@@ -20,6 +20,11 @@ use Doctrine\DBAL\Driver\OCI8\OCI8Connection as BaseConnection;
 class Connection extends BaseConnection
 {
     /**
+     * @var \Doctrine\DBAL\Driver\OCI8\OCI8Statement[]
+     */
+    protected $statements = array();
+
+    /**
      * @param resource $connection
      */
     public function __construct($connection)
@@ -29,9 +34,18 @@ class Connection extends BaseConnection
 
     /**
      * {@inheritdoc}
+     *
+     * Reuse existing statements
      */
     public function prepare($prepareString)
     {
-        return new Statement($this->dbh, $prepareString, $this);
+        $hash = md5($prepareString);
+        if (isset($this->statements[$hash])) {
+            $stmt = $this->statements[$hash];
+        } else {
+            $stmt = $this->statements[$hash] = new Statement($this->dbh, $prepareString, $this);
+        }
+
+        return $stmt;
     }
 }
