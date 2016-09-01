@@ -13,6 +13,7 @@ class Rome
     protected $file = '';
     protected $lineCount = 0;
     protected $tagStack = array();
+    protected $excludeDirs = array();
     protected $buildPath = 'buildstest';
     public $startPath = '';
     //FILE ONLY TAGS (reset at build of each file)
@@ -71,9 +72,16 @@ class Rome
     }
 
     /**
+     * Sets the directories to be excluded from building
+     */
+    public function setExcludeDirs($dirs)
+    {
+        $this->excludeDirs = $dirs;
+    }
+
+    /**
      * Sets the Path For The Build Directory
      */
-
     public function setBuildDir($dir)
     {
         if (!file_exists($dir)) {
@@ -625,7 +633,7 @@ class Rome
             if (substr($e, 0, 1) == '.' && $e != '.htaccess') {
                 continue;
             }
-            if (!empty($this->config['skipDirs'][$e])) {
+            if (!empty($this->config['skipDirs'][$e]) || in_array($e, $this->excludeDirs)) {
                 continue;
             }
             $next = $path . DIRECTORY_SEPARATOR . $e;

@@ -160,8 +160,7 @@ class ViewHistory extends SugarView
             . ");' style='margin:5px;'>";
         $this->history->restoreByTimestamp ( $sid ) ;
 
-        if ($this->layout == 'listview')
-        {
+        if (($this->layout == 'listview') || ($this->layout == 'wirelesslistview')) {
             require_once ("modules/ModuleBuilder/views/view.listview.php") ;
             $view = new ViewListView ( ) ;
         } else if ($this->layout == 'basic_search' || $this->layout == 'advanced_search')

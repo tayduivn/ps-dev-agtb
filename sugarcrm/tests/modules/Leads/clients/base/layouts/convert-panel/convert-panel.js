@@ -615,7 +615,7 @@ describe('Leads.Base.Layout.ConvertPanel', function() {
 
     it('should remove unsaved changes when turnOffUnsavedChanges is called', function() {
         var hasUnsavedChanges = function(view) {
-            return view.model.isNew() && view.model.hasChanged();
+            return view.model.isNew() && !_.isEqual(_.keys(view.model.getDefault()), _.keys(view.model.attributes));
         };
 
         layout.createView.model.set('test', '123'); //add unsaved changes
