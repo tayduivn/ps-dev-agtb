@@ -134,7 +134,7 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     public function doPostUpdateAction()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        $oppConfig = Opportunity::getSettings();
+        $oppConfig = $this->getOpportunityConfig();
         if ($oppConfig['opps_view_by'] === 'RevenueLineItems') {
             $sql = "SELECT opportunity_id               AS opp_id,
                               Sum(likely_case)             AS likely,
@@ -211,5 +211,15 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         return $rli->getClosedStages();
     }
 
-
+//BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Returns the Opportunities module configuration
+     *
+     * @return array
+     */
+    protected function getOpportunityConfig()
+    {
+        return Opportunity::getSettings();
+    }
+//END SUGARCRM flav=ent ONLY
 }

@@ -44,7 +44,10 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function setupMockClass()
     {
-        $this->mock = $this->createPartialMock('RevenueLineItemsCurrencyRateUpdate', array('getClosedStages'));
+        $this->mock = $this->createPartialMock('RevenueLineItemsCurrencyRateUpdate', array(
+            'getClosedStages',
+            'getOpportunityConfig',
+        ));
         // we want to use our mock database for these tests, so replace it
         SugarTestReflection::setProtectedValue($this->mock, 'db', $this->db);
     }
@@ -120,6 +123,12 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
             ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
         //END SUGARCRM flav=ent ONLY
 
+        $this->mock->expects($this->any())
+            ->method('getOpportunityConfig')
+            ->will($this->returnValue(array(
+                'opps_view_by' => 'RevenueLineItems',
+            )));
+
         // setup the query strings we are expecting and what they should return
         $this->db->addQuerySpy(
             'post_select',
@@ -127,14 +136,6 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
             array(
                 array('likely'=>'1000', 'best'=>'1000', 'worst'=>'1000', 'opp_id'=>'abc123'),
                 array('likely'=>'2000', 'best'=>'2000', 'worst'=>'2000', 'opp_id'=>'abc123'),
-            )
-        );
-
-        $this->db->addQuerySpy(
-            'post_select_config',
-            "/SELECT name, value FROM config/",
-            array(
-                array('name'=>'opps_view_by', 'value'=>'RevenueLineItems'),
             )
         );
 
