@@ -214,23 +214,6 @@ class SqlsrvManager extends MssqlManager
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Explicitly cast numeric IDs to string since it's important for SQL Server,
-     * but Doctrine DBAL doesn't pass the "string" binding type to the DB driver
-     *
-     * @link https://github.com/doctrine/dbal/issues/2369
-     */
-    public function bindValue(QueryBuilder $builder, $value, array $fieldDef)
-    {
-        if (isset($fieldDef['type']) && $fieldDef['type'] == 'id' && is_int($value)) {
-            $value = (string) $value;
-        }
-
-        return parent::bindValue($builder, $value, $fieldDef);
-    }
-
 	/**
      * @see DBManager::getFieldsArray()
      */
