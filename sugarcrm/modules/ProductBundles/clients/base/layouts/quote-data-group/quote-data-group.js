@@ -70,5 +70,58 @@
 
         // set the product bundle ID on all the QLI/Notes rows
         this.$('tr.quote-data-group-list').attr('data-group-id', this.groupId);
+    },
+
+    /**
+     * Adds a row model to this layout's collection and, if the row is in edit mode, it adds
+     * the row model to the QuoteDataGroupListView's toggledModels object
+     *
+     * @param {Data.Bean} model The row model that needs to be added to the collection
+     * @param {boolean} isRowInEdit Is the row currently in edit mode?
+     */
+    addRowModel: function(model, isRowInEdit) {
+        var listComp;
+        var modelId;
+
+        if (isRowInEdit) {
+            modelId = model.get('id');
+            listComp = this._getGroupListComponent();
+            listComp.toggledModels[modelId] = model;
+        }
+
+        this.collection.add(model);
+    },
+
+    /**
+     * Removes a row model from this layout's collection and, if the row is in edit mode, it removes
+     * the row model from the QuoteDataGroupListView's toggledModels object
+     *
+     * @param {Data.Bean} model The row model that needs to be removed from the collection
+     * @param {boolean} isRowInEdit Is the row currently in edit mode?
+     */
+    removeRowModel: function(model, isRowInEdit) {
+        var listComp;
+        var modelId;
+
+        if (isRowInEdit) {
+            modelId = model.get('id');
+            listComp = this._getGroupListComponent();
+            if (listComp.toggledModels[modelId]) {
+                delete listComp.toggledModels[modelId];
+            }
+        }
+
+        this.collection.remove(model);
+    },
+
+    /**
+     * Returns the QuoteDataGroupListView in this layout
+     *
+     * @private
+     */
+    _getGroupListComponent: function() {
+        return _.find(this._components, function(comp) {
+            return comp.name === 'quote-data-group-list';
+        });
     }
 })

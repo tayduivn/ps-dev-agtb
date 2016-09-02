@@ -138,4 +138,109 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             expect($attrSpy).toHaveBeenCalledWith('data-group-id', layoutGroupId);
         });
     });
+
+    describe('addRowModel()', function() {
+        var rowModel;
+        var listComponent;
+        beforeEach(function() {
+            listComponent = {
+                toggledModels: {}
+            };
+            sinon.collection.stub(layout, '_getGroupListComponent', function() {
+                return listComponent;
+            });
+            rowModel = new Backbone.Model({
+                id: 'rowModelId1'
+            });
+            layout.collection.reset();
+        });
+
+        afterEach(function() {
+            listComponent = null;
+            rowModel = null;
+        });
+
+        it('should add the model to the collection', function() {
+            layout.addRowModel(rowModel, false);
+
+            expect(layout.collection.length).toBe(1);
+        });
+
+        it('should add model to list component toggledModels if in edit', function() {
+            layout.addRowModel(rowModel, true);
+
+            expect(listComponent.toggledModels.rowModelId1).toEqual(rowModel);
+        });
+
+        it('should not add model to list component toggledModels if not in edit', function() {
+            layout.addRowModel(rowModel, false);
+
+            expect(listComponent.toggledModels.rowModelId1).toBeUndefined();
+        });
+    });
+
+    describe('removeRowModel()', function() {
+        var rowModel;
+        var listComponent;
+        beforeEach(function() {
+            rowModel = new Backbone.Model({
+                id: 'rowModelId1'
+            });
+            listComponent = {
+                toggledModels: {
+                    rowModelId1: rowModel
+                }
+            };
+            sinon.collection.stub(layout, '_getGroupListComponent', function() {
+                return listComponent;
+            });
+            layout.collection.reset(rowModel);
+        });
+
+        afterEach(function() {
+            listComponent = null;
+            rowModel = null;
+        });
+
+        it('should remove the model from the collection', function() {
+            layout.removeRowModel(rowModel, false);
+
+            expect(layout.collection.length).toBe(0);
+        });
+
+        it('should remove model from list toggledModels if in edit', function() {
+            layout.removeRowModel(rowModel, true);
+
+            expect(listComponent.toggledModels.rowModelId1).toBeUndefined();
+        });
+    });
+
+    describe('_getGroupListComponent()', function() {
+        var comp;
+        var result;
+        beforeEach(function() {
+            comp = {
+                name: 'quote-data-group-list',
+                id: 'groupListId1'
+            };
+            layout._components = [comp];
+        });
+
+        afterEach(function() {
+            comp = null;
+            result = null;
+            layout._components = [];
+        });
+
+        it('should return the list component', function() {
+            result = layout._getGroupListComponent();
+            expect(result).toBe(comp);
+        });
+
+        it('should return undefined if list component is not found', function() {
+            layout._components = [];
+            result = layout._getGroupListComponent();
+            expect(result).toBe(undefined);
+        });
+    });
 });

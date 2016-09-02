@@ -129,6 +129,8 @@
         var $item = $(ui.item.get(0));
         var oldGroupId = $item.data('group-id');
         var newGroupId = $($item.parent()).data('group-id');
+        // check if the row is in edit mode
+        var isRowInEdit = $item.hasClass('tr-inline-edit');
         var triggerOldGroup = false;
         var oldGroup;
         var newGroup;
@@ -153,11 +155,11 @@
             // get the row model from the old group's collection
             rowModel = oldGroup.collection.get(rowId);
 
-            // remove the rowModel from the old group silently so it doesn't cause a render yet
-            oldGroup.collection.remove(rowModel);
+            // remove the rowModel from the old group
+            oldGroup.removeRowModel(rowModel, isRowInEdit);
 
             // add rowModel to the new group
-            newGroup.collection.add(rowModel);
+            newGroup.addRowModel(rowModel, isRowInEdit);
 
             // get the requests from updated rows for old and new group
             bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(oldGroup));
@@ -298,7 +300,7 @@
      */
     _getComponentByGroupId: function(groupId) {
         return _.find(this._components, function(group) {
-            return group.groupId === groupId;
+            return group.name === 'quote-data-group' && group.groupId === groupId;
         });
     },
 

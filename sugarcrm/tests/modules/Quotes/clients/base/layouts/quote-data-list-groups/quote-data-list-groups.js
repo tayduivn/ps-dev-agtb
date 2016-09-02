@@ -80,6 +80,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_render()', function() {
         var disableSelectionStub;
+        
         beforeEach(function() {
             disableSelectionStub = sinon.collection.stub();
             sinon.collection.stub($.fn, 'sortable', function() {
@@ -219,14 +220,26 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             oldGroup = {
                 groupId: oldGroupId,
                 collection: new Backbone.Collection(),
-                trigger: oldGroupTriggerSpy
+                trigger: oldGroupTriggerSpy,
+                addRowModel: function(model, isEdit) {
+                    this.collection.add(model);
+                },
+                removeRowModel: function(model, isEdit) {
+                    this.collection.remove(model);
+                }
             };
 
             newGroupId = 'newGroupId1';
             newGroup = {
                 groupId: newGroupId,
                 collection: new Backbone.Collection(),
-                trigger: newGroupTriggerSpy
+                trigger: newGroupTriggerSpy,
+                addRowModel: function(model, isEdit) {
+                    this.collection.add(model);
+                },
+                removeRowModel: function(model, isEdit) {
+                    this.collection.remove(model);
+                }
             };
 
             rowModelId = 'rowModelId1';
@@ -862,6 +875,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var result;
         beforeEach(function() {
             group = {
+                name: 'quote-data-group',
                 groupId: 'groupId1'
             };
             layout._components = [group];
