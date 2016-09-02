@@ -10,7 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr class="quote-data-group-list product-row sortable ui-sortable" name="{{model.module}}_{{model.id}}">
+<tr name="{{model.module}}_{{model.id}}"
+    class="quote-data-group-list product-row{{#if model.attributes._notSaved}} not-sortable{{else}} sortable ui-sortable{{/if}}">
     <td>
         <span class="left-column-save-cancel">
             {{#each view.leftSaveCancelColumn}}

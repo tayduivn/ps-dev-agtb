@@ -374,7 +374,7 @@
      */
     toggleRow: function(rowModule, rowModelId, isEdit) {
         var toggleModel;
-
+        var row;
         if (isEdit) {
             toggleModel = this.collection.get(rowModelId);
             toggleModel.modelView = 'edit';
@@ -386,11 +386,18 @@
             delete this.toggledModels[rowModelId];
         }
 
-        this.$('tr[name=' + rowModule + '_' + rowModelId + ']').toggleClass('tr-inline-edit', isEdit);
+        row = this.$('tr[name=' + rowModule + '_' + rowModelId + ']');
+        row.toggleClass('tr-inline-edit', isEdit);
         this.toggleFields(this.rowFields[rowModelId], isEdit);
 
         if (isEdit) {
             this.context.trigger('list:editrow:fire');
+        } else if (row.hasClass('not-sortable')) {
+            // if this is not edit mode and row still has not-sortable (from being a brand new row)
+            // then remove the not-sortable and add the sortable classes
+            row
+                .removeClass('not-sortable')
+                .addClass('sortable ui-sortable');
         }
     },
 

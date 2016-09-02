@@ -80,7 +80,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_render()', function() {
         var disableSelectionStub;
-        
+
         beforeEach(function() {
             disableSelectionStub = sinon.collection.stub();
             sinon.collection.stub($.fn, 'sortable', function() {

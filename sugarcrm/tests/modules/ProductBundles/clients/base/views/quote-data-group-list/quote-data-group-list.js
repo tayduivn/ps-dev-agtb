@@ -556,9 +556,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             view.rowFields[rowModelId] = rowModel;
 
             toggleClassStub = sinon.collection.stub();
+
             sinon.collection.stub(view, '$', function() {
                 return {
-                    toggleClass: toggleClassStub
+                    toggleClass: toggleClassStub,
+                    hasClass: function() {
+                        return false;
+                    }
                 };
             });
             sinon.collection.stub(view, 'toggleFields', function() {});
@@ -599,6 +603,32 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
                 view.toggleRow(rowModule, rowModelId, false);
                 expect(rowModel.modelView).toBe('list');
+            });
+
+            describe('with jquery not stubbed', function() {
+                var testRow;
+                beforeEach(function() {
+                    view.$.restore();
+                    testRow = $('<tr name="Products_productId1" class="not-sortable"></tr>');
+                    sinon.collection.stub(view, '$', function() {
+                        return testRow;
+                    });
+                });
+
+                it('should call removeClass not-sortable if the row hasClass not-sortable', function() {
+                    view.toggleRow(rowModule, rowModelId, false);
+                    expect(testRow.hasClass('not-sortable')).toBeFalsy();
+                });
+
+                it('should add class "sortable" if the row hasClass not-sortable', function() {
+                    view.toggleRow(rowModule, rowModelId, false);
+                    expect(testRow.hasClass('sortable')).toBeTruthy();
+                });
+
+                it('should add class "ui-sortable" if the row hasClass not-sortable', function() {
+                    view.toggleRow(rowModule, rowModelId, false);
+                    expect(testRow.hasClass('ui-sortable')).toBeTruthy();
+                });
             });
         });
 
