@@ -40,7 +40,7 @@ class SugarUpgradeRepairDict extends UpgradeScript
 
                             while ($line = fgets($fp)) {
                                 if (preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\"|\']\s*\)\s*;/', $line, $match)) {
-                                    if (!file_exists($match[1])) {
+                                    if (!$this->isIncludedFileExists($entry, $match[1])) {
                                         $altered = true;
                                     } else {
                                         $contents .= $line;
@@ -60,5 +60,25 @@ class SugarUpgradeRepairDict extends UpgradeScript
                 } // while
             } // if
         }
+    }
+    
+    /**
+     * All custom files was moved to 'Disable' folders for disabled module.
+     * But the files content didn't changed.
+     * So we need to add 'Disable' folder for includes file path before existing check.
+     * @param string $source processed file with include
+     * @param string $included included file
+     * @return bool
+     */
+    protected function isIncludedFileExists($source, $included)
+    {
+        if (preg_match('~.*'. DISABLED_PATH . '$~', pathinfo($source, PATHINFO_DIRNAME))) {
+            $included = sprintf(
+                '%s' . DIRECTORY_SEPARATOR . DISABLED_PATH . DIRECTORY_SEPARATOR . '%s',
+                dirname($included),
+                basename($included)
+            );
+        }
+        return SugarAutoLoader::fileExists($included);
     }
 }
