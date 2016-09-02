@@ -43,4 +43,22 @@ class Statement extends BaseStatement
 
         return $results;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Do not free the statement since it contradicts the purpose of the method
+     */
+    public function closeCursor()
+    {
+        $re = new \ReflectionProperty(get_parent_class($this), '_stmt');
+        $re->setAccessible(true);
+        $stmt = $re->getValue($this);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        return db2_free_result($stmt);
+    }
 }

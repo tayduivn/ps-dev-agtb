@@ -165,12 +165,11 @@ class Statement implements IteratorAggregate, StatementInterface
 
     /**
      * {@inheritdoc}
+     *
+     * Do not free the statement since it contradicts the purpose of the method
      */
     public function closeCursor()
     {
-        if ($this->stmt) {
-            sqlsrv_free_stmt($this->stmt);
-        }
     }
 
     /**

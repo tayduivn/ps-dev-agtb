@@ -43,4 +43,13 @@ class Statement extends BaseStatement
 
         return $results;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Do not free the statement since it contradicts the purpose of the method
+     */
+    public function closeCursor()
+    {
+    }
 }
