@@ -183,7 +183,7 @@
                      * Returns the grid and the last tab index used by the GridBuilder. Override this method to
                      * customize a GridBuilder's return value.
                      *
-                     * @return {grid: Array, lastTabIndex: number}
+                     * @return {Object}
                      * @private
                      */
                     _getGrid: function() {
