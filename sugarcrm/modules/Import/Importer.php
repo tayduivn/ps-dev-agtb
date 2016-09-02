@@ -1225,6 +1225,9 @@ class Importer
                 $this->importAddress($bean, $address);
             }
         }
+
+        // Necessary for legacy compatibility
+        $bean->emailAddress->populateLegacyFields($bean);
     }
 
     /**
