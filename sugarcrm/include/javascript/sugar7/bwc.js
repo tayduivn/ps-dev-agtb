@@ -244,6 +244,9 @@
          * @param {String} name The record name that we are sharing.
          */
         shareRecord: function(module, id, name) {
+            // Unfortunately we cannot create fields without views, so we need a
+            // container view here.
+            var containerView = app.view.createView({});
             var shareField = app.view.createField({
                     def: {
                         type: 'shareaction'
@@ -253,7 +256,7 @@
                         id: id,
                         name: name
                     }),
-                    view: app.view.createView({})
+                    view: containerView
                 });
 
             if (shareField.useSugarEmailClient()) {
@@ -261,6 +264,10 @@
             } else {
                 this._launchExternalEmail(shareField.getShareMailtoUrl());
             }
+
+            // Need to dispose these dynamically-created components.
+            // Disposing the view will dispose the field as well.
+            containerView.dispose();
         },
 
         /**
