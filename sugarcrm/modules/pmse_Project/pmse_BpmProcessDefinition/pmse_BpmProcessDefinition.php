@@ -88,9 +88,19 @@ class pmse_BpmProcessDefinition extends pmse_BpmProcessDefinition_sugar
 
         $result = $this->db->query($sql);
         $rows = array();
-        while ($row = $this->db->fetchByAssoc($result)) {
-            $merge = isset($rows[$row[$alias]]) ? $rows[$row[$alias]] : array();
-            $rows[$row[$alias]] = array_unique(array_merge($merge, json_decode(html_entity_decode($row['def']))));
+        while ($row = $this->db->fetchByAssoc($result, false)) {
+            // In the case of empty locked field defs we need to make an array
+            // since the json_decode will result in null
+            $def = json_decode($row['def']);
+            if ($def === null) {
+                $def = [];
+            }
+
+            // If there is an existing ID to merge, merge that
+            $merge = isset($rows[$row[$alias]]) ? $rows[$row[$alias]] : [];
+
+            // Merge the mergeable and current row defs, and unique them
+            $rows[$row[$alias]] = array_unique(array_merge($merge, $def));
         }
 
         return $rows;
