@@ -16,11 +16,6 @@ $viewdefs['ProductBundles']['base']['view']['quote-data-group-footer'] = array(
             'label' => 'LBL_QUOTE_DATA_GROUP_FOOTER',
             'fields' => array(
                 array(
-                    'name' => 'additional_group_discount',
-                    'type' => 'quote-footer-input',
-                    'label' => 'LBL_ADDITIONAL_GROUP_DISCOUNT',
-                ),
-                array(
                     'name' => 'subtotal',
                     'label' => 'LBL_GROUP_TOTAL',
                     'type' => 'quote-footer',

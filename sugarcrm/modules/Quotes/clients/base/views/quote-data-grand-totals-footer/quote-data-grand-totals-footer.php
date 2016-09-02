@@ -20,11 +20,6 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                     'type' => 'quote-footer',
                 ),
                 array(
-                    'name' => 'additional_discount',
-                    'type' => 'quote-footer-input',
-                    'label' => 'LBL_ADDITIONAL_ORDER_DISCOUNT',
-                ),
-                array(
                     'name' => 'additional_tax',
                     'type' => 'quote-footer-input',
                     'label' => 'LBL_ADDITIONAL_TAX',
