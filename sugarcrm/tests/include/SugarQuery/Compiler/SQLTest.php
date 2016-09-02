@@ -249,12 +249,13 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @param array $args Arguments for SugarQuery_Compiler_SQL::applyOrderByStability
      * @param string $expColumn Expected stability column name to be added
+     * @param string $expDirection Expected stability column order direction
      *
      * @covers SugarQuery_Compiler_SQL::applyOrderByStability
      * @group unit
      * @dataProvider dataProviderTestApplyOrderByStability
      */
-    public function testApplyOrderByStability($args, $expColumn)
+    public function testApplyOrderByStability($args, $expColumn, $expDirection)
     {
         // SUT
         $compiler = $this->getMockBuilder('SugarQuery_Compiler_SQL')
@@ -284,13 +285,22 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
             'Incorrect column used for order stability'
         );
 
+        $this->assertEquals(
+            $expDirection,
+            $added->column->direction,
+            'Incorrect order direction used for the order stability column'
+        );
     }
 
     public function dataProviderTestApplyOrderByStability()
     {
+        /** @var SugarQuery_Builder_Orderby|PHPUnit_Framework_MockObject_MockObject $mockOrderBy */
         $mockOrderBy = $this->getMockBuilder('SugarQuery_Builder_Orderby')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $mockOrderBy->direction = 'ASC';
+        $mockOrderBy->addField('date_modified');
 
         return array(
             array(
@@ -298,13 +308,15 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                     array(),
                     'fieldx',
                 ),
-                'fieldx'
+                'fieldx',
+                'DESC',
             ),
             array(
                 array(
                     array(),
                 ),
                 'id',
+                'DESC',
             ),
             array(
                 array(
@@ -312,6 +324,7 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
                     'fieldy',
                 ),
                 'fieldy',
+                'ASC',
             ),
         );
     }

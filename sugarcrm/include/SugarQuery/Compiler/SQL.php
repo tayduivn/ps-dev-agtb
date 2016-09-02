@@ -282,7 +282,13 @@ class SugarQuery_Compiler_SQL
      */
     protected function applyOrderByStability(array $orderBy, $column = 'id')
     {
-        $uniqueCol = new SugarQuery_Builder_Orderby($this->sugar_query);
+        if ($lastOrderBy = end($orderBy)) {
+            $direction = $lastOrderBy->direction;
+        } else {
+            $direction = 'DESC';
+        }
+
+        $uniqueCol = new SugarQuery_Builder_Orderby($this->sugar_query, $direction);
         $uniqueCol->addField($column);
         $orderBy[] = $uniqueCol;
         return $orderBy;
