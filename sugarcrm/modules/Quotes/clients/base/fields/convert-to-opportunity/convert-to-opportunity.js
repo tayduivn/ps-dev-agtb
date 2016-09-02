@@ -30,6 +30,14 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this.model.on('sync', this._toggleDisable, this);
+        this.model.on('change:opportunity_id', this._toggleDisable, this);
+    },
+
+    /**
      * Handler for when "Create Opp from Quote" is clicked
      * @private
      */
@@ -77,5 +85,15 @@
             title: app.lang.get('LBL_ERROR'),
             messages: [data.message]
         });
+    },
+
+    /**
+     * Reusable method for the event actions
+     *
+     * @private
+     */
+    _toggleDisable: function() {
+        var opportunityId = this.model.get('opportunity_id');
+        this.setDisabled(!(_.isUndefined(opportunityId) || _.isEmpty(opportunityId)));
     }
 });

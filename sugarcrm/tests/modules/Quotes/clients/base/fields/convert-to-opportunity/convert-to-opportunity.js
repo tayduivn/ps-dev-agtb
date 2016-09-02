@@ -136,4 +136,34 @@ describe('Quotes.Base.Fields.ConvertToOpportunityField', function() {
             });
         });
     });
+
+    describe('_toggleDisable', function() {
+        beforeEach(function() {
+            field.render();
+        });
+
+        it('will set disabled class on the field element', function() {
+            field.model.set('opportunity_id', 'my_new_opportunity', {silent: true});
+            field._toggleDisable();
+            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
+        });
+
+        it('will remove disabled class when opportunity_id changes to empty', function() {
+            field.model.set('opportunity_id', 'my_new_opportunity', {silent: true});
+            field._toggleDisable();
+            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
+
+            field.model.set('opportunity_id', '');
+            expect(field.getFieldElement().hasClass('disabled')).toBeFalsy();
+        });
+
+        it('will remove disabled class when opportunity_id is unset', function() {
+            field.model.set('opportunity_id', 'my_new_opportunity', {silent: true});
+            field._toggleDisable();
+            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
+
+            field.model.unset('opportunity_id');
+            expect(field.getFieldElement().hasClass('disabled')).toBeFalsy();
+        });
+    });
 });
