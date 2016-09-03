@@ -45,21 +45,21 @@
 
                 // This allows us to define our own endpoint setter, which is needed
                 // for case view to force consuming our own endpoint
-                options.endpoint = function(method, model, options, callbacks) {
+                options.endpoint = function(method, model, opts, callbacks) {
                     var casModule = data.case.flow.cas_sugar_module;
                     var casModuleId = data.case.flow.cas_sugar_object_id;
 
                     // This is the endpoint URL we want to consume
-                    var url = app.api.buildURL('pmse_Inbox/caseRecord/' + casModule + '/' + casModuleId);
-
+                    var resourcePath = 'pmse_Inbox/caseRecord/' + casModule + '/' + casModuleId;
+                    var url = app.api.buildURL(resourcePath, null, null, {view: 'record'});
                     // For some reason, options contains a method property that
                     // is causing the subsequent success call to be a READ HTTP
                     // Request Type. So delete the method property of options to
                     // force a GET request to be made.
-                    delete options.method;
+                    delete opts.method;
 
                     // Send back the data from our own endpoint
-                    return app.api.call('read', url, {}, callbacks, options);
+                    return app.api.call('read', url, {}, callbacks, opts);
                 };
 
                 self.initCaseView(data, [options]);
