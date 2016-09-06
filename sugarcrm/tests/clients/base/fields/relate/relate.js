@@ -294,14 +294,14 @@ describe('Base.Field.Relate', function() {
                 name: 'bob',
                 id: '1234',
                 module: 'Contacts',
-                varfefsLink: 'accounts',
+                vardefsLink: 'accounts',
                 expectedHref: '#Contacts/1234'
             },
             {
                 name: 'bob',
                 id: '1234',
                 module: 'Contacts',
-                varfefsLink: 'accounts',
+                vardefsLink: 'accounts',
                 view_access: 'no',
                 expectedHref: void 0
             },
@@ -309,14 +309,14 @@ describe('Base.Field.Relate', function() {
                 name: 'bob',
                 id: '1234',
                 module: 'Contacts',
-                varfefsLink: 'accounts',
+                vardefsLink: 'accounts',
                 link: false,
                 expectedHref: void 0
             },
             {
                 name: 'bob',
                 module: 'Contacts',
-                varfefsLink: 'accounts',
+                vardefsLink: 'accounts',
                 id: void 0,
                 expectedHref: void 0
             },
@@ -324,7 +324,7 @@ describe('Base.Field.Relate', function() {
         function(data) {
             it('should build the link according to the record acls', function() {
                 var attrs = {};
-                attrs[data.varfefsLink] = {
+                attrs[data.vardefsLink] = {
                     _acl: {
                         fields: [],
                         view: data.view_access,
@@ -335,7 +335,7 @@ describe('Base.Field.Relate', function() {
                 app.data.declareModel(data.module, app.metadata.getModule(data.module), 'base');
 
                 var model = app.data.createBean(data.module, attrs);
-                var parentView= app.view.createView({type: 'base'});
+                var parentView = app.view.createView({type: 'base'});
                 var field = app.view.createField({
                     viewDefs: {
                         link: data.link,
@@ -352,6 +352,7 @@ describe('Base.Field.Relate', function() {
 
                 expect(field.href).toEqual(data.expectedHref);
 
+                parentView.dispose();
                 field.dispose();
             });
         });

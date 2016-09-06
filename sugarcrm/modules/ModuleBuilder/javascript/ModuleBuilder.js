@@ -1302,13 +1302,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			    cookiePattern = "(" + sessionName + "=)([a-f0-9\-]*)",
 			    matches = document.cookie.match(cookiePattern),
 			    matched = false,
-			    currentSID = parent.SUGAR.App.cache.get("AuthAccessToken");
-			    
+			    currentSID = parent.SUGAR.App.api.getOAuthToken();
+
 			// If there is a current session id cookie (which would happen for
 			// bwc logins) but it does not match the current auth token then 
 			// update the document cookie to the auth token to allow studio to 
 			// continue to function
-			if (matches) {
+			if (currentSID && matches) {
 				for (var i in matches) {
 					if (matches[i] == currentSID) {
 						matched = true;

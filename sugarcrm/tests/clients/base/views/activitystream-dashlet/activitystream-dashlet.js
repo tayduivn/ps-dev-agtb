@@ -10,8 +10,9 @@
  */
 
 describe('Activity Stream Dashlet View', function() {
-    var view,
-        app;
+    var app;
+    var view;
+    var layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -34,7 +35,7 @@ describe('Activity Stream Dashlet View', function() {
 
         var meta = {};
 
-        var layout = app.view.createLayout({
+        layout = app.view.createLayout({
             type: 'dashlet',
             context: context
         });
@@ -49,7 +50,9 @@ describe('Activity Stream Dashlet View', function() {
 
     afterEach(function() {
         sinon.collection.restore();
+        view.disposeAllActivities();
         view.dispose();
+        layout.dispose();
         SugarTest.testMetadata.dispose();
     });
 
@@ -66,12 +69,8 @@ describe('Activity Stream Dashlet View', function() {
             }
         };
 
-        beforeEach(function() {
-            view.renderedActivities = {};
-        });
-
         afterEach(function() {
-            view.renderedActivities = {};
+            view.disposeAllActivities();
         });
 
         it('should cache rendered activities', function() {
@@ -145,7 +144,6 @@ describe('Activity Stream Dashlet View', function() {
                 }]
             }
         };
-        var dispose = function() {};
 
         it('should empty renderedActivities cache', function() {
             view.model.set(model);
@@ -154,18 +152,6 @@ describe('Activity Stream Dashlet View', function() {
 
             view.disposeAllActivities();
             expect(view.renderedActivities['asdf']).not.toBeDefined();
-        });
-
-        it('should remove activities from components', function() {
-            view._components = [];
-            view._components.push({name: 'activitystream', dispose: dispose});
-            view._components.push({name: 'activitystream', dispose: dispose});
-            view._components.push({name: 'notactivitystream', dispose: dispose});
-            view._components.push({name: 'notactivitystream', dispose: dispose});
-            expect(view._components.length).toEqual(4);
-
-            view.disposeAllActivities();
-            expect(view._components.length).toEqual(2);
         });
     });
 });

@@ -264,7 +264,19 @@ $dictionary['pmse_BpmFormAction'] = array(
         array(
             'name' => 'idx_pmse_bpm_form_action_del_cas_id',
             'type' => 'index',
-            'fields' => array('deleted','cas_id')
+            'fields' => array(
+                'cas_id',
+                'deleted',
+            ),
+        ),
+        array(
+            'name' => 'idx_pmse_bpm_form_action_cas_id_frm_last',
+            'type' => 'index',
+            'fields' => array(
+                'cas_id',
+                'frm_last',
+                'deleted',
+            ),
         ),
     ),
     'relationships' => array(),

@@ -14,8 +14,8 @@
  * 
  * The following items are configurable.
  *
- * - {Integer} limit Limit imposed to the number of records pulled.
- * - {Integer} refresh How often (minutes) should refresh the data collection.
+ * - {number} limit Limit imposed to the number of records pulled.
+ * - {number} refresh How often (minutes) should refresh the data collection.
  *
  * @class View.Views.Base.RssfeedView
  * @alias SUGAR.App.view.views.BaseRssfeedView

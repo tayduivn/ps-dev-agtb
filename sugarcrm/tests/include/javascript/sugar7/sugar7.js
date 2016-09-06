@@ -174,6 +174,9 @@ describe('Sugar7.Routes', function() {
         });
 
         afterEach(function() {
+            _.each(app.additionalComponents, function(component) {
+                component.dispose();
+            });
             app.additionalComponents = {};
             app.controller.$el.empty();
             hasAccessStub.restore();

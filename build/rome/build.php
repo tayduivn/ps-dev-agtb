@@ -20,6 +20,10 @@ if (!empty($config['ver'])) {
     $rome->setVersion($config['ver']);
 }
 
+if (!empty($config['exclude_dirs'])) {
+    $rome->setExcludeDirs(explode(",", $config['exclude_dirs']));
+}
+
 if (!empty($config['build_dir'])) {
     $rome->setBuildDir($config['build_dir']);
 }
@@ -153,20 +157,9 @@ if (!empty($config['base_dir'])) {
         $latin->copyTranslations();
     }
 
-    $build_dir = $rome->getBuildDir();
-    if (!empty($config['sidecar'])) {
-        foreach ($config['builds'] as $build) {
-            if (is_file("$build_dir/$build/sugarcrm/sidecar/build.php")) {
-                echo "\nBuilding sidecar in $build\n";
-                $cwd = getcwd();
-                chdir("$build_dir/$build/sugarcrm/sidecar/");
-                include("build.php");
-                chdir($cwd);
-            }
-        }
-    }
-
     if (!empty($config['dir'])) {
+        $build_dir = $rome->getBuildDir();
+
         foreach ($config['builds'] as $flav) {
             $dir = $build_dir . '/' . $flav . $config['dir'];
             $rome->generateMD5($dir);
@@ -291,6 +284,13 @@ Build options:
     php build.php --ver=6.1.0 --dir=sugarcrm/modules/Accounts
 
     Will build only the Accounts directory
+
+--exclude_dirs
+    Exclude list of directories rather than building them.
+
+    php build.php --ver=6.1.0 --exclude_dirs=node_modules[,vendor,...]
+
+    Will exclude node_modules from the build process
 
 —-build_dir
     If you would like to change where the files are built to, specify

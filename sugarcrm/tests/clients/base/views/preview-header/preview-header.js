@@ -13,17 +13,16 @@ describe("Preview Header View", function() {
         view = SugarTest.createView("base","Accounts", "preview-header", null, context, null, layout);
         view.model = new Backbone.Model();
         app.drawer = {
-                isActive:function() {
-                    
-                }
+            isActive: function() {}
         };
     });
-    
+
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        view.model = null;
+        view.dispose();
+        layout.dispose();
         view = null;
         layout = null;
         delete app.drawer;

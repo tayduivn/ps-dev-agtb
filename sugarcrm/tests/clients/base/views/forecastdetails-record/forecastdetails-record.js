@@ -12,6 +12,8 @@
 
 describe("Base.View.Forecastdetails-record", function() {
     var app, view, cfg, result, sandbox;
+    var dashletLayout;
+    var forecastLayout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -52,15 +54,18 @@ describe("Base.View.Forecastdetails-record", function() {
 
         app.user.setPreference('decimal_precision', 2);
 
-        var layout = app.view.createLayout({
+        dashletLayout = app.view.createLayout({
             type: 'dashlet',
             context: context
         });
-        SugarTest.createView('base', '', 'forecastdetails', meta, context, false, layout, true);
-        view = SugarTest.createView('base', '', 'forecastdetails-record', meta, context, false, layout, true);
+        forecastLayout = SugarTest.createView('base', '', 'forecastdetails', meta, context, false, dashletLayout, true);
+        view = SugarTest.createView('base', '', 'forecastdetails-record', meta, context, false, dashletLayout, true);
     });
 
     afterEach(function() {
+        view.dispose();
+        forecastLayout.dispose();
+        dashletLayout.dispose();
         sandbox.restore();
         cfg = null;
         result = null;

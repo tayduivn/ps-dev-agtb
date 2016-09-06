@@ -53,7 +53,7 @@
     /**
      * Retrieves custom filters.
      *
-     * @param {Integer} index Tab index.
+     * @param {number} index Tab index.
      * @return {Array} Custom filters.
      * @protected
      */

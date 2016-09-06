@@ -12,7 +12,7 @@
 --}}
 {{#if showMore}}
 <li data-sweetaction="true">
-  <a href{{#if term}}="#search/{{term}}?"{{/if}} data-showmore="true" track="click:sweetspot-action-showmore">
+  <a href="{{searchRoute}}" data-route="{{searchRoute}}" data-showmore="true" track="click:sweetspot-action-showmore">
     <div class="result-text">
       <div class="result-name">{{str 'LNK_SEARCH_FTS_VIEW_ALL'}}&hellip;</div>
     </div>

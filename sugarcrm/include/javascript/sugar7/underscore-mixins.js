@@ -16,8 +16,8 @@
              * Move an item to a specific index.
              *
              * @param {Array} initialArray The initial array.
-             * @param {Integer} fromIndex The index of the item to move.
-             * @param {Integer} toIndex The index where the item is moved.
+             * @param {number} fromIndex The index of the item to move.
+             * @param {number} toIndex The index where the item is moved.
              * @return {Array} The array reordered.
              */
             moveIndex: function(array, fromIndex, toIndex) {

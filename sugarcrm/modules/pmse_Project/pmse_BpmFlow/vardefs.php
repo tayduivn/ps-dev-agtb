@@ -696,6 +696,32 @@ $dictionary['pmse_BpmFlow'] = array(
                 'cas_index',
             ),
         ),
+        array(
+            'name' => 'idx_pmse_bpm_flow_bpmn_type_flow_status_due_date_del',
+            'type' => 'index',
+            'fields' => array(
+                'bpmn_type',
+                'cas_flow_status',
+                'cas_due_date',
+                'deleted',
+            ),
+        ),
+        array(
+            'name' => 'idx_pmse_bpm_flow_del_cas_id',
+            'type' => 'index',
+            'fields' => array(
+                'cas_id',
+                'deleted',
+            ),
+        ),
+        array(
+            'name' => 'idx_pmse_bpm_flow_cas_id_flow_status',
+            'type' => 'index',
+            'fields' => array(
+                'cas_id',
+                'cas_flow_status',
+            ),
+        ),
     ),
     'relationships' => array(),
     'optimistic_locking' => true,

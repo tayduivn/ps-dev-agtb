@@ -14,6 +14,7 @@ describe('Base.View.HelpDashlet', function() {
         testObj,
         testModule = 'Accounts',
         sandbox;
+    var layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -45,7 +46,7 @@ describe('Base.View.HelpDashlet', function() {
         context.prepare();
         context.parent.prepare();
 
-        var layout = app.view.createLayout({
+        layout = app.view.createLayout({
             name: 'dashlet',
             context: context
         });
@@ -60,6 +61,8 @@ describe('Base.View.HelpDashlet', function() {
 
     afterEach(function() {
         sandbox.restore();
+        view.dispose();
+        layout.dispose();
         testObj = null;
         app = null;
     });

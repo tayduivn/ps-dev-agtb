@@ -17,7 +17,9 @@
     plugins: ['Dashlet'],
 
     /**
-     * {Integer} limit Default number of rows displayed in a dashlet.
+     * @property {Object} _defaultOptions
+     * @property {number} _defaultOptions.limit Default number of rows displayed
+     *   in a dashlet.
      *
      * @protected
      */

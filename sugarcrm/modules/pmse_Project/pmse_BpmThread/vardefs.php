@@ -196,8 +196,8 @@ $dictionary['pmse_BpmThread'] = array(
             'name' => 'idx_pmse_bpm_thread_del_cas_id',
             'type' => 'index',
             'fields' => array(
-                'deleted',
                 'cas_id',
+                'deleted',
             ),
         ),
     ),

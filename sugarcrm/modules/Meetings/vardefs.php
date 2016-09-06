@@ -131,13 +131,10 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => array(
-        'types' => array(
-            'RR' => false,
-            'ALL' => true,
-        ),
-    ),
+    'processes' => true,
     'default' => 0,
+    'group'=>'end_date',
+    'group_label' => 'LBL_DATE_END',
   ),
   'duration_minutes' =>
   array (
@@ -146,18 +143,14 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'duration_intervals',
-    'group'=>'duration_hours',
+    'group'=>'end_date',
+    'group_label' => 'LBL_DATE_END',
     'len' => '2',
     'comment' => 'Duration (minutes)',
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => array(
-        'types' => array(
-            'RR' => false,
-            'ALL' => true,
-        ),
-    ),
+    'processes' => true,
     'default' => 0,
   ),
   'date_start' =>
@@ -190,6 +183,8 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
 	'readonly' => true,
     'full_text_search' => array('enabled' => true, 'searchable' => false),
+    'group'=>'end_date',
+    'group_label' => 'LBL_DATE_END',
   ),
   'parent_type' =>
   array (

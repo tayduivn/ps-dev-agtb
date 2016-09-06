@@ -2,23 +2,15 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
     var app, layout, viewA, viewB, viewC,
         viewAisFocusable, viewBisFocusable, viewCisFocusable;
 
-
-    var createMockView = function(name) {
-        return {
-            name: name,
-            initialize: $.noop,
-            render: $.noop,
-            dispose: $.noop,
-            trigger: sinon.collection.stub()
-        };
-    };
-
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        viewA = createMockView('view-a');
-        viewB = createMockView('view-b');
-        viewC = createMockView('view-c');
+        viewA = app.view.createView({name: 'view-a'});
+        viewB = app.view.createView({name: 'view-b'});
+        viewC = app.view.createView({name: 'view-c'});
+        sinon.collection.stub(viewA, 'trigger');
+        sinon.collection.stub(viewB, 'trigger');
+        sinon.collection.stub(viewC, 'trigger');
         viewA.isFocusable = function() {return viewAisFocusable};
         viewB.isFocusable = function() {return viewBisFocusable};
         viewC.isFocusable = function() {return viewCisFocusable};
@@ -34,13 +26,14 @@ describe('View.Layouts.Base.QuicksearchLayout', function() {
             ]
         };
         layout = SugarTest.createLayout('base', null, 'quicksearch', defaultMeta);
-        layout.initialize(layout.options);
-        layout.initComponents();
         app.routing.start();
     });
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
+        viewA.dispose();
+        viewB.dispose();
+        viewC.dispose();
         layout.dispose();
         sinon.collection.restore();
         app.shortcuts._activeSession = null;

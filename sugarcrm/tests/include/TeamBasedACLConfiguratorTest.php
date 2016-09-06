@@ -253,18 +253,41 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test removeAllTBAValuesFromBean method.
+     * Data provider for testRemoveTBAValuesFromBean.
+     *
+     * @see TeamBasedACLConfiguratorTest::testRemoveTBAValuesFromBean
+     * @return array
      */
-    public function testRemoveAllTBAValuesFromBean()
+    public static function removeTBAValuesFromBeanDataProvider()
+    {
+        return array(
+            // Addressees module doesn't implement tba, so call removeAllTBAValuesFromTable only for accounts table
+            array(array('Accounts' => 'Account',), 'accounts'),
+            // Users module implements tba, but exists in alwaysEnabledModules list
+            array(array('Accounts' => 'Account', 'Users' => 'User'), 'accounts'),
+        );
+    }
+
+    /**
+     * Check that we don't call removeAllTBAValuesFromTable for modules which marked as 'always enabled'
+     * or don't implement TBA
+     *
+     * @dataProvider RemoveTBAValuesFromBeanDataProvider
+     * @covers TeamBasedACLConfigurator::removeAllTBAValuesFromBean
+     * @param array $beanList
+     * @param string $expectedTableName
+     */
+    public function testRemoveTBAValuesFromBean($beanList, $expectedTableName)
     {
         $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('removeAllTBAValuesFromTable'));
         $this->tbaConfig
             ->expects($this->once())
-            ->method('removeAllTBAValuesFromTable');
-        $beanList = array(
-            'Users' => 'User', // does implement tba
-            'Unknowns' => 'Unknown', // does not exist
-        );
-        $this->tbaConfig->removeAllTBAValuesFromBeans($beanList);
+            ->method('removeAllTBAValuesFromTable')
+            ->with($expectedTableName);
+
+        foreach ($beanList as $moduleName => $beanName) {
+            $bean = $this->getMock($beanName, null);
+            $this->tbaConfig->removeAllTBAValuesFromBean($bean);
+        }
     }
 }

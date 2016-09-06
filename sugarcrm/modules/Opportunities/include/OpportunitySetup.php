@@ -188,8 +188,11 @@ abstract class OpportunitySetup
         // fix the dupe check as it changes the vardefs as well
         $this->fixOpportunityModule();
 
+        // hide RLI related fields from massupdate
+        $this->fixProductsModule();
+
         // r&r the opp module
-        $this->runRepairAndRebuild();
+        $this->runRepairAndRebuild(array('Opportunities','Products'));
 
         // regenerate the Opportunity Vardefs
         VardefManager::loadVardef(
@@ -707,6 +710,40 @@ EOL;
                     ' AND date_entered = date_modified');
             }
         }
+    }
+
+    /**
+     * Handle updating the field in the Products Module
+     */
+    protected function fixProductsModuleField($field, $attribute, $value)
+    {
+        $products = BeanFactory::getBean('Products');
+        $field_defs = $products->getFieldDefinition($field);
+
+        // get the get_widget helper and the StandardField Helper
+        SugarAutoLoader::load('modules/DynamicFields/FieldCases.php');
+        SugarAutoLoader::load('modules/ModuleBuilder/parsers/StandardField.php');
+
+        $f = get_widget($field_defs['type']);
+        $f->populateFromRow(array_merge($field_defs, array($attribute => $value)));
+
+        // now lets save, since these are OOB field, we use StandardField
+        $df = new StandardField($products->module_name);
+        $df->setup($products);
+        $f->module = $products;
+
+        // StandardField considers only the attributes which can be edited in Studio,
+        // while the "studio" attribute is not one of them. we need to change the vardef map temporarily here,
+        // because changing it permanently will make the "studio" attribute always overridden with empty value,
+        // after the field has been saved in Studio
+        if (!isset($f->vardef_map['studio'])) {
+            $f->vardef_map['studio'] = 'studio';
+        }
+        if (!isset($f->vardef_map['convertToBase'])) {
+            $f->vardef_map['convertToBase'] = 'convertToBase';
+        }
+
+        $f->save($df);
     }
 
     abstract public function doDataConvert();

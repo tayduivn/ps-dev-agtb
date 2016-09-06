@@ -225,6 +225,8 @@
         // Reset the locked field state
         this._setLockedFieldFlag(false);
 
+        var lockedFields = this.model.get('locked_fields');
+
         // Loop and check locked field state of each field
         _.each(this.$('.record-lock-link-wrapper[data-name]'), function(el) {
             var $el = $(el);
@@ -239,10 +241,36 @@
             var field = this.getField(fieldName);
 
             // Is the current field locked?
-            var isLocked = _.contains(this.model.get('locked_fields'), fieldName);
+            var isLocked = _.contains(lockedFields, fieldName);
+
+            // Special handling for fieldsets
+            if (field.fields) {
+                // Some fieldsets have fields that are only for viewing, like the
+                // `copy` field on alternate addresses. Those should be filtered
+                // out of the fields list.
+                var fieldSetFields = _.filter(field.fields, function(fieldSetField) {
+                    return !_.isUndefined(self.model.get(fieldSetField.name));
+                });
+
+                // A fieldset is locked when all of its actual fields are locked
+                isLocked = _.every(fieldSetFields, function(fieldSetField) {
+                    return _.contains(lockedFields, fieldSetField.name);
+                });
+
+                var hasLockedFieldSetField = _.some(fieldSetFields, function(fieldSetField) {
+                    return _.contains(lockedFields, fieldSetField.name);
+                });
+
+                if (hasLockedFieldSetField && this.getCurrentButtonState() === this.STATE.EDIT) {
+                    _.defer(function(field) {
+                        // by toggling the fieldset here, we allow the acl check to handle individual field states
+                        self.toggleField(field, true);
+                    }, field);
+                }
+            }
 
             // Set the flag that says if we have locked fields
-            this._setLockedFieldFlag(this.hasLockedFields() || isLocked);
+            this._setLockedFieldFlag(this.hasLockedFields() || isLocked || hasLockedFieldSetField);
 
             // If the field is locked and we are in edit mode...
             if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
@@ -558,6 +586,7 @@
      * @private
      */
     _setNoEditFields: function(panels) {
+        var self = this;
         panels = panels || this.meta.panels;
 
         delete this.noEditFields;
@@ -572,8 +601,15 @@
                 }
 
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.type === 'fieldset') {
-                    if (field.readonly || _.every(field.fields, function(f) {
+                if (field.fields) {
+                    // Some fieldsets have fields that are only for viewing, like the
+                    // `copy` field on alternate addresses. Those should be filtered
+                    // out of the fields list.
+                    var fieldSetFields = _.filter(field.fields, function(fieldSetField) {
+                        return !_.isUndefined(self.model.get(fieldSetField.name));
+                    });
+
+                    if (field.readonly || _.every(fieldSetFields, function(f) {
                         return !app.acl.hasAccessToModel('edit', this.model, f.name);
                     }, this)) {
                         this.noEditFields.push(field.name);

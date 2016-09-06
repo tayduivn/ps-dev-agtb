@@ -537,34 +537,11 @@
      */
     editClicked: function(model, field) {
         // If a field is locked, we don't allow inline editing. Instead show an alert that links
-        // to the record view in edit mode to make changes there.
+        // to the record view or editview to make changes there.
         if (!_.isEmpty(model.get('locked_fields'))) {
-            var route = app.router.buildRoute(model.module, model.id, 'edit');
-            var recordName = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
-            var message = app.lang.get(
-                'LBL_LOCKED_FIELD_INLINE_EDIT',
-                model.module,
-                {link: new Handlebars.SafeString('<a href="javascript:void(0);">' + recordName + '</a>')}
-            );
-            app.alert.show('locked_field_inline_edit', {
-                level: 'warning',
-                messages: message,
-                autoClose: false,
-                onLinkClick: function() {
-                    app.alert.dismiss('locked_field_inline_edit');
-                    app.controller.loadView({
-                        layout: 'record',
-                        module: model.module,
-                        modelId: model.id,
-                        action: 'edit',
-                        lockedFieldsWarning: false
-                    });
-                    app.router.navigate(route, {trigger: false});
-                }
-            });
+            this._showLockedFieldWarning(model);
             return;
         }
-
         if (field.def.full_form) {
             var parentModel = this.context.parent.get('model');
             var link = this.context.get('link');
@@ -580,6 +557,45 @@
         if (!_.isEqual(model.attributes, model._syncedAttributes)) {
             model.setSyncedAttributes(model.attributes);
         }
+    },
+
+    /**
+     * Show a warning alert about locked fields on the model. The warning will
+     * link to the Sidecar record view in edit mode or BWC edit view
+     *
+     * @param {Backbone.Model} model the model for the row we are editing
+     * @private
+     */
+    _showLockedFieldWarning: function(model) {
+        var route = app.router.buildRoute(model.module, model.id, 'edit');
+        var recordName = Handlebars.Utils.escapeExpression(app.utils.getRecordName(model));
+        var message = app.lang.get(
+            'LBL_LOCKED_FIELD_INLINE_EDIT',
+            model.module,
+            {link: new Handlebars.SafeString('<a href="javascript:void(0);">' + recordName + '</a>')}
+        );
+        var module = app.metadata.getModule(model.module);
+        app.alert.show('locked_field_inline_edit', {
+            level: 'warning',
+            messages: message,
+            autoClose: false,
+            onLinkClick: function() {
+                app.alert.dismiss('locked_field_inline_edit');
+                var trigger = module.isBwcEnabled;
+                if (!trigger) {
+                    // We need to load the view here to add lockedFieldWarning to the context
+                    // for sidecar modules
+                    app.controller.loadView({
+                        layout: 'record',
+                        module: model.module,
+                        modelId: model.id,
+                        action: 'edit',
+                        lockedFieldsWarning: false
+                    });
+                }
+                app.router.navigate(route, {trigger: trigger});
+            }
+        });
     },
 
     /**

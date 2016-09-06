@@ -36,13 +36,10 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => array(
-        'types' => array(
-            'RR' => false,
-            'ALL' => true,
-        ),
-    ),
+    'processes' => true,
     'default' => 0,
+    'group' => 'end_date',
+    'group_label' => 'LBL_DATE_END',
   ),
   'duration_minutes' =>
   array (
@@ -51,19 +48,15 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'enum',
     'dbType' => 'int',
     'options' => 'duration_intervals',
-    'group'=>'duration_hours',
+    'group'=>'end_date',
+    'group_label' => 'LBL_DATE_END',
     'importable' => 'required',
     'len' => '2',
     'comment' => 'Call duration, minutes portion',
     'required' => true,
     'massupdate' => false,
     'studio' => false,
-    'processes' => array(
-        'types' => array(
-            'RR' => false,
-            'ALL' => true,
-        ),
-    ),
+    'processes' => true,
   ),
 
    'date_start' =>
@@ -96,6 +89,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'studio' => array('recordview' => false, 'wirelesseditview'=>false), // date_end is computed by the server from date_start and duration
     'readonly' => true,
     'full_text_search' => array('enabled' => true, 'searchable' => false),
+    'group'=>'end_date',
+    'group_label' => 'LBL_DATE_END',
   ),
 
  'parent_type'=>

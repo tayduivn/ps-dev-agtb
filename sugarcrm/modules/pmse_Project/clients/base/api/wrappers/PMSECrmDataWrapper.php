@@ -1596,8 +1596,8 @@ class PMSECrmDataWrapper implements PMSEObservable
         foreach ($fieldsData as $field) {
             $tmpField = array();
             if (isset($field['vname']) && (PMSEEngineUtils::isValidField($field, $type))) {
-                // If this field is part of a group
-                if (!empty($field['group'])) {
+                // If this is a locked field list AND this field is part of a group
+                if ($type === 'RR' && !empty($field['group'])) {
                     // If the group field for this field exists in vardefs then we can skip this field
                     // since it will be covered by the other field
                     // example : phone_alternate has phone_office as its group field and phone_office is defined

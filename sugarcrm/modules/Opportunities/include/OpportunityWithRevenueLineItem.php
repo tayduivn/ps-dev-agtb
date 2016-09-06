@@ -432,4 +432,12 @@ EOL;
         );
         Activity::enable();
     }
+
+    /**
+     * Update the field in the Products Module
+     */
+    protected function fixProductsModule()
+    {
+        $this->fixProductsModuleField('revenuelineitem_name', 'massupdate', true);
+    }
 }

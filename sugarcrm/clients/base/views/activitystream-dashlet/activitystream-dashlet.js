@@ -337,18 +337,21 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.omnibarView.dispose();
+        this.disposeAllActivities();
+        this._super('_dispose');
+    },
+
+    /**
      * Dispose all previously rendered activities
      */
     disposeAllActivities: function() {
-        var nonActivities = [];
-        _.each(this._components, function(component) {
-            if (component.name !== 'activitystream') {
-                nonActivities.push(component);
-            } else {
-                component.dispose();
-            }
+        _.each(this.renderedActivities, function(component) {
+            component.dispose();
         });
-        this._components = nonActivities;
         this.renderedActivities = {};
     }
 })

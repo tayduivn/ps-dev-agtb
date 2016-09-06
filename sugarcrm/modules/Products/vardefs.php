@@ -40,7 +40,8 @@ $dictionary['Product'] = array(
             'len' => '255',
             'source' => 'non-db',
             'source' => 'non-db',
-            'studio' => false
+            'studio' => false,
+            'massupdate' => false,
         ),
         'product_template_id' => array(
             'name' => 'product_template_id',

@@ -2,22 +2,18 @@ describe("Base.Layout.Toggle", function() {
     var app, layout, defaultMeta, viewA, viewB, viewC,
         moduleName = 'Contacts';
 
-    var createMockView = function(name) {
-        return {
-            name: name,
-            initialize: sinon.stub(),
-            render: sinon.stub(),
-            el: '<div data-name="' + name + '"></div>',
-            dispose: sinon.stub()
-        };
-    };
-
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        viewA = createMockView('view-a');
-        viewB = createMockView('view-b');
-        viewC = createMockView('view-c');
+        viewA = app.view.createView({name: 'view-a', el: '<div data-name="view-a"></div>'});
+        viewB = app.view.createView({name: 'view-b', el: '<div data-name="view-b"></div>'});
+        viewC = app.view.createView({name: 'view-c', el: '<div data-name="view-c"></div>'});
+        sinon.collection.stub(viewA, 'render');
+        sinon.collection.stub(viewB, 'render');
+        sinon.collection.stub(viewC, 'render');
+        sinon.collection.spy(viewA, 'dispose');
+        sinon.collection.spy(viewB, 'dispose');
+        sinon.collection.spy(viewC, 'dispose');
         SugarTest.addComponent('base', 'view', 'view-a', viewA);
         SugarTest.addComponent('base', 'view', 'view-b', viewB);
         SugarTest.addComponent('base', 'view', 'view-c', viewC);
@@ -39,6 +35,10 @@ describe("Base.Layout.Toggle", function() {
 
     afterEach(function() {
         app.cache.cutAll();
+        viewA.dispose();
+        viewB.dispose();
+        viewC.dispose();
+        layout.dispose();
         app.view.reset();
         Handlebars.templates = {};
         SugarTest.testMetadata.dispose();

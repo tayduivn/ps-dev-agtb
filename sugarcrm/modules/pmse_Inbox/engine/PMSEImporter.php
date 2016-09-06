@@ -64,6 +64,12 @@ class PMSEImporter
     protected $module;
 
     /**
+     * @var $metadata
+     * @access protected
+     */
+    protected $metadata = null;
+
+    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
@@ -146,6 +152,11 @@ class PMSEImporter
             throw $sugarApiExceptionRequestMethodFailure;
         }
         $project = json_decode($_data, true);
+
+        if (!empty($project) && !empty($project['metadata'])) {
+            $this->metadata = $project['metadata'];
+        }
+
         if (!empty($project) && isset($project['project'])) {
             if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
                 $result = $this->saveProjectData($project['project']);

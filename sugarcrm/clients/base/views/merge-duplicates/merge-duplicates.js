@@ -385,10 +385,13 @@
      * @private
      */
     _savePrimary: function() {
-        var self = this,
-            fields = this.getFieldNames().filter(function(field) {
+        var self = this;
+        var fields = this.getFieldNames().filter(function(field) {
             return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
         }, this);
+        var headerpaneView = this.layout.getComponent('merge-duplicates-headerpane');
+
+        headerpaneView.getField('cancel_button').setDisabled(true);
 
         this.primaryRecord.trigger('duplicate:unformat:field');
 
@@ -1432,6 +1435,11 @@
                 self.mergeProgressModel.trigger('massupdate:end');
                 if (!self.mergeProgressModel.get('isStopped')) {
                     self.primaryRecord.trigger('mergeduplicates:related:merged');
+                }
+
+                if (self.mergeStat.total_fetch_errors > 0 || self.mergeStat.total_errors > 0) {
+                    var headerpaneView = self.layout.getComponent('merge-duplicates-headerpane');
+                    headerpaneView.getField('cancel_button').setDisabled(false);
                 }
             };
             // Wait until all related records be merged or finish merge.
