@@ -300,6 +300,10 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         //sometimes individual tests change the max time execution limit, reset back to original
         set_time_limit($originalMaxTime);
 
+        // clean up prepared statements
+        $connection = DBManagerFactory::getConnection()->getWrappedConnection();
+        SugarTestReflection::setProtectedValue($connection, 'statements', array());
+
         if (SHADOW_CHECK) {
             $oldfiles = $this->file_map;
             $this->file_map = static::getFiles();
@@ -566,6 +570,7 @@ class SugarTestHelper
 
         SugarConfig::getInstance()->clearCache();
         \TimeDate::getInstance()->allow_cache = true;
+
         return true;
     }
 
