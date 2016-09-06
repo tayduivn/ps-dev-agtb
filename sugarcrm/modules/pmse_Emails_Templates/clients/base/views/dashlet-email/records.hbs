@@ -33,7 +33,7 @@
                         {{/with}}
                     {{/if}}
                     <div class="details"  style="padding-left: 0px;">
-                        {{getFieldValue this "base_module_name"}}&#44;&nbsp;
+                        {{fieldValue this "base_module_name"}}&#44;&nbsp;
                         {{#if attributes.assigned_user_id}}
                             <a href="#{{buildRoute module="Employees" id=attributes.assigned_user_id action="detail"}}">
                                 {{fieldValue this "assigned_user_name"}}
