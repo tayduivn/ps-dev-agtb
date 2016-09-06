@@ -41,6 +41,21 @@
     collection: null,
 
     /**
+     * Collections for additional modules.
+     */
+    _alertsCollections: {},
+
+    /**
+     * @property {number} Interval ID for checking reminders.
+     */
+    _remindersIntervalId: null,
+
+    /**
+     * @property {number} Timestamp of last time when we checked reminders.
+     */
+    _remindersIntervalStamp: 0,
+
+    /**
      * Interval ID defined when the pulling mechanism is running.
      *
      * @property {Number}
@@ -70,23 +85,6 @@
     },
 
     /**
-     * List of array notifications pending transfer to collection.
-     * @property {Array}
-     * @protected
-     */
-    _buffer: [],
-
-    /**
-     * @property {boolean} is connected to socket server.
-     */
-    isSocketConnected: false,
-
-    /**
-     * On-SugarCRM alert id start mark.
-     */
-    alertIdStart: 'notification_on_sugarcrm_alert_',
-
-    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -94,11 +92,6 @@
 
         this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
-        app.events.on('app:socket:connect', this.socketOn, this);
-        app.events.on('app:socket:disconnect', this.socketOff, this);
-
-        app.events.on('app:notifications:markAs', this.notificationMarkHandler, this);
-
         app.events.on('app:logout', this.stopPulling, this);
     },
 
@@ -109,10 +102,9 @@
      * @protected
      */
     _bootstrap: function() {
-        this.stopPulling();
-
         this._initOptions();
         this._initCollection();
+        this._initReminders();
         this._initFavicon();
 
         //Start pulling data after 1 second so that other more important calls to
@@ -159,8 +151,7 @@
                 'id',
                 'is_read',
                 'name',
-                'severity',
-                'type'
+                'severity'
             ],
             apiOptions: {
                 skipMetadataHash: true
@@ -170,6 +161,43 @@
         this.collection.filterDef = [{
             is_read: {$equals: false}
         }];
+
+        return this;
+    },
+
+    /**
+     * Initialize reminders for Calls and Meetings.
+     *
+     * Setup the reminderMaxTime that is based on maximum reminder time option
+     * added to the pulls delay to get a big interval to grab for possible
+     * reminders.
+     * Setup collections for each module that we support with reminders.
+     *
+     * FIXME this will be removed when we integrate reminders with
+     * Notifications on server side. This is why we have modules hardcoded.
+     * We also don't check for meta as optional because it is required.
+     * We will keep all this code private because we don't want to support it
+     *
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
+     * @private
+     */
+    _initReminders: function() {
+
+        var timeOptions = _.keys(app.lang.getAppListStrings('reminder_time_options'));
+        var max = _.max(timeOptions, function(key) {
+            return parseInt(key, 10);
+        });
+
+        this.reminderMaxTime = parseInt(max, 10) + this.delay / 1000;
+        this.reminderDelay = 30 * 1000;
+
+        _.each(['Calls', 'Meetings'], function(module) {
+            this._alertsCollections[module] = app.data.createBeanCollection(module);
+            this._alertsCollections[module].options = {
+                limit: this.meta && parseInt(this.meta.remindersLimit, 10) || 100,
+                fields: ['date_start', 'id', 'name', 'reminder_time', 'location', 'parent_name']
+            };
+        }, this);
 
         return this;
     },
@@ -189,29 +217,19 @@
         }
 
         this.favicon = new Favico({animation: 'none'});
-        this.collection.on('add', this._updateFaviconBadge, this);
-        this.collection.on('change', this._updateFaviconBadge, this);
-        this.collection.on('remove', this._updateFaviconBadge, this);
-        this.collection.on('reset', this._updateFaviconBadge, this);
+        this.collection.on('reset', function() {
+            var badge = this.collection.length;
+            if (this.collection.next_offset > 0) {
+                badge = badge + '+';
+            }
+            this.favicon.badge(badge);
+        }, this);
 
         this.on('render', function(){
             if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
                 this.favicon.reset();
             }
         });
-    },
-
-    /**
-     * Updates Favicon badge after adding, removing or resetting the collection.
-     *
-     * @private
-     */
-    _updateFaviconBadge: function() {
-        var badge = this.collection.length;
-        if (this.collection.next_offset > 0) {
-            badge = badge + '+';
-        }
-        this.favicon.badge(badge);
     },
 
     /**
@@ -225,8 +243,11 @@
         if (!_.isNull(this._intervalId)) {
             return this;
         }
+        this._remindersIntervalStamp = new Date().getTime();
+
         this.pull();
         this._intervalId = window.setTimeout(_.bind(this._pullAction, this), this.delay);
+        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), this.reminderDelay);
         return this;
     },
 
@@ -236,7 +257,7 @@
      * @protected
      */
     _pullAction: function() {
-        if (!app.api.isAuthenticated() || this.isSocketConnected) {
+        if (!app.api.isAuthenticated()) {
             this.stopPulling();
             return;
         }
@@ -256,11 +277,15 @@
             window.clearTimeout(this._intervalId);
             this._intervalId = null;
         }
+        if (!_.isNull(this._remindersIntervalId)) {
+            window.clearTimeout(this._remindersIntervalId);
+            this._remindersIntervalId = null;
+        }
         return this;
     },
 
     /**
-     * Pull notifications via bulk API. Render notifications
+     * Pull notifications and reminders via bulk API. Render notifications
      * if view isn't disposed or dropdown isn't open.
      *
      * @return {View.Views.BaseNotificationsView} Instance of this view.
@@ -270,18 +295,123 @@
             return this;
         }
 
+        var self = this;
         var bulkApiId = _.uniqueId();
 
         this.collection.fetch({
-            success: _.bind(this.reRender, this),
+            success: function() {
+                if (self.disposed || self.isOpen()) {
+                    return this;
+                }
+
+                self.render();
+            },
             apiOptions: {
                 bulk: bulkApiId
             }
         });
 
+        this._pullReminders(bulkApiId);
+
         app.api.triggerBulkCall(bulkApiId);
 
         return this;
+    },
+
+    /**
+     * Pull next reminders from now to the next remindersMaxTime.
+     *
+     * This will give us all the reminders that should be triggered during the
+     * next maximum reminders time (with pull delay).
+     *
+     * @param {string} bulkApiId Bulk ID that the reminders should be a part of
+     */
+    _pullReminders: function(bulkApiId) {
+
+        if (this.disposed || !_.isFinite(this.reminderMaxTime)) {
+            return this;
+        }
+
+        var date = new Date();
+        var startDate = date.toISOString();
+        var endDate;
+
+        date.setTime(date.getTime() + this.reminderMaxTime * 1000);
+        endDate = date.toISOString();
+
+        _.each(['Calls', 'Meetings'], function(module) {
+
+            this._alertsCollections[module].filterDef = _.extend({},
+                this.meta.remindersFilterDef || {},
+                {
+                    'date_start': {'$dateBetween': [startDate, endDate]},
+                    'users.id': {'$equals': app.user.get('id')}
+                }
+            );
+            this._alertsCollections[module].fetch({
+                silent: true,
+                merge: true,
+                //Notifications should never trigger a metadata refresh
+                apiOptions: {
+                    skipMetadataHash: true,
+                    bulk: bulkApiId
+                }
+            });
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * Check if there is a reminder we should show in the near future.
+     *
+     * If the reminder exists we immediately show it.
+     *
+     * @return {View.Views.BaseNotificationsView} Instance of this view.
+     */
+    checkReminders: function() {
+        if (!app.api.isAuthenticated()) {
+            this.stopPulling();
+            return this;
+        }
+        var date = (new Date()).getTime();
+        var diff = this.reminderDelay - (date - this._remindersIntervalStamp) % this.reminderDelay;
+        this._remindersIntervalId = window.setTimeout(_.bind(this.checkReminders, this), diff);
+        _.each(this._alertsCollections, function(collection) {
+            _.chain(collection.models)
+                .filter(function(model) {
+                    var needDate = (new Date(model.get('date_start'))).getTime() -
+                        parseInt(model.get('reminder_time'), 10) * 1000;
+                    return needDate > this._remindersIntervalStamp && needDate - this._remindersIntervalStamp <= diff;
+                }, this)
+                .each(this._showReminderAlert, this);
+        }, this);
+        this._remindersIntervalStamp = date + diff;
+        return this;
+    },
+
+    /**
+     * Show reminder alert based on given model.
+     *
+     * @param {Backbone.Model} model Model that is triggering a reminder.
+     *
+     * @private
+     */
+    _showReminderAlert: function(model) {
+        var url = app.router.buildRoute(model.module, model.id);
+        var startTime = app.date(model.get('date_start')).format(app.date.getUserTimeFormat());
+        var data = {
+            moduleName: app.lang.getModuleName(model.module),
+            startTime: startTime
+        };
+        var title = app.lang.get('TPL_NOTIFICATION_TITLE', model.module, data);
+
+        app.browserNotification.show(title, {
+            body: new Handlebars.SafeString(model.get('name')),
+            onclick: function() {
+                app.router.navigate(url, {trigger: true});
+            }
+        });
     },
 
     /**
@@ -317,26 +447,12 @@
     },
 
     /**
-     * Handler listens to global app event for notification record markAs read/unread action
-     * and re-renders notifications counter accordingly.
-     *
-     * @param {Object} model Notification model object
-     * @param {boolean} read is notification read?
-     */
-    notificationMarkHandler: function (model, read) {
-        if (read) {
-            this.collection.remove(model);
-        } else {
-            this.collection.add(model);
-        }
-        this.reRender();
-    },
-
-    /**
      * @inheritdoc
      */
     _renderHtml: function() {
-        if (this.noDisplay()) {
+        if (!app.api.isAuthenticated() ||
+            app.config.appStatus === 'offline' ||
+            !app.acl.hasAccess('view', this.module)) {
             return;
         }
 
@@ -346,133 +462,12 @@
     /**
      * @inheritdoc
      *
-     * Stops pulling for new notifications and disposes the rest.
+     * Stops pulling for new notifications and disposes all reminders.
      */
     _dispose: function() {
         this.stopPulling();
-        app.socket.off('notification', this.catchNotification, this);
-        app.events.off('app:socket:connect', this.socketOn, this);
-        app.events.off('app:socket:disconnect', this.socketOff, this);
-        app.events.off('app:notifications:markAs', this.notificationMarkHandler, this);
+        this._alertsCollections = {};
 
         this._super('_dispose');
-    },
-
-    /**
-     * Flush socket buffer to collection
-     */
-    transferToCollection: function () {
-        if (this.collection) {
-            while (this._buffer.length) {
-                var arr = this._buffer.shift();
-                if (arr.is_read) {
-                    var model = this.collection.get(arr.id);
-                    if (model) {
-                        this.collection.remove(model);
-                    }
-                } else {
-                    this.collection.add(app.data.createBean(arr._module, arr));
-                }
-            }
-            this.reRender();
-        }
-    },
-
-    /**
-     * Catch notification from socket server and show it.
-     *
-     * @param data notification from socket server.
-     */
-    catchNotification: function (data) {
-        this._buffer.push(data);
-        this.transferToCollection();
-    },
-
-    /**
-     * On socket and Off pulling
-     */
-    socketOn: function () {
-        this.isSocketConnected = true;
-        app.socket.on('notification', this.catchNotification, this);
-        this.stopPulling();
-    },
-
-    /**
-     * Off socket and on pulling
-     */
-    socketOff: function () {
-        this.isSocketConnected = false;
-        app.socket.off('notification', this.catchNotification, this);
-        this.startPulling();
-    },
-
-    /**
-     * Detect whether notifications can be displayed or not.
-     * @return {boolean} true if not allowed to display.
-     */
-    noDisplay: function() {
-        return !app.api.isAuthenticated() ||
-            app.config.appStatus === 'offline' ||
-            !app.acl.hasAccess('view', this.module);
-    },
-
-    /**
-     * Render On-SugarCRM alerts and Notifications View.
-     * @returns {SUGAR.App.view.views.NotificationsView} Instance of this view.
-     */
-    reRender: function() {
-        this.reRenderView();
-        this.hideAlerts();
-        this.showAlerts();
-        return this;
-    },
-
-    /**
-     * Render component if it not opened and not disposed.
-     */
-    reRenderView: function() {
-        if (this.disposed || this.isOpen()) {
-            return;
-        }
-        this.render();
-    },
-
-    /**
-     * Show On-SugarCRM alerts for each unread Notification Bean.
-     */
-    showAlerts: function() {
-        if (this.noDisplay()) {
-            return;
-        }
-
-        _.each(this.collection.models, function(model) {
-            if (!model.get('is_read') && model.get('type') === 'alert') {
-                var modelURL = app.router.buildRoute(model.module, model.get('id'));
-                app.alert.show(this.alertIdStart + model.get('id'), {
-                    level: 'info',
-                    title: model.get('name'),
-                    model: model, // pass Notification model to alert view.
-                    messages: [app.lang.get('LBL_ON_SUGARCRM_ALERT_SHOW_MORE', this.module, {url: modelURL})],
-                    onClose: function() {
-                        this.model.save({is_read: true}, {
-                            success: _.bind(function() {
-                                app.events.trigger('app:notifications:markAs', this.model, true);
-                            }, this)
-                        });
-                    }
-                });
-            }
-        }, this);
-    },
-
-    /**
-     * Remove all displayed On-SugarCRM alerts.
-     */
-    hideAlerts: function() {
-        _.each(app.alert.getAll(), function(alert, key) {
-            if (key.indexOf(this.alertIdStart) === 0) {
-                app.alert.dismiss(key);
-            }
-        }, this);
     }
 })

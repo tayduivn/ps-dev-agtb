@@ -43,21 +43,9 @@ class Meeting extends SugarBean {
 	var $user_id;
 	var $meeting_id;
 	var $reminder_time;
-    /**
-     * @deprecated Since 7.8 the decision to remind about a Call is set up in Notification Center.
-     */
 	var $reminder_checked;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_time;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_checked;
-    /**
-     * @deprecated Since 7.8 no separate configuration for email-reminders.
-     */
 	var $email_reminder_sent;
 	var $required;
 	var $accept_status;
@@ -78,7 +66,6 @@ class Meeting extends SugarBean {
 	var $contacts_arr = array();
 	var $users_arr = array();
 	var $leads_arr = array();
-    public $addressees_arr = array();
 	var $meetings_arr;
 	// when assoc w/ a user/contact:
 	var $minutes_value_default = 15;
@@ -87,7 +74,6 @@ class Meeting extends SugarBean {
 	var $rel_users_table = "meetings_users";
 	var $rel_contacts_table = "meetings_contacts";
 	var $rel_leads_table = "meetings_leads";
-	public $rel_addressees_table = "meetings_addressees";
 	var $module_dir = "Meetings";
 	var $object_name = "Meeting";
 
@@ -103,7 +89,6 @@ class Meeting extends SugarBean {
         'contact_id' => 'contacts',
         'user_id' => 'users',
         'meeting_id' => 'meetings',
-        'addressee_id' => 'addressees',
     );
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;
@@ -111,26 +96,6 @@ class Meeting extends SugarBean {
     var $date_changed = false;
 
 	public $send_invites = false;
-
-    /**
-     * UID for invitation to specify the same event.
-     * @var string
-     */
-    public $send_invites_uid = '';
-
-    /**
-     * Helper-field to store invites for notification.
-     * Is not a sugar-field, is not persisted anywhere.
-     * @var null|array
-     */
-    public $inviteesNotification = null;
-
-    /**
-     * Helper-field to store information to change all recurrence or only participants or only parent.
-     * Is not a sugar-field, is not persisted anywhere.
-     * @var int
-     */
-    public $updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
 
     /**
      * Parent id of recurring.
@@ -149,12 +114,6 @@ class Meeting extends SugarBean {
      * @var string
      */
     public $recurrence_id = null;
-
-    /**
-     * Flag whether or not to ignore sending notification organizer.
-     * @var boolean
-     */
-    public $ignoreOrganizerNotification = false;
 
 	/**
 	 * sole constructor
@@ -183,15 +142,11 @@ class Meeting extends SugarBean {
 	}
 
     // save date_end by calculating user input
-    public function save($check_notify = false, $options = array())
+    public function save($check_notify = false)
     {
         global $timedate, $current_user;
 
         $isUpdate = $this->isUpdate();
-
-        if ($isUpdate && is_null($this->inviteesNotification)) {
-            $this->inviteesNotification = CalendarUtils::getInvitees($this);
-        }
 
         if (isset($this->date_start)) {
             $td = $timedate->fromDb($this->date_start);
@@ -307,40 +262,8 @@ class Meeting extends SugarBean {
             $this->set_accept_status($organizer, 'accept');
         }
 
-        if (empty($options['disableCalDavHook'])) {
-            if ($isUpdate) {
-                $GLOBALS['log']->debug(
-                    "CalDav: $this->object_name update: sending $this->object_name($this->id) to export"
-                );
-                $this->getCalDavHook()->export($this, array('update', $this->dataChanges, array()));
-            } else {
-                $GLOBALS['log']->debug(
-                    "CalDav: $this->object_name create: sending $this->object_name($this->id) to export"
-                );
-                $this->getCalDavHook()->export($this);
-            }
-        }
-
-        $this->inviteesNotification = null;
-
 		return $return_id;
 	}
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler
-     */
-    public function getCalDavHook()
-    {
-        return new \Sugarcrm\Sugarcrm\Dav\Cal\Hook\Handler();
-    }
-
-    /**
-     * @return \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper
-     */
-    public function getParticipantsHelper()
-    {
-        return new \Sugarcrm\Sugarcrm\Dav\Base\Helper\ParticipantsHelper();
-    }
 
     /**
      * @inheritdoc
@@ -355,14 +278,7 @@ class Meeting extends SugarBean {
             return null;
         }
         CalendarUtils::correctRecurrences($this, $id);
-        $deletedStatus = $this->deleted;
         parent::mark_deleted($id);
-        if ($this->send_invites) {
-            $this->_sendNotifications(true);
-        }
-        if (!$deletedStatus && $this->deleted) {
-            $this->getCalDavHook()->export($this, array('delete'));
-        }
         if ($this->update_vcal) {
             global $current_user;
             vCal::cache_sugar_vcal($current_user);
@@ -382,11 +298,7 @@ class Meeting extends SugarBean {
             return null;
         }
         CalendarUtils::correctDeletedRecurrence($this);
-        $deletedStatus = $this->deleted;
         parent::mark_undeleted($id);
-        if ($deletedStatus && !$this->deleted) {
-            $this->getCalDavHook()->export($this);
-        }
     }
 
 	function get_summary_text() {
@@ -619,21 +531,6 @@ class Meeting extends SugarBean {
 		return $meeting_fields;
 	}
 
-    /**
-     * @inheritdoc
-     */
-    protected function getTemplateNameForNotificationEmail()
-    {
-        if ($this->current_notify_user) {
-            $emailInvitee = $this->current_notify_user->emailAddress->getPrimaryAddress($this->current_notify_user);
-            if (CalDavEventCollection::isInviteCanceled($this, $emailInvitee)) {
-                return 'MeetingCanceled';
-            }
-        }
-
-        return parent::getTemplateNameForNotificationEmail();
-    }
-
 	function set_notification_body($xtpl, &$meeting) {
 		global $sugar_config;
 		global $app_list_strings;
@@ -646,7 +543,6 @@ class Meeting extends SugarBean {
         $propertyUrlUserId = array_search(strtolower(get_class($meeting->current_notify_user)), array(
             'contact_id' => 'contact',
             'lead_id' => 'lead',
-            'addressee_id' => 'addressee',
         ));
 
         if ($propertyUrlUserId === false) {
@@ -674,17 +570,20 @@ class Meeting extends SugarBean {
                 $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
             }
         }
-
-        $dateTimeHelper = new \Sugarcrm\Sugarcrm\Dav\Base\Helper\DateTimeHelper();
-        $dateStart = $dateTimeHelper->sugarDateToUTC($meeting->date_start);
-        $dateEnd = $dateTimeHelper->sugarDateToUTC($meeting->date_end);
-
         $xtpl->assign("MEETING_TYPE", isset($meeting->type) ? $typestring : "");
-		$xtpl->assign("MEETING_STARTDATE", $timedate->asUser($dateStart, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateStart, $notifyUser));
-		$xtpl->assign("MEETING_ENDDATE", $timedate->asUser($dateEnd, $notifyUser)." ".TimeDate::userTimezoneSuffix($dateEnd, $notifyUser));
-		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
-		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
-		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
+        $startdate = $timedate->fromDb($meeting->date_start);
+        $xtpl->assign(
+            "MEETING_STARTDATE",
+            $timedate->asUser($startdate, $notifyUser) . " " . TimeDate::userTimezoneSuffix($startdate, $notifyUser)
+        );
+        $enddate = $timedate->fromDb($meeting->date_end);
+        $xtpl->assign(
+            "MEETING_ENDDATE",
+            $timedate->asUser($enddate, $notifyUser) . " " . TimeDate::userTimezoneSuffix($enddate, $notifyUser)
+        );
+        $xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
+        $xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
+        $xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
         if ( !empty($meeting->join_url) ) {
             $xtpl->assign('MEETING_URL', $meeting->join_url);
             $xtpl->parse('Meeting.Meeting_External_API');
@@ -706,25 +605,13 @@ class Meeting extends SugarBean {
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
-        $emailInvitee = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-        $organizerEmail = BeanFactory::getBean('InboundEmail')->getCalDavHandlerEmail();
+        require_once 'modules/vCals/vCal.php';
+        $content = vCal::get_ical_event($this, $GLOBALS['current_user']);
 
-        // Trying to get real UID of event. It will be set later in prepareForInvite.
-        // We need to fetch it and change only for events, that came from calendar app.
-        if (empty($this->send_invites_uid)) {
-            $eventBean = BeanFactory::newBean('CalDavEvents')->findByParentModuleAndId('Meetings', $this->id);
-            if ($eventBean && !empty($eventBean->event_uid)) {
-                $this->send_invites_uid = $eventBean->event_uid;
-            } else {
-                $this->send_invites_uid = $this->id;
-            }
-        }
-        $content = CalDavEventCollection::prepareForInvite($this, $emailInvitee, $organizerEmail);
-
-		if ($content && file_put_contents($path, $content)) {
-            $attachment = new Attachment($path, "invite.ics", Encoding::Base64, "text/calendar");
+        if (file_put_contents($path, $content)) {
+            $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
             $mailer->addAttachment($attachment);
-		}
+        }
 
 		return $mailer;
 	}
@@ -802,10 +689,6 @@ class Meeting extends SugarBean {
 			$relate_values = array('lead_id'=>$user->id,'meeting_id'=>$this->id);
 			$data_values = array('accept_status'=>$status);
 			$this->set_relationship($this->rel_leads_table, $relate_values, true, true,$data_values);
-        } elseif ($user->object_name == 'Addressee') {
-            $relate_values = array('addressee_id' => $user->id, 'meeting_id' => $this->id);
-            $data_values = array('accept_status' => $status);
-            $this->set_relationship($this->rel_addressees_table, $relate_values, true, true, $data_values);
         }
 	}
 
@@ -976,18 +859,6 @@ class Meeting extends SugarBean {
     {
         $this->leads_arr = $leadInvitees;
         $this->upgradeAttachInvitees('leads', $leadInvitees, $existingLeads);
-    }
-
-    /**
-     * Stores addressee invitees.
-     *
-     * @param array $addresseeInvitees Array of addressee invitees ids
-     * @param array $existingAddressees
-     */
-    public function setAddresseeInvitees($addresseeInvitees, $existingAddressees = array())
-    {
-        $this->addressees_arr = $addresseeInvitees;
-        $this->upgradeAttachInvitees('addressees', $addresseeInvitees, $existingAddressees);
     }
 
     /**

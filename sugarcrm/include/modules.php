@@ -710,29 +710,6 @@ $beanList['EmbeddedFiles'] = 'EmbeddedFile';
 $beanFiles['EmbeddedFile'] = 'modules/EmbeddedFiles/EmbeddedFile.php';
 $modInvisList[] = 'EmbeddedFiles';
 
-$modInvisList[] = 'CarrierSugar';
-$modInvisList[] = 'CarrierEmail';
-$modInvisList[] = 'NotificationCenterSubscriptions';
-
-$beanList['NotificationCenterSubscriptions'] = 'NotificationCenterSubscription';
-$beanFiles['NotificationCenterSubscription'] = 'modules/NotificationCenter/NotificationCenterSubscription.php';
-
-$modInvisList[] = 'CalDav';
-$modInvisList[] = 'Addressees';
-$beanList['CalDavEvents'] = 'CalDavEventCollection';
-$beanFiles['CalDavEventCollection'] = 'modules/CalDav/EventCollection.php';
-$beanList['CalDavCalendars'] = 'CalDavCalendar';
-$beanFiles['CalDavCalendar'] = 'modules/CalDav/Calendar.php';
-$beanList['CalDavChanges'] = 'CalDavChange';
-$beanFiles['CalDavChange'] = 'modules/CalDav/Change.php';
-$beanList['CalDavSchedulings'] = 'CalDavScheduling';
-$beanFiles['CalDavScheduling'] = 'modules/CalDav/Scheduling.php';
-$beanList['CalDavSynchronizations'] = 'CalDavSynchronization';
-$beanFiles['CalDavSynchronization'] = 'modules/CalDav/Synchronization.php';
-$beanList['CalDavQueues'] = 'CalDavQueue';
-$beanFiles['CalDavQueue'] = 'modules/CalDav/Queue.php';
-$beanList['Addressees'] = 'Addressee';
-$beanFiles['Addressee'] = 'modules/Addressees/Addressee.php';
 
 // this module doesn't need a Bean
 $modInvisList[] = 'Feedbacks';

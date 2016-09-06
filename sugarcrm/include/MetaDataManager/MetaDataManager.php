@@ -294,12 +294,6 @@ class MetaDataManager
         'calendar' => array(
             'max_repeat_count' => true,
         ),
-        'websockets' => array(
-            'client' => array(
-                'url' => true,
-                'balancer' => true,
-            ),
-        ),
         'lead_conv_activity_opt' => true,
         'team_based_acl' => array(
             'enabled' => true,

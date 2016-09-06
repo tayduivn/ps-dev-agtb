@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 require_once 'modules/Calls/Call.php';
-require_once 'tests/SugarTestAddresseeUtilities.php';
 
 class CallTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -37,7 +36,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCallUtilities::removeCallContacts();
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestAddresseeUtilities::removeAllCreatedAddressees();
 
         if(!empty($this->callid)) {
             $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->callid}'");
@@ -61,7 +59,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->status = 'Test';
-        $call->assigned_user_id = $current_user->id;
+         $call->assigned_user_id = $current_user->id;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
          $call->save();
          // then retrieve
@@ -80,7 +78,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
-        $call->assigned_user_id = $current_user->id;
+         $call->assigned_user_id = $current_user->id;
          $call->save();
          // then retrieve
          $call = new Call();
@@ -104,7 +102,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->date_start = TimeDate::getInstance()->getNow()->asDb();
-        $call->assigned_user_id = $current_user->id;
+         $call->assigned_user_id = $current_user->id;
          $call->save();
          // then retrieve
          $call = new Call();
@@ -171,27 +169,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actual = $call->get_notification_recipients();
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
-        $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
-        $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
-    }
-
-    public function testIgnoreOrganizerNotification()
-    {
-        $contacts = array(
-            SugarTestContactUtilities::createContact(),
-            SugarTestContactUtilities::createContact(),
-        );
-
-        $currentUser = $GLOBALS['current_user']->id;
-        $call = SugarTestCallUtilities::createCall();
-        SugarTestCallUtilities::addCallUserRelation($call->id, $currentUser);
-        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[0]->id);
-        SugarTestCallUtilities::addCallContactRelation($call->id, $contacts[1]->id);
-
-        $call->ignoreOrganizerNotification = true;
-
-        $actual = $call->get_notification_recipients();
-        $this->assertArrayNotHasKey($currentUser, $actual, 'The current user should not be in the list.');
         $this->assertArrayHasKey($contacts[0]->id, $actual, 'The first contact should be in the list.');
         $this->assertArrayHasKey($contacts[1]->id, $actual, 'The second contact should be in the list.');
     }

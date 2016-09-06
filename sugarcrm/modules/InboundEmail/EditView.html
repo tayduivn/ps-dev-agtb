@@ -177,10 +177,10 @@
 				<slot style="{MAILBOX_TYPE_STYLE}">{MOD.LBL_CREATE_CASE}:&nbsp;{TIPS.LBL_CREATE_CASE_HELP}</slot></td>
 			<td valign="top"  width="35%"><slot style="{MAILBOX_TYPE_STYLE}">
 			     <input name='is_create_case' id='is_create_case' onclick="showCreateCaseRow();"tabindex='45' type='checkbox' {IS_CREATE_CASE} {IE_DISABLED}></slot></td>
-			<td valign="top" scope="row" width="15%" NOWRAP style="{REPLY_TO_STYLE}">
+			<td valign="top" scope="row" width="15%" NOWRAP>
 				{MOD.LBL_REPLY_TO_NAME}:&nbsp;
 			</td>
-			<td valign="top"  width="35%" style="{REPLY_TO_STYLE}">
+			<td valign="top"  width="35%">
 				<input tabindex="320" name="reply_to_name" value="{REPLY_TO_NAME}" {IE_DISABLED}>
 			</td>
 		</tr>
@@ -210,10 +210,10 @@
 				<slot>&nbsp;</slot></td>
 			<td valign="top"  width="35%"><slot>
 				&nbsp;</slot></td>
-			<td valign="top" scope="row" width="15%" NOWRAP style="{REPLY_TO_STYLE}">
+			<td valign="top" scope="row" width="15%" NOWRAP>
 				{MOD.LBL_REPLY_TO_ADDR}:&nbsp;
 			</td>
-			<td valign="top"  width="35%" style="{REPLY_TO_STYLE}">
+			<td valign="top"  width="35%">
 				<input tabindex="340" name="reply_to_addr" value="{REPLY_TO_ADDR}" {IE_DISABLED}>&nbsp;
 			</td>
 		</tr>

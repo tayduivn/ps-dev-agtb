@@ -938,15 +938,6 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_FORECASTS',
         ),
-        'caldav_calendars' =>
-            array (
-                'name' => 'caldav_calendars',
-                'type' => 'link',
-                'relationship' => 'users_caldav_calendars',
-                'source'=>'non-db',
-                'link_type'=>'one',
-                'vname'=>'LBL_CALENDARS',
-            ),
 
     'preferred_language' =>
       array(
@@ -1124,16 +1115,6 @@ $dictionary['User'] = array(
             'relationship_type'	=> 'one-to-many',
             'relationship_role_column'=>'quota_type',
             'relationship_role_column_value'=>'Direct'
-        ),
-
-        'users_caldav_calendars' => array(
-            'rhs_module'		=> 'CalDavCalendars',
-            'rhs_table'			=> 'caldav_calendars',
-            'rhs_key'			=> 'assigned_user_id',
-            'lhs_module'		=> 'Users',
-            'lhs_table'			=> 'users',
-            'lhs_key'			=> 'id',
-            'relationship_type'	=> 'one-to-many',
         ),
 
         'users_team_sets' => array (

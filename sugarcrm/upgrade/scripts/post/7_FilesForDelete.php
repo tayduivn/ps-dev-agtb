@@ -382,6 +382,60 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
             $files[] = 'modules/pmse_Project/pmse_BpmAccessManagement';
         }
+
+        //Remove NotificationCenter, iCal and JobQ.
+        if (version_compare($this->from_version, '7.8.0.0RC3', '>=') &&
+            version_compare($this->from_version, '7.8.0.0', '<')
+        ) {
+            $files[] = 'Ext/LogicHooks/Notifications.php';
+            $files[] = 'caldav.php';
+            $files[] = 'clients/base/api/ReminderApi.php';
+            $files[] = 'clients/base/api/TokenVerificationApi.php';
+            $files[] = 'data/acl/SugarACLAddressees.php';
+            $files[] = 'include/api/help/reminder.html';
+            $files[] = 'include/api/help/token_verification_help.html';
+            $files[] = 'include/javascript/sugar7/socket.js';
+            $files[] = 'include/nmb.php';
+            $files[] = 'include/sfr.php';
+            $files[] = 'install/templates/triggerServerConfig.tpl';
+            $files[] = 'install/templates/websocketConfig.tpl';
+            $files[] = 'metadata/calls_addresseesMetaData.php';
+            $files[] = 'metadata/meetings_addresseesMetaData.php';
+            $files[] = 'modules/Addressees';
+            $files[] = 'modules/Administration/ReExportEvents.php';
+            $files[] = 'modules/Administration/RebuildReminders.php';
+            $files[] = 'modules/Administration/templates/ReExportEvents.tpl';
+            $files[] = 'modules/Administration/templates/RebuildReminders.tpl';
+            $files[] = 'modules/Administration/templates/TriggerServer.tpl';
+            $files[] = 'modules/Administration/templates/WebSockets.tpl';
+            $files[] = 'modules/Administration/views/view.triggerserver.php';
+            $files[] = 'modules/Administration/views/view.websockets.php';
+            $files[] = 'modules/CalDav';
+            $files[] = 'modules/Calls/Emitter.php';
+            $files[] = 'modules/Calls/Ext/LogicHooks/logic_hooks.php';
+            $files[] = 'modules/CarrierEmail';
+            $files[] = 'modules/CarrierSugar';
+            $files[] = 'modules/Meetings/Emitter.php';
+            $files[] = 'modules/Meetings/Ext/LogicHooks/logic_hooks.php';
+            $files[] = 'modules/NotificationCenter';
+            $files[] = 'modules/Notifications/Ext/LogicHooks/logic_hooks.php';
+            $files[] = 'modules/TriggerServer';
+            $files[] = 'modules/UserPreferences/Ext/LogicHooks/logic_hooks.php';
+            $files[] = 'modules/WebSockets';
+            $files[] = 'queueManager.php';
+            $files[] = 'src/Dav';
+            $files[] = 'src/JobQueue';
+            $files[] = 'src/Notification';
+            $files[] = 'src/Socket';
+            $files[] = 'src/Trigger';
+            $files[] = 'styleguide/less/sugar-specific/notification-center.less';
+            $files[] = 'upgrade/scripts/post/1_LockJobQueue.php';
+            $files[] = 'upgrade/scripts/post/9_AddMeetingsAndCallsToEvents.php';
+            $files[] = 'upgrade/scripts/post/9_ParticipantsLinksUpdate.php';
+            $files[] = 'upgrade/scripts/post/9_RepairReminders.php';
+            $files[] = 'upgrade/scripts/post/9_UnlockJobQueue.php';
+            $files[] = 'vendor/sabre';
+        }
         $this->fileToDelete($files);
     }
 

@@ -94,26 +94,6 @@
                             </td>
                         </tr>
                     {/if}
-                    {if $smarty.session.websockets_server_url && $smarty.session.websockets_client_url}
-                        <tr><td colspan="3" align="left"></td></tr>
-                        <tr>
-                            <td></td>
-                            <td><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_CLIENT} {$MOD.LBL_WEB_SOCKET_CONFIGURATION_URL}</strong></td>
-                            <td>{$smarty.session.websockets_client_url}</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><strong>{$MOD.LBL_WEB_SOCKET_CONFIGURATION_SERVER} {$MOD.LBL_WEB_SOCKET_CONFIGURATION_URL}</strong></td>
-                            <td>{$smarty.session.websockets_server_url}</td>
-                        </tr>
-                    {/if}
-                    {if $smarty.session.trigger_server_url}
-                        <tr>
-                            <td></td>
-                            <td><strong>{$MOD.LBL_TRIGGER_SERVER_CONFIGURATION_URL}</strong></td>
-                            <td>{$smarty.session.trigger_server_url}</td>
-                        </tr>
-                    {/if}
                     {foreach from=$warningsLocalhost item = warning}
                         <tr>
                             <td></td>

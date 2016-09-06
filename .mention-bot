@@ -220,7 +220,6 @@
             "sugarcrm/modules/CalDav/**",
             "sugarcrm/modules/Carrier*/**",
             "sugarcrm/modules/Addressees/**",
-            "sugarcrm/modules/NotificationCenter/**"
         ]
     },
     {

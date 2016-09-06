@@ -338,17 +338,9 @@ class CalendarUtils
 			$leads_rel_arr[] = $ro['lead_id'];
 		}
 
-        $qu = "SELECT * FROM {$bean->rel_addressees_table} WHERE deleted = 0 AND {$lower_name}_id = " . $db->quoted($id);
-        $re = $db->query($qu);
-        $addressees_rel_arr = array();
-        while ($ro = $db->fetchByAssoc($re)) {
-            $addressees_rel_arr[] = $ro['addressee_id'];
-        }
-
 		$qu_contacts = array();
 		$qu_users = array();
 		$qu_leads = array();
-        $qu_addressees = array();
 		$arr = array();
 		$i = 0;
 
@@ -379,7 +371,6 @@ class CalendarUtils
             $clone->recurrence_id = null;
             $clone->update_vcal = false;
             $clone->send_invites = false;
-            $clone->updateChildrenStrategy = \CalendarEvents::UPDATE_CURRENT;
             
             // make sure any store relationship info is not saved
             $clone->rel_fields_before_value = array();
@@ -430,21 +421,6 @@ class CalendarUtils
                 ));
             }
 
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'addressee_id' => array('name' => 'addressee_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($addressees_rel_arr as $addressee_id) {
-                $db->insertParams($bean->rel_addressees_table, $fields, array(
-                    'id' => create_guid(),
-                    'addressee_id' => $addressee_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
             $clone->save(false);
 
             if($clone->id){
@@ -489,7 +465,6 @@ class CalendarUtils
 			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
 			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_addressees_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = " . $db->quoted($id));
 		}
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 	}
@@ -560,7 +535,7 @@ class CalendarUtils
         if (isset($definitions['invitees']['links'])) {
             $requiredRelations = $definitions['invitees']['links'];
         } else {
-            $requiredRelations = array('contacts', 'leads', 'users', 'addressees');
+            $requiredRelations = array('contacts', 'leads', 'users');
         }
 
         $invitees = array();
@@ -593,53 +568,7 @@ class CalendarUtils
     }
 
     /**
-     * Compares invites before and after bean changing and returns invitees who should be invited.
-     *
-     * @param array $inviteesBefore
-     * @param array $inviteesAfter
-     * @return array
-     */
-    public static function compareBeforeAfterInvites($inviteesBefore, $inviteesAfter)
-    {
-        $mergedInvitees = array();
-        $inviteesBeforeFlipped = array();
-        $inviteesAfterFlipped = array();
-
-        foreach ($inviteesBefore as $before) {
-            $inviteesBeforeFlipped[$before[1]] = $before;
-        }
-
-        foreach ($inviteesAfter as $after) {
-            $inviteesAfterFlipped[$after[1]] = $after;
-        }
-
-        foreach ($inviteesAfterFlipped as $id => $after) {
-            $needInvite = true;
-            if (isset($inviteesBeforeFlipped[$id])
-                &&
-                $inviteesBeforeFlipped[$id][3] != $after[3]
-                &&
-                $after[3] != 'none'
-            ) {
-                $needInvite = false;
-            }
-            if ($needInvite) {
-                $mergedInvitees[$after[1]] = $after[0];
-            }
-        }
-
-        foreach ($inviteesBeforeFlipped as $id => $before) {
-            if (!isset($inviteesAfterFlipped[$id])) {
-                $mergedInvitees[$before[1]] = $before[0];
-            }
-        }
-
-        return $mergedInvitees;
-    }
-
-    /**
-     * Build notification list for Calls and Meetings. If event was saved in sugar - all invites should be in the list.
-     * If event was saved in iCal we should exclude invite if user change only own status.
+     * Build notification list for Calls and Meetings.
      *
      * @param Call|Meeting|SugarBean $event
      * @return string[]
@@ -651,19 +580,12 @@ class CalendarUtils
             throw new Exception('$event should be instance of Call or Meeting. Get:' . get_class($event));
         }
         $inviteesList = array();
-        if (empty($event->send_invites_uid)) {
-            $invitees = static::getInvitees($event);
-            foreach ($invitees as $invite) {
-                $inviteesList[$invite[1]] = $invite[0];
-            }
-        } else {
-            $inviteesBefore = $event->inviteesNotification ? : array();
-            $inviteesAfter = static::getInvitees($event);
-            $inviteesList = static::compareBeforeAfterInvites($inviteesBefore, $inviteesAfter);
+        $invitees = static::getInvitees($event);
+        foreach ($invitees as $invite) {
+            $inviteesList[$invite[1]] = $invite[0];
         }
 
-        if (!$event->ignoreOrganizerNotification &&
-            !empty($event->created_by) &&
+        if (!empty($event->created_by) &&
             !isset($inviteesList[$event->created_by])
         ) {
             $inviteesList[$event->created_by] = 'Users';

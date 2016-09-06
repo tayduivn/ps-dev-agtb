@@ -74,7 +74,6 @@
             success: _.bind(function() {
                 if (!this.disposed) {
                     this.render();
-                    app.events.trigger('app:notifications:markAs', this.model, read);
                 }
             }, this)
         });
