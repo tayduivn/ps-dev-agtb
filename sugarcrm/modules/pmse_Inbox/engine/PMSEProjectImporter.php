@@ -256,6 +256,9 @@ class PMSEProjectImporter extends PMSEImporter
                 $processBean->$key = $value;
             }
         }
+        if ($isCopy && !empty($projectData['assigned_user_id'])) {
+            $processBean->assigned_user_id = $projectData['assigned_user_id'];
+        }
         $keysArray['pro_id'] = $processBean->save();
 
         $processDefinitionBean = BeanFactory::newBean('pmse_BpmProcessDefinition');
@@ -280,8 +283,16 @@ class PMSEProjectImporter extends PMSEImporter
         $processDefinitionBean->id = $keysArray['pro_id'];
         $processDefinitionBean->pro_status = 'INACTIVE';
         $processDefinitionBean->new_with_id = true;
-        // by default an imported project should be disabled
-        $processDefinitionBean->pro_status = 'INACTIVE';
+        if ($isCopy && !empty($projectData['prj_status'])) {
+            // make PD's status consistent with project status
+            $processDefinitionBean->pro_status = $projectData['prj_status'];
+        } else {
+            // by default an imported project should be disabled
+            $processDefinitionBean->pro_status = 'INACTIVE';
+        }
+        if ($isCopy && !empty($projectData['assigned_user_id'])) {
+            $processDefinitionBean->assigned_user_id = $projectData['assigned_user_id'];
+        }
         $processDefinitionBean->save();
 
         // terminate fields
