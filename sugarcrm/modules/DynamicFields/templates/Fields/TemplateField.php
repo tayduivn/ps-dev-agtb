@@ -332,27 +332,31 @@ class TemplateField{
 	 * BEAN FUNCTIONS
 	 *
 	 */
-	function get_field_def(){
-		$array =  array(
-			'required'=>$this->convertBooleanValue($this->required),
-			'source'=>'custom_fields',
-			'name'=>$this->name,
-			'vname'=>$this->vname,
-			'type'=>$this->type,
+    public function get_field_def()
+    {
+        $array = array(
+            'required' => $this->convertBooleanValue($this->required),
+            'source' => 'custom_fields',
+            'name' => $this->name,
+            'vname' => $this->vname,
+            'type' => $this->type,
             // This needs to be a boolean value so clients know how to handle it
-			'massupdate'=>$this->convertBooleanValue($this->massupdate),
-			'default'=>$this->default,
-            'no_default'=> !empty($this->no_default),
-			'comments'=> (isset($this->comments)) ? $this->comments : '',
-		    'help'=> (isset($this->help)) ?  $this->help : '',
-		    'importable'=>$this->importable,
-			'duplicate_merge'=>$this->duplicate_merge,
-			'duplicate_merge_dom_value'=> $this->getDupMergeDomValue(),
-			'audited'=>$this->convertBooleanValue($this->audited),
-			'reportable'=>$this->convertBooleanValue($this->reportable),
-            'unified_search'=>$this->convertBooleanValue($this->unified_search),
-            'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter
-		);
+            'massupdate' => $this->convertBooleanValue($this->massupdate),
+            'no_default' => !empty($this->no_default),
+            'comments' => (isset($this->comments)) ? $this->comments : '',
+            'help' => (isset($this->help)) ? $this->help : '',
+            'importable' => $this->importable,
+            'duplicate_merge' => $this->duplicate_merge,
+            'duplicate_merge_dom_value' => $this->getDupMergeDomValue(),
+            'audited' => $this->convertBooleanValue($this->audited),
+            'reportable' => $this->convertBooleanValue($this->reportable),
+            'unified_search' => $this->convertBooleanValue($this->unified_search),
+            'merge_filter' => empty($this->merge_filter) ? "disabled" : $this->merge_filter,
+        );
+
+        if (isset($this->default)) {
+            $array['default'] = $this->default;
+        }
         if (isset($this->studio)) {
             $array['studio'] = $this->convertBooleanValue($this->studio);
         }
@@ -364,11 +368,11 @@ class TemplateField{
             $array['formula'] = html_entity_decode($this->formula);
             $array['enforced'] = !empty($this->enforced) && $this->enforced == true;
             if ($array['calculated'] && $array['enforced']) {
-                $array['default'] = null;
+                unset($array['default']);
                 $array['massupdate'] = false;
                 // Need to set it on the object as well, since some child classes
                 // use that instead of the return of this method
-                $this->default = null;
+                unset($this->default);
                 $this->massupdate = false;
             }
         } else {
@@ -377,12 +381,12 @@ class TemplateField{
         if (!empty($this->dependency) && is_string($this->dependency)) {
             $array['dependency'] = html_entity_decode($this->dependency);
         }
-		if(!empty($this->len)){
-			$array['len'] = $this->len;
-		}
-		if(!empty($this->size)){
-			$array['size'] = $this->size;
-		}
+        if (!empty($this->len)) {
+            $array['len'] = $this->len;
+        }
+        if (!empty($this->size)) {
+            $array['size'] = $this->size;
+        }
         // Bug 61736 - Address fields in undeployed modules do not have a group property
         if (!empty($this->group)) {
             $array['group'] = $this->group;
@@ -398,8 +402,8 @@ class TemplateField{
 
         $this->get_dup_merge_def($array);
 
-		return $array;
-	}
+        return $array;
+    }
 
 	protected function convertBooleanValue($value)
 	{

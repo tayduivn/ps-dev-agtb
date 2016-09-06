@@ -68,14 +68,17 @@ function get_xtpl_edit(){
 		return $returnXTPL;
 	}
 
-function get_field_def(){
-		$def = parent::get_field_def();
-		if(!empty($def['default'])){
-			$def['display_default'] = $def['default'];
+    public function get_field_def()
+    {
+        $def = parent::get_field_def();
+
+        if (!empty($def['default'])) {
+            $def['display_default'] = $def['default'];
         }
-        $def['default'] = null;
-		return $def;
-	}
+
+        unset($def['default']);
+        return $def;
+    }
 
     public function populateFromPost(Request $request = null)
     {
