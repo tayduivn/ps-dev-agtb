@@ -25,7 +25,8 @@ $viewdefs['KBContents']['base']['view']['panel-top-for-localizations'] = array(
                     'tooltip' => 'LBL_CREATE_BUTTON_LABEL',
                 ),
                 array(
-                    'type' => 'link-action',
+                    // Replace `link-action` to disable click event when the `disabled` class is removed manually.
+                    'type' => 'sticky-rowaction',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'css_class' => 'disabled',
