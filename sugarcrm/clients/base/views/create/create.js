@@ -719,6 +719,8 @@
     /**
      * Add component to layout's component list so it gets cleaned up properly on dispose
      *
+     * FIXME: SC-6041 should handle deprecating this method.
+     *
      * @param component
      */
     addToLayoutComponents: function (component) {
@@ -733,6 +735,16 @@
         if (this.dupecheckList) {
             this.dupecheckList.hide();
         }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        if (this.dupecheckList) {
+            this.dupecheckList.dispose();
+        }
+        this._super('_dispose');
     },
 
     /**
