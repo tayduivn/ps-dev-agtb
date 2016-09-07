@@ -37,6 +37,7 @@ var translate = function (label, module, replace) {
 
 var evvv = $([]);
 function validateForm(formID) {
+    App.logger.warn('validateForm is deprecated and will be removed in a future release');
     var form = $(document.getElementById(formID)),
         valid = true,
         req = [],
