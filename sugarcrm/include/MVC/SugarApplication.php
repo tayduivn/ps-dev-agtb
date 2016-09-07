@@ -168,7 +168,6 @@ class SugarApplication
              // check for authorised users
             $this->checkMobileRedirect();
             $this->loadUser();
-            $this->ACLFilter();
             $this->preProcess();
             $this->controller->preProcess();
             $this->checkHTTPReferer();
@@ -189,6 +188,11 @@ class SugarApplication
         $this->loadGlobals();
         $this->setupResourceManagement($module);
         $this->controller->execute();
+        if (empty($_REQUEST['entryPoint'])
+            || $this->controller->checkEntryPointRequiresAuth($_REQUEST['entryPoint'])
+        ) {
+            $this->ACLFilter();
+        }
         sugar_cleanup();
     }
 
