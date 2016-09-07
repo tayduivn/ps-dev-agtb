@@ -1,4 +1,5 @@
-describe("bug 54496", function () {
+// FIXME: Remove this xdescribe when SC-5905 is completed.
+xdescribe('bug 54496', function() {
     describe("controller", function () {
         it("should not call logout if app status equals offline and not authenticated", function () {
             var app = SugarTest.app;
