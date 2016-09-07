@@ -64,12 +64,6 @@ class PMSEImporter
     protected $module;
 
     /**
-     * @var $metadata
-     * @access protected
-     */
-    protected $metadata = null;
-
-    /**
      * Get class Bean.
      * @codeCoverageIgnore
      * @return object
@@ -152,14 +146,9 @@ class PMSEImporter
             throw $sugarApiExceptionRequestMethodFailure;
         }
         $project = json_decode($_data, true);
-
-        if (!empty($project) && !empty($project['metadata'])) {
-            $this->metadata = $project['metadata'];
-        }
-
         if (!empty($project) && isset($project['project'])) {
             if (in_array($project['project'][$this->module], PMSEEngineUtils::getSupportedModules())) {
-                $result = $this->saveProjectData($project['project']);
+                $result = $this->saveProjectData($this->validateLockedFieldGroups($project['project']));
             } else {
                 $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized('EXCEPTION_NOT_AUTHORIZED');
                 PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
@@ -173,6 +162,59 @@ class PMSEImporter
         return $result;
     }
 
+    /**
+     * Checks whether there is any field group that is only partially locked.
+     * @param array $project The Process Definition to be imported
+     * @return array Validated Process Definition
+     * @throws SugarApiExceptionError
+     */
+    protected function validateLockedFieldGroups($project)
+    {
+        $lockedFields =
+            html_entity_decode($project['definition']['pro_locked_variables'], ENT_QUOTES);
+        $project['definition']['pro_locked_variables'] = $lockedFields;
+
+        $lockedFields = json_decode($lockedFields);
+        if ($lockedFields) {
+            $bean = BeanFactory::getBean($project[$this->module]);
+            // tally the locked fields in each group
+            $locked = [];
+            foreach ($lockedFields as $lockedField) {
+                $def = $bean->field_defs[$lockedField];
+                $group = isset($def['group']) ? $def['group'] : $lockedField;
+                if (isset($locked[$group])) {
+                    $locked[$group][] = $lockedField;
+                } else {
+                    $locked[$group] = array($lockedField);
+                }
+            }
+            // tally the number of fields in each group
+            $total = [];
+            foreach ($bean->field_defs as $def) {
+                $group = isset($def['group']) ? $def['group'] : $def['name'];
+                if (isset($total[$group])) {
+                    $total[$group] += 1;
+                } else {
+                    $total[$group] = 1;
+                }
+            }
+            foreach ($locked as $group => $fields) {
+                if ($total[$group] > count($fields)) {
+                    // found a failure
+                    $msg =  'Advanced Workflow Partially Locked Field Group - Field '
+                        . implode(', ', $fields) . ' locked in group ' . $group . '.';
+                    LoggerManager::getLogger()->fatal($msg);
+                    $sugarApiExceptionError = new SugarApiExceptionError(
+                        'ERROR_AWF_PARTIAL_LOCKED_GROUP'
+                    );
+                    PMSELogger::getInstance()->alert($sugarApiExceptionError->getMessage());
+                    throw $sugarApiExceptionError;
+                }
+            }
+        }
+
+        return $project;
+    }
 
     /**
      * Detects if the string start as a serialize php file
