@@ -345,14 +345,13 @@
      * @private
      */
     _onEditRowBtnClicked: function(evt) {
-        var $ulEl = $(evt.target).closest('ul');
-        var rowModule;
-        var rowModelId;
-        if ($ulEl.length) {
-            rowModule = $ulEl.data('row-module');
-            rowModelId = $ulEl.data('row-model-id');
-            this.toggleRow(rowModule, rowModelId, true);
+        var row = this.isolateRowParams(evt);
+
+        if (!row.id || !row.module) {
+            return false;
         }
+
+        this.toggleRow(row.module, row.id, true);
     },
 
     /**
@@ -362,7 +361,39 @@
      * @private
      */
     _onDeleteRowBtnClicked: function(evt) {
+        var row = this.isolateRowParams(evt);
 
+        if (!row.id || !row.module) {
+            return false;
+        }
+
+        app.alert.show('confirm_delete', {
+            level: 'confirmation',
+            title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
+            messages: [app.lang.get('LBL_ALERT_CONFIRM_DELETE')],
+            onConfirm: function() {
+                this.options.data.rowModel.destroy();
+            },
+            data: {'rowModel': this.collection.get(row.id)},
+        });
+    },
+
+    /**
+     * Parse out a row module and ID
+     *
+     * @param {MouseEvent} evt The mouse click event
+     * @private
+     */
+    isolateRowParams: function(evt) {
+        var $ulEl = $(evt.target).closest('ul');
+        var rowParams = {};
+
+        if ($ulEl.length) {
+            rowParams.module = $ulEl.data('row-module');
+            rowParams.id = $ulEl.data('row-model-id');
+        }
+
+        return rowParams;
     },
 
     /**

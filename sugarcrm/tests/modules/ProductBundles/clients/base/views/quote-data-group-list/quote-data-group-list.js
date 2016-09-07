@@ -537,6 +537,64 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
     });
 
+    describe('_onDeleteRowBtnClicked()', function() {
+        var dataStub;
+        var evt;
+
+        beforeEach(function() {
+            evt = {
+                target: '<div></div>'
+            };
+
+            dataStub = sinon.collection.stub();
+            dataStub.withArgs('row-module').returns('rowModule');
+            dataStub.withArgs('row-model-id').returns('rowModelId');
+
+            sinon.collection.stub($.fn, 'closest', function() {
+                return {
+                    length: 1,
+                    data: dataStub
+                };
+            });
+
+            sinon.collection.stub(app.alert, 'show');
+        });
+
+        it('should call alert show', function() {
+            view._onDeleteRowBtnClicked(evt);
+            expect(app.alert.show).toHaveBeenCalled();
+        });
+    });
+
+    describe('isolateRowParams()', function() {
+        var dataStub;
+        var evt;
+
+        beforeEach(function() {
+            evt = {
+                target: '<div></div>'
+            };
+
+            dataStub = sinon.collection.stub();
+            dataStub.withArgs('row-module').returns('rowModule');
+            dataStub.withArgs('row-model-id').returns('rowModelId');
+
+            sinon.collection.stub($.fn, 'closest', function() {
+                return {
+                    length: 1,
+                    data: dataStub
+                };
+            });
+        });
+
+        it('should return the correct params', function() {
+            var result = view.isolateRowParams(evt);
+
+            expect(result.module).toEqual('rowModule');
+            expect(result.id).toEqual('rowModelId');
+        });
+    });
+
     describe('toggleRow()', function() {
         var toggleClassStub;
         var rowModel;
