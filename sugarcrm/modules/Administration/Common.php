@@ -266,6 +266,10 @@ function save_custom_dropdown_strings($new_dd_strings, $language = '', $all_lang
                 $app_list_strings[$list_key] = $new_dd_strings[$list_key];
                 $extFilename = "custom/Extension/application/Ext/Language/$current_lang.sugar_" .
                     $list_key . '.php';
+                $dir = dirname($extFilename);
+                if (!is_dir($dir)) {
+                    mkdir_recursive($dir);
+                }
                 //write out dropdown changes to app_list_strings in an extension file
                 write_array_to_file_as_key_value_pair(
                     "app_list_strings['$list_key']",
