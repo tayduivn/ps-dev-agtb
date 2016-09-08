@@ -329,7 +329,7 @@ class CalendarEventsApi extends ModuleApi
      */
     protected function adjustStartDate(&$args)
     {
-        if (!empty($args['repeat_type'])) {
+        if (!empty($args['repeat_type']) && !empty($args['date_start'])) {
             $sequence = $this->getRecurringSequence($args);
             if (empty($sequence)) {
                 throw new SugarApiExceptionMissingParameter('ERR_CALENDAR_NO_EVENTS_GENERATED');
