@@ -471,7 +471,13 @@ function buildInstall($path){
             {
                 foreach ($relationshipsMetaFiles as $file)
                 {
-                    $installdefs['relationships'][] = array('meta_data' => str_replace('custom', '<basepath>', $file)); 
+                    $installdefs['relationships'][] = array(
+                        'meta_data' => str_replace(
+                            'custom' . DIRECTORY_SEPARATOR,
+                            '<basepath>' . DIRECTORY_SEPARATOR,
+                            $file
+                        ),
+                    );
                 }
             }
         }//foreach
