@@ -40,7 +40,6 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
             'size' => '36',
         ),
         'evn_uid' => array(
-            'required' => true,
             'name' => 'evn_uid',
             'vname' => 'Event PMSE Identifier',
             'type' => 'id',
@@ -564,7 +563,6 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
             'cols' => '20',
         ),
         'prj_id' => array(
-            'required' => true,
             'name' => 'prj_id',
             'vname' => 'Project Identifier',
             'type' => 'id',
@@ -584,7 +582,6 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
             'size' => '36',
         ),
         'pro_id' => array(
-            'required' => true,
             'name' => 'pro_id',
             'vname' => 'Process Identifier',
             'type' => 'id',
