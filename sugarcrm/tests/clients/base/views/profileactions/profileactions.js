@@ -12,7 +12,6 @@ describe("Profile Actions", function() {
         sinonSandbox = sinon.sandbox.create();
         menuMeta = [{
             acl_action: 'admin',
-            label: 'LBL_ADMIN'
         }];
     });
     afterEach(function() {

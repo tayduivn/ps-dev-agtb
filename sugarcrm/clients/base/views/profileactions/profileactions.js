@@ -52,7 +52,7 @@
                 if(app.acl.hasAccess(item.acl_action, item.acl_module)) {
                     result.push(item);
                 }
-            } else if(item['acl_action'] === 'admin' && item['label'] === 'LBL_ADMIN') {
+            } else if(item['acl_action'] === 'admin') {
                 //Edge case for admin link. We only show the Admin link when
                 //user has the "Admin & Developer" or "Developer" (so developer
                 //in either case; see SP-1827)

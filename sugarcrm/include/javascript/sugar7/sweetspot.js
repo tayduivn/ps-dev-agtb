@@ -48,7 +48,7 @@
                 return action;
             }
 
-            if (action.acl_action === 'admin' && action['label'] === 'LBL_ADMIN') {
+            if (action.acl_action === 'admin') {
                 //Edge case for admin link. We only show the Admin link when
                 //user has the "Admin & Developer" or "Developer" (so developer
                 //in either case; see SP-1827)
@@ -132,7 +132,7 @@
                 }
 
                 var profileActionObj = {
-                    name: app.lang.get(action.label),
+                    name: app.lang.get(action.label, action.module),
                     route: action.route,
                     icon: action.icon,
                     weight: 10
