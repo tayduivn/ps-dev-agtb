@@ -11,6 +11,7 @@
  */
 
 require_once 'clients/base/api/ModuleApi.php';
+require_once 'modules/Emails/EmailRecipientsService.php';
 
 class EmailsApi extends ModuleApi
 {
