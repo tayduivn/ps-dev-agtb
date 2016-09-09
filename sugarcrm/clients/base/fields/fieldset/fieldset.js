@@ -265,6 +265,19 @@
     },
 
     /**
+     * Fieldsets need to reset the action of its individual fields as well
+     *
+     * @protected
+     * @override
+     */
+    _resetAction: function() {
+        this._super('_resetAction');
+        _.each(this.fields, function(field) {
+            field._resetAction();
+        });
+    },
+
+    /**
      * @inheritdoc
      */
     setDisabled: function(disable) {

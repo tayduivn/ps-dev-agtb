@@ -209,8 +209,12 @@
                 return;
             }
 
-            var hidePencil = !_.isUndefined(noEditFieldsMap[field]);
-            $pencilEl.toggleClass('hide', hidePencil);
+            var isEditable = _.isUndefined(noEditFieldsMap[field]);
+            $pencilEl.toggleClass('hide', !isEditable);
+
+            if (this.action === 'edit') {
+                $pencilEl.closest('.record-cell').toggleClass('edit', isEditable);
+            }
         }, this);
     },
 
@@ -243,44 +247,28 @@
 
             // Special handling for fieldsets
             if (field.fields) {
-                // Some fieldsets have fields that are only for viewing, like the
-                // `copy` field on alternate addresses. Those should be filtered
-                // out of the fields list.
-                var fieldSetFields = _.filter(field.fields, function(fieldSetField) {
-                    return !_.isUndefined(self.model.get(fieldSetField.name));
-                });
-
-                // A fieldset is locked when all of its actual fields are locked
-                isLocked = !_.isEmpty(fieldSetFields) && _.every(fieldSetFields, function(fieldSetField) {
-                    return _.contains(lockedFields, fieldSetField.name);
-                });
-
-                var hasLockedFieldSetField = _.some(fieldSetFields, function(fieldSetField) {
-                    return _.contains(lockedFields, fieldSetField.name);
-                });
-
-                if (hasLockedFieldSetField && this.getCurrentButtonState() === this.STATE.EDIT) {
-                    _.defer(function(field) {
-                        // by toggling the fieldset here, we allow the acl check to handle individual field states
-                        self.toggleField(field, true);
-                    }, field);
-                }
-            }
-
-            // Set the flag that says if we have locked fields
-            this._setLockedFieldFlag(this.hasLockedFields() || isLocked || hasLockedFieldSetField);
-
-            // If the field is locked and we are in edit mode...
-            if (isLocked && this.getCurrentButtonState() === this.STATE.EDIT) {
-                _.defer(function(field) {
-                    if (field.disposed) {
+                var hasLockedChildField = false;
+                isLocked = true;
+                _.each(field.fields, function(fieldSetField) {
+                    // Some fieldsets have fields that are only for viewing, like the
+                    // `copy` field on alternate addresses. Those should be filtered
+                    // out of the fields list.
+                    if (_.isUndefined(this.model.get(fieldSetField.name))) {
                         return;
                     }
 
-                    // Toggles the field state from edit to not edit
-                    self.toggleField(field, false);
-                }, field);
+                    var isChildLocked = _.contains(lockedFields, fieldSetField.name);
+                    hasLockedChildField = hasLockedChildField || isChildLocked;
+
+                    // A fieldset is locked when all of its actual fields are locked
+                    if (!isChildLocked) {
+                        isLocked = false;
+                    }
+                }, this);
             }
+
+            // Set the flag that says if we have locked fields
+            this._setLockedFieldFlag(this.hasLockedFields() || isLocked || hasLockedChildField);
 
             // Handle toggling the class
             $el.toggleClass('hide', !isLocked);
