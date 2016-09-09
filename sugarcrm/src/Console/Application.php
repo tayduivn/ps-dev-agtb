@@ -19,6 +19,8 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -74,6 +76,8 @@ class Application extends BaseApplication
             new SearchFieldsCommand(),
             new SearchReindexCommand(),
             new SearchStatusCommand(),
+            new CleanupQueueCommand(),
+            new ModuleCommand(),
         ));
 
         $app = new Application();
