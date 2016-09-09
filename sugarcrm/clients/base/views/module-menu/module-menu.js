@@ -303,7 +303,7 @@
      * @param {Event} event The event that triggered this (normally a click
      *   event).
      */
-    handleRouteEvent: function(event) {
+    handleRouteEvent: _.debounce(function(event) {
         var currentRoute,
             $currentTarget = this.$(event.currentTarget),
             route = $currentTarget.data('route');
@@ -317,6 +317,6 @@
 
         currentRoute = '#' + Backbone.history.getFragment();
         (currentRoute === route) ? app.router.refresh() : app.router.navigate(route, {trigger: true});
-    }
+    }, 400)
 
 })
