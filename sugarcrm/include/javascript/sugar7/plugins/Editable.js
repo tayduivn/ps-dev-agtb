@@ -169,6 +169,7 @@
 
                 _.each(fields, function(field) {
                     if (field.action === viewName) {
+                        field.$el.closest('.record-cell').toggleClass('edit', (viewName === 'edit'));
                         numOfToggledFields--;
                         return; //don't toggle if it's the same
                     }
