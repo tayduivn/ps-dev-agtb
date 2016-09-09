@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -19,12 +19,6 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ExplainCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -78,12 +72,11 @@ class Application extends BaseApplication
             new ElasticsearchIndicesCommand(),
             new ElasticsearchQueueCommand(),
             new ElasticsearchRoutingCommand(),
-            new ExplainCommand(),
-
-            // Generic Search
             new SearchFieldsCommand(),
             new SearchReindexCommand(),
             new SearchStatusCommand(),
+            new CleanupQueueCommand(),
+            new ModuleCommand(),
 
             // Password management
             new WeakHashesCommand(),
