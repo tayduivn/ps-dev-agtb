@@ -291,7 +291,7 @@ class QueueManager
         $bean->populateFromRow($bean->convertRow($row));
 
         // Index the bean and flag for removal when successful
-        if ($status = $this->container->indexer->indexBean($bean, true, true)) {
+        if ($this->container->indexer->indexBean($bean, true, true)) {
             $this->batchDeleteFromQueue($row['fts_id'], $module);
         }
     }
