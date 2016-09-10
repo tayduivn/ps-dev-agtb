@@ -95,10 +95,15 @@ class Client extends BaseClient
      */
     public function isAvailable($force = false)
     {
+        // To avoid incorrectly declaring the connection down because of
+        // indexing timeouts, only check and use the availability when forced
         if ($force) {
             $this->verifyConnectivity();
+            return $this->loadAvailability();
         }
-        return $this->loadAvailability();
+
+        // When not forced to check, assume the connection is available
+        return true;
     }
 
     /**
