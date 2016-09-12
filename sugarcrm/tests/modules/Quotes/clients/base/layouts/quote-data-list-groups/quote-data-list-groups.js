@@ -203,13 +203,16 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var uiParam;
         var oldGroup;
         var oldGroupId;
+        var oldGroupModel;
         var oldGroupTriggerSpy;
         var newGroup;
         var newGroupId;
+        var newGroupModel;
         var newGroupTriggerSpy;
         var rowModelId;
         var rowModelModule;
         var rowModel;
+
         beforeEach(function() {
             evtParam = {};
 
@@ -217,10 +220,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             newGroupTriggerSpy = sinon.collection.spy();
 
             oldGroupId = 'oldGroupId1';
+            oldGroupModel = app.data.createBean('ProductBundles', {
+                id: oldGroupId,
+                name: 'oldGroupModelName_original'
+            });
             oldGroup = {
                 groupId: oldGroupId,
-                collection: new Backbone.Collection(),
+                collection: app.data.createBeanCollection('ProductBundles'),
                 trigger: oldGroupTriggerSpy,
+                model: oldGroupModel,
                 addRowModel: function(model, isEdit) {
                     this.collection.add(model);
                 },
@@ -230,10 +238,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             };
 
             newGroupId = 'newGroupId1';
+            newGroupModel = app.data.createBean('ProductBundles', {
+                id: newGroupId,
+                name: 'newGroupModelName_original'
+            });
             newGroup = {
                 groupId: newGroupId,
-                collection: new Backbone.Collection(),
+                collection: app.data.createBeanCollection('ProductBundles'),
                 trigger: newGroupTriggerSpy,
+                model: newGroupModel,
                 addRowModel: function(model, isEdit) {
                     this.collection.add(model);
                 },
@@ -252,7 +265,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             rowModel.module = rowModelModule;
 
             sinon.collection.stub(app.tooltip, '_enable', function() {});
-            sinon.collection.stub(app.api, 'call', function() {});
+            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
+            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+
             sinon.collection.stub(layout, '_getComponentByGroupId', function(id) {
                 if (id === oldGroupId) {
                     return oldGroup;
@@ -333,99 +348,26 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
             });
 
-            describe('app.api.call params', function() {
-                var appApiCallArgs;
-                var result;
-                beforeEach(function() {
-                    appApiCallArgs = app.api.call.args[0];
+            describe('on save default group', function() {
+                it('should call _saveDefaultGroupThenCallBulk with an unsaved group', function() {
+                    newGroupModel.set('_notSaved', true);
+                    // reset everything back
+                    layout._saveDefaultGroupThenCallBulk.restore();
+                    layout._callBulkRequests.restore();
+                    sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
+                    sinon.collection.stub(layout, '_callBulkRequests', function() {});
+                    newGroup.collection.remove(rowModel);
+                    oldGroup.collection.add(rowModel);
+
+                    layout._onDragStop(evtParam, uiParam);
+
+                    expect(layout._saveDefaultGroupThenCallBulk).toHaveBeenCalled();
+                    expect(layout._callBulkRequests).not.toHaveBeenCalled();
                 });
 
-                afterEach(function() {
-                    appApiCallArgs = null;
-                    result = null;
-                });
-
-                it('should call with method create', function() {
-                    expect(appApiCallArgs[0]).toBe('create');
-                });
-
-                it('should call with bulk url', function() {
-                    var url = appApiCallArgs[1].split('/');
-                    expect(_.last(url)).toBe('bulk');
-                });
-
-                it('should call with requests array', function() {
-                    expect(appApiCallArgs[2].requests).toBeDefined();
-                });
-
-                it('should have correct requests length', function() {
-                    expect(appApiCallArgs[2].requests.length).toBe(3);
-                });
-
-                describe('first request call - group move', function() {
-                    beforeEach(function() {
-                        result = appApiCallArgs[2].requests[0];
-                    });
-
-                    it('should have the POST method', function() {
-                        expect(result.method).toBe('POST');
-                    });
-
-                    it('should have the group id', function() {
-                        expect(result.data.id).toBe('newGroupId1');
-                    });
-
-                    it('should have the item link', function() {
-                        expect(result.data.link).toBe('products');
-                    });
-
-                    it('should have the data related position', function() {
-                        expect(result.data.related.position).toBe(2);
-                    });
-
-                    it('should have the data relatedId', function() {
-                        expect(result.data.relatedId).toBe('rowModelId1');
-                    });
-
-                    it('should have the data url', function() {
-                        expect(result.url).toBeDefined();
-                    });
-                });
-
-                describe('second request call - old group position changes', function() {
-                    beforeEach(function() {
-                        result = appApiCallArgs[2].requests[1];
-                    });
-
-                    it('should have the PUT method', function() {
-                        expect(result.method).toBe('PUT');
-                    });
-
-                    it('should have the data position', function() {
-                        expect(result.data.position).toBe(0);
-                    });
-
-                    it('should have the url with the old group', function() {
-                        expect(result.url.split('/')).toContain('oldGroupId1');
-                    });
-                });
-
-                describe('third request call - new group position changes', function() {
-                    beforeEach(function() {
-                        result = appApiCallArgs[2].requests[2];
-                    });
-
-                    it('should have the PUT method', function() {
-                        expect(result.method).toBe('PUT');
-                    });
-
-                    it('should have the data position', function() {
-                        expect(result.data.position).toBe(0);
-                    });
-
-                    it('should have the url with the new group', function() {
-                        expect(result.url.split('/')).toContain('newGroupId1');
-                    });
+                it('should call _callBulkRequests with an regular saved group', function() {
+                    expect(layout._saveDefaultGroupThenCallBulk).not.toHaveBeenCalled();
+                    expect(layout._callBulkRequests).toHaveBeenCalled();
                 });
             });
         });
@@ -479,53 +421,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 });
             });
 
-            describe('app.api.call params', function() {
-                var appApiCallArgs;
-                var result;
-
-                beforeEach(function() {
-                    appApiCallArgs = app.api.call.args[0];
-                });
-
-                afterEach(function() {
-                    appApiCallArgs = null;
-                    result = null;
-                });
-
-                it('should call with method create', function() {
-                    expect(appApiCallArgs[0]).toBe('create');
-                });
-
-                it('should call with bulk url', function() {
-                    var url = appApiCallArgs[1].split('/');
-                    expect(_.last(url)).toBe('bulk');
-                });
-
-                it('should call with requests array', function() {
-                    expect(appApiCallArgs[2].requests).toBeDefined();
-                });
-
-                it('should have correct requests length', function() {
-                    expect(appApiCallArgs[2].requests.length).toBe(1);
-                });
-
-                describe('first request call - position change', function() {
-                    beforeEach(function() {
-                        result = appApiCallArgs[2].requests[0];
-                    });
-
-                    it('should have the PUT method', function() {
-                        expect(result.method).toBe('PUT');
-                    });
-
-                    it('should have the data position', function() {
-                        expect(result.data.position).toBe(0);
-                    });
-
-                    it('should have the url with new group id', function() {
-                        expect(result.url.split('/')).toContain('newGroupId1');
-                    });
-                });
+            it('should call _callBulkRequests with an regular saved group', function() {
+                expect(layout._saveDefaultGroupThenCallBulk).not.toHaveBeenCalled();
+                expect(layout._callBulkRequests).toHaveBeenCalled();
             });
         });
 
@@ -549,6 +447,229 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should call tooltip _enable', function() {
                 expect(app.tooltip._enable).toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('_updateDefaultGroupWithNewData()', function() {
+        var group;
+        var recordData;
+        var elAttrSpy;
+        var trAttrSpy;
+
+        beforeEach(function() {
+            elAttrSpy = sinon.collection.spy();
+            trAttrSpy = sinon.collection.spy();
+            group = {
+                model: app.data.createBean('ProductBundle'),
+                $el: {
+                    attr: elAttrSpy
+                },
+                $: function() {
+                    return {
+                        attr: trAttrSpy
+                    };
+                }
+            };
+            recordData = {
+                id: 'newId1',
+                test: 'abc'
+            };
+            layout.groupIds = ['oldGroupId1'];
+            layout.defaultGroupId = 'oldGroupId1';
+            layout._updateDefaultGroupWithNewData(group, recordData);
+        });
+
+        afterEach(function() {
+            group = null;
+            recordData = null;
+            elAttrSpy = null;
+            trAttrSpy = null;
+        });
+
+        it('should update groupIds with the new group ID', function() {
+            expect(layout.groupIds).toEqual(['newId1']);
+        });
+
+        it('should set the defaultGroupId to be the new group ID', function() {
+            expect(layout.defaultGroupId).toBe('newId1');
+        });
+
+        it('should set recordData on the model', function() {
+            expect(group.model.get('id')).toBe('newId1');
+            expect(group.model.get('test')).toBe('abc');
+        });
+
+        it('should set the group groupId to be the new group ID', function() {
+            expect(group.groupId).toBe('newId1');
+        });
+
+        it('should call attr function on $el to update the group ID', function() {
+            expect(elAttrSpy).toHaveBeenCalled();
+        });
+
+        it('should call attr function on any tr elements to update the group ID', function() {
+            expect(trAttrSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('_saveDefaultGroupThenCallBulk', function() {
+        var oldGroup;
+        var newGroup;
+        var newGroupId;
+        var newGroupModel;
+        var bulkSaveRequests;
+        var layoutModelId;
+        var appApiCallArgs;
+
+        beforeEach(function() {
+            oldGroup = {};
+            newGroupId = 'testGroupId1';
+            newGroupModel = app.data.createBean('ProductBundles', {
+                id: newGroupId,
+                _notSaved: true,
+                name: 'New Test Group'
+            });
+            newGroup = {
+                model: newGroupModel
+            };
+            bulkSaveRequests = [];
+            layoutModelId = 'layoutModelId1';
+
+            sinon.collection.stub(app.api, 'relationships', function() {});
+
+            layout.model.set('id', layoutModelId);
+            layout._saveDefaultGroupThenCallBulk(oldGroup, newGroup, bulkSaveRequests);
+            appApiCallArgs = app.api.relationships.args[0];
+        });
+
+        afterEach(function() {
+            oldGroup = null;
+            newGroup = null;
+            newGroupModel = null;
+            bulkSaveRequests = null;
+            layoutModelId = null;
+            appApiCallArgs = null;
+        });
+
+        it('should unset the group id', function() {
+            expect(newGroupModel.has('id')).toBeFalsy();
+        });
+
+        it('should unset the _notSaved flag', function() {
+            expect(newGroupModel.has('_notSaved')).toBeFalsy();
+        });
+
+        it('should call app.api.relationships with method "create"', function() {
+            expect(appApiCallArgs[0]).toBe('create');
+        });
+
+        it('should call app.api.relationships with module "Quotes"', function() {
+            expect(appApiCallArgs[1]).toBe('Quotes');
+        });
+
+        describe('with proper payload', function() {
+            it('should use layout model id', function() {
+                expect(appApiCallArgs[2].id).toBe(layoutModelId);
+            });
+
+            it('should use product_bundles as link name', function() {
+                expect(appApiCallArgs[2].link).toBe('product_bundles');
+            });
+
+            it('should have related object', function() {
+                expect(appApiCallArgs[2].related.position).toBe(0);
+                expect(appApiCallArgs[2].related.name).toBe('New Test Group');
+            });
+        });
+    });
+
+    describe('_onDefaultGroupSaveSuccess', function() {
+        var oldGroup;
+        var newGroup;
+        var newGroupModel;
+        var bulkSaveRequests;
+        var newGroupOldId;
+        var serverData;
+        var newGroupSavedId;
+
+        beforeEach(function() {
+            oldGroup = {};
+            newGroupModel = app.data.createBean('ProductBundles', {
+                id: ''
+            });
+            newGroup = {
+                model: newGroupModel,
+                groupId: newGroupOldId
+            };
+            newGroupOldId = 'oldGroupId1';
+            newGroupSavedId = 'savedGroupId2';
+            serverData = {
+                related_record: {
+                    id: newGroupSavedId,
+                    test: true
+                }
+            };
+            bulkSaveRequests = [{
+                url: 'v10/ProductBundles/' + newGroupOldId + '/stuff'
+            }];
+            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+            sinon.collection.stub(layout, '_updateDefaultGroupWithNewData', function() {});
+
+            layout._onDefaultGroupSaveSuccess(oldGroup, newGroup, bulkSaveRequests, newGroupOldId, serverData);
+        });
+
+        afterEach(function() {
+            oldGroup = null;
+            newGroup = null;
+            bulkSaveRequests = null;
+            newGroupOldId = null;
+            newGroupSavedId = null;
+            serverData = null;
+        });
+
+        it('should update old group id in requests to new group id', function() {
+            expect(bulkSaveRequests[0].url).toBe('v10/ProductBundles/' + newGroupSavedId + '/stuff');
+        });
+
+        it('should call _updateDefaultGroupWithNewData to update the group', function() {
+            expect(layout._updateDefaultGroupWithNewData).toHaveBeenCalled();
+        });
+
+        it('should call _callBulkRequests', function() {
+            expect(layout._callBulkRequests).toHaveBeenCalled();
+        });
+    });
+
+    describe('_callBulkRequests', function() {
+        var bulkSaveRequests;
+        beforeEach(function() {
+            bulkSaveRequests = [{
+                url: 'testUrl'
+            }];
+            sinon.collection.stub(app.api, 'call', function() {});
+
+            layout._callBulkRequests({}, {}, bulkSaveRequests);
+        });
+
+        afterEach(function() {
+            bulkSaveRequests = null;
+        });
+
+        it('should call with method create', function() {
+            expect(app.api.call.args[0][0]).toBe('create');
+        });
+
+        it('should call with bulk url', function() {
+            var url = app.api.call.args[0][1].split('/');
+            expect(_.last(url)).toBe('bulk');
+        });
+
+        it('should call with requests array', function() {
+            expect(app.api.call.args[0][2].requests).toBeDefined();
+        });
+
+        it('should have correct requests length', function() {
+            expect(app.api.call.args[0][2].requests.length).toBe(1);
         });
     });
 
@@ -688,6 +809,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var rowModel4;
         var results;
         var callUrl;
+
         beforeEach(function() {
             dataGroup = {
                 groupId: 'dataGroupId1',
@@ -1018,23 +1140,30 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_onProductBundleChange()', function() {
         var quoteData;
+        var defaultBundle;
         var bundle1;
         var bundle2;
         var bundle3;
         beforeEach(function() {
-            bundle1 = new Backbone.Model({
+            defaultBundle = app.data.createBean('ProductBundles', {
+                id: 'defaultId1',
+                name: 'defaultName1',
+                default_group: true
+            });
+            bundle1 = app.data.createBean('ProductBundles', {
                 id: 'testId1',
                 name: 'testName1'
             });
-            bundle2 = new Backbone.Model({
+            bundle2 = app.data.createBean('ProductBundles', {
                 id: 'testId2',
                 name: 'testName2'
             });
-            bundle3 = new Backbone.Model({
+            bundle3 = app.data.createBean('ProductBundles', {
                 id: 'testId3',
                 name: 'testName3'
             });
-            quoteData = new Backbone.Collection([
+            quoteData = app.data.createBeanCollection('ProductBundles', [
+                defaultBundle,
                 bundle1,
                 bundle2
             ]);
@@ -1045,7 +1174,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should set this.groupIds with quoteData record IDs', function() {
-            expect(layout.groupIds).toEqual(['testId1', 'testId2']);
+            expect(layout.groupIds).toEqual(['defaultId1', 'testId1', 'testId2']);
         });
 
         it('should call _addQuoteGroupToLayout with new bundle 1 data', function() {
@@ -1061,13 +1190,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout._addQuoteGroupToLayout.restore();
             sinon.collection.spy(layout, '_addQuoteGroupToLayout');
 
-            quoteData = new Backbone.Collection([
+            quoteData = app.data.createBeanCollection('ProductBundles', [
+                defaultBundle,
                 bundle1,
                 bundle2,
                 bundle3
             ]);
 
             layout.model.set('bundles', quoteData);
+            expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(defaultBundle);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle1);
             expect(layout._addQuoteGroupToLayout).not.toHaveBeenCalledWith(bundle2);
             expect(layout._addQuoteGroupToLayout).toHaveBeenCalledWith(bundle3);
@@ -1162,13 +1293,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             expect(callArgs.args[2].related.position).toBe(2);
         });
 
-        it('should call app.api.relationships with payload position of 0 when no bundles exist', function() {
+        it('should call app.api.relationships with payload position of 1 when no bundles exist', function() {
+            // because default group is 0, any new create could get a position of 1
             layout.model.set('bundles', new Backbone.Collection());
             layout._onCreateQuoteGroup();
 
             callArgs = app.api.relationships.lastCall;
 
-            expect(callArgs.args[2].related.position).toBe(0);
+            expect(callArgs.args[2].related.position).toBe(1);
         });
     });
 
@@ -1213,7 +1345,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should add the newBundleData to records', function() {
-            expect(layout.model.get('bundles').at(2).get('id')).toBe('testId3');
+            expect(layout.model.get('bundles').at(3).get('id')).toBe('testId3');
         });
 
         it('should call add on bundles collection', function() {
@@ -1283,7 +1415,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 }),
                 dispose: disposeStub
             };
-            layout.model.set('bundles', new Backbone.Collection([groupToDelete.model, {id: 'testId2'}]));
+
+            layout.model.off('change:bundles', null, layout);
+            layout.model.set('bundles', new Backbone.Collection([
+                groupToDelete.model,
+                {id: 'testId2'}
+            ]));
             layout.groupIds = [groupId, 'testId2'];
 
             sinon.collection.stub(app.alert, 'dismiss', function() {});

@@ -14,5 +14,15 @@
  * @extends Model.Bean
  */
 ({
-    plugins: ['VirtualCollection']
+    plugins: ['VirtualCollection'],
+
+    /**
+     * @inheritdoc
+     */
+    isNew: function() {
+        if (this.get('_notSaved') === true) {
+            return true;
+        }
+        return !this.has(this.idAttribute);
+    }
 })

@@ -85,6 +85,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     });
 
     describe('initialize()', function() {
+        var initOptions;
+
+        afterEach(function() {
+            initOptions = null;
+        });
+
         it('should have the same model as the layout', function() {
             expect(view.model).toBe(viewLayoutModel);
         });
@@ -101,13 +107,63 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.collection.length).toBe(3);
         });
 
+        describe('setting isEmptyGroup', function() {
+            var initModel;
+            var collection;
+
+            beforeEach(function() {
+                sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
+                initModel = new Backbone.Model();
+                initOptions = {
+                    context: viewContext,
+                    meta: {
+                        panels: [{
+                            fields: ['field1', 'field2']
+                        }]
+                    },
+                    layout: {
+                        listColSpan: 2,
+                    },
+                    model: initModel
+                };
+                collection = new Backbone.Collection();
+            });
+
+            afterEach(function() {
+                initModel = null;
+            });
+
+            it('should set isEmptyGroup true if product_bundle_items collection has no records', function() {
+                initModel.set('product_bundle_items', collection);
+                initOptions.model = initModel;
+                view.initialize(initOptions);
+                expect(view.isEmptyGroup).toBeTruthy();
+            });
+
+            it('should set isEmptyGroup false if product_bundle_items collection has records', function() {
+                collection.add(new Backbone.Model({
+                    id: 'test1'
+                }));
+                initModel.set('product_bundle_items', collection);
+                initOptions.model = initModel;
+                view.initialize(initOptions);
+                expect(view.isEmptyGroup).toBeFalsy();
+            });
+        });
+
         describe('setting fields', function() {
             var viewModel;
+            var collection;
+
             beforeEach(function() {
                 viewContextOnSpy.reset();
+                collection = new Backbone.Collection();
                 viewModel = new Backbone.Model({
-                    id: 'viewId1'
+                    id: 'viewId1',
+                    product_bundle_items: collection
                 });
+                sinon.collection.stub(collection, 'on', function() {});
+                sinon.collection.stub(view.layout, 'on', function() {});
                 view.initialize({
                     context: viewContext,
                     meta: viewMeta,
@@ -118,20 +174,40 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 });
             });
 
-            it('should add listener on context for quotes:group:create:qli:<modelId>', function() {
-                expect(view.context.on.args[0][0]).toBe('quotes:group:create:qli:viewId1');
+            afterEach(function() {
+                viewModel = null;
             });
 
-            it('should add listener on context for quotes:group:create:note:<modelId>', function() {
-                expect(view.context.on.args[1][0]).toBe('quotes:group:create:note:viewId1');
+            it('should add listener on layout for quotes:group:create:qli', function() {
+                expect(view.layout.on.args[0][0]).toBe('quotes:group:create:qli');
             });
 
-            it('should add listener on context for editablelist:cancel:<modelId>', function() {
-                expect(view.context.on.args[2][0]).toBe('editablelist:cancel:viewId1');
+            it('should add listener on layout for quotes:group:create:note', function() {
+                expect(view.layout.on.args[1][0]).toBe('quotes:group:create:note');
             });
 
-            it('should add listener on context for editablelist:save:<modelId>', function() {
-                expect(view.context.on.args[3][0]).toBe('editablelist:save:viewId1');
+            it('should call view.layout.on should be called with "quotes:sortable:over"', function() {
+                expect(view.layout.on.args[2][0]).toBe('quotes:sortable:over');
+            });
+
+            it('should call view.layout.on should be called with "quotes:sortable:out"', function() {
+                expect(view.layout.on.args[3][0]).toBe('quotes:sortable:out');
+            });
+
+            it('should add listener on layout for editablelist:cancel', function() {
+                expect(view.layout.on.args[4][0]).toBe('editablelist:cancel');
+            });
+
+            it('should add listener on layout for editablelist:save', function() {
+                expect(view.layout.on.args[5][0]).toBe('editablelist:save');
+            });
+
+            it('should add listener on layout for editablelist:saving', function() {
+                expect(view.layout.on.args[6][0]).toBe('editablelist:saving');
+            });
+
+            it('should call view.collection.on should be called with "add remove"', function() {
+                expect(view.collection.on.args[0][0]).toBe('add remove');
             });
 
             it('should call setElement', function() {
@@ -355,6 +431,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
             sinon.collection.stub(view, '_setRowFields', function() {});
             sinon.collection.stub(view, 'toggleRow', function() {});
+            sinon.collection.stub(view, 'onNewItemChanged', function() {});
+            sinon.collection.stub(view, 'toggleCancelButton', function() {});
 
             oldModelId = 'oldRowModel1';
             rowModelId = 'rowModel1';
@@ -367,6 +445,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         afterEach(function() {
             rowModel = null;
             oldModelId = null;
+        });
+
+        it('should call toggleCancelButton', function() {
+            view.onSaveRowEdit(rowModel, rowModelId);
+            expect(view.toggleCancelButton).toHaveBeenCalled();
         });
 
         describe('model has _notSaved = true', function() {
@@ -408,6 +491,38 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             it('should call toggleRow', function() {
                 expect(view.toggleRow).toHaveBeenCalledWith('Products', 'rowModel1', false);
             });
+        });
+    });
+
+    describe('onSavingRow()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'toggleCancelButton', function() {});
+        });
+
+        it('should call toggleCancelButton', function() {
+            view.onSavingRow();
+            expect(view.toggleCancelButton).toHaveBeenCalled();
+        });
+    });
+
+    describe('toggleCancelButton()', function() {
+        var setDisabledSpy;
+        beforeEach(function() {
+            setDisabledSpy = sinon.collection.spy();
+            view.fields = [{
+                name: 'inline-cancel',
+                setDisabled: setDisabledSpy
+            }];
+        });
+
+        afterEach(function() {
+            setDisabledSpy = null;
+            view.fields = null;
+        });
+
+        it('should call toggleCancelButton', function() {
+            view.toggleCancelButton();
+            expect(setDisabledSpy).toHaveBeenCalled();
         });
     });
 
@@ -463,6 +578,293 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         it('should add the new relatedModel to collection', function() {
             expect(view.collection.contains(relatedModel)).toBeTruthy();
+        });
+    });
+
+    describe('onNewItemChanged()', function() {
+        var layoutCollection;
+        beforeEach(function() {
+            layoutCollection = new Backbone.Collection();
+            view.collection = layoutCollection;
+            sinon.collection.stub(view, 'toggleEmptyRow', function() {});
+        });
+
+        afterEach(function() {
+            layoutCollection = null;
+        });
+
+        describe('when layout collection has records', function() {
+            beforeEach(function() {
+                layoutCollection.add(new Backbone.Model({
+                    id: 'test1'
+                }));
+                view.onNewItemChanged();
+            });
+
+            it('should set isEmptyGroup false', function() {
+                expect(view.isEmptyGroup).toBeFalsy();
+            });
+
+            it('should call toggleEmptyRow with false', function() {
+                expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+            });
+        });
+
+        describe('when layout collection has no records', function() {
+            beforeEach(function() {
+                view.onNewItemChanged();
+            });
+
+            it('should set isEmptyGroup true', function() {
+                expect(view.isEmptyGroup).toBeTruthy();
+            });
+
+            it('should call toggleEmptyRow with true', function() {
+                expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+            });
+        });
+    });
+
+    describe('_onSortableGroupOver()', function() {
+        it('should always call toggleEmptyRow with false', function() {
+            sinon.collection.stub(view, 'toggleEmptyRow');
+            view._onSortableGroupOver();
+
+            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+        });
+    });
+
+    describe('_onSortableGroupOut()', function() {
+        var evtParam;
+        var uiParam;
+        beforeEach(function() {
+            sinon.collection.stub(view, 'toggleEmptyRow');
+            uiParam = {};
+            evtParam = {};
+        });
+
+        afterEach(function() {
+            evtParam = null;
+            uiParam = null;
+        });
+
+        describe('when isEmptyGroup is true', function() {
+            beforeEach(function() {
+                view.isEmptyGroup = true;
+                uiParam = {
+                    sender: null
+                };
+            });
+
+            it('should always call toggleEmptyRow with true because the collection is empty', function() {
+                view._onSortableGroupOut(evtParam, uiParam);
+
+                expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+            });
+        });
+
+        describe('when isEmptyGroup is false', function() {
+            beforeEach(function() {
+                view.isEmptyGroup = false;
+            });
+
+            describe('when ui.sender is null', function() {
+                beforeEach(function() {
+                    uiParam = {
+                        sender: null
+                    };
+                });
+
+                describe('when view.collection.length = 1', function() {
+                    beforeEach(function() {
+                        view.collection.reset(new Backbone.Model({
+                            id: 1
+                        }));
+                    });
+
+                    describe('when the current item 0 is hidden', function() {
+                        beforeEach(function() {
+                            uiParam.item = {
+                                get: function() {
+                                    return '<div style="display: none"></div>';
+                                }
+                            };
+                        });
+
+                        it('should call toggleEmptyRow with true', function() {
+                            view._onSortableGroupOut(evtParam, uiParam);
+
+                            expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+                        });
+                    });
+
+                    describe('when the current item 0 is not hidden', function() {
+                        beforeEach(function() {
+                            uiParam.item = {
+                                get: function() {
+                                    return '<div style="display: block"></div>';
+                                }
+                            };
+                        });
+
+                        it('should call toggleEmptyRow with true', function() {
+                            view._onSortableGroupOut(evtParam, uiParam);
+
+                            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+                        });
+                    });
+                });
+
+                describe('when view.collection.length != 1', function() {
+                    beforeEach(function() {
+                        view.collection.reset();
+                    });
+
+                    it('should call toggleEmptyRow with false', function() {
+                        view._onSortableGroupOut(evtParam, uiParam);
+
+                        expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+                    });
+                });
+            });
+
+            describe('when ui.sender is not null', function() {
+                describe('when ui.sender el is the same as the view.el', function() {
+                    beforeEach(function() {
+                        view.el = '<div id="viewEl" style="display: block"></div>';
+                        uiParam.sender = {
+                            length: 1,
+                            get: function() {
+                                return view.el;
+                            }
+                        };
+                    });
+
+                    describe('when view.collection.length = 1', function() {
+                        beforeEach(function() {
+                            view.collection.reset(new Backbone.Model({
+                                id: 1
+                            }));
+                        });
+
+                        describe('when the current item 0 is hidden', function() {
+                            beforeEach(function() {
+                                uiParam.item = {
+                                    get: function() {
+                                        return '<div style="display: none"></div>';
+                                    }
+                                };
+                            });
+
+                            it('should call toggleEmptyRow with true', function() {
+                                view._onSortableGroupOut(evtParam, uiParam);
+
+                                expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+                            });
+                        });
+
+                        describe('when the current item 0 is not hidden', function() {
+                            beforeEach(function() {
+                                uiParam.item = {
+                                    get: function() {
+                                        return '<div style="display: block"></div>';
+                                    }
+                                };
+                            });
+
+                            it('should call toggleEmptyRow with true', function() {
+                                view._onSortableGroupOut(evtParam, uiParam);
+
+                                expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+                            });
+                        });
+                    });
+
+                    describe('when view.collection.length != 1', function() {
+                        beforeEach(function() {
+                            view.collection.reset();
+                        });
+
+                        it('should call toggleEmptyRow with false', function() {
+                            view._onSortableGroupOut(evtParam, uiParam);
+
+                            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+                        });
+                    });
+                });
+
+                describe('when ui.sender el is different from the view.el', function() {
+                    beforeEach(function() {
+                        view.el = '<div id="viewEl" style="display: block"></div>';
+                        uiParam.sender = {
+                            length: 1,
+                            get: function() {
+                                return '<div id="diffEl" style="display: block"></div>';
+                            }
+                        };
+                    });
+
+                    it('should call toggleEmptyRow with false because sender is not in the same group', function() {
+                        view._onSortableGroupOut(evtParam, uiParam);
+
+                        expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+                    });
+                });
+            });
+        });
+    });
+
+    describe('toggleEmptyRow()', function() {
+        var addClassSpy;
+        var removeClassSpy;
+        beforeEach(function() {
+            addClassSpy = sinon.collection.stub();
+            removeClassSpy = sinon.collection.stub();
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    addClass: addClassSpy,
+                    removeClass: removeClassSpy
+                };
+            });
+        });
+
+        it('should call remove class hidden when showEmptyRow is true', function() {
+            view.toggleEmptyRow(true);
+
+            expect(removeClassSpy).toHaveBeenCalled();
+            expect(addClassSpy).not.toHaveBeenCalled();
+        });
+
+        it('should call add class hidden when showEmptyRow is false', function() {
+            view.toggleEmptyRow(false);
+
+            expect(removeClassSpy).not.toHaveBeenCalled();
+            expect(addClassSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('_renderHtml', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'toggleEmptyRow');
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    length: 0
+                };
+            });
+        });
+
+        it('should call toggleEmptyRow with true when isEmptyGroup = true', function() {
+            view.isEmptyGroup = true;
+            view._renderHtml();
+
+            expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+        });
+
+        it('should call toggleEmptyRow with false when isEmptyGroup = false', function() {
+            view.isEmptyGroup = false;
+            view._renderHtml();
+
+            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
         });
     });
 

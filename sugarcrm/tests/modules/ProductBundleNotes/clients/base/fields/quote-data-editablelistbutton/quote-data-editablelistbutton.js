@@ -100,15 +100,21 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
                 id: 'viewId1'
             });
             sinon.collection.stub(field.view, 'toggleRow', function() {});
-            sinon.collection.stub(field.view.context, 'trigger', function() {});
+            field.view.layout = {
+                trigger: $.noop
+            };
+            sinon.collection.stub(field.view.layout, 'trigger', function() {});
 
             field.cancelEdit();
             lastCall = field.view.toggleRow.lastCall;
-            lastCallCtxTrigger = field.view.context.trigger.lastCall;
+            lastCallCtxTrigger = field.view.layout.trigger.lastCall;
         });
 
         afterEach(function() {
             lastCall = null;
+            field.view.layout.trigger.restore();
+            delete field.view.layout.trigger;
+            delete field.view.layout;
         });
 
         it('should call toggleRow with three params', function() {
@@ -128,11 +134,58 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
         });
 
         it('should trigger editablelist:cancel:<viewModelId> on view context', function() {
-            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:cancel:viewId1');
+            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:cancel');
         });
     });
 
     describe('_save()', function() {
+        beforeEach(function() {
+            field.view.layout = {
+                trigger: $.noop
+            };
+            sinon.collection.stub(field.view.layout, 'trigger', function() {});
+            field.view.context.parent = {
+                trigger: $.noop
+            };
+            field.view.model = app.data.createBean('ProductBundles');
+            sinon.collection.stub(field.view.context.parent, 'trigger', function() {});
+            sinon.collection.stub(field, '_saveRowModel', function() {});
+        });
+
+        afterEach(function() {
+            field.view.layout.trigger.restore();
+            delete field.view.layout.trigger;
+            delete field.view.layout;
+            field.view.context.parent.trigger.restore();
+            delete field.view.context.parent.trigger;
+            delete field.view.context.parent;
+        });
+
+        it('should trigger editablelist:saving on the view.layout', function() {
+            field._save();
+            expect(field.view.layout.trigger).toHaveBeenCalled();
+        });
+
+        it('should trigger default group save if default group is not saved', function() {
+            sinon.collection.stub(field.view.model, 'isNew', function() {
+                return true;
+            });
+            field._save();
+            expect(field.view.context.parent.trigger).toHaveBeenCalled();
+            expect(field._saveRowModel).not.toHaveBeenCalled();
+        });
+
+        it('should call _saveRowModel if default group is already saved', function() {
+            sinon.collection.stub(field.view.model, 'isNew', function() {
+                return false;
+            });
+            field._save();
+            expect(field.view.context.parent.trigger).not.toHaveBeenCalled();
+            expect(field._saveRowModel).toHaveBeenCalled();
+        });
+    });
+
+    describe('_saveRowModel()', function() {
         beforeEach(function() {
             sinon.collection.stub(field.model, 'save', function() {});
             field.getCustomSaveOptions = function() {};
@@ -142,18 +195,18 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
 
         it('should unset id if model._notSaved is true', function() {
             field.model.set('_notSaved', true);
-            field._save();
+            field._saveRowModel();
             expect(field.model.id).toBeUndefined();
         });
 
         it('should unset id on model if model._notSaved is true', function() {
             field.model.set('_notSaved', true);
-            field._save();
+            field._saveRowModel();
             expect(field.model.get('id')).toBeUndefined();
         });
 
         it('should not unset id if model._notSaved is false', function() {
-            field._save();
+            field._saveRowModel();
             expect(field.model.id).toBe('fieldId1');
             expect(field.model.get('id')).toBe('fieldId1');
         });

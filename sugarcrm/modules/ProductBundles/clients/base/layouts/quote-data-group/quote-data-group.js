@@ -39,6 +39,14 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        if (options.model.get('default_group')) {
+            // for the default group, we only want the quote-data-group-list component
+            options.meta = _.clone(options.meta);
+            options.meta.components = [{
+                view: 'quote-data-group-list'
+            }];
+        }
+
         this._super('initialize', [options]);
 
         // set the groupID to the model ID

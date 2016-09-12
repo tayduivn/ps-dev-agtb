@@ -665,7 +665,9 @@ $renamedefs = array(
             array('name' => 'EXCEPTION_NOT_FOUND_QUOTE', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'LBL_CREATE_QLI_BUTTON_LABEL', 'type' => 'singular', 'source' => 'Products'),
             array('name' => 'LBL_CREATE_QLI_BUTTON_TOOLTIP', 'type' => 'singular', 'source' => 'Products'),
-            array('name' => 'LBL_QUOTE_DATA_EMPTY_ROW_GROUPLESS', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_QUOTE_DATA_EMPTY_ROW_DEFAULT_GROUP', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP', 'type' => 'singular', 'source' => 'ProductBundles'),
+            array('name' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP', 'type' => 'singular', 'source' => 'Quotes'),
         ),
         'ProductTemplates' => array(
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),

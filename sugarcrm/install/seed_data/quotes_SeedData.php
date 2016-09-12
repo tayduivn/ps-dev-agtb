@@ -78,9 +78,9 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 			$pb->bundle_stage = $bundle['bundle_stage'];
 			$pb->name = $bundle['bundle_name'];
             $pb->shipping = '0.00';
-			
+
             $product_bundle_id = $pb->save();
-            
+
             //Save the products
             foreach($bundle['products'] as $product_key=>$products) {
             	$sql = 'SELECT * FROM product_templates WHERE name = \'' . $products['name'] . '\'';
@@ -136,7 +136,7 @@ if(!empty($sugar_demodata['quotes_seed_data']['quotes'])) {
 	        }
 
             $focus->load_relationship('product_bundles');
-            $focus->product_bundles->add($pb, array('bundle_index' => $bundle_key));
+            $focus->product_bundles->add($pb, array('bundle_index' => $bundle_key + 1));
 	        
 		} //foreach
         unset($focus->product_bundles);

@@ -106,7 +106,7 @@
      * @private
      */
     _onCreateQLIBtnClicked: function(evt) {
-        this.context.trigger('quotes:group:create:qli:' + this.model.get('id'), this.model, 'products');
+        this.layout.trigger('quotes:group:create:qli', 'products');
     },
 
     /**
@@ -116,7 +116,7 @@
      * @private
      */
     _onCreateCommentBtnClicked: function(evt) {
-        this.context.trigger('quotes:group:create:note:' + this.model.get('id'), this.model, 'product_bundle_notes');
+        this.layout.trigger('quotes:group:create:note', 'product_bundle_notes');
     },
 
     /**

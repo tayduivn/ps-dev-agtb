@@ -45,6 +45,11 @@
     sortableTag: 'tbody',
 
     /**
+     * The ID of the default group
+     */
+    defaultGroupId: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -62,6 +67,21 @@
         this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
+        this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
+        this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
+    },
+
+    /**
+     * Handles the quotes:defaultGroup:create event from a separate layout context
+     * and triggers the correct create event on the default group to add a new item
+     *
+     * @param {string} itemType The type of item to create: 'qli' or 'note'
+     * @private
+     */
+    _onCreateDefaultQuoteGroup: function(itemType) {
+        var linkName = itemType == 'qli' ? 'products' : 'product_bundle_notes';
+        var group = this._getComponentByGroupId(this.defaultGroupId);
+        group.trigger('quotes:group:create:' + itemType, linkName);
     },
 
     /**
@@ -139,6 +159,7 @@
         var bulkSaveRequests = [];
         var url;
         var linkName;
+        var saveDefaultGroup;
 
         // make sure item was dropped in a different group than it started in
         if (oldGroupId !== newGroupId) {
@@ -148,6 +169,9 @@
             // get the old and new quote-data-group components
             oldGroup = this._getComponentByGroupId(oldGroupId);
             newGroup = this._getComponentByGroupId(newGroupId);
+
+            // get if we need to save the new default group list or not
+            saveDefaultGroup = newGroup.model.get('_notSaved') || false;
 
             // get the row id from the name="Products_modelID" attrib
             rowId = $item.attr('name').split('_')[1];
@@ -203,15 +227,154 @@
             // trigger save start for the new group
             newGroup.trigger('quotes:group:save:start');
 
-            app.api.call('create', app.api.buildURL(null, 'bulk'), {
-                requests: bulkSaveRequests
-            }, {
-                success: _.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup)
-            });
+            if (saveDefaultGroup) {
+                this._saveDefaultGroupThenCallBulk(oldGroup, newGroup, bulkSaveRequests);
+            } else {
+                this._callBulkRequests(oldGroup, newGroup, bulkSaveRequests);
+            }
         }
 
         // re-enable tooltips in the app
         app.tooltip._enable();
+    },
+
+    /**
+     * Handles saving the default quote group when a user adds a new QLI/Note to an unsaved default group
+     * and clicks the save button from the new QLI/Note row
+     *
+     * @param {Function} successCallback Callback function sent from the QuoteDataEditablelistField so the field
+     *      knows when the group save is successful and the field can continue saving the new row model
+     * @private
+     */
+    _onSaveDefaultQuoteGroup: function(successCallback) {
+        var group = this._getComponentByGroupId(this.defaultGroupId);
+        group.model.unset('id');
+        group.model.unset('_notSaved');
+
+        app.alert.show('saving_default_group_alert', {
+            level: 'success',
+            autoClose: false,
+            messages: app.lang.get('LBL_SAVING_DEFAULT_GROUP_ALERT_MSG', 'Quotes')
+        });
+
+        app.api.relationships('create', 'Quotes', {
+            'id': this.model.get('id'),
+            'link': 'product_bundles',
+            'related': {
+                position: 0,
+                default_group: true
+            }
+        }, null, {
+            success: _.bind(function(group, successCallback, serverData) {
+                app.alert.dismiss('saving_default_group_alert');
+
+                this._updateDefaultGroupWithNewData(group, serverData.related_record);
+
+                // call the callback to continue the save stuff
+                successCallback();
+            }, this, group, successCallback)
+        });
+    },
+
+    /**
+     * Updates a group with the latest server data, updates the model, groupId, and DOM elements
+     *
+     * @param {View.QuoteDataGroupLayout} group The QuoteDataGroupLayout to update
+     * @param {Object} recordData The new record data from the server
+     * @private
+     */
+    _updateDefaultGroupWithNewData: function(group, recordData) {
+        if (this.defaultGroupId !== recordData.id) {
+            // remove the old default group ID from groupIds
+            this.groupIds = _.without(this.groupIds, this.defaultGroupId);
+            // add the new group ID so we dont add the default group twice
+            this.groupIds.push(recordData.id);
+        }
+        // update defaultGroupId with new id
+        this.defaultGroupId = recordData.id;
+        // set the new data on the group model
+        group.model.set(recordData);
+        // update groupId with new id
+        group.groupId = this.defaultGroupId;
+        // update the group's dom tbody el with the correct group id
+        group.$el.attr('data-group-id', this.defaultGroupId);
+        // update the tr's inside the group's dom tbody el with the correct group id
+        group.$('tr').attr('data-group-id', this.defaultGroupId);
+    },
+
+    /**
+     * Handles saving the default quote data group if it has not been saved yet,
+     * then when that save success returns, it calls save on all the bulk requests
+     * with the new proper group ID
+     *
+     * @param {View.QuoteDataGroupLayout} oldGroup The old QuoteDataGroupLayout
+     * @param {View.QuoteDataGroupLayout} newGroup The new QuoteDataGroupLayout - default group that needs saving
+     * @param {Array} bulkSaveRequests The array of bulk save requests
+     * @private
+     */
+    _saveDefaultGroupThenCallBulk: function(oldGroup, newGroup, bulkSaveRequests) {
+        var newGroupOldId = newGroup.model.get('id');
+        newGroup.model.unset('id');
+        newGroup.model.unset('_notSaved');
+
+        app.alert.show('saving_default_group_alert', {
+            level: 'success',
+            autoClose: false,
+            messages: app.lang.get('LBL_SAVING_DEFAULT_GROUP_ALERT_MSG', 'Quotes')
+        });
+
+        app.api.relationships('create', 'Quotes', {
+            'id': this.model.get('id'),
+            'link': 'product_bundles',
+            'related': _.extend({
+                position: 0
+            }, newGroup.model.toJSON())
+        }, null, {
+            success: _.bind(this._onDefaultGroupSaveSuccess, this, oldGroup, newGroup, bulkSaveRequests, newGroupOldId)
+        });
+    },
+
+    /**
+     * Called when the default group has been saved successfully and we have the new proper group id. It
+     * updates all the bulk requests replacing the old "fake" group ID with the new proper DB-saved group ID,
+     * updates newGroup with the new data and group ID and calls the save on the remaining bulk requests
+     *
+     * @param {View.QuoteDataGroupLayout} oldGroup The old QuoteDataGroupLayout
+     * @param {View.QuoteDataGroupLayout} newGroup The new QuoteDataGroupLayout
+     * @param {Array} bulkSaveRequests The array of bulk save requests
+     * @param {string} newGroupOldId The previous "fake" group ID for newGroup
+     * @param {Object} serverData The server response from saving the newGroup
+     * @private
+     */
+    _onDefaultGroupSaveSuccess: function(oldGroup, newGroup, bulkSaveRequests, newGroupOldId, serverData) {
+        var newId = serverData.related_record.id;
+        app.alert.dismiss('saving_default_group_alert');
+
+        // update all the bulk save requests that have the old newGroup ID with the newly saved group ID
+        _.each(bulkSaveRequests, function(req) {
+            req.url = req.url.replace(newGroupOldId, newId);
+        }, this);
+
+        this._updateDefaultGroupWithNewData(newGroup, serverData.related_record);
+
+        // call the remaining bulk requests
+        this._callBulkRequests(oldGroup, newGroup, bulkSaveRequests);
+    },
+
+    /**
+     * Calls the bulk request endpoint with an array of requests
+     *
+     * @param {View.QuoteDataGroupLayout} oldGroup The old QuoteDataGroupLayout
+     * @param {View.QuoteDataGroupLayout} newGroup The new QuoteDataGroupLayout
+     * @param {Array} bulkSaveRequests The array of bulk save requests
+     * @private
+     */
+    _callBulkRequests: function(oldGroup, newGroup, bulkSaveRequests) {
+        app.api.call('create', app.api.buildURL(null, 'bulk'), {
+            requests: bulkSaveRequests
+        }, {
+            success: _.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup)
+        });
     },
 
     /**
@@ -366,11 +529,43 @@
      * Handler for when quote_data changes on the model
      */
     _onProductBundleChange: function(productBundles) {
-        // fixme: SFA-4399 will add "groupless" rows in here before the groups
-        // after adding and deleting the change event is like ite change for the model, where the
+        var hasDefaultGroup = false;
+        var defaultGroupModel;
+
+        // after adding and deleting models, the change event is like its change for the model, where the
         // model is the first param and not the actual value it's self.
         if (productBundles instanceof Backbone.Model) {
             productBundles = productBundles.get('bundles');
+        }
+
+        // check to see if there's a default group in the bundle
+        if (productBundles && productBundles.length > 0) {
+            hasDefaultGroup = _.some(productBundles.models, function(bundle) {
+                return bundle.get('default_group');
+            });
+        }
+
+        if (!hasDefaultGroup) {
+            // if there is not a default group yet, add one
+            this.defaultGroupId = app.utils.generateUUID();
+            defaultGroupModel = app.data.createBean('ProductBundles', {
+                id: this.defaultGroupId,
+                _notSaved: true,
+                _module: 'ProductBundles',
+                link: 'product_bundles',
+                default_group: true,
+                product_bundle_items: [],
+                position: 0
+            });
+            // calling unshift on the collection with silent so it doesn't
+            // cause this function to be triggered again halfway thru
+            productBundles.unshift(defaultGroupModel, {silent: true});
+        } else {
+            // default group exists, get the ID
+            defaultGroupModel = _.find(productBundles.models, function(bundle) {
+                return bundle.get('default_group');
+            });
+            this.defaultGroupId = defaultGroupModel.get('id');
         }
 
         productBundles.each(function(bundle) {
@@ -386,7 +581,7 @@
     /**
      * Adds the actual quote-data-group layout component to this layout
      *
-     * @param {Object} [bundleData] The ProductBundle data object - defaults to empty Object
+     * @param {Object} [bundle] The ProductBundle data object
      * @private
      */
     _addQuoteGroupToLayout: function(bundle) {

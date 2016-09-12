@@ -4,6 +4,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
     var layoutModel;
     var layoutContext;
     var layoutGroupId;
+    var initializeOptions;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -13,6 +14,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         layoutGroupId = 'layoutGroupId1';
         layoutModel = new Backbone.Model({
             id: layoutGroupId,
+            default_group: false,
             product_bundle_items: new Backbone.Collection([
                 {id: 'test1', _module: 'Products', position: 0},
                 {id: 'test2', _module: 'Products', position: 1},
@@ -36,7 +38,13 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             };
         });
 
-        layout = SugarTest.createLayout('base', 'ProductBundles', 'quote-data-group', null, layoutContext, true);
+        initializeOptions = {
+            model: layoutModel
+        };
+
+        layout = SugarTest.createLayout('base', 'ProductBundles', 'quote-data-group', null,
+            layoutContext, true, initializeOptions);
+
         sinon.collection.stub(layout, '_super', function() {});
     });
 
@@ -66,19 +74,16 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         });
 
         it('should call app.metadata.getView with first param Products module', function() {
-            layout.initialize({});
             lastCall = app.metadata.getView.lastCall;
             expect(lastCall.args[0]).toBe('Products');
         });
 
         it('should call app.metadata.getView with second param quote-data-group-list', function() {
-            layout.initialize({});
             lastCall = app.metadata.getView.lastCall;
             expect(lastCall.args[1]).toBe('quote-data-group-list');
         });
 
         it('should set listColSpan if metadata exists', function() {
-            layout.initialize({});
             expect(layout.listColSpan).toBe(4);
         });
     });

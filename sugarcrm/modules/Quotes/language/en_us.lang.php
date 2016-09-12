@@ -236,4 +236,5 @@ $mod_strings = array (
     'LBL_DELETED_BUNDLE_SUCCESS_MSG' => 'Group successfully deleted',
     'LBL_ADDING_BUNDLE_ALERT_MSG' => 'Creating a new Group',
     'LBL_ADDED_BUNDLE_SUCCESS_MSG' => 'Group successfully created',
+    'LBL_SAVING_DEFAULT_GROUP_ALERT_MSG' => 'Saving the default group',
 );

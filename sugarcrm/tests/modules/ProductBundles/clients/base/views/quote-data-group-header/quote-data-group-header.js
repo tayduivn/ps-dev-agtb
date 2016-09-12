@@ -180,21 +180,21 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
 
     describe('_onCreateQLIBtnClicked()', function() {
         it('should trigger quotes:group:delete event', function() {
-            sinon.collection.spy(view.context, 'trigger');
+            sinon.collection.spy(view.layout, 'trigger');
             view.model.set('id', 'viewModel1');
             view._onCreateQLIBtnClicked();
 
-            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:create:qli:viewModel1');
+            expect(view.layout.trigger).toHaveBeenCalledWith('quotes:group:create:qli');
         });
     });
 
     describe('_onCreateCommentBtnClicked()', function() {
         it('should trigger quotes:group:delete event', function() {
-            sinon.collection.spy(view.context, 'trigger');
+            sinon.collection.spy(view.layout, 'trigger');
             view.model.set('id', 'viewModel1');
             view._onCreateCommentBtnClicked();
 
-            expect(view.context.trigger).toHaveBeenCalledWith('quotes:group:create:note:viewModel1');
+            expect(view.layout.trigger).toHaveBeenCalledWith('quotes:group:create:note');
         });
     });
 });

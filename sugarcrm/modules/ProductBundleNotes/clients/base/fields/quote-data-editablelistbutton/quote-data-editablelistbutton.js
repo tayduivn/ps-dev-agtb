@@ -63,21 +63,40 @@
         // trigger a cancel event across the view context so listening components
         // know the changes made in this row are being reverted
         if (this.view.context) {
-            this.view.context.trigger('editablelist:cancel:' + this.view.model.get('id'), this.model);
+            this.view.layout.trigger('editablelist:cancel', this.model);
         }
     },
 
     /**
+     * Called after the save button is clicked and all the fields have been validated,
+     * triggers an event for
+     *
      * @inheritdoc
      */
     _save: function() {
+        this.view.layout.trigger('editablelist:saving', true);
+
+        if (this.view.model.isNew()) {
+            this.view.context.parent.trigger('quotes:defaultGroup:save', _.bind(this._saveRowModel, this));
+        } else {
+            this._saveRowModel();
+        }
+    },
+
+    /**
+     * Saves the row's model
+     *
+     * @private
+     */
+    _saveRowModel: function() {
         var self = this;
         var oldModelId = this.model.get('id');
+
         var successCallback = function(model) {
             self.changed = false;
             model.modelView = 'list';
             if (self.view.context) {
-                self.view.context.trigger('editablelist:save:' + self.view.model.get('id'), model, oldModelId);
+                self.view.layout.trigger('editablelist:save', model, oldModelId);
             }
         };
         var options = {

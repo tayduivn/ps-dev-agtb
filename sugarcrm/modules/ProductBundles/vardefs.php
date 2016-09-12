@@ -370,6 +370,14 @@ $dictionary['ProductBundle'] = array(
             'link' => 'quotes',
             'rname_link' => 'bundle_index',
         ),
+        'default_group' => array(
+            'name' => 'default_group',
+            'type' => 'bool',
+            'studio' => false,
+            'vname' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP',
+            'importable' => false,
+            'default' => false,
+        ),
     ),
     'indices' => array(
         array('name' => 'procuct_bundlespk', 'type' => 'primary', 'fields' => array('id')),

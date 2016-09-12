@@ -414,6 +414,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                         'team_name',
                         'total',
                         'total_usdollar',
+                        'default_group',
                         array(
                             'name' => 'product_bundle_items',
                             'fields' => array(

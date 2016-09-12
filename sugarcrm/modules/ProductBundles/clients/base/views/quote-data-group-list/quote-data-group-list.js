@@ -49,6 +49,11 @@
     listColSpan: 0,
 
     /**
+     * The colspan value for empty rows listColSpan + 1 since no left column
+     */
+    emptyListColSpan: 0,
+
+    /**
      * Array of left column fields
      */
     leftColumns: undefined,
@@ -103,6 +108,11 @@
     moduleDependencies: {},
 
     /**
+     * If this QuoteDataGroupList is the default group list view, or regular header/footer group view
+     */
+    isDefaultGroupList: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -118,12 +128,15 @@
         options.model = options.model || options.layout.model;
         // get the product_bundle_items collection from the model
         options.collection = options.model.get('product_bundle_items');
+
         this.listColSpan = options.layout.listColSpan;
+        this.emptyListColSpan = this.listColSpan + 1;
 
         this._super('initialize', [options]);
 
         this.viewName = 'list';
         this.action = 'list';
+        this.isDefaultGroupList = this.model.get('default_group');
 
         this._fields = _.flatten(_.pluck(this.qliListMetadata.panels, 'fields'));
 
@@ -142,13 +155,21 @@
         this.el = this.layout.el;
         this.setElement(this.el);
 
-        this.context.on('quotes:group:create:qli:' + this.model.get('id'), this.onAddNewItemToGroup, this);
-        this.context.on('quotes:group:create:note:' + this.model.get('id'), this.onAddNewItemToGroup, this);
-        this.context.on('editablelist:cancel:' + this.model.get('id'), this.onCancelRowEdit, this);
-        this.context.on('editablelist:save:' + this.model.get('id'), this.onSaveRowEdit, this);
+        this.isEmptyGroup = this.collection.length === 0;
 
         // for each item in the collection, setup SugarLogic
         this.collection.each(this.setupSugarLogicForModel, this);
+
+        // listen directly on the parent QuoteDataGroupLayout
+        this.layout.on('quotes:group:create:qli', this.onAddNewItemToGroup, this);
+        this.layout.on('quotes:group:create:note', this.onAddNewItemToGroup, this);
+        this.layout.on('quotes:sortable:over', this._onSortableGroupOver, this);
+        this.layout.on('quotes:sortable:out', this._onSortableGroupOut, this);
+        this.layout.on('editablelist:cancel', this.onCancelRowEdit, this);
+        this.layout.on('editablelist:save', this.onSaveRowEdit, this);
+        this.layout.on('editablelist:saving', this.onSavingRow, this);
+
+        this.collection.on('add remove', this.onNewItemChanged, this);
     },
 
     /**
@@ -231,6 +252,8 @@
                 this.sugarLogicContexts[rowId].dispose();
             }
         }
+
+        this.onNewItemChanged();
     },
 
     /**
@@ -245,6 +268,8 @@
         var $oldRow;
         var modelId = rowModel.get('id');
         var modelModule = rowModel.module;
+
+        this.toggleCancelButton(false);
 
         if (rowModel.has('_notSaved')) {
             // if the rowModel still has _notSaved on it, remove it
@@ -266,6 +291,31 @@
             }
         }
         this.toggleRow(modelModule, modelId, false);
+        this.onNewItemChanged();
+    },
+
+    /**
+     * Handles when the row is being saved but has not been saved fully yet
+     *
+     * @param {boolean} disableCancelBtn If we should disable the button or not
+     */
+    onSavingRow: function(disableCancelBtn) {
+        // todo: SFA-4541 needs to add code in here to toggle fields to readonly
+        this.toggleCancelButton(disableCancelBtn);
+    },
+
+    /**
+     * Toggles the cancel button disabled or not
+     *
+     * @param {boolean} disable If we should disable the button or not
+     */
+    toggleCancelButton: function(disable) {
+        var cancelBtn = _.find(this.fields, function(field) {
+            return field.name == 'inline-cancel';
+        });
+        if (cancelBtn) {
+            cancelBtn.setDisabled(disable);
+        }
     },
 
     /**
@@ -274,8 +324,8 @@
      * @param {Data.Bean} groupModel The ProductBundle model
      * @param {string} linkName The link name of the new item to create: products or product_bundle_notes
      */
-    onAddNewItemToGroup: function(groupModel, linkName) {
-        var relatedModel = this.createLinkModel(groupModel, linkName);
+    onAddNewItemToGroup: function(linkName) {
+        var relatedModel = this.createLinkModel(this.model, linkName);
         var maxPositionModel;
         var position = 0;
         var newRelatedModelId = app.utils.generateUUID();
@@ -308,6 +358,71 @@
 
         // adding to the collection will trigger the render
         this.collection.add(relatedModel);
+
+        this.onNewItemChanged();
+    },
+
+    /**
+     * Handles updating if we should show the empty row when QLI/Notes have
+     * been created or canceled before saving
+     */
+    onNewItemChanged: function() {
+        this.isEmptyGroup = this.collection.length === 0;
+        this.toggleEmptyRow(this.isEmptyGroup);
+    },
+
+    /**
+     * Handles when this group receives a sortover event that the user
+     * has dragged an item into this group
+     *
+     * @param {jQuery.Event} evt The jQuery sortover event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @private
+     */
+    _onSortableGroupOver: function(evt, ui) {
+        // When entering a new group, always hide the empty row
+        this.toggleEmptyRow(false);
+    },
+
+    /**
+     * Handles when this group receives a sortout event that the user has
+     * dragged an item out of this group
+     *
+     * @param {jQuery.Event} evt The jQuery sortout event
+     * @param {Object} ui The jQuery Sortable UI Object
+     * @private
+     */
+    _onSortableGroupOut: function(evt, ui) {
+        var isSenderNull = _.isNull(ui.sender);
+        var isSenderSameGroup = isSenderNull ||
+            ui.sender.length && ui.sender.get(0) === this.el;
+
+        // if the group was originally empty, show the empty row
+        // if the group was not empty and had more than one row in it, hide the empty row
+        var showEmptyRow = this.isEmptyGroup;
+
+        // if there is only one item in this group, and the out event happens on a group that is the line item's
+        // original group, and the existing single row is currently hidden,
+        // set showEmptyRow = true so we show the Click + message
+        if (this.collection.length === 1 &&
+            isSenderSameGroup && $(ui.item.get(0)).css('display') === 'none') {
+            showEmptyRow = true;
+        }
+
+        this.toggleEmptyRow(showEmptyRow);
+    },
+
+    /**
+     * Toggles showing and hiding the empty-row message row
+     *
+     * @param {boolean} showEmptyRow True to show the empty row, false to hide it
+     */
+    toggleEmptyRow: function(showEmptyRow) {
+        if (showEmptyRow) {
+            this.$('.empty-row').removeClass('hidden');
+        } else {
+            this.$('.empty-row').addClass('hidden');
+        }
     },
 
     /**
@@ -318,7 +433,14 @@
      * @override
      */
     _renderHtml: function() {
-        this.$('tr.quote-data-group-header').after(this.template(this));
+        var $el = this.$('tr.quote-data-group-header');
+        if ($el.length) {
+            $el.after(this.template(this));
+        } else {
+            this.$el.html(this.template(this));
+        }
+
+        this.toggleEmptyRow(this.isEmptyGroup);
     },
 
     /**

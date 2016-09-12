@@ -121,7 +121,7 @@
      * @private
      */
     _onCreateQLIBtnClicked: function(evt) {
-
+        this.context.trigger('quotes:defaultGroup:create', 'qli');
     },
 
     /**
@@ -131,7 +131,7 @@
      * @private
      */
     _onCreateCommentBtnClicked: function(evt) {
-
+        this.context.trigger('quotes:defaultGroup:create', 'note');
     },
 
     /**

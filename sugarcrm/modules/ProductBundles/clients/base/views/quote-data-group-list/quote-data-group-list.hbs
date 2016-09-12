@@ -13,3 +13,17 @@
 {{#each collection.models}}
     {{partial 'row' ../this module=this.module view=../this model=this fields=../_fields listColSpan=../listColSpan}}
 {{/each}}
+<tr class="quote-data-group-list empty-row">
+    <td colspan="{{emptyListColSpan}}">
+        <div class="empty-row-droppable droppable">
+            {{#if isDefaultGroupList}}
+                {{str 'LBL_QUOTE_DATA_EMPTY_ROW_DEFAULT_GROUP' 'ProductBundles'}}
+            {{else}}
+                {{str 'LBL_QUOTE_DATA_EMPTY_ROW_WITH_GROUP' 'ProductBundles'}}
+            {{/if}}
+        </div>
+    </td>
+</tr>
+<tr class="quote-data-group-list sortable ui-sortable hidden" name="emptyRow">
+    <td colspan="{{emptyListColSpan}}">&nbsp;</td>
+</tr>
