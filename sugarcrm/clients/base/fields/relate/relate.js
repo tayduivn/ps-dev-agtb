@@ -965,7 +965,8 @@
 
         var $dropdown = this.$(this.fieldTag);
         if (!_.isEmpty($dropdown.data('select2'))) {
-            var value, id;
+            var value;
+            var id;
             var relField = this.getRelatedModuleField();
             //FIXME: We will remove this condition once BR-4576 is implemented
             if (_.isArray(this.model.get(this.fieldDefs.link))) {
