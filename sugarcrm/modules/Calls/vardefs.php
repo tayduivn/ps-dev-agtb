@@ -205,7 +205,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Whether email reminder is already sent',
     'studio' => false,
     'massupdate'=> false,
-   ), 
+   ),
   'outlook_id' =>
   array (
     'name' => 'outlook_id',
