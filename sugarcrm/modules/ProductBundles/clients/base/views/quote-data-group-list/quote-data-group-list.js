@@ -85,7 +85,6 @@
 
     /**
      * Array of IDs that have row models created for them but have not been saved yet
-     * todo: Possibly use this with a before navigate event to let users know they have unsaved data
      */
     newIdsToSave: undefined,
 

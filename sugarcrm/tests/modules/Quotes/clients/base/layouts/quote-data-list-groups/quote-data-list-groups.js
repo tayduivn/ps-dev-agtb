@@ -564,29 +564,39 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bulkResponses;
         var bulkOldModelUpdate;
         var bulkNewModelUpdate;
+        var oldProductGroupModel;
         beforeEach(function() {
             oldGroupTriggerSpy = sinon.collection.spy();
             newGroupTriggerSpy = sinon.collection.spy();
 
+            oldProductGroupModel = app.data.createBean('ProductBundles', {
+                id: 'oldProductGroupModelId'
+            });
+            sinon.collection.spy(oldProductGroupModel, 'setSyncedAttributes');
+
             oldGroupId = 'oldGroupId1';
-            oldGroupModel = new Backbone.Model({
+            oldGroupModel = app.data.createBean('Products', {
                 id: 'oldGroupModelId1',
                 name: 'oldGroupModelName_original'
             });
+            sinon.collection.spy(oldGroupModel, 'setSyncedAttributes');
+
             oldGroup = {
                 groupId: oldGroupId,
-                collection: new Backbone.Collection(),
+                model: oldProductGroupModel,
+                collection: app.data.createMixedBeanCollection(),
                 trigger: oldGroupTriggerSpy
             };
 
             newGroupId = 'newGroupId1';
-            newGroupModel = new Backbone.Model({
+            newGroupModel = app.data.createBean('ProductBundles', {
                 id: 'newGroupModelId1',
                 name: 'newGroupModelName_original'
             });
+            sinon.collection.spy(newGroupModel, 'setSyncedAttributes');
             newGroup = {
                 groupId: newGroupId,
-                collection: new Backbone.Collection(),
+                collection: app.data.createMixedBeanCollection(),
                 trigger: newGroupTriggerSpy
             };
 
@@ -595,7 +605,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             bulkOldModelUpdate = {
                 contents: {
-                    record: {},
+                    record: {
+                        id: 'oldProductGroupModelId'
+                    },
                     related_record: {
                         id: 'oldGroupModelId1',
                         name: 'oldGroupModelName_new'
@@ -632,10 +644,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             it('should not update old group', function() {
                 expect(oldGroupModel.get('name')).toBe('oldGroupModelName_original');
+                expect(oldGroupModel.setSyncedAttributes).not.toHaveBeenCalled();
+                expect(oldProductGroupModel.setSyncedAttributes).not.toHaveBeenCalled();
             });
 
             it('should update the new group records', function() {
                 expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
+                expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
         });
 
@@ -644,7 +659,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 layout._onSaveUpdatedGroupSuccess(oldGroup, newGroup, bulkResponses);
             });
 
-            it('should not trigger quotes:group:save:stop if oldGroup is not passed in', function() {
+            it('should trigger quotes:group:save:stop on oldGroup', function() {
                 expect(oldGroupTriggerSpy).toHaveBeenCalled();
             });
 
@@ -652,12 +667,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 expect(newGroupTriggerSpy).toHaveBeenCalled();
             });
 
-            it('should not update old group', function() {
+            it('should update the old group', function() {
                 expect(oldGroupModel.get('name')).toBe('oldGroupModelName_new');
+                expect(oldGroupModel.setSyncedAttributes).toHaveBeenCalled();
+                expect(oldProductGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
 
             it('should update the new group records', function() {
                 expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
+                expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
         });
     });

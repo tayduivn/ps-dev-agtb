@@ -228,23 +228,36 @@
         }
         newGroup.trigger('quotes:group:save:stop');
 
-        _.each(bulkResponses, _.bind(function(oldGroup, newGroup, data) {
-            var record = data.contents.related_record;
-            var model;
-            if (oldGroup) {
-                // if oldGroup exists, check if the record is in the oldGroup
-                model = oldGroup.collection.get(record.id);
-                if (model) {
-                    model.set(record);
-                }
+        // reusable method to update a mode once the bulk responses come back.
+        var updateModelWithRecord = function(model, record) {
+            if (model) {
+                model.setSyncedAttributes(record);
+                model.set(record);
             }
+        };
 
-            if (newGroup) {
-                // check if the record is in the newGroup
-                model = newGroup.collection.get(record.id);
-                if (model) {
-                    model.set(record);
+        _.each(bulkResponses, _.bind(function(oldGroup, newGroup, data) {
+            var record = data.contents.record;
+            var relatedRecord = data.contents.related_record;
+            var model;
+
+            if (oldGroup) {
+                // check if record is the one on this collection
+                if (oldGroup.model && oldGroup.model.get('id') === record.id) {
+                    updateModelWithRecord(oldGroup.model, record);
                 }
+                // if oldGroup exists, check if the related_record is in the oldGroup
+                model = oldGroup.collection.get(relatedRecord.id);
+                updateModelWithRecord(model, relatedRecord);
+            }
+            if (newGroup) {
+                // check if record is the one on this collection
+                if (newGroup.model && newGroup.model.get('id') === record.id) {
+                    updateModelWithRecord(newGroup.model, record);
+                }
+                // check if the related_record is in the newGroup
+                model = newGroup.collection.get(relatedRecord.id);
+                updateModelWithRecord(model, relatedRecord);
             }
         }, this, oldGroup, newGroup), this);
     },
