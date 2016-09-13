@@ -23,6 +23,7 @@ class IbmDb2Platform extends DB2Platform
      * {@inheritDoc}
      *
      * @link https://github.com/doctrine/dbal/commit/e64c76d
+     * @link https://github.com/doctrine/dbal/pull/2463
      */
     protected function doModifyLimitQuery($query, $limit, $offset = null)
     {
@@ -30,13 +31,19 @@ class IbmDb2Platform extends DB2Platform
             return $query;
         }
 
-        $limit = (int) $limit;
-        $offset = (int) (($offset)?:0);
+        $where = array();
+
+        if ($offset !== null) {
+            $where[] = 'db22.DC_ROWNUM >= ' . ((int) $offset + 1);
+        }
+
+        if ($limit !== null) {
+            $where[] = 'db22.DC_ROWNUM <= ' . (($offset ?: 0) + $limit);
+        }
 
         // Todo OVER() needs ORDER BY data!
         $sql = 'SELECT db22.* FROM (SELECT db21.*, ROW_NUMBER() OVER() AS DC_ROWNUM'
-            . ' FROM (' . $query . ') db21) db22'
-            . ' WHERE db22.DC_ROWNUM BETWEEN ' . ($offset + 1) . ' AND ' . ($offset + $limit);
+            . ' FROM (' . $query . ') db21) db22 WHERE ' . implode(' AND ', $where);
 
         return $sql;
     }
