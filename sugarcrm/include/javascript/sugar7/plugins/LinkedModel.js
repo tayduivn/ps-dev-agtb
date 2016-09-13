@@ -50,8 +50,13 @@
                             parentValue = parentModel.get('full_name')
                                 || app.utils.formatNameLocale(parentModel.attributes);
                         }
+                        //FIXME: BR-4577 will remove the 2 following lines.
                         model.set(field.name, parentValue);
                         model.set(field.id_name, parentModel.get('id'));
+                        var relatedRecord = {};
+                        relatedRecord[field.rname || 'name'] = parentValue;
+                        relatedRecord.id = parentModel.get('id');
+                        model.set(field.link, relatedRecord);
                         model.relatedAttributes[field.name] = parentModel.get(field.rname);
                         model.relatedAttributes[field.id_name] = parentModel.get('id');
 
