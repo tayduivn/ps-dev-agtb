@@ -25,7 +25,7 @@ class SugarUpgradeEmailTemplatesUpdateHasVariables extends UpgradeScript
 
         $sql = 'UPDATE email_templates ' .
                 'SET has_variables = 1 ' .
-                'WHERE CONCAT(body, " ", body_html) REGEXP "\\\$[a-zA-Z]*\\\_[a-zA-Z0-9_]*"';
+                'WHERE CONCAT_WS(" ", body, body_html) REGEXP "\\\$[a-zA-Z]*\\\_[a-zA-Z0-9_]*"';
 
         $r = $this->db->query($sql);
         $this->log('SQL Ran, Updated ' . $this->db->getAffectedRowCount($r) . ' Rows');
