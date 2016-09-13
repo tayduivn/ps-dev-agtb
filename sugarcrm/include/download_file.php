@@ -114,7 +114,7 @@ class DownloadFile {
      */
     public function getImageInfo($bean, $field) {
         if ($this->validateBeanAndField($bean, $field, 'image')) {
-            $filename = method_exists($bean, 'getUploadId') ? $bean->getUploadId() : $bean->{$field};
+            $filename = $bean->{$field};
             $filepath = $this->getFilePathFromId($filename);
 
             // Quick existence check to make sure we are actually working
