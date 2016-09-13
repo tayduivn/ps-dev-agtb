@@ -112,7 +112,7 @@ class One2MBeanRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$account->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'name ASC']
         );
-        $this->assertEquals(
+        $this->assertArraySubset(
             [$relId2 => ['id' => $relId2, 'opportunities__name' => 'Opportunity2']],
             $opportunities['rows']
         );

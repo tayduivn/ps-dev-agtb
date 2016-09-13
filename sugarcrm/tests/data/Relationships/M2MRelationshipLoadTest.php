@@ -116,7 +116,7 @@ class M2MRelationshipLoadTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunities = self::$contact->opportunities->query(
             ['limit' => 1, 'offset' => 1, 'orderby' => 'contact_role ASC']
         );
-        $this->assertEquals([$relId2 => ['id' => $relId2, 'contact_role' => 'test2']], $opportunities['rows']);
+        $this->assertArraySubset([$relId2 => ['id' => $relId2, 'contact_role' => 'test2']], $opportunities['rows']);
     }
 
     /**
