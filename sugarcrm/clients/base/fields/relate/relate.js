@@ -570,7 +570,7 @@
             this.formattedRname = value.join(this._separator);
             this.formattedIds = idList.join(this._separator);
         } else {
-            idList = this._getRelateId();
+            idList = _.property('id')(this.model.get(this.fieldDefs.link));
             this.formattedRname = value;
             this.formattedIds = idList;
         }
