@@ -498,7 +498,7 @@ class FilterApi extends SugarApi
      */
     public function filterListCount(ServiceBase $api, array $args)
     {
-        $GLOBALS['log']->fatal('POST <module>/filter/count has been deprecated as of 7.7.0. ' .
+        LoggerManager::getLogger()->fatal('POST <module>/filter/count has been deprecated as of 7.7.0. ' .
             'Please use the equivalent GET endpoint instead.');
 
         return $this->getFilterListCount($api, $args);
@@ -613,8 +613,8 @@ class FilterApi extends SugarApi
 
                 if (!empty($data[$field])) {
                     if (empty($fieldDef['rname'])) {
-                        $GLOBALS['log']->fatal("Field $field has invalid metadata, has source of relate but is " .
-                            'missing rname');
+                        LoggerManager::getLogger()->fatal("Field $field has invalid metadata, " .
+                            'has source of relate but is missing rname');
                         continue;
                     }
                     // we have direct data - populate it
@@ -774,8 +774,8 @@ class FilterApi extends SugarApi
             if (is_callable(array($relate_bean, 'getRelatedModuleRecords'))) {
                 $rc_beans[$name] = $relate_bean->getRelatedModuleRecords($bean, $bean_ids);
             } else {
-                $GLOBALS['log']->fatal('Field is a relate collection, but associated module does not have function' .
-                    ' getRelatedModuleRecords');
+                LoggerManager::getLogger()->fatal('Field is a relate collection, ' .
+                    'but associated module does not have function getRelatedModuleRecords');
             }
         }
 
