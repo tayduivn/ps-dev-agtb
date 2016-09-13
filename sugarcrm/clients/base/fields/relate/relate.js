@@ -506,7 +506,7 @@
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
     _getRelateId: function () {
-        return _.property('id')(this.model.get(this.fieldDefs.link));
+        return this.model.get(this.def.id_name);
     },
 
     /**

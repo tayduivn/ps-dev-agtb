@@ -105,6 +105,9 @@
         }
         return this;
     },
+    _getRelateId: function() {
+         return this.model.get("parent_id");
+     },
     format: function(value) {
         var module;
         this.def.module = this.getSearchModule();
