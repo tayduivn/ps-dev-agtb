@@ -105,6 +105,9 @@
         }
         return this;
     },
+    _getRelateId: function() {
+         return this.model.get("parent_id");
+     },
     format: function(value) {
         var module;
         this.def.module = this.getSearchModule();
@@ -168,7 +171,6 @@
             return;
         }
         models = _.isArray(models) ? models : [models];
-        var parentRecord = {};
         _.each(models, _.bind(function(model) {
 
             var silent = model.silent || false,
@@ -179,27 +181,19 @@
 
             if (app.acl.hasAccessToModel(this.action, this.model, this.name)) {
                 if (module) {
-                    // FIXME: We will remove this once BR-4577 is implemented.
-                    this.model.set('parent_type', module, {silent: true});
-                    parentRecord.type = module;
+                    this.model.set('parent_type', module, {silent: silent});
+                    this._createSearchCollection();
                 }
                 // only set when we have an id on the model, as setting undefined
                 // is causing issues with the warnUnsavedChanges() method
                 if (!_.isUndefined(model.id)) {
-                    parentRecord.id = model.id;
-                    // FIXME: We will remove this once BR-4577 is implemented.
-                    this.model.set('parent_id', model.id, {silent: true});
+                    this.model.set('parent_id', model.id, {silent: silent});
                     // FIXME we shouldn't rely on model.value... and hack the full_name here until we fix it properly
                     // SC-4196 will fix this.
                     var value = model.value || model[this.def.rname || 'name'] || model['full_name'] ||
                         app.utils.formatNameLocale(model);
-                    parentRecord[this.getRelatedModuleField()] = value;
-                    // FIXME: We will remove this once BR-4577 is implemented.
-                    this.model.set('parent_name', value, {silent: true});
+                    this.model.set('parent_name', value, {silent: silent});
                 }
-
-                this.model.set(this.fieldDefs.link, parentRecord, {silent: silent});
-                this._createSearchCollection();
             }
         }, this));
 
@@ -217,8 +211,7 @@
         return !!moduleFound;
     },
     getSearchModule: function() {
-        return _.property('type')(this.model.get(this.fieldDefs.link)) || this.model.get('parent_type') ||
-            this.$(this.typeFieldTag).val();
+        return this.model.get('parent_type') || this.$(this.typeFieldTag).val();
     },
     getPlaceHolder: function() {
         return  app.lang.get('LBL_SEARCH_SELECT', this.module);
@@ -230,14 +223,19 @@
 
     /**
      * @inheritdoc
+     * Avoid rendering process on select2 change in order to keep focus.
      */
-    _onChange: function() {
-        this._super('_onChange');
-        var plugin = this.$(this.typeFieldTag).data('select2');
-        if (_.isEmpty(plugin) || !plugin.searchmore) {
-            this.render();
-        } else {
-            this.$(this.typeFieldTag).select2('val', _.property('type')(this.model.get(this.fieldDefs.link)));
+    bindDataChange: function() {
+        this._super('bindDataChange');
+        if (this.model) {
+            this.model.on('change:parent_type', function() {
+                var plugin = this.$(this.typeFieldTag).data('select2');
+                if (_.isEmpty(plugin) || !plugin.searchmore) {
+                    this.render();
+                } else {
+                    this.$(this.typeFieldTag).select2('val', this.model.get('parent_type'));
+                }
+            }, this);
         }
     },
 

@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Relate field provides a link to a module that is set in the field definition
- * (fieldDefs)
+ * Relate field provides a link to a module that is set in the definition of
+ * this field metadata.
  *
  * This field requires at least the follow definitions to be exist in the
  * field:
@@ -19,8 +19,9 @@
  * array(
  *     'name' => 'account_name',
  *     'rname' => 'name',
- *     'link' => 'accounts',
+ *     'id_name' => 'account_id',
  *     'module' => 'Accounts',
+ *     'link' => true,
  *     //...
  * ),
  * ```
@@ -505,8 +506,7 @@
         this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
     _getRelateId: function () {
-        //FIXME Remove the fallback to `id_name` when BR-4577 is implemented.
-        return _.property('id')(this.model.get(this.fieldDefs.link)) || this.model.get(this.fieldDefs.id_name);
+        return this.model.get(this.def.id_name);
     },
 
     /**
@@ -563,33 +563,15 @@
             this._buildRoute();
         }
 
-        var idList;
-        //FIXME: We will remove this condition once BR-4576 is implemented
+        var idList = this.model.get(this.def.id_name);
         if (_.isArray(value)) {
-            idList = _.pluck(this.model.get(this.fieldDefs.link), 'id');
             this.formattedRname = value.join(this._separator);
             this.formattedIds = idList.join(this._separator);
         } else {
-            idList = _.property('id')(this.model.get(this.fieldDefs.link));
             this.formattedRname = value;
             this.formattedIds = idList;
         }
-
         return value;
-    },
-
-    /**
-     * @override
-     */
-    getFormattedValue: function() {
-        var relRecords = this.model.get(this.fieldDefs.link);
-        if (!relRecords) {
-            return this._super('getFormattedValue');
-        }
-
-        var relField = this.getRelatedModuleField();
-        //FIXME: We will remove this ternary opperator once BR-4576 is implemented.
-        return this.format(_.isArray(relRecords) ? _.pluck(relRecords, relField) : _.property(relField)(relRecords));
     },
 
     /**
@@ -601,10 +583,8 @@
         if (!models) {
             return;
         }
-
-        var updateRelatedFields = true;
-        var values = {};
-        var relatedRecords = [];
+        var updateRelatedFields = true,
+            values = {};
         if (_.isArray(models)) {
             // Does not make sense to update related fields if we selected
             // multiple models
@@ -619,27 +599,31 @@
         _.each(models, _.bind(function(model) {
             values[this.def.id_name].push(model.id);
             //FIXME SC-4196 will fix the fallback to `formatNameLocale` for person type models.
-            var relatedName = model[this.getRelatedModuleField()] || app.utils.formatNameLocale(model) || model.value;
-            values[this.def.name].push(relatedName);
-            var relatedRecord = {};
-            relatedRecord.id = model.id;
-            relatedRecord[this.getRelatedModuleField()] = relatedName;
-            relatedRecords.push(relatedRecord);
+            values[this.def.name].push(model[this.getRelatedModuleField()] ||
+                app.utils.formatNameLocale(model) || model.value);
         }, this));
 
         // If it's not a multiselect relate, we get rid of the array.
         if (!this.def.isMultiSelect) {
             values[this.def.id_name] = values[this.def.id_name][0];
             values[this.def.name] = values[this.def.name][0];
-            relatedRecords = relatedRecords[0];
         }
-        // Silently set related records keeping backward compatibility.
-        // FIXME: We will remove this once BR-4577 is implemented.
-        this.model.set(values, {silent: true});
-        // Properly set related records in the model.
-        this.model.set(this.fieldDefs.link, relatedRecords);
+        this.model.set(values);
 
         if (updateRelatedFields) {
+            // TODO: move this to SidecarExpressionContext
+            // check if link field is currently populated
+            if (this.model.get(this.fieldDefs.link)) {
+                // unset values of related bean fields in order to make the model load
+                // the values corresponding to the currently selected bean
+                this.model.unset(this.fieldDefs.link);
+            } else {
+                // unsetting what is not set won't trigger "change" event,
+                // we need to trigger it manually in order to notify subscribers
+                // that another related bean has been chosen.
+                // the actual data will then come asynchronously
+                this.model.trigger('change:' + this.fieldDefs.link);
+            }
             this.updateRelatedFields(models[0]);
         }
     },
@@ -752,7 +736,7 @@
         if (!!this.def.isMultiSelect) {
             layout = 'multi-selection-list';
             _.extend(context, {
-                preselectedModelIds: _.clone(_.pluck(this.model.get(this.fieldDefs.link), 'id')),
+                preselectedModelIds: _.clone(this.model.get(this.def.id_name)),
                 maxSelectedRecords: this._maxSelectedRecords,
                 isMultiSelect: true
             });
@@ -950,43 +934,29 @@
                 this.getFilterOptions(true);
             }, this);
 
-            this.model.on('change:' + this.fieldDefs.link, this._onChange, this);
-        }
-    },
+            this.model.on('change:' + this.name, function() {
+                if (this.disposed) {
+                    return;
+                }
+                var $dropdown = this.$(this.fieldTag);
+                if (!_.isEmpty($dropdown.data('select2'))) {
+                    var value = this.model.get(this.def.name);
+                    value = _.isArray(value) ? value.join(this._separator) : value;
+                    value = value ? value.trim() : value;
 
-    /**
-     * Callback when the model field value changes.
-     * @private
-     */
-    _onChange: function() {
-        if (this.disposed) {
-            return;
-        }
+                    $dropdown.data('rname', value);
 
-        var $dropdown = this.$(this.fieldTag);
-        if (!_.isEmpty($dropdown.data('select2'))) {
-            var value;
-            var id;
-            var relField = this.getRelatedModuleField();
-            //FIXME: We will remove this condition once BR-4576 is implemented
-            if (_.isArray(this.model.get(this.fieldDefs.link))) {
-                value = _.pluck(this.model.get(this.fieldDefs.link), relField).join(this._separator);
-                id = _.pluck(this.model.get(this.fieldDefs.link), 'id');
-            } else {
-                //FIXME: Remove the fallbacks when BR-4577 is implemented.
-                value = _.property(relField)(this.model.get(this.fieldDefs.link)) || this.model.get(this.viewDefs.name);
-                id = this._getRelateId();
-            }
+                    // `id` can be an array of ids if the field is a multiselect.
+                    var id = this.model.get(this.def.id_name);
+                    if (_.isEqual($dropdown.select2('val'), id)) {
+                        return;
+                    }
 
-            $dropdown.data('rname', value.trim());
-
-            if (_.isEqual($dropdown.select2('val'), id)) {
-                return;
-            }
-
-            $dropdown.select2('val', id);
-        } else {
-            this.render();
+                    $dropdown.select2('val', id);
+                } else {
+                    this.render();
+                }
+            }, this);
         }
     },
 

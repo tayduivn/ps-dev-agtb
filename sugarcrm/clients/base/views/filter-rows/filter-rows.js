@@ -864,13 +864,8 @@
                     complete: function() {
                         if (!self.disposed) {
                             if (findRelatedName.length > 0) {
-                                var relatedRecords = findRelatedName.map(function(model) {
-                                    var relatedRecord = {};
-                                    relatedRecord[fieldDef.rname] = model.get(fieldDef.rname);
-                                    relatedRecord.id = model.id;
-                                    return relatedRecord;
-                                });
-                                model.set(fieldDef.link, relatedRecords, {silent: true});
+                                model.set(fieldDef.id_name, findRelatedName.pluck('id'), { silent: true });
+                                model.set(fieldName, findRelatedName.pluck(fieldDef.rname), { silent: true });
                             }
                             if (!field.disposed) {
                                 self._renderField(field, fieldContainer);
