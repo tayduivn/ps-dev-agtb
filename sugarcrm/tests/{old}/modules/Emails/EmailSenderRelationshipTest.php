@@ -47,7 +47,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * There should always only be at most one row with role=from for an email.
+     * There should always only be at most one row with address_type=from for an email.
      *
      * @covers ::add
      * @covers ::getRowToInsert
@@ -72,9 +72,9 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => null,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'from',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should be the contact without a defined email address');
@@ -89,12 +89,30 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $address->id,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'from',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should be the contact with a defined email address');
+
+        $additionalFields = array(
+            // An empty string would work too.
+            'email_address_id' => null,
+        );
+        $relationship1->add($email, $contact, $additionalFields);
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => '',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should be the contact with the email address removed');
 
         $additionalFields = array();
         $relationship2->add($email, $account, $additionalFields);
@@ -104,9 +122,9 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => null,
-            'participant_id' => $account->id,
-            'participant_module' => 'Accounts',
-            'role' => 'from',
+            'bean_id' => $account->id,
+            'bean_type' => 'Accounts',
+            'address_type' => 'from',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should be the account without a defined email address');
@@ -114,7 +132,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Rows are deleted by the left-hand side link regardless of whether or not the right-hand side bean's module
-     * matches the value of participant_module in the existing row.
+     * matches the value of bean_type in the existing row.
      *
      * @covers ::removeAll
      * @covers ::checkExisting
@@ -147,7 +165,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * The value of participant_module is always set to the correct module for senders.
+     * The value of bean_type is always set to the correct module for senders.
      *
      * @covers ::getRowToInsert
      * @dataProvider setParticipantModuleProvider
@@ -162,7 +180,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $additionalFields = array(
-            'participant_module' => $module,
+            'bean_type' => $module,
         );
         // Drop empty values, like when $module comes in as null.
         $additionalFields = array_filter($additionalFields);
@@ -179,23 +197,23 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             'email_id' => $email->id,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'from',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
             'deleted' => 0,
         );
         $this->assertRow($expected, $row);
     }
 
     /**
-     * Returns the matching set of rows from the email_participants table.
+     * Returns the matching set of rows from the emails_email_addr_rel table.
      *
      * @param array $fields
      * @return array
      */
     protected function getRows(array $fields)
     {
-        $sql = 'SELECT * FROM emails_participants';
+        $sql = 'SELECT * FROM emails_email_addr_rel WHERE deleted=0';
 
         if (!empty($fields)) {
             $where = array();
@@ -204,7 +222,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
                 $where[] = "{$field}='{$value}'";
             }
 
-            $sql .= ' WHERE ' . implode(' AND ', $where);
+            $sql .= ' AND ' . implode(' AND ', $where);
         }
 
         $result = $GLOBALS['db']->query($sql);
@@ -227,6 +245,11 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // Testing for id is unnecessary.
         unset($row['id']);
+
+        // Assert that date_modified is not empty. Then discard it because testing the actual value is unnecessary.
+        $this->assertNotEmpty($row['date_modified']);
+        unset($row['date_modified']);
+
         $this->assertEquals($expected, $row);
     }
 }

@@ -1115,22 +1115,6 @@ $app_list_strings = array (
         'Archived' => 'Archived',
     ),
 
-    'dom_emails_participants_roles' => array(
-        'from' => 'From',
-        'to' => 'To',
-        'cc' => 'CC',
-        'bcc' => 'BCC',
-    ),
-
-    'dom_emails_participants_participant_modules' => array(
-        'Accounts' => 'Account',
-        'Contacts' => 'Contact',
-        'EmailAddresses' => 'Email Address', // Used when the email address does not map to a known record.
-        'Leads' => 'Lead',
-        'Prospects' => 'Target',
-        'Users' => 'User',
-    ),
-
     'scheduler_status_dom' =>
         array (
         'Active' => 'Active',

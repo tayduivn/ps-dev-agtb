@@ -20,10 +20,6 @@
 class EmailRecipientRelationship extends M2MRelationship
 {
     /**
-     * Disables the primary flag column, as this relationship does not support primary records. This has the effect of
-     * allowing the relationship table to exclude the date_modified field, since the date_modified column is only
-     * required when the primary flag column is enabled.
-     *
      * Disables self-referencing relationships.
      *
      * {@inheritdoc}
@@ -31,15 +27,14 @@ class EmailRecipientRelationship extends M2MRelationship
     public function __construct($def)
     {
         parent::__construct($def);
-        $this->def['primary_flag_column'] = false;
         $this->self_referencing = false;
     }
 
     /**
      * When removing all rows using the right-hand side link, rows where the email_address_id is set are converted to
-     * rows using EmailAddresses as the participant_module. This preserves historical data regarding email participants.
-     * Even if the record ceases to exist, that email will continue to have to record of sending email from or to the
-     * particular email address.
+     * rows using EmailAddresses as the bean_type. This preserves historical data regarding email participants. Even if
+     * the record ceases to exist, that email will continue to have to record of sending email from or to the particular
+     * email address.
      *
      * {@inheritdoc}
      */
@@ -76,7 +71,7 @@ class EmailRecipientRelationship extends M2MRelationship
 
                 // Replace the row with a new row representing the email address used.
                 if (!empty($row['email_address_id'])) {
-                    $newLink = "email_addresses_{$row['role']}";
+                    $newLink = "email_addresses_{$row['address_type']}";
 
                     LoggerManager::getLogger()->debug(
                         "Replace {$rhs->module_dir}/{$rhs->id} with EmailAddresses/{$row['email_address_id']} for " .
@@ -121,8 +116,6 @@ class EmailRecipientRelationship extends M2MRelationship
      * requires discovering the ID of the email address and then guaranteeing that the email address is linked to the
      * right-hand side record.
      *
-     * The field date_modified is not used in this relationship.
-     *
      * {@inheritdoc}
      */
     protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
@@ -132,7 +125,6 @@ class EmailRecipientRelationship extends M2MRelationship
         }
 
         $row = parent::getRowToInsert($lhs, $rhs, $additionalFields);
-        unset($row['date_modified']);
 
         if (empty($row['email_address_id'])) {
             if (empty($row['email_address'])) {
@@ -170,19 +162,10 @@ class EmailRecipientRelationship extends M2MRelationship
             return false;
         }
 
-        $stringSets = array();
+        $roleColumns = $this->getRelationshipRoleColumns();
+        $where = array_merge($where, $roleColumns);
 
-        foreach ($where as $field => $val) {
-            $stringSets[] = "{$field}='{$val}'";
-        }
-
-        $query = 'DELETE FROM ' .
-            $this->getRelationshipTable() .
-            ' WHERE ' .
-            implode(' AND ', $stringSets) .
-            $this->getRoleWhere();
-
-        return DBManagerFactory::getInstance()->query($query);
+        return parent::removeRow($where);
     }
 
     /**
@@ -206,14 +189,13 @@ class EmailRecipientRelationship extends M2MRelationship
     }
 
     /**
-     * The fields date_modified, modified_user_id, and created_by are not used in this relationship.
+     * The modified_user_id and created_by fields are not used in this relationship.
      *
      * {@inheritdoc}
      */
     protected function getStandardFields()
     {
         $fields = parent::getStandardFields();
-        unset($fields['date_modified']);
         unset($fields['modified_user_id']);
         unset($fields['created_by']);
 
@@ -227,7 +209,7 @@ class EmailRecipientRelationship extends M2MRelationship
      * @param string $emailAddress
      * @return bool
      */
-    protected function addEmailAddressToRecord(SugarBean $bean, $emailAddress)
+    private function addEmailAddressToRecord(SugarBean $bean, $emailAddress)
     {
         $emailAddresses = $bean->emailAddress->getAddressesForBean($bean);
         $matches = array_filter($emailAddresses, function ($address) use ($emailAddress) {

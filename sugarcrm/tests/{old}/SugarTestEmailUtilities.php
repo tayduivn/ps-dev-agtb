@@ -53,7 +53,7 @@ class SugarTestEmailUtilities
         $emailIdsSql = "'" . implode("','", $email_ids) . "'";
         $GLOBALS['db']->query("DELETE FROM emails WHERE id IN ({$emailIdsSql})");
         $GLOBALS['db']->query("DELETE FROM emails_text WHERE id IN ({$emailIdsSql})");
-        $GLOBALS['db']->query("DELETE FROM emails_participants WHERE email_id IN ({$emailIdsSql})");
+        $GLOBALS['db']->query("DELETE FROM emails_email_addr_rel WHERE email_id IN ({$emailIdsSql})");
         self::removeCreatedEmailBeansRelationships();
         static::removeCreatedEmailsAttachments();
         self::$_createdEmails = array();

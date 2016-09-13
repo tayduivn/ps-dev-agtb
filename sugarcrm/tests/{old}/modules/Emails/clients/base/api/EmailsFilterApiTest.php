@@ -183,8 +183,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     '$from' => array(
                         array(
-                            'participant_module' => 'Users',
-                            'participant_id' => '$current_user_id',
+                            'bean_type' => 'Users',
+                            'bean_id' => '$current_user_id',
                         ),
                     ),
                 ),
@@ -201,8 +201,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     '$from' => array(
                         array(
-                            'participant_module' => 'Users',
-                            'participant_id' => '$current_user_id',
+                            'bean_type' => 'Users',
+                            'bean_id' => '$current_user_id',
                         ),
                     ),
                 ),
@@ -224,12 +224,12 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     '$from' => array(
                         array(
-                            'participant_module' => 'Users',
-                            'participant_id' => '$current_user_id',
+                            'bean_type' => 'Users',
+                            'bean_id' => '$current_user_id',
                         ),
                         array(
-                            'participant_module' => 'Users',
-                            'participant_id' => $user->id,
+                            'bean_type' => 'Users',
+                            'bean_id' => $user->id,
                         ),
                     ),
                 ),
@@ -251,8 +251,8 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     '$from' => array(
                         array(
-                            'participant_module' => 'Contacts',
-                            'participant_id' => $contact->id,
+                            'bean_type' => 'Contacts',
+                            'bean_id' => $contact->id,
                         ),
                     ),
                 ),
@@ -271,24 +271,24 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             '$to' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
                         array(
                             '$cc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
                         array(
                             '$bcc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
@@ -314,36 +314,36 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             '$to' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => $user->id,
+                                    'bean_type' => 'Users',
+                                    'bean_id' => $user->id,
                                 ),
                             ),
                         ),
                         array(
                             '$cc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => $user->id,
+                                    'bean_type' => 'Users',
+                                    'bean_id' => $user->id,
                                 ),
                             ),
                         ),
                         array(
                             '$bcc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => $user->id,
+                                    'bean_type' => 'Users',
+                                    'bean_id' => $user->id,
                                 ),
                             ),
                         ),
@@ -364,32 +364,32 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             '$from' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
                         array(
                             '$to' => array(
                                 array(
-                                    'participant_module' => 'Contacts',
-                                    'participant_id' => $contact->id,
+                                    'bean_type' => 'Contacts',
+                                    'bean_id' => $contact->id,
                                 ),
                             ),
                         ),
                         array(
                             '$cc' => array(
                                 array(
-                                    'participant_module' => 'Contacts',
-                                    'participant_id' => $contact->id,
+                                    'bean_type' => 'Contacts',
+                                    'bean_id' => $contact->id,
                                 ),
                             ),
                         ),
                         array(
                             '$bcc' => array(
                                 array(
-                                    'participant_module' => 'Contacts',
-                                    'participant_id' => $contact->id,
+                                    'bean_type' => 'Contacts',
+                                    'bean_id' => $contact->id,
                                 ),
                             ),
                         ),

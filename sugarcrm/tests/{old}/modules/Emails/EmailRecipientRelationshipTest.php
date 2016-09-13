@@ -55,9 +55,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $address->id,
-            'participant_id' => $address->id,
-            'participant_module' => 'EmailAddresses',
-            'role' => 'to',
+            'bean_id' => $address->id,
+            'bean_type' => 'EmailAddresses',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -90,9 +90,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $address->id,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -124,9 +124,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $contact->emailAddress->getGuid($address),
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -159,9 +159,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $address->id,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -191,9 +191,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => null,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -226,9 +226,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $addressId,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -268,9 +268,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => $address->id,
-            'participant_id' => $contact->id,
-            'participant_module' => 'Contacts',
-            'role' => 'to',
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
@@ -283,10 +283,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Rows are physically deleted. Only rows that match the role columns are deleted.
+     * Only rows that match the role columns are deleted.
      *
      * @covers ::remove
-     * @covers ::removeRow
      */
     public function testRemove()
     {
@@ -314,21 +313,21 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $rows = $this->getRows(array(
             'email_id' => $email->id,
-            'role' => 'to',
+            'address_type' => 'to',
         ));
         $row = $rows[0];
-        $this->assertCount(1, $rows, 'There should be one row with role=to');
-        $this->assertSame('Contacts', $row['participant_module'], 'The row with role=to should be for Contacts');
-        $this->assertSame($contact->id, $row['participant_id'], "The row with role=to should be for {$contact->id}");
+        $this->assertCount(1, $rows, 'There should be one row with address_type=to');
+        $this->assertSame('Contacts', $row['bean_type'], 'The row with address_type=to should be for Contacts');
+        $this->assertSame($contact->id, $row['bean_id'], "The row with address_type=to should be for {$contact->id}");
 
         $rows = $this->getRows(array(
             'email_id' => $email->id,
-            'role' => 'cc',
+            'address_type' => 'cc',
         ));
         $row = $rows[0];
-        $this->assertCount(1, $rows, 'There should be one row with role=cc');
-        $this->assertSame('Accounts', $row['participant_module'], 'The row with role=cc should be for Accounts');
-        $this->assertSame($account->id, $row['participant_id'], "The row with role=cc should be for {$account->id}");
+        $this->assertCount(1, $rows, 'There should be one row with address_type=cc');
+        $this->assertSame('Accounts', $row['bean_type'], 'The row with address_type=cc should be for Accounts');
+        $this->assertSame($account->id, $row['bean_id'], "The row with address_type=cc should be for {$account->id}");
     }
 
     /**
@@ -367,40 +366,40 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $rows = $this->getRows(array(
             'email_id' => $email1->id,
-            'role' => 'to',
+            'address_type' => 'to',
         ));
         $this->assertCount(0, $rows, 'The row should have been removed');
 
         $rows = $this->getRows(array(
             'email_id' => $email2->id,
-            'role' => 'to',
+            'address_type' => 'to',
         ));
         $row = $rows[0];
         $this->assertCount(1, $rows, "The row should have been replaced with the contact's primary email address");
-        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
-        $this->assertSame($primaryId, $row['participant_id'], "The row should use the contact's primary email address");
+        $this->assertSame('EmailAddresses', $row['bean_type'], 'The row should be for EmailAddresses');
+        $this->assertSame($primaryId, $row['bean_id'], "The row should use the contact's primary email address");
 
         $rows = $this->getRows(array(
             'email_id' => $email3->id,
-            'role' => 'to',
+            'address_type' => 'to',
         ));
         $row = $rows[0];
         $this->assertCount(1, $rows, "The row should have been replaced with the chosen email address");
-        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
-        $this->assertSame($address->id, $row['participant_id'], 'The row should use the chosen email address');
+        $this->assertSame('EmailAddresses', $row['bean_type'], 'The row should be for EmailAddresses');
+        $this->assertSame($address->id, $row['bean_id'], 'The row should use the chosen email address');
 
         // When an email is archived, the email address has been set automatically. The row should be replaced instead
         // of completely removed.
         $rows = $this->getRows(
             array(
                 'email_id' => $email4->id,
-                'role' => 'to',
+                'address_type' => 'to',
             )
         );
         $row = $rows[0];
         $this->assertCount(1, $rows, "The row should have been replaced with the contact's primary email address");
-        $this->assertSame('EmailAddresses', $row['participant_module'], 'The row should be for EmailAddresses');
-        $this->assertSame($primaryId, $row['participant_id'], "The row should use the contact's primary email address");
+        $this->assertSame('EmailAddresses', $row['bean_type'], 'The row should be for EmailAddresses');
+        $this->assertSame($primaryId, $row['bean_id'], "The row should use the contact's primary email address");
     }
 
     /**
@@ -420,31 +419,34 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'email_id' => array(
                 'name' => 'email_id',
             ),
-            'participant_id' => array(
-                'name' => 'participant_id',
+            'bean_id' => array(
+                'name' => 'bean_id',
             ),
-            'participant_module' => array(
-                'name' => 'participant_module',
+            'bean_type' => array(
+                'name' => 'bean_type',
             ),
-            'role' => array(
-                'name' => 'role',
+            'address_type' => array(
+                'name' => 'address_type',
             ),
             'deleted' => array(
                 'name' => 'deleted',
+            ),
+            'date_modified' => array(
+                'name' => 'date_modified',
             ),
         );
         $this->assertEquals($expected, $fields);
     }
 
     /**
-     * Returns the matching set of rows from the email_participants table.
+     * Returns the matching set of rows from the emails_email_addr_rel table.
      *
      * @param array $fields
      * @return array
      */
     protected function getRows(array $fields)
     {
-        $sql = 'SELECT * FROM emails_participants';
+        $sql = 'SELECT * FROM emails_email_addr_rel WHERE deleted=0';
 
         if (!empty($fields)) {
             $where = array();
@@ -453,7 +455,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
                 $where[] = "{$field}='{$value}'";
             }
 
-            $sql .= ' WHERE ' . implode(' AND ', $where);
+            $sql .= ' AND ' . implode(' AND ', $where);
         }
 
         $result = $GLOBALS['db']->query($sql);
@@ -476,6 +478,11 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // Testing for id is unnecessary.
         unset($row['id']);
+
+        // Assert that date_modified is not empty. Then discard it because testing the actual value is unnecessary.
+        $this->assertNotEmpty($row['date_modified']);
+        unset($row['date_modified']);
+
         $this->assertEquals($expected, $row);
     }
 }

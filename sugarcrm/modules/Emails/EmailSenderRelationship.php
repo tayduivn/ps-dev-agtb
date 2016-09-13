@@ -30,24 +30,26 @@ class EmailSenderRelationship extends EmailRecipientRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-        $currentRow = $this->checkExisting($dataToInsert);
+        if (!$this->relationship_exists($lhs, $rhs)) {
+            $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
+            $currentRow = $this->getCurrentRow($lhs);
 
-        if ($currentRow && !$this->compareRow($currentRow, $dataToInsert)) {
-            $lhsLinkName = $this->lhsLink;
+            if ($currentRow && !$this->compareRow($currentRow, $dataToInsert)) {
+                $lhsLinkName = $this->lhsLink;
 
-            if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName)) {
-                $lhsClass = get_class($lhs);
-                LoggerManager::getLogger()->fatal("could not load LHS {$lhsLinkName} in {$lhsClass}");
-                return false;
-            }
+                if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName)) {
+                    $lhsClass = get_class($lhs);
+                    LoggerManager::getLogger()->fatal("could not load LHS {$lhsLinkName} in {$lhsClass}");
+                    return false;
+                }
 
-            if ($this->removeAll($lhs->$lhsLinkName) === false) {
-                LoggerManager::getLogger()->error(
-                    "Warning: failure calling removeAll() on lhsLinkName: {$lhsLinkName} for relationship " .
-                    "{$this->name} within EmailSenderRelationship->add()."
-                );
-                return false;
+                if ($this->removeAll($lhs->$lhsLinkName) === false) {
+                    LoggerManager::getLogger()->error(
+                        "Warning: failure calling removeAll() on lhsLinkName: {$lhsLinkName} for relationship " .
+                        "{$this->name} within EmailSenderRelationship->add()."
+                    );
+                    return false;
+                }
             }
         }
 
@@ -66,15 +68,12 @@ class EmailSenderRelationship extends EmailRecipientRelationship
         }
 
         $lhs = $link->getFocus();
-        $data = array(
-            $this->def['join_key_lhs'] => $lhs->id,
-        );
-        $currentRow = $this->checkExisting($data);
+        $currentRow = $this->getCurrentRow($lhs);
 
         if ($currentRow) {
             $rhs = BeanFactory::retrieveBean(
-                $currentRow['participant_module'],
-                $currentRow['participant_id'],
+                $currentRow['bean_type'],
+                $currentRow['bean_id'],
                 array(
                     'disable_row_level_security' => true,
                 )
@@ -86,38 +85,33 @@ class EmailSenderRelationship extends EmailRecipientRelationship
     }
 
     /**
-     * Returns the row for a particular email where the role is "from."
-     *
-     * {@inheritdoc}
-     */
-    protected function checkExisting($row)
-    {
-        $lhsKey = $this->def['join_key_lhs'];
-
-        if (empty($row[$lhsKey])) {
-            return false;
-        }
-
-        $query = 'SELECT * FROM '
-            . $this->getRelationshipTable() .
-            " WHERE {$lhsKey}='{$row[$lhsKey]}' " .
-            $this->getRoleWhere() .
-            ' AND deleted=0';
-        $row = DBManagerFactory::getInstance()->fetchOne($query);
-
-        return empty($row) ? false : $row;
-    }
-
-    /**
-     * Patches $additionalFields['participant_module'] to guarantee that it is always the module of the right-hand side
-     * record. This is required because participant_module isn't a role column for these relationships, whereas it is a
-     * role column for the recipients relationships.
+     * Patches $additionalFields['bean_type'] to guarantee that it is always the module of the right-hand side record.
+     * This is required because bean_type isn't a role column for these relationships, whereas it is a role column for
+     * the recipients relationships.
      *
      * {@inheritdoc}
      */
     protected function getRowToInsert($lhs, $rhs, $additionalFields = array())
     {
-        $additionalFields['participant_module'] = $rhs->module_dir;
+        $additionalFields['bean_type'] = $rhs->module_dir;
         return parent::getRowToInsert($lhs, $rhs, $additionalFields);
+    }
+
+    /**
+     * Returns the row for a particular email where the role is "from."
+     *
+     * @param SugarBean $lhs An email bean.
+     * @return bool|array
+     */
+    private function getCurrentRow(SugarBean $lhs)
+    {
+        $query = 'SELECT * FROM '
+            . $this->getRelationshipTable() .
+            " WHERE {$this->def['join_key_lhs']}='{$lhs->id}' " .
+            $this->getRoleWhere() .
+            ' AND deleted=0';
+        $row = DBManagerFactory::getInstance()->fetchOne($query);
+
+        return empty($row) ? false : $row;
     }
 }

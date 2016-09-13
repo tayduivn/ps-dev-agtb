@@ -39,8 +39,8 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
                 array(
                     '$from' => array(
                         array(
-                            'participant_module' => 'Users',
-                            'participant_id' => '$current_user_id',
+                            'bean_type' => 'Users',
+                            'bean_id' => '$current_user_id',
                         ),
                     ),
                 ),
@@ -61,24 +61,24 @@ $viewdefs['Emails']['base']['filter']['basic'] = array(
                         array(
                             '$to' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
                         array(
                             '$cc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),
                         array(
                             '$bcc' => array(
                                 array(
-                                    'participant_module' => 'Users',
-                                    'participant_id' => '$current_user_id',
+                                    'bean_type' => 'Users',
+                                    'bean_id' => '$current_user_id',
                                 ),
                             ),
                         ),

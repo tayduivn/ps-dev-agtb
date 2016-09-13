@@ -73,16 +73,16 @@ class EmailsFilterApi extends FilterApi
      *     'filter' => array(
      *         '$from' => array(
      *             array(
-     *                 'participant_module' => 'Users',
-     *                 'participant_id' => '$current_user_id',
+     *                 'bean_type' => 'Users',
+     *                 'bean_id' => '$current_user_id',
      *             ),
      *             array(
-     *                 'participant_module' => 'Contacts',
-     *                 'participant_id' => 'fa300a0e-0ad1-b322-9601-512d0983c19a',
+     *                 'bean_type' => 'Contacts',
+     *                 'bean_id' => 'fa300a0e-0ad1-b322-9601-512d0983c19a',
      *             ),
      *             array(
-     *                 'participant_module' => 'EmailAddresses',
-     *                 'participant_id' => 'b0701501-1fab-8ae7-3942-540da93f5017',
+     *                 'bean_type' => 'EmailAddresses',
+     *                 'bean_id' => 'b0701501-1fab-8ae7-3942-540da93f5017',
      *             ),
      *         ),
      *     ),
@@ -92,7 +92,7 @@ class EmailsFilterApi extends FilterApi
      * The above filter definition would return all emails sent by the current user, by the contact whose ID is
      * fa300a0e-0ad1-b322-9601-512d0983c19a, or using the email address foo@bar.com, which is referenced by the ID
      * b0701501-1fab-8ae7-3942-540da93f5017. Any number of tuples can be provided in the definition. When the
-     * $current_user_id macro is used for the participant_id field, it is swapped for the current user's ID.
+     * $current_user_id macro is used for the bean_id field, it is swapped for the current user's ID.
      *
      * @param SugarQuery $q The whole SugarQuery object
      * @param SugarQuery_Builder_Where $where The Where part of the SugarQuery object
@@ -114,11 +114,11 @@ class EmailsFilterApi extends FilterApi
         );
 
         $fta = $q->getFromAlias();
-        $jta = $q->getJoinTableAlias('emails_participants', false, false);
+        $jta = $q->getJoinTableAlias('emails_email_addr_rel', false, false);
         $joinParams = array(
             'alias' => $jta,
         );
-        $join = isset($q->join[$jta]) ? $q->join[$jta] : $q->joinTable('emails_participants', $joinParams);
+        $join = isset($q->join[$jta]) ? $q->join[$jta] : $q->joinTable('emails_email_addr_rel', $joinParams);
         $join->on()->equalsField("{$fta}.id", "{$jta}.email_id");
         $or = $where->queryOr();
 
@@ -129,26 +129,26 @@ class EmailsFilterApi extends FilterApi
                 );
             }
 
-            if (!isset($def['participant_module'])) {
+            if (!isset($def['bean_type'])) {
                 throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operation is invalid: participant_module is required"
+                    "definition for {$field} operation is invalid: bean_type is required"
                 );
             }
 
-            if (!isset($def['participant_id'])) {
+            if (!isset($def['bean_id'])) {
                 throw new SugarApiExceptionInvalidParameter(
-                    "definition for {$field} operation is invalid: participant_id is required"
+                    "definition for {$field} operation is invalid: bean_id is required"
                 );
             }
 
-            if ($def['participant_id'] === static::MACRO_CURRENT_USER_ID) {
-                $def['participant_id'] = static::$current_user->id;
+            if ($def['bean_id'] === static::MACRO_CURRENT_USER_ID) {
+                $def['bean_id'] = static::$current_user->id;
             }
 
             $or->queryAnd()
-                ->equals("{$jta}.role", $roles[$field])
-                ->equals("{$jta}.participant_module", $def['participant_module'])
-                ->equals("{$jta}.participant_id", $def['participant_id']);
+                ->equals("{$jta}.address_type", $roles[$field])
+                ->equals("{$jta}.bean_type", $def['bean_type'])
+                ->equals("{$jta}.bean_id", $def['bean_id']);
         }
     }
 }

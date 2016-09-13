@@ -30,10 +30,10 @@ The additional filters:
 <h4>Emails Sent By</h4>
 <div class="well well-small">
     The <b>$from</b> operation allows you to find emails sent by one or more people. When the person is not known, only
-    the email address is stored. In such a case, the <b>participant_module</b> is EmailAddresses and the
-    <b>participant_id</b> is the ID of the email address from the database. In the example, you would find any emails
-    sent by the current user, the Contacts record with ID "fa300a0e-0ad1-b322-9601-512d0983c19a", or the email address
-    with ID "b0701501-1fab-8ae7-3942-540da93f5017".
+    the email address is stored. In such a case, the <b>bean_type</b> is EmailAddresses and the <b>bean_id</b> is the ID
+    of the email address from the database. In the example, you would find any emails sent by the current user, the
+    Contacts record with ID "fa300a0e-0ad1-b322-9601-512d0983c19a", or the email address with ID
+    "b0701501-1fab-8ae7-3942-540da93f5017".
 
     <h5>Example</h5>
 <pre class="pre-scrollable">
@@ -42,16 +42,16 @@ The additional filters:
         {
             "$from":{
                 {
-                    "participant_module":"Users",
-                    "participant_id":"$current_user_id"
+                    "bean_type":"Users",
+                    "bean_id":"$current_user_id"
                 },
                 {
-                    "participant_module":"Contacts",
-                    "participant_id":"fa300a0e-0ad1-b322-9601-512d0983c19a"
+                    "bean_type":"Contacts",
+                    "bean_id":"fa300a0e-0ad1-b322-9601-512d0983c19a"
                 },
                 {
-                    "participant_module":"EmailAddresses",
-                    "participant_id":"b0701501-1fab-8ae7-3942-540da93f5017"
+                    "bean_type":"EmailAddresses",
+                    "bean_id":"b0701501-1fab-8ae7-3942-540da93f5017"
                 }
             }
         }
@@ -76,20 +76,20 @@ The additional filters:
             "$or":{
                 "$to":{
                     {
-                        "participant_module":"Users",
-                        "participant_id":"$current_user_id"
+                        "bean_type":"Users",
+                        "bean_id":"$current_user_id"
                     }
                 },
                 "$cc":{
                     {
-                        "participant_module":"Users",
-                        "participant_id":"$current_user_id"
+                        "bean_type":"Users",
+                        "bean_id":"$current_user_id"
                     }
                 },
                 "$bcc":{
                     {
-                        "participant_module":"Users",
-                        "participant_id":"$current_user_id"
+                        "bean_type":"Users",
+                        "bean_id":"$current_user_id"
                     }
                 }
             }
