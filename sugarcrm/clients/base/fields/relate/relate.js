@@ -102,12 +102,12 @@
          */
         this._maxSelectedRecords = 20;
 
-        this._super('initialize', [options]);
-
-        if (_.property('link')(this.def) && !_.isBoolean(this.def.link)) {
+        if (_.property('link')(options.def) && !_.isBoolean(options.def.link)) {
             app.logger.warn('The `link` property passed in the viewDefs must be a boolean. Hence, `link`' +
                 ' will be set to `true` by default.');
         }
+
+        this._super('initialize', [options]);
 
         // A relate field displays a link by default.
         this.viewDefs = _.defaults(this.viewDefs || {}, {link: true});
