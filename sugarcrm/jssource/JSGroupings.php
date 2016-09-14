@@ -335,6 +335,7 @@
 
             $sugar_grp_sugar7 = array(
                 'include/javascript/sugar7.js' => 'include/javascript/sugar_grp7.min.js',
+                'include/javascript/sugar7/tutorial.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/bwc.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/utils.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/utils-filters.js' => 'include/javascript/sugar_grp7.min.js',
