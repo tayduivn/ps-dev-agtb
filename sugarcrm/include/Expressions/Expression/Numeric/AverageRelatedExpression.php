@@ -99,7 +99,7 @@ class AverageRelatedExpression extends NumericExpression
             );
         }
 
-        if (!model.isNew()) {
+        if (model.has('id')) {
             if (hasModelBeenRemoved || !_.isFinite(new_value)) {
                 delete all_values[model.get('id')];
             } else if (this.context.relatedModel || all_values[model.get('id')]) {
