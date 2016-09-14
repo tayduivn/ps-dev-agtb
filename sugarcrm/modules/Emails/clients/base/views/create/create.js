@@ -198,9 +198,6 @@
                     case '_signatureLocation':
                         self._signatureLocation = value;
                         break;
-                    case '_isReply':
-                        self._isReply = value;
-                        break;
                     default:
                         self.model.set(fieldName, value);
                 }
@@ -213,7 +210,7 @@
             }
 
             //Reply has special requirement to focus editor at top of content
-            if (self._isReply) {
+            if (!_.isEmpty(values.reply_to_id)) {
                 self._focusEditor();
             }
         });

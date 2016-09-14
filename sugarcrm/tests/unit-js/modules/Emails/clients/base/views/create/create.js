@@ -220,7 +220,7 @@ describe('Emails.Views.Create', function() {
             runs(function() {
                 view.prepopulate({
                     description_html: 'my reply content',
-                    _isReply: true
+                    reply_to_id: _.uniqueId()
                 });
             });
 
@@ -230,6 +230,7 @@ describe('Emails.Views.Create', function() {
 
             runs(function() {
                 expect(focusEditorStub).toHaveBeenCalled();
+                expect(modelSetStub.calledTwice).toBe(true);
             });
         });
     });
