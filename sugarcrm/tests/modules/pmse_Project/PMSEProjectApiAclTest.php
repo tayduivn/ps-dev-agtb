@@ -17,7 +17,7 @@ require_once 'include/api/RestService.php';
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 /**
- * Unit test class to cover ACL testing for Process Author Apis
+ * Unit test class to cover ACL testing for Advanced Workflow Apis
  */
 class PMSEProjectApiAclTest extends Sugar_PHPUnit_Framework_TestCase
 {

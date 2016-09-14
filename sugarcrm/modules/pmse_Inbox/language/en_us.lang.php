@@ -81,7 +81,7 @@ $mod_strings = array (
     'LBL_PMSE_LABEL_CURRENT' => 'Current',
     'LBL_PMSE_LABEL_OVERDUE' => 'Overdue',
     'LBL_PMSE_LABEL_PROCESS' => 'Process',
-    'LBL_PMSE_LABEL_PROCESS_AUTHOR' => 'Process Author',
+    'LBL_PMSE_LABEL_PROCESS_AUTHOR' => 'Advanced Workflow',
     'LBL_PMSE_LABEL_UNASSIGNED' => 'Unassigned',
 
     'LBL_RECORD_NAME'  => "Record Name",
@@ -104,7 +104,7 @@ $mod_strings = array (
     'LBL_PMSE_TITLE_HISTORY' => 'Process History',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR' => 'Process #%s: Current Status',
     'LBL_PMSE_TITLE_IMAGE_GENERATOR_OBJ' => 'Process #{{id}}: Current Status',
-    'LBL_PMSE_TITLE_LOG_VIEWER' => 'Process Author Log Viewer',
+    'LBL_PMSE_TITLE_LOG_VIEWER' => 'Advanced Workflow Log Viewer',
     'LBL_PMSE_TITLE_PROCESS_NOTES' => 'Process Notes',
 
     'LBL_PMSE_MY_PROCESSES' => 'My Processes',

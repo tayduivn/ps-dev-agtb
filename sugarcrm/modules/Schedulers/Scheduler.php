@@ -1004,7 +1004,7 @@ class Scheduler extends SugarBean {
         $schedulers[$scheduler->job] = $scheduler;
 
         //BEGIN SUGARCRM flav=ent ONLY
-        // Process Author OOTB Job
+        // Advanced Workflow OOTB Job
         $scheduler = BeanFactory::getBean('Schedulers');
         $scheduler->name = $mod_strings['LBL_OOTB_PROCESS_AUTHOR_JOB'];
         $scheduler->job = 'function::PMSEEngineCron';

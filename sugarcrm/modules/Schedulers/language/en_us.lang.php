@@ -39,7 +39,7 @@ $mod_strings = array (
 'LBL_OOTB_HEARTBEAT' => 'Sugar Heartbeat',
 'LBL_OOTB_KBCONTENT_UPDATE' => 'Update KBContent articles.',
 'LBL_OOTB_KBSCONTENT_EXPIRE' => 'Publish approved articles & Expire KB Articles.',
-'LBL_OOTB_PROCESS_AUTHOR_JOB' => 'Process Author Scheduled Job',
+'LBL_OOTB_PROCESS_AUTHOR_JOB' => 'Advanced Workflow Scheduled Job',
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',
@@ -158,7 +158,7 @@ $mod_strings = array (
 'LBL_CLEANJOBQUEUE' => 'Cleanup Job Queue',
 'LBL_CLEANOLDRECORDLISTS' => 'Cleanup Old Record Lists',
 //BEGIN SUGARCRM flav=ent ONLY
-'LBL_PMSEENGINECRON' => 'Process Author Scheduler',
+'LBL_PMSEENGINECRON' => 'Advanced Workflow Scheduler',
 //END SUGARCRM flav=ent ONLY
 );
 

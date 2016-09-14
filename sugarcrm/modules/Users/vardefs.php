@@ -178,7 +178,7 @@ $dictionary['User'] = array(
             'type' => 'bool',
             'default' => '0',
             'studio' => array('listview' => false, 'searchview'=>false, 'related' => false),
-            // Remove from Process Author
+            // Remove from Advanced Workflow
             // To add finer grain validation, you could do something like this
             // 'processes' => array(
             //    'isCurrentUserAdmin',

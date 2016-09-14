@@ -139,7 +139,7 @@
             app.logger.fatal('Record not found.');
         }
 
-        // Override the templates and buttons to use Process Author's templates and buttons
+        // Override the templates and buttons to use Advanced Workflow's templates and buttons
         record.xmeta = {
             template: 'pmse-case',
             buttons: data.case.buttons
@@ -435,7 +435,7 @@
             /**
              * @override
              *
-             * Allows checking Process author readonly and required fields
+             * Allows checking Advanced Workflow readonly and required fields
              */
             setEditableFields: function() {
                 delete this.editableFields;
@@ -573,7 +573,7 @@
             },
 
             /**
-             * Check if the field is set to readonly by Process Author
+             * Check if the field is set to readonly by Advanced Workflow
              * @param field The field
              * @returns {boolean} `true` or `false`
              */
@@ -588,7 +588,7 @@
             },
 
             /**
-             * Check if the field is set to required by Process Author
+             * Check if the field is set to required by Advanced Workflow
              * @param field The field
              * @returns {boolean} `true` or `false`
              */
