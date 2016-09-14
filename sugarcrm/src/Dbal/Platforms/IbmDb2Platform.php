@@ -22,7 +22,6 @@ class IbmDb2Platform extends DB2Platform
     /**
      * {@inheritDoc}
      *
-     * @link https://github.com/doctrine/dbal/commit/e64c76d
      * @link https://github.com/doctrine/dbal/pull/2463
      */
     protected function doModifyLimitQuery($query, $limit, $offset = null)

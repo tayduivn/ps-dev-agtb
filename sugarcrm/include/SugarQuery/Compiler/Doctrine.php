@@ -89,7 +89,7 @@ class SugarQuery_Compiler_Doctrine
         $this->compileOrderBy($builder, $query, false);
 
         // combine manually built SELECT with the ORDER BY built by builder
-        $sql = str_replace('SELECT  FROM ', $sql, $builder->getSQL());
+        $sql = str_replace('SELECT ', $sql, $builder->getSQL());
 
         // manually apply LIMIT to the resulting SQL
         if ($hasLimit) {
