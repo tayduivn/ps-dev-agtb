@@ -86,7 +86,7 @@ class HealthCheckScanner
      * @var array List of packages with compatible versions to check.
      */
     protected $packages = array(
-        'Process Author' => array(
+        'Advanced Workflow' => array(
             'checkDisabled' => true,
             array('version' => '*', '__MetaSuffix' => 'DataReset'),
         ),
@@ -410,7 +410,7 @@ class HealthCheckScanner
     );
 
     /**
-     * Methods to run as part of the Process Author invalid field check
+     * Methods to run as part of the Advanced Workflow invalid field check
      * @var array
      */
     protected $invalidFieldUseMethods = array(
@@ -419,7 +419,7 @@ class HealthCheckScanner
     );
 
     /**
-     * List of fields blacklisted for Process Author as of 7.6.2
+     * List of fields blacklisted for Advanced Workflow as of 7.6.2
      * @var array
      */
     protected $blacklistedPAFields = array(
@@ -471,13 +471,13 @@ class HealthCheckScanner
     );
 
     /**
-     * List of field types that are blacklisted throughout Process Author
+     * List of field types that are blacklisted throughout Advanced Workflow
      * @var array
      */
     protected $blacklistedPAFieldTypes = array('image','password','file');
 
     /**
-     * List of validation types needed when checking process author fields
+     * List of validation types needed when checking Advanced Workflow fields
      * @var array
      */
     protected $processFieldValidationTypes = array(
@@ -496,7 +496,7 @@ class HealthCheckScanner
     );
 
     /**
-     * Stack of invalid Process Author fields used in context, and their counts
+     * Stack of invalid Advanced Workflow fields used in context, and their counts
      * @var array
      */
     protected $invalidPAFields = array();
@@ -871,13 +871,13 @@ class HealthCheckScanner
         // Check the Elastic Search Customization
         $this->checkCustomElastic();
 
-        // Check Process Author unserialization
+        // Check Advanced Workflow unserialization
         $this->checkPAUnserialization();
 
-        // Check Process Author invalid fields in activities and business rules
+        // Check Advanced Workflow invalid fields in activities and business rules
         $this->checkPAInvalidFields();
 
-        // Check Process Author locked fields
+        // Check Advanced Workflow locked fields
         $this->checkPALockedFields();
 
         // TODO: custom dashlets
@@ -899,7 +899,7 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks Process Author locked fields.
+     * Checks Advanced Workflow locked fields.
      * If any field group is partially locked, it will notify with a Bucket F red flag.
      */
     protected function checkPALockedFields()
@@ -998,7 +998,7 @@ class HealthCheckScanner
     }
 
     /**
-     * Checks whether Process Author unserializtion between 7.6.(0|1) and 7.6.2+ will
+     * Checks whether Advanced Workflow unserializtion between 7.6.(0|1) and 7.6.2+ will
      * fail. If any unserialize calls fail, it will notify with a Bucket F red flag.
      */
     protected function checkPAUnserialization()
@@ -1021,7 +1021,7 @@ class HealthCheckScanner
     /**
      * Checks whether the unserialization of PHP serialized data will actually
      * work during an upgrade. Used by HealthCheck to ensure that an upgrade will
-     * actually succeed when it comes to Process Author conversion of serialized
+     * actually succeed when it comes to Advanced Workflow conversion of serialized
      * data to json data.
      * @return array List of warnings
      */
@@ -1133,7 +1133,7 @@ class HealthCheckScanner
     }
 
     /**
-     * Gets a parsed log message string for Process Author Unserialization issues
+     * Gets a parsed log message string for Advanced Workflow Unserialization issues
      * @param string $table The table that contains the data for this failure
      * @param string $col The column that contains the data for this failure
      * @param string $id The id of the failed data
@@ -1284,7 +1284,7 @@ class HealthCheckScanner
     }
 
     /**
-     * Trigger method that actually handles launching the Process Author invalid
+     * Trigger method that actually handles launching the Advanced Workflow invalid
      * field use scan, captures log messages and updates the scanner status.
      */
     protected function checkPAInvalidFields()

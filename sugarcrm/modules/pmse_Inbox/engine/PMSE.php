@@ -24,7 +24,7 @@ class PMSE
     private function __construct()
     {
         $this->version = '1.0.0';
-        $this->moduleName = 'Process Author';
+        $this->moduleName = 'Advanced Workflow';
         $this->modulePath['pmse_Inbox'] = "modules/pmse_Inbox";
         $this->modulePath['pmse_Project'] = "modules/pmse_Project";
         $this->modulePath['pmse_Emails_Templates'] = "modules/pmse_Emails_Templates";
