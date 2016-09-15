@@ -74,8 +74,6 @@
     _defaultSettings: {},
 
     /**
-     * @inheritdoc
-     *
      * Bind the separate context to avoid sharing context's handlers
      * between its extension dashlets.
      */
@@ -104,10 +102,10 @@
     },
 
     /**
-     * Initialize max height target element by overriding it's value and
+     * Initialize max height target element by overriding its value and
      * setting it to a specific tab inner element.
      *
-     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @chainable
      * @template
      * @protected
      */
@@ -120,7 +118,7 @@
     /**
      * Initialize events.
      *
-     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @chainable
      * @template
      * @protected
      */
@@ -136,7 +134,7 @@
     /**
      * Initialize tabs.
      *
-     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @chainable
      * @protected
      */
     _initTabs: function() {
@@ -177,7 +175,7 @@
      * - `{custom/,}modules/{module}/clients/{platform}/view/tabbed-dashlet/tabs.hbs`
      * - `{custom/,}modules/{module}/clients/{platform}/view/tabbed-dashlet/toolbar.hbs`
      *
-     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @chainable
      * @template
      * @protected
      */
@@ -198,7 +196,7 @@
     /**
      * Sets up settings, starting with defaults.
 
-     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @chainable
      * @protected
      */
     _initSettings: function() {
@@ -215,7 +213,7 @@
      * New model related properties are injected into each model.
      * Update the record date associating by tab's record date value.
      *
-     * @param {Bean} model Appended new model.
+     * @param {Data.Bean} model Appended new model.
      */
     bindCollectionAdd: function(model) {
         var tab = this._getTab(model.collection);
@@ -223,9 +221,9 @@
     },
 
     /**
-     * Bind event trigger's for each updated models on collection reset.
+     * Bind event triggers for each updated models on collection reset.
      *
-     * @param {BeanCollection} collection Activated tab's collection.
+     * @param {Data.BeanCollection} collection Activated tab's collection.
      */
     bindCollectionReset: function(collection) {
         _.each(collection.models, this.bindCollectionAdd, this);
@@ -247,8 +245,8 @@
      * Update the collection's count on the active tab.
      */
     updateCollectionCount: function() {
-        var tabIndex = this.settings.get('activeTab'),
-            count = this.collection.length;
+        var tabIndex = this.settings.get('activeTab');
+        var count = this.collection.length;
 
         if (this.collection.next_offset >= 0) {
             count += '+';
@@ -294,7 +292,7 @@
      * collection will be created instead.
      *
      * @param {Object} tab Tab properties.
-     * @return {Data.BeanCollection} A new instance of bean collection or null
+     * @return {Data.BeanCollection|null} A new instance of bean collection or `null`
      *   if we cannot access module metadata.
      * @protected
      */
@@ -330,19 +328,26 @@
      *
      * @param {number} index Tab index.
      * @return {Object} Collection options.
+     * @return {number} return.limit The number of records to retrieve.
+     * @return {number} return.offset The offset for pagination.
+     * @return {Object} return.params Additional parameters to the API call.
+     * @return {Object|null} return.fields Specifies the fields on each
+     * requested model.
+     * @return {boolean|undefined} return.myItems Whether or not there is user
+     * visibility when the module is not Meetings or Calls.
      * @protected
      */
     _getCollectionOptions: function(index) {
-        var tab = this.tabs[index],
-            options = {
-                limit: this.settings.get('limit'),
-                offset: 0,
-                params: {
-                    order_by: tab.order_by || null,
-                    include_child_items: tab.include_child_items || null
-                },
-                fields: tab.fields || null
-            };
+        var tab = this.tabs[index];
+        var options = {
+            limit: this.settings.get('limit'),
+            offset: 0,
+            params: {
+                order_by: tab.order_by || null,
+                include_child_items: tab.include_child_items || null
+            },
+            fields: tab.fields || null
+        };
 
         if (tab.module != 'Meetings' && tab.module != 'Calls') {
             options.myItems = this.getVisibility() === 'user';
@@ -359,8 +364,8 @@
      * @protected
      */
     _getCollectionFilters: function(index) {
-        var tab = this.tabs[index],
-            filters = [];
+        var tab = this.tabs[index];
+        var filters = [];
 
         _.each(tab.filters, function(condition, field) {
             var filter = {};
@@ -424,9 +429,9 @@
      * Refresh tabs for the given module
      * @param module {String} name of module needing refresh
      */
-    refreshTabsForModule: function(module){
+    refreshTabsForModule: function(module) {
         var toRefresh = [];
-        _.each(this.tabs, function(tab){
+        _.each(this.tabs, function(tab) {
             if (tab.module === module) {
                toRefresh.push(tab);
             }
@@ -435,16 +440,16 @@
     },
 
     /**
-     * Load data for passed set of tabs
-     * @param tabs {Array} Set of tabs to update
-     * @param options {Object} load options
+     * Load data for passed set of tabs.
+     * @param tabs {Array} Set of tabs to update.
+     * @param options {Object} load options.
      */
-    loadDataForTabs: function(tabs, options){
+    loadDataForTabs: function(tabs, options) {
         options = options || {};
         var self = this;
         var loadDataRequests = [];
         _.each(tabs, function(tab, index) {
-            loadDataRequests.push(function(callback){
+            loadDataRequests.push(function(callback) {
                 tab.collection.setOption(self._getCollectionOptions(index));
 
                 tab.collection.filterDef = _.union(
@@ -461,7 +466,7 @@
             });
         }, this);
         if (!_.isEmpty(loadDataRequests)) {
-            async.parallel(loadDataRequests, function(){
+            async.parallel(loadDataRequests, function() {
                 if (self.disposed) {
                     return;
                 }
@@ -478,18 +483,19 @@
     },
 
     /**
-     * Convenience callback for updating this and related dashlets once a model has been removed
-     * @return {Function} complete callback
+     * Convenience callback for updating this
+     * and related dashlets once a model has been removed.
+     * @return {Function} complete callback.
      * @private
      */
     _getRemoveModelCompleteCallback: function() {
-        return _.bind(function(model){
+        return _.bind(function(model) {
             if (this.disposed) {
                 return;
             }
             this.collection.remove(model);
             this.render();
-            this.context.trigger("tabbed-dashlet:refresh", model.module);
+            this.context.trigger('tabbed-dashlet:refresh', model.module);
         }, this);
     },
 
@@ -521,9 +527,9 @@
     },
 
     /**
-     * @inheritdoc
-     *
      * Additional logic on switch visibility event.
+     *
+     * See {@link app.plugins.ToggleVisibility}.
      */
     visibilitySwitcher: function() {
         var activeVisibility;
@@ -564,11 +570,7 @@
     /**
      * @inheritdoc
      *
-     * New model related properties are injected into each model:
-     *
-     * - {String} record_date Date field to be used to print record
-     *   date, defaults to date_entered, though it can be overridden on
-     *   metadata.
+     * New model related properties are injected into each model.
      */
     _renderHtml: function() {
         if (this.meta.config) {
@@ -601,7 +603,8 @@
                 $(this).removeClass('hide');
             })
             .on('error', function() {
-                $(this).parent().removeClass('avatar avatar-md').addClass('label label-module label-module-md label-Users');
+                $(this).parent().removeClass('avatar avatar-md')
+                                .addClass('label label-module label-module-md label-Users');
                 $(this).parent().find('span').removeClass('hide');
             });
         this.$('img.avatar').each(function() {
