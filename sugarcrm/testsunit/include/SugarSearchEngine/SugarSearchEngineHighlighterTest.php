@@ -76,6 +76,64 @@ class SugarSearchEngineHighlighterTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
 
+            // the field value is an array with 1 element
+            array(
+                'Accounts',
+                array(
+                    'email' => array(
+                        array(0 => '<strong>beans.vegan.hr@example.name</strong>'),
+                    ),
+                ),
+                array(),
+                array(
+                    'email' => array(
+                        'text' => '<strong>beans.vegan.hr@example.name</strong>',
+                        'module' => 'Accounts',
+                        'label' => 'email',
+                    ),
+                ),
+            ),
+
+            // the field value is an array with more than 1 element
+            array(
+                'Accounts',
+                array(
+                    'email' => array(
+                        array(0 => '<strong>beans@example.name</strong>'),
+                        array(0 => '<strong>kid.air@example.name</strong>'),
+                    ),
+                ),
+                array(),
+                array(
+                    'email' => array(
+                        'text' => '<strong>beans@example.name</strong> ... <strong>kid.air@example.name</strong>',
+                        'module' => 'Accounts',
+                        'label' => 'email',
+                    ),
+                ),
+            ),
+
+            // the field value is an array of multiple arrays
+            array(
+                'Accounts',
+                array(
+                    'email' => array(
+                        array(
+                            0 => '<strong>beans.vegan.hr@example.name</strong>',
+                            1 => '<strong>kid.play@example.name</strong>',
+                        ),
+                    ),
+                ),
+                array(),
+                array(
+                    'email' => array(
+                        'text' => '',
+                        'module' => 'Accounts',
+                        'label' => 'email',
+                    ),
+                ),
+            ),
+
             // testing labels and field normalization
             array(
                 'Accounts',
