@@ -1254,6 +1254,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             }]);
             layout.model.set('id', 'testQuoteLayoutId');
             layout.model.set('bundles', bundles);
+            layout.model.set({
+                currency_id: 'currency_id_1',
+                base_rate: '50.37'
+            });
 
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(app.api, 'relationships', function() {});
@@ -1291,6 +1295,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         it('should call app.api.relationships with proper link payload position', function() {
             expect(callArgs.args[2].related.position).toBe(2);
+        });
+
+        it('should call app.api.relationships with proper link payload currency', function() {
+            expect(callArgs.args[2].related.currency_id).toBe('currency_id_1');
+            expect(callArgs.args[2].related.base_rate).toBe('50.37');
         });
 
         it('should call app.api.relationships with payload position of 1 when no bundles exist', function() {

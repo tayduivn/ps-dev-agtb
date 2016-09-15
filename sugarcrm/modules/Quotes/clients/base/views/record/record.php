@@ -306,6 +306,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                 array(
                     'name' => 'currency_id',
                     'type' => 'currency-type-dropdown',
+                    'label' => 'LBL_CURRENCY',
                     'related_fields' => array(
                         'currency_id',
                         'base_rate',

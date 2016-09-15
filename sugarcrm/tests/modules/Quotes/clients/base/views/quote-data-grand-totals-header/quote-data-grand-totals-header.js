@@ -68,42 +68,6 @@ describe('Quotes.Base.Views.QuoteDataGrandTotalsHeader', function() {
         it('should set className', function() {
             expect(view.className).toBe('quote-data-grand-totals-header-wrapper quote-totals-row');
         });
-
-        it('should set panelFields', function() {
-            expect(view.panelFields).toEqual([{
-                name: 'deal_tot',
-                label: 'LBL_DEAL_TOT',
-                value: '$0.00'
-            },
-            {
-                name: 'new_sub',
-                label: 'LBL_NEW_SUB',
-                value: '$0.00'
-            }]);
-        });
-
-        it('should set panelFieldNames', function() {
-            expect(view.panelFieldNames).toEqual(['deal_tot', 'new_sub']);
-        });
-
-        it('should set panelFieldsObj', function() {
-            expect(view.panelFieldsObj).toEqual({
-                deal_tot: {
-                    name: 'deal_tot',
-                    label: 'LBL_DEAL_TOT',
-                    value: '$0.00'
-                },
-                new_sub: {
-                    name: 'new_sub',
-                    label: 'LBL_NEW_SUB',
-                    value: '$0.00'
-                }
-            });
-        });
-
-        it('should create a debouceRender method', function() {
-            expect(_.isFunction(view.debouceRender)).toBeTruthy();
-        });
     });
 
     describe('_onCreateGroupBtnClicked()', function() {

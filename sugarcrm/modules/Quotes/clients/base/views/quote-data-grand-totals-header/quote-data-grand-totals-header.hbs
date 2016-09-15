@@ -15,9 +15,8 @@
         {{field ../this model=../model template='list-header'}}
     {{/each}}
 </div>
-{{#each panelFields}}
-    <div class="quote-totals-row-item {{name}}Item">
-        <div class="record-label quote-totals-row-label">{{label}}</div>
-        <div class="quote-totals-row-value">{{formatCurrency value}}</div>
-    </div>
+{{#each meta.panels}}
+    {{#each fields}}
+        {{field ../../this model=../../model template=../../action}}
+    {{/each}}
 {{/each}}

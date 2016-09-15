@@ -346,9 +346,14 @@
         // set a few items on the model
         relatedModel.set({
             'position': position,
+            currency_id: this.model.get('currency_id'),
+            base_rate: this.model.get('base_rate'),
             id: newRelatedModelId,
             _notSaved: true
         });
+
+        // tell the currency field, not to set the default currency
+        relatedModel.ignoreUserPrefCurrency = true;
 
         // this model's fields should be set to render
         relatedModel.modelView = 'edit';

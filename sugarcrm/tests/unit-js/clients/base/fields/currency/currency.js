@@ -406,7 +406,30 @@ describe('Base.Fields.Currency', function() {
             expect(field.model.get('currency_id')).toEqual('-99');
         });
 
+        it('should leave existing record currency even if new when ignoreUserPrefCurrency is set', function() {
+            model = app.data.createBean(moduleName, {
+                id: 'abcdefg9999999',
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+            model.ignoreUserPrefCurrency = true;
 
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            expect(field.model.get('currency_id')).toEqual('-99');
+        });
     });
 
     describe('detail view', function() {

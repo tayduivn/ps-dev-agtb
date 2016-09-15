@@ -545,6 +545,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 return relatedModelId;
             });
 
+            view.model.set({
+                currency_id: 'currency_id_1',
+                base_rate: '50.37'
+            });
+
             view.onAddNewItemToGroup(groupModel, linkName);
         });
 
@@ -578,6 +583,15 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         it('should add the new relatedModel to collection', function() {
             expect(view.collection.contains(relatedModel)).toBeTruthy();
+        });
+
+        it('should add the new relatedModel with proper currency payload', function() {
+            expect(relatedModel.get('currency_id')).toBe('currency_id_1');
+            expect(relatedModel.get('base_rate')).toBe('50.37');
+        });
+
+        it('should set ignoreUserPrefCurrency on relatedModel so that the values are not overridden', function() {
+            expect(relatedModel.ignoreUserPrefCurrency).toBeTruthy();
         });
     });
 

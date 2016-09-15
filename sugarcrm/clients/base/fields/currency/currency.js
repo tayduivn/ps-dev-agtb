@@ -63,7 +63,11 @@
         var currencyField = this.def.currency_field || 'currency_id',
             currencyFieldValue, baseRateField, baseRateFieldValue;
 
-        if (this.model.isNew() && (!this.model.isCopy())) {
+        // should we ignore the user preference currency
+        // currently this is only used in quotes
+        var ignoreUserPrefCurrency = this.model.ignoreUserPrefCurrency || false;
+
+        if (this.model.isNew() && (!this.model.isCopy()) && (!ignoreUserPrefCurrency)) {
             // new records are set the user's preferred currency
             currencyFieldValue = app.user.getPreference('currency_id');
             this.model.set(currencyField, currencyFieldValue);

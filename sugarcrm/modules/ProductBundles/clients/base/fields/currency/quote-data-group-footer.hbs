@@ -12,5 +12,11 @@
 --}}
 <div class="quote-footer-item {{css_class}}">
     <span class="quote-footer-label">{{label}}</span>
-    <span class="quote-footer-value">{{formatCurrency value}}</span>
+    <span class="quote-footer-value">
+        {{#if transactionValue}}
+            <label class="original">{{transactionValue}}</label><div class="converted">{{value}}</div>
+        {{else}}
+            {{value}}
+        {{/if}}
+    </span>
 </div>

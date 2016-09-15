@@ -54,7 +54,7 @@
     _renderHtml: function() {
         var $els = this.$('tr.quote-data-group-list');
         if ($els.length) {
-            // get the last table row with calss quote-data-group-list and place
+            // get the last table row with class quote-data-group-list and place
             // this template after it  quote-data-group-header
             $(_.last($els)).after(this.template(this));
         } else {

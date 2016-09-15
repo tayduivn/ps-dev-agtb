@@ -628,6 +628,8 @@
             'id': this.model.get('id'),
             'link': 'product_bundles',
             'related': {
+                currency_id: this.model.get('currency_id'),
+                base_rate: this.model.get('base_rate'),
                 position: nextPosition
             }
         }, null, {

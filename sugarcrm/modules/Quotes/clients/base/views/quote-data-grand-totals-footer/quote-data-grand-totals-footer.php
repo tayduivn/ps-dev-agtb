@@ -17,7 +17,7 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
             'fields' => array(
                 array(
                     'name' => 'new_sub',
-                    'type' => 'quote-footer',
+                    'type' => 'currency',
                 ),
                 array(
                     'name' => 'additional_tax',
@@ -26,16 +26,16 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                 ),
                 array(
                     'name' => 'tax',
-                    'type' => 'quote-footer',
+                    'type' => 'currency',
                 ),
                 array(
                     'name' => 'shipping',
-                    'type' => 'quote-footer',
+                    'type' => 'currency',
                 ),
                 array(
                     'name' => 'total',
                     'label' => 'LBL_LIST_GRAND_TOTAL',
-                    'type' => 'quote-footer',
+                    'type' => 'currency',
                     'css_class' => 'grand-total',
                 ),
             ),

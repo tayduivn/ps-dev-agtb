@@ -51,16 +51,25 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-header'] = array(
                 array(
                     'name' => 'deal_tot',
                     'label' => 'LBL_LIST_DEAL_TOT',
+                    'css_class' => 'quote-totals-row-item',
                 ),
-                'new_sub',
+                array(
+                    'name' => 'new_sub',
+                    'css_class' => 'quote-totals-row-item',
+                ),
                 array(
                     'name' => 'tax',
                     'label' => 'LBL_TAX_TOTAL',
+                    'css_class' => 'quote-totals-row-item',
                 ),
-                'shipping',
+                array(
+                    'name' => 'shipping',
+                    'css_class' => 'quote-totals-row-item',
+                ),
                 array(
                     'name' => 'total',
                     'label' => 'LBL_LIST_GRAND_TOTAL',
+                    'css_class' => 'quote-totals-row-item',
                 ),
             ),
         ),
