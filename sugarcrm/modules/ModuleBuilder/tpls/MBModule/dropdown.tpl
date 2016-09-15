@@ -103,29 +103,29 @@
                             {else}
                                 {assign var=is_blank value=false}
                             {/if}
-                            <li class="draggable" id="{$name}">
+                            <li class="draggable" id="{$name|escape:'html':'UTF-8'}">
                                 <table width='100%'>
                                     <tr>
                                         <td class="first">
                                             {if $is_blank}
-                                                {$val}
+                                                {$val|escape:'html':'UTF-8'}
                                             {else}
-                                                <b>{$name}</b>
+                                                <b>{$name|escape:'html':'UTF-8'}</b>
                                             {/if}
-                                            <input id='value_{$name}' value='{$val|escape}' type='hidden'>
-			               <span class='fieldValue' id='span_{$name}'>[{$val}]</span>
-			               <span class='fieldValue' id='span_edit_{$name}' style='display:none'>
-			                   <input type='text' id='input_{$name}' value="{$val}"
-                                      onBlur='SimpleList.setDropDownValue("{$name}", this.value, true)'>
+                                            <input id="value_{$name|escape:'html':'UTF-8'}" value="{$val|escape:'html':'UTF-8'}" type='hidden' />
+                                            <span class="fieldValue" id="span_{$name|escape:'html':'UTF-8'}">[{$val|escape:'html':'UTF-8'}]</span>
+                                            <span class="fieldValue" id="span_edit_{$name|escape:'html':'UTF-8'}" style="display:none">
+                                                <input type="text" id="input_{$name|escape:'html':'UTF-8'}" value="{$val|escape:'html':'UTF-8'}"
+                                                    onBlur='SimpleList.setDropDownValue("{$name|escape:'javascript':'UTF-8'}", this.value, true)'>
 			               </span>
                                         </td>
                                         <td align='right'>
                                             <a href='javascript:void(0)'
-                                               onclick='SimpleList.editDropDownValue("{$name}", true)'>
+                                               onclick='SimpleList.editDropDownValue("{$name|escape:'javascript':'UTF-8'}", true)'>
                                                 {$editImage}</a>
                                             &nbsp;
                                             <a href='javascript:void(0)'
-                                               onclick='SimpleList.deleteDropDownValue("{$name}", true)'>
+                                               onclick='SimpleList.deleteDropDownValue("{$name|escape:'javascript':'UTF-8'}", true)'>
                                                 {$deleteImage}</a>
                                         </td>
                                     </tr>

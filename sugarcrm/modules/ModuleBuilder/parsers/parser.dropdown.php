@@ -48,7 +48,8 @@ class ParserDropDown extends ModuleBuilderParser
         // we rely here on PHP to preserve the order of the received name=>value pairs - associative arrays in PHP are ordered
         if (is_array($temp)) {
             foreach ($temp as $item) {
-                $dropdown[SugarCleaner::stripTags(from_html($item [ 0 ]), false)] = SugarCleaner::stripTags(from_html($item [ 1 ]), false);
+                $key = SugarCleaner::stripTags(from_html($item[0]), false);
+                $dropdown[$key] = empty($key) ? '' : SugarCleaner::stripTags(from_html($item[1]), false);
             }
         }
         if (array_key_exists($emptyMarker, $dropdown)) {
