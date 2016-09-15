@@ -374,6 +374,7 @@ $dictionary['emails_email_addr_rel'] = array(
             'join_key_lhs' => 'email_id',
             'join_key_rhs' => 'bean_id',
             'relationship_role_columns' => array(
+                'bean_type' => 'EmailAddresses',
                 'address_type' => 'from',
             ),
         ),

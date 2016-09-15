@@ -31,6 +31,71 @@ class EmailRecipientRelationship extends M2MRelationship
     }
 
     /**
+     * When an email address is being linked and it collides with a row with the same email address:
+     *
+     * - The existing row is replaced by the new row if the existing row represents an email address.
+     * - The existing row is not removed if it represents a record. The new row is added.
+     * - The new row is not added if it represents an email address and the existing row represents a record.
+     *
+     * {@inheritdoc}
+     */
+    public function add($lhs, $rhs, $additionalFields = array())
+    {
+        LoggerManager::getLogger()->debug('EmailRecipientRelationship::add()');
+
+        $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
+        LoggerManager::getLogger()->debug("Adding to {$this->name}");
+        LoggerManager::getLogger()->debug('data=' . var_export($dataToInsert, true));
+
+        $currentRows = $this->getCurrentRows($lhs);
+
+        foreach ($currentRows as $currentRow) {
+            LoggerManager::getLogger()->debug('current_row=' . var_export($currentRow, true));
+
+            // Equality is checked loosely because null and empty strings need to be considered the same.
+            if ($currentRow['email_address_id'] != $dataToInsert['email_address_id']) {
+                LoggerManager::getLogger()->debug("The email_address_id's do not collide");
+                continue;
+            }
+
+            LoggerManager::getLogger()->debug('The email_address_id columns collide');
+
+            if ($dataToInsert['bean_type'] === 'EmailAddresses') {
+                LoggerManager::getLogger()->debug(
+                    'There is no benefit to updating the current row when the $dataToInsert[bean_type]=EmailAddresses'
+                );
+
+                if ($currentRow['bean_type'] === $dataToInsert['bean_type']) {
+                    LoggerManager::getLogger()->debug('It is a no-op, so the framework can handle it');
+                    continue;
+                } else {
+                    LoggerManager::getLogger()->debug('Preserve $currentRow[bean_type] and $currentRow[bean_id]');
+                    return false;
+                }
+            }
+
+            if ($currentRow['bean_type'] !== 'EmailAddresses') {
+                LoggerManager::getLogger()->debug(
+                    'Email addresses can be duplicated when bean_type and bean_id are not duplicated in order to ' .
+                    'track all records that can be linked to the email'
+                );
+                continue;
+            }
+
+            LoggerManager::getLogger()->debug(
+                'Replace the current row with the new row because we want the bean_type and bean_id data'
+            );
+
+            if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
+                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
+                return false;
+            }
+        }
+
+        return parent::add($lhs, $rhs, $additionalFields);
+    }
+
+    /**
      * When removing all rows using the right-hand side link, rows where the email_address_id is set are converted to
      * rows using EmailAddresses as the bean_type. This preserves historical data regarding email participants. Even if
      * the record ceases to exist, that email will continue to have to record of sending email from or to the particular
@@ -152,7 +217,7 @@ class EmailRecipientRelationship extends M2MRelationship
     }
 
     /**
-     * Physically deletes the row.
+     * Only remove rows that match the role columns since the table is used for more than one relationship.
      *
      * {@inheritdoc}
      */
@@ -200,6 +265,67 @@ class EmailRecipientRelationship extends M2MRelationship
         unset($fields['created_by']);
 
         return $fields;
+    }
+
+    /**
+     * Returns the rows associated with an email and matching the role columns from this relationship.
+     *
+     * @param SugarBean $lhs
+     * @return array
+     */
+    protected function getCurrentRows(SugarBean $lhs)
+    {
+        $rows = array();
+        $roleColumns = $this->getRelationshipRoleColumns();
+        $sql = "SELECT * FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs}='{$lhs->id}' AND " .
+            "address_type='{$roleColumns['address_type']}' AND deleted=0";
+        $result = DBManagerFactory::getInstance()->query($sql);
+
+        while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result)) {
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
+    /**
+     * A row that is being replaced needs to be removed first. This is a convenience method that takes care of loading
+     * the correct relationship and unlinking the RHS bean.
+     *
+     * @param SugarBean $lhs
+     * @param array $row
+     * @return bool
+     */
+    protected function removeRowBeingReplaced(SugarBean $lhs, array $row)
+    {
+        LoggerManager::getLogger()->debug('Removing a row that is being replaced');
+        LoggerManager::getLogger()->debug('row=' . var_export($row, true));
+
+        $rhs = BeanFactory::retrieveBean(
+            $row['bean_type'],
+            $row['bean_id'],
+            array(
+                'disable_row_level_security' => true,
+            )
+        );
+
+        if ($this->getRHSModule() === $row['bean_type']) {
+            LoggerManager::getLogger()->debug("Removing from this relationship: {$this->name}");
+            return $this->remove($lhs, $rhs);
+        } else {
+            $module = $row['bean_type'] === 'EmailAddresses' ? 'email_addresses' : strtolower($row['bean_type']);
+            $link = "{$module}_{$row['address_type']}";
+            LoggerManager::getLogger()->debug("Removing from another relationship: link={$link}");
+
+            if ($lhs->load_relationship($link)) {
+                return $lhs->$link->delete($lhs->id, $rhs);
+            } else {
+                $lhsClass = get_class($lhs);
+                LoggerManager::getLogger()->fatal("Could not load LHS {$link} in {$lhsClass}");
+            }
+        }
+
+        return false;
     }
 
     /**

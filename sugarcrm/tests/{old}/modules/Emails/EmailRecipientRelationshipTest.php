@@ -282,6 +282,110 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(1, $addresses, "The contact should be linked to {$address->email_address}");
     }
 
+    public function testAdd_LinkBeanWithAnEmailAddressWhenTheEmailAddressIsAlreadyLinked()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_email_addresses_to');
+        $email = SugarTestEmailUtilities::createEmail();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $relationship->add($email, $address);
+
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
+        $contact = SugarTestContactUtilities::createContact();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $relationship->add($email, $contact, array('email_address' => $address->email_address));
+
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address->id,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0]);
+    }
+
+    public function testAdd_LinkAnEmailAddressWhenTheEmailAddressIsAlreadyLinked()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
+        $email = SugarTestEmailUtilities::createEmail();
+        $contact = SugarTestContactUtilities::createContact();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $relationship->add($email, $contact, array('email_address_id' => $address->id));
+
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_email_addresses_to');
+        $relationship->add($email, $address);
+
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address->id,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0]);
+    }
+
+    public function testAdd_EmailAddressIsSharedByMoreThanOneBean()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
+        $contact = SugarTestContactUtilities::createContact();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $relationship->add($email, $contact, array('email_address_id' => $address->id));
+
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_accounts_to');
+        $account = SugarTestAccountUtilities::createAccount();
+        SugarTestEmailAddressUtilities::addAddressToPerson($account, $address);
+        $relationship->add($email, $account, array('email_address' => $address->email_address));
+
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(2, $rows, 'There should be two rows');
+
+        /**
+         * Sorts the rows by their "bean_type" attribute.
+         *
+         * @param array $a
+         * @param array $b
+         * @return int
+         */
+        $rsort = function (array $a, array $b) {
+            return ($a['bean_type'] < $b['bean_type']) ? -1 : 1;
+        };
+        usort($rows, $rsort);
+
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address->id,
+            'bean_id' => $account->id,
+            'bean_type' => 'Accounts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0]);
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address->id,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[1]);
+    }
+
     /**
      * Only rows that match the role columns are deleted.
      *

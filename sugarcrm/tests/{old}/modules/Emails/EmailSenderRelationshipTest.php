@@ -58,49 +58,98 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
-        $address = SugarTestEmailAddressUtilities::createEmailAddress();
-        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
+        $lead = SugarTestLeadUtilities::createLead();
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
+        SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address2);
 
-        $relationship1 = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
-        $relationship2 = SugarRelationshipFactory::getInstance()->getRelationship('emails_accounts_from');
+        $contactsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
+        $accountsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_accounts_from');
+        $addressesRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_email_addresses_from');
+        $leadsRelationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_leads_from');
 
-        $additionalFields = array();
-        $relationship1->add($email, $contact, $additionalFields);
+        $addressesRelationship->add($email, $address1);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
 
         $expected = array(
             'email_id' => $email->id,
-            'email_address_id' => null,
-            'bean_id' => $contact->id,
-            'bean_type' => 'Contacts',
+            'email_address_id' => $address1->id,
+            'bean_id' => $address1->id,
+            'bean_type' => 'EmailAddresses',
             'address_type' => 'from',
             'deleted' => '0',
         );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact without a defined email address');
+        $this->assertRow($expected, $rows[0], 'The row should be the email address');
+
+        $addressesRelationship->add($email, $address2);
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address2->id,
+            'bean_id' => $address2->id,
+            'bean_type' => 'EmailAddresses',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should be the new email address');
 
         $additionalFields = array(
-            'email_address_id' => $address->id,
+            'email_address_id' => $address2->id,
         );
-        $relationship1->add($email, $contact, $additionalFields);
+        $leadsRelationship->add($email, $lead, $additionalFields);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
 
         $expected = array(
             'email_id' => $email->id,
-            'email_address_id' => $address->id,
+            'email_address_id' => $address2->id,
+            'bean_id' => $lead->id,
+            'bean_type' => 'Leads',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should be the lead with the same email address');
+
+        $additionalFields = array(
+            'email_address_id' => $address2->id,
+        );
+        $contactsRelationship->add($email, $contact, $additionalFields);
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address2->id,
             'bean_id' => $contact->id,
             'bean_type' => 'Contacts',
             'address_type' => 'from',
             'deleted' => '0',
         );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact with a defined email address');
+        $this->assertRow($expected, $rows[0], 'The row should be the contact with the same email address');
+
+        $addressesRelationship->add($email, $address2);
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => $address2->id,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should still reference the contact');
 
         $additionalFields = array(
             // An empty string would work too.
             'email_address_id' => null,
         );
-        $relationship1->add($email, $contact, $additionalFields);
+        $contactsRelationship->add($email, $contact, $additionalFields);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
 
@@ -115,7 +164,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRow($expected, $rows[0], 'The row should be the contact with the email address removed');
 
         $additionalFields = array();
-        $relationship2->add($email, $account, $additionalFields);
+        $accountsRelationship->add($email, $account, $additionalFields);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
 

@@ -26,30 +26,70 @@ class EmailSenderRelationship extends EmailRecipientRelationship
     /**
      * If an email already has a sender, then the sender is removed before the new one is added.
      *
+     * When an email address is being linked and the existing row has the same email address:
+     *
+     * - The existing row is replaced by the new row if the new row represents a record.
+     * - The new row is not added if it represents an email address and the existing row represents a record.
+     *
      * {@inheritdoc}
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        if (!$this->relationship_exists($lhs, $rhs)) {
-            $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-            $currentRow = $this->getCurrentRow($lhs);
+        LoggerManager::getLogger()->debug('EmailSenderRelationship::add()');
 
-            if ($currentRow && !$this->compareRow($currentRow, $dataToInsert)) {
-                $lhsLinkName = $this->lhsLink;
+        $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
+        LoggerManager::getLogger()->debug("Adding to {$this->name}");
+        LoggerManager::getLogger()->debug('data=' . var_export($dataToInsert, true));
 
-                if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName)) {
-                    $lhsClass = get_class($lhs);
-                    LoggerManager::getLogger()->fatal("could not load LHS {$lhsLinkName} in {$lhsClass}");
+        $currentRows = $this->getCurrentRows($lhs);
+
+        // There can only be one. But just in case something weird happens, we'll iterate through the rows.
+        foreach ($currentRows as $currentRow) {
+            LoggerManager::getLogger()->debug('current_row=' . var_export($currentRow, true));
+
+            if ($this->compareRow($currentRow, $dataToInsert, array('id', 'date_modified', 'email_address_id'))) {
+                LoggerManager::getLogger()->debug(
+                    'It is either a no-op or an update to email_address_id, so the framework can handle it'
+                );
+                continue;
+            }
+
+            if ($dataToInsert['bean_type'] !== 'EmailAddresses') {
+                LoggerManager::getLogger()->debug('Replace the current row with the new row');
+
+                if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
+                    LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
                     return false;
                 }
 
-                if ($this->removeAll($lhs->$lhsLinkName) === false) {
-                    LoggerManager::getLogger()->error(
-                        "Warning: failure calling removeAll() on lhsLinkName: {$lhsLinkName} for relationship " .
-                        "{$this->name} within EmailSenderRelationship->add()."
-                    );
-                    return false;
-                }
+                continue;
+            }
+
+            // Equality is checked loosely because null and empty strings need to be considered the same.
+            $hasEmailAddressCollision = $currentRow['email_address_id'] == $dataToInsert['email_address_id'];
+
+            if ($hasEmailAddressCollision) {
+                LoggerManager::getLogger()->debug('The email_address_id columns collide');
+            }
+
+            if ($hasEmailAddressCollision && $currentRow['bean_type'] !== 'EmailAddresses') {
+                LoggerManager::getLogger()->debug('Preserve $currentRow[bean_type] and $currentRow[bean_id]');
+                return false;
+            }
+
+            $message = 'Replace the current row with the new row because ';
+
+            if ($hasEmailAddressCollision) {
+                $message .= 'we want the bean_type and bean_id data from the new row';
+            } else {
+                $message .= 'we want the new email address';
+            }
+
+            LoggerManager::getLogger()->debug($message);
+
+            if (!$this->removeRowBeingReplaced($lhs, $currentRow)) {
+                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
+                return false;
             }
         }
 
@@ -63,25 +103,32 @@ class EmailSenderRelationship extends EmailRecipientRelationship
      */
     public function removeAll($link)
     {
+        LoggerManager::getLogger()->debug('EmailSenderRelationship::removeAll()');
+        LoggerManager::getLogger()->debug("Removing from {$this->name}");
+
         if ($link->getSide() === REL_RHS) {
+            LoggerManager::getLogger()->debug("{$link->name} is the RHS of the relationship");
             return parent::removeAll($link);
         }
 
+        LoggerManager::getLogger()->debug("{$link->name} is the LHS of the relationship");
+        $result = true;
         $lhs = $link->getFocus();
-        $currentRow = $this->getCurrentRow($lhs);
+        $currentRows = $this->getCurrentRows($lhs);
 
-        if ($currentRow) {
-            $rhs = BeanFactory::retrieveBean(
-                $currentRow['bean_type'],
-                $currentRow['bean_id'],
-                array(
-                    'disable_row_level_security' => true,
-                )
-            );
-            return $this->remove($lhs, $rhs);
+        // There can only be one. But just in case something weird happens, we'll iterate through the rows.
+        foreach ($currentRows as $currentRow) {
+            LoggerManager::getLogger()->debug('Removing current_row=' . var_export($currentRow, true));
+
+            if ($this->removeRowBeingReplaced($lhs, $currentRow)) {
+                $result = $result && true;
+            } else {
+                LoggerManager::getLogger()->error('Failed to remove current_row=' . var_export($currentRow, true));
+                $result = false;
+            }
         }
 
-        return true;
+        return $result;
     }
 
     /**
@@ -95,23 +142,5 @@ class EmailSenderRelationship extends EmailRecipientRelationship
     {
         $additionalFields['bean_type'] = $rhs->module_dir;
         return parent::getRowToInsert($lhs, $rhs, $additionalFields);
-    }
-
-    /**
-     * Returns the row for a particular email where the role is "from."
-     *
-     * @param SugarBean $lhs An email bean.
-     * @return bool|array
-     */
-    private function getCurrentRow(SugarBean $lhs)
-    {
-        $query = 'SELECT * FROM '
-            . $this->getRelationshipTable() .
-            " WHERE {$this->def['join_key_lhs']}='{$lhs->id}' " .
-            $this->getRoleWhere() .
-            ' AND deleted=0';
-        $row = DBManagerFactory::getInstance()->fetchOne($query);
-
-        return empty($row) ? false : $row;
     }
 }

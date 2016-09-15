@@ -230,6 +230,7 @@ $vardefs = array(
             'join_key_lhs' => 'email_id',
             'join_key_rhs' => 'bean_id',
             'relationship_role_columns' => array(
+                'bean_type' => $module,
                 'address_type' => 'from',
             ),
         ),
