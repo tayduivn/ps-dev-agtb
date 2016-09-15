@@ -24,7 +24,7 @@ if (!function_exists("PMSEEngineCron")) {
     function PMSEEngineCron()
     {
 //      Calls and Meetings modules uses this session variable on save function,
-//      in order to do not send notification email to the owner. (within Process Author cron)
+//      in order to do not send notification email to the owner. (within Advanced Workflow cron)
         $_SESSION['process_author_cron'] = true;
         $hookHandler = ProcessManager\Factory::getPMSEObject('PMSEHookHandler');
         $hookHandler->executeCron();

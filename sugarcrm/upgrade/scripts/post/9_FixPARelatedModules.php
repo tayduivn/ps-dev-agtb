@@ -12,7 +12,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 /**
- * Update configuration for Process Author's new format.
+ * Update configuration for Advanced Workflow's new format.
  */
 class SugarUpgradeFixPARelatedModules extends UpgradeScript
 {
