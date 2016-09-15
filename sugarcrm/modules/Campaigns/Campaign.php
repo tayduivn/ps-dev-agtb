@@ -15,7 +15,6 @@
  ********************************************************************************/
 
 class Campaign extends SugarBean {
-	var $field_name_map;
 
 	// Stored fields
 	var $id;

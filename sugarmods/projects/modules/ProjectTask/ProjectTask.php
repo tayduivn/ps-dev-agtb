@@ -94,8 +94,6 @@ class ProjectTask extends SugarBean {
 	var $object_name = 'ProjectTask';
 	var $module_dir = 'ProjectTask';
 
-
-	var $field_name_map;
 	var $new_schema = true;
 
 	var $relationship_fields = array(
@@ -469,4 +467,3 @@ class ProjectTask extends SugarBean {
     }
 	
 }
-?>

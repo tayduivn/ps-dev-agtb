@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 class ProspectList extends SugarBean {
-	var $field_name_map;
 
 	// Stored fields
 	var $id;

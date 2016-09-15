@@ -21,7 +21,6 @@
 class UserPreference extends SugarBean
 {
     public $db;
-    public $field_name_map;
 
     // Stored fields
     public $id;

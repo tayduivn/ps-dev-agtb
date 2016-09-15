@@ -14,7 +14,6 @@
  *  EmailTemplate is used to store email email_template information.
  */
 class EmailTemplate extends SugarBean {
-	var $field_name_map = array();
 	// Stored fields
 	var $id;
 	var $date_entered;

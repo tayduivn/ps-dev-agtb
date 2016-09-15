@@ -313,7 +313,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'link_field' => array('type' => 'field', 'name'=>'link_field')
         );
         
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
@@ -366,7 +366,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'link_field' => array('type' => 'field', 'name'=>'link_field')
         );
         
-        $beanMock->field_name_map = array (
+        $beanMock->field_defs = array (
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
@@ -421,7 +421,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'link_field' => array('type' => 'field', 'name'=>'link_field')
         );
         
-        $beanMock->field_name_map = array (
+        $beanMock->field_defs = array (
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
@@ -491,7 +491,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'Notes' => array('type' => 'Notes', 'relationship'=>'')
         );
         
-        $beanMock->field_name_map = array (
+        $beanMock->field_defs = array (
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
@@ -579,7 +579,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'Notes' => array('type' => 'href_link', 'relationship'=>'leads_notes')
         );
 
-        $beanMock->field_name_map = array (
+        $beanMock->field_defs = array (
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
@@ -666,7 +666,7 @@ class PMSEBeanHandlerTest extends Sugar_PHPUnit_Framework_TestCase
             'link_field' => array('type' => 'field', 'name'=>'link_field'),
         );
 
-        $beanMock->field_name_map = array (
+        $beanMock->field_defs = array (
             'id' => array('type' => 'string', 'dbType' => 'varchar'), 
             'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
             'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 

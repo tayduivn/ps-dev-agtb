@@ -276,9 +276,10 @@ class quicksearchQuery
 
             foreach ($args['field_list'] as $field) {
                 // handle enums
-                if ((isset($results[$i]->field_name_map[$field]['type']) && $results[$i]->field_name_map[$field]['type'] == 'enum')
-                    || (isset($results[$i]->field_name_map[$field]['custom_type']) && $results[$i]->field_name_map[$field]['custom_type'] == 'enum')) {
-
+                if ((isset($results[$i]->field_defs[$field]['type'])
+                        && $results[$i]->field_defs[$field]['type'] == 'enum')
+                    || (isset($results[$i]->field_defs[$field]['custom_type'])
+                        && $results[$i]->field_defs[$field]['custom_type'] == 'enum')) {
                     // get fields to match enum vals
                     if(empty($app_list_strings)) {
                         if(isset($_SESSION['authenticated_user_language']) && $_SESSION['authenticated_user_language'] != '') $current_language = $_SESSION['authenticated_user_language'];
@@ -287,8 +288,9 @@ class quicksearchQuery
                     }
 
                     // match enum vals to text vals in language pack for return
-                    if(!empty($app_list_strings[$results[$i]->field_name_map[$field]['options']])) {
-                        $results[$i]->$field = $app_list_strings[$results[$i]->field_name_map[$field]['options']][$results[$i]->$field];
+                    if (!empty($app_list_strings[$results[$i]->field_defs[$field]['options']])) {
+                        $results[$i]->$field =
+                            $app_list_strings[$results[$i]->field_defs[$field]['options']][$results[$i]->$field];
                     }
                 }
 

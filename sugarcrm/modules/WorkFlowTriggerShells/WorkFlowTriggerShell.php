@@ -27,7 +27,6 @@ require_once('modules/WorkFlowTriggerShells/MetaArray.php');
 
 // WorkFlowTriggerShell is used to store the shell trigger information.
 class WorkFlowTriggerShell extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

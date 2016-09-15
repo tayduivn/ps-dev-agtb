@@ -16,7 +16,6 @@
 
 // DataSet_Layout is used to store customer information.
 class DataSet_Layout extends SugarBean {
-    var $field_name_map;
     // Stored fields
     var $id;
     var $deleted;

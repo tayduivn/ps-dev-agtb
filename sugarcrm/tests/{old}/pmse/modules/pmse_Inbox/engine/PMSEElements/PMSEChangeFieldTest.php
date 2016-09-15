@@ -138,7 +138,7 @@ class PMSEChangeFieldTest extends PHPUnit_Framework_TestCase
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array()
         );
         
@@ -233,7 +233,7 @@ class PMSEChangeFieldTest extends PHPUnit_Framework_TestCase
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array()
         );
                 
@@ -358,7 +358,7 @@ class PMSEChangeFieldTest extends PHPUnit_Framework_TestCase
         $beanMock->rating = 2;
         $beanMock->date = 897329847298134;
         $beanMock->description = 'Original description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array(),
             'rating' => array(),
             'date' => array()
@@ -492,7 +492,7 @@ class PMSEChangeFieldTest extends PHPUnit_Framework_TestCase
         $beanMock->rating = 2;
         $beanMock->date = 897329847298134;
         $beanMock->description = 'Original description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array(),
             'rating' => array(),
             'date' => array()

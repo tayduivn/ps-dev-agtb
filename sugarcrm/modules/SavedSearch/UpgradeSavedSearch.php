@@ -43,7 +43,7 @@ class UpgradeSavedSearch {
 			  	 } else {
 				  	
 				  	$bean = BeanFactory::getBean($module);
-				  	$field_map = $bean->field_name_map;	 	 
+                    $field_map = $bean->field_defs;
 			  	 }
 
 			  	 //Special case for team_id field (from 4.5.x)
@@ -108,4 +108,3 @@ class UpgradeSavedSearch {
 		} //while
 	}
 }
-

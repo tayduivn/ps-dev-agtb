@@ -52,7 +52,7 @@ class TemplateRelatedTextField extends TemplateText{
 
     function get_html_search(){
         $searchable=array();
-        $def = $this->bean->field_name_map[$this->name];
+        $def = $this->bean->field_defs[$this->name];
         $searchable = array('team_id');
         if(!empty($def['id_name']) && in_array($def['id_name'], $searchable)){
             $name = $def['id_name'];
@@ -64,7 +64,7 @@ class TemplateRelatedTextField extends TemplateText{
 
     function get_xtpl_search(){
         $searchable=array();
-        $def = $this->bean->field_name_map[$this->name];
+        $def = $this->bean->field_defs[$this->name];
         $searchable = array('team_id');
         $returnXTPL = array();
         if(!empty($def['id_name']) && in_array($def['id_name'], $searchable)){

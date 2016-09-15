@@ -26,7 +26,6 @@ class RevenueLineItem extends SugarBean
     public $created_by;
     public $created_by_name;
     public $modified_by_name;
-    public $field_name_map;
     public $name;
     public $product_template_id;
     public $description;

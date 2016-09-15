@@ -211,8 +211,8 @@ function create_campaign_summary  ($focus){
     $colorclass = '';
     foreach($fields as $key){
 
-                if(!empty($focus->$key) && !empty($mod_strings[$focus->field_name_map[$key]['vname']])){
-                    $cmpgn_tbl .= "<tr><td scope='row' width='15%'>".$mod_strings[$focus->field_name_map[$key]['vname']]."</td>\n";
+        if (!empty($focus->$key) && !empty($mod_strings[$focus->field_defs[$key]['vname']])) {
+            $cmpgn_tbl .= "<tr><td scope='row' width='15%'>".$mod_strings[$focus->field_defs[$key]['vname']]."</td>\n";
                     if($key == 'team_name') {
                         require_once 'modules/Teams/TeamSetManager.php';
                         $cmpgn_tbl .= "<td scope='row'>" .
@@ -463,5 +463,3 @@ function create_wiz_menu_items($type,$mrkt_string,$camp_url,$summ_url){
 
     return $nav_html;
 }
-
-?>

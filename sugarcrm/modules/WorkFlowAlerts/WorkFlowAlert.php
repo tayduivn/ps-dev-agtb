@@ -34,7 +34,6 @@ require_once('modules/WorkFlowAlerts/MetaArray.php');
 
 // WorkFlowAlert is used to store the workflow alert component information.
 class WorkFlowAlert extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

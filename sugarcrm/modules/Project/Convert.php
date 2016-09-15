@@ -54,8 +54,8 @@ $sugar_smarty->assign('NAME', $focus->name);
 
 // get date/time fields in correct display format to pass front end validation
 foreach ($focus->fetched_row as $field=>$value) {
-    if (isset($focus->field_name_map[$field]['type'])
-        && in_array($focus->field_name_map[$field]['type'], array('date','datetime','datetimecombo','time'))) {
+    if (isset($focus->field_defs[$field]['type'])
+        && in_array($focus->field_defs[$field]['type'], array('date','datetime','datetimecombo','time'))) {
         $focus->fetched_row[$field] = $focus->$field;
     }
 }

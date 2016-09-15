@@ -63,11 +63,11 @@ class BugPAT713Test extends Sugar_PHPUnit_Framework_TestCase
             $vardefs[$relatedModule][1]['type'] == 'relate') {
             $linkField   = $vardefs[$relatedModule][1];
             $relatedBean = BeanFactory::getBean($relatedModule);
-            $fieldMap    = array_keys($relatedBean->field_name_map);
+            $fieldMap    = array_keys($relatedBean->field_defs);
 
             $this->assertContains($linkField['rname'], $fieldMap, 'Rname field does not exist in related module.');
 
-            $fieldDef = $relatedBean->field_name_map[$linkField['rname']];
+            $fieldDef = $relatedBean->field_defs[$linkField['rname']];
 
             $this->assertFalse($fieldDef['type'] == 'relate', 'Related field does not belong to related module.');
         } else {

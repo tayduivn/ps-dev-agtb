@@ -29,7 +29,6 @@ require_once('modules/WorkFlowActionShells/MetaArray.php');
 
 // WorkFlowActionShell is used to store the shell action information.
 class WorkFlowActionShell extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

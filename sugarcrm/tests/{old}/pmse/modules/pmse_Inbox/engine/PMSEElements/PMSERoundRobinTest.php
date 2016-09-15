@@ -103,7 +103,7 @@ class PMSERoundRobinTest extends PHPUnit_Framework_TestCase {
         $beanMock->team_id = '932ei0923dk0239ike023';
         $beanMock->team_set_id = 'ijdaoisdjaio892de';
         $beanMock->assigned_user_id = '278uw8912uw1';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'team_id' => '932ei0923dk0239ike023'
         );
 
@@ -139,4 +139,3 @@ class PMSERoundRobinTest extends PHPUnit_Framework_TestCase {
         $this->roundRobin->run($flowData, $beanMock, '');
     }
 }
- 

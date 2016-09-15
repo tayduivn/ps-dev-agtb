@@ -99,7 +99,7 @@ class PMSEAssignUserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('save'))
             ->getMock();
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'assigned_user_id' => '2389uj29eu8932ue93'
         );
 

@@ -170,9 +170,9 @@ class TemplateHandler {
                       }
             } //foreach
 
-            //Create a base class with field_name_map property
+            //Create a base class with field_defs property
             $sugarbean = new stdClass;
-            $sugarbean->field_name_map = $defs;
+            $sugarbean->field_defs = $defs;
             $sugarbean->module_dir = $module;
 
             $javascript = new javascript();
@@ -193,8 +193,7 @@ class TemplateHandler {
             //3) not have validateDepedency set to false in metadata
             //4) have id_name in vardef entry
             //5) not already been added to Array
-            foreach($sugarbean->field_name_map as $name=>$def) {
-
+            foreach ($sugarbean->field_defs as $name => $def) {
                if($def['type']=='relate' &&
                   isset($defs2[$name]) &&
                   (!isset($defs2[$name]['validateDependency']) || $defs2[$name]['validateDependency'] === true) &&

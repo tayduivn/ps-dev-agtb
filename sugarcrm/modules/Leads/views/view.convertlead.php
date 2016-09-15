@@ -524,7 +524,7 @@ class ViewConvertLead extends SugarView
             }
 
             //iterate through each field in field map and check meta for calculated fields
-            foreach ($bean->field_name_map as $calcFieldDefs) {
+            foreach ($bean->field_defs as $calcFieldDefs) {
                 if (!empty($calcFieldDefs['calculated'])) {
                     //bean has a calculated field, lets add it to the array for later processing
                     $calcFieldBeans[] = $bean;

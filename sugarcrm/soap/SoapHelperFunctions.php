@@ -623,8 +623,8 @@ function new_handle_set_entries($module_name, $name_value_lists, $select_fields 
 
 		foreach($name_value_list as $value) {
 			$val = $value['value'];
-			if($seed->field_name_map[$value['name']]['type'] == 'enum'){
-				$vardef = $seed->field_name_map[$value['name']];
+            if ($seed->field_defs[$value['name']]['type'] == 'enum') {
+                $vardef = $seed->field_defs[$value['name']];
 				if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$value]) ) {
 		            if ( in_array($val,$app_list_strings[$vardef['options']]) ){
 		                $val = array_search($val,$app_list_strings[$vardef['options']]);

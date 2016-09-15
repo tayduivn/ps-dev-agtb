@@ -469,8 +469,7 @@ $javascript->setSugarBean($focus);
 //$javascript->addAllFields(''); 
 
 //add custom fields to validation 
-foreach($javascript->sugarbean->field_name_map as $field=>$value){
-
+foreach ($javascript->sugarbean->field_defs as $field => $value) {
     if(isset($value['custom_type'])) {
         if ($value['custom_type'] != 'link') {                      
             //pass in required flag if set to required            
@@ -508,5 +507,3 @@ $str = "<script>
 YAHOO.util.Event.addListener(window, 'load', SUGAR.util.fillShortcuts, $savedSearchSelects);
 </script>";
 echo $str;
-
-?>

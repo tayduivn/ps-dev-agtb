@@ -1824,13 +1824,13 @@ class Report
             // This is field name as table.field
             $field_name = substr($field, 0, $has_space);
             $field_data = explode(".", $field_name);
-            if (!isset($field_data[1]) || !isset($this->focus->field_name_map[$field_data[1]]['type'])) {
+            if (!isset($field_data[1]) || !isset($this->focus->field_defs[$field_data[1]]['type'])) {
                 // Not a field or unknown field type - don't touch it
                 return $field;
             }
 
             $db = DBManagerFactory::getInstance();
-            $field_type = $db->getFieldType($this->focus->field_name_map[$field_data[1]]);
+            $field_type = $db->getFieldType($this->focus->field_defs[$field_data[1]]);
 
             if (!in_array($field_type, array('currency','double','float','decimal','int','date','datetime'))) {
                 if ($field_type === 'bool') {

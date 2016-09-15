@@ -30,8 +30,6 @@ require_once('include/utils.php');
 
 class Holiday extends SugarBean {
 
-	var $field_name_map;
-	
 	var $id;
 	var $deleted;
 	var $date_entered;
@@ -93,5 +91,3 @@ class Holiday extends SugarBean {
 	}	
 
 }
-
-?>

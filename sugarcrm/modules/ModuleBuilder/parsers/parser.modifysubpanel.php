@@ -187,8 +187,11 @@ class ParserModifySubPanel extends ParserModifyListView
                 {
                     $vname = $this->panel->template_instance->field_defs [ $field ] [ 'vname' ] ;
                 }
-                if (($this->subPanelParentModule != null) && (isset ( $this->subPanelParentModule->field_name_map [ $field ] ) && ($this->subPanelParentModule->field_name_map [ $field ] [ 'type' ] == 'bool' || (isset ( $this->subPanelParentModule->field_name_map [ $field ] [ 'custom_type' ] ) && $this->subPanelParentModule->field_name_map [ $field ] [ 'custom_type' ] == 'bool'))))
-                {
+                if ($this->subPanelParentModule != null
+                    && (isset($this->subPanelParentModule->field_defs[$field])
+                        && ($this->subPanelParentModule->field_defs[$field]['type'] == 'bool'
+                            || (isset($this->subPanelParentModule->field_defs[$field]['custom_type'])
+                                && $this->subPanelParentModule->field_defs[$field]['custom_type'] == 'bool')))) {
                     $newFields [ $field ] = array ( 'name' => $field , 'vname' => $vname , 'widget_type' => 'checkbox' ) ;
                 } else
                 {
@@ -218,4 +221,3 @@ class ParserModifySubPanel extends ParserModifyListView
     }
 
 }
-?>

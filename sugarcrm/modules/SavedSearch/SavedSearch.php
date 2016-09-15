@@ -54,7 +54,7 @@ class SavedSearch extends SugarBean {
 		$this->sortOrder = $sortOrder;
 		$this->setupCustomFields('SavedSearch');
 		foreach ($this->field_defs as $field) {
-			$this->field_name_map[$field['name']] = $field;
+            $this->field_defs[$field['name']] = $field;
 		}
 	}
 

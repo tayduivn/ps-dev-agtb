@@ -29,7 +29,6 @@ class Currency extends SugarBean
     var $symbol;
     var $hide = '';
     var $unhide = '';
-    var $field_name_map;
 
     var $table_name = "currencies";
     var $object_name = "Currency";

@@ -22,7 +22,6 @@ class ProductBundle extends SugarBean
     public $created_by;
     public $created_by_name;
     public $modified_by_name;
-    public $field_name_map;
     public $name;
     public $currency_id;
     public $base_rate;

@@ -212,7 +212,10 @@ EOQ;
 
 		// assign search inputs to xtemplates
 		foreach(array_keys($searchInputs) as $key) {
-			if(!empty($_REQUEST[$key]) && (isset($seed_bean->field_name_map[$key]['type']) && $seed_bean->field_name_map[$key]['type'] == 'bool')) {
+            if (!empty($_REQUEST[$key])
+                && isset($seed_bean->field_defs[$key]['type'])
+                && $seed_bean->field_defs[$key]['type'] == 'bool'
+            ) {
 				$form->assign(strtoupper($key), ' checked ');
 			} else {
 				$form->assign(strtoupper($key), $searchInputs[$key]);

@@ -19,7 +19,6 @@ require_once('include/workflow/alert_utils.php');
  */
 class WorkFlow extends SugarBean
 {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

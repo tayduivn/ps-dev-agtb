@@ -13,7 +13,6 @@
 
 // DataSet is used to store data formatting for CSQL queries.
 class DataSet extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

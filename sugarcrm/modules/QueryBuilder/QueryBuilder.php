@@ -13,7 +13,6 @@
 
 // ProductTemplate is used to store customer information.
 class QueryBuilder extends SugarBean {
-    var $field_name_map;
     // Stored fields
     var $id;
     var $deleted;
@@ -399,5 +398,3 @@ class QueryBuilder extends SugarBean {
 
 //end class
 }
-
-?>

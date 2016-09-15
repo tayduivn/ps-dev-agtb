@@ -304,14 +304,14 @@ class Document extends SugarBean {
 		$document_fields['FILE_URL_NOIMAGE'] = $this->file_url_noimage;
 		$document_fields['LAST_REV_CREATED_BY'] = $this->last_rev_created_name;
 
-        $category_id_key = isset($this->field_name_map['category_id']['options']) ?
-            $this->field_name_map['category_id']['options'] : 'document_category_dom';
+        $category_id_key = isset($this->field_defs['category_id']['options']) ?
+            $this->field_defs['category_id']['options'] : 'document_category_dom';
 
         $document_fields['CATEGORY_ID'] = empty ($this->category_id) ? "" :
             $app_list_strings[$category_id_key][$this->category_id];
 
-        $subcategory_id_key = isset($this->field_name_map['subcategory_id']['options']) ?
-            $this->field_name_map['subcategory_id']['options'] : 'document_subcategory_dom';
+        $subcategory_id_key = isset($this->field_defs['subcategory_id']['options']) ?
+            $this->field_defs['subcategory_id']['options'] : 'document_subcategory_dom';
 
         $document_fields['SUBCATEGORY_ID'] = empty ($this->subcategory_id) ? "" :
             $app_list_strings[$subcategory_id_key][$this->subcategory_id];

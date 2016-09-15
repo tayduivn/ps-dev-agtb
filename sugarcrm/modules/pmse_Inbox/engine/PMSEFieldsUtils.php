@@ -294,7 +294,7 @@ function bpminbox_check_special_fields($field_name, $source_object, $use_past_ar
 function get_bean_field_type($field_name_mapped, $bean_source_object)
 {
     $unknown = 'unknown';
-    $field = $bean_source_object->field_name_map[$field_name_mapped];
+    $field = $bean_source_object->field_defs[$field_name_mapped];
     $type = (isset($field['type']) ? $field['type'] : $unknown);
     $db_type = (isset($field['dbType']) ? $field['dbType'] : $unknown);
     return array('type' => $type, 'db_type' => $db_type);

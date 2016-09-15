@@ -24,7 +24,6 @@ include_once('include/workflow/field_utils.php');
 
 // WorkFlowTrigger is used to trigger information.
 class WorkFlowAction extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

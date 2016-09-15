@@ -26,7 +26,6 @@ require_once('include/workflow/workflow_utils.php');
 
 // WorkFlowAlertShell is used to store the workflow alert shell information.
 class WorkFlowAlertShell extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

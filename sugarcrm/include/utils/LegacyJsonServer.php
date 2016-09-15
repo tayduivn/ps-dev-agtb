@@ -138,28 +138,32 @@ class LegacyJsonServer
 
             foreach ($args['field_list'] as $field) {
 
-
                 //handle links
-                if (isset($list_return[$i]->field_name_map[$field]) && $list_return[$i]->field_name_map[$field]['type'] == "relate") {
-                    $linked = current($list_return[$i]->get_linked_beans($list_return[$i]->field_name_map[$field]['link'],
-                            get_valid_bean_name($list_return[$i]->field_name_map[$field]['module'])));
+                if (isset($list_return[$i]->field_defs[$field])
+                    && $list_return[$i]->field_defs[$field]['type'] == "relate") {
+                    $linked = current(
+                        $list_return[$i]->get_linked_beans(
+                            $list_return[$i]->field_defs[$field]['link'],
+                            get_valid_bean_name($list_return[$i]->field_defs[$field]['module'])
+                        )
+                    );
                     $list_return[$i]->$field = "";
                     if (is_object($linked)) {
-                        $linkFieldName = $list_return[$i]->field_name_map[$field]['rname'];
+                        $linkFieldName = $list_return[$i]->field_defs[$field]['rname'];
                         $list_return[$i]->$field = $linked->$linkFieldName;
                     }
                 }
 
-
-                if (!empty($list_return[$i]->field_name_map[$field]['sensitive'])) {
+                if (!empty($list_return[$i]->field_defs[$field]['sensitive'])) {
                     continue;
                 }
 
                 // handle enums
-                if ((isset($list_return[$i]->field_name_map[$field]['type']) && $list_return[$i]->field_name_map[$field]['type'] == 'enum') ||
-                    (isset($list_return[$i]->field_name_map[$field]['custom_type']) && $list_return[$i]->field_name_map[$field]['custom_type'] == 'enum')
-                ) {
-
+                if ((isset($list_return[$i]->field_defs[$field]['type'])
+                        && $list_return[$i]->field_defs[$field]['type'] == 'enum')
+                    || (isset($list_return[$i]->field_defs[$field]['custom_type'])
+                        && $list_return[$i]->field_defs[$field]['custom_type'] == 'enum'
+                    )) {
                     // get fields to match enum vals
                     if (empty($app_list_strings)) {
                         if (isset($_SESSION['authenticated_user_language']) && $_SESSION['authenticated_user_language'] != '') {
@@ -171,9 +175,13 @@ class LegacyJsonServer
                     }
 
                     // match enum vals to text vals in language pack for return
-                    if (!empty($app_list_strings[$list_return[$i]->field_name_map[$field]['options']])) {
-                        if (!empty($app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field])) {
-                            $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
+                    if (!empty($app_list_strings[$list_return[$i]->field_defs[$field]['options']])) {
+                        if (!empty($app_list_strings[
+                            $list_return[$i]->field_defs[$field]['options']
+                        ][$list_return[$i]->$field])) {
+                            $list_return[$i]->$field = $app_list_strings[
+                                $list_return[$i]->field_defs[$field]['options']
+                            ][$list_return[$i]->$field];
                         } else {
                             $list_return[$i]->$field = '';
                         }

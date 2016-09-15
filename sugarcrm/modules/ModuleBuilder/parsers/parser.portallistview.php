@@ -124,7 +124,7 @@ class ParserPortalListView extends ParserModifyListView
 			}
 		}
 		$GLOBALS['log']->debug('parser.modifylistview.php->getAvailableFields(): field_defs='.print_r($this->availableFields,true));
-		$modFields = !empty($this->module->field_name_map) ? $this->module->field_name_map : $this->module->field_defs;
+        $modFields = !empty($this->module->field_defs) ? $this->module->field_defs : $this->module->field_defs;
 		$invalidTypes = array('iframe', 'encrypt');
 		foreach ( $modFields as $key => $def )
 		{

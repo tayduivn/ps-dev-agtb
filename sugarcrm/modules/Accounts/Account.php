@@ -18,7 +18,6 @@
 
 // Account is used to store account information.
 class Account extends Company {
-	var $field_name_map = array();
 	// Stored fields
 	var $date_entered;
 	var $date_modified;

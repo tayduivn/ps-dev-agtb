@@ -12,7 +12,6 @@
 
 // ReportMaker is used to build advanced reports from data formats.
 class ReportMaker extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

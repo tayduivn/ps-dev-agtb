@@ -36,7 +36,6 @@ class Meeting extends SugarBean {
 	var $parent_type;
 	var $parent_type_options;
 	var $parent_id;
-	var $field_name_map;
 	var $contact_id;
 	var $user_id;
 	var $meeting_id;
@@ -117,7 +116,7 @@ class Meeting extends SugarBean {
 		    if(empty($field['name'])) {
 		        continue;
 		    }
-			$this->field_name_map[$field['name']] = $field;
+            $this->field_defs[$field['name']] = $field;
 		}
 
         if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {

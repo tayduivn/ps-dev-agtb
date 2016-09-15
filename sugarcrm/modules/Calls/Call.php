@@ -12,7 +12,6 @@
 
 
 class Call extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $json_id;
@@ -112,7 +111,7 @@ class Call extends SugarBean {
 			if(empty($field['name'])) {
 		        continue;
 		    }
-		    $this->field_name_map[$field['name']] = $field;
+            $this->field_defs[$field['name']] = $field;
 		}
 
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))

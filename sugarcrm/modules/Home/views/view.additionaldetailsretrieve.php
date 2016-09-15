@@ -36,7 +36,7 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
             $bean = BeanFactory::getBean($moduleDir, $id);
 
             //bug38901 - shows dropdown list label instead of database value
-            foreach ($bean->field_name_map as $field => $value) {
+            foreach ($bean->field_defs as $field => $value) {
                 if ($value['type'] == 'enum' &&
                     !empty($value['options']) &&
                     !empty($app_list_strings[$value['options']]) &&

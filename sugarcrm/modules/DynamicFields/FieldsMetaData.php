@@ -76,7 +76,6 @@ class FieldsMetaData extends SugarBean {
         'reportable',
 	);
 
-	var $field_name_map;
 	var $new_schema = true;
 	public $disable_row_level_security = true;
 

@@ -98,7 +98,7 @@ class LeadConvert
             $this->modules[$moduleName]->save();
 
             //iterate through each field in field map and check meta for calculated fields
-            foreach ($this->modules[$moduleName]->field_name_map as $calcFieldDefs) {
+            foreach ($this->modules[$moduleName]->field_defs as $calcFieldDefs) {
                 if (!empty($calcFieldDefs['calculated'])) {
                     //bean has a calculated field, lets add it to the array for later processing
                     $calcFieldBeans[$moduleName] = $this->modules[$moduleName];

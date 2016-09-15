@@ -1713,9 +1713,11 @@ function get_mailmerge_document($session, $file_name, $fields)
             $html .= '<tr>';
             foreach($master_fields as $master_field){
                 if(isset($seed1->$master_field)){
-                    if($seed1->field_name_map[$master_field]['type'] == 'enum'){
+                    if ($seed1->field_defs[$master_field]['type'] == 'enum') {
                         //pull in the translated dom
-                         $html .='<td>'.$app_list_strings[$seed1->field_name_map[$master_field]['options']][$seed1->$master_field].'</td>';
+                         $html .= '<td>'
+                             . $app_list_strings[$seed1->field_defs[$master_field]['options']][$seed1->$master_field]
+                             . '</td>';
                     }else{
                         $html .='<td>'.$seed1->$master_field.'</td>';
                     }
@@ -1728,9 +1730,13 @@ function get_mailmerge_document($session, $file_name, $fields)
                 $seed2->retrieve($value);
                 foreach($related_fields as $related_field){
                     if(isset($seed2->$related_field)){
-                        if($seed2->field_name_map[$related_field]['type'] == 'enum'){
+                        if ($seed2->field_defs[$related_field]['type'] == 'enum') {
                             //pull in the translated dom
-                            $html .='<td>'.$app_list_strings[$seed2->field_name_map[$related_field]['options']][$seed2->$related_field].'</td>';
+                            $html .= '<td>'
+                                . $app_list_strings[
+                                    $seed2->field_defs[$related_field]['options']
+                                ][$seed2->$related_field]
+                                . '</td>';
                         }else{
                             $html .= '<td>'.$seed2->$related_field.'</td>';
                         }
@@ -1843,22 +1849,19 @@ function get_mailmerge_document2($session, $file_name, $fields)
             $html .= '<tr>';
             foreach($master_fields as $master_field){
                 if(isset($seed1->$master_field)){
-                    if($seed1->field_name_map[$master_field]['type'] == 'enum'){
+                    if ($seed1->field_defs[$master_field]['type'] == 'enum') {
                         //pull in the translated dom
-                         $html .='<td>'.$app_list_strings[$seed1->field_name_map[$master_field]['options']][$seed1->$master_field].'</td>';
-                    } else if ($seed1->field_name_map[$master_field]['type'] == 'multienum') {
-
-                        if(isset($app_list_strings[$seed1->field_name_map[$master_field]['options']]) )
-                        {
+                         $html .= '<td>'
+                             . $app_list_strings[$seed1->field_defs[$master_field]['options']][$seed1->$master_field]
+                             . '</td>';
+                    } elseif ($seed1->field_defs[$master_field]['type'] == 'multienum') {
+                        if (isset($app_list_strings[$seed1->field_defs[$master_field]['options']])) {
                             $items = unencodeMultienum($seed1->$master_field);
                             $output = array();
                             foreach($items as $item) {
-                                if ( !empty($app_list_strings[$seed1->field_name_map[$master_field]['options']][$item]) )
-                                {
-                                    array_push($output, $app_list_strings[$seed1->field_name_map[$master_field]['options']][$item]);
-
+                                if (!empty($app_list_strings[$seed1->field_defs[$master_field]['options']][$item])) {
+                                    $output[] = $app_list_strings[$seed1->field_defs[$master_field]['options']][$item];
                                 }
-
                             } // foreach
 
                             $encoded_output = encodeMultienumValue($output);
@@ -1878,9 +1881,13 @@ function get_mailmerge_document2($session, $file_name, $fields)
 				$seed2->retrieve($value);
                 foreach($related_fields as $related_field){
                     if(isset($seed2->$related_field)){
-                        if($seed2->field_name_map[$related_field]['type'] == 'enum'){
+                        if ($seed2->field_defs[$related_field]['type'] == 'enum') {
                             //pull in the translated dom
-                            $html .='<td>'.$app_list_strings[$seed2->field_name_map[$related_field]['options']][$seed2->$related_field].'</td>';
+                            $html .= '<td>'
+                                . $app_list_strings[
+                                    $seed2->field_defs[$related_field]['options']
+                                ][$seed2->$related_field]
+                                . '</td>';
                         }else{
                             $html .= '<td>'.$seed2->$related_field.'</td>';
                         }
@@ -2132,9 +2139,9 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
         {
 			$val = $value['value'];
 
-			if($seed->field_name_map[$value['name']]['type'] == 'enum' || $seed->field_name_map[$value['name']]['type'] == 'radioenum')
-            {
-				$vardef = $seed->field_name_map[$value['name']];
+            if ($seed->field_defs[$value['name']]['type'] == 'enum'
+                || $seed->field_defs[$value['name']]['type'] == 'radioenum') {
+                $vardef = $seed->field_defs[$value['name']];
 				if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$val]) )
                 {
 		            if ( in_array($val,$app_list_strings[$vardef['options']]) )
@@ -2142,10 +2149,8 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 		                $val = array_search($val,$app_list_strings[$vardef['options']]);
 		            }
 		        }
-
-			} else if($seed->field_name_map[$value['name']]['type'] == 'multienum') {
-
-                $vardef = $seed->field_name_map[$value['name']];
+            } elseif ($seed->field_defs[$value['name']]['type'] == 'multienum') {
+                $vardef = $seed->field_defs[$value['name']];
 
                 if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$value]) )
                 {

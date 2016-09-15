@@ -14,7 +14,6 @@
 // Note is used to store customer information.
 class Note extends SugarBean
 {
-    var $field_name_map;
     // Stored fields
     var $id;
     var $date_entered;

@@ -12,7 +12,6 @@
 
 
 class Prospect extends Person {
-    var $field_name_map;
 	// Stored fields
 	var $id;
 	var $name = '';

@@ -747,8 +747,8 @@ function validate_user($user_name, $password){
 
 			foreach($name_value_list as $value) {
 				$val = $value['value'];
-				if($seed->field_name_map[$value['name']]['type'] == 'enum'){
-					$vardef = $seed->field_name_map[$value['name']];
+                if ($seed->field_defs[$value['name']]['type'] == 'enum') {
+                    $vardef = $seed->field_defs[$value['name']];
 					if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$value]) ) {
 						if ( in_array($val,$app_list_strings[$vardef['options']]) ){
 							$val = array_search($val,$app_list_strings[$vardef['options']]);
@@ -758,7 +758,7 @@ function validate_user($user_name, $password){
 				if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $value['name'] == 'user_hash'){
 					continue;
 				}
-                if(!empty($seed->field_name_map[$value['name']]['sensitive'])) {
+                if (!empty($seed->field_defs[$value['name']]['sensitive'])) {
                     continue;
                 }
                 $seed->{$value['name']} = $val;
@@ -1199,7 +1199,7 @@ function validate_user($user_name, $password){
         }
         //if the select fields array is empty, then use all the fields for this bean
         if(empty($select_fields)){
-            $fields = $seed->field_name_map;
+            $fields = $seed->field_defs;
             $select_fields = array_keys($fields);
         }
         //check to see if bean implements acl and this is not an admin so we can remove any restricted fields

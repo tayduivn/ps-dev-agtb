@@ -308,8 +308,10 @@ class LayoutManager
                 $beanCache[$widget_def['module']] = BeanFactory::getBean($widget_def['module']);
             }
             $bean = $beanCache[$widget_def['module']];
-			if(!empty($widget_def['name']) && !empty($bean->field_name_map) &&!empty($bean->field_name_map[$widget_def['name']]) ){
-				return $bean->field_name_map[$widget_def['name']];
+            if (!empty($widget_def['name'])
+                && !empty($bean->field_defs)
+                && !empty($bean->field_defs[$widget_def['name']])) {
+                return $bean->field_defs[$widget_def['name']];
 			}
 		}
 

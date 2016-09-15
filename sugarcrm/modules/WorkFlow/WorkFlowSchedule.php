@@ -16,7 +16,6 @@ require_once('include/workflow/action_utils.php');
  *  WorkFlowSchedule is used to process workflow time cron objects
  */
 class WorkFlowSchedule extends SugarBean {
-    var $field_name_map;
     // Stored fields
     var $id;
     var $deleted;

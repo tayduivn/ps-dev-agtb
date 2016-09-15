@@ -15,7 +15,6 @@
  *  Lead is used to store profile information for people who may become customers.
  */
 class Lead extends Person {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $date_entered;

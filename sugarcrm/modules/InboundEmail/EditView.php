@@ -367,8 +367,7 @@ $sqs_objects = array_merge($sqs_objects, $teamSetField->createQuickSearchCode(fa
 $json = getJSONobj();
 $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
 //add custom fields to validation
-foreach($javascript->sugarbean->field_name_map as $field=>$value)
-{
+foreach ($javascript->sugarbean->field_defs as $field => $value) {
     if(isset($value['custom_type']))
     {
         if ($value['custom_type'] != 'link')

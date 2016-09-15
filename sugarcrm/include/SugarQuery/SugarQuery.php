@@ -536,12 +536,13 @@ class SugarQuery
                     //if field class is raw, then we need to do some special processing
                     if (get_class($selectField) == 'SugarQuery_Builder_Field_Raw') {
                         //check to see if this is a concatenated field:
-                        if (!empty($selectField->alias) && !empty($this->from->field_name_map[$selectField->alias]['db_concat_fields'])) {
+                        if (!empty($selectField->alias)
+                            && !empty($this->from->field_defs[$selectField->alias]['db_concat_fields'])) {
                             //we need to get the concatenated fields
-                            $concatFields = $this->from->field_name_map[$selectField->alias]['db_concat_fields'];
+                            $concatFields = $this->from->field_defs[$selectField->alias]['db_concat_fields'];
                             //check to see if join exists, otherwise use table name
-                            $table = $this->from->field_name_map[$selectField->alias]['table'];
-                            $linkName = $this->from->field_name_map[$selectField->alias]['link'];
+                            $table = $this->from->field_defs[$selectField->alias]['table'];
+                            $linkName = $this->from->field_defs[$selectField->alias]['link'];
                             //check for join name only if we have a table and link name
                             if (!empty($table) && !empty($linkName)) {
                                 foreach ($this->join as $joinName => $joinDef) {

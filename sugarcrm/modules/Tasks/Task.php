@@ -16,8 +16,6 @@
  * @property Link2 $contacts
  */
 class Task extends SugarBean {
-        var $field_name_map;
-
 	// Stored fields
 	var $id;
 	var $date_entered;

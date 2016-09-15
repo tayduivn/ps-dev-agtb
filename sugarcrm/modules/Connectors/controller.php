@@ -188,7 +188,8 @@ class ConnectorsController extends SugarController {
 				$value = $_POST[$field];
 
 				$ds_record->merge_bean->$field = $value;
-			}elseif (isset($ds_record->merge_bean->field_name_map[$field]['type']) && $ds_record->merge_bean->field_name_map[$field]['type'] == 'bool') {
+            } elseif (isset($ds_record->merge_bean->field_defs[$field]['type'])
+                && $ds_record->merge_bean->field_defs[$field]['type'] == 'bool') {
 				$ds_record->merge_bean->$field = 0;
 			}
 		}

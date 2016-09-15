@@ -51,7 +51,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->date = '10/10/2013';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -127,7 +127,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -200,7 +200,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -273,7 +273,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -346,7 +346,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -419,7 +419,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -494,7 +494,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->datetime = '10/10/2013';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -572,7 +572,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -646,7 +646,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -721,7 +721,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -795,7 +795,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -869,7 +869,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -943,7 +943,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -1018,7 +1018,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -1084,7 +1084,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -1131,7 +1131,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',
@@ -1178,7 +1178,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Notes';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_name_map = array(
+        $beanObject->field_defs = array(
             'account_name' => array(
                 'type' => 'varchar',
                 'dbtype' => 'char',

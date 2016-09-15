@@ -17,7 +17,6 @@ use Sugarcrm\Sugarcrm\Security\Password\Hash;
  *  Contact is used to store customer information.
  */
 class Contact extends Person {
-    var $field_name_map;
 	// Stored fields
 	var $id;
 	var $name = '';

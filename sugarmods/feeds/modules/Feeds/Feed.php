@@ -43,7 +43,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class Feed extends SugarBean {
 	
 	var $db;
-        var $field_name_map;
 
 	// Stored fields
 	var $id;
@@ -88,7 +87,7 @@ class Feed extends SugarBean {
 		$this->setupCustomFields('Feeds');
 		foreach ($this->field_defs as $field)
 		{
-			$this->field_name_map[$field['name']] = $field;
+            $this->field_defs[$field['name']] = $field;
 		}
 
         //BEGIN SUGARCRM flav=pro ONLY 

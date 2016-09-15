@@ -161,8 +161,13 @@ function processJsForSelectorField(&$javascript, $field, $type, $tempModule, $fi
 
     if (in_array($type, array ('date', 'time', 'datetimecombo')))
     {
-        $jsString .=
-            "addToValidate('EditView', 'field_{$fieldNumber}__{$ifAdvanced}_value', 'assigned_user_name', 1,'{$javascript->stripEndColon(translate($tempModule->field_name_map[$field]['vname']))}' )";
+        $jsString .= "addToValidate("
+            . "'EditView', "
+            . "'field_{$fieldNumber}__{$ifAdvanced}_value', "
+            . "'assigned_user_name', "
+            . "1, "
+            . "'{$javascript->stripEndColon(translate($tempModule->field_defs[$field]['vname']))}'"
+            . ")";
     }
     else if (!(in_array($type, $workFlowActionsExceptionFields) == 1))
     {

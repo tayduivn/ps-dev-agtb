@@ -170,18 +170,19 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
             $this->bean->load_relationship($link);
 
         //if this is not part of a subpanel collection, see if the link field name and relationship is defined on the subpanel bean
-        if(isset($this->bean->$link) && !empty($this->bean->field_name_map[$link]) && !empty($this->bean->field_name_map[$link]['relationship'])){
+        if (isset($this->bean->$link)
+            && !empty($this->bean->field_defs[$link])
+            && !empty($this->bean->field_defs[$link]['relationship'])) {
             //return relationship name
-            return $formname . $this->bean->field_name_map[$link]['relationship'];
-
+            return $formname . $this->bean->field_defs[$link]['relationship'];
         } else {
             //if the relationship was not found on the subpanel bean, then see if the relationship is defined on the parent bean
 	        $parentBean = BeanFactory::getBean($mod);
             $subpanelMod = strtolower($layout_def['module']);
-            if(!empty($parentBean->field_name_map[$subpanelMod]) && !empty($parentBean->field_name_map[$subpanelMod]['relationship'])){
+            if (!empty($parentBean->field_defs[$subpanelMod])
+                && !empty($parentBean->field_defs[$subpanelMod]['relationship'])) {
                 //return relationship name
-                return $formname . $parentBean->field_name_map[$subpanelMod]['relationship'];
-
+                return $formname . $parentBean->field_defs[$subpanelMod]['relationship'];
             }
         }
 

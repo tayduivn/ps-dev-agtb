@@ -30,7 +30,8 @@ foreach($focus->merge_bean->column_fields as $field)
             $value = encodeMultienumValue($value);
         }
         $focus->merge_bean->$field = $value;
-	}elseif (isset($focus->merge_bean->field_name_map[$field]['type']) && $focus->merge_bean->field_name_map[$field]['type'] == 'bool'  ) {
+    } elseif (isset($focus->merge_bean->field_defs[$field]['type'])
+        && $focus->merge_bean->field_defs[$field]['type'] == 'bool') {
 		$focus->merge_bean->$field = 0;
 	}
 }

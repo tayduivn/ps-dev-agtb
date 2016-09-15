@@ -26,7 +26,6 @@ require_once('modules/Expressions/MetaArray.php');
 
 // Expression is a general object for expressions, filters, and calculations
 class Expression extends SugarBean {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

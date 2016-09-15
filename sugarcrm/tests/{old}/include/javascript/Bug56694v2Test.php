@@ -60,7 +60,7 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddFieldForFieldWithoutValidator()
     {
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertEmpty($this->javascript->getData(), 'Validator is added');
@@ -74,9 +74,9 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAddFieldForFieldWithoutRealValidator()
     {
         $this->templateInt->min = 5;
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
-        $this->bean->field_name_map[$this->templateInt->name]['validation']['min'] = null;
-        $this->bean->field_name_map[$this->templateInt->name]['validation']['max'] = null;
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name]['validation']['min'] = null;
+        $this->bean->field_defs[$this->templateInt->name]['validation']['max'] = null;
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
@@ -93,7 +93,7 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAddFieldForFieldWithMinOnly()
     {
         $this->templateInt->min = 5;
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
@@ -110,7 +110,7 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testAddFieldForFieldWithMaxOnly()
     {
         $this->templateInt->max = 5;
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
@@ -128,7 +128,7 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->templateInt->min = 5;
         $this->templateInt->max = 6;
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
@@ -145,7 +145,7 @@ class Bug56694v2Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->templateInt->min = 6;
         $this->templateInt->max = 5;
-        $this->bean->field_name_map[$this->templateInt->name] = $this->templateInt->get_field_def();
+        $this->bean->field_defs[$this->templateInt->name] = $this->templateInt->get_field_def();
         $this->javascript->addField($this->templateInt->name, $this->templateInt->required);
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');

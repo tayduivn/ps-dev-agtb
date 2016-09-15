@@ -31,7 +31,6 @@ class Quote extends SugarBean
      */
     public $closed_statuses = array('Closed Accepted', 'Closed Dead', 'Closed Lost');
 
-    public $field_name_map;
     // Stored fields
     public $id;
     public $date_entered;

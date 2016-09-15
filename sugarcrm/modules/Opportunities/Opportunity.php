@@ -21,7 +21,6 @@ class Opportunity extends SugarBean
     const STATUS_CLOSED_WON = 'Closed Won';
     const STATUS_CLOSED_LOST = 'Closed Lost';
 
-    public $field_name_map;
     // Stored fields
     public $id;
     public $lead_source;

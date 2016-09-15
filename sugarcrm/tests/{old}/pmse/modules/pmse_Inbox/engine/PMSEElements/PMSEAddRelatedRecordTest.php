@@ -52,7 +52,7 @@ class PMSEAddRelatedRecordTest extends PHPUnit_Framework_TestCase
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array()
         );
 
@@ -165,7 +165,7 @@ class PMSEAddRelatedRecordTest extends PHPUnit_Framework_TestCase
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_name_map = array(
+        $beanMock->field_defs = array(
             'description' => array()
         );
 

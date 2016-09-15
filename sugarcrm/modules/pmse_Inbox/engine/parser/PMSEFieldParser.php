@@ -180,7 +180,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $criteriaToken->currentValue = $tokenValue;
         $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
-        $fieldType = $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'];
+        $fieldType = $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'];
 
         if ($fieldType == 'date') {
             $criteriaToken->expSubtype = 'date';
@@ -255,11 +255,11 @@ class PMSEFieldParser implements PMSEDataParserInterface
         } else {
             $criteriaToken->currentValue = $tokenValue;
         }
-        if (isset($this->evaluatedBean->field_name_map[$criteriaToken->expField])) {
-            if ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'date') {
+        if (isset($this->evaluatedBean->field_defs[$criteriaToken->expField])) {
+            if ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'date') {
                 $criteriaToken->expSubtype = 'date';
-            } elseif ($this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetime'
-                || $this->evaluatedBean->field_name_map[$criteriaToken->expField]['type'] == 'datetimecombo'
+            } elseif ($this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetime'
+                || $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'] == 'datetimecombo'
                ) {
                 $criteriaToken->expSubtype = 'date';
               }

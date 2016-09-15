@@ -18,7 +18,6 @@
 
 // DataSet Attribute is used to store attribute information for a particular data format.
 class DataSet_Attribute extends SugarBean {
-    var $field_name_map;
     // Stored fields
     var $id;
     var $deleted;

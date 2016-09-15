@@ -20,8 +20,6 @@
 
 class Holiday extends SugarBean {
 
-	var $field_name_map;
-	
 	var $id;
 	var $deleted;
 	var $date_entered;

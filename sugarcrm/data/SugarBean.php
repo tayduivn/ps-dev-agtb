@@ -211,15 +211,6 @@ class SugarBean
     */
     var $module_dir = '';
     var $module_name = '';
-
-    /**
-     * Stores bean field definitions
-     *
-     * @var array
-     * @deprecated Use $field_defs instead
-     */
-    var $field_name_map;
-
     var $field_defs;
     var $custom_fields;
     var $column_fields = array();
@@ -565,7 +556,6 @@ class SugarBean
 
             if(isset($GLOBALS['dictionary'][$this->object_name]) && !$this->disable_vardefs)
             {
-                $this->field_name_map = $dictionary[$this->object_name]['fields'];
                 $this->field_defs =	$dictionary[$this->object_name]['fields'];
 
                 if (isset($dictionary[$this->object_name]['name_format_map'])) {
@@ -584,7 +574,6 @@ class SugarBean
             self::$loadedDefs[$this->object_name]['column_fields'] =& $this->column_fields;
             self::$loadedDefs[$this->object_name]['list_fields'] =& $this->list_fields;
             self::$loadedDefs[$this->object_name]['required_fields'] =& $this->required_fields;
-            self::$loadedDefs[$this->object_name]['field_name_map'] =& $this->field_name_map;
             self::$loadedDefs[$this->object_name]['field_defs'] = $this->field_defs;
             self::$loadedDefs[$this->object_name]['name_format_map'] =& $this->name_format_map;
         }
@@ -593,7 +582,6 @@ class SugarBean
             $this->column_fields =& self::$loadedDefs[$this->object_name]['column_fields'] ;
             $this->list_fields =& self::$loadedDefs[$this->object_name]['list_fields'];
             $this->required_fields =& self::$loadedDefs[$this->object_name]['required_fields'];
-            $this->field_name_map =& self::$loadedDefs[$this->object_name]['field_name_map'];
             $this->field_defs = isset(self::$loadedDefs[$this->object_name]['field_defs']) ?
                 self::$loadedDefs[$this->object_name]['field_defs'] : null;
             $this->name_format_map =& self::$loadedDefs[$this->object_name]['name_format_map'];
@@ -2778,14 +2766,11 @@ class SugarBean
 					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				}
-				elseif(isset($this->field_name_map[$field]['type']))
-				{
-					$type = $this->field_name_map[$field]['type'];
+                } elseif (isset($this->field_defs[$field]['type'])) {
+                    $type = $this->field_defs[$field]['type'];
 
-					if($type == 'relate'  && isset($this->field_name_map[$field]['custom_module']))
-					{
-						$type = $this->field_name_map[$field]['type'];
+                    if ($type == 'relate' && isset($this->field_defs[$field]['custom_module'])) {
+                        $type = $this->field_defs[$field]['type'];
 					}
 
 					if($type == 'date')
@@ -2793,9 +2778,8 @@ class SugarBean
 						if($this->$field == '0000-00-00')
 						{
 							$this->$field = '';
-						} elseif(!empty($this->field_name_map[$field]['rel_field']))
-						{
-							$rel_field = $this->field_name_map[$field]['rel_field'];
+                        } elseif (!empty($this->field_defs[$field]['rel_field'])) {
+                            $rel_field = $this->field_defs[$field]['rel_field'];
 
 							if(!empty($this->$rel_field))
 							{
@@ -2835,8 +2819,7 @@ class SugarBean
 							$this->$field = '';
 						} else
 						{
-							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
-							{
+							if (empty($this->field_defs[$field]['rel_field']) && empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_time($this->$field,true, false);
 							}
 						}
@@ -4605,7 +4588,7 @@ class SugarBean
 					$rel_module = $rel_mod->module_name;
 					if(isset($data['rname']) && $data['rname'] === 'name' && !empty($rel_mod)) {
 						//if bean has first and last name fields, then name should be concatenated
-						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
+                        if (isset($rel_mod->field_defs['first_name']) && isset($rel_mod->field_defs['last_name'])) {
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
 						}
 					}
@@ -6396,17 +6379,17 @@ class SugarBean
         global $timedate;
         foreach($this->column_fields as $field)
         {
-            if(isset($this->field_name_map[$field]) && empty($this->$field))
-            {
-                if($this->field_name_map[$field]['type'] != 'date' && $this->field_name_map[$field]['type'] != 'enum')
-                $this->$field = $field;
-                if($this->field_name_map[$field]['type'] == 'date')
-                {
+            if (isset($this->field_defs[$field]) && empty($this->$field)) {
+                if ($this->field_defs[$field]['type'] != 'date' && $this->field_defs[$field]['type'] != 'enum') {
+                    $this->$field = $field;
+                }
+
+                if ($this->field_defs[$field]['type'] == 'date') {
                     $this->$field = $timedate->to_display_date('1980-07-09');
                 }
-                if($this->field_name_map[$field]['type'] == 'enum')
-                {
-                    $dom = $this->field_name_map[$field]['options'];
+
+                if ($this->field_defs[$field]['type'] == 'enum') {
+                    $dom = $this->field_defs[$field]['options'];
                     global $current_language, $app_list_strings;
                     $mod_strings = return_module_language($current_language, $currentModule);
 

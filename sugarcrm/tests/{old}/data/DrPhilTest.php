@@ -446,7 +446,6 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             'object_name',
             'module_dir',
             'module_name',
-            'field_name_map',
             'field_defs',
             'custom_fields',
             'list_fields',

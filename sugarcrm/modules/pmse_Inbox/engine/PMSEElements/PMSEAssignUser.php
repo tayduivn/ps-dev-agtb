@@ -51,7 +51,7 @@ class PMSEAssignUser extends PMSEScriptTask
         $act_assign_user = $bpmnElement['act_assign_user'];
         $userData = $this->retrieveUserData($act_assign_user);
 
-        if (isset($bean->field_name_map['assigned_user_id']) && (isset($userData->id) && $userData->id == $act_assign_user)) {
+        if (isset($bean->field_defs['assigned_user_id']) && isset($userData->id) && $userData->id == $act_assign_user) {
             $this->logger->debug("Assign user to '$act_assign_user'");
 
             $historyData = $this->retrieveHistoryData($flowData['cas_sugar_module']);

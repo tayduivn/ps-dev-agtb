@@ -389,8 +389,8 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $val = $value['value'];
                 }
 
-				if($seed->field_name_map[$field_name]['type'] == 'enum'){
-					$vardef = $seed->field_name_map[$field_name];
+                if ($seed->field_defs[$field_name]['type'] == 'enum') {
+                    $vardef = $seed->field_defs[$field_name];
 					if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$val]) ) {
 						if ( in_array($val,$app_list_strings[$vardef['options']]) ){
 							$val = array_search($val,$app_list_strings[$vardef['options']]);
@@ -400,7 +400,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 				if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $field_name == 'user_hash'){
 					continue;
 				}
-				if(!empty($seed->field_name_map[$field_name]['sensitive'])) {
+                if (!empty($seed->field_defs[$field_name]['sensitive'])) {
 					continue;
 				}
 				$seed->$field_name = $val;

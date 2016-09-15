@@ -22,7 +22,6 @@
 
 // ProductTemplate is used to store customer information.
 class QueryCalc extends QueryBuilder {
-	var $field_name_map;
 	// Stored fields
 	var $id;
 	var $deleted;

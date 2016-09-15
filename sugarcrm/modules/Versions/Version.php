@@ -33,7 +33,6 @@ class Version extends SugarBean {
 	var $created_by;
 	var $created_by_name;
 	var $modified_by_name;
-	var $field_name_map;
 	var $name;
 	var $file_version;
 	var $db_version;
@@ -113,5 +112,3 @@ function get_profile(){
 
 
 }
-
-?>
