@@ -351,16 +351,16 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         var model;
         beforeEach(function() {
             // this is needed since we can't load the SugarLogic plugin in tests
-            view.initSugarLogicForModelWithDeps = function() {};
+            view.initSugarLogic = function() {};
             model = new Backbone.Model({id: 'asdf'});
         });
         it('will not setup dependencies when size is 0', function() {
             sinon.collection.stub(view, '_getSugarLogicDependenciesForModel', function() {
                 return [];
             });
-            sinon.collection.spy(view, 'initSugarLogicForModelWithDeps');
+            sinon.collection.spy(view, 'initSugarLogic');
             view.setupSugarLogicForModel(model);
-            expect(view.initSugarLogicForModelWithDeps).not.toHaveBeenCalled();
+            expect(view.initSugarLogic).not.toHaveBeenCalled();
         });
 
         it('it will init dependencies for the model', function() {
@@ -371,11 +371,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             var ret = {
                 dispose: function() {}
             };
-            sinon.collection.stub(view, 'initSugarLogicForModelWithDeps', function() {
+            sinon.collection.stub(view, 'initSugarLogic', function() {
                 return ret;
             });
             view.setupSugarLogicForModel(model);
-            expect(view.initSugarLogicForModelWithDeps).toHaveBeenCalled(model, deps, true);
+            expect(view.initSugarLogic).toHaveBeenCalled(model, deps, true);
         });
     });
 

@@ -227,7 +227,7 @@
             app.logger.debug('Setting up SugarLogic for "' + model.get('id') + '" with module of "' +
                 model.module + '" with "' + dependencies.length + '" dependencies');
 
-            slContext = this.initSugarLogicForModelWithDeps(
+            slContext = this.initSugarLogic(
                 model,
                 dependencies,
                 _.has(this.toggledModels, model.get('id'))
