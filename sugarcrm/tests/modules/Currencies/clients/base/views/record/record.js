@@ -11,13 +11,13 @@
  */
 
 describe('Currencies.Base.Views.Record', function() {
-    var app,
-        layout,
-        view,
-        options,
-        sinonSandbox,
-        context,
-        model;
+    var app;
+    var layout;
+    var view;
+    var options;
+    var sinonSandbox;
+    var context;
+    var model;
 
     afterEach(function() {
         sinonSandbox.restore();
@@ -66,8 +66,8 @@ describe('Currencies.Base.Views.Record', function() {
 
     });
 
-    describe("_checkIfBaseCurrency", function(){
-        it("shouldn't change anything when not the base", function(){
+    describe('_checkIfBaseCurrency', function() {
+        it('should not change anything when not the base', function() {
             context.set({
                 model: model,
                 module: 'Currencies'
@@ -81,7 +81,7 @@ describe('Currencies.Base.Views.Record', function() {
             expect(view.meta.buttons[0].buttons[0].css_class).toEqual('');
         });
 
-        it("should set the css_class to disabled for the delete button", function(){
+        it('should set the css_class to disabled for the delete button', function() {
             context.set({
                 model: model,
                 module: 'Currencies'

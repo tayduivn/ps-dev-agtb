@@ -27,7 +27,7 @@
                 if (model.get('id') == app.currency.getBaseCurrencyId()) {
                     model.isDefault = true;
                     var defaultLang = app.lang.get('LBL_CURRENCY_DEFAULT', 'Currencies');
-                    if(defaultLang) {
+                    if (defaultLang) {
                         model.set('name', defaultLang);
                     }
                 }
@@ -46,13 +46,13 @@
     _render: function() {
         this._super('_render');
 
-        var $tableRow = this.$('tr[name="Currencies_-99"]'),
-            $rowCheckBox = $tableRow.find('input[name="check"]'),
-            $rowActionDropdown = $tableRow.find('a.dropdown-toggle'),
-            $defaultCurrencyLabel = $tableRow.find('[data-type="name"] div.ellipsis_inline')
+        var $tableRow = this.$('tr[name="Currencies_-99"]');
+        var $rowCheckBox = $tableRow.find('input[name="check"]');
+        var $rowActionDropdown = $tableRow.find('a.dropdown-toggle');
+        var $defaultCurrencyLabel = $tableRow.find('[data-type="name"] div.ellipsis_inline');
 
         // Add the default currency class to the default currency row
-        if($defaultCurrencyLabel.length) {
+        if ($defaultCurrencyLabel.length) {
             $defaultCurrencyLabel.addClass('defaultCurrencyLabel');
         }
 

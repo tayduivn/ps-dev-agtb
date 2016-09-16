@@ -87,5 +87,5 @@ $viewdefs['Currencies']['base']['view']['record'] = array(
                 ),
             ),
         ),
-    )
+    ),
 );

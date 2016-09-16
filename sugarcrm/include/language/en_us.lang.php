@@ -1730,11 +1730,11 @@ $app_list_strings = array (
     'exempt' => 'Suppression List - By Id',
     'test' => 'Test',
   ),
-  'currency_status_dom' =>
-  array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-  ),
+         'currency_status_dom' =>
+         array (
+             'Active' => 'Active',
+             'Inactive' => 'Inactive',
+         ),
   'email_settings_num_dom' =>
   array(
         '10'    => '10',
@@ -3615,9 +3615,6 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
-
-    'LBL_DNB_AND' => 'and',
-    'LBL_DNB_PRIM_NAME_DESC' => 'Text recording a name of this organization',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
@@ -6209,9 +6206,9 @@ $app_list_strings['iso_currency_symbol'] = array(
     'VND' => '₫',
     'YER' => '﷼',
     'ZWD' => 'Z$',
-);
+    );
 
-$app_list_strings['iso_currency_name'] = array(
+    $app_list_strings['iso_currency_name'] = array(
     'ALL' => 'Leke',
     'USD' => 'Dollars',
     'AFN' => 'Afghanis',
@@ -6325,7 +6322,7 @@ $app_list_strings['iso_currency_name'] = array(
     'VND' => 'Dong',
     'YER' => 'Rials',
     'ZWD' => 'Zimbabwe Dollars',
-);
+    );
 
 //BEGIN SUGARCRM flav=ent ONLY
 $app_list_strings['business_rule_type_list'] = array(

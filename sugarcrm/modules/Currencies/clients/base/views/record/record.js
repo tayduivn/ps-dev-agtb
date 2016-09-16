@@ -51,7 +51,7 @@
      *
      * @param buttons
      * @param name
-     * @returns {*}
+     * @return {*}
      * @private
      */
     _findButton: function(buttons, name) {

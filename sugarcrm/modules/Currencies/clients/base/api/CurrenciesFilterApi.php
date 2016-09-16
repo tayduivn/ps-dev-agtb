@@ -11,7 +11,7 @@
  */
 
 require_once 'data/BeanFactory.php';
-require_once('clients/base/api/FilterApi.php');
+require_once 'clients/base/api/FilterApi.php' ;
 class CurrenciesFilterApi extends FilterApi
 {
     public function registerApiRest()

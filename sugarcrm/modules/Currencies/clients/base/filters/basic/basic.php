@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -21,7 +20,7 @@ $viewdefs['Currencies']['base']['filter']['basic'] = array(
             'id'                => 'all_records',
             'name'              => 'LBL_LISTVIEW_FILTER_ALL',
             'filter_definition' => array(),
-            'editable'          => false
+            'editable'          => false,
         ),
         array(
             'id'                => 'recently_viewed',
@@ -29,7 +28,7 @@ $viewdefs['Currencies']['base']['filter']['basic'] = array(
             'filter_definition' => array(
                 '$tracker' => '-7 DAY',
             ),
-            'editable'          => false
+            'editable'          => false,
         ),
         array(
             'id'                => 'recently_created',
@@ -39,7 +38,7 @@ $viewdefs['Currencies']['base']['filter']['basic'] = array(
                     '$dateRange' => 'last_7_days',
                 ),
             ),
-            'editable'          => false
+            'editable'          => false,
         ),
     ),
 );

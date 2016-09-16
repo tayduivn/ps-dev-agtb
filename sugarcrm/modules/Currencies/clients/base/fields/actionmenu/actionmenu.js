@@ -35,7 +35,7 @@
         // if default currency exists in collection, remove it
         _.each(this.massCollection.models, function(model, index) {
             if (model.id === '-99') {
-                this.massCollection.remove(this.massCollection.models[index], { silent: true });
+                this.massCollection.remove(this.massCollection.models[index], {silent: true});
             }
         }, this);
 
