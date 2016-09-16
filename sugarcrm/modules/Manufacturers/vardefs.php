@@ -41,18 +41,18 @@ $dictionary['Manufacturer'] = array(
             'relationship' => 'revenuelineitems_manufacturers',
             'source' => 'non-db',
             'vname' => 'LBL_REVENUELINEITEMS',
-            'workflow' => false
+            'workflow' => false,
         ),
     ),
     'acls' => array(
         'SugarACLDeveloperOrAdmin' => array(
             'aclModule' => 'Products',
-            'allowUserRead' => true
+            'allowUserRead' => true,
         ),
-        'SugarACLStatic' => false
+        'SugarACLStatic' => false,
     ),
     'uses' => array(
-        'basic'
+        'basic',
     ),
 );
 

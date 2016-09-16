@@ -113,8 +113,8 @@ $viewdefs['Contracts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                )
-            )
+                ),
+            ),
         ),
         array(
             'name' => 'panel_body',
@@ -136,7 +136,7 @@ $viewdefs['Contracts']['base']['view']['record'] = array(
                 'company_signed_date',
                 'expiration_notice',
                 'customer_signed_date',
-                'description'
+                'description',
             ),
         ),
         array(

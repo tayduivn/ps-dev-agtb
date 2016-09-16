@@ -335,11 +335,11 @@ $app_list_strings = array (
     'Existing Business' => 'Existing Business',
     'New Business' => 'New Business',
   ),
-  'taxrate_status_dom' => 
-  array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-  ),
+    'taxrate_status_dom' =>
+        array (
+            'Active' => 'Active',
+            'Inactive' => 'Inactive',
+        ),
   'roi_type_dom' =>
     array (
     'Revenue' => 'Revenue',
@@ -364,17 +364,15 @@ $app_list_strings = array (
     'Other' => 'Other',
   ),
 
-'manufacturer_status_dom' =>
-  array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-),
+        'manufacturer_status_dom' => array (
+            'Active' => 'Active',
+            'Inactive' => 'Inactive',
+        ),
 
-'shipper_status_dom' => 
-  array (
-    'Active' => 'Active',
-    'Inactive' => 'Inactive',
-),
+        'shipper_status_dom' => array (
+            'Active' => 'Active',
+            'Inactive' => 'Inactive',
+        ),
 
   //Note:  do not translate case_relationship_type_default_key
 //       it is the key for the default case_relationship_type_dom value

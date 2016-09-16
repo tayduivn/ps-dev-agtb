@@ -64,11 +64,11 @@ $dictionary['Shipper'] = array(
             'lhs_table'=> 'shippers',
             'lhs_key' => 'id',
             'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'shipper_id',
-            'relationship_type'=>'one-to-many'
-        )
+            'relationship_type'=>'one-to-many',
+        ),
     ),
     'uses' => array(
-        'basic'
+        'basic',
     ),
 );
 

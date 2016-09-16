@@ -33,7 +33,7 @@ $dictionary['ContractType'] = array(
     ),
     'acls' => array('SugarACLDeveloperOrAdmin' => array('aclModule'=>'Contracts')),
     'uses' => array(
-        'basic'
+        'basic',
     ),
 );
 

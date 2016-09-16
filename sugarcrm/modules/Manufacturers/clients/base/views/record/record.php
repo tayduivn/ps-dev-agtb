@@ -113,8 +113,8 @@ $viewdefs['Manufacturers']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                )
-            )
+                ),
+            ),
         ),
         array(
             'name' => 'panel_body',
