@@ -21,7 +21,7 @@ $mod_strings = array(
     'LBL_LOGMETA' => 'Log meta',
     'LBL_ERROR' => 'Error',
 
-    // Failure handling in Advanced Workflow upgraders
+    // Failure handling in Process Author upgraders
     'LBL_PA_UNSERIALIZE_DATA_FAILURE' => 'Serialized data could not be unserialized',
     'LBL_PA_UNSERIALIZE_OBJECT_FAILURE' => 'Serialized data could not be unserialized because it contains references to objects or classes',
 
@@ -110,8 +110,8 @@ $mod_strings = array(
     'LBL_SCAN_516_LOG' => 'Previously removed files found referenced in: %s',
     'LBL_SCAN_517_LOG' => 'Incompatible Integration - %s %s',
     'LBL_SCAN_540_LOG' => 'Incompatible Integration Data Reset - %s %s',
-    'LBL_SCAN_541_LOG' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
-    'LBL_SCAN_542_LOG' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
+    'LBL_SCAN_541_LOG' => 'Invalid Process Author Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
+    'LBL_SCAN_542_LOG' => 'Invalid Process Author Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_LOG' => 'Advanced Workflow Partially Locked Field Group - Field %4$s locked in group %s in Process Definition %s for the %s module.',
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
@@ -201,8 +201,8 @@ $mod_strings = array(
     'LBL_SCAN_529_TITLE' => '%s: %s in file %s on line %s',
     'LBL_SCAN_530_TITLE' => 'Missing custom file: %s',
     'LBL_SCAN_540_TITLE' => 'Incompatible Integration Data Reset - %s %s',
-    'LBL_SCAN_541_TITLE' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
-    'LBL_SCAN_542_TITLE' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
+    'LBL_SCAN_541_TITLE' => 'Invalid Process Author Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
+    'LBL_SCAN_542_TITLE' => 'Invalid Process Author Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_TITLE' => 'Advanced Workflow Partially Locked Field Group - %3$s module: Group %s is partially locked in Process Definition %s.',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',

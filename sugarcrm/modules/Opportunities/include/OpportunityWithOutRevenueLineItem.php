@@ -502,7 +502,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         $this->deleteRevenueLineItemsRelatedTriggers();
         $this->deleteRevenueLineItemWorkFlowEmailTemplates();
 
-        // Advanced Workflow RLI Definitions need to be disabled
+        // Process Author RLI Definitions need to be disabled
         $this->disableRevenueLineItemsProcessDefinitions();
 
         parent::processWorkFlows();
