@@ -70,9 +70,7 @@
             this.currentLink = link;
         }, this);
 
-        this.on('filter:create:open', _.debounce(function() {
-            // This debounce method should be in accordance with filter-rows::openForm,
-            // so components show up at the same time
+        this.on('filter:create:open', function() {
             this.$('.filter-options').removeClass('hide');
 
             // "filter:create:open" is triggered even when the edit drawer is
@@ -91,7 +89,7 @@
                     'Filter:Reset'
                 ], this);
             }
-        }, 100, true), this);
+        }, this);
 
         this.on('filter:create:close', function() {
             this.$('.filter-options').addClass('hide');

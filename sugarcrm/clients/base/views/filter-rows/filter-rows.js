@@ -121,9 +121,7 @@
      * Handler for filter:create:open event
      * @param {Bean} filterModel
      */
-    openForm: _.debounce(function(filterModel) {
-        // This debounce method should be in accordance with filterpanel `filter:create:open` event handler,
-        // so components show up at the same time
+    openForm: function(filterModel) {
         var template = filterModel.get('filter_template') || filterModel.get('filter_definition');
         if (_.isEmpty(template)) {
             this.render();
@@ -153,7 +151,7 @@
                 this.$('[data-action=remove]').last().click();
             }
         });
-    }, 100, true),
+    },
 
     /**
      * Save the filter.
