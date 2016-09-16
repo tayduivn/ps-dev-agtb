@@ -17,7 +17,7 @@ class S_540_1_PackageManager extends PackageManager
         return array(
             array(
                 'enabled' => 'ENABLED',
-                'name' => 'Advanced Workflow',
+                'name' => 'Process Author',
                 'version' => '2.7',
             ),
         );
