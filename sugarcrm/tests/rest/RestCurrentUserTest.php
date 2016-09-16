@@ -39,7 +39,9 @@ class RestCurrentUserTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testRetrieveDefaults()  {
+    public function testRetrieveDefaults()
+    {
+        // FIXME TY-1313: investigate why this test fails
         global $current_user,$sugar_config;
         $real_current_user = $current_user;
         // The reset preferences call will fail because it's trying to mess with a session
@@ -67,7 +69,9 @@ class RestCurrentUserTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testAclUsers() {
+    public function testAclUsers()
+    {
+        // FIXME TY-1313: investigate why this test fails
       $restReply = $this->_restCall("me");
       // verify the user is not the admin of the users module
       $userAcl = $restReply['reply']['current_user']['acl']['Users'];
@@ -84,7 +88,9 @@ class RestCurrentUserTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testUpdate() {
+    public function testUpdate()
+    {
+        // FIXME TY-1313: investigate why this test fails
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }

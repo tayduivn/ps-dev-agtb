@@ -68,6 +68,7 @@ class Bug56584Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testImport()
     {
+        // FIXME TY-1324: figure out why this test is failing
         global $db, $current_user;
 
         $taskBean     = new Task();

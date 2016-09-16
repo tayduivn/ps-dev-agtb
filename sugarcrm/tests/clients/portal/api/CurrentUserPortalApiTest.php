@@ -133,6 +133,7 @@ class CurrentUserPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateCurrentUser(array $args, array $expected)
     {
+        // FIXME TY-1321: figure out why this test fails
         $result = $this->currentUserApi->updateCurrentUser($this->service, $args);
 
         $this->assertNotEmpty($result);

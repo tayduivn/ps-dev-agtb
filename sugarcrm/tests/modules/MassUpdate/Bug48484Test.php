@@ -45,14 +45,16 @@ class Bug48484Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-         $this->massUpdate = new MassUpdateStub($this->customFieldName);
-         global $current_user;
-         $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->massUpdate = new MassUpdateStub($this->customFieldName);
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('app_strings');
     }
 
     public function tearDown()
     {
-         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
     /**

@@ -44,6 +44,7 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
      * @group rest
      */
     public function testDefaultPortalLayoutMetaData() {
+        // FIXME TY-1298: investigate why this test fails
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['modules']['Contacts']['layouts']['_hash']), "Portal layouts missing hash empty");
@@ -66,6 +67,7 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
      * @group rest
      */
     public function testAdditionalPortalLayoutMetaData() {
+        // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
         SugarAutoLoader::put($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');", true);
         SugarAutoLoader::saveMap();
@@ -79,6 +81,7 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
      * @group rest
      */
     public function testAdditionalPortalViewMetaData() {
+        // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
         SugarAutoLoader::put($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');", true);
         SugarAutoLoader::saveMap();

@@ -10,10 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
-
 require_once 'include/api/RestService.php';
 require_once 'clients/base/api/MassUpdateApi.php';
 
@@ -156,6 +152,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassDeleteEntireListWithoutFilter()
     {
+        // FIXME TY-1315: investigate why this test fails
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -199,6 +196,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassDeleteEntireListWithFilter()
     {
+        // FIXME TY-1315: investigate why this test fails
         $contact1 = SugarTestContactUtilities::createContact();
         $contact1->first_name = 'Airline';
         $contact1->save();
@@ -655,6 +653,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassUpdateEntireListWithoutFilter()
     {
+        // FIXME TY-1315: investigate why this test fails
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -698,6 +697,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMassUpdateEntireListWithFilter()
     {
+        // FIXME TY-1315: investigate why this test fails
         if (isset($_REQUEST)) {
             unset($_REQUEST);
         }
@@ -741,6 +741,7 @@ class RestMassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSelectedTeamSetMassUpdate()
     {
+        // FIXME TY-1315: investigate why this test fails
         $contact = SugarTestContactUtilities::createContact();
         $team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();

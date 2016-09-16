@@ -22,7 +22,6 @@ require_once('modules/Import/sources/ImportFile.php');
 
 class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
     var $contact;
     var $fileArr;
     var $call_id;
@@ -48,7 +47,6 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-
         $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->call_id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id='{$this->contact->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -59,11 +57,10 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         unset( $GLOBALS['mod_strings']);
     }
 
-
-
     public function testParentsAreRelatedDuringImport()
     {
-
+        // FIXME TY-1310: figure out why this test fails
+        // suspect it has to do with the colnum_2 being 'status'
         $file = 'upload://test50438.csv';
         $ret = file_put_contents($file, $this->fileArr);
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr,true));
@@ -111,5 +108,4 @@ class Bug50438Test extends Sugar_PHPUnit_Framework_TestCase
         }
         */
     }
-
 }

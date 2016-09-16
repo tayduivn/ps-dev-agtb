@@ -21,6 +21,7 @@ class SamlLogoutTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testLogoutURL()
     {
+        // FIXME TY-1328: figure out why this test is failing
         global $sugar_config;
 
         $sugar_config['SAML_loginurl'] = 'http://loginURL.example.com/';

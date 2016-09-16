@@ -46,6 +46,7 @@ class Bug63673Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAggregateFunctions($reportDef, $create, $avg, $count, $max, $sum)
     {
+        // FIXME TY-1323: Figure out why this test is failing
         call_user_func($create);
 
         $report = new Report($reportDef);

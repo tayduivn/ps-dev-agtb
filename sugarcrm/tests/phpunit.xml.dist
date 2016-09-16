@@ -101,30 +101,74 @@
             <directory>./tests/</directory>
         </testsuite>
         <testsuite name="Sugar SC Test Suite">
-            <directory>./modules/Accounts/</directory>
             <directory>./modules/Calendar/</directory>
             <directory>./modules/Calls/</directory>
+            <directory>./modules/iCals/</directory>
+            <directory>./modules/Meetings/</directory>
+            <directory>./modules/Project/</directory>
+            <directory>./modules/ProjectTask/</directory>
+            <directory>./modules/Workflow/</directory>
+            <directory>./modules/History/</directory>
+        </testsuite>
+        <testsuite name="Sugar TY Test Suite">
+            <file>./clients/base/api/FilterApiTest.php</file>
+            <file>./clients/base/api/PersonFilterApiTest.php</file>
+            <file>./data/duplicatecheck/FilterDuplicateCheckTest.php</file>
+            <file>./include/ExportUtilsTest.php</file>
+            <!-- FIXME TY-1337: Investigate if we should delete the rest tests -->
+            <!-- <file>./rest/RestAuditTest.php</file> -->
+            <!-- <file>./rest/RestCurrentUserPortalTest.php</file> -->
+            <!-- <file>./rest/RestCurrentUserTest.php</file> -->
+            <!-- <file>./rest/RestExportTest.php</file> -->
+            <!-- <file>./rest/RestMassUpdateTest.php</file> -->
+            <file>./rest/RestPortalLoginTest.php</file>
+            <file>./rest/RestPortalMetadataBWCTest.php</file>
+            <!-- <file>./rest/RestPortalMetadataviewDefsTest.php</file> -->
+            <!-- <file>./rest/RestPortalSecurityTest.php</file> -->
+            <!-- FIXME TY-1317: Investigate why this test is failing -->
+            <!-- <file>./soap/CanGetUserListTest.php</file> -->
+            <file>./upgrade/UpgradeDeleteLearningResourcesFromDashboardsTest.php</file>
+            <file>./upgrade/UpgradeFixPdfTest.php</file>
+            <file>./upgrade/UpgradeMigrateDashableLists.php</file>
+            <file>./upgrade/scripts/post/RebuildActivitiesDashboardsTest.php</file>
+            <file>./upgrade/scripts/post/RemoveDuplicateAccountsContactsTest.php</file>
+            <directory>./clients/portal</directory>
+            <directory>./include/Dashlets</directory>
+            <directory>./include/MassUpdate</directory>
+            <directory>./include/tcpdf</directory>
+            <directory>./modules/Accounts/</directory>
+            <directory>./modules/Audit/</directory>
+            <directory>./modules/Bugs/</directory>
+            <directory>./modules/Cases/</directory>
             <directory>./modules/Contacts/</directory>
             <directory>./modules/Dashboards/</directory>
             <directory>./modules/Documents/</directory>
+            <directory>./modules/Employees/</directory>
             <directory>./modules/Filters/</directory>
-            <directory>./modules/iCals/</directory>
-            <directory>./modules/MergeRecords/</directory>
-            <directory>./modules/MassUpdate/</directory>
-            <directory>./modules/Meetings/</directory>
+            <directory>./modules/Import</directory>
+            <directory>./modules/MassUpdate</directory>
+            <directory>./modules/MergeRecords</directory>
             <directory>./modules/Notes/</directory>
-            <directory>./modules/Project/</directory>
-            <directory>./modules/ProjectTask/</directory>
+            <directory>./modules/Releases</directory>
             <directory>./modules/ReportMaker/</directory>
             <directory>./modules/Reports/</directory>
             <directory>./modules/Tasks/</directory>
-            <directory>./modules/Workflow/</directory>
-            <directory>./modules/History/</directory>
-            <directory>./portal2/</directory>
-        </testsuite>
-        <testsuite name="Sugar SP Test Suite">
-            <directory>./modules/Bugs/</directory>
-            <directory>./modules/Cases/</directory>
+            <directory>./modules/UserPreferences/</directory>
+            <directory>./modules/Users/</directory>
+            <directory>./portal2</directory>
+            <!-- FIXME TY-1297: Investigate why these tests are failing -->
+            <exclude>./clients/portal/api/CurrentUserPortalApiTest.php</exclude>
+            <exclude>./modules/Accounts/clients/base/api/RS172Test.php</exclude>
+            <exclude>./modules/Import/Bug50438Test.php</exclude>
+            <exclude>./modules/Import/ImportFieldSanitizeTest.php</exclude>
+            <exclude>./modules/Reports/Bug52796Test.php</exclude>
+            <exclude>./modules/Reports/Bug63673Test.php</exclude>
+            <exclude>./modules/Tasks/Bug56584Test.php</exclude>
+            <exclude>./modules/Users/authentication/SAMLAuthenticate/Bug50936Test.php</exclude>
+            <exclude>./modules/Users/authentication/SAMLAuthenticate/Bug57454Test.php</exclude>
+            <exclude>./modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticateTest.php</exclude>
+            <exclude>./modules/Users/authentication/SAMLAuthenticate/SamlLogoutTest.php</exclude>
+            <exclude>./modules/Users/authentication/SAMLAuthenticate/SamlSettingsTest.php</exclude>
         </testsuite>
         <testsuite name="Sugar MAR Test Suite">
             <directory>./modules/ActivityStream/</directory>

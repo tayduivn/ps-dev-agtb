@@ -51,6 +51,7 @@ class RS172Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFilterRelatedCall()
     {
+        // FIXME TY-1309: investigate why this test fails
         $this->call = new Call();
         $this->call->name = 'Test Call';
         $this->call->assigned_user_id = $GLOBALS['current_user']->id;

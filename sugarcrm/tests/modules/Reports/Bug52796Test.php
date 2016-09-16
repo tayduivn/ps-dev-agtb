@@ -61,6 +61,7 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	function testReportCurrencyConversion()
     {
+        // FIXME TY-1320: investigate why this test fails
         $id = create_guid();
         $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
