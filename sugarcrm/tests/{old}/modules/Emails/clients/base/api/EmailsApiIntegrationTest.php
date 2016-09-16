@@ -579,4 +579,48 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
     }
+
+    /**
+     * When replying to an email, the reply_to_id is set on the new Email record being created. The reply_to_id must
+     * refer to an existing Email Record in the 'Archived' state. If successfully sent, that Replied-To Email record's
+     * reply_to status is set to true.
+     *
+     * @covers ::createRecord
+     * @covers ::isValidStateTransition
+     * @covers ::getRelatedRecordArguments
+     * @covers ::linkRelatedRecords
+     * @covers ::sendEmail
+     * @covers Email::sendEmail
+     */
+    public function testCreateAndSendReplyEmail()
+    {
+        $emailValues = array(
+            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'reply_to_status' => false,
+        );
+        $repliedToEmail = SugarTestEmailUtilities::createEmail('', $emailValues);
+
+        $user = $this->createRhsBean('users_to');
+        $args = array(
+            'state' => Email::EMAIL_STATE_READY,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'reply_to_id' => $repliedToEmail->id,
+            'users_from' => array(
+                'add' => array(
+                    $user,
+                ),
+            ),
+            'users_to' => array(
+                'add' => array(
+                    $user->id,
+                ),
+            ),
+        );
+        $record = $this->createRecord($args);
+        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame($repliedToEmail->id, $record['reply_to_id'], 'Should contain id of Email being replied to');
+
+        $repliedToEmail = $repliedToEmail->retrieve($repliedToEmail->id);
+        $this->assertEquals('1', $repliedToEmail->reply_to_status, 'reply_to_status value should be True');
+    }
 }

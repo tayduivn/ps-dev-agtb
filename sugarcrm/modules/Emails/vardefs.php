@@ -338,6 +338,16 @@ $dictionary['Email'] = array(
             'massupdate' => false,
             'comment' => 'An email is either a draft or archived',
         ),
+        'reply_to_id' => array(
+            'name' => 'reply_to_id',
+            'vname' => 'LBL_EMAIL_REPLY_TO_ID',
+            'type' => 'id',
+            'len' => '36',
+            'reportable' => false,
+            'duplicate_on_record_copy' => 'no',
+            'importable' => false,
+            'comment' => 'Identifier of email record that this email was a reply to',
+        ),
         'parent_name' => array(
             'name' => 'parent_name',
             'parent_type' => 'record_type_display_emails',

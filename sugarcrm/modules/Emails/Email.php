@@ -3592,6 +3592,17 @@ eoq;
             $this->date_sent = TimeDate::getInstance()->nowDb();
             $this->save();
 
+            if (!empty($this->reply_to_id)) {
+                $replyToEmail = BeanFactory::retrieveBean('Emails', $this->reply_to_id);
+                if (!empty($replyToEmail) &&
+                    $replyToEmail->state === Email::EMAIL_STATE_ARCHIVED &&
+                    !$replyToEmail->reply_to_status
+                ) {
+                    $replyToEmail->reply_to_status = true;
+                    $replyToEmail->save();
+                }
+            }
+
             //TODO: Push the sent email to the IMAP sent folder.
         } catch (MailerException $me) {
             $GLOBALS['log']->error($me->getLogMessage());

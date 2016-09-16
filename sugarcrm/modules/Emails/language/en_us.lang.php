@@ -310,6 +310,7 @@ $mod_strings = array(
     'LBL_STATUS' => 'Email Status:',
     'LBL_EMAIL_FLAGGED' => 'Flagged:',
     'LBL_EMAIL_REPLY_TO_STATUS' => 'Reply To Status:',
+    'LBL_EMAIL_REPLY_TO_ID' => 'Reply To Id',
     'LBL_TYPE' => 'Type:',
     'LBL_EMAIL_STATE' => 'State',
 
