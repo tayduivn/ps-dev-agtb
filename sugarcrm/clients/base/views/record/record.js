@@ -459,12 +459,16 @@
 
     _renderField: function(field, $fieldEl) {
         // When we render the view, we need to enforce `action`
-        // and `options.viewname` to be 'detail' if the field is non editable.
+        // to be 'detail' if the field is non editable.
         // This is due to how View.Field#_loadTemplate currently works.
         // FIXME SC-6037: Will remove this hack.
         if (!_.contains(this.editableFields, field)) {
             field.action = 'detail';
-            field.options.viewName = 'detail';
+            // Set viewName to `detail` if it was set to `edit` (because the field is non-editable)
+            // but if it is not `edit` (hardcoded e.g. preview template), we want to keep it as it was.
+            if (field.options.viewName === 'edit') {
+                field.options.viewName = 'detail';
+            }
         }
 
         this._super('_renderField', [field, $fieldEl]);
