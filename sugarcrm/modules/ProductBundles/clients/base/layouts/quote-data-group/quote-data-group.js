@@ -65,6 +65,13 @@
      */
     bindDataChange: function() {
         this.model.on('change:product_bundle_items', this.render, this);
+        // listen for the currency id to change on the parent record
+        this.context.parent.get('model').on('change:currency_id', function(model, value, options) {
+            this.model.set({
+                currency_id: model.get('currency_id'),
+                base_rate: model.get('base_rate')
+            });
+        }, this);
     },
 
     /**

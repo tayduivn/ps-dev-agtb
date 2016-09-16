@@ -213,6 +213,12 @@
                     return;
                 }
 
+                if (_.has(model.changed, this.name)) {
+                    // if this field is on the view more than once, this will trigger x number of times. so if the
+                    // currency_id has changed and this field has already changed on the model, we should ignore it.
+                    return;
+                }
+
                 // update the base rate in the model, set it silently since we are already going to do a re-render
                 this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate, {silent: true});
 

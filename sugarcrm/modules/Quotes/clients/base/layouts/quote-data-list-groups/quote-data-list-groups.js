@@ -554,6 +554,8 @@
                 _module: 'ProductBundles',
                 link: 'product_bundles',
                 default_group: true,
+                currency_id: this.model.get('currency_id'),
+                base_rate: this.model.get('base_rate'),
                 product_bundle_items: [],
                 position: 0
             });

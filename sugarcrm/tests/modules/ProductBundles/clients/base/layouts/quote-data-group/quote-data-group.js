@@ -5,11 +5,15 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
     var layoutContext;
     var layoutGroupId;
     var initializeOptions;
+    var parentContext;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
+
+        parentContext = app.context.getContext({module: 'Quotes'});
+        parentContext.prepare(true);
 
         layoutGroupId = 'layoutGroupId1';
         layoutModel = new Backbone.Model({
@@ -27,6 +31,8 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             module: 'ProductBundles',
             model: layoutModel
         });
+
+        layoutContext.parent = parentContext;
 
         sinon.collection.stub(app.metadata, 'getView', function() {
             return {
