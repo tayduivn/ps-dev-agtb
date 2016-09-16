@@ -27,8 +27,9 @@ $viewdefs['base']['view']['profileactions'] = array(
     ),
     array(
         'route' => '#bwc/index.php?module=Administration&action=index',
-        'label' => 'LBL_ADMIN',
+        'label' => 'LBL_MODULE_NAME',
         'css_class' => 'administration',
+        'module' => 'Administration',
         'acl_action' => 'admin',
         'icon' => 'fa-cogs',
     ),
