@@ -457,6 +457,13 @@ class HealthCheckScannerMeta
             'report' => 'missingCustomFile',
             'bucket' => self::MANUAL,
         ),
+        531 => array(
+            'report' => 'deprecatedDbDriver',
+            'bucket' => self::VANILLA,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Deprecated_DB_Driver/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

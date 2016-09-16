@@ -818,6 +818,8 @@ class HealthCheckScanner
             $this->ping(array("instance" => $GLOBALS['sugar_config']['site_url'], "version" => $sugar_version));
         }
 
+        $this->checkDbDriver();
+
         $this->listUpgrades();
         $this->checkPackages();
         $this->checkLanguageFiles();
@@ -2888,6 +2890,18 @@ class HealthCheckScanner
             $this->updateStatus("thisUsage", $deffile);
         }
         return $res;
+    }
+
+    /**
+     * Check if compatible DB driver is used
+     */
+    protected function checkDbDriver()
+    {
+        if ($this->db->variant == 'mysql') {
+            $this->updateStatus('deprecatedDbDriver', 'mysql', 'mysqli');
+        } elseif ($this->db->dbType == 'mssql') {
+            $this->updateStatus('deprecatedDbDriver', 'mssql', 'sqlsrv');
+        }
     }
 
     /**
