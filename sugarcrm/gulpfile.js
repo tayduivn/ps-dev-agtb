@@ -12,8 +12,11 @@
 var _ = require('lodash');
 var commander = require('commander');
 var fs = require('fs');
+var filter = require('gulp-filter');
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var os = require('os');
+var todo = require('gulp-todo');
 
 function splitByCommas(val) {
     return val.split(',');
@@ -220,3 +223,23 @@ gulp.task('check-license', function(done) {
         }
     });
 });
+
+gulp.task('find-todos', function(done) {
+    var teams = require('./gulp/plugins/team/team.js');
+    commander
+        .option('--teams <list>', 'Choose teams to filter by', splitByCommas)
+        .option('--path <path>', 'Set output path')
+        .parse(process.argv);
+    var destPath = commander.path || os.tmpdir();
+    console.log('Results will be output to ' + destPath + '/TODO.md');
+    var teamsChosen = commander.teams;
+    try {
+        return gulp.src('**/*.{js,php}')
+            .pipe(!_.isEmpty(teamsChosen) ? filter(teams(teamsChosen)) : gutil.noop())
+            .pipe(todo())
+            .pipe(gulp.dest(destPath));
+    } catch (e) {
+        console.error(e.toString());
+    }
+});
+
