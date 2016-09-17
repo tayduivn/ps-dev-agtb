@@ -189,7 +189,7 @@ describe('Module Menu', function() {
         });
 
         view.render();
-        view.$('[data-route]').click();
+        view.$('[data-openwindow]').click();
 
         expect(windowOpenStub).toHaveBeenCalledWith(testlink, '_blank');
     });
