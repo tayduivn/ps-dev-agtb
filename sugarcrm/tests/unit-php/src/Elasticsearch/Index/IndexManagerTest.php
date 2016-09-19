@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -33,6 +33,7 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
         $index = $this->getIndexMock($indexName);
         $indexManager = $this->getIndexManagerMock();
         TestReflection::setProtectedValue($indexManager, 'config', $config);
+        TestReflection::setProtectedValue($indexManager, 'defaultSettings', array('setting_Z' => 'core'));
         $settings = TestReflection::callProtectedMethod($indexManager, 'getIndexSettingsFromConfig', array($index));
         $this->assertEquals($settings, $output);
     }
@@ -40,37 +41,47 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
     public function providerTestGetIndexSettingsFromConfig()
     {
         return array(
+            // explicit index config + default config + default core
             array(
                 'index_foo',
                 array(
                     'index_foo' => array (
-                        'setting_A' => 'bar',
+                        'setting_A' => 'foo',
                         'setting_B' => 'fox',
                     ),
                     IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
                         array(
-                            'index.mapping.ignore_malformed' => true,
-                            'index.mapping.coerce' => true,
+                            'setting_A' => 'bar',
+                            'setting_C' => 'foo',
                         ),
                     'index_bar' => array(),
                 ),
-                array ('setting_A' => 'bar', 'setting_B' => 'fox')
+                array(
+                    'setting_Z' => 'core',
+                    'setting_C' => 'foo',
+                    'setting_A' => 'foo',
+                    'setting_B' => 'fox',
+                ),
             ),
+            // default config + default core
             array(
                 'index_foo',
                 array(
                     IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
                         array(
-                            'index.mapping.ignore_malformed' => true,
-                            'index.mapping.coerce' => true,
+                            'setting_A' => 'bar',
+                            'setting_C' => 'foo',
+                            'setting_Z' => 'nocore',
                         ),
                     'index_bar' => array(),
                 ),
                 array(
-                    'index.mapping.ignore_malformed' => true,
-                    'index.mapping.coerce' => true,
-                )
+                    'setting_Z' => 'nocore',
+                    'setting_A' => 'bar',
+                    'setting_C' => 'foo',
+                ),
             ),
+            // explicit config with analysis settings (the latter is stripped)
             array(
                 'index_foo',
                 array(
@@ -80,7 +91,11 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
                         AnalysisBuilder::ANALYSIS => 'quick'
                     ),
                 ),
-                array ('setting_A' => 'bar', 'setting_B' => 'fox')
+                array (
+                    'setting_Z' => 'core',
+                    'setting_A' => 'bar',
+                    'setting_B' => 'fox',
+                ),
             ),
         );
     }

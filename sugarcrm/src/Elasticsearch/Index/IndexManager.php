@@ -256,7 +256,7 @@ class IndexManager
     protected function buildIndexSettings(Index $index, AnalysisBuilder $analysisBuilder)
     {
         $config = $this->getIndexSettingsFromConfig($index);
-        return array_merge($this->defaultSettings, $config, $analysisBuilder->compile());
+        return array_merge($config, $analysisBuilder->compile());
     }
 
     /**
@@ -268,11 +268,19 @@ class IndexManager
     {
         $indexName = $index->getBaseName();
         $settings = array();
+
+        // explicit index configuration
         if (isset($this->config[$indexName])) {
             $settings = $this->config[$indexName];
-        } elseif (isset($this->config[self::DEFAULT_INDEX_SETTINGS_KEY])) {
-            $settings = $this->config[self::DEFAULT_INDEX_SETTINGS_KEY];
         }
+
+        // default settings from config
+        if (isset($this->config[self::DEFAULT_INDEX_SETTINGS_KEY])) {
+            $settings = array_merge($this->config[self::DEFAULT_INDEX_SETTINGS_KEY], $settings);
+        }
+
+        // derfault core settings
+        $settings = array_merge($this->defaultSettings, $settings);
 
         // We do NOT accept analysis settings anymore in `$sugar_config`
         if (isset($settings[AnalysisBuilder::ANALYSIS])) {
@@ -511,7 +519,7 @@ class IndexManager
      */
     protected function enableIndexRefresh(Index $index)
     {
-        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index));
+        $config = $this->getIndexSettingsFromConfig($index);
         return $this->setIndexRefresh($index, $config['index.refresh_interval']);
     }
 
@@ -538,7 +546,7 @@ class IndexManager
      */
     protected function enableIndexReplicas(Index $index)
     {
-        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index));
+        $config = $this->getIndexSettingsFromConfig($index);
         return $this->setReplicas($index, $config['index.number_of_replicas']);
     }
 }

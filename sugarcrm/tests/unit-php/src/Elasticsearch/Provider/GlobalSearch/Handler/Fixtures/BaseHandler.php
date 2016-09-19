@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -10,25 +10,25 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
-use ReflectionClass;
 
 /**
  *
- * Abstract Handler
+ * BaseHandler fixture
  *
  */
-abstract class AbstractHandler implements HandlerInterface
+class BaseHandler implements HandlerInterface
 {
     /**
      * @var GlobalSearch
      */
-    protected $provider;
+    public $provider;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setProvider(GlobalSearch $provider)
     {
@@ -36,14 +36,10 @@ abstract class AbstractHandler implements HandlerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Use the class basename as name/identifier. If needed this can be
-     * overruled in the implementing handler class.
+     * {@inheritDoc}
      */
     public function getName()
     {
-        $ref = new ReflectionClass($this);
-        return $ref->getShortName();
+        return 'BaseHandler';
     }
 }
