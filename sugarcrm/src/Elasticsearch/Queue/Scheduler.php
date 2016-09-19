@@ -77,6 +77,7 @@ class Scheduler implements \RunnableSchedulerJob
             $message = 'Created consumers for: '.implode(', ', $list);
         } else {
             $message = 'No records currently in queue - nothing to do';
+            $this->enableRefresh();
         }
 
         return $this->job->succeedJob($message);
@@ -107,5 +108,13 @@ class Scheduler implements \RunnableSchedulerJob
     protected function getQueuedModules()
     {
         return $this->engine->getContainer()->queueManager->getQueuedModules();
+    }
+
+    /**
+     * Wrapper to enable refresh interval for all indices
+     */
+    protected function enableRefresh()
+    {
+        $this->engine->getContainer()->indexManager->enableRefresh();
     }
 }
