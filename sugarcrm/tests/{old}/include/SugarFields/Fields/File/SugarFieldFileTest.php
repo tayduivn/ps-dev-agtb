@@ -65,4 +65,24 @@ class SugarFieldFileTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertFileExists("upload://{$this->newNote->id}");
     }
+
+    public function testApiSave_ReusesExistingFile()
+    {
+        $this->newNote = BeanFactory::getBean('Notes');
+        $this->newNote->id = create_guid();
+        $submittedData = array(
+            'name' => 'new note',
+            'filename' => 'test.txt',
+            'filename_duplicateBeanId' => $this->origNote->id,
+            'email_type' => 'Emails',
+            'email_id' => create_guid(),
+        );
+
+        $sfh = new SugarFieldHandler();
+        $field = $sfh->getSugarField($this->newNote->field_defs['filename']['type']);
+        $field->apiSave($this->newNote, $submittedData, 'filename', $this->newNote->field_defs['filename']);
+
+        $this->assertEquals($this->origNote->id, $this->newNote->getUploadId());
+        $this->assertFileNotExists("upload://{$this->newNote->id}");
+    }
 }

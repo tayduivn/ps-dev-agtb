@@ -42,8 +42,8 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 	    $n = new Note();
 	    $n->name = 'tst_' . uniqid();
 	    $n->filename = 'file_' . uniqid();
-	    $n->parent_type = 'Emails';
-	    $n->parent_id = $this->em1->id;
+        $n->email_type = 'Emails';
+        $n->email_id = $this->em1->id;
 	    $n->save();
 	    $this->note1 = $n;
 	    
@@ -108,8 +108,8 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 		$n = new Note();
 	    $n->name = 'tst2_' . uniqid();
 	    $n->filename = 'file2_' . uniqid();
-	    $n->parent_type = 'Emails';
-	    $n->parent_id = $this->em1->id;
+        $n->email_type = 'Emails';
+        $n->email_id = $this->em1->id;
 	    $n->save();
 	    $this->note2 = $n;
 	    $results = $this->em1->searchImportedEmails();	
