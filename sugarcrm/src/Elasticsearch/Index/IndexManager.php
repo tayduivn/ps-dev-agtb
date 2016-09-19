@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
+use Elastica\Index\Settings;
 
 /**
  *
@@ -53,6 +54,8 @@ class IndexManager
         'index.mapping.ignore_malformed' => true,
         // Coerce numeric values
         'index.mapping.coerce' => true,
+        // Refresh interval
+        'index.refresh_interval' => '1s',
     );
 
     /**
@@ -102,7 +105,7 @@ class IndexManager
     public function scheduleIndexing(array $modules = array(), $recreateIndices = false)
     {
         if (!$this->readyForIndexChanges()) {
-            $this->container->logger->critical('System not ready for full reindex, cancelling');
+            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
             return false;
         }
 
@@ -123,7 +126,7 @@ class IndexManager
     public function addMappings(array $modules = array())
     {
         if (!$this->readyForIndexChanges()) {
-            $this->container->logger->critical('System not ready for full reindex, cancelling');
+            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
             return false;
         }
 
@@ -348,6 +351,7 @@ class IndexManager
     {
         // TODO: add error handling
         $settings = $this->buildIndexSettings($index->getBaseName(), $analysisBuilder);
+
         $result = $index->create($settings, $dropExist);
         return $index;
     }
@@ -391,5 +395,90 @@ class IndexManager
     protected function getIndexCollection(MappingCollection $mappingCollection)
     {
         return $this->container->indexPool->buildIndexCollection($mappingCollection);
+    }
+
+    /**
+     * Ensure the refresh intervals are properly configured for all indices.
+     * During bulk imports the refresh interval can be disabled to speed up
+     * bulk imports. This method is primarily called from the scheduler which
+     * kicks in from cron. When no more records are present in fts_queue the
+     * scheduler will re-enable the refresh intervals as per index config.
+     *
+     * Although refresh intervals can be disabled on a per module/index base,
+     * enabling the refresh interval does not require this fine grained
+     * control.
+     *
+     * This implies when the index.refresh_interval is
+     * changed using $sugar_config, this will be picked up automatically given
+     * cron is enabled on the system.
+     */
+    public function enableRefresh()
+    {
+        $modules = $this->getAllEnabledModules();
+        foreach ($this->container->indexPool->getReadIndices($modules)->getIterator() as $index) {
+            $this->enableIndexRefresh($index);
+        }
+    }
+
+    /**
+     * Disable refresh interval on indices for given modules. This should only
+     * be called from the queue manager when a reindex is scheduled. The
+     * scheduler which will ensure the refresh interval is re-enabled when no
+     * more records are in need of processing from the fts_queue table.
+     *
+     * @param array $modules List of modules
+     * @param int|string $interval
+     */
+    public function disableRefresh(array $modules, $interval = -1)
+    {
+        foreach ($this->container->indexPool->getReadIndices($modules)->getIterator() as $index) {
+            $this->setIndexRefresh($index->getSettings(), $interval);
+            $this->container->logger->info(sprintf(
+                "IndexManager: Refresh interval disabled for %s using value %s",
+                $index->getName(),
+                $interval
+            ));
+        }
+    }
+
+    /**
+     * Set index interval
+     * @param Settings $indexSettings
+     * @param int|string $interval
+     */
+    protected function setIndexRefresh(Settings $indexSettings, $interval)
+    {
+        $indexSettings->setRefreshInterval($interval);
+    }
+
+    /**
+     * Set proper refresh interval for given index from configuration
+     * @param Index $index
+     */
+    protected function enableIndexRefresh(Index $index)
+    {
+        // load index configuration
+        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index->getBaseName()));
+
+        // load refresh interval from index
+        $settings = $index->getSettings();
+        $refresh = $settings->getRefreshInterval();
+
+        // update interval when needed
+        if ($refresh !== $config['index.refresh_interval']) {
+            $this->setIndexRefresh($settings, $config['index.refresh_interval']);
+            $this->container->logger->info(sprintf(
+                "IndexManager: Update refresh interval from %s to %s for %s",
+                $refresh,
+                $config['index.refresh_interval'],
+                $index->getName()
+            ));
+        } else {
+            $this->container->logger->info(sprintf(
+                "ES IndexManager: Refresh interval already set to %s for %s",
+                $config['index.refresh_interval'],
+                $index->getName()
+            ));
+        }
     }
 }

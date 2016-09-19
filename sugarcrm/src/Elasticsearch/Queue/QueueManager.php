@@ -60,6 +60,13 @@ class QueueManager
     protected $postponeJobTime = 120;
 
     /**
+     * Value used when disabling index refresh_interval as defined in
+     * `$sugar_config['search_engine']['disable_refresh_interval']`.
+     * @var int|string
+     */
+    protected $disableRefreshInterval = -1;
+
+    /**
      * In memory queue for processed queue record ids
      * @var array
      */
@@ -79,6 +86,9 @@ class QueueManager
         }
         if (!empty($config['postpone_job_time'])) {
             $this->maxBulkDeleteThreshold = (int) $config['postpone_job_time'];
+        }
+        if (!empty($config['disable_refresh_interval'])) {
+            $this->disableRefreshInterval = $config['disable_refresh_interval'];
         }
 
         $this->container = $container;
@@ -100,9 +110,27 @@ class QueueManager
             $this->resetQueue($modules);
         }
 
+        $this->disableRefresh($modules);
         $this->cleanupQueue();
         $this->queueModules($modules);
         $this->createScheduler();
+    }
+
+    /**
+     * Enable refresh on all modules
+     */
+    protected function enableRefresh()
+    {
+        $this->container->indexManager->enableRefresh();
+    }
+
+    /**
+     * Disable refresh interval on indices for given modules
+     * @param array $modules
+     */
+    protected function disableRefresh(array $modules)
+    {
+        $this->container->indexManager->disableRefresh($modules, $this->disableRefreshInterval);
     }
 
     /**
@@ -542,6 +570,7 @@ class QueueManager
         foreach ($this->getQueuedModules() as $module) {
             $this->consumeModuleFromQueue($module);
         }
+        $this->enableRefresh();
     }
 
     /**
