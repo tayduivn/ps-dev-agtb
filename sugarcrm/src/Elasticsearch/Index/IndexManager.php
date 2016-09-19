@@ -18,6 +18,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
+use Elastica\Response;
 
 /**
  *
@@ -416,20 +417,20 @@ class IndexManager
      * kicks in from cron. When no more records are present in fts_queue the
      * scheduler will re-enable the refresh intervals as per index config.
      *
-     * Although refresh intervals can be disabled on a per module/index base,
-     * enabling the refresh interval does not require this fine grained
-     * control.
+     * This implies when the index.refresh_interval is set using $sugar_config,
+     * this will be picked up automatically given cron is enabled on the
+     * system.
      *
-     * This implies when the index.refresh_interval is
-     * changed using $sugar_config, this will be picked up automatically given
-     * cron is enabled on the system.
+     * @return array List of affected indices and status code
      */
     public function enableRefresh()
     {
         $modules = $this->getAllEnabledModules();
+        $status = array();
         foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $this->enableIndexRefresh($index);
+            $status[$index->getName()] = $this->enableIndexRefresh($index)->getStatus();
         }
+        return $status;
     }
 
     /**
@@ -440,81 +441,94 @@ class IndexManager
      *
      * @param array $modules List of modules
      * @param int|string $interval
+     * @return array List of affected indices and status code
      */
     public function disableRefresh(array $modules, $interval = -1)
     {
+        $status = array();
         foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $this->setIndexRefresh($index, $interval);
-            $this->container->logger->info(sprintf(
-                "IndexManager: Refresh interval disabled for %s using value %s",
-                $index->getName(),
-                $interval
-            ));
+            $status[$index->getName()] = $this->setIndexRefresh($index, $interval)->getStatus();
         }
+        return $status;
+    }
+
+    /**
+     * Enable replicas for all indices. This method is primarily called by the
+     * scheduler when no more records are in the fts_queue table. This implies
+     * that sugar controls the replica settings for its indices and no other
+     * cluster overrides should be set to avoid flapping index recovery.
+     *
+     * @return array List of affected indices and status code
+     */
+    public function enableReplicas()
+    {
+        $modules = $this->getAllEnabledModules();
+        $status = array();
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
+            $status[$index->getName()] = $this->enableIndexReplicas($index)->getStatus();
+        }
+        return $status;
+    }
+
+    /**
+     * Disable replicas on indices for given modules. This method is primarily
+     * called by queue manager to disable replicas during reindexing process.
+     * Cron scheduler will ensure to re-enable the replica settings once
+     * fts_queue table is empty.
+     *
+     * @param array $modules
+     * @return array List of affected indices and status code
+     */
+    public function disableReplicas(array $modules)
+    {
+        $status = array();
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
+            $status[$index->getName()] = $this->setReplicas($index, 0)->getStatus();
+        }
+        return $status;
     }
 
     /**
      * Set index interval
      * @param Index $index
      * @param int|string $interval
-     * @return \Elastica\Response
+     * @return Response
      */
     protected function setIndexRefresh(Index $index, $interval)
     {
+        $this->container->logger->info(sprintf(
+            "IndexManager: Set refresh interval %s for %s",
+            $interval,
+            $index->getName()
+        ));
         return $index->getSettings()->setRefreshInterval($interval);
     }
 
     /**
      * Set proper refresh interval for given index from configuration
      * @param Index $index
+     * @return Response
      */
     protected function enableIndexRefresh(Index $index)
     {
-        // load index configuration
         $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index));
-
-        // update interval only when needed
-        if (isset($config['index.refresh_interval'])) {
-            $this->setIndexRefresh($index, $config['index.refresh_interval']);
-            $this->container->logger->info(sprintf(
-                "IndexManager: Pushing refresh interval %s for %s",
-                $config['index.refresh_interval'],
-                $index->getName()
-            ));
-        }
-    }
-
-    /**
-     * Disable replicas on indices for given modules
-     * @param array $modules
-     */
-    public function disableReplicas(array $modules)
-    {
-        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $this->setReplicas($index, 0);
-        }
+        return $this->setIndexRefresh($index, $config['index.refresh_interval']);
     }
 
     /**
      * Set replicas on given index
      * @param Index $index
      * @param int $replicas
-     * @return \Elastica\Response
+     * @return Response
      */
     protected function setReplicas(Index $index, $replicas)
     {
+        $this->container->logger->info(sprintf(
+            "IndexManager: Set replicas to %s for %s",
+            $replicas,
+            $index->getName()
+        ));
         return $index->getSettings()->setNumberOfReplicas($replicas);
-    }
-
-    /**
-     * Enable replicas for all indices
-     */
-    public function enableReplicas()
-    {
-        $modules = $this->getAllEnabledModules();
-        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $this->enableIndexReplicas($index);
-        }
     }
 
     /**
