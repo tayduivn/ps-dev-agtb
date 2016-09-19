@@ -40,11 +40,12 @@ $dictionary['Project'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
-                'aggregations' => array(
-                    'date_entered' => array(
-                        'type' => 'DateRange',
-                    ),
-                ),
+                // Disabled until UX component is available
+                //'aggregations' => array(
+                //    'date_entered' => array(
+                //        'type' => 'DateRange',
+                //    ),
+                //),
             ),
 		),
 		'date_modified' => array(
@@ -58,11 +59,12 @@ $dictionary['Project'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
-                'aggregations' => array(
-                    'date_modified' => array(
-                        'type' => 'DateRange',
-                    ),
-                ),
+                // Disabled until UX component is available
+                //'aggregations' => array(
+                //    'date_modified' => array(
+                //        'type' => 'DateRange',
+                //    ),
+                //),
             ),
 		),
 		'assigned_user_id' => array(
