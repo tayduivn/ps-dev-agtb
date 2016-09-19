@@ -359,7 +359,7 @@
         if (!this.disposed && doClose) {
             this.context.trigger('lead:convert:exit');
             app.drawer.close();
-            app.navigate(this.context, leadsModel, 'record');
+            app.router.record('Leads', leadsModel.id);
         }
     },
 
