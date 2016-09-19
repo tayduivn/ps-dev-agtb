@@ -18,7 +18,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
-use Elastica\Index\Settings;
 
 /**
  *
@@ -56,6 +55,8 @@ class IndexManager
         'index.mapping.coerce' => true,
         // Refresh interval
         'index.refresh_interval' => '1s',
+        // Number of replicas
+        'index.number_of_replicas' => '1',
     );
 
     /**
@@ -247,11 +248,11 @@ class IndexManager
 
     /**
      * Build index settings for given index
-     * @param string $index Index name
+     * @param Index $index
      * @param AnalysisBuilder $analysisBuilder
      * @return array
      */
-    protected function buildIndexSettings($index, AnalysisBuilder $analysisBuilder)
+    protected function buildIndexSettings(Index $index, AnalysisBuilder $analysisBuilder)
     {
         $config = $this->getIndexSettingsFromConfig($index);
         return array_merge($this->defaultSettings, $config, $analysisBuilder->compile());
@@ -259,14 +260,15 @@ class IndexManager
 
     /**
      * Get index settings from $sugar_config
-     * @param string $index Index name
+     * @param Index $index
      * @return array
      */
-    protected function getIndexSettingsFromConfig($index)
+    protected function getIndexSettingsFromConfig(Index $index)
     {
+        $indexName = $index->getBaseName();
         $settings = array();
-        if (isset($this->config[$index])) {
-            $settings = $this->config[$index];
+        if (isset($this->config[$indexName])) {
+            $settings = $this->config[$indexName];
         } elseif (isset($this->config[self::DEFAULT_INDEX_SETTINGS_KEY])) {
             $settings = $this->config[self::DEFAULT_INDEX_SETTINGS_KEY];
         }
@@ -350,7 +352,7 @@ class IndexManager
     public function createIndex(Index $index, AnalysisBuilder $analysisBuilder, $dropExist = false)
     {
         // TODO: add error handling
-        $settings = $this->buildIndexSettings($index->getBaseName(), $analysisBuilder);
+        $settings = $this->buildIndexSettings($index, $analysisBuilder);
 
         $result = $index->create($settings, $dropExist);
         return $index;
@@ -398,6 +400,16 @@ class IndexManager
     }
 
     /**
+     * Get list of managed indices for given modules
+     * @param array $modules
+     * @return IndexCollection
+     */
+    protected function getManagedIndices(array $modules)
+    {
+        return $this->container->indexPool->getManagedIndices($modules);
+    }
+
+    /**
      * Ensure the refresh intervals are properly configured for all indices.
      * During bulk imports the refresh interval can be disabled to speed up
      * bulk imports. This method is primarily called from the scheduler which
@@ -415,7 +427,7 @@ class IndexManager
     public function enableRefresh()
     {
         $modules = $this->getAllEnabledModules();
-        foreach ($this->container->indexPool->getReadIndices($modules)->getIterator() as $index) {
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
             $this->enableIndexRefresh($index);
         }
     }
@@ -431,8 +443,8 @@ class IndexManager
      */
     public function disableRefresh(array $modules, $interval = -1)
     {
-        foreach ($this->container->indexPool->getReadIndices($modules)->getIterator() as $index) {
-            $this->setIndexRefresh($index->getSettings(), $interval);
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
+            $this->setIndexRefresh($index, $interval);
             $this->container->logger->info(sprintf(
                 "IndexManager: Refresh interval disabled for %s using value %s",
                 $index->getName(),
@@ -443,12 +455,13 @@ class IndexManager
 
     /**
      * Set index interval
-     * @param Settings $indexSettings
+     * @param Index $index
      * @param int|string $interval
+     * @return \Elastica\Response
      */
-    protected function setIndexRefresh(Settings $indexSettings, $interval)
+    protected function setIndexRefresh(Index $index, $interval)
     {
-        $indexSettings->setRefreshInterval($interval);
+        return $index->getSettings()->setRefreshInterval($interval);
     }
 
     /**
@@ -458,27 +471,60 @@ class IndexManager
     protected function enableIndexRefresh(Index $index)
     {
         // load index configuration
-        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index->getBaseName()));
+        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index));
 
-        // load refresh interval from index
-        $settings = $index->getSettings();
-        $refresh = $settings->getRefreshInterval();
-
-        // update interval when needed
-        if ($refresh !== $config['index.refresh_interval']) {
-            $this->setIndexRefresh($settings, $config['index.refresh_interval']);
+        // update interval only when needed
+        if (isset($config['index.refresh_interval'])) {
+            $this->setIndexRefresh($index, $config['index.refresh_interval']);
             $this->container->logger->info(sprintf(
-                "IndexManager: Update refresh interval from %s to %s for %s",
-                $refresh,
-                $config['index.refresh_interval'],
-                $index->getName()
-            ));
-        } else {
-            $this->container->logger->info(sprintf(
-                "ES IndexManager: Refresh interval already set to %s for %s",
+                "IndexManager: Pushing refresh interval %s for %s",
                 $config['index.refresh_interval'],
                 $index->getName()
             ));
         }
+    }
+
+    /**
+     * Disable replicas on indices for given modules
+     * @param array $modules
+     */
+    public function disableReplicas(array $modules)
+    {
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
+            $this->setReplicas($index, 0);
+        }
+    }
+
+    /**
+     * Set replicas on given index
+     * @param Index $index
+     * @param int $replicas
+     * @return \Elastica\Response
+     */
+    protected function setReplicas(Index $index, $replicas)
+    {
+        return $index->getSettings()->setNumberOfReplicas($replicas);
+    }
+
+    /**
+     * Enable replicas for all indices
+     */
+    public function enableReplicas()
+    {
+        $modules = $this->getAllEnabledModules();
+        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
+            $this->enableIndexReplicas($index);
+        }
+    }
+
+    /**
+     * Enable replica settings for given index from configuration
+     * @param Index $index
+     * @return Response
+     */
+    protected function enableIndexReplicas(Index $index)
+    {
+        $config = array_merge($this->defaultSettings, $this->getIndexSettingsFromConfig($index));
+        return $this->setReplicas($index, $config['index.number_of_replicas']);
     }
 }
