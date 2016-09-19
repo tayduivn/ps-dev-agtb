@@ -10,26 +10,36 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 
 /**
  *
- * Handler marker interface
+ * BaseHandler fixture
  *
  */
-interface HandlerInterface
+class BaseHandler implements HandlerInterface
 {
     /**
-     * Set global search provider
-     * @param GlobalSearch $provider
+     * @var GlobalSearch
      */
-    public function setProvider(GlobalSearch $provider);
+    public $provider;
 
     /**
-     * Return the handler name
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName();
+    public function setProvider(GlobalSearch $provider)
+    {
+        $this->provider = $provider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return 'BaseHandler';
+    }
 }

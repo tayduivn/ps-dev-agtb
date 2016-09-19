@@ -14,6 +14,10 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerFilterIterator;
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\AnalysisHandler;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\MappingHandler;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\AnalysisMappingHandler;
 
 /**
  *
@@ -31,9 +35,14 @@ class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
     public function testIterator(HandlerCollection $collection, $filter, $expected)
     {
         $iterator = new HandlerFilterIterator($collection->getIterator(), $filter);
-        $this->assertCount(count($expected), $iterator);
-        foreach ($iterator as $key => $item) {
-            $this->assertInstanceOf($expected[$key], $item);
+
+        if (empty($expected)) {
+            $this->assertEmpty(iterator_to_array($iterator));
+        } else {
+            foreach ($iterator as $key => $item) {
+                $this->assertArrayHasKey($key, $expected);
+                $this->assertInstanceOf($expected[$key], $item);
+            }
         }
     }
 
@@ -42,60 +51,49 @@ class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
         return array(
             // no filter
             array(
-                $this->getCollectionFixture(array('Analysis', 'Mapping')),
+                $this->getCollectionMock(array(
+                    new AnalysisHandler(),
+                    new MappingHandler(),
+                )),
                 null,
                 array(
-                    0 => $this->getHandlerInterface('Analysis'),
-                    1 => $this->getHandlerInterface('Mapping')
+                    'AnalysisHandler' => $this->getHandlerInterface('Analysis'),
+                    'MappingHandler' => $this->getHandlerInterface('Mapping'),
                 ),
             ),
-            // filter ourself
+            // filter, no hits
             array(
-                $this->getCollectionFixture(array('Analysis')),
-                'Analysis',
-                array(
-                    0 => $this->getHandlerInterface('Analysis')
-                ),
-            ),
-            // no results
-            array(
-                $this->getCollectionFixture(array('Analysis')),
+                $this->getCollectionMock(array(
+                    new AnalysisHandler(),
+                )),
                 'Mapping',
                 array(),
             ),
-            // multiple different interfaces
+            // filter, one hit
             array(
-                $this->getCollectionFixture(array('Analysis', 'Mapping')),
-                'Analysis',
-                array(
-                    0 => $this->getHandlerInterface('Analysis')
-                ),
-            ),
-            // multiple different interfaces with duplicates
-            array(
-                $this->getCollectionFixture(array('Analysis', 'Mapping', 'SearchFields', 'Mapping')),
+                $this->getCollectionMock(array(
+                    new AnalysisHandler(),
+                    new MappingHandler(),
+                )),
                 'Mapping',
                 array(
-                    1 => $this->getHandlerInterface('Mapping'),
-                    3 => $this->getHandlerInterface('Mapping'),
+                    'MappingHandler' => $this->getHandlerInterface('Mapping'),
+                ),
+            ),
+            // filter, multiple hits
+            array(
+                $this->getCollectionMock(array(
+                    new AnalysisHandler(),
+                    new MappingHandler(),
+                    new AnalysisMappingHandler(),
+                )),
+                'Analysis',
+                array(
+                    'AnalysisHandler' => $this->getHandlerInterface('Analysis'),
+                    'AnalysisMappingHandler' => $this->getHandlerInterface('Analysis'),
                 ),
             ),
         );
-    }
-
-    /**
-     * Get collection fixture
-     * @param array $interfaces
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection
-     */
-    protected function getCollectionFixture(array $interfaces)
-    {
-        $collection = new HandlerCollection($this->getProviderMock());
-        foreach ($interfaces as $interface) {
-            $handler = $this->getMock($this->getHandlerInterface($interface));
-            $collection->addHandler($handler);
-        }
-        return $collection;
     }
 
     /**
@@ -113,7 +111,7 @@ class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Get GlobalSearch provider mock
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch
+     * @return GlobalSearch
      */
     protected function getProviderMock()
     {
@@ -121,5 +119,19 @@ class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array())
             ->getMock();
+    }
+
+    /**
+     * Create HandlerCollection mock
+     * @param array $handlers
+     * @return HandlerCollection
+     */
+    protected function getCollectionMock(array $handlers)
+    {
+        $collection = new HandlerCollection($this->getProviderMock());
+        foreach ($handlers as $handler) {
+            $collection->addHandler($handler);
+        }
+        return $collection;
     }
 }

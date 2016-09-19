@@ -10,26 +10,31 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\MappingHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 
 /**
  *
- * Handler marker interface
+ * MappingHandler fixture
  *
  */
-interface HandlerInterface
+class MappingHandler extends BaseHandler implements MappingHandlerInterface
 {
     /**
-     * Set global search provider
-     * @param GlobalSearch $provider
+     * {@inheritDoc}
      */
-    public function setProvider(GlobalSearch $provider);
+    public function getName()
+    {
+        return 'MappingHandler';
+    }
 
     /**
-     * Return the handler name
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName();
+    public function buildMapping(Mapping $mapping, $field, array $defs)
+    {
+    }
 }

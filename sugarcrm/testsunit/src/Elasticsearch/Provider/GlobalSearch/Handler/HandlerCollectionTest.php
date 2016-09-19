@@ -13,6 +13,10 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerCollection;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\BaseHandler;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\AnalysisHandler;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\MappingHandler;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
 
 /**
  *
@@ -23,30 +27,64 @@ class HandlerCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::addHandler
+     * @covers ::hasHandler
+     * @covers ::removeHandler
+     * @covers ::getHandler
      * @covers ::getIterator
      * @covers ::__construct
      */
-    public function testAddHandler()
+    public function testCollection()
     {
-        $provider = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch')
-            ->disableOriginalConstructor()
-            ->setMethods(array())
-            ->getMock();
+        $provider = new GlobalSearch();
 
-        $handler = $this->getMock('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface');
-
-        $handler->expects($this->once())
-            ->method('setProvider')
-            ->with($this->equalTo($provider));
+        $handler1 = new BaseHandler();
+        $handler2 = new AnalysisHandler();
+        $handler3 = new MappingHandler();
 
         $collection = new HandlerCollection($provider);
-        $collection->addHandler($handler);
+        $collection->addHandler($handler1);
+        $collection->addHandler($handler2);
+        $collection->addHandler($handler3);
+        $collection->removeHandler('AnalysisHandler');
+
+        $this->assertSame($provider, $handler1->provider);
+        $this->assertSame($provider, $handler3->provider);
 
         $iterator = $collection->getIterator();
         $this->assertInstanceOf('ArrayIterator', $iterator);
 
-        foreach ($iterator as $item) {
-            $this->assertSame($handler, $item);
-        }
+        $this->assertTrue($collection->hasHandler('BaseHandler'));
+        $this->assertTrue($collection->hasHandler('MappingHandler'));
+        $this->assertFalse($collection->hasHandler('AnalysisHandler'));
+        $this->assertFalse($collection->hasHandler('FooBar'));
+
+        $this->assertSame($handler1, $collection->getHandler('BaseHandler'));
+        $this->assertSame($handler3, $collection->getHandler('MappingHandler'));
+    }
+
+    /**
+     * @covers ::removeHandler
+     */
+    public function testRemoveHandlerException()
+    {
+        $this->setExpectedException(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception\HandlerCollectionException',
+            'Cannot remove non-existing handler FooBar'
+        );
+        $collection = new HandlerCollection(new GlobalSearch());
+        $collection->removeHandler('FooBar');
+    }
+
+    /**
+     * @covers ::getHandler
+     */
+    public function testGetHandlerException()
+    {
+        $this->setExpectedException(
+            'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception\HandlerCollectionException',
+            'Handler FooBar does not exist'
+        );
+        $collection = new HandlerCollection(new GlobalSearch());
+        $collection->getHandler('FooBar');
     }
 }
