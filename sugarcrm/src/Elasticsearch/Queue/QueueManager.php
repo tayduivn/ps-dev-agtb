@@ -66,6 +66,25 @@ class QueueManager
     protected $disableRefreshInterval = -1;
 
     /**
+     * During indexing documents are sent to each replica node on which the
+     * indexing process is repeated. When this option is enabled, the
+     * replicas for the involved indices will be set to zero. When all
+     * records are processed from fts_queue, the replicas are enabled again
+     * and the recovery process will start syncing the data which is much
+     * more performant than having multiple replicas active.
+     *
+     * Use `$sugar_config['search_engine']['non_replica_reindex'] = true`.
+     *
+     * When using this functionality it is highly encourage to configure
+     * the replica settings using index_settings as we cannot fall back
+     * the any node configuration for this. If no index_setting config is
+     * supplied every index will get configured using one replica.
+     *
+     * @var boolean
+     */
+    protected $nonReplicaReindex = false;
+
+    /**
      * In memory queue for processed queue record ids
      * @var array
      */
@@ -89,6 +108,9 @@ class QueueManager
         if (!empty($config['disable_refresh_interval'])) {
             $this->disableRefreshInterval = $config['disable_refresh_interval'];
         }
+        if (!empty($config['non_replica_reindex'])) {
+            $this->nonReplicaReindex = (bool) $config['non_replica_reindex'];
+        }
 
         $this->container = $container;
         $this->db = $db ?: \DBManagerFactory::getInstance();
@@ -109,7 +131,9 @@ class QueueManager
             $this->resetQueue($modules);
         }
 
+        $this->disableReplicas($modules);
         $this->disableRefresh($modules);
+
         $this->cleanupQueue();
         $this->queueModules($modules);
         $this->createScheduler();
@@ -130,6 +154,27 @@ class QueueManager
     protected function disableRefresh(array $modules)
     {
         $this->container->indexManager->disableRefresh($modules, $this->disableRefreshInterval);
+    }
+
+    /**
+     * Enable replicas on all indices
+     */
+    protected function enableReplicas()
+    {
+        if ($this->nonReplicaReindex) {
+            $this->container->indexManager->enableReplicas();
+        }
+    }
+
+    /**
+     * Disable replicas on indices for given modules
+     * @param array $modules
+     */
+    protected function disableReplicas(array $modules)
+    {
+        if ($this->nonReplicaReindex) {
+            $this->container->indexManager->disableReplicas($modules);
+        }
     }
 
     /**
@@ -563,6 +608,7 @@ class QueueManager
             $this->consumeModuleFromQueue($module);
         }
         $this->enableRefresh();
+        $this->enableReplicas();
     }
 
     /**

@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Index;
 use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexManager;
 use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
+use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 
 /**
  *
@@ -27,8 +28,9 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
      * @covers ::getIndexSettingsFromConfig
      * @dataProvider providerTestGetIndexSettingsFromConfig
      */
-    public function testGetIndexSettingsFromConfig($index, $config, $output)
+    public function testGetIndexSettingsFromConfig($indexName, $config, $output)
     {
+        $index = $this->getIndexMock($indexName);
         $indexManager = $this->getIndexManagerMock();
         TestReflection::setProtectedValue($indexManager, 'config', $config);
         $settings = TestReflection::callProtectedMethod($indexManager, 'getIndexSettingsFromConfig', array($index));
@@ -94,5 +96,20 @@ class IndexManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
+    }
+
+    /**
+     * Get Index mock
+     * @param string $name
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index
+     */
+    protected function getIndexMock($name)
+    {
+        $index = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+        $index->setBaseName($name);
+        return $index;
     }
 }

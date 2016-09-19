@@ -75,9 +75,12 @@ class Scheduler implements \RunnableSchedulerJob
 
         if (!empty($list)) {
             $message = 'Created consumers for: '.implode(', ', $list);
+            // TODO: disable refresh interval when reaching certain fts_queue threshold ?
+            // This probably should should happen in QueueManager during consumption
         } else {
             $message = 'No records currently in queue - nothing to do';
             $this->enableRefresh();
+            $this->enableReplicas();
         }
 
         return $this->job->succeedJob($message);
@@ -116,5 +119,13 @@ class Scheduler implements \RunnableSchedulerJob
     protected function enableRefresh()
     {
         $this->engine->getContainer()->indexManager->enableRefresh();
+    }
+
+    /**
+     * Wrapper to enable replicas for all indices
+     */
+    protected function enableReplicas()
+    {
+        $this->engine->getContainer()->indexManager->enableReplicas();
     }
 }
