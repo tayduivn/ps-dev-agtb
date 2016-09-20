@@ -135,7 +135,7 @@ class AdministrationApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'elasticSearchRefreshTrigger',
                 'shortHelp' => 'Elasticsearch trigger an index refresh',
-                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_trigger__post_help.html',
+                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_trigger_post_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionSearchUnavailable',
@@ -147,7 +147,7 @@ class AdministrationApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'elasticSearchRefreshEnable',
                 'shortHelp' => 'Elasticsearch enable index refresh',
-                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_enable__post_help.html',
+                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_enable_post_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionSearchUnavailable',
@@ -173,7 +173,7 @@ class AdministrationApi extends SugarApi
                 'pathVars' => array(''),
                 'method' => 'elasticSearchReplicasEnable',
                 'shortHelp' => 'Elasticsearch enable index replicas',
-                'longHelp' => 'include/api/help/administration_elasticsearch_replicas_enable__post_help.html',
+                'longHelp' => 'include/api/help/administration_elasticsearch_replicas_enable_post_help.html',
                 'exceptions' => array(
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionSearchUnavailable',
