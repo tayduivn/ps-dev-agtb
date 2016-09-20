@@ -2,7 +2,7 @@
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * http://support.sugarcrm.com/06_Customer_Center/10_Master_Subscription_Agreements/.
  * If you do not agree to all of the applicable terms or do not have the
  * authority to bind the entity as an authorized representative, then do not
  * install or use this SugarCRM file.
@@ -342,13 +342,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            'gs_text_wildcard' => array(
-                                'type' => 'text',
-                                'index' => true,
-                                'analyzer' => 'gs_analyzer_text_ngram',
-                                'search_analyzer' => 'gs_analyzer_string',
-                                'store' => true,
-                            ),
+                            //'gs_text_wildcard' => array(
+                            //    'type' => 'string',
+                            //    'index' => 'analyzed',
+                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
+                            //    'search_analyzer' => 'gs_analyzer_string',
+                            //    'store' => true,
+                            //),
                         ),
                     ),
                     'description' => array(
@@ -606,13 +606,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            'gs_text_wildcard' => array(
-                                'type' => 'text',
-                                'index' => true,
-                                'analyzer' => 'gs_analyzer_text_ngram',
-                                'search_analyzer' => 'gs_analyzer_string',
-                                'store' => true,
-                            ),
+                            //'gs_text_wildcard' => array(
+                            //    'type' => 'string',
+                            //    'index' => 'analyzed',
+                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
+                            //    'search_analyzer' => 'gs_analyzer_string',
+                            //    'store' => true,
+                            //),
                         ),
                     ),
                     'description' => array(
@@ -645,13 +645,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            'gs_text_wildcard' => array(
-                                'type' => 'text',
-                                'index' => true,
-                                'analyzer' => 'gs_analyzer_text_ngram',
-                                'search_analyzer' => 'gs_analyzer_string',
-                                'store' => true,
-                            ),
+                            //'gs_text_wildcard' => array(
+                            //    'type' => 'string',
+                            //    'index' => 'analyzed',
+                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
+                            //    'search_analyzer' => 'gs_analyzer_string',
+                            //    'store' => true,
+                            //),
                         ),
                     ),
                     'body' => array(

@@ -50,7 +50,8 @@ class MultiFieldHandler extends AbstractHandler implements
         ),
         'text' => array(
             'gs_string',
-            'gs_text_wildcard',
+            // Disable wildcard search awaiting optimization
+            //'gs_text_wildcard',
         ),
         'datetime' => array(
             'gs_datetime',
@@ -82,11 +83,13 @@ class MultiFieldHandler extends AbstractHandler implements
         ),
         'longtext' => array(
             'gs_string',
-            'gs_text_wildcard',
+            // Disable wildcard search awaiting optimization
+            //'gs_text_wildcard',
         ),
         'htmleditable_tinymce' => array(
             'gs_string',
-            'gs_text_wildcard',
+            // Disable wildcard search awaiting optimization
+            //'gs_text_wildcard',
         ),
         'enum' => array(
             'not_analyzed',
