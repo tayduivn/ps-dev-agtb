@@ -50,7 +50,10 @@ class HandlerCollection implements \IteratorAggregate
     }
 
     /**
-     * Add handler
+     * Add handler. Every handler is identified by its name. When adding
+     * a handler which already exists with the same name, the previous
+     * one is replaced by the one which is passed in.
+     *
      * @param HandlerInterface $handler
      */
     public function addHandler(HandlerInterface $handler)

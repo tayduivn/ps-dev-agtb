@@ -59,32 +59,6 @@ class QueueManager
     protected $postponeJobTime = 120;
 
     /**
-     * Value used when disabling index refresh_interval as defined in
-     * `$sugar_config['search_engine']['disable_refresh_interval']`.
-     * @var int|string
-     */
-    protected $disableRefreshInterval = -1;
-
-    /**
-     * During indexing documents are sent to each replica node on which the
-     * indexing process is repeated. When this option is enabled, the
-     * replicas for the involved indices will be set to zero. When all
-     * records are processed from fts_queue, the replicas are enabled again
-     * and the recovery process will start syncing the data which is much
-     * more performant than having multiple replicas active.
-     *
-     * Use `$sugar_config['search_engine']['non_replica_reindex'] = true`.
-     *
-     * When using this functionality it is highly encourage to configure
-     * the replica settings using index_settings as we cannot fall back
-     * the any node configuration for this. If no index_setting config is
-     * supplied every index will get configured using one replica.
-     *
-     * @var boolean
-     */
-    protected $nonReplicaReindex = false;
-
-    /**
      * In memory queue for processed queue record ids
      * @var array
      */
@@ -105,34 +79,27 @@ class QueueManager
         if (!empty($config['postpone_job_time'])) {
             $this->maxBulkDeleteThreshold = (int) $config['postpone_job_time'];
         }
-        if (!empty($config['disable_refresh_interval'])) {
-            $this->disableRefreshInterval = $config['disable_refresh_interval'];
-        }
-        if (!empty($config['non_replica_reindex'])) {
-            $this->nonReplicaReindex = (bool) $config['non_replica_reindex'];
-        }
 
         $this->container = $container;
         $this->db = $db ?: \DBManagerFactory::getInstance();
     }
 
     /**
-     * Queue all beans for given modules. If no modules are specified all
-     * enabled modules will be taken into account.
+     * Queue all beans for given modules.
      * @param array $modules
      */
-    public function reindexModules(array $modules = array())
+    public function reindexModules(array $modules)
     {
-        if (empty($modules)) {
-            $modules = $this->container->metaDataHelper->getAllEnabledModules();
-            // no module list needed to just clear everything as this is faster
+        $allModules = $this->container->metaDataHelper->getAllEnabledModules();
+        sort($allModules);
+        sort($modules);
+
+        // clear the whole queue when all modules are selected
+        if ($allModules === $modules) {
             $this->resetQueue();
         } else {
             $this->resetQueue($modules);
         }
-
-        $this->disableReplicas($modules);
-        $this->disableRefresh($modules);
 
         $this->cleanupQueue();
         $this->queueModules($modules);
@@ -140,7 +107,26 @@ class QueueManager
     }
 
     /**
-     * Enable refresh on all modules
+     * Although the queue can be used at any given point in time, we want to
+     * be able to be notified from the scheduler when nothing is left in the
+     * queue. This is our sign to do some housekeeping regarding bulk indexing
+     * operations like refresh_interval and/or replica tuning.
+     *
+     * Both the non-replica reindex settings as well as refresh_interval should
+     * be carefully configured when using live reindexing as both values will
+     * only be restored when the queue is reported as empty. Optionally if due
+     * to circumstances the queue doesn't get empty (i.e. async modules, or
+     * live reindexing) CLI commands are available for prematurely force the
+     * proper refresh_interval/replica settings.
+     */
+    public function reportIndexingDone()
+    {
+        $this->enableRefresh();
+        $this->enableReplicas();
+    }
+
+    /**
+     * Enable refresh interval
      */
     protected function enableRefresh()
     {
@@ -148,33 +134,11 @@ class QueueManager
     }
 
     /**
-     * Disable refresh interval on indices for given modules
-     * @param array $modules
-     */
-    protected function disableRefresh(array $modules)
-    {
-        $this->container->indexManager->disableRefresh($modules, $this->disableRefreshInterval);
-    }
-
-    /**
-     * Enable replicas on all indices
+     * Enable replicas
      */
     protected function enableReplicas()
     {
-        if ($this->nonReplicaReindex) {
-            $this->container->indexManager->enableReplicas();
-        }
-    }
-
-    /**
-     * Disable replicas on indices for given modules
-     * @param array $modules
-     */
-    protected function disableReplicas(array $modules)
-    {
-        if ($this->nonReplicaReindex) {
-            $this->container->indexManager->disableReplicas($modules);
-        }
+        $this->container->indexManager->enableReplicas();
     }
 
     /**
@@ -607,8 +571,7 @@ class QueueManager
         foreach ($this->getQueuedModules() as $module) {
             $this->consumeModuleFromQueue($module);
         }
-        $this->enableRefresh();
-        $this->enableReplicas();
+        $this->reportIndexingDone();
     }
 
     /**

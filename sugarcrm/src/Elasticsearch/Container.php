@@ -271,6 +271,18 @@ class Container
     {
         $config = SugarArray::staticGet($this->getConfig('engine'), 'index_settings', array());
         $this->indexManager = new IndexManager($config, $this);
+
+        // reindex refresh interval from config
+        $interval = SugarArray::staticGet($this->getConfig('engine'), 'reindex_refresh_interval');
+        if (null !== $interval) {
+            $this->indexManager->setReindexRefreshInterval($interval);
+        }
+
+        // reindex zero replica usage from config
+        $zeroReplica = SugarArray::staticGet($this->getConfig('engine'), 'reindex_zero_replica');
+        if ($zeroReplica) {
+            $this->indexManager->setReindexZeroReplica($zeroReplica);
+        }
     }
 
     /**
