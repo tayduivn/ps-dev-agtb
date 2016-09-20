@@ -74,6 +74,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                     'search:reindex' => $ns . '\Api\SearchReindexCommand',
                     'search:status' => $ns . '\Api\SearchStatusCommand',
                     'search:module' => $ns . '\Elasticsearch\ModuleCommand',
+                    'search:silent_reindex' => $ns . '\Elasticsearch\SilentReindexCommand',
                 ),
             ),
         );

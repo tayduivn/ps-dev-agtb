@@ -26,6 +26,7 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -88,6 +89,7 @@ class Application extends BaseApplication
             new SearchStatusCommand(),
             new CleanupQueueCommand(),
             new ModuleCommand(),
+            new SilentReindexCommand(),
         ));
 
         $app = new Application();
