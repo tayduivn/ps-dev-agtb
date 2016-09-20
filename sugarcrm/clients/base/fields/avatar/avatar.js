@@ -40,10 +40,10 @@
                 className = _.isUndefined(this.MAPSIZECLASS[this.def.size]) ? this.MAPSIZECLASS['large'] : this.MAPSIZECLASS[this.def.size];
                 // replace the image field with the module icon when there is no avatar to display
                 // load the module icon template
-                template = app.template.getField(this.type, 'module-icon', this._getModuleName());
+                template = app.template.getField(this.type, 'module-icon', this.module);
                 if (template) {
                     this.$('.image_field').replaceWith(template({
-                        module: this._getModuleName(),
+                        module: this.module,
                         labelSizeClass: className,
                         tooltipPlacement: app.lang.direction === 'ltr' ? 'right' : 'left'
                     }));
@@ -54,23 +54,6 @@
             }
         }
         return this;
-    },
-
-    /**
-     * Gets the record's module name.
-     *
-     * FIXME: This isn't the right way to do it. The
-     * {@link View.Views.Base.HistorySummaryView} view should use a true
-     * {@link Data.MixedBeanCollection} so we don't have to do this.
-     *
-     * @return {string} The module name.
-     * @protected
-     */
-    _getModuleName: function() {
-        if (this.view.name === 'history-summary') {
-            return this.model.get('_module');
-        }
-        return this.module;
     },
 
     /**
