@@ -411,8 +411,4 @@ $dictionary['Note'] = array(
 VardefManager::createVardef('Notes','Note', array('default', 'assignable',
 'team_security',
 ));
-
-// Temporary disable Note description field indexing until the analyzers are sorted out
-// to properly cope with larger fields. This impacts indexing performance and additional
-// adds a heavy taxation on the required disk space usage as well.
-$dictionary['Note']['fields']['description']['full_text_search']['enabled'] = false;
+?>
