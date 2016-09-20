@@ -12,6 +12,10 @@
 
 namespace Sugarcrm\Sugarcrm\Console;
 
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ExplainCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand;
 use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
 use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchIndicesCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchQueueCommand;
@@ -24,6 +28,9 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchReplicasEnableCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -77,23 +84,25 @@ class Application extends BaseApplication
             new ElasticsearchIndicesCommand(),
             new ElasticsearchQueueCommand(),
             new ElasticsearchRoutingCommand(),
+            new ExplainCommand(),
             new ElasticsearchRefreshStatusCommand(),
             new ElasticsearchRefreshEnableCommand(),
             new ElasticsearchRefreshTriggerCommand(),
             new ElasticsearchReplicasStatusCommand(),
             new ElasticsearchReplicasEnableCommand(),
+            new CleanupQueueCommand(),
+            new ModuleCommand(),
+            new SilentReindexCommand(),
+
+            // Genreric Search
             new SearchFieldsCommand(),
             new SearchReindexCommand(),
             new SearchStatusCommand(),
-            new CleanupQueueCommand(),
-            new ModuleCommand(),
 
             // Password management
             new WeakHashesCommand(),
             new PasswordConfigCommand(),
             new PasswordResetCommand(),
-            new CleanupQueueCommand(),
-            new ModuleCommand(),
         ));
 
         $app = new Application();
