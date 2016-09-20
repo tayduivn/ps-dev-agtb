@@ -1384,35 +1384,63 @@ class Email extends SugarBean {
 		}
 	}
 
+    /**
+     * Link an email address to the email.
+     *
+     * The email address might already be linked to the email, in which case the ID of the existing row is returned. An
+     * empty string is returned if a failure occurs that cannot allow for the email address to be linked.
+     *
+     * @param string $id The ID of the email address
+     * @param string $type from, to, cc, or bcc
+     * @return string The ID of the row added to the emails_email_addr_rel table.
+     */
     public function linkEmailToAddress($id, $type)
     {
-        // TODO: make this update?
-        $query = "SELECT id FROM emails_email_addr_rel " .
-            "WHERE email_id = ? AND email_address_id = ? AND address_type = ? AND deleted = ?";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id, $id, $type, 0));
+        $link = "email_addresses_{$type}";
+        $emailAddress = BeanFactory::retrieveBean('EmailAddresses', $id);
 
-        $linkedEmailId = $stmt->fetchColumn();
-
-        if (!empty($linkedEmailId)) {
-            return $linkedEmailId;
-        } else {
-            $guid = create_guid();
-            global $dictionary;
-            $this->db->insertParams(
-                'emails_email_addr_rel',
-                $dictionary['emails_email_addr_rel']['fields'],
-                array(
-                    'id' => $guid,
-                    'email_id' => $this->id,
-                    'address_type' => $type,
-                    'email_address_id' => $id,
-                    'deleted' => 0,
-                )
-            );
+        if (!$emailAddress) {
+            LoggerManager::getLogger()->error("Invalid ID for an EmailAddresses record: {$id}");
+            return '';
         }
 
-        return $guid;
+        if (!$this->load_relationship($link)) {
+            LoggerManager::getLogger()->error("Failed to load link {$link} for Emails record: {$this->id}");
+            return '';
+        }
+
+        $failures = $this->$link->add($emailAddress);
+
+        if ($failures === true) {
+            LoggerManager::getLogger()->debug("Linked EmailAddresses/{$id} to Emails/{$this->id} on link {$link}");
+        } else {
+            LoggerManager::getLogger()->error(
+                "Failed to link EmailAddresses/{$id} to Emails/{$this->id} on link {$link}"
+            );
+            LoggerManager::getLogger()->error('failures=' . var_export($failures, true));
+        }
+
+        // Get the ID of the row from the emails_email_addr_rel table.
+        $joinParams = array(
+            'alias' => 'eear',
+            'joinType' => 'LEFT',
+            'linkingTable' => true,
+        );
+        $q = new SugarQuery();
+        $q->from($this);
+        $q->joinTable('emails_email_addr_rel', $joinParams)
+            ->on()
+            ->equalsField('id', 'eear.email_id', $this)
+            ->equals('eear.email_id', $this->id)
+            ->equals('eear.email_address_id', $id)
+            ->equals('eear.address_type', $type)
+            ->equals('eear.deleted', 0);
+        // The calls to `from` and `joinTable` must happen before the call to `select`.
+        $q->select(array(array('eear.id', 'eear_id')));
+        $q->where()->equals('id', $this->id, $this);
+        $guid = $q->getOne();
+
+        return empty($guid) ? '' : $guid;
     }
 
     protected $email_to_text = array(

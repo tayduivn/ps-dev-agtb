@@ -33,6 +33,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestEmailUtilities::removeAllCreatedEmails();
 		unset($this->email);
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -705,6 +708,96 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         $td->allow_cache = $tdCache;
+    }
+
+    public function testSaveAndLinkEmailToAddress()
+    {
+        $email = $this->getMockBuilder('Email')
+            ->setMethods(array('linkEmailToAddress'))
+            ->getMock();
+        $email->expects($this->exactly(7))
+            ->method('linkEmailToAddress');
+
+        $email->from_addr = 'sam@example.com';
+        $email->to_addrs = 'tom@example.com,wendy@example.com';
+        $email->cc_addrs = 'randy@example.com';
+        $email->bcc_addrs = 'bonnie@example.com;tara@example.com,bill@example.com';
+        $email->save();
+
+        SugarTestEmailUtilities::setCreatedEmail($email->id);
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('sam@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('tom@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('wendy@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('randy@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('bonnie@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('tara@example.com');
+        SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('bill@example.com');
+    }
+
+    public function testLinkEmailToAddress()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $address1 = SugarTestEmailAddressUtilities::createEmailAddress();
+        $address2 = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        // Link a new email address.
+        $rowId = $email->linkEmailToAddress($address1->id, 'to');
+        $this->assertNotEmpty(
+            $rowId,
+            "Should have returned the ID of the new row for address_type=to and email_address_id={$address1->id}"
+        );
+
+        // Link the same email address with the same address_type.
+        $this->assertSame(
+            $rowId,
+            $email->linkEmailToAddress($address1->id, 'to'),
+            "Should have returned the ID of the existing row for address_type=to and email_address_id={$address1->id}"
+        );
+
+        // Link the same email address with a different address_type.
+        $this->assertNotSame(
+            $rowId,
+            $email->linkEmailToAddress($address1->id, 'cc'),
+            "Should have returned the ID of the new row for address_type=cc and email_address_id={$address1->id}"
+        );
+
+        // Link a different email address.
+        $this->assertNotEquals(
+            $rowId,
+            $email->linkEmailToAddress($address2->id, 'to'),
+            "Should have returned the ID of the new row for address_type=to and email_address_id={$address2->id}"
+        );
+
+        // The email address is invalid.
+        $this->assertEmpty(
+            $email->linkEmailToAddress(create_guid(), 'to'),
+            'Should not have been able to load the email address'
+        );
+
+        // Link an email address that is already linked via multiple records.
+        $contact = SugarTestContactUtilities::createContact();
+        SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address2);
+        $email->load_relationship('contacts_bcc');
+        $email->contacts_bcc->add($contact, array('email_address_id' => $address2->id));
+
+        $lead = SugarTestLeadUtilities::createLead();
+        SugarTestEmailAddressUtilities::addAddressToPerson($lead, $address2);
+        $email->load_relationship('leads_bcc');
+        $email->leads_bcc->add($lead, array('email_address_id' => $address2->id));
+
+        $this->assertNotEmpty(
+            $email->linkEmailToAddress($address2->id, 'bcc'),
+            "Should have returned the ID of one of the rows for address_type=bcc and email_address_id={$address1->id}"
+        );
+
+        // Fails to link the email address and there are no existing rows for that email address and address_type.
+        $link = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(array('add'))
+            ->getMock();
+        $link->method('add')->willReturn(array($address1->id));
+        $email->email_addresses_from = $link;
+        $this->assertEmpty($email->linkEmailToAddress($address1->id, 'from'), 'Should have returned nothing');
     }
 }
 
