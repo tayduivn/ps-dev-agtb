@@ -99,11 +99,12 @@ class One2MRelationship extends M2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        $success = false;
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
 
         //If the current data matches the existing data, don't do anything
-        if (!$this->checkExisting($dataToInsert))
-        {
+        $currentRow = $this->relationship_exists($lhs, $rhs, true);
+        if (!$currentRow || !$this->compareRow($currentRow, $dataToInsert)) {
             // Pre-load the RHS relationship, which is used later in the add() function and expects a Bean
             // and we also use it for clearing relationships in case of non self-referencing O2M relations
             // (should be preloaded because when using the relate_to field for updating/saving relationships,
@@ -114,15 +115,16 @@ class One2MRelationship extends M2MRelationship
 
             // For self-referencing from 6.5.x
             // The left side is one, and right side is many
+
             if ($this->isRHSMany()) {
                 $lhsLinkName = $this->lhsLink;
                 $lhs->load_relationship($lhsLinkName);
-                if ($this->removeAll($lhs->$lhsLinkName) === false) {
+                if (!$currentRow && $this->removeAll($lhs->$lhsLinkName) === false) {
                     $success = false;
                     LoggerManager::getLogger()->error("Warning: failed calling removeAll() on lhsLinkName: $lhsLinkName for relationship {$this->name} within One2MRelationship->add().");
                 }
             } else { // For non self-referencing, remove all the relationships from the many (RHS) side
-                if($this->removeAll($rhs->$rhsLinkName) === false) {
+                if (!$currentRow && $this->removeAll($rhs->$rhsLinkName) === false) {
                     $success = false;
                     LoggerManager::getLogger()->error("Warning: failed calling removeAll() on rhsLinkName: $rhsLinkName for relationship {$this->name} within One2MRelationship->add().");
                 }
@@ -133,9 +135,8 @@ class One2MRelationship extends M2MRelationship
                 $success = false;
                 LoggerManager::getLogger()->error("Warning: failed calling parent add() for relationship {$this->name} within One2MRelationship->add().");
             }
-
-            return $success;
         }
+        return $success;
     }
 
 
