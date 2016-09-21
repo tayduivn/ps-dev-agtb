@@ -178,8 +178,8 @@ class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             'Oracle' => array(
                 array($bean, 'test', 0, $vardef, true),
-                array($bean, 'test', -12345678901, $vardef, true),
-                array($bean, 'test', 12345678901, $vardef, true),
+                array($bean, 'test', -12345678901, $vardef, false),
+                array($bean, 'test', 12345678901, $vardef, false),
             ),
             'IBM_DB2' => array(
                 array($bean, 'test', 0, $vardef, true),
@@ -193,6 +193,26 @@ class SugarFieldIntTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        return isset($data[$bean->db->dbName]) ? $data[$bean->db->dbName] : array(); 
+        $data = isset($data[$bean->db->dbName]) ? $data[$bean->db->dbName] : array();
+
+        $sugarMinInt = SugarConfig::getInstance()->get('sugar_min_int');
+        if (!empty($sugarMinInt)) {
+            $data[] = array($bean, 'test', $sugarMinInt - 1, $vardef, false);
+            $data[] = array($bean, 'test', $sugarMinInt, $vardef, true);
+        }
+        $sugarMaxInt = SugarConfig::getInstance()->get('sugar_max_int');
+        if (!empty($sugarMaxInt)) {
+            $data[] = array($bean, 'test', $sugarMaxInt + 1, $vardef, false);
+            $data[] = array($bean, 'test', $sugarMaxInt, $vardef, true);
+        }
+
+        $vardef['min'] = -100;
+        $data[] = array($bean, 'test', $vardef['min'] - 1, $vardef, false);
+        $data[] = array($bean, 'test', $vardef['min'], $vardef, true);
+        $vardef['max'] = 100;
+        $data[] = array($bean, 'test', $vardef['max'] + 1, $vardef, false);
+        $data[] = array($bean, 'test', $vardef['max'], $vardef, true);
+        
+        return $data;
     }
 }

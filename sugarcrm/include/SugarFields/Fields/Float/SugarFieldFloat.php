@@ -147,4 +147,22 @@ class SugarFieldFloat extends SugarFieldInt
 
         return true;
     }
+
+    /**
+     * Currently not supported.
+     * {@inheritDoc}
+     */
+    public function apiValidate(SugarBean $bean, array $params, $field, $properties)
+    {
+        return true;
+    }
+
+    /**
+     * Currently not supported.
+     * {@inheritDoc}
+     */
+    protected function getFieldRange($vardef)
+    {
+        return false;
+    }
 }

@@ -22,6 +22,32 @@
     direction: 'ltr',
 
     /**
+     * Older IE doesn't support Number.MIN_SAFE_INTEGER
+     * @private
+     */
+    _minInt: Number.MIN_SAFE_INTEGER || -9007199254740991,
+
+    /**
+     * Older IE doesn't support Number.MAX_SAFE_INTEGER
+     * @private
+     */
+    _maxInt: Number.MAX_SAFE_INTEGER || 9007199254740991,
+
+    /**
+     * @inheritdoc
+     *
+     * Add custom min/max value validation.
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        this.model.addValidationTask(
+            'min_max_int_validator_' + this.cid,
+            _.bind(this._doValidateMinMaxInt, this)
+        );
+    },
+
+    /**
      * @inheritdoc
      *
      * Unformats the integer based on userPreferences (grouping separator).
@@ -31,7 +57,11 @@
      * @return {Number|undefined} the unformatted value.
      */
     unformat: function(value) {
-        return app.utils.unformatNumberStringLocale(value, true);
+        value = app.utils.unformatNumberStringLocale(value, false);
+        if (!this._isSafeInt(value)) {
+            return value;
+        }
+        return parseFloat(value);
     },
 
     /**
@@ -49,7 +79,9 @@
      */
     format: function(value) {
         var numberGroupSeparator = '', decimalSeparator = '';
-
+        if (!this._isSafeInt(value)) {
+            return value;
+        }
         if (!this.def.disable_num_format) {
             numberGroupSeparator = app.user.getPreference('number_grouping_separator') || ',';
             decimalSeparator = app.user.getPreference('decimal_separator') || '.';
@@ -60,5 +92,49 @@
             numberGroupSeparator,
             decimalSeparator
         );
+    },
+
+    /**
+     * This validates int doesn't exceed min/max value defined in sugar config.
+     *
+     * @param {Object} fields The list of field names and their definitions.
+     * @param {Object} errors The list of field names and their errors.
+     * @param {Function} callback Async.js waterfall callback.
+     * @private
+     */
+    _doValidateMinMaxInt: function(fields, errors, callback) {
+        var value = this.model.get(this.name);
+        var minValue = this._minInt;
+        var maxValue = this._maxInt;
+        if (!_.isUndefined(app.config.sugarMinInt)) {
+            minValue = Math.max(minValue, app.config.sugarMinInt);
+        }
+        if (!_.isUndefined(app.config.sugarMaxInt)) {
+            maxValue = Math.min(maxValue, app.config.sugarMaxInt);
+        }
+        if (value < minValue) {
+            errors[this.name] = {'minValue': minValue};
+        } else if (value > maxValue) {
+            errors[this.name] = {'maxValue': maxValue};
+        }
+        callback(null, fields, errors);
+    },
+
+    /**
+     * Checks if value is too big to format/unformat.
+     * @param {string|number} value
+     * @return {boolean}
+     * @private
+     */
+    _isSafeInt: function(value) {
+        return (_.isFinite(value) && this._minInt <= value && value <= this._maxInt);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        this.model.removeValidationTask('min_max_int_validator_' + this.cid);
+        this._super('_dispose');
     }
 })

@@ -46,6 +46,48 @@ describe('Base.Fields.Int', function() {
             expect(field.format('Asdt')).toEqual('Asdt');
             expect(field.unformat('Asdt')).toEqual('Asdt');
         });
+
+        it('should not format/unformat very large number', function() {
+            expect(field.format('1234567890123456789012')).toEqual('1234567890123456789012');
+            expect(field.unformat('1234567890123456789012')).toEqual('1234567890123456789012');
+        });
+
+        using('int values',[
+            {
+                expectation: 'should error when value is greater than the max config value',
+                value: 2147483648,
+                isErrorExpected: true
+            },
+            {
+                expectation: 'should not error when value is equal to the max config value',
+                value: 2147483647,
+                isErrorExpected: false
+            },
+            {
+                expectation: 'should not error when value is between the min and max config value',
+                value: 1,
+                isErrorExpected: false
+            },
+            {
+                expectation: 'should not error when value is equal to the min config value',
+                value: -2147483648,
+                isErrorExpected: false
+            },
+            {
+                expectation: 'should error when value is less than the min config value',
+                value: -2147483649,
+                isErrorExpected: true
+            }
+        ], function(value) {
+            it(value.expectation, function() {
+                var errors = {};
+                app.config.sugarMinInt = -2147483648;
+                app.config.sugarMaxInt = 2147483647;
+                field.model.set(field.name, value.value, {silent: true});
+                field._doValidateMinMaxInt(null, errors, $.noop);
+                expect(!_.isEmpty(errors)).toBe(value.isErrorExpected);
+            });
+        });
     });
 
     describe('with disable format', function() {
