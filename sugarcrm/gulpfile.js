@@ -213,9 +213,9 @@ gulp.task('check-license', function(done) {
 
     // Runs the command.
     exec(command, {maxBuffer: 2000 * 1024}, function(error, stdout, stderr) {
-        if (stderr.length != 0) {
+        if (stderr.length !== 0) {
             done(stderr);
-        } else if (stdout.length != 0) {
+        } else if (stdout.length !== 0) {
             // Invalid license headers found
             done(stdout);
         } else {
