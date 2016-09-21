@@ -581,6 +581,42 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     }
 
     /**
+     * When creating an email and immediately sending it, the status and type are set for compatibility
+     * with previous Emails implementation based on email2send()
+     *
+     * @covers ::createRecord
+     * @covers ::isValidStateTransition
+     * @covers ::sendEmail
+     * @covers Email::sendEmail
+     */
+    public function testCreateAndSendEmail_StatusAndTypeAreSetCorrectlyForCompatibility()
+    {
+        $contact1 = $this->createRhsBean('contacts_to');
+        $contact2 = $this->createRhsBean('contacts_to');
+
+        $args = array(
+            'state' => Email::EMAIL_STATE_READY,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'contacts_from' => array(
+                'add' => array(
+                    $contact1,
+                    $contact2,
+                ),
+            ),
+            'contacts_to' => array(
+                'add' => array(
+                    $contact1->id,
+                    $contact2->id,
+                ),
+            ),
+        );
+        $record = $this->createRecord($args);
+        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'State should be archived');
+        $this->assertSame('out', $record['type'], 'Type should be out');
+        $this->assertSame('sent', $record['status'], 'Status should be sent');
+    }
+
+    /**
      * When replying to an email, the reply_to_id is set on the new Email record being created. The reply_to_id must
      * refer to an existing Email Record in the 'Archived' state. If successfully sent, that Replied-To Email record's
      * reply_to status is set to true.

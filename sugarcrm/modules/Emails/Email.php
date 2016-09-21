@@ -1147,6 +1147,8 @@ class Email extends SugarBean {
             if ($this->state === static::EMAIL_STATE_DRAFT) {
                 // Always update the timestamp when saving a draft.
                 $this->date_sent = $td->nowDb();
+                $this->type = 'draft';
+                $this->status = 'draft';
             } elseif (empty($this->date_sent)) {
                 // Default the timestamp when it is empty.
                 if (!empty($this->date_start) && !empty($this->time_start)) {
@@ -3590,6 +3592,9 @@ eoq;
             // Archive after sending.
             $this->state = Email::EMAIL_STATE_ARCHIVED;
             $this->date_sent = TimeDate::getInstance()->nowDb();
+            $this->type = 'out';
+            $this->status = 'sent';
+
             $this->save();
 
             if (!empty($this->reply_to_id)) {

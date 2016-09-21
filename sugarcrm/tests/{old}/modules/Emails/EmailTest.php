@@ -567,6 +567,20 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame(0, $this->email->total_attachments, 'Should have decremented the count');
     }
 
+    /**
+     * @covers ::save
+     */
+    public function testSaveDraftEmail_EmailStatusAndTypeAreSetCorrectlyForCompatibility()
+    {
+        $data = array(
+            'state' => Email::EMAIL_STATE_DRAFT,
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
+
+        $this->assertEquals('draft', $email->type, 'Draft Email does not have draft type');
+        $this->assertEquals('draft', $email->status, 'Draft Email does not have draft status');
+    }
+
     public function willCalculateHtmlBodyProvider()
     {
         return array(
