@@ -2,10 +2,7 @@
   "private": true,
   "devDependencies": {
     "commander": "^2.9.0",
-    "grunt": "~0.4.5",
-    "grunt-cli": "~0.1.13",
-    "grunt-jsduck": "1.0.1",
-    "grunt-phpunit": "~0.3.6",
+    "glob": "^7.0.3",
     "gulp": "^3.9.0",
     "gulp-filter": "~3.0.1",
     "gulp-todo": "~4.1.0",
@@ -20,6 +17,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.0.0",
     "lodash": "~2.4.1",
-    "socket.io": "0.9.16"
+    "socket.io": "0.9.16",
+    "strip-json-comments": "^2.0.1"
   }
 }

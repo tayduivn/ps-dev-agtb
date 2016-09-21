@@ -13,10 +13,36 @@ var _ = require('lodash');
 var commander = require('commander');
 var fs = require('fs');
 var filter = require('gulp-filter');
+var glob = require('glob');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
+
+/**
+ * A function that returns an object from a given JSON filename, which will also strip comments.
+ * @param {string} filename Filename to parse.
+ *
+ * @returns {Object} Parsed file.
+ */
+function readJSONFile(filename) {
+    var stripJsonComments = require('strip-json-comments');
+    return JSON.parse(stripJsonComments(fs.readFileSync(filename, 'utf8')));
+}
+
+/**
+ * A function that returns list of first party files.
+ *
+ * @returns {Array} List of files to be documented.
+ */
+function getFirstPartyFiles() {
+    return [
+        'clients/**/*.js',
+        'include/javascript/sugar7/**/*.js',
+        'modules/**/clients/**/*.js',
+        'portal2/user.js',
+    ];
+}
 
 function splitByCommas(val) {
     return val.split(',');
@@ -33,6 +59,7 @@ gulp.task('karma', function(done) {
         .option('--ci', 'Enable CI specific options')
         .option('--path <path>', 'Set base output path')
         .option('--manual', 'Start Karma and wait for browser to connect (manual tests)')
+        .option('--team <name>', 'Filter by specified team', splitByCommas)
         .option('--browsers <list>',
             'Comma-separated list of browsers to run tests with',
             splitByCommas
@@ -41,16 +68,59 @@ gulp.task('karma', function(done) {
         .parse(process.argv);
 
     // set up default Karma options
-    eval('var baseFiles = ' + fs.readFileSync('grunt/assets/base-files.js', 'utf8'));
-    eval('var defaultTests = ' + fs.readFileSync('grunt/assets/default-tests.js', 'utf8'));
+    var baseFiles = readJSONFile('gulp/assets/base-files.json');
+    var tests = [];
+
+    if (commander.team) {
+        var teams = readJSONFile('../.mention-bot').alwaysNotifyForPaths;
+        var team = _.findWhere(teams, {name: 'sugarcrm/eng-' + commander.team});
+
+        if (!team) {
+            return done('Cannot find the specified team');
+        } else {
+            process.stdout.write('Preparing tests for team `' + commander.team + '`...\n');
+        }
+
+        tests = _.reduce(team.files, function(memo, value) {
+            if (!value.endsWith('**') && !value.endsWith('js')) {
+                return memo;
+            }
+
+            if (value.endsWith('**')) {
+                value = value + '/*.js';
+            }
+
+            if (value.startsWith('sugarcrm/tests/')) {
+                value = value.replace(/^sugarcrm\//, '');
+            } else {
+                // TODO: As soon as most of the teams add their tests to mentionbot, we will remove this
+                value = value.replace(/^sugarcrm/, 'tests');
+            }
+
+            memo.push(value);
+            return memo;
+        }, []);
+
+        // Need to filter these before passing to karma to avoid warnings
+        tests = _.filter(tests, function(pattern) {
+            return !_.isEmpty(glob.sync(pattern));
+        });
+    } else {
+        tests = readJSONFile('gulp/assets/default-tests.json');
+    }
+
+    if (_.isEmpty(tests)) {
+        return done('There are no tests defined for the current settings.');
+    }
+
     var karmaAssets = _.flatten([
         baseFiles,
-        defaultTests
+        tests
     ], true);
 
     var karmaOptions = {
         files: karmaAssets,
-        configFile: __dirname + '/grunt/karma.conf.js',
+        configFile: __dirname + '/gulp/karma.conf.js',
         browsers: ['PhantomJS'],
         autoWatch: false,
         singleRun: true,
@@ -60,34 +130,20 @@ gulp.task('karma', function(done) {
     var path = commander.path || os.tmpdir();
     path += '/karma';
 
-    if (commander.manual) {
-        karmaOptions.browsers = [];
-        karmaOptions.singleRun = false;
-        karmaOptions.autoWatch = true;
-        new Server(karmaOptions).start();
-        return;
-    } else if (commander.dev) {
-        karmaOptions.autoWatch = true;
-        karmaOptions.singleRun = false;
-        karmaOptions.browsers = ['Chrome'];
-    } else if (commander.sauce) {
-        // --dev isn't supported for --sauce
-        karmaOptions.reporters.push('saucelabs');
-        karmaOptions.browsers = ['sl_ie'];
-
-        // sauce is slower than local runs...
-        karmaOptions.reportSlowerThan = 2000;
-        // and 60 seconds of timeout seems to be normal...
-        karmaOptions.browserNoActivityTimeout = 60000;
-    }
+    karmaOptions.preprocessors = {};
+    _.each(getFirstPartyFiles(), function(value) {
+        karmaOptions.preprocessors[value] = [];
+    });
 
     if (commander.browsers) {
         karmaOptions.browsers = commander.browsers;
     }
 
     if (commander.coverage) {
+        _.each(karmaOptions.preprocessors, function (value, key) {
+            karmaOptions.preprocessors[key].push('coverage');
+        });
 
-        eval('karmaOptions.preprocessors = ' + fs.readFileSync('grunt/assets/default-pre-processors.js', 'utf-8'));
         karmaOptions.reporters.push('coverage');
 
         karmaOptions.coverageReporter = {
@@ -118,6 +174,25 @@ gulp.task('karma', function(done) {
             outputFile: 'test-results.xml',
             useBrowserName: false,
         };
+    }
+
+    if (commander.manual) {
+        karmaOptions.browsers = [];
+        karmaOptions.singleRun = false;
+        karmaOptions.autoWatch = true;
+    } else if (commander.dev) {
+        karmaOptions.autoWatch = true;
+        karmaOptions.singleRun = false;
+        karmaOptions.browsers = ['Chrome'];
+    } else if (commander.sauce) {
+        // --dev isn't supported for --sauce
+        karmaOptions.reporters.push('saucelabs');
+        karmaOptions.browsers = ['sl_ie'];
+
+        // sauce is slower than local runs...
+        karmaOptions.reportSlowerThan = 2000;
+        // and 60 seconds of timeout seems to be normal...
+        karmaOptions.browserNoActivityTimeout = 60000;
     }
 
     new Server(karmaOptions, function(exitStatus) {
@@ -243,4 +318,3 @@ gulp.task('find-todos', function(done) {
         console.error(e.toString());
     }
 });
-

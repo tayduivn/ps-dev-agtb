@@ -32,7 +32,7 @@ Patches are the best way to provide a bug fix or to propose enhancements to Suga
 Before working with SugarCRM, setup your environment with the following software:
 
 * Git;
-* PHP version 5.3.3+;
+* PHP version 5.4+;
 * Composer.
 
 #### Configure Git
@@ -390,7 +390,7 @@ This task is pre-configured with CI settings and is ideal to use before submitti
 
 ```bash
 $ cd <sugarcrm>
-$ node_modules/gulp/bin/gulp.js karma [--browsers <b1,...>]
+$ node_modules/gulp/bin/gulp.js karma [--browsers <b1,...>] [--team <name>]
 ```
 
 ##### karma --dev
@@ -401,15 +401,15 @@ By having the auto watch flag enabled you only need to run the task once before 
 
 ```bash
 $ cd <sugarcrm>
-$ node_modules/gulp/bin/gulp.js karma --dev [--browsers <b1,...>]
+$ node_modules/gulp/bin/gulp.js karma --dev [--browsers <b1,...>] [--team <name>]
 ```
 
 ##### karma --manual
-
-With this option, you can trigger the tests by launching any browser and visiting the URL where karma web server is listening (by default it is listening on 0.0.0.0:9876 HTTP). This is useful to test browsers like IE while running in virtual machines. Note that this parameter is not compatible with any other parameters.
-
-```bash
-$ cd <sugarcrm>
+ 
+With this option, you can trigger the tests by launching any browser and visiting the URL where karma web server is listening (by default it is listening on 0.0.0.0:9876 HTTP). This is useful to test browsers like IE while running in virtual machines. Note that this parameter is not compatible with `--dev`, `--browsers`, and `--sauce`.
+ 
+ ```bash
+ $ cd <sugarcrm>
 $ node_modules/gulp/bin/gulp.js karma --manual
 ```
 
@@ -421,7 +421,7 @@ This option generates additional XML report after the tests have finished runnin
 $ cd <sugarcrm>
 $ node_modules/gulp/bin/gulp.js karma --ci [--browsers <b1,...>] [--path <path>]
 ```
-
+ 
 ##### karma --coverage
  
  Targeted at the final stage of development. Besides notifying you about the impact that your pull requests might have on the end result of the tests, it also displays the current code coverage.
@@ -460,11 +460,8 @@ If no browser is specified, `Chrome` is used by default for the `dev` task and `
 almost everything else. Currently supported browsers are: `Chrome`, `Firefox`, `Safari`, and `PhantomJS`, except for
 the `sauce` task, which has other options.
 
-<!--
-    FIXME SC-5265: uncomment this
-    By specifying `--team` you're reducing the scope of each test run by only running tests relevant to the given team.
-    Currently supported teams are: `br`, `int`, `mar`, `sc`, `ty`, and `sfa`.
--->
+By specifying `--team` you're reducing the scope of each test run by only running tests relevant to the given team.
+Currently supported teams are: `typhoon`, `hacks`, `crystal`, `sfa`, `mar`, `macaroon`, `integrations`, `burritos`, and `lang`.
 
 #### Exclusive tests
 
