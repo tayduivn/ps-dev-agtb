@@ -11,6 +11,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager\Registry;
+
 class CalendarUtils
 {
 	/**
@@ -224,13 +226,13 @@ class CalendarUtils
 			}
 		}
 
-		/** 
+		/**
 		 * @var SugarDateTime $start Recurrence start date.
 		 */
 		$start = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
         $current = clone $start;
 
-		/** 
+		/**
 		 * @var SugarDateTime $end Recurrence end date. Used if recurrence ends by date.
          * To Make the RepeatUntil Date Inclusive, we need to Add 1 Day to End
 		 */
@@ -371,7 +373,7 @@ class CalendarUtils
             $clone->recurrence_id = null;
             $clone->update_vcal = false;
             $clone->send_invites = false;
-            
+
             // make sure any store relationship info is not saved
             $clone->rel_fields_before_value = array();
 
@@ -421,6 +423,10 @@ class CalendarUtils
                 ));
             }
 
+            // Before calling save, we need to clear out any existing registered AWF
+            // triggered start events so they can continue to trigger.
+            Registry\Registry::getInstance()->drop('triggered_starts');
+
             $clone->save(false);
 
             if($clone->id){
@@ -434,7 +440,7 @@ class CalendarUtils
                 $i++;
             }
         }
-		
+
         Activity::enable();
 
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
