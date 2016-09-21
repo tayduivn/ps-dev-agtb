@@ -300,6 +300,15 @@ gulp.task('check-license', function(done) {
     });
 });
 
+function getFilesToLint() {
+    return _.union(
+        ['**/*.js'],
+        _.map(require('./.jscs.json').excludeFiles, function(str) {
+            return '!' + str;
+        })
+    );
+}
+
 gulp.task('jscs', function() {
     var jscs = require('gulp-jscs');
     return gulp.src(getFilesToLint())
