@@ -165,9 +165,9 @@
         this.layout.on('quotes:group:create:note', this.onAddNewItemToGroup, this);
         this.layout.on('quotes:sortable:over', this._onSortableGroupOver, this);
         this.layout.on('quotes:sortable:out', this._onSortableGroupOut, this);
-        this.layout.on('editablelist:cancel', this.onCancelRowEdit, this);
-        this.layout.on('editablelist:save', this.onSaveRowEdit, this);
-        this.layout.on('editablelist:saving', this.onSavingRow, this);
+        this.layout.on('editablelist:' + this.name + ':cancel', this.onCancelRowEdit, this);
+        this.layout.on('editablelist:' + this.name + ':save', this.onSaveRowEdit, this);
+        this.layout.on('editablelist:' + this.name + ':saving', this.onSavingRow, this);
 
         this.collection.on('add remove', this.onNewItemChanged, this);
     },

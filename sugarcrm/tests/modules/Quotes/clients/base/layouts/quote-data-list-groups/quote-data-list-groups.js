@@ -686,12 +686,27 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var bulkOldModelUpdate;
         var bulkNewModelUpdate;
         var oldProductGroupModel;
+        var bundleItem1;
+        var bundleItem2;
+        var bundles;
+
         beforeEach(function() {
             oldGroupTriggerSpy = sinon.collection.spy();
             newGroupTriggerSpy = sinon.collection.spy();
 
+            bundles = {
+                remove: $.noop
+            };
+
+            bundleItem1 = app.data.createBean('Products', {
+                id: 'bundleItem1'
+            });
+            bundleItem2 = app.data.createBean('Products', {
+                id: 'bundleItem2'
+            });
             oldProductGroupModel = app.data.createBean('ProductBundles', {
-                id: 'oldProductGroupModelId'
+                id: 'oldProductGroupModelId',
+                product_bundle_items: new Backbone.Collection(bundleItem1)
             });
             sinon.collection.spy(oldProductGroupModel, 'setSyncedAttributes');
 
@@ -706,13 +721,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 groupId: oldGroupId,
                 model: oldProductGroupModel,
                 collection: app.data.createMixedBeanCollection(),
-                trigger: oldGroupTriggerSpy
+                trigger: oldGroupTriggerSpy,
+                dispose: $.noop
             };
 
             newGroupId = 'newGroupId1';
             newGroupModel = app.data.createBean('ProductBundles', {
                 id: 'newGroupModelId1',
-                name: 'newGroupModelName_original'
+                name: 'newGroupModelName_original',
+                product_bundle_items: new Backbone.Collection(bundleItem2)
             });
             sinon.collection.spy(newGroupModel, 'setSyncedAttributes');
             newGroup = {
@@ -723,6 +740,14 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             oldGroup.collection.add(oldGroupModel);
             newGroup.collection.add(newGroupModel);
+
+            sinon.collection.stub(layout, '_getComponentByGroupId', function(id) {
+                if (id === oldGroupId) {
+                    return oldGroup;
+                } else {
+                    return newGroup;
+                }
+            });
 
             bulkOldModelUpdate = {
                 contents: {
@@ -748,6 +773,22 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 bulkOldModelUpdate,
                 bulkNewModelUpdate
             ];
+            layout.model.set('bundles', bundles, {silent: true});
+        });
+
+        afterEach(function() {
+            oldGroupModel.dispose();
+            oldGroupModel = null;
+            newGroupModel.dispose();
+            newGroupModel = null;
+            oldGroupId = null;
+            newGroupId = null;
+            oldGroup = null;
+            newGroup = null;
+            bulkOldModelUpdate = null;
+            bulkNewModelUpdate = null;
+            bulkResponses = null;
+            bundles = null;
         });
 
         describe('when oldGroup is not sent', function() {
@@ -797,6 +838,38 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should update the new group records', function() {
                 expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
                 expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
+            });
+        });
+
+        describe('when deleted item exists', function() {
+            beforeEach(function() {
+                newGroup.model = newGroupModel;
+                bulkResponses.push({
+                    contents: {
+                        id: oldGroupId
+                    }
+                });
+                layout.groupIds = [oldGroupId, newGroupId];
+                sinon.collection.stub(oldGroup, 'dispose', function() {
+                    this.model.unset('product_bundle_items');
+                });
+                layout._onSaveUpdatedGroupSuccess(oldGroup, newGroup, bulkResponses);
+            });
+
+            it('should remove the deleted group id from groupIds', function() {
+                expect(layout.groupIds).toEqual([newGroupId]);
+            });
+
+            it('should move the deleted group models to new group', function() {
+                expect(newGroup.model.get('product_bundle_items').length).toBe(2);
+            });
+
+            it('should remove the deleted group models', function() {
+                expect(oldGroup.model.get('product_bundle_items')).toBeUndefined();
+            });
+
+            it('should dispose the deleted group', function() {
+                expect(oldGroup.dispose).toHaveBeenCalled();
             });
         });
     });
@@ -1363,98 +1436,80 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     });
 
     describe('_onDeleteQuoteGroupConfirm()', function() {
-        var callArgs;
         var groupId;
         var groupName;
+        var groupModel;
         var groupToDelete;
-
+        var defaultGroupId;
+        var defaultGroup;
+        var defaultGroupModel;
+        var bundleItem1;
         beforeEach(function() {
+            bundleItem1 = app.data.createBean('Products', {
+                id: 'bundleItemId1',
+                position: 0
+            });
+            defaultGroupId = 'defaultGroupId1';
+            defaultGroupModel = app.data.createBean('ProductBundles', {
+                id: defaultGroupId,
+                product_bundle_items: new Backbone.Collection(bundleItem1)
+            });
+            defaultGroup = {
+                id: defaultGroupId,
+                model: defaultGroupModel
+            };
             groupId = 'testId1';
             groupName = 'testName1';
-            groupToDelete = new Backbone.Model({
+            groupModel = new Backbone.Model({
                 id: groupId,
                 name: groupName
             });
+            groupToDelete = {
+                id: groupId,
+                name: groupName,
+                model: groupModel
+            };
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return defaultGroup;
+            });
+            layout.defaultGroupId = defaultGroupId;
             layout.model.set('id', 'testQuoteLayoutId');
-            layout.model.set('bundles', new Backbone.Collection(groupToDelete));
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
+            layout.model.set('bundles', new Backbone.Collection(groupModel));
             sinon.collection.stub(app.alert, 'show', function() {});
-            sinon.collection.stub(app.api, 'records', function() {});
+            sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
+            sinon.collection.stub(layout, '_callBulkRequests', function() {});
 
-            layout._onDeleteQuoteGroupConfirm(groupId, groupName, groupToDelete);
-            callArgs = app.api.records.firstCall;
         });
 
         afterEach(function() {
-            callArgs = null;
+            groupId = null;
+            groupName = null;
+            groupModel = null;
+            groupToDelete = null;
+            defaultGroupId = null;
+            defaultGroup = null;
+            defaultGroupModel = null;
+            bundleItem1 = null;
         });
 
         it('should call app.alert.show', function() {
+            layout._onDeleteQuoteGroupConfirm(groupId, groupName, groupToDelete);
+
             expect(app.alert.show).toHaveBeenCalled();
         });
 
-        it('should call app.api.records', function() {
-            expect(app.api.records).toHaveBeenCalled();
+        it('should call _saveDefaultGroupThenCallBulk if default group is not saved', function() {
+            defaultGroupModel.set('_notSaved', true);
+            layout._onDeleteQuoteGroupConfirm(groupId, groupName, groupToDelete);
+
+            expect(layout._saveDefaultGroupThenCallBulk).toHaveBeenCalled();
         });
 
-        it('should call app.api.records with method delete', function() {
-            expect(callArgs.args[0]).toBe('delete');
-        });
+        it('should call _callBulkRequests if default group is already saved', function() {
+            defaultGroupModel.unset('_notSaved');
+            layout._onDeleteQuoteGroupConfirm(groupId, groupName, groupToDelete);
 
-        it('should call app.api.records with module Quotes', function() {
-            expect(callArgs.args[1]).toBe('ProductBundles');
-        });
-
-        it('should call app.api.records with proper link payload Quote ID', function() {
-            expect(callArgs.args[2].id).toBe(groupId);
-        });
-    });
-
-    describe('_onDeleteQuoteGroupSuccess()', function() {
-        var groupId;
-        var groupToDelete;
-        var disposeStub;
-
-        beforeEach(function() {
-            disposeStub = sinon.collection.stub();
-            groupId = 'testId1';
-            groupToDelete = {
-                model: new Backbone.Model({
-                    id: groupId
-                }),
-                dispose: disposeStub
-            };
-
-            layout.model.off('change:bundles', null, layout);
-            layout.model.set('bundles', new Backbone.Collection([
-                groupToDelete.model,
-                {id: 'testId2'}
-            ]));
-            layout.groupIds = [groupId, 'testId2'];
-
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
-            sinon.collection.stub(app.alert, 'show', function() {});
-
-            layout._onDeleteQuoteGroupSuccess(groupId, groupToDelete);
-        });
-
-        it('should call app.alert.dismiss to get rid of old alert', function() {
-            expect(app.alert.dismiss).toHaveBeenCalledWith('deleting_bundle_alert');
-        });
-
-        it('should call app.alert.show to display new alert', function() {
-            expect(app.alert.show).toHaveBeenCalledWith('deleted_bundle_alert');
-        });
-
-        it('should remove the group from this.records', function() {
-            var bundles = layout.model.get('bundles');
-
-            expect(bundles.length).toBe(1);
-            expect(bundles.at(0).get('id')).toBe('testId2');
-        });
-
-        it('should call groupToDelete.dispose()', function() {
-            expect(disposeStub).toHaveBeenCalled();
+            expect(layout._callBulkRequests).toHaveBeenCalled();
         });
     });
 

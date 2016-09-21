@@ -28,7 +28,9 @@
      * @inheritdoc
      */
     plugins: [
-        'MassCollection'
+        'MassCollection',
+        'Editable',
+        'ErrorDecoration',
     ],
 
     /**
@@ -52,6 +54,26 @@
     groupSaveCt: undefined,
 
     /**
+     * Object containing the row's fields
+     */
+    rowFields: {},
+
+    /**
+     * Array of left column fields
+     */
+    leftColumns: undefined,
+
+    /**
+     * Array of left column fields
+     */
+    leftSaveCancelColumn: undefined,
+
+    /**
+     * If this is the first time the view has rendered or not
+     */
+    isFirstRender: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -62,7 +84,17 @@
 
         this._super('initialize', [options]);
 
+
+        this.isFirstRender = true;
+
+        this.viewName = 'list';
+        this.action = 'list';
         this._fields = _.flatten(_.pluck(this.meta.panels, 'fields'));
+
+        this.toggledModels = {};
+        this.leftColumns = [];
+        this.leftSaveCancelColumn = [];
+        this.addMultiSelectionAction();
 
         // ninjastuff
         this.el = this.layout.el;
@@ -71,6 +103,30 @@
         this.groupSaveCt = 0;
         this.layout.on('quotes:group:save:start', this._onGroupSaveStart, this);
         this.layout.on('quotes:group:save:stop', this._onGroupSaveStop, this);
+        this.layout.on('editablelist:' + this.name + ':save', this.onSaveRowEdit, this);
+        this.layout.on('editablelist:' + this.name + ':saving', this.onSavingRow, this);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        // set row fields after rendering to prep if we need to toggle rows
+        this._setRowFields();
+
+        if (!_.isEmpty(this.toggledModels)) {
+            _.each(this.toggledModels, function(model, modelId) {
+                this.toggleRow(modelId, true);
+            }, this);
+        }
+
+        if (this.isFirstRender && this.model.get('_justSaved')) {
+            this.model.unset('_justSaved');
+            this.isFirstRender = false;
+            this.toggleRow(this.model.module, this.model.get('id'), true);
+        }
     },
 
     /**
@@ -126,7 +182,10 @@
      * @private
      */
     _onEditBundleBtnClicked: function(evt) {
+        var $tbodyEl = $(evt.target).closest('tbody');
+        var bundleId = $tbodyEl.data('group-id');
 
+        this.toggleRow(this.model.module, bundleId, true);
     },
 
     /**
@@ -137,5 +196,150 @@
      */
     _onDeleteBundleBtnClicked: function(evt) {
         this.context.parent.trigger('quotes:group:delete', this.layout);
+    },
+
+    /**
+     * Toggle editable selected row's model fields.
+     *
+     * @param {string} rowModule The row model's module.
+     * @param {string} rowModelId The row model's ID
+     * @param {boolean} isEdit True for edit mode, otherwise toggle back to list mode.
+     */
+    toggleRow: function(rowModule, rowModelId, isEdit) {
+        var toggleModel;
+        var row;
+        if (isEdit) {
+            toggleModel = this.model;
+            toggleModel.modelView = 'edit';
+            this.toggledModels[rowModelId] = toggleModel;
+        } else {
+            if (this.toggledModels[rowModelId]) {
+                this.toggledModels[rowModelId].modelView = 'list';
+            }
+            delete this.toggledModels[rowModelId];
+        }
+
+        row = this.$('tr[name=' + rowModule + '_' + rowModelId + ']');
+        row.toggleClass('tr-inline-edit', isEdit);
+        this.toggleFields(this.rowFields[rowModelId], isEdit);
+
+        if (isEdit) {
+            this.context.trigger('list:editgroup:fire');
+        } else if (row.hasClass('not-sortable')) {
+            // if this is not edit mode and row still has not-sortable (from being a brand new row)
+            // then remove the not-sortable and add the sortable classes
+            row
+                .removeClass('not-sortable')
+                .addClass('sortable ui-sortable');
+        }
+    },
+
+    /**
+     * Set, or reset, the collection of fields that contains each row.
+     *
+     * This function is invoked when the view renders. It will update the row
+     * fields once the `Pagination` plugin successfully fetches new records.
+     *
+     * @private
+     */
+    _setRowFields: function() {
+        this.rowFields = {};
+        _.each(this.fields, function(field) {
+            if (field.model && field.model.id && _.isUndefined(field.parent)) {
+                this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
+                this.rowFields[field.model.id].push(field);
+            }
+        }, this);
+    },
+
+    /**
+     * Adds the left column fields
+     */
+    addMultiSelectionAction: function() {
+        _.each(this.meta.buttons, function(button) {
+            this.leftColumns.push(button);
+        }, this);
+
+        this.leftSaveCancelColumn.push({
+            'type': 'fieldset',
+            'label': '',
+            'sortable': false,
+            'fields': [{
+                type: 'quote-data-editablelistbutton',
+                label: '',
+                tooltip: 'LBL_CANCEL_BUTTON_LABEL',
+                name: 'inline-cancel',
+                icon: 'fa-close',
+                css_class: 'btn-link btn-invisible inline-cancel ellipsis_inline'
+            }, {
+                type: 'quote-data-editablelistbutton',
+                label: '',
+                tooltip: 'LBL_SAVE_BUTTON_LABEL',
+                name: 'inline-save',
+                icon: 'fa-check-circle',
+                css_class: 'ellipsis_inline'
+            }]
+        });
+    },
+
+    /**
+     * Handles when a row is saved. Since newly added (but not saved) rows have temporary
+     * id's assigned to them, this is needed to go back and fix row id html attributes and
+     * also resets the rowFields with the new model's ID so rows toggle properly
+     *
+     * @param {Data.Bean} rowModel
+     * @param {string} oldModelId
+     */
+    onSaveRowEdit: function(rowModel, oldModelId) {
+        var $oldRow;
+        var modelId = rowModel.get('id');
+        var modelModule = rowModel.module;
+
+        this.toggleCancelButton(false);
+
+        if (rowModel.has('_notSaved')) {
+            // if the rowModel still has _notSaved on it, remove it
+            rowModel.unset('_notSaved');
+
+            if (this.toggledModels[oldModelId]) {
+                delete this.toggledModels[oldModelId];
+            }
+        }
+
+        // If this was a newly created row that was saved, oldModelId will
+        // be different from the current rowModel's id, and we need to redelegate list events
+        if (modelId !== oldModelId) {
+            $oldRow = this.$('tr[name=' + modelModule + '_' + oldModelId + ']');
+            if ($oldRow.length) {
+                $oldRow.attr('name', modelModule + '_' + modelId);
+                // re-set the row fields based on new model IDs
+                this._setRowFields();
+            }
+        }
+        this.toggleRow(modelModule, modelId, false);
+    },
+
+    /**
+     * Toggles the cancel button disabled or not
+     *
+     * @param {boolean} disable If we should disable the button or not
+     */
+    toggleCancelButton: function(disable) {
+        var cancelBtn = _.find(this.fields, function(field) {
+            return field.name == 'inline-cancel';
+        });
+        if (cancelBtn) {
+            cancelBtn.setDisabled(disable);
+        }
+    },
+
+    /**
+     * Handles when the row is being saved but has not been saved fully yet
+     *
+     * @param {boolean} disableCancelBtn If we should disable the button or not
+     */
+    onSavingRow: function(disableCancelBtn) {
+        // todo: SFA-4541 needs to add code in here to toggle fields to readonly
+        this.toggleCancelButton(disableCancelBtn);
     }
 })

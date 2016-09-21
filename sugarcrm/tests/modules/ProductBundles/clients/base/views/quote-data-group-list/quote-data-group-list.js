@@ -164,6 +164,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 });
                 sinon.collection.stub(collection, 'on', function() {});
                 sinon.collection.stub(view.layout, 'on', function() {});
+                view.name = 'viewName';
                 view.initialize({
                     context: viewContext,
                     meta: viewMeta,
@@ -195,15 +196,15 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
 
             it('should add listener on layout for editablelist:cancel', function() {
-                expect(view.layout.on.args[4][0]).toBe('editablelist:cancel');
+                expect(view.layout.on.args[4][0]).toBe('editablelist:' + view.name + ':cancel');
             });
 
             it('should add listener on layout for editablelist:save', function() {
-                expect(view.layout.on.args[5][0]).toBe('editablelist:save');
+                expect(view.layout.on.args[5][0]).toBe('editablelist:' + view.name + ':save');
             });
 
             it('should add listener on layout for editablelist:saving', function() {
-                expect(view.layout.on.args[6][0]).toBe('editablelist:saving');
+                expect(view.layout.on.args[6][0]).toBe('editablelist:' + view.name + ':saving');
             });
 
             it('should call view.collection.on should be called with "add remove"', function() {

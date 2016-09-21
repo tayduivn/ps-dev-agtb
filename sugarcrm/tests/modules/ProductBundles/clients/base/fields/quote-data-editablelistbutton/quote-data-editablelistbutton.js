@@ -1,9 +1,9 @@
-describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function() {
+describe('ProductBundles.Base.Fields.QuoteDataEditablelistbutton', function() {
     var app;
     var field;
     var fieldDef;
     var fieldType = 'quote-data-editablelistbutton';
-    var fieldModule = 'ProductBundleNotes';
+    var fieldModule = 'ProductBundles';
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -144,11 +144,8 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
                 trigger: $.noop
             };
             sinon.collection.stub(field.view.layout, 'trigger', function() {});
-            field.view.context.parent = {
-                trigger: $.noop
-            };
+
             field.view.model = app.data.createBean('ProductBundles');
-            sinon.collection.stub(field.view.context.parent, 'trigger', function() {});
             sinon.collection.stub(field, '_saveRowModel', function() {});
         });
 
@@ -156,9 +153,6 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             field.view.layout.trigger.restore();
             delete field.view.layout.trigger;
             delete field.view.layout;
-            field.view.context.parent.trigger.restore();
-            delete field.view.context.parent.trigger;
-            delete field.view.context.parent;
         });
 
         it('should trigger editablelist:viewName:saving on the view.layout', function() {
@@ -166,21 +160,8 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             expect(field.view.layout.trigger).toHaveBeenCalled();
         });
 
-        it('should trigger default group save if default group is not saved', function() {
-            sinon.collection.stub(field.view.model, 'isNew', function() {
-                return true;
-            });
+        it('should call _saveRowModel', function() {
             field._save();
-            expect(field.view.context.parent.trigger).toHaveBeenCalled();
-            expect(field._saveRowModel).not.toHaveBeenCalled();
-        });
-
-        it('should call _saveRowModel if default group is already saved', function() {
-            sinon.collection.stub(field.view.model, 'isNew', function() {
-                return false;
-            });
-            field._save();
-            expect(field.view.context.parent.trigger).not.toHaveBeenCalled();
             expect(field._saveRowModel).toHaveBeenCalled();
         });
     });

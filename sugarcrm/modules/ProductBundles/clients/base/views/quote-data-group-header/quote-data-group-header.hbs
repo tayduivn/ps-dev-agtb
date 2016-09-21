@@ -10,11 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<tr class="flex-list-row-header quote-data-group-header ui-not-droppable">
+<tr name="{{model.module}}_{{model.id}}" class="flex-list-row-header quote-data-group-header ui-not-droppable">
     <td class="two-dropdowns"{{#if name}} data-fieldname="{{name}}"{{/if}}>
-        {{#each meta.buttons}}
-               {{field ../this model=../model template='list'}}
-        {{/each}}
+        <span class="left-column-save-cancel">
+            {{#each leftSaveCancelColumn}}
+                {{field ../this model=../model template=../viewName}}
+            {{/each}}
+        </span>
+        <span class="left-column-buttons">
+            {{#each leftColumns}}
+                {{field ../this model=../model template=../viewName}}
+            {{/each}}
+        </span>
     </td>
     {{#each _fields}}
         <td{{#if align}} class="{{align}}"{{/if}} data-type="{{type}}" colspan="{{../listColSpan}}">

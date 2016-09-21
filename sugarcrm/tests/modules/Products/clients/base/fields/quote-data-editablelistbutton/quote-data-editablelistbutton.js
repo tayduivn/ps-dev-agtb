@@ -15,7 +15,7 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
             no_default_action: true
         };
 
-        field = SugarTest.createField('base', fieldType, fieldType,'detail',
+        field = SugarTest.createField('base', fieldType, fieldType, 'detail',
             fieldDef, fieldModule, null, null, true);
 
         sinon.collection.stub(field, '_super', function() {});
@@ -104,7 +104,7 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
                 trigger: $.noop
             };
             sinon.collection.stub(field.view.layout, 'trigger', function() {});
-
+            field.view.name = 'fieldViewName';
             field.cancelEdit();
             lastCall = field.view.toggleRow.lastCall;
             lastCallCtxTrigger = field.view.layout.trigger.lastCall;
@@ -133,8 +133,8 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
             expect(lastCall.args[2]).toBeFalsy();
         });
 
-        it('should trigger editablelist:cancel:<viewModelId> on view context', function() {
-            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:cancel');
+        it('should trigger editablelist:viewName:cancel on view context', function() {
+            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':cancel');
         });
     });
 
@@ -161,7 +161,7 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
             delete field.view.context.parent;
         });
 
-        it('should trigger editablelist:saving on the view.layout', function() {
+        it('should trigger editablelist:viewName:saving on the view.layout', function() {
             field._save();
             expect(field.view.layout.trigger).toHaveBeenCalled();
         });

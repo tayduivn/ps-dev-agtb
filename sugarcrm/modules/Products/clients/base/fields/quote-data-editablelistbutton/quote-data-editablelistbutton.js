@@ -60,10 +60,10 @@
         // this is the only line I had to change
         this.view.toggleRow(this.model.module, this.model.id, false);
 
-        // trigger a cancel event across the view context so listening components
+        // trigger a cancel event across the view layout so listening components
         // know the changes made in this row are being reverted
-        if (this.view.context) {
-            this.view.layout.trigger('editablelist:cancel', this.model);
+        if (this.view.layout) {
+            this.view.layout.trigger('editablelist:' + this.view.name + ':cancel', this.model);
         }
     },
 
@@ -87,7 +87,7 @@
      * @inheritdoc
      */
     _save: function() {
-        this.view.layout.trigger('editablelist:saving', true);
+        this.view.layout.trigger('editablelist:' + this.view.name + ':saving', true);
 
         if (this.view.model.isNew()) {
             this.view.context.parent.trigger('quotes:defaultGroup:save', _.bind(this._saveRowModel, this));
@@ -108,8 +108,8 @@
         var successCallback = function(model) {
             self.changed = false;
             model.modelView = 'list';
-            if (self.view.context) {
-                self.view.layout.trigger('editablelist:save', model, oldModelId);
+            if (self.view.layout) {
+                self.view.layout.trigger('editablelist:' + self.view.name + ':save', model, oldModelId);
             }
         };
         var options = {

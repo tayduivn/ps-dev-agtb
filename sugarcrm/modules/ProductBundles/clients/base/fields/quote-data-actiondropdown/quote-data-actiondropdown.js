@@ -22,5 +22,15 @@
     /**
      * @inheritdoc
      */
-    className: 'quote-data-actiondropdown'
+    className: 'quote-data-actiondropdown',
+
+    /**
+     * Skipping ActionmenuField's override, just returning this.def.buttons
+     *
+     * @inheritdoc
+     * @override
+     */
+    _getChildFieldsMeta: function() {
+        return app.utils.deepCopy(this.def.buttons);
+    }
 })

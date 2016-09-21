@@ -386,13 +386,44 @@
      * @protected
      */
     _onSaveUpdatedGroupSuccess: function(oldGroup, newGroup, bulkResponses) {
+        var deleteResponse = _.find(bulkResponses, function(resp) {
+            return resp.contents.id;
+        });
+        var deletedGroupId = deleteResponse && deleteResponse.contents.id;
+        var deletedGroup;
+        var newGroupBundle;
+        var deletedGroupBundle;
+        var bundles;
+        var updateModelWithRecord;
+
         if (oldGroup) {
             oldGroup.trigger('quotes:group:save:stop');
         }
         newGroup.trigger('quotes:group:save:stop');
 
+        // remove the deleted group if it exists
+        if (deletedGroupId) {
+            app.alert.dismiss('deleting_bundle_alert');
+            app.alert.show('deleted_bundle_alert', {
+                level: 'success',
+                autoClose: true,
+                messages: app.lang.get('LBL_DELETED_BUNDLE_SUCCESS_MSG', 'Quotes')
+            });
+
+            // get the deleted group
+            deletedGroup = this._getComponentByGroupId(deletedGroupId);
+            // get the bundle for the deleted group
+            deletedGroupBundle = deletedGroup.model.get('product_bundle_items');
+            // get the bundle for the new group
+            newGroupBundle = newGroup.model.get('product_bundle_items');
+            // add the deleted group's models to the new group
+            _.each(deletedGroupBundle.models, function(model) {
+                newGroupBundle.add(model);
+            }, this);
+        }
+
         // reusable method to update a mode once the bulk responses come back.
-        var updateModelWithRecord = function(model, record) {
+        updateModelWithRecord = function(model, record) {
             if (model) {
                 model.setSyncedAttributes(record);
                 model.set(record);
@@ -404,25 +435,43 @@
             var relatedRecord = data.contents.related_record;
             var model;
 
-            if (oldGroup) {
-                // check if record is the one on this collection
-                if (oldGroup.model && oldGroup.model.get('id') === record.id) {
-                    updateModelWithRecord(oldGroup.model, record);
+            // on Delete record and relatedRecord will both be missing
+            if (record && relatedRecord) {
+                // only update if there are new records to update with
+                if (oldGroup && !oldGroup.disposed) {
+                    // check if record is the one on this collection
+                    if (oldGroup.model && record && oldGroup.model.get('id') === record.id) {
+                        updateModelWithRecord(oldGroup.model, record);
+                    }
+                    // if oldGroup exists, check if the related_record is in the oldGroup
+                    model = oldGroup.collection.get(relatedRecord.id);
+                    updateModelWithRecord(model, relatedRecord);
                 }
-                // if oldGroup exists, check if the related_record is in the oldGroup
-                model = oldGroup.collection.get(relatedRecord.id);
-                updateModelWithRecord(model, relatedRecord);
-            }
-            if (newGroup) {
-                // check if record is the one on this collection
-                if (newGroup.model && newGroup.model.get('id') === record.id) {
-                    updateModelWithRecord(newGroup.model, record);
+                if (newGroup) {
+                    // check if record is the one on this collection
+                    if (newGroup.model && record && newGroup.model.get('id') === record.id) {
+                        updateModelWithRecord(newGroup.model, record);
+                    }
+                    // check if the related_record is in the newGroup
+                    model = newGroup.collection.get(relatedRecord.id);
+                    updateModelWithRecord(model, relatedRecord);
                 }
-                // check if the related_record is in the newGroup
-                model = newGroup.collection.get(relatedRecord.id);
-                updateModelWithRecord(model, relatedRecord);
             }
         }, this, oldGroup, newGroup), this);
+
+        if (deletedGroupId) {
+            // remove the deleted group ID from the main groupIds
+            this.groupIds = _.without(this.groupIds, deletedGroupId);
+            // get the main bundles collection
+            bundles = this.model.get('bundles');
+            // remove the deleted group's model from the main bundles
+            bundles.remove(deletedGroup.model);
+
+            // dispose the group
+            deletedGroup.dispose();
+            // remove the component from the layout
+            this.removeComponent(deletedGroup);
+        }
     },
 
     /**
@@ -659,6 +708,7 @@
         if (_.isUndefined(newBundleData.related_record.product_bundle_items)) {
             newBundleData.related_record.product_bundle_items = [];
         }
+        newBundleData.related_record._justSaved = true;
         // now add the new record to the bundles collection
         bundles.add(newBundleData.related_record);
     },
@@ -692,6 +742,13 @@
      * @private
      */
     _onDeleteQuoteGroupConfirm: function(groupId, groupName, groupToDelete) {
+        var defaultGroup = this._getComponentByGroupId(this.defaultGroupId);
+        var bulkRequests = [];
+        var bundleItems;
+        var positionStart;
+        var linkName;
+        var url;
+
         app.alert.show('deleting_bundle_alert', {
             level: 'info',
             autoClose: false,
@@ -700,36 +757,48 @@
             })
         });
 
-        app.api.records('delete', 'ProductBundles', {
-            id: groupId
-        }, null, {
-            success: _.bind(this._onDeleteQuoteGroupSuccess, this, groupId, groupToDelete)
+        if (groupToDelete.model && groupToDelete.model.has('product_bundle_items')) {
+            bundleItems = groupToDelete.model.get('product_bundle_items');
+        }
+
+        if (defaultGroup.model && defaultGroup.model.has('product_bundle_items')) {
+            positionStart = defaultGroup.model.get('product_bundle_items').length;
+        }
+
+        if (bundleItems && bundleItems.length > 0) {
+            _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, value, key, list) {
+                linkName = (value.module === 'Products' ? 'products' : 'product_bundle_notes');
+                url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' + linkName + '/' + value.id);
+
+                bulkRequests.push({
+                    url: url.substr(4),
+                    method: 'POST',
+                    data: {
+                        id: this.defaultGroupId,
+                        link: linkName,
+                        relatedId: value.id,
+                        related: {
+                            position: positionStart
+                        }
+                    }
+                });
+
+                positionStart++;
+            }, this, bulkRequests, positionStart));
+        }
+
+        url = app.api.buildURL('ProductBundles/' + groupId);
+
+        bulkRequests.push({
+            url: url.substr(4),
+            method: 'DELETE'
         });
-    },
 
-    /**
-     * Success callback when the quote group is deleted
-     *
-     * @param {string} groupId The model ID of the deleted group
-     * @param {View.Layout} groupToDelete The Layout for the deleted group
-     * @private
-     */
-    _onDeleteQuoteGroupSuccess: function(groupId, groupToDelete) {
-        app.alert.dismiss('deleting_bundle_alert');
-
-        app.alert.show('deleted_bundle_alert', {
-            level: 'success',
-            autoClose: true,
-            messages: app.lang.get('LBL_DELETED_BUNDLE_SUCCESS_MSG', 'Quotes')
-        });
-
-        var bundles = this.model.get('bundles');
-        bundles.remove(groupToDelete.model);
-
-        this.groupIds = _.without(this.groupIds, groupId);
-
-        // dispose the group
-        groupToDelete.dispose();
+        if (defaultGroup.model.get('_notSaved')) {
+            this._saveDefaultGroupThenCallBulk(groupToDelete, defaultGroup, bulkRequests);
+        } else {
+            this._callBulkRequests(groupToDelete, defaultGroup, bulkRequests);
+        }
     },
 
     /**

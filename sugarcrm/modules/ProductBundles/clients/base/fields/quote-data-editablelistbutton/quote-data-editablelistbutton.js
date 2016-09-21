@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.ProductBundleNotes.EditablelistbuttonField
- * @alias SUGAR.App.view.fields.BaseProductBundleNotesEditablelistbuttonField
+ * @class View.Fields.Base.ProductBundles.EditablelistbuttonField
+ * @alias SUGAR.App.view.fields.BaseProductBundlesEditablelistbuttonField
  * @extends View.Fields.Base.BaseEditablelistbuttonField
  */
 ({
@@ -50,15 +50,17 @@
      * @inheritdoc
      */
     cancelEdit: function() {
+        var modelModule = this.model.module;
+        var modelId = this.model.id;
         if (this.isDisabled()) {
             this.setDisabled(false);
         }
+
         this.changed = false;
         this.model.revertAttributes();
         this.view.clearValidationErrors();
 
-        // this is the only line I had to change
-        this.view.toggleRow(this.model.module, this.model.id, false);
+        this.view.toggleRow(modelModule, modelId, false);
 
         // trigger a cancel event across the view layout so listening components
         // know the changes made in this row are being reverted
@@ -76,11 +78,7 @@
     _save: function() {
         this.view.layout.trigger('editablelist:' + this.view.name + ':saving', true);
 
-        if (this.view.model.isNew()) {
-            this.view.context.parent.trigger('quotes:defaultGroup:save', _.bind(this._saveRowModel, this));
-        } else {
-            this._saveRowModel();
-        }
+        this._saveRowModel();
     },
 
     /**
@@ -91,7 +89,6 @@
     _saveRowModel: function() {
         var self = this;
         var oldModelId = this.model.get('id');
-
         var successCallback = function(model) {
             self.changed = false;
             model.modelView = 'list';
