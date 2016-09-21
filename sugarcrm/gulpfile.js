@@ -129,6 +129,7 @@ gulp.task('karma', function(done) {
 });
 
 gulp.task('check-license', function(done) {
+
     var options = {
         excludedExtensions: [
             'json',
@@ -159,7 +160,7 @@ gulp.task('check-license', function(done) {
         ],
         licenseFile: 'LICENSE',
         // Add paths you want to exclude in the whiteList file.
-        whiteList: 'grunt/assets/check-license/license-white-list.json'
+        whiteList: 'gulp/assets/check-license/license-white-list.json'
     };
 
     var exec = require('child_process').exec;
