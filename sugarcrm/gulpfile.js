@@ -300,6 +300,22 @@ gulp.task('check-license', function(done) {
     });
 });
 
+gulp.task('jscs', function() {
+    var jscs = require('gulp-jscs');
+    return gulp.src(getFilesToLint())
+        .pipe(jscs())
+        .pipe(jscs.reporter());
+});
+
+gulp.task('jshint', function() {
+    var jshint = require('gulp-jshint');
+    return gulp.src(getFilesToLint())
+        .pipe(jshint())
+        .pipe(jshint.reporter());
+});
+
+gulp.task('lint', ['jshint', 'jscs']);
+
 gulp.task('jsduck', function() {
     var firstPartyFiles = getFirstPartyFiles();
     var GJSDuck = require('gulp-jsduck');
