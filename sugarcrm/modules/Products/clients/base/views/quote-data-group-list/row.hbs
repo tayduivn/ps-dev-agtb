@@ -13,12 +13,12 @@
 <tr name="{{model.module}}_{{model.id}}"
     class="quote-data-group-list product-row{{#if model.attributes._notSaved}} not-sortable{{else}} sortable ui-sortable{{/if}}">
     <td>
-        <span class="left-column-save-cancel">
+        <span class="action-button-wrapper left-column-save-cancel">
             {{#each view.leftSaveCancelColumn}}
                 {{field ../view model=../model template=../view.viewName}}
             {{/each}}
         </span>
-        <span class="left-column-buttons">
+        <span class="action-button-wrapper left-column-buttons">
             {{#each view.leftColumns}}
                 {{field ../view model=../model template=../view.viewName}}
             {{/each}}

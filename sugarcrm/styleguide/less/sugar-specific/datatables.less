@@ -112,14 +112,10 @@
       text-align: left;
     }
     .btn input {
-      position: relative;
-      top: -1px;
+      line-height: 0;
     }
     a {
       text-decoration: none;
-    }
-    input[type=checkbox].toggle-all {
-      margin: 0;
     }
   }
 
@@ -534,6 +530,98 @@ FLEXLIST GENERIC */
     position: static;
   }
 
+  /*LEFT AND RIGHT ACTIONS*/
+  &.left-actions .dataTable th:first-child,
+  &.left-actions .dataTable td:first-child,
+  &.right-actions .dataTable th:last-child,
+  &.right-actions .dataTable td:last-child {
+    height: 28px;
+    text-align: center;
+    overflow-x: visible;
+    .dropdown,
+    > span {
+      position: absolute;
+      overflow: visible;
+      height: 28px;
+      background-color: inherit;
+      &.open {
+        z-index: 999;
+      }
+      // single search and select
+      // input[type=checkbox],
+      // input[type=radio] {
+      //   margin: 8px;
+      // }
+      .btn.btn-invisible {
+        &.active {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+  &.left-actions .dataTable th:first-child,
+  &.right-actions .dataTable th:last-child {
+    padding: 7px 8px;
+    .dropdown,
+    > span {
+      top: 0;
+      padding: 7px 8px;
+    }
+    .btn.checkall {
+      padding: 4px 7px;
+      line-height: 0;
+    }
+  }
+  &.left-actions .dataTable td:first-child,
+  &.right-actions .dataTable td:last-child {
+    > span {
+      margin-top: -18px;
+      padding: 4px 8px;
+      border-bottom: @tableBorder;
+      .fieldset-field {
+        display: inline-block;
+        vertical-align: top;
+      }
+      > .list:first-child {
+        position: absolute;
+        width: 55px;
+        right: 8px;
+        background-color: inherit;
+        display: inline-block;
+        white-space: nowrap;
+      }
+    }
+
+    // row action buttons
+    .fieldset-field .btn {
+      margin-left: 0;
+      + .btn {
+        margin-left: -1px;
+      }
+    }
+    .actions {
+      .btn:hover:not(.disabled) {
+        color: @grayDark;
+      }
+      &.open {
+        .fa-eye {
+          color: @gray;
+        }
+      }
+      // merge duplicates
+      > input[type=checkbox] {
+        margin: 8px;
+      }
+      .dropdown-menu {
+        text-align: left;
+        margin-top: -2px;
+        left: 0;
+        right: auto;
+        z-index: 1001;
+      }
+    }
+  }
+
   /*LEFT ACTIONS ONLY*/
   &.left-actions .dataTable {
     th,
@@ -541,86 +629,27 @@ FLEXLIST GENERIC */
       &:first-child {
         width: 55px;
         min-width: 55px;
-        height: 28px;
-        text-align: center;
-        overflow-x: visible;
-      }
-    }
-    th:first-child {
-      padding: 7px 8px;
-      > span {
-        position: absolute;
-        overflow: visible;
-        width: 55px;
-        height: 28px;
-        top: 0;
-        left: 0;
-        padding: 7px 8px;
-        border-right: @tableBorder;
-        background-color: inherit;
-        z-index: 999;
-      }
-      .btn.checkall {
-        padding: 4px 7px;
-        margin-left: 0;
+        .dropdown,
+        > span {
+          width: 55px;
+          left: 0;
+        }
       }
     }
     td:first-child {
-      > span {
-        position: absolute;
-        display: inline-block;
-        width: 55px;
-        height: 28px;
-        margin-top: -18px;
-        left: 0;
-        border-bottom: @tableBorder;
-        background-color: inherit;
-        overflow: visible;
-        z-index: 10;
-        padding: 4px 8px;
-        font-size: 0;
-        .fieldset-field {
-          display: inline-block;
-          padding: 0;
-        }
-        // single search and select
-        input[type=checkbox],
-        input[type=radio] {
-          margin: 8px;
-        }
-        .btn.btn-invisible {
-          margin: 0;
-          &.active {
-            background-color: transparent !important;
-          }
-        }
-        span.list,
-        span.edit {
-          display: inline-block;
-          white-space: nowrap;
+      // row action buttons
+      .actions {
+        .dropdown-menu {
+          left: 0;
+          right: auto;
         }
       }
-    }
-  }
 
-  /*ADD SHADOW TO LEFT ACTION COLUMN*/
-  &.left-actions.scroll-width .dataTable {
-    th:first-child {
+      // SC-3371
       > span {
-        z-index: 11;
-        border-right: @tableBorder;
-        &:after {
-          .right-shadow(43px);
-        }
-      }
-    }
-    td:first-child {
-      > span {
+        display: inline-block;
         z-index: 10;
-        border-right: @tableBorder;
-          &:after {
-          .right-shadow(37px);
-        }
+        font-size: 0;
       }
     }
   }
@@ -630,72 +659,52 @@ FLEXLIST GENERIC */
     th,
     td {
       &:last-child {
-        width: 55px;
-        min-width: 55px;
-        height: 28px;
-        text-align: center;
-        overflow-x: visible;
+        width: 54px;
+        min-width: 54px;
         .dropdown,
         > span {
-          position: absolute;
-          overflow: visible;
           width: 54px;
-          height: 28px;
-          right: 0px;
-          background-color: inherit;
-          &.open {
-            z-index: 999;
-          }
+          right: 0;
         }
-      }
-    }
-    th:last-child {
-      padding: 7px 8px;
-      .dropdown,
-      > span {
-        top: 0;
-        padding: 7px 8px;
       }
     }
     td:last-child {
-      > span {
-        margin-top: -18px;
-        padding: 4px 8px;
-        border-bottom: @tableBorder;
-        .fieldset-field {
-          display: inline-block;
-          padding: 0;
-        }
-        > .list:first-child {
-          position: absolute;
-          width: 55px;
-          right: 8px;
-          background-color: inherit;
-          display: inline-block;
-          white-space: nowrap;
-        }
-      }
 
       // row action buttons
       .actions {
-        a:hover:not(.disabled) {
-          color: @grayDark;
-        }
-        &.open {
-          .fa-eye {
-            color: @gray;
-          }
-        }
         .dropdown-menu {
-          text-align: left;
-          margin-top: -2px;
+          left: auto;
+          right: 0;
         }
       }
+    }
+  }
 
-      .list .btn.rowaction {
-        margin-left: 0;
-        max-width: 80px;
-        display: inline-block !important;
+  /*ADD SHADOW TO LEFT ACTION COLUMN*/
+  &.left-actions.scroll-width .dataTable {
+    th:first-child {
+      .dropdown,
+      > span {
+        z-index: 11;
+        border-right: @tableBorder;
+        &.open {
+          z-index: 999;
+        }
+        &:after {
+          .right-shadow(43px);
+        }
+      }
+    }
+    td:first-child {
+      > span {
+        z-index: 10;
+        border-right: @tableBorder;
+        &.open {
+          z-index: 999;
+        }
+        &:after {
+          .right-shadow(37px);
+        }
       }
     }
   }
@@ -705,8 +714,11 @@ FLEXLIST GENERIC */
     th:last-child {
       .dropdown,
       > span {
-        z-index: 10;
+        z-index: 11;
         border-left: @tableBorder;
+        &.open {
+          z-index: 999;
+        }
         &:before {
           .left-shadow(43px);
         }
@@ -714,7 +726,11 @@ FLEXLIST GENERIC */
     }
     td:last-child {
       > span {
+        z-index: 10;
         border-left: @tableBorder;
+        &.open {
+          z-index: 999;
+        }
         &:before {
           .left-shadow(37px);
         }
@@ -767,9 +783,6 @@ FLEXLIST GENERIC */
       background-color: @confirmationBackground;
     }
 
-  // &.table-striped tbody > tr:not(.current):not(.tr-inline-edit):nth-child(odd) > td {
-  //   background: @grayLighter;
-  // }
     /*create record dup check*/
     &.duplicates-selectedit {
       tr {

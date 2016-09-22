@@ -277,7 +277,7 @@
                 tooltip: 'LBL_SAVE_BUTTON_LABEL',
                 name: 'inline-save',
                 icon: 'fa-check-circle',
-                css_class: 'ellipsis_inline'
+                css_class: 'btn-link btn-invisible inline-save ellipsis_inline'
             }]
         });
     },

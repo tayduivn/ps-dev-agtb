@@ -37,7 +37,7 @@
     /**
      * @inheritdoc
      */
-    className: 'flex-list-view scroll-width left-actions quote-data-list-header',
+    className: 'quote-data-list-header',
 
     /**
      * Array of left column fields

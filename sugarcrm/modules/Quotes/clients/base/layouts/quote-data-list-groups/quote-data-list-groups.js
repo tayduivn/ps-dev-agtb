@@ -122,6 +122,16 @@
                 }).disableSelection();
             }, this);
         }
+
+        //wrap in container div for scrolling
+        if (!this.$el.parent().hasClass('flex-list-view-content')) {
+            this.$el.wrap(
+                '<div class="flex-list-view-content"></div>'
+            );
+            this.$el.parent().wrap(
+                '<div class="flex-list-view scroll-width left-actions quote-data-table-scrollable"></div>'
+            );
+        }
     },
 
     /**

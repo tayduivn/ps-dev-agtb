@@ -12,12 +12,12 @@
 --}}
 <tr name="{{model.module}}_{{model.id}}" class="flex-list-row-header quote-data-group-header ui-not-droppable">
     <td class="two-dropdowns"{{#if name}} data-fieldname="{{name}}"{{/if}}>
-        <span class="left-column-save-cancel">
+        <span class="action-button-wrapper left-column-save-cancel">
             {{#each leftSaveCancelColumn}}
                 {{field ../this model=../model template=../viewName}}
             {{/each}}
         </span>
-        <span class="left-column-buttons">
+        <span class="action-button-wrapper left-column-buttons">
             {{#each leftColumns}}
                 {{field ../this model=../model template=../viewName}}
             {{/each}}

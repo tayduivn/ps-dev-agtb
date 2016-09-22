@@ -18,7 +18,8 @@ $viewdefs['ProductBundles']['base']['view']['quote-data-group-header'] = array(
             'no_default_action' => true,
             'buttons' => array(
                 array(
-                    'type' => 'button',
+                    'type' => 'rowaction',
+                    'css_class' => 'btn-invisible',
                     'icon' => 'fa-plus',
                     'name' => 'create_qli_button',
                     'label' => 'LBL_CREATE_QLI_BUTTON_LABEL',
@@ -26,7 +27,8 @@ $viewdefs['ProductBundles']['base']['view']['quote-data-group-header'] = array(
                     'tooltip' => 'LBL_CREATE_QLI_BUTTON_TOOLTIP',
                 ),
                 array(
-                    'type' => 'button',
+                    'type' => 'rowaction',
+                    'css_class' => 'btn-invisible',
                     'icon' => 'fa-plus',
                     'name' => 'create_comment_button',
                     'label' => 'LBL_CREATE_COMMENT_BUTTON_LABEL',
@@ -42,14 +44,14 @@ $viewdefs['ProductBundles']['base']['view']['quote-data-group-header'] = array(
             'no_default_action' => true,
             'buttons' => array(
                 array(
-                    'type' => 'button',
+                    'type' => 'rowaction',
                     'name' => 'edit_bundle_button',
                     'label' => 'LBL_EDIT_BUTTON',
                     'acl_action' => 'edit',
                     'tooltip' => 'LBL_EDIT_BUNDLE_BUTTON_TOOLTIP',
                 ),
                 array(
-                    'type' => 'button',
+                    'type' => 'rowaction',
                     'name' => 'delete_bundle_button',
                     'label' => 'LBL_DELETE',
                     'acl_action' => 'delete',

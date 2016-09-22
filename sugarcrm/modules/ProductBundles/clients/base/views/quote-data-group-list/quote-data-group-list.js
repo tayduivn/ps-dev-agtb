@@ -145,6 +145,11 @@
         this.leftSaveCancelColumn = [];
         this.addMultiSelectionAction();
 
+        this.events = _.extend({
+            'hidden.bs.dropdown .actions': 'resetDropdownDelegate',
+            'shown.bs.dropdown .actions': 'delegateDropdown'
+        }, this.events);
+
         /**
          * Due to BackboneJS, this view would have a wrapper tag around it e.g. QuoteDataGroupHeader.tagName "tr"
          * so this would have also been wrapped in div/tr whatever the tagName was for the view.
@@ -170,6 +175,25 @@
         this.layout.on('editablelist:' + this.name + ':saving', this.onSavingRow, this);
 
         this.collection.on('add remove', this.onNewItemChanged, this);
+    },
+
+    /**
+     * Resets the dropdown css
+     * @param e
+     */
+    resetDropdownDelegate: function(e) {
+        var $b = this.$(e.currentTarget).first();
+        $b.parent().closest('.action-button-wrapper').removeClass('open');
+    },
+
+    /**
+     * Fixes z-index for dropdown
+     * @param e
+     */
+    delegateDropdown: function(e) {
+        var $buttonGroup = this.$(e.currentTarget).first();
+        // add open class to parent list to elevate absolute z-index for iOS
+        $buttonGroup.parent().closest('.action-button-wrapper').addClass('open');
     },
 
     /**
@@ -665,14 +689,14 @@
                 tooltip: 'LBL_CANCEL_BUTTON_LABEL',
                 name: 'inline-cancel',
                 icon: 'fa-close',
-                css_class: 'btn-link btn-invisible inline-cancel ellipsis_inline'
+                css_class: 'btn-invisible'
             }, {
                 type: 'quote-data-editablelistbutton',
                 label: '',
                 tooltip: 'LBL_SAVE_BUTTON_LABEL',
                 name: 'inline-save',
                 icon: 'fa-check-circle',
-                css_class: 'ellipsis_inline'
+                css_class: 'btn-invisible'
             }]
         });
     },

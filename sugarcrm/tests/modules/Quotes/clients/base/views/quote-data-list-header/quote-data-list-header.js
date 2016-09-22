@@ -32,7 +32,7 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
     describe('initialize()', function() {
         it('should set className', function() {
-            expect(view.className).toBe('flex-list-view scroll-width left-actions quote-data-list-header');
+            expect(view.className).toBe('quote-data-list-header');
         });
     });
 });
