@@ -43,7 +43,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
-        $success = true;
+
         //Since this is bean based, we know updating the RHS's field will overwrite any old value,
         //But we need to use delete to make sure custom logic is called correctly
         if ($rhs->load_relationship($rhsLinkName)) {
@@ -51,10 +51,7 @@ class One2MBeanRelationship extends One2MRelationship
             $prevRelated = $oldLink->getBeans(null);
             foreach($prevRelated as $oldLHS) {
                 if ($oldLHS->id != $lhs->id) {
-                    if($this->remove($oldLHS, $rhs, false) === false) {
-                        LoggerManager::getLogger()->error("Warning: failed trying to call remove() for relationship {$this->name} within One2MBeanRelationship->add(). rhsLinkName: $rhsLinkName");
-                        $success = false;
-                    }
+                    $this->remove($oldLHS, $rhs, false);
                 }
             }
         }
@@ -91,7 +88,7 @@ class One2MBeanRelationship extends One2MRelationship
             SugarRelationship::resaveRelatedBeans(false);
         }
 
-        return $success;
+        return true;
     }
 
     protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
@@ -125,7 +122,7 @@ class One2MBeanRelationship extends One2MRelationship
     public function remove($lhs, $rhs, $save = true)
     {
         $rhsID = $this->def['rhs_key'];
-        $success = true;
+
         // If this relationship has already been removed, we can just return.
         // Check both current value of related ID field and the one from fetched row.
         // The latter is valid in case, if relation was removed by changing bean's related ID field to another value.
@@ -148,7 +145,6 @@ class One2MBeanRelationship extends One2MRelationship
             // in mass updating and mass deleting
             $nullValue = $rhs->db->massageValue(null, $rhs->field_defs[$rhsID], true);
 
-            global $dictionary;
             $rhs->db->updateParams(
                 $rhs->getTableName(),
                 $rhs->getFieldDefinitions(),
@@ -166,7 +162,7 @@ class One2MBeanRelationship extends One2MRelationship
             $this->callAfterDelete($rhs, $lhs, $this->getRHSLink());
         }
 
-        return $success;
+        return true;
     }
 
     /**

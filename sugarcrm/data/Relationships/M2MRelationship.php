@@ -135,18 +135,11 @@ class M2MRelationship extends SugarRelationship
          * We need to do a complete check against all fields in the relationship to ensure that
          * an update occurs for any additional relationship fields
          * */
-        $success = true;
         if (!$currentRow || !$this->compareRow($currentRow, $dataToInsert)) {
-            if ($this->addRow($dataToInsert) === false) {
-                $success = false;
-                LoggerManager::getLogger()->error("Warning: failure calling row for relationship {$this->name} within M2MRelationship->add() ");
-            }
+            $this->addRow($dataToInsert);
 
             if ($this->self_referencing) {
-                if ($this->addSelfReferencing($lhs, $rhs, $additionalFields) === false) {
-                    $success = false;
-                    LoggerManager::getLogger()->error("Warning: failure calling addSelfReferencing for relationship {$this->name} within M2MRelationship->add() ");
-                }
+                $this->addSelfReferencing($lhs, $rhs, $additionalFields);
             }
             if (!$isUpdate && (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
                 $lhs->$lhsLinkName->resetLoaded();
@@ -162,7 +155,7 @@ class M2MRelationship extends SugarRelationship
             $this->callAfterUpdate($rhs, $lhs, $rhsLinkName);
         }
 
-        return $success;
+        return true;
     }
 
     /**
@@ -170,35 +163,24 @@ class M2MRelationship extends SugarRelationship
      */
     protected function addRow(array $row)
     {
-        $success = true;
         //Need to manage the primary flag if we are going to be updating/inserting data.
         if (!empty($this->def['primary_flag_column']) && $row[$this->def['primary_flag_column']]) {
             $rhsKey = $this->def['join_key_rhs'];
             $lhsKey = $this->def['join_key_lhs'];
-            $db = DBManagerFactory::getInstance();
             // The primary flag is true, that means we need to block
             // out the old primary flag
-            $query = "UPDATE {$this->getRelationshipTable()} SET "
-                . "{$this->def['primary_flag_column']} = 0 WHERE ";
             if ($this->def['primary_flag_side'] == 'rhs') {
-                $query .= "$rhsKey = '" . $db->quote($row[$rhsKey]) . "'";
+                $where = [$rhsKey => $row[$rhsKey]];
             } else {
-                $query .= "$lhsKey = '" . $db->quote($row[$lhsKey]) . "'";
+                $where = [$lhsKey => $row[$lhsKey]];
             }
-            if ($db->query($query) === false) {
-                $success = false;
-                LoggerManager::getLogger()->error("Warning: failure updating primary flag column for within M2MRelationship->add()Row. Query: $query");
-            }
+            DBManagerFactory::getConnection()->update(
+                $this->getRelationshipTable(),
+                [$this->def['primary_flag_column'] => 0],
+                $where
+            );
         }
-        $retObj = parent::addRow($row);
-        if ($retObj === false) {
-            $success = false;
-        }
-        if ($success == false) {
-            return $success;
-        }
-
-        return $retObj;
+        return parent::addRow($row);
     }
     /**
      * Used to check for duplicate rows for this relationship. Compares all fields rather than just id's.
@@ -271,16 +253,14 @@ class M2MRelationship extends SugarRelationship
      * @param $lhs
      * @param $rhs
      * @param array $additionalFields
-     * @return void
+     * @return boolean
      */
     protected function addSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
         if ($rhs->id != $lhs->id)
         {
             $dataToInsert = $this->getRowToInsert($rhs, $lhs, $additionalFields);
-            if($this->addRow($dataToInsert) === false) {
-                return false;
-            }
+            $this->addRow($dataToInsert);
         }
         return true;
     }
@@ -332,17 +312,10 @@ class M2MRelationship extends SugarRelationship
             $this->def['join_key_rhs'] => $rhs->id
         );
 
-        $success = true;
-        if ($this->removeRow($dataToRemove) === false) {
-            $success = false;
-            LoggerManager::getLogger()->error("Warning: failure calling removingRow() for relationship {$this->name} within M2MRelationship->remove()  dataToRemove: ".var_export($dataToRemove,true));
-        }
+        $this->removeRow($dataToRemove);
 
         if ($this->self_referencing) {
-            if ($this->removeSelfReferencing($lhs, $rhs) === false) {
-                $success = false;
-                LoggerManager::getLogger()->error("Warning: failure calling removingSelfReferencing() for relationship {$this->name} within M2MRelationship->remove() ");
-            }
+            $this->removeSelfReferencing($lhs, $rhs);
         }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
@@ -360,18 +333,14 @@ class M2MRelationship extends SugarRelationship
             }
         }
 
-        if ($this->setNewPrimary($dataToRemove) === false) {
-            $success = false;
-            LoggerManager::getLogger()->error("Warning: failure calling setNewPrimary() for relationship {$this->name} within M2MRelationship->remove(). dataToRemove: ".var_export($dataToRemove,true));
-        }
-        return $success;
+        return $this->setNewPrimary($dataToRemove);
     }
     /**
      * Removes the reversed version of this relationship
      * @param $lhs
      * @param $rhs
      * @param array $additionalFields
-     * @return void
+     * @return boolean
      */
     protected function removeSelfReferencing($lhs, $rhs, $additionalFields = array())
     {
@@ -381,67 +350,56 @@ class M2MRelationship extends SugarRelationship
                 $this->def['join_key_lhs'] => $rhs->id,
                 $this->def['join_key_rhs'] => $lhs->id
             );
-            if ($this->removeRow($dataToRemove) === false) {
-                LoggerManager::getLogger()->error("Warning: failure calling removeRow() for relationship {$this->name} within M2MRelationship->removeSelfReferencing(). dataToRemove: ".var_export($dataToRemove,true));
-                return false;
-            }
+            $this->removeRow($dataToRemove);
         }
         return true;
     }
     /**
      * Sets a new primary record for this relationship, if necessary
      * @param array $rowData
-     * @return void
+     * @return boolean
      */
     protected function setNewPrimary($rowData)
     {
         if (empty($this->def['primary_flag_column'])
             || empty($this->def['primary_flag_default'])) {
             // No primary flag, don't need to worry about a new primary record
-            return;
+            return false;
         }
-        $db = DBManagerFactory::getInstance();
 
-        $stringSets = array();
-        foreach ($rowData as $field => $val) {
-            $stringSets[] = $field." = '".$db->quote($val)."'";
+        $conn = DBManagerFactory::getInstance()->getConnection();
+        $query = $conn->createQueryBuilder();
+        $expr = $query->expr();
+        $query->select('id', $this->def['primary_flag_column'])
+            ->from($this->getRelationshipTable())
+            ->where($expr->eq($this->def['primary_flag_column'], 1));
+        foreach ($rowData as $field => $value) {
+            $query->andWhere($expr->eq($field, $query->createPositionalParameter($value)));
         }
-        $wherePart = implode(" AND ",$stringSets);
+        $oldRow = $query->execute()->fetch();
 
-        $query = "SELECT id,{$this->def['primary_flag_column']} "
-            ." FROM {$this->getRelationshipTable()} WHERE "
-            ." {$this->def['primary_flag_column']} = 1 AND {$wherePart}";
-
-        $oldRow = $db->fetchOne($query, true);
-        $success = true;
         if (!empty($oldRow)) {
+            $joinColumnName = $this->def['join_key_' . $this->def['primary_flag_side']];
             // Deleted the primary record, and we need a default primary
-            $colName = $this->def['join_key_'.$this->def['primary_flag_side']];
-            $queryColPart = "{$colName} = '".$db->quote($rowData[$colName])."' ";
+            $conn->update(
+                $this->getRelationshipTable(),
+                [$this->def['primary_flag_column'] => 0],
+                [$joinColumnName => $rowData[$joinColumnName]]
+            );
+            $id = $conn->executeQuery(
+                sprintf(
+                    'SELECT id FROM %s WHERE %s = ? AND deleted = 0',
+                    $this->getRelationshipTable(),
+                    $joinColumnName
+                ),
+                [$rowData[$joinColumnName]]
+            )->fetchColumn();
 
-            // Mark everything related to this record not primary
-            $query = "UPDATE {$this->getRelationshipTable()} SET  {$this->def['primary_flag_column']} = 0 WHERE ".$queryColPart;
-            if ($db->query($query) === false) {
-                LoggerManager::getLogger()->error("Warning: failed trying to reset primary record flags for relationship {$this->name} within M2MRelationship->setNewPrimary(). Query: $query");
-                $success = false;
-            }
-
-            $query = "SELECT id,date_modified FROM {$this->getRelationshipTable()} "
-                ." WHERE deleted = 0 AND ".$queryColPart
-                ." ORDER BY date_modified";
-            $row = $db->fetchOneOffset($query, 0, true);
-            if (empty($row)) {
-                // No other relationships to set as primary
-                return;
-            }
-
-            $query = "UPDATE {$this->getRelationshipTable()} SET {$this->def['primary_flag_column']} = 1 WHERE id = '".$db->quote($row['id'])."'";
-            if ($db->query($query) === false) {
-                LoggerManager::getLogger()->error("Warning: failed trying to set new primary record for relationship {$this->name} within M2MRelationship->setNewPrimary(). Query: $query");
-                $success = false;
+            if ($id) {
+                $conn->update($this->getRelationshipTable(), [$this->def['primary_flag_column'] => 1], ['id' => $id]);
             }
         }
-        return $success;
+        return true;
     }
     /**
      * @param  $link Link2 loads the relationship for this link.
@@ -884,17 +842,29 @@ class M2MRelationship extends SugarRelationship
     /**
      * @param  $lhs
      * @param  $rhs
-     * @return bool
+     * @param bool $returnRow
+     * @return array|bool|string
      */
-    public function relationship_exists($lhs, $rhs, $return_row = false)
+    public function relationship_exists($lhs, $rhs, $returnRow = false)
     {
-        $select = $return_row ? "*" : "id";
-        $query = "SELECT {$select} FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs} = '{$lhs->id}' AND {$this->join_key_rhs} = '{$rhs->id}'";
+        $query = DBManagerFactory::getConnection()->createQueryBuilder();
+        $expr = $query->expr();
 
-        //Roles can allow for multiple links between two records with different roles
-        $query .= $this->getRoleWhere() . " and deleted = 0";
+        $query
+            ->from($this->getRelationshipTable())
+            ->where($expr->eq($this->join_key_lhs, $query->createPositionalParameter($lhs->id)))
+            ->andWhere($expr->eq($this->join_key_rhs, $query->createPositionalParameter($rhs->id)));
 
-        return $return_row ? $GLOBALS['db']->fetchOne($query) : $GLOBALS['db']->getOne($query);
+        $this->addRoleWhereToQuery($query);
+
+        $query->andWhere($expr->eq('deleted', 0));
+
+        if ($returnRow) {
+            $result = $query->select('*')->execute()->fetch();
+        } else {
+            $result = $query->select('id')->execute()->fetchColumn();
+        }
+        return $result;
     }
 
     /**

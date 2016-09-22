@@ -235,11 +235,13 @@ abstract class SugarRelationship
             );
         }
 
-        return DBManagerFactory::getInstance()->insertParams(
+        DBManagerFactory::getInstance()->insertParams(
             $this->getRelationshipTable(),
             $this->getFields(),
             $row
         );
+
+        return true;
     }
 
     /**
@@ -255,7 +257,7 @@ abstract class SugarRelationship
             unset($values['id']);
         }
 
-        return DBManagerFactory::getInstance()->updateParams(
+        DBManagerFactory::getInstance()->updateParams(
             $this->getRelationshipTable(),
             $this->getFields(),
             $values,
@@ -263,6 +265,8 @@ abstract class SugarRelationship
                 'id' => $id,
             )
         );
+
+        return true;
     }
 
     /**
@@ -278,7 +282,7 @@ abstract class SugarRelationship
             return 0;
         }
 
-        return DBManagerFactory::getInstance()->updateParams(
+        DBManagerFactory::getInstance()->updateParams(
             $this->getRelationshipTable(),
             $this->getFields(),
             array(
@@ -287,6 +291,8 @@ abstract class SugarRelationship
             ),
             $where
         );
+
+        return true;
     }
 
     /**
@@ -435,6 +441,32 @@ abstract class SugarRelationship
 
         return $roleCheck;
     }
+
+    /**
+     * add role where clause to query builder
+     * @param QueryBuilder $query
+     * @param bool $ignoreFilter
+     * @param bool $ignoreFlag
+     */
+    protected function addRoleWhereToQuery(QueryBuilder $query, $ignoreFilter = false, $ignoreFlag = false)
+    {
+        $expr = $query->expr();
+        if (!$ignoreFilter && !$this->ignore_role_filter) {
+            foreach ($this->getRelationshipRoleColumns() as $name => $value) {
+                if (empty($value)) {
+                    $query->andWhere($expr->isNull($name));
+                } else {
+                    $query->andWhere($expr->eq($name, $query->createPositionalParameter($value)));
+                }
+            }
+        }
+
+        if (!empty($this->def['primary_flag_column']) && !empty($this->primaryOnly) && !$ignoreFlag) {
+            $query->andWhere($expr->eq($this->def['primary_flag_column'], 1));
+        }
+
+    }
+
 
     /**
      * Build a Where object for a role in a relationship

@@ -32,6 +32,18 @@ class KBUsefulnessRelationship extends M2MRelationship
         return parent::getRoleWhere($table, $ignore_role_filter, $ignore_primary_flag);
     }
 
+    /**
+     * @inheritDoc
+     */
+    protected function addRoleWhereToQuery(QueryBuilder $query, $ignoreFilter = false, $ignoreFlag = false)
+    {
+        if (!empty($this->primaryOnly)) {
+            $query->andWhere($query->expr()->eq($this->def['primary_flag_column'], 1));
+        } else {
+            parent::addRoleWhereToQuery($query, $ignoreFilter, $ignoreFlag);
+        }
+    }
+
     /** {@inheritDoc} */
     protected function applyQueryBuilderFilter(
         QueryBuilder $builder,
