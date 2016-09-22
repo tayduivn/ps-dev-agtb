@@ -26,7 +26,7 @@
          *
          * @type {Core.Context}
          */
-        this.context = this.context.getChildContext({}).prepare();
+        this.context = this.context.getChildContext({});
     },
 
     /**
