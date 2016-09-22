@@ -352,7 +352,6 @@
                 'include/javascript/sugar7/sweetspot.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/tooltip.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/import-export-warnings.js' => 'include/javascript/sugar_grp7.min.js',
-                'include/javascript/sugar7/browser-notification.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/shortcuts.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/accessibility/accessibility.js' => 'include/javascript/sugar_grp7.min.js',
                 'include/javascript/sugar7/accessibility/click.js' => 'include/javascript/sugar_grp7.min.js',

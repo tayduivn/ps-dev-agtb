@@ -314,11 +314,16 @@ describe('Notifications', function() {
                     layouts: []
                 };
                 app.data.declareModel(reminderModule, meta);
+                SugarTest.testMetadata.init();
+                SugarTest.loadHandlebarsTemplate('notifications', 'view', 'base', 'notifications-alert');
+                SugarTest.testMetadata.set();
 
             });
 
             afterEach(function() {
                 app.data.reset(reminderModule);
+                SugarTest.testMetadata.dispose();
+                Handlebars.templates = {};
             });
 
             it('Shouldn\'t check reminders if authentication expires', function() {
@@ -364,6 +369,63 @@ describe('Notifications', function() {
 
                 clock.restore();
             });
+        });
+    });
+
+    describe('Notification alert content', function() {
+        var message;
+        var template;
+        var parentName = 'Parent Company';
+        var model;
+
+        beforeEach(function() {
+            template = app.template.getView('notifications.notifications-alert'),
+            model = new app.data.createBean('Meetings', {
+                'id': '105b0b4a-1337-e0db-b448-522784b92270',
+                'name': 'Discuss pricing',
+                'date_modified': '2013-09-05T00:59:00+02:00',
+                'description': 'Meeting',
+                'location': 'GoTo',
+                'date_start': '2013-09-05T00:59:00+02:00',
+                'reminder_time': '1800',
+                'module': 'Meetings'
+            });
+        });
+
+        afterEach(function() {
+            template = null;
+            model = null;
+        });
+
+        it('Should show the parent name if exists on the model', function() {
+            model.set('parent_name', parentName);
+            message = template({
+                title: 'Test',
+                module: model.module,
+                model: model,
+                location: model.get('location'),
+                description: model.get('description'),
+                dateStart: model.get('date_start'),
+                parentName: model.get('parent_name')
+            });
+
+            expect(message).toContain(app.lang.get('LBL_RELATED_TO', model.module));
+            expect(message).toContain(parentName);
+        });
+
+        it('Should not show the parent name if the model does not have a parent record', function() {
+            message = template({
+                title: 'Test',
+                module: model.module,
+                model: model,
+                location: model.get('location'),
+                description: model.get('description'),
+                dateStart: model.get('date_start'),
+                parentName: model.get('parent_name')
+            });
+
+            expect(message).not.toContain(app.lang.get('LBL_RELATED_TO', model.module));
+            expect(message).not.toContain(parentName);
         });
     });
 
