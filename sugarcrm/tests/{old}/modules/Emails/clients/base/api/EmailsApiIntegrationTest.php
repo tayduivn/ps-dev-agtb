@@ -185,7 +185,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $args = array(
             'email_addresses_from' => array(
                 'create' => array(
-                    'email_address' => 'myname@mydomain.com',
+                    array(
+                        'email_address' => 'myname@mydomain.com',
+                    ),
                 ),
             ),
             'leads_cc' => array(
@@ -255,7 +257,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'email_addresses_from' => array(
                 'create' => array(
-                    'email_address' => 'myname@mycompany.com',
+                    array(
+                        'email_address' => 'myname@mycompany.com',
+                    ),
                 ),
             ),
             'leads_to' => array(
