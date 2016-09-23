@@ -22,6 +22,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
@@ -33,11 +34,21 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDownAfterClass();
     }
 
+    protected function tearDown()
+    {
+        // Clean up any dangling beans that need to be resaved.
+        SugarRelationship::resaveRelatedBeans(false);
+        parent::tearDown();
+    }
+
     /**
      * The value of email_address_id is patched when adding an EmailAddresses record.
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIdIsSetIfRhsBeanIsAnEmailAddress()
     {
@@ -61,6 +72,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals($address->email_address, $email->to_addrs_names);
     }
 
     /**
@@ -68,6 +83,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIdIsUsedIfSet()
     {
@@ -96,6 +114,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
     /**
@@ -104,6 +126,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIsCreated()
     {
@@ -130,6 +155,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address}>", $email->to_addrs_names);
     }
 
     /**
@@ -138,6 +167,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIdIsDiscovered()
     {
@@ -165,6 +197,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
     /**
@@ -174,6 +210,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIdIsLeftEmpty()
     {
@@ -197,6 +236,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
     }
 
     /**
@@ -207,6 +250,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @covers ::add
      * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIdDefaultsToPrimaryAddress()
     {
@@ -232,6 +278,10 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
     }
 
     /**
@@ -242,6 +292,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::add
      * @covers ::getRowToInsert
      * @covers ::addEmailAddressToRecord
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd_EmailAddressIsLinkedToRecipient()
     {
@@ -280,8 +333,19 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             return $addr['email_address'] === $address->email_address;
         });
         $this->assertCount(1, $addresses, "The contact should be linked to {$address->email_address}");
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
+    /**
+     * @covers ::add
+     * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
     public function testAdd_LinkBeanWithAnEmailAddressWhenTheEmailAddressIsAlreadyLinked()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_email_addresses_to');
@@ -306,8 +370,19 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
+    /**
+     * @covers ::add
+     * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
     public function testAdd_LinkAnEmailAddressWhenTheEmailAddressIsAlreadyLinked()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
@@ -332,8 +407,19 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address->email_address}>", $email->to_addrs_names);
     }
 
+    /**
+     * @covers ::add
+     * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
     public function testAdd_EmailAddressIsSharedByMoreThanOneBean()
     {
         $email = SugarTestEmailUtilities::createEmail();
@@ -384,12 +470,22 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[1]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals(
+            "{$account->name} <{$address->email_address}>, {$contact->name} <{$address->email_address}>",
+            $email->to_addrs_names
+        );
     }
 
     /**
      * Only rows that match the role columns are deleted.
      *
      * @covers ::remove
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testRemove()
     {
@@ -432,6 +528,11 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(1, $rows, 'There should be one row with address_type=cc');
         $this->assertSame('Accounts', $row['bean_type'], 'The row with address_type=cc should be for Accounts');
         $this->assertSame($account->id, $row['bean_id'], "The row with address_type=cc should be for {$account->id}");
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
+        $this->assertEquals("{$account->name} <{$account->email1}>", $email->cc_addrs_names);
     }
 
     /**
@@ -439,6 +540,9 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * in an email even when the record is deleted.
      *
      * @covers ::removeAll
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testRemoveAll()
     {
@@ -504,6 +608,16 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertCount(1, $rows, "The row should have been replaced with the contact's primary email address");
         $this->assertSame('EmailAddresses', $row['bean_type'], 'The row should be for EmailAddresses');
         $this->assertSame($primaryId, $row['bean_id'], "The row should use the contact's primary email address");
+
+        SugarRelationship::resaveRelatedBeans();
+        $email1->retrieveEmailText();
+        $email2->retrieveEmailText();
+        $email3->retrieveEmailText();
+        $email4->retrieveEmailText();
+        $this->assertEmpty($email1->to_addrs_names);
+        $this->assertEquals($primary, $email2->to_addrs_names);
+        $this->assertEquals($address->email_address, $email3->to_addrs_names);
+        $this->assertEquals($primary, $email4->to_addrs_names);
     }
 
     /**

@@ -37,6 +37,13 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDownAfterClass();
     }
 
+    protected function tearDown()
+    {
+        // Clean up any dangling beans that need to be resaved.
+        SugarRelationship::resaveRelatedBeans(false);
+        parent::tearDown();
+    }
+
     /**
      * Creates a new Emails record through {@link EmailsApi::createRecord()} that will be deleted during tear down.
      *
@@ -254,6 +261,19 @@ class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
         );
         $api = new RelateApi();
         return $api->filterRelated($this->service, $args);
+    }
+
+    /**
+     * Load data from the emails_text table for the record specified by ID.
+     *
+     * @param string $id
+     * @return null|SugarBean
+     */
+    protected function retrieveEmailText($id)
+    {
+        $bean = BeanFactory::retrieveBean('Emails', $id);
+        $bean->retrieveEmailText();
+        return $bean;
     }
 
     /**

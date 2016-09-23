@@ -92,7 +92,29 @@ class EmailRecipientRelationship extends M2MRelationship
             }
         }
 
-        return parent::add($lhs, $rhs, $additionalFields);
+        if (parent::add($lhs, $rhs, $additionalFields)) {
+            SugarRelationship::addToResaveList($lhs);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds $lhs to the resave list so that the emails_text data can be updated after unlinking $rhs.
+     *
+     * @param SugarBean $lhs
+     * @param SugarBean $rhs
+     * @return bool
+     */
+    public function remove($lhs, $rhs)
+    {
+        if (parent::remove($lhs, $rhs)) {
+            SugarRelationship::addToResaveList($lhs);
+            return true;
+        }
+
+        return false;
     }
 
     /**

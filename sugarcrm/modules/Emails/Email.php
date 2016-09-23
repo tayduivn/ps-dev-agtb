@@ -1131,9 +1131,6 @@ class Email extends SugarBean {
 			$this->description = SugarCleaner::cleanHtml($this->description);
             $this->description_html = SugarCleaner::cleanHtml($this->description_html, true);
             $this->raw_source = SugarCleaner::cleanHtml($this->raw_source, true);
-            
-            $this->saveEmailText();
-			$this->saveEmailAddresses();
 
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
@@ -1184,6 +1181,11 @@ class Email extends SugarBean {
                 }
 			}
 
+            // Save related data.
+            // Linking the email addresses must precede saving email text so that the sender and recipients are linked
+            // to the email before an attempt is made to recalculate those fields in the email_text table.
+            $this->saveEmailAddresses();
+            $this->saveEmailText();
             $this->updateAttachmentsVisibility();
 
             return $parentSaveResult;
@@ -1475,27 +1477,73 @@ class Email extends SugarBean {
 		return join(", ", $res);
 	}
 
-	protected function saveEmailText()
-	{
-        $text = BeanFactory::newBean("EmailText");
-        foreach($this->email_to_text as $textfield=>$mailfield) {
-            $text->$textfield = $this->$mailfield;
+    /**
+     * Save data to the emails_text table.
+     */
+    protected function saveEmailText()
+    {
+        // Get the linked sender and recipients.
+        $collections = array(
+            'from' => array(),
+            'to' => array(),
+            'cc' => array(),
+            'bcc' => array(),
+        );
+
+        foreach (array_keys($collections) as $collection) {
+            $data = $this->getAllEmailRecipients($collection);
+
+            foreach ($data['records'] as $row) {
+                $bean = BeanFactory::retrieveBean(
+                    $row['_module'],
+                    $row['id'],
+                    array('disable_row_level_security' => true)
+                );
+
+                // Use the bean's primary email address if no email address has been chosen.
+                if (empty($row['email_address_used']) && $this->load_relationship($row['_link'])) {
+                    $row['email_address_used'] = $bean->emailAddress->getPrimaryAddress($bean);
+                }
+
+                // Only include the name if the email address and name don't match.
+                $name = ($bean->name === $row['email_address_used']) ? '' : $bean->name;
+
+                if (empty($name)) {
+                    $collections[$collection][] = $row['email_address_used'];
+                } else {
+                    $collections[$collection][] = "{$name} <{$row['email_address_used']}>";
+                }
+            }
         }
+
+        // Populate the sender and recipient properties on the email so they can be mapped to $text.
+        $this->{$this->email_to_text['from_addr']} = implode(', ', $collections['from']);
+        $this->{$this->email_to_text['to_addrs']} = implode(', ', $collections['to']);
+        $this->{$this->email_to_text['cc_addrs']} = implode(', ', $collections['cc']);
+        $this->{$this->email_to_text['bcc_addrs']} = implode(', ', $collections['bcc']);
+
+        $text = BeanFactory::newBean('EmailText');
+
+        foreach ($this->email_to_text as $textField => $emailField) {
+            $text->$textField = $this->$emailField;
+        }
+
+        // Verify that a row exists in the emails_text table for this email.
+        $guid = $GLOBALS['db']->getOne("SELECT email_id FROM emails_text WHERE email_id='{$this->id}' LIMIT 0,1");
 
         // Get and save the current Database Encoding setting and force it to be enabled
         $encodeVal = $GLOBALS['db']->getEncode();
         $GLOBALS['db']->setEncode(true);
 
-        $text->email_id = $this->id;
-		if(!$this->new_with_id) {
+        if ($guid) {
             $this->db->update($text);
-		} else {
-		    $this->db->insert($text);
-		}
+        } else {
+            $this->db->insert($text);
+        }
 
         // Restore previous Database Encoding setting
         $GLOBALS['db']->setEncode($encodeVal);
-	}
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     ////	RETRIEVERS

@@ -62,6 +62,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
      * @covers ::linkRelatedRecords
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      * @param string $fromLink
      */
     public function testCreateArchivedEmail($fromLink)
@@ -120,6 +123,12 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $collection = $this->getCollection($record['id'], 'cc');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $expectedFrom = ($from instanceof EmailAddress) ? $from->email_address : "{$from->name} <{$from->email1}>";
+        $this->assertEquals($expectedFrom, $bean->from_addr_name);
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $bean->to_addrs_names);
+        $this->assertEquals("{$account->name} <{$account->email1}>", $bean->cc_addrs_names);
     }
 
     /**
@@ -128,6 +137,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::updateRecord
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testUpdateArchivedEmail()
     {
@@ -211,6 +223,14 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         // of archived emails.
         //$collection = $this->getCollection($record['id'], 'cc');
         //$this->assertEmpty($collection['records'], 'The CC field should not have changed');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $bean->from_addr_name);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->to_addrs_names
+        );
+        //FIXME: Not asserting the CC field for the same reason as above.
     }
 
     /**
@@ -221,6 +241,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
      * @covers ::linkRelatedRecords
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testCreateDraftEmail()
     {
@@ -291,6 +314,17 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $collection = $this->getCollection($record['id'], 'bcc');
         $this->assertRecords($expected, $collection, 'The BCC field did not match expectations');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->from_addr_name
+        );
+        $this->assertEquals("{$lead->name} <{$lead->email1}>", $bean->to_addrs_names);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->bcc_addrs_names
+        );
     }
 
     /**
@@ -301,6 +335,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::isValidStateTransition
      * @covers ::getRelatedRecordArguments
      * @covers ::linkRelatedRecords
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testUpdateDraftEmail()
     {
@@ -396,6 +433,14 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $collection = $this->getCollection($record['id'], 'cc');
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after update');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->from_addr_name
+        );
+        $this->assertEquals($address->email_address, $bean->to_addrs_names);
+        $this->assertEquals("{$prospect->name} <{$prospect->email1}>", $bean->cc_addrs_names);
     }
 
     /**
@@ -409,6 +454,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::unlinkRelatedRecords
      * @covers ::sendEmail
      * @covers Email::sendEmail
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testSendDraftEmail()
     {
@@ -506,6 +554,16 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after sending');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->from_addr_name
+        );
+        $this->assertEquals(
+            "{$account2->name} <{$account2->email1}>, {$lead->name} <{$lead->email1}>",
+            $bean->to_addrs_names
+        );
     }
 
     /**
@@ -518,6 +576,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * @covers ::linkRelatedRecords
      * @covers ::sendEmail
      * @covers Email::sendEmail
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testCreateAndSendEmail()
     {
@@ -578,6 +639,19 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $collection = $this->getCollection($record['id'], 'to');
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations');
+
+        $bean = $this->retrieveEmailText($record['id']);
+        $this->assertEquals(
+            "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
+            $bean->from_addr_name
+        );
+        $to = array(
+            "{$contact1->name} <{$contact1->email1}>",
+            "{$contact2->name} <{$contact2->email1}>",
+        );
+        sort($to);
+        $to = implode(', ', $to);
+        $this->assertEquals($to, $bean->to_addrs_names);
     }
 
     /**

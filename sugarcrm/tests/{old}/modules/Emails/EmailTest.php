@@ -33,6 +33,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
+        // Clean up any dangling beans that need to be resaved.
+        SugarRelationship::resaveRelatedBeans(false);
+
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
@@ -558,7 +561,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame(1, $this->email->total_attachments, 'Should have incremented the count');
 
-        // While unlinking an attachment, `One2MeBeanRelationship::remove` triggers the `after_relationship_delete`
+        // While unlinking an attachment, `One2MBeanRelationship::remove` triggers the `after_relationship_delete`
         // event. `SugarBean::call_custom_logic` is ultimately called, which calls `SugarBean::updateRelatedCalcFields`
         // because the event is `after_relationship_delete`. The `attachments` link is associated with a calculated
         // field, so the email is added to `SugarRelationship::$resaveQueue`. So the email is not saved and therefore
@@ -710,21 +713,27 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $td->allow_cache = $tdCache;
     }
 
-    public function testSaveAndLinkEmailToAddress()
+    /**
+     * @covers ::save
+     * @covers ::saveEmailAddresses
+     * @covers ::linkEmailToAddress
+     * @covers ::saveEmailText
+     * @covers ::retrieveEmailText
+     */
+    public function testSave_WillLinkEmailAddressesAndRecalculateEmailsText()
     {
-        $email = $this->getMockBuilder('Email')
-            ->setMethods(array('linkEmailToAddress'))
-            ->getMock();
-        $email->expects($this->exactly(7))
-            ->method('linkEmailToAddress');
+        $data = array(
+            'from_addr' => 'sam@example.com',
+            'from_addr_name' => '"Sam Rooker" <sam@example.com>',
+            'to_addrs' => 'tom@example.com,wendy@example.com',
+            'to_addrs_names' => 'Tom Hammond <tom@example.com>, "Wendy Towns" <wendy@example.com>',
+            'cc_addrs' => 'randy@example.com',
+            'cc_addrs_names' => '"Randy Ulman" <randy@example.com>',
+            'bcc_addrs' => 'bonnie@example.com;tara@example.com,bill@example.com',
+            'bcc_addrs_names' => '"Bonnie Vickers" <bonnie@example.com>;tara@example.com,bill@example.com',
+        );
+        $email = SugarTestEmailUtilities::createEmail('', $data);
 
-        $email->from_addr = 'sam@example.com';
-        $email->to_addrs = 'tom@example.com,wendy@example.com';
-        $email->cc_addrs = 'randy@example.com';
-        $email->bcc_addrs = 'bonnie@example.com;tara@example.com,bill@example.com';
-        $email->save();
-
-        SugarTestEmailUtilities::setCreatedEmail($email->id);
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('sam@example.com');
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('tom@example.com');
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('wendy@example.com');
@@ -732,8 +741,17 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('bonnie@example.com');
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('tara@example.com');
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('bill@example.com');
+
+        $email->retrieveEmailText();
+        $this->assertEquals('sam@example.com', $email->from_addr_name);
+        $this->assertEquals('tom@example.com, wendy@example.com', $email->to_addrs_names);
+        $this->assertEquals('randy@example.com', $email->cc_addrs_names);
+        $this->assertEquals('bill@example.com, bonnie@example.com, tara@example.com', $email->bcc_addrs_names);
     }
 
+    /**
+     * @covers ::linkEmailToAddress
+     */
     public function testLinkEmailToAddress()
     {
         $email = SugarTestEmailUtilities::createEmail();
@@ -798,6 +816,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $link->method('add')->willReturn(array($address1->id));
         $email->email_addresses_from = $link;
         $this->assertEmpty($email->linkEmailToAddress($address1->id, 'from'), 'Should have returned nothing');
+
+        // Need to remove the mock to avoid failures when SugarRelationship::resaveRelatedBeans() is called.
+        unset($email->email_addresses_from);
     }
 }
 

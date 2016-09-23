@@ -22,6 +22,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
     }
 
     public static function tearDownAfterClass()
@@ -31,6 +32,13 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         parent::tearDownAfterClass();
+    }
+
+    protected function tearDown()
+    {
+        // Clean up any dangling beans that need to be resaved.
+        SugarRelationship::resaveRelatedBeans(false);
+        parent::tearDown();
     }
 
     public function setParticipantModuleProvider()
@@ -52,6 +60,9 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::add
      * @covers ::getRowToInsert
      * @covers ::checkExisting
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testAdd()
     {
@@ -83,6 +94,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertRow($expected, $rows[0], 'The row should be the email address');
 
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals($address1->email_address, $email->from_addr_name);
+
         $addressesRelationship->add($email, $address2);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
@@ -96,6 +111,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should be the new email address');
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals($address2->email_address, $email->from_addr_name);
 
         $additionalFields = array(
             'email_address_id' => $address2->id,
@@ -114,6 +133,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertRow($expected, $rows[0], 'The row should be the lead with the same email address');
 
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$lead->name} <{$address2->email_address}>", $email->from_addr_name);
+
         $additionalFields = array(
             'email_address_id' => $address2->id,
         );
@@ -131,6 +154,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertRow($expected, $rows[0], 'The row should be the contact with the same email address');
 
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
+
         $addressesRelationship->add($email, $address2);
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(1, $rows, 'There should be one row');
@@ -144,6 +171,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should still reference the contact');
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
 
         $additionalFields = array(
             // An empty string would work too.
@@ -163,6 +194,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertRow($expected, $rows[0], 'The row should be the contact with the email address removed');
 
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->from_addr_name);
+
         $additionalFields = array();
         $accountsRelationship->add($email, $account, $additionalFields);
         $rows = $this->getRows(array('email_id' => $email->id));
@@ -177,6 +212,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'deleted' => '0',
         );
         $this->assertRow($expected, $rows[0], 'The row should be the account without a defined email address');
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$account->name} <{$account->email1}>", $email->from_addr_name);
     }
 
     /**
@@ -186,6 +225,9 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::removeAll
      * @covers ::checkExisting
      * @covers ::remove
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
      */
     public function testRemoveAll_UsingLhsLink()
     {
@@ -211,6 +253,10 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $rows = $this->getRows(array('email_id' => $email->id));
         $this->assertCount(0, $rows, 'The row should have been removed when using the left-hand side link');
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEmpty($email->from_addr_name);
     }
 
     /**
