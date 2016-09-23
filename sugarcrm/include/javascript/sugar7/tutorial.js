@@ -150,12 +150,6 @@
                 //Cache default tutorial metadata
                 app.tutorial.data = app.metadata.getView('','tutorial');
                 this.doTutorial(name, params);
-            } else {
-                var self = this;
-                $.getJSON(app.config.tutorualURL || 'tutorial.json', function(data) {
-                    app.tutorial.data = data;
-                    self.doTutorial(name, params);
-                });
             }
         },
         doTutorial: function(name, params) {
