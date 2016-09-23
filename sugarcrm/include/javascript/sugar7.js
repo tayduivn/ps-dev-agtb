@@ -429,9 +429,6 @@
                 title = getTitle(currModel);
                 //for record view, the title should be updated once model is fetched
                 currModel.on("change", setTitle, this);
-                app.controller.layout.once("dispose", function() {
-                    currModel.off("change", setTitle);
-                });
                 prevModel = currModel;
             } else {
                 title = getTitle();

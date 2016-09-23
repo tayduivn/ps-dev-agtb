@@ -128,6 +128,9 @@ afterEach(function() {
     }, this);
 
     if (SugarTest.app.controller.layout) {
+        if (SugarTest.app.controller.context) {
+            SugarTest.app.controller.context.clear({silent: true});
+        }
         SugarTest.app.controller.layout.dispose();
         // We need to empty this so we don't try to re-append the oldLayout in
         // controller.js#loadView
