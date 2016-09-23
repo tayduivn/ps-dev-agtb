@@ -130,10 +130,13 @@ class Statement implements IteratorAggregate, StatementInterface
      * but Doctrine DBAL doesn't pass the "string" binding type to the DB driver
      *
      * @link https://github.com/doctrine/dbal/issues/2369
+     * @link https://msdn.microsoft.com/en-us/library/ms190309.aspx
      */
     public function bindValue($param, $value, $type = null)
     {
-        if ($type === PDO::PARAM_STR && is_int($value)) {
+        // until we get rid of numeric IDs, we have to cast integers to strings in order to avoid
+        // string to integer conversion errors on the database side
+        if (is_int($value)) {
             $value = (string) $value;
         }
 
