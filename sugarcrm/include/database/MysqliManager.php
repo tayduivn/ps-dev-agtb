@@ -384,12 +384,15 @@ class MysqliManager extends MysqlManager
             $this->connectOptions = $configOptions;
         }
 
-        //mysqli connector has a separate parameter for port.. We need to separate it out from the host name
-        $this->connectOptions['db_port'] = null;
+        if (empty($this->connectOptions['db_port'])) { // '' case
+            $this->connectOptions['db_port'] = null;
+        }
         $pos = strpos($this->connectOptions['db_host_name'],':');
         if ($pos !== false) {
-            $this->connectOptions['db_host_name'] = substr($this->connectOptions['db_host_name'],0,$pos);
-            $this->connectOptions['db_port'] = substr($this->connectOptions['db_host_name'],$pos+1);
+            $dbHostName = $this->connectOptions['db_host_name'];
+            //mysqli connector has a separate parameter for port.. We need to separate it out from the host name
+            $this->connectOptions['db_host_name'] = substr($dbHostName, 0, $pos);
+            $this->connectOptions['db_port'] = substr($dbHostName, $pos+1);
         }
 
         if (ini_get('mysqli.allow_persistent') && $this->getOption('persistent')) {
