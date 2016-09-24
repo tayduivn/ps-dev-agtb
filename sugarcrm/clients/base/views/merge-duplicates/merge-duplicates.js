@@ -411,11 +411,14 @@
                         if (model) {
                             if (isDatabaseData) {
                                 self.resetRadioSelection(model.id);
+                                headerpaneView.getField('cancel_button').setDisabled(false);
                             } else {
                                 self._savePrimary();
                             }
                         }
                     });
+                } else {
+                    headerpaneView.getField('cancel_button').setDisabled(false);
                 }
             },
             lastModified: this.primaryRecord.get('date_modified'),
@@ -1057,6 +1060,13 @@
             app.alert.dismiss('mergeduplicates_merging');
             this._showSuccessMessage();
             app.drawer.close(true, this.primaryRecord);
+        }, this);
+
+        this.primaryRecord.on('validation:complete', function(isValid) {
+            if (!isValid) {
+                var headerpaneView = this.layout.getComponent('merge-duplicates-headerpane');
+                headerpaneView.getField('cancel_button').setDisabled(false);
+            }
         }, this);
     },
 
