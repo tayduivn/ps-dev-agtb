@@ -13,9 +13,15 @@ $viewdefs['Emails']['base']['filter']['default'] = array(
     'default_filter' => 'assigned_to_me',
     'fields' => array(
         'name' => array(),
-        'status' => array(),
-        'date_sent' => array(),
+        'state' => array(
+            'vname' => 'LBL_LIST_STATUS',
+        ),
+        'date_sent' => array(
+            'vname' => 'LBL_LIST_DATE_COLUMN',
+        ),
         'assigned_user_name' => array(),
+        'parent_name' => array(),
+        'tag' => array(),
         '$owner' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',
