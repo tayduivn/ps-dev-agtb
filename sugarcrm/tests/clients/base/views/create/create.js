@@ -617,13 +617,12 @@ describe('Base.View.Create', function() {
                 },
                 messageContext;
 
-            view.moduleSingular = 'Contact';
             view.buildSuccessMessage(model);
             expect(labelSpy.calledWith('LBL_RECORD_SAVED_SUCCESS', moduleName)).toBeTruthy();
             messageContext = labelSpy.lastCall.args[2];
             expect(messageContext.id).toEqual(model.attributes.id);
             expect(messageContext.module).toEqual(moduleName);
-            expect(messageContext.moduleSingularLower).toEqual(view.moduleSingular.toLowerCase());
+            expect(messageContext.moduleSingularLower).toEqual('contact');
             expect(messageContext.name).toEqual(model.attributes.name);
         });
 

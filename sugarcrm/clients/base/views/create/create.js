@@ -604,7 +604,7 @@
         //use the model attributes combined with data from the view to build the success message context
         successMessageContext = _.extend({
             module: this.module,
-            moduleSingularLower: this.moduleSingular.toLowerCase()
+            moduleSingularLower: app.lang.getModuleName(this.module).toLowerCase()
         }, modelAttributes);
 
         return app.lang.get(successLabel, this.module, successMessageContext);
