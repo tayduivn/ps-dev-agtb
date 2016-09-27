@@ -31,7 +31,6 @@
         this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
 
         this.action = 'edit';
-        this.createMode = true;
         this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
 
@@ -42,6 +41,7 @@
     _render: function () {
         this._super('_render');
         this.setTitle(app.lang.get('LBL_MODULE_NAME', this.module));
+        this.toggleViewButtons(true);
     },
 
     /**
@@ -51,6 +51,18 @@
             this.toggleEdit(false);
             this.inlineEditMode = false;
             App.router.navigate("pmse_Emails_Templates", {trigger: true});
+    },
+
+    /**
+     * This is kept very simple because we always stay in detail mode
+     *
+     * @override
+     */
+    handleSave: function() {
+        if (this.disposed) {
+            return;
+        }
+        this._saveModel();
     },
 
     /**
