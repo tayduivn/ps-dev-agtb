@@ -10,26 +10,20 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
-
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
 /**
  *
- * Handler marker interface
+ * Multi Field Handler
  *
  */
-interface HandlerInterface
+class MultiFieldHandler extends BaseHandler
 {
     /**
-     * Set global search provider
-     * @param GlobalSearch $provider
+     * {@inheritDoc}
      */
-    public function setProvider(GlobalSearch $provider);
-
-    /**
-     * Return the handler name
-     * @return string
-     */
-    public function getName();
+    public function getName()
+    {
+        return 'MultiFieldHandler';
+    }
 }

@@ -10,26 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
-
-use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Exception;
 
 /**
  *
- * Handler marker interface
+ * Handler Collection Exception
  *
  */
-interface HandlerInterface
+class HandlerCollectionException extends \RuntimeException implements ExceptionInterface
 {
-    /**
-     * Set global search provider
-     * @param GlobalSearch $provider
-     */
-    public function setProvider(GlobalSearch $provider);
-
-    /**
-     * Return the handler name
-     * @return string
-     */
-    public function getName();
 }

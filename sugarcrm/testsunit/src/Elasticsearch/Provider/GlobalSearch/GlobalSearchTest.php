@@ -13,6 +13,7 @@
 namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures\MultiFieldHandler;
 
 /**
  *
@@ -111,6 +112,47 @@ class GlobalSearchTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ::registerHandlers
+     */
+    public function testStockHandlers()
+    {
+        $sut = new GlobalSearch();
+        $this->assertTrue($sut->hasHandler('MultiFieldHandler'));
+        $this->assertTrue($sut->hasHandler('AutoIncrementHandler'));
+        $this->assertTrue($sut->hasHandler('EmailAddressHandler'));
+        $this->assertTrue($sut->hasHandler('CrossModuleAggHandler'));
+        $this->assertTrue($sut->hasHandler('TagsHandler'));
+        $this->assertTrue($sut->hasHandler('FavoritesHandler'));
+        $this->assertTrue($sut->hasHandler('HtmlHandler'));
+        $this->assertTrue($sut->hasHandler('OwnerIdHandler'));
+    }
+
+    /**
+     * @covers ::addHandler
+     * @covers ::hasHandler
+     * @covers ::getHandler
+     * @covers ::removeHandler
+     */
+    public function testHandlers()
+    {
+        $ns1 = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement';
+        $ns2 = 'Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures';
+        $sut = new GlobalSearch();
+
+        // stock handler
+        $this->assertTrue($sut->hasHandler('MultiFieldHandler'));
+        $this->assertInstanceOf($ns1 . '\MultiFieldHandler', $sut->getHandler('MultiFieldHandler'));
+
+        // add custom multi field handler
+        $sut->addHandler(new MultiFieldHandler());
+        $this->assertTrue($sut->hasHandler('MultiFieldHandler'));
+        $this->assertInstanceOf($ns2 . '\MultiFieldHandler', $sut->getHandler('MultiFieldHandler'));
+
+        // remove handler
+        $sut->removeHandler('MultiFieldHandler');
+        $this->assertFalse($sut->hasHandler('MultiFieldHandler'));
+    }
 
     /**
      * @return \Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch

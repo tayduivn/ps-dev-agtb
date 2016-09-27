@@ -16,9 +16,17 @@ use Sugarcrm\Sugarcrm\Console\CommandRegistry\CommandRegistry;
 use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchIndicesCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchQueueCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRefreshStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRefreshEnableCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRefreshTriggerCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchReplicasStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchReplicasEnableCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\SilentReindexCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,9 +79,17 @@ class Application extends BaseApplication
             new ElasticsearchIndicesCommand(),
             new ElasticsearchQueueCommand(),
             new ElasticsearchRoutingCommand(),
+            new ElasticsearchRefreshStatusCommand(),
+            new ElasticsearchRefreshEnableCommand(),
+            new ElasticsearchRefreshTriggerCommand(),
+            new ElasticsearchReplicasStatusCommand(),
+            new ElasticsearchReplicasEnableCommand(),
             new SearchFieldsCommand(),
             new SearchReindexCommand(),
             new SearchStatusCommand(),
+            new CleanupQueueCommand(),
+            new ModuleCommand(),
+            new SilentReindexCommand(),
         ));
 
         $app = new Application();

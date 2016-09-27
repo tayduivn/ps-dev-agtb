@@ -10,26 +10,31 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler;
+namespace Sugarcrm\SugarcrmTestsUnit\Elasticsearch\Provider\GlobalSearch\Handler\Fixtures;
 
 use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch;
+use Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\AnalysisHandlerInterface;
+use Sugarcrm\Sugarcrm\Elasticsearch\Analysis\AnalysisBuilder;
 
 /**
  *
- * Handler marker interface
+ * AnalysisHandler fixture
  *
  */
-interface HandlerInterface
+class AnalysisHandler extends BaseHandler implements AnalysisHandlerInterface
 {
     /**
-     * Set global search provider
-     * @param GlobalSearch $provider
+     * {@inheritDoc}
      */
-    public function setProvider(GlobalSearch $provider);
+    public function getName()
+    {
+        return 'AnalysisHandler';
+    }
 
     /**
-     * Return the handler name
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName();
+    public function buildAnalysis(AnalysisBuilder $builder)
+    {
+    }
 }
