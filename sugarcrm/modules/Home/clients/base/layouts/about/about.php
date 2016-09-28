@@ -16,7 +16,6 @@ $viewdefs['Home']['base']['layout']['about'] = array(
     'components' => array(
         array(
             'layout' => array(
-                'type' => 'base',
                 'css_class' => 'main-pane span12',
                 'components' => array(
                     array(
@@ -27,14 +26,9 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                             'type' => 'fluid',
                             'components' => array(
                                 array(
-                                    'layout' => array(
-                                        'type' => 'base',
+                                    'view' => array(
+                                        'type' => 'about-copyright',
                                         'span' => 12,
-                                        'components' => array(
-                                            array(
-                                                'view' => 'about-copyright',
-                                            ),
-                                        ),
                                     ),
                                 ),
                             ),
@@ -45,25 +39,15 @@ $viewdefs['Home']['base']['layout']['about'] = array(
                             'type' => 'fluid',
                             'components' => array(
                                 array(
-                                    'layout' => array(
-                                        'type' => 'base',
+                                    'view' => array(
+                                        'type' => 'about-resources',
                                         'span' => 6,
-                                        'components' => array(
-                                            array(
-                                                'view' => 'about-resources',
-                                            ),
-                                        ),
                                     ),
                                 ),
                                 array(
-                                    'layout' => array(
-                                        'type' => 'base',
+                                    'view' => array(
+                                        'type' => 'about-source-code',
                                         'span' => 6,
-                                        'components' => array(
-                                            array(
-                                                'view' => 'about-source-code',
-                                            ),
-                                        ),
                                     ),
                                 ),
                             ),
