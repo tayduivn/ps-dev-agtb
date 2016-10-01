@@ -29,7 +29,7 @@ class PMSEEngineUtils
     const MODULES_WHITELIST_CACHE_KEY = 'pmse_logic_hook_modules_whitelist';
 
     /**
-     * Lists of Process Author supported module names keyed to the module type (target vs related)
+     * Lists of Advanced Workflow supported module names keyed to the module type (target vs related)
      * @var array
      */
     protected static $supportedModules = array();
@@ -165,7 +165,7 @@ class PMSEEngineUtils
     );
 
     /**
-     * Process Author does not handle the below field types currently. So skip displaying them.
+     * Advanced Workflow does not handle the below field types currently. So skip displaying them.
      * @var array
      */
     public static $blacklistedFieldTypes = array('image','password','file');
@@ -1144,7 +1144,7 @@ class PMSEEngineUtils
             return false;
         }
 
-        // Process Author does not handle some field types like image, password, file, etc currently
+        // Advanced Workflow does not handle some field types like image, password, file, etc currently
         if (isset($def['type']) && in_array($def['type'], self::$blacklistedFieldTypes)) {
             return false;
         }

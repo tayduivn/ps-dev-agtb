@@ -92,9 +92,9 @@ class Factory
 
 
     /**
-     * Gets a Process Author object. This expects a mapping of file basename to
-     * class name. This method allows for extending a Process Author class using
-     * the 'Custom' prefix on a classname OR overriding a Process Author class
+     * Gets an Advanced Workflow object. This expects a mapping of file basename to
+     * class name. This method allows for extending an Advanced Workflow class using
+     * the 'Custom' prefix on a classname OR overriding an Advanced Workflow class
      * completely by reusing the name of the class/file. Priority is given to
      * Custom classes before overrides.
      *

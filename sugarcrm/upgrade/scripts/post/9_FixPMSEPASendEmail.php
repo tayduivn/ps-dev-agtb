@@ -11,7 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * Update configuration for Process Author's Send Email Event to the new format.
+ * Update configuration for Advanced Workflow's Send Email Event to the new format.
  */
 class SugarUpgradeFixPMSEPASendEmail extends UpgradeScript
 {
