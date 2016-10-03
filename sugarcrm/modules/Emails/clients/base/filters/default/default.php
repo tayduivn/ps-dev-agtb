@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Emails']['base']['filter']['default'] = array(
-    'default_filter' => 'all_records',
+    'default_filter' => 'assigned_to_me',
     'fields' => array(
         'name' => array(),
         'status' => array(),
