@@ -433,6 +433,8 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                 'position',
                                 'currency_id',
                                 'base_rate',
+                                'discount_select',
+                                'total_amount',
                             ),
                         ),
                     ),

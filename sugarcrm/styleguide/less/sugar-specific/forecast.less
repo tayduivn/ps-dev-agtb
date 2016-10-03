@@ -520,4 +520,36 @@
     display: block;
     clear: both;
   }
+  .quote-discount-percent {
+    div {
+      float: left;
+      &:first-child {
+        margin-top: 1px;
+      }
+    }
+    &.edit {
+      input {
+        text-align: right;
+      }
+      div {
+        &:first-child {
+          width: calc(100% - 20px);
+        }
+        &:last-child {
+          position: absolute;
+          top: 1px;
+          right: -1px;
+          background: @white;
+          border: 1px solid #ddd;
+        }
+        ul.dropdown-menu {
+          left: 0px;
+          top: 26px;
+        }
+      }
+    }
+  }
+}
+.quote-discount-percent .actions .dropdown-menu {
+  right: inherit;
 }

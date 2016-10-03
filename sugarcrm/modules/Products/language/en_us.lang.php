@@ -171,4 +171,5 @@ To create a {{module_name}}:
     'LBL_PRODUCT_POSITION' => 'Product Bundle Position',
     'LBL_PRODUCTS_QUOTE_DATA_LIST' => 'Quoted Line Items Quote Data List',
     'LBL_CREATE_NEW_QLI_IN_DROPDOWN' => ' (New Quoted Line Item)',
+    'LBL_DISCOUNT_PERCENT' => '% Percent',
 );

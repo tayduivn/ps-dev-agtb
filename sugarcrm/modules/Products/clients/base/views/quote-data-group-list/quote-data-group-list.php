@@ -42,11 +42,36 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'showTransactionalAmount' => true,
                 ),
                 array(
-                    'name' => 'discount_amount',
+                    'name' => 'discount',
+                    'type' => 'fieldset',
+                    'css_class' => 'quote-discount-percent',
                     'label' => 'LBL_DISCOUNT_AMOUNT',
-                    'type' => 'currency',
-                    'convertToBase' => true,
-                    'showTransactionalAmount' => true,
+                    'fields' => array(
+                        array(
+                            'name' => 'discount_amount',
+                            'label' => 'LBL_DISCOUNT_AMOUNT',
+                            'type' => 'discount',
+                        ),
+                        array(
+                            'type' => 'discount-select',
+                            'name' => 'discount_select',
+                            'no_default_action' => true,
+                            'buttons' => array(
+                                array(
+                                    'type' => 'rowaction',
+                                    'name' => 'select_discount_amount_button',
+                                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                                    'event' => 'button:discount_select_change:click',
+                                ),
+                                array(
+                                    'type' => 'rowaction',
+                                    'name' => 'select_discount_percent_button',
+                                    'label' => 'LBL_DISCOUNT_PERCENT',
+                                    'event' => 'button:discount_select_change:click',
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 array(
                     'name' => 'tax',
@@ -57,7 +82,7 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'showTransactionalAmount' => true,
                 ),
                 array(
-                    'name' => 'subtotal',
+                    'name' => 'total_amount',
                     'label' => 'LBL_LINE_ITEM_TOTAL',
                     'type' => 'currency',
                     'widthClass' => 'cell-medium',

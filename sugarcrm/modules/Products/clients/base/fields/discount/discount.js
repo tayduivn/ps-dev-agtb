@@ -18,6 +18,20 @@
 
     /**
      * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        /*
+        todo: SFA-4563 should re-add this and fix it
+        this.model.addValidationTask(
+            'discount_number_validator_' + this.cid,
+            _.bind(this._validateAsNumber, this)
+        );
+        */
+    },
+
+    /**
+     * @inheritdoc
      *
      * Listen for the discount_select field to change, when it does, re-render the field
      */
@@ -72,5 +86,24 @@
         } else {
             return this._super('unformat', [value]);
         }
+    },
+
+    /**
+     * Validate the discount field as a number - do not allow letters
+     *
+     * @param {Object} fields The list of field names and their definitions.
+     * @param {Object} errors The list of field names and their errors.
+     * @param {Function} callback Async.js waterfall callback.
+     * @private
+     */
+    /*
+     todo: SFA-4563 should re-add this and fix it
+     _validateAsNumber: function(fields, errors, callback) {
+        var value = this.model.get(this.name);
+        if (!_.isFinite(value)) {
+            errors[this.name] = {'number': value};
+        }
+        callback(null, fields, errors);
     }
+    */
 })

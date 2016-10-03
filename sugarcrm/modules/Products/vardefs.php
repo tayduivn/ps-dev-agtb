@@ -354,6 +354,7 @@ $dictionary['Product'] = array(
             'name' => 'discount_select',
             'vname' => 'LBL_DISCOUNT_AS_PERCENT',
             'type' => 'bool',
+            'default' => true,
             'reportable' => false,
         ),
         'deal_calc' => array(
