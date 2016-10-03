@@ -1131,12 +1131,6 @@ $app_list_strings = array (
         'Users' => 'User',
     ),
 
-    'dom_email_attachment_file_source' => array(
-        'Uploaded' => 'Uploaded',
-        'Document' => 'Document',
-        'Template' => 'Template',
-    ),
-
     'scheduler_status_dom' =>
         array (
         'Active' => 'Active',
