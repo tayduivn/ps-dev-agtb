@@ -224,7 +224,7 @@ class Container
         $this->logger = new Logger(\LoggerManager::getLogger());
         $xhprof = SugarConfig::getInstance()->get('xhprof_config');
         if (!empty($xhprof)) {
-            $this->logger->setXhProf(SugarXHprof::getInstance());
+            $this->logger->setXhProf(\SugarXHprof::getInstance());
         }
     }
 
