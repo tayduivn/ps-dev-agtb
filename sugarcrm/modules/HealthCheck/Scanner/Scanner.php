@@ -2461,6 +2461,62 @@ class HealthCheckScanner
             'isNewModule' => $isNewModule,
         );
         $this->checkCreateActions($options);
+
+        /*
+         * Module specific checks
+         */
+        switch ($module) {
+            case 'KBContents':
+                $this->runKBContentsModuleScanner();
+                break;
+        }
+    }
+
+    /**
+     * Check if KBContents module is ok.
+     */
+    private function runKBContentsModuleScanner()
+    {
+        $sugar_version = '';
+        include 'sugar_version.php';
+        // only if we are updating 7.7
+        if (!(version_compare($sugar_version, '7.7', '>=') && version_compare($sugar_version, '7.8a', '<'))) {
+            // no checks needed
+            return;
+        }
+
+        $customRecordViewFileName = 'custom/modules/KBContents/clients/base/views/record/record.php';
+        // check if custom file exists
+        if (!file_exists($customRecordViewFileName)) {
+            // no warnings
+            return;
+        }
+
+        $viewdefs = array();
+        require $customRecordViewFileName;
+        // search for htmleditable_tinymce field
+        foreach ($viewdefs['KBContents']['base']['view']['record']['panels'] as $panel) {
+            if (!isset($panel['fields'])) {
+                continue;
+            }
+            foreach ($panel['fields'] as $fieldSets) {
+                if (!isset($fieldSets['fields'])) {
+                    continue;
+                }
+                foreach ($fieldSets['fields'] as $field) {
+                    if ($field['type'] == 'htmleditable_tinymce') {
+                        // customization exists
+                        if (!empty($field['tinyConfig'])) {
+                            /*
+                             * update health check status
+                             */
+                            $this->updateStatus('customTinyMCEConfig', $customRecordViewFileName);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

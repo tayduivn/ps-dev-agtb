@@ -145,13 +145,6 @@ $viewdefs['KBContentTemplates']['base']['view']['record'] = array(
                             'span' => 12,
                             'dismiss_label' => false,
                             'fieldSelector' => 'body',
-                            'tinyConfig' => array(
-                                'height' => '300',
-                                'plugins' => 'code,textcolor,link,image',
-                                'toolbar' => 'code | bold italic underline strikethrough | bullist numlist | ' .
-                                    'alignleft aligncenter alignright alignjustify | forecolor backcolor | ' .
-                                    'removeformat | image link | fontsizeselect formatselect',
-                            ),
                         ),
                         array(
                             'name' => 'filename',

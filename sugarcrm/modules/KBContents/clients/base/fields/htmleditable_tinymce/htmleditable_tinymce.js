@@ -19,6 +19,18 @@
     shouldDisable: null,
 
     /**
+     * KB specific parameters.
+     * @private
+     */
+    _tinyMCEConfig: {
+        'height': '300',
+        'plugins': 'code,textcolor,link,image',
+        'toolbar': 'code | bold italic underline strikethrough | bullist numlist | ' +
+        'alignleft aligncenter alignright alignjustify | forecolor backcolor | ' +
+        'removeformat | image link | fontsizeselect formatselect'
+    },
+
+    /**
      * @inheritdoc
      * Additional override fieldSelector property from field's meta.
      */
@@ -47,6 +59,8 @@
     getTinyMCEConfig: function() {
         var config = this._super('getTinyMCEConfig'),
             content_css = [];
+
+        config = _.extend(config, this._tinyMCEConfig);
 
         _.each(document.styleSheets, function(style) {
             if (style.href) {

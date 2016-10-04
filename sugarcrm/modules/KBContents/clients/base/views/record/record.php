@@ -189,13 +189,6 @@ $viewdefs['KBContents']['base']['view']['record'] = array(
                             'type' => 'htmleditable_tinymce',
                             'dismiss_label' => false,
                             'fieldSelector' => 'kbdocument_body',
-                            'tinyConfig' => array(
-                                'height' => '300',
-                                'plugins' => 'code,textcolor,link,image',
-                                'toolbar' => 'code | bold italic underline strikethrough | bullist numlist | ' .
-                                    'alignleft aligncenter alignright alignjustify | forecolor backcolor | ' .
-                                    'removeformat | image link | fontsizeselect formatselect',
-                            ),
                         ),
                     ),
                 ),

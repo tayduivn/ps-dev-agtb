@@ -538,6 +538,10 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             //'kb'     => '',
         ),
+        545 => array(
+            'report' => 'customTinyMCEConfig',
+            'bucket' => self::CUSTOM,
+        ),
 
         // Bucket G
         901 => array(
