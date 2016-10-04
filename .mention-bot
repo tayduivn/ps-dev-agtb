@@ -352,7 +352,6 @@
             "sugarcrm/include/javascript/select2/**",
 
             "sugarcrm/include/javascript/sugar7/shortcuts.js",
-            "sugarcrm/include/javascript/sugar7/browser-notifications.js",
             "sugarcrm/include/javascript/sugar7/accessibility/**",
             "sugarcrm/include/javascript/sugar7/plugins/AddAsInvitee.js",
             "sugarcrm/include/javascript/sugar7/plugins/Chart.js",
@@ -416,7 +415,6 @@
             "sugarcrm/tests/include/OutboundEmail/**",
 
             "sugarcrm/tests/include/javascript/sugar7/shortcuts.js",
-            "sugarcrm/tests/include/javascript/sugar7/browser-notifications.js",
             "sugarcrm/tests/include/javascript/sugar7/accessibility/**",
             "sugarcrm/tests/include/javascript/sugar7/plugins/AddAsInvitee.js",
             "sugarcrm/tests/include/javascript/sugar7/plugins/Chart.js",
