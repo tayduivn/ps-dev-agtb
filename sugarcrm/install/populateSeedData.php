@@ -21,6 +21,7 @@ if(file_exists("include/language/{$current_language}.lang.php")){
 else {
     require_once("include/language/en_us.lang.php");
 }
+
 require_once('install/UserDemoData.php');
 require_once('install/TeamDemoData.php');
 
@@ -37,6 +38,8 @@ $first_name_count = count($sugar_demodata['first_name_array']);
 $company_name_count = count($sugar_demodata['company_name_array']);
 $street_address_count = count($sugar_demodata['street_address_array']);
 $city_array_count = count($sugar_demodata['city_array']);
+$tags_array_count = count($sugar_demodata['tags_array']);
+
 //Turn disable_workflow to Yes so that we don't run workflow for any seed modules
 $_SESSION['disable_workflow'] = "Yes";
 global $app_list_strings;
@@ -135,6 +138,56 @@ installLog("DemoData: Done Time Periods");
 
 echo '.';
 
+$tag_ids = createTags($sugar_demodata['tags_array']);
+
+/**
+ * Create demo data for tags
+ * @param $tags_array has tag names
+ * @return an array of tag ids
+ */
+function createTags($tags_array)
+{
+    $tag_ids = array();
+    for ($i = 0, $j = count($tags_array); $i < $j; $i++) {
+        $tagBean = BeanFactory::getBean('Tags');
+        $tagBean->name = $tags_array[$i];
+        $tagBean->save();
+        $tag_ids[$tagBean->id] = $tagBean;
+    }
+    return $tag_ids;
+}
+
+/**
+ * Gets random count for tags for each record
+ * @return int
+ */
+function getTagsCountForEachRecord()
+{
+    return mt_rand(0, 6);
+}
+
+/**
+ * Adds tags to a given bean
+ * @param $bean Bean to which tag is to be added
+ */
+function addTagsToBean($bean)
+{
+    global $tag_ids;
+    $tagCount = getTagsCountForEachRecord();
+    if ($tagCount) {
+        $bean->load_relationship('tag_link');
+        if ($tagCount > 1) {
+            $tagArray = array_rand($tag_ids, $tagCount);
+        } else {
+            // array_rand with a count of 1 returns just a single key, not an array of keys
+            $tagArray = array(array_rand($tag_ids, $tagCount));
+        }
+
+        foreach ($tagArray as $tag_id) {
+            $bean->tag_link->add($tag_ids[$tag_id]);
+        }
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //BEGIN SUGARCRM flav=ent ONLY
@@ -163,8 +216,8 @@ installLog("DemoData: Companies + Related Calls, Notes Meetings and Bugs");
 for($i = 0; $i < $number_companies; $i++) {
 
     if (count($accounts_companies_list) > 0) {
-	    // De-populate a copy of the company name list
-	    // as each name is used to prevent duplication.
+        // De-populate a copy of the company name list
+        // as each name is used to prevent duplication.
 	    $account_num = array_rand($accounts_companies_list);
 	    $account_name = $accounts_companies_list[$account_num];
 	    unset($accounts_companies_list[$account_num], $account_num);
@@ -244,7 +297,10 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->shipping_address_country = $account->billing_address_country;
 	$account->industry = array_rand($app_list_strings['industry_dom']);
 	$account->account_type = "Customer";
-	$account->save();
+
+    $account->save();
+    addTagsToBean($account);
+
 	$account_ids[] = $account->id;
 	$accounts[] = $account;
 
@@ -292,8 +348,11 @@ for($i = 0; $i < $number_companies; $i++) {
 //BEGIN SUGARCRM flav=ent ONLY
     $case->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
-	$case->save();
+        $case->save();
+        $case->load_relationship('tag_link');
+        addTagsToBean($case);
     }
+
 	// Create a bug for the account
 	$bug = new Bug();
 	$bug->account_id = $account->id;
@@ -309,6 +368,7 @@ for($i = 0; $i < $number_companies; $i++) {
     $bug->portal_viewable = 1;
 //END SUGARCRM flav=ent ONLY
 	$bug->save();
+    addTagsToBean($bug);
 
 	$note = new Note();
 	$note->parent_type = 'Accounts';
@@ -320,7 +380,8 @@ for($i = 0; $i < $number_companies; $i++) {
 	$note->assigned_user_name = $account->assigned_user_name;
 	$note->team_id = $account->team_id;
 	$note->team_set_id = $account->team_set_id;
-	$note->save();
+    $note->save();
+    addTagsToBean($note);
 
 	$call = new Call();
     $call->set_created_by = false;
@@ -341,6 +402,7 @@ for($i = 0; $i < $number_companies; $i++) {
 	$call->team_set_id = $account->team_set_id;
     $call->contacts_arr[0] = $contact->id;
 	$call->save();
+    addTagsToBean($call);
     $call->setContactInvitees($call->contacts_arr);
 
     //Set the user to accept the call
@@ -394,7 +456,10 @@ for($i=0; $i<$number_contacts; $i++) {
 	$contact->assigned_user_name = $contacts_account->assigned_user_name;
 	$contact->primary_address_postalcode = mt_rand(10000,99999);
 	$contact->primary_address_country = 'USA';
+
 	$contact->save();
+    addTagsToBean($contact);
+
     $contacts[] = $contact->id;
 
     // Create a linking table entry to assign an account to the contact.
@@ -418,7 +483,9 @@ for($i=0; $i<$number_contacts; $i++) {
 		$task->parent_id = $account_id;
 		$task->parent_type = 'Accounts';
 	}
+
 	$task->save();
+    addTagsToBean($task);
 
 	//Create new meetings
 	$meeting = new Meeting();
@@ -444,6 +511,7 @@ for($i=0; $i<$number_contacts; $i++) {
     $meeting->update_vcal  = false;
     $meeting->contacts_arr[0] = $contact->id;
 	$meeting->save();
+    addTagsToBean($meeting);
     $meeting->setContactInvitees($meeting->contacts_arr);
 	// leverage the seed user to set the acceptance status on the meeting.
 	$seed_user->id = $meeting->assigned_user_id;
