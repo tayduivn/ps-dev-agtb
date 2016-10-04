@@ -41,7 +41,6 @@ $mod_strings = array (
 	'LBL_COUNTRY' => 'Country:',
 	'LBL_DATE_ENTERED' => 'Date Created:',
 	'LBL_DATE_MODIFIED' => 'Date Modified:',
-	'LBL_DEFAULT_SUBPANEL_TITLE' => 'Accounts',
 	'LBL_DESCRIPTION_INFORMATION' => 'Description Information',
 	'LBL_DESCRIPTION' => 'Description:',
 	'LBL_DUPLICATE' => 'Possible Duplicate Account',

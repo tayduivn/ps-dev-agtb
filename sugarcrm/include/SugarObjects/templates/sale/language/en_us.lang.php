@@ -87,7 +87,6 @@
   'LBL_TOP_SALES' => 'My Top Open Sale',
   'NTC_REMOVE_OPP_CONFIRMATION' => 'Are you sure you want to remove this contact from the sale?',
 	'SALE_REMOVE_PROJECT_CONFIRM' => 'Are you sure you want to remove this sale from the project?',
-	'LBL_DEFAULT_SUBPANEL_TITLE' => 'Sale',
 	'LBL_ACTIVITIES_SUBPANEL_TITLE'=>'Activities',
 	'LBL_HISTORY_SUBPANEL_TITLE'=>'History',
     'LBL_RAW_AMOUNT'=>'Raw Amount',
