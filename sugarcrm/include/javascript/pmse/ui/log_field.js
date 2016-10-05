@@ -125,7 +125,7 @@ LogField.prototype.createHTML = function () {
         logPicture = this.createHTMLElement('div');
         logPicture.className = this.picture;
         logPicture.style.marginRight = "15px";
-        logPicture.innerHTML = 'PA';
+        logPicture.innerHTML = 'AW';
         detailDiv.appendChild(logPicture);
     } else {
         logPicture = this.createHTMLElement('img');
