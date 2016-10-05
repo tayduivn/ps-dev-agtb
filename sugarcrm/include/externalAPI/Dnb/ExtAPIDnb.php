@@ -24,7 +24,7 @@ class ExtAPIDnb extends ExternalAPIBase
     public $connector = "ext_rest_dnb";
     private $dnbBaseURL = array(
         'stg' => 'http://services-ext-stg.dnb.com/',
-        'prod' => 'https://maxcvservices.dnb.com/'
+        'prod' => 'https://direct.dnb.com/',
     );
     private $dnbAuthURL = "rest/Authentication";
     //OrderReasonCode is a parameter required to fetch Firmographic info for all companies
