@@ -719,6 +719,8 @@ class SugarTestHelper
      *
      * @param DBManager $mock
      * @return SugarTestDatabaseMock
+     *
+     * @deprecated
      */
     protected static function setUp_mock_db($mock = null)
     {
@@ -733,6 +735,9 @@ class SugarTestHelper
         return $mock;
     }
 
+    /**
+     * @deprecated
+     */
     protected static function tearDown_mock_db()
     {
         DBManagerFactory::$instances = self::$systemVars['db'];

@@ -17,7 +17,9 @@ require_once 'include/database/DBManagerFactory.php';
  *
  * This is used for when you want to unit test a specific method, but don't want to interact with the database.
  *
- * Please Use Wisely
+ * @deprecated The DB mock only intercepts queries executed via DBManager::query() and doesn't do so in case of
+ * using prepared statements. It makes the query code covered by unit test but does not really prove that the query
+ * is correct.
  */
 class SugarTestDatabaseMock extends DBManager
 {
@@ -51,6 +53,8 @@ class SugarTestDatabaseMock extends DBManager
      *                                    rows, if a Closure is passed in, it will call it and return the results
      *                                    if empty, boolean `true` will be returned
      * @return $this
+     *
+     * @deprecated
      */
     public function addQuerySpy($id, $match, $rows = false)
     {
@@ -70,6 +74,8 @@ class SugarTestDatabaseMock extends DBManager
      *
      * @param string $id Id of the Spy
      * @return $this
+     *
+     * @deprecated
      */
     public function deleteQuerySpy($id)
     {
@@ -86,6 +92,8 @@ class SugarTestDatabaseMock extends DBManager
      * @param String $id Id of the Spy
      * @return bool|integer If the query has been run, return the number of times the spy has been run,
      *                      otherwise return boolean `false`.
+     *
+     * @deprecated
      */
     public function getQuerySpyRunCount($id)
     {
