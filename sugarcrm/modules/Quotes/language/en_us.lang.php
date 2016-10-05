@@ -174,6 +174,7 @@ $mod_strings = array (
     'LBL_SHIPPING_USDOLLAR'=>'Shipping (US Dollar)',
     'LBL_DEAL_TOT'=>'Discount Total',
     'LBL_DEAL_TOT_USDOLLAR'=>'Discount Total (US Dollar)',
+    'LBL_DEAL_TOT_PERCENTAGE'=>'Discount Total Percentage',
     'LBL_SHIPPING' => 'Shipping:',
     'LBL_DISCOUNT_TOTAL' => 'Discount:',
     'LBL_NEW_SUB' => 'Discounted Subtotal:',

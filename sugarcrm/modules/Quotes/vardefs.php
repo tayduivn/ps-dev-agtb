@@ -308,6 +308,16 @@ $dictionary['Quote'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
+        'deal_tot_discount_percentage' => array(
+            'name' => 'deal_tot_discount_percentage',
+            'vname' => 'LBL_DEAL_TOT_PERCENTAGE',
+            'dbType' => 'decimal',
+            'type' => 'currency',
+            'len' => '26,2',
+            'formula' => 'divide($deal_tot, $subtotal)',
+            'calculated' => true,
+            'enforced' => true,
+        ),
         'deal_tot_usdollar' => array(
             'name' => 'deal_tot_usdollar',
             'vname' => 'LBL_DEAL_TOT_USDOLLAR',

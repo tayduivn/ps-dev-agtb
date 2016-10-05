@@ -1,5 +1,8 @@
 <div class="record-label quote-totals-row-label">{{label}}</div>
 <div class="quote-totals-row-value">
+    {{#eq name 'deal_tot'}}
+        <span class="percent-discount">{{valuePercent}}</span>
+    {{/eq}}
     {{#if transactionValue}}
         <label class="original">{{transactionValue}}</label><div class="converted">{{value}}</div>
     {{else}}

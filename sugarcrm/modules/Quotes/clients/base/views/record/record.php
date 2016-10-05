@@ -399,6 +399,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                         'name',
                         'deal_tot',
                         'deal_tot_usdollar',
+                        'deal_tot_discount_percentage',
                         'new_sub',
                         'new_sub_usdollar',
                         'position',
