@@ -43,7 +43,7 @@ $viewdefs['Cases']['portal']['view']['tutorial'] = array(
                 'full' => true,
             ),
             array(
-                'name' => '.routeLink.[data-route="#Cases"]',
+                'name' => '[data-route="#Cases"]',
                 'text' => 'LBL_PORTAL_TOUR_RECORDS_RETURN',
                 'full' => true,
             ),

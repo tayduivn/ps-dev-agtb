@@ -52,12 +52,12 @@ $viewdefs['portal']['view']['tutorial'] = array(
                 'text' => 'LBL_PORTAL_TOUR_RECORDS_PAGE',
             ),
             array(
-                'name' => '.routeLink.[data-route="#Cases"]',
+                'name' => '[data-route="#Cases"]',
                 'text' => 'LBL_PORTAL_TOUR_RECORDS_CASES',
                 'full' => true,
             ),
             array(
-                'name' => '.routeLink.[data-route="#Bugs"]',
+                'name' => '[data-route="#Bugs"]',
                 'text' => 'LBL_PORTAL_TOUR_RECORDS_BUGS',
                 'full' => true,
             ),
