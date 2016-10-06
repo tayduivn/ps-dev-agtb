@@ -3586,6 +3586,9 @@ eoq;
                 }
             }
 
+            // Generate the Message-ID header using the ID of this email.
+            $mailer->setMessageId($this->id);
+
             // Send the email.
             $sentMessage = $mailer->send();
 
@@ -3594,7 +3597,8 @@ eoq;
             $this->date_sent = TimeDate::getInstance()->nowDb();
             $this->type = 'out';
             $this->status = 'sent';
-
+            // Store the generated Message-ID header.
+            $this->message_id = $mailer->getHeader(EmailHeaders::MessageId);
             $this->save();
 
             if (!empty($this->reply_to_id)) {
