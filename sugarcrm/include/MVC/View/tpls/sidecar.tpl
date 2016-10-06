@@ -23,9 +23,6 @@
         {foreach from=$css_url item=url}
             <link rel="stylesheet" href="{sugar_getjspath file=$url}"/>
         {/foreach}
-        <!--[if lt IE 10]>
-        <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='themes/default/css/ie.css'}">
-        <![endif]-->
         {sugar_getscript file="include/javascript/modernizr.js"}
     </head>
     <body>
