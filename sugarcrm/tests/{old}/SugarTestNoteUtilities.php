@@ -75,7 +75,17 @@ class SugarTestNoteUtilities
             if (file_exists($file)) {
                 unlink($file);
             }
+
+            if (!empty($note->upload_id)) {
+                $file = "upload://{$note->upload_id}";
+
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
         }
+
+        static::$createdNotes = array();
     }
 
     /**

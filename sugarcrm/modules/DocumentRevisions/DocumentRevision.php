@@ -279,7 +279,18 @@ class DocumentRevision extends SugarBean {
 			}
 		}
 		return $return_array;
-	}	
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @uses UploadFile::unlink_file()
+     */
+    public function mark_deleted($id)
+    {
+        UploadFile::unlink_file($id);
+        parent::mark_deleted($id);
+    }
 }
 
 require_once('modules/Documents/DocumentExternalApiDropDown.php');

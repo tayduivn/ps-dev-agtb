@@ -116,36 +116,41 @@ class Note extends SugarBean
     }
 
     /**
-     * Deletes the Note associated with the $id parameter by marking it as
-     * deleted and if there is a file attached, it will be deleted as well.
+     * {@inheritdoc}
      *
-     * @param string $id ID of Note to be deleted.
+     * @uses UploadFile::unlink_file() to delete the file as well. The file is only deleted if {@link Note::$upload_id}
+     * is empty.
      */
     function mark_deleted($id)
     {
-        $removeFile = 'upload://' . $this->getUploadId();
-        if (file_exists($removeFile) && !unlink($removeFile)) {
-            $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
+        if (empty($this->upload_id)) {
+            UploadFile::unlink_file($id);
         }
 
         // delete note
         parent::mark_deleted($id);
     }
 
+    /**
+     * Removes the file from the filesystem and clears the file metadata from the record.
+     *
+     * @param string $isduplicate
+     * @return bool
+     */
     function deleteAttachment($isduplicate = "false")
     {
-        $removeFile = '';
-
-        if ($this->ACLAccess('edit')) {
-            if ($isduplicate=="true") {
-                return true;
-            }
-
-            $removeFile = 'upload://' . $this->getUploadId();
+        if (!$this->ACLAccess('edit')) {
+            return false;
         }
 
-        if (file_exists($removeFile) && !unlink($removeFile)) {
-            $GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
+        if ($isduplicate == "true") {
+            return true;
+        }
+
+        // Only attempt to delete the file if there isn't an upload_id. When there is an upload_id, we just clear the
+        // file metadata from the record. When there isn't an upload_id, we attempt to delete the file and clear the
+        // file metadata.
+        if (empty($this->upload_id) && !UploadFile::unlink_file($this->id)) {
             return false;
         }
 

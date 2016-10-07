@@ -11,6 +11,9 @@
  */
  
 
+/**
+ * @coversDefaultClass Note
+ */
 class NotesTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
@@ -119,58 +122,81 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         unlink($file);
     }
 
-    public function testMarkDeleted()
+    public function markDeletedProvider()
     {
-        $note = SugarTestNoteUtilities::createNote();
+        return array(
+            array(
+                array(
+                    'upload_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
+                ),
+                true,
+            ),
+            array(
+                array(),
+                false,
+            ),
+        );
+    }
 
-        $file = "upload://{$note->id}";
+    /**
+     * @covers ::mark_deleted
+     * @dataProvider markDeletedProvider
+     */
+    public function testMarkDeleted($data, $expected)
+    {
+        $note = SugarTestNoteUtilities::createNote('', $data);
+
+        $file = $note->upload_id ? "upload://{$note->upload_id}" : "upload://{$note->id}";
         file_put_contents($file, $note->id);
         $this->assertFileExists($file);
 
         $note->mark_deleted($note->id);
-        $this->assertFileNotExists($file);
+        $this->assertSame($expected, file_exists($file));
     }
 
-    public function testMarkDeleted_FileFoundAtUploadId()
+    public function deleteAttachmentProvider()
     {
-        $uploadId = create_guid();
-        $note = SugarTestNoteUtilities::createNote(
-            '',
+        return array(
             array(
-                'email_type' => 'Emails',
-                'email_id' => create_guid(),
-                'upload_id' => $uploadId,
-            )
+                array(
+                    'filename' => 'foo.jpg',
+                    'file_mime_type' => 'image/jpg',
+                    'file_ext' => 'jpg',
+                    'file_size' => 111,
+                    'email_type' => 'Emails',
+                    'email_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
+                    'upload_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
+                ),
+                true,
+            ),
+            array(
+                array(
+                    'filename' => 'foo.jpg',
+                    'file_mime_type' => 'image/jpg',
+                    'file_ext' => 'jpg',
+                    'file_size' => 111,
+                    'email_type' => 'Emails',
+                    'email_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
+                ),
+                false,
+            ),
         );
+    }
 
-        $file = "upload://{$uploadId}";
-        file_put_contents($file, $uploadId);
+    /**
+     * @covers ::deleteAttachment
+     * @dataProvider deleteAttachmentProvider
+     */
+    public function testDeleteAttachment($data, $expected)
+    {
+        $note = SugarTestNoteUtilities::createNote('', $data);
+
+        $file = $note->upload_id ? "upload://{$note->upload_id}" : "upload://{$note->id}";
+        file_put_contents($file, $note->id);
         $this->assertFileExists($file);
 
-        $note->mark_deleted($note->id);
-        $this->assertFileNotExists($file);
-    }
-
-    public function testDeleteAttachment()
-    {
-        $filename = create_guid();
-        $file = "upload://{$filename}";
-        file_put_contents($file, $filename);
-
-        $note = SugarTestNoteUtilities::createNote(
-            $filename,
-            array(
-                'filename' => 'foo.jpg',
-                'file_mime_type' => 'image/jpg',
-                'file_ext' => 'jpg',
-                'file_size' => 111,
-                'email_type' => 'Emails',
-                'email_id' => create_guid(),
-            )
-        );
-
         $note->deleteAttachment();
-        $this->assertFileNotExists($file);
+        $this->assertSame($expected, file_exists($file));
 
         $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
         $this->assertEmpty($note->filename, 'The filename should be empty');
@@ -182,40 +208,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($note->email_id, 'The email_id should be empty');
         $this->assertEmpty($note->upload_id, 'The upload_id should be empty');
         $this->assertEmpty($note->file, 'There should not be an UploadFile object');
-    }
 
-    public function testDeleteAttachment_FileIsFoundAtUploadId()
-    {
-        $filename = create_guid();
-        $file = "upload://{$filename}";
-        file_put_contents($file, $filename);
-
-        $note = SugarTestNoteUtilities::createNote(
-            '',
-            array(
-                'filename' => 'foo.jpg',
-                'file_mime_type' => 'image/jpg',
-                'file_ext' => 'jpg',
-                'file_size' => 111,
-                'file_source' => 'EmailTemplates',
-                'email_type' => 'Emails',
-                'email_id' => create_guid(),
-                'upload_id' => $filename,
-            )
-        );
-
-        $note->deleteAttachment();
-        $this->assertFileNotExists($file);
-
-        $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
-        $this->assertEmpty($note->filename, 'The filename should be empty');
-        $this->assertEmpty($note->file_mime_type, 'The file_mime_type should be empty');
-        $this->assertEmpty($note->file_ext, 'The file_ext should be empty');
-        $this->assertEmpty($note->file_size, 'The file_size should be empty');
-        $this->assertEmpty($note->file_source, 'The file_source should be empty');
-        $this->assertEmpty($note->email_type, 'The email_type should be empty');
-        $this->assertEmpty($note->email_id, 'The email_id should be empty');
-        $this->assertEmpty($note->upload_id, 'The upload_id should be empty');
-        $this->assertEmpty($note->file, 'There should not be an UploadFile object');
+        unlink($file);
     }
 }

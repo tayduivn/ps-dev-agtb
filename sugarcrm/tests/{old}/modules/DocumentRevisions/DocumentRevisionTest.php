@@ -56,4 +56,47 @@ class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $doc->file_size);
     }
+
+    public function markDeletedProvider()
+    {
+        return array(
+            array(
+                array(
+                    'upload_id' => '123',
+                ),
+                true,
+            ),
+            array(
+                array(),
+                false,
+            ),
+        );
+    }
+
+    /**
+     * @covers ::mark_deleted
+     * @dataProvider markDeletedProvider
+     */
+    public function testMarkDeleted($rows, $expected)
+    {
+        $doc = BeanFactory::newBean('DocumentRevisions');
+        $doc->save(false);
+        static::$docs[] = $doc;
+
+        $file = "upload://{$doc->id}";
+        file_put_contents($file, $doc->id);
+        $this->assertFileExists($file);
+
+        $db = SugarTestHelper::setUp('mock_db');
+        $db->addQuerySpy(
+            'upload_id',
+            "/SELECT upload_id FROM notes WHERE upload_id='{$doc->id}' LIMIT 0,1/",
+            array($rows)
+        );
+
+        $doc->mark_deleted($doc->id);
+        $this->assertSame($expected, file_exists($file));
+
+        unlink($file);
+    }
 }
