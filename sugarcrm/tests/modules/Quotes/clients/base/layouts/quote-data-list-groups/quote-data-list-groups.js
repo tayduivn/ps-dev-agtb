@@ -65,16 +65,50 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     describe('bindDataChange()', function() {
         beforeEach(function() {
             sinon.collection.spy(layout.context, 'on');
+            sinon.collection.spy(layout.model, 'on');
             layout.bindDataChange();
         });
 
-        it('quotes:group:create', function() {
+        it('should listen on layout.model for change:show_line_nums', function() {
+            expect(layout.model.on).toHaveBeenCalledWith('change:show_line_nums');
+        });
+
+        it('should listen on layout.model for change:bundles', function() {
+            expect(layout.model.on).toHaveBeenCalledWith('change:bundles');
+        });
+
+        it('should listen on layout.context for quotes:group:create', function() {
             expect(layout.context.on).toHaveBeenCalledWith('quotes:group:create');
         });
 
-        it('quotes:group:delete', function() {
+        it('should listen on layout.context for quotes:group:delete', function() {
             expect(layout.context.on).toHaveBeenCalledWith('quotes:group:delete');
+        });
 
+        it('should listen on layout.context for quotes:defaultGroup:create', function() {
+            expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:create');
+        });
+
+        it('should listen on layout.context for quotes:defaultGroup:save', function() {
+            expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:save');
+        });
+    });
+
+    describe('_onShowLineNumsChanged()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(layout.context, 'trigger', function() {});
+        });
+
+        it('should trigger the quotes:show_line_nums:changed event with true', function() {
+            layout._onShowLineNumsChanged({}, true);
+
+            expect(layout.context.trigger).toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+        });
+
+        it('should trigger the quotes:show_line_nums:changed event with false', function() {
+            layout._onShowLineNumsChanged({}, false);
+
+            expect(layout.context.trigger).toHaveBeenCalledWith('quotes:show_line_nums:changed', false);
         });
     });
 
@@ -219,6 +253,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             oldGroupTriggerSpy = sinon.collection.spy();
             newGroupTriggerSpy = sinon.collection.spy();
 
+            rowModelId = 'rowModelId1';
+            rowModelModule = 'Products';
+            rowModel = new Backbone.Model({
+                id: rowModelId,
+                module: rowModelModule,
+                position: 2
+            });
+            rowModel.module = rowModelModule;
+
             oldGroupId = 'oldGroupId1';
             oldGroupModel = app.data.createBean('ProductBundles', {
                 id: oldGroupId,
@@ -252,17 +295,18 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 },
                 removeRowModel: function(model, isEdit) {
                     this.collection.remove(model);
+                },
+                $: function() {
+                    return [
+                        '<tr name="Products_' + oldGroupId + '" ></tr>',
+                        '<tr name="Products_' + rowModelId + '" ></tr>'
+                    ];
                 }
             };
 
-            rowModelId = 'rowModelId1';
-            rowModelModule = 'Products';
-            rowModel = new Backbone.Model({
-                id: rowModelId,
-                module: rowModelModule,
-                position: 2
-            });
-            rowModel.module = rowModelModule;
+            newGroup.collection.comparator = function(model) {
+                return model.get('position');
+            };
 
             sinon.collection.stub(app.tooltip, '_enable', function() {});
             sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
@@ -308,6 +352,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 oldGroup.collection.add(rowModel);
 
                 layout._onDragStop(evtParam, uiParam);
+            });
+
+            it('should set new position on rowModel', function() {
+                expect(rowModel.get('position')).toBe(1);
             });
 
             it('should remove the rowModel from oldGroup', function() {
@@ -871,6 +919,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             it('should dispose the deleted group', function() {
                 expect(oldGroup.dispose).toHaveBeenCalled();
             });
+
+            it('should trigger quotes:line_nums:reset on newGroup', function() {
+                expect(newGroupTriggerSpy).toHaveBeenCalledWith('quotes:line_nums:reset');
+            });
         });
     });
 
@@ -896,6 +948,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     ];
                 }
             };
+
+            dataGroup.collection.comparator = function(model) {
+                return model.get('position');
+            };
+
+            sinon.collection.spy(dataGroup.collection, 'sort');
+
             rowModel1 = new Backbone.Model({
                 id: 'qliId1',
                 module: 'Products',
@@ -936,6 +995,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 dataGroup.collection.add(rowModel4);
 
                 results = layout._updateRowPositions(dataGroup);
+            });
+
+            it('should call collection.sort on the group', function() {
+                expect(dataGroup.collection.sort).toHaveBeenCalled();
             });
 
             describe('first call', function() {
@@ -1409,29 +1472,50 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(layout, '_addQuoteGroupToLayout', function() {});
             sinon.collection.stub(layout, 'render', function() {});
+            sinon.collection.stub(layout.context, 'trigger', function() {});
             sinon.collection.spy(bundles, 'add');
-
-            layout._onCreateQuoteGroupSuccess(newBundleData);
         });
 
         afterEach(function() {
             newBundleData = null;
         });
 
-        it('should call app.alert.dismiss to get rid of old alert', function() {
-            expect(app.alert.dismiss).toHaveBeenCalledWith('adding_bundle_alert');
+        describe('regardless of show_line_nums', function() {
+            beforeEach(function() {
+                layout._onCreateQuoteGroupSuccess(newBundleData);
+            });
+
+            it('should call app.alert.dismiss to get rid of old alert', function() {
+                expect(app.alert.dismiss).toHaveBeenCalledWith('adding_bundle_alert');
+            });
+
+            it('should call app.alert.show to display new alert', function() {
+                expect(app.alert.show).toHaveBeenCalledWith('added_bundle_alert');
+            });
+
+            it('should add the newBundleData to records', function() {
+                expect(layout.model.get('bundles').at(3).get('id')).toBe('testId3');
+            });
+
+            it('should call add on bundles collection', function() {
+                expect(bundles.add).toHaveBeenCalledWith(newBundleData.related_record);
+            });
         });
 
-        it('should call app.alert.show to display new alert', function() {
-            expect(app.alert.show).toHaveBeenCalledWith('added_bundle_alert');
-        });
+        describe('with show_line_nums', function() {
+            it('should call context.trigger if show_line_nums is true', function() {
+                layout.model.set('show_line_nums', true);
+                layout._onCreateQuoteGroupSuccess(newBundleData);
 
-        it('should add the newBundleData to records', function() {
-            expect(layout.model.get('bundles').at(3).get('id')).toBe('testId3');
-        });
+                expect(layout.context.trigger).toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+            });
 
-        it('should call add on bundles collection', function() {
-            expect(bundles.add).toHaveBeenCalledWith(newBundleData.related_record);
+            it('should not call context.trigger if show_line_nums is false', function() {
+                layout.model.set('show_line_nums', false);
+                layout._onCreateQuoteGroupSuccess(newBundleData);
+
+                expect(layout.context.trigger).not.toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+            });
         });
     });
 

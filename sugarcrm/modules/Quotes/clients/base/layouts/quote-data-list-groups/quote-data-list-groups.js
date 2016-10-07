@@ -64,11 +64,24 @@
      * @inheritdoc
      */
     bindDataChange: function() {
+        this.model.on('change:show_line_nums', this._onShowLineNumsChanged, this);
         this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
         this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
+    },
+
+    /**
+     * Handles when the show_line_nums attrib changes on the Quotes model, triggers if
+     * line numbers should be shown or not
+     *
+     * @param {Data.Bean} model The Quotes Bean the change happened on
+     * @param {boolean} showLineNums If the line nums should be shown or not
+     * @private
+     */
+    _onShowLineNumsChanged: function(model, showLineNums) {
+        this.context.trigger('quotes:show_line_nums:changed', showLineNums);
     },
 
     /**
@@ -170,6 +183,11 @@
         var url;
         var linkName;
         var saveDefaultGroup;
+        var newPosition;
+        var existingRows;
+
+        // get the new group (may be the same group)
+        newGroup = this._getComponentByGroupId(newGroupId);
 
         // make sure item was dropped in a different group than it started in
         if (oldGroupId !== newGroupId) {
@@ -178,7 +196,12 @@
 
             // get the old and new quote-data-group components
             oldGroup = this._getComponentByGroupId(oldGroupId);
-            newGroup = this._getComponentByGroupId(newGroupId);
+
+            // get the new position index
+            existingRows = newGroup.$('tr.quote-data-group-list:not(:hidden):not(.empty-row)');
+            newPosition = _.findIndex(existingRows, function(item) {
+                return ($(item).attr('name') == $item.attr('name'));
+            });
 
             // get if we need to save the new default group list or not
             saveDefaultGroup = newGroup.model.get('_notSaved') || false;
@@ -188,6 +211,10 @@
 
             // get the row model from the old group's collection
             rowModel = oldGroup.collection.get(rowId);
+
+            // set the new position, so it's only set when the item is saved via the relationship change
+            // and not again for the position update
+            rowModel.set('position', newPosition);
 
             // remove the rowModel from the old group
             oldGroup.removeRowModel(rowModel, isRowInEdit);
@@ -216,8 +243,6 @@
                 }
             });
         } else {
-            // item was sorted in the same group
-            newGroup = this._getComponentByGroupId(newGroupId);
             // get the requests from updated rows
             bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(newGroup));
         }
@@ -230,12 +255,16 @@
                 oldGroup.trigger('quotes:group:changed');
                 // trigger save start for the old group
                 oldGroup.trigger('quotes:group:save:start');
+                // trigger the group to reset it's line numbers
+                oldGroup.trigger('quotes:line_nums:reset', oldGroup.groupId, oldGroup.collection);
             }
 
             // trigger group changed for new group to check themselves
             newGroup.trigger('quotes:group:changed');
             // trigger save start for the new group
             newGroup.trigger('quotes:group:save:start');
+            // trigger the group to reset it's line numbers
+            newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
 
             if (saveDefaultGroup) {
                 this._saveDefaultGroupThenCallBulk(oldGroup, newGroup, bulkSaveRequests);
@@ -481,6 +510,9 @@
             deletedGroup.dispose();
             // remove the component from the layout
             this.removeComponent(deletedGroup);
+
+            // once new items are added to the default group, update the group's line numbers
+            newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
         }
     },
 
@@ -524,6 +556,11 @@
             }
         }, this, dataGroup, retCalls), this);
 
+        if (retCalls.length) {
+            // if items have changed positions, sort the collection
+            // using the collection.comparator compare function
+            dataGroup.collection.sort();
+        }
         return retCalls;
     },
 
@@ -721,6 +758,11 @@
         newBundleData.related_record._justSaved = true;
         // now add the new record to the bundles collection
         bundles.add(newBundleData.related_record);
+
+        if (this.model.get('show_line_nums')) {
+            // if show_line_nums is true, trigger the event so the new group will add the line_num field
+            this.context.trigger('quotes:show_line_nums:changed', true);
+        }
     },
 
     /**
@@ -776,9 +818,10 @@
         }
 
         if (bundleItems && bundleItems.length > 0) {
-            _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, value, key, list) {
-                linkName = (value.module === 'Products' ? 'products' : 'product_bundle_notes');
-                url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' + linkName + '/' + value.id);
+            _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, model, key, list) {
+                linkName = (model.module === 'Products' ? 'products' : 'product_bundle_notes');
+                url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' + linkName + '/' + model.id);
+                model.set('position', positionStart);
 
                 bulkRequests.push({
                     url: url.substr(4),
@@ -786,7 +829,7 @@
                     data: {
                         id: this.defaultGroupId,
                         link: linkName,
-                        relatedId: value.id,
+                        relatedId: model.id,
                         related: {
                             position: positionStart
                         }

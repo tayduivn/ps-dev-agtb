@@ -26,7 +26,8 @@
      * @inheritdoc
      */
     plugins: [
-        'MassCollection'
+        'MassCollection',
+        'QuotesLineNumHelper'
     ],
 
     /**

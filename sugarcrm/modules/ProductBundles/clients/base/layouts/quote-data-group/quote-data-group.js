@@ -53,6 +53,10 @@
         this.groupId = this.model.get('id');
         // set this collection to the product_bundle_items collection
         this.collection = this.model.get('product_bundle_items');
+        // add comparator so the collection can sort
+        this.collection.comparator = function(model) {
+            return model.get('position');
+        };
 
         var listMeta = app.metadata.getView('Products', 'quote-data-group-list');
         if (listMeta && listMeta.panels && listMeta.panels[0].fields) {
@@ -104,7 +108,7 @@
             listComp.toggledModels[modelId] = model;
         }
 
-        this.collection.add(model);
+        this.collection.add(model, {at: model.get('position')});
     },
 
     /**

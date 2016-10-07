@@ -859,27 +859,122 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     });
 
     describe('_renderHtml', function() {
+        var $el;
+        var $trs;
+
         beforeEach(function() {
             sinon.collection.stub(view, 'toggleEmptyRow');
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    length: 0
-                };
+        });
+
+        describe('calling toggleEmptyRow', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view, '$', function() {
+                    return {
+                        length: 0
+                    };
+                });
+            });
+
+            it('should call toggleEmptyRow with true when isEmptyGroup = true', function() {
+                view.isEmptyGroup = true;
+                view._renderHtml();
+
+                expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+            });
+
+            it('should call toggleEmptyRow with false when isEmptyGroup = false', function() {
+                view.isEmptyGroup = false;
+                view._renderHtml();
+
+                expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
             });
         });
 
-        it('should call toggleEmptyRow with true when isEmptyGroup = true', function() {
-            view.isEmptyGroup = true;
-            view._renderHtml();
+        describe('with group header', function() {
+            var afterStub;
+            var removeStub;
 
-            expect(view.toggleEmptyRow).toHaveBeenCalledWith(true);
+            beforeEach(function() {
+                sinon.collection.stub(view, 'template', function() {});
+                afterStub = sinon.collection.stub();
+                removeStub = sinon.collection.stub();
+                $el = {
+                    length: 1,
+                    after: afterStub
+                };
+            });
+
+            afterEach(function() {
+                afterStub = null;
+                removeStub = null;
+            });
+
+            it('should remove existing quote-data-group-list rows if there is a header and rows', function() {
+                $trs = {
+                    length: 1,
+                    remove: removeStub
+                };
+                sinon.collection.stub(view, '$', function(selector) {
+                    if (selector === 'tr.quote-data-group-header') {
+                        return $el;
+                    } else if (selector === 'tr.quote-data-group-list') {
+                        return $trs;
+                    }
+                });
+                view._renderHtml();
+
+                expect(removeStub).toHaveBeenCalled();
+            });
+
+            it('should not call remove if no quote-data-group-list rows', function() {
+                $trs = {
+                    length: 0,
+                    remove: removeStub
+                };
+                sinon.collection.stub(view, '$', function(selector) {
+                    if (selector === 'tr.quote-data-group-header') {
+                        return $el;
+                    } else if (selector === 'tr.quote-data-group-list') {
+                        return $trs;
+                    }
+                });
+                view._renderHtml();
+
+                expect(removeStub).not.toHaveBeenCalled();
+            });
+
+            it('should call after() after the header rows', function() {
+                $trs = {
+                    length: 0
+                };
+                sinon.collection.stub(view, '$', function(selector) {
+                    if (selector === 'tr.quote-data-group-header') {
+                        return $el;
+                    } else if (selector === 'tr.quote-data-group-list') {
+                        return $trs;
+                    }
+                });
+                view._renderHtml();
+
+                expect(afterStub).toHaveBeenCalled();
+            });
         });
 
-        it('should call toggleEmptyRow with false when isEmptyGroup = false', function() {
-            view.isEmptyGroup = false;
-            view._renderHtml();
+        describe('with no group header', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view.$el, 'html', function() {});
+                sinon.collection.stub(view, '$', function() {
+                    return {
+                        length: 0
+                    };
+                });
+            });
 
-            expect(view.toggleEmptyRow).toHaveBeenCalledWith(false);
+            it('should call view.$el.html to render the html', function() {
+                view._renderHtml();
+
+                expect(view.$el.html).toHaveBeenCalled();
+            });
         });
     });
 
@@ -980,6 +1075,28 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         it('should call alert show', function() {
             view._onDeleteRowBtnClicked(evt);
             expect(app.alert.show).toHaveBeenCalled();
+        });
+    });
+
+    describe('_onDeleteRowConfirm()', function() {
+        var deleteModel;
+
+        beforeEach(function() {
+            sinon.collection.stub(view.layout, 'trigger', function() {});
+            deleteModel = app.data.createBean('Products', {
+                id: 'deleteModelId1'
+            });
+            view.layout.collection.add(deleteModel);
+
+            view._onDeleteRowConfirm(deleteModel);
+        });
+
+        it('should remove the deleted model from the collection', function() {
+            expect(view.layout.collection.length).toBe(0);
+        });
+
+        it('should trigger quotes:line_nums:reset on the layout', function() {
+            expect(view.layout.trigger).toHaveBeenCalledWith('quotes:line_nums:reset');
         });
     });
 

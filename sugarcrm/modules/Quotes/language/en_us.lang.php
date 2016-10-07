@@ -180,6 +180,7 @@ $mod_strings = array (
     'LBL_NEW_SUB' => 'Discounted Subtotal:',
     'LBL_NEW_SUB_USDOLLAR' => 'Discounted Subtotal (US Dollar):',
     'LBL_SHOW_LINE_NUMS' => 'Display Line Numbers:',
+    'LBL_LINE_NUMBER' => 'Line Number',
     'LBL_STATE' => 'State:',
     'LBL_SUBTOTAL_USDOLLAR'=>'Subtotal (US Dollar)',
     'LBL_SUBTOTAL' => 'Subtotal:',

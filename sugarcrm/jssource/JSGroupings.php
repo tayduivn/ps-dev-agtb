@@ -281,6 +281,7 @@
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
                     'modules/Forecasts/clients/base/plugins/DisableDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'modules/Forecasts/clients/base/plugins/DisableMassDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                   'modules/Quotes/clients/base/plugins/QuotesLineNumHelper.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MassQuote.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/RelativeTime.js'  => 'include/javascript/sugar_sidecar.min.js',

@@ -30,7 +30,8 @@
         'ErrorDecoration',
         'LinkedModel',
         'MassCollection',
-        'SugarLogic'
+        'SugarLogic',
+        'QuotesLineNumHelper'
     ],
 
     /**
@@ -266,14 +267,22 @@
      * @param {Data.Bean} rowModel The row collection model that was created and now canceled
      */
     onCancelRowEdit: function(rowModel) {
+        var rowId;
+
         if (rowModel.has('_notSaved')) {
-            var rowId = rowModel.get('id');
+            rowId = rowModel.get('id');
             this.newIdsToSave = _.without(this.newIdsToSave, rowId);
             this.collection.remove(rowModel);
 
             if (!_.isUndefined(this.sugarLogicContexts[rowId])) {
                 // cleanup any sugarlogic contexts
                 this.sugarLogicContexts[rowId].dispose();
+            }
+
+            // if we're showing line numbers, and the model we canceled was a Product
+            if (this.showLineNums && rowModel.module === 'Products') {
+                // reset the line_num count on the collection from QuotesLineNumHelper plugin
+                this.resetGroupLineNumbers(this.model.get('id'), this.collection);
             }
         }
 
@@ -353,6 +362,8 @@
         var maxPositionModel;
         var position = 0;
         var newRelatedModelId = app.utils.generateUUID();
+        var modelData;
+        var groupLineNumObj;
 
         // save the new model ID
         this.newIdsToSave.push(newRelatedModelId);
@@ -367,14 +378,23 @@
             position = +maxPositionModel.get('position') + 1;
         }
 
-        // set a few items on the model
-        relatedModel.set({
+        modelData = {
             'position': position,
             currency_id: this.model.get('currency_id'),
             base_rate: this.model.get('base_rate'),
             id: newRelatedModelId,
             _notSaved: true
-        });
+        };
+
+        if (this.showLineNums && relatedModel.module === 'Products') {
+            // get the line_num count object from QuotesLineNumHelper plugin
+            groupLineNumObj = this.getGroupLineNumCount(this.model.get('id'));
+            // add the new line number to the model
+            modelData.line_num = groupLineNumObj.ct++;
+        }
+
+        // set a few items on the model
+        relatedModel.set(modelData);
 
         // tell the currency field, not to set the default currency
         relatedModel.ignoreUserPrefCurrency = true;
@@ -463,7 +483,13 @@
      */
     _renderHtml: function() {
         var $el = this.$('tr.quote-data-group-header');
+        var $trs;
         if ($el.length) {
+            $trs = this.$('tr.quote-data-group-list');
+            if ($trs.length) {
+                // if there are already quote-data-group-list table rows remove them
+                $trs.remove();
+            }
             $el.after(this.template(this));
         } else {
             this.$el.html(this.template(this));
@@ -522,10 +548,26 @@
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
             messages: [app.lang.get('LBL_ALERT_CONFIRM_DELETE')],
             onConfirm: function() {
+                this.options.data.resetLineNums(this.options.data.rowModel);
                 this.options.data.rowModel.destroy();
             },
-            data: {'rowModel': this.collection.get(row.id)},
+            data: {
+                rowModel: this.collection.get(row.id),
+                resetLineNums: _.bind(this._onDeleteRowConfirm, this)
+            }
         });
+    },
+
+    /**
+     * Called when deleting a row is confirmed, this removes the model
+     * from the collection and resets the group's line numbers
+     *
+     * @param {Data.Bean} deletedRowModel The model being deleted
+     * @private
+     */
+    _onDeleteRowConfirm: function(deletedRowModel) {
+        this.layout.collection.remove(deletedRowModel);
+        this.layout.trigger('quotes:line_nums:reset', this.layout.groupId, this.layout.collection);
     },
 
     /**

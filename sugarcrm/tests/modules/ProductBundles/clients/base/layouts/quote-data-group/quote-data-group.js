@@ -79,6 +79,10 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             expect(layout.collection).toBe(layoutModel.get('product_bundle_items'));
         });
 
+        it('should add the comparator function to this.collections', function() {
+            expect(layout.collection.comparator).toBeDefined();
+        });
+
         it('should call app.metadata.getView with first param Products module', function() {
             lastCall = app.metadata.getView.lastCall;
             expect(lastCall.args[0]).toBe('Products');
@@ -152,6 +156,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
 
     describe('addRowModel()', function() {
         var rowModel;
+        var rowModel2;
         var listComponent;
         beforeEach(function() {
             listComponent = {
@@ -161,7 +166,12 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                 return listComponent;
             });
             rowModel = new Backbone.Model({
-                id: 'rowModelId1'
+                id: 'rowModelId1',
+                position: 0
+            });
+            rowModel2 = new Backbone.Model({
+                id: 'rowModelId2',
+                position: 0
             });
             layout.collection.reset();
         });
@@ -187,6 +197,15 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             layout.addRowModel(rowModel, false);
 
             expect(listComponent.toggledModels.rowModelId1).toBeUndefined();
+        });
+
+        it('should add row model at the position value on the model', function() {
+            layout.addRowModel(rowModel, false);
+            rowModel.set('position', 1);
+            layout.addRowModel(rowModel2, false);
+
+            expect(layout.collection.models[0].get('id')).toBe('rowModelId2');
+            expect(layout.collection.models[1].get('id')).toBe('rowModelId1');
         });
     });
 
