@@ -60,7 +60,7 @@ class EmailUI {
 		$folderStateSerial = $current_user->getPreference('folderOpenState', 'Emails');
 
 		if(!empty($folderStateSerial)) {
-			$this->folderStates = unserialize($folderStateSerial);
+            $this->folderStates = Serialized::unserialize($folderStateSerial);
 		}
 
 		$this->smarty = new Sugar_Smarty();
@@ -249,7 +249,7 @@ class EmailUI {
 		$preloadFolder = 'lazyLoadFolder = ';
 		$focusFolderSerial = $current_user->getPreference('focusFolder', 'Emails');
 		if(!empty($focusFolderSerial)) {
-			$focusFolder = unserialize($focusFolderSerial);
+            $focusFolder = Serialized::unserialize($focusFolderSerial);
 			//$focusFolder['ieId'], $focusFolder['folder']
 			$preloadFolder .= json_encode($focusFolder).";";
 		} else {
@@ -898,18 +898,18 @@ eoq;
 		$sortSerial = $current_user->getPreference('folderSortOrder', 'Emails');
 		$sortArray = array();
 		if(!empty($sortSerial)) {
-			$sortArray = unserialize($sortSerial);
+            $sortArray = Serialized::unserialize($sortSerial);
 		}
 
 		// treeview collapsed/open states
 		$folderStateSerial = $current_user->getPreference('folderOpenState', 'Emails');
 		$folderStates = array();
 		if(!empty($folderStateSerial)) {
-			$folderStates = unserialize($folderStateSerial);
+            $folderStates = Serialized::unserialize($folderStateSerial);
 		}
 
 		// subscribed accounts
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		// general settings
 		$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
@@ -926,7 +926,7 @@ eoq;
 
 		// focus folder
 		$focusFolder = $current_user->getPreference('focusFolder', 'Emails');
-		$focusFolder = !empty($focusFolder) ? unserialize($focusFolder) : array();
+        $focusFolder = !empty($focusFolder) ? Serialized::unserialize($focusFolder) : array();
 
 		// unread only flag
 		$showUnreadOnly = $current_user->getPreference('showUnreadOnly', 'Emails');
@@ -1010,7 +1010,7 @@ eoq;
 
 		$sortSerial = $current_user->getPreference('folderSortOrder', 'Emails');
 		if(!empty($sortSerial)) {
-			$sortArray = unserialize($sortSerial);
+            $sortArray = Serialized::unserialize($sortSerial);
 		}
 
 		$sortArray[$ieId][$focusFolder]['current']['sort'] = $sortBy;
@@ -1029,7 +1029,7 @@ eoq;
 		$folderStates = array();
 
 		if(!empty($folderStateSerial)) {
-			$folderStates = unserialize($folderStateSerial);
+            $folderStates = Serialized::unserialize($folderStateSerial);
 		}
 
 		$folderStates[$focusFolder] = $focusFolderOpen;
@@ -1086,7 +1086,7 @@ eoq;
 	function emptyTrash(&$ie) {
 		global $current_user;
 
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		if(is_array($showFolders)) {
 			foreach($showFolders as $ieId) {
@@ -1120,7 +1120,7 @@ eoq;
 		$rootNode->dynamicloadfunction = '';
 		$rootNode->expanded = true;
 		$rootNode->dynamic_load = true;
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		if(empty($showFolders)) {
 			$showFolders = array();
@@ -1341,7 +1341,7 @@ eoq;
 		}
 		if(file_exists($cache)) {
 			$cacheFile = FileLoader::varFromInclude($cache, 'cacheFile'); // provides $cacheFile
-			$metaOut = unserialize($cacheFile['out']);
+            $metaOut = Serialized::unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			if (isset($meta['attachments'])) {
 				$attachmentHtmlData = $meta['attachments'];
@@ -2780,7 +2780,7 @@ eoq;
 		} // if
 
 		//Check to make sure that the user has set the associated inbound email account -> outbound account is active.
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
         $sf = new SugarFolder();
         $groupSubs = $sf->getSubscriptions($current_user);
 
@@ -2971,7 +2971,7 @@ eoq;
 
 		$ieAccountsFull = $ie->retrieveAllByGroupId($current_user->id);
 		$ieAccountsShowOptionsMeta = array();
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		$defaultIEAccount = $ie->getUsersDefaultOutboundServerId($current_user);
 
@@ -3025,7 +3025,7 @@ eoq;
 		//$ieAccountsShowOptions = "<option value=''>{$app_strings['LBL_NONE']}</option>\n";
 		$ieAccountsShowOptionsMeta = array();
 		$ieAccountsShowOptionsMeta[] = array("value" => "", "text" => $app_strings['LBL_NONE'], 'selected' => '');
-		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $showFolders = Serialized::unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
 		foreach($ieAccountsFull as $k => $v) {
 			if(!in_array($v->id, $showFolders)) {
@@ -3106,7 +3106,7 @@ eoq;
 			$cacheFile = FileLoader::varFromInclude($cacheFilePath, 'cacheFile'); // provides $cacheFile
 
 			if(isset($cacheFile[$key])) {
-				$ret = unserialize($cacheFile[$key]);
+                $ret = Serialized::unserialize($cacheFile[$key]);
 				return $ret;
 			}
 		} else {
