@@ -15,6 +15,12 @@ describe('Quotes.Base.Views.Record', function() {
         bundleFields = SugarTest.loadFixture('product-bundle-fields', '../tests/modules/ProductBundles/fixtures');
         productFields = SugarTest.loadFixture('product-fields', '../tests/modules/Products/fixtures');
 
+        SugarTest.loadFile('../modules/Quotes/clients/base/plugins', 'QuotesViewSaveHelper', 'js', function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
+
         SugarTest.testMetadata.init();
         SugarTest.seedMetadata(true, './fixtures');
         SugarTest.testMetadata.updateModuleMetadata('ProductBundles', {
@@ -73,6 +79,7 @@ describe('Quotes.Base.Views.Record', function() {
         model = app.data.createBean('Quotes');
         context.set('model', model);
         view = SugarTest.createView('base', 'Quotes', 'record', viewMeta, context, true);
+        view.hasUnsavedQuoteChanges = $.noop;
     });
 
     afterEach(function() {
@@ -90,6 +97,19 @@ describe('Quotes.Base.Views.Record', function() {
         });
     });
 
+    describe('hasUnsavedChanges()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, 'hasUnsavedQuoteChanges', function() {});
+        });
+
+        it('should call hasUnsavedQuoteChanges', function() {
+            view.hasUnsavedChanges();
+
+            expect(view.hasUnsavedQuoteChanges).toHaveBeenCalled();
+        });
+    });
+
+    /*
     describe('hasUnsavedChanges', function() {
         var tmpRow;
         var callReturn;
@@ -194,7 +214,7 @@ describe('Quotes.Base.Views.Record', function() {
             expect(callReturn).toBeFalsy();
         });
     });
-
+    */
     describe('getCustomSaveOptions', function() {
         var attributes;
         var actual;

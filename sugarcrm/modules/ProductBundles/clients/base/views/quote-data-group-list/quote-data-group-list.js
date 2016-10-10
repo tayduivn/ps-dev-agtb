@@ -90,11 +90,6 @@
     pbnDescriptionMetadata: undefined,
 
     /**
-     * Array of IDs that have row models created for them but have not been saved yet
-     */
-    newIdsToSave: undefined,
-
-    /**
      * Track all the SugarLogic Contexts that we create for each record in bundle
      *
      * @type {Object}
@@ -114,10 +109,24 @@
     isDefaultGroupList: undefined,
 
     /**
+     * If this view is currently in the /create view or not
+     */
+    isCreateView: undefined,
+
+    /**
+     * CSS Classes for sortable rows
+     */
+    sortableCSSClass: 'sortable ui-sortable',
+
+    /**
+     * CSS Classes for non-sortable rows
+     */
+    nonSortableCSSClass: 'not-sortable',
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
-        this.newIdsToSave = [];
         this.pbnListMetadata = app.metadata.getView('ProductBundleNotes', 'quote-data-group-list');
         this.qliListMetadata = app.metadata.getView('Products', 'quote-data-group-list');
 
@@ -138,6 +147,8 @@
         this.viewName = 'list';
         this.action = 'list';
         this.isDefaultGroupList = this.model.get('default_group');
+
+        this.isCreateView = this.context.parent.get('create') || false;
 
         this._fields = _.flatten(_.pluck(this.qliListMetadata.panels, 'fields'));
 
@@ -270,8 +281,7 @@
         var rowId;
 
         if (rowModel.has('_notSaved')) {
-            rowId = rowModel.get('id');
-            this.newIdsToSave = _.without(this.newIdsToSave, rowId);
+            var rowId = rowModel.get('id');
             this.collection.remove(rowModel);
 
             if (!_.isUndefined(this.sugarLogicContexts[rowId])) {
@@ -362,12 +372,10 @@
         var maxPositionModel;
         var position = 0;
         var newRelatedModelId = app.utils.generateUUID();
+        var $relatedRow;
+        var moduleName = linkName === 'products' ? 'Products' : 'ProductBundleNotes';
         var modelData;
         var groupLineNumObj;
-
-        // save the new model ID
-        this.newIdsToSave.push(newRelatedModelId);
-
         if (this.collection.length) {
             // get the model with the highest position
             maxPositionModel = _.max(this.collection.models, function(model) {
@@ -379,12 +387,15 @@
         }
 
         modelData = {
-            'position': position,
+            _module: moduleName,
+            _notSaved: true,
+            position: position,
             currency_id: this.model.get('currency_id'),
             base_rate: this.model.get('base_rate'),
-            id: newRelatedModelId,
-            _notSaved: true
+            id: newRelatedModelId
         };
+
+        relatedModel.module = moduleName;
 
         if (this.showLineNums && relatedModel.module === 'Products') {
             // get the line_num count object from QuotesLineNumHelper plugin
@@ -407,6 +418,15 @@
 
         // adding to the collection will trigger the render
         this.collection.add(relatedModel);
+
+        $relatedRow = this.$('tr[name="' + relatedModel.module + '_' + relatedModel.id + '"]');
+        if ($relatedRow.length) {
+            if (this.isCreateView) {
+                $relatedRow.addClass(this.sortableCSSClass);
+            } else {
+                $relatedRow.addClass(this.nonSortableCSSClass);
+            }
+        }
 
         this.onNewItemChanged();
     },
@@ -731,16 +751,21 @@
                 tooltip: 'LBL_CANCEL_BUTTON_LABEL',
                 name: 'inline-cancel',
                 icon: 'fa-close',
-                css_class: 'btn-invisible'
-            }, {
+                css_class: 'btn-invisible inline-cancel ellipsis_inline'
+            }]
+        });
+
+        // if this is the create view, do not add a save button
+        if (!this.isCreateView) {
+            this.leftSaveCancelColumn[0].fields.push({
                 type: 'quote-data-editablelistbutton',
                 label: '',
                 tooltip: 'LBL_SAVE_BUTTON_LABEL',
                 name: 'inline-save',
                 icon: 'fa-check-circle',
-                css_class: 'btn-invisible'
-            }]
-        });
+                css_class: 'btn-invisible inline-save ellipsis_inline'
+            });
+        }
     },
 
     /**

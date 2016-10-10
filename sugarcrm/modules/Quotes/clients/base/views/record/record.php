@@ -197,9 +197,9 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                     ),
                 ),
                 'purchase_order_num',
+                'quote_stage',
                 'payment_terms',
                 'date_quote_expected_closed',
-                'quote_stage',
             ),
         ),
         array(

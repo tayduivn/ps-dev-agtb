@@ -14,12 +14,7 @@
             name: 'quotesCompatibility',
             route: 'Quotes/create',
             callback: function() {
-                var options = {
-                    layout: 'bwc',
-                    url: 'index.php?module=Quotes&action=EditView&return_module=Quotes'
-                };
-
-                app.controller.loadView(options);
+                app.router.record('Quotes', 'create');
             }
         }];
 

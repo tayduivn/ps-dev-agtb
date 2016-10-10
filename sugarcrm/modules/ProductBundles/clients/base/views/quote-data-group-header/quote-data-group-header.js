@@ -74,6 +74,11 @@
     isFirstRender: undefined,
 
     /**
+     * If this layout is currently in the /create view or not
+     */
+    isCreateView: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -84,6 +89,7 @@
 
         this._super('initialize', [options]);
 
+        this.isCreateView = this.context.parent.get('create') || false;
 
         this.isFirstRender = true;
 
@@ -105,6 +111,7 @@
         this.layout.on('quotes:group:save:stop', this._onGroupSaveStop, this);
         this.layout.on('editablelist:' + this.name + ':save', this.onSaveRowEdit, this);
         this.layout.on('editablelist:' + this.name + ':saving', this.onSavingRow, this);
+        this.layout.on('editablelist:' + this.name + ':create:cancel', this._onDeleteBundleBtnClicked, this);
     },
 
     /**
@@ -118,10 +125,12 @@
 
         if (!_.isEmpty(this.toggledModels)) {
             _.each(this.toggledModels, function(model, modelId) {
-                this.toggleRow(modelId, true);
+                this.toggleRow(model.module, modelId, true);
             }, this);
         }
 
+        // on the first header row render, if this model was _justSaved
+        // we want to toggle the row to edit mode adding this to toggledModels
         if (this.isFirstRender && this.model.get('_justSaved')) {
             this.model.unset('_justSaved');
             this.isFirstRender = false;
@@ -271,15 +280,45 @@
                 name: 'inline-cancel',
                 icon: 'fa-close',
                 css_class: 'btn-link btn-invisible inline-cancel ellipsis_inline'
-            }, {
+            }]
+        });
+
+        // if this is the create view, do not add a save button
+        if (this.isCreateView) {
+            this.leftSaveCancelColumn[0].fields.push({
+                type: 'quote-data-actiondropdown',
+                label: '',
+                tooltip: 'LBL_SAVE_BUTTON_LABEL',
+                name: 'create-dropdown-editmode',
+                icon: 'fa-plus',
+                css_class: 'ellipsis_inline',
+                no_default_action: true,
+                buttons: [{
+                    type: 'button',
+                    icon: 'fa-plus',
+                    name: 'create_qli_button',
+                    label: 'LBL_CREATE_QLI_BUTTON_LABEL',
+                    acl_action: 'create',
+                    tooltip: 'LBL_CREATE_QLI_BUTTON_TOOLTIP'
+                }, {
+                    type: 'button',
+                    icon: 'fa-plus',
+                    name: 'create_comment_button',
+                    label: 'LBL_CREATE_COMMENT_BUTTON_LABEL',
+                    acl_action: 'create',
+                    tooltip: 'LBL_CREATE_COMMENT_BUTTON_TOOLTIP'
+                }]
+            });
+        } else {
+            this.leftSaveCancelColumn[0].fields.push({
                 type: 'quote-data-editablelistbutton',
                 label: '',
                 tooltip: 'LBL_SAVE_BUTTON_LABEL',
                 name: 'inline-save',
                 icon: 'fa-check-circle',
                 css_class: 'btn-link btn-invisible inline-save ellipsis_inline'
-            }]
-        });
+            });
+        }
     },
 
     /**

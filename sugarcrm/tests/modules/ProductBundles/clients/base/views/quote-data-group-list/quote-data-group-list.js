@@ -3,6 +3,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     var view;
     var viewMeta;
     var viewContext;
+    var viewParentContext;
     var viewContextOnSpy;
     var viewLayoutModel;
     var layout;
@@ -25,7 +26,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 {'layout': {'span': 8}}
             ]
         };
-        layout = SugarTest.createLayout('base', 'ProductBundles', 'default', layoutDefs);
+        layout = SugarTest.createLayout('base', 'ProductBundles', 'default', layoutDefs, viewParentContext);
         layout.model = viewLayoutModel;
         layout.listColSpan = 3;
         viewMeta = {
@@ -61,10 +62,18 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             }]
         };
 
+        viewParentContext = app.context.getContext();
+        viewParentContext.set({
+            module: 'Quotes',
+            create: false
+        });
+        viewParentContext.prepare();
+
         viewContext = app.context.getContext();
         viewContext.set({
-            module: 'Quotes'
+            module: 'ProductBundles'
         });
+        viewContext.parent = viewParentContext;
         viewContext.prepare();
 
         viewContextOnSpy = sinon.collection.stub(viewContext, 'on', function() {});
@@ -79,6 +88,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
     });
 
     afterEach(function() {
+        viewParentContext = null;
+        viewContext = null;
         sinon.collection.restore();
         view.dispose();
         view = null;
@@ -107,6 +118,45 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.collection.length).toBe(3);
         });
 
+        describe('setting isCreateView', function() {
+            var initModel;
+            var collection;
+
+            beforeEach(function() {
+                sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
+                initModel = new Backbone.Model();
+                initOptions = {
+                    context: viewContext,
+                    meta: {
+                        panels: [{
+                            fields: ['field1', 'field2']
+                        }]
+                    },
+                    layout: {
+                        listColSpan: 2
+                    },
+                    model: initModel
+                };
+                collection = new Backbone.Collection();
+            });
+
+            afterEach(function() {
+                initModel = null;
+            });
+
+            it('should set isCreateView true if create is on parent context', function() {
+                viewParentContext.set('create', true);
+                view.initialize(initOptions);
+                expect(view.isCreateView).toBeTruthy();
+            });
+
+            it('should set isCreateView false if create is not on parent context', function() {
+                viewParentContext.unset('create');
+                view.initialize(initOptions);
+                expect(view.isCreateView).toBeFalsy();
+            });
+        });
+
         describe('setting isEmptyGroup', function() {
             var initModel;
             var collection;
@@ -122,7 +172,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                         }]
                     },
                     layout: {
-                        listColSpan: 2,
+                        listColSpan: 2
                     },
                     model: initModel
                 };
@@ -221,10 +271,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
             it('should set this.qliListMetadata to be the Products metadata', function() {
                 expect(view.qliListMetadata).toBe(prodMetadata);
-            });
-
-            it('should initialize newIdsToSave', function() {
-                expect(view.newIdsToSave).toEqual([]);
             });
 
             it('should initialize pbnDescriptionMetadata', function() {
@@ -393,7 +439,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 id: 'rowModel2'
             });
             rowModel2.set('_notSaved', true);
-            view.newIdsToSave.push('rowModel2');
             view.collection.add(rowModel1);
             view.collection.add(rowModel2);
         });
@@ -405,13 +450,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         it('should only remove the rowModel from the collection when _notSaved = true', function() {
             view.onCancelRowEdit(rowModel1);
-            expect(view.newIdsToSave.length).toBe(1);
             expect(view.collection.length).toBe(5);
         });
 
         it('should remove the rowModel from the collection since _notSaved = true', function() {
             view.onCancelRowEdit(rowModel2);
-            expect(view.newIdsToSave.length).toBe(0);
             expect(view.collection.length).toBe(4);
         });
     });
@@ -550,49 +593,82 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 currency_id: 'currency_id_1',
                 base_rate: '50.37'
             });
-
-            view.onAddNewItemToGroup(groupModel, linkName);
         });
 
         afterEach(function() {
-            view.newIdsToSave = [];
+            linkName = null;
+            groupModel = null;
+            relatedModel = null;
+            relatedModelId = null;
         });
 
-        it('should add the new model id to newIdsToSave', function() {
-            expect(view.newIdsToSave).toContain(relatedModelId);
+        describe('when adding new item to group', function() {
+            beforeEach(function() {
+                view.onAddNewItemToGroup(groupModel, linkName);
+            });
+
+            it('should set the new related model id to the new guid', function() {
+                expect(relatedModel.get('id')).toBe(relatedModelId);
+            });
+
+            it('should set the new relatedModel position to be the max of the collection models positions', function() {
+                expect(relatedModel.get('position')).toBe(3);
+            });
+
+            it('should set the new relatedModel modelView to be edit', function() {
+                expect(relatedModel.modelView).toBe('edit');
+            });
+
+            it('should set the new relatedModel _notSaved to be true', function() {
+                expect(relatedModel.get('_notSaved')).toBeTruthy();
+            });
+
+            it('should add the new relatedModel to toggledModels', function() {
+                expect(view.toggledModels[relatedModelId]).toEqual(relatedModel);
+            });
+
+            it('should add the new relatedModel to collection', function() {
+                expect(view.collection.contains(relatedModel)).toBeTruthy();
+            });
+
+            it('should add the new relatedModel with proper currency payload', function() {
+                expect(relatedModel.get('currency_id')).toBe('currency_id_1');
+                expect(relatedModel.get('base_rate')).toBe('50.37');
+            });
+
+            it('should set ignoreUserPrefCurrency on relatedModel so that the values are not overridden', function() {
+                expect(relatedModel.ignoreUserPrefCurrency).toBeTruthy();
+            });
         });
 
-        it('should set the new related model id to the new guid', function() {
-            expect(relatedModel.get('id')).toBe(relatedModelId);
-        });
+        describe('adding sortable or non-sortable classes', function() {
+            var addClassStub;
 
-        it('should set the new relatedModel position to be the max of the collection models positions', function() {
-            expect(relatedModel.get('position')).toBe(3);
-        });
+            beforeEach(function() {
+                addClassStub = sinon.collection.stub();
+                sinon.collection.stub(view, '$', function() {
+                    return {
+                        length: 1,
+                        addClass: addClassStub
+                    };
+                });
+            });
 
-        it('should set the new relatedModel modelView to be edit', function() {
-            expect(relatedModel.modelView).toBe('edit');
-        });
+            afterEach(function() {
+                addClassStub = null;
+            });
 
-        it('should set the new relatedModel _notSaved to be true', function() {
-            expect(relatedModel.get('_notSaved')).toBeTruthy();
-        });
+            it('should call addClass on related row when isCreateView is true', function() {
+                view.isCreateView = true;
+                view.onAddNewItemToGroup(groupModel, linkName);
+                expect(addClassStub).toHaveBeenCalledWith(view.sortableCSSClass);
+            });
 
-        it('should add the new relatedModel to toggledModels', function() {
-            expect(view.toggledModels[relatedModelId]).toEqual(relatedModel);
-        });
-
-        it('should add the new relatedModel to collection', function() {
-            expect(view.collection.contains(relatedModel)).toBeTruthy();
-        });
-
-        it('should add the new relatedModel with proper currency payload', function() {
-            expect(relatedModel.get('currency_id')).toBe('currency_id_1');
-            expect(relatedModel.get('base_rate')).toBe('50.37');
-        });
-
-        it('should set ignoreUserPrefCurrency on relatedModel so that the values are not overridden', function() {
-            expect(relatedModel.ignoreUserPrefCurrency).toBeTruthy();
+            it('should call removeClass on related row when isCreateView is false', function() {
+                view.isCreateView = false;
+                view.onAddNewItemToGroup(groupModel, linkName);
+                expect(addClassStub).toHaveBeenCalledWith(view.nonSortableCSSClass);
+            });
         });
     });
 

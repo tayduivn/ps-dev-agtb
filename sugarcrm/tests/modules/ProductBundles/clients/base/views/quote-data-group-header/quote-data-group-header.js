@@ -5,6 +5,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
     var viewLayoutModel;
     var layout;
     var layoutDefs;
+    var viewContext;
+    var viewParentContext;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -15,6 +17,21 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
                 {'layout': {'span': 8}}
             ]
         };
+
+        viewParentContext = app.context.getContext();
+        viewParentContext.set({
+            module: 'Quotes',
+            create: false
+        });
+        viewParentContext.prepare();
+
+        viewContext = app.context.getContext();
+        viewContext.set({
+            module: 'ProductBundles'
+        });
+        viewContext.parent = viewParentContext;
+        viewContext.prepare();
+
         layout = SugarTest.createLayout('base', 'ProductBundles', 'default', layoutDefs);
         layout.model = viewLayoutModel;
         layout.listColSpan = 3;
@@ -24,11 +41,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             }]
         };
         view = SugarTest.createView('base', 'ProductBundles', 'quote-data-group-header',
-            viewMeta, null, true, layout);
+            viewMeta, viewContext, true, layout);
         sinon.collection.stub(view, 'setElement');
     });
 
     afterEach(function() {
+        viewParentContext = null;
+        viewContext = null;
         sinon.collection.restore();
         view.dispose();
         view = null;
@@ -55,6 +74,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupHeader', function() {
             var initOptions;
             beforeEach(function() {
                 initOptions = {
+                    context: viewContext,
                     meta: {
                         panels: [{
                             fields: ['field1', 'field2']

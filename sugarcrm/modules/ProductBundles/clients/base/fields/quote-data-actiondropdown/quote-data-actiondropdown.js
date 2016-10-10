@@ -32,5 +32,19 @@
      */
     _getChildFieldsMeta: function() {
         return app.utils.deepCopy(this.def.buttons);
+    },
+
+    /**
+     * Overriding for quote-data-group-header in create view to display a specific template
+     *
+     * @inheritdoc
+     * @override
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+
+        if (this.view.name === 'quote-data-group-header' && this.view.isCreateView) {
+            this.template = app.template.getField('quote-data-actiondropdown', 'list', this.model.module);
+        }
     }
 })

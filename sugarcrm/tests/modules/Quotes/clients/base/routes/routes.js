@@ -1,6 +1,5 @@
 describe('Quotes.Routes', function() {
     var app;
-    var loadViewStub;
     var buildKeyStub;
     var getStub;
     var setStub;
@@ -10,7 +9,6 @@ describe('Quotes.Routes', function() {
         app.controller.loadAdditionalComponents(app.config.additionalComponents);
         // FIXME: SC-4677, load additionalComponents in tests
         // "Before Route Show Wizard Check" dependency
-        loadViewStub = sinon.collection.stub(app.controller, 'loadView');
         buildKeyStub = sinon.collection.stub(app.user.lastState, 'buildKey');
         getStub = sinon.collection.stub(app.user.lastState, 'get');
         setStub = sinon.collection.stub(app.user.lastState, 'set');
@@ -34,7 +32,8 @@ describe('Quotes.Routes', function() {
         beforeEach(function() {
             oldIsSynced = app.isSynced;
             app.isSynced = true;
-            sinon.collection.stub(app.router, 'index');
+            sinon.collection.stub(app.router, 'record');
+
             sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
             sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
             sinon.collection.stub(app, 'sync');
@@ -47,14 +46,9 @@ describe('Quotes.Routes', function() {
             Backbone.history.stop();
         });
 
-        it('should load the create view in bwc mode', function() {
-            var options = {
-                layout: 'bwc',
-                url: 'index.php?module=Quotes&action=EditView&return_module=Quotes'
-            };
-
+        it('should load the create view', function() {
             app.router.navigate('Quotes/create', {trigger: true});
-            expect(app.controller.loadView).toHaveBeenCalledWith(options);
+            expect(app.router.record).toHaveBeenCalledWith('Quotes', 'create');
         });
     });
 });

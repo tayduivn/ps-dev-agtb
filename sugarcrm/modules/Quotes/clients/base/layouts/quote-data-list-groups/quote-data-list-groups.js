@@ -50,12 +50,19 @@
     defaultGroupId: undefined,
 
     /**
+     * If this layout is currently in the /create view or not
+     */
+    isCreateView: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         this.groupIds = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
+
+        this.isCreateView = this.context.get('create') || false;
 
         this.before('render', this.beforeRender, this);
     },
@@ -70,6 +77,13 @@
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
         this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
+
+        // check if this is create mode, in which case add an empty array to bundles
+        if (this.isCreateView) {
+            this.model.set({
+                bundles: []
+            });
+        }
     },
 
     /**
@@ -102,6 +116,7 @@
      */
     _render: function() {
         var sortableItems;
+        var cssClasses;
 
         this._super('_render');
 
@@ -138,8 +153,12 @@
 
         //wrap in container div for scrolling
         if (!this.$el.parent().hasClass('flex-list-view-content')) {
+            cssClasses = 'flex-list-view-content';
+            if (this.isCreateView) {
+                cssClasses += ' create-view';
+            }
             this.$el.wrap(
-                '<div class="flex-list-view-content"></div>'
+                '<div class="' + cssClasses + '"></div>'
             );
             this.$el.parent().wrap(
                 '<div class="flex-list-view scroll-width left-actions quote-data-table-scrollable"></div>'
@@ -249,7 +268,7 @@
 
         // only make the bulk call if there are actual requests, if user drags row
         // but puts it in same place there should be no updates
-        if (!_.isEmpty(bulkSaveRequests)) {
+        if (!this.isCreateView && !_.isEmpty(bulkSaveRequests)) {
             if (triggerOldGroup) {
                 // trigger group changed for old group to check themselves
                 oldGroup.trigger('quotes:group:changed');
@@ -622,6 +641,46 @@
     },
 
     /**
+     * Creates the default ProductBundles Bean with default group ID
+     *
+     * @return {Data.Bean}
+     * @protected
+     */
+    _getDefaultGroupModel: function() {
+        // if there is not a default group yet, add one
+        this.defaultGroupId = app.utils.generateUUID();
+        return this._createNewProductBundleBean(this.defaultGroupId, 0, true);
+    },
+
+    /**
+     * Creates a new ProductBundle Bean
+     *
+     * @param {String) groupId The groupId to use, if not passed in, will generate a new UUID
+     * @param {number) newPosition The position to use for the group
+     * @param {boolean) isDefaultGroup If this group is the default group or not
+     * @return {Data.Bean}
+     * @protected
+     */
+    _createNewProductBundleBean: function(groupId, newPosition, isDefaultGroup) {
+        groupId = groupId || app.utils.generateUUID();
+        newPosition = newPosition || 0;
+        isDefaultGroup = isDefaultGroup || false;
+        return app.data.createBean('ProductBundles', {
+            id: groupId,
+            _notSaved: true,
+            _module: 'ProductBundles',
+            _action: 'create',
+            link: 'product_bundles',
+            default_group: isDefaultGroup,
+            currency_id: this.model.get('currency_id'),
+            base_rate: this.model.get('base_rate'),
+            product_bundle_items: [],
+            product_bundle_notes: [],
+            position: newPosition
+        });
+    },
+
+    /**
      * Handler for when quote_data changes on the model
      */
     _onProductBundleChange: function(productBundles) {
@@ -642,22 +701,10 @@
         }
 
         if (!hasDefaultGroup) {
-            // if there is not a default group yet, add one
-            this.defaultGroupId = app.utils.generateUUID();
-            defaultGroupModel = app.data.createBean('ProductBundles', {
-                id: this.defaultGroupId,
-                _notSaved: true,
-                _module: 'ProductBundles',
-                link: 'product_bundles',
-                default_group: true,
-                currency_id: this.model.get('currency_id'),
-                base_rate: this.model.get('base_rate'),
-                product_bundle_items: [],
-                position: 0
-            });
+            defaultGroupModel = this._getDefaultGroupModel();
             // calling unshift on the collection with silent so it doesn't
             // cause this function to be triggered again halfway thru
-            productBundles.unshift(defaultGroupModel, {silent: true});
+            productBundles.unshift(defaultGroupModel);
         } else {
             // default group exists, get the ID
             defaultGroupModel = _.find(productBundles.models, function(bundle) {
@@ -710,29 +757,39 @@
         var highestPositionBundle = bundles.max(function(bundle) {
             return bundle.get('position');
         });
+        var newBundle;
 
         // handle on the off chance that no bundles exist on the quote.
         if (!_.isEmpty(highestPositionBundle)) {
             nextPosition = parseInt(highestPositionBundle.get('position')) + 1;
         }
 
-        app.alert.show('adding_bundle_alert', {
-            level: 'info',
-            autoClose: false,
-            messages: app.lang.get('LBL_ADDING_BUNDLE_ALERT_MSG', 'Quotes')
-        });
+        if (this.isCreateView) {
+            // do not perform saves on create view
+            newBundle = this._createNewProductBundleBean(undefined, nextPosition, false);
+            // set the _justSaved flag so the new bundle header starts in edit mode
+            newBundle.set('_justSaved', true);
+            // add the new bundle which will add it to the layout and groupIds
+            bundles.add(newBundle);
+        } else {
+            app.alert.show('adding_bundle_alert', {
+                level: 'info',
+                autoClose: false,
+                messages: app.lang.get('LBL_ADDING_BUNDLE_ALERT_MSG', 'Quotes')
+            });
 
-        app.api.relationships('create', 'Quotes', {
-            'id': this.model.get('id'),
-            'link': 'product_bundles',
-            'related': {
-                currency_id: this.model.get('currency_id'),
-                base_rate: this.model.get('base_rate'),
-                position: nextPosition
-            }
-        }, null, {
-            success: _.bind(this._onCreateQuoteGroupSuccess, this)
-        });
+            app.api.relationships('create', 'Quotes', {
+                'id': this.model.get('id'),
+                'link': 'product_bundles',
+                'related': {
+                    currency_id: this.model.get('currency_id'),
+                    base_rate: this.model.get('base_rate'),
+                    position: nextPosition
+                }
+            }, null, {
+                success: _.bind(this._onCreateQuoteGroupSuccess, this)
+            });
+        }
     },
 
     /**
@@ -809,13 +866,16 @@
             })
         });
 
-        if (groupToDelete.model && groupToDelete.model.has('product_bundle_items')) {
-            bundleItems = groupToDelete.model.get('product_bundle_items');
-        }
+        if (this.isCreateView) {
+            this._removeGroupFromLayout(groupId, groupToDelete);
+        } else {
+            if (groupToDelete.model && groupToDelete.model.has('product_bundle_items')) {
+                bundleItems = groupToDelete.model.get('product_bundle_items');
+            }
 
-        if (defaultGroup.model && defaultGroup.model.has('product_bundle_items')) {
-            positionStart = defaultGroup.model.get('product_bundle_items').length;
-        }
+            if (defaultGroup.model && defaultGroup.model.has('product_bundle_items')) {
+                positionStart = defaultGroup.model.get('product_bundle_items').length;
+            }
 
         if (bundleItems && bundleItems.length > 0) {
             _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, model, key, list) {
@@ -836,22 +896,42 @@
                     }
                 });
 
-                positionStart++;
-            }, this, bulkRequests, positionStart));
+                    positionStart++;
+                }, this, bulkRequests, positionStart));
+            }
+
+            url = app.api.buildURL('ProductBundles/' + groupId);
+
+            bulkRequests.push({
+                url: url.substr(4),
+                method: 'DELETE'
+            });
+
+            if (defaultGroup.model.get('_notSaved')) {
+                this._saveDefaultGroupThenCallBulk(groupToDelete, defaultGroup, bulkRequests);
+            } else {
+                this._callBulkRequests(groupToDelete, defaultGroup, bulkRequests);
+            }
         }
+    },
 
-        url = app.api.buildURL('ProductBundles/' + groupId);
+    /**
+     * Removes a group from the layout
+     *
+     * @param {string} groupId The model ID of the deleted group
+     * @param {View.Layout} groupToDelete The Layout for the deleted group
+     * @private
+     */
+    _removeGroupFromLayout: function(groupId, groupToDelete) {
+        app.alert.dismiss('deleting_bundle_alert');
 
-        bulkRequests.push({
-            url: url.substr(4),
-            method: 'DELETE'
-        });
+        var bundles = this.model.get('bundles');
+        bundles.remove(groupToDelete.model);
 
-        if (defaultGroup.model.get('_notSaved')) {
-            this._saveDefaultGroupThenCallBulk(groupToDelete, defaultGroup, bulkRequests);
-        } else {
-            this._callBulkRequests(groupToDelete, defaultGroup, bulkRequests);
-        }
+        this.groupIds = _.without(this.groupIds, groupId);
+
+        // dispose the group
+        groupToDelete.dispose();
     },
 
     /**
