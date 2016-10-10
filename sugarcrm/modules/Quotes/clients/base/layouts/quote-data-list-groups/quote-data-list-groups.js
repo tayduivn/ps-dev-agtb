@@ -877,24 +877,25 @@
                 positionStart = defaultGroup.model.get('product_bundle_items').length;
             }
 
-        if (bundleItems && bundleItems.length > 0) {
-            _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, model, key, list) {
-                linkName = (model.module === 'Products' ? 'products' : 'product_bundle_notes');
-                url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' + linkName + '/' + model.id);
-                model.set('position', positionStart);
+            if (bundleItems && bundleItems.length > 0) {
+                _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, model, key, list) {
+                    linkName = (model.module === 'Products' ? 'products' : 'product_bundle_notes');
+                    url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' +
+                        linkName + '/' + model.id);
+                    model.set('position', positionStart);
 
-                bulkRequests.push({
-                    url: url.substr(4),
-                    method: 'POST',
-                    data: {
-                        id: this.defaultGroupId,
-                        link: linkName,
-                        relatedId: model.id,
-                        related: {
-                            position: positionStart
+                    bulkRequests.push({
+                        url: url.substr(4),
+                        method: 'POST',
+                        data: {
+                            id: this.defaultGroupId,
+                            link: linkName,
+                            relatedId: model.id,
+                            related: {
+                                position: positionStart
+                            }
                         }
-                    }
-                });
+                    });
 
                     positionStart++;
                 }, this, bulkRequests, positionStart));
