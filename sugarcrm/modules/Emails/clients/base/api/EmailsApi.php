@@ -461,7 +461,7 @@ class EmailsApi extends ModuleApi
      * application is not configured correctly to send email.
      *
      * @param SugarBean $email
-     * @throws SugarApiExceptionError
+     * @throws SugarApiException
      */
     protected function sendEmail(SugarBean $email)
     {
