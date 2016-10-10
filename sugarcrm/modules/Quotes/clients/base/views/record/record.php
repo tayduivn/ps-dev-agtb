@@ -219,7 +219,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                     'type' => 'fieldset',
                     'css_class' => 'address',
                     'label' => 'LBL_BILLING_ADDRESS',
-
                     'fields' => array(
                         array(
                             'name' => 'billing_address_street',
@@ -284,6 +283,8 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                             'label' => 'NTC_COPY_BILLING_ADDRESS',
                             'type' => 'copy',
                             'mapping' => array(
+                                'billing_account_name' => 'shipping_account_name',
+                                'billing_account_id' => 'shipping_account_id',
                                 'billing_address_street' => 'shipping_address_street',
                                 'billing_address_city' => 'shipping_address_city',
                                 'billing_address_state' => 'shipping_address_state',

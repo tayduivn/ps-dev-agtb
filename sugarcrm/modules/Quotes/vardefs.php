@@ -628,6 +628,13 @@ $dictionary['Quote'] = array(
             'source' => 'non-db',
             'importable' => 'required',
             'required' => true,
+            'populate_list' => array(
+                'billing_address_street' => 'billing_address_street',
+                'billing_address_city' => 'billing_address_city',
+                'billing_address_state' => 'billing_address_state',
+                'billing_address_postalcode' => 'billing_address_postalcode',
+                'billing_address_country' => 'billing_address_country',
+            ),
         ),
         'billing_account_id' => array(
             'name' => 'billing_account_id',
