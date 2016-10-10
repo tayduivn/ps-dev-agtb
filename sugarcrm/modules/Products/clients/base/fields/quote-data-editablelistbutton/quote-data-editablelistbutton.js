@@ -22,6 +22,13 @@
     _render: function() {
         this._super('_render');
 
+        if (_.isUndefined(this.changed) && this.model.get('_notSaved')) {
+            // when adding additional items to the list, causing additional renders,
+            // this.changed gets set undefined on re-initialize, so we need to make sure
+            // if this is an unsaved model and this.changed is undefined, that we set changed true
+            this.changed = true;
+        }
+
         if (this.tplName === 'edit') {
             this.$el.closest('.left-column-save-cancel').addClass('higher');
         } else {

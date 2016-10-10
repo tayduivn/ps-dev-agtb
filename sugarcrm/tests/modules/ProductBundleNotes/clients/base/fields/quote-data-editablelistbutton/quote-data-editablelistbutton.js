@@ -56,6 +56,28 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             field._render();
             expect(removeClassStub).toHaveBeenCalled();
         });
+
+        it('should set this.changed to true if this.changed is undefined and model is not saved', function() {
+            field.model.set('_notSaved', true);
+            field.changed = undefined;
+            field._render();
+
+            expect(field.changed).toBeTruthy();
+        });
+
+        it('should not set this.changed if this.changed is already set', function() {
+            field.changed = false;
+            field._render();
+
+            expect(field.changed).toBeFalsy();
+        });
+
+        it('should not set this.changed if model is already saved', function() {
+            field.changed = undefined;
+            field._render();
+
+            expect(field.changed).toBeUndefined();
+        });
     });
 
     describe('_loadTemplate()', function() {
