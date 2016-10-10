@@ -31,6 +31,11 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     protected $linkName;
 
     /**
+     * @var string
+     */
+    protected $originalDefsFileName;
+
+    /**
      * The constructor
      * @param string $subpanelName
      * @param string $loadedModule - Accounts
@@ -75,6 +80,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->setUpSubpanelViewDefFileInfo();
 
         include $this->loadedSubpanelFileName;
+
+        if ($this->originalDefsFileName) {
+            $this->loadOriginalViewDefs();
+        }
 
         // Prepare to load the history file. This will be available in cases when
         // a layout is restored.
@@ -295,6 +304,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $defaultSubpanelFile = "modules/{$this->_moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
         $this->loadedSubpanelName = $this->sidecarSubpanelName;
+        $this->originalDefsFileName = null;
 
         $studioModule = new StudioModule($this->_moduleName);
         $defaultTemplate = $studioModule->getType();
@@ -302,26 +312,45 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
         $baseTemplateSubpanelFile = "include/SugarObjects/templates/basic/clients/base/views/subpanel-list/subpanel-list.php";
 
-        // using includes because require_once causes an empty array
-        if (file_exists('custom/' . $subpanelFile)) {
-            $this->loadedSubpanelFileName = 'custom/' . $subpanelFile;
-        } elseif (file_exists($subpanelFile)) {
-            $this->loadedSubpanelFileName = $subpanelFile;
-        } elseif (!empty($overrideSubpanelName) && file_exists($overrideSubpanelFileName)) {
-            $this->loadedSubpanelFileName = $overrideSubpanelFileName;
-            $this->loadedSubpanelName = $overrideSubpanelName;
-        } elseif (file_exists($defaultSubpanelFile)) {
-            $this->loadedSubpanelFileName = $defaultSubpanelFile;
-            $this->loadedSubpanelName = 'subpanel-list';
-        } elseif (file_exists($defaultTemplateSubpanelFile)) {
-            $this->loadedSubpanelFileName = $defaultTemplateSubpanelFile;
-            $this->loadedSubpanelName = 'subpanel-list';
-        } elseif (file_exists($baseTemplateSubpanelFile)) {
-            $this->loadedSubpanelFileName = $baseTemplateSubpanelFile;
-            $this->loadedSubpanelName = 'subpanel-list';
-        } else {
-            throw new Exception("No metadata file found for subpanel: {$this->loadedSubpanelName}");
+        $files = array();
+        $files[] = array('custom/' . $subpanelFile, null);
+        $files[] = array($subpanelFile, null);
+
+        if ($overrideSubpanelName) {
+            $files[] = array($overrideSubpanelFileName, $overrideSubpanelName);
         }
+
+        $files[] = array($defaultSubpanelFile, 'subpanel-list');
+        $files[] = array($defaultTemplateSubpanelFile, 'subpanel-list');
+        $files[] = array($baseTemplateSubpanelFile, 'subpanel-list');
+
+        // locate effective subpanel definition file
+        foreach ($files as $spec) {
+            list($path, $subPanelName) = $spec;
+
+            if (file_exists($path)) {
+                $this->loadedSubpanelFileName = $path;
+                if ($subPanelName) {
+                    $this->loadedSubpanelName = $subPanelName;
+                }
+                break;
+            }
+        }
+
+        if (!$this->loadedSubpanelFileName) {
+            throw new Exception('No metadata file found for subpanel: ' . $this->loadedSubpanelName);
+        }
+
+        // locate original subpanel definition file
+        foreach ($files as $spec) {
+            list($path) = $spec;
+
+            if (strpos($path, 'custom/') !== 0 && file_exists($path)) {
+                $this->originalDefsFileName = $path;
+                break;
+            }
+        }
+
         $this->sidecarFile = "custom/" . $subpanelFile;
     }
 
@@ -443,6 +472,16 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             ) {
                 SugarAutoLoader::unlink($override);
             }
+        }
+    }
+
+    protected function loadOriginalViewDefs()
+    {
+        $viewdefs = array();
+        include $this->originalDefsFileName;
+
+        if (isset($viewdefs[$this->loadedModule])) {
+            $this->_originalViewdefs = $viewdefs[$this->loadedModule];
         }
     }
 }

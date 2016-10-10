@@ -192,8 +192,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
         // Select available fields from the field definitions - don't need to worry about checking if ok to include as the Implementation has done that already in its constructor
         foreach ($this->_fielddefs as $key => $def) {
-            if ($this->isValidField($key, $def) && !$this->panelHasField($key)) {
-                $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]) ;
+            if ($this->isValidField($key, $def)) {
+                if (!$this->panelHasField($key)) {
+                    $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]);
+                } elseif (isset($def['default']) && !$def['default']) {
+                    // if the panel has the field, but it's not displayed by default,
+                    // add it to the list of available field and keep the effective definition
+                    $availableFields[$key] = $def;
+                }
             }
         }
 
