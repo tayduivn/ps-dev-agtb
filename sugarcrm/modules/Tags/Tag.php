@@ -191,13 +191,13 @@ class Tag extends Basic
     public function mark_deleted($id) {
         //When deleting a tag, also delete the tag relation rows associated with that tag
         $date_modified = $GLOBALS['timedate']->nowDb();
+
         $sql = "UPDATE tag_bean_rel";
-        $sql .= " SET deleted = 1, date_modified = '$date_modified'";
-        $sql .= " WHERE tag_id='$id'";
-
+        $sql .= " SET deleted = 1, date_modified = ? ";
+        $sql .= " WHERE tag_id= ? ";
         $db = DBManagerFactory::getInstance();
-        $db->query($sql);
-
+        $conn = $db->getConnection();
+        $conn->executeQuery(sql, array($date_modified, $id));
         parent::mark_deleted($id);
     }
 

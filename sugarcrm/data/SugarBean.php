@@ -5758,7 +5758,7 @@ class SugarBean
     }
 
     /**
-     * This function should be overridden in each module.  It marks an item as deleted.
+     * This function may be overridden in each module.  It marks an item as deleted.
      *
      * If it is not overridden, then marking this type of item is not allowed
 	 */
@@ -5804,18 +5804,29 @@ class SugarBean
                 } else {
                     $this->modified_user_id = 1;
                 }
-                $query = "UPDATE $this->table_name set deleted=1, date_modified = '$date_modified',
-                            modified_user_id = '$this->modified_user_id' where id='$id'";
+                $this->db->updateParams(
+                    $this->table_name,
+                    $this->field_defs,
+                    array('deleted' => 1,
+                          'date_modified' => $date_modified,
+                          'modified_user_id' => $this->modified_user_id),
+                    array('id' => $id)
+                );
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
                 }
             } else {
-                $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
+                $this->db->updateParams(
+                    $this->table_name,
+                    $this->field_defs,
+                    array('deleted' => 1,
+                          'date_modified' => $date_modified),
+                    array('id' => $id)
+                );
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
                 }
             }
-            $this->db->query($query, true, "Error marking record deleted: ");
 
             // Take the item off the recently viewed lists
             $tracker = BeanFactory::getBean('Trackers');
@@ -5844,8 +5855,10 @@ class SugarBean
 
         $this->deleted = 0;
 		$date_modified = $GLOBALS['timedate']->nowDb();
-		$query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
-		$this->db->query($query, true,"Error marking record undeleted: ");
+
+        $query = "UPDATE {$this->table_name} SET deleted = ?, date_modified = ? WHERE id = ?";
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($this->deleted, $date_modified, $id));
 
         // call the custom business logic
         $this->call_custom_logic("after_restore", $custom_logic_arguments);

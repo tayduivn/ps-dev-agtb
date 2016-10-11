@@ -312,11 +312,9 @@ class Team extends SugarBean
 		}
 
 		// Update team_memberships table and set deleted = 1
-        $query = sprintf(
-            'UPDATE team_memberships SET deleted = 1 WHERE team_id = %s',
-            $this->db->quoted($this->id)
-        );
-		$this->db->query($query,true,"Error deleting memberships while deleting team: ");
+        $query = "UPDATE team_memberships SET deleted = 1 WHERE team_id = ?";
+        $conn = $this->db->getConnection();
+        $conn->executeQuery($query, array($this->id));
 
 		// Update teams and set deleted = 1
 		$this->deleted = 1;
