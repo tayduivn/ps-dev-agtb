@@ -113,19 +113,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     });
 
     describe('_render()', function() {
-        var disableSelectionStub;
-
         beforeEach(function() {
-            disableSelectionStub = sinon.collection.stub();
-            sinon.collection.stub($.fn, 'sortable', function() {
-                return {
-                    disableSelection: disableSelectionStub
-                };
-            });
-        });
-
-        afterEach(function() {
-            disableSelectionStub = null;
+            sinon.collection.stub($.fn, 'sortable', function() {});
         });
 
         describe('when there are no sortable items', function() {
@@ -207,10 +196,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 it('should call with stop handler defined', function() {
                     expect(callObj.stop).toBeDefined();
                 });
-            });
-
-            it('should call disableSelection', function() {
-                expect(disableSelectionStub).toHaveBeenCalled();
             });
         });
     });

@@ -147,7 +147,7 @@
                     out: _.bind(this._onGroupDragTriggerOut, this),
                     // the cursor to use when dragging
                     cursor: 'move'
-                }).disableSelection();
+                });
             }, this);
         }
 
