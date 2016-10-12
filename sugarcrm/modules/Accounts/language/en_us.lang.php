@@ -167,7 +167,6 @@ $mod_strings = array (
     'LBL_FILENAME' => 'Attachment',
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
     'LBL_DUNS_NUM' => 'DUNS:',
-    'LBL_DNB_BAL_PREVIEW' => 'Accounts Preview',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
     // Help Text

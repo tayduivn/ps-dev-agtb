@@ -46,10 +46,4 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>$module_name,
         'icon' => 'fa-arrow-circle-o-up',
     ),
-    array(
-        'type' => 'dnb-bal-import-menu-label',
-        'default_value' => 'LBL_BAL',
-        'icon' => 'fa-arrow-circle-o-up',
-        'route' => '#'.$module_name.'/layout/dnb-bal',
-    ),
 );

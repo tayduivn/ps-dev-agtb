@@ -130,9 +130,6 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'name',
-                    'events' => array(
-                        'keyup' => 'update:account',
-                    ),
                 ),
                 array(
                     'name' => 'favorite',
