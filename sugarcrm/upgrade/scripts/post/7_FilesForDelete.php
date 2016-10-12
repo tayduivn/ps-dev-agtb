@@ -394,6 +394,8 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'data/acl/SugarACLAddressees.php';
             $files[] = 'include/api/help/reminder.html';
             $files[] = 'include/api/help/token_verification_help.html';
+            $files[] = 'include/api/help/verify_socket_token_help.html';
+            $files[] = 'include/api/help/verify_trigger_token_help.html';
             $files[] = 'include/javascript/sugar7/socket.js';
             $files[] = 'include/nmb.php';
             $files[] = 'include/sfr.php';
@@ -434,6 +436,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'upgrade/scripts/post/9_ParticipantsLinksUpdate.php';
             $files[] = 'upgrade/scripts/post/9_RepairReminders.php';
             $files[] = 'upgrade/scripts/post/9_UnlockJobQueue.php';
+            $files[] = 'upgrade/scripts/post/7_FixCallsMeetingsReminderSelection.php';
             $files[] = 'vendor/sabre';
         }
         $this->fileToDelete($files);
