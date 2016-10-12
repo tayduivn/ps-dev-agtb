@@ -130,7 +130,7 @@ class PMSERelatedModule
                 if ($moduleLabel == "LBL_MODULE_NAME") {
                     $moduleLabel = translate($relatedModule);
                 }
-                
+
                 // Parentheses value
                 $pval = "$moduleLabel (" . trim($label, ':') . ": $link)";
                 $ret = array(
@@ -173,8 +173,7 @@ class PMSERelatedModule
 
         // Sort on the label
         array_multisort($labels, SORT_ASC, $output);
-        
-        
+
         // Send text with pluralized module name
         $filterText = isset($app_list_strings['moduleList'][$filter]) ? $app_list_strings['moduleList'][$filter] : $filter;
         $filterArray = array(
@@ -185,7 +184,7 @@ class PMSERelatedModule
             'module_name' => $filter, // Actual Module Name Key
             'relationship' => $filter
         );
-        
+
         array_unshift($output, $filterArray);
 
         $res['search'] = $filter;
@@ -207,7 +206,8 @@ class PMSERelatedModule
                 $value = $timedate->fromDb($theDate);
                 break;
             case 'bool':
-                $value = $value === 1;
+                // Make sure to cover all possible boolean values
+                $value = isTruthy($value);
                 break;
             case 'multienum':
                 $value = !empty($value) ? unencodeMultienum($value) : array();
