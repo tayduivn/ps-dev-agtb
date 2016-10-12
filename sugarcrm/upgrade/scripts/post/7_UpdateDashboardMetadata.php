@@ -28,13 +28,17 @@ class SugarUpgradeUpdateDashboardMetadata extends UpgradeScript
 
     public function updateMetaForDeletedDashboards($deletedDashlets)
     {
-        foreach ($deletedDashlets as $version => $dashlets) {
-            if (version_compare($this->from_version, $version, '<')) {
-                $sql = 'SELECT id, metadata FROM dashboards WHERE 0';
+        $left = "metadata LIKE '%\"type\":\"";
+        $right = "\"%'";
 
-                foreach ($dashlets as $dashlet) {
-                    $sql .= " OR metadata LIKE '%\"type\":\"$dashlet\"%'";
-                }
+        foreach ($deletedDashlets as $version => $dashlets) {
+            if (empty($dashlets)) {
+                continue;
+            }
+
+            if (version_compare($this->from_version, $version, '<')) {
+                $sql = 'SELECT id, metadata FROM dashboards WHERE ';
+                $sql.= $left . implode($right . ' OR ' . $left, $dashlets) . $right;
 
                 $rows = $this->db->query($sql);
 
