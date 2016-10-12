@@ -20,7 +20,6 @@ class MBPackage{
     var $name;
     var $is_uninstallable = true;
     var $description = '';
-    var $has_images = true;
     var $modules = array();
     var $date_modified = '';
     var $author = '';
@@ -222,9 +221,6 @@ function buildInstall($path){
         'layoutdefs'=>array(),
         'relationships'=>array(),
     );
-    if($this->has_images){
-        $installdefs['image_dir'] = '<basepath>/icons';
-    }
     foreach(array_keys($this->modules) as $module){
         $this->modules[$module]->build($path);
         $this->modules[$module]->addInstallDefs($installdefs);
@@ -250,10 +246,15 @@ function buildInstall($path){
         }
 
         copy_recursive( $this->path . '/language/', $path . '/language/');
+    }
+
+    if (file_exists($this->path . '/icons/')) {
         $icon_path = $path . '/../icons/default/images/';
         mkdir_recursive($icon_path);
         copy_recursive($this->path . '/icons/', $icon_path);
+        $installdefs['image_dir'] = '<basepath>/icons';
     }
+
     return "\n".'$installdefs = ' . var_export_helper($installdefs). ';';
 
 }
