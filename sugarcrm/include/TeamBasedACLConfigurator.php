@@ -593,8 +593,6 @@ class TeamBasedACLConfigurator
      */
     protected function saveConfig(\Configurator $cfg)
     {
-        // [RS-1580]. Clean up old data. Can be deleted for future releases which will not be upgraded from 7.8.
-        $cfg->config[self::CONFIG_KEY]['disabled_modules'] = false;
         $cfg->handleOverride();
         SugarConfig::getInstance()->clearCache();
         // PHP 5.5+. Because of the default value for "opcache.revalidate_freq" is 2 seconds and for modules

@@ -30,17 +30,41 @@ class SugarUpgradeUpdateTBAConfig extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.8', '>=')
-                && version_compare($this->to_version, '7.8.0.0.RC.4', '>=')) {
-            $tbaConfigurator = new TeamBasedACLConfigurator();
+        if (version_compare($this->from_version, '7.8', '>=') &&
+            version_compare($this->to_version, '7.8.0.0.RC.4', '>=')
+        ) {
+            $tbaConfigurator = $this->getTBAConfigurator();
+            $actionsList = $tbaConfigurator->getListOfPublicTBAModules();
+            $globalState = $tbaConfigurator->isEnabledGlobally();
+
+            $tbaConfigurator->setGlobal(true);
+
             $config = $tbaConfigurator->getConfig();
-            if (!empty($config['disabled_modules']) && is_array($config['disabled_modules'])) {
-                $actionsList = $tbaConfigurator->getListOfPublicTBAModules();
-                $enabledModules = array_values(array_diff($actionsList, $config['disabled_modules']));
-                $tbaConfigurator->setForModulesList($enabledModules, true);
-                $tbaConfigurator->setForModulesList($config['disabled_modules'], false);
-            }
+            $disabledModules = !empty($config['disabled_modules']) ? $config['disabled_modules'] : [];
+            $enabledModules = array_values(array_diff($actionsList, $disabledModules));
+
+            $tbaConfigurator->setForModulesList($enabledModules, true);
+            $tbaConfigurator->setForModulesList($disabledModules, false);
+
+            $tbaConfigurator->setGlobal($globalState);
+
+            // Important to get a fresh object after the changes.
+            $configurator = new Configurator();
+            // Got disabled modules, the key can be overridden in order to user `enabled_modules` only.
+            $configurator->config[TeamBasedACLConfigurator::CONFIG_KEY]['disabled_modules'] = false;
+            $configurator->handleOverride();
+            $configurator->clearCache();
+            SugarConfig::getInstance()->clearCache();
         }
         return;
+    }
+
+    /**
+     * Initialize configurator.
+     * @return TeamBasedACLConfigurator
+     */
+    public function getTBAConfigurator()
+    {
+        return new TeamBasedACLConfigurator();
     }
 }
