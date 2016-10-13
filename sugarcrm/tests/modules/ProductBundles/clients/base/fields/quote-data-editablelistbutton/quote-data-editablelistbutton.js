@@ -105,9 +105,6 @@ describe('ProductBundles.Base.Fields.QuoteDataEditablelistbutton', function() {
             };
             sinon.collection.stub(field.view.layout, 'trigger', function() {});
             field.view.name = 'fieldViewName';
-            field.cancelEdit();
-            lastCall = field.view.toggleRow.lastCall;
-            lastCallCtxTrigger = field.view.layout.trigger.lastCall;
         });
 
         afterEach(function() {
@@ -117,24 +114,55 @@ describe('ProductBundles.Base.Fields.QuoteDataEditablelistbutton', function() {
             delete field.view.layout;
         });
 
-        it('should call toggleRow with three params', function() {
-            expect(lastCall.args.length).toBe(3);
+        describe('when not create or new header row', function() {
+            beforeEach(function() {
+                field.cancelEdit();
+                lastCall = field.view.toggleRow.lastCall;
+                lastCallCtxTrigger = field.view.layout.trigger.lastCall;
+            });
+
+            it('should call toggleRow with three params', function() {
+                expect(lastCall.args.length).toBe(3);
+            });
+
+            it('should call toggleRow with first param module name', function() {
+                expect(lastCall.args[0]).toBe('TestModule');
+            });
+
+            it('should call toggleRow with second param model id', function() {
+                expect(lastCall.args[1]).toBe('testId');
+            });
+
+            it('should call toggleRow with third param false', function() {
+                expect(lastCall.args[2]).toBeFalsy();
+            });
+
+            it('should trigger editablelist:viewName:cancel on view layout', function() {
+                expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':cancel');
+            });
         });
 
-        it('should call toggleRow with first param module name', function() {
-            expect(lastCall.args[0]).toBe('TestModule');
-        });
+        describe('when in create or new header row', function() {
+            it('should trigger editablelist:viewName:create:cancel on view layout', function() {
+                field.view.isCreateView = true;
+                field.cancelEdit();
+                lastCallCtxTrigger = field.view.layout.trigger.lastCall;
 
-        it('should call toggleRow with second param model id', function() {
-            expect(lastCall.args[1]).toBe('testId');
-        });
+                expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':create:cancel');
+            });
 
-        it('should call toggleRow with third param false', function() {
-            expect(lastCall.args[2]).toBeFalsy();
-        });
+            it('should trigger editablelist:viewName:create:cancel on view layout', function() {
+                field.view.isCreateView = false;
+                sinon.collection.stub(field.model, 'getSynced', function() {
+                    return {
+                        _justSaved: true
+                    };
+                });
+                field.cancelEdit();
+                lastCallCtxTrigger = field.view.layout.trigger.lastCall;
 
-        it('should trigger editablelist:viewName:cancel on view context', function() {
-            expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':cancel');
+                expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':create:cancel');
+            });
         });
     });
 

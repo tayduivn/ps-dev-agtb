@@ -54,7 +54,7 @@
         var modelId = this.model.id;
         var syncedAttribs = this.model.getSynced();
 
-        if (this.view.isCreateView) {
+        if (this.view.isCreateView || syncedAttribs._justSaved) {
             this.view.layout.trigger('editablelist:' + this.view.name + ':create:cancel', this.model);
         } else {
             if (this.isDisabled()) {
