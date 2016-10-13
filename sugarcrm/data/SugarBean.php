@@ -3073,69 +3073,56 @@ class SugarBean
         }
 
         // TODO: When BWC is removed, replace from here
-        // ----------------------------------------------
-        $custom_join = $this->getCustomJoin();
-
-        $query_select = "{$this->table_name}.*";
-        $query_from = $this->table_name;
-        $where = " WHERE $this->table_name.id = ".$this->db->quoted($id);
-        if ($deleted) $where .= " AND $this->table_name.deleted=0";
-
-        $query_select .= " ".$custom_join['select'];
-        $query_from .= ' '.$custom_join['join'];
+        $query = new \SugarQuery();
+        $query->from(
+            $this,
+            ['add_deleted' => $deleted, 'team_security' => !$this->disable_row_level_security, 'action' => 'view']
+        );
+        $query->select('*');
+        $query->where()->equals("$this->table_name.id", $id);
 
         $name_format_fields = $locale->getNameFormatFields('Users');
         if (!empty($name_format_fields)) {
+            $fields = [];
             foreach ($this->related_user_fields as $id_field => $params) {
                 list($name_field, $alias) = $params;
-                if (!empty($this->field_defs[$id_field]) && !empty($this->field_defs[$name_field])) {
-                    list($select, $from) = $this->getUsersJoin($id_field, $alias, $name_format_fields);
-                    $query_select .= $select;
-                    $query_from   .= $from;
+                if (isset($this->field_defs[$id_field])
+                    && isset($this->field_defs[$name_field])
+                    && ($this->field_defs[$name_field]['type'] == 'relate')
+                ) {
+                    $join = $query->join($this->field_defs[$name_field]['link'], array('joinType' => 'LEFT'));
+                    $joinAlias = $join->joinName();
+                    foreach ($name_format_fields as $field) {
+                        $fields[] = [$joinAlias . '.' . $field, $alias . '_' . $field];
+                    }
                 }
             }
+            $query->select($fields);
         }
 
-        if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
-            $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
-            $query_from .= " LEFT JOIN teams teams_tn ON teams_tn.id = {$this->table_name}.team_id";
-        }
-        // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
-        // TODO: add global vardef for my_favorite field
-        // We should only add Favorites if we know what module we are using and if we have a user.
-
-        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
-            $query_select .= ', sf.id AS my_favorite';
-            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = {$this->db->quoted($id)} AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+        if (!empty($this->field_defs['team_link'])) {
+            $query->join('team_link', ['joinType' => 'LEFT', 'alias' => 'teams_tn']);
+            $query->select([['teams_tn.name', 'tn_name'], ['teams_tn.name_2', 'tn_name_2']]);
         }
 
-        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isActivityEnabled()) {
-            $query_select .= ", case when sub.id IS NOT NULL then 1 else 0 end following";
-            $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}'
-            AND sub.parent_id = {$this->db->quoted($id)} AND sub.created_by = '{$GLOBALS['current_user']->id}'";
+        if (!empty($this->module_name) && !empty($GLOBALS['current_user'])) {
+            if ($this->isFavoritesEnabled()) {
+                $query->select(['my_favorite']);
+            }
+            if ($this->isActivityEnabled()) {
+                $query->select(['following']);
+            }
         }
+        $query->limit(1);
 
-        $query = "SELECT $query_select FROM $query_from ";
-        $options = array(
-            'action' => 'view',
-            'where_condition' => true,
-        );
-        if(!$this->disable_row_level_security)
-        {
-            $this->addVisibilityFrom($query, $options);
-        }
-
-        $query .= $where;
-        if(!$this->disable_row_level_security) {
-            $this->addVisibilityWhere($query, $options);
-        }
-
-        $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
-        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record by id $this->table_name:$id found ", $encode);
-
-        if(empty($row))
-        {
+        $GLOBALS['log']->debug("Retrieve $this->object_name");
+        $results = $query->execute();
+        if (empty($results)) {
             return null;
+        }
+        $row = $results[0];
+        if ($encode && $this->db->getEncode()) {
+            $row = array_map([$this->db, 'encodeHTML'], $row);
         }
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow

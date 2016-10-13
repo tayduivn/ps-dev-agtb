@@ -64,18 +64,6 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->get_custom_table_name(), 'my_table_cstm', "SugarBean->get_custom_table_name() is not returning the correct custom table name.");
     }
 
-    public function testRetrieveQuoting()
-    {
-        $db = $this->getDbMock();
-        $db->expects($this->once())
-            ->method('quote')
-            ->with('bad\'idstring');
-
-        $bean = new BeanMockTestObjectName();
-        $bean->db = $db;
-        $bean->retrieve("bad'idstring");
-    }
-
     public function testRetrieveStringQuoting()
     {
         $db = $this->getDbMock();
