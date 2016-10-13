@@ -873,6 +873,18 @@
                 bundleItems = groupToDelete.model.get('product_bundle_items');
             }
 
+            // remove any unsaved models
+            _.each(bundleItems.models, _.bind(function(bundleItems, groupToDelete, model, key, list) {
+                // in _.each, if list is an object, model becomes undefined and list becomes
+                // an array with the last model
+                model = model || list[0];
+                if (model.has('_notSaved') && model.get('_notSaved')) {
+                    var groupList = groupToDelete.getGroupListComponent();
+                    delete groupList.toggledModels[model.get('id')];
+                    bundleItems.remove(model);
+                }
+            }, this, bundleItems, groupToDelete), this);
+
             if (defaultGroup.model && defaultGroup.model.has('product_bundle_items')) {
                 positionStart = defaultGroup.model.get('product_bundle_items').length;
             }

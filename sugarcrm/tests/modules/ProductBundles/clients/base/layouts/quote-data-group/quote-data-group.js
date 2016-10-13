@@ -162,7 +162,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
             listComponent = {
                 toggledModels: {}
             };
-            sinon.collection.stub(layout, '_getGroupListComponent', function() {
+            sinon.collection.stub(layout, 'getGroupListComponent', function() {
                 return listComponent;
             });
             rowModel = new Backbone.Model({
@@ -221,7 +221,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                     rowModelId1: rowModel
                 }
             };
-            sinon.collection.stub(layout, '_getGroupListComponent', function() {
+            sinon.collection.stub(layout, 'getGroupListComponent', function() {
                 return listComponent;
             });
             layout.collection.reset(rowModel);
@@ -245,7 +245,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         });
     });
 
-    describe('_getGroupListComponent()', function() {
+    describe('getGroupListComponent()', function() {
         var comp;
         var result;
         beforeEach(function() {
@@ -263,13 +263,13 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         });
 
         it('should return the list component', function() {
-            result = layout._getGroupListComponent();
+            result = layout.getGroupListComponent();
             expect(result).toBe(comp);
         });
 
         it('should return undefined if list component is not found', function() {
             layout._components = [];
-            result = layout._getGroupListComponent();
+            result = layout.getGroupListComponent();
             expect(result).toBe(undefined);
         });
     });

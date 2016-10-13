@@ -1513,6 +1513,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var defaultGroup;
         var defaultGroupModel;
         var bundleItem1;
+
         beforeEach(function() {
             bundleItem1 = app.data.createBean('Products', {
                 id: 'bundleItemId1',
@@ -1521,7 +1522,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             defaultGroupId = 'defaultGroupId1';
             defaultGroupModel = app.data.createBean('ProductBundles', {
                 id: defaultGroupId,
-                product_bundle_items: new Backbone.Collection(bundleItem1)
+                product_bundle_items: new Backbone.Collection()
             });
             defaultGroup = {
                 id: defaultGroupId,
@@ -1531,7 +1532,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             groupName = 'testName1';
             groupModel = new Backbone.Model({
                 id: groupId,
-                name: groupName
+                name: groupName,
+                product_bundle_items: new Backbone.Collection(bundleItem1)
             });
             groupToDelete = {
                 id: groupId,
@@ -1547,7 +1549,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             sinon.collection.stub(app.alert, 'show', function() {});
             sinon.collection.stub(layout, '_saveDefaultGroupThenCallBulk', function() {});
             sinon.collection.stub(layout, '_callBulkRequests', function() {});
-
         });
 
         afterEach(function() {

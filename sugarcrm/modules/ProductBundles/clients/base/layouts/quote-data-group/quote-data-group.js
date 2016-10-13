@@ -104,7 +104,7 @@
 
         if (isRowInEdit) {
             modelId = model.get('id');
-            listComp = this._getGroupListComponent();
+            listComp = this.getGroupListComponent();
             listComp.toggledModels[modelId] = model;
         }
 
@@ -124,7 +124,7 @@
 
         if (isRowInEdit) {
             modelId = model.get('id');
-            listComp = this._getGroupListComponent();
+            listComp = this.getGroupListComponent();
             if (listComp.toggledModels[modelId]) {
                 delete listComp.toggledModels[modelId];
             }
@@ -135,10 +135,8 @@
 
     /**
      * Returns the QuoteDataGroupListView in this layout
-     *
-     * @private
      */
-    _getGroupListComponent: function() {
+    getGroupListComponent: function() {
         return _.find(this._components, function(comp) {
             return comp.name === 'quote-data-group-list';
         });
