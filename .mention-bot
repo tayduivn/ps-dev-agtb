@@ -225,7 +225,8 @@
             "sugarcrm/modules/CalDav/**",
             "sugarcrm/modules/Carrier*/**",
             "sugarcrm/modules/Addressees/**"
-        ]
+        ],
+        "skipTeamPrs": true
     },
     {
         "name": "sugarcrm/eng-sfa",
@@ -440,7 +441,8 @@
             "sugarcrm/tests/modules/OutboundEmailConfiguration/**",
             "sugarcrm/tests/modules/Prospect*/**",
             "sugarcrm/tests/modules/UserSignatures/**"
-        ]
+        ],
+        "skipTeamPrs": true
     },
     {
         "name": "sugarcrm/eng-macaroon",
@@ -454,7 +456,8 @@
             "sugarcrm/include/javascript/pmse/**",
             "sugarcrm/Ext/LogicHooks/pmse.php",
             "src/ProcessManager/**"
-        ]
+        ],
+        "skipTeamPrs": true
     },
     {
         "name": "sugarcrm/eng-integrations",
@@ -499,7 +502,8 @@
 
             "sugarcrm/modules/Accounts/clients/base/views/dnb-bal-params/**",
             "sugarcrm/modules/Accounts/clients/base/views/dnb-bal-results/**"
-        ]
+        ],
+        "skipTeamPrs": true
     },
     {
         "name": "sugarcrm/eng-burritos",
