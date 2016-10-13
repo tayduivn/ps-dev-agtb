@@ -21,11 +21,6 @@ use Doctrine\DBAL\Driver\Mysqli\MysqliStatement as BaseStatement;
 class Statement extends BaseStatement
 {
     /**
-     * @var bool
-     */
-    protected $_rowValuesAreBound = false;
-
-    /**
      * {@inheritdoc}
      */
     public function execute($params = null)
@@ -33,22 +28,12 @@ class Statement extends BaseStatement
         $isFirstExecution = $this->_columnNames === null;
         $result = parent::execute($params);
 
-        // Doctrine binds row values during first statement execution
-        if ($isFirstExecution) {
-            $this->_rowBindedValues = true;
-        }
-
         $hasColumns = $this->_columnNames !== false;
 
-        // this is a subsequent execution of a SELECT, SHOW, etc. statement
+        // @link https://github.com/doctrine/dbal/pull/2536
         if (!$isFirstExecution && $hasColumns) {
-            // @link https://github.com/doctrine/dbal/pull/2487
             $this->_stmt->store_result();
-        }
 
-        // rebind row values in case they were unbound by closing cursor
-        // @link https://github.com/doctrine/dbal/pull/2489
-        if ($hasColumns && !$this->_rowValuesAreBound) {
             $this->_rowBindedValues = array_fill(0, count($this->_columnNames), null);
 
             $refs = array();
@@ -59,20 +44,7 @@ class Statement extends BaseStatement
             if (!call_user_func_array(array($this->_stmt, 'bind_result'), $refs)) {
                 throw new MysqliException($this->_stmt->error, $this->_stmt->sqlstate, $this->_stmt->errno);
             }
-
-            $this->_rowValuesAreBound = true;
         }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function closeCursor()
-    {
-        $result = parent::closeCursor();
-        $this->_rowValuesAreBound = false;
 
         return $result;
     }
