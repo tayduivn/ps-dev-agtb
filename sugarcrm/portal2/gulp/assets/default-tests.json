@@ -10,9 +10,5 @@
  */
 
 [
-    "tests/clients/base/**/*.js",
-    "tests/modules/**/clients/base/**/*.js",
-    "tests/include/javascript/sugar7/*.js",
-    "tests/include/javascript/sugar7/**/*.js",
-    "tests/include/javascript/twitterbootstrap/**/*.js"
+    "portal2/tests/clients/portal/**/*.js"
 ]

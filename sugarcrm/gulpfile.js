@@ -37,10 +37,9 @@ function readJSONFile(filename) {
  */
 function getFirstPartyFiles() {
     return [
-        'clients/**/*.js',
+        'clients/base/**/*.js',
         'include/javascript/sugar7/**/*.js',
-        'modules/**/clients/**/*.js',
-        'portal2/user.js',
+        'modules/**/clients/base/**/*.js',
     ];
 }
 

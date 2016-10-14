@@ -43,7 +43,6 @@
     "include/javascript/sugar7/accessibility/accessibility.js",
     "include/javascript/sugar7/accessibility/click.js",
     "include/javascript/sugar7/accessibility/label.js",
-    "include/javascript/sugar7/tutorial.js",
 
     // TODO: decide if we"re going to only serve or if we should have
     // them all by default
@@ -83,10 +82,10 @@
     "tests/fixtures/search.js",
     "tests/modules/**/fixtures/*.js",
 
-    // If we are emulating what the real app will see, we need to include our hacks
-    "include/javascript/sugar7/hacks.js",
-
-    "gulp/environment.js",
+    "portal2/lib/sugar.searchahead.js",
+    "portal2/portal.js",
+    "portal2/user.js",
+    "portal2/error.js",
 
     {"pattern": "clients/**/*.js", "included": false, "served": true, "watched": true},
     {"pattern": "modules/**/clients/**/*.js", "included": false, "served": true, "watched": true}
