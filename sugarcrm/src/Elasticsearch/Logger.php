@@ -18,7 +18,6 @@ use Elastica\Request;
 use Elastica\Response;
 use Elastica\Connection;
 use Elastica\JSON;
-use SugarXHprof;
 
 /**
  *
@@ -27,21 +26,6 @@ use SugarXHprof;
  */
 class Logger extends BaseLogger
 {
-    /**
-     * XHProf
-     * @var SugarXHprof
-     */
-    protected $xhProf;
-
-    /**
-     * Set xhProf tracker
-     * @param SugarXHProf $xhProf
-     */
-    public function setXhProf(SugarXHProf $xhProf)
-    {
-        $this->xhProf = $xhProf;
-    }
-
     /**
      * Handle request logging on success.
      * @param \Elastica\Request $request
@@ -81,9 +65,8 @@ class Logger extends BaseLogger
             $this->log(LogLevel::DEBUG, $msg);
         }
 
-        // xhprof tracking
-        if (null !== $this->xhProf) {
-            $this->xhProf->trackElasticQuery(array(
+        if (!empty($GLOBALS['sugar_config']['xhprof_config'])) {
+            \SugarXHprof::getInstance()->trackElasticQuery(array(
                 $request->getMethod(),
                 $info['url'],
             ), $request->getData(), $response->getQueryTime());

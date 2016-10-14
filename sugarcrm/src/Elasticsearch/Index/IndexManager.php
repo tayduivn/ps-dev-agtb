@@ -18,8 +18,6 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Provider\ProviderCollection;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\Mapping;
 use Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index;
 use Sugarcrm\Sugarcrm\Elasticsearch\Mapping\MappingCollection;
-use Sugarcrm\Sugarcrm\Elasticsearch\Exception\IndexManagerException;
-use Elastica\Response;
 
 /**
  *
@@ -38,7 +36,7 @@ class IndexManager
     const DEFAULT_INDEX_SETTINGS_KEY = 'default';
 
     /**
-     * @var Container
+     * @var \Sugarcrm\Sugarcrm\Elasticsearch\Container
      */
     protected $container;
 
@@ -55,10 +53,6 @@ class IndexManager
         'index.mapping.ignore_malformed' => true,
         // Coerce numeric values
         'index.mapping.coerce' => true,
-        // Refresh interval
-        'index.refresh_interval' => '1s',
-        // Number of replicas
-        'index.number_of_replicas' => '1',
     );
 
     /**
@@ -74,67 +68,12 @@ class IndexManager
     );
 
     /**
-     * Value used as refresh_interval when performing a reindex. When no more
-     * records are in the queue, the refresh_interval will be restored as per
-     * the index settings.
-     *
-     * This can be configured by using the following parameter:
-     * `$sugar_config['full_text_engine']['Elastic']['reindex_refresh_interval']`
-     *
-     * @var int|string
-     */
-    protected $reindexRefreshInterval = -1;
-
-    /**
-     * During indexing documents are sent to each replica node on which the
-     * indexing process is repeated. When this option is enabled, the
-     * replicas for the involved indices will be set to zero. When all
-     * records are processed from fts_queue, the replicas are enabled again
-     * and the recovery process will start syncing the data which is much
-     * more performant than having multiple replicas active.
-     *
-     * Use `$sugar_config['full_text_engine']['Elastic']['reindex_zero_replica'] = true`
-     *
-     * When using this functionality it is highly encourage to configure
-     * the replica settings using index_settings as we cannot fall back
-     * the any node configuration for this. If no index_setting config is
-     * supplied every index will get configured using one replica by default.
-     *
-     * Also note that when using this functionality (which is disabled by
-     * default) the cluster state can be affected by it.
-     *
-     * @var boolean
-     */
-    protected $reindexZeroReplica = false;
-
-    /**
      * Ctor
      */
     public function __construct(array $config, Container $container)
     {
         $this->container = $container;
         $this->config = $config;
-    }
-
-    /**
-     * Set reindex refresh interval
-     * @param int|string $interval
-     */
-    public function setReindexRefreshInterval($interval)
-    {
-        if (!is_numeric($interval) && !is_string($interval)) {
-            throw new IndexManagerException("Index refresh_interval needs to be an int or string");
-        }
-        $this->reindexRefreshInterval = $interval;
-    }
-
-    /**
-     * Set zero replica reindex
-     * @param boolean $flag
-     */
-    public function setReindexZeroReplica($flag)
-    {
-        $this->reindexZeroReplica = (bool) $flag;
     }
 
     /**
@@ -163,23 +102,14 @@ class IndexManager
     public function scheduleIndexing(array $modules = array(), $recreateIndices = false)
     {
         if (!$this->readyForIndexChanges()) {
-            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
+            $this->container->logger->critical('System not ready for full reindex, cancelling');
             return false;
-        }
-
-        $allModules = $this->getAllEnabledModules();
-        if (empty($modules)) {
-            $modules = $allModules;
-        } else {
-            $modules = array_intersect($modules, $allModules);
         }
 
         if ($recreateIndices) {
             $this->syncIndices($modules, $recreateIndices);
         }
 
-        $this->disableRefresh($modules);
-        $this->disableReplicas($modules);
         $this->container->queueManager->reindexModules($modules);
 
         return true;
@@ -193,7 +123,7 @@ class IndexManager
     public function addMappings(array $modules = array())
     {
         if (!$this->readyForIndexChanges()) {
-            $this->container->logger->critical('IndexManager: System not ready for full reindex, cancelling');
+            $this->container->logger->critical('System not ready for full reindex, cancelling');
             return false;
         }
 
@@ -306,43 +236,37 @@ class IndexManager
      */
     protected function buildMapping(ProviderCollection $providerCollection, array $modules = array())
     {
+        if (empty($modules)) {
+            $modules = $this->getAllEnabledModules();
+        }
         return $this->container->mappingManager->buildMapping($providerCollection, $modules);
     }
 
     /**
      * Build index settings for given index
-     * @param Index $index
+     * @param string $index Index name
      * @param AnalysisBuilder $analysisBuilder
      * @return array
      */
-    protected function buildIndexSettings(Index $index, AnalysisBuilder $analysisBuilder)
+    protected function buildIndexSettings($index, AnalysisBuilder $analysisBuilder)
     {
         $config = $this->getIndexSettingsFromConfig($index);
-        return array_merge($config, $analysisBuilder->compile());
+        return array_merge($this->defaultSettings, $config, $analysisBuilder->compile());
     }
 
     /**
      * Get index settings from $sugar_config
-     * @param Index $index
+     * @param string $index Index name
      * @return array
      */
-    protected function getIndexSettingsFromConfig(Index $index)
+    protected function getIndexSettingsFromConfig($index)
     {
-        $indexName = $index->getBaseName();
         $settings = array();
-
-        // explicit index configuration
-        if (isset($this->config[$indexName])) {
-            $settings = $this->config[$indexName];
+        if (isset($this->config[$index])) {
+            $settings = $this->config[$index];
+        } elseif (isset($this->config[self::DEFAULT_INDEX_SETTINGS_KEY])) {
+            $settings = $this->config[self::DEFAULT_INDEX_SETTINGS_KEY];
         }
-
-        // default settings from config
-        if (isset($this->config[self::DEFAULT_INDEX_SETTINGS_KEY])) {
-            $settings = array_merge($this->config[self::DEFAULT_INDEX_SETTINGS_KEY], $settings);
-        }
-
-        // derfault core settings
-        $settings = array_merge($this->defaultSettings, $settings);
 
         // We do NOT accept analysis settings anymore in `$sugar_config`
         if (isset($settings[AnalysisBuilder::ANALYSIS])) {
@@ -418,13 +342,12 @@ class IndexManager
      * @param Index $index
      * @param AnalysisBuilder $analysisBuilder
      * @param boolean $dropExist Drop index if already exists
-     * @return Index
+     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Index
      */
     public function createIndex(Index $index, AnalysisBuilder $analysisBuilder, $dropExist = false)
     {
         // TODO: add error handling
-        $settings = $this->buildIndexSettings($index, $analysisBuilder);
-
+        $settings = $this->buildIndexSettings($index->getBaseName(), $analysisBuilder);
         $result = $index->create($settings, $dropExist);
         return $index;
     }
@@ -468,160 +391,5 @@ class IndexManager
     protected function getIndexCollection(MappingCollection $mappingCollection)
     {
         return $this->container->indexPool->buildIndexCollection($mappingCollection);
-    }
-
-    /**
-     * Get list of managed indices for given modules
-     * @param array $modules
-     * @return IndexCollection
-     */
-    protected function getManagedIndices(array $modules)
-    {
-        return $this->container->indexPool->getManagedIndices($modules);
-    }
-
-    /**
-     * Ensure the refresh intervals are properly configured for all indices.
-     * During bulk imports the refresh interval can be disabled to speed up
-     * bulk imports. This method is primarily called from the scheduler which
-     * kicks in from cron. When no more records are present in fts_queue the
-     * scheduler will re-enable the refresh intervals as per index config.
-     *
-     * This implies when the index.refresh_interval is set using $sugar_config,
-     * this will be picked up automatically given cron is enabled on the
-     * system.
-     *
-     * @return array List of affected indices and status code
-     */
-    public function enableRefresh()
-    {
-        $modules = $this->getAllEnabledModules();
-        $status = array();
-        foreach ($this->getManagedIndices($modules) as $index) {
-            $status[$index->getName()] = $this->enableIndexRefresh($index)->getStatus();
-        }
-        return $status;
-    }
-
-    /**
-     * Disable refresh interval on indices for given modules. This should only
-     * be called from the queue manager when a reindex is scheduled. The
-     * scheduler which will ensure the refresh interval is re-enabled when no
-     * more records are in need of processing from the fts_queue table.
-     *
-     * @param array $modules List of modules
-     * @return array List of affected indices and status code
-     */
-    public function disableRefresh(array $modules)
-    {
-        $status = array();
-        foreach ($this->getManagedIndices($modules) as $index) {
-            $status[$index->getName()] = $this->setIndexRefresh($index, $this->reindexRefreshInterval)->getStatus();
-        }
-        return $status;
-    }
-
-    /**
-     * Enable replicas for all indices. This method is primarily called by the
-     * scheduler when no more records are in the fts_queue table. This implies
-     * that sugar controls the replica settings for its indices and no other
-     * cluster overrides should be set to avoid flapping index recovery.
-     *
-     * @return array List of affected indices and status code
-     */
-    public function enableReplicas()
-    {
-        if (!$this->reindexZeroReplica) {
-            return array();
-        }
-
-        $modules = $this->getAllEnabledModules();
-        $status = array();
-        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $status[$index->getName()] = $this->enableIndexReplicas($index)->getStatus();
-        }
-        return $status;
-    }
-
-    /**
-     * Disable replicas on indices for given modules. This method is primarily
-     * called by queue manager to disable replicas during reindexing process.
-     * Cron scheduler will ensure to re-enable the replica settings once
-     * fts_queue table is empty.
-     *
-     * @param array $modules
-     * @return array List of affected indices and status code
-     */
-    public function disableReplicas(array $modules)
-    {
-        if (!$this->reindexZeroReplica) {
-            return array();
-        }
-
-        $status = array();
-        foreach ($this->getManagedIndices($modules)->getIterator() as $index) {
-            $status[$index->getName()] = $this->setNumberOfReplicas($index, 0)->getStatus();
-        }
-        return $status;
-    }
-
-    /**
-     * Set index interval
-     * @param Index $index
-     * @param int|string $interval
-     * @return Response
-     */
-    protected function setIndexRefresh(Index $index, $interval)
-    {
-        $this->container->logger->info(sprintf(
-            "IndexManager: Set refresh interval %s for %s",
-            $interval,
-            $index->getName()
-        ));
-        return $index->getSettings()->setRefreshInterval($interval);
-    }
-
-    /**
-     * Set proper refresh interval for given index from configuration
-     * @param Index $index
-     * @return Response
-     */
-    protected function enableIndexRefresh(Index $index)
-    {
-        $config = $this->getIndexSettingsFromConfig($index);
-        if (!isset($config['index.refresh_interval'])) {
-            throw new IndexManagerException("No refresh_interval config setting available");
-        }
-        return $this->setIndexRefresh($index, $config['index.refresh_interval']);
-    }
-
-    /**
-     * Set replicas on given index
-     * @param Index $index
-     * @param int $replicas
-     * @return Response
-     */
-    protected function setNumberOfReplicas(Index $index, $replicas)
-    {
-        $this->container->logger->info(sprintf(
-            "IndexManager: Set replicas to %s for %s",
-            $replicas,
-            $index->getName()
-        ));
-        return $index->getSettings()->setNumberOfReplicas($replicas);
-    }
-
-    /**
-     * Enable replica settings for given index from configuration
-     * @param Index $index
-     * @return Response
-     */
-    protected function enableIndexReplicas(Index $index)
-    {
-        $config = $this->getIndexSettingsFromConfig($index);
-        if (!isset($config['index.number_of_replicas'])) {
-            throw new IndexManagerException("No number_of_replicas config setting available");
-        }
-        return $this->setNumberOfReplicas($index, $config['index.number_of_replicas']);
     }
 }

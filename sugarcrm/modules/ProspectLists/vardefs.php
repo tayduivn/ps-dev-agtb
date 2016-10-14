@@ -48,12 +48,11 @@ $dictionary['ProspectList'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
-                // Disabled until UX component is available
-                //'aggregations' => array(
-                //    'date_entered' => array(
-                //        'type' => 'DateRange',
-                //    ),
-                //),
+                'aggregations' => array(
+                    'date_entered' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
             ),
             'readonly' => true,
         ),
@@ -64,12 +63,11 @@ $dictionary['ProspectList'] = array(
             'full_text_search' => array(
                 'enabled' => true,
                 'searchable' => false,
-                // Disabled until UX component is available
-                //'aggregations' => array(
-                //    'date_modified' => array(
-                //        'type' => 'DateRange',
-                //    ),
-                //),
+                'aggregations' => array(
+                    'date_modified' => array(
+                        'type' => 'DateRange',
+                    ),
+                ),
             ),
             'readonly' => true,
         ),

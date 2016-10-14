@@ -158,21 +158,6 @@ class IndexPool
     }
 
     /**
-     * Get list of managed indices for given modules
-     * @param array $modules
-     * @return \Sugarcrm\Sugarcrm\Elasticsearch\Index\IndexCollection
-     */
-    public function getManagedIndices(array $modules)
-    {
-        $collection = new IndexCollection($this->container);
-        foreach ($modules as $module) {
-            $indices = $this->getStrategy($module)->getManagedIndices($module);
-            $collection->addIndices($indices);
-        }
-        return $collection;
-    }
-
-    /**
      * Get write index for given module. There can only be one write index at
      * any given time for a module.
      * @param string $module

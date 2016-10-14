@@ -85,17 +85,15 @@ class QueueManager
     }
 
     /**
-     * Queue all beans for given modules.
+     * Queue all beans for given modules. If no modules are specified all
+     * enabled modules will be taken into account.
      * @param array $modules
      */
-    public function reindexModules(array $modules)
+    public function reindexModules(array $modules = array())
     {
-        $allModules = $this->container->metaDataHelper->getAllEnabledModules();
-        sort($allModules);
-        sort($modules);
-
-        // clear the whole queue when all modules are selected
-        if ($allModules === $modules) {
+        if (empty($modules)) {
+            $modules = $this->container->metaDataHelper->getAllEnabledModules();
+            // no module list needed to just clear everything as this is faster
             $this->resetQueue();
         } else {
             $this->resetQueue($modules);
@@ -104,41 +102,6 @@ class QueueManager
         $this->cleanupQueue();
         $this->queueModules($modules);
         $this->createScheduler();
-    }
-
-    /**
-     * Although the queue can be used at any given point in time, we want to
-     * be able to be notified from the scheduler when nothing is left in the
-     * queue. This is our sign to do some housekeeping regarding bulk indexing
-     * operations like refresh_interval and/or replica tuning.
-     *
-     * Both the non-replica reindex settings as well as refresh_interval should
-     * be carefully configured when using live reindexing as both values will
-     * only be restored when the queue is reported as empty. Optionally if due
-     * to circumstances the queue doesn't get empty (i.e. async modules, or
-     * live reindexing) CLI commands are available for prematurely force the
-     * proper refresh_interval/replica settings.
-     */
-    public function reportIndexingDone()
-    {
-        $this->enableRefresh();
-        $this->enableReplicas();
-    }
-
-    /**
-     * Enable refresh interval
-     */
-    protected function enableRefresh()
-    {
-        $this->container->indexManager->enableRefresh();
-    }
-
-    /**
-     * Enable replicas
-     */
-    protected function enableReplicas()
-    {
-        $this->container->indexManager->enableReplicas();
     }
 
     /**
@@ -571,7 +534,6 @@ class QueueManager
         foreach ($this->getQueuedModules() as $module) {
             $this->consumeModuleFromQueue($module);
         }
-        $this->reportIndexingDone();
     }
 
     /**

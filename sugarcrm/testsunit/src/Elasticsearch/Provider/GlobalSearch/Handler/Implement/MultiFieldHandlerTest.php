@@ -345,13 +345,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            //'gs_text_wildcard' => array(
-                            //    'type' => 'string',
-                            //    'index' => 'analyzed',
-                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
-                            //    'search_analyzer' => 'gs_analyzer_string',
-                            //    'store' => true,
-                            //),
+                            'gs_text_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ),
                         ),
                     ),
                     'description' => array(
@@ -613,13 +613,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            //'gs_text_wildcard' => array(
-                            //    'type' => 'string',
-                            //    'index' => 'analyzed',
-                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
-                            //    'search_analyzer' => 'gs_analyzer_string',
-                            //    'store' => true,
-                            //),
+                            'gs_text_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ),
                         ),
                     ),
                     'description' => array(
@@ -653,13 +653,13 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
-                            //'gs_text_wildcard' => array(
-                            //    'type' => 'string',
-                            //    'index' => 'analyzed',
-                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
-                            //    'search_analyzer' => 'gs_analyzer_string',
-                            //    'store' => true,
-                            //),
+                            'gs_text_wildcard' => array(
+                                'type' => 'string',
+                                'index' => 'analyzed',
+                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ),
                         ),
                     ),
                     'body' => array(

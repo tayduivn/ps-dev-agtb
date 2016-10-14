@@ -46,12 +46,11 @@ $dictionary['Manufacturer'] = array(
     'full_text_search' => array(
           'enabled' => true,
           'searchable' => false,
-            // Disabled until UX component is available
-            //'aggregations' => array(
-            //    'date_entered' => array(
-            //        'type' => 'DateRange',
-            //    ),
-            //),
+          'aggregations' => array(
+              'date_entered' => array(
+                  'type' => 'DateRange',
+              ),
+          ),
     ),
   ),
   'date_modified' =>
@@ -64,12 +63,11 @@ $dictionary['Manufacturer'] = array(
     'full_text_search' => array(
           'enabled' => true,
           'searchable' => false,
-            // Disabled until UX component is available
-            //'aggregations' => array(
-            //    'date_modified' => array(
-            //        'type' => 'DateRange',
-            //    ),
-            //),
+          'aggregations' => array(
+              'date_modified' => array(
+                  'type' => 'DateRange',
+              ),
+          ),
     ),
   ),
     'modified_user_id' =>

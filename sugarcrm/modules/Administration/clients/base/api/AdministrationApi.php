@@ -115,70 +115,6 @@ class AdministrationApi extends SugarApi
                     'SugarApiExceptionSearchUnavailable',
                 ),
             ),
-
-            // Refresh API's
-            'elasticSearchRefreshStatus' => array(
-                'reqType' => array('GET'),
-                'path' => array('Administration', 'elasticsearch', 'refresh', 'status'),
-                'pathVars' => array(''),
-                'method' => 'elasticSearchRefreshStatus',
-                'shortHelp' => 'Elasticsearch index refresh status',
-                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_status_get_help.html',
-                'exceptions' => array(
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionSearchUnavailable',
-                ),
-            ),
-            'elasticSearchRefreshTrigger' => array(
-                'reqType' => array('POST'),
-                'path' => array('Administration', 'elasticsearch', 'refresh', 'trigger'),
-                'pathVars' => array(''),
-                'method' => 'elasticSearchRefreshTrigger',
-                'shortHelp' => 'Elasticsearch trigger an index refresh',
-                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_trigger_post_help.html',
-                'exceptions' => array(
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionSearchUnavailable',
-                ),
-            ),
-            'elasticSearchRefreshEnable' => array(
-                'reqType' => array('POST'),
-                'path' => array('Administration', 'elasticsearch', 'refresh', 'enable'),
-                'pathVars' => array(''),
-                'method' => 'elasticSearchRefreshEnable',
-                'shortHelp' => 'Elasticsearch enable index refresh',
-                'longHelp' => 'include/api/help/administration_elasticsearch_refresh_enable_post_help.html',
-                'exceptions' => array(
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionSearchUnavailable',
-                ),
-            ),
-
-            // Replica API's
-            'elasticSearchReplicasStatus' => array(
-                'reqType' => array('GET'),
-                'path' => array('Administration', 'elasticsearch', 'replicas', 'status'),
-                'pathVars' => array(''),
-                'method' => 'elasticSearchReplicasStatus',
-                'shortHelp' => 'Elasticsearch index replica status',
-                'longHelp' => 'include/api/help/administration_elasticsearch_replicas_status_get_help.html',
-                'exceptions' => array(
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionSearchUnavailable',
-                ),
-            ),
-            'elasticSearchReplicasEnable' => array(
-                'reqType' => array('POST'),
-                'path' => array('Administration', 'elasticsearch', 'replicas', 'enable'),
-                'pathVars' => array(''),
-                'method' => 'elasticSearchReplicasEnable',
-                'shortHelp' => 'Elasticsearch enable index replicas',
-                'longHelp' => 'include/api/help/administration_elasticsearch_replicas_enable_post_help.html',
-                'exceptions' => array(
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionSearchUnavailable',
-                ),
-            ),
         );
     }
 
@@ -188,11 +124,11 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function searchReindex(RestService $api, array $args)
+    public function searchReindex(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
-        $clearData = !empty($args['clear_data']);
+        $clearData = isset($args['clear_data']) ? (bool) $args['clear_data'] : false;
         $modules = empty($args['module_list']) ? array() : explode(',', $args['module_list']);
         $engine = $this->getSearchEngine();
         $status = $engine->scheduleIndexing($modules, $clearData);
@@ -205,7 +141,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function searchStatus(RestService $api, array $args)
+    public function searchStatus(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -233,7 +169,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function searchFields(RestService $api, array $args)
+    public function searchFields(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -319,7 +255,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function elasticSearchQueue(RestService $api, array $args)
+    public function elasticSearchQueue(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -351,7 +287,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function elasticSearchRouting(RestService $api, array $args)
+    public function elasticSearchRouting(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -384,7 +320,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function elasticSearchIndices(RestService $api, array $args)
+    public function elasticSearchIndices(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -403,7 +339,7 @@ class AdministrationApi extends SugarApi
      * @param array $args
      * @return array
      */
-    public function elasticSearchMapping(RestService $api, array $args)
+    public function elasticSearchMapping(\RestService $api, array $args)
     {
         $this->ensureAdminUser();
 
@@ -417,7 +353,7 @@ class AdministrationApi extends SugarApi
     }
 
     /**
-     * Get managed indices
+     *
      * @param Elastic $engine
      * @return \Elastica\Index[]
      */
@@ -425,7 +361,7 @@ class AdministrationApi extends SugarApi
     {
         $indexPool = $engine->getContainer()->indexPool;
         $modules = $engine->getMetaDataHelper()->getAllEnabledModules();
-        return $indexPool->getManagedIndices($modules)->getIterator();
+        return $indexPool->getReadIndices($modules)->getIterator();
     }
 
     /**
@@ -456,91 +392,5 @@ class AdministrationApi extends SugarApi
                 $GLOBALS['app_strings']['EXCEPTION_NOT_AUTHORIZED']
             );
         }
-    }
-
-    /**
-     * Get refresh status for all indices
-     * @param RestService $api
-     * @param array $args
-     * @return array
-     */
-    public function elasticSearchRefreshStatus(RestService $api, array $args)
-    {
-        $this->ensureAdminUser();
-
-        $engine = $this->getSearchEngine(true);
-        $indices = array();
-
-        foreach ($this->getIndices($engine) as $index) {
-            $indices[$index->getName()] = $index->getSettings()->getRefreshInterval();
-        }
-        return $indices;
-    }
-
-    /**
-     * Trigger a manual refresh on all indices
-     * @param RestService $api
-     * @param array $args
-     * @return array
-     */
-    public function elasticSearchRefreshTrigger(RestService $api, array $args)
-    {
-        $this->ensureAdminUser();
-
-        $engine = $this->getSearchEngine(true);
-        $indices = array();
-
-        foreach ($this->getIndices($engine) as $index) {
-            $status = $index->refresh();
-            $indices[$index->getName()] = $status->getStatus();
-        }
-        return $indices;
-    }
-
-    /**
-     * Enable refresh on all indices
-     * @param RestService $api
-     * @param array $args
-     * @return array
-     */
-    public function elasticSearchRefreshEnable(RestService $api, array $args)
-    {
-        $this->ensureAdminUser();
-
-        $engine = $this->getSearchEngine(true);
-        return $engine->getContainer()->indexManager->enableRefresh();
-    }
-
-    /**
-     * Get replica status for all indices
-     * @param RestService $api
-     * @param array $args
-     * @return array
-     */
-    public function elasticSearchReplicasStatus(RestService $api, array $args)
-    {
-        $this->ensureAdminUser();
-
-        $engine = $this->getSearchEngine(true);
-        $indices = array();
-
-        foreach ($this->getIndices($engine) as $index) {
-            $indices[$index->getName()] = $index->getSettings()->get('number_of_replicas');
-        }
-        return $indices;
-    }
-
-    /**
-     * Enable replicas on all indices
-     * @param RestService $api
-     * @param array $args
-     * @return array
-     */
-    public function elasticSearchReplicasEnable(RestService $api, array $args)
-    {
-        $this->ensureAdminUser();
-
-        $engine = $this->getSearchEngine(true);
-        return $engine->getContainer()->indexManager->enableReplicas();
     }
 }

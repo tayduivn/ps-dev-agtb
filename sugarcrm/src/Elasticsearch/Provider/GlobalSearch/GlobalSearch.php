@@ -149,35 +149,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     }
 
     /**
-     * Remove existing handler
-     * @param string $name
-     */
-    public function removeHandler($name)
-    {
-        $this->handlers->removeHandler($name);
-    }
-
-    /**
-     * Check if given handler is registered
-     * @param string $name
-     * @return boolean
-     */
-    public function hasHandler($name)
-    {
-        return $this->handlers->hasHandler($name);
-    }
-
-    /**
-     * Get existing handler by name
-     * @param string $name
-     * @return HandlerInterface
-     */
-    public function getHandler($name)
-    {
-        return $this->handlers->getHandler($name);
-    }
-
-    /**
      * Get handlers filtered by interface. If no interface is given an
      * iterator of all available handlers is returned.
      *
