@@ -3089,6 +3089,7 @@ class ModuleInstaller{
 //BEGIN SUGARCRM flav=ent ONLY
             'teamBasedAcl' => $config->get(TeamBasedACLConfigurator::CONFIG_KEY),
 //END SUGARCRM flav=ent ONLY
+            'uniqueKey' => $config->get('unique_key'),
         );
 
         $jsConfig = $config->get('additional_js_config', array());

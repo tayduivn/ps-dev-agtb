@@ -2093,6 +2093,10 @@ class MetaDataManager
             $configs['systemName'] = $administration->settings['system_name'];
         }
 
+        if (!empty($sugarConfig['unique_key'])) {
+            $configs['uniqueKey'] = $sugarConfig['unique_key'];
+        }
+
         // Handle connectors
         $connectors = ConnectorUtils::getConnectors();
         $configs['connectors'] = $this->getFilteredConnectorList($connectors);
