@@ -114,14 +114,14 @@ class EmailAddressHandlerTest extends \PHPUnit_Framework_TestCase
             'analysis' => array(
                 'analyzer' => array(
                     'gs_analyzer_email' => array(
-                        'tokenizer' => 'uax_url_email',
+                        'tokenizer' => 'whitespace',
                         'filter' => array(
                             'lowercase',
                         ),
                         'type' => 'custom',
                     ),
                     'gs_analyzer_email_ngram' => array(
-                        'tokenizer' => 'standard',
+                        'tokenizer' => 'whitespace',
                         'filter' => array(
                             'lowercase',
                             'gs_filter_ngram_1_15',

@@ -120,12 +120,12 @@ class EmailAddressHandler extends AbstractHandler implements
         $analysisBuilder
             ->addCustomAnalyzer(
                 'gs_analyzer_email',
-                'uax_url_email',
+                'whitespace',
                 array('lowercase')
             )
             ->addCustomAnalyzer(
                 'gs_analyzer_email_ngram',
-                'standard',
+                'whitespace',
                 array('lowercase', 'gs_filter_ngram_1_15')
             )
         ;
