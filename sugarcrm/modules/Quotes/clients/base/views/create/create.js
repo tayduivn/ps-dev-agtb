@@ -97,6 +97,22 @@
         var productBundleItems;
 
         if (bundles && bundles.length) {
+
+            //Check to see if we have only the default group
+            if (bundles.length === 1 && bundles.models.length === 1) {
+                productBundleItems = bundles.models[0].get('product_bundle_items');
+                //check to see if that group is empty, if so, return the valid status of the parent.
+                if (productBundleItems.length === 0) {
+                    if (fromCreateView) {
+                        // the create waterfall wants the opposite of if this is validated
+                        callback(!isValid);
+                    } else {
+                        // this view wants if the models are valid or not
+                        callback(isValid);
+                    }
+                }
+            }
+
             totalItemsToValidate += bundles.length;
 
             // get the count of items
@@ -110,6 +126,7 @@
             _.each(bundles.models, function(bundleModel) {
                 // get the bundle items for this bundle to validate later
                 productBundleItems = bundleModel.get('product_bundle_items');
+
                 // call validate on the ProductBundle model (if group name were required or some other field)
                 bundleModel.doValidate(this.moduleFieldsMeta[bundleModel.module], _.bind(function(isValid) {
                     // increment the validate count
@@ -146,7 +163,12 @@
         } else {
             // if there are no bundles to validate then just return
             // if the original model was valid
-            callback(isValid);
+            if (fromCreateView) {
+                //but opposite because that is what the waterfall expects
+                callback(!isValid);
+            } else {
+                callback(isValid);
+            }
         }
     },
 

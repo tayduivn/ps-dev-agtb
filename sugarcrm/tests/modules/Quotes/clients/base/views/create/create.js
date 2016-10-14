@@ -64,7 +64,21 @@ describe('Quotes.Base.Views.Create', function() {
             ]
         };
 
+        modMeta = {
+            fields: [
+                {
+                    name: 'name'
+                }
+            ]
+        };
+
         sinon.collection.stub(app.data, 'getRelatedModule');
+        sinon.collection.stub(app.metadata, 'getView', function() {
+            return viewMeta;
+        });
+        sinon.collection.stub(app.metadata, 'getModule', function() {
+            return modMeta;
+        });
         app.data.getRelatedModule.withArgs('Quotes', 'product_bundles').returns('ProductBundles');
         app.data.getRelatedModule.withArgs('ProductBundles', 'products').returns('Products');
         app.data.getRelatedModule.withArgs('ProductBundles', 'product_bundle_notes').returns('ProductBundleNotes');
@@ -72,7 +86,7 @@ describe('Quotes.Base.Views.Create', function() {
         context = app.context.getContext();
         model = app.data.createBean('Quotes');
         context.set('model', model);
-        view = SugarTest.createView('base', 'Quotes', 'record', viewMeta, context, true);
+        view = SugarTest.createView('base', 'Quotes', 'create', viewMeta, context, true);
     });
 
     afterEach(function() {
@@ -86,6 +100,7 @@ describe('Quotes.Base.Views.Create', function() {
 
     describe('hasUnsavedChanges()', function() {
         beforeEach(function() {
+            view.hasUnsavedQuoteChanges = function() {};
             sinon.collection.stub(view, 'hasUnsavedQuoteChanges', function() {});
         });
 
@@ -93,6 +108,111 @@ describe('Quotes.Base.Views.Create', function() {
             view.hasUnsavedChanges();
 
             expect(view.hasUnsavedQuoteChanges).toHaveBeenCalled();
+        });
+    });
+
+    describe('validateModels', function() {
+        var bundleGet;
+        var callback;
+
+        beforeEach(function() {
+            view.model.get = function() {
+                return {
+                    get: bundleGet
+                };
+            };
+
+            callback = sinon.collection.spy();
+        });
+
+        afterEach(function() {
+            view.model.get = null;
+        });
+
+        it('should return false for no bundles (from create view)', function() {
+            bundleGet = function() {
+                return [];
+            };
+            view.validateModels(true, callback, true);
+            expect(callback).toHaveBeenCalledWith(false);
+        });
+
+        it('should return true for no bundles (not from create view)', function() {
+            bundleGet = function() {
+                return [];
+            };
+            view.validateModels(true, callback, false);
+            expect(callback).toHaveBeenCalledWith(true);
+        });
+
+        it('should return false for the default empty bundle (from create view)', function() {
+            bundleGet = function() {
+                return [
+                    {
+                        get: function() {
+                            return [];
+                        }
+                    }
+                ];
+            };
+            view.validateModels(true, callback, true);
+            expect(callback).toHaveBeenCalledWith(false);
+        });
+
+        it('should return true for the default empty bundle (not from create view)', function() {
+            bundleGet = function() {
+                return [
+                    {
+                        get: function() {
+                            return [];
+                        }
+                    }
+                ];
+            };
+            view.validateModels(true, callback, false);
+            expect(callback).toHaveBeenCalledWith(true);
+        });
+
+        it('should return false for a valid bundle of one item (from create view)', function() {
+            bundleGet = function() {
+                return [
+                    {
+                        get: function() {
+                            return [{
+                                doValidate: function(stuff, fcn) {
+                                    fcn();
+                                }
+                            }];
+                        },
+                        doValidate: function(stuff, fcn) {
+                            fcn();
+                        }
+                    }
+                ];
+            };
+            view.validateModels(true, callback, true);
+            expect(callback).toHaveBeenCalledWith(false);
+        });
+
+        it('should return true for a valid bundle of one item (not from create view)', function() {
+            bundleGet = function() {
+                return [
+                    {
+                        get: function() {
+                            return [{
+                                doValidate: function(stuff, fcn) {
+                                    fcn();
+                                }
+                            }];
+                        },
+                        doValidate: function(stuff, fcn) {
+                            fcn();
+                        }
+                    }
+                ];
+            };
+            view.validateModels(true, callback, false);
+            expect(callback).toHaveBeenCalledWith(true);
         });
     });
 });
