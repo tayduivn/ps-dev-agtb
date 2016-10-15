@@ -200,6 +200,9 @@ class One2MBeanRelationship extends One2MRelationship
         return array("rows" => $rows);
     }
 
+    /**
+     * @deprecated Use One2MBeanRelationship::load() instead
+     */
     public function getQuery($link, $params = array())
     {
         //There was an old signature with $return_as_array as the second parameter. We should respect this if $params is true

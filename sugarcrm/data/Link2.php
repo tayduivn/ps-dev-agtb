@@ -166,7 +166,8 @@ class Link2 {
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      * @return string|array query used to load this relationship
      */
-    public function query($params){
+    public function query($params = array())
+    {
         return $this->relationship->load($this, $params);
     }
 
@@ -374,6 +375,8 @@ class Link2 {
      * @param array $params optional parameters. Possible Values;
      * 'return_as_array': returns the query broken into
      * @return String/Array query to grab just ids for this relationship
+     *
+     * @deprecated Use Link2::query() instead
      */
     function getQuery($params = array())
     {

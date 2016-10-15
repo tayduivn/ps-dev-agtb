@@ -465,6 +465,9 @@ class M2MRelationship extends SugarRelationship
         return $link->getSide() == REL_LHS;
     }
 
+    /**
+     * @deprecated Use M2MRelationship::load() instead
+     */
     public function getQuery($link, $params = array())
     {
         if ($this->linkIsLHS($link)) {

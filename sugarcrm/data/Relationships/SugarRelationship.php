@@ -92,7 +92,7 @@ abstract class SugarRelationship
      * This is currently public, but should prob be made protected later.
      * See Link2->getQuery
      *
-     * @deprecated
+     * @deprecated Use SugarRelationship::load() instead
      * @abstract
      *
      * @param  $link Link Object to get query for.
