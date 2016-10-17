@@ -23,7 +23,6 @@ class LocalizationsLink extends Link2
             ->notEquals('id', $this->focus->id)
             ->notEquals('kbarticle_id', $this->focus->kbarticle_id)
             ->equals('active_rev', 1);
-        $sugar_query->distinct('kbcontents.id');
         
         return $this->relationship->buildJoinSugarQuery($this, $sugar_query, $options);
     }

@@ -28,6 +28,12 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $categoryRoot;
 
+    /**
+     * Backup of current config for module.
+     * @var array $config
+     */
+    protected $config;
+
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
@@ -37,13 +43,41 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user', array(true, true));
         $this->bean = SugarTestKBContentUtilities::createBean();
+
+        $apiClass = new ConfigModuleApi();
+        $this->config = $apiClass->config(SugarTestRestUtilities::getRestServiceMock(), ['module' =>'KBContents']);
+
+        $apiClass->configSave(
+            SugarTestRestUtilities::getRestServiceMock(),
+            [
+                'languages' => [
+                    [
+                        'en' => 'English',
+                        'primary' => true,
+                    ],
+                    [
+                        'ww' => 'Test Language',
+                        'primary' => false,
+                    ],
+                ],
+                'module' => 'KBContents',
+            ]
+        );
         $this->categoryRoot = SugarTestCategoryUtilities::createRootBean();
+
     }
 
     public function tearDown()
     {
         SugarTestCategoryUtilities::removeAllCreatedBeans();
         SugarTestKBContentUtilities::removeAllCreatedBeans();
+
+        $apiClass = new ConfigModuleApi();
+        $apiClass->configSave(
+            SugarTestRestUtilities::getRestServiceMock(),
+            array_merge($this->config, ['module' =>'KBContents'])
+        );
+
         SugarTestHelper::tearDown();
     }
 
@@ -442,5 +476,52 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         $newLocalization->kbdocument_id = $bean->kbdocument_id;
         $newLocalization->language = '';
         SugarTestKBContentUtilities::saveBean($newLocalization);
+    }
+
+    /**
+     * Test related API works correctly with localization/revision subpanels.
+     */
+    public function testRelatedApi()
+    {
+        //create localization
+        $languages = array_filter(
+            $this->bean->getLanguages(),
+            function ($language) {
+                return $language['primary'] !== true;
+            }
+        );
+        $lang = array_pop($languages);
+        unset($lang['primary']);
+        $languageKey = reset(array_keys($lang));
+        $localizationData = [
+            'kbdocument_id' => $this->bean->kbdocument_id,
+            'language' => $languageKey,
+        ];
+        SugarTestKBContentUtilities::createBean($localizationData);
+
+        //create revision
+        $revisionData = array(
+            'kbarticle_id' => $this->bean->kbarticle_id,
+            'kbdocument_id' => $this->bean->kbdocument_id,
+            'language' => $this->bean->language,
+        );
+        SugarTestKBContentUtilities::createBean($revisionData);
+
+        $relateApi = new RelateApi();
+        $rest = SugarTestRestUtilities::getRestServiceMock();
+        $args = [
+            'module' => 'KBContents',
+            'fields' => ['name'],
+            'record' => $this->bean->id,
+            'oreder_by' => 'date_modified:desc',
+            'max_num' => 3,
+            'link_name' => 'localizations',
+        ];
+        $result = $relateApi->filterRelated($rest, $args);
+        $this->assertCount(1, $result['records'], 'RelateAPI should return one record for localization');
+
+        $args['link_name'] = 'revisions';
+        $result = $relateApi->filterRelated($rest, $args);
+        $this->assertCount(1, $result['records'], 'RelateAPI should return one record for revision');
     }
 }

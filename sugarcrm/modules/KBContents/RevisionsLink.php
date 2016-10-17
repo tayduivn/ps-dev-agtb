@@ -23,7 +23,6 @@ class RevisionsLink extends Link2
             ->notEquals('id', $this->focus->id)
             ->equals('kbdocument_id', $this->focus->kbdocument_id)
             ->equals('kbarticle_id', $this->focus->kbarticle_id);
-        $sugar_query->distinct('kbcontents.id');
 
         return $this->relationship->buildJoinSugarQuery($this, $sugar_query, $options);
     }
