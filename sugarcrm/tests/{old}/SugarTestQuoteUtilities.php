@@ -56,6 +56,9 @@ class SugarTestQuoteUtilities
         $GLOBALS['db']->query('DELETE FROM quotes_contacts WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM quotes_accounts WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM quotes_opportunities WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
+        $GLOBALS['db']->query(
+            'DELETE FROM product_bundle_quote WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')'
+        );
     }
         
     public static function getCreatedQuoteIds()
@@ -74,6 +77,20 @@ class SugarTestQuoteUtilities
             "insert into quotes_opportunities(id,opportunity_id,quote_id,date_modified,deleted) values('%s','%s','%s',%s,0)",
             create_guid(),
             $oppId,
+            $quoteId,
+            $db->convert(null, 'today')
+        );
+        $db->query($query);
+    }
+
+    public static function relateQuoteToProductBundle($quoteId, $bundleId)
+    {
+        $db = DBManagerFactory::getInstance();
+        $query = sprintf(
+            "insert into product_bundle_quote(id,bundle_id,quote_id,date_modified,deleted,bundle_index) "
+            . " values('%s','%s','%s',%s,0,0)",
+            create_guid(),
+            $bundleId,
             $quoteId,
             $db->convert(null, 'today')
         );
