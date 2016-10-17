@@ -241,15 +241,11 @@ FROM prospect_lists_prospects plp
 
 	function get_entry_count()
 	{
-		$query = "SELECT count(*) AS num FROM prospect_lists_prospects WHERE prospect_list_id='$this->id' AND deleted = '0'";
-		$result = $this->db->query($query, true, "Grabbing prospect_list entry count");
-
-		$row = $this->db->fetchByAssoc($result);
-
-		if($row)
-			return $row['num'];
-		else
-			return 0;
+        $query = "SELECT count(*) AS num FROM prospect_lists_prospects WHERE prospect_list_id= ? AND deleted = '0'";
+        $count = $this->db->getConnection()
+                    ->executeQuery($query, array($this->id))
+                    ->fetchColumn();
+        return $count;
 	}
 
 
