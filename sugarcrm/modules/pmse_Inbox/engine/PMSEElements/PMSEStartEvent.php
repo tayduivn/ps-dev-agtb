@@ -143,6 +143,12 @@ class PMSEStartEvent extends PMSEEvent
             }
         }
 
+        // Ensures that the assigned_user_id field is trimmed, since on some
+        // DBs this field is a padded char field and on others it is a varchar.
+        // This is done here because $flowData can be sent throughout the chain
+        // of method calls and could pose a problem in comparison beyond this point.
+        $assigned_user_id = $bean->db->fromConvert($assigned_user_id, 'id');
+
         // Get the name of the record
         $cas_title = $bean->getRecordName();
 

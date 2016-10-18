@@ -62,4 +62,33 @@ class pmse_BpmFlow extends pmse_BpmFlow_sugar {
 		}
 		return parent::ACLAccess($view, $context);
 	}
+
+    /**
+     * @inheritDoc
+     */
+    public function populateFromRow($row, $convert = false)
+    {
+        // Done here since assignment of this field could happen from anywhere
+        // and assigned_user_id on some DBs is char whereas on others it is varchar
+        if (isset($row['cas_user_id'])) {
+            $row['cas_user_id'] = $this->db->fromConvert($row['cas_user_id'], 'id');
+        }
+
+        return parent::populateFromRow($row, $convert);
+    }
+
+    /**
+    * @inheritDoc
+    */
+    public function save($check_notify = false)
+    {
+        // Because cas_user_id is sometimes set from assigned_user_id, and because
+        // assigned_user_id varies in type based on DB, we need to make sure that
+        // we always have a clean, consistent value for cas_user_id.
+        if (isset($this->cas_user_id)) {
+            $this->cas_user_id = $this->db->fromConvert($this->cas_user_id, 'id');
+        }
+
+        return parent::save($check_notify);
+    }
 }
