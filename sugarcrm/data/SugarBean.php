@@ -6200,17 +6200,21 @@ class SugarBean
      */
     function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
-        $where_clause = $this->get_where($fields_array, $deleted);
-        $custom_join = $this->getCustomJoin();
-        $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
-        $query .= " $where_clause";
-        $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
+        $query = new \SugarQuery();
+        $query->from($this, ['add_deleted' => $deleted, 'team_security' => false]);
+        $query->select('*');
+        foreach ($fields_array as $field => $value) {
+            $query->where()->equals($field, $value);
+        }
+        $query->limit(1);
 
-        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record $where_clause:", $encode);
-
-        if(empty($row))
-        {
+        $results = $query->execute();
+        if (empty($results)) {
             return null;
+        }
+        $row = $results[0];
+        if ($encode && $this->db->getEncode()) {
+            $row = array_map([$this->db, 'encodeHTML'], $row);
         }
         // Removed getRowCount-if-clause earlier and insert duplicates_found here as it seems that we have found something
         // if we didn't return null in the previous clause.
