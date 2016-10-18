@@ -42,6 +42,7 @@
     "include/javascript/sugar7/accessibility/accessibility.js",
     "include/javascript/sugar7/accessibility/click.js",
     "include/javascript/sugar7/accessibility/label.js",
+    "include/javascript/sugar7/tutorial.js",
 
     // TODO: decide if we"re going to only serve or if we should have
     // them all by default
