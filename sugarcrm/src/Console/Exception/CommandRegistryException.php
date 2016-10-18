@@ -17,6 +17,6 @@ namespace Sugarcrm\Sugarcrm\Console\Exception;
  * Command Registry Exception
  *
  */
-class CommandRegistryException extends \RuntimeException implements ExceptionInterface
+class CommandRegistryException extends \Exception implements ExceptionInterface
 {
 }

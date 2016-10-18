@@ -51,7 +51,7 @@ abstract class AbstractApiCommandTestCase extends \PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        self::$fixturePath = __DIR__ . '/../../Fixtures/';
+        self::$fixturePath = __DIR__ . '/../../Fixtures/Api/';
     }
 
     /**

@@ -66,6 +66,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                     'search:fields' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand',
                     'search:reindex' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand',
                     'search:status' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand',
+                    'password:config' => 'Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand',
+                    'password:reset' => 'Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand',
+                    'password:weak' => 'Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand',
                 ),
             ),
         );

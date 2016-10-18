@@ -19,6 +19,9 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -68,12 +71,20 @@ class Application extends BaseApplication
         $registry = CommandRegistry::getInstance();
 
         $registry->addCommands(array(
+            // Elasticsearch specific
             new ElasticsearchIndicesCommand(),
             new ElasticsearchQueueCommand(),
             new ElasticsearchRoutingCommand(),
+
+            // Generic Search
             new SearchFieldsCommand(),
             new SearchReindexCommand(),
             new SearchStatusCommand(),
+
+            // Password management
+            new WeakHashesCommand(),
+            new PasswordConfigCommand(),
+            new PasswordResetCommand(),
         ));
 
         $app = new Application();
