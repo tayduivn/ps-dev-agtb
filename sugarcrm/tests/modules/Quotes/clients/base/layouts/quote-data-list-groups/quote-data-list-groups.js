@@ -746,7 +746,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             oldGroupId = 'oldGroupId1';
             oldGroupModel = app.data.createBean('Products', {
                 id: 'oldGroupModelId1',
-                name: 'oldGroupModelName_original'
+                name: 'oldGroupModelName_original',
+                position: 0
             });
             sinon.collection.spy(oldGroupModel, 'setSyncedAttributes');
 
@@ -789,7 +790,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     },
                     related_record: {
                         id: 'oldGroupModelId1',
-                        name: 'oldGroupModelName_new'
+                        name: 'oldGroupModelName_new',
+                        position: 1
                     }
                 }
             };
@@ -798,7 +800,8 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     record: {},
                     related_record: {
                         id: 'newGroupModelId1',
-                        name: 'newGroupModelName_new'
+                        name: 'newGroupModelName_new',
+                        position: 1
                     }
                 }
             };
@@ -843,8 +846,9 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 expect(oldProductGroupModel.setSyncedAttributes).not.toHaveBeenCalled();
             });
 
-            it('should update the new group records', function() {
-                expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
+            it('should update the new group record position', function() {
+                expect(newGroupModel.get('name')).toBe('newGroupModelName_original');
+                expect(newGroupModel.get('position')).toBe(1);
                 expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
         });
@@ -862,14 +866,16 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 expect(newGroupTriggerSpy).toHaveBeenCalled();
             });
 
-            it('should update the old group', function() {
-                expect(oldGroupModel.get('name')).toBe('oldGroupModelName_new');
+            it('should update the old group position', function() {
+                expect(oldGroupModel.get('name')).toBe('oldGroupModelName_original');
+                expect(oldGroupModel.get('position')).toBe(1);
                 expect(oldGroupModel.setSyncedAttributes).toHaveBeenCalled();
                 expect(oldProductGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
 
-            it('should update the new group records', function() {
-                expect(newGroupModel.get('name')).toBe('newGroupModelName_new');
+            it('should update the new group record position', function() {
+                expect(newGroupModel.get('name')).toBe('newGroupModelName_original');
+                expect(newGroupModel.get('position')).toBe(1);
                 expect(newGroupModel.setSyncedAttributes).toHaveBeenCalled();
             });
         });

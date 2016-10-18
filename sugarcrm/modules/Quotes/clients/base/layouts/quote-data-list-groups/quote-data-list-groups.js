@@ -492,6 +492,8 @@
             var record = data.contents.record;
             var relatedRecord = data.contents.related_record;
             var model;
+            // get a subset of the relatedRecord changes with just date_modified and position
+            var relatedRecordSubset = _.pick(relatedRecord, 'date_modified', 'position');
 
             // on Delete record and relatedRecord will both be missing
             if (record && relatedRecord) {
@@ -503,7 +505,7 @@
                     }
                     // if oldGroup exists, check if the related_record is in the oldGroup
                     model = oldGroup.collection.get(relatedRecord.id);
-                    updateModelWithRecord(model, relatedRecord);
+                    updateModelWithRecord(model, relatedRecordSubset);
                 }
                 if (newGroup) {
                     // check if record is the one on this collection
@@ -512,7 +514,7 @@
                     }
                     // check if the related_record is in the newGroup
                     model = newGroup.collection.get(relatedRecord.id);
-                    updateModelWithRecord(model, relatedRecord);
+                    updateModelWithRecord(model, relatedRecordSubset);
                 }
             }
         }, this, oldGroup, newGroup), this);
