@@ -19,7 +19,7 @@ class SugarUpgradeDropFormActionCasDataFields extends UpgradeScript
     {
         // only run this when coming from a 7.6.x or 7.7.x upgrade
         if (!(version_compare($this->from_version, '7.6.0', ">=")
-            && version_compare($this->from_version, '7.8.0', "<"))
+            && version_compare($this->from_version, '7.8.0.0RC1', "<"))
         ) {
             return;
         }

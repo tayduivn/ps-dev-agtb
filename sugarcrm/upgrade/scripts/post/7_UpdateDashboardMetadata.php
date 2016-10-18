@@ -18,7 +18,7 @@ class SugarUpgradeUpdateDashboardMetadata extends UpgradeScript
     public function run()
     {
         $deletedDashlets = array(
-            '7.8' => array(
+            '7.8.0.0' => array(
                 'news',
             ),
         );

@@ -74,7 +74,7 @@ class SugarUpgradeConfigSettings extends UpgradeScript
     private function fixConfigSettings($config)
     {
         $data = array(
-            '7.8' => array(
+            '7.8.0.0' => array(
                 'snip_url',
             ),
         );

@@ -18,8 +18,7 @@ class SugarUpgradeRemoveOldConnectors extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.8.0', '<') && version_compare($this->to_version, '7.8.0', '>=')) {
-
+        if (version_compare($this->from_version, '7.8.0.0', '<')) {
             $oldConnectors = array('ext_soap_hoovers', 'ext_rest_insideview');
             $connectorRemoved = false;
             $fileName = 'custom/modules/Connectors/metadata/display_config.php';

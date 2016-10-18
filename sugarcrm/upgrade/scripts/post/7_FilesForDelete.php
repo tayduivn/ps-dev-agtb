@@ -357,7 +357,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/pmse_Project/metadata/quickcreatedefs.php';
         }
 
-        if (version_compare($this->from_version, '7.8', '<')) {
+        if (version_compare($this->from_version, '7.8.0.0', '<')) {
             $files[] = 'modules/Forecasts/clients/base/view/forecast-pipeline/forecast-pipeline.hbs';
             $files[] = 'include/javascript/sugar7/plugins/QuickSearchFilter.js';
             $files[] = 'styleguide/assets/css/sugar.css';
@@ -376,7 +376,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/views/news';
         }
 
-        if (version_compare($this->from_version, '7.8', '<')) {
+        if (version_compare($this->from_version, '7.8.0.0', '<')) {
             $files[] = 'modules/pmse_Inbox/engine/Crypt.php';
             $files[] = 'modules/pmse_Inbox/engine/PMSEAccessManager.php';
             $files[] = 'modules/pmse_Inbox/engine/PMSELicenseManager.php';

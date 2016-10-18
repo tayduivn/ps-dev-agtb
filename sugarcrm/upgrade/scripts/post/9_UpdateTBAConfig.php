@@ -30,8 +30,8 @@ class SugarUpgradeUpdateTBAConfig extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.8', '>=') &&
-            version_compare($this->to_version, '7.8.0.0.RC.4', '>=')
+        if (version_compare($this->from_version, '7.8.0.0RC1', '>=') &&
+            version_compare($this->from_version, '7.8.0.0', '<')
         ) {
             $tbaConfigurator = $this->getTBAConfigurator();
             $actionsList = $tbaConfigurator->getListOfPublicTBAModules();

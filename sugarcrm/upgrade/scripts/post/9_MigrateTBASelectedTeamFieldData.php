@@ -22,9 +22,9 @@ class SugarUpgradeMigrateTBASelectedTeamFieldData extends UpgradeScript
     public function run()
     {
         // this upgrade script is from 7.8RC3 to next RC or 7.8
-        $nextMinorReleases = version_compare($this->to_version, '7.8.0.0.RC.4', '>=')
-            || version_compare($this->to_version, '7.8', '==');
-        if (version_compare($this->from_version, '7.8.0.0.RC.3', '==') && $nextMinorReleases) {
+        $nextMinorReleases = version_compare($this->to_version, '7.8.0.0RC4', '>=')
+            || version_compare($this->to_version, '7.8.0.0', '==');
+        if (version_compare($this->from_version, '7.8.0.0RC3', '==') && $nextMinorReleases) {
             $tables = array();
             foreach ($GLOBALS['beanList'] as $beanName) {
                 $bean = BeanFactory::newBeanByName($beanName);
