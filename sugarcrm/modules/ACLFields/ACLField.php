@@ -125,7 +125,7 @@ class ACLField extends SugarBean
             );
 
             if ($user_id) {
-                $builder->join('af', 'acl_roles_users', 'aru', 'aru.role_id = ar.id AND AND aru.deleted = 0')
+                $builder->join('af', 'acl_roles_users', 'aru', 'aru.role_id = ar.id AND aru.deleted = 0')
                     ->andWhere('aru.user_id = ' . $user_id);
             }
 
