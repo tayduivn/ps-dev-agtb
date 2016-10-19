@@ -115,7 +115,39 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
      */
     public function hasValidRelationship($bean, $flowData)
     {
-        $seedBean = BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
-        return $seedBean->load_relationship($flowData['rel_element_relationship']);
+        // We don't need the entire retrieved bean for this operation...
+        $seedBean = BeanFactory::getBean($flowData['cas_sugar_module']);
+
+        // We just need the ID to be able to check relationships
+        $seedBean->id = $flowData['cas_sugar_object_id'];
+
+        // Get the relationship field and see if we have it
+        $relField = $flowData['rel_element_relationship'];
+        $hasRel = $seedBean->load_relationship($relField);
+
+        // If there is a seed bean and there is a valid relationship...
+        if ($seedBean->id && $hasRel) {
+            // Get the row for this relationship by query instead through beans
+            // which is much more expensive
+            $relWhere = array(
+                'where' => array(
+                    'lhs_field' => 'id',
+                    'operator' => '=',
+                    'rhs_value' => $bean->id,
+                )
+            );
+
+            $query = $seedBean->$relField->getRelationshipObject()->getQuery($seedBean->$relField, $relWhere);
+
+            /** @var MysqliManager $db */
+            $db = $seedBean->db;
+            $row = $db->fetchOne($query);
+
+            // And verify that the relationship is actually valid record to record
+            return $row && $row['id'] == $bean->id;
+        }
+
+        // Otherwise just return whether there is a relationship
+        return $hasRel;
     }
 }

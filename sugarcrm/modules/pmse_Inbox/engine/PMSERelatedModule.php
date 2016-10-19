@@ -64,22 +64,39 @@ class PMSERelatedModule
         return $bean;
     }
 
+    /**
+     * Gets a related record from the list of related beans.
+     *
+     * @todo Rename this method as it is incorrectly named
+     * @param SugarBean $moduleBean The left hand side bean
+     * @param string $linkField The link name to get related records from
+     * @return SugarBean
+     */
     public function getRelatedModule($moduleBean, $linkField)
     {
         $fieldName = $linkField;
-        if (empty($moduleBean->field_defs[$fieldName]))
-            throw ProcessManager\Factory::getException('InvalidData', "Unable to find field {$fieldName}");
-
-        if(!$moduleBean->load_relationship($fieldName))
-            throw ProcessManager\Factory::getException('InvalidData', "Unable to load relationship $fieldName");
-
-        $relatedBean = $moduleBean->$fieldName->getBeans(array('limit' => 1));
-
-        if (!empty($relatedBean)) {
-            return current($relatedBean);
-        } else {
+        if (empty($moduleBean->field_defs[$fieldName])) {
+            $this->logger->warning("Unable to find field {$fieldName}");
             return null;
         }
+
+        if (!$moduleBean->load_relationship($fieldName)) {
+            $this->logger->warning("Unable to load relationship $fieldName");
+            return null;
+        }
+
+        // Get the latest created related record
+        $related = $moduleBean->$fieldName->getBeans(array(
+            'limit' => 1,
+            'orderby' => 'date_entered DESC',
+        ));
+
+        // If there are related records, send back the first in the set
+        if (!empty($related)) {
+            return current($related);
+        }
+
+        return null;
     }
 
     public function getRelatedModuleName($moduleBeanName, $linkField)
@@ -195,6 +212,17 @@ class PMSERelatedModule
     public function getFieldValue($newBean, $field)
     {
         global $timedate;
+
+        // There is no sense in continuing on if the bean we are working on does
+        // not actually have the field we are looking for. This doesn't usually
+        // happen, but sometimes when working on related modules, both sides get
+        // sent through this.
+        if (!isset($newBean->field_defs[$field])) {
+            $module = $newBean->getModuleName();
+            $this->logger->warning("Field $field not found on bean for module $module");
+            return null;
+        }
+
         $value= !empty($newBean->fetched_row[$field]) ? $newBean->fetched_row[$field] : $newBean->$field;
         $def = $newBean->field_defs[$field];
         switch ($def['type']){

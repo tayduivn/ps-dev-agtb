@@ -27,6 +27,12 @@ class PMSEFieldParser implements PMSEDataParserInterface
     private $evaluatedBean;
 
     /**
+     * Related bean to the evaluated bean
+     * @var SugarBean
+     */
+    protected $relatedBean;
+
+    /**
      * Lists modules Bean
      * @var array
      */
@@ -80,6 +86,7 @@ class PMSEFieldParser implements PMSEDataParserInterface
     public function setEvaluatedBean($evaluatedBean)
     {
         $this->evaluatedBean = $evaluatedBean;
+        $this->relatedBean = null;
     }
 
     /**
@@ -180,7 +187,49 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $criteriaToken->currentValue = $tokenValue;
         $criteriaToken->expValue = $this->setExpValueFromCriteria($criteriaToken);
 
-        $fieldType = $this->evaluatedBean->field_defs[$criteriaToken->expField]['type'];
+        // We need to check to see if the evaluated bean (sometimes the target
+        // and sometimes the related bean) is the right bean to work on
+        $eBean = $this->evaluatedBean;
+        if (isset($eBean->field_defs[$criteriaToken->expField])) {
+            // We are good to go, so set the working bean as the evaluated bean
+            $workingBean = $eBean;
+        } else {
+            // Evaluted bean is not the right bea, so prepare to log some relevant
+            // information, starting with the module name we failed on
+            $eModule = $eBean->getModuleName();
+
+            // Write a simple message to log, to start with
+            $msg = "Could not find {$criteriaToken->expField} on the target module $eModule";
+
+            // Look at the related bean, since that could be what we are after
+            // since the target bean is NOT what we are after
+            $rBean = $this->getRelatedBean($criteriaToken->expModule);
+
+            // Is there a related module?
+            if ($rBean !== null) {
+                // Does *it* have the field we are looking for?
+                if (isset($rBean->field_defs[$criteriaToken->expField])) {
+                    // The related bean is the one we want, so set THAT as the working bean
+                    $workingBean = $rBean;
+                } else {
+                    // We will need this for a bit of enhanced logging
+                    $rModule = $rBean->getModuleName();
+                    $msg .= " or the related module $rModule";
+
+                    // Log this as an alert, since this is fairly high priority
+                    PMSELogger::getInstance()->warning($msg);
+                    return $criteriaToken;
+                }
+            } else {
+                // A null related bean means we have nothing further to do, so
+                // log this the same as above and return
+                PMSELogger::getInstance()->warning($msg);
+                return $criteriaToken;
+            }
+        }
+
+        // Use the working bean now to get what we are after
+        $fieldType = $workingBean->field_defs[$criteriaToken->expField]['type'];
 
         if ($fieldType == 'date') {
             $criteriaToken->expSubtype = 'date';
@@ -269,6 +318,24 @@ class PMSEFieldParser implements PMSEDataParserInterface
     }
 
     /**
+     * Gets the related bean to the evaluated bean, if one is set
+     * @param string $link The link name to get the related bean from
+     * @return SugarBean
+     */
+    public function getRelatedBean($link)
+    {
+        // If we have a related bean, send it back now
+        if (!empty($this->relatedBean)) {
+            return $this->relatedBean;
+        }
+
+        // Get and set the related bean since we don't have it yet
+        $this->relatedBean = $this->pmseRelatedModule->getRelatedModule($this->evaluatedBean, $link);
+        return $this->relatedBean;
+    }
+
+
+    /**
      * parser a token for a field element, is this: bool or custom fields
      * @param string $token field contains a parser
      * @return string field value, in the case of a currency type it returns a serialized array with the amount and
@@ -282,9 +349,14 @@ class PMSEFieldParser implements PMSEDataParserInterface
         $bean = $this->evaluatedBean;
         $value = '';
         if (!empty($tokenArray)) {
+            // This logic is a fairly bad assumption, but works in most cases. The
+            // assumption is that a link name won't be in the bean list so try to load
+            // a related bean instead.
             if (!isset($this->beanList[$tokenArray[1]])) {
-                $bean = $this->pmseRelatedModule->getRelatedModule($bean, $tokenArray[1]);
+                // Get the related bean instead
+                $bean = $this->getRelatedBean($tokenArray[1]);
             }
+
             $field = $tokenArray[2];
             if (!empty($bean) && is_object($bean)) {
                 $value = $this->pmseRelatedModule->getFieldValue($bean, $field);

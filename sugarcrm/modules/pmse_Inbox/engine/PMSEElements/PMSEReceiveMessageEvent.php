@@ -43,17 +43,34 @@ class PMSEReceiveMessageEvent extends PMSEIntermediateEvent
             $flowData['cas_flow_status'] = 'WAITING';
             $flowData['cas_due_date'] = date('Y-m-d H:i:s', strtotime("+1 seconds"));
             $result = $this->prepareResponse($flowData, 'WAIT', 'CREATE');
-            //$this->bpmLog('INFO', "[$cas_id][$newCasIndex] setting up a Catch Message Event");
         } else {
             if ($externalAction === 'EVALUATE_RELATED_MODULE' || $externalAction === 'EVALUATE_MAIN_MODULE') {
                 $usesEBGateway = $this->checkIfUsesAnEventBasedGateway($flowData['cas_id'], $flowData['cas_previous']);
                 $this->checkIfExistEventBased($flowData['cas_id'], $flowData['cas_previous'], $usesEBGateway);
-                $result = $this->prepareResponse($flowData, 'ROUTE', 'UPDATE');
-                $result['process_bean'] = $this->caseFlowHandler->retrieveBean($flowData['cas_sugar_module'],
-                    $flowData['cas_sugar_object_id']);
+
+                // Only set the bean on the result if there is one to set
+                if ($procBean = $this->getProcessBean($flowData, $bean)) {
+                    // We only need to modify the result if there is a process bean
+                    $result = $this->prepareResponse($flowData, 'ROUTE', 'UPDATE');
+                    $result['process_bean'] = $procBean;
+                }
             }
         }
         return $result;
     }
 
+    /**
+     * Determines if a bean should be sent back at all, and if so, which one
+     * @param array $flowData The current flow data set
+     * @param SugarBean|null $bean The trigger bean, if passed
+     * @return SugarBean The proper bean, if there is one
+     */
+    protected function getProcessBean(array $flowData, SugarBean $bean = null)
+    {
+        if ($bean === null || $bean->id === $flowData['cas_sugar_object_id']) {
+            return BeanFactory::getBean($flowData['cas_sugar_module'], $flowData['cas_sugar_object_id']);
+        }
+
+        return null;
+    }
 }
