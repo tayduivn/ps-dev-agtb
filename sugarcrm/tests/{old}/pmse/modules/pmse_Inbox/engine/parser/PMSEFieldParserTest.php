@@ -34,11 +34,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('10/10/2013'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -112,11 +112,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue' ))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -185,11 +185,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -258,11 +258,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -331,11 +331,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -404,11 +404,11 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -471,18 +471,18 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
                 ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-   
+
     public function testParseCriteriaDistinct()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('10/10/2013'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -532,7 +532,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
                 "expLabel": "Account Name: != \"ONE\""
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
-        
+
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = array(
             0 =>
@@ -550,18 +550,18 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaMajorEquals()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -624,18 +624,18 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaMajor()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -698,19 +698,19 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaMinorEquals()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
-        
+
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -773,18 +773,18 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaMinor()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -847,14 +847,14 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaWithin()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
@@ -921,18 +921,18 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseCriteriaNotWithin()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
-        
+
         $beanList = array('Leads' => 'Lead');
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
@@ -995,15 +995,15 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-        
-    
+
+
     public function testParseCriteriaDefault()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
             ->setMethods(array('parseTokenValue'))
             ->getMock();
-        
+
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
@@ -1070,7 +1070,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
             ));
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
-    
+
     public function testParseTokenValue()
     {
         $preferencesArray = array();
@@ -1109,6 +1109,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
                 'type' => 'bool'
             )
         );
+
         $token = "{::future::Leads::email_addresses_primary::}";
         $expectedToken = "rock.star@gmail.com";
         $this->dataParser->setEvaluatedBean($beanObject);
@@ -1156,6 +1157,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
                 'type' => 'bool'
             )
         );
+
         $token = "{::future::Leads::do_not_call::}";
         $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
@@ -1163,7 +1165,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $processedToken = $this->dataParser->parseTokenValue($token);
         $this->assertSame($expectedToken, $processedToken);
     }
-    
+
     public function testParseTokenValueTokenEmptyModules()
     {
         $preferencesArray = array();
@@ -1203,6 +1205,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
                 'type' => 'bool'
             )
         );
+
         $token = "{::future::Leads::do_not_call::}";
         $expectedToken = true;
         $this->dataParser->setEvaluatedBean($beanObject);
@@ -1210,7 +1213,7 @@ class PMSEFieldParserTest extends PHPUnit_Framework_TestCase
         $processedToken = $this->dataParser->parseTokenValue($token);
         $this->assertSame($expectedToken, $processedToken);
     }
-    
+
     public function testDecomposeToken()
     {
         $token = "{::future::Leads::email_addresses_primary::}";

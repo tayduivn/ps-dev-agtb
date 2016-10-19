@@ -134,7 +134,7 @@ class PMSEExpressionValidator extends PMSEBaseValidator implements PMSEValidate
                     'lhs_field' => 'id',
                     'operator' => '=',
                     'rhs_value' => $bean->id,
-                )
+                ),
             );
 
             $query = $seedBean->$relField->getRelationshipObject()->getQuery($seedBean->$relField, $relWhere);
