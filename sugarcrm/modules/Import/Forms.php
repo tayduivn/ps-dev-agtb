@@ -74,6 +74,11 @@ function getControl(
             }
         }
 
+        // no widget for email field
+        if ($vardef['type'] == 'email') {
+            $vardef['type'] = 'varchar';
+        }
+
         // load SugarFieldHandler to render the field tpl file
         static $sfh;
 
