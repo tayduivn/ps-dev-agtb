@@ -73,7 +73,6 @@
             "sugarcrm/modules/Notes/**",
             "sugarcrm/modules/PdfManager/**",
             "sugarcrm/modules/Releases/**",
-            "sugarcrm/modules/Reports/**",
             "sugarcrm/modules/Tasks/**",
             "sugarcrm/modules/Users/**",
             "sugarcrm/modules/UserPreferences/**",
