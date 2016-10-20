@@ -450,6 +450,7 @@ describe('View.Fields.Base.RepeatDaysField', function() {
         beforeEach(function() {
             sinon.collection.stub(app.view, 'createField', function() {
                 return {
+                    setMode: function(mode) {},
                     sfId: '1'
                 }
             });

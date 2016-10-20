@@ -79,6 +79,26 @@
     /**
      * @inheritdoc
      */
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on('change:' + this.name, function(model, value) {
+                if (this.action === 'edit' || this.action === 'detail') {
+                    var dates = this.model.get(this.name);
+                    if (dates) {
+                        this.selectedDates = dates;
+                        if (_.isString(this.selectedDates)) {
+                            this.selectedDates = this.format(this.selectedDates);
+                            this.render();
+                        }
+                    }
+                }
+            }, this);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
     _render: function() {
         this._super('_render');
         this.getSelect2Field().setElement(this.$('div[sfuuid="' + this.select2SfId + '"]'));
@@ -246,6 +266,7 @@
      */
     getSelect2Field: function() {
         if (this.select2Field) {
+            this.select2Field.setMode(this.action);
             return this.select2Field;
         }
 
@@ -258,6 +279,7 @@
             view: this.view
         });
         this.select2SfId = this.select2Field.sfId;
+        this.select2Field.setMode(this.action);
 
         return this.select2Field;
     },

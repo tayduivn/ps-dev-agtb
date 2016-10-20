@@ -37,5 +37,18 @@
         };
 
         this.type = 'badge-select';
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        var action = this.action || this.view.action;
+        if (action === 'edit') {
+            this.type = 'enum';
+        }
+
+        this._super('_loadTemplate');
+        this.type = 'badge-select';
     }
 })
