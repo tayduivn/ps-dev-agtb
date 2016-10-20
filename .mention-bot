@@ -560,7 +560,8 @@
             "testsunit/ResultListener.php",
             "testsunit/TestBootstrap.php",
             "testsunit/phpunit.xml.dist"
-        ]
+        ],
+        "skipTeamPrs": true
     },
     {
         "name": "sugarcrm/eng-lang",
