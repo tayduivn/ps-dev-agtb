@@ -96,10 +96,6 @@ function mark_upgraded($name, $dbVersion, $fileVersion){
 	$version->file_version = $fileVersion;
 	$version->db_version = $dbVersion;
 	$version->save();
-	
-	if(isset($_SESSION['invalid_versions'][$name])) {
-		unset($_SESSION['invalid_versions'][$name]);
-	}
 }
 
 function get_profile(){

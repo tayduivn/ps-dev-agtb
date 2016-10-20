@@ -62,23 +62,3 @@ if(file_exists($uploadHta) && filesize($uploadHta)) {
 		$htaccess_failed = true;
 	}
 }
-
-include('modules/Versions/ExpectedVersions.php');
-
-global $expect_versions;
-
-if (isset($expect_versions['htaccess'])) {
-        $version = BeanFactory::getBean('Versions');
-        $version->retrieve_by_string_fields(array('name'=>'htaccess'));
-
-        $version->name = $expect_versions['htaccess']['name'];
-        $version->file_version = $expect_versions['htaccess']['file_version'];
-        $version->db_version = $expect_versions['htaccess']['db_version'];
-        $version->save();
-}
-
-/* Commenting out as this shows on upgrade screen
- * echo "\n" . $mod_strings['LBL_HT_DONE']. "<br />\n";
-*/
-
-?>

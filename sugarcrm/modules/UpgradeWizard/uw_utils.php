@@ -1425,9 +1425,6 @@ function preflightCheck() {
         require('sugar_version.php');
     }
 
-	unset($_SESSION['rebuild_relationships']);
-	unset($_SESSION['rebuild_extensions']);
-
 	// don't bother if are rechecking
 	$manualDiff			= array();
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
@@ -2027,21 +2024,6 @@ function resetUwSession() {
  * runs rebuild scripts
  */
 function UWrebuild() {
-	global $db;
-	global $path;
-	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
-	$db->query($query);
-	logThis('Registering rebuild record: '.$query, $path);
-	logThis('Rebuild done.', $path);
-
-	// insert a new database row to show the rebuild extensions is done
-	$id = create_guid();
-	$gmdate = gmdate('Y-m-d H:i:s');
-	$date_entered = db_convert("'$gmdate'", 'datetime');
-	$query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
-		. "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
-	$db->query($query);
-	logThis('Registering rebuild record in versions table: '.$query, $path);
 }
 
 function getCustomTables() {

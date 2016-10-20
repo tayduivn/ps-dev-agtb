@@ -5134,10 +5134,6 @@
     <file sha256="067a39b6ef0c065e55d62d55752e2657ceb0862980259f705db9e5ed5331c75c" size="4753" name="htdocs/modules/Users/views/view.wirelesslogin.php"/>
     <file sha256="402ff41c067f95b2813573031a0bb9699b57b41a068372a1e91c547fa8708452" size="5174" name="htdocs/modules/Users/views/view.wirelessmain.php"/>
     <file sha256="ba83007535f605f2d42637a042dadda41f391e912bde0deac4612508acb94214" size="12503" name="htdocs/modules/Users/views/view.wizard.php"/>
-    <file sha256="f910f1e8654b69ce0516101d0d35cc4cdb2b0b0ee4a52319a11e43e4654b2785" size="2388" name="htdocs/modules/Versions/CheckVersions.php"/>
-    <file sha256="3fa39497f8798d2c3854edc1183027480f5e952bd603eeed84cf6039ed99bcc5" size="3458" name="htdocs/modules/Versions/DefaultVersions.php"/>
-    <file sha256="6f1a776ccb905a9d735baef2633804c37feb241858dab0895c3105bc34002c50" size="2666" name="htdocs/modules/Versions/ExpectedVersions.php"/>
-    <file sha256="937d27e49075548d59602b5fa117154c552527235838901895eadea6ed20ff46" size="2345" name="htdocs/modules/Versions/InstallDefaultVersions.php"/>
     <file sha256="b1ed4d3e4805173c8dbcd4423ab481df05e038b75e2bc58ae0d1d3ff77ee7634" size="3952" name="htdocs/modules/Versions/Version.php"/>
     <file sha256="09fc0ebb19a2f8cdb01a8379b29c842d0b4e2f0166379891ffc961510b7b8343" size="2453" name="htdocs/modules/Versions/field_arrays.php"/>
     <file sha256="b9a4e71f89bdac41c49610f43aacd2da31bdae83a896ea391709fe1b8fa9e5d4" size="1961" name="htdocs/modules/Versions/index.html"/>
