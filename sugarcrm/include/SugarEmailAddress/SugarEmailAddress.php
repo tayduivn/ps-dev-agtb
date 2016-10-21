@@ -593,16 +593,18 @@ class SugarEmailAddress extends SugarBean
                     foreach($new_addrs as $k=>$email) {
                        preg_match('/emailAddress([0-9])+$/', $k, $matches);
                        $count = $matches[1];
-                       $result = $this->db->query("SELECT opt_out, invalid_email from " . $this->table_name . " where email_address_caps = '" . $this->db->quote(strtoupper($email)) . "'");
-                       if(!empty($result)) {
-                          $row=$this->db->fetchByAssoc($result);
-                          if(!empty($row['opt_out'])) {
-                             $optOutValues[$k] = "emailAddress$count";
-                          }
-                          if(!empty($row['invalid_email'])) {
-                             $invalidValues[$k] = "emailAddress$count";
-                          }
-                       }
+                        $query = "SELECT opt_out, invalid_email from " . $this->table_name
+                            . " where email_address_caps = ?";
+
+                        $conn = $this->db->getConnection();
+                        $stmt = $conn->executeQuery($query, array(strtoupper($email)));
+                        $row = $stmt->fetch();
+                        if (!empty($row['opt_out'])) {
+                            $optOutValues[$k] = "emailAddress$count";
+                        }
+                        if (!empty($row['invalid_email'])) {
+                            $invalidValues[$k] = "emailAddress$count";
+                        }
                     }
                 }
                 // Re-populate the addresses class variable if we have new address(es).
@@ -745,20 +747,29 @@ class SugarEmailAddress extends SugarBean
         $address = $this->db->quote($this->_cleanAddress($addr));
         $addressCaps = strtoupper($address);
 
-        $q = "SELECT id FROM " . $this->table_name . " WHERE email_address_caps = '{$addressCaps}'";
-        $r = $this->db->query($q);
-        $a = $this->db->fetchByAssoc($r);
+        //use email address in captial letters for query
+        $q = "SELECT id FROM " . $this->table_name . " WHERE email_address_caps = ?";
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($q, array($addressCaps));
+        $id = $stmt->fetchColumn();
 
-        if (!empty($a) && !empty($a['id'])) {
-            return $a['id'];
+        if (!empty($id)) {
+            return $id;
         } else {
             $guid = '';
             if (!empty($address)) {
                 $guid = create_guid();
                 $now = TimeDate::getInstance()->nowDb();
-                $qa = "INSERT INTO " . $this->table_name . " (id, email_address, email_address_caps, date_created, date_modified, deleted)
-                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '$now', '$now', 0)";
-                $ra = $this->db->query($qa);
+
+                $fieldDefs = $GLOBALS['dictionary'][$this->table_name]['fields'];
+                $this->db->insertParams($this->table_name, $fieldDefs, array(
+                    'id' => $guid,
+                    'email_address' => $address,
+                    'email_address_caps' => $addressCaps,
+                    'date_created' => $now,
+                    'date_modified' => $now,
+                    'deleted' => 0,
+                ));
             }
             return $guid;
         }
@@ -874,18 +885,17 @@ class SugarEmailAddress extends SugarBean
 
         $q = "SELECT ea.email_address FROM " . $this->table_name . " ea
                 LEFT JOIN email_addr_bean_rel ear ON ea.id = ear.email_address_id
-                WHERE ear.bean_module = '".$this->db->quote($parent_type)."'
-                AND ear.bean_id = '".$this->db->quote($parent_id)."'
+                WHERE ear.bean_module = ?
+                AND ear.bean_id = ?
                 AND ear.deleted = 0
                 AND ea.invalid_email = 0
                 ORDER BY ear.primary_address DESC";
-        $r = $this->db->limitQuery($q, 0, 1);
-        $a = $this->db->fetchByAssoc($r);
 
-        if (isset($a['email_address'])) {
-            return $a['email_address'];
-        }
-        return '';
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($q, array($parent_type, $parent_id));
+        //expect one column only
+        $address = $stmt->fetchColumn();
+        return $address;
     }
 
     /**
@@ -902,10 +912,11 @@ class SugarEmailAddress extends SugarBean
     {
         $q = "SELECT ea.email_address FROM " . $this->table_name . " ea
                 LEFT JOIN email_addr_bean_rel ear ON ea.id = ear.email_address_id
-                WHERE ear.bean_module = '".$this->db->quote($focus->module_dir)."'
-                AND ear.bean_id = '".$this->db->quote($focus->id)."'
+                WHERE ear.bean_module = ?
+                AND ear.bean_id = ?
                 AND ear.deleted = 0
                 AND ea.invalid_email = 0";
+
 
         if (!$replyToOnly) {
             // retrieve reply-to address if it exists or any other address
@@ -919,13 +930,11 @@ class SugarEmailAddress extends SugarBean
                 AND ear.reply_to_address = 1";
         }
 
-        $r = $this->db->query($q);
-        $a = $this->db->fetchByAssoc($r);
-
-        if (isset($a['email_address'])) {
-            return $a['email_address'];
-        }
-        return '';
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($q, array($focus->module_dir, $focus->id));
+        //expect one column only
+        $address = $stmt->fetchColumn();
+        return $address;
     }
 
     /**
