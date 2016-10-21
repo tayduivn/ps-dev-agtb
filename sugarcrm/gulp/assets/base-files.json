@@ -45,7 +45,7 @@
     "include/javascript/sugar7/accessibility/label.js",
     "include/javascript/sugar7/tutorial.js",
 
-    // TODO: decide if we"re going to only serve or if we should have
+    // TODO: decide if we're going to only serve or if we should have
     // them all by default
     {"pattern": "include/javascript/sugar7/plugins/*.js", "included": true, "served": true, "watched": true},
 
