@@ -10,8 +10,8 @@
  */
 
 [
-    {"pattern": "clients/**/*.hbs", "included": false, "served": true, "watched": false},
-    {"pattern": "modules/**/clients/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "clients/base/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "modules/**/clients/base/**/*.hbs", "included": false, "served": true, "watched": false},
     {"pattern": "tests/fixtures/*.json", "included": false, "served": true, "watched": false},
     {"pattern": "tests/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
@@ -88,6 +88,6 @@
 
     "gulp/environment.js",
 
-    {"pattern": "clients/**/*.js", "included": false, "served": true, "watched": true},
-    {"pattern": "modules/**/clients/**/*.js", "included": false, "served": true, "watched": true}
+    {"pattern": "clients/base/**/*.js", "included": false, "served": true, "watched": true},
+    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true}
 ]
