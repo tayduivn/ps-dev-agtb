@@ -25,9 +25,6 @@
      * @override
      */
     initialize: function(options) {
-        // FIXME: SC-5838 will remove this because layout in sidecar defines
-        // the type from the metadata
-        options.type = 'panel';
         //Check for the override_subpanel_list_view from the parent layout metadata and replace the list view if found.
         if (options.meta && options.def && options.def.override_subpanel_list_view) {
             _.each(options.meta.components, function(def) {

@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['base']['layout']['subpanel-with-massupdate']  = array (
+    'template' => 'panel',
     'components' => array (
         array (
             'view' => 'panel-top',
