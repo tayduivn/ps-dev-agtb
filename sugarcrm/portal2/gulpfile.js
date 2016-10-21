@@ -131,7 +131,9 @@ gulp.task('karma', function(done) {
     if (commander.dev) {
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;
-        karmaOptions.browsers = ['Chrome'];
+        if (!commander.browsers) {
+            karmaOptions.browsers = ['Chrome'];
+        }
     }
 
     return karma.start(karmaOptions, function(exitStatus) {
