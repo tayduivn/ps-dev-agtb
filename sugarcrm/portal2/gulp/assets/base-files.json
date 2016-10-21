@@ -10,8 +10,8 @@
  */
 
 [
-    {"pattern": "clients/**/*.hbs", "included": false, "served": true, "watched": false},
-    {"pattern": "modules/**/clients/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "clients/{base,portal}/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "modules/**/clients/{base,portal}/**/*.hbs", "included": false, "served": true, "watched": false},
     {"pattern": "tests/fixtures/*.json", "included": false, "served": true, "watched": false},
     {"pattern": "tests/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
@@ -87,6 +87,6 @@
     "portal2/user.js",
     "portal2/error.js",
 
-    {"pattern": "clients/**/*.js", "included": false, "served": true, "watched": true},
-    {"pattern": "modules/**/clients/**/*.js", "included": false, "served": true, "watched": true}
+    {"pattern": "clients/{base,portal}/**/*.js", "included": false, "served": true, "watched": true},
+    {"pattern": "modules/**/clients/{base,portal}/**/*.js", "included": false, "served": true, "watched": true}
 ]
