@@ -507,9 +507,6 @@
             ctxCollection.origFilterDef = origFilterDef;
 
             ctx.resetLoadFlag({recursive: false});
-            if (!_.isEmpty(ctx._recordListFields)) {
-                ctx.set('fields', ctx._recordListFields);
-            }
             ctx.set('skipFetch', false);
             ctx.loadData(options);
         });
