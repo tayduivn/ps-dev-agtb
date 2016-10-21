@@ -183,7 +183,9 @@ gulp.task('karma', function(done) {
     } else if (commander.dev) {
         karmaOptions.autoWatch = true;
         karmaOptions.singleRun = false;
-        karmaOptions.browsers = ['Chrome'];
+        if (!commander.browsers) {
+            karmaOptions.browsers = ['Chrome'];
+        }
     } else if (commander.sauce) {
         // --dev isn't supported for --sauce
         karmaOptions.reporters.push('saucelabs');
