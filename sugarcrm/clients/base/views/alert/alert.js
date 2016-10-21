@@ -257,59 +257,29 @@
     /**
      * Get CSS classes given alert level
      *
-     * @deprecated Deprecated since 7.9. Will be removed in 7.10.
-     * @param {String} level
-     * @return {String}
+     * @deprecated Deprecated since 7.8. Will be removed in 7.9.
+     * @param {string} level
+     * @return {string}
      */
     getAlertClasses: function(level) {
-        app.logger.warn('The View.Views.Base.AlertView#getAlertClasses has been deprecated since 7.9.0 and will be ' +
-            'removed in 7.10. Please use View.Views.Base.AlertView#_getAlertProps instead.');
+        app.logger.warn('The View.Views.Base.AlertView#getAlertClasses has been deprecated since 7.8.0 and will be ' +
+            'removed in 7.9.');
 
-        switch (level) {
-            case this.LEVEL.PROCESS:
-                return 'alert-process';
-            case this.LEVEL.SUCCESS:
-                return 'alert-success';
-            case this.LEVEL.WARNING:
-                return 'alert-warning';
-            case this.LEVEL.INFO:
-                return 'alert-info';
-            case this.LEVEL.ERROR:
-                return 'alert-danger';
-            case this.LEVEL.CONFIRMATION:
-                return 'alert-warning';
-            default:
-                return '';
-        }
+        this._getAlertProps({level: level}).cssClass;
     },
 
     /**
      * Get the default title given alert level
      *
-     * @deprecated Deprecated since 7.9. Will be removed in 7.10.
-     * @param {String} level
-     * @return {String}
+     * @deprecated Deprecated since 7.8. Will be removed in 7.9.
+     * @param {string} level
+     * @return {string}
      */
     getDefaultTitle: function(level) {
-        app.logger.warn('The View.Views.Base.AlertView#getDefaultTitle has been deprecated since 7.9.0 and will be ' +
-            'removed in 7.10. Please use View.Views.Base.AlertView#_getAlertProps instead.');
+        app.logger.warn('The View.Views.Base.AlertView#getDefaultTitle has been deprecated since 7.8.0 and will be ' +
+            'removed in 7.9.');
 
-        switch (level) {
-            case this.LEVEL.PROCESS:
-                return 'LBL_ALERT_TITLE_LOADING';
-            case this.LEVEL.SUCCESS:
-                return 'LBL_ALERT_TITLE_SUCCESS';
-            case this.LEVEL.WARNING:
-                return 'LBL_ALERT_TITLE_WARNING';
-            case this.LEVEL.INFO:
-                return 'LBL_ALERT_TITLE_NOTICE';
-            case this.LEVEL.ERROR:
-                return 'LBL_ALERT_TITLE_ERROR';
-            case this.LEVEL.CONFIRMATION:
-                return 'LBL_ALERT_TITLE_WARNING';
-            default:
-                return '';
-        }
+        this._getAlertProps({level: level}).title;
     },
 
     /**
