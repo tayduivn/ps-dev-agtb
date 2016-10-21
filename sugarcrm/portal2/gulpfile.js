@@ -39,6 +39,8 @@ function getFirstPartyFiles() {
         'portal2/portal.js',
         'portal2/user.js',
         'portal2/error.js',
+        'clients/portal/**/*.js',
+        'modules/**/clients/portal/**/*.js',
     ];
 }
 
