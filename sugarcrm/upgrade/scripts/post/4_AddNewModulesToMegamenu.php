@@ -218,8 +218,8 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
      */
     public function getExistingTabs(TabController $tc)
     {
-        // Get the existing tabs
-        return $tc->get_system_tabs();
+        // Get all the tabs - enabled and disabled
+        return $tc->get_tabs_system();
     }
 
     /**
@@ -232,10 +232,12 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
     {
         // Add in our new modules
         foreach ($def['modules'] as $m) {
-            $tabs[$m] = $m;
+            if (!isset($tabs[0][$m]) && !isset($tabs[1][$m])) {
+                $tabs[0][$m] = $m;
+            }
         }
 
-        return $tabs;
+        return $tabs[0];
     }
 
     /**

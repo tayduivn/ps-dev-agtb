@@ -23,9 +23,14 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
      * @var array
      */
     public $mockTabs = array(
-        'Accounts' => 'Accounts',
-        'Bugs' => 'Bugs',
-        'Contacts' => 'Contacts',
+        '0' => array(
+            'Accounts' => 'Accounts',
+            'Bugs' => 'Bugs',
+            'Contacts' => 'Contacts',
+            ),
+        '1' => array(
+            'Blah' => 'Blah',
+        ),
     );
 
     /**
