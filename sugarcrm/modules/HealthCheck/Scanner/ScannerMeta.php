@@ -538,7 +538,7 @@ class HealthCheckScannerMeta
             'bucket' => self::MANUAL,
             //'kb'     => '',
         ),
-        545 => array(
+        546 => array(
             'report' => 'customTinyMCEConfig',
             'bucket' => self::CUSTOM,
         ),

@@ -114,7 +114,7 @@ $mod_strings = array(
     'LBL_SCAN_541_LOG' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table:  %s.',
     'LBL_SCAN_542_LOG' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_LOG' => 'Advanced Workflow Partially Locked Field Group - Field %4$s locked in group %s in Process Definition %s for the %s module.',
-    'LBL_SCAN_545_LOG' => 'Custom Knowledge Base TinyMCE config',
+    'LBL_SCAN_546_LOG' => 'Custom Knowledge Base TinyMCE config',
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
@@ -207,7 +207,7 @@ $mod_strings = array(
     'LBL_SCAN_541_TITLE' => 'Invalid Advanced Workflow Serialization - %s invalid serialization(s) in the %s column of the %s table: %s',
     'LBL_SCAN_542_TITLE' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_TITLE' => 'Advanced Workflow Partially Locked Field Group - %3$s module: Group %s is partially locked in Process Definition %s.',
-    'LBL_SCAN_545_TITLE' => 'Custom Knowledge Base TinyMCE config',
+    'LBL_SCAN_546_TITLE' => 'Custom Knowledge Base TinyMCE config',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',
@@ -299,7 +299,7 @@ $mod_strings = array(
     'LBL_SCAN_541_DESCR' => 'Data has been discovered in your Process Management tables that is not unserializable or convertible',
     'LBL_SCAN_542_DESCR' => 'Invalid fields have been found in your Process Management Business Rules and/or Actions. These fields must be removed from Business Rules and/or Actions in order to upgrade.',
     'LBL_SCAN_545_DESCR' => 'A group field is partially locked in a Process Definition. These fields must be unlocked in the Process Definition in order for the upgrade to proceed.',
-    'LBL_SCAN_545_DESCR' => 'Cannot migrate custom TinyMCE config in Knowledge Base module. '
+    'LBL_SCAN_546_DESCR' => 'Cannot migrate custom TinyMCE config in Knowledge Base module. '
         . 'The "tinyConfig" parameter in %s file will be emptied. '
         . 'If you have any TinyMCE customizations there you should save them before upgrade '
         . 'and add after upgrade manually.',
