@@ -953,13 +953,15 @@ UpdaterItem.prototype.getData = function () {
 UpdaterItem.prototype.attachListeners = function () {
     var that = this;
     if (this.html && !this._attachedListeners) {
-        jQuery(this._activationControl).on("change", function (e) {
-            if (e.target.checked) {
-                that.enable();
-            } else {
-                that.disable();
-            }
-        });
+        if (this._activationControl) {
+            jQuery(this._activationControl).on('change', function(e) {
+                if (e.target.checked) {
+                    that.enable();
+                } else {
+                    that.disable();
+                }
+            });
+        }
         jQuery(this._configButton).on("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -994,9 +996,14 @@ UpdaterItem.prototype.createHTML = function () {
         controlContainer = this.createHTMLElement("div");
         controlContainer.className = "adam-itemupdater-controlcontainer";
 
-        activationControl = this.createHTMLElement("input");
-        activationControl.type = "checkbox";
-        activationControl.className = "adam-itemupdater-activation";
+        if (this._parent.hasCheckbox) {
+            activationControl = this.createHTMLElement('input');
+            activationControl.type = 'checkbox';
+            activationControl.className = 'adam-itemupdater-activation';
+
+            label.appendChild(activationControl);
+            this._activationControl = activationControl;
+        }
 
         labelContent = this.createHTMLElement("span");
         labelContent.className = "adam-itemupdater-labelcontent";
@@ -1015,7 +1022,6 @@ UpdaterItem.prototype.createHTML = function () {
         labelContent.appendChild(labelText);
         labelContent.appendChild(requiredContainer);
 
-        label.appendChild(activationControl);
         label.appendChild(labelContent);
 
         controlContainer.appendChild(this._createControl());
@@ -1027,7 +1033,6 @@ UpdaterItem.prototype.createHTML = function () {
         this._dom.labelText = labelText;
         this._dom.requiredContainer = requiredContainer;
 
-        this._activationControl = activationControl;
         this._controlContainer = controlContainer;
         this.html.appendChild(label);
         this.html.appendChild(controlContainer);
