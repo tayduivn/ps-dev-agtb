@@ -263,6 +263,7 @@ ItemContainer.prototype._paintItem = function (item, index) {
 			if(this._textInputMode === this.textInputMode.ALL) {
 				this._addInputText(index || item);
 			}
+            this.fixInputWidths();
 		}
 	}
 	return this;
@@ -271,7 +272,7 @@ ItemContainer.prototype._paintItem = function (item, index) {
 ItemContainer.prototype._paintItems = function () {
 	var i, items = this._items.asArray();
 	if (this.html) {
-		if (this._textInputMode === this.textInputMode.ALL) {
+        if (this._textInputMode === this.textInputMode.ALL && this._textInputs.getSize() === 0) {
 	    	this._addInputText();
 	    }
     	for(i = 0; i < items.length; i++) {
@@ -312,6 +313,11 @@ ItemContainer.prototype.addItem = function(item, index, noFocusNext, skipCallbac
 	}
 	item.setParent(this);
 	item.setOnRemoveHandler(this._onRemoveItemHandler());
+
+    if (_.isUndefined(index)) {
+        index = this._selectedIndex;
+    }
+
 	if (typeof index === 'number' && index >= 0) {
 		this._items.insertAt(item, index);
 	} else {
@@ -445,6 +451,43 @@ ItemContainer.prototype._onBlur = function () {
 	};
 };
 
+/**
+ * Change the input widths to extend to end of line
+ */
+ItemContainer.prototype.fixInputWidths = function() {
+    var elements = $(this.html).children();
+
+    if (elements.length === 0) {
+        return;
+    }
+    var lineWidth = 0;
+
+    // Subtract 17px from width to allow room for the scroll bar
+    var totalWidth = $(this.html).width() - 17;
+
+    _.each(elements, function(element) {
+        var $element = $(element);
+        if ($element.hasClass('item-container-input')) {
+            $element.width(1);
+        }
+        var elementWidth = $element.outerWidth(true);
+
+        if (lineWidth + elementWidth >= totalWidth) {
+            if ($element.hasClass('single-item')) {
+                var prevInput = $element.prev();
+                var newWidth = totalWidth - lineWidth;
+                if (newWidth < 1) {
+                    newWidth = 1;
+                }
+                prevInput.width(newWidth);
+                lineWidth = elementWidth;
+            }
+        } else {
+            lineWidth += elementWidth;
+        }
+    }, this);
+};
+
 ItemContainer.prototype._attachListeners = function () {
 	var that, _tempValue = "";
 	if(this.html) {
@@ -455,17 +498,15 @@ ItemContainer.prototype._attachListeners = function () {
 			}
 		}).on('click', function () {
 			that._blurSemaphore = true;
+            that.fixInputWidths();
 			that.select();
 		}).on('focusin', function(e) {
-			//console.log("focusin");
 			clearInterval(that._blurTimer);
 			if(that._blurred && typeof that.onFocus === 'function' && that._blurSemaphore) {
 				that._blurred = false;
 				that.onFocus(that);
 			}
 		}).on('focusout', function(e) {
-			//console.log("focusout");
-			//console.log(that._blurSemaphore);
 			if (!that._blurred) {
 				that._blurTimer = setInterval(that._onBlur(), 20);
 			}
@@ -591,9 +632,37 @@ ItemContainer.prototype.createHTML = function() {
             height: this.height,
             zIndex: this.zOrder
         });
+        this._textInputs.clear();
         this._paintItems();
         this._attachListeners();
         this.setVisible(this.visible);
+
+        // Let pills be moveable
+        $(this.html).sortable({
+            items: 'li',
+            opacity: 1,
+            forcePlaceholderSize: true,
+            placeholder: 'adam single-item pill-placeholder',
+            tolerance: 'pointer',
+            start: function(e, ui) {
+                var inputs = $(self.html).find('input');
+                _.each(inputs, function(input) {
+                    $(input).width(1);
+                });
+            },
+            update: function(e, ui) {
+                var movedItem = self._items.find('id', ui.item.context.id);
+                var newIndex = ui.item.parent().children('li').index(ui.item[0]);
+                self.moveItem(movedItem, newIndex);
+                var items = self._items.asArray();
+                self.setItems(items);
+                // Reset the event listeners for each of the SingleItems
+                _.each(items, function(item) {
+                    item._eventListenersAttached = false;
+                    item._attachListeners();
+                });
+            }
+        });
 	}
 	return this.html;
 };
