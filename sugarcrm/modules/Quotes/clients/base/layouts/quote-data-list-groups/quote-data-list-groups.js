@@ -525,6 +525,7 @@
             // get the main bundles collection
             bundles = this.model.get('bundles');
             // remove the deleted group's model from the main bundles
+            deletedGroup.model.set('deleted', true);
             bundles.remove(deletedGroup.model);
 
             // dispose the group
