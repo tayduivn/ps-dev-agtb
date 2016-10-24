@@ -46,17 +46,17 @@
                         {{else}}
                             {{str "LBL_UNASSIGNED" this.module}}
                         {{/if}}
-                        <date class="date">{{relativeTime attributes.date_due}}</date>-->
+                        <date class="date">{{relativeTime attributes.date_modified}}</date>
                         <strong>{{fieldValue this "task_name"}}</strong>
                                 <br/>
                         <strong>{{fieldValue this "pro_title"}}</strong>
                         {{#if useRelativeTime}}
                             Due
-                            {{relativeTime attributes.record_date class='date'}}
+                            {{relativeTime attributes.cas_due_date class='date'}}
                         {{else}}
                             {{#if useAbsoluteTime}}
                                 Due on
-                                {{formatDate attributes.record_date class='date'}}
+                                {{formatDate attributes.cas_due_date class='date'}}
                             {{/if}}
                         {{/if}}
                     </div>
