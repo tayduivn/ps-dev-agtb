@@ -498,7 +498,6 @@ describe('Base.Layout.Filter', function() {
                 module: moduleName,
                 layout: 'filter'
             });
-            ctxt._recordListFields = ['name', 'date_modified'];
             ctxt.prepare();
             var _oResetPagination = ctxt.get('collection').resetPagination;
             ctxt.get('collection').resetPagination = function() {};
@@ -529,7 +528,6 @@ describe('Base.Layout.Filter', function() {
             expect(ctxt.get('collection').filterDef).toEqual(testFilterDef1);
             expect(ctxt.get('collection').origFilterDef).toEqual(testFilterDef);
             expect(ctxt.get('skipFetch')).toBeFalsy();
-            expect(ctxt.get('fields')).toEqual(['name', 'date_modified']);
             expect(resetLoadFlagSpy).toHaveBeenCalled();
             expect(stub).toHaveBeenCalled();
             expect(spy).toHaveBeenCalled();

@@ -52,23 +52,17 @@ describe('Base.View.RecordList', function() {
         view = null;
     });
 
+    it('should have `my_favorite` field in the context', function() {
+        expect(_.contains(view.context.get('fields'), 'my_favorite')).toBeTruthy();
+    });
+
     describe('adding actions to list view', function() {
-
-        it('should return my_favorite field when calling getFieldNames', function() {
-            var fields = view.getFieldNames(null, true);
-            expect(_.contains(fields, 'my_favorite')).toBeTruthy();
-        });
-
-        it('should return my_favorite field and save to context for filtering', function() {
-            expect(_.contains(view.context._recordListFields, 'my_favorite')).toBeTruthy();
-        });
-
         it('should have added favorite field', function() {
             view.render();
             expect(view.leftColumns[0].fields[1]).toEqual({type: 'favorite'});
         });
 
-        it('should have added favorite field', function() {
+        it('should not add favorite field to the view if the feature is not enabled', function() {
             view.dispose();
 
             SugarTest.testMetadata.updateModuleMetadata('Cases', {
@@ -79,12 +73,6 @@ describe('Base.View.RecordList', function() {
             var actualFavoriteField = _.where(nofavoriteview.leftColumns[0].fields, {type: 'favorite'});
             expect(actualFavoriteField.length).toBe(0);
             nofavoriteview.dispose();
-        });
-
-        it('should return not return the fields from the metadata for getFieldNames', function () {
-            expect(view.meta.panels[0].fields.length).toBeGreaterThan(1);
-            var fields = view.getFieldNames(null, true);
-            expect(fields.length).toBe(1);
         });
 
         it('should set a data view on the context', function() {
