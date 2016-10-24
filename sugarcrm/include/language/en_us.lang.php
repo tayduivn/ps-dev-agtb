@@ -113,6 +113,7 @@ $app_list_strings = array (
     'Tags' => 'Tags',
     'Categories' => 'Categories',
     'Dashboards' => 'Dashboards',
+    'OutboundEmail' => 'Email Settings',
   ),
 
     'moduleIconList' =>
@@ -229,6 +230,7 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedback',
     'Tags' => 'Tag',
     'Categories' => 'Category',
+    'OutboundEmail' => 'Email Setting',
   ),
 
 /*
@@ -920,6 +922,7 @@ $app_list_strings = array (
     'Studio' => 'Studio',
     'Upgrade' => 'Upgrade',
     'Users' => 'Users',
+    'OutboundEmail' => 'Email Settings',
   ),
   /*Added entries 'Queued' and 'Sending' for 4.0 release..*/
   'campaign_status_dom' =>
@@ -1913,9 +1916,15 @@ $app_list_strings = array (
     ),
     'email_settings_for_ssl' =>
     array (
-        '0' => '',
+        '0' => 'None',
         '1' => 'SSL',
         '2' => 'TLS',
+    ),
+    'mail_smtptype_options' => array(
+        'google' => 'Google',
+        'exchange' => 'Exchange',
+        'outlook' => 'Outlook',
+        'other' => 'Other',
     ),
     'import_enclosure_options' =>
     array (
@@ -5186,6 +5195,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_FIELDSIZE_OVERFLOW' => 'Field exceeds maximum character limit.',
     'LBL_TINYMCE_TARGET_SAME' => 'Same window',
     'LBL_TINYMCE_TARGET_NEW' => 'New window',
+
+    'LBL_OUTBOUND_EMAILS' => 'Email Settings',
+    'LBL_OUTBOUND_EMAIL' => 'Email Setting',
 );
 
 $app_list_strings['activity_user_options'] = array (

@@ -10,7 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
+$dictionary['OutboundEmail'] = array (
+    'table' => 'outbound_email',
+    'acls' => array(
+        'SugarACLOutboundEmail' => true,
+    ),
 	'fields' => array (
 		'id' => array (
 			'name' => 'id',
@@ -18,6 +22,7 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 			'type' => 'id',
 			'required' => true,
 			'reportable' => false,
+            'mandatory_fetch' => true,
 		),
 		'name' => array (
 			'name' => 'name',
@@ -35,6 +40,8 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 			'required' => true,
 			'default' => 'user',
 			'reportable' => false,
+            'mandatory_fetch' => true,
+            'readonly' => true,
 		),
 		'user_id' => array (
 			'name' => 'user_id',
@@ -42,6 +49,8 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 			'type' => 'id',
 			'required' => true,
 			'reportable' => false,
+            'mandatory_fetch' => true,
+            'readonly' => true,
 		),
 		'mail_sendtype' => array(
 			'name' => 'mail_sendtype',
@@ -54,11 +63,12 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 		),
 		'mail_smtptype' => array(
 			'name' => 'mail_smtptype',
-			'vname' => 'LBL_MAIL_SENDTYPE',
-			'type' => 'varchar',
+            'vname' => 'LBL_EMAIL_PROVIDER',
+            'type' => 'enum',
+            'options' => 'mail_smtptype_options',
 			'len' => 20,
 			'required' => true,
-			'default' => 'other',
+            'default' => 'other',
 			'reportable' => false,
 		),
 		'mail_smtpserver' => array(
@@ -74,8 +84,9 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 			'vname' => 'LBL_MAIL_SMTPPORT',
 			'type' => 'int',
 			'len' => 5,
-			'default' => 0,
-			'reportable' => false,
+            'default' => 465,
+            'reportable' => false,
+            'disable_num_format' => true,
 		),
 		'mail_smtpuser' => array(
 			'name' => 'mail_smtpuser',
@@ -90,6 +101,7 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 			'type' => 'encrypt',
 			'len' => 100,
 			'reportable' => false,
+            'duplicate_on_record_copy' => 'no',
 		),
 		'mail_smtpauth_req' => array(
 			'name' => 'mail_smtpauth_req',
@@ -101,11 +113,20 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 		'mail_smtpssl' => array(
 			'name' => 'mail_smtpssl',
 			'vname' => 'LBL_MAIL_SMTPSSL',
-			'type' => 'int',
+            'type' => 'enum',
+            'options' => 'email_settings_for_ssl',
 			'len' => 1,
-			'default' => 0,
+            'default' => 1,
 			'reportable' => false,
 		),
+        'deleted' => array(
+            'name' => 'deleted',
+            'vname' => 'LBL_DELETED',
+            'type' => 'bool',
+            'default' => '0',
+            'reportable' => false,
+            'duplicate_on_record_copy' => 'no',
+        ),
 	),
 	'indices' => array (
 		array(
@@ -125,4 +146,3 @@ $dictionary['OutboundEmail'] = array ('table' => 'outbound_email',
 		),
 	), /* end indices */
 );
-

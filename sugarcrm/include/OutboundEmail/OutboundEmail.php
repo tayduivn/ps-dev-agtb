@@ -14,23 +14,44 @@
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
- * Outbuound email management
+ * Outbound email management
  * @api
  */
-class OutboundEmail
+class OutboundEmail extends SugarBean
 {
     const TYPE_USER = 'user';
     const TYPE_SYSTEM = 'system';
     const TYPE_SYSTEM_OVERRIDE = 'system-override';
 
+    /**
+     * @var bool
+     */
+    public $importable = false;
+
 	/**
-	 * Necessary
-	 */
-	var $db;
+     * @var string
+     */
+    public $module_dir = 'OutboundEmail';
 
-    protected $table_name = 'outbound_email';
+    /**
+     * @var string
+     */
+    public $module_name = 'OutboundEmail';
 
-    public $field_defs = array();
+    /**
+     * @var bool
+     */
+    public $new_schema = true;
+
+    /**
+     * @var string
+     */
+    public $object_name = 'OutboundEmail';
+
+    /**
+     * @var string
+     */
+    public $table_name = 'outbound_email';
 
     protected $adminSystemFields = array(
         'mail_smtptype',
@@ -52,42 +73,75 @@ class OutboundEmail
         'mail_smtpssl',
     );
 
-	/**
-	 * Columns
-	 */
-	var $id;
-	var $name;
-	var $type; // user or system
-	var $user_id; // owner
-	var $mail_sendtype; // smtp
-	var $mail_smtptype;
-	var $mail_smtpserver;
-	var $mail_smtpport = 25;
-	var $mail_smtpuser;
-	var $mail_smtppass;
-	var $mail_smtpauth_req; // bool
-	var $mail_smtpssl; // bool
-	var $mail_smtpdisplay; // calculated value, not in DB
-	var $new_with_id = FALSE;
+    public $name;
+    public $type; // system, system-override, or user
+    public $user_id; // owner
+    public $mail_sendtype;
+    public $mail_smtptype;
+    public $mail_smtpserver;
+    public $mail_smtpport = 465;
+    public $mail_smtpuser;
+    public $mail_smtppass;
+    public $mail_smtpauth_req;
+    public $mail_smtpssl = 1;
+    public $mail_smtpdisplay; // calculated value, not in DB
 
     /**
      * @var null|OutboundEmail
      */
     protected static $sysMailerCache = null;
 
-	/**
-	 * Sole constructor
-	 */
+    protected $module_key = 'OutBoundEmail';
+
+    /**
+     * Adds the {@link OutboundEmailVisibility} visibility strategy.
+     *
+     * {@inheritdoc}
+     */
     public function __construct()
     {
-        $this->db = DBManagerFactory::getInstance();
+        parent::__construct();
+        $this->addVisibilityStrategy('OutboundEmailVisibility');
+    }
 
-        $dictionary = array();
-        require 'metadata/outboundEmailMetaData.php';
-        $this->field_defs = $dictionary['OutboundEmail']['fields'];
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+            default:
+                return false;
+        }
+    }
 
-	/**
+    /**
+     * The owner field is {@link OutboundEmail::$user_id}.
+     *
+     * {@inheritdoc}
+     */
+    public function getOwnerField()
+    {
+        return 'user_id';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOwner($user_id)
+    {
+        if (!$this->isUpdate() && $GLOBALS['current_user']->id === $user_id) {
+            return true;
+        }
+
+        $ownerField = $this->getOwnerField();
+
+        return isset($this->$ownerField) && $this->$ownerField === $user_id;
+    }
+
+    /**
 	 * Retrieves the mailer for a user if they have overriden the username
 	 * and password for the default system account.
 	 *
@@ -98,7 +152,7 @@ class OutboundEmail
 	{
         $email = new self();
         $email->retrieveByCriteria(
-            array('user_id' => $user_id, 'type' => self::TYPE_SYSTEM_OVERRIDE),
+            array('user_id' => $user_id, 'type' => static::TYPE_SYSTEM_OVERRIDE),
             array('name' => 'ASC')
         );
 
@@ -119,7 +173,7 @@ class OutboundEmail
 	    $ob->id = create_guid();
 	    $ob->new_with_id = TRUE;
 	    $ob->user_id = $user_id;
-        $ob->type = self::TYPE_SYSTEM_OVERRIDE;
+        $ob->type = static::TYPE_SYSTEM_OVERRIDE;
 	    $ob->mail_smtpuser = $user_name;
 	    $ob->mail_smtppass = $user_pass;
 	    $ob->save();
@@ -160,7 +214,7 @@ class OutboundEmail
 
         $stmt = $this->db->getConnection()->executeQuery(
             sprintf('SELECT * FROM %s WHERE user_id = ? AND type = ? ORDER BY name', $this->table_name),
-            array($user->id, self::TYPE_USER)
+            array($user->id, static::TYPE_USER)
         );
 
 		$ret = array();
@@ -308,7 +362,7 @@ class OutboundEmail
 		}
 
         if (empty($emailId)) {
-            $criteria = array('type' => self::TYPE_SYSTEM);
+            $criteria = array('type' => static::TYPE_SYSTEM);
         } else {
             $criteria = array('id' => $emailId);
         }
@@ -379,16 +433,14 @@ class OutboundEmail
         return static::$sysMailerCache;
     }
 
-	/**
-	 * Populates this instance
-	 * @param string $id
-	 * @return object $this
-	 */
-    public function retrieve($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function retrieve($id = '-1', $encode = true, $deleted = true)
     {
         $this->retrieveByCriteria(array('id' => $id));
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * populate current object with data from DB by criteria
@@ -444,7 +496,7 @@ class OutboundEmail
         }
 
         if (!empty($data['mail_smtppass'])) {
-            $this->mail_smtppass = blowfishDecode(blowfishGetKey('OutBoundEmail'), $data['mail_smtppass']);
+            $this->mail_smtppass = blowfishDecode(blowfishGetKey($this->module_key), $data['mail_smtppass']);
             $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
         }
 
@@ -464,7 +516,7 @@ class OutboundEmail
      */
     protected function getSystemMailData()
     {
-        return $this->getDataByCriteria(array('type' => self::TYPE_SYSTEM));
+        return $this->getDataByCriteria(array('type' => static::TYPE_SYSTEM));
     }
 
     /**
@@ -497,7 +549,8 @@ class OutboundEmail
                     if (!empty($this->mail_smtppass)) {
                         $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
                     }
-                    $this->mail_smtppass = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->mail_smtppass);
+
+                    $this->mail_smtppass = Blowfish::encode(Blowfish::getKey($this->module_key), $this->mail_smtppass);
                 }
                 if ($field == 'mail_smtpserver'
                     && !empty($sugar_config['bad_smtpservers'])
@@ -511,26 +564,24 @@ class OutboundEmail
 	    return $values;
 	}
 
-	/**
-	 * saves an instance
-	 */
-	function save() {
-	    if( empty($this->id) ) {
-	        $this->id = create_guid();
-			$this->new_with_id = true;
-		}
+    /**
+     * {@inheritdoc}
+     *
+     * The record is owned by the current user, by default. The system mailer cache is reset after save.
+     */
+    public function save($check_notify = false)
+    {
+        $ownerField = $this->getOwnerField();
 
-        $values = $this->getValues($this->field_defs);
+        if (empty($this->$ownerField) && isset($GLOBALS['current_user'])) {
+            $this->$ownerField = $GLOBALS['current_user']->id;
+        }
 
-		if($this->new_with_id) {
-            $this->db->insertParams($this->table_name, $this->field_defs, $values);
-		} else {
-            $this->db->updateParams($this->table_name, $this->field_defs, $values, array('id' => $this->id));
-		}
-
+        $id = parent::save($check_notify);
         $this->resetSystemMailerCache();
-		return $this;
-	}
+
+        return $id;
+    }
 
 	/**
 	 * Saves system mailer.  Presumes all values are filled.
@@ -593,7 +644,7 @@ class OutboundEmail
      */
     protected function updateSystemOverride(array $fields, array $where = array())
     {
-        $where['type'] = self::TYPE_SYSTEM_OVERRIDE;
+        $where['type'] = static::TYPE_SYSTEM_OVERRIDE;
         return $this->db->updateParams(
             $this->table_name,
             $this->field_defs,
@@ -602,7 +653,23 @@ class OutboundEmail
         );
     }
 
-	/**
+    /**
+     * Hard deletes the instance.
+     *
+     * @uses OutboundEmail::delete()
+     *
+     * {@inheritdoc}
+     */
+    public function mark_deleted($id)
+    {
+        if ($this->id !== $id) {
+            return false;
+        }
+
+        return $this->delete();
+    }
+
+    /**
 	 * Deletes an instance
      *
      * @return bool
@@ -617,7 +684,16 @@ class OutboundEmail
         return true;
 	}
 
-	private function _getOutboundServerDisplay(
+    /**
+     * OutboundEmail records are hard deleted. This function is a noop.
+     *
+     * {@inheritdoc}
+     */
+    public function mark_undeleted($id)
+    {
+    }
+
+    private function _getOutboundServerDisplay(
 	    $smtptype,
 	    $smtpserver
 	    )

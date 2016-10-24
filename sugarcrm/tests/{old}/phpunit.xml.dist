@@ -218,6 +218,8 @@
         </testsuite>
         <testsuite name="Emails">
             <file>./data/Relationships/EmailRelationshipsTest.php</file>
+            <file>./data/visibility/EmailsVisibilityTest.php</file>
+            <file>./data/visibility/OutboundEmailEmailVisibilityTest.php</file>
             <directory>./include/OutboundEmail</directory>
             <directory>./include/SugarEmailAddress</directory>
             <directory>./include/SugarFields/Fields/Email</directory>
@@ -231,6 +233,7 @@
             <directory>./modules/EmailTemplates</directory>
             <directory>./modules/InboundEmail</directory>
             <directory>./modules/Mailer</directory>
+            <directory>./modules/OutboundEmail</directory>
             <directory>./modules/OutboundEmailConfiguration</directory>
             <directory>./modules/SNIP</directory>
             <directory>./modules/UserSignatures</directory>

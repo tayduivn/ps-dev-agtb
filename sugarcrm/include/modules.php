@@ -45,6 +45,7 @@ $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
+$moduleList[] = 'OutboundEmail';
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -206,6 +207,7 @@ $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
 //END SUGARCRM flav=int ONLY
 $beanList['UpgradeHistory'] = 'UpgradeHistory';
+$beanList['OutboundEmail'] = 'OutboundEmail';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -368,6 +370,7 @@ $beanFiles['pmse_BpmGroupUser'] = 'modules/pmse_Project/pmse_BpmGroupUser/pmse_B
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
 $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
+$beanFiles['OutboundEmail'] = 'include/OutboundEmail/OutboundEmail.php';
 
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'CustomFields', 'Connectors',
@@ -393,6 +396,7 @@ $modInvisList = array('Administration', 'CustomFields', 'Connectors',
     'ProjectTask',
     'RevenueLineItems',
     'ModuleBuilder',
+    'OutboundEmail',
     //BEGIN SUGARCRM flav=ent ONLY
     'pmse_BpmnActivity',
     'pmse_BpmnArtifact',
@@ -510,6 +514,7 @@ $GLOBALS['moduleTabMap'] = array(
     'Studio' => 'Administration',
     'DocumentRevisions' => 'Documents',
     'EmailTemplates' => 'Emails',
+    'OutboundEmail' => 'Emails',
 //BEGIN SUGARCRM flav=ent ONLY
     'DataSets' => 'ReportMaker',
     'CustomQueries' => 'ReportMaker',
@@ -587,6 +592,7 @@ $objectList['TrackerSessions'] =  'tracker_sessions';
 $objectList['TrackerPerfs'] =  'tracker_perf';
 $objectList['TrackerQueries'] =  'tracker_queries';
 $objectList['TeamNotices'] =  'TeamNotices';
+$objectList['OutboundEmail'] =  'OutboundEmail';
 
 $beanList['PdfManager']     = 'PdfManager';
 $beanFiles['PdfManager']     = 'modules/PdfManager/PdfManager.php';

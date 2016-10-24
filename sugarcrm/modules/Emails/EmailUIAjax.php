@@ -1199,7 +1199,7 @@ eoq;
             $ret = array();
 
             foreach($oe->field_defs as $def) {
-                $ret[$def] = $oe->$def;
+                $ret[$def['name']] = $oe->$def['name'];
             }
             $ret['mail_smtppass']=''; // don't send back the password
             $ret['has_password'] =  isset($oe->mail_smtppass);
@@ -1272,8 +1272,7 @@ eoq;
         if(!empty($_REQUEST['mail_smtppass'])) {
             $oe->mail_smtppass = $_REQUEST['mail_smtppass'];
         }
-        $oe = $oe->save();
-		echo $oe->id;
+        echo $oe->save();
         break;
 
     case "saveDefaultOutbound":

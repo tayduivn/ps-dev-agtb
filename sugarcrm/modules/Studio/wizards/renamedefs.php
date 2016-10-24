@@ -656,6 +656,10 @@ $renamedefs = array(
             array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_HELP_CONFIG_RLIS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
         ),
+        'OutboundEmail' => array(
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'OutboundEmail'),
+            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'OutboundEmail'),
+        ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
@@ -1075,6 +1079,10 @@ $renamedefs = array(
         array('name' => 'LBL_CREATE_NOTE', 'type' => 'singular', 'source' => 'Notes'),
         array('name' => 'LBL_DASHLET_ATTACHMENTS_NAME', 'type' => 'plural', 'source' => 'Notes'),
         array('name' => 'LBL_DASHLET_ATTACHMENTS_DESCRIPTION', 'type' => 'plural', 'source' => 'Notes'),
+
+        // Outbound Email
+        array('name' => 'LBL_OUTBOUND_EMAIL', 'type' => 'plural', 'source' => 'OutboundEmail'),
+        array('name' => 'LBL_OUTBOUND_EMAIL', 'type' => 'singular', 'source' => 'OutboundEmail'),
 
         // Opportunities
         //BEGIN SUGARCRM flav!=ent ONLY

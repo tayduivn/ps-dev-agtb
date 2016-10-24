@@ -166,6 +166,7 @@ $mod_strings = array(
     'LNK_DRAFTS_EMAIL_LIST' => 'All Drafts',
     'LNK_EMAIL_LIST' => 'Emails',
     'LBL_EMAIL_RELATE' => 'Related To',
+    'LNK_EMAIL_SETTINGS_LIST' => 'Email Settings',
     'LNK_EMAIL_SIGNATURE_LIST' => 'View Email Signatures',
     'LNK_EMAIL_TEMPLATE_LIST' => 'View Email Templates',
     'LNK_MEETING_LIST' => 'Meetings',

@@ -55,4 +55,11 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'acl_module'=>'UserSignatures',
         'icon' => 'fa-bars',
     ),
+    array(
+        'route' => '#OutboundEmail',
+        'label' => 'LNK_EMAIL_SETTINGS_LIST',
+        'acl_action' => 'list',
+        'acl_module' => 'OutboundEmail',
+        'icon' => 'fa-cog',
+    ),
 );
