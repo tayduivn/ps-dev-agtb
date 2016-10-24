@@ -71,6 +71,7 @@
     "sidecar/minified/",
     "sidecar/node_modules/",
     "sidecar/tests/",
+    "sidecar/yarn.lock",
     "src/Console/Resources/sugarcrm-bash-completion",
     "styleguide/content/charts/js/cookie-monster.min.js",
     "styleguide/content/charts/js/jquery-ui.min.js",
@@ -84,5 +85,6 @@
     "testsunit/",
     "themes/SugarIE6/js/pngbehavior.htc",
     "upload/",
-    "vendor/"
+    "vendor/",
+    "yarn.lock"
 ]
