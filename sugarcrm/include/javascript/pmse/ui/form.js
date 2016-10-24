@@ -564,10 +564,6 @@ Form.prototype.validate = function () {
         for (i = 0; i < this.items.length; i += 1) {
             current = this.items[i].isValid();
             valid = valid && current;
-            if (!current && this.items[i].errorTooltip) {
-                $(this.items[i].errorTooltip.html).removeClass('adam-tooltip-error-off');
-                $(this.items[i].errorTooltip.html).addClass('adam-tooltip-error-on');
-            }
         }
     } else {
         valid = false;
@@ -575,15 +571,9 @@ Form.prototype.validate = function () {
             this.callback.required();
         }
     }
-    if (valid) {
-        $(".pmse-form-error")
-            .removeClass('pmse-form-error-on')
-            .addClass('pmse-form-error-off');
-    } else {
-        $(".pmse-form-error")
-            .removeClass('pmse-form-error-off')
-            .addClass('pmse-form-error-on');
-    }
+    $('.pmse-form-error')
+        .toggleClass('pmse-form-error-on', !valid)
+        .toggleClass('pmse-form-error-off', valid);
     return valid;
 };
 

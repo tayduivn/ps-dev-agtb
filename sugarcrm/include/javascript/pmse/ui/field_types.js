@@ -94,9 +94,6 @@ TextField.prototype.createHTML = function () {
     }
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -254,9 +251,6 @@ ComboboxField.prototype.createHTML = function () {
     }
     this.html.appendChild(selectInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -421,9 +415,6 @@ TextareaField.prototype.createHTML = function () {
     }
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -527,9 +518,6 @@ CheckboxField.prototype.createHTML = function () {
     }
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -676,9 +664,6 @@ RadiobuttonField.prototype.createHTML = function () {
         textInput.setAttributeNode(readAtt);
     }
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -924,9 +909,6 @@ DateField.prototype.createHTML = function () {
     }
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -1053,9 +1035,6 @@ NumberField.prototype.createHTML = function () {
     }
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -1231,9 +1210,6 @@ CheckboxGroup.prototype.createHTML = function () {
     div.appendChild(ul);
     this.html.appendChild(div);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -1732,9 +1708,6 @@ SearchableCombobox.prototype.createHTML = function () {
     this.html.appendChild(this.controlObject.data("select2").container[0]);
     this.html.appendChild(textInput);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }

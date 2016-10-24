@@ -164,9 +164,6 @@ ItemUpdaterField.prototype.createHTML = function () {
 
     this.html.appendChild(criteriaContainer);
 
-    if (this.errorTooltip) {
-        this.html.appendChild(this.errorTooltip.getHTML());
-    }
     if (this.helpTooltip) {
         this.html.appendChild(this.helpTooltip.getHTML());
     }
@@ -223,14 +220,9 @@ ItemUpdaterField.prototype.isValid = function() {
     }
 
     if (valid) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
         valid = valid && Field.prototype.isValid.call(this);
     } else {
         this.visualObject.scrollTop += getRelativePosition(field.getHTML(), this.visualObject).top;
-        this.errorTooltip.setMessage(this.language.LBL_ERROR_ON_FIELDS);
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
     }
     return valid;
 };
@@ -242,10 +234,6 @@ ItemUpdaterField.prototype.validate = function () {
         if (this.options[i].checkboxControl.checked) {
             current = this.options[i].isValid();
             valid = valid && current;
-            if (!current && this.options[i].errorTooltip) {
-                $(this.options[i].errorTooltip.html).removeClass('adam-tooltip-error-off');
-                $(this.options[i].errorTooltip.html).addClass('adam-tooltip-error-on');
-            }
         }
 
     }
@@ -404,8 +392,7 @@ FieldUpdater.prototype.getJSONObject = function() {
             .setFieldValue(defaults.fieldValue)
             .setFieldType(defaults.fieldType)
             .setFieldItems(defaults.fieldItems)
-            .setMessageError(defaults.messageError)
-            .setErrorTooltip({});
+            .setMessageError(defaults.messageError);
     };
 
     FieldOption.prototype.setRequired = function(required) {
@@ -580,9 +567,6 @@ FieldUpdater.prototype.getJSONObject = function() {
         div = this.createHTMLElement('div');
         div.className = 'cell';
         div.style.width = '5%';
-        if (this.errorTooltip) {
-            div.appendChild(this.errorTooltip.getHTML());
-        }
         this.html.appendChild(div);
 
         div = this.createHTMLElement('div');
@@ -610,7 +594,6 @@ FieldUpdater.prototype.getJSONObject = function() {
                 root.textControl.disabled = true;
                 root.setActive(false);
                 $(root.textControl).removeClass('required');
-                $(root.errorTooltip.html).addClass('adam-tooltip-error-off');
                 if (root.fieldType  === 'date' || root.fieldType === 'datetime') {
                     $(root.textControl).datepicker( "option", { disabled: true } );
                 }
@@ -625,10 +608,6 @@ FieldUpdater.prototype.getJSONObject = function() {
                 }
             }
             root.setFieldValue(root.textControl.value);
-            if (!root.isValid() && root.errorTooltip) {
-                $(root.errorTooltip.html).removeClass('adam-tooltip-error-off');
-                $(root.errorTooltip.html).addClass('adam-tooltip-error-on');
-            }
         });
         $(this.checkboxControl).change(function (e) {
             root.parent.parent.setDirty(true);
@@ -643,23 +622,6 @@ FieldUpdater.prototype.getJSONObject = function() {
      */
     FieldOption.prototype.setMessageError = function (msg) {
         this.messageError = msg;
-        return this;
-    };
-
-
-    FieldOption.prototype.setErrorTooltip = function (tooltip) {
-        if (tooltip) {
-            if (!tooltip.css) {
-                tooltip.css = 'adam-tooltip-error-off';
-            }
-            if (!tooltip.icon) {
-                tooltip.icon = 'adam-tooltip-icon-error';
-            }
-            tooltip.visible = false;
-            this.errorTooltip = new Tooltip(tooltip, this);
-        } else {
-            this.errorTooltip = null;
-        }
         return this;
     };
 
@@ -815,19 +777,7 @@ FieldUpdater.prototype.getJSONObject = function() {
                         message = '';
                         break;
                 }
-                this.errorTooltip.setMessage(message);
             }
-
-        } else {
-            this.errorTooltip.setMessage(this.language.ERROR_FIELD_REQUIRED); 
-        }
-
-        if (res) {
-            $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-            $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-        } else {
-            $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-            $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
         }
 
         return res;

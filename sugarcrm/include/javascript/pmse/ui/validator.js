@@ -129,21 +129,5 @@ Validator.prototype.validate = function () {
  */
 Validator.prototype.isValid = function () {
     this.validate();
-    this.updateTooltip();
     return this.valid;
-};
-
-Validator.prototype.updateTooltip = function () {
-    if (this.parent && this.parent.errorTooltip) {
-        if (this.valid) {
-            $(this.parent.errorTooltip.html)
-                .removeClass('adam-tooltip-error-on')
-                .addClass('adam-tooltip-error-off');
-        } else {
-            this.parent.errorTooltip.setMessage(this.errorMessage);
-            $(this.parent.errorTooltip.html)
-                .removeClass('adam-tooltip-error-off')
-                .addClass('adam-tooltip-error-on');
-        }
-    }
 };

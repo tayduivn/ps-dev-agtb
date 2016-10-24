@@ -71,8 +71,6 @@ var Field = function (options, parent) {
 
     this.helpTooltip = null;
 
-    this.errorTooltip = null;
-
     this.controlObject = null;
 
     this.labelObject = null;
@@ -138,7 +136,6 @@ Field.prototype.initObject = function (options, parent) {
         .setInitialValue(defaults.initialValue)
         .setFieldWidth(defaults.fieldWidth)
         .setHelpTooltip(defaults.helpTooltip)
-        .setErrorTooltip({})
         .setChangeHandler(defaults.change)
         .setReadOnly(defaults.readOnly)
         .setSubmit(defaults.submit)
@@ -292,22 +289,6 @@ Field.prototype.setHelpTooltip = function (tooltip) {
     return this;
 };
 
-Field.prototype.setErrorTooltip = function (tooltip) {
-    if (tooltip) {
-        if (!tooltip.css) {
-            tooltip.css = 'adam-tooltip-error-off';
-        }
-        if (!tooltip.icon) {
-            tooltip.icon = 'adam-tooltip-icon-error';
-        }
-        tooltip.visible = false;
-        this.errorTooltip = new Tooltip(tooltip, this);
-    } else {
-        this.errorTooltip = null;
-    }
-    return this;
-};
-
 Field.prototype.setChangeHandler = function (fn) {
     this.change = fn;
     return this;
@@ -449,10 +430,6 @@ Field.prototype.evalRequired = function () {
  */
 Field.prototype.reset = function () {
     this.setValue(this.initialValue || null, true);
-    if (this.errorTooltip) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
-    }
     if (this.required && this.controlObject) {
         $(this.controlObject).removeClass('required');
     }
@@ -473,19 +450,10 @@ Field.prototype.isValid = function () {
     var i, res = true;
 
     for (i = 0; i < this.validators.length; i += 1) {
-        res = res && this.validators[i].isValid();
-
+        res = this.validators[i].isValid();
         if (!res) {
-            this.errorTooltip.setMessage(this.validators[i].getErrorMessage());
-            $(this.errorTooltip.html).removeClass('adam-tooltip-error-off');
-            $(this.errorTooltip.html).addClass('adam-tooltip-error-on');
-            return res;
+            break;
         }
-    }
-
-    if (res) {
-        $(this.errorTooltip.html).removeClass('adam-tooltip-error-on');
-        $(this.errorTooltip.html).addClass('adam-tooltip-error-off');
     }
 
     return res;

@@ -336,10 +336,6 @@ HistoryPanel.prototype.validate = function () {
     for (i = 0; i < this.items.length; i += 1) {
         current = this.items[i].isValid();
         valid = valid && current;
-        if (!current && this.items[i].errorTooltip) {
-            $(this.items[i].errorTooltip.html).removeClass('adam-tooltip-error-off');
-            $(this.items[i].errorTooltip.html).addClass('adam-tooltip-error-on');
-        }
     }
     return valid;
 };

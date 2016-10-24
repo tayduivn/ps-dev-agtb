@@ -296,9 +296,6 @@ MultipleItemField.prototype.createHTML = function () {
 
 	    this._createPanel();
 
-	    if (this.errorTooltip) {
-	        this.html.appendChild(this.errorTooltip.getHTML());
-	    }
 	    if (this.helpTooltip) {
 	        this.html.appendChild(this.helpTooltip.getHTML());
 	    }
