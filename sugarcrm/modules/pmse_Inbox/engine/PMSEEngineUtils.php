@@ -76,6 +76,8 @@ class PMSEEngineUtils
             'kbdocument_body',
             'revision',
             'viewcount',
+            'created_by',
+            'modified_user_id',
         ),
         // Process Definitions
         'PD' => array(

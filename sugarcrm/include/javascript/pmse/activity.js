@@ -2494,7 +2494,8 @@ AdamActivity.prototype.getAction = function(type, w) {
                 }),
                 fieldWidth: 470,
                 fieldHeight: 260,
-                hasCheckbox: true
+                hasCheckbox: true,
+                actionType: 'changeField'
             });
 
             var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
@@ -2596,7 +2597,8 @@ AdamActivity.prototype.getAction = function(type, w) {
                     callback: null
                 }),
                 fieldWidth: 470,
-                fieldHeight: 260
+                fieldHeight: 260,
+                actionType: 'addRelatedRecord'
             });
             var actionText = translate('LBL_PMSE_CONTEXT_MENU_SETTINGS');
             var actionCSS = 'adam-menu-icon-configure';

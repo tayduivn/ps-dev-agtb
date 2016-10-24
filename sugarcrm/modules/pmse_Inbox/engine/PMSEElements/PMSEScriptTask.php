@@ -71,6 +71,16 @@ class PMSEScriptTask extends PMSEActivity
             case 'owner':
                 $newValue = $this->userAssignmentHandler->getRecordOwnerId($bean->id, $bean->module_dir);
                 break;
+            case 'created_by':
+                $newValue = $bean->$value;
+                break;
+            case 'modified_user_id':
+                if (isset($bean->dataChanges[$value])) {
+                    $newValue = $bean->dataChanges[$value]['before'];
+                } else {
+                    $newValue = !empty($bean->$value) ? $bean->$value : '';
+                }
+                break;
             default:
                 $newValue = $value;
                 break;

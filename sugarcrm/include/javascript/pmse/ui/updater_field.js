@@ -75,16 +75,98 @@ UpdaterField.prototype.initObject = function (options) {
         language: {
             LBL_ERROR_ON_FIELDS: 'Please, correct the fields with errors'
         },
-        hasCheckbox : false,
+        hasCheckbox: false,
         decimalSeparator: ".",
-        numberGroupingSeparator: ","
+        numberGroupingSeparator: ',',
+        actionType: null,
+        meta: {
+            DropDown: {
+                fallback: [
+                    {
+                        'text': 'LBL_PMSE_FORM_OPTION_CURRENT_USER',
+                        'value': 'currentuser'
+                    },
+                    {
+                        'text': 'LBL_PMSE_FORM_OPTION_RECORD_OWNER',
+                        'value': 'owner'
+                    },
+                    {
+                        'text': 'LBL_PMSE_FORM_OPTION_SUPERVISOR',
+                        'value': 'supervisor'
+                    }
+                ]
+            },
+            user: {
+                addRelatedRecord: [
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_CURRENT_USER',
+                        value: 'currentuser'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_RECORD_OWNER',
+                        value: 'owner'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_SUPERVISOR',
+                        value: 'supervisor'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_CREATED_BY_USER',
+                        value: 'created_by'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_LAST_MODIFIED_USER',
+                        value: 'modified_user_id'
+                    }
+                ],
+                changeField: [
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_CURRENT_USER',
+                        value: 'currentuser'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_RECORD_OWNER',
+                        value: 'owner'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_SUPERVISOR',
+                        value: 'supervisor'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_CREATED_BY_USER',
+                        value: 'created_by'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_LAST_MODIFIED_USER',
+                        value: 'modified_user_id'
+                    }
+                ],
+                fallback: [
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_CURRENT_USER',
+                        value: 'currentuser'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_RECORD_OWNER',
+                        value: 'owner'
+                    },
+                    {
+                        text: 'LBL_PMSE_FORM_OPTION_SUPERVISOR',
+                        value: 'supervisor'
+                    }
+                ]
+            }
+        }
     };
+
     $.extend(true, defaults, options);
     this.language = defaults.language;
     this.setFields(defaults.fields);
     this.hasCheckbox = defaults.hasCheckbox;
     this._decimalSeparator = defaults.decimalSeparator;
     this._numberGroupingSeparator = defaults.numberGroupingSeparator;
+    this.actionType = defaults.actionType;
+    this.meta = defaults.meta;
 };
 
 /**
@@ -191,11 +273,12 @@ UpdaterField.prototype.setOptions = function (settings) {
                 aUsers = [];
                 if (currentSetting.options instanceof Array) {
                     if (currentSetting.value === 'assigned_user_id') {
-                        aUsers = [
-                            {'text': translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), 'value': 'currentuser'},
-                            {'text': translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), 'value': 'owner'},
-                            {'text': translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), 'value': 'supervisor'}
-                        ];
+                        var dropdownMeta = this.meta.DropDown[this.actionType] || this.meta.DropDown.fallback;
+                        dropdownMeta = _.map(dropdownMeta, function(option) {
+                            return {'text': translate(option.text), 'value': option.value};
+                        });
+                        aUsers = _.sortBy(dropdownMeta, 'text');
+
                         customUsers = aUsers.concat(currentSetting.options);
                         currentSetting.options = customUsers;
                     }
@@ -224,11 +307,11 @@ UpdaterField.prototype.setOptions = function (settings) {
             case 'user':
                 currentSetting.searchUrl = PMSE_USER_SEARCH.url;
                 currentSetting.searchLabel = PMSE_USER_SEARCH.text;
-                currentSetting.defaultSearchOptions = [
-                    {text: translate('LBL_PMSE_FORM_OPTION_CURRENT_USER'), value: 'currentuser'},
-                    {text: translate('LBL_PMSE_FORM_OPTION_RECORD_OWNER'), value: 'owner'},
-                    {text: translate('LBL_PMSE_FORM_OPTION_SUPERVISOR'), value: 'supervisor'}
-                ];
+                var defaultSearchOptions = this.meta.user[this.actionType] || this.meta.user.fallback;
+                defaultSearchOptions = _.map(defaultSearchOptions, function(option) {
+                    return {'text': translate(option.text), 'value': option.value};
+                });
+                currentSetting.defaultSearchOptions = _.sortBy(defaultSearchOptions, 'text');
                 newOption =  new SearchUpdaterItem(currentSetting);
                 break;
             case 'team_list':
