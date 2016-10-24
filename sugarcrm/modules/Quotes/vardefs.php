@@ -314,7 +314,7 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,2',
-            'formula' => 'ifElse(not(equal($subtotal, 0)), divide($deal_tot, $subtotal), "")',
+            'formula' => 'divide($deal_tot, $subtotal)',
             'calculated' => true,
             'enforced' => true,
         ),

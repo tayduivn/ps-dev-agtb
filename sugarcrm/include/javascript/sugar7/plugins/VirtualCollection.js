@@ -128,7 +128,7 @@
              * @chainable
              */
             unlinkRecord: function(model) {
-                if (this.isSynced(model) && !model.get('deleted')) {
+                if (this.isSynced(model)) {
                     model.set('_action', 'delete');
                     this.add(model, {merge: true});
                 } else {

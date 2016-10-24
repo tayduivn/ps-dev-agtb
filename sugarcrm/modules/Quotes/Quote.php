@@ -207,12 +207,9 @@ class Quote extends SugarBean
         $this->fill_in_additional_detail_fields();
     }
 
-    /**
-     * @deprecated old model code that will be removed. Currently returns false to stop corrupting data.
-     */
     public function fill_in_additional_detail_fields()
     {
-        return false;
+
         parent::fill_in_additional_detail_fields();
         if (!empty($this->id)) {
             $this->set_account();
