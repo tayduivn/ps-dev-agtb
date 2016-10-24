@@ -111,6 +111,13 @@
             }
         }, this));
     },
+
+    /**
+     * Email Templates Designer's URL should not change because it doesn't contain the action in it
+     * @override
+     */
+    setRoute: _.noop,
+
     _dispose: function() {
         if (App.drawer) {
             App.drawer.off(null, null, this);
