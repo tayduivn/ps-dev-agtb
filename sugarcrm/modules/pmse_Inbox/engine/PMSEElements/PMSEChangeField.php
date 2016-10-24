@@ -160,9 +160,13 @@ class PMSEChangeField extends PMSEScriptTask
                                 if (is_array($field->value)) {
                                     // Handle regular evaluation of values
                                     $newValue = $this->beanHandler->processValueExpression($field->value, $beanModule);
-
-                                    // Handle special field type processing
-                                    $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
+                                    if (empty($newValue)) {
+                                        // Used to set these fields to null in db
+                                        $newValue = '';
+                                    } else {
+                                        // Handle special field type processing
+                                        $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
+                                    }
                                 } else {
                                     if ($field->field == 'assigned_user_id') {
                                         $field->value = $this->getCustomUser($field->value, $beanModule);
