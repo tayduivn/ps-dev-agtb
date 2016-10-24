@@ -1830,6 +1830,112 @@ DateUpdaterItem.prototype.clear = function () {
     return this;
 };
 
+/**
+ * Validate the current content of the date field
+ *
+ * @return Boolean Whether the field content is valid
+ */
+DateUpdaterItem.prototype.isValid = function() {
+    var valid = UpdaterItem.prototype.isValid.call(this);
+    if (valid && Array.isArray(this._value) && this._value.length > 0) {
+        valid = this.validateExpression(this._value);
+    }
+    return valid;
+};
+
+/**
+ * Utility function to validate a date value expression
+ *
+ * @param Array An array of tokens that form an expression
+ *
+ * @return Boolean Whether the expression is valid
+ */
+DateUpdaterItem.prototype.validateExpression = function(value) {
+    var exp, val, curr, i, left, right, leftType, rightType, type;
+    if (Array.isArray(value) && value.length > 0) {
+        // only expected operators are + and -
+        exp = value.slice(0);
+        val = [];
+        for (i = 0; i < exp.length; i++) {
+            curr = exp[i];
+            if (curr.expType == 'ARITHMETIC' && (curr.expValue == '+' || curr.expValue == '-')) {
+                // needs to have a left hand operand
+                if (val.length < 1) {
+                    return false;
+                }
+                left = val.pop();
+                // left hand operand needs to be of a value type
+                if (left.expType != 'CONSTANT' && left.expType != 'VARIABLE') {
+                    return false;
+                }
+                // needs to have a right hand operand
+                if (i >= exp.length - 1) {
+                    return false;
+                }
+                right = exp[i + 1];
+                // right hand operand needs to be of a value type
+                if (right.expType != 'CONSTANT' && right.expType != 'VARIABLE') {
+                    return false;
+                }
+                // check the validity of the expression now
+                leftType = left.expSubtype.toLowerCase();
+                rightType = right.expSubtype.toLowerCase();
+                if (leftType == 'date' || leftType == 'datetime') {
+                    if (rightType == 'date' || rightType == 'datetime') {
+                        // can only do subtraction
+                        if (curr.expValue != '-') {
+                            return false;
+                        }
+                        curr = _.extend({}, left);
+                        curr.expSubtype = 'timespan';
+                        val.push(curr);
+                        i++;
+                    } else if (rightType == 'timespan') {
+                        // all good
+                        val.push(left);
+                        i++;
+                    } else {
+                        // bad type
+                        return false;
+                    }
+                } else if (leftType == 'timespan') {
+                    if (rightType == 'date' || rightType == 'datetime') {
+                        // can only do addition
+                        if (curr.expValue != '+') {
+                            return false;
+                        }
+                        val.push(right);
+                        i++;
+                    } else if (rightType == 'timespan') {
+                        // all good
+                        val.push(left);
+                        i++;
+                    } else {
+                        // bad type
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                val.push(curr);
+            }
+        }
+        // should have only one token left
+        if (val.length == 1) {
+            curr = val[0];
+            // check the type
+            if (curr.expType == 'CONSTANT' || curr.expType == 'VARIABLE') {
+                type = curr.expSubtype.toLowerCase();
+                if (type == 'date' || type == 'datetime' || type == 'timespan') {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+};
+
 DateUpdaterItem.prototype._createControl = function () {
     var control = this.createHTMLElement("input");
     control.type = "text";

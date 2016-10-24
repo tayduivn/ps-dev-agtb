@@ -2184,7 +2184,7 @@ AdamActivity.prototype.actionFactory = function(type) {
         proxy: actionDef.proxy,
         items: actionDef.items || [],
         closeContainerOnSubmit: true,
-        footerAlign: 'right',
+        footerAlign: 'left',
         buttons: [
             {
                 jtype: 'normal',
@@ -2531,6 +2531,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                                         if (fields) {
                                             updater_field.setOptions(fields.result, true);
                                             updater_field.setValue(data.act_fields || null);
+                                            updater_field.isValid();
                                             App.alert.dismiss('upload');
                                             w.html.style.display = 'inline';
                                         }
@@ -2636,6 +2637,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                                     success: function(fields) {
                                         updater_field.setOptions(fields.result);
                                         updater_field.setValue(data.act_fields || null);
+                                        updater_field.isValid();
                                         App.alert.dismiss('upload');
                                         w.html.style.display = 'inline';
                                     },
