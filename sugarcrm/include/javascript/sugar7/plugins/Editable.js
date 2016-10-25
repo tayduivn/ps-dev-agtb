@@ -330,6 +330,81 @@
             },
 
             /**
+             * Returns the editable fields of the view.
+             * Forms doubly linked list between elements in array.
+             *
+             * @param {Object[]} fields Fields of the view.
+             * @param {string[]} noEditFields List of non-editable field names.
+             * @return {Object[]} Array of editable fields of the view.
+             */
+            getEditableFields: function(fields, noEditFields) {
+                var editableFields = [];
+
+                _.each(fields, function(field) {
+                    var readonlyField = this._isReadOnly(field, noEditFields);
+                    if (!readonlyField) {
+                        editableFields.push(field);
+                    }
+                }, this);
+
+                this._formDoublyLinkedList(editableFields);
+
+                return editableFields;
+            },
+
+            /**
+             * Forms a doubly linked list with fields.
+             *
+             * @param {Object[]} fields Array of fields.
+             * @private
+             **/
+            _formDoublyLinkedList: function(fields) {
+                if (fields.length <= 1) {
+                    return;
+                }
+
+                var firstField;
+                var previousField;
+
+                _.each(fields, function(field) {
+                    if (previousField) {
+                        previousField.nextField = field;
+                        field.prevField = previousField;
+                    } else {
+                        firstField = field;
+                    }
+
+                    previousField = field;
+                });
+
+                if (previousField) {
+                    previousField.nextField = firstField;
+                    firstField.prevField = previousField;
+                }
+            },
+
+            /**
+             * Returns true if field is read-only, and false otherwise.
+             *
+             * @param {Object} field The Field object.
+             * @param {string[]} noEditFields List of non-editable field names.
+             * @return {boolean} `true` if the field is readonly
+             * @private
+             */
+            _isReadOnly: function(field, noEditFields) {
+                var isLocked = _.contains(this.model.get('locked_fields'), field.def.name);
+
+                if (field.def.readonly ||
+                    (field.def.type !== 'fieldset' && isLocked) ||
+                    _.indexOf(noEditFields, field.name) >= 0 ||
+                    field.parent) {
+                    return true;
+                }
+
+                return false;
+            },
+
+            /**
              * Bind default mouse click handler for inline edit mode.
              *
              * Once user clicks the out of the field area, it will cancel the inilne edit mode.

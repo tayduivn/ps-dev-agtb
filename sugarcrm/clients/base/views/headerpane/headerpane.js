@@ -14,6 +14,11 @@
  * @extends View.View
  */
 ({
+    plugins: [
+        'ErrorDecoration',
+        'Editable'
+    ],
+
     /**
      * @inheritdoc
      */
@@ -35,6 +40,7 @@
          * @private
          */
         this._title = this.meta.title;
+        this.buttons = {};
 
         this.context.on('headerpane:title', function(title) {
             this._title = title;
@@ -72,7 +78,10 @@
                 }
             }
         });
-        $(window).on('resize.headerpane.' + this.cid, _.bind(this.adjustHeaderpane, this));
+
+        this.adjustHeaderpane = _.debounce(this.adjustHeaderpane, 50);
+        _.bindAll(this, 'adjustHeaderpane');
+        $(window).on('resize.headerpane.' + this.cid, this.adjustHeaderpane);
         this.layout.on('headerpane:adjust_fields', this.adjustTitle, this);
     },
 
@@ -105,6 +114,7 @@
          * @type {string}
          */
         this.title = !_.isUndefined(this._title) ? this._formatTitle(this._title) : this.title;
+        // FIXME TY-1751 Move code that alters the metadata outside of _renderHtml
         this.meta.fields = _.map(this.meta.fields, function(field) {
             if (field.name === 'title') {
                 field['formatted_value'] = this.title || this._formatTitle(field['default_value']);
@@ -167,6 +177,95 @@
         if (this.layout) {
             this.layout.trigger('headerpane:adjust_fields');
         }
+    },
+
+    /**
+     * Adds the button corresponding to `buttonName` to the `buttons` object.
+     *
+     * @param {string} buttonName The name of the button.
+     * @private
+     */
+    _registerFieldAsButton: function(buttonName) {
+        var button = this.getField(buttonName);
+        if (button) {
+            this.buttons[buttonName] = button;
+        }
+    },
+
+    /**
+     * Returns a list of fields that are not button of the view.
+     *
+     * @private
+     */
+    _getNonButtonFields: function() {
+        return _.filter(this.fields, _.bind(function(field) {
+            if (field.name) {
+                return !this.buttons[field.name];
+            }
+
+            return true;
+        }, this));
+    },
+
+    /**
+     * Uses {@link app.plugins.Editable} to
+     *   set the internal property of {@link #editableFields}.
+     */
+    setEditableFields: function() {
+        this.editableFields = this.getEditableFields(this._getNonButtonFields(), this.noEditFields || []);
+    },
+
+    /**
+     * Registers fields as buttons as specified in the metadata.
+     *
+     * @protected
+     */
+    _setButtons: function() {
+        if (this.meta && this.meta.buttons) {
+            _.each(this.meta.buttons, function(button) {
+                this._registerFieldAsButton(button.name);
+            }, this);
+        }
+    },
+
+    /**
+     * Show/hide buttons depending on the state defined for each buttons in the
+     * metadata.
+     *
+     * @param {string} state The {@link #STATE} of the current view.
+     */
+    setButtonStates: function(state) {
+        this.currentState = state;
+
+        _.each(this.buttons, function(field) {
+            var showOn = field.def.showOn;
+            if (_.isUndefined(showOn) || (showOn === state)) {
+                field.show();
+            } else {
+                field.hide();
+            }
+        });
+
+        this._toggleButtons(true);
+    },
+
+    /**
+     * Enables or disables the action buttons that are currently shown on the
+     * page. Toggles the `.disabled` class by default.
+     *
+     * @param {boolean} [enable=false] Whether to enable or disable the action
+     *   buttons. Defaults to `false`.
+     * @private
+     */
+    _toggleButtons: function(enable) {
+        var state = !_.isUndefined(enable) ? !enable : false;
+
+        _.each(this.buttons, function(button) {
+            var showOn = button.def.showOn;
+            if (_.isUndefined(showOn) || this.currentState === showOn) {
+                button.setDisabled(state);
+            }
+        }, this);
     },
 
     /**

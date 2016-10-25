@@ -176,4 +176,34 @@ describe("Editable Plugin", function() {
         });
     });
 
+    describe('getEditableFields', function() {
+        it('should return a list of editable fields', function() {
+            view.render();
+            var noEditFields = ['case_number', 'type'];
+            view.model.set('locked_fields', ['name', 'description']);
+
+            var editableFields = view.getEditableFields(view.fields, noEditFields);
+            expect(editableFields.length).toBe(4);
+            expect(editableFields[0].name).toBe('created_by');
+            expect(editableFields[1].name).toBe('date_entered');
+            expect(editableFields[2].name).toBe('date_modified');
+            expect(editableFields[3].name).toBe('modified_user_id');
+        });
+
+        it('should return a doubly-linked list', function() {
+            view.render();
+            var noEditFields = ['name', 'case_number', 'created_by', 'date_modified', 'modified_user_id'];
+
+            var editableFields = view.getEditableFields(view.fields, noEditFields);
+            /**
+             * linked list in the form of: `description` <=> `type` <=> `date_entered`
+             */
+            expect(editableFields[0].nextField.name).toBe('type');
+            expect(editableFields[0].prevField.name).toBe('date_entered');
+            expect(editableFields[1].nextField.name).toBe('date_entered');
+            expect(editableFields[1].prevField.name).toBe('description');
+            expect(editableFields[2].nextField.name).toBe('description');
+            expect(editableFields[2].prevField.name).toBe('type');
+        });
+    });
 });

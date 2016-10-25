@@ -632,40 +632,26 @@
     },
 
     /**
-     * sets editable fields
+     * Returns a list of fields that are not buttons of the view.
+     *
+     * @private
+     */
+    _getNonButtonFields: function() {
+        return _.filter(this.fields, _.bind(function(field) {
+            if (field.name) {
+                return !this.buttons[field.name];
+            }
+
+            return true;
+        }, this));
+    },
+
+    /**
+     * Uses {@link app.plugins.Editable} to
+     * set the internal property of {@link #editableFields}.
      */
     setEditableFields: function() {
-        delete this.editableFields;
-        this.editableFields = [];
-
-        var previousField, firstField;
-        _.each(this.fields, function(field) {
-            var isLocked = _.contains(this.model.get('locked_fields'), field.def.name);
-
-            var readonlyField = field.def.readonly ||
-                (field.def.type !== 'fieldset' && isLocked) ||
-                _.indexOf(this.noEditFields, field.def.name) >= 0 ||
-                field.parent || (field.name && this.buttons[field.name]);
-
-            if (readonlyField) {
-                // exclude read only fields
-                return;
-            }
-            if (previousField) {
-                previousField.nextField = field;
-                field.prevField = previousField;
-            } else {
-                firstField = field;
-            }
-            previousField = field;
-            this.editableFields.push(field);
-
-        }, this);
-
-        if (previousField) {
-            previousField.nextField = firstField;
-            firstField.prevField = previousField;
-        }
+        this.editableFields = this.getEditableFields(this._getNonButtonFields(), this.noEditFields);
     },
 
     initButtons: function() {

@@ -11,10 +11,10 @@
 /**
  * @class View.Views.Base.DashboardHeaderpaneView
  * @alias SUGAR.App.view.views.BaseDashboardHeaderpaneView
- * @extends View.Views.Base.RecordView
+ * @extends View.Views.Base.HeaderpaneView
  */
 ({
-    extendsFrom: 'RecordView',
+    extendsFrom: 'HeaderpaneView',
     buttons: null,
     editableFields: null,
     className: 'preview-headerbar',
@@ -142,7 +142,7 @@
     _render: function() {
         app.view.View.prototype._render.call(this);
 
-        this.initButtons();
+        this._setButtons();
         this.setButtonStates(this.context.get("create") ? 'create' : 'view');
         this.setEditableFields();
     },
