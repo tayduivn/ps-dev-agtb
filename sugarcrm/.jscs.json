@@ -5,7 +5,7 @@
     "safeContextKeyword": ["self"],
     "maxErrors": -1,
     "excludeFiles": [
-        "node_modules/**",
+        "**/node_modules/**",
         "**/*.min.js",
         "include/javascript/fuse/**",
         "include/javascript/jquery/**",
