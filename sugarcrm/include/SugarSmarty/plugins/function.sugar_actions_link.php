@@ -61,7 +61,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
 			break;
 
             case "DUPLICATE":
-                $duplicateBtn = '<a title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
+                return '{if $bean->ACLAccess("edit")}<a title="{$APP.LBL_DUPLICATE_BUTTON_TITLE}" ' .
                     'accessKey="{$APP.LBL_DUPLICATE_BUTTON_KEY}" ' .
                     'onclick="$(\'#form\')[0].return_module.value=\''. $module . '\'; ' .
                     '$(\'#form\')[0].return_action.value=\'DetailView\'; ' .
@@ -69,8 +69,7 @@ function smarty_function_sugar_actions_link($params, &$smarty)
                     '$(\'#form\')[0].action.value=\'DuplicateView\'; ' .
                     '$(\'#form\')[0].return_id.value=\'{$id}\';' .
                     'SUGAR.ajaxUI.submitForm($(\'#form\')[0]);" ' .
-                    'name="Duplicate" id="duplicate_button">{$APP.LBL_DUPLICATE_BUTTON_LABEL}</a> ';
-                return (SugarACL::checkAccess($module, 'edit', array('owner_override' => true))) ? $duplicateBtn : '';
+                    'name="Duplicate" id="duplicate_button">{$APP.LBL_DUPLICATE_BUTTON_LABEL}</a>{/if} ';
                 break;
 
 			case "EDIT";
