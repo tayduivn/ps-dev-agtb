@@ -289,10 +289,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             }
         }
 
-        if (version_compare($this->from_version, '7.7.1', '<')) {
-            $files[] = 'jssource/src_files';
-        }
-
         if (version_compare($this->from_version, '7.7', '<')) {
             $files[] = 'clients/base/views/interactionschart';
             $files[] = 'include/javascript/sugar7/plugins/Timeago.js';
@@ -374,9 +370,80 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'clients/base/layouts/create-actions';
             $files[] = 'clients/base/views/create-actions';
             $files[] = 'clients/base/views/news';
-        }
-
-        if (version_compare($this->from_version, '7.8.0.0', '<')) {
+            $files[] = 'styleguide/assets/css/jsduck.css';
+            $files[] = 'styleguide/less/sugar-specific/rtl.less';
+            $files[] = 'styleguide/less/twitter-bootstrap/alerts.less';
+            $files[] = 'themes/default/css/ie.css';
+            $files[] = 'sidecar/build.php';
+            $files[] = 'sidecar/construct';
+            $files[] = 'sidecar/grunt';
+            $files[] = 'sidecar/Gruntfile.js';
+            $files[] = 'sidecar/lib/jquery/jquery.tinymce.js';
+            $files[] = 'sidecar/lib/momentjs/lang';
+            $files[] = 'sidecar/lib/momentjs/min/langs.js';
+            $files[] = 'sidecar/lib/momentjs/min/langs.min.js';
+            $files[] = 'sidecar/lib/momentjs/min/moment-with-langs.js';
+            $files[] = 'sidecar/lib/momentjs/min/moment-with-langs.min.js';
+            $files[] = 'sidecar/lib/mousetrap';
+            $files[] = 'sidecar/lib/sugaraccessibility';
+            $files[] = 'sidecar/minified/sidecar.js';
+            $files[] = 'sidecar/minified/sidecar.lite.js';
+            $files[] = 'sidecar/minified/sidecar.lite.min.js';
+            $files[] = 'sidecar/src/include-manifest.php';
+            $files[] = 'sidecar/src/sample-config.js';
+            $files[] = 'sidecar/src/utils/shortcuts.js';
+            $files[] = 'sidecar/src/view/tutorial.js';
+            $files[] = 'jssource/src_files';
+            $files[] = 'clients/base/layouts/create-dupecheck/create-dupecheck.js';
+            $files[] = 'clients/base/layouts/dashlet-preview/dashlet-preview.js';
+            $files[] = 'clients/base/layouts/first-login-wizard/first-login-wizard.js';
+            $files[] = 'clients/base/layouts/multi-selection-list-link/multi-selection-list-link.js';
+            $files[] = 'clients/base/layouts/multi-selection-list/multi-selection-list.js';
+            $files[] = 'clients/base/views/help-dashboard-headerpane/help-dashboard-headerpane.js';
+            $files[] = 'modules/Accounts/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/Contacts/clients/base/views/panel-top-for-cases/panel-top-for-cases.js';
+            $files[] = 'modules/Contacts/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/Home/clients/base/layouts/list/list.js';
+            $files[] = 'modules/Home/clients/base/layouts/record/record.js';
+            $files[] = 'modules/Leads/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/Prospects/clients/base/views/panel-top-for-prospectlists/' .
+                'panel-top-for-prospectlists.js';
+            $files[] = 'modules/Quotes/clients/base/views/panel-top-for-accounts/panel-top-for-accounts.js';
+            $files[] = 'modules/Users/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/Leads/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/Prospects/clients/base/views/panel-top-for-prospectlists/' .
+                'panel-top-for-prospectlists.js';
+            $files[] = 'modules/Quotes/clients/base/views/panel-top-for-accounts/panel-top-for-accounts.js';
+            $files[] = 'modules/Users/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
+            $files[] = 'modules/ACLRoles/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Administration/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Calendar/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Campaigns/clients/base/layouts/records/records.js';
+            $files[] = 'modules/ContractTypes/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Contracts/clients/base/layouts/records/records.js';
+            $files[] = 'modules/DocumentRevisions/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Documents/clients/base/layouts/records/records.js';
+            $files[] = 'modules/EmailTemplates/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Emails/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Employees/clients/base/layouts/records/records.js';
+            $files[] = 'modules/InboundEmail/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Manufacturers/clients/base/layouts/records/records.js';
+            $files[] = 'modules/OAuthKeys/clients/base/layouts/records/records.js';
+            $files[] = 'modules/PdfManager/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Project/clients/base/layouts/records/records.js';
+            $files[] = 'modules/ProjectTask/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Quotas/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Quotes/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Reports/clients/base/layouts/records/records.js';
+            $files[] = 'modules/TaxRates/clients/base/layouts/records/records.js';
+            $files[] = 'modules/TeamNotices/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Teams/clients/base/layouts/records/records.js';
+            $files[] = 'modules/UserSignatures/clients/base/layouts/records/records.js';
+            $files[] = 'modules/Users/clients/base/layouts/records/records.js';
+            $files[] = 'clients/base/layouts/history-summary-preview/history-summary-preview.js';
+            $files[] = 'clients/base/views/history-summary-preview-header/history-summary-preview-header.js';
+            $files[] = 'clients/base/views/history-summary/history-summary.hbs';
+            $files[] = 'mobile/js/sidecar.js';
             $files[] = 'modules/pmse_Inbox/engine/Crypt.php';
             $files[] = 'modules/pmse_Inbox/engine/PMSEAccessManager.php';
             $files[] = 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
