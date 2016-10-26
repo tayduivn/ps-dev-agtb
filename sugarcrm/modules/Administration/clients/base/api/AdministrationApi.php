@@ -128,7 +128,7 @@ class AdministrationApi extends SugarApi
     {
         $this->ensureAdminUser();
 
-        $clearData = isset($args['clear_data']);
+        $clearData = isset($args['clear_data']) ? (bool) $args['clear_data'] : false;
         $modules = empty($args['module_list']) ? array() : explode(',', $args['module_list']);
         $engine = $this->getSearchEngine();
         $status = $engine->scheduleIndexing($modules, $clearData);

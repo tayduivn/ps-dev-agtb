@@ -2243,26 +2243,6 @@ EOQ;
                 $mailer->send();
                 $result["status"] = true;
 
-                // save the email record
-                $email                   = new Email();
-                $email->id = $emailId;
-                $email->new_with_id = true;
-                $email->team_id          = 1;
-                $email->to_addrs         = '';
-                $email->type             = 'archived';
-                $email->deleted          = '0';
-                $email->name             = $emailTemplate->subject;
-                $email->description      = $textBody;
-                $email->description_html = $htmlBody;
-                $email->from_addr        = $mailer->getHeader(EmailHeaders::From)->getEmail();
-                $email->parent_type      = 'User';
-                $email->date_sent        = TimeDate::getInstance()->nowDb();
-                $email->modified_user_id = '1';
-                $email->created_by       = '1';
-                $email->status           = 'sent';
-                $email->message_id = $mailer->getHeader(EmailHeaders::MessageId);
-                $email->save();
-
                 if (!isset($additionalData['link']) || $additionalData['link'] == false) {
                     $this->setNewPassword($additionalData['password'], '1');
                 }

@@ -154,7 +154,7 @@ class QueueManager
         $sq->from($job)->where()
             ->equals('target', $jobExec)
             ->starts('data', $module)
-            ->equals('status', \SchedulersJob::JOB_STATUS_QUEUED);
+            ->contains('status', array(\SchedulersJob::JOB_STATUS_QUEUED, \SchedulersJob::JOB_STATUS_RUNNING));
 
         $result = $job->fetchFromQuery($sq);
 
@@ -291,7 +291,7 @@ class QueueManager
         $bean->populateFromRow($bean->convertRow($row));
 
         // Index the bean and flag for removal when successful
-        if ($status = $this->container->indexer->indexBean($bean, true, true)) {
+        if ($this->container->indexer->indexBean($bean, true, true)) {
             $this->batchDeleteFromQueue($row['fts_id'], $module);
         }
     }

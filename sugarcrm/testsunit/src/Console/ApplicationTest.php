@@ -47,6 +47,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function providerTestAvailableStockCommands()
     {
+        $ns = 'Sugarcrm\Sugarcrm\Console\Command';
         return array(
             array(
                 CommandRegistry::MODE_STANDALONE,
@@ -60,15 +61,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 array(
                     'help' => 'Symfony\Component\Console\Command\HelpCommand',
                     'list' => 'Symfony\Component\Console\Command\ListCommand',
-                    'elastic:indices' => 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchIndicesCommand',
-                    'elastic:queue' => 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchQueueCommand',
-                    'elastic:routing' => 'Sugarcrm\Sugarcrm\Console\Command\Api\ElasticsearchRoutingCommand',
-                    'search:fields' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchFieldsCommand',
-                    'search:reindex' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchReindexCommand',
-                    'search:status' => 'Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand',
-                    'password:config' => 'Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand',
-                    'password:reset' => 'Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand',
-                    'password:weak' => 'Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand',
+                    'elastic:indices' => $ns . '\Api\ElasticsearchIndicesCommand',
+                    'elastic:queue' => $ns . '\Api\ElasticsearchQueueCommand',
+                    'elastic:queue_cleanup' => $ns . '\Elasticsearch\CleanupQueueCommand',
+                    'elastic:routing' => $ns . '\Api\ElasticsearchRoutingCommand',
+                    'search:fields' => $ns . '\Api\SearchFieldsCommand',
+                    'search:reindex' => $ns . '\Api\SearchReindexCommand',
+                    'search:status' => $ns . '\Api\SearchStatusCommand',
+                    'search:module' => $ns . '\Elasticsearch\ModuleCommand',
+                    'password:config' => $ns . '\Password\PasswordConfigCommand',
+                    'password:reset' => $ns . '\Password\PasswordResetCommand',
+                    'password:weak' => $ns . '\Password\WeakHashesCommand',
                 ),
             ),
         );
