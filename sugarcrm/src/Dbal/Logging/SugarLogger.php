@@ -86,6 +86,6 @@ class SugarLogger implements \Doctrine\DBAL\Logging\SQLLogger
      */
     protected function log($message)
     {
-        $this->logger->{self::LEVEL}($message);
+        call_user_func(array($this->logger, self::LEVEL), $message);
     }
 }
