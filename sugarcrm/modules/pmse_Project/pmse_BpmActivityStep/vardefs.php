@@ -23,7 +23,7 @@ $dictionary['pmse_BpmActivityStep'] = array(
             'required' => true,
             'name' => 'pro_id',
             'vname' => 'Process identifier',
-            'type' => 'id',
+            'type' => 'varchar',
             'massupdate' => false,
             'default' => '',
             'no_default' => false,
@@ -37,6 +37,7 @@ $dictionary['pmse_BpmActivityStep'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'calculated' => false,
+            'len' => '36',
             'size' => '36',
         ),
         'act_step_type' => array(

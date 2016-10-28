@@ -23,7 +23,7 @@ $dictionary['pmse_BpmGroup'] = array(
             'required' => true,
             'name' => 'grp_uid',
             'vname' => 'Group Identifier',
-            'type' => 'id',
+            'type' => 'varchar',
             'massupdate' => false,
             'default' => '',
             'no_default' => false,
@@ -37,6 +37,7 @@ $dictionary['pmse_BpmGroup'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'calculated' => false,
+            'len' => '36',
             'size' => '36',
         ),
         'grp_parent_group' => array(
