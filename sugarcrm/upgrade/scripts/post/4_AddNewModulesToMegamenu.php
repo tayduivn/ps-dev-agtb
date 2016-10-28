@@ -102,7 +102,7 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
         }
 
         // Save the module list
-        $this->saveModifiedTabs($tc, $tabs);
+        $this->saveModifiedTabs($tc, $tabs[0]);
     }
 
     /**
@@ -237,7 +237,7 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
             }
         }
 
-        return $tabs[0];
+        return $tabs;
     }
 
     /**

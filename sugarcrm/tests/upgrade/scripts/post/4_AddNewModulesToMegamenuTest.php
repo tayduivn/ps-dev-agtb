@@ -215,12 +215,17 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                     ),
                 ),
                 'expect' => array(
-                    'Accounts' => 'Accounts',
-                    'Bugs' => 'Bugs',
-                    'Contacts' => 'Contacts',
-                    'Voldemort' => 'Voldemort',
-                    'Gandalf' => 'Gandalf',
-                    'Palpatine' => 'Palpatine',
+                    '0' => array(
+                        'Accounts' => 'Accounts',
+                        'Bugs' => 'Bugs',
+                        'Contacts' => 'Contacts',
+                        'Voldemort' => 'Voldemort',
+                        'Gandalf' => 'Gandalf',
+                        'Palpatine' => 'Palpatine',
+                    ),
+                    '1' => array(
+                        'Blah' => 'Blah',
+                    ),
                 ),
             ),
             array(
@@ -232,11 +237,16 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
                     ),
                 ),
                 'expect' => array(
-                    'Accounts' => 'Accounts',
-                    'Bugs' => 'Bugs',
-                    'Contacts' => 'Contacts',
-                    'Azog' => 'Azog',
-                    'Hammerhead' => 'Hammerhead',
+                    '0' => array(
+                        'Accounts' => 'Accounts',
+                        'Bugs' => 'Bugs',
+                        'Contacts' => 'Contacts',
+                        'Azog' => 'Azog',
+                        'Hammerhead' => 'Hammerhead',
+                    ),
+                    '1' => array(
+                        'Blah' => 'Blah',
+                    ),
                 ),
             ),
         );
