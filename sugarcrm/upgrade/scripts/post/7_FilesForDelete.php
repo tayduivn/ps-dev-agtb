@@ -446,7 +446,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/pmse_Inbox/engine/PMSEAccessManager.php';
             $files[] = 'modules/pmse_Inbox/engine/PMSELicenseManager.php';
             $files[] = 'modules/pmse_Project/pmse_BpmAccessManagement';
-            $files[] = 'modules/Notifications/Ext';
             $files[] = 'themes/default/images/ical-settings-icon.gif';
             $files[] = 'modules/Categories/clients/base/views/tree/tree.php';
             $files[] = 'modules/Forecasts/clients/base/views/forecast-pipeline/forecast-pipeline.hbs';
