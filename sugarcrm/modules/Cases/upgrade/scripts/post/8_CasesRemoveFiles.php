@@ -36,6 +36,10 @@ class SugarUpgradeCasesRemoveFiles extends UpgradeScript
             $files[] = 'modules/Cases/CasesApiHelper.php';
         }
 
+        if (version_compare($this->from_version, '7.8.0.0', '<')) {
+            $files[] = 'modules/Cases/clients/base/layouts/tabbed-layout';
+        }
+
         if (!empty($files)) {
             $this->fileToDelete($files);
         }

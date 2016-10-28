@@ -403,8 +403,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Accounts/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
             $files[] = 'modules/Contacts/clients/base/views/panel-top-for-cases/panel-top-for-cases.js';
             $files[] = 'modules/Contacts/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
-            $files[] = 'modules/Home/clients/base/layouts/list/list.js';
-            $files[] = 'modules/Home/clients/base/layouts/record/record.js';
             $files[] = 'modules/Leads/clients/base/views/panel-top-for-prospectlists/panel-top-for-prospectlists.js';
             $files[] = 'modules/Prospects/clients/base/views/panel-top-for-prospectlists/' .
                 'panel-top-for-prospectlists.js';

@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeBugsRemoveFiles extends UpgradeScript
+class SugarUpgradeUserPreferencesRemoveFiles extends UpgradeScript
 {
     /**
      * When to run this upgrade script
@@ -25,19 +25,11 @@ class SugarUpgradeBugsRemoveFiles extends UpgradeScript
      */
     public $type = self::UPGRADE_CORE;
 
-    /**
-     * Lets Run This Upgrade Script!
-     */
     public function run()
     {
         $files = array();
-        // if we are coming from before 7.2.1, these files need to be deleted
-        if (version_compare($this->from_version, '7.2.1', '<')) {
-            $files[] = 'modules/Bugs/BugsApiHelper.php';
-        }
-
         if (version_compare($this->from_version, '7.8.0.0', '<')) {
-            $files[] = 'modules/Bugs/clients/base/layouts/tabbed-layout';
+            $files[] = 'modules/UserPreferences/Ext';
         }
 
         if (!empty($files)) {
