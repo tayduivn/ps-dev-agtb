@@ -22,8 +22,27 @@ class SugarUpgradeFilesToRemove extends UpgradeScript
 
     public function run()
     {
-        $filesToRemove = json_decode(file_get_contents("{$this->context['extract_dir']}/filesToRemove.json"));
+        $filesToRemove = "{$this->context['extract_dir']}/filesToRemove.json";
 
-        $this->fileToDelete($filesToRemove);
+        if (!file_exists($filesToRemove)) {
+            $this->log("Skipping script due to missing 'filesToRemove.json'");
+            return;
+        }
+
+        $contents = file_get_contents($filesToRemove);
+
+        if (empty($contents)) {
+            $this->log("Skipping script due to empty contents in 'filesToRemove.json'");
+            return;
+        }
+
+        $files = json_decode($contents);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($files)) {
+            $this->log("Skipping script due to invalid JSON in 'filesToRemove.json'");
+            return;
+        }
+
+        $this->fileToDelete($files);
     }
 }
