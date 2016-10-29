@@ -190,7 +190,8 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
   .alert {
     padding: 0;
     min-width: 280px;
-    max-width: 280px;
+    width: auto;
+    max-width: 430px;
     background: @confirmationBackground;
     .indicator {
       display: block;
@@ -209,9 +210,6 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
         display: inline;
       }
     }
-    .alert-messages {
-      padding: 15px;
-    }
     strong {
       padding: 0;
     }
@@ -219,6 +217,8 @@ div.alert { /* rules here do not apply to alert in a list view (<table>) header 
       text-align: center;
       display: block;
       padding: 18px 40px 16px;
+      max-height: 320px;
+      overflow: auto;
     }
     //Alert buttons
     .row-fluid {
