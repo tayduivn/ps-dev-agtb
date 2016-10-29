@@ -93,6 +93,14 @@
             return this;
         }
 
+        if (options.messages) {
+            var messageSize = _.reduce(options.messages, function(memo, message) {
+                return memo + message.length;
+            }, 0);
+            this.templateOptions = this.templateOptions || {};
+            this.templateOptions.hasBigMessage = (messageSize > 80);
+        }
+
         var template = this._getAlertTemplate(options, this.templateOptions);
 
         this.$el.html(template);
