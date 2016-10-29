@@ -19,7 +19,7 @@ describe('Sugar7 filters utils', function() {
                     initial_filter: 'my_custom',
                     initial_filter_label: 'LBL_MY_CUSTOM',
                     filter_populate: {
-                        'module': {$in: ['Accounts']}
+                        'module': 'Accounts'
                     }
                 })
                 .format();
@@ -28,7 +28,7 @@ describe('Sugar7 filters utils', function() {
                 initial_filter: 'my_custom',
                 initial_filter_label: 'LBL_MY_CUSTOM',
                 filter_populate: {
-                    'module': {$in: ['Accounts']}
+                    'module': 'Accounts'
                 },
                 stickiness: false
             });
@@ -72,8 +72,8 @@ describe('Sugar7 filters utils', function() {
                             'contact_id': 'contact_id'
                         },
                         filter_populate: {
-                            'account_id': {$in: ['']},
-                            'contact_id': {$in: ['']}
+                            'account_id': '',
+                            'contact_id': ''
                         }
                     })
                     .populateRelate(relatedModel)
@@ -83,8 +83,8 @@ describe('Sugar7 filters utils', function() {
                     initial_filter: 'my_custom',
                     initial_filter_label: 'LBL_FILTER_USE_RELATED_FIELDS',
                     filter_populate: {
-                        'account_id': {$in: ['abcd-efgh']},
-                        'contact_id': {$in: ['1234-5678']}
+                        'account_id': 'abcd-efgh',
+                        'contact_id': '1234-5678'
                     },
                     stickiness: false
                 });
@@ -99,8 +99,8 @@ describe('Sugar7 filters utils', function() {
                             'contact_id': 'contact_id'
                         },
                         filter_populate: {
-                            'account_id': {$in: ['']},
-                            'contact_id': {$in: ['']}
+                            'account_id': '',
+                            'contact_id': ''
                         }
                     })
                     .populateRelate(relatedModel)
@@ -110,8 +110,8 @@ describe('Sugar7 filters utils', function() {
                     initial_filter: 'my_custom',
                     initial_filter_label: 'The related account, The related contact',
                     filter_populate: {
-                        'account_id': {$in: ['abcd-efgh']},
-                        'contact_id': {$in: ['1234-5678']}
+                        'account_id': 'abcd-efgh',
+                        'contact_id': '1234-5678'
                     },
                     stickiness: false
                 });
