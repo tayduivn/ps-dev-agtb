@@ -11,8 +11,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+
+$record = InputValidation::getService()->getValidInputRequest('record', 'Assert\Guid');
+$module = InputValidation::getService()->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
+
 $focus = BeanFactory::getBean('MergeRecords');
-$focus->load_merge_bean($_REQUEST['merge_module'], true, $_REQUEST['record']);
+$focus->load_merge_bean($module, true, $record);
 
 foreach($focus->merge_bean->column_fields as $field)
 {
@@ -66,8 +71,18 @@ $linked_fields=$focus->merge_bean->get_linked_fields();
 
 $exclude = explode(',', $_REQUEST['merged_links']);
 
-if (is_array($_POST['merged_ids'])) {
-    foreach ($_POST['merged_ids'] as $id) {
+
+$merged = InputValidation::getService()->getValidInputPost(
+    'merged_ids',
+    array(
+        'Assert\All' => array(
+            'constraints' => 'Assert\Guid',
+        ),
+    )
+);
+
+if (is_array($merged)) {
+    foreach ($merged as $id) {
         $mergesource = BeanFactory::getBean($focus->merge_module, $id);
         //kbrill Bug #13826
         foreach ($linked_fields as $name => $properties) {

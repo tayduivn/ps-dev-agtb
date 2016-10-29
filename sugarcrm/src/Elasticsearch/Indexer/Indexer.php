@@ -119,9 +119,9 @@ class Indexer
         }
 
         // Send to database queue when Elastic is unavailable or in async mode
-        if ($this->useQueue($bean, $fromQueue)) {
+        if (!$fromQueue && $this->useQueue($bean)) {
             $this->container->queueManager->queueBean($bean);
-            return false;
+            return true;
         }
 
         // Convert bean into an Elastica Document
@@ -137,19 +137,13 @@ class Indexer
     /**
      * Verify whether or not to use the queue
      * @param \SugarBean $bean
-     * @param boolean $fromQueue
      * @return boolean
      */
-    protected function useQueue(\SugarBean $bean, $fromQueue)
+    protected function useQueue(\SugarBean $bean)
     {
         // connection should be available
         if (!$this->container->client->isAvailable()) {
             return true;
-        }
-
-        // avoid loops when coming from queue already
-        if ($fromQueue) {
-            return false;
         }
 
         // in async mode use queue only if not coming from the queue already
