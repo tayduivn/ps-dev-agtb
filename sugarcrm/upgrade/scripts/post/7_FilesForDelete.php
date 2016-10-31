@@ -47,8 +47,6 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             'modules/Leads/SugarFeeds',
             'modules/Opportunities/SugarFeeds/OppFeed.php',
             'modules/SugarFeed',
-            // remove the old FTS Logic Hook
-            'custom/Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
             // remove old popup picker files from RLI
             'modules/RevenueLineItems/Popup_picker.html',
             'modules/RevenueLineItems/Popup_picker.php',
