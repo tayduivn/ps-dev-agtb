@@ -431,23 +431,25 @@ class Call extends SugarBean {
         $calldate = $timedate->fromDb($call->date_start);
 		$xOffset = $timedate->asUser($calldate, $notifyUser).' '.$timedate->userTimezoneSuffix($calldate, $notifyUser);
 
-		$propertyUrlUserId = array_search(strtolower(get_class($call->current_notify_user)), array(
-			'contact_id' => 'contact',
-			'lead_id' => 'lead',
-		));
-
-		if ($propertyUrlUserId === false) {
-			$propertyUrlUserId = 'user_id';
-		}
-
-		$xtpl->assign("ACCEPT_URL", sprintf(
-			'%s/index.php?entryPoint=acceptDecline&module=Calls&%s=%s&record=%s',
-			$sugar_config['site_url'],
-			$propertyUrlUserId,
-			$call->current_notify_user->id,
-			$call->id
-		));
-
+        if (strtolower(get_class($call->current_notify_user)) == 'contact') {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Calls&contact_id=' .
+                $call->current_notify_user->id . '&record=' . $call->id
+            );
+        } elseif (strtolower(get_class($call->current_notify_user)) == 'lead') {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Calls&lead_id=' .
+                $call->current_notify_user->id . '&record=' . $call->id
+            );
+        } else {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Calls&user_id=' .
+                $call->current_notify_user->id . '&record=' . $call->id
+            );
+        }
 		$xtpl->assign("CALL_TO", $call->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("CALL_SUBJECT", $call->name);
 		$xtpl->assign("CALL_STARTDATE", $xOffset);

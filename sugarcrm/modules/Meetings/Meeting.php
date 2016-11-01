@@ -540,23 +540,26 @@ class Meeting extends SugarBean {
 		// cn: bug 9494 - passing a contact breaks this call
 		$notifyUser =($meeting->current_notify_user->object_name == 'User') ? $meeting->current_notify_user : $current_user;
 		// cn: bug 8078 - fixed call to $timedate
-        $propertyUrlUserId = array_search(strtolower(get_class($meeting->current_notify_user)), array(
-            'contact_id' => 'contact',
-            'lead_id' => 'lead',
-        ));
 
-        if ($propertyUrlUserId === false) {
-            $propertyUrlUserId = 'user_id';
+        if (strtolower(get_class($meeting->current_notify_user)) == 'contact') {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Meetings&contact_id=' .
+                $meeting->current_notify_user->id . '&record=' . $meeting->id
+            );
+        } elseif (strtolower(get_class($meeting->current_notify_user)) == 'lead') {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Meetings&lead_id=' .
+                $meeting->current_notify_user->id . '&record=' . $meeting->id
+            );
+        } else {
+            $xtpl->assign(
+                "ACCEPT_URL",
+                $sugar_config['site_url'] . '/index.php?entryPoint=acceptDecline&module=Meetings&user_id=' .
+                $meeting->current_notify_user->id . '&record=' . $meeting->id
+            );
         }
-
-        $xtpl->assign("ACCEPT_URL", sprintf(
-            '%s/index.php?entryPoint=acceptDecline&module=Meetings&%s=%s&record=%s',
-            $sugar_config['site_url'],
-            $propertyUrlUserId,
-            $meeting->current_notify_user->id,
-            $meeting->id
-        ));
-
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
