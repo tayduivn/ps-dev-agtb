@@ -261,8 +261,8 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
     public static function removeTBAValuesFromBeanDataProvider()
     {
         return array(
-            // Addressees module doesn't implement tba, so call removeAllTBAValuesFromTable only for accounts table
-            array(array('Accounts' => 'Account',), 'accounts'),
+            // Versions module doesn't implement tba, so call removeAllTBAValuesFromTable only for accounts table
+            array(array('Versions' => 'Version', 'Accounts' => 'Account',), 'accounts'),
             // Users module implements tba, but exists in alwaysEnabledModules list
             array(array('Accounts' => 'Account', 'Users' => 'User'), 'accounts'),
         );
