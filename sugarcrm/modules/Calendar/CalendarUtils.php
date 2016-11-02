@@ -507,27 +507,6 @@ class CalendarUtils
     }
 
     /**
-     * Restores deleted series.
-     *
-     * @param Call|Meeting|SugarBean $bean
-     * @return bool true if series was restored or false if nothing found
-     */
-    public static function correctDeletedRecurrence(SugarBean $bean)
-    {
-        if ($bean->repeat_parent_id) {
-            return false;
-        }
-        /** @var DBManager $db */
-        /** @var TimeDate $timedate */
-        global $db, $timedate;
-
-        $query = 'UPDATE %1$s SET repeat_parent_id = %2$s, date_modified = %3$s WHERE id <> %2$s AND repeat_root_id = %2$s';
-        $query = sprintf($query, $bean->table_name, $db->quoted($bean->id), $db->convert($db->quoted($timedate->nowDb()), 'datetime'));
-        $db->query($query);
-        return true;
-    }
-
-    /**
      * get all invites for bean, such as  contacts, leads and users
      * @param SugarBean|Call|Meeting $bean
      * @return array

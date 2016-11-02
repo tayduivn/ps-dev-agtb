@@ -570,18 +570,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'reportable' => false,
     'studio' => 'false',
   ),
-    'repeat_root_id' => array(
-        'name' => 'repeat_root_id',
-        'vname' => 'LBL_REPEAT_ROOT_ID',
-        'type' => 'id',
-        'len' => 36,
-        'comment' => 'Id of the root element of recurring records',
-        'importable' => 'false',
-        'massupdate' => false,
-        'reportable' => false,
-        'studio' => 'false',
-            'duplicate_on_record_copy' => 'no',
-    ),
     'recurrence_id' => array(
         'name' => 'recurrence_id',
         'vname' => 'LBL_CALENDAR_RECURRENCE_ID',

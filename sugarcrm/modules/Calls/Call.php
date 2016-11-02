@@ -99,12 +99,6 @@ class Call extends SugarBean {
     public $repeat_parent_id = null;
 
     /**
-     * Root id of recurring.
-     * @var string
-     */
-    public $repeat_root_id = null;
-
-    /**
      * Recurrence id. Original start date of event.
      * @var string
      */
@@ -149,9 +143,6 @@ class Call extends SugarBean {
 		if ($this->repeat_type && $this->repeat_type != 'Weekly') {
 			$this->repeat_dow = '';
 		}
-        if (!$this->repeat_root_id) {
-            $this->repeat_root_id = $this->repeat_parent_id ?: $this->id;
-        }
 
         if ($this->repeat_selector == 'None') {
             $this->repeat_unit = '';
@@ -663,7 +654,6 @@ class Call extends SugarBean {
             BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
             return null;
         }
-        CalendarUtils::correctDeletedRecurrence($this);
         parent::mark_undeleted($id);
     }
 
