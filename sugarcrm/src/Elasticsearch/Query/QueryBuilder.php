@@ -114,6 +114,12 @@ class QueryBuilder
     protected $sort = array('_score');
 
     /**
+     * Set explain flag
+     * @var boolean
+     */
+    protected $explain = false;
+
+    /**
      * Ctor
      */
     public function __construct(Container $container)
@@ -268,6 +274,17 @@ class QueryBuilder
     }
 
     /**
+     * Set explain flag
+     * @param boolean $flag
+     * @return QueryBuilder
+     */
+    public function setExplain($flag)
+    {
+        $this->explain = (bool) $flag;
+        return $this;
+    }
+
+    /**
      * Set aggregation filter definitions
      * @param array $aggFilterDefs
      */
@@ -354,6 +371,7 @@ class QueryBuilder
 
         // Build query
         $query = $this->build();
+        $query->setExplain($this->explain);
 
         // Wrap query in search API object
         $search = $this->newSearchObject();

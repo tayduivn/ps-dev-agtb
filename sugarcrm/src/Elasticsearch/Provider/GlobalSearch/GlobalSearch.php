@@ -427,6 +427,11 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
     protected $sort = array('_score');
 
     /**
+     * @var boolean Execute explain on query
+     */
+    protected $explain = false;
+
+    /**
      * Set search term
      * @param string $term Search term
      * @return GlobalSearch
@@ -494,7 +499,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $this;
     }
 
-
     /**
      * Set the list of filters filtering.
      * @param array $filters
@@ -507,7 +511,6 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         }
         return $this;
     }
-
 
     /**
      * Enable field boosts (disabled by default)
@@ -560,6 +563,17 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         return $this;
     }
 
+    /**
+     * Set query explain flag
+     * @param boolean $flag
+     * @return GlobalSearch
+     */
+    public function setExplain($flag)
+    {
+        $this->explain = (bool) $flag;
+        return $this;
+    }
+
     protected function handleSearchAggregations($builder)
     {
         if ($this->queryCrossModuleAggs || $this->queryModuleAggs) {
@@ -596,6 +610,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
             ->setLimit($this->limit)
             ->setOffset($this->offset)
             ->setQuery($query)
+            ->setExplain($this->explain)
         ;
 
         // Set highlighter

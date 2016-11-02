@@ -65,6 +65,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                     'elastic:queue' => $ns . '\Api\ElasticsearchQueueCommand',
                     'elastic:queue_cleanup' => $ns . '\Elasticsearch\CleanupQueueCommand',
                     'elastic:routing' => $ns . '\Api\ElasticsearchRoutingCommand',
+                    'elastic:explain' => $ns . '\Elasticsearch\ExplainCommand',
                     'search:fields' => $ns . '\Api\SearchFieldsCommand',
                     'search:reindex' => $ns . '\Api\SearchReindexCommand',
                     'search:status' => $ns . '\Api\SearchStatusCommand',

@@ -24,6 +24,7 @@ use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
+use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ExplainCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -77,6 +78,7 @@ class Application extends BaseApplication
             new ElasticsearchIndicesCommand(),
             new ElasticsearchQueueCommand(),
             new ElasticsearchRoutingCommand(),
+            new ExplainCommand(),
 
             // Generic Search
             new SearchFieldsCommand(),
