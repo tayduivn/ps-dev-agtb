@@ -21,7 +21,7 @@ class SugarUpgradeFixPreferredLanguage extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.6', '<')) {
+        if (version_compare($this->from_version, '7.8.0.0', '<')) {
             $this->fixPreferredLanguage();
         }
     }
