@@ -20,9 +20,6 @@ require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer cl
 
 /**
  * Class for sending email reminders of meetings and call to invitees
- *
- * @deprecated Class is no longer used by core SugarCRM functionality.
- * Email notifications is delivered via NotificationCenter since ver. 7.8
  */
 class EmailReminder
 {
