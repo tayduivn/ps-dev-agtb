@@ -18,47 +18,135 @@ class SugarUpgradeLockedFieldsToRelateCollection extends UpgradeScript
     public $order = 9011;
     public $type = self::UPGRADE_DB;
 
+    /**
+     * Process Definition bean
+     * @var pmse_BpmProcessDefinition
+     */
+    public $pd;
+
+    /**
+     * Flow Bean
+     * @var pmse_BpmFlow
+     */
+    public $flow;
+
+    /**
+     * The DB fields we need to work on. These are aliases to actual fields.
+     * @var array
+     */
+    protected $dbFields = [
+        'mod' => 'bean_module',
+        'id' => 'bean_id',
+        'pd' => 'pd_id',
+    ];
+
     public function run()
     {
         if (version_compare($this->from_version, '7.8.0.0', '<')) {
-            // We need this as the primary bean for the query
-            $pd = \BeanFactory::getBean('pmse_BpmProcessDefinition');
+            // Get the assembled SugarQuery object
+            $q = $this->getAssembledQuery();
 
-            // We need this to join on for the record check
-            $flow = \BeanFactory::newBean('pmse_BpmFlow');
-
-            //Grab all records that have locked fields
-            $q = new \SugarQuery();
-            $q->select(
-                array(
-                    array('pd.id', 'pd_id'),
-                    array('flow.cas_sugar_object_id', 'bean_id'),
-                    array('flow.cas_sugar_module', 'bean_module'),
-                )
-            );
-
-            $q->joinTable($flow->getTableName(), array('alias' => 'flow'))
-                ->on()
-                ->equalsField('flow.pro_id', 'pd.id');
-
-            $q->from($pd, array('alias' => 'pd'));
-
-            $q->where()
-                ->notIn('flow.cas_flow_status', array('CLOSED', 'TERMINATED'))
-                ->isNotEmpty('pd.pro_locked_variables');
-
+            // Execute the query to get our rows now
             $rows = $q->execute('array', true);
 
             // Loop through and add the relationship
             foreach ($rows as $row) {
-                $recordBean = BeanFactory::getBean($row['bean_module'], $row['bean_id']);
-                $pd->retrieve($row['pd_id']);
+                // Load the target record
+                $recordBean = BeanFactory::getBean(
+                    $row[$this->dbFields['mod']],
+                    $row[$this->dbFields['id']]
+                );
+
+                // Load the correct process definition
+                $this->pd->retrieve($row[$this->dbFields['pd']]);
+
+                // Now try to load the relationship
                 if ($recordBean->load_relationship('locked_fields_link')) {
-                    if (!$recordBean->locked_fields_link->add($pd)) {
-                        $this->log('Failed to create relationship for record: ' + $recordBean->id + ' pd: ' + $pd->id);
+                    // And handle errors as needed if adding doesn't work
+                    if (!$recordBean->locked_fields_link->add($this->pd)) {
+                        // Get our log message
+                        $msg = $this->getLogMessage($recordBean);
+
+                        // And log it
+                        $this->log($msg);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Gets a SugarQuery object for use in getting our records that are needed
+     *
+     * @return SugarQuery
+     */
+    public function getAssembledQuery()
+    {
+        // We need this as the primary bean for the query
+        $this->setPD();
+
+        // We need this to join on for the record check
+        $this->setFlow();
+
+        //Grab all records that have locked fields
+        $q = new \SugarQuery();
+
+        // Set the FROM part first so it sets the bean to get data from
+        $q->from($this->pd, array('alias' => 'pd'));
+
+        // Set the JOIN second so it sets the join alias and join table
+        $q->joinTable($this->flow->getTableName(), array('alias' => 'flow'))
+            ->on()
+            ->equalsField('flow.pro_id', 'pd.id');
+
+        // Set the WHERE now so that everything can be assembled properly
+        $q->where()
+            ->notIn('flow.cas_flow_status', array('CLOSED', 'TERMINATED'))
+            ->isNotEmpty('pd.pro_locked_variables');
+
+        // Lastly set the SELECT fields now that everything is set up
+        $q->select(
+            array(
+                array('pd.id', $this->dbFields['pd']),
+                array('flow.cas_sugar_object_id', $this->dbFields['id']),
+                array('flow.cas_sugar_module', $this->dbFields['mod']),
+            )
+        );
+
+        return $q;
+    }
+
+    /**
+     * Sets the PD object on this object
+     *
+     * @param string $beanName The name of the bean to load
+     */
+    public function setPD($beanName = 'pmse_BpmProcessDefinition')
+    {
+        $this->pd = \BeanFactory::getBean($beanName);
+    }
+
+    /**
+     * Sets the flow object on this object
+     *
+     * @param string $beanName The name of the bean to load
+     */
+    public function setFlow($beanName = 'pmse_BpmFlow')
+    {
+        $this->flow = \BeanFactory::newBean($beanName);
+    }
+
+    /**
+     * Gets the message to log in case of failure
+     * @param SugarBean $bean
+     * @return string
+     */
+    public function getLogMessage(SugarBean $bean)
+    {
+        return sprintf(
+            'Failed to create relationship for record: %s pd: %s',
+            $bean->id,
+            $this->pd->id
+        );
     }
 }
