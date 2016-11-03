@@ -276,21 +276,6 @@ class Meeting extends SugarBean {
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function mark_undeleted($id)
-    {
-        if (!$id) {
-            return null;
-        }
-        if ($this->id != $id) {
-            BeanFactory::getBean($this->module_name, $id)->mark_undeleted($id);
-            return null;
-        }
-        parent::mark_undeleted($id);
-    }
-
 	function get_summary_text() {
 		return "$this->name";
 	}
