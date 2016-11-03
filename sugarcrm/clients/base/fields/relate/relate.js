@@ -494,6 +494,9 @@
 
         if (relatedRecord && app.acl.hasAccess(action, oldModule, {acls: relatedRecord._acl})) {
             this.href = '#' + app.router.buildRoute(module, id);
+            //FIXME SC-6128 will remove this deprecated block.
+        } else if (!relatedRecord) {
+            this.href = this.href = '#' + app.router.buildRoute(module, id);
         } else {
             // if no access to module, remove the href
             this.href = undefined;
