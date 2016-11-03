@@ -67,7 +67,7 @@
     "sidecar/lib/momentjs/",
     "sidecar/lib/mousetrap/",
     "sidecar/lib/sinon/",
-    "sidecar/lib/stash/",
+    "sidecar/lib/store/",
     "sidecar/lib/zepto/",
     "sidecar/minified/",
     "sidecar/node_modules/",
