@@ -7,14 +7,15 @@
     margin: 0;
 }
 
-.alert-top :not(.alert-confirmation) > .alert,
-.alert.alert-success,
-.alert.alert-danger,
-.alert.alert-error,
-.alert.alert-info {
-    padding-left: 30px;
-    padding-right: 10px;
+.alert .text {
+    padding: 20px 18px 20px 0;
 }
+
+.alert.closeable {
+    padding-right: 0;
+    padding-left: 40px;
+}
+
 .alert-confirmation .alert .row-fluid .alert-btn-cancel {
     border-left: 1px solid @warningBorder;
     border-right: none;
