@@ -45,6 +45,7 @@
     "modules/ModuleBuilder/tpls/MBPackage/appLanguage.tpl",
     "modules/Notifications/Forms.php",
     "node_modules/",
+    "portal2/node_modules/",
     "portal2/proxy.php",
     "portal2/tests/",
     "service/core/WSDL.tpl",
