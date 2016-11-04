@@ -184,6 +184,21 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($reply['records']), 'Simple: Returned too many results');
     }
 
+    public function testEmptyFilterDefinition()
+    {
+        // FIXME TY-1821: Empty filter definitions are currently supported to
+        // maintain backward compatibility on v10. This behaviour will change on
+        // one of the upcoming API versions.
+        $result = $this->filterApi->filterListSetup(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter' => '',
+            )
+        );
+        $this->assertEquals(array(), $result[0]['filter'], 'Empty definition: filter becomes empty array');
+    }
+
     public function testBadLinkName()
     {
         $this->setExpectedException('SugarApiExceptionInvalidParameter');

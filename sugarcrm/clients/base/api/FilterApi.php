@@ -391,6 +391,14 @@ class FilterApi extends SugarApi
             unset($args['filter_id']);
         }
 
+        // FIXME TY-1821: Empty filter definitions are currently supported to
+        // maintain backward compatibility on v10. This behaviour will change on
+        // one of the upcoming API versions.
+        if (isset($args['filter']) && $args['filter'] == '') {
+            // Remove filter if it is an empty string.
+            unset($args['filter']);
+        }
+
         // filter must be an array
         if (isset($args['filter']) && !is_array($args['filter'])) {
             throw new SugarApiExceptionInvalidParameter('Unexpected filter type ' . gettype($args['filter']) . '.');
