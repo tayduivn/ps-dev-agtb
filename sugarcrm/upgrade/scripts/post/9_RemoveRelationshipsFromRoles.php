@@ -23,7 +23,7 @@ class SugarUpgradeRemoveRelationshipsFromRoles extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->from_version, '7.7', '>=')) {
+        if (version_compare($this->from_version, '7.8.0.0', '>=')) {
             return;
         }
         $query = "DELETE FROM acl_roles_actions WHERE action_id IN
