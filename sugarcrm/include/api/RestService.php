@@ -472,13 +472,19 @@ class RestService extends ServiceBase
         // Initialize the return var in case all conditionals fail
         $sessionId = '';
 
+        $allowGet = (bool) SugarConfig::getInstance()->get('allow_oauth_via_get', false);
+
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
         } elseif ( isset($_POST['oauth_token']) ) {
             $sessionId = $_POST['oauth_token'];
+        } elseif ($allowGet && !empty($_GET['oauth_token'])) {
+            $sessionId = $_GET['oauth_token'];
         } elseif ( isset($_POST['OAuth-Token']) ) {
             $sessionId = $_POST['OAuth-Token'];
+        } elseif ($allowGet && !empty($_GET['OAuth-Token'])) {
+            $sessionId = $_GET['OAuth-Token'];
         } elseif ( function_exists('apache_request_headers') ) {
             // Some PHP implementations don't populate custom headers by default
             // So we have to go for a hunt
