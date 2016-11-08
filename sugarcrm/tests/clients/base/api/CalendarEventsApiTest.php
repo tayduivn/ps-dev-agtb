@@ -10,9 +10,13 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'modules/Meetings/clients/base/api/MeetingsApi.php';
+require_once 'modules/Calls/clients/base/api/CallsApi.php';
+
 /**
  * @group api
  * @group calendarevents
+ * @coversDefaultClass CalendarEventsApi
  */
 class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -947,6 +951,83 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actual = SugarTestReflection::callProtectedMethod($this->calendarEventsApi, 'shouldAutoInviteParent', array($bean, $args));
         $this->assertEquals($expected, $actual, $message);
+    }
+
+    public function repeatUntilProvider()
+    {
+        return [
+            ['Meetings'],
+            ['Calls'],
+        ];
+    }
+
+    /**
+     * This test guarantees that meetings and calls can be created with a date (xxxx-xx-xx) as a repeat_until argument.
+     * There should not be any exceptions, the parent event should be saved, and the repeat_until date should be
+     * returned just as it was submitted.
+     *
+     * @covers ::createRecord
+     * @covers ::createBean
+     * @covers ::generateRecurringCalendarEvents
+     * @dataProvider repeatUntilProvider
+     */
+    public function testRepeatUntil($module)
+    {
+        $timezone = new DateTimeZone('America/Los_Angeles');
+        $GLOBALS['current_user']->setPreference('timezone', $timezone->getName());
+
+        $start = new DateTime('2017-01-01 10:00:00', $timezone);
+        $end = new DateTime('2017-01-01 10:30:00', $timezone);
+        $until = new DateTime('2017-01-05 00:00:00', $timezone);
+
+        // Stub CalendarEvents::saveRecurring() to avoid actually saving the beans. The return value isn't used, so
+        // $repeatDateTimeArray is returned so that we return something that resembles the return value of
+        // CalendarUtils::saveRecurring().
+        $events = $this->getMockBuilder('CalendarEvents')
+            ->setMethods(['saveRecurring'])
+            ->getMock();
+        $events->method('saveRecurring')
+            ->willReturnArgument(1);
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $api = $this->getMockBuilder("{$module}Api")
+            ->setMethods(['getCalendarEvents', 'loadBean', 'saveBean'])
+            ->getMock();
+        $api->method('getCalendarEvents')
+            ->willReturn($events);
+        $api->method('loadBean')
+            ->willReturnCallback(function ($api, $args, $aclToCheck = 'view', $options = []) {
+                $options['use_cache'] = true;
+                return BeanFactory::retrieveBean($args['module'], $args['record'], $options);
+            });
+
+        $args = [
+            'module' => $module,
+            'name' => 'foo',
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'duration_hours' => 0,
+            'duration_minutes' => 30,
+            'status' => 'Planned',
+            'type' => 'Sugar',
+            'reminder_time' => '-1',
+            'email_reminder_time' => -1,
+            'email_reminder_sent' => false,
+            'sequence' => 0,
+            'repeat_interval' => 1,
+            'date_start' => $start->format('c'),
+            'date_end' => $end->format('c'),
+            'repeat_type' => 'Daily',
+            'repeat_selector' => 'None',
+            'repeat_ordinal' => 'first',
+            'repeat_unit' => 'Sun',
+            'auto_invite_parent' => false,
+            'repeat_until' => $until->format('Y-m-d'),
+            'team_id' => '1',
+            'team_set_id' => '1',
+        ];
+        $record = $api->createRecord($service, $args);
+
+        $this->assertEquals($args['repeat_until'], $record['repeat_until'], 'repeat_until should be the same date');
     }
 
     private function dateTimeAsISO($dbDateTime)

@@ -535,7 +535,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 	array(
 		'name' => 'repeat_until',
 		'vname' => 'LBL_CALENDAR_REPEAT_UNTIL_DATE',
-        'type' => 'datetime',
+        'type' => 'date',
 		'comment' => 'Repeat until specified date',
 		'importable' => 'false',
 		'massupdate' => false,

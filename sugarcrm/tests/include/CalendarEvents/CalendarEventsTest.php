@@ -539,7 +539,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Daily',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2015-12-30T23:59:00', 'user', $user),
+                    'until' => '2015-12-30',
                     'interval' => 2,
                 ),
                 8,
@@ -574,7 +574,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'type'  => 'Weekly',
                     'dow'   => "15",
-                    'until' => $calendarEvents->formatDateTime('datetime', '2016-01-06T23:59:00', 'user', $user),
+                    'until' => '2016-01-06',
                     'interval' => 3,
                 ),
                 2,
@@ -606,7 +606,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Monthly',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2018-06-30T23:59:00', 'user', $user),
+                    'until' => '2018-06-30',
                     'interval' => 4,
                 ),
                 8,
@@ -643,7 +643,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Monthly',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2033-08-14T23:59:00', 'user', $user),
+                    'until' => '2033-08-14',
                     'selector' => 'Each',
                     'interval' => 5,
                     'days' => '31',
@@ -684,7 +684,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Monthly',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2025-06-11T23:59:00', 'user', $user),
+                    'until' => '2025-06-11',
                     'selector' => 'On',
                     'interval' => 4,
                     'ordinal' => 'fifth',
@@ -719,7 +719,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Yearly',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2025-03-14T23:59:00', 'user', $user),
+                    'until' => '2025-03-14',
                     'interval' => 3,
                 ),
                 4,
@@ -758,7 +758,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 $dateStart,
                 array(
                     'type'  => 'Yearly',
-                    'until' => $calendarEvents->formatDateTime('datetime', '2025-06-11T23:59:00', 'user', $user),
+                    'until' => '2025-06-11',
                     'selector' => 'On',
                     'interval' => 4,
                     'ordinal' => 'second',

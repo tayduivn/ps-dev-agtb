@@ -79,7 +79,7 @@ class CalendarEventsApi extends ModuleApi
             throw new SugarApiExceptionMissingParameter('Missing parameter: date_start');
         }
         $args = $this->initializeArgs($args, null);
-        $this->adjustDateTimeValues($args);
+        $this->adjustStartDate($args); // adjust start date as necessary if this is a recurring event
 
         CalendarEvents::setOldAssignedUser($args['module'], null);
 
@@ -130,8 +130,8 @@ class CalendarEventsApi extends ModuleApi
                 $this->getCalendarEvents()->rebuildFreeBusyCache($GLOBALS['current_user']);
             }
         } else {
-            // adjust start date and until date as necessary if being updated to a recurring event
-            $this->adjustDateTimeValues($args);
+            // adjust start date as necessary if being updated to a recurring event
+            $this->adjustStartDate($args);
             $updateResult = $this->updateRecord($api, $args);
 
             // check if it changed from a non-recurring to recurring & generate events if necessary
@@ -185,7 +185,7 @@ class CalendarEventsApi extends ModuleApi
             throw new SugarApiExceptionInvalidParameter('ERR_CALENDAR_CANNOT_UPDATE_FROM_CHILD');
         }
 
-        $this->adjustDateTimeValues($args);
+        $this->adjustStartDate($args); // adjust start date as necessary
 
         $api->action = 'save';
         $this->updateRecord($api, $args);
@@ -311,18 +311,6 @@ class CalendarEventsApi extends ModuleApi
     }
 
     /**
-     * Converts datetime values such as until and datestart to necessary format.
-     *
-     * @param array $args
-     * @throws SugarApiExceptionMissingParameter
-     */
-    protected function adjustDateTimeValues(array &$args)
-    {
-        $this->adjustRepeatUntil($args);
-        $this->adjustStartDate($args);
-    }
-
-    /**
      * If the event specifies a recurring series, ensure that the series date_start represents
      * the first date in the series.
      * @param array $args
@@ -337,28 +325,6 @@ class CalendarEventsApi extends ModuleApi
             $firstEventDate = $this->getCalendarEvents()->formatDateTime('datetime', $sequence[0], 'iso');
             $args['date_start'] = $firstEventDate;
         }
-    }
-
-    /**
-     * Set repeat until at the end of day.
-     *
-     * @param array $args
-     */
-    protected function adjustRepeatUntil(array &$args)
-    {
-        if (!isset($args['repeat_until'])) {
-            return;
-        }
-
-        $calendarEvent = $this->getCalendarEvents();
-
-        $until = $calendarEvent->getSugarDateTime('datetime', $args['repeat_until'], $GLOBALS['current_user']);
-        if ($until) {
-            $until->setTime(23, 59, 0);
-            $args['repeat_until'] = $until->formatDateTime('datetime', 'iso', $GLOBALS['current_user']);
-        }
-
-        return;
     }
 
     /**
@@ -452,7 +418,7 @@ class CalendarEventsApi extends ModuleApi
         $params['interval'] = isset($args['repeat_interval']) ? $args['repeat_interval'] : '';
         $params['count'] = isset($args['repeat_count']) ? $args['repeat_count'] : '';
         $params['until'] = isset($args['repeat_until']) ? $args['repeat_until'] : '';
-        $params['until'] = $calEvents->formatDateTime('datetime', $params['until'], 'user');
+        $params['until'] = $calEvents->formatDateTime('date', $params['until'], 'user');
         $params['dow'] = isset($args['repeat_dow']) ? $args['repeat_dow'] : '';
 
         $params['selector'] = isset($args['repeat_selector']) ? $args['repeat_selector'] : '';
