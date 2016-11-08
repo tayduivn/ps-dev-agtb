@@ -9,6 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers, validateIndentation
+
 var groups_arr=new Array();
 var chartTypesHolder = []; // storage for removed chart items
 var groups_count=-1;
@@ -1128,6 +1130,7 @@ function addGroupQualify(cell, group) {
 
 function addFilterQualify(cell, filter) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
+    var module = filter_row.module;
 	var field_key = filter_row.column_select.options[filter_row.column_select.selectedIndex].value;
 
 	var field = new Object();
@@ -1144,9 +1147,14 @@ function addFilterQualify(cell, filter) {
 
 	field_type = field.type;
 
-	if ( typeof(field.custom_type) != 'undefined') {
-		field_type = field.custom_type;
-	}
+    if (typeof(field.custom_type) != 'undefined' && typeof(filter_defs[field.custom_type]) != 'undefined') {
+        field_type = field.custom_type;
+    } else if (typeof(filter_defs[module + ':' + field_type]) != 'undefined') {
+        // if we want to customize the dropdown for a specific module and field
+        // then use 'module:field' format. For example 'Tags:name' to customize
+        // the dropdown for tag names only.
+        field_type = module + ':' + field_type;
+    }
 
 	var qualifiers = filter_defs[field_type];
 	var selected = false;
@@ -1230,6 +1238,7 @@ function addGroupBy(group) {
 var default_filter = {column_name:'',qualifier_name:'',input_name0:'',input_name1:''};
 
 function addFilter(filter) {
+    var module = full_table_list[filter.table_key].module;
 	filters_arr[filters_arr.length] = new Object();
 	filters_count++;
 	filters_count_map[filters_count] = filters_arr.length - 1;
@@ -1242,6 +1251,8 @@ function addFilter(filter) {
 	var row = document.createElement('tr');
 	filters_arr[filters_count_map[filters_count]].row = row;
 	row.valign="top";
+
+    filters_arr[filters_count_map[filters_count]].module = module;
 
 	var module_cell = document.createElement('td');
 	module_cell.valign="top";

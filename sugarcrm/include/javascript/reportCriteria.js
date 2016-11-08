@@ -9,6 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers, validateIndentation
+
 var groups_arr=new Array();
 var chartTypesHolder = []; // storage for removed chart items
 var groups_count=-1;
@@ -49,7 +51,7 @@ function getAllFieldsMapped(module) {
 	for(var k in module_defs[module].field_defs) {
 		all_fields["self:"+module_defs[module].field_defs[k].name] = {"field_def": module_defs[module].field_defs[k],"linked_field_name":"self","label_prefix":module_defs[module].label};
 	}
-	
+
 	for(var k in module_defs[module].summary_field_defs) {
 		all_fields["self:"+module_defs[module].summary_field_defs[k].name] = {"field_def": module_defs[module].summary_field_defs[k],"linked_field_name":"self","label_prefix":module_defs[module].label};
 			summary_fields_str+='|'+"self:"+module_defs[module].summary_field_defs[k].name;
@@ -80,7 +82,7 @@ function getAllFieldsMapped(module) {
 		if ( typeof(module_defs[join_module]) == 'undefined') {
 			continue;
 		}
-		
+
 		for( var j in module_defs[join_module].field_defs) {
 			all_fields[i+":"+module_defs[join_module].field_defs[j].name] = {"field_def": module_defs[join_module].field_defs[j],"linked_field_name":i,"label_prefix":link_defs[i].label};
 		}
@@ -97,25 +99,25 @@ function getAllFieldsMapped(module) {
 			}
 			all_fields[i+":"+module_defs[join_module].summary_field_defs[j].name] ={"field_def": module_defs[join_module].summary_field_defs[j],"linked_field_name":i,"label_prefix":link_defs[i].label};
 		}
-	}	
+	}
 
 	return all_fields;
 }
 
 function getSelectedLinkDefs(module) {
 	if ( typeof(module) == 'undefined') {
-		module = current_module;	
+		module = current_module;
 	}
 	var new_links = new Object();
 	var links = getSelectedLinks()
-	
+
 	var type = 'one';
 	for (i = 0 ; i < links.length ; i++) {
 		if((full_table_list[links[i]] == null) || typeof full_table_list[links[i]].link_def == 'undefined') {
 			return new_links;
 		}
 		var linked_field = full_table_list[links[i]].link_def;
-		
+
 		var selected = false;
 		var relationship = rel_defs[linked_field['relationship_name']];
 		var rel_type = get_rel_type(linked_field,relationship);
@@ -131,13 +133,13 @@ function get_rel_type(linked_field,relationship) {
 		return linked_field['link_type'];
 	}
 
-	// code should never get this far.. link_type is already defined 
-	
+	// code should never get this far.. link_type is already defined
+
 	if ( relationship.relationship_type == 'one-to-many') {
 		if (linked_field.bean_is_lhs == true) {
 			if ( relationship['lhs_module'] == linked_field['module']) {
 				return 'one';
-			} 
+			}
 			else {
 				return 'many';
 			}
@@ -150,8 +152,8 @@ function get_rel_type(linked_field,relationship) {
 				return 'many';
 			}
 		}
-	} 
-	
+	}
+
 	return 'many';
 }
 
@@ -166,7 +168,7 @@ function getRelatedModule(link_def) {
 	}
 	if ( link_def.bean_is_lhs ) {
 		return rel_def['rhs_module'];
-	} 
+	}
 	else {
 		return rel_def['lhs_module'];
 	}
@@ -180,7 +182,7 @@ function getSelectedLinks() {
 			// This is the primary module, we don't want to include it
 			continue;
 		}
-		
+
 		if ( full_table_list[index] != null && full_table_list[index].value != '' ) {
 			joins_array.push(index);
 		}
@@ -195,12 +197,12 @@ function reload_actual_filters() {
 } // fn
 
 function reload_filters(filters) {
-	var operator = filters.operator;	
+	var operator = filters.operator;
 	var i = 0;
 	while (filters[i]) {
 		current_filter = filters[i];
 		if (current_filter.operator) {
-			reload_filters(current_filter);	
+			reload_filters(current_filter);
 		}
 		else {
 			current_filter.column_name = getFieldKey(current_filter);
@@ -214,7 +216,7 @@ function getFieldKey(field_def) {
 	var func_name = '';
 	if (typeof(field_def.group_function) != 'undefined') {
 		func_name = field_def.group_function;
-	} 
+	}
 	else if (typeof(field_def.column_function) != 'undefined') {
 		func_name = field_def.column_function;
 	}
@@ -225,13 +227,14 @@ function getFieldKey(field_def) {
 	else if (! (func_name == 'weighted_amount' || func_name == 'weighted_sum') && func_name != '' ) {
 		return field_def.table_key+":"+field_def.name+":"+func_name;
 	}
-	
+
 	return field_def.table_key+":"+field_def.name;
 }
 
 var default_filter = {column_name:'',qualifier_name:'',input_name0:'',input_name1:''};
 
 function addFilter(filter) {
+	var module = full_table_list[filter.table_key].module;
 	filters_arr[filters_arr.length] = new Object();
 	filters_count++;
 	filters_count_map[filters_count] = filters_arr.length - 1;
@@ -246,6 +249,8 @@ function addFilter(filter) {
 	row.valign="top";
 	row.id = "rowid" + filters_count;
 	filter.id = row.id;
+
+	filters_arr[filters_count_map[filters_count]].module = module;
 
 	var module_cell = document.createElement('td');
 	module_cell.valign="top";
@@ -290,9 +295,9 @@ function isRuntimeFilter(filter) {
     } // else
 }
 
-function getModuleNaeFromParts(parts) {
-    if (parts.length == 0) {
-        return parts[0];
+function getModuleNameFromParts(parts) {
+	if (parts.length == 0) {
+		return parts[0];
 	}
 	var moduleName = '';
 	for (i = 0 ; i < (parts.length - 1) ; i++) {
@@ -321,7 +326,7 @@ function addModuleSelectFilter(cell,filter, row) {
 	options[options.length] = option_info;
 
 	var parts = filter.column_name.split(':');
-	var selected_link_name = getModuleNaeFromParts(parts);
+	var selected_link_name = getModuleNameFromParts(parts);
 
 	var j=0;
 	var selectedValue = 0;
@@ -330,7 +335,7 @@ function addModuleSelectFilter(cell,filter, row) {
 		var selected = false;
 		if ( i == selected_link_name) {
 				selected=true;
-		} 
+		}
 		else {
 				selected=false;
 		}
@@ -356,7 +361,7 @@ function addModuleSelectFilter(cell,filter, row) {
 	select_html_info['options'] = options;
 	cell.innerHTML=buildSelectHTML(select_html_info, true);
 	filters_arr[filters_count_map[current_filter_id]].module_select = cell.getElementsByTagName('select')[0];
-	
+
 	var module_text_cell = document.createElement('td');
 	module_text_cell.innerHTML = "&nbsp;&nbsp;&nbsp;" + cell.innerHTML + options[selectedValue].text;
 	row.appendChild(module_text_cell);
@@ -378,7 +383,7 @@ function addColumnSelectFilter(cell,filter, row) {
 	if (table_key == 'self') {
 		selected_module = current_module;
 		field_defs = module_defs[selected_module].field_defs;
-	} 
+	}
 	else {
 		selected_module = table_key;
 		var field_defs = module_defs[full_table_list[table_key].module].field_defs;
@@ -400,7 +405,7 @@ function addColumnSelectFilter(cell,filter, row) {
 
 		if ( filter.column_name == key) {
 			selected = true;
-		} 
+		}
 		else {
 			selected = false;
 		}
@@ -417,11 +422,11 @@ function addColumnSelectFilter(cell,filter, row) {
 	select_html_info['options'] = options;
 	cell.innerHTML=buildSelectHTML(select_html_info, true);
 	filters_arr[filters_count_map[current_filter_id]].column_select = cell.getElementsByTagName('select')[0];
-	
+
 	var column_text_cell = document.createElement('td');
 	column_text_cell.innerHTML = "&nbsp;>&nbsp;" + column_text_cell.innerHTML + selectedLabel;
 	row.appendChild(column_text_cell);
-	
+
 }
 
 function getOrderedFieldDefArray(field_defs,show_id_field) {
@@ -432,7 +437,7 @@ function getOrderedFieldDefArray(field_defs,show_id_field) {
 		var field = field_defs[field_name];
 		field_defs_arr.push(field);
 	}
-	
+
 	field_defs_arr.sort( _sort_by_field_name);
 
 	if ( id_field  != null && show_id_field ) {
@@ -443,6 +448,7 @@ function getOrderedFieldDefArray(field_defs,show_id_field) {
 
 function addFilterQualify(cell, filter, row) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
+	var module = filter_row.module;
 	if (!filter_row.column_select.options[filter_row.column_select.selectedIndex]){
 		return;
 	}
@@ -450,7 +456,7 @@ function addFilterQualify(cell, filter, row) {
 	var selectedLabel = '';
 	var field = new Object();
 	if (typeof(field_key) != 'undefined' && field_key != '') {
-		field = all_fields[field_key].field_def;	
+		field = all_fields[field_key].field_def;
 	}
 
 	var select_html_info = new Object();
@@ -462,8 +468,13 @@ function addFilterQualify(cell, filter, row) {
 
 	field_type = field.type;
 
-	if ( typeof(field.custom_type) != 'undefined') {
+	if (typeof(field.custom_type) != 'undefined' && typeof(filter_defs[field.custom_type]) != 'undefined') {
 		field_type = field.custom_type;
+	} else if (typeof(filter_defs[module + ':' + field_type]) != 'undefined') {
+		// if we want to customize the dropdown for a specific module and field
+		// then use 'module:field' format. For example 'Tags:name' to customize
+		// the dropdown for tag names only.
+		field_type = module + ':' + field_type;
 	}
 
 	var qualifiers = filter_defs[field_type];
@@ -537,7 +548,7 @@ function addFilterInput(cell,filter) {
 	if ( typeof ( column_name) == 'undefined' || column_name == '') {
 		column_name='';
 	}
-	var field = all_fields[column_name].field_def;	
+	var field = all_fields[column_name].field_def;
 
 	var field_type = field.type;
 	if ( typeof(field.custom_type) != 'undefined') {
@@ -549,7 +560,7 @@ function addFilterInput(cell,filter) {
 
 	if (qualifier_name == 'between') {
 		addFilterInputTextBetween(row,filter);
-	} 
+	}
 	else if (qualifier_name == 'between_dates') {
 		addFilterInputDateBetween(row,filter);
 	}
@@ -566,32 +577,32 @@ function addFilterInput(cell,filter) {
 		if (qualifier_name.indexOf('tp_') == 0) {
 			addFilterInputEmpty(row,filter);
 		}
-		
+
 		else {
 			addFilterInputDate(row,filter);
 		}
-	} 
+	}
 	else if (field_type == 'datetimecombo') {
 		if (qualifier_name.indexOf('tp_') == 0) {
 			addFilterInputEmpty(row,filter);
 		}
-		
+
 		else {
 			addFilterInputDatetimecombo(row,filter);
 		}
-	} 
+	}
 	else if (field_type == 'id' || field_type == 'name'  || field_type == 'fullname' ) {
 		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,false);
-		} 
+		}
 		else {
 			addFilterInputText(row,filter);
 		}
-	} 
+	}
 	else if (field_type == 'relate'){
 		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,true);
-		} 
+		}
 		else {
 			addFilterInputText(row,filter);
 		}
@@ -653,7 +664,7 @@ function to_display_date(date_str) {
     	new_date = new_date.replace("%m",date_arr[2]);
     	new_date = new_date.replace("%d",date_arr[3]);
     	return new_date;
- 	} 
+ 	}
  	else {
     	return date_str;
  	}
@@ -661,35 +672,35 @@ function to_display_date(date_str) {
 
 function addFilterInputDate(row,filter) {
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var new_input = document.createElement("input");
 	new_input.type="text";
 
 	if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
 		if (isRuntimeFilter(filter)) {
             new_input.value = to_display_date(filter.input_name0);
-		} 
+		}
  	}
 	new_input.name="text_input";
 	new_input.size="30";
 	new_input.maxsize="255";
 	new_input.visible="true";
-	new_input.setAttribute('id','jscal_field'); 
+	new_input.setAttribute('id','jscal_field');
 	cell.appendChild(new_input);
 	row.appendChild(cell);
 
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var img_element = document.createElement("img");
-	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif'); 
-	img_element.setAttribute('id','jscal_trigger'); 
+	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif');
+	img_element.setAttribute('id','jscal_trigger');
 	cell.appendChild(img_element);
 	row.appendChild(cell);
 	Calendar.setup ({
-		inputFieldObj : new_input , 
-		buttonObj : img_element, 
+		inputFieldObj : new_input ,
+		buttonObj : img_element,
 		ifFormat : cal_date_format,
-		showsTime : false, 
+		showsTime : false,
 		singleClick : true, step : 1,
 		weekNumbers:false
 	});
@@ -705,10 +716,10 @@ function timeValueUpdate(fname){
 	if(fname){
 		fieldname =fname;
 	}
-	
+
 	var timeseparator = ':';
 	var newtime = '';
-	
+
 	id = fieldname + '_hours';
 	h = window.document.getElementById(id).value;
 	id = fieldname + '_minutes';
@@ -716,7 +727,7 @@ function timeValueUpdate(fname){
 	id = fieldname + '_meridiem';
 	ampm = document.getElementById(id).value;
 	newtime = h + timeseparator + m + ampm;
-   
+
 	document.getElementById(fieldname).value = newtime;
 }
 
@@ -734,7 +745,7 @@ function newSelectSpanElement(name, inputTime){
 			hrs = parseInt(timevalue.substring(0,2));
 			mins = parseInt(timevalue.substring(3,5));
 			meridiem = timevalue.substring(5,7);
-			
+
 			var text =  '<select tabindex="0" size="1" id="'+dname+'_hours" onchange="timeValueUpdate(\''+dname+'\');">';
 			for(i=1; i <= 12; i++) {
 			    val = i < 10 ? "0" + i : i;
@@ -749,7 +760,7 @@ function newSelectSpanElement(name, inputTime){
 			text += '\n<option value="45" ' + (mins == 45 ? "SELECTED" : "") + '>45</option>';
 			text += '\n</select>';
 			text += ' <select tabindex="0" size="1" id="'+dname+'_meridiem" onchange="timeValueUpdate(\''+dname+'\');"> ';
-			
+
 			text += '\n<option value="' + "am" + '" ' + (/am/i.test(meridiem) ? "SELECTED" : "") + '>' +  "am"  + '</option>';
 			text += '\n<option value="' +"pm"  + '" ' + (/pm/i.test(meridiem) ? "SELECTED" : "") + '>' +  "pm" + '</option>';
 			text += '\n</select>';
@@ -762,7 +773,7 @@ function addFilterInputDatetimecombo(row, filter) {
 		var cellInput = document.createElement("td");
 		var new_input = document.createElement("input");
 		new_input.type="text";
-	
+
 		if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
             new_input.value = to_display_date(filter.input_name0);
 	 	}
@@ -770,34 +781,34 @@ function addFilterInputDatetimecombo(row, filter) {
 		new_input.size="13";
 		new_input.maxsize="255";
 		new_input.visible="true";
-		new_input.setAttribute('id','jscal_field'); 
+		new_input.setAttribute('id','jscal_field');
 		cellInput.appendChild(new_input);
-		
+
 		var img_element = document.createElement("img");
-		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
-		img_element.setAttribute('id','jscal_trigger'); 
+		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif");
+		img_element.setAttribute('id','jscal_trigger');
 		img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 		cellInput.appendChild(img_element);
 		Calendar.setup ({
-			inputFieldObj : new_input , 
-			buttonObj : img_element, 
-			ifFormat : cal_date_format, 
-			showsTime : false, 
+			inputFieldObj : new_input ,
+			buttonObj : img_element,
+			ifFormat : cal_date_format,
+			showsTime : false,
 			singleClick : true, step : 1,
 			weekNumbers:false
 		});
-	
+
 		var filter_row = filters_arr[filters_count_map[current_filter_id]];
 		filter_row.input_field0 = new_input;
 		filter_row.input_field1 = null;
-		
-		//Append time select area 
+
+		//Append time select area
 		var cellSelect = document.createElement("span");
 		cellSelect.appendChild(newSelectSpanElement('ontime', filter.input_name1));
 		cellInput.appendChild(cellSelect);
 		row.appendChild(cellInput);
 }
-	
+
 function addFilterNoInput(row,filter) {
 	var cell = document.createElement("td");
 	cell.setAttribute('valign','middle');
@@ -811,7 +822,7 @@ function addFilterNoInput(row,filter) {
 
 function addFilterInputEmpty(row,filter) {
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var new_input = document.createElement("input");
 	new_input.type="hidden";
 	new_input.value=filter.qualifier_name;
@@ -941,7 +952,7 @@ function addFilterInputTextBetween(row,filter) {
 	cell.appendChild(new_input);
 	row.appendChild(cell);
 	filter_row.input_field0 = new_input;
-	
+
 	var cell = document.createElement('td');
 	var new_text = document.createTextNode(lbl_and);
 	cell.appendChild(new_text);
@@ -964,13 +975,13 @@ function addFilterInputDateBetween(row,filter) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
 
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var new_input = document.createElement("input");
 	new_input.type="text";
 	if (typeof(filter.input_name0) == 'undefined') {
 		filter.input_name0 = '';
 	}
-	
+
 	if (isRuntimeFilter(filter)) {
         new_input.value = to_display_date(filter.input_name0);
 	}
@@ -984,30 +995,30 @@ function addFilterInputDateBetween(row,filter) {
 	filter_row.input_field1 = new_input;
 
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var img_element = document.createElement("img");
-	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif'); 
+	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif');
 	img_element.setAttribute('id', 'jscal_trigger_' + current_filter_id);
 	cell.appendChild(img_element);
 	row.appendChild(cell);
 
-	Calendar.setup ({ 
-		inputFieldObj : new_input , 
-		buttonObj : img_element, 	
-		ifFormat : cal_date_format, 
-		showsTime : false, 
+	Calendar.setup ({
+		inputFieldObj : new_input ,
+		buttonObj : img_element,
+		ifFormat : cal_date_format,
+		showsTime : false,
 		singleClick : true,
 		weekNumbers:false,
 		step : 1 });
 
     var cell = document.createElement('td');
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
     var new_text = document.createTextNode(lbl_and);
     cell.appendChild(new_text);
     row.appendChild(cell);
 
 	var cell = document.createElement("td");
-	cell.setAttribute('valign','middle'); 
+	cell.setAttribute('valign','middle');
 	var new_input = document.createElement("input");
 	new_input.type="text";
 	if (typeof(filter.input_name1) == 'undefined') {
@@ -1027,15 +1038,15 @@ function addFilterInputDateBetween(row,filter) {
 
 	var cell = document.createElement("td");
 	var img_element = document.createElement("img");
-	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif'); 
+	img_element.setAttribute('src','index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=jscalendar.gif');
 	img_element.setAttribute('id', 'jscal_trigger2_' + current_filter_id);
 	cell.appendChild(img_element);
 	row.appendChild(cell);
-	Calendar.setup ({ 
-		inputFieldObj : new_input , 
-		buttonObj : img_element, 	
-		ifFormat : cal_date_format, 
-		showsTime : false, 
+	Calendar.setup ({
+		inputFieldObj : new_input ,
+		buttonObj : img_element,
+		ifFormat : cal_date_format,
+		showsTime : false,
 		singleClick : true,
 		weekNumbers:false,
 		step : 1 });
@@ -1043,9 +1054,9 @@ function addFilterInputDateBetween(row,filter) {
 
 function addFilterInputDatetimesBetween(row,filter) {
 		var filter_row = filters_arr[filters_count_map[current_filter_id]];
-		
+
 		var cell = document.createElement("td");
-		cell.setAttribute('valign','middle'); 
+		cell.setAttribute('valign','middle');
 		var div1 = document.createElement('div');
 		var new_input = document.createElement("input");
 		new_input.type="text";
@@ -1061,29 +1072,29 @@ function addFilterInputDatetimesBetween(row,filter) {
 		new_input.setAttribute('id', 'jscal_field_' + current_filter_id);
 		div1.appendChild(new_input);
 		filter_row.input_field1 = new_input;
-	
+
 		var img_element = document.createElement("img");
-		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
+		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif");
 		img_element.setAttribute('id', 'jscal_trigger_' + current_filter_id);
 		img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 		div1.appendChild(img_element);
 		div1.appendChild(this.newSelectSpanElement('namestart', filter.input_name1));
 		cell.appendChild(div1);
-		
-		Calendar.setup ({ 
-			inputFieldObj : new_input , 
-			buttonObj : img_element, 	
-			ifFormat : cal_date_format, 
-			showsTime : false, 
+
+		Calendar.setup ({
+			inputFieldObj : new_input ,
+			buttonObj : img_element,
+			ifFormat : cal_date_format,
+			showsTime : false,
 			singleClick : true,
 			weekNumbers:false,
 			step : 1 });
-	
+
 	    var div2 = document.createElement('div');
 	    var new_text = document.createTextNode(lbl_and);
 	    div2.appendChild(new_text);
 	    cell.appendChild(div2);
-	
+
 		var div3 = document.createElement('div');
 		var new_input = document.createElement("input");
 		new_input.type="text";
@@ -1099,26 +1110,26 @@ function addFilterInputDatetimesBetween(row,filter) {
 		new_input.setAttribute('id', 'jscal_field2_' + current_filter_id);
 		div3.appendChild(new_input);
 		filter_row.input_field1 = new_input;
-	
+
 		var img_element = document.createElement("img");
-		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif"); 
+		img_element.setAttribute('src',"index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=jscalendar.gif");
 		img_element.setAttribute('id', 'jscal_trigger2_' + current_filter_id);
 		img_element.setAttribute('style', 'vertical-align:bottom;padding-left:3px;padding-right:3px;');
 		div3.appendChild(img_element);
-		Calendar.setup ({ 
-			inputFieldObj : new_input , 
-			buttonObj : img_element, 	
-			ifFormat : cal_date_format, 
-			showsTime : false, 
+		Calendar.setup ({
+			inputFieldObj : new_input ,
+			buttonObj : img_element,
+			ifFormat : cal_date_format,
+			showsTime : false,
 			singleClick : true,
 			weekNumbers:false,
 			step : 1 });
 		div3.appendChild(this.newSelectSpanElement('nameend', filter.input_name3));
 		cell.appendChild(div3);
 		row.appendChild(cell);
-		
+
 	}
-		
+
 function addFilterInputRelate(row,field,filter,isCustom) {
 	totalSqsEnabledFields++;
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
@@ -1131,7 +1142,7 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 		var field_name = field.name;
 	}
 	var field_id_name= module_name+":"+field.name+":id:"+ totalSqsEnabledFields;
-	var field_name_name= module_name+":"+field.name+":name:"+totalSqsEnabledFields;	
+	var field_name_name= module_name+":"+field.name+":name:"+totalSqsEnabledFields;
 
 	var cell = document.createElement('td');
 	var id_input = document.createElement("input");
@@ -1141,21 +1152,21 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 	if ( typeof (filter.input_name0) == 'undefined') {
 		filter.input_name0 = '';
 	}
-	id_input.setAttribute("value",filter.input_name0); 
+	id_input.setAttribute("value",filter.input_name0);
 	cell.appendChild(id_input);
 	filter_row.input_field0 = id_input;
 
 	var name_input = document.createElement("input");
-	name_input.setAttribute("type","text"); 
+	name_input.setAttribute("type","text");
 	name_input.setAttribute("name", field_name_name);
 	name_input.setAttribute("id", field_name_name);
 	name_input.setAttribute("class", "sqsEnabled");
-	name_input.setAttribute("autocomplete", "off");	
-	
+	name_input.setAttribute("autocomplete", "off");
+
 	if ( typeof (filter.input_name1) == 'undefined') {
 		filter.input_name1= '';
 	}
-	name_input.setAttribute("value",filter.input_name1); 
+	name_input.setAttribute("value",filter.input_name1);
 	cell.appendChild(name_input);
 	filter_row.input_field1 = name_input;
 
@@ -1165,19 +1176,19 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 	var new_input = document.createElement("input");
 	new_input.title= lbl_select;
 	new_input.type="button";
-	new_input.value=lbl_select; 
+	new_input.value=lbl_select;
 	new_input.name=field.module;
-	new_input.setAttribute("class","button"); 
-	new_input.onclick= function () { 	        
-		current_parent = name_input; 	 
-		current_parent_id = id_input; 	 
+	new_input.setAttribute("class","button");
+	new_input.onclick= function () {
+		current_parent = name_input;
+		current_parent_id = id_input;
 		return	open_popup(module_name, 600, 400, "", true, false, { "call_back_function":"set_form_return_reports", "form_name":"EditView", "field_to_name_array":{ "id":"id", "name":"name" } });
 	}
 
 	cell.appendChild(new_input);
 
 	row.appendChild(cell);
-	
+
 	var sqs_field_name = 'EditView_' + field_name_name;
 
 	var callback = {
@@ -1194,7 +1205,7 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 		failure: function(o){}
 	}
 	var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_form=EditView&parent_module='+ module_name+'&parent_field='+sqs_field_name;
-	YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);	
+	YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);
 }
 
 function set_form_return_reports(popup_reply_data) {
@@ -1216,11 +1227,11 @@ function getModuleInFilter(filter) {
 	var selected_option = view_join.options[view_join.selectedIndex].value;
 	if ( selected_option != 'self') {
 		selected_module = full_table_list[selected_option].module;
-	} 
+	}
 
 	return selected_module;
 }
-//builds the html for a select 
+//builds the html for a select
 function buildSelectHTML(info, showHidden, id,onBlur) {
 	var text;
 	text = "<select";
@@ -1232,14 +1243,14 @@ function buildSelectHTML(info, showHidden, id,onBlur) {
 		text = text + " style='display:none'";
 		//text = text + " disabled";
 	}
-       
+
 	for(var key in info['select']) {
 		if ( typeof (info['select'][key]) != 'undefined') {
 			text +=" "+ key +"=\""+ info['select'][key] +"\"";
 		}
 	}
 	text +=">";
-	
+
 	var saved_attrs = new Array();
 
 	for(i=0; i < info['options'].length; i++) {
@@ -1265,29 +1276,29 @@ function buildSelectHTML(info, showHidden, id,onBlur) {
 function _sort_by_field_name(a,b) {
 	if ( typeof(a['vname']) == 'undefined') {
 		a['vname'] = a['name'];
-	} 
+	}
 	else if ( typeof(b['vname']) == 'undefined') {
 		b['vname'] = b['name'];
 	}
-	
+
 	if ( a['type'] == 'name' ||  a['type'] == 'username' ) {
 		return -1;
-	} 
+	}
 	else if ( b['type'] == 'name' ||  b['type'] == 'username' ) {
 		return 1;
-	} 
-	else { 
+	}
+	else {
 		return a['vname'].localeCompare( b['vname']);
 	}
 }
 
 function save_filters(filters, returnObject) {
-	var operator = filters.operator;	
+	var operator = filters.operator;
 	var i = 0;
 	while (filters[i]) {
 		current_filter = filters[i];
 		if (current_filter.operator) {
-			save_filters(current_filter, returnObject);	
+			save_filters(current_filter, returnObject);
 		}
 		else {
 			validateFilterRow(current_filter, returnObject);
@@ -1301,7 +1312,7 @@ function validateFilterRow(filter, returnObject) {
 		var row = document.getElementById(filter.id);
 		var cell0 = row.cells[2];
 		var cell1 = row.cells[4];
-		var cell2 = row.cells[5];		
+		var cell2 = row.cells[5];
 
 		var column_name = cell0.getElementsByTagName('select')[0].value;
 		//var filter_def = new Object();
@@ -1312,14 +1323,14 @@ function validateFilterRow(filter, returnObject) {
 		column_vname = all_fields[column_name].label_prefix+": "+ field['vname'];
 		filter.qualifier_name=cell1.getElementsByTagName('select')[0].value;
 		var input_arr = cell2.getElementsByTagName('input');
-	
+
 		if ( typeof(input_arr[0]) !=  'undefined') {
 			filter.input_name0=input_arr[0].value;
 			if (input_arr[0].value == '') {
 				returnObject.got_error = 1;
 				returnObject.error_msgs += "\""+column_vname+"\""+lbl_missing_input_value+"\n";
 			}
-	
+
 			if ( typeof(input_arr[1]) != 'undefined') {
 				filter.input_name1=input_arr[1].value;
 				if (input_arr[1].value == '') {
@@ -1327,7 +1338,7 @@ function validateFilterRow(filter, returnObject) {
 					returnObject.error_msgs += "\"" + column_vname + "\""+lbl_missing_second_input_value+"\n";
 				}
 			}
-			
+
 			if(field.type=='datetimecombo'){
 				if( typeof(input_arr[2]) != 'undefined'){
 					filter.input_name2=input_arr[2].value;
@@ -1351,7 +1362,7 @@ function validateFilterRow(filter, returnObject) {
 					}
 				}
 			}
-		} 
+		}
 		else {
 			var got_selected = 0;
 			var select_input = cell2.getElementsByTagName('select')[0];
@@ -1373,28 +1384,28 @@ function validateFilterRow(filter, returnObject) {
 				if ( date_match != null) {
 					filter.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']];
 				}
-			}			
+			}
 			if ( typeof(filter.input_name1) != 'undefined' && typeof(filter.input_name1) != 'array') {
 				var date_match = filter.input_name1.match(date_reg_format);
 				if ( date_match != null) {
 					filter.input_name1 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']];
 				} // if
-			} // if			
-		} // if	
+			} // if
+		} // if
 		else if ( field.type == 'datetimecombo') {
 			if ( (typeof(filter.input_name0) != 'undefined' && typeof(filter.input_name0) != 'array') && (typeof(filter.input_name1) != 'undefined' && typeof(filter.input_name1) != 'array')) {
                 var dbValue = convertReportDateTimeToDB(filter.input_name0, filter.input_name1);
                 if (dbValue != '') {
                     filter.input_name0 = dbValue;
                 }
-			}			
+			}
 			if ( typeof(filter.input_name2) != 'undefined' && typeof(filter.input_name2) != 'array' && typeof(filter.input_name3) != 'undefined' && typeof(filter.input_name3) != 'array') {
                 var dbValue = convertReportDateTimeToDB(filter.input_name2, filter.input_name3);
                 if (dbValue != '') {
                     filter.input_name2 = dbValue;
                 }
 			}
-		}			
+		}
 	} // if
 } // fn
 
@@ -1402,7 +1413,7 @@ function validateFilterRow(filter, returnObject) {
 function fill_form(type) {
 	var report_def_1 = new Object();
 	var form_obj = document.EditView;
-	
+
   // we want an export of csv:
 	if ( typeof (type) != 'undefined' && type == 'export') {
 		form_obj.to_pdf.value = '';
@@ -1438,11 +1449,11 @@ function fill_form(type) {
 
 		report_def_1.order_by = sort_by;
 	}
-	
+
 	if (got_summary_sort == 0) {
 		form_obj.summary_sort_by.value = '';
 		form_obj.summary_sort_dir.value = '';
-	} 
+	}
 	else {
 		var summary_sort_by_elem = new Object();
 		var key_arr = form_obj.summary_sort_by.value.split(':');
@@ -1452,7 +1463,7 @@ function fill_form(type) {
 			summary_sort_by_elem.group_function = all_fields[ form_obj.summary_sort_by.value ].field_def.group_function;
 			summary_sort_by_elem.column_function = key_arr[2];
 			summary_sort_by_elem.table_key = all_fields[ form_obj.summary_sort_by.value ].linked_field_name;
-		} 
+		}
 		else if ( typeof(all_fields[ form_obj.summary_sort_by.value ].field_def.column_function) != 'undefined') {
 			summary_sort_by_elem.name = all_fields[ form_obj.summary_sort_by.value ].field_def.field_def_name;
 			summary_sort_by_elem.group_function = all_fields[ form_obj.summary_sort_by.value ].field_def.column_function;
@@ -1496,11 +1507,11 @@ function set_sort(column_name,source) {
 		source = 'columns';
 	}
 
-	var sort_by = 'sort_by';	
-	var sort_dir = 'sort_dir';	
+	var sort_by = 'sort_by';
+	var sort_dir = 'sort_dir';
 	if ( source == 'summary') {
-		sort_by = 'summary_sort_by';	
-		sort_dir = 'summary_sort_dir';	
+		sort_by = 'summary_sort_by';
+		sort_dir = 'summary_sort_dir';
 	}
 
 	if (column_name == document.EditView[sort_by].value) {
@@ -1530,7 +1541,7 @@ function set_offset(offset) {
 	if ( fill_form() == true) {
 		document.EditView.submit();
 	}
-	
+
 }
 
 function getReportType() {
@@ -1551,9 +1562,9 @@ function getListFieldDef(field_key) {
 	else {
 		field_def.name = vardef['name'];
 	}
-	
+
 	field_def.label = vardef['vname'];
-	
+
 	if ( typeof(vardef.group_function) != 'undefined' && vardef.group_function != null) {
 		field_def.group_function = vardef.group_function;
 	}
@@ -1603,7 +1614,7 @@ function showDuplicateOverlib(el,reportType, canCovertToMatrix) {
 						'document.EditView.save_as_report_type.value=\"matrix\";document.EditView.submit();\' href=\'#\'>' + SUGAR.language.get('Reports', 'LBL_DUPLICATE_AS_MATRIX') + '</a>';
 		}
 
-	}	
+	}
 	else if (reportType == 'matrix') {
 		var menu = '<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,"yes");\' ' +
 				   'onmouseout=\'unhiliteItem(this);\' ' +
@@ -1621,7 +1632,7 @@ function showDuplicateOverlib(el,reportType, canCovertToMatrix) {
 				   'onmouseout=\'unhiliteItem(this);\' ' +
 				   'onclick=\'document.EditView.to_pdf.value=\"\";document.EditView.to_csv.value=\"\";document.EditView.action.value=\"ReportsWizard\";document.EditView.save_as.value=\"true\";' +
 						'document.EditView.save_as_report_type.value=\"tabular\";document.EditView.submit();\' href=\'#\'>' + SUGAR.language.get('Reports', 'LBL_DUPLICATE_AS_ROWS_AND_COLS') + '</a>';
-		
+
 	}
 	else if (reportType == 'summation') {
 		var menu = '<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,"yes");\' ' +
@@ -1642,8 +1653,8 @@ function showDuplicateOverlib(el,reportType, canCovertToMatrix) {
 				   'onclick=\'document.EditView.to_pdf.value=\"\";document.EditView.to_csv.value=\"\";document.EditView.action.value=\"ReportsWizard\";document.EditView.save_as.value=\"true\";' +
 						'document.EditView.save_as_report_type.value=\"matrix\";document.EditView.submit();\' href=\'#\'>' + SUGAR.language.get('Reports', 'LBL_DUPLICATE_AS_MATRIX') + '</a>';
 		}
-						
-		
+
+
 	}
 	SUGAR.util.showHelpTips(el,menu);
 }
