@@ -21,6 +21,7 @@ var todo = require('gulp-todo');
 
 /**
  * A function that returns an object from a given JSON filename, which will also strip comments.
+ *
  * @param {string} filename Filename to parse.
  *
  * @returns {Object} Parsed file.
@@ -48,10 +49,9 @@ function splitByCommas(val) {
 }
 
 gulp.task('karma', function(done) {
-
     var Server = require('karma').Server;
 
-    // get command-line arguments (only relevant for karma tests)
+    // get command-line arguments for karma tests
     commander
         .option('-d, --dev', 'Set Karma options for debugging')
         .option('--coverage', 'Enable code coverage')
@@ -139,7 +139,7 @@ gulp.task('karma', function(done) {
     }
 
     if (commander.coverage) {
-        _.each(karmaOptions.preprocessors, function (value, key) {
+        _.each(karmaOptions.preprocessors, function(value, key) {
             karmaOptions.preprocessors[key].push('coverage');
         });
 
@@ -204,8 +204,64 @@ gulp.task('karma', function(done) {
     }).start();
 });
 
-gulp.task('check-license', function(done) {
+// run the modern PHPUnit tests (i.e. testsunit/, not tests/)
+gulp.task('test:unit:php', function(done) {
+    var path = require('path');
 
+    /**
+     * Set up the environment for Jenkins.
+     */
+    function setUpCiConfiguration() {
+        var rm = require('rimraf').sync;
+
+        // set env.WORKSPACE to one directory up if unset
+        var cwd = process.cwd();
+        process.env = _.defaults(process.env, {
+            WORKSPACE: path.join(cwd, '..')
+        });
+
+        var testOutputPath = path.join(process.env.WORKSPACE, 'test-output');
+        var junitOutputPath = path.join(process.env.WORKSPACE, 'junit');
+        rm(testOutputPath);
+        rm(junitOutputPath);
+        fs.mkdirSync(testOutputPath);
+        fs.mkdirSync(junitOutputPath);
+    }
+
+    commander
+        .option('--ci', 'Set up CI-specific environment')
+        .parse(process.argv);
+
+    var args = [];
+    if (commander.ci) {
+        setUpCiConfiguration();
+        var workspace = process.env.WORKSPACE;
+        args.push(
+            '-derror_log=' + path.join(workspace, 'test-output', 'php_errors.log'),
+            '--log-tap', path.join(workspace, 'test-output', 'tap.txt'),
+            '--log-junit', path.join(workspace, 'junit', 'phpunit.xml'),
+            '--coverage-html', path.join(workspace, 'coverage'),
+            '--testdox-text', path.join(workspace, 'testdox.txt')
+        );
+    }
+
+    var execa = require('execa');
+    var phpunitPath = path.join('..', 'vendor', 'bin', 'phpunit');
+    var phpProcess = execa(phpunitPath, args, {
+        maxBuffer: 1e6, // 1 MB
+        cwd: 'testsunit'
+    });
+    phpProcess.stdout.pipe(process.stdout);
+    phpProcess.stderr.pipe(process.stderr);
+    phpProcess.then(function(result) {
+        done();
+    }, function(err) {
+        console.error(err.message);
+        done(err.code);
+    });
+});
+
+gulp.task('check-license', function(done) {
     var options = {
         excludedExtensions: [
             'json',
