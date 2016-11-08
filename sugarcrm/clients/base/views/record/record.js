@@ -251,7 +251,7 @@
                 });
 
                 // A fieldset is locked when all of its actual fields are locked
-                isLocked = _.every(fieldSetFields, function(fieldSetField) {
+                isLocked = !_.isEmpty(fieldSetFields) && _.every(fieldSetFields, function(fieldSetField) {
                     return _.contains(lockedFields, fieldSetField.name);
                 });
 
