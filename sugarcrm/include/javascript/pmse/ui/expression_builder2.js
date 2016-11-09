@@ -1073,7 +1073,13 @@ ExpressionControl.prototype._closeParentPanels = function() {
 ExpressionControl.prototype._onPanelValueGeneration = function () {
     var that = this;
     return function (panel, subpanel, data) {
-        var itemData, valueType, value, aux, parent = subpanel.getParent() || {}, label, valueField;
+        var itemData;
+        var valueType;
+        var value;
+        var aux;
+        var parent = subpanel.getParent() || {};
+        var label;
+        var valueField;
         if (parent.id !== 'variables-list') {
             switch (subpanel.id) {
                 case "button-panel-operators":
@@ -1134,7 +1140,7 @@ ExpressionControl.prototype._onPanelValueGeneration = function () {
                                 label += (valueType === 'string' ? '"' + value + '"' : data.value);
                         }
                     }
-                    
+
                     itemData = {
                         expType: "MODULE",
                         expSubtype: aux[1],

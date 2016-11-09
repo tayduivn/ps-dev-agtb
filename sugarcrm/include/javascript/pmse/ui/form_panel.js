@@ -331,7 +331,10 @@ FormPanel.prototype._attachListeners = function () {
 };
 
 FormPanel.prototype.createHTML = function () {
-    var footer, button, close, self = this;
+    var footer;
+    var button;
+    var close;
+    var self = this;
     if (!this.html) {
         CollapsiblePanel.prototype.createHTML.call(this);
         footer = this.createHTMLElement("div");

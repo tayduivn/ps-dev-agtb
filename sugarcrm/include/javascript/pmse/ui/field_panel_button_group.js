@@ -15,7 +15,7 @@ var FieldPanelButtonGroup = function(settings) {
 	this._htmlLabel = null;
 	this._htmlItemsContainer = null;
 	this._massiveAction = false;
-	this._closeButton = null;
+    this._closeButton = null;
 	FieldPanelButtonGroup.prototype.init.call(this, settings);
 };
 
@@ -34,11 +34,11 @@ FieldPanelButtonGroup.prototype.init = function(settings) {
 	this.setItems(defaults.items)
 		.setLabel(defaults.label);
 
-	this._closeButton = {
-		text: 'x',
-		value: 'x',
-		html: null
-	};
+    this._closeButton = {
+        text: 'x',
+        value: 'x',
+        html: null
+    };
 };
 
 FieldPanelButtonGroup.prototype.setLabel = function (label) {
@@ -93,21 +93,23 @@ FieldPanelButtonGroup.prototype.addItem = function (item) {
 };
 
 FieldPanelButtonGroup.prototype._paintItems = function () {
-	var i, items, self = this;
+    var i;
+    var items;
+    var self = this;
 	if (this.html) {
 		items = this._items.asArray();
 		for (i = 0; i < items.length; i += 1) {
 			this._paintItem(items[i]);
 		}
-		if (!this._closeButton.html) {
-			this._closeButton.html = this.createHTMLElement('button');
-			this._closeButton.html.className = 'adam field-panel-button-group-button btn btn-mini btn-close';
-			this._closeButton.html.appendChild(document.createTextNode(this._closeButton.text));
-			jQuery(this._closeButton.html).on('click', function() {
-				self._onValueAction(self._closeButton);
-			});
-		}
-		this.html.appendChild(this._closeButton.html);
+        if (!this._closeButton.html) {
+            this._closeButton.html = this.createHTMLElement('button');
+            this._closeButton.html.className = 'adam field-panel-button-group-button btn btn-mini btn-close';
+            this._closeButton.html.appendChild(document.createTextNode(this._closeButton.text));
+            jQuery(this._closeButton.html).on('click', function() {
+                self._onValueAction(self._closeButton);
+            });
+        }
+        this.html.appendChild(this._closeButton.html);
 	}
 	return this;
 };
