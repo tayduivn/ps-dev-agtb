@@ -213,7 +213,7 @@ $(window).bind("load", function () {
             for (var i = 0; i < data.length; i++) {
                 var item = data[i];
                 var displayNumber = typeof item.displayNumber == 'undefined' ? true : item.displayNumber;
-                var html = ["<h1><i class='", flagToIcon[parseInt(item.flag)], "'></i> "];
+                var html = ["<h1><i class='fa ", flagToIcon[parseInt(item.flag)], "'></i> "];
                 if (displayNumber) {
                     html.push(i + 1, ". ");
                 }
