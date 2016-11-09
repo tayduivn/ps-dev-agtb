@@ -10,6 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+/**
+ * @coversDefaultClass CalendarEvents
+ */
 class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $calendarEventsService;
@@ -495,27 +498,9 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function dataProviderForBuildRecurringSequenceTests()
     {
-        $calendarEvents = new CalendarEvents();
-        $user = SugarTestUserUtilities::createAnonymousUser();
-        $user->setPreference('datef', 'Y-m-d');
-        $user->setPreference('timef', 'H:i');
-        $dateStart = $calendarEvents->formatDateTime('datetime', '2015-12-15T00:00:00-00:00', 'user', $user);
-
-        $params = array();
-        $params['type'] = 'Daily';
-        $params['interval'] = 1;
-        $params['count'] = 1;
-        $params['until'] = '';
-        $params['dow'] = '';
-
-        $params['selector'] = '';
-        $params['days'] = '';
-        $params['ordinal'] = '';
-        $params['unit'] =  '';
-
         return array(
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Daily',
                     'count' => 3,
@@ -525,7 +510,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2015-12-17 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Daily',
                     'count' => 3,
@@ -536,7 +521,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2015-12-21 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Daily',
                     'until' => '2015-12-30',
@@ -547,10 +532,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2015-12-29 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Weekly',
-                    'dow'   => "35",
+                    'dow' => '35',
                     'count' => 4,
                 ),
                 4,
@@ -558,10 +543,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2015-12-25 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Weekly',
-                    'dow'   => "246",
+                    'dow' => '246',
                     'count' => 5,
                     'interval' => 4,
                 ),
@@ -570,10 +555,10 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-01-14 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Weekly',
-                    'dow'   => "15",
+                    'dow' => '15',
                     'until' => '2016-01-06',
                     'interval' => 3,
                 ),
@@ -582,7 +567,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-01-04 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 2,
@@ -592,7 +577,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-01-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 3,
@@ -603,7 +588,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-10-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'until' => '2018-06-30',
@@ -614,7 +599,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2018-04-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 5,
@@ -627,7 +612,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-02-26 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 3,
@@ -640,7 +625,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2020-01-31 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'until' => '2033-08-14',
@@ -653,7 +638,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2033-01-31 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 5,
@@ -667,7 +652,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2016-10-01 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'count' => 9,
@@ -681,7 +666,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2017-04-28 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Monthly',
                     'until' => '2025-06-11',
@@ -695,7 +680,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2025-04-19 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'count' => 4,
@@ -705,7 +690,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2018-12-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'count' => 2,
@@ -716,7 +701,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2020-12-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'until' => '2025-03-14',
@@ -727,7 +712,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2024-12-15 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'count' => 5,
@@ -741,7 +726,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2024-01-03 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'count' => 9,
@@ -755,7 +740,7 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
                 '2032-12-27 00:00',
             ),
             array(
-                $dateStart,
+                '2015-12-15',
                 array(
                     'type'  => 'Yearly',
                     'until' => '2025-06-11',
@@ -772,39 +757,44 @@ class CalendarEventsTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * test CalendarEvents:buildRecurringSequence()
+     * @covers ::buildRecurringSequence
      * @dataProvider dataProviderForBuildRecurringSequenceTests
      */
-    public function testBuildRecurringSequence($dateStart, $paramDelta, $expCount, $expFirst, $expLast)
+    public function testBuildRecurringSequence($dateStart, $params, $expCount, $expFirst, $expLast)
     {
-        global $current_user;
+        // This test assumes that the current user's timezone is GMT. If this assumption were to change, then the
+        // expected values being asserted would likely also have to change.
+        $timezone = new DateTimeZone('GMT');
+        $GLOBALS['current_user']->setPreference('timezone', $timezone->getName());
+        $GLOBALS['current_user']->setPreference('datef', 'Y-m-d');
+        $GLOBALS['current_user']->setPreference('timef', 'H:i');
 
-        $defaultParams = array();
-        $defaultParams['type'] = 'Daily';
-        $defaultParams['interval'] = 1;
-        $defaultParams['count'] = 0;
-        $defaultParams['until'] = '';
-        $defaultParams['dow'] = '';
+        // Make sure we are always operating in the same timezone as the current user's timezone.
+        $dateStart = new DateTime($dateStart, $timezone);
+        $dateStart = $this->calendarEventsService->formatDateTime(
+            'datetime',
+            $dateStart->format('c'),
+            'user',
+            $GLOBALS['current_user']
+        );
 
-        $defaultParams['selector'] = 'None';
-        $defaultParams['days'] = '';
-        $defaultParams['ordinal'] = '';
-        $defaultParams['unit'] =  '';
-
-        $params = array_merge($defaultParams, $paramDelta);
-
+        $defaultParams = [
+            'type' => 'Daily',
+            'interval' => 1,
+            'count' => 0,
+            'until' => '',
+            'dow' => '',
+            'selector' => 'None',
+            'days' => '',
+            'ordinal' => '',
+            'unit' => '',
+        ];
+        $params = array_merge($defaultParams, $params);
         $events = $this->calendarEventsService->buildRecurringSequence($dateStart, $params);
-        $count = count($events);
 
-        if (!is_null($expCount)) {
-            $this->assertEquals($expCount, $count, "Unexpected Number of Events Generated");
-        }
-        if (!is_null($expFirst)) {
-            $this->assertEquals($expFirst, $events[0], "Unexpected First Event Date");
-        }
-        if (!is_null($expLast)) {
-            $this->assertEquals($expLast, $events[$count - 1], "Unexpected Last Event Date");
-        }
+        $this->assertCount($expCount, $events, 'An unexpected number of events were generated');
+        $this->assertEquals($expFirst, $events[0], 'Unexpected date for the first event');
+        $this->assertEquals($expLast, $events[$expCount - 1], 'Unexpected date for the last event');
     }
 
     /**
