@@ -65,8 +65,7 @@ class SugarUpgradeFixRecordUploadFileEditViewDefs extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->from_version, '7.5', '<')
-            || version_compare($this->from_version, '7.7.2', '>=')
+        if (version_compare($this->from_version, '7.7.2', '>=')
             || empty($this->template)
         ) {
             return;

@@ -37,14 +37,6 @@ class SugarUpgradeAddNewModulesToMegamenu extends UpgradeScript
      * @var array
      */
     public $newModuleDefs = [
-        // Upgrade from 7.6.X and below to 7.7+
-        array(
-            'name' => 'Tags Module',
-            'fromVersion' => array('7.7.0', '<'),
-            'modules' => array(
-                'Tags',
-            ),
-        ),
         // Upgrade from 7.5.X and below to 7.6+ on ent
         array(
             'name' => 'PMSE Modules',
