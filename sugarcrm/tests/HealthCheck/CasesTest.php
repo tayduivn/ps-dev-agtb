@@ -11,6 +11,9 @@
  */
 
 require_once 'HealthCheckScanner.php';
+require_once 'data/Relationships/One2MBeanRelationship.php';
+require_once 'data/Relationships/UserBasedRelationship.php';
+require_once 'data/Relationships/EmailAddressRelationship.php';
 
 class HealthCheckCasesTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -146,7 +146,10 @@ class HealthCheckScanner
             array('version' => '3.0'),
         ),
         'SugarChimp' => array(
-            array('version' => '7.0.1'),
+            array('version' => '7.7b'),
+        ),
+        'SugarChimp - Force Sugar 7 Upgrade' => array(
+            array('version' => '7.7b'),
         ),
         'Calendar 2.0 V1.2 003' => array(
             array('version' => '*'),
@@ -179,7 +182,7 @@ class HealthCheckScanner
             array('version' => '*'),
         ),
         'Map to Lead' => array(
-            array('version' => '2.6.0'),
+            array('version' => '2.7.1.3'),
         ),
         'wMaps76' => array(
             array('version' => '*'),
@@ -195,6 +198,9 @@ class HealthCheckScanner
         ),
         'Login/Sudo - SugarCRM 7.6.*/7.7.*/7.8.*/7.9.*' => array(
             array('version' => '*'),
+        ),
+        'SynoDashboardTemplates' => array(
+            array('version' => '20161024'),
         ),
     );
 
