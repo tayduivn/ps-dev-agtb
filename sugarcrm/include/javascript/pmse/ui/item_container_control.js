@@ -49,6 +49,7 @@ ItemContainer.prototype.init = function (settings) {
 		items: [],
 		onAddItem: null,
 		onRemoveItem: null,
+        onMoveItem: null,
 		width: 200,
 		height: 80,
 		textInputMode: this.textInputMode.ALL,
@@ -209,6 +210,20 @@ ItemContainer.prototype.setOnRemoveItemHandler = function (handler) {
 	return this;
 };
 
+/**
+ * Set a function to be called when you move a SingleItem
+ *
+ * @param {Function} handler
+ * @return {ItemContainer}
+ */
+ItemContainer.prototype.setOnMoveChangeHandler = function(handler) {
+    if (!(handler === null || typeof handler === 'function')) {
+        throw new Error('setOnMoveChangeHandler(): The parameter must be a function or null.');
+    }
+    this.onMoveItem = handler;
+    return this;
+};
+
 ItemContainer.prototype._addInputText = function (reference) {
 	var input = this.createHTMLElement("input");
 	input.className = 'adam item-container-input';
@@ -355,6 +370,24 @@ ItemContainer.prototype.removeItem = function (item) {
 			.end().remove();
 	}
 	return this;
+};
+
+/**
+ * Add an item to a specific location
+ *
+ * @param {SingleItem} item
+ * @param {number} newIndex where to put the item
+ * @return {ItemContainer}
+ */
+ItemContainer.prototype.moveItem = function(item, newIndex) {
+    if (!(item instanceof SingleItem || typeof item === 'object')) {
+        throw new Error('The paremeter must be of type SingleItem.');
+    }
+
+    this._items.remove(item);
+    this._items.insertAt(item, newIndex);
+    this.onMoveItem(this);
+    return this;
 };
 
 ItemContainer.prototype.setVisible = function (value) {
@@ -621,6 +654,7 @@ ItemContainer.prototype._attachListeners = function () {
 };
 
 ItemContainer.prototype.createHTML = function() {
+    var self = this;
 	if (!this.html) {
 		this.html = this.createHTMLElement('ul');
 		this.html.className = "adam item-container";

@@ -263,6 +263,7 @@ ExpressionControl.prototype.init = function(settings) {
 
     this._itemContainer.setOnAddItemHandler(this._onChange())
         .setOnRemoveItemHandler(this._onChange())
+        .setOnMoveChangeHandler(this._onChange())
         .setInputValidationFunction(this._inputValidationFunction())
         .setOnBeforeAddItemByInput(this._onBeforeAddItemByInput());
 
