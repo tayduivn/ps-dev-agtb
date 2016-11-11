@@ -964,6 +964,13 @@ class HealthCheckScanner
                         } else {
                             $locked[$def['group']] = array($lockedField);
                         }
+                    } else {
+                        // if a locked field does not belong to any group, default itself as the locked group
+                        if (!empty($locked[$lockedField])) {
+                            $locked[$lockedField] = array_merge($locked[$lockedField], array($lockedField));
+                        } else {
+                            $locked[$lockedField] = array($lockedField);
+                        }
                     }
                     if ($checkDuration && in_array($lockedField, $durationFields)) {
                         if (isset($locked[$durationGroup])) {
@@ -980,7 +987,8 @@ class HealthCheckScanner
                     } else {
                         $total = 0;
                         foreach ($bean->field_defs as $def) {
-                            if (isset($def['group']) && $def['group'] == $group) {
+                            // if field name happens to be the name of a group, it is by default in that group
+                            if ($def['name'] == $group || (isset($def['group']) && $def['group'] == $group)) {
                                 $this->log($group . ' => ' . $def['name']);
                                 $total++;
                             }
