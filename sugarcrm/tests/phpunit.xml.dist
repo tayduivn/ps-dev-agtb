@@ -114,12 +114,10 @@
             <file>./clients/base/api/FilterApiTest.php</file>
             <file>./clients/base/api/PersonFilterApiTest.php</file>
             <file>./data/duplicatecheck/FilterDuplicateCheckTest.php</file>
-            <file>./include/ExportUtilsTest.php</file>
             <!-- FIXME TY-1337: Investigate if we should delete the rest tests -->
             <!-- <file>./rest/RestAuditTest.php</file> -->
             <!-- <file>./rest/RestCurrentUserPortalTest.php</file> -->
             <!-- <file>./rest/RestCurrentUserTest.php</file> -->
-            <!-- <file>./rest/RestExportTest.php</file> -->
             <!-- <file>./rest/RestMassUpdateTest.php</file> -->
             <file>./rest/RestPortalLoginTest.php</file>
             <file>./rest/RestPortalMetadataBWCTest.php</file>
@@ -145,13 +143,10 @@
             <directory>./modules/Documents/</directory>
             <directory>./modules/Employees/</directory>
             <directory>./modules/Filters/</directory>
-            <directory>./modules/Import</directory>
             <directory>./modules/MassUpdate</directory>
             <directory>./modules/MergeRecords</directory>
             <directory>./modules/Notes/</directory>
             <directory>./modules/Releases</directory>
-            <directory>./modules/ReportMaker/</directory>
-            <directory>./modules/Reports/</directory>
             <directory>./modules/Tasks/</directory>
             <directory>./modules/UserPreferences/</directory>
             <directory>./modules/Users/</directory>
@@ -159,10 +154,6 @@
             <!-- FIXME TY-1297: Investigate why these tests are failing -->
             <exclude>./clients/portal/api/CurrentUserPortalApiTest.php</exclude>
             <exclude>./modules/Accounts/clients/base/api/RS172Test.php</exclude>
-            <exclude>./modules/Import/Bug50438Test.php</exclude>
-            <exclude>./modules/Import/ImportFieldSanitizeTest.php</exclude>
-            <exclude>./modules/Reports/Bug52796Test.php</exclude>
-            <exclude>./modules/Reports/Bug63673Test.php</exclude>
             <exclude>./modules/Tasks/Bug56584Test.php</exclude>
             <exclude>./modules/Users/authentication/SAMLAuthenticate/Bug50936Test.php</exclude>
             <exclude>./modules/Users/authentication/SAMLAuthenticate/Bug57454Test.php</exclude>
