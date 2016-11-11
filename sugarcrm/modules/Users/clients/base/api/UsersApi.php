@@ -23,7 +23,7 @@ class UsersApi extends ModuleApi
                 'pathVars'  => array('module', 'record'),
                 'method'    => 'deleteUser',
                 'shortHelp' => 'This method deletes a User record',
-                'longHelp'  => 'modules/Users/api/help/UsersApi.html',
+                'longHelp'  => 'modules/Users/clients/base/api/help/UsersApi.html',
             ),
             'getFreeBusySchedule' => array(
                 'reqType' => 'GET',
