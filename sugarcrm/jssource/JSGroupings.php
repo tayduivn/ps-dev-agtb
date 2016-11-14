@@ -264,7 +264,6 @@
                     'include/javascript/sugar7/plugins/DragdropAttachments.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/FileDragoff.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/Dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/EllipsisInline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ListColumnEllipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/MassCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ReorderableColumns.js'  => 'include/javascript/sugar_sidecar.min.js',
