@@ -303,7 +303,15 @@
         if (this.model.isNew() && (_.isEmpty(value) || this.model.get(this.name) != value)) {
             //load the default team setting that is specified in the user profile settings
             if (_.isEmpty(value)) {
+                //Here default_teams with "selected teams" are copied from user to module.
+                //This "teams" will be send to server with "selected" options
                 value = app.utils.deepCopy(app.user.getPreference("default_teams"));
+                //If TBA not enabled for module "selected" can be set to false.
+                _.each(value, function(team, index, list) {
+                    if (!_.isUndefined(team.selected) && !this.isTBAEnabled) {
+                        team.selected = false;
+                    }
+                });
                 this.model.setDefault(this.name, value);
             }
         }
