@@ -43,6 +43,9 @@ class ParserLabelTest extends PHPUnit_Framework_TestCase
         global $current_language;
 
         SugarTestHelper::saveFile(array(
+            'custom/Extension/application/Ext/Language/' . $current_language . '.sugar_moduleList.php',
+            'custom/Extension/application/Ext/Language/' . $current_language . '.sugar_moduleListSingular.php',
+            'custom/application/Ext/Language/' . $current_language . '.lang.ext.php',
             'custom/include/language/' . $current_language . '.lang.php',
             'custom/Extension/modules/' . $module . '/Ext/Language/' . $current_language . '.lang.php'
         ));
@@ -58,11 +61,6 @@ class ParserLabelTest extends PHPUnit_Framework_TestCase
 
         $strings = return_app_list_strings_language($current_language);
         $this->assertEquals($label, $strings[$listName][$module]);
-
-        //save the original strings back
-        $parser->handleSave(array(
-            'label_' . $labelName => $orig,
-        ), $current_language);
     }
 
     public static function updateModuleListsProvider()
