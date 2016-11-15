@@ -218,8 +218,12 @@ class EmailTemplate extends SugarBean {
                 if (!empty($template_text)) {
 
                     if(!isset($this->parsed_urls[$key]) || $this->parsed_urls[$key]['text'] != $template_text) {
-                        //the curly brackets we key come in encoded, search for and replace the encoded brackets
-                        $template_text = str_ireplace(array('%7B','%7D'), array('{', '}'), $template_text);
+                        // Decode the encoded characters for curly braces and any other url-encoded characters
+                        $template_text = str_ireplace(
+                            array('%7B', '%7D'),
+                            array('{', '}'),
+                            rawurldecode($template_text)
+                        );
 
                         $matches = $this->_preg_match_tracker_url($template_text);
                         $count = count($matches[0]);
