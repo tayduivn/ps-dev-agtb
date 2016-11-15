@@ -22,10 +22,11 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     private $_themeObject;
     private $_themeDefChild;
     private $_themeObjectChild;
-    private $_olddeveloperMode;
 
     public function setup()
     {
+        parent::setUp();
+
         $themedef = array();
         include('themes/'.SugarTestThemeUtilities::createAnonymousTheme().'/themedef.php');
 
@@ -40,12 +41,8 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         SugarThemeRegistry::add($this->_themeDefChild);
         $this->_themeObjectChild = SugarThemeRegistry::get($this->_themeDefChild['dirName']);
 
-        // test assumes developerMode is off, so css minifying happens
-        if (inDeveloperMode())
-        {
-            $this->_olddeveloperMode = $GLOBALS['sugar_config']['developerMode'];
-        }
         $GLOBALS['sugar_config']['developerMode'] = false;
+        $GLOBALS['sugar_config']['minify_resources'] = true;
     }
 
     public function testMagicIssetWorks()
@@ -57,10 +54,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
 
-        if ( $this->_olddeveloperMode )
-            $GLOBALS['sugar_config']['developerMode'] = $this->_olddeveloperMode;
-        else
-            unset($GLOBALS['sugar_config']['developerMode']);
+        parent::tearDown();
     }
 
     public function testCaching()
