@@ -36,6 +36,7 @@ function packSortingHat($archive, $params, $installdefs = null, $internalPath = 
         'Scanner/ScannerCli.php',
         'Scanner/ScannerWeb.php',
         'Scanner/ScannerMeta.php',
+        'Scanner/removed-php4-constructors.php',
         'Scanner/version.json',
         'language/en_us.lang.php',
     );

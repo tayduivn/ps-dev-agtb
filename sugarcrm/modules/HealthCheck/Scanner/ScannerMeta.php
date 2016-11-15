@@ -464,6 +464,18 @@ class HealthCheckScannerMeta
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Deprecated_DB_Driver/',
             //@codingStandardsIgnoreEnd
         ),
+        532 => array(
+            'report' => 'stockPhp4ConstructorCall',
+            'bucket' => self::CUSTOM,
+            // @codingStandardsIgnoreLine
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Core_PHP4_Parent_Constructor_Call'
+        ),
+        533 => array(
+            'report' => 'customPhp4ConstructorCall',
+            'bucket' => self::MANUAL,
+            // @codingStandardsIgnoreLine
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unknown_PHP4_Parent_Constructor_Call'
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(
