@@ -678,17 +678,32 @@ class CalendarEvents
     }
 
     /**
+     * Reload all invitees relationships.
+     *
+     * This guarantees that any changes to the parent event's invitees will be replicated to all children. This is of
+     * particular importance to the users relationship (and users_arr), which must be up-to-date during the child bean's
+     * save operation because of the auto-accept logic that exists in {@link Meeting::save()} and {@link Call::save()}.
+     * The contacts and leads relationships need to be up-to-date while {@link CalendarUtils::saveRecurring} is saving
+     * the invitees for each child event.
+     *
      * @param SugarBean $parentBean
      * @param array $repeatDateTimeArray
      * @return array events saved
      */
     protected function saveRecurring(SugarBean $parentBean, array $repeatDateTimeArray)
     {
-        // Load the user relationship so the child events that are created will
-        // have the users added via bean->save (which has special auto-accept
-        // logic)
-        if (empty($parentBean->users_arr) && $parentBean->load_relationship('users')) {
-            $parentBean->users->load();
+        if ($parentBean->load_relationship('contacts')) {
+            $parentBean->contacts->resetLoaded();
+            $parentBean->contacts_arr = $parentBean->contacts->get();
+        }
+
+        if ($parentBean->load_relationship('leads')) {
+            $parentBean->leads->resetLoaded();
+            $parentBean->leads_arr = $parentBean->leads->get();
+        }
+
+        if ($parentBean->load_relationship('users')) {
+            $parentBean->users->resetLoaded();
             $parentBean->users_arr = $parentBean->users->get();
         }
 

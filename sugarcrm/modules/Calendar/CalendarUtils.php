@@ -297,130 +297,53 @@ class CalendarUtils
 		return $arr;
 	}
 
-	/**
-	 * Save repeat activities
-     * Invites are sent once for a Recurring Series (only when the Parent was saved)
-	 * @param Call|Meeting|SugarBean $bean
-	 * @param array $timeArray array of datetimes
-	 * @return array
-	 */
-	static function saveRecurring(SugarBean $bean, $timeArray)
-	{
+    /**
+     * Save repeat activities.
+     *
+     * @param SugarBean $bean
+     * @param array $timeArray Array of start datetimes for each occurrence in the series.
+     * @return array
+     */
+    public static function saveRecurring(SugarBean $bean, $timeArray)
+    {
         set_time_limit(0); // Required to prevent inadvertent timeouts for large recurring series
 
-		// Here we will create single big inserting query for each invitee relationship
-		// rather than using relationships framework due to performance issues.
-		// Relationship framework runs very slowly
+        $contacts = $bean->get_linked_beans('contacts', 'Contact');
+        $leads = $bean->get_linked_beans('leads', 'Lead');
+        $users = $bean->get_linked_beans('users', 'User');
 
-		$db = $GLOBALS['db'];
-		$id = $bean->id;
-		$date_modified = $GLOBALS['timedate']->nowDb();
-		$lower_name = strtolower($bean->object_name);
-
-        $qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
-        $re = $db->query($qu);
-        $users_rel_arr = array();
-
-        while ($ro = $db->fetchByAssoc($re)) {
-            $users_rel_arr[] = $ro['user_id'];
-        }
-
-		$qu = "SELECT * FROM {$bean->rel_contacts_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
-		$re = $db->query($qu);
-		$contacts_rel_arr = array();
-		while($ro = $db->fetchByAssoc($re)) {
-			$contacts_rel_arr[] = $ro['contact_id'];
-		}
-
-		$qu = "SELECT * FROM {$bean->rel_leads_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
-		$re = $db->query($qu);
-		$leads_rel_arr = array();
-		while($ro = $db->fetchByAssoc($re)) {
-			$leads_rel_arr[] = $ro['lead_id'];
-		}
-
-		$qu_contacts = array();
-		$qu_users = array();
-		$qu_leads = array();
-		$arr = array();
-		$i = 0;
-
+        $isActivityEnabled = Activity::isEnabled();
         Activity::disable();
 
         $calendarEvents = new CalendarEvents();
         $bean->load_relationship('tag_link');
         $parentTagBeans = $bean->tag_link->getBeans();
 
-		$clone = clone $bean;
+        $arr = array();
+        $i = 0;
+        $clone = clone $bean;
 
-        //this is a new bean being created - so throw away cloned fetched_row
-        //attribute that incorrectly makes it look like an existing bean
+        // $clone is a new bean being created - so throw away the cloned fetched_row attribute that incorrectly makes it
+        // look like an existing bean.
         $clone->fetched_row = false;
 
-        foreach ($timeArray as $date_start) {
+        foreach ($timeArray as $dateStart) {
+            //TODO: CHECK DATETIME VARIABLE
+            $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(), $dateStart);
+            $date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
+            $dateEnd = $date->format($GLOBALS['timedate']->get_date_time_format());
+
             $clone->id = create_guid();
             $clone->new_with_id = true;
-            $clone->date_start = $date_start;
-            // TODO CHECK DATETIME VARIABLE
-            $date = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$date_start);
-            $bean->duration_minutes = $bean->duration_minutes ? : 0;
-            $date = $date->get("+{$bean->duration_hours} Hours")->get("+{$bean->duration_minutes} Minutes");
-            $date_end = $date->format($GLOBALS['timedate']->get_date_time_format());
-            $clone->date_end = $date_end;
+            $clone->date_start = $dateStart;
+            $clone->date_end = $dateEnd;
             $clone->recurring_source = "Sugar";
-            $clone->repeat_parent_id = $id;
-            $clone->recurrence_id = null;
+            $clone->repeat_parent_id = $bean->id;
             $clone->update_vcal = false;
             $clone->send_invites = false;
 
             // make sure any store relationship info is not saved
             $clone->rel_fields_before_value = array();
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'user_id' => array('name' => 'user_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($users_rel_arr as $user_id) {
-                $db->insertParams($clone->rel_users_table, $fields, array(
-                    'id' => create_guid(),
-                    'user_id' => $user_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'contact_id' => array('name' => 'contact_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-
-            foreach ($contacts_rel_arr as $contact_id) {
-                $db->insertParams($bean->rel_contacts_table, $fields, array(
-                    'id' => create_guid(),
-                    'contact_id' => $contact_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
-
-            $fields = array(
-                'id' => array('name' => 'id', 'type' => 'id'),
-                'lead_id' => array('name' => 'lead_id', 'type' => 'id'),
-                $lower_name . '_id' => array('name' => $lower_name . '_id', 'type' => 'id'),
-                'date_modified' => array('name' => 'date_modified', 'type' => 'datetime'),
-            );
-            foreach ($leads_rel_arr as $lead_id) {
-                $db->insertParams($bean->rel_leads_table, $fields, array(
-                    'id' => create_guid(),
-                    'lead_id' => $lead_id,
-                    $lower_name . '_id' => $clone->id,
-                    'date_modified' => $date_modified,
-                ));
-            }
 
             // Before calling save, we need to clear out any existing registered AWF
             // triggered start events so they can continue to trigger.
@@ -428,51 +351,111 @@ class CalendarUtils
 
             $clone->save(false);
 
-            if($clone->id){
-                $clone->load_relationship('tag_link');
-                $calendarEvents->reconcileTags($parentTagBeans, $clone);
-                if($i < 44){
-                    $clone->date_start = $date_start;
-                    $clone->date_end = $date_end;
-                    $arr[] = array_merge(array('id' => $clone->id),CalendarUtils::get_time_data($clone));
+            if ($clone->id) {
+                if ($clone->load_relationship('tag_link')) {
+                    $calendarEvents->reconcileTags($parentTagBeans, $clone);
                 }
+
+                if ($clone->load_relationship('contacts')) {
+                    $clone->contacts->add($contacts);
+                }
+
+                if ($clone->load_relationship('leads')) {
+                    $clone->leads->add($leads);
+                }
+
+                if ($clone->load_relationship('users')) {
+                    $clone->users->add($users);
+                }
+
+                if ($i < 44) {
+                    $clone->date_start = $dateStart;
+                    $clone->date_end = $dateEnd;
+                    $arr[] = array_merge(array('id' => $clone->id), CalendarUtils::get_time_data($clone));
+                }
+
                 $i++;
             }
         }
 
-        Activity::enable();
+        if ($isActivityEnabled) {
+            Activity::enable();
+        }
 
 		vCal::cache_sugar_vcal($GLOBALS['current_user']);
 		return $arr;
 	}
 
-	/**
-	 * Delete recurring activities and their invitee relationships
-	 * @param Call|Meeting|SugarBean $bean
-	 */
-	static function markRepeatDeleted(SugarBean $bean)
-	{
-		// we don't use mark_deleted method here because it runs very slowly
-		global $db;
-		$date_modified = $GLOBALS['timedate']->nowDb();
-		if(!empty($GLOBALS['current_user']))
-			$modified_user_id = $GLOBALS['current_user']->id;
-		else
-			$modified_user_id = 1;
-		$lower_name = strtolower($bean->object_name);
+    /**
+     * Delete recurring activities and their invitee relationships.
+     *
+     * {@link SugarBean::mark_deleted()} is not used because it runs slowly. The before_delete and after_delete logic
+     * hooks are triggered, but the before_relationship_delete and after_relationship_delete logic hooks are not
+     * triggered.
+     *
+     * @param SugarBean $bean
+     */
+    public static function markRepeatDeleted(SugarBean $bean)
+    {
+        $modifiedUserId = empty($GLOBALS['current_user']) ? 1 : $GLOBALS['current_user']->id;
+        $dateModified = $GLOBALS['db']->convert($GLOBALS['db']->quoted($GLOBALS['timedate']->nowDb()), 'datetime');
+        $valuesClause = "SET deleted=1, date_modified={$dateModified}";
+        $relationshipWhereClause = 'WHERE ' . strtolower($bean->object_name) . '_id=';
 
-		$qu = "SELECT id FROM {$bean->table_name} WHERE repeat_parent_id = '{$bean->id}' AND deleted = 0";
-		$re = $db->query($qu);
-		while( $ro = $db->fetchByAssoc($re)) {
-			$id = $ro['id'];
-			$date_modified = $GLOBALS['timedate']->nowDb();
-			$db->query("UPDATE {$bean->table_name} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . ", modified_user_id = '{$modified_user_id}' WHERE id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
-			$db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = " . $db->convert($db->quoted($date_modified), 'datetime') . " WHERE {$lower_name}_id = '{$id}'");
-		}
-		vCal::cache_sugar_vcal($GLOBALS['current_user']);
-	}
+        $sq = new SugarQuery();
+        $sq->select(array('id'));
+        $sq->from($bean);
+        $sq->where()->equals('repeat_parent_id', $bean->id);
+        $rows = $sq->execute();
+
+        foreach ($rows as $row) {
+            $occurrence = BeanFactory::retrieveBean($bean->module_name, $row['id']);
+
+            if ($occurrence) {
+                $occurrence->call_custom_logic('before_delete', array('id' => $occurrence->id));
+
+                // Delete the occurrence.
+                $GLOBALS['db']->query(
+                    "UPDATE {$occurrence->table_name} {$valuesClause}, modified_user_id='{$modifiedUserId}' " .
+                    "WHERE id='{$row['id']}'"
+                );
+
+                // Remove the contacts invitees.
+                $GLOBALS['db']->query(
+                    "UPDATE {$occurrence->rel_contacts_table} {$valuesClause} {$relationshipWhereClause}'" .
+                    "{$occurrence->id}'"
+                );
+
+                if ($occurrence->load_relationship('contacts')) {
+                    $occurrence->contacts->resetLoaded();
+                }
+
+                // Remove the leads invitees.
+                $GLOBALS['db']->query(
+                    "UPDATE {$occurrence->rel_leads_table} {$valuesClause} {$relationshipWhereClause}'" .
+                    "{$occurrence->id}'"
+                );
+
+                if ($occurrence->load_relationship('leads')) {
+                    $occurrence->leads->resetLoaded();
+                }
+
+                // Remove the users invitees.
+                $GLOBALS['db']->query(
+                    "UPDATE {$occurrence->rel_users_table} {$valuesClause} {$relationshipWhereClause}'" .
+                    "{$occurrence->id}'"
+                );
+
+                if ($occurrence->load_relationship('users')) {
+                    $occurrence->users->resetLoaded();
+                }
+
+                $occurrence->call_custom_logic('after_delete', array('id' => $occurrence->id));
+            }
+        }
+
+        vCal::cache_sugar_vcal($GLOBALS['current_user']);
+    }
 
     /**
      * check if meeting has repeat children and pass repeat_parent over to the 2nd meeting in sequence
