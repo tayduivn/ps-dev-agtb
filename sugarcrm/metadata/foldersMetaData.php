@@ -69,11 +69,13 @@ $dictionary['folders'] = array(
             'type' => 'id',
             'required' => false,
         ),
+//BEGIN SUGARCRM flav=ent ONLY
         'acl_team_set_id' => array(
             'name' => 'acl_team_set_id',
             'type' => 'id',
             'required' => false,
         ),
+//END SUGARCRM flav=ent ONLY
         'created_by' => array(
             'name' => 'created_by',
             'type' => 'id',
