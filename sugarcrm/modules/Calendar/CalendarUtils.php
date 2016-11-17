@@ -365,7 +365,15 @@ class CalendarUtils
                 }
 
                 if ($clone->load_relationship('users')) {
-                    $clone->users->add($users);
+                    // We want to preserve user's accept status for the event.
+                    foreach ($users as $user) {
+                        $additionalFields = array();
+                        if (isset($bean->users->rows[$user->id]) &&
+                            isset($bean->users->rows[$user->id]['accept_status'])) {
+                            $additionalFields['accept_status'] = $bean->users->rows[$user->id]['accept_status'];
+                        }
+                        $clone->users->add($user, $additionalFields);
+                    }
                 }
 
                 if ($i < 44) {

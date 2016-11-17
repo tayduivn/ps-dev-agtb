@@ -144,4 +144,58 @@ class CalendarUtilsTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($invitesBeforeExpected, $invitesBefore);
 		$this->assertEquals($invitesAfterExpected, $invitesAfter);
 	}
+
+    /**
+     * @covers CalendarUtils::saveRecurring
+     */
+    public function testSaveRecurringUsesRelationshipFramework()
+    {
+        global $current_user;
+
+        $meeting = $this->getMockBuilder('Meeting')->getMock();
+        $meeting->id = Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
+        $meeting->date_start = '2030-08-15 13:00:00';
+        $meeting->date_end = '2030-08-15 18:15:00';
+        $meeting->name = "Test Meeting";
+        $meeting->duration_hours = '1';
+        $meeting->duration_minutes = '30';
+        $meeting->repeat_type = 'Daily';
+        $meeting->repeat_interval = 1;
+        $meeting->repeat_count = 2;
+        $meeting->repeat_until = null;
+        $meeting->repeat_dow = null;
+        $meeting->assigned_user_id = $current_user->id;
+        $recurrencesTimeArray = array('2030-08-16 13:00');
+
+        $attendees = array(new SugarBean(), new SugarBean());
+
+        $contactsLinkMock = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $contactsLinkMock->expects($this->once())->method('add');
+        $meeting->contacts = $contactsLinkMock;
+
+        $leadsLinkMock = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $leadsLinkMock->expects($this->once())->method('add');
+        $meeting->leads = $leadsLinkMock;
+
+        $usersLinkMock = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $usersLinkMock->expects($this->exactly(count($attendees)))->method('add');
+        $meeting->users = $usersLinkMock;
+
+        $tagsLinkMock = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
+        $meeting->tag_link = $tagsLinkMock;
+
+        $meeting->expects($this->any())
+            ->method('get_linked_beans')
+            ->will($this->returnValue($attendees));
+
+        $meeting->expects($this->any())
+            ->method('load_relationship')
+            ->will($this->returnValueMap(array(
+                array('contacts', true),
+                array('leads', true),
+                array('users', true),
+            )));
+
+        CalendarUtils::saveRecurring($meeting, $recurrencesTimeArray);
+    }
 }
