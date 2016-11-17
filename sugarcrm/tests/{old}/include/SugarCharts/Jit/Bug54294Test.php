@@ -12,7 +12,6 @@
  */
 
 require_once 'modules/Reports/Report.php';
-require_once 'modules/Reports/templates/templates_chart.php';
 
 /**
  * Bug #54294

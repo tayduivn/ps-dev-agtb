@@ -13,7 +13,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('modules/Reports/sugarpdf/sugarpdf.reports.php');
-require_once('modules/Reports/templates/templates_chart.php');
 require_once('include/SugarCharts/SugarChartFactory.php');
 require_once('include/SugarCharts/ChartDisplay.php');
 

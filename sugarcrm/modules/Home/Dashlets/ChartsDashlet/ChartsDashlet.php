@@ -107,7 +107,6 @@ class ChartsDashlet extends Dashlet {
 		if (!empty($chartReport)){
 	        $this->title = $chartReport->name;
 
-			require_once("modules/Reports/templates/templates_chart.php");
 			require_once('include/SugarCharts/SugarChartFactory.php');
 
 			$sugarChart = SugarChartFactory::getInstance();
