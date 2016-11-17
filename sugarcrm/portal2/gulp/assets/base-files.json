@@ -15,10 +15,10 @@
     {"pattern": "tests/fixtures/*.json", "included": false, "served": true, "watched": false},
     {"pattern": "tests/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
-    "sidecar/lib/backbone/underscore.js",
+    "sidecar/node_modules/underscore/underscore-min.js",
     "sidecar/lib/jquery/jquery.min.js",
     "sidecar/lib/backbone/backbone.js",
-    "sidecar/lib/handlebars/handlebars.js",
+    "sidecar/node_modules/handlebars/dist/handlebars.min.js",
     "sidecar/lib/sugarapi/sugarapi.js",
     "sidecar/minified/sidecar.min.js",
     {"pattern": "sidecar/minified/sidecar.min.js.map", "included": false},
@@ -66,7 +66,7 @@
     "include/javascript/sugar7/shortcuts.js",
 
     // jasmine and sinon core files
-    "sidecar/lib/sinon/sinon.js",
+    "sidecar/node_modules/sinon/pkg/sinon.js",
     "sidecar/lib/jasmine-sinon/jasmine-sinon.js",
     "sidecar/lib/jasmine-jquery/jasmine-jquery.js",
     "sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js",

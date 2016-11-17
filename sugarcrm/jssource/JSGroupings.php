@@ -86,7 +86,7 @@
         $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
-                'sidecar/node_modules/underscore/underscore.js'    => 'include/javascript/sugar_grp1.js',
+                'sidecar/node_modules/underscore/underscore-min.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',

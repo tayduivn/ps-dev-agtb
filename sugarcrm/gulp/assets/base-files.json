@@ -15,11 +15,6 @@
     {"pattern": "tests/unit-js/fixtures/*.json", "included": false, "served": true, "watched": false},
     {"pattern": "tests/unit-js/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
-    "sidecar/lib/backbone/underscore.js",
-    "sidecar/lib/jquery/jquery.min.js",
-    "sidecar/lib/backbone/backbone.js",
-    "sidecar/lib/handlebars/handlebars.js",
-    "sidecar/lib/sugarapi/sugarapi.js",
     "sidecar/minified/sidecar.min.js",
     {"pattern": "sidecar/minified/sidecar.min.js.map", "included": false},
     "include/javascript/sugar7/hbs-helpers.js",
@@ -43,7 +38,6 @@
     "include/javascript/sugar7/accessibility/accessibility.js",
     "include/javascript/sugar7/accessibility/click.js",
     "include/javascript/sugar7/accessibility/label.js",
-    "include/javascript/sugar7/tutorial.js",
 
     // TODO: decide if we're going to only serve or if we should have
     // them all by default
@@ -67,7 +61,7 @@
     "include/javascript/sugar7/shortcuts.js",
 
     // jasmine and sinon core files
-    "sidecar/lib/sinon/sinon.js",
+    "sidecar/node_modules/sinon/pkg/sinon.js",
     "sidecar/lib/jasmine-sinon/jasmine-sinon.js",
     "sidecar/lib/jasmine-jquery/jasmine-jquery.js",
     "sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js",
