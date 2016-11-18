@@ -341,6 +341,12 @@ class HealthCheckScanner
      */
     protected $removed_files = array(
         'include/Smarty/plugins/function.sugar_help.php',
+        // Removed in Sugar 7.8
+        'modules/pmse_Inbox/engine/Crypt.php',
+        'modules/pmse_Inbox/engine/PMSEAccessManager.php',
+        'modules/pmse_Inbox/engine/PMSELicenseManager.php',
+        'modules/pmse_Project/pmse_BpmAccessManagement',
+        'modules/Notifications/controller.php',
     );
 
     /**
@@ -368,8 +374,53 @@ class HealthCheckScanner
      * regex'es for removed code
      * @var array
      */
-    protected $deprecatedCodePatterns = array(
-        '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession' //report id
+    protected $deprecatedPHPCodePatterns = array(
+        '/[^\w]SugarSession[^\w]/i' => 'deprecatedCodeSugarSession', //report id
+    );
+
+    protected $deprecatedJsAPIPatterns = array(
+        // Removed in 7.8
+        '/(_\.bindAll)\s*\([\s\w]+[^,][\s\w]+\)/U' => 'useOfUnderscoreBindAll',
+        '/\.(setDefaultAttributes)\W/' => 'removedSidecarAPI_Bean',
+        '/\.([gs]etDefaultAttribute)\W/' => 'removedSidecarAPI_Bean_fixable',
+        '/\.(removeDefaultAttribute)\W/' => 'removedSidecarAPI_Bean',
+        '/([Aa]pp\.date\.(compareDates|isDate(After|Before|On|Between)))\s*\(/' => 'removedSidecarAPI_app_date',
+    );
+
+    //Removed in 7.8
+    protected $removedSidecarFiles = array(
+        'clients/base/views/news',
+        'clients/base/layouts/subpanels-create/subpanels-create',
+        'clients/base/views/history-summary-preview-header',
+        'clients/base/views/passwordmodal',
+        'clients/portal/views/passwordmodal',
+        'modules/ACLRoles/clients/base/layouts/records',
+        'modules/Administration/clients/base/layouts/records',
+        'modules/Calendar/clients/base/layouts/records',
+        'modules/Campaigns/clients/base/layouts/records',
+        'modules/Contracts/clients/base/layouts/records',
+        'modules/ContractTypes/clients/base/layouts/records',
+        'modules/KBContents/clients/base/views/prefilteredlist',
+        'modules/Quotes/clients/base/views/panel-top-for-accounts',
+        'modules/RevenueLineItems/clients/base/views/subpanel-list-with-massupdate',
+    );
+
+    //Removed in 7.8
+    protected $removedSidecarClasses = array(
+        'NewsView',
+        'SubpanelsCreateLayout',
+        'HistorySummaryPreviewHeaderView',
+        'PasswordmodalView',
+        'PortalPasswordmodalView',
+        'ACLRolesRecordsLayout',
+        'AdministrationRecordsLayout',
+        'CalendarRecordsLayout',
+        'CampaignsRecordsLayout',
+        'ContractsRecordsLayout',
+        'ContractTypesRecordsLayout',
+        'KBContentsPrefilteredlistView',
+        'QuotesPanelTopForAccountsView',
+        'RevenueLineItemsSubpanelListWithMassupdateView',
     );
 
     protected $filesWithDeprecatedCode = array();
@@ -865,6 +916,9 @@ class HealthCheckScanner
             $this->log("Checking module $module");
             $this->scanModule($module);
         }
+
+        //Now that we have catalogued all the bad files in custom, log them by category.
+        $this->updateCustomDirScanStatus();
 
         // Check global hooks
         $this->log("Checking global hooks");
@@ -2275,6 +2329,7 @@ class HealthCheckScanner
     protected function scanCustomDir()
     {
         $this->checkCreateActions();
+        $this->checkSidecarJSFiles();
         $this->log("Checking custom directory for no longer valid code");
         $files = $this->getPhpFiles("custom/");
         foreach ($files as $name => $file) {
@@ -2284,8 +2339,6 @@ class HealthCheckScanner
             $this->scanFileForSessionArrayReferences($file, $fileContents);
             $this->scanFileForDeprecatedCode($file, $fileContents);
         }
-        //Now that we have catalogued all the bad files in custom, log them by category.
-        $this->updateCustomDirScanStatus();
     }
 
     /**
@@ -2395,7 +2448,7 @@ class HealthCheckScanner
      */
     protected function scanFileForDeprecatedCode($file, $fileContents)
     {
-        foreach ($this->deprecatedCodePatterns as $pattern => $reportId) {
+        foreach ($this->deprecatedPHPCodePatterns as $pattern => $reportId) {
             if (preg_match($pattern, $fileContents)) {
                 $this->filesWithDeprecatedCode[$reportId][] = $file;
             }
@@ -2435,7 +2488,7 @@ class HealthCheckScanner
             $this->updateStatus("arraySessionUsage", $filesWithSession);
         }
         foreach ($this->filesWithDeprecatedCode as $reportId => $files) {
-            $this->updateStatus($reportId, implode(PHP_EOL, $files));
+            $this->updateStatus($reportId, array_unique($files));
         }
     }
 
@@ -2479,6 +2532,7 @@ class HealthCheckScanner
             'isNewModule' => $isNewModule,
         );
         $this->checkCreateActions($options);
+        $this->checkSidecarJSFiles($options);
 
         /*
          * Module specific checks
@@ -2610,6 +2664,79 @@ class HealthCheckScanner
             $formatted = implode(', ', $files);
             $this->log('Found custom create-actions components');
             $this->updateStatus('hasCustomCreateActions', $formatted);
+        }
+    }
+
+    protected function checkSidecarJSFiles($options = array())
+    {
+        $files = array();
+        $sidecarJSPath = 'clients' . DIRECTORY_SEPARATOR .
+            '*' . DIRECTORY_SEPARATOR .
+            '{layouts,views,fields}' . DIRECTORY_SEPARATOR .
+            '*' . DIRECTORY_SEPARATOR .
+            '*.js';
+
+        if (!empty($options['module'])) {
+            $this->log("Checking for deprecated/removed Sidecar JS in custom/modules/{$options['module']}");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                'modules' . DIRECTORY_SEPARATOR .
+                $options['module'] . DIRECTORY_SEPARATOR .
+                $sidecarJSPath,
+                GLOB_BRACE
+            );
+
+            if (!empty($options['isNewModule'])) {
+                $this->log("Checking for deprecated/removed Sidecar JS in modules/{$options['module']}");
+                $files = array_merge($files, glob(
+                    'modules' . DIRECTORY_SEPARATOR .
+                    $options['module'] . DIRECTORY_SEPARATOR .
+                    $sidecarJSPath,
+                    GLOB_BRACE
+                ));
+            }
+        } else {
+            $this->log("Checking for deprecated/removed Sidecar JS in custom/clients");
+            $files = glob(
+                'custom' . DIRECTORY_SEPARATOR .
+                $sidecarJSPath,
+                GLOB_BRACE
+            );
+        }
+
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $this->scanFileForDeprecatedJSCode($file, file_get_contents($file));
+            }
+
+            foreach ($this->removedSidecarFiles as $deletedFile) {
+                if (in_array($deletedFile, $files)) {
+                    $this->log("found deleted file: $deletedFile");
+                    $this->deletedFilesReferenced[] = $deletedFile;
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks that we don't use classes deprecated/removed in sugar API
+     * @param string $file
+     * @param string $fileContents
+     */
+    protected function scanFileForDeprecatedJSCode($file, $fileContents)
+    {
+        foreach ($this->deprecatedJsAPIPatterns as $pattern => $reportId) {
+            $matches = array();
+            if ($val = preg_match($pattern, $fileContents, $matches)) {
+                $this->log("Found $matches[1] in $file");
+                $this->filesWithDeprecatedCode[$reportId][] = $file;
+            }
+        }
+        foreach ($this->removedSidecarClasses as $className) {
+            if (preg_match('/\s+extendsFrom:\s*[\'"]' . $className . '[\'"]/', $fileContents)) {
+                $this->log("Found $className in $file");
+                $this->filesWithDeprecatedCode["extendsFromRemovedSidecarClass"][] = $file;
+            }
         }
     }
 

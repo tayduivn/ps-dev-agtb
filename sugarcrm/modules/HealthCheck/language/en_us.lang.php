@@ -94,6 +94,8 @@ $mod_strings = array(
     'LBL_SCAN_433_LOG' => 'Found custom Elastic Search files %s',
     'LBL_SCAN_434_LOG' => 'Found usage of array functions on $_SESSION in files: %s',
     'LBL_SCAN_435_LOG' => 'Class SugarSession was removed from API, use Sugarcrm\Sugarcrm\Session\SessionStorage instead. Files with deprecated code: ' . PHP_EOL . '%s',
+    'LBL_SCAN_550_LOG' => 'Use of removed Sidecar app.date APIs in %s',
+    'LBL_SCAN_551_LOG' => 'Use of removed Sidecar Bean APIs in %s',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',
@@ -117,6 +119,9 @@ $mod_strings = array(
     'LBL_SCAN_542_LOG' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_LOG' => 'Advanced Workflow Partially Locked Field Group - Field %4$s locked in group %s in Process Definition %s for the %s module.',
     'LBL_SCAN_546_LOG' => 'Custom Knowledge Base TinyMCE config',
+    'LBL_SCAN_552_LOG' => 'Use of removed Underscore APIs in %s',
+    'LBL_SCAN_553_LOG' => 'Use of removed Sidecar Bean APIs in %s',
+    'LBL_SCAN_554_LOG' => 'Sidecar controller %s extends from removed Sidecar controller',
 
     'LBL_SCAN_901_LOG' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_LOG' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',
@@ -183,6 +188,8 @@ $mod_strings = array(
     'LBL_SCAN_433_TITLE' => 'Found custom Elastic Search files %s',
     'LBL_SCAN_434_TITLE' => 'Found usage of array functions on $_SESSION in files: %s',
     'LBL_SCAN_435_TITLE' => 'Found usage of removed SugarSession class',
+    'LBL_SCAN_550_TITLE' => 'Use of removed Sidecar app.date APIs in %s',
+    'LBL_SCAN_551_TITLE' => 'Use of removed Sidecar Bean APIs in %s',
 
     'LBL_SCAN_501_TITLE' => 'Missing file: %s',
     'LBL_SCAN_502_TITLE' => 'md5 mismatch for %s, expected %s',
@@ -212,6 +219,9 @@ $mod_strings = array(
     'LBL_SCAN_542_TITLE' => 'Invalid Advanced Workflow Field Use - %s invalid field(s) used in %s.',
     'LBL_SCAN_545_TITLE' => 'Advanced Workflow Partially Locked Field Group - %3$s module: Group %s is partially locked in Process Definition %s.',
     'LBL_SCAN_546_TITLE' => 'Custom Knowledge Base TinyMCE config',
+    'LBL_SCAN_552_TITLE' => 'Use of removed Underscore APIs in %s',
+    'LBL_SCAN_553_TITLE' => 'Use of removed Sidecar Bean APIs in %s',
+    'LBL_SCAN_554_TITLE' => 'Sidecar controller %s extends from removed Sidecar controller',
 
     'LBL_SCAN_901_TITLE' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_TITLE' => 'Unsupported Upgrader version',
@@ -277,6 +287,8 @@ $mod_strings = array(
     'LBL_SCAN_432_DESCR' => 'Field \'name\' has a type other than name, fullname, varchar or id',
     'LBL_SCAN_433_DESCR' => 'Found custom Elastic Search files %s',
     'LBL_SCAN_434_DESCR' => 'Found usage of array functions on $_SESSION in files: %s',
+    'LBL_SCAN_550_DESCR' => 'Use of removed Sidecar app.date APIs in %s, this code will be migrated by upgrade scripts',
+    'LBL_SCAN_551_DESCR' => 'Use of removed Sidecar Bean APIs in %s, this code will be migrated by upgrade scripts',
 
     'LBL_SCAN_501_DESCR' => 'One of the core files is not present in the instance',
     'LBL_SCAN_502_DESCR' => 'One of the core files has been modified in this install',
@@ -309,6 +321,9 @@ $mod_strings = array(
         . 'The "tinyConfig" parameter in %s file will be emptied. '
         . 'If you have any TinyMCE customizations there you should save them before upgrade '
         . 'and add after upgrade manually.',
+    'LBL_SCAN_552_DESCR' => 'Use of removed Underscore APIs in %s',
+    'LBL_SCAN_553_DESCR' => 'Use of removed Sidecar Bean APIs in %s',
+    'LBL_SCAN_554_DESCR' => 'Sidecar controller %s extends from removed Sidecar controller',
 
     'LBL_SCAN_901_DESCR' => 'Instance already upgraded to Sugar 7',
     'LBL_SCAN_903_DESCR' => 'Unsupported Upgrader version. Please install the appropriate SugarUpgradeWizardPrereq package',

@@ -400,6 +400,21 @@ class HealthCheckScannerMeta
             'report' => 'deprecatedCodeSugarSession',
             'bucket' => self::MANUAL,
         ),
+        // 7.8 sidecar and backbone deprecations, E bucket
+        550 => array(
+            'report' => 'removedSidecarAPI_app_date',
+            'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_app_date_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+        551 => array(
+            'report' => 'removedSidecarAPI_Bean_fixable',
+            'bucket' => self::CUSTOM,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_Bean_APIs_Migration_Script/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         // BUCKET F
         501 => array(
@@ -553,6 +568,28 @@ class HealthCheckScannerMeta
         546 => array(
             'report' => 'customTinyMCEConfig',
             'bucket' => self::CUSTOM,
+        ),
+        // 7.8 sidecar and backbone deprecations, F bucket
+        552 => array(
+            'report' => 'useOfUnderscoreBindAll',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Underscore_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+        553 => array(
+            'report' => 'removedSidecarAPI_Bean',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Use_of_Removed_Sidecar_Bean_APIs/',
+            //@codingStandardsIgnoreEnd
+        ),
+        554 => array(
+            'report' => 'extendsFromRemovedSidecarClass',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Sidecar_Controller_Extends_from_Removed_Sidecar/',
+            //@codingStandardsIgnoreEnd
         ),
 
         // Bucket G
