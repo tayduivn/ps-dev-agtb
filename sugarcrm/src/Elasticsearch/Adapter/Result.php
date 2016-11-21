@@ -135,8 +135,7 @@ class Result implements ResultInterface
             $bean = \BeanFactory::getBean($this->getModule(), $this->getId());
         } else {
             $bean = \BeanFactory::newBean($this->getModule());
-            $bean->populateFromRow($this->getData(), true);
-            $bean->id = $this->getId();
+            $bean->populateFromRow(array_merge(['id' => $this->getId()], $this->getData()), true);
         }
 
         // Dispatch event for logic hook framework

@@ -172,6 +172,10 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'vname' => 'LBL_FROM',
             'source' => 'non-db',
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'reply_to_addr' => array(
             'name' => 'reply_to_addr',
@@ -214,13 +218,21 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'vname' => 'LBL_TEXT_BODY',
             'source' => 'non-db',
-            'full_text_search' => array('enabled' => true, 'searchable' => true, 'type' => 'text'),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+                'type' => 'text',
+            ),
         ),
         'date_sent' => array(
             'name' => 'date_sent',
             'vname' => 'LBL_DATE_SENT',
             'type' => 'datetime',
             'massupdate' => false,
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => false,
+            ),
         ),
         'message_id' => array(
             'name' => 'message_id',
@@ -245,7 +257,10 @@ $dictionary['Email'] = array(
             'required' => false,
             'len' => '255',
             'comment' => 'The subject of the email',
-            'full_text_search' => array('enabled' => true, 'searchable' => true),
+            'full_text_search' => array(
+                'enabled' => true,
+                'searchable' => true,
+            ),
         ),
         'type' => array(
             'name' => 'type',

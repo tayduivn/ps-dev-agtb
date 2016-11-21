@@ -1594,6 +1594,11 @@ class Email extends SugarBean {
      */
     public function retrieveEmailAddresses()
     {
+        if (empty($this->id)) {
+            $GLOBALS['log']->warn('Skipping Email::retrieveEmailAddresses because of missing bean.id value');
+            return;
+        }
+
         $query = "SELECT email_address, address_type FROM emails_email_addr_rel eam " .
             "JOIN email_addresses ea ON ea.id = eam.email_address_id " .
             "WHERE eam.email_id = ? AND eam.deleted = ?";
@@ -1626,6 +1631,11 @@ class Email extends SugarBean {
      */
     public function retrieveEmailText()
     {
+        if (empty($this->id)) {
+            $GLOBALS['log']->warn('Skipping Email::retrieveEmailText because of missing bean.id value');
+            return;
+        }
+
         $query = "SELECT from_addr, reply_to_addr, to_addrs, cc_addrs, bcc_addrs, " .
             "description, description_html, raw_source " .
             " FROM emails_text WHERE email_id = ?";
@@ -1821,7 +1831,7 @@ class Email extends SugarBean {
 		if(empty($text)) {
 			return '';
 		}
-        // <p></p> is not really needed here and it will make TinyMCE to inert <br> between them and 
+        // <p></p> is not really needed here and it will make TinyMCE to inert <br> between them and
         // cause more display issues
         $text = preg_replace('/<p[^>]*><\/p>/i', '', $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
