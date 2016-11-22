@@ -36,8 +36,8 @@ $mod_strings = array (
     'LBL_CREATE_COMMENT_BUTTON_TOOLTIP' => 'Create Comment',
     'LBL_EDIT_BUNDLE_BUTTON_TOOLTIP' => 'Edit the group name',
     'LBL_DELETE_BUNDLE_BUTTON_TOOLTIP' => 'Delete the group',
-    'LBL_QUOTE_DATA_EMPTY_ROW_WITH_GROUP' => 'Use the + create menu to add a line item, or note to this group.',
-    'LBL_QUOTE_DATA_EMPTY_ROW_DEFAULT_GROUP' => 'Use the + create menu to add a line item, note, or group to this '
+    'LBL_QUOTE_DATA_EMPTY_ROW_WITH_GROUP' => 'Use the + create menu to add a line item, or comment to this group.',
+    'LBL_QUOTE_DATA_EMPTY_ROW_DEFAULT_GROUP' => 'Use the + create menu to add a line item, comment, or group to this '
         . 'Quote.',
     'LBL_QUOTE_BUNDLE_DEFAULT_GROUP' => 'The default Product Bundle group for the Quote',
 );
