@@ -4694,9 +4694,7 @@ class SugarBean
                                 if(isset($rel_mod->field_defs['assigned_user_id']))
                                 {
                                     $ret_array['select'] .= ' , ' .$params['join_table_alias'] . '.assigned_user_id ' .  $field . '_owner';
-                                }
-                                else
-                                {
+                                } elseif (isset($rel_mod->field_defs['created_by'])) {
                                     $ret_array['select'] .= ' , ' .$params['join_table_alias'] . '.created_by ' .  $field . '_owner';
                                 }
                                 $ret_array['select'] .= "  , '".$rel_module  ."' " .  $field . '_mod';

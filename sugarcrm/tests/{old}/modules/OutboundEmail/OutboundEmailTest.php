@@ -70,13 +70,15 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSave()
     {
+        $emailAddressId = Uuid::uuid1();
+
         $db = SugarTestHelper::setUp('mock_db');
         $db->addQuerySpy(
             'save',
-            "/INSERT INTO outbound_email \\(id,name,type,user_id,mail_sendtype,mail_smtptype,mail_smtpserver," .
-            "mail_smtpport,mail_smtpuser,mail_smtppass,mail_smtpauth_req,mail_smtpssl,deleted\\) VALUES " .
-            "\\('[a-z0-9_-]{36}','test outbound account','user','{$GLOBALS['current_user']->id}','smtp','other'," .
-            "'smtp\\.sugarcrm\\.com',465,'sugarcrm','.*',0,'1',0\\)/"
+            "/INSERT INTO outbound_email \\(id,name,type,user_id,email_address_id,mail_sendtype,mail_smtptype," .
+            "mail_smtpserver,mail_smtpport,mail_smtpuser,mail_smtppass,mail_smtpauth_req,mail_smtpssl,deleted\\) " .
+            "VALUES \\('[a-z0-9_-]{36}','test outbound account','user','{$GLOBALS['current_user']->id}'," .
+            "'{$emailAddressId}','smtp','other','smtp\\.sugarcrm\\.com',465,'sugarcrm','.*',0,'1',0\\)/"
         );
 
         $bean = BeanFactory::newBean('OutboundEmail');
@@ -85,6 +87,7 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->mail_smtpserver = 'smtp.sugarcrm.com';
         $bean->mail_smtpuser = 'sugarcrm';
         $bean->mail_smtppass = 'foobar';
+        $bean->email_address_id = $emailAddressId;
         $bean->save();
 
         $actual = $db->getQuerySpyRunCount('save');

@@ -46,6 +46,7 @@ class AbstractRelationships
                                              'emails_beans',
         'emails_email_addr_rel',
                                              'linked_documents',
+        'OutboundEmail',
                                              'project_relation',
                                              'prospect_lists_prospects',
                                              'queues_beans',

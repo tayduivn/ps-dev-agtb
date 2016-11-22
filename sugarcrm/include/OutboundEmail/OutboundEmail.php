@@ -531,7 +531,20 @@ class OutboundEmail extends SugarBean
         global $sugar_config;
 	    $values = array();
 
+        // Ignore non-db fields.
+        $ignoreFields = array_filter($this->field_defs, function ($def) {
+            return isset($def['source']) && $def['source'] === 'non-db';
+        });
+        $ignoreFields = array_map(function ($def) {
+            return $def['name'];
+        }, $ignoreFields);
+
         foreach ($fieldDefs as $field => $def) {
+            // Skip fields that should be ignored.
+            if (in_array($field, $ignoreFields)) {
+                continue;
+            }
+
             if (isset($this->$field)) {
                 if ($field == 'mail_smtppass') {
                     if (!empty($this->mail_smtppass)) {

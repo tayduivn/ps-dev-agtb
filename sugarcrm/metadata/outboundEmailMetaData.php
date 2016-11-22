@@ -52,6 +52,38 @@ $dictionary['OutboundEmail'] = array (
             'mandatory_fetch' => true,
             'readonly' => true,
 		),
+        'email_addresses' => [
+            'name' => 'email_addresses',
+            'relationship' => 'outbound_email_email_addresses',
+            'source' => 'non-db',
+            'type' => 'link',
+            'vname' => 'LBL_EMAIL_ADDRESSES',
+        ],
+        'email_address_id' => [
+            'name' => 'email_address_id',
+            'duplicate_merge' => 'disabled',
+            'id_name' => 'email_address_id',
+            'link' => 'email_addresses',
+            'massupdate' => false,
+            'module' => 'EmailAddresses',
+            'reportable' => false,
+            'rname' => 'id',
+            'table' => 'email_addresses',
+            'type' => 'id',
+            'vname' => 'LBL_EMAIL_ADDRESS_ID',
+        ],
+        'email_address' => [
+            'name' => 'email_address',
+            'id_name' => 'email_address_id',
+            'link' => 'email_addresses',
+            'module' => 'EmailAddresses',
+            'required' => true,
+            'rname' => 'email_address',
+            'source' => 'non-db',
+            'table' => 'email_addresses',
+            'type' => 'relate',
+            'vname' => 'LBL_EMAIL_ADDRESS',
+        ],
 		'mail_sendtype' => array(
 			'name' => 'mail_sendtype',
 			'vname' => 'LBL_MAIL_SENDTYPE',
@@ -145,4 +177,15 @@ $dictionary['OutboundEmail'] = array (
 			)
 		),
 	), /* end indices */
+    'relationships' => [
+        'outbound_email_email_addresses' => [
+            'lhs_module' => 'EmailAddresses',
+            'lhs_table' => 'email_addresses',
+            'lhs_key' => 'id',
+            'rhs_module' => 'OutboundEmail',
+            'rhs_table' => 'outbound_email',
+            'rhs_key' => 'email_address_id',
+            'relationship_type' => 'one-to-many',
+        ],
+    ],
 );
