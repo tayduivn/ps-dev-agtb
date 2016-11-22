@@ -119,18 +119,17 @@ class ClearVarDefsTest extends Sugar_PHPUnit_Framework_TestCase
             'source_dir' => $path
         );
 
-        $script = $this->getMock(
-            'SugarUpgradeClearVarDefs',
-            array(
+        $script = $this->getMockBuilder('SugarUpgradeClearVarDefs')
+            ->setMethods(array(
                 'cleanCache',
                 'deleteFieldFile',
                 'deleteRelationshipFiles',
                 'writeDef',
                 'updateLinks',
                 'updateRelationshipDefinition'
-            ),
-            array($upgradeDriver)
-        );
+            ))
+            ->setConstructorArgs(array($upgradeDriver))
+            ->getMock();
 
         $script->expects($this->once())
             ->method('cleanCache');

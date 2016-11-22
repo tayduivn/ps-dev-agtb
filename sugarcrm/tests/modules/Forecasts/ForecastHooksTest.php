@@ -19,7 +19,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $hook = new MockForecastHooks();
 
         /* @var $bean Opportunity */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->probability = 90;
 
         /* @var $hook ForecastHooks */
@@ -50,7 +50,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         /* @var $bean Opportunity */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->probability = 90;
 
         /* @var $hook ForecastHooks */
@@ -82,7 +82,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         /* @var $bean Opportunity */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->probability = 50;
 
         /* @var $hook ForecastHooks */
@@ -114,7 +114,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         /* @var $bean Opportunity */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->probability = 50;
         $bean->commit_stage = 'include';
 
@@ -130,7 +130,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->amount = 500;
         $bean->best_case = 600;
         $bean->worst_case = 400;
@@ -148,7 +148,7 @@ class ForecastHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
         $bean->amount = 500;
         $bean->best_case = 600;
         $bean->worst_case = 400;

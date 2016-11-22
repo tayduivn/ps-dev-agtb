@@ -426,7 +426,7 @@ class MetaDataHelperTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         // stub out our logger
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->createMock('Psr\Log\LoggerInterface');
         TestReflection::setProtectedValue($mock, 'logger', $logger);
 
         return $mock;

@@ -171,9 +171,10 @@ class Bug51568Test extends Sugar_PHPUnit_Framework_TestCase
                 $layout_def[$k] = $v;
             }
         }
-        $sf = $this->getMock('SugarWidgetFieldCurrency',
-            array('getTruncatedColumnAlias'),
-            array(&$this->lm));
+        $sf = $this->getMockBuilder('SugarWidgetFieldCurrency')
+            ->setMethods(['getTruncatedColumnAlias'])
+            ->setConstructorArgs([&$this->lm])
+            ->getMock();
         $sf->expects($this->any())
             ->method('getTruncatedColumnAlias')
             ->will($this->returnArgument(0));

@@ -80,7 +80,10 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $meeting->duration_minutes = '0';
         $meeting->assigned_user_id = 1;
 
-        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMockBuilder('CalendarEventsApiHelper')
+            ->setMethods(['getInvitees'])
+            ->setConstructorArgs([$this->api])
+            ->getMock();
         $helper->expects($this->any())->method('getInvitees')->will($this->returnValue(array()));
 
         $helper->populateFromApi($meeting, array());
@@ -105,7 +108,10 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array($meeting, 'leads', array(), $leads),
             array($meeting, 'contacts', array(), $contacts),
         );
-        $helper = $this->getMock('CalendarEventsApiHelper', array('getInvitees'), array($this->api));
+        $helper = $this->getMockBuilder('CalendarEventsApiHelper')
+            ->setMethods(['getInvitees'])
+            ->setConstructorArgs([$this->api])
+            ->getMock();
         $helper->expects($this->any())->method('getInvitees')->will($this->returnValueMap($map));
 
         $helper->populateFromApi($meeting, array());
@@ -168,7 +174,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFormatForApi_MeetingIsRelatedToAContact_TheNameOfTheContactIsAddedToTheResponse()
     {
-        $meeting = $this->getMock('Meeting', array('ACLAccess'));
+        $meeting = $this->getMockBuilder('Meeting')->setMethods(array('ACLAccess'))->getMock();
         $meeting->expects($this->any())->method('ACLAccess')->will($this->returnValue(true));
         BeanFactory::setBeanClass('Meetings', get_class($meeting));
         $meeting->id = create_guid();
@@ -187,7 +193,7 @@ class CalendarEventsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetInvitees_ReturnsCorrectDataForLink()
     {
-        $meeting = $this->getMock('Meeting', array('load_relationship'));
+        $meeting = $this->createPartialMock('Meeting', array('load_relationship'));
         $meeting->expects($this->any())->method('load_relationship')
             ->will($this->returnValue(false));
 

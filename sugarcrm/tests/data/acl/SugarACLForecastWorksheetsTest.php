@@ -17,15 +17,15 @@ class SugarACLForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckAccessWithViewEqualToField()
     {
-        $beanMock = $this->getMock('Product', array('ACLFieldAccess'));
+        $beanMock = $this->createPartialMock('Product', array('ACLFieldAccess'));
         $beanMock->expects($this->once())
             ->method('ACLFieldAccess')
             ->will($this->returnValue(true));
 
-        $userMock = $this->getMock('User');
+        $userMock = $this->createMock('User');
         $userMock->id = 'test_user_id';
 
-        $acl_class = $this->getMock('SugarACLForecastWorksheets', array('getForecastByBean'));
+        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', array('getForecastByBean'));
         $acl_class->expects($this->once())
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));
@@ -42,14 +42,14 @@ class SugarACLForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCheckAccessWithViewNotEqualToField()
     {
-        $beanMock = $this->getMock('Product', array('ACLFieldAccess'));
+        $beanMock = $this->createPartialMock('Product', array('ACLFieldAccess'));
         $beanMock->expects($this->never())
             ->method('ACLFieldAccess');
 
-        $userMock = $this->getMock('User');
+        $userMock = $this->createMock('User');
         $userMock->id = 'test_user_id';
 
-        $acl_class = $this->getMock('SugarACLForecastWorksheets', array('getForecastByBean'));
+        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', array('getForecastByBean'));
         $acl_class->expects($this->once())
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));

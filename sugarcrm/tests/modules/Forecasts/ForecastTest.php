@@ -59,7 +59,7 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
             unset($GLOBALS['current_user']);
         }
 
-        $forecast = $this->getMock('Forecast');
+        $forecast = $this->getMockBuilder('Forecast')->getMock();
 
         $this->assertEquals(true, $forecast->disable_row_level_security);
         $this->assertEquals($symbol, $forecast->currencysymbol);

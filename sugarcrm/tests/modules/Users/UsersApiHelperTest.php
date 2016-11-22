@@ -26,7 +26,10 @@ class UsersApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean = BeanFactory::newBean('Users');
         $this->bean->id = create_guid();
 
-        $this->helper = $this->getMock('UsersApiHelper', array('checkUserAccess'), array(new UsersServiceMockup()));
+        $this->helper = $this->getMockBuilder('UsersApiHelper')
+            ->setMethods(['checkUserAccess'])
+            ->setConstructorArgs([new UsersServiceMockup()])
+            ->getMock();
     }
 
     public function tearDown()

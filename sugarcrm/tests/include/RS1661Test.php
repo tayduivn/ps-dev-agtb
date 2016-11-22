@@ -79,7 +79,9 @@ class RS1661Test extends Sugar_PHPUnit_Framework_TestCase
         $excludeTables = $this->getExcludedTables();
 
         /** @var TeamBasedACLConfigurator|PHPUnit_Framework_MockObject_MockObject $lvMock */
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', ['removeAllTBAValuesFromTable']);
+        $this->tbaConfig = $this->getMockBuilder('TeamBasedACLConfigurator')
+            ->setMethods(['removeAllTBAValuesFromTable'])
+            ->getMock();
         // Check that removeAllTBAValuesFromTable called only once for out test table
         $this->tbaConfig
             ->expects($this->once())
@@ -88,7 +90,7 @@ class RS1661Test extends Sugar_PHPUnit_Framework_TestCase
         $this->tbaConfig->removeTBAValuesFromAllTables($excludeTables);
 
         // Check that out test record will be updated to null
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', null);
+        $this->tbaConfig = $this->getMockBuilder('TeamBasedACLConfigurator')->setMethods(null)->getMock();
         $this->tbaConfig->removeTBAValuesFromAllTables($excludeTables);
         $row = $this->db->fetchOne("SELECT * FROM {$this->tableName}");
         $this->assertNull($row['acl_team_set_id']);

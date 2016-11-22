@@ -50,7 +50,10 @@ class RemoveInlineHTMLSpacingTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($path . '/' . $file, $content);
 
-        $script = $this->getMock('SugarUpgradeRemoveInlineHTMLSpacing', array('backupFile') , array($this->upgradeDriver));
+        $script = $this->getMockBuilder('SugarUpgradeRemoveInlineHTMLSpacing')
+            ->setMethods(['backupFile'])
+            ->setConstructorArgs([$this->upgradeDriver])
+            ->getMock();
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {

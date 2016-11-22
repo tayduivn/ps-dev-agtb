@@ -308,7 +308,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $configuration->mail_smtpserver = '';
         $configuration->save();
 
-        $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound", "getSystemMailerSettings"));
+        $mockOutboundEmail = $this->createPartialMock('OutboundEmail', array("isAllowUserAccessToSystemDefaultOutbound", "getSystemMailerSettings"));
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue(false));
@@ -365,7 +365,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     public function testGetMailConfigurationStatusForUser_ValidSystemConfig_AllowAllUsersNotSet_SMTPAuthenticationSet_NoUserData_ReturnsInvalidConfiguration()
     {
         $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));
+        $mockOutboundEmail = $this->getMockBuilder('OutboundEmail')
+            ->setMethods(array("isAllowUserAccessToSystemDefaultOutbound"))
+            ->getMock();
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue(false));
@@ -396,7 +398,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
     private function setUpMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound)
     {
-        $mockOutboundEmail = $this->getMock("OutboundEmail", array("isAllowUserAccessToSystemDefaultOutbound"));
+        $mockOutboundEmail = $this->getMockBuilder('OutboundEmail')
+            ->setMethods(array("isAllowUserAccessToSystemDefaultOutbound"))
+            ->getMock();
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue($isAllowUserAccessToSystemDefaultOutbound));

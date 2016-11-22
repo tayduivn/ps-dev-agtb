@@ -68,12 +68,12 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testHandlePresetRelationshipsAdd()
     {
         $contactId = 'some_contact_id';
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->once())
             ->method('load_relationship')
             ->with('contacts');
 
-        $account->contacts = $this->getMock('Link2', array('add'), array(), '', false);
+        $account->contacts = $this->createPartialMock('Link2', array('add'));
         $account->contacts->expects($this->once())
             ->method('add')
             ->with($contactId)
@@ -92,13 +92,13 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $contactId = 'some_contact_id';
         $accountId = 'some_account_id';
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->id = $accountId;
         $account->expects($this->once())
             ->method('load_relationship')
             ->with('contacts');
 
-        $account->contacts = $this->getMock('Link2', array('delete'), array(), '', false);
+        $account->contacts = $this->createPartialMock('Link2', array('delete'));
         $account->contacts->expects($this->once())
             ->method('delete')
             ->with($accountId, $contactId)
@@ -118,13 +118,13 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         $thisId = 'this_id';
         $relateId = 'relate_id';
 
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->atLeastOnce())
             ->method('load_relationship')
             ->with('relate_field_link')
             ->willReturn(true);
 
-        $account->relate_field_link = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->relate_field_link = $this->createPartialMock('Link2', array('add', 'delete'));
         $account->relate_field_link->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -167,13 +167,13 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $relateId = 'relate_id';
 
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->any())
             ->method('load_relationship')
             ->with('member_of')
             ->willReturn(true);
 
-        $account->member_of = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->member_of = $this->createPartialMock('Link2', array('add', 'delete'));
         $account->member_of->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -191,7 +191,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $relateId = 'relate_id';
 
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->at(0))
             ->method('load_relationship')
             ->with('MEMBER_OF')
@@ -202,7 +202,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
             ->with('member_of')
             ->willReturn(true);
 
-        $account->member_of = $this->getMock('Link2', array('add', 'delete'), array(), '', false);
+        $account->member_of = $this->createPartialMock('Link2', array('add', 'delete'));
         $account->member_of->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -221,7 +221,7 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         $rel_link_name = 'some_non_existing_link_name';
         $relateId = 'relate_id';
 
-        $account = $this->getMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->any())
             ->method('load_relationship')
             ->willReturn(false);

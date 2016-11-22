@@ -108,7 +108,7 @@ class Bug40969Test extends Sugar_PHPUnit_Framework_TestCase
         $methods = array('getFielddefs', 'getOriginalViewdefs', 'getViewdefs');
 
         // Mock ListLayoutMetaDataParser Meta Implementation and make it return test values
-        $implementation = $this->getMock('DeployedMetaDataImplementation', $methods, array(), '', false);
+        $implementation = $this->createPartialMock('DeployedMetaDataImplementation', $methods);
 
         $implementation->expects($this->any())->method('getFielddefs')->will($this->returnValue($this->vardefs));
         $implementation->expects($this->any())->method('getOriginalViewdefs')->will($this->returnValue($this->originalVardefs));

@@ -43,7 +43,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertProductToRLI($amount, $quantity, $discount, $discount_select, $likely_expected)
     {
         /* @var $product Product */
-        $product = $this->getMock('Product', array('save'));
+        $product = $this->getMockBuilder('Product')->setMethods(array('save'))->getMock();
 
         $product->expects($this->any())
             ->method('save')
@@ -112,13 +112,13 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateCurrencyBaseRate($stage, $expected)
     {
-        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
         $product->expects($this->once())
             ->method('load_relationship')
             ->with('product_bundles')
             ->willReturn(true);
 
-        $bundle = $this->getMock('ProductBundle', array('save', 'load_relationship'));
+        $bundle = $this->createPartialMock('ProductBundle', array('save', 'load_relationship'));
 
         $bundle->expects($this->once())
             ->method('load_relationship')
@@ -126,7 +126,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /* @var $quote Quote */
-        $quote = $this->getMock('Quote', array('save'));
+        $quote = $this->createPartialMock('Quote', array('save'));
 
         $quote->quote_stage = $stage;
 
@@ -184,7 +184,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateCurrencyBaseRateWithNotQuoteReturnTrue()
     {
-        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
         $product->expects($this->once())
             ->method('load_relationship')
             ->with('product_bundles')
@@ -212,7 +212,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSummaryText()
     {
-        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
         $product->name = 'test';
 
         $this->assertEquals('test', $product->get_summary_text());
@@ -240,7 +240,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetAccountIdForOpportunity($accounts, $expected)
     {
-        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
 
         $opp = $this->getMockBuilder('Opportunity')
             ->setMethods(array('save', 'load_relationship'))
@@ -289,7 +289,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testPopulateFromTemplateWillReturnFalse($template_id)
     {
-        $product = $this->getMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', array('save'));
 
         $product->product_template_id = $template_id;
         $product->fetched_row = array(
@@ -314,7 +314,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
             'pricing_factor'
         );
 
-        $product = $this->getMock('Product', array('save', 'getPriceFormula'));
+        $product = $this->createPartialMock('Product', array('save', 'getPriceFormula'));
 
         $product->expects($this->never())
             ->method('getPriceFormula');
@@ -331,7 +331,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCalculateDiscountPrice()
     {
-        $product = $this->getMock('Product', array('save', 'getPriceFormula'));
+        $product = $this->createPartialMock('Product', array('save', 'getPriceFormula'));
         $product->pricing_formula = 'PercentageDiscount';
         $product->cost_price = '100.000000';
         $product->list_price = '150.000000';
@@ -379,7 +379,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetPriceFormula($formula)
     {
-        $product = $this->getMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', array('save'));
 
         $actual = SugarTestReflection::callProtectedMethod($product, 'getPriceFormula', array($formula));
 

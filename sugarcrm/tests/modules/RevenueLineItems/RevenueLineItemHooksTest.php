@@ -33,7 +33,7 @@ class RevenueLineItemHooksTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
-        $this->rli = $this->getMock('RevenueLineItem', array('save'));
+        $this->rli = $this->createPartialMock('RevenueLineItem', array('save'));
     }
 
     public function tearDown()

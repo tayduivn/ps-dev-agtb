@@ -299,11 +299,11 @@ class SearchViewMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Creating a mock object for the DeployedMetaDataImplementation
 
-        $impl = $this->getMock('DeployedMetaDataImplementation',
-                               array('getOriginalViewdefs'),
-                               array(),
-                               'DeployedMetaDataImplementation_Mock',
-                               FALSE);
+        $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
+            ->setMethods(array('getOriginalViewdefs'))
+            ->setMockClassName('DeployedMetaDataImplementation_Mock')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         // Making the getOriginalViewdefs function return the test viewdefs and verify that it is being called once
         $impl->expects($this->once())

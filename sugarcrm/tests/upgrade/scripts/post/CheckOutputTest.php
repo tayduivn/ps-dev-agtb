@@ -50,7 +50,10 @@ class CheckOutputTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($file, $content);
 
-        $script = $this->getMock('SugarUpgradeCheckOutput', array('backupFile') , array($this->upgradeDriver));
+        $script = $this->getMockBuilder('SugarUpgradeCheckOutput')
+            ->setMethods(['backupFile'])
+            ->setConstructorArgs([$this->upgradeDriver])
+            ->getMock();
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {
@@ -80,7 +83,10 @@ class CheckOutputTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($file, $content);
 
-        $script = $this->getMock('SugarUpgradeCheckOutput', array('backupFile') , array($this->upgradeDriver));
+        $script = $this->getMockBuilder('SugarUpgradeCheckOutput')
+            ->setMethods(['backupFile'])
+            ->setConstructorArgs([$this->upgradeDriver])
+            ->getMock();
         $script->expects($this->never())->method('backupFile');
 
         $script->run();

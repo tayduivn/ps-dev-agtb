@@ -38,7 +38,7 @@ class QuietTest extends \Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->runnable = $this->getMock(
+        $this->runnable = $this->createPartialMock(
             'Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface',
             array('getBeans', 'execute')
         );

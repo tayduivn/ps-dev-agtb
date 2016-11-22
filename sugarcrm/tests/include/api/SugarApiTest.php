@@ -106,20 +106,22 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
 
-        $apiMock = $this->getMock('SugarApi',array('htmlDecodeReturn', 'trackAction'));
+        $apiMock = $this->createPartialMock('SugarApi', array('htmlDecodeReturn', 'trackAction'));
         $apiMock->expects($this->any())
                 ->method('htmlDecodeReturn');
 
         $apiMock->expects($this->once())
                 ->method('trackAction');
 
-        $fakeBean = $this->getMock('SugarBean');
+        $fakeBean = $this->createMock('SugarBean');
         $fakeBean->id = 'abcd';
         $fakeBean->module_dir = 'fakeBean';
 
-        $apiMock->api = $this->getMock('RestService');
+        $apiMock->api = $this->createMock('RestService');
 
-        $helperMock = $this->getMock('SugarBeanApiHelper',array('formatForApi'),array($apiMock->api));
+        $helperMock = $this->getMockBuilder('SugarBeanApiHelper')
+            ->setMethods(array('formatForApi'))
+            ->setConstructorArgs(array($apiMock->api));
         $helperMock->expects($this->any())
                    ->method('formatForApi')
                    ->will($this->returnValue(
@@ -158,19 +160,19 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('saveMonitor');
         
-        $sugarApi = $this->getMock('SugarApi',array('getTrackerManager'));
+        $sugarApi = $this->createPartialMock('SugarApi', array('getTrackerManager'));
         $sugarApi
             ->expects($this->any())
             ->method('getTrackerManager')
             ->will($this->returnValue($managerMock));
         
-        $sugarApi->api = $this->getMock('RestService');
-        $sugarApi->api->user = $this->getMock('User',array('getPrivateTeamID'));
+        $sugarApi->api = $this->createMock('RestService');
+        $sugarApi->api->user = $this->createPartialMock('User', array('getPrivateTeamID'));
         $sugarApi->api->user
             ->expects($this->any())
             ->method('getPrivateTeamID')
             ->will($this->returnValue('1'));
-        $fakeBean = $this->getMock('SugarBean',array('get_summary_text'));
+        $fakeBean = $this->createPartialMock('SugarBean', array('get_summary_text'));
         $fakeBean->id = 'abcd';
         $fakeBean->module_dir = 'fakeBean';
         $fakeBean->expects($this->any())

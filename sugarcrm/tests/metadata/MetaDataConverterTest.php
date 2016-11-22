@@ -293,14 +293,9 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testConvertLegacyViewDefsToSidecar($viewdef, $vardef, $result)
     {
-        $mock = $this->getMock(
+        $mock = $this->createPartialMock(
             'MetaDataConverter',
-            array('loadSearchFields'),
-            array(),
-            '',
-            false,
-            false,
-            false
+            array('loadSearchFields')
         );
         $mock->expects($this->any())
             ->method('loadSearchFields')

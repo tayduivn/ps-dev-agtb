@@ -57,7 +57,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testForecastManagerWorksheetsGet($args, $expectedUserId, $expectedTimePeriodId, $expectedType)
     {
-        $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('createFilter', 'filterList'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', array('createFilter', 'filterList'));
         $api->expects($this->once())->method('createFilter')->with($this->equalTo($this->service), $this->equalTo($expectedUserId), $this->equalTo($expectedTimePeriodId));
         $api->forecastManagerWorksheetsGet($this->service, $args);
     }
@@ -97,7 +97,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testForecastManagerWorksheetsChartGet()
     {
-        $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
         $api->expects($this->once())->method('ForecastManagerWorksheetsGet')->will($this->returnValue(array('records' => array())));
         $api->expects($this->once())->method('getDirectHierarchyUsers')->will($this->returnValue(array('records' => array(
                     array(
@@ -121,7 +121,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testForecastManagerWorksheetsChartGetNoData()
     {
-        $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
         $api->expects($this->never())->method('ForecastManagerWorksheetsGet');
         $api->expects($this->never())->method('getDirectHierarchyUsers');
         $actual = $api->forecastManagerWorksheetsChartGet($this->service, array(
@@ -138,7 +138,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testForecastManagerWorksheetsChartGetTargetQuota()
     {
-        $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', array('ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers'));
         $api->expects($this->never())->method('ForecastManagerWorksheetsGet');
         $api->expects($this->never())->method('getDirectHierarchyUsers');
         $actual = $api->forecastManagerWorksheetsChartGet($this->service, array(
@@ -255,7 +255,7 @@ class ForecastManagerWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testFilterList($args, $expectedAssignedUser, $expectedTimePeriod, $expectedType)
     {
-        $api = $this->getMock('ForecastManagerWorksheetsFilterApi', array('createFilter'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', array('createFilter'));
         $api->expects($this->once())->method('createFilter')->with(
             $this->equalTo($this->service),
             $this->equalTo($expectedAssignedUser),

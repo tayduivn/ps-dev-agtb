@@ -35,7 +35,7 @@ class SidecarMetaDataUpgraderBugCrys697Test extends Sugar_PHPUnit_Framework_Test
      */
     public function testSetFilesToUpgrade($state, $methods)
     {
-        $mock = $this->getMock('SidecarMetaDataUpgrader', array('setBaseFilesToUpgrade', 'setPortalFilesToUpgrade', 'setMobileFilesToUpgrade', 'setSubpanelFilesToUpgrade'));
+        $mock = $this->createPartialMock('SidecarMetaDataUpgrader', array('setBaseFilesToUpgrade', 'setPortalFilesToUpgrade', 'setMobileFilesToUpgrade', 'setSubpanelFilesToUpgrade'));
 
         foreach ($methods as $method) {
             $mock->expects($this->once())->method($method);

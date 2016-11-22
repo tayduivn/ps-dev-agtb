@@ -78,7 +78,7 @@ class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
             $beans = array();
         }
 
-        $mock = $this->getMock('Link2', array('getSide', 'getFocus', 'getBeans'), array(), '', false);
+        $mock = $this->createPartialMock('Link2', array('getSide', 'getFocus', 'getBeans'));
         $mock->expects($this->any())
             ->method('getSide')
             ->will($this->returnValue(REL_LHS));

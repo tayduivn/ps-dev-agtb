@@ -36,7 +36,7 @@ class KBContentsApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, true));
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
-        $this->api = $this->getMock('KBContentsApi', array('getElasticQueryBuilder'));
+        $this->api = $this->createPartialMock('KBContentsApi', array('getElasticQueryBuilder'));
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 

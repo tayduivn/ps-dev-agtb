@@ -114,7 +114,7 @@ class RSSFeedApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetFeed()
     {
         // Mock our API object so that the getFeedContent returns a known value
-        $api = $this->getMock('RSSFeedApi', array('getFeedContent'));
+        $api = $this->createPartialMock('RSSFeedApi', array('getFeedContent'));
         $api->expects($this->once())
             ->method('getFeedContent')
             ->with($this->equalTo('http://www.sugarcrm.com/feed.xml'))

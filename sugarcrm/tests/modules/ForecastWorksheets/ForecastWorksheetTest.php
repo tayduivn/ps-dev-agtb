@@ -423,7 +423,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $count = intval($forecastSetup);
 
-        $tp = $this->getMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', array('save'));
         $tp->id = $timePeriodId;
 
         $worksheet->expects($this->exactly($count))
@@ -479,12 +479,12 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('removeReassignedItems')
             ->with('test_user_id', 'test_timeperiod_id', 1);
 
-        $tp = $this->getMock('Timeperiod', array('save'));
+        $tp = $this->getMockBuilder('Timeperiod')->setMethods(array('save'))->getMock();
         $tp->id = 'test_timeperiod_id';
 
-        $sq = $this->getMock('SugarQuery', array('execute'));
+        $sq = $this->getMockBuilder('SugarQuery')->setMethods(array('execute'))->getMock();
 
-        $bean = $this->getMock($bean, array('save', 'load_relationship'));
+        $bean = $this->getMockBuilder($bean)->setMethods(array('save', 'load_relationship'))->getMock();
         $link2 = $this->getMockBuilder('Link2')
             ->setMethods(array('buildJoinSugarQuery'))
             ->disableOriginalConstructor()
@@ -611,7 +611,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function dataProviderCopyValues()
     {
-        $bean = $this->getMock('Opportunity', array('save', 'toArray'));
+        $bean = $this->createPartialMock('Opportunity', array('save', 'toArray'));
         $bean->amount = '50.000000';
         return array(
             array(
@@ -721,8 +721,8 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $data = array('forecast_by' => 'unit_test', 'data' => array());
         $user_id = "bar";
-        $sj = $this->getMock('SchedulersJobs');
-        $jq = $this->getMock('SugarJobQueue', array('submitJob'));
+        $sj = $this->createMock('SchedulersJob');
+        $jq = $this->createPartialMock('SugarJobQueue', array('submitJob'));
         $fw = $this->getMockWorksheet(array('getJobQueue'));
 
         $jq->expects($this->once())
@@ -803,14 +803,18 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveReassignedItems($settings, $expected, $tp_id, $execute_count, $beans)
     {
-        $fw = $this->getMock('ForecastWorksheet', array('getForecastSettings',
-                                                        'getBean',
-                                                        'getSugarQuery',
-                                                        'processRemoveChunk',
-                                                        'createRemoveReassignedJob'));
-        $tp = $this->getMock('TimePeriods');
+        $fw = $this->getMockbuilder('ForecastWorksheet')
+            ->setMethods(array(
+                'getForecastSettings',
+                'getBean',
+                'getSugarQuery',
+                'processRemoveChunk',
+                'createRemoveReassignedJob',
+            ))
+            ->getMock();
+        $tp = $this->createMock('TimePeriod');
 
-        $sq = $this->getMock('SugarQuery', array('execute'));
+        $sq = $this->getMockBuilder('SugarQuery')->setMethods(array('execute'))->getMock();
 
         $tp->id = $tp_id;
 
@@ -903,7 +907,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessRemoveChunk()
     {
-        $fw = $this->getMock('ForecastWorksheet', array('mark_deleted'));
+        $fw = $this->createPartialMock('ForecastWorksheet', array('mark_deleted'));
         $bean = array('id' => 'foo');
 
         $fw->expects($this->once())
@@ -919,9 +923,9 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $data = array("foo");
         $user_id = "bar";
-        $sj = $this->getMock('SchedulersJobs');
-        $jq = $this->getMock('SugarJobQueue', array('submitJob'));
-        $fw = $this->getMock('ForecastWorksheet', array('getBean',
+        $sj = $this->createMock('SchedulersJob');
+        $jq = $this->createPartialMock('SugarJobQueue', array('submitJob'));
+        $fw = $this->createPartialMock('ForecastWorksheet', array('getBean',
                                                         'getJobQueue'));
 
         $jq->expects($this->once())
@@ -953,7 +957,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $worksheet = $this->getMockWorksheet();
 
-        $tp = $this->getMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', array('save'));
         $tp->id = null;
 
         $worksheet->expects($this->once())
@@ -971,12 +975,12 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testWorksheetTotalsReturnsDefaultEmptyArrayWhenNoValuesAreFound()
     {
-        $GLOBALS['current_user'] = $this->getMock('User', array('save'));
+        $GLOBALS['current_user'] = $this->createPartialMock('User', array('save'));
         $GLOBALS['current_user']->id = 'current_user_id';
 
         $worksheet = $this->getMockWorksheet(array('getSugarQuery', 'getTableName'));
 
-        $tp = $this->getMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', array('save'));
         $tp->id = 'test_timeperiod_id';
         $tp->start_date_timestamp = '10000';
         $tp->end_date_timestamp = '10000';
@@ -996,7 +1000,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 $worksheet
             );
 
-        $sq = $this->getMock('SugarQuery', array('execute'));
+        $sq = $this->createPartialMock('SugarQuery', array('execute'));
 
         $sq->expects($this->once())
             ->method('execute')
@@ -1047,7 +1051,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testWorksheetTotals()
     {
-        $GLOBALS['current_user'] = $this->getMock('User', array('save'));
+        $GLOBALS['current_user'] = $this->createPartialMock('User', array('save'));
         $GLOBALS['current_user']->id = 'current_user_id';
 
         Forecast::$settings = array(
@@ -1058,7 +1062,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 
         $worksheet = $this->getMockWorksheet(array('getSugarQuery', 'getTableName'));
 
-        $tp = $this->getMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', array('save'));
         $tp->id = 'test_timeperiod_id';
         $tp->start_date_timestamp = '10000';
         $tp->end_date_timestamp = '10000';
@@ -1078,7 +1082,7 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 $worksheet
             );
 
-        $sq = $this->getMock('SugarQuery', array('execute'));
+        $sq = $this->createPartialMock('SugarQuery', array('execute'));
 
         $sq->expects($this->once())
             ->method('execute')

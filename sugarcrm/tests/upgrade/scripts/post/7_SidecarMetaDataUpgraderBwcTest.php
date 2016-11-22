@@ -23,11 +23,10 @@ class SidecarMetaDataUpgraderBwcTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRunUpgradeWithListOfBwcModules($bwc_modules, $excpectUpgrade)
     {
-        $this->script = $this->getMock(
-            'SidecarMetaDataUpgraderBwc',
-            array('prepareUpgradeOneModule', 'upgradeOneModule'),
-            array($bwc_modules)
-        );
+        $this->script = $this->getMockBuilder('SidecarMetaDataUpgraderBwc')
+            ->setMethods(array('prepareUpgradeOneModule', 'upgradeOneModule'))
+            ->setConstructorArgs(array($bwc_modules))
+            ->getMock();
         $this->assertEquals($bwc_modules, SugarTestReflection::getProtectedValue($this->script, 'modules'));
         if ($excpectUpgrade) {
             $this->script->expects($this->once())
@@ -49,11 +48,10 @@ class SidecarMetaDataUpgraderBwcTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRunTryGetMBModules($bwc_modules)
     {
-        $this->script = $this->getMock(
-            'SidecarMetaDataUpgraderBwc',
-            array('upgradeOneModule'),
-            array($bwc_modules)
-        );
+        $this->script = $this->getMockBuilder('SidecarMetaDataUpgraderBwc')
+            ->setMethods(array('upgradeOneModule'))
+            ->setConstructorArgs(array($bwc_modules))
+            ->getMock();
         $this->assertEmpty($this->script->getMBModules());
     }
 
@@ -62,11 +60,10 @@ class SidecarMetaDataUpgraderBwcTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRunSetQuickCreateFiles($bwc_modules)
     {
-        $this->script = $this->getMock(
-            'SidecarMetaDataUpgraderBwc',
-            array('getModulesList', 'getUpgradeFileParams', 'isQuickCreateVisible'),
-            array($bwc_modules)
-        );
+        $this->script = $this->getMockBuilder('SidecarMetaDataUpgraderBwc')
+            ->setMethods(array('getModulesList', 'getUpgradeFileParams', 'isQuickCreateVisible'))
+            ->setConstructorArgs(array($bwc_modules))
+            ->getMock();
         $this->script->expects($this->never())
             ->method('getModulesList');
         $this->script->expects($this->never())
@@ -81,11 +78,10 @@ class SidecarMetaDataUpgraderBwcTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRunUpgradeOneModule($bwc_modules, $excpectUpgrade)
     {
-        $this->script = $this->getMock(
-            'SidecarMetaDataUpgraderBwc',
-            array('setModule', 'upgradeOneModule'),
-            array($bwc_modules)
-        );
+        $this->script = $this->getMockBuilder('SidecarMetaDataUpgraderBwc')
+            ->setMethods(array('setModule', 'upgradeOneModule'))
+            ->setConstructorArgs(array($bwc_modules))
+            ->getMock();
 
         if ($excpectUpgrade) {
             $this->script->expects($this->once())

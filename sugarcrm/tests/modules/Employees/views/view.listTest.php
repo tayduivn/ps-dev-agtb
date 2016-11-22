@@ -83,10 +83,10 @@ class EmployeesViewListTest extends Sugar_PHPUnit_Framework_TestCase
         $searchForm = new SearchForm($bean, 'Employees');
 
         /** @var ListViewSmarty|PHPUnit_Framework_MockObject_MockObject $lvMock */
-        $lvMock = $this->getMock('ListViewSmarty', array('display'));
+        $lvMock = $this->getMockBuilder('ListViewSmarty')->setMethods(array('display'))->getMock();
 
         /** @var EmployeesViewList|PHPUnit_Framework_MockObject_MockObject $employeesListViewMock */
-        $employeesListViewMock = $this->getMock('EmployeesViewList', array('processSearchForm'));
+        $employeesListViewMock = $this->createPartialMock('EmployeesViewList', array('processSearchForm'));
         $employeesListViewMock->searchForm = $searchForm;
         $employeesListViewMock->headers = true;
         $employeesListViewMock->seed = $bean;

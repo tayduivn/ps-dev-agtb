@@ -22,7 +22,6 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutTestSize="true"
-         checkForUnintentionallyCoveredCode="false"
          timeoutForSmallTests="100"
          timeoutForMediumTests="145"
          timeoutForLargeTests="165"

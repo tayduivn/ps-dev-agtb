@@ -65,7 +65,7 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
         $comment = BeanFactory::getBean('Comments');
         $comment->data = '{}';
 
-        $activity = $this->getMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', array('processTags'));
         $activity->expects($this->never())->method('processTags');
 
         SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));
@@ -79,7 +79,7 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
         $comment = BeanFactory::getBean('Comments');
         $comment->data = '{"tags":[{"module":"Foo","id":"123"}]}';
 
-        $activity = $this->getMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', array('processTags'));
         $activity->expects($this->once())->method('processTags');
 
         SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));

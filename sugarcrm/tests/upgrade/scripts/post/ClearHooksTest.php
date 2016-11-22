@@ -55,11 +55,11 @@ class ClearHooksTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $fname = $path . DIRECTORY_SEPARATOR . 'testHooks.php';
         file_put_contents($fname, "<?php \$hook_array=" . var_export($hooks, true) . ";");
-        $script = $this->getMock(
-            'SugarUpgradeClearHooks',
-            array('findHookFiles'),
-            array($upgradeDriver)
-        );
+        $script = $this->getMockBuilder('SugarUpgradeClearHooks')
+            ->setMethods(array('findHookFiles'))
+            ->setConstructorArgs(array($upgradeDriver))
+            ->getMock();
+
         if (isset($hooks['before_save'][0][2]) && $hooks['before_save'][0][2] == 'clearHooksTestcheckToken.php') {
             $checkTokenFile = $path . DIRECTORY_SEPARATOR . $hooks['before_save'][0][2];
             file_put_contents($checkTokenFile, '<?php class ' . $hooks['before_save'][0][3] . ' { function one(){ global $x; $this->${$x};$this->{$x};} function two(){echo "1";} function three(){ echo "1";}}');

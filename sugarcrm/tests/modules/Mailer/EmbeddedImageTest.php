@@ -20,7 +20,7 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testFromSugarBean_ThrowsException() {
-        $mockNote = self::getMock("Note", array("Note"));
+        $mockNote = self::getMockBuilder("Note")->setMethods(array("Note"))->getMock();
 
         $mockNote->expects(self::any())
             ->method("Note")

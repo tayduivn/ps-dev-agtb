@@ -22,8 +22,10 @@ class Update6xToSidecarTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $upgradeMock = $this->getMockForAbstractClass('UpgradeDriver');
         $upgradeMock->state['MBModules'] = array('Accounts', 'Documents');
-        $sidecarUpgradeMock =
-            $this->getMock('SidecarMetaDataUpgrader2', array('setUpgradeMBFiles'), array($upgradeMock));
+        $sidecarUpgradeMock = $this->getMockBuilder('SidecarMetaDataUpgrader2')
+            ->setMethods(['setUpgradeMBFiles'])
+            ->setConstructorArgs([$upgradeMock])
+            ->getMock();
 
         $sidecarUpgradeMock->expects($this->once())->method('setUpgradeMBFiles')
                            ->with($upgradeMock->state['MBModules']);

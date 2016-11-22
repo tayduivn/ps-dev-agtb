@@ -38,7 +38,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveWorksheetOpportunity()
     {
         /** @var PHPUnit_Framework_MockObject_MockObject|Opportunity $parent */
-        $parent = $this->getMock('Opportunity', array('save'));
+        $parent = $this->getMockBuilder('Opportunity')->setMethods(array('save'))->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
         $parent->new_with_id = true;
@@ -71,7 +71,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveWorksheetRevenueLineItem()
     {
         /** @var PHPUnit_Framework_MockObject_MockObject|RevenueLineItem $parent */
-        $parent = $this->getMock('RevenueLineItem', array('save'));
+        $parent = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
         $parent->new_with_id = true;
@@ -127,7 +127,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->account_id = create_guid();
 
         /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
-        $bean = $this->getMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'save', 'removeMigratedRow'));
+        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'save', 'removeMigratedRow'));
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->once())->method('getRelatedName')->with($this->equalTo('Accounts'), $this->equalTo($opportunity->account_id))->will($this->returnValue('Account ' . __CLASS__));
         $bean->expects($this->once())->method('copyValues')->with($this->anything(), $this->equalTo($opportunity));
@@ -149,7 +149,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $parent->id = create_guid();
 
         /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
-        $bean = $this->getMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
+        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->never())->method('getRelatedName');
         $bean->expects($this->once())->method('copyValues')->with($this->isType('array'), $this->equalTo($parent));
@@ -180,7 +180,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $parent->$propertyId = create_guid();
 
         /** @var PHPUnit_Framework_MockObject_MockObject|ForecastWorksheet $bean */
-        $bean = $this->getMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
+        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
         $bean->expects($this->any())->method('retrieve_by_string_fields');
         $bean->expects($this->any())->method('copyValues');
         $bean->expects($this->any())->method('removeMigratedRow');
@@ -287,7 +287,7 @@ class RS70Test extends Sugar_PHPUnit_Framework_TestCase
         $rli->save();
         // END SUGARCRM flav=ent ONLY
 
-        $bean = $this->getMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob',
+        $bean = $this->createPartialMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob',
                                                           'removeReassignedItems'));
 
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');

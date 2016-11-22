@@ -70,11 +70,10 @@ class ClearSubpanelsTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $upgradeDriver->state = $state;
 
-        $script = $this->getMock(
-            'SugarUpgradeClearSubpanels',
-            array('getDefFiles', 'updateFile', 'getBeanDefs', 'rebuildExtensions'),
-            array($upgradeDriver)
-        );
+        $script = $this->getMockBuilder('SugarUpgradeClearSubpanels')
+            ->setMethods(array('getDefFiles', 'updateFile', 'getBeanDefs', 'rebuildExtensions'))
+            ->setConstructorArgs(array($upgradeDriver))
+            ->getMock();
 
         $script->expects($this->any())
             ->method('getBeanDefs')

@@ -17,7 +17,7 @@ class SugarAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase {
             ->disableOriginalConstructor()
             ->getMock();
 
-        $authUser = $this->getMock('SugarAuthenticateUser');
+        $authUser = $this->createMock('SugarAuthenticateUser');
         $authUser->expects($this->once())
             ->method('loadUserOnLogin')
             ->will($this->returnValue(true));

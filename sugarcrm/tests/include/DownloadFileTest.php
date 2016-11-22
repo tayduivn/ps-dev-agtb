@@ -55,7 +55,7 @@ class DownloadFileTest extends Sugar_PHPUnit_Framework_TestCase
             array_push($map, array($bean, 'somefield', $info));
         }
 
-        $df = $this->getMock('DownloadFile', array('validateBeanAndField', 'getFileInfo'));
+        $df = $this->createPartialMock('DownloadFile', array('validateBeanAndField', 'getFileInfo'));
         $df->expects($this->any())
             ->method('validateBeanAndField')
             ->willReturn(true);

@@ -48,7 +48,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->validator = Validator::create();
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
         // setup ConstraintBuilder with additional fixture namespaces
         $this->constraintBuilder = $builder = new ConstraintBuilder();

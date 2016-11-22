@@ -75,7 +75,7 @@ class ParserDropdownTest extends Sugar_PHPUnit_Framework_TestCase
             'skipSaveExemptDropdowns' => true,
         );
 
-        $parser = $this->getMock('ParserDropDown', array('saveExemptDropdowns', 'synchDropDown', 'saveContents', 'finalize'));
+        $parser = $this->createPartialMock('ParserDropDown', array('saveExemptDropdowns', 'synchDropDown', 'saveContents', 'finalize'));
         $parser->expects($this->never())->method('saveExemptDropdowns');
         $parser->saveDropDown($params);
     }

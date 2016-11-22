@@ -92,7 +92,7 @@ class HandlerFilterIteratorTest extends \PHPUnit_Framework_TestCase
     {
         $collection = new HandlerCollection($this->getProviderMock());
         foreach ($interfaces as $interface) {
-            $handler = $this->getMock($this->getHandlerInterface($interface));
+            $handler = $this->createMock($this->getHandlerInterface($interface));
             $collection->addHandler($handler);
         }
         return $collection;

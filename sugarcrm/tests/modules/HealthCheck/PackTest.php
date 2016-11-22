@@ -57,7 +57,7 @@ class PackTest extends PHPUnit_Framework_TestCase
     public function testHealthCheckPack($params, $expect)
     {
         $manifest = array();
-        $zip = $this->getMock('ZipArchive');
+        $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/HealthCheck/Scanner/version.json';
         $zip->expects($this->exactly(22))->method('addFile');
         $zip->expects($this->exactly(3))->method('addFromString');

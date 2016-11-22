@@ -84,10 +84,10 @@ class ReportsDashletsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSavedReports_NoContent_ReturnsEmptyArray()
     {
-        $mockSavedReport = $this->getMock("SavedReport", array("ACLAccess"));
+        $mockSavedReport = $this->createPartialMock('SavedReport', array("ACLAccess"));
         $mockSavedReport->method("ACLAccess")->will($this->returnValue(false));
 
-        $mockApiClass = $this->getMock("ReportsDashletsApi", array("getSavedReportFromData"));
+        $mockApiClass = $this->createPartialMock('ReportsDashletsApi', array("getSavedReportFromData"));
         $mockApiClass->method("getSavedReportFromData")->will($this->returnValue($mockSavedReport));
 
         $this->assertEmpty($mockApiClass->getSavedReports($this->service, array()), "No reports should be returned");
@@ -98,10 +98,10 @@ class ReportsDashletsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSavedReportChartById_NoAccess_ThrowsException()
     {
-        $mockSavedReport = $this->getMock("SavedReport", array("ACLAccess"));
+        $mockSavedReport = $this->createPartialMock('SavedReport', array("ACLAccess"));
         $mockSavedReport->method("ACLAccess")->will($this->returnValue(false));
 
-        $mockApiClass =  $this->getMock("ReportsDashletsApi", array("getSavedReportById"));
+        $mockApiClass =  $this->createPartialMock('ReportsDashletsApi', array("getSavedReportById"));
         $mockApiClass->method("getSavedReportById")->will($this->returnValue($mockSavedReport));
 
         $this->setExpectedException("SugarApiExceptionNotAuthorized");

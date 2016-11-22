@@ -127,7 +127,7 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
         ACLAction::setACLData($this->user->id, $this->module, $aclData);
 
-        $acl = $this->getMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl = $this->createPartialMock('SugarACLTeamBased', array('getCurrentUser'));
         $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
 
         $actualAccess = $acl->checkAccess($this->module, $action, $context);
@@ -178,7 +178,7 @@ class TeamBasedACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
         ACLAction::setACLData($this->user->id, $this->module, $aclData);
 
-        $acl = $this->getMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl = $this->createPartialMock('SugarACLTeamBased', array('getCurrentUser'));
         $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
 
         $actualAccess = $acl->checkAccess($this->module, $action, $context);

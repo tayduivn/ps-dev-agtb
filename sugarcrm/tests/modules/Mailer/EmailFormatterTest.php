@@ -73,12 +73,12 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testTranslateCharacters_HtmlEntitiesAreTranslatedToRealCharacters() {
         $body = "Check to see if &quot; &lt; &gt; &#039; was translated to \" < > '";
 
-        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale = self::createPartialMock("Localization", array("translateCharset"));
         $mockLocale->expects(self::any())
             ->method("translateCharset")
             ->will(self::returnValue($body)); // return the exact same string
 
-        $mockFormatter = self::getMock("EmailFormatter", array("retrieveDisclosureSettings"));
+        $mockFormatter = self::createPartialMock("EmailFormatter", array("retrieveDisclosureSettings"));
         $mockFormatter->expects(self::any())
             ->method("retrieveDisclosureSettings")
             ->will(self::returnValue(false));

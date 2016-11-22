@@ -317,7 +317,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testExecuteException()
     {
-        $controller = $this->getMock('SugarController', array('process', 'handleException'));
+        $controller = $this->createPartialMock('SugarController', array('process', 'handleException'));
         $controller->expects($this->once())
             ->method('process')
             ->will($this->throwException(new Exception('test')));

@@ -69,7 +69,7 @@ class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
     protected function statusTest($serverResponse,$expectedStatus,$expectedMessage=null,$snipEmailExists=true)
     {
     	//give snip our mock client
-        $clientMock = $this->getMock('SugarHttpClient');
+        $clientMock = $this->createMock('SugarHttpClient');
         $clientMock->expects($this->once())
             ->method('callRest')
             ->with($this->matchesRegularExpression('`^' . $this->snip->getSnipURL() . 'status/?`'))

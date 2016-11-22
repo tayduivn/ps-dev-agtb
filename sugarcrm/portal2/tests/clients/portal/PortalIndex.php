@@ -43,7 +43,7 @@ class PortalIndexTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEnsureCacheWhenNoFiles()
     {
-        $minifyUtilsMock = $this->getMock('SugarMinifyUtils', array('ConcatenateFiles'));
+        $minifyUtilsMock = $this->createPartialMock('SugarMinifyUtils', array('ConcatenateFiles'));
         $minifyUtilsMock->expects($this->once())
             ->method("ConcatenateFiles")
             ->with($this->rootDir);
@@ -57,7 +57,7 @@ class PortalIndexTest extends Sugar_PHPUnit_Framework_TestCase
     {
         sugar_touch($this->sugarsidecar);
         sugar_file_put_contents($this->sugarsidecar, "adfs");
-        $minifyUtilsMock = $this->getMock('SugarMinifyUtils', array('ConcatenateFiles'));
+        $minifyUtilsMock = $this->createPartialMock('SugarMinifyUtils', array('ConcatenateFiles'));
         // We don't call ConcatenateFiles if min file already there
         $minifyUtilsMock->expects($this->never())
             ->method("ConcatenateFiles");

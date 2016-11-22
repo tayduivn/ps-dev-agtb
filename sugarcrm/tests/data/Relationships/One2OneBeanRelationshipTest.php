@@ -29,7 +29,7 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $rel = new One2OneBeanRelationship($relDef);
 
         /* @var $product Product */
-        $product = $this->getMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', array('save'));
         $product->id = 'unit_test_id';
 
         $link2 = $this->getMockBuilder('Link2')
@@ -59,7 +59,10 @@ class One2OneBeanRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetType()
     {
-        $relationship = $this->getMock('One2OneBeanRelationship', null, array(), '', false);
+        $relationship = $this->getMockBuilder('One2OneBeanRelationship')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->assertEquals(REL_TYPE_ONE, $relationship->getType(REL_LHS));
         $this->assertEquals(REL_TYPE_ONE, $relationship->getType(REL_RHS));

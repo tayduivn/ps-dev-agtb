@@ -29,7 +29,7 @@ class Bug40311Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->db = SugarTestHelper::setUp('mock_db');
 
-        $this->accountMockBean = $this->getMock('Account' , array('hasCustomFields'));
+        $this->accountMockBean = $this->getMockBuilder('Account')->setMethods(array('hasCustomFields'))->getMock();
         $this->_tablename = 'test' . date("YmdHis");
         if ( isset($GLOBALS['installing']) )
             $this->_old_installing = $GLOBALS['installing'];

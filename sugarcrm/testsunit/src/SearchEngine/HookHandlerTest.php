@@ -72,7 +72,7 @@ class HookHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getSearchEngineMock($callIndexBeanCount)
     {
-        $engine = $this->getMock('\Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface');
+        $engine = $this->createMock('\Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface');
         $engine->expects($this->exactly($callIndexBeanCount))
             ->method('indexBean');
 

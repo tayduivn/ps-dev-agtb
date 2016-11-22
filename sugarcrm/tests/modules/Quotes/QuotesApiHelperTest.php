@@ -34,7 +34,7 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $mock_service = new QuotesServiceMock();
         $mock_service->user = SugarTestHelper::setUp('current_user');
 
-        $this->helper = $this->getMock('QuotesApiHelper', array('execute'), array($mock_service));
+        $this->helper = $this->getMockBuilder('QuotesApiHelper')->setMethods(array('execute'))->setConstructorArgs(array($mock_service))->getMock();
     }
 
     public function tearDown()

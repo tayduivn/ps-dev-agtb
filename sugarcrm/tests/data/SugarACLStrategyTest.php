@@ -28,9 +28,9 @@ class SugarACLStrategyTest extends PHPUnit_Framework_TestCase
     public function testGetCurrentUser()
     {
         // Remove the following lines when you implement this test.
-        $user1 = $this->getMock('User');
+        $user1 = $this->createMock('User');
         $context = array('user' => $user1);
-        $user2 = $this->getMock('User');
+        $user2 = $this->createMock('User');
 
         $this->assertEquals($user1, $this->object->getCurrentUser($context));
         unset($GLOBALS['current_user']);
@@ -48,8 +48,8 @@ class SugarACLStrategyTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUserID()
     {
-        $user1 = $this->getMock('User');
-        $user2 = $this->getMock('User');
+        $user1 = $this->createMock('User');
+        $user2 = $this->createMock('User');
 
         $user1->id = 111;
         $user2->id = 222;

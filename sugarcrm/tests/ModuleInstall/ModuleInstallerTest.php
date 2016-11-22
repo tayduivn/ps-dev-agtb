@@ -7,7 +7,7 @@ class ModuleInstallerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMergeFiles()
     {
-        $minst = $this->getMock('ModuleInstaller', array('mergeModuleFiles'));
+        $minst = $this->createPartialMock('ModuleInstaller', array('mergeModuleFiles'));
         $minst->expects($this->once())->method('mergeModuleFiles')
             ->with('application', 'foo', 'bar', 'baz');
         $minst->merge_files('foo', 'bar', 'baz', true);
@@ -18,7 +18,7 @@ class ModuleInstallerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMergeFiles2()
     {
-        $minst = $this->getMock('ModuleInstaller', array('mergeModuleFiles'));
+        $minst = $this->createPartialMock('ModuleInstaller', array('mergeModuleFiles'));
         // We add one to the count for the application extension invocation.
         $count = count($minst->modules) + 1;
         $minst->expects($this->exactly($count))->method('mergeModuleFiles')

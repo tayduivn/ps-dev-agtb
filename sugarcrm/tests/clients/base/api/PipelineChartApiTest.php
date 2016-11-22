@@ -53,7 +53,7 @@ class PipelineChartApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->service = $this->getMock(
+        $this->service = $this->createPartialMock(
             'ServiceBase',
             array('execute', 'handleException')
         );

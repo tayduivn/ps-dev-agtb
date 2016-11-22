@@ -19,7 +19,9 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accountMockBean = $this->getMock('Account' , array('hasCustomFields'));
+        $this->accountMockBean = $this->getMockBuilder('Account')
+            ->setMethods(array('hasCustomFields'))
+            ->getMock();
         $this->_tablename = 'test' . date("YmdHis");
         if ( isset($GLOBALS['installing']) )
         {

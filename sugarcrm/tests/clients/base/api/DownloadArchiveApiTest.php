@@ -124,7 +124,10 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetArchive($forceDownload)
     {
         $unit = $this;
-        $downloadMock = $this->getMock('DownloadFileApi', array('outputFile'), array($this->service));
+        $downloadMock = $this->getMockBuilder('DownloadFileApi')
+            ->setMethods(array('outputFile'))
+            ->setConstructorArgs(array($this->service))
+            ->getMock();
         $downloadMock->expects($this->once())->method('outputFile')
             ->with(
                 $this->logicalAnd($this->isType('bool'), $this->isTrue()),
@@ -155,7 +158,7 @@ class DownloadArchiveApiTest extends Sugar_PHPUnit_Framework_TestCase
                 $unit->assertEquals(3, $numFiles, 'Invalid file counts in archive');
             }));
 
-        $apiMock = $this->getMock('FileApi', array('getDownloadFileApi'));
+        $apiMock = $this->createPartialMock('FileApi', array('getDownloadFileApi'));
         $apiMock->expects($this->once())
                 ->method('getDownloadFileApi')
                 ->will($this->returnValue($downloadMock));

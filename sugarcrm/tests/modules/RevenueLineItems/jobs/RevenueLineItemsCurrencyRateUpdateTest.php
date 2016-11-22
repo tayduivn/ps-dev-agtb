@@ -45,7 +45,7 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function setupMockClass()
     {
-        $this->mock = $this->getMock('RevenueLineItemsCurrencyRateUpdate', array('getClosedStages'));
+        $this->mock = $this->createPartialMock('RevenueLineItemsCurrencyRateUpdate', array('getClosedStages'));
         // we want to use our mock database for these tests, so replace it
         SugarTestReflection::setProtectedValue($this->mock, 'db', $this->db);
     }

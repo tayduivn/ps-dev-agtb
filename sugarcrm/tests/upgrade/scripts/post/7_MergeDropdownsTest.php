@@ -23,11 +23,10 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
      */
     public function testRun_NothingToMerge_ReturnsBeforeDoingAnything()
     {
-        $mockMerger = $this->getMock(
-            'SugarUpgradeMergeDropdowns',
-            array('getDropdownHelper', 'getDropdownParser'),
-            array($this->upgrader)
-        );
+        $mockMerger = $this->getMockBuilder('SugarUpgradeMergeDropdowns')
+            ->setMethods(['getDropdownHelper', 'getDropdownParser'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
         $mockMerger->expects($this->never())->method('getDropdownParser');
 
         $this->upgrader->state['dropdowns_to_merge'] = array();
@@ -46,18 +45,17 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
      */
     public function testRun_SavesAMergedDropdown($old, $new, $custom, $expected)
     {
-        $mockParser = $this->getMock('ParserDropDown', array('saveDropDown'));
+        $mockParser = $this->createPartialMock('ParserDropDown', array('saveDropDown'));
         $mockParser->expects($this->once())->method('saveDropDown')->with($this->equalTo($expected));
 
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
         $mockHelper->expects($this->once())->method('getDropdowns')->willReturn($new);
         $mockHelper->expects($this->once())->method('getDropdownsToPush')->willReturn(array());
 
-        $mockMerger = $this->getMock(
-            'SugarUpgradeMergeDropdowns',
-            array('getDropdownParser', 'getDropdownHelper'),
-            array($this->upgrader)
-        );
+        $mockMerger = $this->getMockBuilder('SugarUpgradeMergeDropdowns')
+            ->setMethods(['getDropdownHelper', 'getDropdownParser'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
         $mockMerger->expects($this->once())->method('getDropdownParser')->willReturn($mockParser);
         $mockMerger->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
 
@@ -210,7 +208,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
             ),
         );
 
-        $mockParser = $this->getMock('ParserDropDown', array('saveDropDown'));
+        $mockParser = $this->createPartialMock('ParserDropDown', array('saveDropDown'));
         $mockParser->expects($this->exactly(2))
             ->method('saveDropDown')
             ->withConsecutive(
@@ -238,15 +236,14 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                 )
             );
 
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
         $mockHelper->expects($this->exactly(2))->method('getDropdowns')->willReturn($new);
         $mockHelper->expects($this->exactly(2))->method('getDropdownsToPush')->willReturn(array());
 
-        $mockMerger = $this->getMock(
-            'SugarUpgradeMergeDropdowns',
-            array('getDropdownParser', 'getDropdownHelper'),
-            array($this->upgrader)
-        );
+        $mockMerger = $this->getMockBuilder('SugarUpgradeMergeDropdowns')
+            ->setMethods(['getDropdownHelper', 'getDropdownParser'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
         $mockMerger->expects($this->once())->method('getDropdownParser')->willReturn($mockParser);
         $mockMerger->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
 
@@ -278,7 +275,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
     {
         $params = array();
 
-        $parserMock = $this->getMock('ParserDropDown', array('saveDropDown'));
+        $parserMock = $this->createPartialMock('ParserDropDown', array('saveDropDown'));
         $parserMock->expects($this->once())
                    ->method('saveDropDown')
                    ->will(
@@ -290,7 +287,7 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
                        )
                    );
 
-        $helperMock = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
+        $helperMock = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns', 'getDropdownsToPush'));
         $helperMock->expects($this->once())->method('getDropdowns')->willReturn($new);
         $helperMock->expects($this->once())->method('getDropdownsToPush')->willReturn($dropdownsToPush);
 
@@ -301,11 +298,10 @@ class SugarUpgradeMergeDropdownsTest extends UpgradeTestCase
             ),
         );
 
-        $mockObject = $this->getMock(
-            'SugarUpgradeMergeDropdowns',
-            array('getDropdownParser', 'getDropdownHelper'),
-            array($this->upgrader)
-        );
+        $mockObject = $this->getMockBuilder('SugarUpgradeMergeDropdowns')
+            ->setMethods(['getDropdownHelper', 'getDropdownParser'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
 
         $mockObject->expects($this->once())->method('getDropdownParser')->willReturn($parserMock);
         $mockObject->expects($this->once())->method('getDropdownHelper')->willReturn($helperMock);

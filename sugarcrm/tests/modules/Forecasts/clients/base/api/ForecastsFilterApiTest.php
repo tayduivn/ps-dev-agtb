@@ -82,7 +82,7 @@ class ForecastsCommittedApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _getMockApi($class_name)
     {
-        return $this->getMock($class_name);
+        return $this->createMock($class_name);
     }
 
     /**

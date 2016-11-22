@@ -38,7 +38,7 @@ class ForecastsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCompareConfigsThrowsException()
     {
-        $adm = $this->getMock('Administration', array('save'));
+        $adm = $this->getMockBuilder('Administration')->setMethods(array('save'))->getMock();
         $adm->expects($this->any())
             ->method('save');
 
@@ -56,7 +56,7 @@ class ForecastsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCompareConfigsDoestThrowsException()
     {
-        $adm = $this->getMock('Administration', array('save'));
+        $adm = $this->getMockBuilder('Administration')->setMethods(array('save'))->getMock();
         $adm->expects($this->any())
             ->method('save');
 

@@ -133,7 +133,7 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function getResponse()
     {
-        return $this->getMock('OneLogin_Saml_Response', array(), array(), 'Bug49959Test_Response', false);
+        return $this->createMock('OneLogin_Saml_Response');
     }
 
     /**

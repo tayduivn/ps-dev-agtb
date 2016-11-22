@@ -51,7 +51,7 @@ class SugarQuery_Builder_Field_SelectTest extends Sugar_PHPUnit_Framework_TestCa
             ->getMock();
         $select->def = $def;
         $select->jta = 'join_table_alias';
-        $select->query = $this->getMock('SugarQuery');
+        $select->query = $this->createMock('SugarQuery');
         $select->query->select = $this->getMockBuilder('SugarQuery_Builder_Select')
             ->disableOriginalConstructor()
             ->setMethods(array('addField'))

@@ -30,7 +30,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("ACLStatic");
         // load up the unifiedSearchApi for good times ahead
-        $this->fileApi = $this->getMock('FileApiMockUp', array('getDownloadFileApi'));
+        $this->fileApi = $this->createPartialMock('FileApiMockUp', array('getDownloadFileApi'));
         $this->fileApi
             ->expects($this->any())
             ->method('getDownloadFileApi')

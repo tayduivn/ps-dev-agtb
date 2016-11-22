@@ -43,7 +43,7 @@ class PackSortingHatTest extends PHPUnit_Framework_TestCase
      */
     public function testHealthCheckPack($params, $expect)
     {
-        $zip = $this->getMock('ZipArchive');
+        $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/HealthCheck/Scanner/version.json';
         $zip->expects($this->exactly(6))->method('addFile');
         packSortingHat($zip, $params);

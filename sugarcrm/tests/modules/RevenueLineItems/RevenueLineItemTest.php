@@ -34,7 +34,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertToQuotedLineItemWithDiscountPriceSet()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $rli->likely_case = '100.00';
         $rli->discount_price = '200.00';
         $rli->sales_stage = 'Test';
@@ -52,7 +52,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertToQuotedLineItemWithoutDiscountPriceSet()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $rli->likely_case = '100.00';
         $rli->discount_price = '';
         $rli->sales_stage = 'Test';
@@ -70,7 +70,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertToQuoteLineItemsSetsCorrectDiscountAmount()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $rli->discount_amount = '25.00';
         $rli->quantity = '50';
         $rli->discount_price = '1.00';
@@ -86,7 +86,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public function testConvertToQuoteLineItemsSetCorrectDiscountAmountWhenPercent()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $rli->discount_amount = '25.00';
         $rli->quantity = '50';
         $rli->discount_price = '1.00';
@@ -108,7 +108,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetDiscountPrice($likely, $quantity, $discount_price, $expected_discount)
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
         $rli->likely_case = $likely;
         $rli->quantity = $quantity;
         $rli->discount_price = $discount_price;
@@ -153,7 +153,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMapFieldsProductTemplate()
     {
-        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
 
         $arrExpected = array(
             'category_id' => 'test_category_id',
@@ -211,7 +211,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetAccountIdForOpportunity($accounts, $expected)
     {
-        $product = $this->getMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
 
         $opp = $this->getMockBuilder('Opportunity')
             ->setMethods(array('save', 'load_relationship'))
@@ -250,7 +250,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMapFieldsFromOpportunity()
     {
-        $product = $this->getMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', array('save'));
 
         $opp = $this->getMockBuilder('Opportunity')
             ->setMethods(array('save'))
@@ -392,7 +392,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMapProbabilityFromSalesStage($sales_stage, $probability)
     {
-        $revenuelineitem = $this->getMock('RevenueLineItem');
+        $revenuelineitem = $this->createMock('RevenueLineItem');
         $revenuelineitem->sales_stage = $sales_stage;
         // use the Reflection Helper to call the Protected Method
         SugarTestReflection::callProtectedMethod($revenuelineitem, 'mapProbabilityFromSalesStage');

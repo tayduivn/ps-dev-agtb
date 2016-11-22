@@ -106,7 +106,7 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
     public function testStoreAndRetrieveWithTTLZero()
     {
         $sc = SugarCache::instance();
-        $cacheStub = $this->getMock(get_class($sc), array('_setExternal'));
+        $cacheStub = $this->createPartialMock(get_class($sc), array('_setExternal'));
         $cacheStub->expects($this->once())
                        ->method('_setExternal');
         $cacheStub->set($this->_cacheKey1,$this->_cacheValue1,0);
@@ -115,7 +115,7 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
     public function testStoreAndRetrieveWithTTLNull()
     {
         $sc = SugarCache::instance();
-        $cacheStub = $this->getMock(get_class($sc), array('_setExternal'));
+        $cacheStub = $this->createPartialMock(get_class($sc), array('_setExternal'));
         $cacheStub->expects($this->once())
                        ->method('_setExternal');
         $cacheStub->set($this->_cacheKey1,$this->_cacheValue1,null);

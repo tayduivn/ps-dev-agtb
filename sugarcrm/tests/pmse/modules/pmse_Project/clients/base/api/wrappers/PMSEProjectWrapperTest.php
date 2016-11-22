@@ -48,20 +48,12 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
             ->setMethods(array('getBean'))
             ->getMock(); 
         
-        // $this->mockProject = $this->getMock('BpmnProject');
+        // $this->mockProject = $this->createMock('BpmnProject');
         $this->mockProject =$this->getMockBuilder('pmse_BpmnProject')
             ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(array('get_full_list', '_get', '_put', '_post', '_delete', 'retrieve_by_string_fields', 'save', 'getPrimaryFieldUID'))
             ->getMock();
-        
-        /**
-        $this->object->expects($this->any())
-            ->method('getBean')
-            ->will($this->returnValue(
-                $this->getMock('SomeBean', array('getDisplayName', 'get_full_list', 'retrieve_by_string_fields', 'retrieve'))
-            ));
-        */
         
         $this->mockDiagram = $this->getMockBuilder('pmse_BpmnDiagram')
                 ->disableAutoload()
@@ -230,7 +222,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
                 ->with($this->isType('array'))
                 ->will($this->returnValue($this->mockProcessDefinition));
 
-        //$this->mockApi = $this->getMock('ServiceBase');
+        //$this->mockApi = $this->createMock('ServiceBase');
         $this->args = array('id' => '2193798123');
 
         $result = $this->projectWrapper->retrieveProject($this->args['id']);
@@ -276,7 +268,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 //                ->method('retrieve_by_string_fields')
 //                ->with($this->isType('array'))
 //                ->will($this->returnValue(null));
-//        $this->mockApi = $this->getMock('ServiceBase');
+//        $this->mockApi = $this->createMock('ServiceBase');
 //        $this->args = array('id' => '2193798123');
 //        $result = $this->projectWrapper->_get($this->args);
 //        $this->assertInternalType('array', $result);
@@ -413,7 +405,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 //                ->with($this->isType('array'));
 //        $this->mockProcess->pro_id = 1;
 //        
-//        $this->mockBpmInbox = $this->getMock('BpmInbox');
+//        $this->mockBpmInbox = $this->createMock('BpmInbox');
 //        $this->mockBpmInbox->expects($this->exactly(1))
 //                ->method('getSelectRows')
 //                ->will($this->returnValue(array('rowList' =>
@@ -428,7 +420,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 //                                )
 //                            )
 //                        )));
-//        $this->mockBeanFactory = $this->getMock('ADAMBeanFactory');
+//        $this->mockBeanFactory = $this->createMock('ADAMBeanFactory');
 //        $this->mockBeanFactory->expects($this->at(0))
 //                ->method('getBean')
 //                ->with($this->equalTo('BpmnProcess'))
@@ -461,7 +453,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 //                ->with($this->isType('array'));
 //        $this->mockProcess->pro_id = 1;
 //        
-//        $this->mockBpmInbox = $this->getMock('pmse_BpmInbox');
+//        $this->mockBpmInbox = $this->createMock('pmse_BpmInbox');
 //        $this->mockBpmInbox->expects($this->exactly(1))
 //                ->method('getSelectRows')
 ////                ->with($this->isType('string','string'))
@@ -478,7 +470,7 @@ class PMSEProjectWrapperTest extends PHPUnit_Framework_TestCase
 //                            )
 //                        )));
 //        
-//        $this->mockBeanFactory = $this->getMock('ADAMBeanFactory');
+//        $this->mockBeanFactory = $this->createMock('ADAMBeanFactory');
 //        $this->mockBeanFactory->expects($this->at(0))
 //                ->method('getBean')
 //                ->with($this->equalTo('pmse_BpmnProcess'))

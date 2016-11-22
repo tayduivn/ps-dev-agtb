@@ -77,7 +77,7 @@ EOC;
         // Emaluate 6_ScanModules result for MBModules array
         $this->upgradeDriver->state['MBModules'] = array($this->testModule);
 
-        $script = $this->getMock('SugarUpgradeRepairVendorsMock', array('backupFile'), array($this->upgradeDriver));
+        $script = $this->getMockBuilder('SugarUpgradeRepairVendorsMock')->setMethods(array('backupFile'))->setConstructorArgs(array($this->upgradeDriver))->getMock();
         if ($content == $expected) {
             $script->expects($this->never())->method('backupFile');
         } else {
@@ -107,7 +107,7 @@ EOC;
         SugarTestHelper::saveFile($file);
         sugar_file_put_contents($file, $source);
 
-        $mockObject = $this->getMock('SugarUpgradeRepairVendorsMock', array('backupFile'), array($this->upgradeDriver));
+        $mockObject = $this->getMockBuilder('SugarUpgradeRepairVendorsMock')->setMethods(array('backupFile'))->setConstructorArgs(array($this->upgradeDriver))->getMock();
         $mockObject->expects($this->atLeastOnce())->method('backupFile')->with($file);
 
         $mockObject->repairSugarSpecificFilesPath($file);

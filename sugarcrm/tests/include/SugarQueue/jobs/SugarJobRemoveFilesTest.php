@@ -41,7 +41,7 @@ class SugarJobRemoveFilesTest extends Sugar_PHPUnit_Framework_TestCase
             ->willReturn(5);
 
         /** @var SchedulersJob|PHPUnit_Framework_MockObject_MockObject $schedulerJob */
-        $schedulerJob = $this->getMock('SchedulersJob');
+        $schedulerJob = $this->createMock('SchedulersJob');
         $schedulerJob->expects($this->once())
             ->method('succeedJob');
 

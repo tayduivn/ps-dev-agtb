@@ -32,7 +32,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
      */
     public function testVerify($legacy, $password, $hash, $expected)
     {
-        $backend = $this->getMock('Sugarcrm\Sugarcrm\Security\Password\BackendInterface');
+        $backend = $this->createMock('Sugarcrm\Sugarcrm\Security\Password\BackendInterface');
         $backend->expects($this->any())
             ->method('verify')
             ->with($this->equalTo(md5($password)), $this->equalTo($hash))

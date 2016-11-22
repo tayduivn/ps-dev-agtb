@@ -1002,7 +1002,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAsDbDefaultsToSettingGMT()
     {
-        $dateMock = $this->getMock('DateTime', array('setTimezone', 'format'));
+        $dateMock = $this->createPartialMock('DateTime', array('setTimezone', 'format'));
         $dateMock->expects($this->once())
             ->method('setTimezone');
         $dateMock->expects($this->once())
@@ -1012,7 +1012,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAsDbDontSetGMT()
     {
-        $dateMock = $this->getMock('DateTime', array('setTimezone', 'format'));
+        $dateMock = $this->createPartialMock('DateTime', array('setTimezone', 'format'));
         $dateMock->expects($this->never())//dont set GMT
             ->method('setTimezone');
         $dateMock->expects($this->once())
@@ -1033,7 +1033,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $value = new DateTime('+' . $value . ' seconds');
         /** @var TimeDate $timeDate */
-        $timeDate = $this->getMock('TimeDate', array($method));
+        $timeDate = $this->createPartialMock('TimeDate', array($method));
         if (isset($GMT)) {
             $timeDate->expects($this->once())->method($method)->with($this->equalTo($value), $this->equalTo($GMT));
         } else {

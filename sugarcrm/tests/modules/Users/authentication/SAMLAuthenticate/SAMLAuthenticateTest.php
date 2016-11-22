@@ -56,7 +56,7 @@ class SAMLAuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testNeedLogin()
     {
-        $mockauth = $this->getMock('AuthenticationController', array('getLoginUrl', 'isExternal'));
+        $mockauth = $this->createPartialMock('AuthenticationController', array('getLoginUrl', 'isExternal'));
         $rest = SugarTestRestUtilities::getRestServiceMock();
 
         $mockauth->expects($this->once())

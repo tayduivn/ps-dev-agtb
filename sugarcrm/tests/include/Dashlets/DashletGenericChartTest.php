@@ -45,10 +45,10 @@ class DashletGenericChartTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testDisplay()
     {
-        $dashlet = $this->getMock('DashletGenericChartTestMock',
-                                    array('processAutoRefresh'),
-                                    array('unit_test_run')
-                                    );
+        $dashlet = $this->getMockBuilder('DashletGenericChartTestMock')
+            ->setMethods(['processAutoRefresh'])
+            ->setConstructorArgs(['unit_test_run'])
+            ->getMock();
         $dashlet->expects($this->any())
                 ->method('processAutoRefresh')
                 ->will($this->returnValue('successautorefresh'));

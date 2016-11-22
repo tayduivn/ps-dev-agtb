@@ -59,7 +59,7 @@ class Bug46427Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDuplicateQueryContact()
     {
-        $focus = $this->getMock('Contact');
+        $focus = $this->createMock('Contact');
         $focus->disable_row_level_security = false;
         $focus->expects($this->once())->method('add_team_security_where_clause');
 
@@ -72,7 +72,7 @@ class Bug46427Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDuplicateQueryContact2()
     {
-        $focus = $this->getMock('Contact');
+        $focus = $this->createMock('Contact');
         $focus->disable_row_level_security = true;
         $focus->expects($this->never())->method('add_team_security_where_clause');
 
@@ -85,7 +85,7 @@ class Bug46427Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDuplicateQueryLead()
     {
-        $focus = $this->getMock('Lead');
+        $focus = $this->createMock('Lead');
         $focus->disable_row_level_security = false;
         $focus->expects($this->once())->method('add_team_security_where_clause');
 
@@ -98,7 +98,7 @@ class Bug46427Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDuplicateQueryLead2()
     {
-        $focus = $this->getMock('Lead');
+        $focus = $this->createMock('Lead');
         $focus->disable_row_level_security = true;
         $focus->expects($this->never())->method('add_team_security_where_clause');
 

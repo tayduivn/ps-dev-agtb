@@ -40,7 +40,7 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRequestArgs()
     {
-        $request = $this->getMock('request', array('getPathVars', 'getPostContents', 'getQueryVars'));
+        $request = $this->createPartialMock('request', array('getPathVars', 'getPostContents', 'getQueryVars'));
         $request->expects($this->any())
                 ->method('getPathVars')
                 ->will($this->returnValue(array()));

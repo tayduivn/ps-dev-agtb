@@ -36,9 +36,7 @@ class KBContentsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user', array(true, true));
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
-        $this->api = $this->getMock('KBContentsFilterApi',
-            array('getElasticQueryBuilder')
-        );
+        $this->api = $this->createPartialMock('KBContentsFilterApi', array('getElasticQueryBuilder'));
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
@@ -107,7 +105,7 @@ class KBContentsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFilterList($args, $expected)
     {
-        $api = $this->getMock('KBContentsFilterApi', array('filterByContainingExcludingWords'));
+        $api = $this->createPartialMock('KBContentsFilterApi', array('filterByContainingExcludingWords'));
         if ($expected) {
             $api->expects($this->once())->method('filterByContainingExcludingWords')->with(
                 $this->equalTo($this->service)

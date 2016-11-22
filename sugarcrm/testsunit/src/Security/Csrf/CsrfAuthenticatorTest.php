@@ -31,7 +31,7 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+        $manager = $this->createMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
 
         $manager->expects($this->once())
             ->method('getToken')
@@ -53,7 +53,7 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsFormTokenValid($softFail, array $post, $valid, $expected)
     {
-        $manager = $this->getMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+        $manager = $this->createMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
         $manager->expects($this->any())
             ->method('isTokenValid')
             ->will($this->returnValue($valid));
@@ -112,8 +112,8 @@ class CsrfAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCsrfAuthMock(array $methods = null)
     {
-        $manager = $this->getMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $manager = $this->createMock('Symfony\Component\Security\Csrf\CsrfTokenManagerInterface');
+        $logger = $this->createMock('Psr\Log\LoggerInterface');
 
         // SugarConfig stubbing get to always return default
         $config = $this->getMockBuilder('SugarConfig')

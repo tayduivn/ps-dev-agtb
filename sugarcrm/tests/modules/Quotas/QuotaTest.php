@@ -101,7 +101,7 @@ class QuotaTest extends Sugar_PHPUnit_Framework_TestCase
         $userFullName = "Test User Full Name";
         $expectedSummary = "$tpname - $userFullName";
 
-        $mocktp = $this->getMock('TimePeriod');
+        $mocktp = $this->createMock('TimePeriod');
 
         BeanFactory::setBeanClass('TimePeriods', get_class($mocktp));
 

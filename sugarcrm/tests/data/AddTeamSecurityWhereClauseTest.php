@@ -179,7 +179,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
         global $current_user;
 
         /** @var User|PHPUnit_Framework_MockObject_MockObject $current_user */
-        $current_user = $this->getMock('User', array('isAdminForModule'));
+        $current_user = $this->createPartialMock('User', array('isAdminForModule'));
         $current_user->expects($this->atLeastOnce())
             ->method('isAdminForModule')
             ->with('Foo')

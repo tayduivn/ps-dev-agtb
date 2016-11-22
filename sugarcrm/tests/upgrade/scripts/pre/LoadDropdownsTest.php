@@ -23,7 +23,7 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
      */
     public function testRun_IdentifiesCustomizedDropdowns()
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns'));
         $mockHelper->expects($this->exactly(2))
             ->method('getDropdowns')
             ->willReturnOnConsecutiveCalls(
@@ -55,11 +55,10 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
                 )
             );
 
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
@@ -89,11 +88,10 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
      */
     public function testRun_CustomFileNotFound_NothingToMerge()
     {
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'geti18nFiles'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'geti18nFiles'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
             ->willReturn(array('include/language/en_us.lang.php'));
@@ -111,7 +109,7 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
      */
     public function testRun_NoCustomizationsFoundInCustomFile_NothingToMerge()
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns'));
         $mockHelper->expects($this->exactly(2))
             ->method('getDropdowns')
             ->willReturnOnConsecutiveCalls(
@@ -129,11 +127,10 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
                 array()
             );
 
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
@@ -161,7 +158,7 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
         $firstLanguage = 'en_us';
         $secondLanguage = 'es_ES';
 
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns'));
         $mockHelper->expects($this->exactly(4))
             ->method('getDropdowns')
             ->willReturnOnConsecutiveCalls(
@@ -209,11 +206,10 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
                 )
             );
 
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage', 'getFileMTime'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage', 'getFileMTime'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
@@ -250,7 +246,7 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
      */
     public function testRun_CustomHasDropdownsNotFoundInOld()
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns'));
         $mockHelper->expects($this->exactly(2))
             ->method('getDropdowns')
             ->willReturnOnConsecutiveCalls(
@@ -279,11 +275,10 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
                 )
             );
 
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')
@@ -308,16 +303,15 @@ class SugarUpgradeLoadDropdownsTest extends UpgradeTestCase
      */
     public function testRun_NoDropdownsAreFound()
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getDropdowns'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getDropdowns'));
         $mockHelper->expects($this->exactly(2))
             ->method('getDropdowns')
             ->willReturn(array());
 
-        $mockLoader = $this->getMock(
-            'SugarUpgradeLoadDropdowns',
-            array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'),
-            array($this->upgrader)
-        );
+        $mockLoader = $this->getMockBuilder('SugarUpgradeLoadDropdowns')
+            ->setMethods(array('getCustomFile', 'getDropdownHelper', 'geti18nFiles', 'getLanguage'))
+            ->setConstructorArgs(array($this->upgrader))
+            ->getMock();
         $mockLoader->expects($this->once())->method('getDropdownHelper')->willReturn($mockHelper);
         $mockLoader->expects($this->once())
             ->method('geti18nFiles')

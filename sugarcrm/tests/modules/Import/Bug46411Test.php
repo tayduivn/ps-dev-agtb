@@ -56,13 +56,16 @@ class Bug46411Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testMissingFields()
     {
-        $bean = $this->getMock('Call',array(
-            'get_importable_fields',
-            'populateDefaultValues',
-            'beforeImportSave',
-            'save',
-            'afterImportSave',
-            'writeRowToLastImport'));
+        $bean = $this->getMockBuilder('Call')
+            ->setMethods(array(
+                'get_importable_fields',
+                'populateDefaultValues',
+                'beforeImportSave',
+                'save',
+                'afterImportSave',
+                'writeRowToLastImport',
+            ))
+            ->getMock();
 
         $bean->expects($this->any())
             ->method('get_importable_fields')

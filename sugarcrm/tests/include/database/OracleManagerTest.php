@@ -296,7 +296,7 @@ class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'dbType' => 'text',
         );
         /** @var PHPUnit_Framework_MockObject_MockObject|OracleManager $db */
-        $db = $this->getMock(get_class($this->_db), array('getFieldType', 'isTextType'));
+        $db = $this->createPartialMock(get_class($this->_db), array('getFieldType', 'isTextType'));
         $db->expects($this->atLeastOnce())->method('getFieldType')->with($this->equalTo($vardef))->will($this->returnValue($vardef['dbType']));
         $db->expects($this->atLeastOnce())->method('isTextType')->with($this->equalTo($vardef['dbType']))->will($this->returnValue(true));
         SugarTestReflection::callProtectedMethod($db, 'isNullable', array($vardef));

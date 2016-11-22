@@ -54,7 +54,7 @@ class ACLRoleSetActionTest extends Sugar_PHPUnit_Framework_TestCase
      */
     private function getRole()
     {
-        return $this->getMock('ACLRole', array('set_relationship'));
+        return $this->createPartialMock('ACLRole', array('set_relationship'));
     }
 
     /**

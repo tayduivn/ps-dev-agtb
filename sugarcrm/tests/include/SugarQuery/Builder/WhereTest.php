@@ -18,14 +18,14 @@ class WhereTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateRangeWithoutBean()
     {
-        $bean = $this->getMock('Account', array('getFieldDefinition'));
+        $bean = $this->getMockBuilder('Account')->setMethods(array('getFieldDefinition'))->getMock();
         $bean->expects($this->never())->method('getFieldDefinition');
         $q = new SugarQuery();
         $q->from($bean);
         $dateTime = new DateTime();
 
         /** @var TimeDate|PHPUnit_Framework_MockObject_MockObject $timeDate */
-        $timeDate = $this->getMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
+        $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
         $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
         $timeDate->expects($this->exactly(2))->method('asDb')->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDbType');
@@ -48,7 +48,7 @@ class WhereTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateRangeWithBeanDateField($type)
     {
-        $bean = $this->getMock('Account', array('getFieldDefinition'));
+        $bean = $this->getMockBuilder('Account')->setMethods(array('getFieldDefinition'))->getMock();
         $bean->expects($this->once())->method('getFieldDefinition')->will($this->returnValue(array(
             'type' => $type,
         )));
@@ -57,7 +57,7 @@ class WhereTest extends Sugar_PHPUnit_Framework_TestCase
         $dateTime = new DateTime();
 
         /** @var TimeDate|PHPUnit_Framework_MockObject_MockObject $timeDate */
-        $timeDate = $this->getMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
+        $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
         $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
         $timeDate->expects($this->exactly(2))->method('asDbType')->with($this->equalTo($dateTime), $this->equalTo($type), $this->equalTo(false))->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDb');

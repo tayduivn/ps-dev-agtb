@@ -42,15 +42,14 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testClearRecipients_ClearToAndBccButNotCc()
     {
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = self::getMockBuilder("SmtpMailer")
+            ->setMethods(array(
                  "clearRecipientsTo",
                  "clearRecipientsCc",
                  "clearRecipientsBcc"
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->getmock();
 
         $mockMailer->expects(self::once())
             ->method("clearRecipientsTo");
@@ -66,24 +65,23 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("smtpConnect"));
+        $mockPhpMailerProxy = self::createPartialMock("PHPMailerProxy", array("smtpConnect"));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("smtpConnect")
             ->will(self::throwException(new phpmailerException()));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = self::getMockBuilder("SmtpMailer")
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "transferHeaders",
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->getmock();
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
@@ -200,30 +198,29 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                 null,
             ),
         );
-        $mockEmailHeaders     = self::getMock("EmailHeaders", array("packageHeaders"));
+        $mockEmailHeaders     = self::createPartialMock("EmailHeaders", array("packageHeaders"));
 
         $mockEmailHeaders->expects(self::once())
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("setFrom"));
+        $mockPhpMailerProxy = self::createPartialMock("PHPMailerProxy", array("setFrom"));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("setFrom")
             ->will(self::throwException(new phpmailerException()));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->getMock();
 
         $mockMailer->setHeaders($mockEmailHeaders);
 
@@ -262,30 +259,29 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                 null,
             ),
         );
-        $mockEmailHeaders     = self::getMock("EmailHeaders", array("packageHeaders"));
+        $mockEmailHeaders     = self::createPartialMock("EmailHeaders", array("packageHeaders"));
 
         $mockEmailHeaders->expects(self::once())
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addReplyTo"));
+        $mockPhpMailerProxy = self::createPartialMock("PHPMailerProxy", array("addReplyTo"));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("addReplyTo")
             ->will(self::returnValue(false));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->getMock();
 
         $mockMailer->setHeaders($mockEmailHeaders);
 
@@ -318,7 +314,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException()
     {
-        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale = $this->getMockBuilder("Localization")->setMethods(array("translateCharset"))->getMock();
         $mockLocale->expects(self::any())
             ->method("translateCharset")
             ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
@@ -326,24 +322,23 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addAttachment"));
+        $mockPhpMailerProxy = $this->getMockBuilder("PHPMailerProxy")->setMethods(array("addAttachment"))->getMock();
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("addAttachment")
             ->will(self::throwException(new phpmailerException()));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
                  "transferHeaders",
                  "transferRecipients",
                  "transferBody",
-            ),
-            array($mailerConfiguration)
-        );
+            ))
+            ->setConstructorArgs(array($mailerConfiguration))
+            ->getMock();
 
         $attachment = new Attachment("/foo/bar.txt");
         $mockMailer->addAttachment($attachment);
@@ -376,7 +371,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException()
     {
-        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale = $this->getMockBuilder("Localization")->setMethods(array("translateCharset"))->getMock();
         $mockLocale->expects(self::any())
             ->method("translateCharset")
             ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
@@ -384,24 +379,23 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("addEmbeddedImage"));
+        $mockPhpMailerProxy = $this->getMockBuilder("PHPMailerProxy")->setMethods(array("addEmbeddedImage"))->getMock();
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("addEmbeddedImage")
             ->will(self::returnValue(false));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array($mailerConfiguration))
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
                  "transferHeaders",
                  "transferRecipients",
                  "transferBody",
-            ),
-            array($mailerConfiguration)
-        );
+            ))
+            ->getMock();
 
         $embeddedImage = new EmbeddedImage("foobar", "/foo/bar.txt");
         $mockMailer->addAttachment($embeddedImage);
@@ -434,15 +428,15 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_PHPMailerSendThrowsException_SendCatchesItAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send"));
+        $mockPhpMailerProxy = self::createPartialMock("PHPMailerProxy", array("send"));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("send")
             ->will(self::throwException(new phpmailerException()));
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -450,9 +444,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->getMock();
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
@@ -488,7 +481,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_AllMethodCallsAreSuccessful_ReturnsSentMessage()
     {
-        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("send", 'getSentMIMEMessage'));
+        $mockPhpMailerProxy = self::createPartialMock("PHPMailerProxy", array("send", 'getSentMIMEMessage'));
 
         $mockPhpMailerProxy->expects(self::once())
             ->method("send")
@@ -497,9 +490,9 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = 'the sent email';
         $mockPhpMailerProxy->expects($this->once())->method('getSentMIMEMessage')->willReturn($expected);
 
-        $mockMailer = self::getMock(
-            "SmtpMailer",
-            array(
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"])))
+            ->setMethods(array(
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -507,9 +500,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            ),
-            array(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]))
-        );
+            ))
+            ->getMock();
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")

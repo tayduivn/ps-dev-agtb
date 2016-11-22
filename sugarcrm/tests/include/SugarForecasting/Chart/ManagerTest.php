@@ -22,11 +22,10 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
     public function setUp()
     {
-        $this->obj = $this->getMock(
-            'SugarForecasting_Chart_Manager',
-            array('getForecastConfig', 'getTimeperiod', 'getRollupQuota', 'getModuleLanguage'),
-            array(array())
-        );
+        $this->obj = $this->getMockBuilder('SugarForecasting_Chart_Manager')
+            ->setMethods(array('getForecastConfig', 'getTimeperiod', 'getRollupQuota', 'getModuleLanguage'))
+            ->setConstructorArgs(array(array()))
+            ->getMock();
 
         $this->obj->expects($this->atLeastOnce())
             ->method('getForecastConfig')
@@ -40,7 +39,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
                 )
             );
 
-        $tp_mock = $this->getMock('TimePeriod', array('save'));
+        $tp_mock = $this->createPartialMock('TimePeriod', array('save'));
         $tp_mock->name = 'Q2 2012';
 
         $this->obj->expects($this->atLeastOnce())

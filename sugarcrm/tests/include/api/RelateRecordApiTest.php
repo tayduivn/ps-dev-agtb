@@ -124,7 +124,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         require_once 'clients/base/api/RelateRecordApi.php';
-        $api = $this->getMock('RelateRecordApi', array('loadModuleApi'));
+        $api = $this->createPartialMock('RelateRecordApi', array('loadModuleApi'));
         $api->expects($this->once())
             ->method('loadModuleApi')
             ->with($service, 'TheModule')
@@ -263,7 +263,7 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $records = array ($account1->id, $account2->id);
         $recordListId = RecordListFactory::saveRecordList($records, 'Reports');
 
-        $mockAPI = self::getMock("RelateRecordApi", array("loadBean", "requireArgs"));
+        $mockAPI = self::createPartialMock("RelateRecordApi", array("loadBean", "requireArgs"));
         $mockAPI->expects(self::once())
             ->method("loadBean")
             ->will(self::returnValue($prospectList));
@@ -306,10 +306,10 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('add')
             ->will($this->returnValue(array($account1->id)));
 
-        $stub = $this->getMock(BeanFactory::getObjectName('ProspectLists'));
+        $stub = $this->getMockBuilder(BeanFactory::getObjectName('ProspectLists'))->getMock();
         $stub->accounts = $relationshipStub;
 
-        $mockAPI = self::getMock("RelateRecordApi", array("loadBean", "requireArgs", "checkRelatedSecurity"));
+        $mockAPI = self::createPartialMock("RelateRecordApi", array("loadBean", "requireArgs", "checkRelatedSecurity"));
         $mockAPI->expects(self::once())
             ->method("loadBean")
             ->will(self::returnValue($stub));
@@ -352,8 +352,8 @@ class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRelatedFieldsReturnsOnlyFieldsForPassedInLink()
     {
-        $opp = $this->getMock('Opportunity', array('save'));
-        $contact = $this->getMock('Contact', array('save'));
+        $opp = $this->getMockBuilder('Opportunity')->setMethods(array('save'))->getMock();
+        $contact = $this->getMockBuilder('Contact')->setMethods(array('save'))->getMock();
 
         $rr_api = new RelateRecordApi();
 

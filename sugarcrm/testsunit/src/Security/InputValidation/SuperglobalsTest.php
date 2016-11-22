@@ -56,7 +56,7 @@ class SuperglobalsTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
         $this->globals = new Superglobals($this->inputGet, $this->inputPost, $this->logger);
     }
 

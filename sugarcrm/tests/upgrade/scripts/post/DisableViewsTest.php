@@ -65,7 +65,7 @@ class DisableViewsTest extends UpgradeTestCase
             ),
         );
 
-        $script = $this->getMock('SugarUpgradeDisableViews', array('renameDisabled'), array($this->upgrader));
+        $script = $this->getMockBuilder('SugarUpgradeDisableViews')->setMethods(array('renameDisabled'))->setConstructorArgs(array($this->upgrader))->getMock();
 
         $script->expects($this->once())->method('renameDisabled')->with($filesToCheck);
 

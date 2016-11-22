@@ -424,7 +424,7 @@ END;
             write_array_to_file('mod_strings', $customLabels, $path);
         }
 
-        $moduleInstaller = $this->getMock('ModuleInstaller', array('rebuild_languages'));
+        $moduleInstaller = $this->createPartialMock('ModuleInstaller', array('rebuild_languages'));
         $moduleInstaller->expects($this->once())
             ->method('rebuild_languages')
             ->with($languages, array('TestModule1'));
@@ -464,7 +464,7 @@ END;
         }
 
         // Rebuild should never be called cause there are no customizations for test labels in test module
-        $moduleInstaller = $this->getMock('ModuleInstaller', array('rebuild_languages'));
+        $moduleInstaller = $this->createPartialMock('ModuleInstaller', array('rebuild_languages'));
         $moduleInstaller->expects($this->never())
             ->method('rebuild_languages');
 

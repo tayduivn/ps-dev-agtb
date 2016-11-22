@@ -62,7 +62,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecordAndRecurrences');
 
-        $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
+        $mockMeeting = $this->createPartialMock('Meeting', array('ACLAccess'));
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(true));
@@ -92,7 +92,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecordAndRecurrences');
 
-        $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
+        $mockMeeting = $this->createPartialMock('Meeting', array('ACLAccess'));
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(true));
@@ -118,7 +118,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDeleteRecordAndRecurrences_NoAccess_ThrowsException()
     {
-        $mockMeeting = $this->getMock('Meeting', array('ACLAccess'));
+        $mockMeeting = $this->getMockBuilder('Meeting')->setMethods(array('ACLAccess'))->getMock();
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
@@ -1059,7 +1059,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
             $methodsArray[] = 'getCalendarEvents';
         }
 
-        $calendarEventsApiMock = $this->getMock(
+        $calendarEventsApiMock = $this->createPartialMock(
             'CalendarEventsApi',
             $methodsArray
         );
@@ -1086,7 +1086,7 @@ class CalendarEventsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     private function getMockForCalendarEvents($methodsArray = array())
     {
-        $calendarEvents = $this->getMock(
+        $calendarEvents = $this->createPartialMock(
             'CalendarEvents',
             $methodsArray
         );

@@ -20,7 +20,7 @@ class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testFromSugarBean_BeanIsAccount_ThrowsException() {
-        $mockAccount = self::getMock("Account", array("Account"));
+        $mockAccount = self::getMockBuilder("Account")->setMethods(array("Account"))->getMock();
 
         $mockAccount->expects(self::any())
             ->method("Account")

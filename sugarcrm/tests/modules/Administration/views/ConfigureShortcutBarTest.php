@@ -46,7 +46,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'order' => 1,
         );
 
-        $stub = $this->getMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
+        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
         $stub->expects($this->at(0))
             ->method('getQuickCreateMetadata')
             ->with('Accounts')
@@ -85,7 +85,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'order' => 1,
         );
 
-        $stub = $this->getMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
+        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
         $stub->expects($this->at(0))
             ->method('getQuickCreateMetadata')
             ->with('Accounts')
@@ -122,7 +122,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'Contacts' => 1,
         );
 
-        $mock = $this->getMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->with(
@@ -152,7 +152,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $modulesToEnable = array();
 
-        $mock = $this->getMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->with(
@@ -183,7 +183,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'Accounts' => 0,
         );
 
-        $mock = $this->getMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
         $mock->expects($this->never())
             ->method('setQuickCreateMetadata');
 
@@ -207,7 +207,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'Accounts' => 1,
         );
 
-        $mock = $this->getMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
         $mock->expects($this->at(0))
             ->method('setQuickCreateMetadata')
             ->with(
@@ -250,7 +250,7 @@ class ConfigureShortcutBarTest extends Sugar_PHPUnit_Framework_TestCase
             'Contacts' => 1,
         );
 
-        $mock = $this->getMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->will($this->returnValue(false));

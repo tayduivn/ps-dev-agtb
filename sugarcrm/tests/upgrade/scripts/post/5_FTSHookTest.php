@@ -37,11 +37,10 @@ class SugarUpgradeFTSHookTest extends UpgradeTestCase
     {
         $upgraderMock = $this->getMockForAbstractClass('UpgradeDriver');
 
-        $mockInstaller = $this->getMock(
-            'SugarUpgradeFTSHook',
-            array('removeDuplicates', 'fileExists'),
-            array($upgraderMock)
-        );
+        $mockInstaller = $this->getMockBuilder('SugarUpgradeFTSHook')
+            ->setMethods(['removeDuplicates', 'fileExists'])
+            ->setConstructorArgs([$upgraderMock])
+            ->getMock();
 
         $mockInstaller->expects($this->once())->method('fileExists')->willReturn($fileExists);
 
@@ -68,7 +67,9 @@ class SugarUpgradeFTSHookTest extends UpgradeTestCase
                          )
                      );
 
-        $mockInstaller = $this->getMock('SugarUpgradeFTSHook', null, array($upgraderMock));
+        $mockInstaller = $this->getMockBuilder('SugarUpgradeFTSHook')
+            ->setConstructorArgs([$upgraderMock])
+            ->getMock();
 
         SugarTestReflection::setProtectedValue($mockInstaller, 'oldHookDefs', $this->oldHookDefs);
 

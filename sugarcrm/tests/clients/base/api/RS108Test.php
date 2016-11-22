@@ -43,7 +43,7 @@ class RS108Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSaveTempImagePost()
     {
-        $api = $this->getMock('FileTempApi', array('saveFilePost'));
+        $api = $this->createPartialMock('FileTempApi', array('saveFilePost'));
         $api->expects($this->once())->method('saveFilePost')->with($this->anything(), $this->anything(), $this->equalTo(true));
         $api->saveTempImagePost($this->service, array());
     }
@@ -53,7 +53,7 @@ class RS108Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetTempImage()
     {
-        $service = $this->getMock('RestService', array('fileResponse'));
+        $service = $this->createPartialMock('RestService', array('fileResponse'));
         $service->expects($this->once())->method('fileResponse')->with($this->equalTo($this->file));
         $api = new FileTempApi();
         $api->getTempImage($service, array(

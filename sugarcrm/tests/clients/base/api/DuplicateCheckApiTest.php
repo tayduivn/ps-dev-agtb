@@ -250,7 +250,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedException('SugarApiExceptionInvalidParameter');
-        $duplicateCheckApi = $this->getMock('DuplicateCheckApi', array('populateFromApi'));
+        $duplicateCheckApi = $this->createPartialMock('DuplicateCheckApi', array('populateFromApi'));
         $duplicateCheckApi->expects($this->any())
                           ->method('populateFromApi')
                           ->will($this->returnValue(array()));

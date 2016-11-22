@@ -40,7 +40,7 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUploadDocConflictErrorMessage()
     {
         /*
-        $responseMock = $this->getMock('Response', array('getBody', 'getMessage', 'isSuccessful'));
+        $responseMock = $this->createPartialMock('Response', array('getBody', 'getMessage', 'isSuccessful'));
         $responseMock->expects($this->any())
             ->method('isSuccessful')
             ->with($this->any())
@@ -54,25 +54,25 @@ class ExtAPILotusLiveTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($this->any())
             ->will($this->returnValue('Conflict'));
 
-        $clientMock3 = $this->getMock('Client', array('request'));
+        $clientMock3 = $this->createPartialMock('Client', array('request'));
         $clientMock3->expects($this->any())
             ->method('request')
             ->with($this->any())
             ->will($this->returnValue($responseMock));
 
-        $clientMock2 = $this->getMock('Client', array('setHeaders'));
+        $clientMock2 = $this->createPartialMock('Client', array('setHeaders'));
         $clientMock2->expects($this->any())
             ->method('setHeaders')
             ->with($this->any())
             ->will($this->returnValue($clientMock3));
 
-        $clientMock = $this->getMock('Client', array('setRawData'));
+        $clientMock = $this->createPartialMock('Client', array('setRawData'));
         $clientMock->expects($this->any())
             ->method('setRawData')
             ->with($this->any())
             ->will($this->returnValue($clientMock2));
 
-        $oauthMock = $this->getMock('SugarOauth', array('setUri'));
+        $oauthMock = $this->createPartialMock('SugarOauth', array('setUri'));
         $oauthMock->expects($this->any())
             ->method('setUri')
             ->will($this->returnValue($clientMock));

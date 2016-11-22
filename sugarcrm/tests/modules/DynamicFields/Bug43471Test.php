@@ -22,7 +22,7 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accountMockBean = $this->getMock('TestBean');
+        $this->accountMockBean = $this->createMock('TestBean');
         $this->_tablename = 'test' . date("YmdHis");
     }
 
@@ -35,7 +35,7 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
         $bean = $this->accountMockBean;
 
         /** @var $df DynamicField */
-        $df = $this->getMock('DynamicField', array('createCustomTable'));
+        $df = $this->createPartialMock('DynamicField', array('createCustomTable'));
         $bean->table_name = $this->_tablename;
         $bean->field_defs = array (
               'id' =>
@@ -89,7 +89,7 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
                 ->method('createCustomTable')
                 ->will($this->returnValue(null));
 
-        $helper = $this->getMock('MysqliManager', array('get_columns'));
+        $helper = $this->createPartialMock('MysqliManager', array('get_columns'));
         $helper->expects($this->any())
                 ->method('get_columns')
                 ->will($this->returnValue(array(

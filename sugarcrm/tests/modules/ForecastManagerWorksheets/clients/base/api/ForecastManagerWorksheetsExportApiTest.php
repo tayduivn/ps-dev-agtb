@@ -36,7 +36,7 @@ class ForecastManagerWorksheetsExportApiTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testExport()
     {
-        $api = $this->getMock('ForecastManagerWorksheetsExportApi', array('doExport'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsExportApi', array('doExport'));
         $api->expects($this->once())
             ->method('doExport')
             ->with(

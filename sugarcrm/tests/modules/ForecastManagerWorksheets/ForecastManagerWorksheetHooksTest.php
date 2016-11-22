@@ -22,7 +22,7 @@ class ForecastManagerWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetManagerSavedFlag($data, $expected)
     {
         /** @var ForecastManagerWorksheet $worksheet */
-        $worksheet = $this->getMock('ForecastManagerWorksheet', array('save'));
+        $worksheet = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
 
         foreach ($data as $key => $value) {
             $worksheet->$key = $value;

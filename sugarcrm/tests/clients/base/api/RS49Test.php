@@ -63,7 +63,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
             'field' => 'filename',
         );
         $_FILES[$parameters['field']] = array();
-        $api = $this->getMock('FileApi', array('saveFilePost'));
+        $api = $this->createPartialMock('FileApi', array('saveFilePost'));
         $api->expects($this->once())->method('saveFilePost')->will($this->returnValue('saveFilePostReturnString'))->with($this->equalTo($this->service), $this->equalTo($parameters));
         $actual = $api->saveFilePut($this->service, $parameters, $this->file);
         $this->assertEquals('saveFilePostReturnString', $actual);
@@ -78,7 +78,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveFilePutFileSize()
     {
         file_put_contents($this->file, '');
-        $api = $this->getMock('FileApi', array('saveFilePost'));
+        $api = $this->createPartialMock('FileApi', array('saveFilePost'));
         $api->expects($this->never())->method('saveFilePost');
         $api->saveFilePut($this->service, array(), $this->file);
     }
@@ -119,11 +119,11 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSaveFilePostBeanACLAccessView()
     {
-        $bean = $this->getMock('Note', array('ACLAccess'));
+        $bean = $this->createPartialMock('Note', array('ACLAccess'));
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
         $parameters = array(
@@ -229,12 +229,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
             'delete_if_fails' => true,
         );
 
-        $bean = $this->getMock('Note', array('mark_deleted'));
+        $bean = $this->createPartialMock('Note', array('mark_deleted'));
         $bean->id = $this->note->id;
         $bean->created_by = $GLOBALS['current_user']->id;
         $bean->expects($this->once())->method('mark_deleted')->with($this->equalTo($bean->id))->will($this->returnValue(true));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
         $api->saveFilePost($this->service, $parameters);
@@ -256,12 +256,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
             'field' => 'filename',
         );
 
-        $bean = $this->getMock('Note', array('mark_deleted'));
+        $bean = $this->createPartialMock('Note', array('mark_deleted'));
         $bean->id = $this->note->id;
         $bean->created_by = $GLOBALS['current_user']->id;
         $bean->expects($this->never())->method('mark_deleted');
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
         $api->saveFilePost($this->service, $parameters);
@@ -288,11 +288,11 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFileListACLAccessView()
     {
-        $bean = $this->getMock('Note', array('ACLAccess'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
         $parameters = array(
@@ -310,12 +310,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFile()
     {
-        $bean = $this->getMock('Note', array('ACLAccess'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(true));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
         $parameters = array(
@@ -347,11 +347,11 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFileACLAccessView()
     {
-        $bean = $this->getMock('Note', array('ACLAccess'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
         $parameters = array(
@@ -369,12 +369,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetFileACLEmptyField()
     {
-        $bean = $this->getMock('Note', array('ACLAccess'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = '';
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(true));
 
-        $api = $this->getMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', array('loadBean'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
         $parameters = array(
@@ -391,12 +391,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveFile()
     {
-        $bean = $this->getMock('Note', array('deleteAttachment'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('deleteAttachment')->will($this->returnValue(true));
 
-        $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
         $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
 
@@ -415,12 +415,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveFileEmptyField()
     {
-        $bean = $this->getMock('Note', array('deleteAttachment'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = '';
         $bean->expects($this->never())->method('ACLAccess');
 
-        $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
         $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
 
@@ -440,7 +440,7 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveFileIncorrectFieldType()
     {
-        $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($this->note));
         $api->expects($this->never())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
 
@@ -459,12 +459,12 @@ class RS49Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveFileDeleteAttachmentFails()
     {
-        $bean = $this->getMock('Note', array('deleteAttachment'));
+        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('deleteAttachment')->will($this->returnValue(false));
 
-        $api = $this->getMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
         $api->expects($this->never())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
 

@@ -45,7 +45,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $_SESSION['authenticated_user_id'] = null;
 
-	    $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
 	    $url = '';
         require('modules/Users/Authenticate.php');
@@ -64,7 +64,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_POST['login_action']);
         unset($_POST['login_record']);
 
-        $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');
@@ -83,7 +83,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         $_POST['login_action'] = 'bar';
         $_POST['login_record'] = '123';
 
-        $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');
@@ -102,7 +102,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_POST['login_action']);
         unset($_POST['login_record']);
 
-        $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');
@@ -121,7 +121,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_POST['login_record']);
         $_SESSION['isMobile'] = true;
         $GLOBALS['current_user']->setPreference('wireless_last_module','dogpoo');
-        $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');
@@ -139,7 +139,7 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         $_POST['login_action'] = 'mouse';
         $_POST['login_record'] = '456';
         $_SESSION['isMobile'] = true;
-        $authController = $this->getMock('AuthenticationController');
+        $authController = $this->createMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');

@@ -58,7 +58,7 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_TestCase
 
         $seed = BeanFactory::getBean('Accounts');
 
-        $lvfMock = $this->getMock('ListViewFacade', array('setup', 'display'), array($seed, 'Accounts'));
+        $lvfMock = $this->getMockBuilder('ListViewFacade')->setMethods(array('setup', 'display'))->setConstructorArgs(array($seed, 'Accounts'))->getMock();
 
         $lvfMock->expects($this->any())
             ->method('setup')

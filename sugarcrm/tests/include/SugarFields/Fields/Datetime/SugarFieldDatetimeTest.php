@@ -118,7 +118,7 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testApiSaveDateTest($date)
     {
         /* @var $bean SugarBean */
-        $bean = $this->getMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', array('save'));
 
         $params = array(
             'test_c' => $date

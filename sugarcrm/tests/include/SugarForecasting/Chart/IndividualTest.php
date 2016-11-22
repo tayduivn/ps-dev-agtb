@@ -32,10 +32,9 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
     public function setUp()
     {
-        $this->obj = $this->getMock(
+        $this->obj = $this->createPartialMock(
             'SugarForecasting_Chart_Individual',
-            array('getForecastConfig', 'getTimeperiod', 'getUserQuota', 'getModuleLanguage'),
-            array(array())
+            array('getForecastConfig', 'getTimeperiod', 'getUserQuota', 'getModuleLanguage')
         );
 
         $this->obj->expects($this->atLeastOnce())
@@ -51,7 +50,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
                 )
             );
 
-        $tp_mock = $this->getMock('TimePeriod', array('save', 'getChartLabels'));
+        $tp_mock = $this->createPartialMock('TimePeriod', array('save', 'getChartLabels'));
         $tp_mock->name = 'Q2 2012';
         $tp_mock->id = 1;
 

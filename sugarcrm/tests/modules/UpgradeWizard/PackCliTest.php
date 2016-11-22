@@ -51,7 +51,7 @@ class PackCliTest extends PHPUnit_Framework_TestCase
      */
     public function testPackUpgradeWizardCli($params, $expect)
     {
-        $zip = $this->getMock('ZipArchive');
+        $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/UpgradeWizard/version.json';
         $zip->expects($this->exactly(6))->method('addFile');
         packUpgradeWizardCli($zip, $params);

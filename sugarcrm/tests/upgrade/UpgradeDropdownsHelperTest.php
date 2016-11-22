@@ -22,7 +22,7 @@ class UpgradeDropdownsHelperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDropdowns_ReturnsCoreDropDowns()
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
         $mockHelper->expects($this->once())
             ->method('getAppListStringsFromFile')
             ->willReturn(array(
@@ -78,7 +78,7 @@ class UpgradeDropdownsHelperTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetDropdowns_RestrictedDropDownsAreIgnored($dropdown)
     {
-        $mockHelper = $this->getMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
         $mockHelper->expects($this->once())
             ->method('getAppListStringsFromFile')
             ->willReturn(

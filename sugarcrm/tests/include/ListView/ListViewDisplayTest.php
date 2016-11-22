@@ -277,7 +277,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->show_mass_update_form = true;
         $this->_lvd->multiSelect = true;
         $this->_lvd->multi_select_popup = true;
-        $this->_lvd->mass = $this->getMock('MassUpdate');
+        $this->_lvd->mass = $this->createMock('MassUpdate');
         $this->_lvd->mass->expects($this->any())
                          ->method('getDisplayMassUpdateForm')
                          ->will($this->returnValue('foo'));
@@ -560,7 +560,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDisplayEndWhenShowingMassUpdateForm()
     {
         $this->_lvd->show_mass_update_form = true;
-        $this->_lvd->mass = $this->getMock('MassUpdate');
+        $this->_lvd->mass = $this->createMock('MassUpdate');
         $this->_lvd->mass->expects($this->any())
                          ->method('getMassUpdateForm')
                          ->will($this->returnValue('foo'));

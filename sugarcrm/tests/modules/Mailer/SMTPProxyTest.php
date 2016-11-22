@@ -98,7 +98,7 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHandleError_NothingIsLogged($error)
     {
-        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
+        $GLOBALS['log'] = $this->createPartialMock('SugarMockLogger', array('__call'));
         $GLOBALS['log']->expects($this->never())->method('__call');
 
         SugarTestReflection::callProtectedMethod(new SMTPProxy(), 'handleError', array($error));
@@ -111,7 +111,7 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHandleError_ErrorIsLogged($level, $error)
     {
-        $GLOBALS['log'] = $this->getMock('SugarMockLogger', array('__call'));
+        $GLOBALS['log'] = $this->createPartialMock('SugarMockLogger', array('__call'));
         $GLOBALS['log']->expects($this->any())->method('__call')->with($this->equalTo($level));
 
         SugarTestReflection::callProtectedMethod(new SMTPProxy(), 'handleError', array($error));
@@ -119,10 +119,10 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCall_CallsHandleError()
     {
-        $smtp = $this->getMock('SMTP', array('connect'));
+        $smtp = $this->createPartialMock('SMTP', array('connect'));
         $smtp->expects($this->once())->method('connect');
 
-        $proxy = $this->getMock('SMTPProxy', array('handleError'));
+        $proxy = $this->createPartialMock('SMTPProxy', array('handleError'));
         $proxy->expects($this->once())->method('handleError');
         SugarTestReflection::setProtectedValue($proxy, 'smtp', $smtp);
 
@@ -135,10 +135,10 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCall_ReturnsTheValueFromTheProxiedMethod($value)
     {
-        $smtp = $this->getMock('SMTP', array('connect'));
+        $smtp = $this->createPartialMock('SMTP', array('connect'));
         $smtp->expects($this->once())->method('connect')->willReturn($value);
 
-        $proxy = $this->getMock('SMTPProxy', array('handleError'));
+        $proxy = $this->createPartialMock('SMTPProxy', array('handleError'));
         $proxy->expects($this->once())->method('handleError');
         SugarTestReflection::setProtectedValue($proxy, 'smtp', $smtp);
 

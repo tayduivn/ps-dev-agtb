@@ -19,7 +19,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGet_OneLinkInTextButNothingReturnedFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
         $mock->expects($this->once())->method('fetch')->will($this->returnValue(''));
         $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
@@ -31,7 +31,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGet_OneLinkInTextButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
         $mock->expects($this->once())->method('fetch')->will($this->returnValue(false));
         $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
@@ -76,7 +76,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -98,7 +98,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $json = '{"type":"rich","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -121,7 +121,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $html = '<oembed><type>video</type><html>&lt;embed src=www.foo.com&gt;</html><width>200</width><height>100'
             . '</height></oembed>';
         $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -141,7 +141,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGet_OneLinkInTextButNoEmbedLinks_ReturnsNoEmbedData()
     {
-        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
         $mock->expects($this->once())
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -156,7 +156,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGet_OneLinkWithVideoJsonEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -172,7 +172,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGet_OneLinkWithVideoXmlEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -189,7 +189,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -207,7 +207,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->getMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')

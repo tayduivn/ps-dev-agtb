@@ -49,7 +49,7 @@ class SchedulersJobsTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function createJobMock(array $data, array $methodsToBeMocked = array())
     {
-        $jobMock = $this->getMock('TestSchedulersJob', $methodsToBeMocked);
+        $jobMock = $this->getMockBuilder('TestSchedulersJob')->setMethods($methodsToBeMocked)->getMock();
         $this->prepareJob($jobMock, $data);
         return $jobMock;
     }

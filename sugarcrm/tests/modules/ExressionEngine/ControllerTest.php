@@ -39,7 +39,7 @@ class ExpressionEngine_ControllerTest extends Sugar_PHPUnit_Framework_TestCase
         require_once 'modules/ExpressionEngine/controller.php';
 
         /** @var PHPUnit_Framework_MockObject_MockObject | ExpressionEngineController $controller */
-        $controller = $this->getMock('ExpressionEngineController', array('display'));
+        $controller = $this->createPartialMock('ExpressionEngineController', array('display'));
 
         // assert that display method was invoked which means no PHP error was triggered
         $controller->expects($this->once())->method('display');

@@ -84,7 +84,7 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteGlobalSearch()
     {
-        $engine = $this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable');
+        $engine = $this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable');
 
         $expectedCalls = array(
             'from',

@@ -150,7 +150,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             'changes' => array(),
         );
 
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
+        $sugarQueryMock = $this->createPartialMock('SugarQuery', array("execute"));
         $sugarQueryMock->expects($this->once())
             ->method("execute")
             ->will($this->returnValue($records));
@@ -223,7 +223,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
+        $sugarQueryMock = $this->createPartialMock('SugarQuery', array("execute"));
         $sugarQueryMock->expects($this->once())
             ->method("execute")
             ->will($this->returnValue($records));
@@ -286,7 +286,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             'changes' => array(),
         );
 
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
+        $sugarQueryMock = $this->createPartialMock('SugarQuery', array("execute"));
         $sugarQueryMock->expects($this->once())
             ->method("execute")
             ->will($this->returnValue($records));
@@ -359,7 +359,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         'changes' => array(),
     );
 
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
+        $sugarQueryMock = $this->createPartialMock('SugarQuery', array("execute"));
         $sugarQueryMock->expects($this->once())
             ->method("execute")
             ->will($this->returnValue($records));
@@ -455,7 +455,7 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
+        $sugarQueryMock = $this->createPartialMock('SugarQuery', array("execute"));
         $sugarQueryMock->expects($this->once())
             ->method("execute")
             ->will($this->returnValue($records));

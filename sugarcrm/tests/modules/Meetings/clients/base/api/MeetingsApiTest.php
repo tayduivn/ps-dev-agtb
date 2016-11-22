@@ -30,7 +30,7 @@ class MeetingsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->api->user->id = 'foo';
         $GLOBALS['current_user'] = $this->api->user;
 
-        $this->meetingsApi = $this->getMock("MeetingsApi", array("isUserInvitedToMeeting"));
+        $this->meetingsApi = $this->createPartialMock('MeetingsApi', array("isUserInvitedToMeeting"));
     }
 
     public function tearDown()
@@ -67,7 +67,7 @@ class MeetingsApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetExternalInfo_UserIsDeveloperForMeetings_CanHostAndJoin()
     {
         //mock out user so we can return isDeveloperForModule = true
-        $this->api->user = $this->getMock('User', array('isAdmin', 'isDeveloperForModule'));
+        $this->api->user = $this->createPartialMock('User', array('isAdmin', 'isDeveloperForModule'));
         $this->api->user->id = 'foo';
         $this->api->user->expects($this->any())
             ->method("isAdmin")

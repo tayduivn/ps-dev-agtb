@@ -92,10 +92,10 @@ class FixEmailTemplatesTest extends UpgradeTestCase
      */
     public function testHandleLostPasswordTemplate($tplId, $bodyHtml, $expectBodyHtml)
     {
-        $mockUpgrade = $this->getMock('SugarUpgradeFixEmailTemplates', array(
+        $mockUpgrade = $this->getMockBuilder('SugarUpgradeFixEmailTemplates')->setMethods(array(
                 'getEmailTemplateBodyHtml',
                 'updateEmailTemplateBodyHtml'
-            ), array($this->upgrader));
+            ))->setConstructorArgs(array($this->upgrader))->getMock();
 
         $this->upgrader->config['passwordsetting']['lostpasswordtmpl'] = $tplId;
 
@@ -176,10 +176,10 @@ class FixEmailTemplatesTest extends UpgradeTestCase
      */
     public function testHandleGeneratePasswordTemplate($tplId, $bodyHtml, $expectBodyHtml)
     {
-        $mockUpgrade = $this->getMock('SugarUpgradeFixEmailTemplates', array(
+        $mockUpgrade = $this->getMockBuilder('SugarUpgradeFixEmailTemplates')->setMethods(array(
                 'getEmailTemplateBodyHtml',
                 'updateEmailTemplateBodyHtml'
-            ), array($this->upgrader));
+            ))->setConstructorArgs(array($this->upgrader))->getMock();
 
         $this->upgrader->config['passwordsetting']['generatepasswordtmpl'] = $tplId;
 
@@ -337,10 +337,10 @@ class FixEmailTemplatesTest extends UpgradeTestCase
      */
     public function testRun()
     {
-        $mockUpgrade = $this->getMock('SugarUpgradeFixEmailTemplates', array(
+        $mockUpgrade = $this->getMockBuilder('SugarUpgradeFixEmailTemplates')->setMethods(array(
                 'handleGeneratePasswordTemplate',
                 'handleLostPasswordTemplate'
-            ), array($this->upgrader));
+            ))->setConstructorArgs(array($this->upgrader))->getMock();
 
         $mockUpgrade->expects($this->once())->method('handleGeneratePasswordTemplate');
         $mockUpgrade->expects($this->once())->method('handleLostPasswordTemplate');

@@ -64,7 +64,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetOpportunitySalesStatusOnNewOpp()
     {
-        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
+        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();
@@ -83,7 +83,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSetOpportunitySalesStatusWithAccess($won_count, $lost_count, $total_count, $status)
     {
-        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
         $oppMock->id = 'test';
         $oppMock->fetched_row['id'] = 'test';
 
@@ -157,7 +157,7 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetOpportunitySalesStatusWithoutAccess()
     {
-        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();

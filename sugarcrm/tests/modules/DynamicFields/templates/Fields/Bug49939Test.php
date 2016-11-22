@@ -50,7 +50,7 @@ public function xssFields() {
 public function testPopulateFromPostWithXSSHelpField($badXSS, $expectedValue)
 {
     /** @var TemplateField $tf */
-    $tf = $this->getMock('TemplateField', array('applyVardefRules'), array());
+        $tf = $this->createPartialMock('TemplateField', array('applyVardefRules'));
     $request = InputValidation::create(array(
         'help' => $badXSS,
     ), array());

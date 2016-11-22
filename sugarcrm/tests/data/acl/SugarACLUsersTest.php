@@ -93,7 +93,7 @@ class SugarACLUsersTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
-        $acl_class = $this->getMock('SugarACLUsers', null);
+        $acl_class = $this->getMockBuilder('SugarACLUsers')->setMethods(null)->getMock();
         $result = $acl_class->checkAccess($module, $view, $context);
         $this->assertEquals($expected, $result);
     }
@@ -133,7 +133,7 @@ class SugarACLUsersTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
         /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
-        $acl_class = $this->getMock('SugarACLUsers', array('myselfCheck'));
+        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));
@@ -178,7 +178,7 @@ class SugarACLUsersTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
         /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
-        $acl_class = $this->getMock('SugarACLUsers', array('myselfCheck'));
+        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));
@@ -196,10 +196,10 @@ class SugarACLUsersTest extends Sugar_PHPUnit_Framework_TestCase
         $current_user = SugarTestHelper::setup('current_user', array(true, false));
 
         /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
-        $acl_class = $this->getMock('SugarACLUsers', null);
+        $acl_class = $this->createMock('SugarACLUsers');
 
         /** @var User|PHPUnit_Framework_MockObject_MockObject $bean */
-        $bean = $this->getMock('Users');
+        $bean = $this->createMock('Users');
 
         // Expected result - false if bean id and current_user id are not equal
         $this->assertFalse($acl_class->myselfCheck($bean, $current_user));
@@ -244,7 +244,7 @@ class SugarACLUsersTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('current_user', array(true, $isAdmin));
 
         /** @var SugarACLUsers|PHPUnit_Framework_MockObject_MockObject $acl_class */
-        $acl_class = $this->getMock('SugarACLUsers', array('myselfCheck'));
+        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
         $acl_class->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));

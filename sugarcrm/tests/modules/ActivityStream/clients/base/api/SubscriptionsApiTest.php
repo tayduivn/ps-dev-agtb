@@ -57,7 +57,7 @@ class SubscriptionsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSubscribeToRecord_NoAccess_ThrowsException()
     {
-        $mockLead = $this->getMock('Lead', array('ACLAccess'));
+        $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
         $mockLead->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
@@ -100,7 +100,7 @@ class SubscriptionsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUnSubscribeFromRecord_NoAccess_ThrowsException()
     {
-        $mockLead = $this->getMock('Lead', array('ACLAccess'));
+        $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
         $mockLead->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));

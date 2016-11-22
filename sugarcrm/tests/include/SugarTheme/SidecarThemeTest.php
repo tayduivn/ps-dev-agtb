@@ -184,7 +184,10 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
         // Create a stub for the SomeClass class.
-        $theme = $this->getMock('SidecarTheme', array('getThemeVariables'), array($this->platformTest, $this->themeTest));
+        $theme = $this->getMockBuilder('SidecarTheme')
+            ->setMethods(array('getThemeVariables'))
+            ->setConstructorArgs(array($this->platformTest, $this->themeTest))
+            ->getMock();
         $theme->expects($this->any())
             ->method('getThemeVariables')
             ->will($this->returnValue($mockThemeVariables));

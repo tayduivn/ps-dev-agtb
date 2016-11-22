@@ -17,7 +17,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function aclProvider()
     {
-        $this->getMock('SugarACLDCE');
+        $this->createMock('SugarACLDCE');
         return array(
             array(1, array('SugarACLStatic'), array('SugarACLStatic' => true)), //ACL
             array(0, array(), array('SugarACLStatic' => false)),
@@ -96,13 +96,13 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
      */
     public function testCheckAccess()
     {
-        $acl1 = $this->getMock('SugarACLStatic');
+        $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(3))->method('checkAccess')->with('test', 'test2')->will($this->returnValue(false));
         SugarACL::$acls['test'] = array($acl1);
 
         $this->assertFalse(SugarACL::checkAccess('test', 'test2'));
 
-        $acl2 = $this->getMock('SugarACLStatic');
+        $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->with('test', 'test2')->will($this->returnValue(true));
         SugarACL::$acls['test'] = array($acl2);
 
@@ -122,11 +122,11 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
      */
     public function testDisabledModuleList()
     {
-        $acl1 = $this->getMock('SugarACLStatic');
+        $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(false));
         SugarACL::$acls['test1'] = array($acl1);
 
-        $acl2 = $this->getMock('SugarACLStatic');
+        $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(true));
         SugarACL::$acls['test2'] = array($acl2);
 
@@ -139,7 +139,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function testCheckField()
     {
-        $acl2 = $this->getMock('SugarACLStatic');
+        $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(1))->method('checkAccess')->with('test', 'field', array('field' => 'myfield', 'action' => 'myaction'))->will($this->returnValue(true));
         SugarACL::$acls['test'] = array($acl2);
 
@@ -151,11 +151,11 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
      */
     public function testFilterModuleList()
     {
-        $acl1 = $this->getMock('SugarACLStatic');
+        $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(true));
         SugarACL::$acls['test1'] = array($acl1);
 
-        $acl2 = $this->getMock('SugarACLStatic');
+        $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(false));
         SugarACL::$acls['test2'] = array($acl2);
 
@@ -187,7 +187,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         $acct = BeanFactory::getBean('Accounts');
         $this->assertTrue($acct->ACLAccess('edit'));
 
-        $rejectacl = $this->getMock('SugarACLStatic');
+        $rejectacl = $this->createMock('SugarACLStatic');
         $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnValue(false));
         SugarACL::setACL('Accounts', array($rejectacl));
         $this->assertFalse($acct->ACLAccess('edit'));

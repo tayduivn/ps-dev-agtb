@@ -181,14 +181,14 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
         $baseField = create_guid();
 
         /** @var SugarQuery_Builder_Field_Condition|PHPUnit_Framework_MockObject_MockObject $field */
-        $field = $this->getMock('SugarQuery_Builder_Field_Condition', array(), array(), '', false);
+        $field = $this->createMock('SugarQuery_Builder_Field_Condition');
         $field->def = array(
             'name' => $baseField,
             'type' => create_guid(),
         );
 
         /** @var SugarQuery_Builder_Condition|PHPUnit_Framework_MockObject_MockObject $condition */
-        $condition = $this->getMock('SugarQuery_Builder_Condition', array(), array(), '', false);
+        $condition = $this->createMock('SugarQuery_Builder_Condition');
         $condition->field = $field;
         foreach ($conditions as $k => $v) {
             $condition->$k = $v;
@@ -204,7 +204,10 @@ class SugarQuery_Compiler_SQLTest extends Sugar_PHPUnit_Framework_TestCase
         $db->expects($this->once())->method('convert')->with($this->equalTo($baseField), $this->equalTo('text2char'))->willReturn($castedField);
 
         /** @var SugarQuery_Compiler_SQL|PHPUnit_Framework_MockObject_MockObject $compiler */
-        $compiler = $this->getMock('SugarQuery_Compiler_SQL', array('compileField', 'prepareValue', 'getFieldCondition'), array($db));
+        $compiler = $this->getMockBuilder('SugarQuery_Compiler_SQL')
+            ->setMethods(['compileField', 'prepareValue', 'getFieldCondition'])
+            ->setConstructorArgs([$db])
+            ->getMock();
         $compiler->expects($this->at(0))->method('compileField')->with($this->equalTo($field))->willReturn($baseField);
 
         $actual = $compiler->compileCondition($condition);

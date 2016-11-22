@@ -79,7 +79,7 @@ class PMSEBusinessRuleTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve_by_string_fields'))
                 ->getMock();
-//        $definition = $this->getMock('pmse_BpmActivityDefinition', array('retrieve_by_string_fields'));
+//        $definition = $this->createPartialMock('pmse_BpmActivityDefinition', array('retrieve_by_string_fields'));
 
         $definition->act_fields = '298uj9sd812';
         $definition->pro_id = 'd8923dj982398d';
@@ -225,7 +225,7 @@ class PMSEBusinessRuleTest extends PHPUnit_Framework_TestCase
             ->disableAutoload()
             ->setMethods(array('retrieve_by_string_fields'))
             ->getMock();
-//        $definition = $this->getMock('pmse_BpmActivityDefinition', array('retrieve_by_string_fields'));
+//        $definition = $this->createPartialMock('pmse_BpmActivityDefinition', array('retrieve_by_string_fields'));
         $definition->act_fields = '298uj9sd812';
         $definition->pro_id = 'd8923dj982398d';
         $definition->act_field_module = 'Leads';
@@ -239,7 +239,7 @@ class PMSEBusinessRuleTest extends PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(array('retrieve_by_string_fields'))
                 ->getMock();
-//        $processDefinition = $this->getMock('pmse_BpmProcessDefinition', array('retrieve_by_string_fields'));
+//        $processDefinition = $this->createPartialMock('pmse_BpmProcessDefinition', array('retrieve_by_string_fields'));
         $processDefinition->pro_module = 'Leads';
         $processDefinition->pro_id = 'd8923dj982398d';
         

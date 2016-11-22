@@ -96,7 +96,7 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function getLinkMock(SugarBean $focus, $shouldBeanBeSaved)
     {
-        $bean = $this->getMock('SugarBean', array('save'));
+        $bean = $this->createPartialMock('SugarBean', array('save'));
         $bean->id = 'Bug58282Test';
 
         if ($shouldBeanBeSaved) {
@@ -109,11 +109,10 @@ class Bug58282Test extends Sugar_PHPUnit_Framework_TestCase
 
         $beans = array($bean);
 
-        $mock = $this->getMock(
-            'Link2',
-            array('getBeans'),
-            array('opportunities', $focus)
-        );
+        $mock = $this->getMockBuilder('Link2')
+            ->setMethods(['getbeans'])
+            ->setConstructorArgs(['opportunities', $focus])
+            ->getMock();
         $mock->expects($this->any())
             ->method('getBeans')
             ->will($this->returnValue($beans));

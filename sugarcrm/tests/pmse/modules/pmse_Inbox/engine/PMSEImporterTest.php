@@ -39,7 +39,7 @@ class PMSEImporterTest extends PHPUnit_Framework_TestCase
         $row5->name = "Email Template (2)";
 
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEImporter');
-        $this->bean = $this->getMock('pmse_EmailsTemplates', array('get_full_list', 'save', 'in_save'));
+        $this->bean = $this->createPartialMock('pmse_EmailsTemplates', array('get_full_list', 'save', 'in_save'));
         $this->bean->table_name = 'pmse_emails_templates';
         $this->bean->expects($this->any())
             ->method('get_full_list')

@@ -1309,7 +1309,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRepairIndexes($current, $new, $query)
     {
         $tablename1 = 'test23_' . mt_rand();
-        $dbmock = $this->getMock(get_class($this->_db), array('get_columns', 'get_indices', 'add_drop_constraint'));
+        $dbmock = $this->getMockBuilder(get_class($this->_db))
+            ->setMethods(array('get_columns', 'get_indices', 'add_drop_constraint'))
+            ->getMock();
         if (!($dbmock instanceof DBManager)) {
             // Failed to instantiate the driver, skip it
             $this->markTestSkipped("Could not load DB driver");
@@ -2323,7 +2325,7 @@ SQL;
         // First assuming that we are only running unit tests against a supported database :)
         $this->assertTrue($this->_db->canInstall(), "Apparently we are not running this unit test against a supported database!!!");
 
-        $DBstub = $this->getMock($DBManagerClass, array('version'));
+        $DBstub = $this->getMockBuilder($DBManagerClass)->setMethods(array('version'))->getMock();
         $DBstub->expects($this->any())
                ->method('version')
                ->will($this->returnValue('0.0.0')); // Expect that any supported version is higher than 0.0.0
@@ -3135,7 +3137,7 @@ SQL;
      */
     public function testOneColumnSQLRep($fieldDef, $expected)
     {
-        $db = $this->getMock(get_class($this->_db), array('massageValue'));
+        $db = $this->getMockBuilder(get_class($this->_db))->setMethods(array('massageValue'))->getMock();
         $method = $db->expects($this->$expected())->method('massageValue');
         if ($expected != 'never') {
             $method->with($this->equalTo($fieldDef['default']), $this->equalTo($fieldDef))->will($this->returnValue("correct"));
@@ -3211,7 +3213,9 @@ SQL;
         $vardefs['quantity'] = array_merge($vardefs['quantity'], $vardefcol);
 
         // Oracle currently forces decimals to be 20,2 - can't test here
-        $dbmock = $this->getMock($driver, array('get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'));
+        $dbmock = $this->getMockBuilder($driver)
+            ->setMethods(array('get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'))
+            ->getMock();
         if (!($dbmock instanceof DBManager)) {
                 // Failed to instantiate the driver, skip it
                 $this->markTestSkipped("Could not load driver for $driver");

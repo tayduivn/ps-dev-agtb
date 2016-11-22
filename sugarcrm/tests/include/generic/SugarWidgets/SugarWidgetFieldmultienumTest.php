@@ -45,9 +45,9 @@ class SugarWidgetReportFieldmultienumTest extends PHPUnit_Framework_TestCase
         $def = array(
             'name' => 'test'
         );
-        $report = $this->getMock('Report');
+        $report = $this->createMock('Report');
         $db = DBManagerFactory::getInstance();
-        $dbMock = $this->getMock(get_class($db), array('convert'));
+        $dbMock = $this->createPartialMock(get_class($db), array('convert'));
         $dbMock->expects($this->once())
             ->method('convert')
             ->with($this->equalTo('test'), $this->equalTo('text2char'));

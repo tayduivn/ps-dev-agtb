@@ -47,7 +47,7 @@ class SugarJobKBContentUpdateArticlesTest extends Sugar_PHPUnit_Framework_TestCa
         $this->approvedArticle->is_external = false;
         $this->approvedArticle->save();
 
-        $schedulersJob = $this->getMock('SchedulersJob');
+        $schedulersJob = $this->createMock('SchedulersJob');
         $schedulersJob->expects($this->any())->method('succeedJob')->will($this->returnValue(true));
 
         $this->job = new SugarJobKBContentUpdateArticles();

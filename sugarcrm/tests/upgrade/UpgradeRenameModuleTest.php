@@ -137,7 +137,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
     public function testNonUsLangWithUntranslatedModuleNameShouldNotBeProcessed(array $appListStringLang, array $appListStringLangCore, array $appListStringDefault)
     {
         /** @var PHPUnit_Framework_MockObject_MockObject|RenameModules $renameModules */
-        $renameModules = $this->getMock('RenameModules');
+        $renameModules = $this->createMock('RenameModules');
         $renameModules->expects($this->never())->method('getModuleSingularKey');
         $renameModules->expects($this->never())->method('changeModuleModStrings');
         $renameModules->expects($this->never())->method('setChangedModules');
@@ -145,13 +145,16 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $renameModules->expects($this->never())->method('getRenamedModules');
 
         /** @var PHPUnit_Framework_MockObject_MockObject|SugarUpgradeRenameModules $script */
-        $script = $this->getMock('SugarUpgradeRenameModules', array(
-            'getLanguages',
-            'getDefaultAppListStrings',
-            'getAppListStrings',
-            'getCoreAppListStrings',
-            'getRenameModulesInstance',
-        ), array($this->getMockForAbstractClass('UpgradeDriver')));
+        $script = $this->getMockBuilder('SugarUpgradeRenameModules')
+            ->setMethods(array(
+                'getLanguages',
+                'getDefaultAppListStrings',
+                'getAppListStrings',
+                'getCoreAppListStrings',
+                'getRenameModulesInstance',
+            ))
+            ->setConstructorArgs([$this->getMockForAbstractClass('UpgradeDriver')])
+            ->getMock();
         $script->expects($this->once())->method('getLanguages')->will($this->returnValue(array('lang_LANG' => 'Language')));
         $script->expects($this->once())->method('getDefaultAppListStrings')->will($this->returnValue($appListStringDefault));
         $script->expects($this->atLeastOnce())->method('getAppListStrings')->with($this->equalTo('lang_LANG'))->will($this->returnValue($appListStringLang));

@@ -543,7 +543,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q->from($bean);
 
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('isEmpty'), array($q));
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('isEmpty'))
+            ->setConstructorArgs(array($q))
+            ->getMock();
         $where->expects($this->once())->method('isEmpty')->with($field)->will($this->returnSelf());
 
         FilterApiMock::addFilters(array(
@@ -563,7 +566,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q->from($bean);
 
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('isNotEmpty'), array($q));
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('isNotEmpty'))
+            ->setConstructorArgs(array($q))
+            ->getMock();
         $where->expects($this->once())->method('isNotEmpty')->with($field)->will($this->returnSelf());
 
         FilterApiMock::addFilters(array(
@@ -1140,7 +1146,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         ));
 
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('gt'), array($query));
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('gt'))
+            ->setConstructorArgs(array($query))
+            ->getMock();
         $where->expects($this->once())->method('gt')->with(
             $this->equalTo('date_entered'),
             $this->equalTo(array('$field' => 'date_modified')),
@@ -1175,7 +1184,10 @@ class FilterApiTest extends Sugar_PHPUnit_Framework_TestCase
         $q = new SugarQuery();
         $q->from($bean);
         /** @var SugarQuery_Builder_Where|PHPUnit_Framework_MockObject_MockObject $where */
-        $where = $this->getMock('SugarQuery_Builder_Where', array('dateRange'), array($q));
+        $where = $this->getMockBuilder('SugarQuery_Builder_Where')
+            ->setMethods(array('dateRange'))
+            ->setConstructorArgs(array($q))
+            ->getMock();
         $where->expects($this->once())->method('dateRange')->with(
             $this->equalTo('date_entered'),
             $this->equalTo(''),

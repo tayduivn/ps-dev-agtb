@@ -36,7 +36,7 @@ class TimeElapsedSaveOnceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUniqueSaveOnce()
     {
         // Initialize the mock
-        $bean = $this->getMock('Account', array('save'));
+        $bean = $this->getMockBuilder('Account')->setMethods(array('save'))->getMock();
         // We expect save() to run on this bean only once
         $bean->expects($this->once())->method('save');
         $bean->id = $this->beanId;

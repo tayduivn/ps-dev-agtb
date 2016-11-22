@@ -189,7 +189,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             )));
 
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('getSources')
             ->willReturn(array('a', 'b', 'c'));
@@ -254,7 +254,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('getSources')
             ->willReturn(array('a', 'b', 'c'));
@@ -331,7 +331,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('getSources')
             ->willReturn(array('a', 'b', 'c'));
@@ -374,7 +374,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->any())
             ->method('hasFieldMap')
             ->willReturn(true);
@@ -438,7 +438,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetSourceFilter(array $sourceFilter, array $storedFilter, array $apiFilter, array $expected)
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('hasSourceFilter')
             ->with('test-source')
@@ -565,7 +565,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                 return 'from-default-order-by';
             }));
 
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->any())
             ->method('getOrderBy')
             ->willReturn($orderBy);
@@ -630,7 +630,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNormalizeOffsetSuccess($offset, array $expected)
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('getSources')
             ->willReturn(array('a'));
@@ -688,7 +688,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNormalizeOffsetFailure(array $offset)
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         SugarTestReflection::callProtectedMethod(
             $this->api,
             'normalizeOffset',
@@ -712,7 +712,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNormalizeStoredFilterSuccess(array $args, array $expected)
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->any())
             ->method('hasStoredFilter')
             ->willReturn(true);
@@ -753,7 +753,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testNormalizeStoredFilterFailure()
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->any())
             ->method('hasStoredFilter')
             ->willReturn(false);
@@ -1798,7 +1798,7 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetAdditionalSortFields(array $args, array $sources, array $sortSpec, array $expected)
     {
-        $definition = $this->getMock('CollectionDefinitionInterface');
+        $definition = $this->createMock('CollectionDefinitionInterface');
         $definition->expects($this->once())
             ->method('getSources')
             ->willReturn($sources);

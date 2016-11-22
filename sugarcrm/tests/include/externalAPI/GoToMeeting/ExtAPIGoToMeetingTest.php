@@ -169,7 +169,7 @@ class ExtAPIGoToMeetingTest extends Sugar_PHPUnit_Framework_TestCase
         $headers = array();
 
         $this->assertTrue(is_array($body), '$body should be an array()');
-        $goToMeetingAPI = $this->getMock('ExtAPIGoToMeeting', array('makeRequest'));
+        $goToMeetingAPI = $this->createPartialMock('ExtAPIGoToMeeting', array('makeRequest'));
         $goToMeetingAPI->expects($this->any())
             ->method('makeRequest')
             ->will(

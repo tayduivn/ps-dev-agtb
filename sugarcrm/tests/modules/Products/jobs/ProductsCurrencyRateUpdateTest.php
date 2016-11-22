@@ -45,7 +45,7 @@ class ProductsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setupMockClass()
     {
-        $this->mock = $this->getMock('ProductsCurrencyRateUpdate', array('getProductsWithNonClosedQuote'));
+        $this->mock = $this->createPartialMock('ProductsCurrencyRateUpdate', array('getProductsWithNonClosedQuote'));
         // we want to use our mock database for these tests, so replace it
         SugarTestReflection::setProtectedValue($this->mock, 'db', $this->db);
     }

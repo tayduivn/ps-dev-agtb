@@ -54,7 +54,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                 'readAccess' => true,
             );
         
-        $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));
+        $sugarSpot = $this->createPartialMock('SugarSpot', array('_performSearch'));
         $sugarSpot->expects($this->any())
             ->method('_performSearch')
             ->will($this->returnValue($result));
@@ -97,7 +97,7 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
                 'readAccess' => true,
             );
         
-        $sugarSpot = $this->getMock('SugarSpot', array('_performSearch'));
+        $sugarSpot = $this->createPartialMock('SugarSpot', array('_performSearch'));
         $sugarSpot->expects($this->any())
             ->method('_performSearch')
             ->will($this->returnValue($result));

@@ -31,7 +31,7 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasCapability($interface, $capability, $expected)
     {
-        $engine = new SearchEngine($this->getMock($interface));
+        $engine = new SearchEngine($this->createMock($interface));
         $this->assertSame($expected, $engine->hasCapability($capability));
     }
 
@@ -71,8 +71,8 @@ class SearchEngineTest extends \PHPUnit_Framework_TestCase
     public function dataProviderTestGetEngine()
     {
         return array(
-            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')),
-            array($this->getMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')),
+            array($this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')),
+            array($this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')),
         );
     }
 

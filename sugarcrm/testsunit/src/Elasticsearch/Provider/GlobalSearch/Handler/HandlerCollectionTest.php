@@ -33,7 +33,7 @@ class HandlerCollectionTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array())
             ->getMock();
 
-        $handler = $this->getMock('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface');
+        $handler = $this->createMock('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\HandlerInterface');
 
         $handler->expects($this->once())
             ->method('setProvider')

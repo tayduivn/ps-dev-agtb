@@ -416,13 +416,13 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'dataChanges' => array("assigned_user_id" => array())
         );
 
-        $mockActivity = self::getMock('Activity', array('save', 'processRecord'));
+        $mockActivity = self::getMockBuilder('Activity')->setMethods(array('save', 'processRecord'))->getMock();
         $mockActivity->expects($this->once())
             ->method('save');
         $mockActivity->expects($this->once())
             ->method('processRecord');
 
-        $actManager = $this->getMock(
+        $actManager = $this->createPartialMock(
             'ActivityQueueManager',
             array(
                 'subscribeUserToRecord',
@@ -468,7 +468,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if (!$activityEnabled) {
             Activity::disable();
         }
-        $actManager = self::getMock(
+        $actManager = self::createPartialMock(
             'ActivityQueueManager',
             array('isValidLink', 'createOrUpdate', 'link', 'unlink')
         );
@@ -546,7 +546,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         //mock out db manager
         $dbManagerClass = get_class($bean->db);
-        $dbManager = self::getMock($dbManagerClass, array('getDataChanges'));
+        $dbManager = self::createPartialMock($dbManagerClass, array('getDataChanges'));
         $dbManager->expects($this->any())->method('getDataChanges')->will($this->returnValue($allDataChanges));
         $bean->db = $dbManager;
 

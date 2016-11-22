@@ -40,14 +40,14 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->passwordApi = new PasswordApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
 
-        $this->passwordApi->usr = $this->getMock('User');
+        $this->passwordApi->usr = $this->createMock('User');
 
         $this->passwordApi->usr->expects($this->any())->method('retrieve_user_id')->will($this->returnValue('test_id'));
         $this->passwordApi->usr->expects($this->any())->method('retrieve')->will($this->returnValue(true));
 
-        $this->passwordApi->usr->db = $this->getMock(get_class($GLOBALS['db']));
+        $this->passwordApi->usr->db = $this->createMock(get_class($GLOBALS['db']));
         $this->passwordApi->usr->db->expects($this->any())->method('query')->will($this->returnValue(true));
-        $this->passwordApi->usr->emailAddress = $this->getMock('emailAddress');
+        $this->passwordApi->usr->emailAddress = $this->createMock('emailAddress');
         $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will($this->returnValue($this->args['email']));
 
         $this->passwordApi->usr->portal_only = false;
@@ -155,7 +155,7 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
             $this->returnValue($data['primary'])
         );
-        $this->passwordApi->usr->emailAddress = $this->getMock('emailAddress');
+        $this->passwordApi->usr->emailAddress = $this->createMock('emailAddress');
         $this->passwordApi->usr->emailAddress->expects($this->any())->method('getPrimaryAddress')->will(
             $this->returnValue($data['email'])
         );

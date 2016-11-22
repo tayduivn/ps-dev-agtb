@@ -127,7 +127,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testToggleExistingFavorite_DeletedIs0_CallsMark_undeletedAndReturnsTrue()
     {
-        $favMock = $this->getMock("SugarFavorites", array("mark_deleted", "mark_undeleted"));
+        $favMock = $this->createPartialMock('SugarFavorites', array("mark_deleted", "mark_undeleted"));
         $favMock->expects($this->never())->method("mark_deleted");
         $favMock->expects($this->once())->method("mark_undeleted");
 
@@ -137,7 +137,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testToggleExistingFavorite_DeletedIs1_CallsMark_deletedAndReturnsTrue()
     {
-        $favMock = $this->getMock("SugarFavorites", array("mark_deleted", "mark_undeleted"));
+        $favMock = $this->createPartialMock('SugarFavorites', array("mark_deleted", "mark_undeleted"));
         $favMock->expects($this->once())->method("mark_deleted");
         $favMock->expects($this->never())->method("mark_undeleted");
 
@@ -148,7 +148,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSave_DeletedIs0_CallsSubscribeUserToRecord()
     {
         $contact = SugarTestContactUtilities::createContact();
-        $favMock = $this->getMock("SugarFavorites", array("subscribeUserToRecord"));
+        $favMock = $this->getMockBuilder('SugarFavorites')->setMethods(array("subscribeUserToRecord"))->getMock();
         $favMock->expects($this->once())->method("subscribeUserToRecord");
 
         $favMock->module           = $contact->module_dir;
@@ -164,7 +164,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSave_DeletedIs1_NeverCallsSubscribeUserToRecord()
     {
         $contact = SugarTestContactUtilities::createContact();
-        $favMock = $this->getMock("SugarFavorites", array("subscribeUserToRecord"));
+        $favMock = $this->getMockBuilder('SugarFavorites')->setMethods(array("subscribeUserToRecord"))->getMock();
         $favMock->expects($this->never())->method("subscribeUserToRecord");
 
         $favMock->module           = $contact->module_dir;
@@ -180,7 +180,7 @@ class SugarFavoritesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMark_undeleted_CallsSubscribeUserToRecord()
     {
         $contact = SugarTestContactUtilities::createContact();
-        $favMock = $this->getMock("SugarFavorites", array("subscribeUserToRecord"));
+        $favMock = $this->getMockBuilder('SugarFavorites')->setMethods(array("subscribeUserToRecord"))->getMock();
         $favMock->expects($this->once())->method("subscribeUserToRecord");
 
         $favMock->module           = $contact->module_dir;

@@ -23,7 +23,7 @@ class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testDisplayWithClassicView()
 	{
-	    $view = $this->getMock('ViewClassic',array('includeClassicFile'));
+        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
 
 	    $view->module = 'testmodule'.mt_rand();
 	    $view->action = 'testaction'.mt_rand();
@@ -41,7 +41,7 @@ class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testDisplayWithClassicCustomView()
 	{
-	    $view = $this->getMock('ViewClassic',array('includeClassicFile'));
+        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
 
 	    $view->module = 'testmodule'.mt_rand();
 	    $view->action = 'testaction'.mt_rand();
@@ -59,7 +59,7 @@ class ViewClassicTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testDisplayWithNoClassicView()
 	{
-	    $view = $this->getMock('ViewClassic',array('includeClassicFile'));
+        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
 
 	    $view->module = 'testmodule'.mt_rand();
 	    $view->action = 'testaction'.mt_rand();

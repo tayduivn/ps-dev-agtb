@@ -25,7 +25,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
-        $this->worksheet = $this->getMock('ForecastWorksheet', array('save', 'load_relationship'));
+        $this->worksheet = $this->createPartialMock('ForecastWorksheet', array('save', 'load_relationship'));
     }
 
     public function tearDown()
@@ -44,7 +44,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->worksheet->draft = 1;
 
         /* @var $hook ForecastWorksheetHooks */
-        $hook = $this->getMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
+        $hook = $this->createPartialMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
         $hook::$_isForecastSetup = false;
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
@@ -155,7 +155,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
     public function testManagerNotifyCommitStageWithUserWithNoReportsToReturnsFalse()
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $user = $this->getMock('User', array('save'));
+        $user = $this->createPartialMock('User', array('save'));
         $user->id = 'test';
 
         $link2 = $this->getMockBuilder('Link2')
@@ -200,7 +200,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
     public function testManagerNotifyCommitStageWithUserWithReportsToCreatesNotification()
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $user = $this->getMock('User', array('save'));
+        $user = $this->createPartialMock('User', array('save'));
         $user->id = 'test';
         $user->reports_to_id = 'test1';
 
@@ -233,7 +233,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
 
-        $notification = $this->getMock('Notifications', array('save'));
+        $notification = $this->createPartialMock('Notifications', array('save'));
         $notification->expects($this->once())
             ->method('save')
             ->will($this->returnValue(true));
@@ -262,7 +262,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $hook = new MockForecastWorksheetHooks();
 
-        $worksheet = $this->getMock('ForecastWorksheet', array('save'));
+        $worksheet = $this->createPartialMock('ForecastWorksheet', array('save'));
 
         $fn = $field . '_name';
         $fi = $field . '_id';
@@ -295,7 +295,7 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
          */
         $dbMock = SugarTestHelper::setUp('mock_db');
 
-        $worksheet = $this->getMock('ForecastWorksheet', array('save', 'load_relationship', 'getFieldDefinition'));
+        $worksheet = $this->createPartialMock('ForecastWorksheet', array('save', 'load_relationship', 'getFieldDefinition'));
         $worksheet->db = $dbMock;
 
         $worksheet->expects($this->once())

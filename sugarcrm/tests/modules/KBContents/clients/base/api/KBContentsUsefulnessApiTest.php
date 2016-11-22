@@ -189,12 +189,12 @@ class KBContentsUsefulnessApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testVoteNotUsefulNotAuthorized($isUseful)
     {
-        $beanMock = $this->getMock('KBContents', array('ACLAccess'));
+        $beanMock = $this->getMockBuilder('KBContents')->setMethods(array('ACLAccess'))->getMock();
         $beanMock->expects($this->once())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
 
-        $apiMock = $this->getMock('KBContentsUsefulnessApi', array('loadBean'));
+        $apiMock = $this->getMockBuilder('KBContentsUsefulnessApi')->setMethods(array('loadBean'))->getMock();
         $apiMock->expects($this->once())
             ->method('loadBean')
             ->will(

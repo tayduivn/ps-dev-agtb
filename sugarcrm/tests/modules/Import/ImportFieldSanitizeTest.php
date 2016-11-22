@@ -1155,7 +1155,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     protected function setupUserMockWithTZ($tz) {
-        $userMock = $this->getMock("User", array('getPreference'));
+        $userMock = $this->createPartialMock('User', array('getPreference'));
         $userMock->expects($this->atLeastOnce())
             ->method('getPreference')
             ->will($this->returnValueMap(array(

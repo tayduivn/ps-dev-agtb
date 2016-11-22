@@ -57,13 +57,13 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $logMessages = '';
         
         /** @var SugarLogger|PHPUnit_Framework_MockObject_MockObject $log */
-        $logWriter = $this->getMock('SugarLogger', array('write'));
+        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(array('write'))->getMock();
         $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
             $logMessages .= $message;
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
-        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel($currentLevel);
@@ -81,13 +81,13 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         $logMessages = '';
         
         /** @var SugarLogger|PHPUnit_Framework_MockObject_MockObject $log */
-        $logWriter = $this->getMock('SugarLogger', array('write'));
+        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(array('write'))->getMock();
         $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
             $logMessages .= $message;
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
-        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel('debug');
@@ -196,7 +196,7 @@ class SugarLoggerTest extends Sugar_PHPUnit_Framework_TestCase
         )
     {
         /** @var LoggerManagerSugarLoggerTestMock|PHPUnit_Framework_MockObject_MockObject $logManager */
-        $logManager = $this->getMock('LoggerManagerSugarLoggerTestMock', array('log'), array(), '', false);
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array('log'));
         
         $logManager ->setLevel($currentLevel);
         $this->assertEquals($shouldMessageBeWritten, $logManager->wouldLog($logLevel));

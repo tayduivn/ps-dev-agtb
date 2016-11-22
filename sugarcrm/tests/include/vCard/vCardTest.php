@@ -151,7 +151,7 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
             ->setMethods(array('getBean'))
             ->getMock();
 
-        $data = $this->getMock('Person');
+        $data = $this->createMock('Person');
         $data->first_name = $fname;
         $data->last_name = $lname;
         $GLOBALS['current_user']->setPreference('default_export_charset', 'UTF-8');

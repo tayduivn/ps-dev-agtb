@@ -506,7 +506,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function createControllerMock(array $properties = array())
     {
-        $controller = $this->getMock('SugarController');
+        $controller = $this->createMock('SugarController');
         foreach ($properties as $property => $value) {
             $controller->$property = $value;
         }

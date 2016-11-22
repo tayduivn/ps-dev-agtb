@@ -47,7 +47,10 @@ END;
         $runsql = $this->upgrader->getScript("post", "1_RunSQL");
         $this->assertNotEmpty($runsql);
 
-        $mock = $this->getMock(get_class($runsql), array("parseAndExecuteSqlFile"), array($this->upgrader));
+        $mock = $this->getMockBuilder(get_class($runsql))
+            ->setMethods(['parseAndExecuteSqlFile'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
         $dbMock = $this->getMockBuilder('DBManager')
             ->setMethods(array('getScriptName'))
             ->getMockForAbstractClass();

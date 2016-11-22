@@ -145,7 +145,7 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetBrowserTitle()
     {
-        $viewMock = $this->getMock('SugarViewTestMock',array('_getModuleTitleParams'));
+        $viewMock = $this->createPartialMock('SugarViewTestMock', array('_getModuleTitleParams'));
         $viewMock->expects($this->any())
                  ->method('_getModuleTitleParams')
                  ->will($this->returnValue(array('foo','bar')));

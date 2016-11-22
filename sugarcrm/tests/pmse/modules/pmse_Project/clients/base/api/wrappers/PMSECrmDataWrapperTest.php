@@ -61,7 +61,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         //$this->beanList = json_decode('{"ACLRoles":"ACLRole","ACLActions":"ACLAction","ACLFields":"ACLField","Leads":"Lead","Cases":"aCase","Bugs":"Bug","ProspectLists":"ProspectList","Prospects":"Prospect","Project":"Project","ProjectTask":"ProjectTask","Campaigns":"Campaign","EmailMarketing":"EmailMarketing","CampaignLog":"CampaignLog","CampaignTrackers":"CampaignTracker","Releases":"Release","Groups":"Group","EmailMan":"EmailMan","Schedulers":"Scheduler","SchedulersJobs":"SchedulersJob","Contacts":"Contact","Accounts":"Account","DynamicFields":"DynamicField","EditCustomFields":"FieldsMetaData","Opportunities":"Opportunity","EmailTemplates":"EmailTemplate","Notes":"Note","Calls":"Call","Emails":"Email","Meetings":"Meeting","Tasks":"Task","Users":"User","Currencies":"Currency","Trackers":"Tracker","Connectors":"Connectors","TrackerSessions":"TrackerSession","TrackerPerfs":"TrackerPerf","TrackerQueries":"TrackerQuery","Import_1":"ImportMap","Import_2":"UsersLastImport","Versions":"Version","Administration":"Administration","vCals":"vCal","CustomFields":"CustomFields","Documents":"Document","DocumentRevisions":"DocumentRevision","Roles":"Role","Audit":"Audit","InboundEmail":"InboundEmail","SavedSearch":"SavedSearch","UserPreferences":"UserPreference","MergeRecords":"MergeRecord","EmailAddresses":"EmailAddress","EmailText":"EmailText","Relationships":"Relationship","Employees":"Employee","Reports":"SavedReport","Reports_1":"SavedReport","Teams":"Team","TeamMemberships":"TeamMembership","TeamSets":"TeamSet","TeamSetModules":"TeamSetModule","Quotes":"Quote","Products":"Product","ProductBundles":"ProductBundle","ProductBundleNotes":"ProductBundleNote","ProductTemplates":"ProductTemplate","ProductTypes":"ProductType","ProductCategories":"ProductCategory","Manufacturers":"Manufacturer","Shippers":"Shipper","TaxRates":"TaxRate","TeamNotices":"TeamNotice","TimePeriods":"TimePeriod","AnnualTimePeriods":"AnnualTimePeriod","QuarterTimePeriods":"QuarterTimePeriod","Quarter544TimePeriods":"Quarter544TimePeriod","Quarter445TimePeriods":"Quarter445TimePeriod","Quarter454TimePeriods":"Quarter454TimePeriod","MonthTimePeriods":"MonthTimePeriod","Forecasts":"Forecast","ForecastWorksheets":"ForecastWorksheet","ForecastManagerWorksheets":"ForecastManagerWorksheet","ForecastSchedule":"ForecastSchedule","Worksheet":"Worksheet","ForecastOpportunities":"ForecastOpportunities","Quotas":"Quota","WorkFlow":"WorkFlow","WorkFlowTriggerShells":"WorkFlowTriggerShell","WorkFlowAlertShells":"WorkFlowAlertShell","WorkFlowAlerts":"WorkFlowAlert","WorkFlowActionShells":"WorkFlowActionShell","WorkFlowActions":"WorkFlowAction","Expressions":"Expression","Contracts":"Contract","KBDocuments":"KBDocument","KBDocumentRevisions":"KBDocumentRevision","KBTags":"KBTag","KBDocumentKBTags":"KBDocumentKBTag","KBContents":"KBContent","ContractTypes":"ContractType","Holidays":"Holiday","ProjectResources":"ProjectResource","CustomQueries":"CustomQuery","DataSets":"DataSet","ReportMaker":"ReportMaker","SugarFeed":"SugarFeed","Notifications":"Notifications","EAPM":"EAPM","OAuthKeys":"OAuthKey","OAuthTokens":"OAuthToken","SugarFavorites":"SugarFavorites","PdfManager":"PdfManager","ProcessMaker":"BpmnProject"}');
 
         $this->beanList = array("ACLRoles"=>"ACLRole","ACLActions"=>"ACLAction","ACLFields"=>"ACLField","Leads"=>"Lead","Cases"=>"aCase","Bugs"=>"Bug","ProspectLists"=>"ProspectList","Prospects"=>"Prospect","Project"=>"Project","ProjectTask"=>"ProjectTask","Campaigns"=>"Campaign","EmailMarketing"=>"EmailMarketing","CampaignLog"=>"CampaignLog","CampaignTrackers"=>"CampaignTracker","Releases"=>"Release","Groups"=>"Group","EmailMan"=>"EmailMan","Schedulers"=>"Scheduler","SchedulersJobs"=>"SchedulersJob","Contacts"=>"Contact","Accounts"=>"Account","DynamicFields"=>"DynamicField","EditCustomFields"=>"FieldsMetaData","Opportunities"=>"Opportunity","EmailTemplates"=>"EmailTemplate","Notes"=>"Note","Calls"=>"Call","Emails"=>"Email","Meetings"=>"Meeting","Tasks"=>"Task","Users"=>"User","Currencies"=>"Currency","Trackers"=>"Tracker","Connectors"=>"Connectors","TrackerSessions"=>"TrackerSession","TrackerPerfs"=>"TrackerPerf","TrackerQueries"=>"TrackerQuery","Import_1"=>"ImportMap","Import_2"=>"UsersLastImport","Versions"=>"Version","Administration"=>"Administration","vCals"=>"vCal","CustomFields"=>"CustomFields","Documents"=>"Document","DocumentRevisions"=>"DocumentRevision","Roles"=>"Role","Audit"=>"Audit","InboundEmail"=>"InboundEmail","SavedSearch"=>"SavedSearch","UserPreferences"=>"UserPreference","MergeRecords"=>"MergeRecord","EmailAddresses"=>"EmailAddress","EmailText"=>"EmailText","Relationships"=>"Relationship","Employees"=>"Employee","Reports"=>"SavedReport","Reports_1"=>"SavedReport","Teams"=>"Team","TeamMemberships"=>"TeamMembership","TeamSets"=>"TeamSet","TeamSetModules"=>"TeamSetModule","Quotes"=>"Quote","Products"=>"Product","ProductBundles"=>"ProductBundle","ProductBundleNotes"=>"ProductBundleNote","ProductTemplates"=>"ProductTemplate","ProductTypes"=>"ProductType","ProductCategories"=>"ProductCategory","Manufacturers"=>"Manufacturer","Shippers"=>"Shipper","TaxRates"=>"TaxRate","TeamNotices"=>"TeamNotice","TimePeriods"=>"TimePeriod","AnnualTimePeriods"=>"AnnualTimePeriod","QuarterTimePeriods"=>"QuarterTimePeriod","Quarter544TimePeriods"=>"Quarter544TimePeriod","Quarter445TimePeriods"=>"Quarter445TimePeriod","Quarter454TimePeriods"=>"Quarter454TimePeriod","MonthTimePeriods"=>"MonthTimePeriod","Forecasts"=>"Forecast","ForecastWorksheets"=>"ForecastWorksheet","ForecastManagerWorksheets"=>"ForecastManagerWorksheet","ForecastSchedule"=>"ForecastSchedule","Worksheet"=>"Worksheet","ForecastOpportunities"=>"ForecastOpportunities","Quotas"=>"Quota","WorkFlow"=>"WorkFlow","WorkFlowTriggerShells"=>"WorkFlowTriggerShell","WorkFlowAlertShells"=>"WorkFlowAlertShell","WorkFlowAlerts"=>"WorkFlowAlert","WorkFlowActionShells"=>"WorkFlowActionShell","WorkFlowActions"=>"WorkFlowAction","Expressions"=>"Expression","Contracts"=>"Contract","KBDocuments"=>"KBDocument","KBDocumentRevisions"=>"KBDocumentRevision","KBTags"=>"KBTag","KBDocumentKBTags"=>"KBDocumentKBTag","KBContents"=>"KBContent","ContractTypes"=>"ContractType","Holidays"=>"Holiday","ProjectResources"=>"ProjectResource","CustomQueries"=>"CustomQuery","DataSets"=>"DataSet","ReportMaker"=>"ReportMaker","SugarFeed"=>"SugarFeed","Notifications"=>"Notifications","EAPM"=>"EAPM","OAuthKeys"=>"OAuthKey","OAuthTokens"=>"OAuthToken","SugarFavorites"=>"SugarFavorites","PdfManager"=>"PdfManager","ProcessMaker"=>"BpmnProject");
-        $this->db = $this->getMock('db', array('query', 'fetchByAssoc'));
+        $this->db = $this->createPartialMock('db', array('query', 'fetchByAssoc'));
 
         $this->beanFactory = $this->getMockBuilder("BeanFactory")
                 ->setMethods(array('getBean'))
@@ -262,7 +262,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         );
     
 
-        $studio = $this->getMock('StudioBrowser', array('loadModules'));
+        $studio = $this->createPartialMock('StudioBrowser', array('loadModules'));
         $studio->expects($this->any())
             ->method('loadModules')
             ->will($this->returnValue($modules));
@@ -345,9 +345,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
-        $queryAndMock = $this->getMock('queryAnd', array('addRaw'));
+        $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
         
-        $whereMock = $this->getMock('where', array('queryAnd'));
+        $whereMock = $this->createPartialMock('where', array('queryAnd'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)
@@ -417,9 +417,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
-        $queryAndMock = $this->getMock('queryAnd', array('addRaw'));
+        $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
         
-        $whereMock = $this->getMock('where', array('queryAnd'));
+        $whereMock = $this->createPartialMock('where', array('queryAnd'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)
@@ -499,9 +499,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
-        $queryAndMock = $this->getMock('queryAnd', array('addRaw'));
+        $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
         
-        $whereMock = $this->getMock('where', array('queryAnd'));
+        $whereMock = $this->createPartialMock('where', array('queryAnd'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)
@@ -628,15 +628,15 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $filter = '';
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
-        $queryAndMock = $this->getMock('queryAnd', array('addRaw'));
+        $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
         
-        $whereMock = $this->getMock('where', array('queryAnd'));
+        $whereMock = $this->createPartialMock('where', array('queryAnd'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)
         );
         
-        $selectMock = $this->getMock('select', array('fieldRaw'));
+        $selectMock = $this->createPartialMock('select', array('fieldRaw'));
         $selectMock->expects($this->any())
             ->method('fieldRaw');
         
@@ -723,7 +723,7 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieveEmailTemplatesWithoutModule()
     {
             
-        $emailBeanMock = $this->getMock('pmse_Emails_Templates', array('get_full_list'));
+        $emailBeanMock = $this->createPartialMock('pmse_Emails_Templates', array('get_full_list'));
         $testModule = null;
         
         $emailBeanMock->expects($this->any())
@@ -1020,9 +1020,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         
-        $queryAndMock = $this->getMock('queryAnd', array('addRaw'));
+        $queryAndMock = $this->createPartialMock('queryAnd', array('addRaw'));
         
-        $whereMock = $this->getMock('where', array('queryAnd'));
+        $whereMock = $this->createPartialMock('where', array('queryAnd'));
         $whereMock->expects($this->any())
             ->method('queryAnd')
             ->will($this->returnValue($queryAndMock)

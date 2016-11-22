@@ -95,10 +95,10 @@ class DashletTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetHeaderIfHomePageIsNotLocked()
     {
-        $dashlet = $this->getMock('Dashlet',
-                                    array('setConfigureIcon','setRefreshIcon','setDeleteIcon'),
-                                    array('unit_test_run')
-                                    );
+        $dashlet = $this->getMockBuilder('DashletGenericChartTestMock')
+            ->setMethods(['setConfigureIcon','setRefreshIcon','setDeleteIcon'])
+            ->setConstructorArgs(['unit_test_run'])
+            ->getMock();
         $dashlet->expects($this->any())
                 ->method('setConfigureIcon')
                 ->will($this->returnValue('successconfigure'));
@@ -133,10 +133,10 @@ class DashletTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetHeaderIfHomePageIsLocked()
     {
-        $dashlet = $this->getMock('Dashlet',
-                                    array('setConfigureIcon','setRefreshIcon','setDeleteIcon'),
-                                    array('unit_test_run')
-                                    );
+        $dashlet = $this->getMockBuilder('DashletGenericChartTestMock')
+            ->setMethods(['setConfigureIcon','setRefreshIcon','setDeleteIcon'])
+            ->setConstructorArgs(['unit_test_run'])
+            ->getMock();
         $dashlet->expects($this->any())
                 ->method('setConfigureIcon')
                 ->will($this->returnValue('successconfigure'));

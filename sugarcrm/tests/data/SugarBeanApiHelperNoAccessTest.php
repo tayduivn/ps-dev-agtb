@@ -27,7 +27,7 @@ class SugarBeanApiHelperNoAccessTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
         // Mocking out SugarBean to avoid having to deal with any dependencies other than those that we need for this test
-        $mock = $this->getMock('SugarBean');
+        $mock = $this->createMock('SugarBean');
         $mock->id = 'SugarBeanApiHelperMockBean-1';
         $mock->favorite = false;
         $mock->module_name = 'Test';

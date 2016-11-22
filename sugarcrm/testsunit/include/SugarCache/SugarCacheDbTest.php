@@ -195,7 +195,7 @@ class SugarCacheDbTest extends \PHPUnit_Framework_TestCase
 
         TestReflection::setProtectedValue($mock, 'timeDate', $this->timeDate);
         TestReflection::setProtectedValue($mock, '_keyPrefix', '');
-        TestReflection::setProtectedValue($mock, 'logger', $this->getMock('Psr\Log\LoggerInterface'));
+        TestReflection::setProtectedValue($mock, 'logger', $this->createMock('Psr\Log\LoggerInterface'));
         return $mock;
     }
 

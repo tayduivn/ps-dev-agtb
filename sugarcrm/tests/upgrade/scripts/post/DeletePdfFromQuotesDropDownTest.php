@@ -50,8 +50,10 @@ class DeletePdfFromQuotesDropDownTest extends UpgradeTestCase
             ),
         );
 
-        $mockObject = $this->getMock('SugarUpgradeDeletePdfFromQuotesDropDown', array('getFilesToProcess', 'backupFile'),
-                                     array($this->upgrader));
+        $mockObject = $this->getMockBuilder('SugarUpgradeDeletePdfFromQuotesDropDown')
+            ->setMethods(['backupFile', 'getFilesToProcess'])
+            ->setConstructorArgs([$this->upgrader])
+            ->getMock();
 
         $mockObject->from_version = '6.5.17';
 

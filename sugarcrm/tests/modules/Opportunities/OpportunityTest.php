@@ -198,7 +198,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMapProbabilityFromSalesStage($sales_stage, $probability)
     {
         /* @var $oppMock Opportunity */
-        $oppMock = $this->getMock('Opportunity', array('save'));
+        $oppMock = $this->createPartialMock('Opportunity', array('save'));
         $oppMock->sales_stage = $sales_stage;
         // use the Reflection Helper to call the Protected Method
         SugarTestReflection::callProtectedMethod($oppMock, 'mapProbabilityFromSalesStage');

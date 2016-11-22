@@ -21,7 +21,7 @@ class SugarFieldParentTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                array(), array(), 'Custom', array(), array(), $this->getMock('ServiceBase')
+                array(), array(), 'Custom', array(), array(), $this->createMock('ServiceBase'),
             )
         );
     }
@@ -34,7 +34,7 @@ class SugarFieldParentTest extends Sugar_PHPUnit_Framework_TestCase
             ->setMethods(array('ensureApiFormatFieldArguments'))
             ->disableOriginalConstructor()
             ->getMock();
-        $bean = $this->getMock('SugarBean');
+        $bean = $this->createMock('SugarBean');
         $bean->parent_type = 'NonExistingClass';
         $sugarField->expects(static::once())
             ->method('ensureApiFormatFieldArguments')

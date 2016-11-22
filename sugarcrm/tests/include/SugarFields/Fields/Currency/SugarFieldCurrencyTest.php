@@ -137,7 +137,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $vardef = array();
 
         /* @var $focus SugarBean */
-        $focus = $this->getMock('Opportunity', array('save'));
+        $focus = $this->createPartialMock('Opportunity', array('save'));
 
         /* @var $field SugarFieldCurrency */
         $field = SugarFieldHandler::getSugarField('currency');
@@ -164,7 +164,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
             $settings->num_grp_sep = ',';
 
             /* @var $focus SugarBean */
-            $focus = $this->getMock('Opportunity', array('save'));
+            $focus = $this->createPartialMock('Opportunity', array('save'));
 
             /* @var $field SugarFieldCurrency */
             $field = SugarFieldHandler::getSugarField('currency');

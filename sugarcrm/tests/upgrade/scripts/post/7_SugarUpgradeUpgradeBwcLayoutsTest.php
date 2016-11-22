@@ -34,11 +34,10 @@ class SugarUpgradeUpgradeBwcLayoutsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRun($bwc_modules, $excpectUpgrade)
     {
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $this->script = $this->getMock(
-            'SugarUpgradeUpgradeBwcLayouts',
-            array('runBwcUpgraderModules'),
-            array($this->upgradeDriver)
-        );
+        $this->script = $this->getMockBuilder('SugarUpgradeUpgradeBwcLayouts')
+            ->setMethods(array('runBwcUpgraderModules'))
+            ->setConstructorArgs(array($this->upgradeDriver))
+            ->getMock();
 
         // BWC modules are registered by pre-upgrade script.
         $this->upgradeDriver->state = array(
@@ -64,11 +63,10 @@ class SugarUpgradeUpgradeBwcLayoutsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRunSinglePrepareBwcUpgraderModules($bwc_modules)
     {
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $this->script = $this->getMock(
-            'SugarUpgradeUpgradeBwcLayouts',
-            array('runBwcUpgraderModules'),
-            array($this->upgradeDriver)
-        );
+        $this->script = $this->getMockBuilder('SugarUpgradeUpgradeBwcLayouts')
+            ->setMethods(array('runBwcUpgraderModules'))
+            ->setConstructorArgs(array($this->upgradeDriver))
+            ->getMock();
         SugarTestReflection::callProtectedMethod($this->script, 'prepareBwcUpgraderModules', array($bwc_modules));
         $this->assertInstanceOf('SidecarMetaDataUpgraderBwc', $this->script->sidecarMetaDataUpgraderBwcUpgrader);
     }
@@ -80,11 +78,10 @@ class SugarUpgradeUpgradeBwcLayoutsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRunWhitEmptyBwcModules($bwc_modules, $excpectUpgrade)
     {
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $this->script = $this->getMock(
-            'SugarUpgradeUpgradeBwcLayouts',
-            array('runBwcUpgraderModules', 'getBwcModules'),
-            array($this->upgradeDriver)
-        );
+        $this->script = $this->getMockBuilder('SugarUpgradeUpgradeBwcLayouts')
+            ->setMethods(array('runBwcUpgraderModules', 'getBwcModules'))
+            ->setConstructorArgs(array($this->upgradeDriver))
+            ->getMock();
 
         // BWC modules are registered by pre-upgrade script.
         $this->upgradeDriver->state = array(

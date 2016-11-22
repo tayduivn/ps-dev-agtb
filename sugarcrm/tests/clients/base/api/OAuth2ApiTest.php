@@ -35,13 +35,13 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         // Non-admin attempting to sudo
-        $service = $this->getMock('RestService');
-        $service->user = $this->getMock('User',array('isAdmin'));
+        $service = $this->createMock('RestService');
+        $service->user = $this->createPartialMock('User', array('isAdmin'));
         $service->user->expects($this->once())
             ->method('isAdmin')
             ->will($this->returnValue(false));
 
-        $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
+        $api = $this->createPartialMock('OAuth2Api', array('getOAuth2Server'));
         $api->expects($this->never())
             ->method('getOAuth2Server');
 
@@ -54,7 +54,7 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($caughtException,'Did not deny a non-admin user from sudoing');
 
         // Admin user that is already being sudo-ed
-        $service->user = $this->getMock('User',array('isAdmin'));
+        $service->user = $this->createPartialMock('User', array('isAdmin'));
         $service->user->expects($this->any())
             ->method('isAdmin')
             ->will($this->returnValue(true));
@@ -70,12 +70,12 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $_SESSION = array();
 
         // Deny the oauth2 request
-        $oauth2 = $this->getMock('stdClass',array('getSudoToken'));
+        $oauth2 = $this->createPartialMock('stdClass', array('getSudoToken'));
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(false));
 
-        $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
+        $api = $this->createPartialMock('OAuth2Api', array('getOAuth2Server'));
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));
@@ -89,12 +89,12 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($caughtException,'Did not fail when the token was false');
 
         // Try a successful run
-        $oauth2 = $this->getMock('stdClass',array('getSudoToken'));
+        $oauth2 = $this->createPartialMock('stdClass', array('getSudoToken'));
         $oauth2->expects($this->once())
             ->method('getSudoToken')
             ->will($this->returnValue(array('access_token'=>'i_am_only_a_test')));
 
-        $api = $this->getMock('OAuth2Api',array('getOAuth2Server'));
+        $api = $this->createPartialMock('OAuth2Api', array('getOAuth2Server'));
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));
@@ -111,7 +111,7 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testIsSupportedClientVersion(array $info, $expected, $message)
     {
-        $service = $this->getMock('RestService');
+        $service = $this->createMock('RestService');
         $service->api_settings = array(
             'minClientVersions' => array(
                 'the-client' => '1.2.0',
@@ -131,13 +131,13 @@ class OAuth2ApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $serviceBase = SugarTestRestUtilities::getRestServiceMock();
 
-        $oauth2 = $this->getMock('stdClass', array('unsetRefreshToken'));
+        $oauth2 = $this->createPartialMock('stdClass', array('unsetRefreshToken'));
         $oauth2->expects($this->once())
         ->method('unsetRefreshToken')
         ->with($this->equalTo("test_refresh"))
         ->will($this->returnValue(true));
 
-        $api = $this->getMock('OAuth2Api', array('getOAuth2Server'));
+        $api = $this->createPartialMock('OAuth2Api', array('getOAuth2Server'));
         $api->expects($this->once())
             ->method('getOAuth2Server')
             ->will($this->returnValue($oauth2));

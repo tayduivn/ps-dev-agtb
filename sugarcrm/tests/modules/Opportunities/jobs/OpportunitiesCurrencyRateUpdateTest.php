@@ -43,7 +43,7 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
      */
     public function setupMockClass()
     {
-        $this->mock = $this->getMock('OpportunitiesCurrencyRateUpdate', array('getClosedStages'));
+        $this->mock = $this->createPartialMock('OpportunitiesCurrencyRateUpdate', array('getClosedStages'));
         $this->mock->expects($this->once())
             ->method('getClosedStages')
             ->will($this->returnValue(array('Closed Won', 'Closed Lost')));

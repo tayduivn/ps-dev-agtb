@@ -94,7 +94,7 @@ class CalendarApiTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $this->calendarApi = $this->getMock(
+        $this->calendarApi = $this->createPartialMock(
             'CalendarApiTest_CalendarApi',
             array('formatBean')
         );

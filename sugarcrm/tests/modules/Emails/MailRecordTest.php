@@ -29,7 +29,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->mailRecord          = new MailRecord();
         $this->mailRecord->subject = "MailRecord subject";
 
-        $this->mockEmail = $this->getMock("Email", array("email2Send"));
+        $this->mockEmail = $this->createPartialMock("Email", array("email2Send"));
     }
 
     public function tearDown()
@@ -423,7 +423,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("email2Send")
             ->will($this->returnValue(true));
 
-        $mailRecord                = $this->getMock("MailRecord", array("endCapturingOutput"));
+        $mailRecord                = $this->createPartialMock('MailRecord', array("endCapturingOutput"));
         $mailRecord->subject       = "MailRecord subject";
         $mailRecord->mockEmailBean = $this->mockEmail;
 

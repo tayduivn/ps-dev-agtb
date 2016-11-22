@@ -820,8 +820,8 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
                 array('1500.000000', 'Direct', 'test_user_id', 'test_timeperiod_id', true)
             );
 
-        $mockWorksheetOne = $this->getMock('ForecastManagerWorksheet', array('save'));
-        $mockWorksheetTwo = $this->getMock('ForecastManagerWorksheet', array('save'));
+        $mockWorksheetOne = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
+        $mockWorksheetTwo = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
 
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
@@ -1025,7 +1025,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
 
 
-        $tpMock = $this->getMock('TimePeriod', array('save'));
+        $tpMock = $this->createPartialMock('TimePeriod', array('save'));
 
         $worksheet->expects($this->once())
             ->method('getBean')
@@ -1106,7 +1106,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ->getMock();
 
 
-        $tpMock = $this->getMock('TimePeriod', array('save'));
+        $tpMock = $this->createPartialMock('TimePeriod', array('save'));
         $tpMock->id = 'test_timeperiod_id';
 
         $mockSQ = $this->getMockBuilder('SugarQuery')
@@ -1220,7 +1220,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ))
             ->getMock();
 
-        $userBean = $this->getMock('User', array('save'));
+        $userBean = $this->createPartialMock('User', array('save'));
 
         $worksheet->expects($this->once())
             ->method('isUserManager')
@@ -1382,7 +1382,7 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
             ))
             ->getMock();
 
-        $sq = $this->getMock('SugarQuery', array('getOne'));
+        $sq = $this->createPartialMock('SugarQuery', array('getOne'));
         $sq->expects($this->once())
             ->method('getOne')
             ->willReturn('50.000000');

@@ -25,7 +25,7 @@ class ExtAPIDnbTest extends Sugar_PHPUnit_Framework_TestCase
         //create object of extapidnb
         $this->dnbApiObj = new ExtAPIDnb();
         //create a mock object for curlWrapper
-        $this->dnbCurlMock = $this->getMock('DnbCurlWrapper');
+        $this->dnbCurlMock = $this->createMock('DnbCurlWrapper');
     }
 
     /**

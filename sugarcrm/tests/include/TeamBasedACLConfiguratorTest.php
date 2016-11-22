@@ -44,7 +44,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('current_user', array(true, true));
-        $this->tbaConfig = $this->getMock(
+        $this->tbaConfig = $this->createPartialMock(
             'TeamBasedACLConfigurator',
             array('applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback')
         );
@@ -123,7 +123,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFallbackAndRestore($module, $field)
     {
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
         $this->tbaConfig->setForModule($module, true);
         $action = 'view';
         $aclType = BeanFactory::getBean($module)->acltype;
@@ -203,7 +203,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRestoreDisabledModules()
     {
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
         $action = 'view';
         $roleActions = $this->role->getRoleActions($this->role->id);
         $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
@@ -227,7 +227,7 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFallbackDisabledModules()
     {
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
         $action = 'view';
         $extraModule = 'Bugs';
         $roleActions = $this->role->getRoleActions($this->role->id);
@@ -279,14 +279,16 @@ class TeamBasedACLConfiguratorTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRemoveTBAValuesFromBean($beanList, $expectedTableName)
     {
-        $this->tbaConfig = $this->getMock('TeamBasedACLConfigurator', array('removeAllTBAValuesFromTable'));
+        $this->tbaConfig = $this->getMockBuilder('TeamBasedACLConfigurator')
+            ->setMethods(array('removeAllTBAValuesFromTable'))
+            ->getMock();
         $this->tbaConfig
             ->expects($this->once())
             ->method('removeAllTBAValuesFromTable')
             ->with($expectedTableName);
 
         foreach ($beanList as $moduleName => $beanName) {
-            $bean = $this->getMock($beanName, null);
+            $bean = $this->getMockBuilder($beanName)->setMethods(null)->getMock();
             $this->tbaConfig->removeAllTBAValuesFromBean($bean);
         }
     }

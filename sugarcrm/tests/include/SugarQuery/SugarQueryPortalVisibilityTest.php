@@ -40,8 +40,13 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testVisibilityCall()
     {
-        $bean = $this->getMock('SugarBean', array('loadVisibility'));
-        $vis = $this->getMock('SupportPortalVisibility', array('addVisibilityFromQuery', 'addVisibilityWhereQuery'), array($bean));
+        $bean = $this->createPartialMock('SugarBean', array('loadVisibility'));
+
+        $vis = $this->getMockBuilder('SupportPortalVisibility')
+            ->setMethods(['addVisibilityFromQuery', 'addVisibilityWhereQuery'])
+            ->setConstructorArgs([$bean])
+            ->getMock();
+        $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
         $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
         $bean->module_dir = 'test';
         $query = new SugarQuery();

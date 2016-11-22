@@ -158,7 +158,7 @@ class MetaDataManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $expectedConfigs['systemName'] = $administration->settings['system_name'];
         }
     
-        $manager = $this->getMock('MetadataManagerMock', array('getSugarConfig'));
+        $manager = $this->createPartialMock('MetadataManagerMock', array('getSugarConfig'));
         $manager->expects($this->any())
             ->method('getSugarConfig')
             ->will($this->returnValue($sugarConfig));
@@ -668,7 +668,7 @@ PLATFORMS;
 
         $app_list_strings['md_fix_filter_test'] = $defaults;
 
-        $mock = $this->getMock("MetadataManager", array('getRawFilter'));
+        $mock = $this->createPartialMock('MetadataManager', array('getRawFilter'));
         $mock->expects($this->any())->method('getRawFilter')->willReturn($filter);
         $actual = $mock->getEditableDropdownFilter('md_fix_filter_test', 'foo');
 

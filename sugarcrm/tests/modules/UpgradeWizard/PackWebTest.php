@@ -57,7 +57,7 @@ class PackWebTest extends PHPUnit_Framework_TestCase
     public function testPackUpgradeWizardWeb($params, $expect)
     {
         $manifest = array();
-        $zip = $this->getMock('ZipArchive');
+        $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/UpgradeWizard/version.json';
         $zip->expects($this->exactly(16))->method('addFile');
         $zip->expects($this->exactly(2))->method('addFromString');

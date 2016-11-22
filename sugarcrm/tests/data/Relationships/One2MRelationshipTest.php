@@ -17,7 +17,10 @@ class One2MRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetType()
     {
-        $relationship = $this->getMock('One2MRelationship', null, array(), '', false);
+        $relationship = $this->getMockBuilder('One2MRelationship')
+            ->setMethods(null)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->assertEquals(REL_TYPE_MANY, $relationship->getType(REL_LHS));
         $this->assertEquals(REL_TYPE_ONE, $relationship->getType(REL_RHS));

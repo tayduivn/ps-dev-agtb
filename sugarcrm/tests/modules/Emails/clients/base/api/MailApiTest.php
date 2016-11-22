@@ -29,7 +29,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('app_list_strings');
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
-        $this->mailApi = $this->getMock("MailApi", array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
+        $this->mailApi = $this->createPartialMock('MailApi', array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
 
         $this->emailUI = new EmailUI();
         $this->emailUI->preflightUserCache();
@@ -56,7 +56,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             MailApi::SUBJECT => 'foo',
         );
 
-        $mailRecordMock = $this->getMock("MailRecord", array("archive"));
+        $mailRecordMock = $this->createPartialMock('MailRecord', array("archive"));
         $mailRecordMock->expects($this->once())
             ->method("archive");
 
@@ -77,7 +77,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "id" => '1234567890',
         );
 
-        $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
+        $mailRecordMock = $this->createPartialMock('MailRecord', array("saveAsDraft"));
         $mailRecordMock->expects($this->once())
             ->method("saveAsDraft")
             ->will($this->returnValue($mockResult));
@@ -101,7 +101,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "id" => '1234567890',
         );
 
-        $mailRecordMock = $this->getMock("MailRecord", array("send"));
+        $mailRecordMock = $this->createPartialMock('MailRecord', array("send"));
         $mailRecordMock->expects($this->once())
             ->method("send")
             ->will($this->returnValue($mockResult));
@@ -122,7 +122,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             $args[] = array("email" => "recipient{$i}");
         }
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("lookup"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("lookup"));
         $emailRecipientsServiceMock->expects($this->exactly($expected))
             ->method("lookup")
             ->will($this->returnArgument(0));
@@ -153,7 +153,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "max_num" => 5,
         );
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->any())
             ->method("find")
             ->will($this->returnValue(array_pad(array(10), 10, 0)));
@@ -175,7 +175,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "max_num" => 5,
         );
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->any())
             ->method("findCount")
             ->will($this->returnValue(4));
@@ -199,7 +199,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "offset" => "end",
         );
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->never())->method("findCount");
         $emailRecipientsServiceMock->expects($this->never())->method("find");
 
@@ -217,7 +217,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $args = array();
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->once())
             ->method("find")
             ->with($this->isEmpty(),
@@ -244,7 +244,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "offset"      => 3,
         );
 
-        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("findCount", "find"));
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', array("findCount", "find"));
         $emailRecipientsServiceMock->expects($this->once())
             ->method("find")
             ->with($this->equalTo($args["q"]),
@@ -292,7 +292,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $mockResult = array('name' => 'foo');
 
-        $emailMock = $this->getMock("Email", array("email2init", "email2saveAttachment"));
+        $emailMock = $this->createPartialMock("Email", array("email2init", "email2saveAttachment"));
         $emailMock->expects($this->once())
             ->method("email2init");
         $emailMock->expects($this->once())
@@ -359,7 +359,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMailApi_run_validation($args, $exceptionExpected, $exceptionArgs = null)
     {
-        $mailApiMock = $this->getMock("MailApi", array("invalidParameter"));
+        $mailApiMock = $this->createPartialMock('MailApi', array("invalidParameter"));
         if (!empty($exceptionExpected)) {
             $mailApiMock->expects($this->once())
                 ->method("invalidParameter")

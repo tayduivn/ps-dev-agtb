@@ -95,11 +95,10 @@ PHP;
     }
 
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
-        $mockOutboundEmailConfiguration = self::getMock(
-            "OutboundEmailConfiguration",
-            array("getMode"),
-            array($GLOBALS["current_user"])
-        );
+        $mockOutboundEmailConfiguration = self::getMockBuilder("OutboundEmailConfiguration")
+            ->setMethods(array("getMode"))
+            ->setConstructorArgs(array($GLOBALS["current_user"]))
+            ->getMock();
 
         $mockOutboundEmailConfiguration->expects(self::any())
             ->method("getMode")
@@ -119,11 +118,10 @@ PHP;
      * the "default" mode, so we don't want to support the notion that such a strategy exists.
      */
     public function testGetMailer_ModeIsDefault_ThrowsException() {
-        $mockOutboundEmailConfiguration = self::getMock(
-            "OutboundEmailConfiguration",
-            array("getMode"),
-            array($GLOBALS["current_user"])
-        );
+        $mockOutboundEmailConfiguration = self::getMockBuilder("OutboundEmailConfiguration")
+            ->setMethods(array("getMode"))
+            ->setConstructorArgs(array($GLOBALS["current_user"]))
+            ->getMock();
 
         $mockOutboundEmailConfiguration->expects(self::any())
             ->method("getMode")

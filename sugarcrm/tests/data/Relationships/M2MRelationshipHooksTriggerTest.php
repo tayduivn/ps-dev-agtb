@@ -51,18 +51,15 @@ class M2MRelationshipHooksTriggerTest extends Sugar_PHPUnit_Framework_TestCase
             'join_key_rhs' => 'user_id',
         );
 
-        $this->relationship = $this->getMock(
-            'M2MRelationship',
-            array(
-                'callBeforeAdd',
+        $this->relationship = $this->getMockBuilder('M2MRelationship')
+            ->setMethods(['callBeforeAdd',
                 'callAfterAdd',
                 'callBeforeUpdate',
                 'callAfterUpdate',
                 'callBeforeDelete',
-                'callAfterDelete'
-            ),
-            array($this->def)
-        );
+                'callAfterDelete'])
+            ->setConstructorArgs([$this->def])
+            ->getMock();
     }
 
     /**

@@ -191,7 +191,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $relationshipStub->expects($this->once())
             ->method('add');
 
-        $stub = $this->getMock(BeanFactory::getObjectName('Activities'));
+        $stub = $this->createMock(BeanFactory::getObjectName('Activities'));
         $stub->expects($this->once())
             ->method('load_relationship')
             ->with('activities_teams')
@@ -305,7 +305,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $activity->activity_type = 'foo';
         $activity->data = '{changes: []}';
 
-        $bean = $this->getMock('SugarBean');
+        $bean = $this->createMock('SugarBean');
         $bean->expects($this->never())->method('ACLFilterFieldList');
 
         $result = SugarTestReflection::callProtectedMethod(
@@ -325,7 +325,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $activity->activity_type = 'update';
         $activity->data = '{}';
 
-        $bean = $this->getMock('SugarBean');
+        $bean = $this->createMock('SugarBean');
         $bean->expects($this->never())->method('ACLFilterFieldList');
 
         $result = SugarTestReflection::callProtectedMethod(
@@ -345,7 +345,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $activity->activity_type = 'update';
         $activity->data = '{"changes": [{"field_name": "foo"},{"field_name": "bar"}]}';
 
-        $bean = $this->getMock('SugarBean');
+        $bean = $this->createMock('SugarBean');
         $bean->expects($this->once())->method('ACLFilterFieldList');
 
         $result = SugarTestReflection::callProtectedMethod(
@@ -361,7 +361,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessPostTags_WithTags_CallsProcessTags()
     {
-        $activity = $this->getMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', array('processTags'));
         $activity->expects($this->once())->method('processTags');
 
         $activity->data = '{"tags": ["tag1","tag2"]}';
@@ -373,7 +373,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessPostTags_WithNoTags_DoesNotCallProcessTags()
     {
-        $activity = $this->getMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', array('processTags'));
         $activity->expects($this->never())->method('processTags');
 
         $activity->data = '{}';
@@ -386,7 +386,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testProcessTags_WithNoTags_DoesNotProcessAnyRelationships()
     {
         $tags = array();
-        $activity = $this->getMock('Activity', array('processUserRelationships', 'processRecord'));
+        $activity = $this->createPartialMock('Activity', array('processUserRelationships', 'processRecord'));
         $activity->expects($this->never())->method('processUserRelationships');
         $activity->expects($this->never())->method('processRecord');
         $activity->processTags($tags);
@@ -400,7 +400,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $tags = array(
             array('module'=>'Users', 'id'=>'123'),
         );
-        $activity = $this->getMock('Activity', array('processUserRelationships', 'processRecord'));
+        $activity = $this->createPartialMock('Activity', array('processUserRelationships', 'processRecord'));
         $activity->expects($this->once())
             ->method('processUserRelationships')
             ->with($this->equalTo(array('123')));
@@ -423,7 +423,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
                 'id' => $user->id,
             ),
         );
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'processUserRelationships',
@@ -447,7 +447,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $tags = array(
             array('module'=>'Users', 'id'=>'123'),
         );
-        $activity = $this->getMock('Activity', array(
+        $activity = $this->createPartialMock('Activity', array(
             'processUserRelationships',
             'processRecord',
             'userHasViewAccessToParentModule',
@@ -475,7 +475,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
                 'id' => $contact->id,
             ),
         );
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'processUserRelationships',
@@ -508,7 +508,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessUserRelationships_NoRelationship_ReturnsFalse()
     {
-        $activity = $this->getMock('Activity', array('load_relationship'));
+        $activity = $this->createPartialMock('Activity', array('load_relationship'));
         $activity->expects($this->once())
             ->method('load_relationship')
             ->will($this->returnValue(false));
@@ -524,7 +524,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'load_relationship',
@@ -547,7 +547,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $parentBean = BeanFactory::newBean('Contacts');
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'load_relationship',
@@ -572,7 +572,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'load_relationship',
@@ -598,7 +598,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $parentBean = BeanFactory::newBean('Contacts');
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->getMock(
+        $activity = $this->createPartialMock(
             'Activity',
             array(
                 'load_relationship',
@@ -621,11 +621,11 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessUserRelationships_UserHasAccessToParent_RelationshipIsAdded()
     {
-        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
+        $parentBean = $this->createPartialMock('SugarBean', array('checkUserAccess'));
         $parentBean->expects($this->once())->method('checkUserAccess')->will($this->returnValue(true));
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->once())->method('add');
-        $activity = $this->getMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity = $this->createPartialMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
         $activity->expects($this->once())->method('getChangedFieldsForUser')->will($this->returnValue(true));
@@ -646,7 +646,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         Subscription::subscribeUserToRecord($user, $contact, array('disable_row_level_security' => true));
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->getMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity = $this->createPartialMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($contact));
         $activity->expects($this->never())->method('getChangedFieldsForUser');

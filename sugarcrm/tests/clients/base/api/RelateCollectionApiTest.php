@@ -62,7 +62,7 @@ class RelateCollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->save();
         BeanFactory::unregisterBean($this->module, $this->bean->id);
 
-        $serviceBaseMock = $this->getMock('ServiceBase');
+        $serviceBaseMock = $this->createMock('ServiceBase');
         $args = array(
             'collection_name' => $this->collectionName,
             'module' => $this->module,
@@ -72,7 +72,7 @@ class RelateCollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
             'max_num' => 20,
         );
 
-        $relateCollectionApi = $this->getMock('RelateCollectionApi', array(
+        $relateCollectionApi = $this->createPartialMock('RelateCollectionApi', array(
             'normalizeArguments',
             'getSortSpec',
             'getAdditionalSortFields',

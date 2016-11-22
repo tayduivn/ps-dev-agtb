@@ -34,7 +34,7 @@ class SugarJobHeartbeatTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRunFailsOnBadHeartbeatResponse()
     {
         $this->mockStuff();
-        $schedulersJob = $this->getMock('SchedulersJob');
+        $schedulersJob = $this->createMock('SchedulersJob');
         $schedulersJob->expects($this->once())
             ->method("failJob");
 
@@ -49,7 +49,7 @@ class SugarJobHeartbeatTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRunSuccessOnHeartbeatSuccess()
     {
         $this->mockStuff();
-        $schedulersJob = $this->getMock('SchedulersJob');
+        $schedulersJob = $this->createMock('SchedulersJob');
         $schedulersJob->expects($this->once())
             ->method("succeedJob");
 

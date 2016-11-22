@@ -56,10 +56,10 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'fields' => array('id'),
         );
 
-        $account = $this->getMock('Account');
+        $account = $this->createMock('Account');
         $account->expects($this->any())->method('getTableName')->will($this->returnValue($table));
 
-        $db = $this->getMock(get_class($this->_db), array('get_indices', 'dropIndexes', 'dropTableName'));
+        $db = $this->createPartialMock(get_class($this->_db), array('get_indices', 'dropIndexes', 'dropTableName'));
         $db->expects($this->once())->method('get_indices')->with($this->equalTo($table))->will($this->returnValue(array(
             $indexOk['name'] => $indexOk,
             $indexBad['name'] => $indexBad,
@@ -78,7 +78,7 @@ class IBMDB2ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetIndices()
     {
         $queries = array();
-        $db = $this->getMock(get_class($this->_db), array('query', 'fetchByAssoc', 'tableExistsExtended'));
+        $db = $this->createPartialMock(get_class($this->_db), array('query', 'fetchByAssoc', 'tableExistsExtended'));
         $db->expects($this->any())->method('tableExistsExtended')->will($this->returnValue(true));
         $db->expects($this->any())->method('query')->will($this->returnCallback(function($query) use (&$queries) {
             $queries[] = $query;

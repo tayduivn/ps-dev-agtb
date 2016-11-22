@@ -313,7 +313,7 @@ class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testViewNoneCreate()
     {
         // setup ACL
-        $rejectacl = $this->getMock('SugarACLStatic', array('checkAccess'));
+        $rejectacl = $this->createPartialMock('SugarACLStatic', array('checkAccess'));
         $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnCallback(function($module, $view, $context) {
                 if($module == 'Accounts' && $view == 'view') {
                     return false;
