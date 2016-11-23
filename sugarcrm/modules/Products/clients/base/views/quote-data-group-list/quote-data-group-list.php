@@ -48,6 +48,11 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'type' => 'currency',
                     'convertToBase' => true,
                     'showTransactionalAmount' => true,
+                    'related_fields' => array(
+                        'discount_price',
+                        'currency_id',
+                        'base_rate',
+                    ),
                 ),
                 array(
                     'name' => 'discount',
@@ -96,6 +101,11 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'widthClass' => 'cell-medium',
                     'convertToBase' => true,
                     'showTransactionalAmount' => true,
+                    'related_fields' => array(
+                        'total_amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
                 ),
             ),
         ),

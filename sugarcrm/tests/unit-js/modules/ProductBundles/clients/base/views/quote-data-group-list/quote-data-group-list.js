@@ -118,7 +118,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.collection.length).toBe(3);
         });
 
-        describe('setting isCreateView', function() {
+        describe('setting isCreateView and isOppsConvert', function() {
             var initModel;
             var collection;
 
@@ -150,8 +150,24 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 expect(view.isCreateView).toBeTruthy();
             });
 
+            it('should set isOppsConvert true if isCreateView is true and convert is on parent context', function() {
+                viewParentContext.set({
+                    create: true,
+                    convert: true
+                });
+                view.initialize(initOptions);
+                expect(view.isOppsConvert).toBeTruthy();
+            });
+
             it('should set isCreateView false if create is not on parent context', function() {
                 viewParentContext.unset('create');
+                view.initialize(initOptions);
+                expect(view.isCreateView).toBeFalsy();
+            });
+
+            it('should set isOppsConvert false if create is not true', function() {
+                viewParentContext.unset('create');
+                viewParentContext.set('convert', true);
                 view.initialize(initOptions);
                 expect(view.isCreateView).toBeFalsy();
             });
@@ -572,7 +588,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
     describe('onAddNewItemToGroup()', function() {
         var linkName;
-        var groupModel;
         var relatedModel;
         var relatedModelId;
 
@@ -597,14 +612,13 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         afterEach(function() {
             linkName = null;
-            groupModel = null;
             relatedModel = null;
             relatedModelId = null;
         });
 
         describe('when adding new item to group', function() {
             beforeEach(function() {
-                view.onAddNewItemToGroup(groupModel, linkName);
+                view.onAddNewItemToGroup(linkName);
             });
 
             it('should set the new related model id to the new guid', function() {
@@ -660,14 +674,43 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
             it('should call addClass on related row when isCreateView is true', function() {
                 view.isCreateView = true;
-                view.onAddNewItemToGroup(groupModel, linkName);
+                view.onAddNewItemToGroup(linkName);
                 expect(addClassStub).toHaveBeenCalledWith(view.sortableCSSClass);
             });
 
             it('should call removeClass on related row when isCreateView is false', function() {
                 view.isCreateView = false;
-                view.onAddNewItemToGroup(groupModel, linkName);
+                view.onAddNewItemToGroup(linkName);
                 expect(addClassStub).toHaveBeenCalledWith(view.nonSortableCSSClass);
+            });
+        });
+
+        describe('adding new item with preopulated data', function() {
+            var prepopulateModel;
+            beforeEach(function() {
+                prepopulateModel = new Backbone.Model({
+                    _module: 'RevenueLineItems',
+                    account_id: 'newAcctId1',
+                    account_name: 'newAcctName1',
+                    opportunity_id: 'newOppId1',
+                    opportunity_name: 'newOppName1'
+                });
+                view.onAddNewItemToGroup(linkName, prepopulateModel.toJSON());
+            });
+
+            afterEach(function() {
+                prepopulateModel = null;
+            });
+
+            it('should reset the _module', function() {
+                expect(relatedModel.get('_module')).toBe('Products');
+            });
+
+            it('should populate with passed in data', function() {
+                expect(relatedModel.get('account_id')).toBe('newAcctId1');
+                expect(relatedModel.get('account_name')).toBe('newAcctName1');
+                expect(relatedModel.get('opportunity_id')).toBe('newOppId1');
+                expect(relatedModel.get('opportunity_name')).toBe('newOppName1');
             });
         });
     });
@@ -1059,11 +1102,73 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             sinon.collection.stub(view, '_super', function() {});
             sinon.collection.stub(view, '_setRowFields', function() {});
             sinon.collection.stub(view, 'toggleRow', function() {});
+            sinon.collection.stub(view, 'onAddNewItemToGroup', function() {});
         });
 
         it('should call _setRowFields', function() {
             view._render();
             expect(view._setRowFields).toHaveBeenCalled();
+        });
+
+        describe('adding Opps convert RLIs to the Quote', function() {
+            var relatedModels;
+            var relatedModel;
+            beforeEach(function() {
+                relatedModel = new Backbone.Model({
+                    id: 'relatedModelId1',
+                    name: 'relatedModelName1'
+                });
+                relatedModels = [relatedModel];
+                view.context.parent.set('relatedRecords', relatedModels);
+
+                view.isCreateView = false;
+                view.isOppsConvert = false;
+                view.addedConvertModels = false;
+            });
+
+            afterEach(function() {
+                relatedModel = null;
+                relatedModels = null;
+            });
+
+            it('should not call onAddNewItemToGroup if isCreateView is false', function() {
+                view.isOppsConvert = true;
+                view._render();
+
+                expect(view.onAddNewItemToGroup).not.toHaveBeenCalled();
+            });
+
+            it('should not call onAddNewItemToGroup if isOppsConvert is false', function() {
+                view.isCreateView = true;
+                view._render();
+
+                expect(view.onAddNewItemToGroup).not.toHaveBeenCalled();
+            });
+
+            it('should not call onAddNewItemToGroup if addedConvertModels is true', function() {
+                view.isCreateView = true;
+                view.isOppsConvert = true;
+                view.addedConvertModels = true;
+                view._render();
+
+                expect(view.onAddNewItemToGroup).not.toHaveBeenCalled();
+            });
+
+            it('should call onAddNewItemToGroup with related models', function() {
+                view.isCreateView = true;
+                view.isOppsConvert = true;
+                view._render();
+
+                expect(view.onAddNewItemToGroup).toHaveBeenCalledWith('products', relatedModel.toJSON());
+            });
+
+            it('should call onAddNewItemToGroup and set addedConvertModels to true', function() {
+                view.isCreateView = true;
+                view.isOppsConvert = true;
+                view._render();
+
+                expect(view.addedConvertModels).toBeTruthy();
+            });
         });
 
         it('should call toggleRow if toggledModels has data', function() {

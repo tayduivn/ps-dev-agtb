@@ -684,6 +684,9 @@
 
     /**
      * Handler for when quote_data changes on the model
+     *
+     * @param {Backbone.Model|Data.MixedBeanCollection} productBundles The quote_data object that changed
+     * @protected
      */
     _onProductBundleChange: function(productBundles) {
         var hasDefaultGroup = false;

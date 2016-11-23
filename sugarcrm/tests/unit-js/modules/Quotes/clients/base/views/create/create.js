@@ -7,6 +7,7 @@ describe('Quotes.Base.Views.Create', function() {
     var quoteFields;
     var bundleFields;
     var productFields;
+    var modMeta;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -96,6 +97,90 @@ describe('Quotes.Base.Views.Create', function() {
         context = null;
         model.dispose();
         model = null;
+    });
+
+    describe('initialize()', function() {
+        var options;
+        beforeEach(function() {
+            options = {
+                context: context
+            };
+
+            sinon.collection.stub(view, '_prepopulateQuoteWithOpp', function() {});
+            sinon.collection.stub(view, '_buildMeta', function() {});
+        });
+
+        afterEach(function() {
+            options = null;
+        });
+
+        it('should call _prepopulateQuoteWithOpp if convert is on the context', function() {
+            options.context.set('convert', true);
+            view.initialize(options);
+
+            expect(view._prepopulateQuoteWithOpp).toHaveBeenCalledWith(options);
+
+        });
+
+        it('should not call _prepopulateQuoteWithOpp if convert is not on the context', function() {
+            view.initialize(options);
+
+            expect(view._prepopulateQuoteWithOpp).not.toHaveBeenCalled();
+        });
+
+        it('should call _buildMeta with ProductBundleNotes params', function() {
+            view.initialize(options);
+
+            expect(view._buildMeta).toHaveBeenCalledWith('ProductBundleNotes', 'quote-data-group-list');
+        });
+
+        it('should call _buildMeta with ProductBundles params', function() {
+            view.initialize(options);
+
+            expect(view._buildMeta).toHaveBeenCalledWith('ProductBundles', 'quote-data-group-header');
+        });
+
+        it('should call _buildMeta with Products params', function() {
+            view.initialize(options);
+
+            expect(view._buildMeta).toHaveBeenCalledWith('Products', 'quote-data-group-list');
+        });
+    });
+
+    describe('_prepopulateQuoteWithOpp()', function() {
+        var options;
+        var quoteModel;
+        var oppModel;
+
+        beforeEach(function() {
+            quoteModel = new Backbone.Model();
+            oppModel = new Backbone.Model({
+                id: 'oppId1',
+                name: 'oppName1',
+                account_id: 'acctId1',
+                account_name: 'acctName1'
+            });
+            context.set({
+                model: quoteModel,
+                parentModel: oppModel
+            });
+            options = {
+                context: context
+            };
+        });
+
+        afterEach(function() {
+            options = null;
+        });
+
+        it('should map fields and prepopulate the Quote context', function() {
+            view._prepopulateQuoteWithOpp(options);
+
+            expect(quoteModel.get('opportunity_id')).toBe('oppId1');
+            expect(quoteModel.get('opportunity_name')).toBe('oppName1');
+            expect(quoteModel.get('billing_account_id')).toBe('acctId1');
+            expect(quoteModel.get('billing_account_name')).toBe('acctName1');
+        });
     });
 
     describe('hasUnsavedChanges()', function() {

@@ -114,6 +114,16 @@
     isCreateView: undefined,
 
     /**
+     * If this view is in the /create view coming from Opportunities Convert to Quote
+     */
+    isOppsConvert: undefined,
+
+    /**
+     * In Convert to Quote, if the RLI models have been added to the Quote yet
+     */
+    addedConvertModels: undefined,
+
+    /**
      * CSS Classes for sortable rows
      */
     sortableCSSClass: 'sortable ui-sortable',
@@ -144,11 +154,14 @@
 
         this._super('initialize', [options]);
 
-        this.viewName = 'list';
-        this.action = 'list';
         this.isDefaultGroupList = this.model.get('default_group');
 
         this.isCreateView = this.context.parent.get('create') || false;
+        this.isOppsConvert = this.isCreateView && this.context.parent.get('convert');
+        this.addedConvertModels = false;
+
+        this.action = 'list';
+        this.viewName = this.isCreateView ? 'edit' : 'list';
 
         this._fields = _.flatten(_.pluck(this.qliListMetadata.panels, 'fields'));
 
@@ -281,7 +294,7 @@
         var rowId;
 
         if (rowModel.has('_notSaved')) {
-            var rowId = rowModel.get('id');
+            rowId = rowModel.get('id');
             this.collection.remove(rowModel);
 
             if (!_.isUndefined(this.sugarLogicContexts[rowId])) {
@@ -365,9 +378,10 @@
      * Called when a group's Create QLI or Create Note button is clicked
      *
      * @param {Data.Bean} groupModel The ProductBundle model
+     * @param {Object} prepopulateData Any data to prepopulate the model with - coming from Opps Convert
      * @param {string} linkName The link name of the new item to create: products or product_bundle_notes
      */
-    onAddNewItemToGroup: function(linkName) {
+    onAddNewItemToGroup: function(linkName, prepopulateData) {
         var relatedModel = this.createLinkModel(this.model, linkName);
         var maxPositionModel;
         var position = 0;
@@ -376,6 +390,9 @@
         var moduleName = linkName === 'products' ? 'Products' : 'ProductBundleNotes';
         var modelData;
         var groupLineNumObj;
+
+        prepopulateData = prepopulateData || {};
+
         if (this.collection.length) {
             // get the model with the highest position
             maxPositionModel = _.max(this.collection.models, function(model) {
@@ -386,14 +403,20 @@
             position = +maxPositionModel.get('position') + 1;
         }
 
-        modelData = {
+        // if the data has a _module, remove it
+        if (!_.isEmpty(prepopulateData)) {
+            delete prepopulateData._module;
+        }
+
+        // defers to prepopulateData
+        modelData = _.extend({
             _module: moduleName,
             _notSaved: true,
             position: position,
             currency_id: this.model.get('currency_id'),
             base_rate: this.model.get('base_rate'),
             id: newRelatedModelId
-        };
+        }, prepopulateData);
 
         relatedModel.module = moduleName;
 
@@ -522,10 +545,24 @@
      * @inheritdoc
      */
     _render: function() {
+        var qliModels;
+
         this._super('_render');
 
         // set row fields after rendering to prep if we need to toggle rows
         this._setRowFields();
+
+        // if this is the create view, and we're coming from Opps convert to Quote,
+        // and we have not added the RLI models
+        if (this.isCreateView && this.isOppsConvert && !this.addedConvertModels) {
+            qliModels = this.context.parent.get('relatedRecords');
+
+            _.each(qliModels, function(qliModel) {
+                this.onAddNewItemToGroup('products', qliModel.toJSON());
+            }, this);
+
+            this.addedConvertModels = true;
+        }
 
         if (!_.isEmpty(this.toggledModels)) {
             _.each(this.toggledModels, function(model, modelId) {

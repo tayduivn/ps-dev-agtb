@@ -25,7 +25,7 @@
         </span>
     </td>
     {{#each fields}}
-        <td>
+        <td data-type="{{type}}">
             {{field ../view model=../model template=../view.viewName}}
         </td>
     {{/each}}

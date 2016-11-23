@@ -62,7 +62,7 @@
      *
      * @param {Data.Bean} model The model of the row that was changed
      * @param {View.Field} field The field that triggered the event
-     * @param evt {Event} The click event
+     * @param {Event} evt The click event
      */
     onDiscountChanged: function(model, field, evt) {
         var isPercent = false;
@@ -81,7 +81,9 @@
      * Updates the dropdown icon symbol
      */
     updateDropdownSymbol: function() {
-        if (this.model.get(this.name) === false) {
+        var val = this.model.get(this.name);
+
+        if (_.isUndefined(val) || val === false) {
             this.currentDropdownSymbol = this.currentCurrency.symbol;
         } else {
             this.currentDropdownSymbol = '%';

@@ -22,10 +22,44 @@
     moduleFieldsMeta: undefined,
 
     /**
+     * Field map for where Opportunities fields (values) should map to Quote fields (keys)
+     */
+    oppsToQuoteConvertFieldMap: {
+        opportunity_id: 'id',
+        opportunity_name: 'name',
+        billing_accounts: 'accounts',
+        shipping_accounts: 'accounts',
+        billing_account_id: 'account_id',
+        billing_account_name: 'account_name',
+        shipping_account_id: 'account_id',
+        shipping_account_name: 'account_name'
+    },
+
+    /**
+     * A list of field names to pull from the Account model to the Quote model
+     */
+    acctToQuoteConvertFields: [
+        'billing_address_city',
+        'billing_address_country',
+        'billing_address_postalcode',
+        'billing_address_state',
+        'billing_address_street',
+        'shipping_address_city',
+        'shipping_address_country',
+        'shipping_address_postalcode',
+        'shipping_address_state',
+        'shipping_address_street'
+    ],
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['QuotesViewSaveHelper']);
+
+        if (options.context.get('convert')) {
+            this._prepopulateQuoteWithOpp(options);
+        }
 
         this._super('initialize', [options]);
 
@@ -35,10 +69,50 @@
         this._buildMeta('ProductBundles', 'quote-data-group-header');
         this._buildMeta('Products', 'quote-data-group-list');
 
+        // gets the name of any field where calculated is true
         this.calculatedFields = _.chain(this.model.fields)
             .where({calculated: true})
             .pluck('name')
             .value();
+    },
+
+    /**
+     * Prepopulates the Quote context model with with Opp/Account ID
+     *
+     * @param {Object} options The initialize options Object
+     * @protected
+     */
+    _prepopulateQuoteWithOpp: function(options) {
+        var parentModel = options.context.get('parentModel');
+        var ctxModel = options.context.get('model');
+        var quoteData = {};
+
+        if (ctxModel && parentModel) {
+            _.each(this.oppsToQuoteConvertFieldMap, function(oppField, quoteField) {
+                quoteData[quoteField] = parentModel.get(oppField);
+            }, this);
+
+            app.api.call('read', app.api.buildURL('Accounts/' + parentModel.get('account_id')), null, {
+                success: _.bind(this._setAccountInfo, this)
+            });
+            ctxModel.set(quoteData);
+        }
+    },
+
+    /**
+     * Sets the related Account info on the Quote bean
+     *
+     * @param {Object} accountInfoData The Account info returned from the Accounts/:id endpoint
+     * @protected
+     */
+    _setAccountInfo: function(accountInfoData) {
+        var acctData = {};
+
+        _.each(this.acctToQuoteConvertFields, function(fieldName) {
+            acctData[fieldName] = accountInfoData[fieldName];
+        }, this);
+
+        this.model.set(acctData);
     },
 
     /**
