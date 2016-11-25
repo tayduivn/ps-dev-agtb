@@ -26,6 +26,6 @@ class SugarUpgradeFilesToRemoveCustom extends UpgradeScript
             'custom/Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
         );
 
-        $this->fileToDelete($filesToRemove);
+        $this->upgrader->fileToDelete($filesToRemove, $this);
     }
 }

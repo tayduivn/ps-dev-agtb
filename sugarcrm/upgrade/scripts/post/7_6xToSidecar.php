@@ -40,7 +40,7 @@ class SugarUpgrade6xToSidecar extends UpgradeScript
             $this->log('Sidecar Upgrade: Mobile/portal metadata upgrade ran with no failures:');
             $this->log($smdUpgrader->getCountOfFilesForUpgrade() . ' files were upgraded.');
         }
-        $this->fileToDelete(SidecarMetaDataUpgrader::getFilesForRemoval());
+        $this->upgrader->fileToDelete(SidecarMetaDataUpgrader::getFilesForRemoval(), $this);
     }
 }
 

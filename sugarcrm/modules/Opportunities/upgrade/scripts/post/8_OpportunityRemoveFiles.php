@@ -40,6 +40,6 @@ class SugarUpgradeOpportunityRemoveFiles extends UpgradeScript
             $files[] = 'modules/Opportunities/upgrade/scripts/post/2_OpportunityCreateRLI.php';
         }
 
-        $this->fileToDelete($files);
+        $this->upgrader->fileToDelete($files, $this);
     }
 }

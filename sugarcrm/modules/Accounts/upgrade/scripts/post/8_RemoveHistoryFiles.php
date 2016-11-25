@@ -24,6 +24,6 @@ class SugarUpgradeRemoveHistoryFiles extends UpgradeScript
             return;
         }
         // can be files or directories
-        $this->fileToDelete('modules/Accounts/clients/base/views/history');
+        $this->upgrader->fileToDelete('modules/Accounts/clients/base/views/history', $this);
     }
 }

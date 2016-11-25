@@ -38,18 +38,18 @@ class SugarUpgradeRemoveWebUpgrader extends UpgradeScript
                 $history = $uh->checkForExisting($uh);
                 $this->filesToRemove[] = "custom/Extension/application/Ext/Include/{$history->id_name}.php";
                 $history->delete();
-                $this->fileToDelete($this->filesToRemove);
+                $this->upgrader->fileToDelete($this->filesToRemove, $this);
                 $this->log("Useless files of {$pack['name']} v{$pack['version']} removed");
             }
         }
         foreach ($pm->getPackagesInStaging() as $pack) {
             if (strpos($pack['name'], 'SugarCRM Upgrader') !== false) {
                 $file = UploadStream::path(hashToFile($pack['file']));
-                $this->fileToDelete($file);
+                $this->upgrader->fileToDelete($file, $this);
                 foreach (array('manifest', 'icon') as $meta) {
-                    $this->fileToDelete(
-                        pathinfo($file, PATHINFO_DIRNAME) . '/' .
-                        pathinfo($file, PATHINFO_FILENAME) . "-$meta.php"
+                    $this->upgrader->fileToDelete(
+                        pathinfo($file, PATHINFO_DIRNAME) . '/' . pathinfo($file, PATHINFO_FILENAME) . "-$meta.php",
+                        $this
                     );
                 }
             }

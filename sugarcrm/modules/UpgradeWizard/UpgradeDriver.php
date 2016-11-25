@@ -88,6 +88,7 @@ abstract class UpgradeDriver
      * - stages - Stages success
      * - scripts - Scripts execution status
      * - files_to_delete - Files that upgrade scripts requested to be deleted
+     * - files_deleter - Hash that contains files as keys and which class::function requested delete
      * @var array
      */
     public $state = array();
@@ -1508,15 +1509,32 @@ abstract class UpgradeDriver
         return implode($delimiter, $parsedVersion);
     }
 
-    public function fileToDelete($file)
+    /**
+     * Marks file for removal in the upgrade process.
+     *
+     * @param string|array $files Single string or array of strings files to remove.
+     * @param UpgradeScript $caller Who calls this function.
+     */
+    public function fileToDelete($files, UpgradeScript $caller)
     {
         if (!isset($this->state['files_to_delete'])) {
             $this->state['files_to_delete'] = array();
         }
-        if (is_array($file)) {
-            $this->state['files_to_delete'] = array_merge($this->state['files_to_delete'], $file);
-        } else {
-            $this->state['files_to_delete'][] = $file;
+
+        if (!isset($this->state['files_deleter'])) {
+            $this->state['files_deleter'] = array();
+        }
+
+        if (!is_array($files)) {
+            $files = array($files);
+        }
+
+        $this->state['files_to_delete'] = array_merge($this->state['files_to_delete'], $files);
+
+        $caller = get_class($caller);
+
+        foreach ($files as $file) {
+            $this->state['files_deleter'][$file][] = $caller;
         }
     }
 

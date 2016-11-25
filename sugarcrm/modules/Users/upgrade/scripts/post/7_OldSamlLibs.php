@@ -20,6 +20,6 @@ class SugarUpgradeOldSamlLibs extends UpgradeScript
 
     public function run()
     {
-        $this->fileToDelete('modules/Users/authentication/SAMLAuthenticate/lib');
+        $this->upgrader->fileToDelete('modules/Users/authentication/SAMLAuthenticate/lib', $this);
     }
 }

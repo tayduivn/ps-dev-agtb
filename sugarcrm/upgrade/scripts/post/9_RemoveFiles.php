@@ -30,6 +30,10 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
         $foldersToCheck = array();
 
         foreach ($this->state['files_to_delete'] as $file) {
+            $deleter = isset($this->state['files_deleter'][$file]) ?
+                implode('/', $this->state['files_deleter'][$file]) :
+                'N/A';
+
             $file = SugarAutoLoader::normalizeFilePath($file);
             // If we're using a case-insensitive file-system and the
             // file is not present as we specified it, don't remove it.
@@ -38,7 +42,7 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
             }
 
             $this->backupFile($file);
-            $this->log("Removing $file");
+            $this->log("[$deleter] Removing $file");
 
             if (is_dir($file)) {
                 $this->removeDir($file);
