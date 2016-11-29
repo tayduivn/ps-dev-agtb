@@ -65,9 +65,17 @@ $dictionary['locked_field_bean_rel'] = array(
             'name' => 'idx_locked_field_bean_rel_del_bean_module_beanid',
             'type' => 'index',
             'fields' => array(
+                'bean_module',
+                'deleted',
+            ),
+        ),
+        array(
+            'name' => 'idx_locked_field_bean_rel_beanid_del_bean_module',
+            'type' => 'index',
+            'fields' => array(
+                'bean_id',
                 'deleted',
                 'bean_module',
-                'bean_id',
             ),
         ),
     ),
