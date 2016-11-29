@@ -93,7 +93,7 @@ gulp.task('karma', function(done) {
                 value = value.replace(/^sugarcrm\//, '');
             } else {
                 // TODO: As soon as most of the teams add their tests to mentionbot, we will remove this
-                value = value.replace(/^sugarcrm/, 'tests');
+                value = value.replace(/^sugarcrm/, 'tests/unit-js');
             }
 
             memo.push(value);

@@ -52,8 +52,8 @@ module.exports = function(config) {
             // it should be:
             // '/tests': '/base/tests',
             // so that we can provide all test requests in the correct /base/ path
-            '/fixtures': '/base/tests/fixtures',
-            '/tests/modules': '/base/tests/modules',
+            '/fixtures': '/base/tests/unit-js/fixtures',
+            '/tests/modules': '/base/tests/unit-js/modules',
             '/include': '/base/include',
             '/modules': '/base/modules',
             '/portal2': '/base/portal2'

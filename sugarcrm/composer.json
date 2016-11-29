@@ -36,15 +36,15 @@
     "autoload-dev": {
         "psr-4": {
             "Sugarcrm\\SugarcrmTests\\": [
-                "tests/src/",
-                "tests/"
+                "tests/{old}/src/",
+                "tests/{old}"
             ],
-            "Sugarcrm\\SugarcrmTests\\inc\\": "tests/include/",
+            "Sugarcrm\\SugarcrmTests\\inc\\": "tests/{old}/include/",
             "Sugarcrm\\SugarcrmTestsUnit\\": [
-                "testsunit/src/",
-                "testsunit/"
+                "tests/unit-php/src/",
+                "tests/unit-php/"
             ],
-            "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "testsunit/include/"
+            "Sugarcrm\\SugarcrmTestsUnit\\inc\\": "tests/unit-php/include/"
         }
     },
     "require": {

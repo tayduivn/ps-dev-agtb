@@ -83,7 +83,7 @@
     "styleguide/content/js/google-code-prettify",
     "styleguide/tests/",
     "tests/",
-    "testsunit/",
+    "tests/unit-php/",
     "themes/SugarIE6/js/pngbehavior.htc",
     "upload/",
     "vendor/",

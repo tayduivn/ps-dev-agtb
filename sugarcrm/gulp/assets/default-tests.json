@@ -10,9 +10,9 @@
  */
 
 [
-    "tests/clients/base/**/*.js",
-    "tests/modules/**/clients/base/**/*.js",
-    "tests/include/javascript/sugar7/*.js",
-    "tests/include/javascript/sugar7/**/*.js",
-    "tests/include/javascript/twitterbootstrap/**/*.js"
+    "tests/unit-js/clients/base/**/*.js",
+    "tests/unit-js/modules/**/clients/base/**/*.js",
+    "tests/unit-js/include/javascript/sugar7/*.js",
+    "tests/unit-js/include/javascript/sugar7/**/*.js",
+    "tests/unit-js/include/javascript/twitterbootstrap/**/*.js"
 ]
