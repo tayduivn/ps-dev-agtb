@@ -210,18 +210,14 @@ gulp.task('test:unit:php', function(done) {
 
     /**
      * Set up the environment for Jenkins.
+     *
+     * @param {string} workspace Base output directory.
      */
-    function setUpCiConfiguration() {
+    function setUpCiConfiguration(workspace) {
         var rm = require('rimraf').sync;
 
-        // set env.WORKSPACE to one directory up if unset
-        var cwd = process.cwd();
-        process.env = _.defaults(process.env, {
-            WORKSPACE: path.join(cwd, '..')
-        });
-
-        var testOutputPath = path.join(process.env.WORKSPACE, 'test-output');
-        var junitOutputPath = path.join(process.env.WORKSPACE, 'junit');
+        var testOutputPath = path.join(workspace, 'test-output');
+        var junitOutputPath = path.join(workspace, 'junit');
         rm(testOutputPath);
         rm(junitOutputPath);
         fs.mkdirSync(testOutputPath);
@@ -230,37 +226,42 @@ gulp.task('test:unit:php', function(done) {
 
     commander
         .option('--ci', 'Set up CI-specific environment')
+        .option('--path <path>', 'Set base output path')
+        .option('--coverage', 'Enable code coverage')
         .parse(process.argv);
 
+    var workspace = commander.path || process.env.WORKSPACE || os.tmpdir();
     var args = [];
     if (commander.ci) {
-        setUpCiConfiguration();
-        var workspace = process.env.WORKSPACE;
+        setUpCiConfiguration(workspace);
         args.push(
             '-derror_log=' + path.join(workspace, 'test-output', 'php_errors.log'),
             '--log-tap', path.join(workspace, 'test-output', 'tap.txt'),
             '--log-junit', path.join(workspace, 'junit', 'phpunit.xml'),
-            '--coverage-html', path.join(workspace, 'coverage'),
             '--testdox-text', path.join(workspace, 'testdox.txt')
         );
+    }
+
+    if (commander.coverage) {
+        args.push('--coverage-html', path.join(workspace, 'coverage'));
+        process.stdout.write('Coverage reports will be generated to: ' + path.join(workspace, 'coverage') + '\n');
     }
 
     var execa = require('execa');
     var phpunitPath = path.join('..', 'vendor', 'bin', 'phpunit');
     var phpProcess = execa(phpunitPath, args, {
         maxBuffer: 1e6, // 1 MB
-        cwd: 'testsunit'
+        cwd: 'testsunit',
+        reject: false,
     });
     phpProcess.stdout.pipe(process.stdout);
     phpProcess.stderr.pipe(process.stderr);
     phpProcess.then(function(result) {
-        done();
-    }, function(err) {
-        console.error(err.message);
-        done(err.code);
+        done(result.code ? 'There are failing unit tests' : undefined);
     });
 });
 
+// confirm our files have the desired license header
 gulp.task('check-license', function(done) {
     var options = {
         excludedExtensions: [

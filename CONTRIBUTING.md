@@ -310,38 +310,6 @@ For each report, we first try to confirm the vulnerability. When it is confirmed
 
 Before submitting a [patch](#submitting-a-patch) for inclusion, you need to run the SugarCRM test suite to check that you didn't break anything.
 
-### PHPUnit
-
-To run the SugarCRM test suite, install the several flavors of Sugar (PRO, ENT) and run install on each one.
-
-Then, run the test suite from the `tests` root directory of the installed instance with the following command:
-
-```bash
-$ php ../vendor/bin/phpunit
-```
-
-The output should display `OK`. If not, you need to figure out what's going on and if the tests are broken because of your modifications.
-
-> If you want to test a single component type its path after the `phpunit` command, e.g.:
->
-> ```bash
-> $ php ../vendor/bin/phpunit include/SugarOAuth2StorageTest.php
-> ```
->
-> Run the test suite before applying your modifications to check that they run fine on your configuration.
-
-### Code Coverage
-
-If you add a new feature, you also need to check the code coverage by using the `coverage-html` option:
-
-```bash
-$ php ../vendor/bin/phpunit --coverage-html=cov/
-```
-
-Check the code coverage by opening the generated `cov/index.html` page in a browser.
-
-> The code coverage only works if you have XDebug enabled and all dependencies installed.
-
 ### Client side test suite
 
 The SugarCRM client side test suite is composed of three different tools: [Karma test runner], [Jasmine] and [Gulp the Streaming build system].
@@ -474,6 +442,91 @@ Exclusive tests are source based, which means that you have to edit the source c
 
 Beware that `iit` has precedence over `ddescribe`, so it’s important to understand that this is level independent. It doesn't matter what “hierarchy” of ddescribes you might have; if an `iit` is defined that is the spec that is going to run.
 
+### PHPUnit
+
+#### PHPUnit Unit Tests
+
+This gulp task runs the PHPUnit unit tests (i.e. those located under `testsunit/`).
+
+ ```bash
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js test:unit:php
+```
+
+You should run the tests on a built version of Sugar, but *do not install it*. The tests must be able to run
+without installation.
+
+Paths to output files are explained in the section [Workspace Location](#workspace-location).
+
+##### Workspace Location
+
+The location where output files are placed is determined in the following way:
+
+* If the `--path <path>` flag is passed, use that location
+* Otherwise, use the location specified by the WORKSPACE environment variable
+* If WORKSPACE is not defined, default to the system temp directory
+
+##### CI Mode
+
+The `--ci` flag generates additional reports after the tests have finished running:
+
+* testdox.txt: TestDox output
+* test-output/tap.txt: Test Anything Protocol output
+* junit/phpunit.xml: JUnit output (suitable for Jenkins)
+
+```bash
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js test:unit:php --ci [--path <path>]
+```
+
+##### Coverage
+ 
+Using the `--coverage` flag, you can generate an HTML code coverage report.
+ 
+First, ensure you have [XDebug] enabled on PHP. Then run the following commands:
+ 
+```bash
+$ cd <sugarcrm>
+$ node_modules/gulp/bin/gulp.js test:unit:php --coverage [--path <path>]
+```
+ 
+ The location where the files are placed is explained [here](#workspace-location).
+ 
+#### Legacy PHPUnit Tests
+
+To run the legacy PHPUnit test suite, install the several flavors of Sugar (PRO, ENT) and run install on each one.
+Then run the test suite from the `tests` root directory of the installed instance with the following commands:
+
+```bash
+$ cd <sugarcrm>/tests
+$ php ../vendor/bin/phpunit
+```
+
+The output should display `OK`. If not, you need to figure out what's going on and if the tests are broken because of
+your modifications.
+
+> If you want to test a single component type its path after the `phpunit` command, e.g.:
+>
+> ```bash
+> $ cd <sugarcrm>/tests
+> $ php ../vendor/bin/phpunit include/SugarOAuth2StorageTest.php
+> ```
+>
+> Run the test suite before applying your modifications to check that they run fine on your configuration.
+
+##### Code Coverage
+
+If you add a new feature, you also need to check the code coverage by using the `coverage-html` option.
+
+First, ensure you have [XDebug] enabled on PHP. Then run the following commands:
+
+```bash
+$ cd <sugarcrm>/tests
+$ php ../vendor/bin/phpunit --coverage-html=cov/
+```
+
+Check the code coverage by opening the generated `cov/index.html` page in a browser.
+
 ## Translation Changes
 If you make changes involving translatable strings, there is a special procedure to follow. See [Making Translation Changes][Making Translation Changes] for details.
 
@@ -494,3 +547,4 @@ If you make changes involving translatable strings, there is a special procedure
 [Jasmine]: http://jasmine.github.io/
 [Karma test runner]: http://karma-runner.github.io/
 [NodeJS]: http://nodejs.org/
+[XDebug]: https://xdebug.org/
