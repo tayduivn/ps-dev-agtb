@@ -45,6 +45,7 @@ class OutboundEmailConfigurationTestHelper
 
         while ($row = $GLOBALS["db"]->fetchByAssoc($result)) {
             $outboundEmail = new OutboundEmail();
+            $outboundEmail->disable_row_level_security = true;
             $outboundEmail->retrieve($row["id"]);
             self::$existingConfigurations[] = $outboundEmail;
             $outboundEmail->delete();

@@ -28,7 +28,7 @@ class OutboundEmail extends SugarBean
      */
     public $importable = false;
 
-	/**
+    /**
      * @var string
      */
     public $module_dir = 'OutboundEmail';
@@ -151,6 +151,7 @@ class OutboundEmail extends SugarBean
     public function getUsersMailerForSystemOverride($user_id)
 	{
         $email = new self();
+        $email->disable_row_level_security = true;
         $email->retrieveByCriteria(
             array('user_id' => $user_id, 'type' => static::TYPE_SYSTEM_OVERRIDE),
             array('name' => 'ASC')
@@ -367,6 +368,7 @@ class OutboundEmail extends SugarBean
             $criteria = array('id' => $emailId);
         }
 
+        $this->disable_row_level_security = true;
         $this->retrieveByCriteria($criteria);
 
         if (empty($this->id)) {
@@ -420,6 +422,7 @@ class OutboundEmail extends SugarBean
                 $this->save();
                 static::$sysMailerCache = $this;
             } else {
+                $this->disable_row_level_security = true;
                 static::$sysMailerCache = $this->retrieve($a['id']);
             }
         }
@@ -438,7 +441,16 @@ class OutboundEmail extends SugarBean
      */
     public function retrieve($id = '-1', $encode = true, $deleted = true)
     {
-        $this->retrieveByCriteria(array('id' => $id));
+        parent::retrieve($id, $encode, $deleted);
+
+        $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
+
+        if (empty($this->mail_smtptype)) {
+            $this->mail_smtpdisplay = $this->mail_smtpserver;
+        } else {
+            $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype, $this->mail_smtpserver);
+        }
+
         return $this;
     }
 
@@ -451,8 +463,8 @@ class OutboundEmail extends SugarBean
     public function retrieveByCriteria(array $criteria, array $order = [])
     {
         $data = $this->getDataByCriteria($criteria, $order);
-        if (!empty($data)) {
-            $this->populate($data);
+        if (!empty($data) && !empty($data['id'])) {
+            return $this->retrieve($data['id']);
         }
         return $this;
     }
@@ -483,30 +495,6 @@ class OutboundEmail extends SugarBean
         }
 
         return $query->execute()->fetch();
-    }
-
-    /**
-     * Populate object from array
-     * @param array $data
-     */
-    protected function populate(array $data)
-    {
-        foreach ($data as $name => $value) {
-            $this->$name = $value;
-        }
-
-        if (!empty($data['mail_smtppass'])) {
-            $this->mail_smtppass = blowfishDecode(blowfishGetKey($this->module_key), $data['mail_smtppass']);
-            $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
-        }
-
-        $this->mail_smtpdisplay = $data['mail_smtpserver'];
-        if (!empty($data['mail_smtptype'])) {
-            $this->mail_smtpdisplay = $this->_getOutboundServerDisplay(
-                $data['mail_smtptype'],
-                $data['mail_smtpserver']
-            );
-        }
     }
 
     /**
@@ -575,6 +563,10 @@ class OutboundEmail extends SugarBean
 
         if (empty($this->$ownerField) && isset($GLOBALS['current_user'])) {
             $this->$ownerField = $GLOBALS['current_user']->id;
+        }
+
+        if (!empty($this->mail_smtppass)) {
+            $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
         }
 
         $id = parent::save($check_notify);

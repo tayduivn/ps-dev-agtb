@@ -335,6 +335,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
         $configuration = new OutboundEmail();
+        $configuration->disable_row_level_security = true;
         $configuration->retrieve($systemConfiguration->id);
         $configuration->mail_smtpauth_req = '0';
         $configuration->save();
@@ -384,6 +385,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
         $configuration = new OutboundEmail();
+        $configuration->disable_row_level_security = true;
         $configuration->retrieve($systemConfiguration->id);
         $configuration->mail_smtpauth_req = '0';
         $configuration->save();
