@@ -163,7 +163,7 @@ class CurrentUserApi extends SugarApi
             }
         }
 
-        $data = $this->getUserData($api->platform, $args);
+        $data = $this->getUserData($api, $args);
 
         if (!empty($data['current_user']['preferences'])) {
             $this->htmlDecodeReturn($data['current_user']['preferences']);
@@ -265,7 +265,7 @@ class CurrentUserApi extends SugarApi
 
         $this->updateBean($bean, $api, $args);
 
-        return $this->getUserData($api->platform, $args);
+        return $this->getUserData($api, $args);
     }
 
     /**
@@ -567,13 +567,14 @@ class CurrentUserApi extends SugarApi
      * This data is dependent on the platform used. Each own platform has a
      * different data set to be sent in the response.
      *
-     * @param string $platform The platform of the request.
+     * @param ServiceBase $api
      * @param array $options A list of options like `category` to retrieve the
      *   basic user info. Will use `global` if no `category` is supplied.
      * @return array The user's data to be used in a `/me` request.
      */
-    protected function getUserData($platform, array $options) {
-
+    protected function getUserData(ServiceBase $api, array $options)
+    {
+        $platform = $api->platform;
         $current_user = $this->getUserBean();
 
         // Get the basics
@@ -601,6 +602,16 @@ class CurrentUserApi extends SugarApi
         if($user_data['is_manager']) {
             $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
         }
+
+        // Email addresses
+        $fieldDef = $current_user->getFieldDefinition('email');
+
+        if (!$fieldDef) {
+            $fieldDef = [];
+        }
+
+        $sf = SugarFieldHandler::getSugarField('email');
+        $sf->apiFormatField($user_data, $current_user, $options, 'email', $fieldDef, ['email'], $api);
 
         // Address information
         $user_data['address_street'] = $current_user->address_street;

@@ -123,6 +123,7 @@ class SugarFieldEmail extends SugarFieldBase
     public function formatEmails(array &$rawEmail, $key) 
     {
         static $emailProperties = array(
+            'email_address_id' => true,
             'email_address' => true,
             'opt_out' => true,
             'invalid_email' => true,
