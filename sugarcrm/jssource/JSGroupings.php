@@ -86,7 +86,7 @@
         $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
-                "sidecar/lib/backbone/underscore.js" => "include/javascript/sugar_grp1.js",
+                'sidecar/node_modules/underscore/underscore.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
                 'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
@@ -246,7 +246,7 @@
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    'include/javascript/select2/language.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'sidecar/lib/momentjs/min/locales.min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/node_modules/moment/min/locales.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/favicon.js' => 'include/javascript/sugar_sidecar.min.js',
 
                    //Expression Engine
