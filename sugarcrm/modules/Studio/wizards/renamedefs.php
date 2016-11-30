@@ -235,6 +235,10 @@ $renamedefs = array(
             array('name' => 'LBL_DOC_URL', 'type' => 'singular', 'source' => 'Documents'),
             array('name' => 'LBL_BUGS_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'Bugs'),
         ),
+        'EmailAddresses' => array(
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular', 'source' => 'Email Addresses'),
+            array('name' => 'LBL_MODULE_NAME_SINGULAR', 'type' => 'singular', 'source' => 'Email Address'),
+        ),
         'Forecasts' => array(
             array('name' => 'LNK_NEW_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'Forecasts'),
