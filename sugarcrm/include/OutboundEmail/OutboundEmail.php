@@ -521,6 +521,27 @@ class OutboundEmail extends SugarBean
         }
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Defaults `name` to the current user's full name and `email_address` and `email_address_id` to the requisite
+     * values representing the current user's primary email address.
+     */
+    public function populateDefaultValues($force = false)
+    {
+        parent::populateDefaultValues($force);
+
+        if (isset($GLOBALS['current_user'])) {
+            $userData = $GLOBALS['current_user']->getUsersNameAndEmail();
+            $this->name = $userData['name'];
+
+            if (!empty($userData['email'])) {
+                $this->email_address = $userData['email'];
+                $this->email_address_id = $GLOBALS['current_user']->emailAddress->getGuid($this->email_address);
+            }
+        }
+    }
+
 	/**
 	 * Generate values for saving into outbound_emails table
      * @param array $fieldDefs

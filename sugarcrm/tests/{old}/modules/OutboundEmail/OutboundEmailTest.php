@@ -139,4 +139,20 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db->deleteQuerySpy('delete');
     }
+
+    /**
+     * @covers ::populateDefaultValues
+     */
+    public function testPopulateDefaultValues()
+    {
+        $bean = BeanFactory::newBean('OutboundEmail');
+        $bean->populateDefaultValues();
+
+        $emailAddress = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
+        $emailAddressId = $GLOBALS['current_user']->emailAddress->getGuid($emailAddress);
+
+        $this->assertSame($GLOBALS['current_user']->name, $bean->name, 'The names should match');
+        $this->assertSame($emailAddress, $bean->email_address, 'The email addresses should match');
+        $this->assertSame($emailAddressId, $bean->email_address_id, 'The email address IDs should match');
+    }
 }
