@@ -189,10 +189,10 @@ describe('Emails.fields.email-recipients', function() {
 
             it('Should return a new option as an object when data is empty.', function() {
                 var data = [];
-                var expected = {email_address: 'foo@bar.com'};
-                var actual = field._createOption(expected.email_address, data);
+                var expected = 'foo@bar.com';
+                var actual = field._createOption(expected, data);
 
-                expect(actual.toJSON()).toEqual(expected);
+                expect(actual.get('email_address')).toEqual(expected);
             });
         });
 

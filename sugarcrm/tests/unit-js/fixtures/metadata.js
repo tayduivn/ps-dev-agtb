@@ -899,6 +899,59 @@ fixtures.metadata = {
                 }
             }
         },
+        "EmailAddresses": {
+            "fields": {
+                "id": {
+                    "name": 'id',
+                    "type": 'id',
+                    "vname": 'LBL_EMAIL_ADDRESS_ID',
+                    "required": true
+                },
+                "email_address": {
+                    "name": 'email_address',
+                    "type": 'varchar',
+                    "vname": 'LBL_EMAIL_ADDRESS',
+                    "length": 100,
+                    "required": true
+                },
+                "email_address_caps": {
+                    "name": 'email_address_caps',
+                    "type": 'varchar',
+                    "vname": 'LBL_EMAIL_ADDRESS_CAPS',
+                    "length": 100,
+                    "required": true,
+                    "reportable": false
+                },
+                "invalid_email": {
+                    "name": 'invalid_email',
+                    "type": 'bool',
+                    "default": 0,
+                    "vname": 'LBL_INVALID_EMAIL'
+                },
+                "opt_out": {
+                    "name": 'opt_out',
+                    "type": 'bool',
+                    "default": 0,
+                    "vname": 'LBL_OPT_OUT'
+                },
+                "date_created": {
+                    "name": 'date_created',
+                    "type": 'datetime',
+                    "vname": 'LBL_DATE_CREATE'
+                },
+                "date_modified": {
+                    "name": 'date_modified',
+                    "type": 'datetime',
+                    "vname": 'LBL_DATE_MODIFIED'
+                },
+                "deleted": {
+                    "name": 'deleted',
+                    "type": 'bool',
+                    "default": 0,
+                    "vname": 'LBL_DELETED'
+                }
+            }
+        },
         "Emails": {
             "fields": {
                 "name": {
@@ -1019,6 +1072,32 @@ fixtures.metadata = {
                     "source": "non-db",
                     "type": "link",
                     "vname": "LBL_ATTACHMENTS"
+                }
+            }
+        },
+        "Filters": {
+            "fields": {
+                "filter_definition": {
+                    "required": true,
+                    "name": "filter_definition",
+                    "vname": "LBL_FILTER_DEFINITION",
+                    "dbType": "longtext",
+                    "type": "json"
+                },
+                "filter_template": {
+                    "required": true,
+                    "name": "filter_template",
+                    "vname": "LBL_FILTER_TEMPLATE",
+                    "dbType": "longtext",
+                    "type": "json"
+                },
+                "module_name": {
+                    "required": true,
+                    "name": "module_name",
+                    "vname": "LBL_MODULE_NAME",
+                    "dbType": "varchar",
+                    "len": 100,
+                    "type": "text"
                 }
             }
         }

@@ -96,7 +96,13 @@ describe('Sugar7 sync alerts', function() {
         });
 
         it('should hide the alert on app:sync:error', function() {
-            app.events.trigger('app:sync:error', 'read', model, {});
+            // Pass an error with status=0 to avoid logging out and returning
+            // to the login page, since that is not relevant to this test.
+            var error = {
+                status: 0,
+                message: 'an error occurred'
+            };
+            app.events.trigger('app:sync:error', error);
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
     });
