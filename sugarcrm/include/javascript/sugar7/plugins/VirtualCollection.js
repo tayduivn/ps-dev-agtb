@@ -1392,6 +1392,17 @@
                 });
 
                 /**
+                 * Uses the regular backbone get.
+                 *
+                 * `get` is overriden in Data.Bean to replace this plugin. Here
+                 * we want to use the Backbone version.
+                 *
+                 */
+                this.get = function(attr) {
+                    return Backbone.Model.prototype.get.call(this, attr);
+                },
+
+                /**
                  * Defers to {@link BeanOverrides#hasChanged} when the
                  * attribute is a collection field.
                  */
