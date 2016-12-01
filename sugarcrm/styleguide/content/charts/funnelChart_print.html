@@ -42,10 +42,6 @@
     <canvas id="canvas_test" width="1440" height="960" class="nv-image-canvas"></canvas>
   </div>
 
-<script src="../../../include/javascript/jquery/jquery-min.js"></script>
-<script src="../../../sidecar/node_modules/underscore/underscore-min.js"></script>
-<script src="../../../sidecar/lib/backbone/backbone.min.js"></script>
-
 <script src="../../../include/javascript/rgbcolor.js"></script>
 <script src="../../../include/javascript/StackBlur.js"></script>
 <script src="../../../include/javascript/canvg.js"></script>
@@ -83,9 +79,30 @@
         var canvasChartId = 'canvas_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
         var svgChartId = 'svg_' + id || 'canvas_c3090c86-2b12-a65e-967f-51b642ac6165';
 
-        var completeCallback = complete || function() {
-            //self.renderChart(id);
-        };
+        var completeCallback = complete || function(css) {
+              var svg = serializer.serializeToString(d3Container),
+                  svgAttr = ' xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="480" viewBox="0 0 1440 960">',
+                  cssCdata = '<style type="text/css"><![CDATA[' + css.trim() + ']]></style>',
+                  d3Chart = svg.replace(/><g class="nvd3/, (svgAttr + cssCdata + '<g class="nvd3')),
+                  canvgOptions = {
+                      ignoreMouse: true,
+                      ignoreAnimation: false,
+                      ignoreClear: true,
+                      ignoreDimensions: true,
+                      scaleWidth: 1440,
+                      scaleHeight: 960,
+                      renderCallback: function() {
+                          var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
+                          //$.post(saveToUrl, {imageStr: uri, filename: filename}, "json");
+                          //var ctx = oCanvas.getContext('2d');
+                          //ctx.clearRect(0, 0, 1440, 960);
+                      }
+                  };
+
+              setTimeout(function() {
+                canvg(canvasChartId, d3Chart, canvgOptions);
+              }, 1000);
+            };
 
         d3.select(d3ChartId + ' svg').remove();
 
@@ -96,9 +113,9 @@
             .call(this.chart);
 
         d3.select(d3ChartId).selectAll('.nv-axis line')
-          .style('stroke', '#000')
-          .style('stroke-width', 1)
-          .style('stroke-opacity', 1);
+            .style('stroke', '#000')
+            .style('stroke-width', 1)
+            .style('stroke-opacity', 1);
 
         var parts = jsonfilename.split('/'),
             filename = parts[parts.length - 1].replace('.js', '.' + imageExt),
@@ -111,36 +128,10 @@
             return;
         }
 
-        $.ajax({
-            url: '../../assets/css/nvd3_print.css',
-            dataType: 'text',
-            success: function(css) {
-                var svg = serializer.serializeToString(d3Container),
-                    svgAttr = ' xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="480" viewBox="0 0 1440 960">',
-                    cssCdata = '<style type="text/css"><![CDATA[' + css.trim() + ']]></style>',
-                    d3Chart = svg.replace(/><g class="nvd3/, (svgAttr + cssCdata + '<g class="nvd3')),
-                    canvgOptions = {
-                        ignoreMouse: true,
-                        ignoreAnimation: false,
-                        ignoreClear: true,
-                        ignoreDimensions: true,
-                        scaleWidth: 1440,
-                        scaleHeight: 960,
-                        renderCallback: function() {
-                            var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
-                            //$.post(saveToUrl, {imageStr: uri, filename: filename}, "json");
-                            //var ctx = oCanvas.getContext('2d');
-                            //ctx.clearRect(0, 0, 1440, 960);
-                        }
-                    };
-
-                setTimeout(function() {
-                  canvg(canvasChartId, d3Chart, canvgOptions);
-                }, 1000);
-
-            },
-            complete: completeCallback
-        });
+        d3.text('../../assets/css/nvd3_print.css')
+          .get()
+          .on('load', completeCallback)
+          .on('error', function() { alert('Error loading print css!'); });
     }
 
     d3.json("data/funnel_data.json", function(data) {

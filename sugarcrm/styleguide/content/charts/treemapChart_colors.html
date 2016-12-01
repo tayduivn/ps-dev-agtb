@@ -85,9 +85,6 @@
     </section>
   </div>
 
-<script src="../../../include/javascript/jquery/jquery-min.js"></script>
-<script src="../../../sidecar/node_modules/underscore/underscore-min.js"></script>
-
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/src/models/treemap.js"></script>
@@ -176,8 +173,7 @@
         .call(chart8);
   });
 
-
-  function parseData(data) {
+  function parseData(data0) {
     var root = {
           name: 'Opportunities',
           children: [],
@@ -197,13 +193,14 @@
     var day_ms = 1000 * 60 * 60 * 24,
         d1 = new Date(today.getTime() + 31 * day_ms);
 
-    var data = data.filter(function(model) {
+    var data1 = data0.filter(function(model) {
       // Filter for 30 days from now.
       var d2 = new Date(model.date_closed || '1970-01-01');
       return (d2 - d1) / day_ms <= 30;
     }).map(function(d) {
       // Include properties to be included in leaves
       return {
+        id: d.id,
         assigned_user_name: d.assigned_user_name,
         sales_stage: d.sales_stage,
         name: d.name,
@@ -212,23 +209,29 @@
       };
     });
 
-    data = _.groupBy(data, function(m) {
-      return m.assigned_user_name;
+    var data2 = d3.nest()
+      .key(function(d) {
+        return d.assigned_user_name;
+      })
+      .entries(data1);
+
+    data2.forEach(function(value, key, list) {
+      list[key].values = d3.nest()
+        .key(function(m) {
+          return m.sales_stage;
+        })
+        .entries(value.values);
     });
 
-    _.each(data, function(value, key, list) {
-      list[key] = _.groupBy(value, function(m) {
-        return m.sales_stage;
-      });
-    });
-
-    _.each(data, function(value1, key1) {
+    data2.forEach(function(value1) {
       var child = [];
-      _.each(value1, function(value2, key2) {
+      var key1 = value1.key;
+      value1.values.forEach(function(value2) {
+        var key2 = value2.key;
         if (colorIndices.indexOf('2oppgroup_' + key2) === -1) {
           colorIndices.push('2oppgroup_' + key2);
         }
-        _.each(value2, function(record) {
+        value2.values.forEach(function(record) {
           record.className = 'stage_' + record.sales_stage.toLowerCase().replace(' ', '');
           record.value = parseInt(record.amount_usdollar, 10);
           record.colorIndex = '2oppgroup_' + key2;
@@ -236,7 +239,7 @@
         child.push({
           name: key2,
           className: 'stage_' + key2.toLowerCase().replace(' ', ''),
-          children: value2,
+          children: value2.values,
           colorIndex: '2oppgroup_' + key2
         });
       });
