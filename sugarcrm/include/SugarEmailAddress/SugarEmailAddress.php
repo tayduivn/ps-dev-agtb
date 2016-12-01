@@ -784,7 +784,7 @@ class SugarEmailAddress extends SugarBean
         // Trim the address
         $addr = trim($addr);
 
-        $address = $this->db->quote($this->_cleanAddress($addr));
+        $address = self::_cleanAddress($addr);
         $addressCaps = strtoupper($address);
 
         $conn = $this->db->getConnection();
