@@ -418,7 +418,7 @@ class MysqliManager extends MysqlManager
         $names = "SET NAMES 'utf8'";
         $collation = $this->getOption('collation');
         if (!empty($collation)) {
-            $names .= " COLLATE '$collation'";
+            $names .= " COLLATE " . $this->quoted($collation);
         }
         mysqli_query($this->getDatabase(),$names);
     }
