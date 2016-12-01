@@ -380,6 +380,11 @@
       }
 
       tr.quote-data-group-list {
+        &.product-row {
+          .currency-field {
+            text-align: right;
+          }
+        }
         .btn-group {
           &:not(.open) .bt {
             background: @white;
@@ -531,8 +536,12 @@
     clear: both;
   }
   .quote-discount-percent {
+    &.list {
+      .fieldset-field {
+        float: right;
+      }
+    }
     div {
-      float: left;
       &:first-child {
         margin-top: 1px;
       }
