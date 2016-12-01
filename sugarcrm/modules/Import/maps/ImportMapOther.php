@@ -115,7 +115,7 @@ class ImportMapOther
                     "Tax Class"=>"tax_class",
                     "Manufacturer Name"=>"manufacturer_name",
                     "Manufacturer ID"=>"manufacturer_id",
-                    "Mft Part Number"=>"mft_part_num",
+                    "Part Number"=>"mft_part_num",
                     "Vendor Part Number"=>"vendor_part_num",
                     "Currency"=>"currency_name",
                     "Cost"=>"cost_price",
