@@ -192,7 +192,7 @@ describe('Base.Layout.ConfigDrawer', function() {
             expect(layout._checkConfigMetadata()).toBeFalsy();
         });
     });
-    
+
     describe('_checkUserAccess()', function() {
         it('returns true if the user has access to the module', function() {
             expect(layout._checkUserAccess()).toBeTruthy();

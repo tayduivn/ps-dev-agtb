@@ -35,7 +35,7 @@ describe('Base.View.DupeCheckList', function() {
         SugarTest.testMetadata.set();
         layout = SugarTest.createLayout('base', 'Cases', 'list', null, null);
         createBeanStub = sinon.stub(app.data, 'createBean', function() {
-            var bean = new Backbone.Model();
+            var bean = new app.Bean();
             bean.copy = $.noop;
             sinon.stub(bean, 'copy', function(sourceBean) {
                 bean.set(sourceBean.attributes);

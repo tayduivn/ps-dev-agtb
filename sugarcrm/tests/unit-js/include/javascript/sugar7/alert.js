@@ -4,7 +4,6 @@ describe('Sugar7 sync alerts', function() {
         context,
         model,
         alertStubs = {},
-        originalBean, originalBeanCollection,
         sinonSandbox;
 
     beforeEach(function() {
@@ -12,6 +11,7 @@ describe('Sugar7 sync alerts', function() {
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
         app = SugarTest.app;
+        app.routing.start();
         app.drawer = {
             open: $.noop,
             close: $.noop,
@@ -23,11 +23,6 @@ describe('Sugar7 sync alerts', function() {
         context = app.context.getContext();
         model = app.data.createBean(moduleName);
 
-        originalBean = app.Bean;
-        originalBeanCollection = app.BeanCollection;
-
-        app.Bean = Backbone.Model;
-        app.BeanCollection = Backbone.Collection;
         sinonSandbox = sinon.sandbox.create();
     });
 
@@ -38,9 +33,7 @@ describe('Sugar7 sync alerts', function() {
         delete app.drawer;
         alertStubs.show.restore();
         alertStubs.dismiss.restore();
-
-        app.Bean = originalBean;
-        app.BeanCollection = originalBeanCollection;
+        app.routing.stop();
         sinonSandbox.restore();
     });
 

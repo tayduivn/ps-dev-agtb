@@ -107,11 +107,8 @@ describe("Record View", function () {
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;
+        app.routing.start();
         app.data.declareModels();
-        SugarTest.loadPlugin('VirtualCollection');
-        app.data.declareModelClass(moduleName, app.metadata.getModule(moduleName), app.config.platform, {
-            plugins: ['VirtualCollection']
-        });
         sinonSandbox = sinon.sandbox.create();
 
         view = SugarTest.createView("base", moduleName, "record", null, null);
@@ -141,6 +138,7 @@ describe("Record View", function () {
         sinonSandbox.restore();
         sinon.collection.restore();
         buildGridsFromPanelsMetadataStub.restore();
+        app.routing.stop();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         app.data.reset();
@@ -738,6 +736,11 @@ describe("Record View", function () {
         var collection, sandbox;
 
         beforeEach(function() {
+            SugarTest.loadPlugin('VirtualCollection');
+            app.data.declareModelClass(moduleName, app.metadata.getModule(moduleName), app.config.platform, {
+                plugins: ['VirtualCollection']
+            });
+
             collection = app.data.createBeanCollection(view.model.module, [
                 app.data.createBean(view.model.module, {id: 1, name: 'aaa', status: 'aaa'}),
                 app.data.createBean(view.model.module, {id: 2, name: 'bbb', status: 'bbb'}),
@@ -761,6 +764,7 @@ describe("Record View", function () {
 
         afterEach(function() {
             sandbox.restore();
+            app.data.declareModels();
         });
 
         it('should not call `fetchAll` when `getCollectionFieldNames` does not exist', function() {

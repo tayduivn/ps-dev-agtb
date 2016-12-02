@@ -11,7 +11,7 @@ describe("Base.Views.ConvertResults", function() {
         SugarTest.testMetadata.set();
 
         createBeanStub = sinon.stub(app.data, 'createBean', function(moduleName, attributes) {
-            return new Backbone.Model(attributes);
+            return new app.Bean(attributes);
         });
 
         view = SugarTest.createView('base', null, 'convert-results', null, null, true);
