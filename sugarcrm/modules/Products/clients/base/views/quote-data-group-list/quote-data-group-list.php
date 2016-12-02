@@ -17,7 +17,7 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
             'fields' => array(
                 array(
                     'name' => 'line_num',
-                    'label' => 'LBL_LINE_NUMBER',
+                    'label' => null,
                     'widthClass' => 'cell-small',
                     'css_class' => 'line_num tcenter',
                     'type' => 'int',
