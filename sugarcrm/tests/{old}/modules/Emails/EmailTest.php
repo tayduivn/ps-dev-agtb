@@ -397,6 +397,54 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //BEGIN SUGARCRM flav=ent ONLY
         $this->assertEquals('West', $note->team_set_selected_id, 'team_set_selected_id should not have changed');
     }
+
+    /**
+     * @covers ::save
+     * @covers ::updateTeamsForAttachments
+     * @covers ::updateTeamsForAttachment
+     * @covers Note::save
+     */
+    public function testUpdateTeamsForAttachments_ArchivingADraftSynchronizesTeams()
+    {
+        $email = SugarTestEmailUtilities::createEmail();
+        $data = array(
+            'email_type' => 'Emails',
+            'email_id' => $email->id,
+        );
+        $note = SugarTestNoteUtilities::createNote('', $data);
+
+        // Change the teams on the email.
+        $teams = BeanFactory::getBean('TeamSets');
+        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->assigned_user_id = $GLOBALS['current_user']->id;
+        $email->team_id = 'East';
+        $email->team_set_id = $teams->addTeams(array('East', 'West'));
+        //BEGIN SUGARCRM flav=ent ONLY
+        $email->team_set_selected_id = 'East';
+        //END SUGARCRM flav=ent ONLY
+        $email->save();
+
+        $expected = $GLOBALS['current_user']->getPrivateTeam();
+        $this->assertEquals($expected, $note->team_set_id, 'team_set_id should be the private team');
+        $this->assertEquals($expected, $note->team_id, 'team_id should be the private team');
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->assertEquals($expected, $note->team_set_selected_id, 'team_set_selected_id should be the private team');
+        //END SUGARCRM flav=ent ONLY
+
+        // Archive the email.
+        $email->state = Email::EMAIL_STATE_ARCHIVED;
+        $email->save();
+
+        $this->assertEquals($email->team_set_id, $note->team_set_id, 'team_set_id does not match');
+        $this->assertEquals($email->team_id, $note->team_id, 'team_id does not match');
+        //BEGIN SUGARCRM flav=ent ONLY
+        $this->assertEquals(
+            $email->team_set_selected_id,
+            $note->team_set_selected_id,
+            'team_set_selected_id does not match'
+        );
+        //END SUGARCRM flav=ent ONLY
+    }
 }
 
 
