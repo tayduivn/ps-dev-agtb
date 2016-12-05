@@ -109,8 +109,18 @@
                 return button.name === 'select_discount_amount_button';
             });
 
-            // update the button label to the current row currency
+            // update the button field def label to the current row currency
             btn.label = currentCurrencyLabel;
+
+            btn = _.find(this.dropdownFields, function(button) {
+                return button.name === 'select_discount_amount_button';
+            });
+
+            if (btn) {
+                // if the button has already been rendered into dropdownFields
+                // update the actual button field label, not just the defs
+                btn.label = currentCurrencyLabel;
+            }
 
             // make sure the dropdown symbol is updated
             this.updateDropdownSymbol();

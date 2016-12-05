@@ -214,6 +214,16 @@ describe('Products.Base.Field.DiscountSelect', function() {
             app.lang.direction = oldAppLangDirection;
         });
 
+        it('should call update the label on the dropdown field for select_discount_amount_button', function() {
+            app.lang.direction = 'ltr';
+            field.dropdownFields = [{
+                name: 'select_discount_amount_button',
+                label: 'oldLabel'
+            }];
+            field.updateCurrencyStrings();
+            expect(field.dropdownFields[0].label).toBe('$ US Dollar');
+        });
+
         it('should call updateDropdownSymbol', function() {
             field.updateCurrencyStrings();
             expect(field.updateDropdownSymbol).toHaveBeenCalled();
