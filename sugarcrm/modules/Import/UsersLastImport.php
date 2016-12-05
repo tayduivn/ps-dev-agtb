@@ -192,19 +192,25 @@ class UsersLastImport extends SugarBean
     {
         global $current_user;
 
-        $query1 = "SELECT DISTINCT bean_type FROM users_last_import WHERE assigned_user_id = '$current_user->id'
-                   AND import_module = '$module' AND deleted=0";
+        $db = DBManagerFactory::getInstance();
 
-        $result1 = $GLOBALS['db']->query($query1);
+        $query1 = sprintf(
+            'SELECT DISTINCT bean_type FROM users_last_import WHERE assigned_user_id = %s'
+                . ' AND import_module = %s AND deleted=0',
+            $db->quoted($current_user->id),
+            $db->quoted($module)
+        );
+
+        $result1 = $db->query($query1);
         if ( !$result1 )
             return array($module);
 
         $returnarray = array();
-        while ( $row1 = $GLOBALS['db']->fetchByAssoc($result1))
+        while ($row1 = $db->fetchByAssoc($result1)) {
             $returnarray[] = $row1['bean_type'];
+        }
 
         return $returnarray;
     }
 
 }
-?>
