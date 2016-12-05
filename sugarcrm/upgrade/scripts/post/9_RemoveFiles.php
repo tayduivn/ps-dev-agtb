@@ -28,7 +28,7 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
         }
 
         $caseInsensitiveFS = $this->upgrader->context['case_insensitive_fs'];
-        $checkEmptyFolders = array();
+        $folders = array();
 
         foreach ($this->state['files_to_delete'] as $file) {
             $file = SugarAutoLoader::normalizeFilePath($file);
@@ -46,14 +46,14 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
             } else {
                 $this->unlink($file);
                 $folder = dirname($file);
-                if (!in_array($folder, $checkEmptyFolders)) {
-                    $checkEmptyFolders[] = $folder;
+
+                if (!isset($folders[$folder])) {
+                    $folders[$folder] = count(glob($folder . '/*'));
                 }
             }
         }
 
-        foreach ($checkEmptyFolders as $folder) {
-            $numberOfFiles = count(glob($folder . '/*'));
+        foreach ($folders as $folder => $numberOfFiles) {
             if ($numberOfFiles === 0) {
                 $this->removeDir($folder);
             }
