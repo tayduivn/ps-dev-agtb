@@ -660,6 +660,84 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($html, $this->email->description_html);
     }
 
+    public function willSetDescriptionProvider()
+    {
+        return array(
+            array(
+                'Hello World!',
+                '<p>Hello World!</p>',
+            ),
+            array(
+                'Example email message',
+                '<div><div>Example</div> email <span>message</span></div>',
+            ),
+            array(
+                "Example email\n\n message with\n line breaks",
+                '<div>Example email<br /><br> <span>message</span> with<br /> line breaks</div>',
+            ),
+        );
+    }
+    /**
+     * @dataProvider willSetDescriptionProvider
+     * @covers ::save
+     */
+    public function testSave_WillSetDescription($text, $html)
+    {
+        $this->email->state = 'Archived';
+        $this->email->description_html = $html;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertSame($text, $this->email->description);
+    }
+
+    public function willNotSetDescriptionProvider()
+    {
+        return array(
+            array(
+                'Archived',
+                'Test email message',
+                'Test <b>email</b> message',
+            ),
+            array(
+                'Draft',
+                null,
+                '<div>Test email</div>',
+            ),
+            array(
+                'Archived',
+                'Test email message',
+                null,
+            ),
+            array(
+                'Archived',
+                'One message',
+                '<p>Entirely different message</p>',
+            ),
+            // The description field should not change if it was already set, even if it includes HTML tags
+            array(
+                'Archived',
+                'Allow <b>HTML</b> if sent for text',
+                'Allow <b>HTML</b> if sent for text',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider willNotSetDescriptionProvider
+     * @covers ::save
+     */
+    public function testSave_WillNotSetDescription($state, $text, $html)
+    {
+        $this->email->state = $state;
+        $this->email->description = $text;
+        $this->email->description_html = $html;
+        $this->email->save();
+        SugarTestEmailUtilities::setCreatedEmail($this->email->id);
+
+        $this->assertSame($text, $this->email->description);
+    }
+
     /**
      * @covers ::sendEmail
      */

@@ -1115,12 +1115,17 @@ class Email extends SugarBean {
 				$this->new_with_id = true;
 			}
 
-            // Copy plain-text email body to HTML field column
-            if ($this->state === static::EMAIL_STATE_ARCHIVED &&
-                empty($this->description_html) &&
-                !empty($this->description)
-            ) {
-                $this->description_html = str_replace(array("\r\n", "\n", "\r"), '<br />', $this->description);
+            if ($this->state === static::EMAIL_STATE_ARCHIVED) {
+                // Copy plain-text email body to HTML field column
+                if (empty($this->description_html) && !empty($this->description)) {
+                    $this->description_html = str_replace(array("\r\n", "\n", "\r"), '<br />', $this->description);
+                }
+
+                // Strip HTML tags from the description_html and save to description
+                if (!empty($this->description_html) && empty($this->description)) {
+                    // Replace HTML line breaks with non HTML line breaks and strip all remaining HTML tags
+                    $this->description = strip_tags(br2nl($this->description_html));
+                }
             }
 
 			$this->from_addr_name = $this->cleanEmails($this->from_addr_name);

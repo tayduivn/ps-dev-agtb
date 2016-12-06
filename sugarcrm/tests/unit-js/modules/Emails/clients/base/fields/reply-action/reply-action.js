@@ -3,6 +3,8 @@ describe('Emails.Field.ReplyAction', function() {
     var field;
     var model;
     var user;
+    var sandbox;
+    var context;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -18,8 +20,9 @@ describe('Emails.Field.ReplyAction', function() {
         //used by formatDate in the reply header template
         user.setPreference('datepref', 'Y-m-d');
         user.setPreference('timepref', 'H:i');
-
-        model = app.data.createBean('Emails');
+        context = app.context.getContext({module: 'Emails'});
+        context.prepare(true);
+        model = context.get('model');
 
         field = SugarTest.createField({
             name: 'reply_action',
@@ -27,8 +30,11 @@ describe('Emails.Field.ReplyAction', function() {
             viewName: 'record',
             module: 'Emails',
             loadFromModule: true,
-            model: model
+            model: model,
+            context: context
         });
+
+        sandbox = sinon.sandbox.create();
     });
 
     afterEach(function() {
@@ -38,6 +44,7 @@ describe('Emails.Field.ReplyAction', function() {
         delete field.model;
         field = null;
         SugarTest.testMetadata.dispose();
+        sandbox.restore();
     });
 
     describe('_getReplyRecipients', function() {
@@ -319,6 +326,50 @@ describe('Emails.Field.ReplyAction', function() {
         it('should return an empty string if email body is not set', function() {
             field.model.unset('description_html');
             expect(field._getReplyBodyHtml()).toEqual('');
+        });
+    });
+
+    describe('_updateEmailOptions', function() {
+        beforeEach(function() {
+            sandbox.stub(app.user, 'getPreference')
+                .withArgs('timepref')
+                .returns('H:i');
+
+            app.user.getPreference.withArgs('datepref').returns('Y-m-d');
+        });
+
+        using('client preferences', [
+            {
+                test: 'should not set description in email options when using sugar email client',
+                type: 'sugar',
+                expected: undefined
+            },
+            {
+                test: 'should set description in email options when using external email client',
+                type: 'external',
+                expected: "\n-----\nFrom: \nTo: \nSubject: \n\n\Hello World!"
+            }
+        ], function(data) {
+            it(data.test, function() {
+                var newField;
+
+                app.user.getPreference.withArgs('email_client_preference').returns({type: data.type});
+
+                newField = SugarTest.createField({
+                    name: 'reply_action',
+                    type: 'reply-action',
+                    viewName: 'record',
+                    module: 'Emails',
+                    loadFromModule: true,
+                    model: model,
+                    context: context
+                });
+
+                model.set('description', 'Hello World!');
+
+                expect(newField.emailOptions.description).toBe(data.expected);
+                newField.dispose();
+            });
         });
     });
 });

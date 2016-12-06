@@ -68,15 +68,13 @@
         var replyHeaderHtml = tplHeaderHtml(this._getReplyHeaderParams());
         var replyBody = this._getReplyBody();
         var replyBodyHtml = this._getReplyBodyHtml();
-        var description = '\n' + replyHeader + '\n' + replyBody;
         var descriptionHtml = '<div></div><div id="' + this.REPLY_CONTENT_ID + '">' +
             replyHeaderHtml + replyBodyHtml + '</div>';
 
-        this.addEmailOptions({
+        var options = {
             to: replyRecipients.to,
             cc: replyRecipients.cc,
             name: subject,
-            description: description,
             description_html: descriptionHtml,
             parent_type: this.model.get('parent_type'),
             parent_id: this.model.get('parent_id'),
@@ -84,7 +82,13 @@
             team_name: this.model.get('team_name'),
             reply_to_id: this.model.get('id'),
             _signatureLocation: 'above'
-        });
+        };
+
+        if (!this.useSugarEmailClient()) {
+            options.description = '\n' + replyHeader + '\n' + replyBody;
+        }
+
+        this.addEmailOptions(options);
     },
 
     /**
