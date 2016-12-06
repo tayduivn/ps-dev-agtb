@@ -207,21 +207,8 @@ class SavedReport extends Basic
 		} // if
 		parent::fill_in_additional_detail_fields();
 		$this->get_scheduled_query();
-                $this->getLastRunDate();
 	}
 
-    /**
-     * To populate last_run_date field
-     */
-    protected function getLastRunDate()
-    {
-        global $current_user;
-        $query = 'SELECT date_modified ';
-        $query .= "FROM $this->report_cache_table ";
-        $query .= "WHERE id = ? AND assigned_user_id = ?";
-        $conn = $this->db->getConnection();
-        $this->last_run_date = $conn->executeQuery($query, array($this->id, $current_user->id))->fetchColumn();
-    }
 
 	function get_scheduled_query(){
 		global $current_user;

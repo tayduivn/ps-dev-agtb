@@ -72,6 +72,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
             'vname' => 'LBL_REPORT_LAST_RUN_DATE',
             'reportable' => false,
             'primary_only' => true,
+            'link_type' => 'one',
         ),
   'report_cache_id' => array(
     'name' => 'report_cache_id',

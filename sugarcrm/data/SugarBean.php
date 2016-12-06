@@ -5668,10 +5668,9 @@ class SugarBean
 
         foreach($this->field_defs as $field)
         {
-            if (in_array($field['type'], static::$relateFieldTypes) && !empty($field['module'])) {
-                $name = $field['name'];
-                if(empty($this->$name))
-                {
+            $name = $field['name'];
+            if (empty($this->$name)) {
+                if (in_array($field['type'], static::$relateFieldTypes) && !empty($field['module']) && !empty($field['id_name'])) {
                     // set the value of this relate field in this bean ($this->$field['name']) to the value of the 'name' field in the related module for the record identified by the value of $this->$field['id_name']
                     $related_module = $field['module'];
                     $id_name = $field['id_name'];
@@ -5732,6 +5731,19 @@ class SugarBean
                             }
 
                             $this->$name = $locale->formatName($rel_bean, $data);
+                        }
+                    }
+                }
+                elseif (!empty($field['rname_link']) && !empty($field['link'])) {
+                    $link = $field['link'];
+                    if (isset($this->field_defs[$link]['link_type']) && $this->field_defs[$link]['link_type'] == 'one') {
+                        $rName = $field['rname_link'];
+                        if (!empty($this->$link) || $this->load_relationship($link)) {
+                            $params = $this->$link->beansAreLoaded() ? null : array('limit' => 1);
+                            $record = reset($this->$link->getBeans($params));
+                            if ($record) {
+                                $this->$name = $record->$rName;
+                            }
                         }
                     }
                 }

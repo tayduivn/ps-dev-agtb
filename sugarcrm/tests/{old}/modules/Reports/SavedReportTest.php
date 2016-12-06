@@ -36,6 +36,32 @@ class SavedReportTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test of SavedReport's getLastRunDate
+     */
+    public function testGetLastRunDate()
+    {
+        $timedate = TimeDate::getInstance();
+        $now = db_convert("'" . $timedate->nowDb() . "'", 'datetime');
+
+        $report = new SavedReport();
+
+        $mock = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mock->method('beansAreLoaded')->willReturn(true);
+        $relBean = new SugarBean();
+        $relBean->date_modified = $now;
+        $mock->method('getBeans')->willReturn(array($relBean));
+        $report->last_run_date_link = $mock;
+        //Set values to other relate fields to ensure nothing tries to populate them
+        $report->report_cache_id = "-1";
+
+        $report->fill_in_relationship_fields();
+
+        $this->assertEquals($now, $report->last_run_date, 'incorrect last_run_date');
+    }
+
+    /**
      * Make sure that the array returned is a subset of `GLOBALS['report_modules']`
      * and contain values from `$app_list_strings['moduleList']`
      */
