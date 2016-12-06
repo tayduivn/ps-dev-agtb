@@ -567,6 +567,17 @@
         "files": [
             "sugarcrm/**/*.lang.php"
         ]
+    },
+    {
+        "name": "sugarcrm/eng-rpt",
+        "files": [
+            "sugarcrm/modules/Reports/**",
+            "sugarcrm/modules/ReportMaker/**",
+            "sugarcrm/modules/CustomQueries/**",
+            "sugarcrm/modules/Datasets/**",
+            "sugarcrm/tests/modules/Reports/**",
+            "sugarcrm/tests/modules/ReportMaker/**"
+        ]
     }],
     "findPotentialReviewers": false,
     "skipAlreadyMentionedPR": true,
