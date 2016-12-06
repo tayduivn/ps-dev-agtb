@@ -11,7 +11,7 @@
  */
 $viewdefs['ProductTemplates']['base']['filter']['basic'] = array(
     'create' => true,
-    'quicksearch_field' => array('name'),
+    'quicksearch_field' => array('name', 'category_name', 'type_name'),
     'quicksearch_priority' => 1,
     'filters' => array(
         array(
