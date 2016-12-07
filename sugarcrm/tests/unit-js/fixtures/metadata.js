@@ -1,5 +1,4 @@
-var fixtures = typeof(fixtures) == "object" ? fixtures : {},
-    tmpMetadata;
+var fixtures = typeof(fixtures) == "object" ? fixtures : {};
 
 fixtures.jssource = {
    "modules": {
@@ -76,7 +75,7 @@ fixtures.jssource = {
     }
 };
 
-tmpMetadata = {
+fixtures.metadata = {
     _hash: '2q34aasdfwrasdfse',
     "server_info": {
         "flavor":"ENT",
@@ -97,7 +96,7 @@ tmpMetadata = {
         1: "bugs"
     },
     "config":{
-      "configfoo":"configBar"
+        "configfoo":"configBar"
     },
     "relationships": {
         "contacts_accounts": {
@@ -289,7 +288,7 @@ tmpMetadata = {
                                 name: "show_more_button",
                                 type: "button",
                                 label: "Show More",
-                                class: "loading wide",
+                                css_class: "loading wide",
                                 events: {
                                     click: "function(){ var self = this; " +
                                         "this.context.attributes.collection.paginate({add:true, success:function(){window.scrollTo(0,document.body.scrollHeight);}});" +
@@ -1270,6 +1269,36 @@ tmpMetadata = {
         'Cases',
         'Contacts'
     ],
+    modules_info: {
+        'Accounts': {
+            'display_tab': true,
+            'enabled': true,
+            'quick_create': true,
+            'show_subpanels': true,
+            'visible': false
+        },
+        'Bugs': {
+            'display_tab': true,
+            'enabled': true,
+            'quick_create': true,
+            'show_subpanels': true,
+            'visible': true
+        },
+        'Cases': {
+            'display_tab': true,
+            'enabled': true,
+            'quick_create': true,
+            'show_subpanels': true,
+            'visible': true
+        },
+        'Contacts': {
+            'display_tab': true,
+            'enabled': true,
+            'quick_create': true,
+            'show_subpanels': true,
+            'visible': true
+        }
+    },
     'full_module_list':{
         'Accounts':'Accounts',
         'Bugs':'Bugs',
@@ -1286,11 +1315,19 @@ tmpMetadata = {
             }
         }
     },
-    'logo_url': 'company_logo.jpg'
+    'logo_url': 'company_logo.jpg',
+    filters: {
+        operators: {
+            meta: {
+                enum: {
+                    $in: 'is any of',
+                    $not_in: 'is not any of',
+                },
+                text: {
+                    $equals: 'equals',
+                    $starts: 'starts with'
+                }
+            }
+        }
+    }
 };
-
-if (_.has(fixtures, 'metadata')) {
-    jQuery.extend(true, fixtures.metadata, tmpMetadata);
-} else {
-    fixtures.metadata = tmpMetadata;
-}

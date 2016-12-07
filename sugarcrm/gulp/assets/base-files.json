@@ -17,6 +17,7 @@
 
     "sidecar/minified/sidecar.min.js",
     {"pattern": "sidecar/minified/sidecar.min.js.map", "included": false},
+
     "include/javascript/sugar7/hbs-helpers.js",
     "include/javascript/modernizr.js",
     "include/javascript/nprogress/nprogress.js",
@@ -70,9 +71,6 @@
     "tests/unit-js/jshelpers/component-helper.js",
 
     // Fixtures
-    "sidecar/tests/fixtures/api.js",
-    "sidecar/tests/fixtures/metadata.js",
-    "sidecar/tests/fixtures/language.js",
     "tests/unit-js/fixtures/metadata.js",
     "tests/unit-js/fixtures/search.js",
     "tests/unit-js/modules/**/fixtures/*.js",
