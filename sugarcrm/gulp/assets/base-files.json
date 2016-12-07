@@ -60,10 +60,9 @@
     "include/javascript/sugar7/shortcuts.js",
 
     // jasmine and sinon core files
-    "sidecar/node_modules/sinon/pkg/sinon.js",
-    "sidecar/lib/jasmine-sinon/jasmine-sinon.js",
-    "sidecar/lib/jasmine-jquery/jasmine-jquery.js",
-    "sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js",
+    "node_modules/sinon/pkg/sinon.js",
+    "node_modules/jasmine-sinon/lib/jasmine-sinon.js",
+    "tests/unit-js/jshelpers/jasmine-jquery/jasmine-jquery.js",
     "tests/unit-js/jshelpers/config.js",
     "tests/unit-js/jshelpers/spec-helper.js",
     "tests/unit-js/jshelpers/component-helper.js",
