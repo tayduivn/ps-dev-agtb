@@ -64,7 +64,6 @@
     "sidecar/lib/jasmine-sinon/jasmine-sinon.js",
     "sidecar/lib/jasmine-jquery/jasmine-jquery.js",
     "sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js",
-    "sidecar/tests/spec-helper.js",
     "tests/unit-js/jshelpers/config.js",
     "tests/unit-js/jshelpers/spec-helper.js",
     "tests/unit-js/jshelpers/component-helper.js",
