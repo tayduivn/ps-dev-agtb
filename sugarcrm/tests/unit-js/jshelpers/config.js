@@ -60,9 +60,6 @@
         clientID: 'sugar',
         syncConfig: false,
         loadCss: false,
-        fetchLimit: {
-            recents: 20
-        },
 
     }, false);
 
