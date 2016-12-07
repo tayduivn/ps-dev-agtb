@@ -44,8 +44,6 @@
     // them all by default
     {"pattern": "include/javascript/sugar7/plugins/*.js", "included": true, "served": true, "watched": true},
 
-    "sidecar/tests/config.js",
-
     "include/javascript/jquery/jquery.dataTables.min.js",
     "include/javascript/jquery/sugar.resizableColumns.js",
     "include/javascript/twitterbootstrap/bootstrap-collapse.js",
@@ -67,6 +65,7 @@
     "sidecar/lib/jasmine-jquery/jasmine-jquery.js",
     "sidecar/lib/jasmine-ci/jasmine-reporters/jasmine.phantomjs-reporter.js",
     "sidecar/tests/spec-helper.js",
+    "tests/unit-js/jshelpers/config.js",
     "tests/unit-js/jshelpers/spec-helper.js",
     "tests/unit-js/jshelpers/component-helper.js",
 
@@ -77,8 +76,6 @@
 
     // If we are emulating what the real app will see, we need to include our hacks
     "include/javascript/sugar7/hacks.js",
-
-    "gulp/environment.js",
 
     {"pattern": "clients/base/**/*.js", "included": false, "served": true, "watched": true},
     {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true}
