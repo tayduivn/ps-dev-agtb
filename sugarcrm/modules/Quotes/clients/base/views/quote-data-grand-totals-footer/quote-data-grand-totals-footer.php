@@ -20,13 +20,11 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                     'type' => 'currency',
                 ),
                 array(
-                    'name' => 'additional_tax',
-                    'type' => 'quote-footer-input',
-                    'label' => 'LBL_ADDITIONAL_TAX',
-                ),
-                array(
                     'name' => 'tax',
                     'type' => 'currency',
+                    'related_fields' => array(
+                        'taxrate_value',
+                    ),
                 ),
                 array(
                     'name' => 'shipping',
