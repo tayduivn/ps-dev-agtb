@@ -261,6 +261,67 @@ gulp.task('test:unit:php', function(done) {
     });
 });
 
+// Task to run REST API tests on an installed instance
+gulp.task('test:rest', function() {
+    function help() {
+        cmd.outputHelp((text) => text.replace('Usage: gulp', 'Usage: gulp test:rest'));
+        process.exit(1);
+    }
+
+    var mocha = require('gulp-spawn-mocha');
+    var cmd = commander
+        .option('--url <url>', 'Instance URL')
+        .option('-u, --username <username>', 'Administrator username')
+        .option('-p, --password <password>', 'Administrator password')
+        .option('--ci', 'Enable CI specific options')
+        .option('--path <path>', 'Set base output path')
+        .parse(process.argv);
+
+    var env = {};
+    if (commander.url) {
+        env.API_URL = commander.url + '/rest';
+    } else if (process.env.API_URL) {
+        process.env.API_URL += '/rest';
+    } else {
+        console.error('Either setting $API_URL or the --url flag is required.');
+        help();
+    }
+
+    if (commander.username) {
+        env.ADMIN_USERNAME = commander.username;
+    } else if (!process.env.ADMIN_USERNAME) {
+        console.error('Either setting $ADMIN_USERNAME or the --username flag is required.');
+        help();
+    }
+
+    if (commander.password) {
+        env.ADMIN_PASSWORD = commander.password;
+    } else if (!process.env.ADMIN_PASSWORD) {
+        console.error('Either setting $ADMIN_PASSWORD or the --password flag is required.');
+        help();
+    }
+
+    var options = {
+        env: env,
+        timeout: 15000
+    };
+
+    if (commander.ci) {
+        var path = commander.path || process.env.WORKSPACE || os.tmpdir();
+        path += '/test-rest';
+
+        options.reporter = 'mocha-junit-reporter';
+        options.reporterOptions = 'mochaFile=' + path + '/test-results.xml';
+
+        process.stdout.write('Test reports will be generated to: ' + path + '\n');
+    } else {
+        options.reporter = 'spec';
+    }
+
+    return gulp.src(['tests/rest/**/*.js', 'modules/**/tests/rest/**/*.js'], {read: false})
+        .pipe(mocha(options));
+});
+
 // confirm our files have the desired license header
 gulp.task('check-license', function(done) {
     var options = {
