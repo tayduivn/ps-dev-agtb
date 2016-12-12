@@ -13,10 +13,10 @@
 
 class pmse_Inbox extends pmse_Inbox_sugar
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
+    /**
+     * Inbox records should not be tracked
+     *
+     * @var boolean
+     */
+    public $tracker_visibility = false;
 }

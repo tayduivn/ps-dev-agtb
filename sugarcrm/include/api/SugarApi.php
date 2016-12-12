@@ -325,7 +325,9 @@ abstract class SugarApi {
         $monitor->setValue('user_id', $this->api->user->id);
         $monitor->setValue('module_name', $bean->module_dir);
         $monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
-        $monitor->setValue('visible', 1);
+
+        // Visibility is important... only mark it visible if the bean says to
+        $monitor->setValue('visible', $bean->tracker_visibility);
         $monitor->setValue('item_id', $bean->id);
         $monitor->setValue('item_summary', $bean->get_summary_text());
 

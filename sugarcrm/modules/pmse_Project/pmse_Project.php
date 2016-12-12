@@ -14,11 +14,4 @@
 class pmse_Project extends pmse_Project_sugar
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
 }
-
-?>

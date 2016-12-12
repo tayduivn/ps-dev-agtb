@@ -195,6 +195,9 @@ class RecentApi extends SugarApi
             $query->where()->queryAnd()->gte('tracker.date_modified', $td->asDb());
         }
 
+        // We should only show recent items that are visible
+        $query->where()->queryAnd()->equals('tracker.visible', 1);
+
         foreach ($query->select()->select as $v) {
             $query->groupBy($v->table . '.' . $v->field);
         }
