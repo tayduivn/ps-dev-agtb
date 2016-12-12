@@ -3071,9 +3071,9 @@ class HealthCheckScanner
     protected function checkDbDriver()
     {
         if ($this->db->variant == 'mysql') {
-            $this->updateStatus('deprecatedDbDriver', 'mysql', 'mysqli');
+            $this->updateStatus('unsupportedDbDriver', 'mysql', 'mysqli');
         } elseif ($this->db->dbType == 'mssql') {
-            $this->updateStatus('deprecatedDbDriver', 'mssql', 'sqlsrv');
+            $this->updateStatus('unsupportedDbDriver', 'mssql', 'sqlsrv');
         }
     }
 

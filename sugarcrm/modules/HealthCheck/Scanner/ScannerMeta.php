@@ -491,6 +491,13 @@ class HealthCheckScannerMeta
             // @codingStandardsIgnoreLine
             'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unknown_PHP4_Parent_Constructor_Call'
         ),
+        534 => array(
+            'report' => 'unsupportedDbDriver',
+            'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb'     => 'http://support.sugarcrm.com/Knowledge_Base/Administration/Install/Troubleshooting_Health_Check_Output/Health_Check_Error_Unsupported_DB_Driver/',
+            //@codingStandardsIgnoreEnd
+        ),
 
         //Moved foundEcho,foundPrint,foundDieExit,foundPrintR,foundVarDump to E bucket. Use this code for new reports
 //        509 => array(

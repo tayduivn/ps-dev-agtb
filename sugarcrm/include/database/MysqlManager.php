@@ -64,8 +64,6 @@
 
 /**
  * MySQL manager implementation for mysql extension
- *
- * @deprecated Use MysqliManager instead.
  */
 abstract class MysqlManager extends DBManager
 {
