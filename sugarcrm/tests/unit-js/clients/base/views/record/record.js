@@ -162,20 +162,7 @@ describe("Record View", function () {
             expect(actual_button_length).toBe(2);
         });
 
-        it('Should have locked fields', function() {
 
-            view.render();
-            view.model.set({
-                name: 'Name',
-                case_number: 123,
-                description: 'Description'
-            });
-            view.model.set('locked_fields', ['name']);
-            view.handleLockedFields();
-
-            var hasLockedFields = view.hasLockedFields();
-            expect(hasLockedFields).toBe(true);
-        });
 
         it("Should hide 4 editable fields", function () {
             var hiddenFields = 0;
@@ -433,6 +420,70 @@ describe("Record View", function () {
 
                     });
                 });
+        });
+    });
+
+    describe('Locked Fields', function() {
+        var fieldset = {
+            name: 'custom_fieldset',
+            type: 'fieldset',
+            fields: [
+                {name: 'fake_field1'},
+                {name: 'fake_field2'}
+            ]
+        };
+
+        beforeEach(function() {
+            buildGridsFromPanelsMetadataStub.restore();
+            view.meta.panels[1].fields.push(fieldset);
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description',
+                fake_field1: 'fake1',
+                fake_field2: 'fake2'
+            });
+        });
+
+        it('should set _hasLockedFields to true when a field is locked', function() {
+            view.render();
+            view.model.set('locked_fields', ['name']);
+            view.handleLockedFields();
+
+            expect(view._hasLockedFields).toBe(true);
+        });
+
+        it('should set _hasLockedFields to true when a fieldset field is locked', function() {
+            view.render();
+            view.model.set('locked_fields', ['fake_field1']);
+            view.handleLockedFields();
+
+            expect(view._hasLockedFields).toBe(true);
+        });
+
+        it('should only show a lock if the field is locked', function() {
+            view.render();
+            view.model.set('locked_fields', ['case_number']);
+            view.handleLockedFields();
+
+            expect(view.$('.record-lock-link-wrapper[data-name="case_number"]').hasClass('hide')).toBe(false);
+            expect(view.$('.record-lock-link-wrapper[data-name="description"]').hasClass('hide')).toBe(true);
+        });
+
+        it('should only show a lock if all fields in a fieldset are locked', function() {
+            view.render();
+            view.model.set('locked_fields', ['fake_field1', 'fake_field2']);
+            view.handleLockedFields();
+
+            expect(view.$('.record-lock-link-wrapper[data-name="custom_fieldset"]').hasClass('hide')).toBe(false);
+        });
+
+        it('should not show a lock if a field in a fieldset is not locked', function() {
+            view.render();
+            view.model.set('locked_fields', ['fake_field1']);
+            view.handleLockedFields();
+
+            expect(view.$('.record-lock-link-wrapper[data-name="custom_fieldset"]').hasClass('hide')).toBe(true);
         });
     });
 
