@@ -24,6 +24,15 @@
         app.lang.get('LBL_STATUS_IN_PROGRESS', this.module),
         app.lang.get('LBL_STATUS_CANCELLED', this.module),
         app.lang.get('LBL_STATUS_ERROR', this.module)],
+
+    /**
+    * Initialize
+    */
+    initialize: function(options) {
+        this.cacheKiller = (new Date()).getTime();
+        this._super('initialize', [options]);
+    },
+
     /**
      * Converts the input field to a select2 field and adds the module filter for refining the search.
      *
