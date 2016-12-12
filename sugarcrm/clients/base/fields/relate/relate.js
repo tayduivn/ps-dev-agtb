@@ -390,7 +390,7 @@
             // if we have search results use that to set new values
             var model = collection.get(id);
             attributes.id = model.id;
-            attributes.value = model.get('name');
+            attributes.value = model.get(this.getRelatedModuleField());
             _.each(model.attributes, function(value, field) {
                 if (app.acl.hasAccessToModel('view', model, field)) {
                     attributes[field] = attributes[field] || model.get(field);
