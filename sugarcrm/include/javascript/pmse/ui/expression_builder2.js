@@ -1577,6 +1577,7 @@ ExpressionControl.prototype._createModulePanel = function () {
                                     case 'dropdown':
                                         labelField = 'text';
                                     case 'multiselect':
+                                    case 'radio':
                                         var aux = parentField.getSelectedData() ||
                                                 parentField._getFirstAvailableOption(),
                                             itemsObj = aux.optionItem;
