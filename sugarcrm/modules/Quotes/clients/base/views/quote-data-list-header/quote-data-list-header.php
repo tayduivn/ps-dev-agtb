@@ -16,8 +16,8 @@ $viewdefs['Quotes']['base']['view']['quote-data-list-header'] = array(
             array(
                 'name' => 'group_button',
                 'type' => 'rowaction',
-                'label' => 'LBL_CREATE_GROUP_BUTTON_LABEL',
-                'tooltip' => 'LBL_CREATE_GROUP_BUTTON_TOOLTIP',
+                'label' => 'LBL_CREATE_GROUP_SELECTED_BUTTON_LABEL',
+                'tooltip' => 'LBL_CREATE_GROUP_SELECTED_BUTTON_TOOLTIP',
                 'acl_action' => 'edit',
             ),
             array(

@@ -50,6 +50,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             expect(layout.groupIds).toEqual([]);
         });
 
+        it('should initialize currentBulkSaveRequests to an empty array', function() {
+            expect(layout.currentBulkSaveRequests).toEqual([]);
+        });
+
         it('should initialize quoteDataGroupMeta to ProductBundlesQuoteDataGroupLayout metadata', function() {
             expect(layout.quoteDataGroupMeta).toEqual({
                 name: 'ProductBundlesQuoteDataGroupMetadata'
@@ -333,22 +337,13 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 sinon.collection.stub($.fn, 'parent', function() {
                     return '<div data-group-id="' + newGroupId + '"></div>';
                 });
-
+                sinon.collection.stub(layout, '_moveItemToNewGroup', function() {});
                 oldGroup.collection.add(rowModel);
 
+                layout.currentBulkSaveRequests = [{
+                    id: 'hey'
+                }];
                 layout._onDragStop(evtParam, uiParam);
-            });
-
-            it('should set new position on rowModel', function() {
-                expect(rowModel.get('position')).toBe(1);
-            });
-
-            it('should remove the rowModel from oldGroup', function() {
-                expect(oldGroup.collection.length).toBe(0);
-            });
-
-            it('should add the rowModel to newGroup', function() {
-                expect(newGroup.collection.length).toBe(1);
             });
 
             it('should call _getComponentByGroupId with oldGroup ID', function() {
@@ -479,6 +474,425 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             it('should call tooltip _enable', function() {
                 expect(app.tooltip._enable).toHaveBeenCalled();
+            });
+        });
+    });
+
+
+    describe('moveMassCollectionItemsToNewGroup()', function() {
+        var rowModel;
+        var massCollection;
+        var newGroupData;
+
+        beforeEach(function() {
+            massCollection = new Backbone.Collection();
+
+            rowModel = app.data.createBean('Products', {
+                id: 'rowModelId'
+            });
+
+            rowModel.link = {
+                bean: {
+                    id: 'oldGroupId'
+                }
+            };
+
+            newGroupData = {
+                related_record: {
+                    id: 'newGroupId'
+                }
+            };
+
+            massCollection.add(rowModel);
+            layout.context.set('mass_collection', massCollection);
+
+            sinon.collection.stub(layout, '_moveItemToNewGroup', function() {});
+            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+        });
+
+        afterEach(function() {
+            rowModel = null;
+            massCollection = null;
+            newGroupData = null;
+        });
+
+        it('should not call _moveItemToNewGroup() if massCollection is empty', function() {
+            massCollection.reset();
+            layout.moveMassCollectionItemsToNewGroup(newGroupData);
+
+            expect(layout._moveItemToNewGroup).not.toHaveBeenCalled();
+        });
+
+        it('should call _moveItemToNewGroup() with isRowEdit false', function() {
+            layout.moveMassCollectionItemsToNewGroup(newGroupData);
+
+            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith('oldGroupId', 'newGroupId', 'rowModelId', false);
+        });
+
+        it('should call _moveItemToNewGroup() with isRowEdit true', function() {
+            rowModel.modelView = 'edit';
+            layout.moveMassCollectionItemsToNewGroup(newGroupData);
+
+            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith('oldGroupId', 'newGroupId', 'rowModelId', true);
+        });
+
+        it('should call _callBulkRequests()', function() {
+            layout.moveMassCollectionItemsToNewGroup(newGroupData);
+
+            expect(layout._callBulkRequests).toHaveBeenCalled();
+        });
+
+        it('should reset mass collection', function() {
+            layout.moveMassCollectionItemsToNewGroup(newGroupData);
+
+            expect(massCollection.length).toBe(0);
+        });
+    });
+
+    describe('_onSaveUpdatedMassCollectionItemsSuccess()', function() {
+        var bulkResponses;
+        var newGroup;
+        var groupModel;
+        var groupCollection;
+        var rowModel;
+
+        beforeEach(function() {
+            bulkResponses = [{
+                contents: {
+                    record: {
+                        id: 'bundleId1',
+                        total: '100'
+                    },
+                    related_record: {
+                        id: 'modelId1',
+                        total: '100',
+                        date_modified: '100',
+                        position: 0
+                    }
+                }
+            }];
+
+            groupModel = app.data.createBean('ProductBundles', {
+                id: 'bundleId1',
+                total: '0'
+            });
+            groupCollection = new Backbone.Collection();
+
+            rowModel = app.data.createBean('Products', {
+                id: 'modelId1',
+                position: '1',
+                date_modified: '50'
+            });
+            groupCollection.add(rowModel);
+
+            newGroup = {
+                model: groupModel,
+                collection: groupCollection
+            };
+
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return newGroup;
+            });
+
+            layout._onSaveUpdatedMassCollectionItemsSuccess(bulkResponses);
+        });
+
+        afterEach(function() {
+            bulkResponses = null;
+            rowModel = null;
+            groupModel = null;
+            groupCollection = null;
+            newGroup = null;
+        });
+
+        it('should update the group model with new data', function() {
+            expect(groupModel.get('total')).toBe('100');
+        });
+
+        it('should update the row model with new data', function() {
+            expect(rowModel.get('position')).toBe(0);
+        });
+    });
+
+    describe('_updateModelWithRecord()', function() {
+        var model;
+        var record;
+
+        beforeEach(function() {
+            model = app.data.createBean('Products', {
+                id: 'oldId'
+            });
+            record = {
+                id: 'newId'
+            };
+
+            sinon.collection.spy(model, 'setSyncedAttributes');
+            sinon.collection.spy(model, 'set');
+        });
+
+        afterEach(function() {
+            model = null;
+            record = null;
+        });
+
+        it('should do nothing if model does not exist', function() {
+            layout._updateModelWithRecord(undefined, record);
+
+            expect(model.set).not.toHaveBeenCalled();
+        });
+
+        it('should call setSyncedAttributes if model exists', function() {
+            layout._updateModelWithRecord(model, record);
+
+            expect(model.setSyncedAttributes).toHaveBeenCalledWith(record);
+            expect(model.getSynced('id')).toBe('newId');
+        });
+
+        it('should call set if model exists', function() {
+            layout._updateModelWithRecord(model, record);
+
+            expect(model.set).toHaveBeenCalledWith(record);
+            expect(model.get('id')).toBe('newId');
+        });
+    });
+
+    describe('_moveItemToNewGroup()', function() {
+        var oldGroup;
+        var oldGroupId;
+        var oldGroupModel;
+        var newGroup;
+        var newGroupId;
+        var newGroupModel;
+        var rowModelId;
+        var rowModelModule;
+        var rowModel;
+        var oldGroupTriggerSpy;
+        var newGroupTriggerSpy;
+
+        beforeEach(function() {
+            oldGroupTriggerSpy = sinon.collection.spy();
+            newGroupTriggerSpy = sinon.collection.spy();
+
+            rowModelId = 'rowModelId1';
+            rowModelModule = 'Products';
+            rowModel = new Backbone.Model({
+                id: rowModelId,
+                module: rowModelModule,
+                position: 2
+            });
+            rowModel.module = rowModelModule;
+
+            oldGroupId = 'oldGroupId1';
+            oldGroupModel = app.data.createBean('ProductBundles', {
+                id: oldGroupId,
+                name: 'oldGroupModelName_original'
+            });
+            oldGroup = {
+                groupId: oldGroupId,
+                collection: app.data.createBeanCollection('ProductBundles'),
+                model: oldGroupModel,
+                trigger: oldGroupTriggerSpy,
+                removeRowModel: function(model, isEdit) {
+                    this.collection.remove(model);
+                }
+            };
+
+            newGroupId = 'newGroupId1';
+            newGroupModel = app.data.createBean('ProductBundles', {
+                id: newGroupId,
+                name: 'newGroupModelName_original'
+            });
+            newGroup = {
+                groupId: newGroupId,
+                collection: app.data.createBeanCollection('ProductBundles'),
+                model: newGroupModel,
+                trigger: newGroupTriggerSpy,
+                addRowModel: function(model, isEdit) {
+                    this.collection.add(model);
+                }
+            };
+
+            sinon.collection.stub(layout, '_getComponentByGroupId', function(id) {
+                if (id === oldGroupId) {
+                    return oldGroup;
+                } else {
+                    return newGroup;
+                }
+            });
+
+            sinon.collection.stub(layout, '_updateRowPositions', function(group) {
+                var retCalls = [];
+
+                _.each(group.collection.models, _.bind(function(retCalls, model, index) {
+                    if (model && index != model.previous('position')) {
+                        retCalls.push({
+                            data: {
+                                position: index
+                            },
+                            method: 'PUT',
+                            url: '/v10/ProductBundles/' + group.groupId + '/link/products/' + model.id
+                        });
+                    }
+                }, this, retCalls), this);
+                return retCalls;
+            });
+        });
+
+        afterEach(function() {
+            oldGroup = null;
+            oldGroupId = null;
+            oldGroupModel = null;
+            newGroup = null;
+            newGroupId = null;
+            newGroupModel = null;
+            rowModelId = null;
+            rowModelModule = null;
+            rowModel = null;
+            oldGroupTriggerSpy = null;
+            newGroupTriggerSpy = null;
+        });
+
+        describe('adding/removing from collections and setting positions', function() {
+            beforeEach(function() {
+                oldGroup.collection.add(rowModel);
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false);
+            });
+
+            it('should call _getComponentByGroupId with oldGroup ID', function() {
+                expect(layout._getComponentByGroupId).toHaveBeenCalledWith(oldGroupId);
+            });
+
+            it('should call _getComponentByGroupId with newGroup ID', function() {
+                expect(layout._getComponentByGroupId).toHaveBeenCalledWith(newGroupId);
+            });
+
+            it('should set new position on rowModel when newPosition is not passed in', function() {
+                expect(rowModel.get('position')).toBe(0);
+            });
+
+            it('should remove the rowModel from oldGroup', function() {
+                expect(oldGroup.collection.length).toBe(0);
+            });
+
+            it('should add the rowModel to newGroup', function() {
+                expect(newGroup.collection.length).toBe(1);
+            });
+
+            it('should call quotes:line_nums:reset on oldGroup', function() {
+                expect(oldGroupTriggerSpy).toHaveBeenCalledWith('quotes:line_nums:reset');
+            });
+
+            it('should call quotes:line_nums:reset on newGroup', function() {
+                expect(newGroupTriggerSpy).toHaveBeenCalledWith('quotes:line_nums:reset');
+            });
+        });
+
+        describe('when newPosition is passed in', function() {
+            beforeEach(function() {
+                oldGroup.collection.add(rowModel);
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false, 2);
+            });
+
+            it('should set the position to be the passed in position', function() {
+                expect(rowModel.get('position')).toBe(2);
+            });
+        });
+
+        describe('setting currentBulkSaveRequests', function() {
+            var rowModel2Id;
+            var rowModel2Module;
+            var rowModel2;
+            var result;
+
+            beforeEach(function() {
+                rowModel2Id = 'rowModelId2';
+                rowModel2Module = 'Products';
+                rowModel2 = new Backbone.Model({
+                    id: rowModel2Id,
+                    module: rowModel2Module,
+                    position: 1
+                });
+                rowModel2.module = rowModel2Module;
+
+                // set rowModel's position to 1
+                rowModel.set('position', 2);
+
+                oldGroup.collection.add(rowModel2);
+                oldGroup.collection.add(rowModel);
+                layout.currentBulkSaveRequests = [];
+
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false);
+            });
+
+            afterEach(function() {
+                rowModel2Id = null;
+                rowModel2Module = null;
+                rowModel2 = null;
+            });
+
+            it('should set currentBulkSaveRequests first call URL', function() {
+                result = layout.currentBulkSaveRequests[0].url;
+
+                expect(result.indexOf('ProductBundles/newGroupId1/link/products/rowModelId1')).not.toBe(-1);
+            });
+
+            it('should set currentBulkSaveRequests first call METHOD', function() {
+                result = layout.currentBulkSaveRequests[0].method;
+
+                expect(result).toBe('POST');
+            });
+
+            it('should set currentBulkSaveRequests first call DATA', function() {
+                result = layout.currentBulkSaveRequests[0].data;
+
+                expect(result).toEqual({
+                    id: newGroupId,
+                    link: 'products',
+                    related: {
+                        position: 0
+                    },
+                    relatedId: rowModelId
+                });
+            });
+
+            it('should set currentBulkSaveRequests second call URL', function() {
+                result = layout.currentBulkSaveRequests[1].url;
+
+                expect(result.indexOf('ProductBundles/oldGroupId1/link/products/rowModelId2')).not.toBe(-1);
+            });
+
+            it('should set currentBulkSaveRequests second call METHOD', function() {
+                result = layout.currentBulkSaveRequests[1].method;
+
+                expect(result).toBe('PUT');
+            });
+
+            it('should set currentBulkSaveRequests second call DATA', function() {
+                result = layout.currentBulkSaveRequests[1].data;
+
+                expect(result).toEqual({
+                    position: 0
+                });
+            });
+
+            it('should set currentBulkSaveRequests third call URL', function() {
+                result = layout.currentBulkSaveRequests[2].url;
+
+                expect(result.indexOf('ProductBundles/newGroupId1/link/products/rowModelId1')).not.toBe(-1);
+            });
+
+            it('should set currentBulkSaveRequests third call METHOD', function() {
+                result = layout.currentBulkSaveRequests[2].method;
+
+                expect(result).toBe('PUT');
+            });
+
+            it('should set currentBulkSaveRequests third call DATA', function() {
+                result = layout.currentBulkSaveRequests[2].data;
+
+                expect(result).toEqual({
+                    position: 0
+                });
             });
         });
     });
@@ -674,18 +1088,17 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     });
 
     describe('_callBulkRequests', function() {
-        var bulkSaveRequests;
         beforeEach(function() {
-            bulkSaveRequests = [{
+            layout.currentBulkSaveRequests = [{
                 url: 'testUrl'
             }];
             sinon.collection.stub(app.api, 'call', function() {});
 
-            layout._callBulkRequests({}, {}, bulkSaveRequests);
+            layout._callBulkRequests();
         });
 
         afterEach(function() {
-            bulkSaveRequests = null;
+            layout.currentBulkSaveRequests = [];
         });
 
         it('should call with method create', function() {
@@ -805,6 +1218,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                     }
                 }
             };
+            layout.currentBulkSaveRequests = [
+                bulkOldModelUpdate,
+                bulkNewModelUpdate
+            ];
             bulkResponses = [
                 bulkOldModelUpdate,
                 bulkNewModelUpdate
@@ -825,6 +1242,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             bulkNewModelUpdate = null;
             bulkResponses = null;
             bundles = null;
+        });
+
+        it('should reset currentBulkSaveRequests array', function() {
+            layout._onSaveUpdatedGroupSuccess(undefined, newGroup, bulkResponses);
+
+            expect(layout.currentBulkSaveRequests.length).toBe(0);
         });
 
         describe('when oldGroup is not sent', function() {
@@ -1490,6 +1913,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             it('should call add on bundles collection', function() {
                 expect(bundles.add).toHaveBeenCalledWith(newBundleData.related_record);
+            });
+
+            it('should trigger quotes:group:create:success and send newBundleData', function() {
+                expect(layout.context.trigger).toHaveBeenCalledWith('quotes:group:create:success', newBundleData);
             });
         });
 

@@ -55,11 +55,17 @@
     isCreateView: undefined,
 
     /**
+     * Contains any current bulk save requests being processed
+     */
+    currentBulkSaveRequests: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
         this.groupIds = [];
+        this.currentBulkSaveRequests = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
 
         this.isCreateView = this.context.get('create') || false;
@@ -197,13 +203,9 @@
         var oldGroup;
         var newGroup;
         var rowId;
-        var rowModel;
-        var bulkSaveRequests = [];
-        var url;
-        var linkName;
         var saveDefaultGroup;
-        var newPosition;
         var existingRows;
+        var newPosition;
 
         // get the new group (may be the same group)
         newGroup = this._getComponentByGroupId(newGroupId);
@@ -213,62 +215,29 @@
             // since the groups are different, also trigger events for the old group
             triggerOldGroup = true;
 
+            // get the row id from the name="Products_modelID" attrib
+            rowId = $item.attr('name').split('_')[1];
+
+            // get if we need to save the new default group list or not
+            saveDefaultGroup = newGroup.model.get('_notSaved') || false;
+
             // get the old and new quote-data-group components
             oldGroup = this._getComponentByGroupId(oldGroupId);
 
-            // get the new position index
             existingRows = newGroup.$('tr.quote-data-group-list:not(:hidden):not(.empty-row)');
             newPosition = _.findIndex(existingRows, function(item) {
                 return ($(item).attr('name') == $item.attr('name'));
             });
 
-            // get if we need to save the new default group list or not
-            saveDefaultGroup = newGroup.model.get('_notSaved') || false;
-
-            // get the row id from the name="Products_modelID" attrib
-            rowId = $item.attr('name').split('_')[1];
-
-            // get the row model from the old group's collection
-            rowModel = oldGroup.collection.get(rowId);
-
-            // set the new position, so it's only set when the item is saved via the relationship change
-            // and not again for the position update
-            rowModel.set('position', newPosition);
-
-            // remove the rowModel from the old group
-            oldGroup.removeRowModel(rowModel, isRowInEdit);
-
-            // add rowModel to the new group
-            newGroup.addRowModel(rowModel, isRowInEdit);
-
-            // get the requests from updated rows for old and new group
-            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(oldGroup));
-            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(newGroup));
-
-            linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
-            url = app.api.buildURL('ProductBundles/' + newGroupId + '/link/' + linkName + '/' + rowId);
-
-            // add the group switching call to the beginning of the bulk requests
-            bulkSaveRequests.unshift({
-                url: url.substr(4),
-                method: 'POST',
-                data: {
-                    id: newGroupId,
-                    link: linkName,
-                    relatedId: rowModel.get('id'),
-                    related: {
-                        position: rowModel.get('position')
-                    }
-                }
-            });
+            this._moveItemToNewGroup(oldGroupId, newGroupId, rowId, isRowInEdit, newPosition);
         } else {
             // get the requests from updated rows
-            bulkSaveRequests = bulkSaveRequests.concat(this._updateRowPositions(newGroup));
+            this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
         }
 
         // only make the bulk call if there are actual requests, if user drags row
         // but puts it in same place there should be no updates
-        if (!this.isCreateView && !_.isEmpty(bulkSaveRequests)) {
+        if (!this.isCreateView && !_.isEmpty(this.currentBulkSaveRequests)) {
             if (triggerOldGroup) {
                 // trigger group changed for old group to check themselves
                 oldGroup.trigger('quotes:group:changed');
@@ -286,14 +255,145 @@
             newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
 
             if (saveDefaultGroup) {
-                this._saveDefaultGroupThenCallBulk(oldGroup, newGroup, bulkSaveRequests);
+                this._saveDefaultGroupThenCallBulk(oldGroup, newGroup, this.currentBulkSaveRequests);
             } else {
-                this._callBulkRequests(oldGroup, newGroup, bulkSaveRequests);
+                this._callBulkRequests(_.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup));
             }
         }
 
         // re-enable tooltips in the app
         app.tooltip._enable();
+    },
+
+    /**
+     * Moves all items from mass_collection into a new group
+     * based on the `newGroupData` info
+     *
+     * @param {Object} newGroupData The new ProductBundle to
+     *      be used to move the mass_collection items into
+     */
+    moveMassCollectionItemsToNewGroup: function(newGroupData) {
+        var newGroupId = newGroupData.related_record.id;
+        var massCollection = this.context.get('mass_collection');
+        var oldGroupId;
+        var isRowInEdit;
+
+        _.each(massCollection.models, function(model) {
+            // get the old Group ID from the model link
+            oldGroupId = model.link.bean.id;
+            // get if the row was in Edit mode if modelView exists and is set to 'edit'
+            isRowInEdit = model.modelView && model.modelView === 'edit' || false;
+
+            this._moveItemToNewGroup(oldGroupId, newGroupId, model.id, isRowInEdit);
+        }, this);
+
+        // the items have all been moved on the frontend now call the BulkAPI
+        // to flush out this.currentBulkSaveRequests to update the server
+        this._callBulkRequests(_.bind(this._onSaveUpdatedMassCollectionItemsSuccess, this));
+        if (massCollection) {
+            massCollection.reset();
+        }
+        this.currentBulkSaveRequests = [];
+    },
+
+    /**
+     * Handles the success call from moving MassCollection items to a new group
+     *
+     * @param {Object} bulkResponses Response data from the bulk requests
+     * @private
+     */
+    _onSaveUpdatedMassCollectionItemsSuccess: function(bulkResponses) {
+        _.each(bulkResponses, function(response) {
+            var record = response.contents.record;
+            var relatedRecord = response.contents.related_record;
+            var newGroup = this._getComponentByGroupId(record.id);
+            var relatedRecordSubset = _.pick(relatedRecord, 'date_modified', 'position');
+            var model;
+
+            if (newGroup) {
+                // check if record is the one on this collection
+                if (newGroup.model && record && newGroup.model.get('id') === record.id) {
+                    this._updateModelWithRecord(newGroup.model, record);
+                }
+                // check if the related_record is in the newGroup
+                model = newGroup.collection.get(relatedRecord.id);
+                this._updateModelWithRecord(model, relatedRecordSubset);
+            }
+        }, this);
+    },
+
+    /**
+     * Updates the syncedAttributes and attributes of a `model` with the `record` data
+     *
+     * @param {Data.Bean} model The model to be updated
+     * @param {Object} record The data to set on the model
+     * @private
+     */
+    _updateModelWithRecord: function(model, record) {
+        if (model) {
+            model.setSyncedAttributes(record);
+            model.set(record);
+        }
+    },
+
+    /**
+     * Moves an item with `itemId` from `oldGroupId` to the `newGroupId` ProductBundle
+     *
+     * @param {string} oldGroupId The ID of the old ProductBundle to move the item from
+     * @param {string} newGroupId The ID of the new ProductBundle to move the item to
+     * @param {string} itemId The ID of the item to move
+     * @param {boolean} isRowInEdit If the row to move is in edit mode or not
+     * @param {number|undefined} [newPosition] The new position to place the item in
+     * @private
+     */
+    _moveItemToNewGroup: function(oldGroupId, newGroupId, itemId, isRowInEdit, newPosition) {
+        var oldGroup = this._getComponentByGroupId(oldGroupId);
+        var newGroup = this._getComponentByGroupId(newGroupId);
+        var rowModel = oldGroup.collection.get(itemId);
+        var url;
+        var linkName;
+        var bulkMoveRequest;
+
+        // if newPosition is not passed in, make it the newGroup collection length
+        newPosition = _.isUndefined(newPosition) ? newGroup.collection.length : newPosition;
+
+        // set the new position, so it's only set when the item is saved via the relationship change
+        // and not again for the position update
+        rowModel.set('position', newPosition);
+
+        // remove the rowModel from the old group
+        oldGroup.removeRowModel(rowModel, isRowInEdit);
+
+        // add rowModel to the new group
+        newGroup.addRowModel(rowModel, isRowInEdit);
+
+        // get the requests from updated rows for old and new group
+        this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
+        this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
+
+        linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
+        url = app.api.buildURL('ProductBundles/' + newGroupId + '/link/' + linkName + '/' + itemId);
+
+        bulkMoveRequest = {
+            url: url.substr(4),
+            method: 'POST',
+            data: {
+                id: newGroupId,
+                link: linkName,
+                relatedId: rowModel.get('id'),
+                related: {
+                    position: newPosition
+                }
+            }
+        };
+
+        // add the group switching call to the newPosition element of the bulk requests
+        // so position "0" will be the 0th element in currentBulkSaveRequests
+        this.currentBulkSaveRequests.splice(newPosition, 0, bulkMoveRequest);
+
+        // update the line numbers in the groups
+        oldGroup.trigger('quotes:line_nums:reset', oldGroup.groupId, oldGroup.collection);
+        newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
     },
 
     /**
@@ -416,23 +516,23 @@
         this._updateDefaultGroupWithNewData(newGroup, serverData.related_record);
 
         // call the remaining bulk requests
-        this._callBulkRequests(oldGroup, newGroup, bulkSaveRequests);
+        this._callBulkRequests(_.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup));
     },
 
     /**
      * Calls the bulk request endpoint with an array of requests
      *
-     * @param {View.QuoteDataGroupLayout} oldGroup The old QuoteDataGroupLayout
-     * @param {View.QuoteDataGroupLayout} newGroup The new QuoteDataGroupLayout
-     * @param {Array} bulkSaveRequests The array of bulk save requests
+     * @param {Function} [successCallback] The success callback function
      * @private
      */
-    _callBulkRequests: function(oldGroup, newGroup, bulkSaveRequests) {
+    _callBulkRequests: function(successCallback) {
+        var customSuccessCallbackObj = {
+            success: successCallback
+        };
+        var customSuccess = _.isFunction(successCallback) ? customSuccessCallbackObj : {};
         app.api.call('create', app.api.buildURL(null, 'bulk'), {
-            requests: bulkSaveRequests
-        }, {
-            success: _.bind(this._onSaveUpdatedGroupSuccess, this, oldGroup, newGroup)
-        });
+            requests: this.currentBulkSaveRequests
+        }, customSuccess);
     },
 
     /**
@@ -452,7 +552,6 @@
         var newGroupBundle;
         var deletedGroupBundle;
         var bundles;
-        var updateModelWithRecord;
 
         if (oldGroup) {
             oldGroup.trigger('quotes:group:save:stop');
@@ -480,14 +579,6 @@
             }, this);
         }
 
-        // reusable method to update a mode once the bulk responses come back.
-        updateModelWithRecord = function(model, record) {
-            if (model) {
-                model.setSyncedAttributes(record);
-                model.set(record);
-            }
-        };
-
         _.each(bulkResponses, _.bind(function(oldGroup, newGroup, data) {
             var record = data.contents.record;
             var relatedRecord = data.contents.related_record;
@@ -501,20 +592,20 @@
                 if (oldGroup && !oldGroup.disposed) {
                     // check if record is the one on this collection
                     if (oldGroup.model && record && oldGroup.model.get('id') === record.id) {
-                        updateModelWithRecord(oldGroup.model, record);
+                        this._updateModelWithRecord(oldGroup.model, record);
                     }
                     // if oldGroup exists, check if the related_record is in the oldGroup
                     model = oldGroup.collection.get(relatedRecord.id);
-                    updateModelWithRecord(model, relatedRecordSubset);
+                    this._updateModelWithRecord(model, relatedRecordSubset);
                 }
                 if (newGroup) {
                     // check if record is the one on this collection
                     if (newGroup.model && record && newGroup.model.get('id') === record.id) {
-                        updateModelWithRecord(newGroup.model, record);
+                        this._updateModelWithRecord(newGroup.model, record);
                     }
                     // check if the related_record is in the newGroup
                     model = newGroup.collection.get(relatedRecord.id);
-                    updateModelWithRecord(model, relatedRecordSubset);
+                    this._updateModelWithRecord(model, relatedRecordSubset);
                 }
             }
         }, this, oldGroup, newGroup), this);
@@ -535,6 +626,9 @@
             // once new items are added to the default group, update the group's line numbers
             newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
         }
+
+        // reset currentBulkSaveRequests
+        this.currentBulkSaveRequests = [];
     },
 
     /**
@@ -562,7 +656,7 @@
             rowId = rowNameSplit[1];
 
             rowModel = dataGroup.collection.get(rowId);
-            if (rowModel.get('position') != index) {
+            if (rowModel.get('position') != index && !rowModel.has('_notSaved')) {
                 linkName = rowModule === 'Products' ? 'products' : 'product_bundle_notes';
                 url = app.api.buildURL('ProductBundles/' + dataGroup.groupId + '/link/' + linkName + '/' + rowId);
                 retCalls.push({
@@ -825,6 +919,9 @@
             // if show_line_nums is true, trigger the event so the new group will add the line_num field
             this.context.trigger('quotes:show_line_nums:changed', true);
         }
+
+        // trigger that the group create was successful and pass the new group data
+        this.context.trigger('quotes:group:create:success', newBundleData);
     },
 
     /**
@@ -925,10 +1022,11 @@
                 method: 'DELETE'
             });
 
+            this.currentBulkSaveRequests = bulkRequests;
             if (defaultGroup.model.get('_notSaved')) {
                 this._saveDefaultGroupThenCallBulk(groupToDelete, defaultGroup, bulkRequests);
             } else {
-                this._callBulkRequests(groupToDelete, defaultGroup, bulkRequests);
+                this._callBulkRequests(_.bind(this._onSaveUpdatedGroupSuccess, this, groupToDelete, defaultGroup));
             }
         }
     },

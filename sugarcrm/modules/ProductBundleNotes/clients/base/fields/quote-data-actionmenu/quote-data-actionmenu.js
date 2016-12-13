@@ -27,5 +27,16 @@
      */
     _getChildFieldsMeta: function() {
         return app.utils.deepCopy(this.def.buttons);
+    },
+
+    /**
+     * Triggers massCollection events to the context.parent
+     *
+     * @inheritdoc
+     * @override
+     */
+    toggleSelect: function(checked) {
+        var event = !!checked ? 'mass_collection:add' : 'mass_collection:remove';
+        this.context.parent.trigger(event, this.model);
     }
 })

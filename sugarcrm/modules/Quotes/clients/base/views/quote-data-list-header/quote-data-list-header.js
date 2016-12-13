@@ -62,8 +62,31 @@
             this.meta.panels = qliListMetadata.panels;
         }
 
-        this.addMultiSelectionAction();
+        if (this.layout.isCreateView) {
+            this.leftColumns.push({
+                'type': 'fieldset',
+                'fields': [],
+                'value': false,
+                'sortable': false
+            });
+        } else {
+            this.addMultiSelectionAction();
+        }
+
         this._fields = _.flatten(_.pluck(this.meta.panels, 'fields'));
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
+        // massCollection has the Quote record as its only model,
+        // reset this during initialization so it's empty
+        if (this.massCollection) {
+            this.massCollection.reset();
+        }
     },
 
     /**
@@ -96,7 +119,31 @@
      * @private
      */
     _onCreateGroupBtnClicked: function(evt) {
+        if (this.massCollection.length) {
+            this.context.on('quotes:group:create:success', this._onNewGroupedItemsCreateSuccess, this);
+            this.context.trigger('quotes:group:create');
+        } else {
+            app.alert.show('quote_grouping_message', {
+                level: 'error',
+                title: '',
+                messages: [
+                    app.lang.get('LBL_GROUP_NOTHING_SELECTED', this.module)
+                ]
+            });
+        }
+    },
 
+    /**
+     * Called when the group in which any selected items are to be grouped has
+     * successfully been saved. Clears app alerts and removes the context listener
+     * for the create success event
+     *
+     * @param {Object} newGroupData The new ProductBundle to add selected items into
+     * @private
+     */
+    _onNewGroupedItemsCreateSuccess: function(newGroupData) {
+        this.context.off('quotes:group:create:success', this._onNewGroupedItemsCreateSuccess);
+        this.layout.moveMassCollectionItemsToNewGroup(newGroupData);
     },
 
     /**
@@ -107,5 +154,17 @@
      */
     _onDeleteBtnClicked: function(evt) {
 
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        // in case something weird happens where this view gets
+        // disposed between adding the listener and removing,
+        // go ahead and remove it on dispose if it exists
+        this.context.off('quotes:group:create:success', null, this);
+
+        this._super('_dispose');
     }
 })

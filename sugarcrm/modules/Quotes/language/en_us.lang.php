@@ -225,6 +225,8 @@ $mod_strings = array (
     'LBL_CREATE_COMMENT_BUTTON_TOOLTIP' => 'Create Comment',
     'LBL_CREATE_GROUP_BUTTON_LABEL' => 'Group',
     'LBL_CREATE_GROUP_BUTTON_TOOLTIP' => 'Create Group',
+    'LBL_CREATE_GROUP_SELECTED_BUTTON_LABEL' => 'Group Selected',
+    'LBL_CREATE_GROUP_SELECTED_BUTTON_TOOLTIP' => 'Create Group from selected items',
     'LBL_ADDITIONAL_ORDER_DISCOUNT' => 'Additional order discount',
     'LBL_ADDITIONAL_TAX' => 'Additional tax',
     'LBL_QUANTITY' => 'Quantity',
@@ -239,4 +241,6 @@ $mod_strings = array (
     'LBL_ADDING_BUNDLE_ALERT_MSG' => 'Creating a new Group',
     'LBL_ADDED_BUNDLE_SUCCESS_MSG' => 'Group successfully created',
     'LBL_SAVING_DEFAULT_GROUP_ALERT_MSG' => 'Saving the default group',
+    'LBL_GROUP_NOTHING_SELECTED' => 'Unable to group: nothing selected.',
+    'LBL_GROUPING_ITEMS' => 'Grouping selected items... please wait.',
 );
