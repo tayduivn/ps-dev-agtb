@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0a8eb4e9faab9c568935c2c946f5a324",
-    "content-hash": "af882fc3aa4471e27131ca99dedf3f63",
+    "hash": "eb9501dab350fac45f9d6656ea9d1206",
+    "content-hash": "6d56a32fd706ce29c30b6d511a5eff1a",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1331,39 +1331,94 @@
             "time": "2016-10-31 17:19:45"
         },
         {
-            "name": "phpdocumentor/reflection-docblock",
-            "version": "2.0.4",
+            "name": "phpdocumentor/reflection-common",
+            "version": "1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "d68dbdc53dc358a816f00b300704702b2eaff7b8"
+                "url": "https://github.com/phpDocumentor/ReflectionCommon",
+                "reference": "144c307535e82c8fdcaacbcfc1d6d8eeb896687c"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-docblock-2.0.4-b8dbaa.tar",
-                "reference": "d68dbdc53dc358a816f00b300704702b2eaff7b8",
-                "shasum": "4f625658c510ce719987b8abc7cfcab03fdd4182"
+                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-common-1.0-c3be2d.tar",
+                "reference": "144c307535e82c8fdcaacbcfc1d6d8eeb896687c",
+                "shasum": "b35423613fccec0b2073e499d48379fba7e38b0a"
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.5"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "suggest": {
-                "dflydev/markdown": "~1.0",
-                "erusev/parsedown": "~1.0"
+                "phpunit/phpunit": "^4.6"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.0.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "phpDocumentor": [
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "src"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "Common reflection classes used by phpdocumentor to reflect the code structure",
+            "homepage": "http://www.phpdoc.org",
+            "keywords": [
+                "FQSEN",
+                "phpDocumentor",
+                "phpdoc",
+                "reflection",
+                "static analysis"
+            ],
+            "time": "2015-12-27 11:43:31"
+        },
+        {
+            "name": "phpdocumentor/reflection-docblock",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/phpdocumentor-reflection-docblock-3.1.1-319752.tar",
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e",
+                "shasum": "4f4bebf56937d201f93082bfc8b5bcb93f0e431c"
+            },
+            "require": {
+                "php": ">=5.5",
+                "phpdocumentor/reflection-common": "^1.0@dev",
+                "phpdocumentor/type-resolver": "^0.2.0",
+                "webmozart/assert": "^1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
                         "src/"
+                    ]
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "tests/unit"
                     ]
                 }
             },
@@ -1373,10 +1428,64 @@
             "authors": [
                 {
                     "name": "Mike van Riel",
-                    "email": "mike.vanriel@naenius.com"
+                    "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2015-02-03 12:10:50"
+            "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
+            "time": "2016-09-30 07:12:33"
+        },
+        {
+            "name": "phpdocumentor/type-resolver",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/TypeResolver",
+                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/phpdocumentor-type-resolver-0.2.1-e5468a.tar",
+                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb",
+                "shasum": "d9b20aeec0a0fb217e7c758ddae26a460e7c9f72"
+            },
+            "require": {
+                "php": ">=5.5",
+                "phpdocumentor/reflection-common": "^1.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^5.2||^4.8.24"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": [
+                        "tests/unit"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                }
+            ],
+            "time": "2016-11-25 06:54:22"
         },
         {
             "name": "phpspec/prophecy",
@@ -1704,17 +1813,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.6.4",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6f0cf627fa76dea979956d6944f268b7217f8e2d"
+                "reference": "5fb2bb41245ea003609a94272117af8cf39a2d6c"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-5.6.4-1a325c.tar",
-                "reference": "6f0cf627fa76dea979956d6944f268b7217f8e2d",
-                "shasum": "db35f0a7102a9d3c87e874e7f91ebbbb7cafd746"
+                "url": "https://satis.sugardev.team/dist/phpunit-phpunit-5.7.2-b89845.tar",
+                "reference": "5fb2bb41245ea003609a94272117af8cf39a2d6c",
+                "shasum": "228d80bb98cb739324b8832325dcd6cbc882765f"
             },
             "require": {
                 "ext-dom": "*",
@@ -1725,25 +1834,23 @@
                 "myclabs/deep-copy": "~1.3",
                 "php": "^5.6 || ^7.0",
                 "phpspec/prophecy": "^1.3.1",
-                "phpunit/php-code-coverage": "^4.0.1",
+                "phpunit/php-code-coverage": "^4.0.3",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-timer": "^1.0.6",
                 "phpunit/phpunit-mock-objects": "^3.2",
-                "sebastian/comparator": "~1.1",
+                "sebastian/comparator": "~1.2.2",
                 "sebastian/diff": "~1.2",
-                "sebastian/environment": "^1.3 || ^2.0",
-                "sebastian/exporter": "~1.2",
+                "sebastian/environment": "^1.3.4 || ^2.0",
+                "sebastian/exporter": "~2.0",
                 "sebastian/global-state": "~1.0",
-                "sebastian/object-enumerator": "~1.0",
+                "sebastian/object-enumerator": "~2.0",
                 "sebastian/resource-operations": "~1.0",
                 "sebastian/version": "~1.0|~2.0",
                 "symfony/yaml": "~2.1|~3.0"
             },
             "conflict": {
-                "phpdocumentor/reflection-docblock": "3.0.2",
-                "sebastian/object-enumerator": "1.0.1",
-                "sebastian/recursion-context": "1.0.3 || 1.0.4"
+                "phpdocumentor/reflection-docblock": "3.0.2"
             },
             "require-dev": {
                 "ext-pdo": "*"
@@ -1758,7 +1865,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.6.x-dev"
+                    "dev-master": "5.7.x-dev"
                 }
             },
             "autoload": {
@@ -1795,7 +1902,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues"
             },
-            "time": "2016-11-18 09:50:51"
+            "time": "2016-12-03 08:33:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2073,21 +2180,21 @@
         },
         {
             "name": "sebastian/exporter",
-            "version": "1.2.2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/exporter.git",
-                "reference": "fdafe2affba6c9a207b200d9d0e34711ced6d06c"
+                "reference": "abc09359053f96a7fe483bbc92f7201bbdd1f099"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian-exporter-1.2.2-465b66.tar",
-                "reference": "fdafe2affba6c9a207b200d9d0e34711ced6d06c",
-                "shasum": "94db10c3bf16492e015f5340ef6d5d0e36bc4dea"
+                "url": "https://satis.sugardev.team/dist/sebastian-exporter-2.0.0-c1d041.tar",
+                "reference": "abc09359053f96a7fe483bbc92f7201bbdd1f099",
+                "shasum": "4d5bd2d5dfb6ea16bd9a3546f1f399d74975d467"
             },
             "require": {
                 "php": ">=5.3.3",
-                "sebastian/recursion-context": "~1.0"
+                "sebastian/recursion-context": "~2.0"
             },
             "require-dev": {
                 "ext-mbstring": "*",
@@ -2096,7 +2203,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.3.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -2135,7 +2242,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2016-06-17 09:04:28"
+            "time": "2016-11-19 07:52:52"
         },
         {
             "name": "sebastian/global-state",
@@ -2194,21 +2301,21 @@
         },
         {
             "name": "sebastian/object-enumerator",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-enumerator.git",
-                "reference": "e16c14df7d833207398625f4bdc37a1415747040"
+                "reference": "489dc7e33b207f6cdc0967f64b521758c509145d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian-object-enumerator-1.0.0-df62ef.tar",
-                "reference": "e16c14df7d833207398625f4bdc37a1415747040",
-                "shasum": "659ae08832557ac185c5a3f75f8f925a8f24b3f7"
+                "url": "https://satis.sugardev.team/dist/sebastian-object-enumerator-2.0.0-a89e0c.tar",
+                "reference": "489dc7e33b207f6cdc0967f64b521758c509145d",
+                "shasum": "664c2a7cd9ff0ed38eeac2eabfb7da606bd19451"
             },
             "require": {
                 "php": ">=5.6",
-                "sebastian/recursion-context": "~1.0"
+                "sebastian/recursion-context": "~2.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "~5"
@@ -2216,7 +2323,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -2235,21 +2342,21 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2016-01-28 13:25:10"
+            "time": "2016-11-19 07:35:10"
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "1.0.2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
-                "reference": "7ffb704b37a4896d98047aed89a76ae14b864505"
+                "reference": "938359410d5eb73a34317b422feb4662a1215da1"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/sebastian-recursion-context-1.0.2-46b97a.tar",
-                "reference": "7ffb704b37a4896d98047aed89a76ae14b864505",
-                "shasum": "b5bd349b8e3cb44f1015fdb2bfc1f38da1b427d6"
+                "url": "https://satis.sugardev.team/dist/sebastian-recursion-context-2.0.0-a3231f.tar",
+                "reference": "938359410d5eb73a34317b422feb4662a1215da1",
+                "shasum": "71a5bbc6be23db6e05c36d8ec058625caf9c0807"
             },
             "require": {
                 "php": ">=5.3.3"
@@ -2260,7 +2367,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -2287,7 +2394,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2015-11-11 19:50:13"
+            "time": "2016-11-19 07:33:16"
         },
         {
             "name": "sebastian/resource-operations",
@@ -2569,6 +2676,60 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2016-11-18 21:17:59"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozart/assert",
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/webmozart-assert-1.2.0-36e9ad.tar",
+                "reference": "2db61e59ff05fe5126d152bd0655c9ea113e550f",
+                "shasum": "a94ec2731630a2ffc7c97243b7cf63017b45027f"
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.6",
+                "sebastian/version": "^1.0.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Webmozart\\Assert\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "time": "2016-11-23 20:04:58"
         }
     ],
     "aliases": [],
