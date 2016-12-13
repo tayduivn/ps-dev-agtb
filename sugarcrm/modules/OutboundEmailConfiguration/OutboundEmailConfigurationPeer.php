@@ -625,23 +625,24 @@ class OutboundEmailConfigurationPeer
             $outboundEmailConfiguration->setInboundIds($configurations["inbound_ids"]);
         }
 
-        if (!empty($configurations["from_email"])) {
-            $outboundEmailConfiguration->setFrom($configurations["from_email"], $configurations["from_name"]);
+        if (!empty($configurations['from_email'])) {
+            $fromName = empty($configurations['from_name']) ? '' : $configurations['from_name'];
+            $outboundEmailConfiguration->setFrom($configurations['from_email'], $fromName);
         }
 
         if (!empty($configurations["display_name"])) {
             $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
         }
 
-        if (!empty($configurations["replyto_email"])) {
-            $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);
+        if (!empty($configurations['replyto_email'])) {
+            $replyToName = empty($configurations['replyto_name']) ? '' : $configurations['replyto_name'];
+            $outboundEmailConfiguration->setReplyTo($configurations['replyto_email'], $replyToName);
         }
 
-        if (!is_bool($configurations["personal"])) {
-            $configurations["personal"] = ($configurations["personal"]) ? true : false;
+        if (!array_key_exists('personal', $configurations) || !is_bool($configurations['personal'])) {
+            $configurations['personal'] = false;
         }
-
-        $outboundEmailConfiguration->setPersonal($configurations["personal"]);
+        $outboundEmailConfiguration->setPersonal($configurations['personal']);
 
         if (is_null($locale)) {
             $locale = $GLOBALS["locale"];

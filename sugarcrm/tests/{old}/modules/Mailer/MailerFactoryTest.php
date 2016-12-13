@@ -73,6 +73,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
 class {$expected} extends BaseMailer
 {
+    public function connect() {}
     public function send() {}
 }
 

@@ -73,11 +73,61 @@ class OutboundEmailApi extends ModuleApi
      */
     protected function saveBean(SugarBean $bean, ServiceBase $api, array $args)
     {
+        $this->validateSmtpConfiguration($bean, $api, $args);
+
         if ($bean->type === OutboundEmail::TYPE_SYSTEM) {
             $bean->saveSystem();
             BeanFactory::unregisterBean($bean->module_name, $bean->id);
         } else {
             parent::saveBean($bean, $api, $args);
+        }
+    }
+
+    /**
+     * Get Mailer instance from MailerFactory
+     *
+     * @param OutboundEmailConfiguration $outboundEmailConfiguration
+     * @return mixed Mailer
+     */
+    protected function getMailer(OutboundEmailConfiguration $outboundEmailConfiguration)
+    {
+        return MailerFactory::getMailer($outboundEmailConfiguration);
+    }
+
+    /**
+     * Validate the SMTP account settings and verify that the SMTP server can be successfully connected to.
+     *
+     * @param SugarBean $oe
+     * @param ServiceBase $api
+     * @param array $args
+     * @throws Exception
+     * @throws SugarApiException
+     * @throws SugarApiExceptionEditConflict
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    private function validateSmtpConfiguration(SugarBean $oe, ServiceBase $api, array $args)
+    {
+        try {
+            $configurations = array('from_email' => 'a@a');
+            $outboundEmailConfiguration = OutboundEmailConfigurationPeer::buildOutboundEmailConfiguration(
+                $GLOBALS['current_user'],
+                $configurations,
+                $oe
+            );
+
+            $mailer = $this->getMailer($outboundEmailConfiguration);
+            if (empty($mailer)) {
+                throw new MailerException('Invalid Mailer', MailerException::InvalidMailer);
+            }
+            $mailer->connect();
+        } catch (MailerException $e) {
+            throw new SugarApiException(
+                $e->getUserFriendlyMessage(),
+                null,
+                'Emails',
+                422,
+                'smtp_server_error'
+            );
         }
     }
 }

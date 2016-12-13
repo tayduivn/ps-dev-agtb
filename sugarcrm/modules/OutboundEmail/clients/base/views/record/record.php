@@ -120,7 +120,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'params' => array(
                         'target' => 'mail_smtpserver',
                         'value' =>
-                            'ifElse(equal($mail_smtptype,"google"), "smtp.google.com",
+                            'ifElse(equal($mail_smtptype,"google"), "smtp.gmail.com",
                                 ifElse(equal($mail_smtptype,"exchange"), "",
                                     ifElse(equal($mail_smtptype,"outlook"), "smtp-mail.outlook.com",
                                         $mail_smtpserver)))',
@@ -131,8 +131,8 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'params' => array(
                         'target' => 'mail_smtpport',
                         'value' =>
-                            'ifElse(equal($mail_smtptype,"google"), "465",
-                                ifElse(equal($mail_smtptype,"exchange"), "25",
+                            'ifElse(equal($mail_smtptype,"google"), "587",
+                                ifElse(equal($mail_smtptype,"exchange"), "587",
                                     ifElse(equal($mail_smtptype,"outlook"), "587",
                                         $mail_smtpport)))',
                     ),
@@ -142,7 +142,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'params' => array(
                         'target' => 'mail_smtpssl',
                         'value' =>
-                            'ifElse(equal($mail_smtptype,"google"), "1",
+                            'ifElse(equal($mail_smtptype,"google"), "2",
                                 ifElse(equal($mail_smtptype,"exchange"), "2",
                                     ifElse(equal($mail_smtptype,"outlook"), "2",
                                         $mail_smtpssl)))',

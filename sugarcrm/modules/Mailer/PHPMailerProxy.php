@@ -50,6 +50,21 @@ class PHPMailerProxy extends PHPMailer
     }
 
     /**
+     * Does not attempt an SMTP Connection when DISABLE_EMAIL_SEND is true. Immediately returns that the connection was
+     * successful.
+     *
+     * {@inheritdoc}
+     */
+    public function smtpConnect()
+    {
+        if (defined('DISABLE_EMAIL_SEND') && DISABLE_EMAIL_SEND === true) {
+            return true;
+        }
+
+        return parent::smtpConnect();
+    }
+
+    /**
      * Only performs the pre-send steps when DISABLE_EMAIL_SEND is true.
      *
      * {@inheritdoc}

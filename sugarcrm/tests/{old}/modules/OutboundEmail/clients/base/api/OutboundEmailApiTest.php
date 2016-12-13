@@ -34,11 +34,12 @@ class OutboundEmailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
+        BeanFactory::setBeanClass('OutboundEmail');  // Must be Reset
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
-    public function createRecordDataProvider()
+    public function createSystemRecordDataProvider()
     {
         return [
             ['system'],
@@ -48,16 +49,81 @@ class OutboundEmailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @covers ::createRecord
-     * @dataProvider createRecordDataProvider
+     * @dataProvider createSystemRecordDataProvider
      * @expectedException SugarApiExceptionNotAuthorized
      */
-    public function testCreateRecord($type)
+    public function testCreateSystemRecord($type)
     {
         $args = [
             'module' => 'OutboundEmail',
             'type' => $type,
         ];
         $response = $this->api->createRecord($this->service, $args);
+    }
+
+    /**
+     * @covers ::createRecord
+     */
+    public function testCreateRecord_TypeUser_OK()
+    {
+        $outboundEmailMock = $this->getMockBuilder('OutboundEmail')
+            ->setMethods(['save'])
+            ->getMock();
+
+        BeanFactory::setBeanClass('OutboundEmail', get_class($outboundEmailMock));
+
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->disableOriginalConstructor()
+            ->setMethods(['connect'])
+            ->getMock();
+
+        $mockMailer->expects($this->once())
+            ->method('connect');
+
+        $outboundEmailApiMock = $this->getMockBuilder('OutboundEmailApi')
+            ->setMethods(['getMailer'])
+            ->getMock();
+
+        $outboundEmailApiMock->expects($this->once())
+            ->method('getMailer')
+            ->will($this->returnValue($mockMailer));
+
+        $args = [
+            'module' => 'OutboundEmail',
+            'mail_smtpserver' => 'smtp.x.y',
+            'mail_smtpport' => 465,
+        ];
+
+        $outboundEmailApiMock->createRecord($this->service, $args);
+    }
+
+    /**
+     * @covers ::createRecord
+     * @expectedException SugarApiException
+     */
+    public function testCreateRecord_TypeUser_InvalidConnection_ThrowsException()
+    {
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->disableOriginalConstructor()
+            ->setMethods(['connect'])
+            ->getMock();
+        $mockMailer->method('connect')->willThrowException(new MailerException());
+
+        $outboundEmailApiMock = $this->getMockBuilder('OutboundEmailApi')
+            ->setMethods(['getMailer'])
+            ->getMock();
+
+        $outboundEmailApiMock->expects($this->once())
+            ->method('getMailer')
+            ->will($this->returnValue($mockMailer));
+
+        $args = [
+            'module' => 'OutboundEmail',
+            'mail_smtpserver' => 'smtp.a.b',
+            'mail_smtpport' => 465,
+        ];
+
+        $outboundEmailApiMock->createRecord($this->service, $args);
     }
 
     public function updateRecordProvider()
@@ -76,6 +142,22 @@ class OutboundEmailApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testUpdateRecord($name, $type, $saveSystemCallCount, $saveCallCount)
     {
+        $mockMailer = $this->getMockBuilder('SmtpMailer')
+            ->disableOriginalConstructor()
+            ->setMethods(['connect'])
+            ->getMock();
+
+        $mockMailer->expects($this->once())
+            ->method('connect');
+
+        $outboundEmailApiMock = $this->getMockBuilder('OutboundEmailApi')
+            ->setMethods(['getMailer'])
+            ->getMock();
+
+        $outboundEmailApiMock->expects($this->once())
+            ->method('getMailer')
+            ->will($this->returnValue($mockMailer));
+
         $oe = $this->getMockBuilder('OutboundEmail')
             ->setMethods(['saveSystem', 'save'])
             ->getMock();
@@ -94,7 +176,7 @@ class OutboundEmailApiTest extends Sugar_PHPUnit_Framework_TestCase
             'record' => $oe->id,
             'mail_smtpport' => 465,
         ];
-        $response = $this->api->updateRecord($this->service, $args);
+        $response = $outboundEmailApiMock->updateRecord($this->service, $args);
 
         BeanFactory::unregisterBean($oe);
     }

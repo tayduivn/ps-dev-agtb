@@ -20,6 +20,17 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @covers ::smtpConnect
+     */
+    public function testSmtpConnect()
+    {
+        $mailer = $this->createPartialMock('\PHPMailerProxy', ['getSMTPInstance']);
+        $mailer->expects($this->never())->method('getSMTPInstance');
+        $actual = $mailer->smtpConnect();
+        $this->assertTrue($actual);
+    }
+
+    /**
      * \PHPMailer::postSend() will not be called when DISABLE_EMAIL_SEND is true.
      *
      * @covers ::send
