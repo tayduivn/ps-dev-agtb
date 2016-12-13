@@ -488,7 +488,7 @@ abstract class CollectionApi extends SugarApi
                 break;
             }
             if (!isset($index[$record['_module']][$record['id']])) {
-                if (count($records) >= $limit) {
+                if ($limit >= 0 && count($records) >= $limit) {
                     array_unshift($sourceRecords[$source], $record);
                     break;
                 }

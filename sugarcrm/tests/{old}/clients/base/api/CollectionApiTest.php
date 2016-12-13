@@ -1453,6 +1453,43 @@ class CollectionApiTest extends Sugar_PHPUnit_Framework_TestCase
                     's4' => -1,
                 ),
             ),
+            'negative-limit' => array(
+                array(
+                    's' => array(
+                        'records' => array(
+                            array(
+                                '_module' => 'm',
+                                'id' => 'm-a',
+                                'a' => 'a',
+                            ),
+                        ),
+                        'next_offset' => -1,
+                    ),
+                ),
+                array(
+                    array(
+                        'map' => array(
+                            's' => array('a'),
+                        ),
+                        'is_numeric' => false,
+                        'direction' => true,
+                    ),
+                ),
+                -1,
+                array(
+                    's' => 0,
+                ),
+                array(
+                    array(
+                        '_module' => 'm',
+                        'id' => 'm-a',
+                        'a' => 'a',
+                    ),
+                ),
+                array(
+                    's' => -1,
+                ),
+            ),
             'database-order-preserved' => array(
                 array(
                     's1' => array(

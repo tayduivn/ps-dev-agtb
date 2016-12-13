@@ -192,6 +192,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                         'discount_select',
                                         'total_amount',
                                     ),
+                                    'max_num' => -1,
                                 ),
                             ),
                         ),
