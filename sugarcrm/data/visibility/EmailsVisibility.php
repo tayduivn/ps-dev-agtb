@@ -31,7 +31,7 @@ class EmailsVisibility extends SugarVisibility
             $alias = $this->bean->getTableName();
         }
 
-        $where = "({$alias}.state<>'" . Email::EMAIL_STATE_DRAFT . "' OR ({$alias}.state='" . Email::EMAIL_STATE_DRAFT .
+        $where = "({$alias}.state<>'" . Email::STATE_DRAFT . "' OR ({$alias}.state='" . Email::STATE_DRAFT .
             "' AND{$ownerWhere}))";
         $query = empty($query) ? $where : "{$query} AND {$where}";
 

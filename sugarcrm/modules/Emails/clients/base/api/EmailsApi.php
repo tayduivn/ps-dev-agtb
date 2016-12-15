@@ -32,26 +32,26 @@ class EmailsApi extends ModuleApi
             array(
                 'from' => self::STATE_ANY,
                 'to' => array(
-                    Email::EMAIL_STATE_READY,
-                    Email::EMAIL_STATE_DRAFT,
-                    Email::EMAIL_STATE_ARCHIVED,
+                    Email::STATE_READY,
+                    Email::STATE_DRAFT,
+                    Email::STATE_ARCHIVED,
                 ),
             ),
         ),
         'update' => array(
             array(
-                'from' => Email::EMAIL_STATE_DRAFT,
+                'from' => Email::STATE_DRAFT,
                 'to' => array(
-                    Email::EMAIL_STATE_DRAFT,
+                    Email::STATE_DRAFT,
                     // The draft is ready to be sent.
-                    Email::EMAIL_STATE_READY,
+                    Email::STATE_READY,
                 ),
             ),
             array(
-                'from' => Email::EMAIL_STATE_ARCHIVED,
+                'from' => Email::STATE_ARCHIVED,
                 'to' => array(
                     // Allows for changing teams or the assigned user, etc.
-                    Email::EMAIL_STATE_ARCHIVED,
+                    Email::STATE_ARCHIVED,
                 ),
             ),
         ),
@@ -141,12 +141,12 @@ class EmailsApi extends ModuleApi
 
         $isReady = false;
 
-        if ($args['state'] === Email::EMAIL_STATE_READY) {
+        if ($args['state'] === Email::STATE_READY) {
             $isReady = true;
-            $args['state'] = Email::EMAIL_STATE_DRAFT;
+            $args['state'] = Email::STATE_DRAFT;
         }
 
-        if ($args['state'] === Email::EMAIL_STATE_DRAFT) {
+        if ($args['state'] === Email::STATE_DRAFT) {
             $fromLinks = VardefManager::getLinkFieldsForCollection(
                 'Emails',
                 BeanFactory::getObjectName('Emails'),
@@ -197,7 +197,7 @@ class EmailsApi extends ModuleApi
                 throw new SugarApiExceptionInvalidParameter($message);
             }
 
-            if ($args['state'] === Email::EMAIL_STATE_READY) {
+            if ($args['state'] === Email::STATE_READY) {
                 $isReady = true;
                 unset($args['state']);
             }

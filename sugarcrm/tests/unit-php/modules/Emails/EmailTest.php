@@ -30,7 +30,7 @@ class EmailTest extends \PHPUnit_Framework_TestCase
         $config = new \OutboundEmailConfiguration($user);
 
         $email = $this->createPartialMock('\Email', []);
-        $email->state = \Email::EMAIL_STATE_ARCHIVED;
+        $email->state = \Email::STATE_ARCHIVED;
         $email->sendEmail($config);
     }
 }

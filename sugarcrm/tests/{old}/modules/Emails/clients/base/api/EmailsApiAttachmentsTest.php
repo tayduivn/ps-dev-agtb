@@ -39,7 +39,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         file_put_contents("upload://{$docRevisionId}", 'test');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(
@@ -95,7 +95,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $email = SugarTestEmailUtilities::createEmail(
             '',
             array(
-                'state' => Email::EMAIL_STATE_DRAFT,
+                'state' => Email::STATE_DRAFT,
                 'assigned_user_id' => $GLOBALS['current_user']->id,
             )
         );
@@ -164,7 +164,7 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         file_put_contents("upload://{$docId}", 'test');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'attachments' => array(
                 'create' => array(

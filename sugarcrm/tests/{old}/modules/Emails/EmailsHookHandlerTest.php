@@ -38,7 +38,7 @@ class EmailsHookHandlerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $teams = BeanFactory::getBean('TeamSets');
         $data = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'team_id' => 'East',
             'team_set_id' => $teams->addTeams(array('East', 'West')),

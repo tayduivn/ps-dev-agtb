@@ -215,7 +215,7 @@ class EmailRecipientRelationship extends M2MRelationship
 
         if (empty($row['email_address_id'])) {
             if (empty($row['email_address'])) {
-                if ($lhs->state === Email::EMAIL_STATE_ARCHIVED) {
+                if ($lhs->state === Email::STATE_ARCHIVED) {
                     // This email is final, so choose the first valid email address.
                     $primary = $rhs->emailAddress->getPrimaryAddress($rhs);
                     $row['email_address_id'] = $rhs->emailAddress->getEmailGUID($primary);

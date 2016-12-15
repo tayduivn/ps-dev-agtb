@@ -12,15 +12,9 @@
 
 class Email extends SugarBean {
 
-    const EMAIL_STATE_READY = 'Ready';
-    const EMAIL_STATE_DRAFT = 'Draft';
-    const EMAIL_STATE_ARCHIVED = 'Archived';
-
-    public $emailStates = array(
-        self::EMAIL_STATE_READY,
-        self::EMAIL_STATE_DRAFT,
-        self::EMAIL_STATE_ARCHIVED,
-    );
+    const STATE_READY = 'Ready';
+    const STATE_DRAFT = 'Draft';
+    const STATE_ARCHIVED = 'Archived';
 
 	/* SugarBean schema */
 	var $id;
@@ -420,7 +414,7 @@ class Email extends SugarBean {
 	/**
 	 * Returns true or false if this email is a draft.
 	 *
-     * @deprecated Check if {@link Email::$state} equals {@link Email::EMAIL_STATE_DRAFT} instead.
+     * @deprecated Check if {@link Email::$state} equals {@link Email::STATE_DRAFT} instead.
 	 * @param array $request
 	 * @return bool True indicates this email is a draft.
 	 */
@@ -428,7 +422,7 @@ class Email extends SugarBean {
 	{
         return isset($request['saveDraft']) ||
             ($this->type == 'draft' && $this->status == 'draft') ||
-            $this->state === Email::EMAIL_STATE_DRAFT;
+            $this->state === Email::STATE_DRAFT;
 	}
 
 	/**
@@ -498,12 +492,12 @@ class Email extends SugarBean {
         if ($saveAsDraft) {
             $this->type = 'draft';
             $this->status = 'draft';
-            $this->state = Email::EMAIL_STATE_DRAFT;
+            $this->state = Email::STATE_DRAFT;
         } else {
             if ($archived) {
                 $this->type = 'archived';
                 $this->status = 'archived';
-                $this->state = Email::EMAIL_STATE_ARCHIVED;
+                $this->state = Email::STATE_ARCHIVED;
             }
 
 			/* Apply Email Templates */
@@ -562,7 +556,7 @@ class Email extends SugarBean {
                 $this->new_with_id = true;
                 $this->type = 'out';
                 $this->status = 'sent';
-                $this->state = Email::EMAIL_STATE_ARCHIVED;
+                $this->state = Email::STATE_ARCHIVED;
             }
         }
 
@@ -834,12 +828,12 @@ class Email extends SugarBean {
                 // sending a draft email
                 $this->type   = 'out';
                 $this->status = 'sent';
-                $this->state = Email::EMAIL_STATE_ARCHIVED;
+                $this->state = Email::STATE_ARCHIVED;
                 $forceSave    = true;
             } elseif ($saveAsDraft) {
                 $this->type   = 'draft';
                 $this->status = 'draft';
-                $this->state = Email::EMAIL_STATE_DRAFT;
+                $this->state = Email::STATE_DRAFT;
                 $forceSave    = true;
             }
 
@@ -1115,7 +1109,7 @@ class Email extends SugarBean {
 				$this->new_with_id = true;
 			}
 
-            if ($this->state === static::EMAIL_STATE_ARCHIVED) {
+            if ($this->state === static::STATE_ARCHIVED) {
                 // Copy plain-text email body to HTML field column
                 if (empty($this->description_html) && !empty($this->description)) {
                     $this->description_html = str_replace(array("\r\n", "\n", "\r"), '<br />', $this->description);
@@ -1140,13 +1134,13 @@ class Email extends SugarBean {
 			$GLOBALS['log']->debug('-------------------------------> Email called save()');
 
             // Overrides SugarBean behavior to use Global as the default team.
-            if ($this->state === static::EMAIL_STATE_ARCHIVED && empty($this->team_id)) {
+            if ($this->state === static::STATE_ARCHIVED && empty($this->team_id)) {
                 $this->team_id = '1';
                 $this->team_set_id = '1';
             }
 
             // Set date_sent.
-            if ($this->state === static::EMAIL_STATE_DRAFT) {
+            if ($this->state === static::STATE_DRAFT) {
                 // Always update the timestamp when saving a draft.
                 $this->date_sent = $td->nowDb();
                 $this->type = 'draft';
@@ -1170,7 +1164,7 @@ class Email extends SugarBean {
 			$parentSaveResult = parent::save($check_notify);
 
             // Add the current user as the sender when the email is a draft.
-            if ($this->state === static::EMAIL_STATE_DRAFT && $this->load_relationship('users_from')) {
+            if ($this->state === static::STATE_DRAFT && $this->load_relationship('users_from')) {
                 $additionalData = [];
 
                 // Use the email address from the outbound email configuration.
@@ -1257,7 +1251,7 @@ class Email extends SugarBean {
      */
     public function updateAttachmentVisibility(Note $attachment)
     {
-        if ($this->state === static::EMAIL_STATE_DRAFT) {
+        if ($this->state === static::STATE_DRAFT) {
             $message = 'Setting the teams for attachment Notes/%s to the private team for Users/%s for the draft ' .
                 'Emails/%s in %s.';
             $GLOBALS['log']->debug(sprintf($message, $attachment->id, $this->assigned_user_id, $this->id, __METHOD__));
@@ -2572,7 +2566,7 @@ class Email extends SugarBean {
                 $ieMail = new Email();
                 $ieMail->retrieve($_REQUEST['inbound_email_id']);
                 $ieMail->status = 'replied';
-                $ieMail->state = Email::EMAIL_STATE_ARCHIVED;
+                $ieMail->state = Email::STATE_ARCHIVED;
                 $ieMail->save();
             }
 
@@ -3630,7 +3624,7 @@ eoq;
      */
     public function sendEmail(OutboundEmailConfiguration $config)
     {
-        if ($this->state !== static::EMAIL_STATE_DRAFT) {
+        if ($this->state !== static::STATE_DRAFT) {
             throw new SugarException("Cannot send an email with state: {$this->state}");
         }
 
@@ -3704,7 +3698,7 @@ eoq;
             $sentMessage = $mailer->send();
 
             // Archive after sending.
-            $this->state = Email::EMAIL_STATE_ARCHIVED;
+            $this->state = Email::STATE_ARCHIVED;
             $this->date_sent = TimeDate::getInstance()->nowDb();
             $this->type = 'out';
             $this->status = 'sent';
@@ -3715,7 +3709,7 @@ eoq;
             if (!empty($this->reply_to_id)) {
                 $replyToEmail = BeanFactory::retrieveBean('Emails', $this->reply_to_id);
                 if (!empty($replyToEmail) &&
-                    $replyToEmail->state === Email::EMAIL_STATE_ARCHIVED &&
+                    $replyToEmail->state === Email::STATE_ARCHIVED &&
                     !$replyToEmail->reply_to_status
                 ) {
                     $replyToEmail->reply_to_status = true;

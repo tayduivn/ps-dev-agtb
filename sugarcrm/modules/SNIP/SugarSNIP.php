@@ -540,11 +540,11 @@ class SugarSNIP
         $e->date_sent = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($e->date_sent));
         $e->type = 'inbound';
         $e->status = 'unread';
-        $e->state = Email::EMAIL_STATE_ARCHIVED;
+        $e->state = Email::STATE_ARCHIVED;
         $e->to_addrs_names = $e->to_addrs;
         $e->cc_addrs_names = $e->cc_addrs;
         $e->bcc_addrs_names = $e->bcc_addrs;
-        $e->state = Email::EMAIL_STATE_ARCHIVED;
+        $e->state = Email::STATE_ARCHIVED;
 
         $addrs = explode(',',$e->to_addrs.",".$e->cc_addrs.",".$e->bcc_addrs);
         $e->all_addrs = array();

@@ -52,16 +52,16 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                Email::EMAIL_STATE_DRAFT,
-                Email::EMAIL_STATE_ARCHIVED,
+                Email::STATE_DRAFT,
+                Email::STATE_ARCHIVED,
             ),
             array(
-                Email::EMAIL_STATE_ARCHIVED,
-                Email::EMAIL_STATE_DRAFT,
+                Email::STATE_ARCHIVED,
+                Email::STATE_DRAFT,
             ),
             array(
-                Email::EMAIL_STATE_ARCHIVED,
-                Email::EMAIL_STATE_READY,
+                Email::STATE_ARCHIVED,
+                Email::STATE_READY,
             ),
         );
     }
@@ -94,7 +94,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             'module' => 'Emails',
             'name' => 'Sugar Email' . mt_rand(),
-            'state' => Email::EMAIL_STATE_READY,
+            'state' => Email::STATE_READY,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
 

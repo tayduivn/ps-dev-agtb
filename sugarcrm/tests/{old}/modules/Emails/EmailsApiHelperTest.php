@@ -43,7 +43,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $bean->new_with_id = false;
         $bean->id = Uuid::uuid1();
         $bean->name = 'Renewal notice';
-        $bean->state = Email::EMAIL_STATE_DRAFT;
+        $bean->state = Email::STATE_DRAFT;
         // There is no outbound email account with that ID.
         $bean->outbound_email_id = Uuid::uuid1();
 
@@ -75,7 +75,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             [
                 // The client submits state=Draft and an outbound_email_id.
                 [
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // The submitted outbound_email_id is accepted.
@@ -85,7 +85,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             [
                 // The client submits state=Archived and an outbound_email_id.
                 [
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'state' => Email::STATE_ARCHIVED,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // The submitted outbound_email_id is ignored.
@@ -141,7 +141,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
                 // The client also submits a different outbound_email_id.
                 [
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // The submitted outbound_email_id is accepted.
@@ -178,7 +178,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
         $bean->new_with_id = false;
-        $bean->state = Email::EMAIL_STATE_DRAFT;
+        $bean->state = Email::STATE_DRAFT;
         $bean->outbound_email_id = $outboundEmailId;
 
         $result = $this->helper->populateFromApi($bean, $submittedData);
@@ -198,7 +198,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing archived email that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'state' => Email::STATE_ARCHIVED,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // Patching the record does not require the state argument.
@@ -213,7 +213,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing archived email that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'state' => Email::STATE_ARCHIVED,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // Patching the record does not require the state argument.
@@ -228,7 +228,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing archived email that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'state' => Email::STATE_ARCHIVED,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // Patching the record does not require the state argument.
@@ -243,7 +243,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing archived email that does not have an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'state' => Email::STATE_ARCHIVED,
                     'outbound_email_id' => null,
                 ],
                 // Patching the record does not require the state argument.
@@ -258,7 +258,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing draft that does not have an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => null,
                 ],
                 // Patching the record does not require the state argument.
@@ -273,13 +273,13 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing draft that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
                 // The client does not submit an outbound_email_id.
                 [
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                 ],
                 $outboundEmailId,
             ],
@@ -287,7 +287,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing draft that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // Patching the record does not require the state argument.
@@ -300,7 +300,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Start with an existing draft that has an outbound_email_id.
                 [
                     'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'state' => Email::STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
                 ],
                 // Patching the record does not require the state argument.
@@ -343,7 +343,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
-        $bean->state = Email::EMAIL_STATE_DRAFT;
+        $bean->state = Email::STATE_DRAFT;
 
         $submittedData = ['outbound_email_id' => Uuid::uuid1()];
 

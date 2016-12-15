@@ -87,7 +87,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $account = $this->createRhsBean('accounts_cc');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             $fromLink => array(
                 'add' => array($from->id),
             ),
@@ -99,7 +99,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
 
         $expected = array(
             array(
@@ -160,7 +160,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $lead = $this->createRhsBean('leads_cc');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'contacts_from' => array(
                 'add' => array($contact->id),
             ),
@@ -169,7 +169,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived after create');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after create');
 
         $expected = array(
             array(
@@ -208,7 +208,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->updateRecord($record['id'], $args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived after update');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after update');
 
         $expected = array(
             array(
@@ -265,7 +265,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $lead = $this->createRhsBean('leads_to');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'email_addresses_from' => array(
@@ -289,7 +289,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be a draft');
+        $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be a draft');
         $this->assertSame(
             static::$overrideConfig->id,
             $record['outbound_email_id'],
@@ -363,7 +363,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $address = $this->createRhsBean('email_addresses_to');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'outbound_email_id' => static::$overrideConfig->id,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'prospects_cc' => array(
@@ -371,7 +371,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be draft after create');
+        $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertSame(
             static::$overrideConfig->id,
             $record['outbound_email_id'],
@@ -420,7 +420,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->updateRecord($record['id'], $args);
-        $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be draft after update');
+        $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after update');
         $this->assertSame(
             static::$userConfig->id,
             $record['outbound_email_id'],
@@ -494,7 +494,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $lead = $this->createRhsBean('leads_to');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'accounts_to' => array(
                 'add' => array($account1->id),
@@ -504,7 +504,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be draft after create');
+        $this->assertSame(Email::STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertEmpty($record['outbound_email_id'], 'No configuration was specified during create');
 
         $expected = array(
@@ -539,14 +539,14 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $this->assertRecords($expected, $collection, 'The TO field did not match expectations after create');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_READY,
+            'state' => Email::STATE_READY,
             'accounts_to' => array(
                 'add' => array($account2->id),
                 'delete' => array($account1->id),
             ),
         );
         $record = $this->updateRecord($record['id'], $args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived after sending');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived after sending');
         $this->assertSame(
             static::$overrideConfig->id,
             $record['outbound_email_id'],
@@ -616,7 +616,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $contact2 = $this->createRhsBean('contacts_to');
 
         $args = array(
-            'state' => Email::EMAIL_STATE_READY,
+            'state' => Email::STATE_READY,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'contacts_from' => array(
                 'add' => array(
@@ -632,7 +632,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
 
         $this->assertSame(
             static::$systemConfiguration->id,
@@ -700,14 +700,14 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     public function testCreateAndSendReplyEmail()
     {
         $emailValues = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'reply_to_status' => false,
         );
         $repliedToEmail = SugarTestEmailUtilities::createEmail('', $emailValues);
 
         $user = $this->createRhsBean('users_to');
         $args = array(
-            'state' => Email::EMAIL_STATE_READY,
+            'state' => Email::STATE_READY,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'reply_to_id' => $repliedToEmail->id,
             'users_from' => array(
@@ -722,7 +722,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             ),
         );
         $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived');
+        $this->assertSame(Email::STATE_ARCHIVED, $record['state'], 'Should be archived');
         $this->assertSame($repliedToEmail->id, $record['reply_to_id'], 'Should contain id of Email being replied to');
 
         $repliedToEmail = $repliedToEmail->retrieve($repliedToEmail->id);

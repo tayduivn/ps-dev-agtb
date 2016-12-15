@@ -193,7 +193,7 @@ class SugarpdfPdfmanager extends SugarpdfSmarty
         //type is draft
         $email_object->type = "draft";
         $email_object->status = "draft";
-        $email_object->state = Email::EMAIL_STATE_DRAFT;
+        $email_object->state = Email::STATE_DRAFT;
 
         $email_object->to_addrs_ids = $focus->id;
         $email_object->to_addrs_names = $focus->name.";";

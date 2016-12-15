@@ -49,10 +49,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     public function saveAndSetDateSentProvider()
     {
         return array(
-            array(Email::EMAIL_STATE_DRAFT, null, null),
-            array(Email::EMAIL_STATE_ARCHIVED, null, null),
-            array(Email::EMAIL_STATE_ARCHIVED, null, null),
-            array(Email::EMAIL_STATE_ARCHIVED, '2014-06-22', '10:44'),
+            array(Email::STATE_DRAFT, null, null),
+            array(Email::STATE_ARCHIVED, null, null),
+            array(Email::STATE_ARCHIVED, null, null),
+            array(Email::STATE_ARCHIVED, '2014-06-22', '10:44'),
         );
     }
 
@@ -76,7 +76,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSaveArchivedEmail_EmptyTeamId_TeamAndTeamsetAreSetToGlobal()
     {
-        $this->email->state = Email::EMAIL_STATE_ARCHIVED;
+        $this->email->state = Email::STATE_ARCHIVED;
         $this->email->team_id = null;
         $this->email->save();
         SugarTestEmailUtilities::setCreatedEmail($this->email->id);
@@ -371,7 +371,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Change the teams on the email.
         $teams = BeanFactory::getBean('TeamSets');
-        $email->state = Email::EMAIL_STATE_ARCHIVED;
+        $email->state = Email::STATE_ARCHIVED;
         $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
         $email->team_set_id = $teams->addTeams(array('East', 'West'));
@@ -420,7 +420,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $note->expects($this->once())->method('save');
 
         $email = BeanFactory::newBean('Emails');
-        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->state = Email::STATE_DRAFT;
         $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
         $email->team_set_id = create_guid();
@@ -458,7 +458,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
 
         $email = BeanFactory::newBean('Emails');
-        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->state = Email::STATE_DRAFT;
         $email->assigned_user_id = null;
         $email->team_id = 'East';
         $email->team_set_id = create_guid();
@@ -491,7 +491,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Change the teams on the email.
         $teams = BeanFactory::getBean('TeamSets');
-        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->state = Email::STATE_DRAFT;
         $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
         $email->team_set_id = $teams->addTeams(array('East', 'West'));
@@ -508,7 +508,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
 
         // Archive the email.
-        $email->state = Email::EMAIL_STATE_ARCHIVED;
+        $email->state = Email::STATE_ARCHIVED;
         $email->save();
 
         $this->assertEquals($email->assigned_user_id, $note->assigned_user_id, 'assigned_user_id does not match');
@@ -623,7 +623,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSaveDraftEmail_EmailStatusAndTypeAreSetCorrectlyForCompatibility()
     {
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
@@ -645,7 +645,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSave_WillCalculateHtmlBody($html)
     {
-        $this->email->state = 'Archived';
+        $this->email->state = Email::STATE_ARCHIVED;
         $this->email->description = "This is a text body\nWith more
  than...\r\n\r\n... one line";
         $this->email->description_html = $html;
@@ -660,27 +660,27 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 'This is a text body',
                 'This is an &lt;b&gt;html&lt;/b&gt; body',
             ),
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 '',
                 null,
             ),
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 '',
                 'This is an &lt;b&gt;html&lt;/b&gt; body',
             ),
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 null,
                 'This is an &lt;b&gt;html&lt;/b&gt; body',
             ),
             array(
-                'Draft',
+                Email::STATE_DRAFT,
                 'This is a text body',
                 null,
             ),
@@ -727,7 +727,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSave_WillSetDescription($text, $html)
     {
-        $this->email->state = 'Archived';
+        $this->email->state = Email::STATE_ARCHIVED;
         $this->email->description_html = $html;
         $this->email->save();
         SugarTestEmailUtilities::setCreatedEmail($this->email->id);
@@ -739,28 +739,28 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 'Test email message',
                 'Test <b>email</b> message',
             ),
             array(
-                'Draft',
+                Email::STATE_DRAFT,
                 null,
                 '<div>Test email</div>',
             ),
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 'Test email message',
                 null,
             ),
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 'One message',
                 '<p>Entirely different message</p>',
             ),
             // The description field should not change if it was already set, even if it includes HTML tags
             array(
-                'Archived',
+                Email::STATE_ARCHIVED,
                 'Allow <b>HTML</b> if sent for text',
                 'Allow <b>HTML</b> if sent for text',
             ),
@@ -799,7 +799,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Create a draft that will be sent.
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'outbound_email_id' => $config->getConfigId(),
             'name' => 'foo',
             'description_html' => '<b>bar</b>',
@@ -819,7 +819,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Send the email.
         $email->sendEmail($config);
 
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $email->state, 'Should be archived');
+        $this->assertSame(Email::STATE_ARCHIVED, $email->state, 'Should be archived');
         //FIXME: Even with TimeDate::allow_cache disabled, the following assertion would fail if the test executes in
         // less than one second. For now, the best we can do is to verify that Email::date_sent is not empty.
         //$this->assertNotEquals($draftDate, $email->date_sent, 'Should reflect the date/time that the email was sent');
@@ -853,7 +853,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $email = BeanFactory::newBean('Emails');
         $email->name = 'some subject';
-        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->state = Email::STATE_DRAFT;
         $email->outbound_email_id = $outboundEmailId;
         $email->save();
         SugarTestEmailUtilities::setCreatedEmail($email->id);
@@ -880,7 +880,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $email = BeanFactory::newBean('Emails');
         $email->name = 'some subject';
-        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->state = Email::STATE_DRAFT;
         $email->outbound_email_id = $oe->id;
         $email->save();
         SugarTestEmailUtilities::setCreatedEmail($email->id);

@@ -332,7 +332,7 @@ class EmailMan extends SugarBean{
                 }
 
                 $this->ref_email->status='sent';
-               $this->ref_email->state = Email::EMAIL_STATE_ARCHIVED;
+                $this->ref_email->state = Email::STATE_ARCHIVED;
                 $retId = $this->ref_email->save();
 
                 foreach($notes as $note) {
@@ -440,7 +440,7 @@ class EmailMan extends SugarBean{
         $email->parent_id        = $this->related_id;
         $email->date_sent = $timedate->nowDb();
         $email->status           = 'sent';
-        $email->state = Email::EMAIL_STATE_ARCHIVED;
+        $email->state = Email::STATE_ARCHIVED;
         $email->message_id = $mail->getHeader(EmailHeaders::MessageId);
         $retId                   = $email->save();
 

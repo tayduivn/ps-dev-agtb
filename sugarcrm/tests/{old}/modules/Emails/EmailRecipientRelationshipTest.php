@@ -217,7 +217,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAdd_EmailAddressIdIsLeftEmpty()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
+        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::STATE_DRAFT));
         $contact = SugarTestContactUtilities::createContact();
 
         $additionalFields = array();
@@ -259,7 +259,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAdd_EmailAddressIsRemoved()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::EMAIL_STATE_DRAFT]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $address = $contact->emailAddress->getPrimaryAddress($contact);
         $addressId = $contact->emailAddress->getGuid($address);
@@ -626,7 +626,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
         SugarTestEmailAddressUtilities::addAddressToPerson($contact, $address);
 
-        $email1 = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
+        $email1 = SugarTestEmailUtilities::createEmail('', array('state' => Email::STATE_DRAFT));
         $email1->load_relationship('contacts_to');
         $email1->contacts_to->add($contact);
 

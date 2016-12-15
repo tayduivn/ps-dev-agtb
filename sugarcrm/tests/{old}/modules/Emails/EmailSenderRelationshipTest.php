@@ -234,7 +234,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $primaryAddress = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
         $primaryAddressId = $GLOBALS['current_user']->emailAddress->getGuid($primaryAddress);
 
-        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::EMAIL_STATE_DRAFT]);
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
         $contact = SugarTestContactUtilities::createContact();
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
 
@@ -325,7 +325,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
         // Use draft state to avoid automatically setting the email_address_id column. That functionality is covered by
         // tests in EmailRecipientRelationshipTest.
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
+        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::STATE_DRAFT));
         $contact = SugarTestContactUtilities::createContact();
 
         $additionalFields = array(

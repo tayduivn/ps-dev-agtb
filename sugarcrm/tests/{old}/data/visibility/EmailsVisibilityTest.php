@@ -26,28 +26,28 @@ class EmailsVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
 
         $data = array(
             'name' => static::$subject,
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         SugarTestEmailUtilities::createEmail('', $data);
 
         $data = array(
             'name' => static::$subject,
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => create_guid(),
         );
         SugarTestEmailUtilities::createEmail('', $data);
 
         $data = array(
             'name' => static::$subject,
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         SugarTestEmailUtilities::createEmail('', $data);
 
         $data = array(
             'name' => static::$subject,
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => create_guid(),
         );
         SugarTestEmailUtilities::createEmail('', $data);

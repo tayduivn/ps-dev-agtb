@@ -36,7 +36,7 @@ class Bug40911 extends Sugar_PHPUnit_Framework_TestCase
         $data = array(
             'type' => 'out',
             'status' => 'sent',
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'from_addr' => 'sender@domain.eu',
             'to_addrs' => 'to@domain.eu',
             'cc_addrs' => 'cc@domain.eu',

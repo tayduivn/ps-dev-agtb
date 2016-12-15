@@ -50,8 +50,8 @@ class EmailsApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         $isDraft = isset($submittedData['state']) ?
-            $submittedData['state'] === Email::EMAIL_STATE_DRAFT :
-            $bean->state === Email::EMAIL_STATE_DRAFT;
+            $submittedData['state'] === Email::STATE_DRAFT :
+            $bean->state === Email::STATE_DRAFT;
 
         if (isset($submittedData['outbound_email_id'])) {
             if ($isDraft) {

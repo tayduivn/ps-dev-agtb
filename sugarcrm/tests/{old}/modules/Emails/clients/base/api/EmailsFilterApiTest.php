@@ -89,7 +89,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Archived email sent by the current user to $contact.
         $data = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -100,7 +100,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Archived email sent by the current user to $user and $contact.
         $data = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -113,7 +113,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Draft email owned by the current user.
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -124,7 +124,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Draft email owned by the current user to be sent to $contact.
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -135,7 +135,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Archived email sent by $user to the current user.
         $data = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $user->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -146,7 +146,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Draft email owned by $user.
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $user->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -155,7 +155,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Archived email sent by $contact to $user and the current user.
         $data = array(
-            'state' => Email::EMAIL_STATE_ARCHIVED,
+            'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
@@ -168,7 +168,7 @@ class EmailsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Draft email to be sent by $user to $contact.
         $data = array(
-            'state' => Email::EMAIL_STATE_DRAFT,
+            'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $user->id,
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
