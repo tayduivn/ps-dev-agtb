@@ -133,12 +133,6 @@
                 }
             }, this);
         }
-
-        this.model.on('change:' + this.name, function(model, value) {
-            if (this.action !== 'edit') {
-                this.render();
-            }
-        }, this);
     },
 
     /**
@@ -711,13 +705,12 @@
                 collection = this.model.get(this.name);
             }
 
+            this.view.trigger('email-recipients:loading', this.name);
+
             collection.fetchAll({
                 fields: ['name', 'email_address_used'],
-                success: _.bind(function() {
-                    if (this.action === 'edit' && !this.disposed) {
-                        // format the recipients and put them in the DOM
-                        this._updateSelect2(this.getFormattedValue());
-                    }
+                complete: _.bind(function() {
+                    this.view.trigger('email-recipients:loaded', this.name);
                 }, this)
             });
         }

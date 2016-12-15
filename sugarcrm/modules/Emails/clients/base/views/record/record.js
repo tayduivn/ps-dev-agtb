@@ -18,10 +18,14 @@
 
     STATE_DRAFT: 'Draft',
 
+    _recipientFields: ['to', 'cc', 'bcc'],
+
     /**
      * @inheritdoc
      */
     initialize: function(options) {
+        var num;
+
         this._super('initialize', [options]);
 
         if (this.model.get('state') === this.STATE_DRAFT) {
@@ -29,6 +33,28 @@
         }
 
         this.listenTo(this.model, 'change:state', this._alertUserDraftState);
+
+        this.listenTo(this.model, 'change:to', function() {
+            this._renderRecipientsField('to');
+        });
+        this.listenTo(this.model, 'change:cc', function() {
+            this._renderRecipientsField('cc');
+        });
+        this.listenTo(this.model, 'change:bcc', function() {
+            this._renderRecipientsField('bcc');
+        });
+
+        this.on('email-recipients:loading', function() {
+            this.toggleButtons(false);
+        }, this);
+
+        num = this._recipientFields.length;
+        this.on('email-recipients:loaded', function() {
+            num--;
+            if (num === 0) {
+                this.toggleButtons(true);
+            }
+        }, this);
     },
 
     /*
@@ -56,6 +82,16 @@
     },
 
     /**
+     * Render the specified recipients field
+     */
+    _renderRecipientsField: function(fieldName) {
+        var field = this.getField(fieldName);
+        if (field) {
+            field.render();
+        }
+    },
+
+    /**
      * @inheritdoc
      * When record name is empty, return (no subject)
      */
@@ -67,5 +103,5 @@
         }
 
         return name;
-    },
+    }
 })

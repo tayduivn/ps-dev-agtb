@@ -723,43 +723,30 @@ describe('Emails.fields.email-recipients', function() {
     });
 
     describe('fetching all recipients when the field is created', function() {
-        var collection;
+        it('should trigger view', function() {
+            var collection;
+            var view;
 
-        beforeEach(function() {
             model.set('id', _.uniqueId());
-            model.unset('to');
+            collection = model.get('to');
+            collection.fetchAll = sandbox.stub().yieldsTo('complete');
 
-            field = SugarTest.createField({
-                client: 'base',
-                name: 'to',
-                type: 'email-recipients',
-                viewName: 'edit',
-                module: context.get('module'),
-                model: model,
+            view = new app.view.View({name: 'edit', context: context});
+            var def = {name: 'to', type: 'email-recipients'};
+
+            sandbox.spy(view, 'trigger');
+
+            field = app.view.createField({
+                def: def,
+                view: view,
                 context: context,
-                loadFromModule: true
+                model: model,
+                module: context.get('module'),
+                platform: 'base'
             });
-
-            collection = {
-                fetchAll: sandbox.stub().yieldsTo('success')
-            };
-            sandbox.stub(field, '_getFieldValue').returns(collection);
-            sandbox.stub(field, 'getFormattedValue');
-            sandbox.stub(field, '_updateSelect2');
-        });
-
-        it('should update the dom', function() {
-            field.action = 'edit';
-            field.model.trigger('sync');
             expect(collection.fetchAll).toHaveBeenCalled();
-            expect(field._updateSelect2).toHaveBeenCalled();
-        });
-
-        it('should not update the dom', function() {
-            field.action = 'detail';
-            field.model.trigger('sync');
-            expect(collection.fetchAll).toHaveBeenCalled();
-            expect(field._updateSelect2).not.toHaveBeenCalled();
+            expect(view.trigger).toHaveBeenCalledWith('email-recipients:loading', field.name);
+            expect(view.trigger).toHaveBeenCalledWith('email-recipients:loaded', field.name);
         });
     });
 });

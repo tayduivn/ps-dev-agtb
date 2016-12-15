@@ -109,5 +109,14 @@
      *
      * @override
      */
-    _addAddressBookIconPadding: $.noop
+    _addAddressBookIconPadding: $.noop,
+
+    /**
+     * @inheritdoc
+     *
+     * No need to call fetchAllRecipients for from field.
+     *
+     * @override
+     */
+    _fetchAllRecipients: $.noop
 })

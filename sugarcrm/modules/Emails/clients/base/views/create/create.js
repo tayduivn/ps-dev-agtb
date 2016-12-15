@@ -56,6 +56,9 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        var recipientsField;
+        var num;
+
         this._super('initialize', [options]);
 
         this.context.on('tinymce:selected_signature:clicked', this._insertSignatureAtCursor, this);
@@ -67,6 +70,24 @@
             this._checkAttachmentLimit();
         }, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
+        this.listenTo(this.model, 'change:to', this._renderRecipientsField);
+        this.listenTo(this.model, 'change:cc', this._renderRecipientsField);
+        this.listenTo(this.model, 'change:bcc', this._renderRecipientsField);
+
+        recipientsField = this.getFieldMeta('recipients');
+        num = _.size(recipientsField.fields);
+
+        this.on('email-recipients:loading', function() {
+            this.toggleButtons(false);
+        }, this);
+
+        this.on('email-recipients:loaded', function() {
+            num--;
+            if (num === 0) {
+                this.toggleButtons(true);
+            }
+        }, this);
+
         app.drawer.on('drawer:resize', this.resizeEditor, this);
 
         this._initializeDefaultSignature();
@@ -148,6 +169,16 @@
 
         this.notifyConfigurationStatus();
     },
+
+    /**
+     * Render recipients fieldset
+     */
+    _renderRecipientsField: _.debounce(function() {
+        var field = this.getField('recipients');
+        if (field) {
+            field.render();
+        }
+    }, 200),
 
     /**
      * Notifies the user of configuration issues and disables send button

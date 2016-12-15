@@ -23,7 +23,24 @@ describe('Emails.Views.Create', function() {
         context = app.context.getContext({module: 'Emails'});
         context.prepare(true);
 
-        view = SugarTest.createView('base', moduleName, viewName, null, context, true);
+        var meta = {
+            panels: [
+                {
+                    fields: [
+                        {
+                            name: 'recipients',
+                            fields: [
+                                {name: 'to'},
+                                {name: 'cc'},
+                                {name: 'bcc'}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        view = SugarTest.createView('base', moduleName, viewName, meta, context, true);
 
         sandbox = sinon.sandbox.create();
     });
@@ -1256,6 +1273,40 @@ describe('Emails.Views.Create', function() {
             //padding should be added back
             view.resizeEditor();
             expect($editor.height()).toEqual(editorHeightBefore);
+        });
+    });
+
+    describe('Toggle action buttons while fetching recipients', function() {
+        it('should disable action buttons', function() {
+            sandbox.spy(view, 'toggleButtons');
+            view.trigger('email-recipients:loading', 'to');
+            expect(view.toggleButtons).toHaveBeenCalledWith(false);
+        });
+
+        it('should enable action buttons', function() {
+            var recipientsField = view.getFieldMeta('recipients');
+            var num = _.size(recipientsField.fields);
+            sandbox.spy(view, 'toggleButtons');
+
+            _.each(recipientsField.fields, function(field) {
+                expect(view.toggleButtons).not.toHaveBeenCalledWith(true);
+                view.trigger('email-recipients:loaded', field.name);
+            });
+
+            expect(view.toggleButtons).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('Render recipients fieldset when one of its fields have changed', function() {
+        using('recipient fields', ['to', 'cc', 'bcc'], function(data) {
+            it('should render recipients fieldset', function() {
+                var field = {
+                    render: sandbox.spy()
+                };
+                sandbox.stub(view, 'getField').withArgs('recipients').returns(field);
+                view.model.trigger('change:' + data);
+                expect(field.render).toHaveBeenCalled();
+            });
         });
     });
 });

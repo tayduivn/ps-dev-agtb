@@ -713,7 +713,9 @@
              * all records have been retrieved.
              */
             fetchAll: function(options) {
-                var self, success;
+                var self;
+                var success;
+                var complete;
 
                 /**
                  * Paginate through the collection until all records have been
@@ -728,6 +730,9 @@
                         if (success) {
                             success(self, options);
                         }
+                        if (complete) {
+                            complete(self, options);
+                        }
                     }
                 }
 
@@ -738,6 +743,10 @@
                 if (options.success) {
                     success = options.success;
                     delete options.success;
+                }
+                if (options.complete) {
+                    complete = options.complete;
+                    delete options.complete;
                 }
 
                 options.success = paginate;
