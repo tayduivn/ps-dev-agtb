@@ -71,22 +71,6 @@ class MailApi extends ModuleApi
 
     /**
      * {@inheritdoc}
-     *
-     * Logs a deprecation warning.
-     *
-     * @deprecated This class is no longer used and is not recommended.
-     */
-    public function __construct()
-    {
-        LoggerManager::getLogger()->deprecated(
-            'MailApi and all of its endpoints have been deprecated. Use EmailsApi instead.'
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @deprecated All /Mail endpoints have been deprecated.
      */
     public function registerApiRest()
     {
@@ -125,7 +109,6 @@ class MailApi extends ModuleApi
                 'method' => 'findRecipients',
                 'shortHelp' => 'Search For Email Recipients',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
-                'maxVersion' => 11,
             ),
             'validateEmailAddresses' => array(
                 'reqType' => 'POST',
@@ -134,7 +117,6 @@ class MailApi extends ModuleApi
                 'method' => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
                 'longHelp' => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
-                'maxVersion' => 11,
             ),
             'saveAttachment' => array(
                 'reqType' => 'POST',
@@ -318,19 +300,12 @@ class MailApi extends ModuleApi
      *    offset      -  offset of first record to return
      *    max_num     -  maximum records to return
      *
-     * @deprecated POST /Mail/recipients/find has been deprecated and will not be available after v11. Use POST
-     * /Emails/recipients/find instead.
      * @param ServiceBase $api
      * @param array $args
      * @return array
      */
     public function findRecipients(ServiceBase $api, array $args)
     {
-        LoggerManager::getLogger()->deprecated(
-            'POST /Mail/recipients/find has been deprecated and will not be available after v11. Use POST ' .
-            '/Emails/recipients/find instead.'
-        );
-
         if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
             ini_set('max_execution_time', 300);
         }
@@ -670,8 +645,6 @@ class MailApi extends ModuleApi
      * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
      * addresses and the values are booleans indicating whether or not the email address is valid.
      *
-     * @deprecated POST /Mail/address/validate has been deprecated and will not be available after v11. Use POST
-     * /Emails/address/validate instead.
      * @param ServiceBase $api
      * @param array $args
      * @return array
@@ -679,11 +652,6 @@ class MailApi extends ModuleApi
      */
     public function validateEmailAddresses(ServiceBase $api, array $args)
     {
-        LoggerManager::getLogger()->deprecated(
-            'POST /Mail/address/validate has been deprecated and will not be available after v11. Use POST ' .
-            '/Emails/address/validate instead.'
-        );
-
         $validatedEmailAddresses = array();
         unset($args["__sugar_url"]);
         if (!is_array($args)) {
@@ -700,15 +668,12 @@ class MailApi extends ModuleApi
     }
 
     /**
-     * @deprecated This method is no longer used and is not recommended.
      * @see MailApi::recipientLookup()
      * @see MailApi::findRecipients()
      * @return EmailRecipientsService
      */
     protected function getEmailRecipientsService()
     {
-        LoggerManager::getLogger()->deprecated('MailApi::getEmailRecipientsService() has been deprecated.');
-
         if (!($this->emailRecipientsService instanceof EmailRecipientsService)) {
             $this->emailRecipientsService = new EmailRecipientsService;
         }

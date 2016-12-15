@@ -281,7 +281,7 @@
         // the first 10 results should be enough
         options.max_num = 10;
         // build the URL for fetching recipients that match the search term
-        url = app.api.buildURL('Emails', 'recipients/find', null, options);
+        url = app.api.buildURL('Mail', 'recipients/find', null, options);
         // create the callbacks
         callbacks.success = function(result) {
             // the api returns objects formatted such that sidecar can convert
@@ -603,7 +603,7 @@
      */
     _validateEmailAddress: function(recipient) {
         var callbacks = {};
-        var url = app.api.buildURL('Emails', 'address/validate');
+        var url = app.api.buildURL('Mail', 'address/validate');
         var email = recipient.get('email_address');
 
         callbacks.success = _.bind(function(result) {

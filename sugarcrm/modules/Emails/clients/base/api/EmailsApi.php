@@ -11,7 +11,6 @@
  */
 
 require_once 'clients/base/api/ModuleApi.php';
-require_once 'modules/Emails/EmailRecipientsService.php';
 
 class EmailsApi extends ModuleApi
 {
@@ -58,13 +57,6 @@ class EmailsApi extends ModuleApi
     );
 
     /**
-     * Instance of the EmailRecipientsService used by the findRecipients API
-     *
-     * @var EmailRecipientsService
-     */
-    private $emailRecipientsService;
-
-    /**
      * The fields `type` and `status` are disabled on create and update. The field `id` is disabled on create.
      *
      * All sender links are disabled on update, as the sender cannot be changed. For emails in the "Draft," or "Ready"
@@ -103,22 +95,6 @@ class EmailsApi extends ModuleApi
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates an Emails record',
                 'longHelp' => 'modules/Emails/clients/base/api/help/emails_record_put_help.html',
-            ),
-            'validateEmailAddresses' => array(
-                'reqType' => 'POST',
-                'path' => array('Emails', 'address', 'validate'),
-                'pathVars' => array(''),
-                'method' => 'validateEmailAddresses',
-                'shortHelp' => 'Validate One Or More Email Address',
-                'longHelp' => 'modules/Emails/clients/base/api/help/emails_address_validate_post_help.html',
-            ),
-            'findRecipients' => array(
-                'reqType' => 'GET',
-                'path' => array('Emails', 'recipients', 'find'),
-                'pathVars' => array(''),
-                'method' => 'findRecipients',
-                'shortHelp' => 'Search For Email Recipients',
-                'longHelp' => 'modules/Emails/clients/base/api/help/emails_recipients_find_get_help.html',
             ),
         );
     }
@@ -212,142 +188,6 @@ class EmailsApi extends ModuleApi
         }
 
         return $result;
-    }
-
-    /**
-     * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
-     * addresses and the values are booleans indicating whether or not the email address is valid.
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     * @throws SugarApiException
-     */
-    public function validateEmailAddresses($api, $args)
-    {
-        $validatedEmailAddresses = array();
-        unset($args['__sugar_url']);
-        if (!is_array($args)) {
-            throw new SugarApiExceptionInvalidParameter('Invalid argument: cannot validate');
-        }
-        if (empty($args)) {
-            throw new SugarApiExceptionMissingParameter('Missing email address(es) to validate');
-        }
-        $emailAddresses = $args;
-        foreach ($emailAddresses as $emailAddress) {
-            $validatedEmailAddresses[$emailAddress] = SugarEmailAddress::isValidEmail($emailAddress);
-        }
-        return $validatedEmailAddresses;
-    }
-
-    /**
-     * Finds recipients that match the search term.
-     *
-     * Arguments:
-     *    q           - search string
-     *    module_list -  one of the keys from $modules
-     *    order_by    -  columns to sort by (one or more of $sortableColumns) with direction
-     *                   ex.: name:asc,id:desc (will sort by last_name ASC and then id DESC)
-     *    offset      -  offset of first record to return
-     *    max_num     -  maximum records to return
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function findRecipients($api, $args)
-    {
-        if (ini_get('max_execution_time') > 0 && ini_get('max_execution_time') < 300) {
-            ini_set('max_execution_time', 300);
-        }
-        $term = (isset($args['q'])) ? trim($args['q']) : "";
-        $offset = 0;
-        $limit = (!empty($args['max_num'])) ? (int)$args['max_num'] : 20;
-        $orderBy = array();
-
-        if (!empty($args['offset'])) {
-            if ($args['offset'] === 'end') {
-                $offset = 'end';
-            } else {
-                $offset = (int)$args['offset'];
-            }
-        }
-
-        $modules = array(
-            'users' => 'users',
-            'accounts' => 'accounts',
-            'contacts' => 'contacts',
-            'leads' => 'leads',
-            'prospects' => 'prospects',
-            'all' => 'LBL_DROPDOWN_LIST_ALL',
-        );
-        $module = $modules['all'];
-
-        if (!empty($args['module_list'])) {
-            $moduleList = strtolower($args['module_list']);
-
-            if (array_key_exists($moduleList, $modules)) {
-                $module = $modules[$moduleList];
-            }
-        }
-
-        if (!empty($args['order_by'])) {
-            $orderBys = explode(',', $args['order_by']);
-
-            foreach ($orderBys as $sortBy) {
-                $column = $sortBy;
-                $direction = 'ASC';
-
-                if (strpos($sortBy, ':')) {
-                    // it has a :, it's specifying ASC / DESC
-                    list($column, $direction) = explode(':', $sortBy);
-
-                    if (strtolower($direction) == 'desc') {
-                        $direction = 'DESC';
-                    } else {
-                        $direction = 'ASC';
-                    }
-                }
-
-                // only add column once to the order-by clause
-                if (empty($orderBy[$column])) {
-                    $orderBy[$column] = $direction;
-                }
-            }
-        }
-
-        $records = array();
-        $nextOffset = -1;
-
-        if ($offset !== 'end') {
-            $emailRecipientsService = $this->getEmailRecipientsService();
-            $records = $emailRecipientsService->find($term, $module, $orderBy, $limit + 1, $offset);
-            $totalRecords = count($records);
-            if ($totalRecords > $limit) {
-                // means there are more records in DB than limit specified
-                $nextOffset = $offset + $limit;
-                array_pop($records);
-            }
-        }
-
-        return array(
-            'next_offset' => $nextOffset,
-            'records' => $records,
-        );
-    }
-
-    /**
-     * Retrieve an instance of the EmailRecipientsService
-     *
-     * @return EmailRecipientsService
-     */
-    protected function getEmailRecipientsService()
-    {
-        if (!($this->emailRecipientsService instanceof EmailRecipientsService)) {
-            $this->emailRecipientsService = new EmailRecipientsService;
-        }
-
-        return $this->emailRecipientsService;
     }
 
     /**
