@@ -810,7 +810,9 @@
      */
     _dispose: function() {
         _.each(this.sugarLogicContexts, function(slContext) {
-            slContext.dispose();
+            _.each(slContext.dependencies, function(dep) {
+                this.view.off('list:editrow:fire', null, dep);
+            }, slContext);
         });
         this._super('_dispose');
         this.rowFields = null;
