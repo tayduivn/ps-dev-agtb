@@ -53,8 +53,6 @@ var SugarTest = {};
         return test.loadFile(fixturePath || "../fixtures", file, "json", function(data) { return data; }, "json");
     };
 
-    test.componentsFixtureSrc = "sidecar/tests/fixtures/components.js";
-
     // Only certain tests want seeded meta data so those suites can
     // load this in there respective beforeEach:
     // SugarTest.seedMetadata();
