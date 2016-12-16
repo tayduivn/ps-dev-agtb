@@ -273,6 +273,7 @@ gulp.task('test:rest', function() {
         .option('--url <url>', 'Instance URL')
         .option('-u, --username <username>', 'Administrator username')
         .option('-p, --password <password>', 'Administrator password')
+        .option('-m, --metadata <filename>', 'Path to metadata JSON file')
         .option('--ci', 'Enable CI specific options')
         .option('--path <path>', 'Set base output path')
         .parse(process.argv);
@@ -298,6 +299,13 @@ gulp.task('test:rest', function() {
         env.ADMIN_PASSWORD = commander.password;
     } else if (!process.env.ADMIN_PASSWORD) {
         console.error('Either setting $ADMIN_PASSWORD or the --password flag is required.');
+        help();
+    }
+
+    if (commander.metadata) {
+        env.METADATA_FILE = commander.metadata;
+    } else if (!process.env.METADATA_FILE) {
+        console.error('Either setting $METADATA_FILE or the --metadata flag is required.');
         help();
     }
 
