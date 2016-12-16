@@ -102,17 +102,17 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         beforeEach(function() {
             massCollection = new Backbone.Collection();
             view.massCollection = massCollection;
-            sinon.collection.spy(view.massCollection, 'reset');
+            sinon.collection.spy(view.massCollection, 'on');
         });
 
         afterEach(function() {
             massCollection = null;
         });
 
-        it('should reset mass collection if it exists', function() {
+        it('should set listener for mass collection add remove reset if it exists', function() {
             view.bindDataChange();
 
-            expect(view.massCollection.reset).toHaveBeenCalled();
+            expect(view.massCollection.on).toHaveBeenCalledWith('add remove reset');
         });
     });
 
@@ -165,6 +165,46 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
         it('should call layout.moveMassCollectionItemsToNewGroup', function() {
             expect(view.layout.moveMassCollectionItemsToNewGroup).toHaveBeenCalled();
+        });
+    });
+
+    describe('_onDeleteBtnClicked()', function() {
+        var massCollection;
+        var model;
+
+        beforeEach(function() {
+            model = app.data.createBean('Products', {
+                id: 'modelId1'
+            });
+            massCollection = new Backbone.Collection({
+                id: 'pbId1'
+            });
+            sinon.collection.stub(app.alert, 'show', function() {});
+            sinon.collection.stub(app.lang, 'get', function() {});
+            sinon.collection.stub(view.context, 'trigger', function() {});
+        });
+
+        describe('with massCollection items', function() {
+            beforeEach(function() {
+                massCollection.add(model);
+                view.massCollection = massCollection;
+
+                view._onDeleteBtnClicked({});
+            });
+
+            it('should call app.alert.show with confirm message', function() {
+                expect(app.alert.show).toHaveBeenCalledWith('confirm_delete');
+            });
+        });
+
+        describe('with empty massCollection', function() {
+            beforeEach(function() {
+                view._onDeleteBtnClicked({});
+            });
+
+            it('should call app.alert.show with error message', function() {
+                expect(app.alert.show).toHaveBeenCalledWith('quote_grouping_message');
+            });
         });
     });
 

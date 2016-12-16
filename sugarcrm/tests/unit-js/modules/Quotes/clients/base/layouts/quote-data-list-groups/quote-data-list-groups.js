@@ -89,6 +89,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             expect(layout.context.on).toHaveBeenCalledWith('quotes:group:delete');
         });
 
+        it('should listen on layout.context for quotes:selected:delete', function() {
+            expect(layout.context.on).toHaveBeenCalledWith('quotes:selected:delete');
+        });
+
         it('should listen on layout.context for quotes:defaultGroup:create', function() {
             expect(layout.context.on).toHaveBeenCalledWith('quotes:defaultGroup:create');
         });
@@ -1092,13 +1096,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             layout.currentBulkSaveRequests = [{
                 url: 'testUrl'
             }];
-            sinon.collection.stub(app.api, 'call', function() {});
+            sinon.collection.stub(app.api, 'call', function() {
+                layout.currentBulkSaveRequests = null;
+            });
 
             layout._callBulkRequests();
-        });
-
-        afterEach(function() {
-            layout.currentBulkSaveRequests = [];
         });
 
         it('should call with method create', function() {
@@ -1116,6 +1118,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
         it('should have correct requests length', function() {
             expect(app.api.call.args[0][2].requests.length).toBe(1);
+        });
+
+        it('should empty currentBulkSaveRequests', function() {
+            expect(layout.currentBulkSaveRequests.length).toBe(0);
         });
     });
 
@@ -1242,12 +1248,6 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             bulkNewModelUpdate = null;
             bulkResponses = null;
             bundles = null;
-        });
-
-        it('should reset currentBulkSaveRequests array', function() {
-            layout._onSaveUpdatedGroupSuccess(undefined, newGroup, bulkResponses);
-
-            expect(layout.currentBulkSaveRequests.length).toBe(0);
         });
 
         describe('when oldGroup is not sent', function() {
@@ -1933,6 +1933,318 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 layout._onCreateQuoteGroupSuccess(newBundleData);
 
                 expect(layout.context.trigger).not.toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+            });
+        });
+    });
+
+    describe('_onCreateQuoteGroupSuccess()', function() {
+        var newBundleData;
+        var layoutModel;
+        var bundlesCollection;
+
+        beforeEach(function() {
+            bundlesCollection = new Backbone.Collection({
+                id: 'recordId1'
+            });
+            layoutModel = app.data.createBean('Quotes', {
+                bundles: bundlesCollection
+            });
+            layout.model = layoutModel;
+            newBundleData = {
+                record: {
+                    id: 'recordId1'
+                },
+                related_record: {
+                    id: 'relatedId1'
+                }
+            };
+            sinon.collection.stub(app.alert, 'dismiss', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {});
+            sinon.collection.stub(layout.context, 'trigger', function() {});
+        });
+
+        afterEach(function() {
+            newBundleData = null;
+            bundlesCollection = null;
+            layoutModel.dispose();
+            layoutModel = null;
+        });
+
+        describe('general behavior', function() {
+            beforeEach(function() {
+                layout.model.set('show_line_nums', false);
+
+                layout._onCreateQuoteGroupSuccess(newBundleData);
+            });
+
+            it('should call app.alert.dismiss on the adding_bundle_alert', function() {
+                expect(app.alert.dismiss).toHaveBeenCalledWith('adding_bundle_alert');
+            });
+
+            it('should call app.alert.show on the added_bundle_alert', function() {
+                expect(app.alert.show).toHaveBeenCalledWith('added_bundle_alert');
+            });
+
+            it('should set product_bundle_items to empty array when no product_bundle_items exist', function() {
+                expect(newBundleData.related_record.product_bundle_items).toEqual([]);
+            });
+
+            it('should set related_record._justSaved = true', function() {
+                expect(newBundleData.related_record._justSaved).toBeTruthy();
+            });
+
+            it('should not trigger quotes:show_line_nums:changed on layout.context', function() {
+                expect(layout.context.trigger).not.toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+            });
+
+            it('should call app.alert.show on the added_bundle_alert', function() {
+                expect(layout.context.trigger).toHaveBeenCalledWith('quotes:group:create:success');
+            });
+        });
+
+        describe('when show_line_nums is true', function() {
+            beforeEach(function() {
+                layout.model.set('show_line_nums', true);
+
+                layout._onCreateQuoteGroupSuccess(newBundleData);
+            });
+
+            it('should trigger quotes:show_line_nums:changed on layout.context', function() {
+                expect(layout.context.trigger).toHaveBeenCalledWith('quotes:show_line_nums:changed', true);
+            });
+        });
+    });
+
+    describe('_onDeleteSelectedItems()', function() {
+        var massCollection;
+        var groupLayout;
+        var groupLayoutId;
+        var groupList;
+        var rowModel1;
+        var rowModel2;
+        var request;
+
+        beforeEach(function() {
+            massCollection = new Backbone.Collection();
+
+            rowModel1 = app.data.createBean('Products', {
+                id: 'productId1'
+            });
+            rowModel1.module = 'Products';
+            rowModel1.link = {
+                bean: {
+                    id: 'layoutId1'
+                }
+            };
+
+            rowModel2 = app.data.createBean('Products', {
+                id: 'productId2'
+            });
+            rowModel2.module = 'Products';
+            rowModel2.link = {
+                bean: {
+                    id: 'layoutId1'
+                }
+            };
+
+            massCollection.add(rowModel1);
+            massCollection.add(rowModel2);
+
+            groupList = {
+                toggledModels: {
+                    productId1: rowModel1
+                }
+            };
+            groupLayoutId = 'layoutId1';
+            groupLayout = {
+                groupId: groupLayoutId,
+                collection: app.data.createMixedBeanCollection(),
+                getGroupListComponent: function() {
+                    return groupList;
+                },
+                dispose: $.noop
+            };
+
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return groupLayout;
+            });
+            sinon.collection.stub(app.api, 'buildURL', function(path) {
+                return '.../' + path;
+            });
+            sinon.collection.stub(layout, '_callBulkRequests', function() {});
+
+            layout._onDeleteSelectedItems(massCollection);
+        });
+
+        afterEach(function() {
+            massCollection = null;
+            groupLayout = null;
+            groupLayoutId = null;
+            groupList = null;
+            rowModel1 = null;
+            rowModel2 = null;
+            request = null;
+        });
+
+        it('should have 3 bulk requests ready', function() {
+            expect(layout.currentBulkSaveRequests.length).toBe(3);
+        });
+
+        describe('first request', function() {
+            beforeEach(function() {
+                request = layout.currentBulkSaveRequests[0];
+            });
+
+            it('should have url Products/productId1', function() {
+                expect(request.url).toBe('Products/productId1');
+            });
+
+            it('should have method = DELETE', function() {
+                expect(request.method).toBe('DELETE');
+            });
+        });
+
+        describe('second request', function() {
+            beforeEach(function() {
+                request = layout.currentBulkSaveRequests[1];
+            });
+
+            it('should have url Products/productId1', function() {
+                expect(request.url).toBe('Products/productId2');
+            });
+
+            it('should have method = DELETE', function() {
+                expect(request.method).toBe('DELETE');
+            });
+        });
+
+        describe('third request', function() {
+            beforeEach(function() {
+                request = layout.currentBulkSaveRequests[2];
+            });
+
+            it('should have url Products/productId1', function() {
+                expect(request.url).toBe('ProductBundles/layoutId1');
+            });
+
+            it('should have method = DELETE', function() {
+                expect(request.method).toBe('GET');
+            });
+        });
+    });
+
+    describe('_onDeleteSelectedItemsSuccess()', function() {
+        var massCollection;
+        var bulkRequests;
+        var rowModel;
+        var groupLayoutId;
+        var groupLayout;
+        var groupLayoutCollection;
+        var groupLayoutModel;
+
+        beforeEach(function() {
+            massCollection = new Backbone.Collection();
+            groupLayoutCollection = new Backbone.Collection();
+            rowModel = app.data.createBean('Products', {
+                id: 'productId1'
+            });
+            rowModel.module = 'Products';
+            rowModel.link = {
+                bean: {
+                    id: 'layoutId1'
+                }
+            };
+            massCollection.add(rowModel);
+            groupLayoutCollection.add(rowModel);
+
+            groupLayoutModel = app.data.createBean('ProductBundles', {
+                id: 'layoutId1',
+                total: '100'
+            });
+            bulkRequests = [];
+
+            groupLayoutId = 'layoutId1';
+            groupLayout = {
+                groupId: groupLayoutId,
+                collection: groupLayoutCollection,
+                model: groupLayoutModel,
+                getGroupListComponent: function() {
+                    return groupList;
+                },
+                trigger: sinon.collection.spy(),
+                dispose: $.noop
+            };
+
+            sinon.collection.stub(app.alert, 'dismiss', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {});
+            sinon.collection.stub(layout, '_getComponentByGroupId', function() {
+                return groupLayout;
+            });
+        });
+
+        afterEach(function() {
+            massCollection = null;
+            bulkRequests = null;
+            rowModel = null;
+            groupLayoutId = null;
+            groupLayout = null;
+            groupLayoutCollection = null;
+            groupLayoutModel = null;
+        });
+
+        describe('general behavior', function() {
+            beforeEach(function() {
+                layout._onDeleteSelectedItemsSuccess(massCollection, bulkRequests);
+            });
+
+            it('should call app.alert.dismiss deleting_line_item', function() {
+                expect(app.alert.dismiss).toHaveBeenCalledWith('deleting_line_item');
+            });
+
+            it('should call app.alert.show deleted_line_item', function() {
+                expect(app.alert.show).toHaveBeenCalledWith('deleted_line_item');
+            });
+        });
+
+        describe('when request is a record delete', function() {
+            beforeEach(function() {
+                bulkRequests = [{
+                    contents: {
+                        id: 'productId1'
+                    }
+                }];
+
+                layout._onDeleteSelectedItemsSuccess(massCollection, bulkRequests);
+            });
+
+            it('should remove rowModel from the group layout collection', function() {
+                expect(groupLayout.collection.length).toBe(0);
+            });
+
+            it('should remove rowModel from massCollection', function() {
+                expect(massCollection.length).toBe(0);
+            });
+        });
+
+        describe('when request is a group update', function() {
+            beforeEach(function() {
+                bulkRequests = [{
+                    contents: {
+                        id: 'layoutId1',
+                        total: '0.00'
+                    }
+                }];
+                sinon.collection.stub(layout, '_updateModelWithRecord');
+
+                layout._onDeleteSelectedItemsSuccess(massCollection, bulkRequests);
+            });
+
+            it('should call _updateModelWithRecord and update the layout model', function() {
+                expect(layout._updateModelWithRecord).toHaveBeenCalled();
+            });
+
+            it('should call trigger quotes:line_nums:reset on the layout', function() {
+                expect(groupLayout.trigger).toHaveBeenCalledWith('quotes:line_nums:reset');
             });
         });
     });

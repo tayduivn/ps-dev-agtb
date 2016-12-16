@@ -82,6 +82,7 @@
         this.model.on('change:bundles', this._onProductBundleChange, this);
         this.context.on('quotes:group:create', this._onCreateQuoteGroup, this);
         this.context.on('quotes:group:delete', this._onDeleteQuoteGroup, this);
+        this.context.on('quotes:selected:delete', this._onDeleteSelectedItems, this);
         this.context.on('quotes:defaultGroup:create', this._onCreateDefaultQuoteGroup, this);
         this.context.on('quotes:defaultGroup:save', this._onSaveDefaultQuoteGroup, this);
 
@@ -308,7 +309,6 @@
         if (massCollection) {
             massCollection.reset();
         }
-        this.currentBulkSaveRequests = [];
     },
 
     /**
@@ -548,6 +548,9 @@
         app.api.call('create', app.api.buildURL(null, 'bulk'), {
             requests: this.currentBulkSaveRequests
         }, customSuccess);
+
+        // reset currentBulkSaveRequests
+        this.currentBulkSaveRequests = [];
     },
 
     /**
@@ -641,9 +644,6 @@
             // once new items are added to the default group, update the group's line numbers
             newGroup.trigger('quotes:line_nums:reset', newGroup.groupId, newGroup.collection);
         }
-
-        // reset currentBulkSaveRequests
-        this.currentBulkSaveRequests = [];
     },
 
     /**
@@ -937,6 +937,110 @@
 
         // trigger that the group create was successful and pass the new group data
         this.context.trigger('quotes:group:create:success', newBundleData);
+    },
+
+    /**
+     * Called when line items have been selected and user has clicked Delete Selected.
+     * It prepares the group lists and models to be deleted and adds GET requests
+     * for each group after the deletes
+     *
+     * @param {Data.MixedBeanCollection} massCollection The mass_collection from the quote data list
+     * @private
+     */
+    _onDeleteSelectedItems: function(massCollection) {
+        var bulkRequests = [];
+        var groupsToUpdate = [];
+        var rowId;
+        var groupId;
+        var groupList;
+        var groupLayout;
+        var url;
+
+        _.each(massCollection.models, function(model) {
+            groupId = model.link.bean.id;
+            rowId = model.get('id');
+
+            // add the group ID to update the group later
+            groupsToUpdate.push(groupId);
+
+            // get the QuoteDataGroupLayout component
+            groupLayout = this._getComponentByGroupId(groupId);
+
+            // get the QuoteDataGroupListView component
+            groupList = groupLayout.getGroupListComponent();
+
+            // remove this row from the list's toggledModels if it exists
+            delete groupList.toggledModels[rowId];
+
+            url = app.api.buildURL(model.module + '/' + rowId);
+            bulkRequests.push({
+                url: url.substr(4),
+                method: 'DELETE'
+            });
+        }, this);
+
+        // make sure the groups are only in here once
+        groupsToUpdate = _.uniq(groupsToUpdate);
+
+        _.each(groupsToUpdate, function(groupIdToUpdate) {
+            url = app.api.buildURL('ProductBundles' + '/' + groupIdToUpdate);
+            bulkRequests.push({
+                url: url.substr(4),
+                method: 'GET'
+            });
+        }, this);
+
+        if (bulkRequests.length) {
+            this.currentBulkSaveRequests = bulkRequests;
+            this._callBulkRequests(_.bind(this._onDeleteSelectedItemsSuccess, this, massCollection));
+        }
+    },
+
+    /**
+     * Called on success after _onDeleteSelectedItems sets up models to be deleted. This function
+     * removes deleted models from the MassCollection and the group's layout, and updates group
+     * models with updated data.
+     *
+     * @param {Data.MixedBeanCollection} massCollection The mass_collection from the quote data list
+     * @param {Array} bulkRequests The results from the BulkAPI calls
+     * @private
+     */
+    _onDeleteSelectedItemsSuccess: function(massCollection, bulkRequests) {
+        var model;
+        var groupId;
+        var groupLayout;
+
+        app.alert.dismiss('deleting_line_item');
+        app.alert.show('deleted_line_item', {
+            level: 'success',
+            autoClose: true,
+            messages: [
+                app.lang.get('LBL_DELETED_ITEMS_SUCCESS_MSG', this.module)
+            ]
+        });
+        _.each(bulkRequests, function(request) {
+            model = massCollection.get(request.contents.id);
+
+            if (model) {
+                // the request was for a model in the massCollection
+                groupId = model.link.bean.id;
+                // get the QuoteDataGroupLayout component
+                groupLayout = this._getComponentByGroupId(groupId);
+                // remove the model from the group layout
+                groupLayout.collection.remove(model);
+                // remove the model from the massCollection
+                massCollection.remove(model);
+            } else {
+                // the request was to update a Bundle group
+                groupId = request.contents.id;
+                // get the QuoteDataGroupLayout component
+                groupLayout = this._getComponentByGroupId(groupId);
+                // update the group's model with the latest contents data
+                this._updateModelWithRecord(groupLayout.model, request.contents);
+                // trigger the line nums to be recalculated
+                groupLayout.trigger('quotes:line_nums:reset', groupLayout.groupId, groupLayout.collection);
+            }
+        }, this);
     },
 
     /**

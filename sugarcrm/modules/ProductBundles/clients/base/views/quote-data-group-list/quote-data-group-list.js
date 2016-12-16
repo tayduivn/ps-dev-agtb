@@ -604,14 +604,13 @@
             level: 'confirmation',
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
             messages: [app.lang.get('LBL_ALERT_CONFIRM_DELETE')],
-            onConfirm: function() {
-                this.options.data.resetLineNums(this.options.data.rowModel);
-                this.options.data.rowModel.destroy();
-            },
-            data: {
-                rowModel: this.collection.get(row.id),
-                resetLineNums: _.bind(this._onDeleteRowConfirm, this)
-            }
+            onConfirm: _.bind(function() {
+                app.alert.show('deleting_line_item', {
+                    level: 'info',
+                    messages: [app.lang.get('LBL_ALERT_DELETING_ITEM', 'ProductBundles')]
+                });
+                this._onDeleteRowModelFromList(this.collection.get(row.id));
+            }, this)
         });
     },
 
@@ -622,8 +621,17 @@
      * @param {Data.Bean} deletedRowModel The model being deleted
      * @private
      */
-    _onDeleteRowConfirm: function(deletedRowModel) {
-        this.layout.collection.remove(deletedRowModel);
+    _onDeleteRowModelFromList: function(deletedRowModel) {
+        deletedRowModel.destroy({
+            success: _.bind(function() {
+                app.alert.dismiss('deleting_line_item');
+                app.alert.show('deleted_line_item', {
+                    level: 'success',
+                    autoClose: true,
+                    messages: app.lang.get('LBL_DELETED_LINE_ITEM_SUCCESS_MSG', 'ProductBundles')
+                });
+            }, this)
+        });
         this.layout.trigger('quotes:line_nums:reset', this.layout.groupId, this.layout.collection);
     },
 

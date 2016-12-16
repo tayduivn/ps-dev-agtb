@@ -238,9 +238,12 @@ $mod_strings = array (
     'LBL_DELETING_BUNDLE_CONFIRM_MSG' => 'Are you sure you want to delete the Group {{groupName}}?',
     'LBL_DELETING_BUNDLE_ALERT_MSG' => 'Deleting the Group {{groupName}}',
     'LBL_DELETED_BUNDLE_SUCCESS_MSG' => 'Group successfully deleted',
+    'LBL_DELETED_ITEMS_SUCCESS_MSG' => 'Item(s) successfully deleted',
     'LBL_ADDING_BUNDLE_ALERT_MSG' => 'Creating a new Group',
     'LBL_ADDED_BUNDLE_SUCCESS_MSG' => 'Group successfully created',
     'LBL_SAVING_DEFAULT_GROUP_ALERT_MSG' => 'Saving the default group',
     'LBL_GROUP_NOTHING_SELECTED' => 'Unable to group: nothing selected.',
-    'LBL_GROUPING_ITEMS' => 'Grouping selected items... please wait.',
+    'LBL_DELETE_NOTHING_SELECTED' => 'Unable to delete: nothing selected.',
+    'LBL_DELETE_SELECTED_LABEL' => 'Delete Selected',
+    'LBL_DELETE_SELECTED_TOOLTIP' => 'Delete selected items',
 );

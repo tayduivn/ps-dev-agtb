@@ -11520,6 +11520,7 @@ Sincerely, SugarCRM',
     'TPL_ALERT_BROWSER_SUPPORT' => 'Please see the {{link}} page for suggested browsers.',
     'LBL_ALERT_SUPPORTED_PLATFORMS_LINK' => 'Supported Platforms',
     'LBL_ALERT_CONFIRM_DELETE' => 'Are you sure you want to delete this item?',
+    'LBL_ALERT_CONFIRM_DELETE_PLURAL' => 'Are you sure you want to delete these items?',
 
     //opportunity chart
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'The selected record will overwrite the following values: {{values}}. Cancel to keep existing values. Confirm to overwrite with new values.',

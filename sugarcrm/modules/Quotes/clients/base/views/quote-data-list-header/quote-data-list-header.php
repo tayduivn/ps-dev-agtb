@@ -23,8 +23,8 @@ $viewdefs['Quotes']['base']['view']['quote-data-list-header'] = array(
             array(
                 'name' => 'massdelete_button',
                 'type' => 'rowaction',
-                'label' => 'LBL_DELETE',
-                'tooltip' => 'LBL_DELETE',
+                'label' => 'LBL_DELETE_SELECTED_LABEL',
+                'tooltip' => 'LBL_DELETE_SELECTED_TOOLTIP',
                 'acl_action' => 'delete',
             ),
         ),

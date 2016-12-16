@@ -1259,24 +1259,29 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
     });
 
-    describe('_onDeleteRowConfirm()', function() {
+    describe('_onDeleteRowModelFromList()', function() {
         var deleteModel;
 
         beforeEach(function() {
-            sinon.collection.stub(view.layout, 'trigger', function() {});
             deleteModel = app.data.createBean('Products', {
-                id: 'deleteModelId1'
+                id: 'modelId1'
             });
-            view.layout.collection.add(deleteModel);
+            sinon.collection.stub(deleteModel, 'destroy', function() {});
+            sinon.collection.stub(view.layout, 'trigger', function() {});
 
-            view._onDeleteRowConfirm(deleteModel);
+            view._onDeleteRowModelFromList(deleteModel, false);
         });
 
-        it('should remove the deleted model from the collection', function() {
-            expect(view.layout.collection.length).toBe(0);
+        afterEach(function() {
+            deleteModel.dispose();
+            deleteModel = null;
         });
 
-        it('should trigger quotes:line_nums:reset on the layout', function() {
+        it('should call destroy() on the delete model', function() {
+            expect(deleteModel.destroy).toHaveBeenCalled();
+        });
+
+        it('should call layout.trigger with quotes:line_nums:reset', function() {
             expect(view.layout.trigger).toHaveBeenCalledWith('quotes:line_nums:reset');
         });
     });

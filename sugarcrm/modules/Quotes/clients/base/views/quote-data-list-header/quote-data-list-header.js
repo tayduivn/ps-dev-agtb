@@ -85,6 +85,45 @@
         // massCollection has the Quote record as its only model,
         // reset this during initialization so it's empty
         if (this.massCollection) {
+            this.massCollection.on('add remove reset', this._massCollectionChange, this);
+        }
+    },
+
+    /**
+     * Called when items are added or removed from the massCollection
+     *
+     * @param {Data.Bean} model The model that was added or removed
+     * @param {Data.MixedBeanCollection} massCollection The mass collection on the context
+     * @private
+     */
+    _massCollectionChange: function(model, massCollection) {
+        var setDisabled = true;
+        var groupBtn = _.find(this.fields, function(field) {
+            return field.name === 'group_button';
+        });
+        var massDeleteBtn = _.find(this.fields, function(field) {
+            return field.name === 'massdelete_button';
+        });
+
+        if (massCollection.length) {
+            setDisabled = false;
+        }
+
+        if (groupBtn) {
+            groupBtn.setDisabled(setDisabled);
+        }
+        if (massDeleteBtn) {
+            massDeleteBtn.setDisabled(setDisabled);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+
+        if (this.massCollection) {
             this.massCollection.reset();
         }
     },
@@ -153,7 +192,33 @@
      * @private
      */
     _onDeleteBtnClicked: function(evt) {
+        var deleteConfirmMsg = 'LBL_ALERT_CONFIRM_DELETE';
+        if (this.massCollection.length) {
+            if (this.massCollection.length > 1) {
+                deleteConfirmMsg += '_PLURAL';
+            }
 
+            app.alert.show('confirm_delete', {
+                level: 'confirmation',
+                title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
+                messages: [app.lang.get(deleteConfirmMsg, '')],
+                onConfirm: _.bind(function() {
+                    app.alert.show('deleting_line_item', {
+                        level: 'info',
+                        messages: [app.lang.get('LBL_ALERT_DELETING_ITEM', 'ProductBundles')]
+                    });
+                    this.context.trigger('quotes:selected:delete', this.massCollection);
+                }, this)
+            });
+        } else {
+            app.alert.show('quote_grouping_message', {
+                level: 'error',
+                title: '',
+                messages: [
+                    app.lang.get('LBL_DELETE_NOTHING_SELECTED', this.module)
+                ]
+            });
+        }
     },
 
     /**
@@ -164,6 +229,10 @@
         // disposed between adding the listener and removing,
         // go ahead and remove it on dispose if it exists
         this.context.off('quotes:group:create:success', null, this);
+
+        if (this.massCollection) {
+            this.massCollection.off('add remove reset', null, this);
+        }
 
         this._super('_dispose');
     }
