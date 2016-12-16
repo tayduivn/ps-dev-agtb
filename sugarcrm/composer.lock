@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eb9501dab350fac45f9d6656ea9d1206",
+    "hash": "c9c42350f19f898ad5146afb91cbcbd7",
     "content-hash": "6d56a32fd706ce29c30b6d511a5eff1a",
     "packages": [
         {
@@ -770,17 +770,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.14",
+            "version": "v2.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "333ca72b5e77742d4e054a65acffbff2b9a6b824"
+                "reference": "feb29bce46c815e639319bd283fa611a8476ff9e"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-event-dispatcher-v2.8.14-d6d9f1.tar",
-                "reference": "333ca72b5e77742d4e054a65acffbff2b9a6b824",
-                "shasum": "5f97251f969e01abd422753292db980eb070baf3"
+                "url": "https://satis.sugardev.team/dist/symfony-event-dispatcher-v2.8.15-4458c7.tar",
+                "reference": "feb29bce46c815e639319bd283fa611a8476ff9e",
+                "shasum": "59620ee2463c883698bf3f4a674d5f9765f179db"
             },
             "require": {
                 "php": ">=5.3.9"
@@ -2529,17 +2529,17 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v2.8.14",
+            "version": "v2.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "6d2015c60555c5372f4167b6e76e33c1a9b6b3d6"
+                "reference": "144c194fb46745242385c7f83f08f7a6ccbad532"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-finder-v2.8.14-fe07b5.tar",
-                "reference": "6d2015c60555c5372f4167b6e76e33c1a9b6b3d6",
-                "shasum": "63085153a4a92654d45e4bd3885bbf28d737a40c"
+                "url": "https://satis.sugardev.team/dist/symfony-finder-v2.8.15-bfa562.tar",
+                "reference": "144c194fb46745242385c7f83f08f7a6ccbad532",
+                "shasum": "54a900c00e4513950385675b33acc4c122684dc6"
             },
             "require": {
                 "php": ">=5.3.9"
@@ -2573,21 +2573,21 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-03 07:52:58"
+            "time": "2016-12-13 09:38:12"
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.14",
+            "version": "v2.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "5381d4611afe8b9f36bb345a216b2df78959032d"
+                "reference": "b4e8c2e52089066e7d382535f4d245235b0fbf7a"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-process-v2.8.14-83ac41.tar",
-                "reference": "5381d4611afe8b9f36bb345a216b2df78959032d",
-                "shasum": "0f2d8101d213c3f552fcf9762f78480d2f26c657"
+                "url": "https://satis.sugardev.team/dist/symfony-process-v2.8.15-09957a.tar",
+                "reference": "b4e8c2e52089066e7d382535f4d245235b0fbf7a",
+                "shasum": "d32b7bc0d033a55d3518305f3060ce009ef4bd6f"
             },
             "require": {
                 "php": ">=5.3.9"
@@ -2621,21 +2621,21 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-29 14:03:54"
+            "time": "2016-11-24 00:43:03"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "216028b3b963a1efe24986cbcfb7092370ff9974"
+                "reference": "cacca21722618bc002a23310e1e562ac780e8b04"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/symfony-yaml-v3.2.0-0022ac.tar",
-                "reference": "216028b3b963a1efe24986cbcfb7092370ff9974",
-                "shasum": "4dfdf0776d28ed47e86e216f974e7784ae439dd7"
+                "url": "https://satis.sugardev.team/dist/symfony-yaml-v3.2.1-c5eed1.tar",
+                "reference": "cacca21722618bc002a23310e1e562ac780e8b04",
+                "shasum": "cdc5c1be0b5c6ac5a8c2a898b570042120a81151"
             },
             "require": {
                 "php": ">=5.5.9"
@@ -2675,7 +2675,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18 21:17:59"
+            "time": "2016-12-10 10:07:06"
         },
         {
             "name": "webmozart/assert",
