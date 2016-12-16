@@ -237,7 +237,7 @@ class ImportController extends SugarController
     {
         $module = $this->request->getValidInputRequest('import_module', 'Assert\Mvc\ModuleName');
         $fieldName = $this->request->getValidInputRequest('field_name');
-        echo getControl($module, $fieldName);
+        echo getControl($module, $fieldName, null, '', array('idName' => "default_value_$fieldName"));
         exit;
     }
 

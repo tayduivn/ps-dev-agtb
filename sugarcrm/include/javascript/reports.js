@@ -2451,11 +2451,17 @@ SUGAR.reports = function() {
 
 			var callback = {
 				success:function(o){
-					var sqs_objects = JSON.parse(o.responseText);
+                    var CBObject = JSON.parse(o.responseText);
 					var populate_list = new Array();
+                    if (!_.isUndefined(sqs_objects) && CBObject[sqs_field_name] &&
+                        _.isString(CBObject[sqs_field_name])) {
+                        sqs_objects[sqs_field_name] = JSON.parse(CBObject[sqs_field_name]);
+                    }
 					populate_list.push(field_name_name);
 					populate_list.push(field_id_name);
-					sqs_objects[sqs_field_name]['populate_list']=populate_list;
+                    if (!_.isUndefined(sqs_objects) && !_.isUndefined(sqs_objects[sqs_field_name])) {
+                        sqs_objects[sqs_field_name]['populate_list'] = populate_list;
+                    }
 				    enableQS(false);
 				},
 				failure: function(o){}

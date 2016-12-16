@@ -502,8 +502,16 @@ class SugarBean
         global  $dictionary, $current_user;
 
         $this->db = DBManagerFactory::getInstance();
-        if (empty($this->module_name))
-            $this->module_name = $this->module_dir;
+        if (empty($this->module_name)) {
+            // is it a sub module
+            $slash = strrpos($this->module_dir, '/');
+            if ($slash !== false) {
+                $GLOBALS["log"]->warning('module_name is not set for ' . $this->module_dir);
+                $this->module_name = substr($this->module_dir, $slash + 1);
+            } else {
+                $this->module_name = $this->module_dir;
+            }
+        }
 
         if(isset($this->disable_team_security)){
             $this->disable_row_level_security = $this->disable_team_security;

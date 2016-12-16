@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class pmse_BpmnDocumentation_sugar extends Basic {
 	var $new_schema = true;
 	var $module_dir = 'pmse_Project/pmse_BpmnDocumentation';
+    public $module_name = 'pmse_BpmnDocumentation';
 	var $object_name = 'pmse_BpmnDocumentation';
 	var $table_name = 'pmse_bpmn_documentation';
 	var $importable = false;

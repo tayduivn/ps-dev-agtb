@@ -338,10 +338,14 @@ class TeamSetManager {
 		if(!is_array($teamSets)){
 			$teamSets = array();
 		}
-		foreach($team_names as $team_id => $team_name){
-			$tm = $teams[$team_id];
-			$teamSets[$team_set_id][] = array('id' => $team_id, 'name' => $team_name, 'name_2' => $tm->name_2);
-		}
+        foreach ($team_names as $team_id => $team_name) {
+            $tm = $teams[$team_id];
+            $teamSets[$team_set_id][] = array(
+                'id' => (string) $team_id,
+                'name' => $team_name,
+                'name_2' => $tm->name_2,
+            );
+        }
 
 	 	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
 

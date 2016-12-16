@@ -143,8 +143,11 @@ class Contract extends SugarBean
         // contracts_opportunities is many to many but for some reason the UI implements it as if it's one to many
         // that is, for a contract, only one opp can be linked to it
         // workaround here to delete the current entry so when it's inserted later we have only the new record
-        $query = 'delete from ' . $this->rel_opportunity_table . " where contract_id = '" . $this->id . "'";
-        $this->db->query($query);
+        if (!empty($this->rel_fields_before_value['opportunity_id']) &&
+            $this->rel_fields_before_value['opportunity_id'] != $this->opportunity_id) {
+            $query = 'delete from ' . $this->rel_opportunity_table . " where contract_id = '" . $this->id . "'";
+            $this->db->query($query);
+        }
 
         $this->setCalculatedValues(false);
         $return_id = parent::save($check_notify);

@@ -135,11 +135,18 @@ class SugarUpgradeClearHooks extends UpgradeScript
         $classes = array();
         $current = '';
         $level = 0;
+        $namespace = '';
         foreach ($tokens as $ind => $token) {
             if (is_array($token)) {
                 switch ($token[0]) {
+                    case T_NAMESPACE:
+                        $namespace = $this->findNamespace($tokens, $ind);
+                        break;
                     case T_CLASS:
                         $current = $this->findName($tokens, $ind, T_STRING);
+                        if ($namespace != '') {
+                            $current = $namespace.'\\'.$current;
+                        }
                         $classes[$current] = array(
                             'level' => $level,
                             'methods' => array()
@@ -193,5 +200,30 @@ class SugarUpgradeClearHooks extends UpgradeScript
             }
         }
         return false;
+    }
+
+    /**
+     * Find namespace.
+     * @param array $tokens
+     * @param int $start
+     * @return string
+     */
+    protected function findNamespace($tokens, $start)
+    {
+        $count = count($tokens);
+        $namespace = '';
+        for ($i = $start + 1; $i < $count; $i++) {
+            if (is_array($tokens[$i]) && $tokens[$i][0] == T_STRING) {
+                $namespace = $tokens[$i][1];
+                break;
+            }
+        }
+        if ($namespace != '') {
+            $i++;
+            while (is_array($tokens[$i]) && $tokens[$i][0] == T_NS_SEPARATOR) {
+                $namespace .= '\\'.$this->findName($tokens, $i++, T_STRING);
+            }
+        }
+        return $namespace;
     }
 }

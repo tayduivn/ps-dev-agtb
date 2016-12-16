@@ -182,7 +182,7 @@ class RenameModules
      */
     public function save($redirect = TRUE)
     {
-        global $locale;
+        global $locale, $current_language, $current_user;
         if (!empty($_REQUEST['dropdown_lang'])) {
             $this->selectedLanguage = $this->request->getValidInputRequest('dropdown_lang', 'Assert\Language');
         } else {
@@ -209,6 +209,11 @@ class RenameModules
 
         // Run the metadata cache refresh queue so changes take effect
         MetaDataManager::runCacheRefreshQueue();
+
+        $cacheDefsJs = sugar_cached('modules/modules_def_' . $current_language . '_' . md5($current_user->id) . '.js');
+        if (file_exists($cacheDefsJs)) {
+            unlink($cacheDefsJs);
+        }
 
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         if($redirect) {

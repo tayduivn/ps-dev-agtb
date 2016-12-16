@@ -57,5 +57,15 @@ class AclCacheTest extends PHPUnit_Framework_TestCase
         $this->cache->clear();
         $value = $this->cache->retrieve('user', 'test');
         $this->assertNull($value);
+        $this->cache->store('user', 'test1', 'x1');
+        $this->cache->store('user', 'test2', 'x2');
+        $this->cache->clear('user', 'test1');
+        $value = $this->cache->retrieve('user', 'test1');
+        $this->assertNull($value, 'The cached ACL data for test1 should be cleared');
+        $value = $this->cache->retrieve('user', 'test2');
+        $this->assertEquals('x2', $value, 'The cached ACL data for test2 should have remained unchanged');
+        $this->cache->clear('user');
+        $value = $this->cache->retrieve('user', 'test2');
+        $this->assertNull($value, 'The cached ACL data for user should be cleared');
     }
 }

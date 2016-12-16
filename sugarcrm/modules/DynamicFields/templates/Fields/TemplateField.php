@@ -550,7 +550,7 @@ class TemplateField{
                 //Remove potential xss code from help field
                 if($field == 'help' && !empty($this->$vardef))
                 {
-                    $this->$vardef = htmlentities(remove_xss($this->$vardef));
+                    $this->$vardef = htmlspecialchars(remove_xss($this->$vardef), ENT_COMPAT, 'UTF-8');
                 }
 
 				if($vardef != $field){

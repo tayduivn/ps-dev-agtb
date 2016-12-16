@@ -30,6 +30,11 @@ class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     private $role;
 
+    /**
+     * @var AclCache
+     */
+    private $cache;
+
     protected function setUp()
     {
         parent::setUp();
@@ -47,12 +52,17 @@ class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->user->update_date_modified = false;
         $this->user->save();
         $this->user->update_date_modified = $oldUpdateDateModified;
+
+        $this->cache = AclCache::getInstance();
     }
 
     protected function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestACLUtilities::tearDown();
+        if ($this->cache) {
+            $this->cache->clear();
+        }
         parent::tearDown();
     }
 
@@ -62,11 +72,29 @@ class ACLRolesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUserHashChangedWhenUserUnlinked()
     {
         $oldUserMDHash = $this->user->getUserMDHash();
+        $this->cache->store($this->user->id, 'test', 'x');
 
         $this->role->load_relationship('users');
         $this->role->users->delete($this->role->id, $this->user->id);
 
+        $value = $this->cache->retrieve($this->user->id, 'test');
+        $this->assertNull($value, 'The cached ACL data for user should be cleared');
+
         $this->user->retrieve();
         $this->assertNotEquals($oldUserMDHash, $this->user->getUserMDHash());
+    }
+
+    /**
+     * Test to check that when we add user to a role, cached acl data is cleared.
+     */
+    public function testUserAclCacheClearedWhenUserlinked()
+    {
+        $this->role->load_relationship('users');
+        $this->role->users->delete($this->role->id, $this->user->id);
+        $this->cache->store($this->user->id, 'test', 'x');
+        $this->role->users->add($this->user->id);
+        $this->role->save();
+        $value = $this->cache->retrieve($this->user->id, 'test');
+        $this->assertNull($value, 'The cached ACL data for user should be cleared');
     }
 }
