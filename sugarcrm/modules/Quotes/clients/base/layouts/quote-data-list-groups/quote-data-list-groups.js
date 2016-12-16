@@ -71,6 +71,7 @@
         this.isCreateView = this.context.get('create') || false;
 
         this.before('render', this.beforeRender, this);
+        this.on('list:scrollLock', this._scrollLock, this);
     },
 
     /**
@@ -263,6 +264,20 @@
 
         // re-enable tooltips in the app
         app.tooltip._enable();
+    },
+
+    /**
+     * Temporarily overwrites the css from the .scroll-width class so that
+     * row field dropdown menues aren't clipped by overflow-x property.
+     */
+    _scrollLock: function(lock) {
+        var $content = this.$el.parent('.flex-list-view-content');
+        if (lock) {
+            $content.css({'overflow-y': 'visible', 'overflow-x': 'hidden'});
+        } else {
+            $content.removeAttr('style');
+        }
+        $content.toggleClass('scroll-locked', lock);
     },
 
     /**

@@ -541,25 +541,23 @@
         float: right;
       }
     }
-    div {
-      &:first-child {
-        margin-top: 1px;
-      }
-    }
     &.edit {
-      input {
-        text-align: right;
-      }
-      div {
+      .fieldset-field {
         &:first-child {
-          width: calc(100% - 20px);
+          display: inline-block;
+          width: calc(~"100% - 28px");
+          input {
+            text-align: right;
+            // min-width: auto;
+            border-radius: 3px 0 0 3px;
+          }
         }
         &:last-child {
-          position: absolute;
-          top: 1px;
-          right: -1px;
-          background: @white;
-          border: 1px solid #ddd;
+          margin-left: -1px;
+          display: inline-block;
+          .btn-group .btn {
+            border-radius: 0 3px 3px 0;
+          }
         }
         ul.dropdown-menu {
           left: 0px;
@@ -569,6 +567,15 @@
     }
   }
 }
+.quote-data-container {
+  .scroll-locked {
+    .quote-discount-percent.edit {
+      position: absolute;
+      margin-top: -14px;
+    }
+  }
+}
+
 .quote-discount-percent .actions .dropdown-menu {
   right: inherit;
 }

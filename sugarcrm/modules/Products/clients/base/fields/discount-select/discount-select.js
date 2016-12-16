@@ -31,6 +31,10 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.events = _.extend({}, this.events, {
+            'shown.bs.dropdown': 'toggleDropdown',
+            'hidden.bs.dropdown': 'toggleDropdown'
+        });
         this.updateCurrencyStrings();
     },
 
@@ -127,5 +131,26 @@
             // make sure the dropdown symbol is updated
             this.updateDropdownSymbol();
         }
+    },
+
+    /**
+     * Sets a button accessibility class 'aria-expanded' to true or false
+     * depending on if the dropdown menu is open or closed.
+     *
+     * @private
+     */
+    toggleDropdown: function(evt) {
+        var state = evt.type ? evt.type !== 'hidden' : this.$el.hasClass('open');
+        var flexView = this.closestComponent('quote-data-list-groups');
+        var $fieldSet = this.$el.parents('.quote-discount-percent');
+        var $tableCell = $fieldSet.parent();
+        var scrollOffset = $fieldSet.offset().left;
+        var scrollWidth = $tableCell.width();
+
+        flexView.trigger('list:scrollLock', state);
+        $fieldSet.css('left', state ? scrollOffset : 'auto');
+        $fieldSet.css('width', state ? scrollWidth : '100%');
+
+        this._toggleAria();
     }
 })
