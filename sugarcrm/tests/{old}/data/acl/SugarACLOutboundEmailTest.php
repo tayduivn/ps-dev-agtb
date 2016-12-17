@@ -109,6 +109,14 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 true,
                 'Users should have read access to the system record when allowed',
             ],
+            [
+                ['view', 'list', 'edit', 'delete'],
+                ['system-override'],
+                true,
+                true,
+                false,
+                'Users should not have any access to the system-override records when the system record is allowed',
+            ],
         ];
     }
 
@@ -144,6 +152,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                     'name',
                     'type',
                     'user_id',
+                    'email_address_id',
                     'mail_sendtype',
                     'mail_smtptype',
                     'mail_smtpserver',
@@ -157,6 +166,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['view', 'list'],
                 ['user', 'system-override', 'system'],
                 false,
+                false,
                 true,
                 'Users should have read access to all fields for any record they can access',
             ],
@@ -166,6 +176,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                     'name',
                     'type',
                     'user_id',
+                    'email_address_id',
                     'mail_sendtype',
                     'mail_smtptype',
                     'mail_smtpserver',
@@ -180,6 +191,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['user', 'system-override', 'system'],
                 false,
                 false,
+                false,
                 'Users should not have write access to any fields for a record they do not own',
             ],
             [
@@ -191,6 +203,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                     // a record.
                     'type',
                     'user_id',
+                    'email_address_id',
                     'mail_sendtype',
                     'mail_smtptype',
                     'mail_smtpserver',
@@ -206,6 +219,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['edit'],
                 ['user'],
                 true,
+                false,
                 true,
                 'Users should have write access to all fields for any user record they own',
             ],
@@ -219,6 +233,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['edit'],
                 ['system-override'],
                 true,
+                false,
                 true,
                 'Users should have write access to only id, mail_smtpuser, and mail_smtppass for their ' .
                 'system-override record',
@@ -226,6 +241,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
             [
                 [
                     'name',
+                    'email_address_id',
                     'mail_sendtype',
                     'mail_smtptype',
                     'mail_smtpserver',
@@ -237,6 +253,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['system-override'],
                 true,
                 false,
+                false,
                 'Users should not have write access to fields other than id, mail_smtpuser, and mail_smtppass for ' .
                 'their system-override record',
             ],
@@ -244,6 +261,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     // Note: `id` is a readonly field, but it must be editable for the user to update a record.
                     'id',
+                    'email_address_id',
                     'mail_sendtype',
                     'mail_smtptype',
                     'mail_smtpserver',
@@ -256,6 +274,7 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['edit'],
                 ['system'],
                 true,
+                false,
                 true,
                 'The admin should have write access to all fields except name for the system record',
             ],
@@ -265,7 +284,33 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
                 ['system'],
                 true,
                 false,
+                false,
                 'The admin should not have write access to the name field for the system record',
+            ],
+            [
+                [
+                    'id',
+                    'name',
+                    'type',
+                    'user_id',
+                    'email_address_id',
+                    'mail_sendtype',
+                    'mail_smtptype',
+                    'mail_smtpserver',
+                    'mail_smtpport',
+                    'mail_smtpuser',
+                    'mail_smtppass',
+                    'mail_smtpauth_req',
+                    'mail_smtpssl',
+                    'deleted',
+                ],
+                ['view', 'list', 'edit'],
+                ['system-override'],
+                true,
+                true,
+                false,
+                'Users should not have access to any fields for their system-override record when the system record ' .
+                'is allowed',
             ],
         ];
     }
@@ -274,14 +319,15 @@ class SugarACLOutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ::checkAccess
      * @dataProvider checkFieldAccessProvider
      */
-    public function testCheckFieldAccess($fields, $actions, $types, $isOwner, $expected, $message)
+    public function testCheckFieldAccess($fields, $actions, $types, $isOwner, $isAllowed, $expected, $message)
     {
         $acl = new SugarACLOutboundEmail();
 
         $bean = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(['isOwner'])
+            ->setMethods(['isOwner', 'isAllowUserAccessToSystemDefaultOutbound'])
             ->getMock();
         $bean->method('isOwner')->willReturn($isOwner);
+        $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn($isAllowed);
 
         foreach ($actions as $action) {
             foreach ($types as $type) {

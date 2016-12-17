@@ -28,7 +28,8 @@ class OutboundEmailVisibility extends SugarVisibility
         }
 
         if ($this->bean->isAllowUserAccessToSystemDefaultOutbound()) {
-            $where .= "OR {$alias}.type='system'";
+            $where = "({$where} OR {$alias}.type='" . OutboundEmail::TYPE_SYSTEM . "') AND {$alias}.type<>'" .
+                OutboundEmail::TYPE_SYSTEM_OVERRIDE . "'";
         }
 
         $where = "({$where})";

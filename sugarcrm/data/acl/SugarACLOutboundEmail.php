@@ -34,6 +34,13 @@ class SugarACLOutboundEmail extends SugarACLStrategy
             return false;
         }
 
+        $systemIsAllowed = $bean->isAllowUserAccessToSystemDefaultOutbound();
+
+        // The system-override record is not accessible when the admin has allowed the system record to be used.
+        if ($systemIsAllowed && $bean->type === OutboundEmail::TYPE_SYSTEM_OVERRIDE) {
+            return false;
+        }
+
         if ($view === 'field') {
             if ($this->isWriteOperation($view, $context)) {
                 // Only the owner has write permission.
@@ -78,7 +85,7 @@ class SugarACLOutboundEmail extends SugarACLStrategy
         }
 
         // Anyone can see the system record as long as the admin has allowed it to be used.
-        if ($bean->type === OutboundEmail::TYPE_SYSTEM && $bean->isAllowUserAccessToSystemDefaultOutbound()) {
+        if ($bean->type === OutboundEmail::TYPE_SYSTEM && $systemIsAllowed) {
             return true;
         }
 

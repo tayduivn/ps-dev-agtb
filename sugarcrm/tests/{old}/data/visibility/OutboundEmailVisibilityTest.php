@@ -31,6 +31,11 @@ class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         // Create two user accounts for the current user.
         OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
 
+        // Create a system override account for the current user.
+        OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
+            $GLOBALS['current_user']->id
+        );
+
         // Create one user account for another user.
         OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfiguration(Uuid::uuid1());
     }
@@ -50,8 +55,8 @@ class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
     public function addVisibilityProvider()
     {
         return [
-            [0, 2],
-            [1, 2],
+            [0, 3],
+            [1, 3],
             [2, 3],
         ];
     }
@@ -59,6 +64,8 @@ class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers ::addVisibilityWhere
      * @dataProvider addVisibilityProvider
+     * @param int $allowDefaultOutbound The notify_allow_default_outbound setting.
+     * @param int $expected The number of accounts that should be returned.
      */
     public function testAddVisibilityWhere($allowDefaultOutbound, $expected)
     {
@@ -67,12 +74,14 @@ class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         $bean = BeanFactory::newBean('OutboundEmail');
         $accounts = (array) $bean->get_full_list();
 
-        $this->assertCount($expected, $accounts, "{$expected} of 4 accounts should have been returned");
+        $this->assertCount($expected, $accounts, "{$expected} accounts should have been returned");
     }
 
     /**
      * @covers ::addVisibilityWhereQuery
      * @dataProvider addVisibilityProvider
+     * @param int $allowDefaultOutbound The notify_allow_default_outbound setting.
+     * @param int $expected The number of accounts that should be returned.
      */
     public function testAddVisibilityWhereQuery($allowDefaultOutbound, $expected)
     {
@@ -85,6 +94,6 @@ class OutboundEmailVisibilityTest extends \Sugar_PHPUnit_Framework_TestCase
         $q->from($bean);
         $accounts = $bean->fetchFromQuery($q);
 
-        $this->assertCount($expected, $accounts, "{$expected} of 4 accounts should have been returned");
+        $this->assertCount($expected, $accounts, "{$expected} accounts should have been returned");
     }
 }
