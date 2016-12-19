@@ -232,31 +232,9 @@ class PMSEEngineApi extends SugarApi
         );
     }
 
-    /**
-     * This method check if the user have admin or developer access to this API
-     * @param $api
-     * @param $args
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    private function checkACL($api, $args) {
-        global $current_user;
-        $route = $api->getRequest()->getRoute();
-        $user = $current_user;
-        if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
-            if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
-                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
-                    'No access to view/edit records for module: ' . $args['module']
-                );
-                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                throw $sugarApiExceptionNotAuthorized;
-            }
-        }
-    }
-
     public function getNotes($api, $args)
     {
-        $this->checkACL($api, $args);
-
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
 
         $notesBean = BeanFactory::getBean('pmse_BpmNotes');
         $queryOptions = array('add_deleted' => true);
@@ -310,7 +288,7 @@ class PMSEEngineApi extends SugarApi
 
     public function saveNotes($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $current_user;
         //Create Notes
         $data = $args['data'];
@@ -330,7 +308,7 @@ class PMSEEngineApi extends SugarApi
 
     public function deleteNotes($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $notesBean = BeanFactory::getBean('pmse_BpmNotes', $args['id']);
         $notesBean->mark_deleted($notesBean->id);
         return array('id' => $args['id']);
@@ -338,7 +316,7 @@ class PMSEEngineApi extends SugarApi
 
     public function retrieveHistoryLog($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $historyLog = ProcessManager\Factory::getPMSEObject('PMSEHistoryLogWrapper');
         $res = $historyLog->_get($args);
         return array('success' => true, 'result' => $res->result);
@@ -359,7 +337,7 @@ class PMSEEngineApi extends SugarApi
 
     public function engineClaim($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $cas_id = $args['cas_id'];
         $cas_index = $args['cas_index'];
 
@@ -389,7 +367,7 @@ class PMSEEngineApi extends SugarApi
 
     public function reassignRecord($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $case = $args['data'];
 
         $cas_id = $case['cas_id'];
@@ -407,7 +385,7 @@ class PMSEEngineApi extends SugarApi
 
     public function adhocReassign($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $case = $args['data'];
         $result = array('success' => true);
         $bean = BeanFactory::retrieveBean($case['moduleName'], $case['beanId']);
@@ -422,7 +400,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getReassign($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
@@ -518,7 +496,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function getAdhoc($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $flowBeanObject = BeanFactory::getBean('pmse_BpmFlow', $args['flowId']);
         $args['cas_id'] = $flowBeanObject->cas_id;
         $args['cas_index'] = $flowBeanObject->cas_index;
@@ -610,7 +588,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function changeCaseUser($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $time_data = $GLOBALS['timedate'];
         global $current_user;
         global $db;
@@ -649,7 +627,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function userListByTeam($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $db;
         $res = array(); //new stdClass();
         $res['success'] = true;
@@ -679,7 +657,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function updateChangeCaseFlow($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $db;
         $res = array(); //new stdClass();
         $res['success'] = true;
@@ -755,7 +733,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function reactivateFlows($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $h = ProcessManager\Factory::getPMSEObject('RequestHandler', 'Engine');
         foreach ($args['cas_id'] as $value) {
             $val['cas_id'] = $value;
@@ -776,7 +754,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function cancelCase($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
         try {
             foreach ($args['cas_id'] as $id) {
@@ -799,7 +777,7 @@ class PMSEEngineApi extends SugarApi
 
     public function reassignFlows($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
         try {
             foreach ($args['flow_data'] as $flow) {
@@ -821,7 +799,7 @@ class PMSEEngineApi extends SugarApi
      */
     public function getReassignFlows($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $result = array('success' => true);
 
         // This is set to -1 because this API is not considering the max_num or
@@ -962,7 +940,7 @@ class PMSEEngineApi extends SugarApi
     public function getUnattendedCases($api, $args)
     {
         global $db;
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
 
         $queryOptions = array('add_deleted' => true);
         // Get unatteneded cases based on user and employee statis
@@ -1122,7 +1100,7 @@ class PMSEEngineApi extends SugarApi
 
     public function selectCase($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $returnArray = array();
         $bpmFlow = BeanFactory::retrieveBean('pmse_BpmFlow', $args['idflow']);
         $returnArray['case']['flow'] = $bpmFlow->fetched_row;
@@ -1392,7 +1370,7 @@ class PMSEEngineApi extends SugarApi
 
     public function getSettingsEngine($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         global $sugar_config;
         $settings = array();
 
@@ -1414,7 +1392,7 @@ class PMSEEngineApi extends SugarApi
 
     public function putSettingsEngine($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         if (!empty($args['data'])) {
             $cfg = new Configurator();
             $cfg->config['pmse_settings_default'] = $args['data'];

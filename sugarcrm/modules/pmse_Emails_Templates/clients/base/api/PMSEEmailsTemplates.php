@@ -63,30 +63,6 @@ class PMSEEmailsTemplates extends vCardApi
     }
 
     /**
-     * This method check acl access in custom APIs
-     * @param $api
-     * @param $args
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    private function checkACL($api, $args)
-    {
-        $route = $api->getRequest()->getRoute();
-        if (isset($route['acl'])) {
-            $acl = $route['acl'];
-
-            $seed = BeanFactory::newBean($args['module']);
-
-            if (!$seed->ACLAccess($acl)) {
-                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
-                    'No access to view/edit records for module: ' . $args['module']
-                );
-                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                throw $sugarApiExceptionNotAuthorized;
-            }
-        }
-    }
-
-    /**
      * Finds related modules variables that match the search term.
      *
      * Arguments:
@@ -105,7 +81,7 @@ class PMSEEmailsTemplates extends vCardApi
     {
         // Initialize this var since not all requests send 'q'
         $q = isset($args["q"]) ? $args["q"] : null;
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $offset = 0;
         $limit = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
         $orderBy = array();
@@ -220,14 +196,14 @@ class PMSEEmailsTemplates extends vCardApi
 
     public function retrieveRelatedBeans($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $related_modules = $this->crmDataWrapper->retrieveRelatedBeans($args['module_list'],'one-to-one');
         return $related_modules;
     }
 
     public function emailTemplatesImport($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::getBean($args['module']);
@@ -274,7 +250,7 @@ class PMSEEmailsTemplates extends vCardApi
 
     public function emailTemplateDownload ($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $emailTemplate = ProcessManager\Factory::getPMSEObject('PMSEEmailTemplateExporter');
         $requiredFields  = array('record', 'module');
         foreach ( $requiredFields as $fieldName ) {

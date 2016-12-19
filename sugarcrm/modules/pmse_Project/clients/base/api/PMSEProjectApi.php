@@ -183,33 +183,9 @@ class PMSEProjectApi extends ModuleApi
         );
     }
 
-    /**
-     * This method check acl access in custom APIs
-     * @param $api
-     * @param $args
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    private function checkACL($api, $args)
-    {
-        $route = $api->getRequest()->getRoute();
-        if (isset($route['acl'])) {
-            $acl = $route['acl'];
-
-            $seed = BeanFactory::newBean($args['module']);
-
-            if (!$seed->ACLAccess($acl)) {
-                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
-                    'No access to view/edit records for module: ' . $args['module']
-                );
-                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                throw $sugarApiExceptionNotAuthorized;
-            }
-        }
-    }
-
     public function retrieveCustomProject($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $api->action = "read";
         $this->requireArgs($args, array('record'));
 
@@ -218,7 +194,7 @@ class PMSEProjectApi extends ModuleApi
 
     public function updateCustomProject($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $api->action = "update";
         $this->requireArgs($args, array('record'));
 
@@ -286,7 +262,7 @@ class PMSEProjectApi extends ModuleApi
      */
     public function getCrmData($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->crmDataWrapper->_get($args, $this);
     }
 
@@ -298,7 +274,7 @@ class PMSEProjectApi extends ModuleApi
      */
     public function putCrmData($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $processObserver = ProcessManager\Factory::getPMSEObject('PMSEProcessObserver');
         $this->crmDataWrapper->attach($processObserver);
         return $this->crmDataWrapper->_put($args);
@@ -312,13 +288,13 @@ class PMSEProjectApi extends ModuleApi
      */
     public function getActivityDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->activityDefinitionWrapper->_get($args);
     }
 
     public function putActivityDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->activityDefinitionWrapper->_put($args);
     }
 
@@ -330,13 +306,13 @@ class PMSEProjectApi extends ModuleApi
      */
     public function getEventDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->eventDefinitionWrapper->_get($args);
     }
 
     public function putEventDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $observer = ProcessManager\Factory::getPMSEObject('PMSEEventObserver');
         $this->eventDefinitionWrapper->attach($observer);
         $this->eventDefinitionWrapper->_put($args);
@@ -344,19 +320,19 @@ class PMSEProjectApi extends ModuleApi
 
     public function getGatewayDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->gatewayDefinitionWrapper->_get($args);
     }
 
     public function putGatewayDefinition($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         return $this->gatewayDefinitionWrapper->_put($args);
     }
 
     public function verifyRunningProcess($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         if (empty($args['baseModule'])) {
             $projectBean = BeanFactory::getBean($args['module'], $args['record'],
                 array('strict_retrieve' => true, 'disable_row_level_security' => true));

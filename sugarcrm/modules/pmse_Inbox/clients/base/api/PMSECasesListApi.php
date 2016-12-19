@@ -11,6 +11,8 @@
  */
 
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 class PMSECasesListApi extends FilterApi
 {
     public function __construct()
@@ -88,30 +90,9 @@ class PMSECasesListApi extends FilterApi
         );
     }
 
-    /**
-     * This method check if the user have admin or developer access to this API
-     * @param $api
-     * @param $args
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    private function checkACL($api, $args) {
-        global $current_user;
-        $route = $api->getRequest()->getRoute();
-        $user = $current_user;
-        if (isset($route['acl']) && $route['acl'] == 'adminOrDev') {
-            if (!($user->isAdmin() || $user->isDeveloperForAnyModule())) {
-                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
-                    'No access to view/edit records for module: ' . $args['module']
-                );
-                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                throw $sugarApiExceptionNotAuthorized;
-            }
-        }
-    }
-
     public function selectCasesList($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
         $inboxBean = BeanFactory::getBean('pmse_Inbox');
         if ($args['order_by'] == 'cas_due_date:asc') {
@@ -310,7 +291,7 @@ class PMSECasesListApi extends FilterApi
 
     public function selectLogLoad($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $logger = PMSELogger::getInstance();
         $pmse = PMSE::getInstance();
         $log = $pmse->getLogFile($logger->getLogFileNameWithPath());
@@ -318,7 +299,7 @@ class PMSECasesListApi extends FilterApi
         }
     public function clearLog($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $logger = PMSELogger::getInstance();
         $pmse = PMSE::getInstance();
         global $current_user;
@@ -332,7 +313,7 @@ class PMSECasesListApi extends FilterApi
 
     public function configLogLoad($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $q = new SugarQuery();
         $configLogBean = BeanFactory::getBean('pmse_BpmConfig');
         $fields = array(
@@ -363,7 +344,7 @@ class PMSECasesListApi extends FilterApi
      */
     public function configLogPut($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $data = $args['cfg_value'];
         $bean = BeanFactory::getBean('pmse_BpmConfig')
             ->retrieve_by_string_fields(array('cfg_status' => 'ACTIVE', 'name' => 'logger_level'));
@@ -375,14 +356,14 @@ class PMSECasesListApi extends FilterApi
 
     public function returnProcessUsersChart($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];
         return $this->createProcessUsersChartData($filter);
     }
 
     public function returnProcessStatusChart($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyUserAccess($api, $args);
         $filter = $args['filter'];
         return $this->createProcessStatusChartData($filter);
     }

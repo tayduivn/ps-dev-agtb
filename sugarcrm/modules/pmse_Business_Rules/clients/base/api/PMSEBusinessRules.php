@@ -43,30 +43,6 @@ class PMSEBusinessRules extends vCardApi
     }
 
     /**
-     * This method check acl access in custom APIs
-     * @param $api
-     * @param $args
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    private function checkACL($api, $args)
-    {
-        $route = $api->getRequest()->getRoute();
-        if (isset($route['acl'])) {
-            $acl = $route['acl'];
-
-            $seed = BeanFactory::newBean($args['module']);
-
-            if (!$seed->ACLAccess($acl)) {
-                $sugarApiExceptionNotAuthorized = new SugarApiExceptionNotAuthorized(
-                    'No access to view/edit records for module: ' . $args['module']
-                );
-                PMSELogger::getInstance()->alert($sugarApiExceptionNotAuthorized->getMessage());
-                throw $sugarApiExceptionNotAuthorized;
-            }
-        }
-    }
-
-    /**
      * @param $api
      * @param $args
      * @return array
@@ -76,7 +52,7 @@ class PMSEBusinessRules extends vCardApi
      */
     public function businessRulesImport($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $this->requireArgs($args, array('module'));
 
         $bean = BeanFactory::getBean($args['module']);
@@ -128,7 +104,7 @@ class PMSEBusinessRules extends vCardApi
      */
     public function businessRuleDownload($api, $args)
     {
-        $this->checkACL($api, $args);
+        ProcessManager\AccessManager::getInstance()->verifyAccess($api, $args);
         $emailTemplate = $this->getPMSEBusinessRuleExporter();
         $requiredFields = array('record', 'module');
         foreach ($requiredFields as $fieldName) {
