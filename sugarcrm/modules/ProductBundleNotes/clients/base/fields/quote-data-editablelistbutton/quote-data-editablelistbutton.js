@@ -17,6 +17,14 @@
     extendsFrom: 'BaseEditablelistbuttonField',
 
     /**
+     * Overriding EditablelistbuttonField's Events with mousedown instead of click
+     */
+    events: {
+        'mousedown [name=inline-save]': 'saveClicked',
+        'mousedown [name=inline-cancel]': 'cancelClicked'
+    },
+
+    /**
      * @inheritdoc
      */
     _render: function() {

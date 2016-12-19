@@ -544,18 +544,19 @@
     }
     &.edit {
       .fieldset-field {
-        &:first-child {
+        &:first-child:not(.error) {
           display: inline-block;
           width: calc(~"100% - 28px");
+
           input {
             text-align: right;
             // min-width: auto;
             border-radius: 3px 0 0 3px;
           }
         }
-        &:last-child {
-          margin-left: -1px;
+        &:last-child:not(.error) {
           display: inline-block;
+
           .btn-group .btn {
             border-radius: 0 3px 3px 0;
           }
@@ -564,6 +565,13 @@
           left: 0px;
           top: 26px;
         }
+        div.input-append.error {
+          display: block;
+        }
+      }
+      span.error-tooltip {
+        left: 2px;
+        position: absolute;
       }
     }
   }
