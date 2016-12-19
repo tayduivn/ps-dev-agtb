@@ -124,7 +124,10 @@
         this._super('_render');
 
         if (this.massCollection) {
-            this.massCollection.reset();
+            // remove any Quotes models from the massCollectio
+            this.massCollection.models = _.filter(this.massCollection.models, function(model) {
+                return model.module !== 'Quotes';
+            });
         }
     },
 

@@ -116,6 +116,37 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         });
     });
 
+    describe('_render()', function() {
+        var massCollection;
+        var quoteModel;
+        var productModel;
+
+        beforeEach(function() {
+            quoteModel = app.data.createBean('Quotes', {
+                id: 'quoteId1'
+            });
+            quoteModel.module = 'Quotes';
+
+            productModel = app.data.createBean('Quotes', {
+                id: 'productId1'
+            });
+            productModel.module = 'Products';
+
+            massCollection = new Backbone.Collection();
+            massCollection.add(quoteModel);
+            massCollection.add(productModel);
+
+            sinon.collection.stub(view, '_super', function() {});
+            view.massCollection = massCollection;
+        });
+
+        it('should remove Quotes module models', function() {
+            view._render();
+
+            expect(view.massCollection.models.length).toBe(1);
+        });
+    });
+
     describe('_onCreateGroupBtnClicked()', function() {
         var massCollection;
 
