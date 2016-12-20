@@ -441,17 +441,19 @@ class OutboundEmail extends SugarBean
      */
     public function retrieve($id = '-1', $encode = true, $deleted = true)
     {
-        parent::retrieve($id, $encode, $deleted);
+        $result = parent::retrieve($id, $encode, $deleted);
 
-        $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
+        if ($result) {
+            $this->mail_smtppass = htmlspecialchars_decode($this->mail_smtppass, ENT_QUOTES);
 
-        if (empty($this->mail_smtptype)) {
-            $this->mail_smtpdisplay = $this->mail_smtpserver;
-        } else {
-            $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype, $this->mail_smtpserver);
+            if (empty($this->mail_smtptype)) {
+                $this->mail_smtpdisplay = $this->mail_smtpserver;
+            } else {
+                $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype, $this->mail_smtpserver);
+            }
         }
 
-        return $this;
+        return $result;
     }
 
     /**

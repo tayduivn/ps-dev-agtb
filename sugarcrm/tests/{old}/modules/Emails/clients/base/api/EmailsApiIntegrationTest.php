@@ -18,17 +18,23 @@ require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfig
  */
 class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 {
-    protected static $systemConfig;
-    protected static $overrideConfig;
+    private static $overrideConfig;
+    private static $userConfig;
 
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
-        static::$systemConfig = OutboundEmailConfigurationTestHelper::createSystemOutboundEmailConfiguration();
+
+        OutboundEmailConfigurationTestHelper::setUp();
         static::$overrideConfig = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS['current_user']->id
         );
+        static::$userConfig = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfiguration(
+            $GLOBALS['current_user']->id
+        );
+
+        // Don't allow the system configuration to be used in these tests.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
     }
 
     public static function tearDownAfterClass()
@@ -253,7 +259,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
-            'outbound_email_id' => static::$systemConfig->id,
+            'outbound_email_id' => static::$overrideConfig->id,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'email_addresses_from' => array(
                 'create' => array(
@@ -278,7 +284,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $record = $this->createRecord($args);
         $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be a draft');
         $this->assertSame(
-            static::$systemConfig->id,
+            static::$overrideConfig->id,
             $record['outbound_email_id'],
             'Should use the specified configuration'
         );
@@ -351,7 +357,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $args = array(
             'state' => Email::EMAIL_STATE_DRAFT,
-            'outbound_email_id' => static::$systemConfig->id,
+            'outbound_email_id' => static::$overrideConfig->id,
             'assigned_user_id' => $GLOBALS['current_user']->id,
             'prospects_cc' => array(
                 'add' => array($prospect->id),
@@ -360,7 +366,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $record = $this->createRecord($args);
         $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be draft after create');
         $this->assertSame(
-            static::$systemConfig->id,
+            static::$overrideConfig->id,
             $record['outbound_email_id'],
             'The configuration did not match expectations after create'
         );
@@ -378,7 +384,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $this->assertRecords($expected, $collection, 'The CC field did not match expectations after create');
 
         $args = array(
-            'outbound_email_id' => static::$overrideConfig->id,
+            'outbound_email_id' => static::$userConfig->id,
             'users_from' => array(
                 'add' => array($user->id),
             ),
@@ -397,7 +403,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $record = $this->updateRecord($record['id'], $args);
         $this->assertSame(Email::EMAIL_STATE_DRAFT, $record['state'], 'Should be draft after update');
         $this->assertSame(
-            static::$overrideConfig->id,
+            static::$userConfig->id,
             $record['outbound_email_id'],
             'The configuration should not have changed'
         );
@@ -525,7 +531,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $this->assertSame(
             static::$overrideConfig->id,
             $record['outbound_email_id'],
-            "Should use the user's configuration"
+            "Should use the user's system override configuration"
         );
 
         $expected = array(
@@ -610,7 +616,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $this->assertSame(
             static::$overrideConfig->id,
             $record['outbound_email_id'],
-            "Should use the user's configuration"
+            "Should use the user's system override configuration"
         );
 
         $expected = array(

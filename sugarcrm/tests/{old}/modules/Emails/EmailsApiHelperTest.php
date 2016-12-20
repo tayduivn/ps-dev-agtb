@@ -12,12 +12,20 @@
 
 require_once 'modules/Emails/EmailsApiHelper.php';
 
+use Sugarcrm\Sugarcrm\Util\Uuid;
+
 /**
  * @coversDefaultClass EmailsApiHelper
  */
 class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $helper;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('current_user');
+    }
 
     protected function setUp()
     {
@@ -26,9 +34,41 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->helper = new EmailsApiHelper($api);
     }
 
+    /**
+     * @covers ::formatForApi
+     */
+    public function testFormatForApi()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->new_with_id = false;
+        $bean->id = Uuid::uuid1();
+        $bean->name = 'Renewal notice';
+        $bean->state = Email::EMAIL_STATE_DRAFT;
+        // There is no outbound email account with that ID.
+        $bean->outbound_email_id = Uuid::uuid1();
+
+        $fieldList = [
+            'id',
+            'name',
+            'state',
+            'outbound_email_id',
+        ];
+        $data = $this->helper->formatForApi($bean, $fieldList);
+
+        // Testing for these attributes is unnecessary.
+        unset($data['_acl']);
+
+        $expected = [
+            'id' => $bean->id,
+            'name' => $bean->name,
+            'state' => $bean->state,
+        ];
+        $this->assertEquals($expected, $data);
+    }
+
     public function populateFromApiProvider()
     {
-        $outboundEmailId = create_guid();
+        $outboundEmailId = Uuid::uuid1();
 
         return array(
             // Creating a new draft. outbound_email_id can be set.
@@ -69,7 +109,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'new_with_id' => false,
                     'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => create_guid(),
+                    'outbound_email_id' => Uuid::uuid1(),
                 ),
                 // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
                 // The client also submits a different outbound_email_id.
@@ -88,7 +128,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'new_with_id' => false,
                     'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => create_guid(),
+                    'outbound_email_id' => Uuid::uuid1(),
                 ),
                 // Patching the record does not require the state argument.
                 // The client only submits an outbound_email_id.
@@ -199,7 +239,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Patching the record does not require the state argument.
                 // The client only submits an outbound_email_id.
                 array(
-                    'outbound_email_id' => create_guid(),
+                    'outbound_email_id' => Uuid::uuid1(),
                 ),
                 // The submitted outbound_email_id is ignored.
                 array(
@@ -252,7 +292,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 // Patching the record does not require the state argument.
                 // The client only submits an outbound_email_id.
                 array(
-                    'outbound_email_id' => create_guid(),
+                    'outbound_email_id' => Uuid::uuid1(),
                 ),
                 // The submitted outbound_email_id is ignored.
                 array(
@@ -272,7 +312,7 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testPopulateFromApi(array $beanData, array $submittedData, array $expected)
     {
         $bean = BeanFactory::newBean('Emails');
-        $bean->id = create_guid();
+        $bean->id = Uuid::uuid1();
 
         foreach ($beanData as $field => $value) {
             $bean->{$field} = $value;
