@@ -42,6 +42,9 @@ class EmailsApiHelper extends SugarBeanApiHelper
      * sender-of-record of an archived email.
      *
      * {@inheritdoc}
+     *
+     * @throws SugarApiExceptionInvalidParameter Thrown if `outbound_email_id` is submitted and the record cannot be
+     * found or is inaccessible to the user.
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
@@ -49,8 +52,20 @@ class EmailsApiHelper extends SugarBeanApiHelper
             $submittedData['state'] === Email::EMAIL_STATE_DRAFT :
             $bean->state === Email::EMAIL_STATE_DRAFT;
 
-        if (isset($submittedData['outbound_email_id']) && !$isDraft) {
-            unset($submittedData['outbound_email_id']);
+        if (isset($submittedData['outbound_email_id'])) {
+            if ($isDraft) {
+                if (!empty($submittedData['outbound_email_id'])) {
+                    $oe = BeanFactory::retrieveBean('OutboundEmail', $submittedData['outbound_email_id']);
+
+                    if (!$oe) {
+                        throw new SugarApiExceptionInvalidParameter(
+                            "Could not find record for outbound_email_id: '{$submittedData['outbound_email_id']}'"
+                        );
+                    }
+                }
+            } else {
+                unset($submittedData['outbound_email_id']);
+            }
         }
 
         return parent::populateFromApi($bean, $submittedData, $options);

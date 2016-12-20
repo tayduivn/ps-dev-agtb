@@ -66,250 +66,261 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $data);
     }
 
-    public function populateFromApiProvider()
+    public function populateFromApiCreateWithOutboundEmailIdProvider()
     {
         $outboundEmailId = Uuid::uuid1();
 
-        return array(
+        return [
             // Creating a new draft. outbound_email_id can be set.
-            array(
-                // Start with an empty bean.
-                array(
-                    'new_with_id' => true,
-                ),
+            [
                 // The client submits state=Draft and an outbound_email_id.
-                array(
+                [
                     'state' => Email::EMAIL_STATE_DRAFT,
                     'outbound_email_id' => $outboundEmailId,
-                ),
+                ],
                 // The submitted outbound_email_id is accepted.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
+                $outboundEmailId,
+            ],
             // Creating a new archived email. outbound_email_id cannot be set.
-            array(
-                // Start with an empty bean.
-                array(
-                    'new_with_id' => true,
-                ),
+            [
                 // The client submits state=Archived and an outbound_email_id.
-                array(
+                [
                     'state' => Email::EMAIL_STATE_ARCHIVED,
                     'outbound_email_id' => $outboundEmailId,
-                ),
+                ],
                 // The submitted outbound_email_id is ignored.
-                array(
-                    'outbound_email_id' => null,
-                ),
-            ),
-            // Updating a draft. outbound_email_id can be changed when the email's state remains unchanged.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => Uuid::uuid1(),
-                ),
-                // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
-                // The client also submits a different outbound_email_id.
-                array(
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // The submitted outbound_email_id is accepted.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating a draft. outbound_email_id can be changed when the email's state remains unchanged.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => Uuid::uuid1(),
-                ),
-                // Patching the record does not require the state argument.
-                // The client only submits an outbound_email_id.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // The submitted outbound_email_id is accepted.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating a draft. outbound_email_id can be cleared.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // The client submits an empty string for outbound_email_id.
-                array(
-                    'outbound_email_id' => '',
-                ),
-                // The submitted outbound_email_id is accepted.
-                array(
-                    'outbound_email_id' => '',
-                ),
-            ),
-            // Updating a draft. outbound_email_id is not changed unless the argument is provided.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
-                // The client does not submit an outbound_email_id.
-                array(
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                ),
-                // The outbound_email_id remains unchanged.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating a draft. outbound_email_id is not changed unless the argument is provided.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // Assume that the client submits some arguments, but the state and outbound_email_id arguments were not
-                // among them.
-                array(),
-                // The outbound_email_id remains unchanged.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating a draft. outbound_email_id is not changed unless the argument is provided.
-            array(
-                // Start with an existing draft that does not have an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                ),
-                // Patching the record does not require the state argument.
-                // The client submits a null outbound_email_id.
-                array(
-                    'outbound_email_id' => null,
-                ),
-                // The outbound_email_id remains unchanged.
-                array(
-                    'outbound_email_id' => null,
-                ),
-            ),
-            // Updating a draft. outbound_email_id is not changed unless the argument is provided.
-            array(
-                // Start with an existing draft that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_DRAFT,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // The client submits a null outbound_email_id.
-                array(
-                    'outbound_email_id' => null,
-                ),
-                // The outbound_email_id remains unchanged.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating an archived email. outbound_email_id cannot be changed.
-            array(
-                // Start with an existing archived email that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // The client only submits an outbound_email_id.
-                array(
-                    'outbound_email_id' => Uuid::uuid1(),
-                ),
-                // The submitted outbound_email_id is ignored.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating an archived email. outbound_email_id cannot be changed.
-            array(
-                // Start with an existing archived email that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // The client submits a null outbound_email_id.
-                array(
-                    'outbound_email_id' => null,
-                ),
-                // The submitted outbound_email_id is ignored.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating an archived email. outbound_email_id cannot be changed.
-            array(
-                // Start with an existing archived email that has an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-                // Patching the record does not require the state argument.
-                // The client submits an empty string for outbound_email_id.
-                array(
-                    'outbound_email_id' => '',
-                ),
-                // The submitted outbound_email_id is ignored.
-                array(
-                    'outbound_email_id' => $outboundEmailId,
-                ),
-            ),
-            // Updating an archived email. outbound_email_id cannot be changed.
-            array(
-                // Start with an existing archived email that does not have an outbound_email_id.
-                array(
-                    'new_with_id' => false,
-                    'state' => Email::EMAIL_STATE_ARCHIVED,
-                ),
-                // Patching the record does not require the state argument.
-                // The client only submits an outbound_email_id.
-                array(
-                    'outbound_email_id' => Uuid::uuid1(),
-                ),
-                // The submitted outbound_email_id is ignored.
-                array(
-                    'outbound_email_id' => null,
-                ),
-            ),
-        );
+                null,
+            ],
+        ];
     }
 
     /**
      * @covers ::populateFromApi
-     * @dataProvider populateFromApiProvider
-     * @param array $beanData The bean is initialized with these properties.
+     * @dataProvider populateFromApiCreateWithOutboundEmailIdProvider
+     * @param array $submittedData The arguments provided over the API. This must include an ID for outbound_email_id.
+     * @param null|string $expected The expected value for outbound_email_id after the bean is populated.
+     */
+    public function testPopulateFromApi_CreateWithOutboundEmailId(array $submittedData, $expected)
+    {
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->id = $submittedData['outbound_email_id'];
+        BeanFactory::registerBean($oe);
+
+        // Start with an empty bean.
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+
+        $this->assertTrue($result);
+        $this->assertEquals($expected, $bean->outbound_email_id, "outbound_email_id should be {$expected}");
+
+        BeanFactory::unregisterBean($oe);
+    }
+
+    public function populateFromApiUpdateOutboundEmailIdProvider()
+    {
+        $outboundEmailId = Uuid::uuid1();
+
+        return [
+            // outbound_email_id can be cleared.
+            [
+                $outboundEmailId,
+                // Patching the record does not require the state argument.
+                // The client submits an empty string for outbound_email_id.
+                [
+                    'outbound_email_id' => '',
+                ],
+                // The submitted outbound_email_id is accepted.
+                '',
+            ],
+            // outbound_email_id can be changed when the email's state remains unchanged.
+            [
+                Uuid::uuid1(),
+                // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
+                // The client also submits a different outbound_email_id.
+                [
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // The submitted outbound_email_id is accepted.
+                $outboundEmailId,
+            ],
+            // outbound_email_id can be changed when the email's state remains unchanged.
+            [
+                Uuid::uuid1(),
+                // Patching the record does not require the state argument.
+                // The client only submits an outbound_email_id.
+                [
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // The submitted outbound_email_id is accepted.
+                $outboundEmailId,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::populateFromApi
+     * @dataProvider populateFromApiUpdateOutboundEmailIdProvider
+     * @param string $outboundEmailId The initial value of the archived email's outbound_email_id property.
      * @param array $submittedData The arguments provided over the API.
      * @param array $expected The expected values for specified bean properties.
      */
-    public function testPopulateFromApi(array $beanData, array $submittedData, array $expected)
+    public function testPopulateFromApi_UpdateOutboundEmailId($outboundEmailId, array $submittedData, $expected)
+    {
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->id = $submittedData['outbound_email_id'];
+        BeanFactory::registerBean($oe);
+
+        // Start with an existing draft that has an outbound_email_id.
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = false;
+        $bean->state = Email::EMAIL_STATE_DRAFT;
+        $bean->outbound_email_id = $outboundEmailId;
+
+        $result = $this->helper->populateFromApi($bean, $submittedData);
+
+        $this->assertTrue($result);
+        $this->assertEquals($expected, $bean->outbound_email_id, "outbound_email_id should be {$expected}");
+
+        BeanFactory::unregisterBean($oe);
+    }
+
+    public function populateFromApiOutboundEmailIdShouldNotChangeProvider()
+    {
+        $outboundEmailId = Uuid::uuid1();
+
+        return [
+            [
+                // Start with an existing archived email that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // Patching the record does not require the state argument.
+                // The client only submits an outbound_email_id.
+                [
+                    'outbound_email_id' => Uuid::uuid1(),
+                ],
+                // The submitted outbound_email_id is ignored.
+                $outboundEmailId,
+            ],
+            [
+                // Start with an existing archived email that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // Patching the record does not require the state argument.
+                // The client submits a null outbound_email_id.
+                [
+                    'outbound_email_id' => null,
+                ],
+                // The submitted outbound_email_id is ignored.
+                $outboundEmailId,
+            ],
+            [
+                // Start with an existing archived email that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // Patching the record does not require the state argument.
+                // The client submits an empty string for outbound_email_id.
+                [
+                    'outbound_email_id' => '',
+                ],
+                // The submitted outbound_email_id is ignored.
+                $outboundEmailId,
+            ],
+            [
+                // Start with an existing archived email that does not have an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_ARCHIVED,
+                    'outbound_email_id' => null,
+                ],
+                // Patching the record does not require the state argument.
+                // The client only submits an outbound_email_id.
+                [
+                    'outbound_email_id' => Uuid::uuid1(),
+                ],
+                // The submitted outbound_email_id is ignored.
+                null,
+            ],
+            [
+                // Start with an existing draft that does not have an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'outbound_email_id' => null,
+                ],
+                // Patching the record does not require the state argument.
+                // The client submits a null outbound_email_id.
+                [
+                    'outbound_email_id' => null,
+                ],
+                // The submitted outbound_email_id is ignored.
+                null,
+            ],
+            [
+                // Start with an existing draft that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // The client explicitly sets the state, like in a PUT use case. This is typical of what sidecar does.
+                // The client does not submit an outbound_email_id.
+                [
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                ],
+                $outboundEmailId,
+            ],
+            [
+                // Start with an existing draft that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // Patching the record does not require the state argument.
+                // Assume that the client submits some arguments, but the state and outbound_email_id arguments were not
+                // among them.
+                [],
+                $outboundEmailId,
+            ],
+            [
+                // Start with an existing draft that has an outbound_email_id.
+                [
+                    'new_with_id' => false,
+                    'state' => Email::EMAIL_STATE_DRAFT,
+                    'outbound_email_id' => $outboundEmailId,
+                ],
+                // Patching the record does not require the state argument.
+                // The client submits a null outbound_email_id.
+                [
+                    'outbound_email_id' => null,
+                ],
+                $outboundEmailId,
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::populateFromApi
+     * @dataProvider populateFromApiOutboundEmailIdShouldNotChangeProvider
+     * @param array $beanData The bean is initialized with these properties.
+     * @param array $submittedData The arguments provided over the API. This must include an ID for outbound_email_id.
+     * @param null|string $expected The expected value for outbound_email_id after the bean is populated.
+     */
+    public function testPopulateFromApi_OutboundEmailIdShouldNotChange(array $beanData, array $submittedData, $expected)
     {
         $bean = BeanFactory::newBean('Emails');
         $bean->id = Uuid::uuid1();
@@ -319,11 +330,23 @@ class EmailsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $result = $this->helper->populateFromApi($bean, $submittedData);
-        $this->assertTrue($result);
 
-        foreach ($expected as $field => $value) {
-            $actual = $bean->{$field};
-            $this->assertEquals($value, $actual, "{$field} should be {$value}, not {$actual}");
-        }
+        $this->assertTrue($result);
+        $this->assertEquals($expected, $bean->outbound_email_id, 'outbound_email_id should not have changed');
+    }
+
+    /**
+     * @covers ::populateFromApi
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testPopulateFromApi_InvalidOutboundEmailIdIsSubmitted()
+    {
+        $bean = BeanFactory::newBean('Emails');
+        $bean->id = Uuid::uuid1();
+        $bean->state = Email::EMAIL_STATE_DRAFT;
+
+        $submittedData = ['outbound_email_id' => Uuid::uuid1()];
+
+        $this->helper->populateFromApi($bean, $submittedData);
     }
 }
