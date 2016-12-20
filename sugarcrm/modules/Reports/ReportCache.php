@@ -58,15 +58,36 @@ class ReportCache {
 	public function save() {
 
 		global $current_user, $timedate;
+        global $dictionary;
 
-		if($this->new_with_id == true) {
-			$q = "INSERT INTO report_cache(id, assigned_user_id, contents, date_entered, date_modified, deleted)".
-				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($this->contents)}', '{$timedate->nowDb()}', '{$timedate->nowDb()}', '0')";
-		} else {
-			$q = "UPDATE report_cache SET contents = '{$this->db->quote($this->contents)}', date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
-		} // if
+        if ($this->new_with_id) {
+            $this->db->insertParams(
+                'report_cache',
+                $dictionary['report_cache']['fields'],
+                array(
+                    'id' => $this->id,
+                    'assigned_user_id' => $current_user->id,
+                    'contents' => $this->contents,
+                    'date_entered' => $timedate->nowDb(),
+                    'date_modified' => $timedate->nowDb(),
+                    'deleted' => 0,
+                )
+            );
+        } else {
+            $this->db->updateParams(
+                'report_cache',
+                $dictionary['report_cache']['fields'],
+                array(
+                    'contents' => $this->contents,
+                    'date_modified' => $timedate->nowDb(),
+                ),
+                array(
+                    'id' => $this->id,
+                    'assigned_user_id' => $this->assigned_user_id,
+                )
+            );
+        }
 
-		$this->db->query($q, true);
 		return true;
 	}
 
@@ -144,4 +165,4 @@ class ReportCache {
 
 		return false;
 	}
-} // end class def
+}
