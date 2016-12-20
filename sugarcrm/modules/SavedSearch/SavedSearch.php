@@ -157,8 +157,8 @@ class SavedSearch extends SugarBean {
         $query = 'SELECT id, name FROM saved_search
                   WHERE
                     deleted = \'0\' AND
-                    assigned_user_id = \'' . $current_user->id . '\' AND
-                    search_module =  \'' . $module . '\'
+                    assigned_user_id = ' . $db->quoted($current_user->id) . ' AND
+                    search_module = ' . $db->quoted($module) . '
                   ORDER BY name';
         $result = $db->query($query, true, "Error filling in saved search list: ");
 
