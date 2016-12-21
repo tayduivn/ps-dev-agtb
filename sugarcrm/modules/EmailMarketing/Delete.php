@@ -35,9 +35,8 @@ $focus->mark_deleted($_REQUEST['record']);
 
 if(isset($_REQUEST['record']))
 {
-	$query = "DELETE FROM emailman WHERE marketing_id ='" . $_REQUEST['record'] ."'";
+    $query = 'DELETE FROM emailman WHERE marketing_id = ' . $focus->db->quoted($_REQUEST['record']);
 	$focus->db->query($query);
 }
 
 header("Location: index.php?module=".$_REQUEST['return_module']."&action=".$_REQUEST['return_action']."&record=".$_REQUEST['return_id']);
-?>
