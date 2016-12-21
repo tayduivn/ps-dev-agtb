@@ -352,7 +352,7 @@ class SugarQuery_Compiler_Doctrine
             }
         }
 
-        $uniqueCol = new SugarQuery_Builder_Orderby($query);
+        $uniqueCol = new SugarQuery_Builder_Orderby($query, end($orderBy)->direction);
         $uniqueCol->addField('id');
         $orderBy[] = $uniqueCol;
 

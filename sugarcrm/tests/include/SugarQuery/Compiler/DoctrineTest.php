@@ -249,21 +249,69 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('COUNT(id) > 3', $builder->getQueryPart('having'));
     }
 
-    public function testCompileOrderBy()
+    /**
+     * @param array $orderBy ORDER BY columns from query
+     * @param array $expected Expected ORDER BY part
+     * @dataProvider compileOrderByProvider
+     */
+    public function testCompileOrderBy(array $orderBy, array $expected)
     {
         $query = new SugarQuery();
         $query->from($this->account);
-        $query->orderBy('name', 'ASC')
-            ->orderBy('date_modified')
-            ->orderBy('members');
+
+        foreach ($orderBy as $column) {
+            call_user_func_array(array($query, 'orderBy'), $column);
+        }
+
         $builder = $query->compile();
 
         // this is not us enforcing the DESC order by default, this is how Sugar works now
-        $this->assertArraySubset(array(
-            'accounts.name ASC',
-            'accounts.date_modified DESC',
-            'accounts.id DESC',
-        ), $builder->getQueryPart('orderBy'));
+        $this->assertArraySubset($expected, $builder->getQueryPart('orderBy'));
+    }
+
+    /**
+     * @return array
+     */
+    public static function compileOrderByProvider()
+    {
+        return array(
+            'id-is-added' => array(
+                array(
+                    array('name', 'DESC'),
+                ),
+                array(
+                    'accounts.name DESC',
+                    'accounts.id DESC',
+                ),
+            ),
+            'id-is-not-duplicated' => array(
+                array(
+                    array('id', 'DESC'),
+                ),
+                array(
+                    'accounts.id DESC',
+                ),
+            ),
+            'direction-is-preserved' => array(
+                array(
+                    array('name', 'ASC'),
+                ),
+                array(
+                    'accounts.name ASC',
+                    'accounts.id ASC',
+                ),
+            ),
+            'empty-order-is-preserved' => array(
+                array(),
+                array(),
+            ),
+            'non-db-columns-are-ignored' => array(
+                array(
+                    array('members'),
+                ),
+                array(),
+            ),
+        );
     }
 
     /**
