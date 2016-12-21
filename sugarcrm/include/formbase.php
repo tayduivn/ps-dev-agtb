@@ -292,7 +292,8 @@ function buildRedirectURL($return_id = '', $return_module = '', array $additiona
 
 function getLikeForEachWord($fieldname, $value, $minsize=4)
 {
-	$value = trim($value);
+    $db = DBManagerFactory::getInstance();
+    $value = trim($value);
 	$values = explode(' ',$value);
 	$ret = '';
 	foreach($values as $val)
@@ -303,7 +304,7 @@ function getLikeForEachWord($fieldname, $value, $minsize=4)
 			{
 				$ret .= ' or';
 			}
-			$ret .= ' '. $fieldname . ' LIKE %'.$val.'%';
+            $ret .= ' '. $fieldname . ' LIKE ' . $db->quoted('%'.$val.'%');
 		}
 
 	}

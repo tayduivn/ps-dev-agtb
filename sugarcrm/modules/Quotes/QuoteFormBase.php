@@ -26,16 +26,16 @@ function checkForDuplicates($prefix){
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
 	}
+        $db = DBManagerFactory::getInstance();
 	$query = '';
 	$baseQuery = 'select id, name, quote_stage, from quotes where deleted!=1 and (';
 	if(isset($_POST[$prefix.'name']) && !empty($_POST[$prefix.'name'])){
-		$query = $baseQuery ."  name like '%".$_POST[$prefix.'name']."%'";
+            $query = $baseQuery ."  name like " . $db->quoted('%'.$_POST[$prefix.'name'].'%');
 		$query .= getLikeForEachWord('name', $_POST[$prefix.'name']);
 	}
 	if(!empty($query)){
 		$rows = array();
 
-		$db = DBManagerFactory::getInstance();
 		$result = $db->query($query.');');
         while($row = $db->fetchByAssoc($result)) {
             $rows[] = $row;
