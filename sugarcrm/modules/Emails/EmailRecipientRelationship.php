@@ -219,6 +219,8 @@ class EmailRecipientRelationship extends M2MRelationship
                     // This email is final, so choose the first valid email address.
                     $primary = $rhs->emailAddress->getPrimaryAddress($rhs);
                     $row['email_address_id'] = $rhs->emailAddress->getEmailGUID($primary);
+                } else {
+                    $row['email_address_id'] = null;
                 }
             } else {
                 // An email address was given. Use it to get an ID.

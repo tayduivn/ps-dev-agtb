@@ -296,6 +296,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
             'bean_type' => 'Contacts',
             'address_type' => 'from',
             'deleted' => 0,
+            'email_address_id' => null,
         );
         $this->assertRow($expected, $row);
     }
