@@ -57,14 +57,6 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             expect(removeClassStub).toHaveBeenCalled();
         });
 
-        it('should set this.changed to true if this.changed is undefined and model is not saved', function() {
-            field.model.set('_notSaved', true);
-            field.changed = undefined;
-            field._render();
-
-            expect(field.changed).toBeTruthy();
-        });
-
         it('should not set this.changed if this.changed is already set', function() {
             field.changed = false;
             field._render();
@@ -73,6 +65,7 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
         });
 
         it('should not set this.changed if model is already saved', function() {
+            sinon.collection.stub(field.model, 'isNew', function() { return false; });
             field.changed = undefined;
             field._render();
 
@@ -204,33 +197,6 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
             field._save();
             expect(field.view.context.parent.trigger).not.toHaveBeenCalled();
             expect(field._saveRowModel).toHaveBeenCalled();
-        });
-    });
-
-    describe('_saveRowModel()', function() {
-        beforeEach(function() {
-            sinon.collection.stub(field.model, 'save', function() {});
-            field.getCustomSaveOptions = function() {};
-            field.model.id = 'fieldId1';
-            field.model.set('id', 'fieldId1');
-        });
-
-        it('should unset id if model._notSaved is true', function() {
-            field.model.set('_notSaved', true);
-            field._saveRowModel();
-            expect(field.model.id).toBeUndefined();
-        });
-
-        it('should unset id on model if model._notSaved is true', function() {
-            field.model.set('_notSaved', true);
-            field._saveRowModel();
-            expect(field.model.get('id')).toBeUndefined();
-        });
-
-        it('should not unset id if model._notSaved is false', function() {
-            field._saveRowModel();
-            expect(field.model.id).toBe('fieldId1');
-            expect(field.model.get('id')).toBe('fieldId1');
         });
     });
 });

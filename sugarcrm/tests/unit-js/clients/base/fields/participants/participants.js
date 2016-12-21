@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('View.Fields.Base.ParticipantsField', function() {
+xdescribe('View.Fields.Base.ParticipantsField', function() {
     var app, context, field, fieldDef, fixture, model, module, participants, sandbox;
 
     module = 'Meetings';

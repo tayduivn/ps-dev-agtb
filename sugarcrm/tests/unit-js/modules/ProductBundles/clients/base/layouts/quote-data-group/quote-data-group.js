@@ -15,7 +15,6 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
         parentContext = app.context.getContext({module: 'Quotes'});
         parentContext.prepare(true);
 
-        layoutGroupId = 'layoutGroupId1';
         layoutModel = new Backbone.Model({
             id: layoutGroupId,
             default_group: false,
@@ -25,6 +24,7 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                 {id: 'test3', _module: 'Products', position: 2}
             ])
         });
+        layoutGroupId = layoutModel.cid;
 
         layoutContext = app.context.getContext();
         layoutContext.set({

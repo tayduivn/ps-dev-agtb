@@ -109,6 +109,7 @@ class MaxRelatedDateExpression extends DateExpression
             rel_field = params[1].evaluate();
 
         var model = this.context.relatedModel || this.context.model,  // the model
+            model_id = model.id || model.cid,
             // has the model been removed from it's collection
             sortByDateDesc = function (lhs, rhs) { return lhs < rhs ? 1 : lhs > rhs ? -1 : 0; },
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
@@ -123,9 +124,13 @@ class MaxRelatedDateExpression extends DateExpression
         }
 
         if (hasModelBeenRemoved) {
-            delete all_values[model.get('id')];
+            delete all_values[model_id];
         } else {
-            all_values[model.get('id')] = new_value;
+            // while this is icky, i believe it's needed for now
+            if (all_values[model.cid] && model_id != model.cid) {
+                delete all_values[model.cid];
+            }
+            all_values[model_id] = new_value;
         }
 
         _.each(all_values, function(_date) {

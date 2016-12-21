@@ -187,7 +187,14 @@
 
         this.isEmptyGroup = this.collection.length === 0;
 
-        // for each item in the collection, setup SugarLogic
+       // for each item in the collection, setup SugarLogic
+       /*var collections = this.model.fields['product_bundle_items'].links;
+       _.each(collections, function(link) {
+             var collection = this.model.getRelatedCollection(link);
+             if (collection) {
+                 this.setupSugarLogicForModel(collection.model, collection);
+             }
+       }, this);*/
         this.collection.each(this.setupSugarLogicForModel, this);
 
         // listen directly on the parent QuoteDataGroupLayout
@@ -279,9 +286,9 @@
             slContext = this.initSugarLogic(
                 model,
                 dependencies,
-                _.has(this.toggledModels, model.get('id'))
+                _.has(this.toggledModels, model.cid)
             );
-            this.sugarLogicContexts[model.get('id')] = slContext;
+            this.sugarLogicContexts[model.cid] = slContext;
         }
     },
 
@@ -293,8 +300,8 @@
     onCancelRowEdit: function(rowModel) {
         var rowId;
 
-        if (rowModel.has('_notSaved')) {
-            rowId = rowModel.get('id');
+        if (rowModel.isNew()) {
+            rowId = rowModel.cid;
             this.collection.remove(rowModel);
 
             if (!_.isUndefined(this.sugarLogicContexts[rowId])) {
@@ -305,7 +312,7 @@
             // if we're showing line numbers, and the model we canceled was a Product
             if (this.showLineNums && rowModel.module === 'Products') {
                 // reset the line_num count on the collection from QuotesLineNumHelper plugin
-                this.resetGroupLineNumbers(this.model.get('id'), this.collection);
+                this.resetGroupLineNumbers(this.model.cid, this.collection);
             }
         }
 
@@ -321,31 +328,10 @@
      * @param {string} oldModelId
      */
     onSaveRowEdit: function(rowModel, oldModelId) {
-        var $oldRow;
-        var modelId = rowModel.get('id');
+        var modelId = rowModel.cid;
         var modelModule = rowModel.module;
 
         this.toggleCancelButton(false);
-
-        if (rowModel.has('_notSaved')) {
-            // if the rowModel still has _notSaved on it, remove it
-            rowModel.unset('_notSaved');
-
-            if (this.toggledModels[oldModelId]) {
-                delete this.toggledModels[oldModelId];
-            }
-        }
-
-        // If this was a newly created row that was saved, oldModelId will
-        // be different from the current rowModel's id, and we need to redelegate list events
-        if (modelId !== oldModelId) {
-            $oldRow = this.$('tr[name=' + modelModule + '_' + oldModelId + ']');
-            if ($oldRow.length) {
-                $oldRow.attr('name', modelModule + '_' + modelId);
-                // re-set the row fields based on new model IDs
-                this._setRowFields();
-            }
-        }
         this.toggleRow(modelModule, modelId, false);
         this.onNewItemChanged();
     },
@@ -411,18 +397,17 @@
         // defers to prepopulateData
         modelData = _.extend({
             _module: moduleName,
-            _notSaved: true,
+            _link: linkName,
             position: position,
             currency_id: this.model.get('currency_id'),
-            base_rate: this.model.get('base_rate'),
-            id: newRelatedModelId
+            base_rate: this.model.get('base_rate')
         }, prepopulateData);
 
         relatedModel.module = moduleName;
 
         if (this.showLineNums && relatedModel.module === 'Products') {
             // get the line_num count object from QuotesLineNumHelper plugin
-            groupLineNumObj = this.getGroupLineNumCount(this.model.get('id'));
+            groupLineNumObj = this.getGroupLineNumCount(this.model.cid);
             // add the new line number to the model
             modelData.line_num = groupLineNumObj.ct++;
         }
@@ -437,12 +422,12 @@
         relatedModel.modelView = 'edit';
 
         // add model to toggledModels to be toggled next render
-        this.toggledModels[relatedModel.id] = relatedModel;
+        this.toggledModels[relatedModel.cid] = relatedModel;
 
         // adding to the collection will trigger the render
         this.collection.add(relatedModel);
 
-        $relatedRow = this.$('tr[name="' + relatedModel.module + '_' + relatedModel.id + '"]');
+        $relatedRow = this.$('tr[name="' + relatedModel.module + '_' + relatedModel.cid + '"]');
         if ($relatedRow.length) {
             if (this.isCreateView) {
                 $relatedRow.addClass(this.sortableCSSClass);
@@ -700,9 +685,9 @@
     _setRowFields: function() {
         this.rowFields = {};
         _.each(this.fields, function(field) {
-            if (field.model && field.model.id && _.isUndefined(field.parent)) {
-                this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
-                this.rowFields[field.model.id].push(field);
+            if (field.model && field.model.cid && _.isUndefined(field.parent)) {
+                this.rowFields[field.model.cid] = this.rowFields[field.model.cid] || [];
+                this.rowFields[field.model.cid].push(field);
             }
         }, this);
     },

@@ -30,7 +30,7 @@
     _render: function() {
         this._super('_render');
 
-        if (_.isUndefined(this.changed) && this.model.get('_notSaved')) {
+        if (_.isUndefined(this.changed) && this.model.isNew()) {
             // when adding additional items to the list, causing additional renders,
             // this.changed gets set undefined on re-initialize, so we need to make sure
             // if this is an unsaved model and this.changed is undefined, that we set changed true
@@ -151,11 +151,6 @@
         };
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
-
-        if (this.model.has('_notSaved')) {
-            this.model.id = null;
-            this.model.unset('id');
-        }
         this.model.save({}, options);
     }
 });

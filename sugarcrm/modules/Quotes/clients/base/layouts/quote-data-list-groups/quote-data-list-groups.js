@@ -64,6 +64,10 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
+        var pbContext = this.context.getChildContext({link: 'product_bundles'});
+        pbContext.prepare(false, true);
+
         this.groupIds = [];
         this.currentBulkSaveRequests = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
@@ -88,9 +92,13 @@
 
         // check if this is create mode, in which case add an empty array to bundles
         if (this.isCreateView) {
-            this.model.set({
-                bundles: []
-            });
+            this._onProductBundleChange(this.model.get('bundles'));
+        } else {
+            this.model.once('sync', function(model) {
+                if (model.get('bundles').length == 0) {
+                    this._onProductBundleChange(this.model.get('bundles'));
+                }
+            }, this);
         }
     },
 
@@ -221,7 +229,7 @@
             rowId = $item.attr('name').split('_')[1];
 
             // get if we need to save the new default group list or not
-            saveDefaultGroup = newGroup.model.get('_notSaved') || false;
+            saveDefaultGroup = newGroup.model.isNew() || false;
 
             // get the old and new quote-data-group components
             oldGroup = this._getComponentByGroupId(oldGroupId);
@@ -421,8 +429,6 @@
      */
     _onSaveDefaultQuoteGroup: function(successCallback) {
         var group = this._getComponentByGroupId(this.defaultGroupId);
-        group.model.unset('id');
-        group.model.unset('_notSaved');
 
         app.alert.show('saving_default_group_alert', {
             level: 'success',
@@ -487,8 +493,6 @@
      */
     _saveDefaultGroupThenCallBulk: function(oldGroup, newGroup, bulkSaveRequests) {
         var newGroupOldId = newGroup.model.get('id');
-        newGroup.model.unset('id');
-        newGroup.model.unset('_notSaved');
 
         app.alert.show('saving_default_group_alert', {
             level: 'success',
@@ -671,7 +675,7 @@
             rowId = rowNameSplit[1];
 
             rowModel = dataGroup.collection.get(rowId);
-            if (rowModel.get('position') != index && !rowModel.has('_notSaved')) {
+            if (rowModel.get('position') != index && !rowModel.isNew()) {
                 linkName = rowModule === 'Products' ? 'products' : 'product_bundle_notes';
                 url = app.api.buildURL('ProductBundles/' + dataGroup.groupId + '/link/' + linkName + '/' + rowId);
                 retCalls.push({
@@ -758,9 +762,10 @@
      * @protected
      */
     _getDefaultGroupModel: function() {
+        var defaultGroup = this._createNewProductBundleBean(null, 0, true);
         // if there is not a default group yet, add one
-        this.defaultGroupId = app.utils.generateUUID();
-        return this._createNewProductBundleBean(this.defaultGroupId, 0, true);
+        this.defaultGroupId = defaultGroup.id || defaultGroup.cid;
+        return defaultGroup;
     },
 
     /**
@@ -773,15 +778,14 @@
      * @protected
      */
     _createNewProductBundleBean: function(groupId, newPosition, isDefaultGroup) {
-        groupId = groupId || app.utils.generateUUID();
+        //groupId = groupId || app.utils.generateUUID();
         newPosition = newPosition || 0;
         isDefaultGroup = isDefaultGroup || false;
         return app.data.createBean('ProductBundles', {
             id: groupId,
-            _notSaved: true,
             _module: 'ProductBundles',
             _action: 'create',
-            link: 'product_bundles',
+            _link: 'product_bundles',
             default_group: isDefaultGroup,
             currency_id: this.model.get('currency_id'),
             base_rate: this.model.get('base_rate'),
@@ -824,12 +828,12 @@
             defaultGroupModel = _.find(productBundles.models, function(bundle) {
                 return bundle.get('default_group');
             });
-            this.defaultGroupId = defaultGroupModel.get('id');
+            this.defaultGroupId = defaultGroupModel.cid;
         }
 
         productBundles.each(function(bundle) {
-            if (!_.contains(this.groupIds, bundle.get('id'))) {
-                this.groupIds.push(bundle.get('id'));
+            if (!_.contains(this.groupIds, bundle.cid)) {
+                this.groupIds.push(bundle.cid);
                 this._addQuoteGroupToLayout(bundle);
             }
         }, this);
@@ -844,8 +848,7 @@
      * @private
      */
     _addQuoteGroupToLayout: function(bundle) {
-        var pbContext = this.context.getChildContext({module: 'ProductBundles'});
-        pbContext.prepare();
+        var pbContext = this.context.getChildContext({link: 'product_bundles'});
         var groupLayout = app.view.createLayout({
             context: pbContext,
             meta: this.quoteDataGroupMeta,
@@ -1050,7 +1053,7 @@
      * @private
      */
     _onDeleteQuoteGroup: function(groupToDelete) {
-        var groupId = groupToDelete.model.get('id');
+        var groupId = groupToDelete.model.cid;
         var groupName = groupToDelete.model.get('name') || '';
 
         app.alert.show('confirm_delete_bundle', {
@@ -1099,9 +1102,9 @@
                 // in _.each, if list is an object, model becomes undefined and list becomes
                 // an array with the last model
                 model = model || list[0];
-                if (model.has('_notSaved') && model.get('_notSaved')) {
+                if (model.isNew()) {
                     var groupList = groupToDelete.getGroupListComponent();
-                    delete groupList.toggledModels[model.get('id')];
+                    delete groupList.toggledModels[model.cid];
                     bundleItems.remove(model);
                 }
             }, this, bundleItems, groupToDelete), this);
@@ -1142,7 +1145,7 @@
             });
 
             this.currentBulkSaveRequests = bulkRequests;
-            if (defaultGroup.model.get('_notSaved')) {
+            if (defaultGroup.model.isNew()) {
                 this._saveDefaultGroupThenCallBulk(groupToDelete, defaultGroup, bulkRequests);
             } else {
                 this._callBulkRequests(_.bind(this._onSaveUpdatedGroupSuccess, this, groupToDelete, defaultGroup));

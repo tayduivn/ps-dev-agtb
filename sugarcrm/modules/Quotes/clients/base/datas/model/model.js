@@ -14,5 +14,5 @@
  * @extends Model.Bean
  */
 ({
-    plugins: ['VirtualCollection']
+    //plugins: ['VirtualCollection']
 })

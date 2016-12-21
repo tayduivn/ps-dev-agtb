@@ -77,7 +77,8 @@ class AverageRelatedExpression extends NumericExpression
             target = this.context.target,
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || this.context.model,  // the model,
+            model_id = model.id || model.cid,
             // has the model been removed from it's collection
             isCurrency = (model.fields[rel_field].type === 'currency'),
             precision = model.fields[rel_field].precision || 6,
@@ -99,13 +100,15 @@ class AverageRelatedExpression extends NumericExpression
             );
         }
 
-        if (model.has('id')) {
-            if (hasModelBeenRemoved || !_.isFinite(new_value)) {
-                delete all_values[model.get('id')];
-            } else if (this.context.relatedModel || all_values[model.get('id')]) {
-                 // the model is related or current with related record
-                all_values[model.get('id')] = new_value;
+        if (hasModelBeenRemoved || !_.isFinite(new_value)) {
+            delete all_values[model_id];
+        } else if (this.context.relatedModel || all_values[model_id]) {
+            // while this is icky, i believe it's needed for now
+            if (all_values[model.cid] && model_id != model.cid) {
+                delete all_values[model.cid];
             }
+            // the model is related or current with related record
+            all_values[model_id] = new_value;
         }
 
         if (_.size(all_values) > 0) {

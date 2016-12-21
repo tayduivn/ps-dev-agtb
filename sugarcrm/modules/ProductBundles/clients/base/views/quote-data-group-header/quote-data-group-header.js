@@ -254,9 +254,9 @@
     _setRowFields: function() {
         this.rowFields = {};
         _.each(this.fields, function(field) {
-            if (field.model && field.model.id && _.isUndefined(field.parent)) {
-                this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
-                this.rowFields[field.model.id].push(field);
+            if (field.model && field.model.cid && _.isUndefined(field.parent)) {
+                this.rowFields[field.model.cid] = this.rowFields[field.model.cid] || [];
+                this.rowFields[field.model.cid].push(field);
             }
         }, this);
     },
@@ -335,15 +335,6 @@
         var modelModule = rowModel.module;
 
         this.toggleCancelButton(false);
-
-        if (rowModel.has('_notSaved')) {
-            // if the rowModel still has _notSaved on it, remove it
-            rowModel.unset('_notSaved');
-
-            if (this.toggledModels[oldModelId]) {
-                delete this.toggledModels[oldModelId];
-            }
-        }
 
         // If this was a newly created row that was saved, oldModelId will
         // be different from the current rowModel's id, and we need to redelegate list events

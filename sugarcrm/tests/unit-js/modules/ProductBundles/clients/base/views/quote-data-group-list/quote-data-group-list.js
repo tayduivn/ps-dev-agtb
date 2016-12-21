@@ -451,10 +451,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 id: 'rowModel1'
             });
 
-            rowModel2 = new Backbone.Model({
-                id: 'rowModel2'
-            });
-            rowModel2.set('_notSaved', true);
+            rowModel2 = new Backbone.Model({});
             view.collection.add(rowModel1);
             view.collection.add(rowModel2);
         });
@@ -464,12 +461,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             rowModel2 = null;
         });
 
-        it('should only remove the rowModel from the collection when _notSaved = true', function() {
+        it('should only remove the rowModel from the collection when isNew()', function() {
             view.onCancelRowEdit(rowModel1);
             expect(view.collection.length).toBe(5);
         });
 
-        it('should remove the rowModel from the collection since _notSaved = true', function() {
+        it('should remove the rowModel from the collection when is New', function() {
             view.onCancelRowEdit(rowModel2);
             expect(view.collection.length).toBe(4);
         });
@@ -495,10 +492,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             sinon.collection.stub(view, 'toggleCancelButton', function() {});
 
             oldModelId = 'oldRowModel1';
-            rowModelId = 'rowModel1';
-            rowModel = new Backbone.Model({
-                id: rowModelId
-            });
+            rowModel = new Backbone.Model({});
+            rowModelId = rowModel.cid;
             rowModel.module = 'Products';
         });
 
@@ -512,44 +507,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.toggleCancelButton).toHaveBeenCalled();
         });
 
-        describe('model has _notSaved = true', function() {
-            it('should remove _notSaved from the model if it exists', function() {
-                rowModel.set('_notSaved', true);
-                view.onSaveRowEdit(rowModel, rowModelId);
-                expect(rowModel._notSaved).toBeUndefined();
-            });
-
-            it('should remove the model from toggledModels', function() {
-                rowModel.set('_notSaved', true);
-                view.toggledModels[rowModel.id] = rowModel;
-                view.onSaveRowEdit(rowModel, rowModelId);
-                expect(view.toggledModels[rowModel.id]).toBeUndefined();
-            });
-        });
 
         describe('model id == oldModelId', function() {
             it('should do nothing if model id is the same as oldModelId', function() {
                 view.onSaveRowEdit(rowModel, rowModelId);
                 expect(view.$).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('model id != oldModelId', function() {
-            beforeEach(function() {
-                view.onSaveRowEdit(rowModel, oldModelId);
-            });
-
-            it('should get the table row if model id is not oldModelId', function() {
-                expect(view.$).toHaveBeenCalledWith('tr[name=Products_oldRowModel1]');
-            });
-            it('should change the table row name attr', function() {
-                expect(attrStub).toHaveBeenCalledWith('name', 'Products_rowModel1');
-            });
-            it('should call _setRowFields', function() {
-                expect(view._setRowFields).toHaveBeenCalled();
-            });
-            it('should call toggleRow', function() {
-                expect(view.toggleRow).toHaveBeenCalledWith('Products', 'rowModel1', false);
             });
         });
     });
@@ -594,8 +556,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         beforeEach(function() {
             linkName = 'products';
             groupModel = new Backbone.Model();
-            relatedModelId = 'newModelUUID1';
             relatedModel = new Backbone.Model();
+            relatedModelId = relatedModel.cid;
 
             sinon.collection.stub(view, 'createLinkModel', function() {
                 return relatedModel;
@@ -621,20 +583,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 view.onAddNewItemToGroup(linkName);
             });
 
-            it('should set the new related model id to the new guid', function() {
-                expect(relatedModel.get('id')).toBe(relatedModelId);
-            });
-
             it('should set the new relatedModel position to be the max of the collection models positions', function() {
                 expect(relatedModel.get('position')).toBe(3);
             });
 
             it('should set the new relatedModel modelView to be edit', function() {
                 expect(relatedModel.modelView).toBe('edit');
-            });
-
-            it('should set the new relatedModel _notSaved to be true', function() {
-                expect(relatedModel.get('_notSaved')).toBeTruthy();
             });
 
             it('should add the new relatedModel to toggledModels', function() {
@@ -1449,26 +1403,21 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
         beforeEach(function() {
             field1 = {
-                model: new Backbone.Model({id: 'testId1'})
+                model: new Backbone.Model()
             };
 
             field2 = {
-                model: new Backbone.Model({id: 'testId2'})
-            };
-
-            field3 = {
-                model: new Backbone.Model({id: 'testId3'}),
-                parent: true
+                model: new Backbone.Model()
             };
 
             field4 = {
                 model: new Backbone.Model(),
+                parent: true
             };
 
             view.fields = [
                 field1,
                 field2,
-                field3,
                 field4
             ];
 
@@ -1481,16 +1430,12 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         it('should set rowFields from fields', function() {
-            expect(view.rowFields.testId1[0]).toEqual(field1);
-            expect(view.rowFields.testId2[0]).toEqual(field2);
-        });
-
-        it('should set not set rowFields for fields with no id', function() {
-            expect(view.rowFields.testId3).toBeUndefined();
+            expect(view.rowFields[field1.model.cid][0]).toEqual(field1);
+            expect(view.rowFields[field2.model.cid][0]).toEqual(field2);
         });
 
         it('should set not set rowFields for fields with a parent', function() {
-            expect(view.rowFields.testId4).toBeUndefined();
+            expect(view.rowFields[field4.model.cid]).toBeUndefined();
         });
     });
 

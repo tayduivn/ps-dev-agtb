@@ -34,10 +34,6 @@ describe('Quotes.Base.Plugins.QuotesViewSaveHelper', function() {
         });
 
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'data', 'model', 'Quotes');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundles');
-        SugarTest.loadComponent('base', 'data', 'model', 'Products');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundleNotes');
         SugarTest.loadPlugin('VirtualCollection');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();

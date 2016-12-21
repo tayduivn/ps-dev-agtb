@@ -51,7 +51,7 @@
      */
     cancelEdit: function() {
         var modelModule = this.model.module;
-        var modelId = this.model.id;
+        var modelId = this.model.cid;
         var syncedAttribs = this.model.getSynced();
 
         if (this.view.isCreateView || syncedAttribs._justSaved) {
@@ -109,7 +109,7 @@
      */
     _saveRowModel: function() {
         var self = this;
-        var oldModelId = this.model.get('id');
+        var oldModelId = this.model.id || this.model.cid;
         var successCallback = function(model) {
             self.changed = false;
             model.modelView = 'list';
@@ -154,11 +154,6 @@
         };
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
-
-        if (this.model.has('_notSaved')) {
-            this.model.id = null;
-            this.model.unset('id');
-        }
         this.model.save({}, options);
     }
 });

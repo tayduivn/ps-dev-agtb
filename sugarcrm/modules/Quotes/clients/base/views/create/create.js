@@ -266,7 +266,7 @@
      * @inheritdoc
      */
     saveModel: function(success, error) {
-        var bundles = this.model.get('bundles');
+        /*var bundles = this.model.get('bundles');
         // unsetting _notSaved during CreateView so the it wont trip isNew() after the save
         bundles.each(function(bundle) {
             // bundle = ProductBundle model
@@ -276,7 +276,7 @@
                 item.unset('_notSaved');
             }, this);
             bundle.unset('_notSaved');
-        }, this);
+        }, this);*/
 
         this._super('saveModel', [success, error]);
     },

@@ -79,7 +79,7 @@
                     return model.changedAttributes(model.getSynced());
                 };
                 var unsavedBundles = _.find(bundles.models, function(model) {
-                    return model.get('_notSaved');
+                    return model.isNew();
                 });
 
                 // if this is the create view and there are more than one bundle, it has unsaved changes
@@ -100,7 +100,7 @@
                             .value();
                     }
 
-                    keysToOmit = ['product_bundle_items', '_notSaved'].concat(bundleCalculatedFields);
+                    keysToOmit = ['product_bundle_items'].concat(bundleCalculatedFields);
                     // VirtualCollection will return the collection as changed if something was added and saved
                     // or canceled, just ignore it since all the items have checked the models to see if they changed
                     bundleChanged = !_.isEmpty(_.omit(changedFields(bundle), keysToOmit));

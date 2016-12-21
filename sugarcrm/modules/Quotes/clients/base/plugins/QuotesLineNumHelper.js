@@ -61,6 +61,10 @@
                     this.hasLineNumField = false;
                     this.showLineNums = false;
                     this.lineNumGroupIdMap = {};
+
+                    if (ctx.has('model') && ctx.get('model').has('show_line_nums')) {
+                        this.onShowLineNumsChanged(ctx.get('model').get('show_line_nums'));
+                    }
                 }, this);
             },
 
@@ -98,13 +102,13 @@
                 if (this.showLineNums && !this.hasLineNumField) {
                     this._addLineNumFieldDef();
                     if (isBundle) {
-                        this._addLineNumToModel(this.model.get('id'), this.collection);
+                        this._addLineNumToModel(this.model.cid, this.collection);
                     }
                     changed = true;
                 } else if (!this.showLineNums && this.hasLineNumField) {
                     this._removeLineNumFieldDef();
                     if (isBundle) {
-                        this._removeLineNumFromModel(this.model.get('id'), this.collection);
+                        this._removeLineNumFromModel(this.model.cid, this.collection);
                     }
                     changed = true;
                 }
@@ -140,7 +144,7 @@
                     return;
                 }
 
-                groupId = groupId || this.model.get('id');
+                groupId = groupId || this.model.cid;
                 collection = collection || this.collection;
 
                 this._checkAddGroupToMap(groupId);

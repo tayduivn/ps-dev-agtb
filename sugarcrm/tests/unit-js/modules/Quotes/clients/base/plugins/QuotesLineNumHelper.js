@@ -44,10 +44,6 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
             fields: quoteFields
         });
 
-        SugarTest.loadComponent('base', 'data', 'model', 'Quotes');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundles');
-        SugarTest.loadComponent('base', 'data', 'model', 'Products');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundleNotes');
         SugarTest.loadPlugin('VirtualCollection');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
@@ -132,7 +128,7 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
         parentContext = app.context.getContext({
             module: 'ProductBundles'
         });
-        model = app.data.createBean('Quotes');
+        model = app.data.createBean('Quotes', {show_line_nums: false});
         model.module = 'Quotes';
         context.set({
             model: model,
@@ -146,6 +142,8 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
     });
 
     afterEach(function() {
+        // remove the plugin
+        delete app.plugins.plugins['view']['QuotesLineNumHelper'];
         sinon.collection.restore();
         if (component) {
             component.dispose();
@@ -294,7 +292,7 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
                         });
 
                         it('should call _addLineNumToModel()', function() {
-                            expect(view._addLineNumToModel).toHaveBeenCalledWith('viewId1');
+                            expect(view._addLineNumToModel).toHaveBeenCalledWith(view.model.cid);
                         });
                     });
 
@@ -365,7 +363,7 @@ describe('Quotes.Base.Plugins.QuotesLineNumHelper', function() {
                         });
 
                         it('should call _removeLineNumFromModel()', function() {
-                            expect(view._removeLineNumFromModel).toHaveBeenCalledWith('viewId1');
+                            expect(view._removeLineNumFromModel).toHaveBeenCalledWith(view.model.cid);
                         });
                     });
 

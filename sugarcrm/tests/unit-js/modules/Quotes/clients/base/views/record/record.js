@@ -34,10 +34,6 @@ describe('Quotes.Base.Views.Record', function() {
         });
 
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'data', 'model', 'Quotes');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundles');
-        SugarTest.loadComponent('base', 'data', 'model', 'Products');
-        SugarTest.loadComponent('base', 'data', 'model', 'ProductBundleNotes');
         SugarTest.loadPlugin('VirtualCollection');
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
@@ -287,12 +283,10 @@ describe('Quotes.Base.Views.Record', function() {
 
         it('should not return new bundles', function() {
             model.get('bundles').add({
-                id: 1234,
                 name: 'bundle_new',
                 currency_id: 'test_1',
                 base_rate: '0.90',
-                _module: 'ProductBundles',
-                _notSaved: true
+                _module: 'ProductBundles'
             });
             actual = view._createBulkBundlesPayload();
 

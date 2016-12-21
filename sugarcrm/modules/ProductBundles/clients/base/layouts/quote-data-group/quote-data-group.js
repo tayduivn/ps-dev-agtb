@@ -50,7 +50,7 @@
         this._super('initialize', [options]);
 
         // set the groupID to the model ID
-        this.groupId = this.model.get('id');
+        this.groupId = this.model.cid;
         // set this collection to the product_bundle_items collection
         this.collection = this.model.get('product_bundle_items');
         // add comparator so the collection can sort

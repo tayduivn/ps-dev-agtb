@@ -74,7 +74,8 @@ class CountConditionalRelatedExpression extends NumericExpression
             condition_values = [condition_values];
         }
 
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || this.context.model,  // the model,
+            model_id = model.id || model.cid,
             // has the model been removed from it's collection
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             // is this being fired for the condition field or the rel_field?
@@ -91,7 +92,7 @@ class CountConditionalRelatedExpression extends NumericExpression
         if (conditionValid || conditionChanged) {
             var current_value = this.context.getRelatedField(relationship, 'countConditional', target) || '0',
                 context_previous_values = this.context.previous_values || {},
-                previous_value = context_previous_values[target + '--' + model.get('id')] || '',
+                previous_value = context_previous_values[target + '--' + model_id] || '',
                 new_value = model.get(condition_field);
                 rollup_value = undefined;
 
@@ -106,7 +107,11 @@ class CountConditionalRelatedExpression extends NumericExpression
             // maintaining the correct previous_value since it's not updated on the models previous_attributes
             // every time the model.set() is called before the initial set() completes
             this.context.previous_values = this.context.previous_values || {};
-            this.context.previous_values[target + '--' + model.get('id')] = new_value;
+            // while this is icky, i believe it's needed for now
+            if (this.context.previous_values[target + '--' + model.cid] && model_id != model.cid) {
+                delete this.context.previous_values[target + '--' + model.cid]
+            }
+            this.context.previous_values[target + '--' + model_id] = new_value;
 
             if (new_value == previous_value && !hasModelBeenRemoved) {
                 return;

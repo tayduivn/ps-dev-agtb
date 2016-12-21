@@ -30,7 +30,7 @@
     _render: function() {
         this._super('_render');
 
-        if (_.isUndefined(this.changed) && this.model.get('_notSaved')) {
+        if (_.isUndefined(this.changed) && this.model.isNew()) {
             // when adding additional items to the list, causing additional renders,
             // this.changed gets set undefined on re-initialize, so we need to make sure
             // if this is an unsaved model and this.changed is undefined, that we set changed true
@@ -73,7 +73,7 @@
         this.view.clearValidationErrors();
 
         // this is the only line I had to change
-        this.view.toggleRow(this.model.module, this.model.id, false);
+        this.view.toggleRow(this.model.module, this.model.cid, false);
 
         // trigger a cancel event across the view layout so listening components
         // know the changes made in this row are being reverted
@@ -118,7 +118,7 @@
      */
     _saveRowModel: function() {
         var self = this;
-        var oldModelId = this.model.get('id');
+        var oldModelId = this.model.id || this.model.cid;
 
         var successCallback = function(model) {
             self.changed = false;
@@ -164,11 +164,6 @@
         };
 
         options = _.extend({}, options, this.getCustomSaveOptions(options));
-
-        if (this.model.has('_notSaved')) {
-            this.model.id = null;
-            this.model.unset('id');
-        }
         this.model.save({}, options);
     }
 });

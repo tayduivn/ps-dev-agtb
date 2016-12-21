@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Plugins.VirtualCollection', function() {
+xdescribe('Plugins.VirtualCollection', function() {
     var app;
     var attribute;
     var collection;

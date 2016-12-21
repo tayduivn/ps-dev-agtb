@@ -11,7 +11,7 @@
  */
 --}}
 {{#each collection.models}}
-    {{partial 'row' ../this groupId=../this.model.id module=this.module view=../this model=this fields=../_fields listColSpan=../listColSpan}}
+    {{partial 'row' ../this groupId=../this.model.cid module=this.module view=../this model=this fields=../_fields listColSpan=../listColSpan}}
 {{/each}}
 <tr class="quote-data-group-list empty-row">
     <td colspan="{{emptyListColSpan}}">
