@@ -157,7 +157,8 @@ END;
         $parents[$ctr]=$current_id;
         $notdone=true;
         do {
-            $query="select id,name, parent_id from product_categories where id='$current_id' and deleted=0";
+            $current_id = $GLOBALS['db']->quoted($current_id);
+            $query="select id,name, parent_id from product_categories where id=$current_id and deleted=0";
             $result=$GLOBALS['db']->query($query);
             $row=$GLOBALS['db']->fetchByAssoc($result);
             if ($row != null and !empty($row['parent_id']) and $row['parent_id']!= '') {
