@@ -491,7 +491,9 @@ class SugarQuery_Compiler_Doctrine
                 case 'DOES NOT CONTAIN':
                 case 'ENDS':
                 case 'DOES NOT END':
-                    $sql = $this->compileContains(
+                case 'LIKE':
+                case 'NOT LIKE':
+                    $sql = $this->compileLike(
                         $builder,
                         $field,
                         $condition->operator,
@@ -598,9 +600,10 @@ class SugarQuery_Compiler_Doctrine
      * @param array $fieldDef Field definition
      * @return string
      */
-    protected function compileContains(QueryBuilder $builder, $field, $operator, $values, array $fieldDef)
+    protected function compileLike(QueryBuilder $builder, $field, $operator, $values, array $fieldDef)
     {
         $format = null;
+        $isPattern = false;
         switch ($operator) {
             case 'STARTS':
             case 'DOES NOT START':
@@ -613,6 +616,10 @@ class SugarQuery_Compiler_Doctrine
             case 'ENDS':
             case 'DOES NOT END':
                 $format = '%%%s';
+                break;
+            case 'LIKE':
+            case 'NOT LIKE':
+                $isPattern = true;
                 break;
         }
 
@@ -631,11 +638,20 @@ class SugarQuery_Compiler_Doctrine
             $expr = $field;
         } else {
             $expr = 'UPPER(' . $field . ')';
+            $values = array_map('strtoupper', $values);
         }
 
         $conditions = array();
         foreach ($values as $value) {
-            $conditions[] = $this->compileLike($builder, $expr, $isNegation, $format, $value, $fieldDef);
+            $condition = $expr . ($isNegation ? ' NOT' : '') . ' LIKE ';
+
+            if (!$isPattern) {
+                $condition .= $this->compileSubstringPattern($builder, $format, $value, $fieldDef);
+            } else {
+                $condition .= $this->bindValue($builder, $value, $fieldDef);
+            }
+
+            $conditions[] = $condition;
         }
 
         $sql = implode(' ' . $chainWith . ' ', $conditions);
@@ -651,40 +667,34 @@ class SugarQuery_Compiler_Doctrine
     }
 
     /**
-     * Compiles LIKE expression
+     * Compiles substring expression
      *
      * @param QueryBuilder $builder Query builder
-     * @param string $field Field expression
-     * @param boolean $isNegative Whether the expression needs to be negative
      * @param string $format Wildcard placement format
-     * @param string $value Value to compare with
+     * @param string $substring Value to compare with
      * @param array $fieldDef Field definition
      * @return string
      */
-    protected function compileLike(
+    protected function compileSubstringPattern(
         QueryBuilder $builder,
-        $field,
-        $isNegative,
         $format,
-        $value,
+        $substring,
         array $fieldDef
     ) {
-        if ($this->isCollationCaseSensitive()) {
-            $value = strtoupper($value);
-        }
-
         $esc = '!';
-        $shouldEscape = strpbrk($value, '%_') !== false;
+        $shouldEscape = strpbrk($substring, '%_') !== false;
         if ($shouldEscape) {
-            $value = str_replace(
+            $pattern = str_replace(
                 array($esc,        '_',        '%'),
                 array($esc . $esc, $esc . '_', $esc . '%'),
-                $value
+                $substring
             );
+        } else {
+            $pattern = $substring;
         }
 
-        $value = sprintf($format, $value);
-        $sql = $field . ($isNegative ? ' NOT' : '') . ' LIKE ' . $this->bindValue($builder, $value, $fieldDef);
+        $value = sprintf($format, $pattern);
+        $sql = $this->bindValue($builder, $value, $fieldDef);
 
         if ($shouldEscape) {
             $sql .= ' ESCAPE \'' . $esc . '\'';

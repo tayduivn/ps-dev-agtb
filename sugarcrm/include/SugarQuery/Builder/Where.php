@@ -439,6 +439,40 @@ abstract class SugarQuery_Builder_Where
     }
 
     /**
+     * Creates a condition to check if the field value matches the pattern
+     *
+     * Use this method only in case if the pattern is expected to contain arbitrary wildcards.
+     * Otherwise, use starts(), ends() or contains().
+     *
+     * @param string $field
+     * @param string $pattern
+     * @param SugarBean|null $bean SugarBean, optional
+     *
+     * @return $this
+     */
+    public function like($field, $pattern, SugarBean $bean = null)
+    {
+        return $this->condition($field, 'LIKE', $pattern, $bean);
+    }
+
+    /**
+     * Creates a condition to check if the field value does not match the pattern
+     *
+     * Use this method only in case if the pattern is expected to contain arbitrary wildcards.
+     * Otherwise, use notContains().
+     *
+     * @param string $field
+     * @param string $pattern
+     * @param SugarBean|null $bean SugarBean, optional
+     *
+     * @return $this
+     */
+    public function notLike($field, $pattern, SugarBean $bean = null)
+    {
+        return $this->condition($field, 'NOT LIKE', $pattern, $bean);
+    }
+
+    /**
      * We need to mock TimeDate object for tests
      *
      * @return TimeDate

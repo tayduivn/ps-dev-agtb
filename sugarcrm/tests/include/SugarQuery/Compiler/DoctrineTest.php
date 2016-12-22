@@ -155,7 +155,10 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
         $subQuery = new SugarQuery();
 
         /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
-        $compiler = $this->getMock('SugarQuery_Compiler_Doctrine', array('compileSubQuery'), array($this->account->db));
+        $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
+            ->setMethods(array('compileSubQuery'))
+            ->setConstructorArgs(array($this->account->db))
+            ->getMock();
         $compiler->expects($this->once())
             ->method('compileSubQuery')
             ->with($this->anything(), $subQuery)
@@ -398,6 +401,15 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
                     2 => '%Y%',
                 ),
             ),
+            'like' => array(
+                function (SugarQuery_Builder_Where $where) {
+                    $where->like('name', '%X%Y%Z%');
+                },
+                'accounts.name LIKE ?',
+                array(
+                    1 => '%X%Y%Z%',
+                ),
+            ),
         );
     }
 
@@ -440,9 +452,10 @@ class SugarQuery_Compiler_DoctrineTest extends Sugar_PHPUnit_Framework_TestCase
     private function getCompilerWithCollationCaseSensitivity($value)
     {
         /** @var SugarQuery_Compiler_Doctrine|PHPUnit_Framework_MockObject_MockObject $compiler */
-        $compiler = $this->getMock('SugarQuery_Compiler_Doctrine', array(
-            'isCollationCaseSensitive',
-        ), array($this->account->db));
+        $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
+            ->setMethods(array('isCollationCaseSensitive'))
+            ->setConstructorArgs(array($this->account->db))
+            ->getMock();
         $compiler->expects($this->any())
             ->method('isCollationCaseSensitive')
             ->willReturn($value);
