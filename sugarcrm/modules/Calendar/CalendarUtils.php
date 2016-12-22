@@ -405,10 +405,10 @@ class CalendarUtils
      */
     public static function markRepeatDeleted(SugarBean $bean)
     {
-        $modifiedUserId = empty($GLOBALS['current_user']) ? 1 : $GLOBALS['current_user']->id;
-        $dateModified = $GLOBALS['db']->convert($GLOBALS['db']->quoted($GLOBALS['timedate']->nowDb()), 'datetime');
-        $valuesClause = "SET deleted=1, date_modified={$dateModified}";
-        $relationshipWhereClause = 'WHERE ' . strtolower($bean->object_name) . '_id=';
+        $db = DBManagerFactory::getInstance();
+        $modified_user_id = empty($GLOBALS['current_user']) ? 1 : $GLOBALS['current_user']->id;
+        $date_modified = $GLOBALS['timedate']->nowDb();
+        $lower_name = strtolower($bean->object_name);
 
         $sq = new SugarQuery();
         $sq->select(array('id'));
@@ -417,48 +417,45 @@ class CalendarUtils
         $rows = $sq->execute();
 
         foreach ($rows as $row) {
-            $occurrence = BeanFactory::retrieveBean($bean->module_name, $row['id']);
+            $bean = BeanFactory::retrieveBean($bean->module_name, $row['id']);
 
-            if ($occurrence) {
-                $occurrence->call_custom_logic('before_delete', array('id' => $occurrence->id));
+            if ($bean) {
+                $bean->call_custom_logic('before_delete', array('id' => $bean->id));
 
                 // Delete the occurrence.
-                $GLOBALS['db']->query(
-                    "UPDATE {$occurrence->table_name} {$valuesClause}, modified_user_id='{$modifiedUserId}' " .
-                    "WHERE id='{$row['id']}'"
-                );
+                $db->query("UPDATE {$bean->table_name} SET deleted = 1, date_modified = "
+                    . $db->convert($db->quoted($date_modified), 'datetime')
+                    . ", modified_user_id = " . $db->quoted($modified_user_id)
+                    . " WHERE id = " . $db->quoted($row['id']));
 
                 // Remove the contacts invitees.
-                $GLOBALS['db']->query(
-                    "UPDATE {$occurrence->rel_contacts_table} {$valuesClause} {$relationshipWhereClause}'" .
-                    "{$occurrence->id}'"
-                );
+                $db->query("UPDATE {$bean->rel_contacts_table} SET deleted = 1, date_modified = "
+                    . $db->convert($db->quoted($date_modified), 'datetime')
+                    . " WHERE {$lower_name}_id = " . $db->quoted($row['id']));
 
-                if ($occurrence->load_relationship('contacts')) {
-                    $occurrence->contacts->resetLoaded();
+                if ($bean->load_relationship('contacts')) {
+                    $bean->contacts->resetLoaded();
                 }
 
                 // Remove the leads invitees.
-                $GLOBALS['db']->query(
-                    "UPDATE {$occurrence->rel_leads_table} {$valuesClause} {$relationshipWhereClause}'" .
-                    "{$occurrence->id}'"
-                );
+                $db->query("UPDATE {$bean->rel_leads_table} SET deleted = 1, date_modified = "
+                    . $db->convert($db->quoted($date_modified), 'datetime')
+                    . " WHERE {$lower_name}_id = " . $db->quoted($row['id']));
 
-                if ($occurrence->load_relationship('leads')) {
-                    $occurrence->leads->resetLoaded();
+                if ($bean->load_relationship('leads')) {
+                    $bean->leads->resetLoaded();
                 }
 
                 // Remove the users invitees.
-                $GLOBALS['db']->query(
-                    "UPDATE {$occurrence->rel_users_table} {$valuesClause} {$relationshipWhereClause}'" .
-                    "{$occurrence->id}'"
-                );
+                $db->query("UPDATE {$bean->rel_users_table} SET deleted = 1, date_modified = "
+                    . $db->convert($db->quoted($date_modified), 'datetime')
+                    . " WHERE {$lower_name}_id = " . $db->quoted($row['id']));
 
-                if ($occurrence->load_relationship('users')) {
-                    $occurrence->users->resetLoaded();
+                if ($bean->load_relationship('users')) {
+                    $bean->users->resetLoaded();
                 }
 
-                $occurrence->call_custom_logic('after_delete', array('id' => $occurrence->id));
+                $bean->call_custom_logic('after_delete', array('id' => $bean->id));
             }
         }
 
