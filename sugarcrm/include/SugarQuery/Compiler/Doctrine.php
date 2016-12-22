@@ -682,7 +682,9 @@ class SugarQuery_Compiler_Doctrine
         array $fieldDef
     ) {
         $esc = '!';
-        $shouldEscape = strpbrk($substring, '%_') !== false;
+        // temporarily disable escaping of wildcards in order to support their usage in starts(), ends() and contains()
+        // and avoid backward compatibility breakage
+        $shouldEscape = /*strpbrk($substring, '%_') !==*/ false;
         if ($shouldEscape) {
             $pattern = str_replace(
                 array($esc,        '_',        '%'),
