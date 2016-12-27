@@ -337,8 +337,8 @@
                 return loadingLabel;
             },
             placeholder: this.getPlaceHolder(),
-            allowClear: self._allow_single_deselect,
-            minimumInputLength: self._minChars,
+            allowClear: this._allow_single_deselect,
+            minimumInputLength: this._minChars,
             query: _.bind(this.search, this)
         });
         $dropdown.select2('disable');
@@ -428,8 +428,8 @@
             formatSelection: _.bind(this._onFormatSelection, this),
             formatSearching: app.lang.get('LBL_LOADING', this.module),
             placeholder: this.getPlaceHolder(),
-            allowClear: self._allow_single_deselect,
-            minimumInputLength: self._minChars,
+            allowClear: this._allow_single_deselect,
+            minimumInputLength: this._minChars,
             maximumSelectionSize: 20,
             query: _.bind(this.search, this)
         });
