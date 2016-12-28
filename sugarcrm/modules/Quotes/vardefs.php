@@ -274,9 +274,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate'
             ),
-            'formula' => 'rollupCurrencySum($product_bundles, "shipping")',
-            'calculated' => true,
-            'enforced' => true,
+            'default' => '0',
         ),
         'shipping_usdollar' => array(
             'name' => 'shipping_usdollar',
@@ -439,7 +437,7 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
-            'formula' => 'rollupCurrencySum($product_bundles, "total")',
+            'formula' => 'add(rollupCurrencySum($product_bundles, "total"), $shipping)',
             'calculated' => true,
             'enforced' => true,
         ),

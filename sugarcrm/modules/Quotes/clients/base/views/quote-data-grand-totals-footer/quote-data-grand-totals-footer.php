@@ -28,7 +28,9 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                 ),
                 array(
                     'name' => 'shipping',
-                    'type' => 'currency',
+                    'type' => 'quote-footer-currency',
+                    'css_class' => 'quote-footer-currency',
+                    'default' => 0,
                 ),
                 array(
                     'name' => 'total',
