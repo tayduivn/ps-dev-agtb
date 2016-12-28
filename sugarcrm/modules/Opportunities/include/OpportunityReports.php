@@ -182,7 +182,7 @@ class OpportunityReports
     {
         $query = 'SELECT id, content FROM saved_reports WHERE module = ? AND content LIKE ? AND deleted = 0';
         $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array('Opportunities', '"name":"sales_stage"'));
+        $stmt = $conn->executeQuery($query, array('Opportunities', '%"name":"sales_stage"%'));
 
         $reports = array();
         while ($row = $stmt->fetch()) {
