@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Quotes']['base']['view']['subpanel-for-accounts'] = array(
+$viewdefs['Quotes']['base']['view']['subpanel-for-contracts'] = array(
     'type' => 'subpanel-list',
     'panels' => array(
         array(

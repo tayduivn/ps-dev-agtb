@@ -3616,6 +3616,9 @@ Sincerely, SugarCRM',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
+    'LBL_DNB_AND' => 'and',
+    'LBL_DNB_PRIM_NAME_DESC' => 'Text recording a name of this organization',
+
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
     'LBL_TWITTER_RETWEET' => 'Retweet',
