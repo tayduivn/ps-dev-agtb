@@ -22,17 +22,26 @@
     moduleFieldsMeta: undefined,
 
     /**
-     * Field map for where Opportunities fields (values) should map to Quote fields (keys)
+     * Field map for where Opp/RLI fields (values) should map to Quote fields (keys)
      */
-    oppsToQuoteConvertFieldMap: {
-        opportunity_id: 'id',
-        opportunity_name: 'name',
-        billing_accounts: 'accounts',
-        shipping_accounts: 'accounts',
-        billing_account_id: 'account_id',
-        billing_account_name: 'account_name',
-        shipping_account_id: 'account_id',
-        shipping_account_name: 'account_name'
+    convertToQuoteFieldMap: {
+        Opportunities: {
+            opportunity_id: 'id',
+            opportunity_name: 'name'
+        },
+        RevenueLineItems: {
+            name: 'name',
+            opportunity_id: 'opportunity_id',
+            opportunity_name: 'opportunity_name'
+        },
+        default: {
+            billing_accounts: 'accounts',
+            shipping_accounts: 'accounts',
+            billing_account_id: 'account_id',
+            billing_account_name: 'account_name',
+            shipping_account_id: 'account_id',
+            shipping_account_name: 'account_name'
+        }
     },
 
     /**
@@ -86,10 +95,17 @@
         var parentModel = options.context.get('parentModel');
         var ctxModel = options.context.get('model');
         var quoteData = {};
+        var fieldMap;
 
         if (ctxModel && parentModel) {
-            _.each(this.oppsToQuoteConvertFieldMap, function(oppField, quoteField) {
-                quoteData[quoteField] = parentModel.get(oppField);
+            // create a field map from the default fields and module-specific fields
+            fieldMap = _.extend(
+                {},
+                this.convertToQuoteFieldMap.default,
+                this.convertToQuoteFieldMap[parentModel.module]
+            );
+            _.each(fieldMap, function(otherModuleField, quoteField) {
+                quoteData[quoteField] = parentModel.get(otherModuleField);
             }, this);
 
             app.api.call('read', app.api.buildURL('Accounts/' + parentModel.get('account_id')), null, {

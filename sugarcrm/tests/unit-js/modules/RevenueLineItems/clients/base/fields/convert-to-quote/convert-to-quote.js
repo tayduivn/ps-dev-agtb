@@ -1,13 +1,3 @@
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 describe('RevenueLineItems.Base.Field.ConvertToQuote', function() {
     var app, field, moduleName = 'RevenueLineItems', context, def, fieldModel, message, sandbox;
 
@@ -92,51 +82,31 @@ describe('RevenueLineItems.Base.Field.ConvertToQuote', function() {
         });
     });
 
-    describe('convertToQuote', function() {
+    describe('convertToQuote()', function() {
+        var layoutTriggerStub;
+        var massCollection;
         beforeEach(function() {
-            sandbox.stub(app.alert, 'show').returns({
-                getCloseSelector: function() {
-                    return {
-                        remove: function() {}
-                    };
-                }
-            });
-            sandbox.stub(app.lang, 'get').returnsArg(0);
+            layoutTriggerStub = sinon.collection.stub();
+            field.view.layout = {
+                trigger: layoutTriggerStub
+            };
+
+            field.convertToQuote({});
         });
 
-        it('will display an alert when product_template_id is empty but category_id is not', function() {
-            field.model.set({
-                category_id: 'category_id'
-            });
-
-            field.convertToQuote();
-
-            expect(app.alert.show).toHaveBeenCalledWith(
-                'invalid_items',
-                {
-                    level: 'error',
-                    title: 'LBL_ALERT_TITLE_ERROR:',
-                    messages: ['LBL_CONVERT_INVALID_RLI_PRODUCT']
-                }
-            );
+        afterEach(function() {
+            layoutTriggerStub = null;
+            delete field.view.layout;
         });
 
-        it('will make xhr call', function() {
-            sandbox.stub(app.api, 'call');
-            field.convertToQuote();
+        it('should set mass_collection on the context', function() {
+            massCollection = field.context.get('mass_collection');
 
-            expect(app.alert.show).toHaveBeenCalledWith(
-                'info_quote',
-                {
-                    level: 'info',
-                    autoClose: false,
-                    closeable: false,
-                    title: 'LBL_CONVERT_TO_QUOTE_INFO:',
-                    messages: ['LBL_CONVERT_TO_QUOTE_INFO_MESSAGE']
-                }
-            );
+            expect(massCollection).toBeDefined();
+        });
 
-            expect(app.api.call).toHaveBeenCalled();
+        it('should trigger list:massquote:fire on view.layout', function() {
+            expect(layoutTriggerStub).toHaveBeenCalledWith('list:massquote:fire');
         });
     });
 });

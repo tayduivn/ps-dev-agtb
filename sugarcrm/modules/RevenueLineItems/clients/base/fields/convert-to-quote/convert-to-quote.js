@@ -42,43 +42,13 @@
      * @param {Object} e
      */
     convertToQuote: function(e) {
-        // if product template is empty, but category is not, this RLI can not be converted to a quote
-        if (_.isEmpty(this.model.get('product_template_id')) && !_.isEmpty(this.model.get('category_id'))) {
-            app.alert.show('invalid_items', {
-                level: 'error',
-                title: app.lang.get('LBL_ALERT_TITLE_ERROR', this.module) + ':',
-                messages: [app.lang.get('LBL_CONVERT_INVALID_RLI_PRODUCT', this.module)]
-            });
-            return;
+        var massCollection = this.context.get('mass_collection');
+        if (!massCollection) {
+            massCollection = this.context.get('collection').clone();
+            this.context.set('mass_collection', massCollection);
         }
 
-        var alert = app.alert.show('info_quote', {
-            level: 'info',
-            autoClose: false,
-            closeable: false,
-            title: app.lang.get('LBL_CONVERT_TO_QUOTE_INFO', this.module) + ':',
-            messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', this.module)]
-        });
-
-        var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id }),
-            callbacks = {
-                'success': _.bind(function(resp) {
-                    app.alert.dismiss('info_quote');
-                    app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
-                        return_module: this.model.module,
-                        return_id: this.model.id
-                    }), {trigger: true});
-                }, this),
-                'error': _.bind(function() {
-                    app.alert.dismiss('info_quote');
-                    app.alert.show('error_xhr', {
-                        level: 'error',
-                        title: app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR', this.module) + ':',
-                        messages: [app.lang.get('LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', this.module)]
-                    });
-                }, this)
-            };
-        app.api.call('create', url, null, callbacks);
+        this.view.layout.trigger('list:massquote:fire');
     },
 
     /**

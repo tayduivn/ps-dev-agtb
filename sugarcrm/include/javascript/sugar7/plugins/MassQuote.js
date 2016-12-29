@@ -28,7 +28,7 @@
              */
             onAttach: function(component, plugin) {
                 this.once('init', function() {
-                    this.layout.on("list:massquote:fire", this.massQuote, this);
+                    this.layout.on('list:massquote:fire', this.massQuote, this);
                 }, this);
             },
 
@@ -38,8 +38,13 @@
             massQuote: function() {
                 var qliModels = [];
                 var rliObj;
+                var loadViewObj;
+                var parentModel;
 
-                this.hideAll();
+                if (_.isFunction(this.hideAll)) {
+                    this.hideAll();
+                }
+
                 var massQuote = this.context.get('mass_collection');
                 var errors = {
                     'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': [],
@@ -118,16 +123,23 @@
                         qliModels.push(app.data.createBean('Products', rliObj));
                     }, this);
 
-                    // Load the Quotes create view
-                    app.controller.loadView({
+                    loadViewObj = {
                         module: 'Quotes',
                         layout: 'create',
                         action: 'edit',
                         convert: true,
                         create: true,
-                        relatedRecords: qliModels,
-                        parentModel: this.context.parent.get('model')
-                    });
+                        relatedRecords: qliModels
+                    };
+
+                    // for Opps->RLI subpanel, context.parent model contains the Opps record model
+                    // for RLI Record view, context model contains the RLI record model
+                    parentModel = this.context.parent ? this.context.parent.get('model') : this.context.get('model');
+                    // set the record model to be the parentModel
+                    loadViewObj.parentModel = parentModel;
+
+                    // Load the Quotes create view
+                    app.controller.loadView(loadViewObj);
                     app.router.navigate('#Quotes/create', {trigger: false});
                 }
             }

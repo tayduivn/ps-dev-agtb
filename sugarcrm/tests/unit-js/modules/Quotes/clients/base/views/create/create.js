@@ -150,36 +150,85 @@ describe('Quotes.Base.Views.Create', function() {
     describe('_prepopulateQuoteWithOpp()', function() {
         var options;
         var quoteModel;
-        var oppModel;
+        var otherModuleModel;
 
         beforeEach(function() {
             quoteModel = new Backbone.Model();
-            oppModel = new Backbone.Model({
-                id: 'oppId1',
-                name: 'oppName1',
+            otherModuleModel = new Backbone.Model({
                 account_id: 'acctId1',
                 account_name: 'acctName1'
             });
-            context.set({
-                model: quoteModel,
-                parentModel: oppModel
+            sinon.collection.stub(app.api, 'call', function() {});
+            sinon.collection.stub(app.api, 'buildURL', function(params) {
+                return params;
             });
-            options = {
-                context: context
-            };
         });
 
         afterEach(function() {
             options = null;
         });
 
-        it('should map fields and prepopulate the Quote context', function() {
-            view._prepopulateQuoteWithOpp(options);
+        describe('from Opportunity', function() {
+            beforeEach(function() {
+                otherModuleModel.set({
+                    id: 'oppId1',
+                    name: 'oppName1'
+                });
+                otherModuleModel.module = 'Opportunities';
+                context.set({
+                    model: quoteModel,
+                    parentModel: otherModuleModel
+                });
+                options = {
+                    context: context
+                };
 
-            expect(quoteModel.get('opportunity_id')).toBe('oppId1');
-            expect(quoteModel.get('opportunity_name')).toBe('oppName1');
-            expect(quoteModel.get('billing_account_id')).toBe('acctId1');
-            expect(quoteModel.get('billing_account_name')).toBe('acctName1');
+                view._prepopulateQuoteWithOpp(options);
+            });
+
+            it('should map fields and prepopulate the Quote context', function() {
+                expect(quoteModel.get('opportunity_id')).toBe('oppId1');
+                expect(quoteModel.get('opportunity_name')).toBe('oppName1');
+                expect(quoteModel.get('billing_account_id')).toBe('acctId1');
+                expect(quoteModel.get('billing_account_name')).toBe('acctName1');
+            });
+
+            it('should call app.api.call to get the account', function() {
+                expect(app.api.call).toHaveBeenCalledWith('read', 'Accounts/acctId1');
+            });
+        });
+
+        describe('from Revenue Line Item', function() {
+            beforeEach(function() {
+                otherModuleModel.set({
+                    id: 'rliId1',
+                    name: 'rliName1',
+                    opportunity_id: 'oppId1',
+                    opportunity_name: 'oppName1'
+                });
+                otherModuleModel.module = 'RevenueLineItems';
+                context.set({
+                    model: quoteModel,
+                    parentModel: otherModuleModel
+                });
+                options = {
+                    context: context
+                };
+
+                view._prepopulateQuoteWithOpp(options);
+            });
+
+            it('should map fields and prepopulate the Quote context', function() {
+                expect(quoteModel.get('name')).toBe('rliName1');
+                expect(quoteModel.get('opportunity_id')).toBe('oppId1');
+                expect(quoteModel.get('opportunity_name')).toBe('oppName1');
+                expect(quoteModel.get('billing_account_id')).toBe('acctId1');
+                expect(quoteModel.get('billing_account_name')).toBe('acctName1');
+            });
+
+            it('should call app.api.call to get the account', function() {
+                expect(app.api.call).toHaveBeenCalledWith('read', 'Accounts/acctId1');
+            });
         });
     });
 
