@@ -25,98 +25,65 @@ class PMSEJobQueueHandler extends PMSEAbstractRequestHandler
     protected $requestType = 'queue';
 
     /**
-     * @var SchedulersJob this attribute stores an instance of the SchedulersJob class
+     * List of valid fields for a process
+     * @var array
      */
-    protected $schedulersJob;
+    protected $validFields = array(
+        'evn_criteria',
+        'rel_element_module',
+        'rel_element_relationship',
+        'rel_process_module',
+        'new_with_id',
+        'cas_delayed',
+        'cas_finished',
+        'cas_started',
+        'cas_delay_duration',
+        'cas_duration',
+        'cas_queue_duration',
+        'cas_due_date',
+        'cas_finish_date',
+        'cas_start_date',
+        'cas_delegate_date',
+        'cas_sugar_action',
+        'cas_sugar_object_id',
+        'cas_sugar_module',
+        'cas_flow_status',
+        'cas_thread',
+        'cas_user_id',
+        'bpmn_type',
+        'bpmn_id',
+        'pro_id',
+        'cas_id',
+        'cas_index',
+        'id',
+    );
 
     /**
-     * @var SugarJobQueue this attribute stores an instance of the SchedulersJob class
-     */
-    protected $sugarJobQueue;
-
-    /**
-     * @var User this attribute stores an instance of the User class,
-     * especificcally the current logged user that executes the process
-     */
-    protected $currentUser;
-
-    /**
-     * Set the Scheduler Job attribute
-     * @param SchedulersJob $schedulersJob
-     * @codeCoverageIgnore
-     */
-    public function setSchedulersJob(SchedulersJob $schedulersJob)
-    {
-        $this->schedulersJob = $schedulersJob;
-    }
-
-    /**
-     * Retrieve the Scheduler Job attribute
+     * Retrieve the Scheduler Job object
      * @return SchedulersJob
      * @codeCoverageIgnore
      */
     public function getSchedulersJob()
     {
-        if (empty($this->schedulersJob)) {
-            $this->schedulersJob = new SchedulersJob();
-        }
-
-        return $this->schedulersJob;
+        return BeanFactory::getBean('SchedulersJobs');
     }
 
     /**
-     * Set the Sugar Job Queue attribute.
-     * @param SugarJobQueue $sugarJobQueue
-     * @codeCoverageIgnore
-     */
-    public function setSugarJobQueue(SugarJobQueue $sugarJobQueue)
-    {
-        $this->sugarJobQueue = $sugarJobQueue;
-    }
-
-    /**
-     * Retrieve the Sugar Job Queue attribute
+     * Retrieve the Sugar Job Queue object
      * @return SugarJobQueue
      * @codeCoverageIgnore
      */
     public function getSugarJobQueue()
     {
-        if (empty($this->sugarJobQueue)) {
-            $this->sugarJobQueue = new SugarJobQueue();
-        }
-
-        return $this->sugarJobQueue;
+        return new SugarJobQueue();
     }
 
     /**
-     * Set the current User attribute
-     * @param User $currentUser
-     * @codeCoverageIgnore
-     */
-    public function setCurrentUser(User $currentUser)
-    {
-        $this->currentUser = $currentUser;
-    }
-
-    /**
-     * Get Current User attribute
+     * Get the current user
      * @return User
      * @codeCoverageIgnore
      */
     public function getCurrentUser()
-    {
-        if (empty($this->currentUser)) {
-            $this->currentUser = $this->fetchCurrentUser();
-        }
-
-        return $this->currentUser;
-    }
-
-    /**
-     * Fetches the current user from the global variable
-     * @return User
-     */
-    protected function fetchCurrentUser()
     {
         global $current_user;
         return $current_user;
@@ -124,8 +91,8 @@ class PMSEJobQueueHandler extends PMSEAbstractRequestHandler
 
     /**
      * Submit a Job top the Sugar job queue handler
-     * @param type $params
-     * @return type
+     * @param Object $params
+     * @return string
      */
     public function submitPMSEJob($params)
     {
@@ -149,40 +116,15 @@ class PMSEJobQueueHandler extends PMSEAbstractRequestHandler
         return $this->getSugarJobQueue()->submitJob($job);
     }
 
+    /**
+     * Filters process data against a list of valid fields
+     * @param array $dataArray Process data array
+     * @return array
+     */
     public function filterData($dataArray)
     {
-        $validFields = array(
-            'evn_criteria',
-            'rel_element_module',
-            'rel_element_relationship',
-            'rel_process_module',
-            'new_with_id',
-            'cas_delayed',
-            'cas_finished',
-            'cas_started',
-            'cas_delay_duration',
-            'cas_duration',
-            'cas_queue_duration',
-            'cas_due_date',
-            'cas_finish_date',
-            'cas_start_date',
-            'cas_delegate_date',
-            'cas_sugar_action',
-            'cas_sugar_object_id',
-            'cas_sugar_module',
-            'cas_flow_status',
-            'cas_thread',
-            'cas_user_id',
-            'bpmn_type',
-            'bpmn_id',
-            'pro_id',
-            'cas_id',
-            'cas_index',
-            'id'
-        );
-
         foreach ($dataArray as $key => $value) {
-            if (!in_array($key, $validFields)) {
+            if (!in_array($key, $this->validFields)) {
                 unset($dataArray[$key]);
             }
         }

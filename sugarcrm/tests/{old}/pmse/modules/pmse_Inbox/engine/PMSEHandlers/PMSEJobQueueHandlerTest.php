@@ -12,32 +12,11 @@
  */
 class PMSEJobQueueHandlerTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * Sets up the test data, for example,
-     *     opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-
-    }
-
-    /**
-     * Removes the initial test configurations for each test, for example:
-     *     close a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-
-    }
-
-
     public function testSubmitPMSEJob()
     {
         $jobQueueHandler = $this->getMockBuilder('PMSEJobQueueHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('filterData'))
+                ->setMethods(array('filterData', 'getSchedulersJob', 'getSugarJobQueue', 'getCurrentUser'))
                 ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
@@ -65,9 +44,9 @@ class PMSEJobQueueHandlerTest extends PHPUnit_Framework_TestCase
         $currentUserMock = SugarTestUserUtilities::createAnonymousUser(false, 0, array('id' => 'user01'));
 
         $jobQueueHandler->setLogger($loggerMock);
-        $jobQueueHandler->setCurrentUser($currentUserMock);
-        $jobQueueHandler->setSchedulersJob($schedulersJobMock);
-        $jobQueueHandler->setSugarJobQueue($sugarJobQueueMock);
+        $jobQueueHandler->method('getCurrentUser')->willReturn($currentUserMock);
+        $jobQueueHandler->method('getSchedulersJob')->willReturn($schedulersJobMock);
+        $jobQueueHandler->method('getSugarJobQueue')->willReturn($sugarJobQueueMock);
 
         $params = new stdClass();
         $params->id = 'params01';
