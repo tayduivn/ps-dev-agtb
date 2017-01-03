@@ -28,7 +28,6 @@
     plugins: [
         'Editable',
         'ErrorDecoration',
-        'LinkedModel',
         'MassCollection',
         'SugarLogic',
         'QuotesLineNumHelper'
@@ -187,15 +186,14 @@
 
         this.isEmptyGroup = this.collection.length === 0;
 
-       // for each item in the collection, setup SugarLogic
-       /*var collections = this.model.fields['product_bundle_items'].links;
-       _.each(collections, function(link) {
-             var collection = this.model.getRelatedCollection(link);
-             if (collection) {
-                 this.setupSugarLogicForModel(collection.model, collection);
-             }
-       }, this);*/
-        this.collection.each(this.setupSugarLogicForModel, this);
+        // for each item in the collection, setup SugarLogic
+        var collections = this.model.fields['product_bundle_items'].links;
+        _.each(collections, function(link) {
+            var collection = this.model.getRelatedCollection(link);
+            if (collection) {
+                this.setupSugarLogicForModelOrCollection(collection);
+            }
+        }, this);
 
         // listen directly on the parent QuoteDataGroupLayout
         this.layout.on('quotes:group:create:qli', this.onAddNewItemToGroup, this);
@@ -232,7 +230,7 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        this.collection.on('add', this.setupSugarLogicForModel, this);
+        //this.collection.on('add', this.setupSugarLogicForModel, this);
     },
 
     /**
@@ -275,20 +273,19 @@
      * @param {Data.Collection} collection
      * @param {Object} options
      */
-    setupSugarLogicForModel: function(model, collection, options) {
+    setupSugarLogicForModelOrCollection: function(modelOrCollection) {
         var slContext;
-        var dependencies = this._getSugarLogicDependenciesForModel(model);
+        var isCollection = (modelOrCollection instanceof app.data.beanCollection);
+        var dependencies = this._getSugarLogicDependenciesForModel(modelOrCollection);
         if (_.size(dependencies) > 0) {
-
-            app.logger.debug('Setting up SugarLogic for "' + model.get('id') + '" with module of "' +
-                model.module + '" with "' + dependencies.length + '" dependencies');
-
-            slContext = this.initSugarLogic(
-                model,
-                dependencies,
-                _.has(this.toggledModels, model.cid)
+            slContext = new SUGAR.expressions.SidecarExpressionContext(
+                this,
+                isCollection ? new modelOrCollection.model() : modelOrCollection,
+                isCollection ? modelOrCollection : false
             );
-            this.sugarLogicContexts[model.cid] = slContext;
+            slContext.initialize(dependencies);
+            var id = isCollection ? modelOrCollection.module : modelOrCollection.get('id') || modelOrCollection.cid;
+            this.sugarLogicContexts[id] = slContext;
         }
     },
 
@@ -368,10 +365,9 @@
      * @param {string} linkName The link name of the new item to create: products or product_bundle_notes
      */
     onAddNewItemToGroup: function(linkName, prepopulateData) {
-        var relatedModel = this.createLinkModel(this.model, linkName);
+        var relatedModel = app.data.createRelatedBean(this.model, null, linkName);//this.createLinkModel(this.model, linkName);
         var maxPositionModel;
         var position = 0;
-        var newRelatedModelId = app.utils.generateUUID();
         var $relatedRow;
         var moduleName = linkName === 'products' ? 'Products' : 'ProductBundleNotes';
         var modelData;
@@ -427,7 +423,7 @@
         // adding to the collection will trigger the render
         this.collection.add(relatedModel);
 
-        $relatedRow = this.$('tr[name="' + relatedModel.module + '_' + relatedModel.cid + '"]');
+        $relatedRow = this.$('tr[name="' + relatedModel.module + '_' + relatedModel.id + '"]');
         if ($relatedRow.length) {
             if (this.isCreateView) {
                 $relatedRow.addClass(this.sortableCSSClass);
@@ -803,9 +799,7 @@
      */
     _dispose: function() {
         _.each(this.sugarLogicContexts, function(slContext) {
-            _.each(slContext.dependencies, function(dep) {
-                this.view.off('list:editrow:fire', null, dep);
-            }, slContext);
+            slContext.dispose();
         });
         this._super('_dispose');
         this.rowFields = null;

@@ -86,33 +86,19 @@ class MaxRelatedExpression extends NumericExpression
             sortByDesc = function (lhs, rhs) { return parseFloat(lhs) < parseFloat(rhs) ? 1 : parseFloat(lhs) > parseFloat(rhs) ? -1 : 0; },
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             current_value = this.context.getRelatedField(relationship, 'rollupMax', rel_field) || '',
-            all_values = this.context.getRelatedField(relationship, 'rollupMax', rel_field + '_values') || {},
-            new_value = model.get(rel_field) || '',
             finite_values = {},
             rollup_value = '0';
             
-        // this needs to be an object, not an array
-        if (_.isArray(all_values) && _.isEmpty(all_values)) {
-            all_values = {};
-        }
+        this.context.updateRelatedCollectionValues(
+            this.context.model,
+            relationship,
+            'rollupMax',
+            rel_field,
+            model,
+            (hasModelBeenRemoved ? 'remove' : 'add')
+        );
 
-        if (isCurrency) {
-            new_value = App.currency.convertToBase(
-                new_value,
-                model.get('currency_id')
-            );
-        }
-
-        if (hasModelBeenRemoved || !_.isFinite(new_value)) {
-            delete all_values[model_id];
-        } else if (this.context.relatedModel || all_values[model_id]) {
-            // while this is icky, i believe it's needed for now
-            if (all_values[model.cid] && model_id != model.cid) {
-                delete all_values[model.cid];
-            }
-            // the model is related or current with related record
-            all_values[model_id] = new_value;
-        }
+        var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupMax', rel_field) || {};
 
         if (_.size(all_values) > 0) {
             finite_values = _.map(_.values(all_values), _.partial(parseInt, _, 10));
@@ -139,14 +125,6 @@ class MaxRelatedExpression extends NumericExpression
                 this.context.model.isNew()
             );
         }
-        // always update the values array
-        this.context.updateRelatedFieldValue(
-            relationship,
-            'rollupMax',
-            rel_field + '_values',
-            all_values,
-            this.context.model.isNew()
-        );
 
         return rollup_value;
 JS;

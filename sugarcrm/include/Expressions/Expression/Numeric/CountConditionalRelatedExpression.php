@@ -85,16 +85,21 @@ class CountConditionalRelatedExpression extends NumericExpression
             // is the condition field valid?
             conditionValid = _.contains(condition_values, model.get(condition_field));
 
-        // if we have a model with out an id, ignore it
-        if (!model.has('id')) {
-            return;
-        }
         if (conditionValid || conditionChanged) {
             var current_value = this.context.getRelatedField(relationship, 'countConditional', target) || '0',
                 context_previous_values = this.context.previous_values || {},
                 previous_value = context_previous_values[target + '--' + model_id] || '',
                 new_value = model.get(condition_field);
                 rollup_value = undefined;
+
+             this.context.updateRelatedCollectionValues(
+                    this.context.model,
+                    relationship,
+                    'countConditional',
+                    target,
+                    model,
+                    (hasModelBeenRemoved ? 'remove' : 'add')
+                );
 
             // when the model is not new, and the previous_value is empty, lets try and fetch it from the
             // relatedModel just to make sure, as it might have a previous value

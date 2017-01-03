@@ -122,6 +122,10 @@
      * @private
      */
     _onCreateDefaultQuoteGroup: function(itemType) {
+        //Ensure the default group exists
+        if (!this.defaultGroupId) {
+            this.model.get('bundles').add(this._getDefaultGroupModel());
+        }
         var linkName = itemType == 'qli' ? 'products' : 'product_bundle_notes';
         var group = this._getComponentByGroupId(this.defaultGroupId);
         group.trigger('quotes:group:create:' + itemType, linkName);
@@ -463,14 +467,14 @@
      * @private
      */
     _updateDefaultGroupWithNewData: function(group, recordData) {
-        if (this.defaultGroupId !== recordData.id) {
+        if (this.defaultGroupId !== recordData.cid) {
             // remove the old default group ID from groupIds
             this.groupIds = _.without(this.groupIds, this.defaultGroupId);
             // add the new group ID so we dont add the default group twice
-            this.groupIds.push(recordData.id);
+            this.groupIds.push(recordData.cid);
         }
         // update defaultGroupId with new id
-        this.defaultGroupId = recordData.id;
+        this.defaultGroupId = recordData.cid;
         // set the new data on the group model
         group.model.set(recordData);
         // update groupId with new id
@@ -764,7 +768,7 @@
     _getDefaultGroupModel: function() {
         var defaultGroup = this._createNewProductBundleBean(null, 0, true);
         // if there is not a default group yet, add one
-        this.defaultGroupId = defaultGroup.id || defaultGroup.cid;
+        this.defaultGroupId = defaultGroup.cid;
         return defaultGroup;
     },
 
@@ -778,7 +782,6 @@
      * @protected
      */
     _createNewProductBundleBean: function(groupId, newPosition, isDefaultGroup) {
-        //groupId = groupId || app.utils.generateUUID();
         newPosition = newPosition || 0;
         isDefaultGroup = isDefaultGroup || false;
         return app.data.createBean('ProductBundles', {

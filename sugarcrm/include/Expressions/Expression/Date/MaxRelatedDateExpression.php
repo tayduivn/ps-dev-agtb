@@ -114,23 +114,24 @@ class MaxRelatedDateExpression extends DateExpression
             sortByDateDesc = function (lhs, rhs) { return lhs < rhs ? 1 : lhs > rhs ? -1 : 0; },
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             current_value = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field) || '',
-            all_values = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field + '_values') || {},
             new_value = model.get(rel_field) || '',
             dates = [],
             rollup_value = '';
 
+        // always update the values array
+        this.context.updateRelatedCollectionValues(
+            this.context.model,
+            relationship,
+            'maxRelatedDate',
+            rel_field,
+            model,
+            (hasModelBeenRemoved ? 'remove' : 'add')
+        );
+
+        var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'maxRelatedDate', rel_field) || {};
+
         if (_.isEqual(new_value, '')) {
             return current_value;
-        }
-
-        if (hasModelBeenRemoved) {
-            delete all_values[model_id];
-        } else {
-            // while this is icky, i believe it's needed for now
-            if (all_values[model.cid] && model_id != model.cid) {
-                delete all_values[model.cid];
-            }
-            all_values[model_id] = new_value;
         }
 
         _.each(all_values, function(_date) {
@@ -150,15 +151,6 @@ class MaxRelatedDateExpression extends DateExpression
                 this.context.model.isNew()
             );
         }
-
-        // always update the values array
-        this.context.updateRelatedFieldValue(
-            relationship,
-            'maxRelatedDate',
-            rel_field + '_values',
-            all_values,
-            this.context.model.isNew()
-        );
 JS;
 
     }
