@@ -35,14 +35,22 @@
             type: 'menubutton',
             tooltip: app.lang.get('LBL_ATTACHMENT', this.module),
             icon: 'paperclip',
+            onclick: function(event) {
+                // Track click on the attachment button.
+                app.analytics.trackEvent('click', 'tinymce_email_attachment_button', event);
+            },
             menu: [{
                 text: app.lang.get('LBL_ATTACH_FROM_LOCAL', this.module),
-                onclick: _.bind(function() {
+                onclick: _.bind(function(event) {
+                    // Track click on the file attachment button.
+                    app.analytics.trackEvent('click', 'tinymce_email_attachment_file_button', event);
                     this.view.trigger('email_attachments:file:pick');
                 }, this)
             }, {
                 text: app.lang.get('LBL_ATTACH_SUGAR_DOC', this.module),
-                onclick: _.bind(function() {
+                onclick: _.bind(function(event) {
+                    // Track click on the document attachment button.
+                    app.analytics.trackEvent('click', 'tinymce_email_attachment_doc_button', event);
                     this.view.trigger('email_attachments:document:pick');
                 }, this)
             }]
@@ -58,6 +66,10 @@
                 // load the users signatures
                 self._getSignatures();
             },
+            onclick: function(event) {
+                // Track click on the signature button.
+                app.analytics.trackEvent('click', 'tinymce_email_signature_button', event);
+            },
             // menu is populated from the _getSignatures() response
             menu: []
         });
@@ -66,7 +78,9 @@
             editor.addButton('sugartemplate', {
                 tooltip: app.lang.get('LBL_TEMPLATE', this.module),
                 icon: 'file-o',
-                onclick: _.bind(function() {
+                onclick: _.bind(function(event) {
+                    // Track click on the template button.
+                    app.analytics.trackEvent('click', 'tinymce_email_template_button', event);
                     this._handleButtonClick('template');
                 }, this)
             });
@@ -170,7 +184,9 @@
             _.each(signatures, _.bind(function(signature) {
                 this._signatureBtn.settings.menu.push({
                     text: signature.get('name'),
-                    onclick: _.bind(function() {
+                    onclick: _.bind(function(event) {
+                        // Track click on a signature.
+                        app.analytics.trackEvent('click', 'email_signature', event);
                         this._handleButtonClick('selected_signature', signature);
                     }, this)
                 });

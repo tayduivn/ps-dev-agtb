@@ -623,12 +623,19 @@
 
         if (_.isEmpty(this._getFullContent())) {
             this._insertTemplate(template);
-
         } else {
             app.alert.show('delete_confirmation', {
                 level: 'confirmation',
                 messages: app.lang.get('LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG', this.module),
-                onConfirm: _.bind(this._insertTemplate, this, template)
+                onConfirm: _.bind(function(event) {
+                    // Track click on confirmation button.
+                    app.analytics.trackEvent('click', 'email_template_confirm', event);
+                    this._insertTemplate(template);
+                }, this),
+                onCancel: function(event) {
+                    // Track click on cancel button.
+                    app.analytics.trackEvent('click', 'email_template_cancel', event);
+                }
             });
         }
     },
@@ -643,6 +650,9 @@
         var replyContent;
 
         if (_.isObject(template)) {
+            // Track applying an email template.
+            app.analytics.trackEvent('email_template', 'apply', template);
+
             replyContent = this._getReplyContent();
             subject = template.get('subject');
 

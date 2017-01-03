@@ -424,38 +424,45 @@
      */
     _handleFileUploadSuccess: function(data) {
         var file;
+        var error;
 
         if (this.disposed === true) {
             return;
         }
 
         if (!data.record || !data.record.id) {
-            app.logger.error('Temporary file has no GUID.');
+            error = new Error('Temporary file has no GUID');
+            app.logger.error(error.message);
             app.alert.show('upload_error', {
                 level: 'error',
                 autoClose: true,
                 messages: app.lang.get('ERROR_UPLOAD_FAILED')
             });
-            return;
-        }
 
-        file = {
-            filename_guid: data.record.id,
-            name: data.record.filename || data.record.name,
-            filename: data.record.filename || data.record.name,
-            file_mime_type: data.record.file_mime_type,
-            file_size: data.record.file_size,
-            file_ext: data.record.file_ext
-        };
-        this.model.get(this.name).add(file, {merge: true});
+            // Track errors attaching a file.
+            app.analytics.trackEvent('email_attachment', 'upload_error', error);
+        } else {
+            file = {
+                filename_guid: data.record.id,
+                name: data.record.filename || data.record.name,
+                filename: data.record.filename || data.record.name,
+                file_mime_type: data.record.file_mime_type,
+                file_size: data.record.file_size,
+                file_ext: data.record.file_ext
+            };
+            this.model.get(this.name).add(file, {merge: true});
+
+            // Track attaching a file.
+            app.analytics.trackEvent('email_attachment', 'attached_file', file);
+        }
     },
 
     /**
      * Handles an error response from the API for uploading the file.
      *
-     * If the error status is 'request_too_large' or 413, then an error is shown to the user
-     * indicating that the error was due to exceeding the maximum filesize.
-     * Otherwise, the error is handled by the framework.
+     * If the error status is 'request_too_large' or 413, then an error is
+     * shown to the user indicating that the error was due to exceeding the
+     * maximum filesize. Otherwise, the error is handled by the framework.
      *
      * @param {HttpError} error AJAX error.
      * @private
@@ -464,6 +471,9 @@
         if (this.disposed === true) {
             return;
         }
+
+        // Track errors attaching a file.
+        app.analytics.trackEvent('email_attachment', 'upload_error', error);
 
         if (error && (error.error === 'request_too_large' || error.status == 413)) {
             // Mark the error as having been handled so that it doesn't get
@@ -526,6 +536,10 @@
             placeholder = this._addPlaceholderAttachment(placeholderName);
             this._requests[placeholder.cid] = doc.fetch({
                 success: _.bind(this._handleDocumentFetchSuccess, this),
+                error: function(error) {
+                    // Track errors attaching a document.
+                    app.analytics.trackEvent('email_attachment', 'doc_error', error);
+                },
                 complete: _.bind(function() {
                     this._removePlaceholderAttachment(placeholder);
                 }, this)
@@ -558,6 +572,9 @@
             file_source: 'DocumentRevisions'
         };
         this.model.get(this.name).add(file, {merge: true});
+
+        // Track attaching a document.
+        app.analytics.trackEvent('email_attachment', 'attached_doc', file);
     },
 
     /**
