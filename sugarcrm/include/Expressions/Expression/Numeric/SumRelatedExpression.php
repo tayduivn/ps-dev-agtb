@@ -93,10 +93,8 @@ class SumRelatedExpression extends NumericExpression
             precision = model.fields[rel_field].precision || 6,
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             current_value = this.context.getRelatedField(relationship, 'rollupSum', rel_field) || '',
-            new_value = model.get(rel_field) || '',
-            rollup_value = '0'
-            id = model.get('id') || model.cid;
-            
+            rollup_value = '0';
+
         // always update the values array
         this.context.updateRelatedCollectionValues(
             this.context.model,

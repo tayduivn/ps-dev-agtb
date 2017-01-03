@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -10,6 +9,15 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+if (!defined('sugarEntry')){
+    //This script is designed to be runnable stand alone
+    define('sugarEntry', true);
+    require_once('include/utils.php');
+    require_once('include/utils/array_utils.php');
+    require_once 'include/SugarObjects/SugarConfig.php';
+    require_once('include/utils/autoloader.php');
+}
+
 
 /**
  * Traverses the Arithmetic directory and builds the cache of
@@ -180,41 +188,46 @@ EOQ;
 		echo "</ul>";
 	}
 
-	return array("function_map" => $contents, "javascript"=>$js_contents);
+    return array(
+        "function_map" => $contents,
+        "javascript" => $js_contents,
+    );
 }
 
-$silent = isset($GLOBALS['updateSilent']) ? $GLOBALS['updateSilent'] : false;
+
+function buildCache($outputDir, $silent = false, $minify = true)
+{
 // the new contents of the functionmap.php file
-$contents = recursiveParse("include/Expressions/Expression", $silent);
+	$contents = recursiveParse("include/Expressions/Expression", $silent);
 
-if (is_dir("custom/include/Expressions/Expression")) {
-    $customContents = recursiveParse("custom/include/Expressions/Expression", $silent);
-    $contents["function_map"] .= $customContents["function_map"];
-	$contents["javascript"]   .= $customContents["javascript"];
-}
+	if (is_dir("custom/include/Expressions/Expression")) {
+		$customContents = recursiveParse("custom/include/Expressions/Expression", $silent);
+		$contents["function_map"] .= $customContents["function_map"];
+		$contents["javascript"] .= $customContents["javascript"];
+	}
 
 //Parse Actions into the cached javascript.
-$contents["javascript"] .= ActionFactory::buildActionCache($silent);
+	require_once("include/Expressions/Actions/ActionFactory.php");
+	$contents["javascript"] .= ActionFactory::buildActionCache($silent);
 
 
-$new_contents = "<?php\n\$FUNCTION_MAP = array(\n";
-$new_contents .= $contents["function_map"];
-$new_contents .= ");\n";
+	$new_contents = "<?php\n\$FUNCTION_MAP = array(\n";
+	$new_contents .= $contents["function_map"];
+	$new_contents .= ");\n";
 
 
+	create_cache_directory("Expressions/functionmap.php");
 
-create_cache_directory("Expressions/functionmap.php");
-
-$fmap = sugar_cached("Expressions/functionmap.php");
+	$fmap = sugar_cached("Expressions/functionmap.php");
 // now write the new contents to functionmap.php
-sugar_file_put_contents($fmap, $new_contents);
+	sugar_file_put_contents($fmap, $new_contents);
 
 // write the functions cache file
-$cache_contents = $contents["javascript"];
+	$cache_contents = $contents["javascript"];
 
-include($fmap);
+	include($fmap);
 
-$cache_contents .= <<<EOQ
+	$cache_contents .= <<<EOQ
 /**
  * The function to object map that is used by the Parser
  * to parse expressions into objects.
@@ -222,17 +235,17 @@ $cache_contents .= <<<EOQ
 SUGAR.FunctionMap = {
 
 EOQ;
-if ( isset($FUNCTION_MAP) && is_array($FUNCTION_MAP) ) {
-    foreach ( $FUNCTION_MAP as $key=>$value ) {
-        $entry = $FUNCTION_MAP[$key]['class'];
-        $cache_contents .= "\t'$key'\t:\tSUGAR.expressions.$entry,";
-    }
-}
-$cache_contents = substr($cache_contents, 0, -1);
-$cache_contents .= "};\n";
+	if (isset($FUNCTION_MAP) && is_array($FUNCTION_MAP)) {
+		foreach ($FUNCTION_MAP as $key => $value) {
+			$entry = $FUNCTION_MAP[$key]['class'];
+			$cache_contents .= "\t'$key'\t:\tSUGAR.expressions.$entry,";
+		}
+	}
+	$cache_contents = substr($cache_contents, 0, -1);
+	$cache_contents .= "};\n";
 
 
-$cache_contents .= <<<EOQ
+	$cache_contents .= <<<EOQ
 /**
  * The function to object map that is used by the Parser
  * to parse expressions into objects.
@@ -240,19 +253,43 @@ $cache_contents .= <<<EOQ
 SUGAR.NumericConstants = {
 
 EOQ;
-if ( isset(Parser::$NUMERIC_CONSTANTS) && is_array(Parser::$NUMERIC_CONSTANTS) ) {
-    foreach ( Parser::$NUMERIC_CONSTANTS as $key=>$value ) {
-        $cache_contents .= "\t'$key'\t:\t$value,";
-    }
+	if (isset(Parser::$NUMERIC_CONSTANTS) && is_array(Parser::$NUMERIC_CONSTANTS)) {
+		foreach (Parser::$NUMERIC_CONSTANTS as $key => $value) {
+			$cache_contents .= "\t'$key'\t:\t$value,";
+		}
+	}
+	$cache_contents = substr($cache_contents, 0, -1);
+	$cache_contents .= "};\n";
+
+	create_cache_directory("Expressions/functions_cache_debug.js");
+	sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
+
+
+	if (function_exists('sugar_file_put_contents')) {
+		sugar_file_put_contents("$outputDir/functions_cache_debug.js", $cache_contents);
+	} else {
+		file_put_contents("$outputDir/functions_cache_debug.js", $cache_contents);
+	}
+
+	if ($minify) {
+		require_once("jssource/minify_utils.php");
+		$minifyUtils = new SugarMinifyUtils();
+		$minifyUtils->CompressFiles(
+			"$outputDir/functions_cache_debug.js", "$outputDir/functions_cache.js"
+		);
+	} else {
+		copy("$outputDir/functions_cache_debug.js", "$outputDir/functions_cache.js");
+	}
+	if (!$silent) {
+		echo "complete.\n";
+	}
 }
-$cache_contents = substr($cache_contents, 0, -1);
-$cache_contents .= "};\n";
-
-create_cache_directory("Expressions/functions_cache_debug.js");
-sugar_file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
-$minifyUtils = new SugarMinifyUtils();
-$minifyUtils->CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
-if (!$silent) echo "complete.";
-?>
+global $updateSilent;
+
+if (!isset($exec) || $exec) {
+    $silent = isset($GLOBALS['updateSilent']) ? $GLOBALS['updateSilent'] : false;
+    create_cache_directory("Expressions/functions_cache.js");
+    buildCache(sugar_cached("Expressions"), $silent, true);
+}
