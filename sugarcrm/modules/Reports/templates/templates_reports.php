@@ -283,11 +283,12 @@ EOD
     ;
 
     $reportName =  $args['reporter']->saved_report->name;
+    $reportNameEncoded = json_encode($reportName, JSON_HEX_APOS | JSON_HEX_QUOT);
 
-    $shareButtonCode = "parent.SUGAR.App.bwc.shareRecord('Reports', '$report_id', '".htmlspecialchars($reportName)."');";
+    $shareButtonCode = 'parent.SUGAR.App.bwc.shareRecord("Reports", "$report_id", '.$reportNameEncoded.");";
     $buttons[] = <<<EOD
         <input type="button" class="button" name="shareReportButton" id="shareReportButton" accessKey="{$app_strings['LBL_SHARE_BUTTON_KEY']}" value="{$app_strings['LBL_SHARE_BUTTON_LABEL']}" title="{$app_strings['LBL_SHARE_BUTTON_TITLE']}"
-               onclick="$shareButtonCode">
+               onclick='$shareButtonCode'>
 EOD;
 
     if ($report_edit_access) {
