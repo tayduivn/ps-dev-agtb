@@ -65,7 +65,7 @@ class PrepareKBDocument
      * Files to delete after upgrade.
      * @var array
      */
-    protected $upgrader->fileToDelete;
+    protected $fileToDelete;
 
     /**
      * Callback for log.
