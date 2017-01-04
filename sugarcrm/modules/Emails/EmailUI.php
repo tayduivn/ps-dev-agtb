@@ -1317,7 +1317,7 @@ eoq;
 		// $ret['uid'] is the draft Email object's GUID
 		$ret['attachments'] = array();
 
-        $q = "SELECT id, filename FROM notes WHERE parent_id = '{$ret['uid']}' AND deleted = 0";
+        $q = "SELECT id, filename FROM notes WHERE parent_id = {$db->quoted($ret['uid'])} AND deleted = 0";
 		$r = $db->query($q);
 
 		while($a = $db->fetchByAssoc($r)) {
