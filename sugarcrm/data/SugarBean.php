@@ -4647,7 +4647,8 @@ class SugarBean
                             }
                             if (isset($data['link_type']) && $data['link_type'] == 'relationship_info' && ($parentbean instanceOf SugarBean))
                             {
-                                $ret_array['secondary_where'] = $params['join_table_link_alias'] . '.' . $join['rel_key']. "='" .$parentbean->id . "'";
+                                $ret_array['secondary_where'] = $params['join_table_link_alias'] . '.' .
+                                $join['rel_key']. "=" . $this->db->quoted($parentbean->id);
                             }
                         }
                     }
