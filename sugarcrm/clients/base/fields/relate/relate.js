@@ -546,7 +546,15 @@
              */
             this._valueSetOnce = true;
         }
-        setFromCtx = value === null && !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
+
+        // This check sees if we should populate the field from the context.
+        // Note that this is a different condition from if we should populate
+        // the field from a parent model.
+        //
+        // Also note that readonly fields are not automatically populated from
+        // the context.
+        setFromCtx = value === null && !this.fieldDefs.readonly &&
+            !this._valueSetOnce && parentCtx && _.isEmpty(this.context.get('model').link) &&
             this.view instanceof app.view.views.BaseCreateView &&
             parentCtx.get('module') === this.def.module &&
             this.module !== this.def.module;
