@@ -170,10 +170,14 @@ class SugarFavorites extends Basic
 
     public function mark_records_deleted_in_favorites($record_id, $date_modified, $modified_user_id = "")
     {
+        $record_id = $this->db->quoted($record_id);
+        $date_modified = $this->db->quoted($date_modified);
+        $modified_user_id = $this->db->quoted($modified_user_id);
+
         if (isset($modified_user))
-            $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$modified_user_id' where record_id='$record_id'";
+            $query = "UPDATE $this->table_name set deleted=1 , date_modified = $date_modified, modified_user_id = $modified_user_id where record_id=$record_id";
         else
-            $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where record_id='$record_id'";
+            $query = "UPDATE $this->table_name set deleted=1 , date_modified = $date_modified where record_id=$record_id";
 
         $this->db->query($query, true, "Error marking favorites deleted: ");
     }
