@@ -21,7 +21,7 @@
 
 
 global $mod_strings;
-
+global $dictionary;
 
 $focus = BeanFactory::getBean('ProspectLists', $_POST['record']);
 if (isset($_POST['isDuplicate']) && $_POST['isDuplicate'] == true) {
@@ -32,16 +32,25 @@ if (isset($_POST['isDuplicate']) && $_POST['isDuplicate'] == true) {
 	$focus->save();
 	$return_id=$focus->id; 
 	//duplicate the linked items.
-	$query  = "select * from prospect_lists_prospects where prospect_list_id = '".$_POST['record']."'";
+    $query = 'SELECT related_id, related_type FROM prospect_lists_prospects WHERE prospect_list_id = '
+        . $focus->db->quoted($_POST['record']);
 	$result = $focus->db->query($query);
 	if ($result != null) {
 	
 		while(($row = $focus->db->fetchByAssoc($result)) != null) {
-			$iquery ="INSERT INTO prospect_lists_prospects (id,prospect_list_id, related_id, related_type,date_modified) ";
-			$iquery .= "VALUES ("."'".create_guid()."',"."'".$focus->id."',"."'".$row['related_id']."',"."'".$row['related_type']."',"."'".TimeDate::getInstance()->nowDb()."')";
-			$focus->db->query($iquery); //save the record.	
-		}	
+            $focus->db->insertParams(
+                'prospect_lists_prospects',
+                $dictionary['prospect_lists_prospects']['fields'],
+                array(
+                    'id' => create_guid(),
+                    'prospect_list_id' => $focus->id,
+                    'related_id' => $row['related_id'],
+                    'related_type' => $row['related_type'],
+                    'date_modified' => TimeDate::getInstance()->nowDb(),
+                )
+            );
+        }
 	}
 }
+
 header("Location: index.php?action=DetailView&module=ProspectLists&record=$return_id");
-?>
