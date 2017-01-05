@@ -64,15 +64,17 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
-        var pbContext = this.context.getChildContext({link: 'product_bundles'});
-        pbContext.prepare(false, true);
 
         this.groupIds = [];
         this.currentBulkSaveRequests = [];
         this.quoteDataGroupMeta = app.metadata.getLayout('ProductBundles', 'quote-data-group');
 
         this.isCreateView = this.context.get('create') || false;
+
+        //Setup the neccesary child context before data is populated so that child views/layouts are correctly linked
+        var pbContext = this.context.getChildContext({link: 'product_bundles'});
+        pbContext.set('create', this.isCreateView);
+        pbContext.prepare(false, true);
 
         this.before('render', this.beforeRender, this);
         this.on('list:scrollLock', this._scrollLock, this);
