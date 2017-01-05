@@ -13,13 +13,19 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        viewLayoutModel = new Backbone.Model({
-            product_bundle_items: new Backbone.Collection([
+        viewLayoutModel = app.data.createBean('ProductBundles', {
+            product_bundle_items: app.data.createMixedBeanCollection([
                 {id: 'test1', _module: 'Products', position: 0},
                 {id: 'test2', _module: 'Products', position: 1},
                 {id: 'test3', _module: 'Products', position: 2}
             ])
         });
+        viewLayoutModel.fields = {
+            product_bundle_items: {
+                link: ['products', 'product_bundle_notes']
+            }
+        };
+        debugger;
         layoutDefs = {
             'components': [
                 {'layout': {'span': 4}},
@@ -125,6 +131,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             beforeEach(function() {
                 sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
                 initModel = new Backbone.Model();
+                initModel.fields = {
+                    product_bundle_items: {
+                        link: []
+                    }
+                };
                 initOptions = {
                     context: viewContext,
                     meta: {
@@ -180,6 +191,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             beforeEach(function() {
                 sinon.collection.stub(view, 'addMultiSelectionAction', function() {});
                 initModel = new Backbone.Model();
+                initModel.fields = {
+                    product_bundle_items: {
+                        link: []
+                    }
+                };
                 initOptions = {
                     context: viewContext,
                     meta: {
@@ -228,6 +244,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                     id: 'viewId1',
                     product_bundle_items: collection
                 });
+                viewModel.fields = {
+                    product_bundle_items: {
+                        link: []
+                    }
+                };
                 sinon.collection.stub(collection, 'on', function() {});
                 sinon.collection.stub(view.layout, 'on', function() {});
                 view.name = 'viewName';
@@ -352,14 +373,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
     });
 
-    describe('bindDataChange()', function() {
-        it('will add a listener to the collection for add', function() {
-            sinon.collection.stub(view.collection, 'on');
-            view.bindDataChange();
-            expect(view.collection.on).toHaveBeenCalledWith('add', view.setupSugarLogicForModel, view);
-        });
-    });
-
     describe('_getSugarLogicDependenciesForModel()', function() {
         var model;
         beforeEach(function() {
@@ -407,38 +420,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             sinon.collection.spy(app.metadata, 'getModule');
             view.moduleDependencies.Products = [{dependency: true}];
             expect(app.metadata.getModule).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('setupSugarLogicForModel', function() {
-        var model;
-        beforeEach(function() {
-            // this is needed since we can't load the SugarLogic plugin in tests
-            view.initSugarLogic = function() {};
-            model = new Backbone.Model({id: 'asdf'});
-        });
-        it('will not setup dependencies when size is 0', function() {
-            sinon.collection.stub(view, '_getSugarLogicDependenciesForModel', function() {
-                return [];
-            });
-            sinon.collection.spy(view, 'initSugarLogic');
-            view.setupSugarLogicForModel(model);
-            expect(view.initSugarLogic).not.toHaveBeenCalled();
-        });
-
-        it('it will init dependencies for the model', function() {
-            var deps = [{'dependency': true}];
-            sinon.collection.stub(view, '_getSugarLogicDependenciesForModel', function() {
-                return deps;
-            });
-            var ret = {
-                dispose: function() {}
-            };
-            sinon.collection.stub(view, 'initSugarLogic', function() {
-                return ret;
-            });
-            view.setupSugarLogicForModel(model);
-            expect(view.initSugarLogic).toHaveBeenCalled(model, deps, true);
         });
     });
 
@@ -559,11 +540,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             relatedModel = new Backbone.Model();
             relatedModelId = relatedModel.cid;
 
-            sinon.collection.stub(view, 'createLinkModel', function() {
+            sinon.collection.stub(app.data, 'createRelatedBean', function() {
                 return relatedModel;
-            });
-            sinon.collection.stub(app.utils, 'generateUUID', function() {
-                return relatedModelId;
             });
 
             view.model.set({

@@ -469,14 +469,14 @@
      * @private
      */
     _updateDefaultGroupWithNewData: function(group, recordData) {
-        if (this.defaultGroupId !== recordData.cid) {
+        if (this.defaultGroupId !== group.model.cid) {
             // remove the old default group ID from groupIds
             this.groupIds = _.without(this.groupIds, this.defaultGroupId);
             // add the new group ID so we dont add the default group twice
-            this.groupIds.push(recordData.cid);
+            this.groupIds.push(group.model.cid);
         }
         // update defaultGroupId with new id
-        this.defaultGroupId = recordData.cid;
+        this.defaultGroupId = group.model.cid;
         // set the new data on the group model
         group.model.set(recordData);
         // update groupId with new id

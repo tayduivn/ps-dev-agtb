@@ -1,4 +1,4 @@
-describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
+ddescribe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     var app;
     var layout;
 
@@ -939,11 +939,11 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should update groupIds with the new group ID', function() {
-            expect(layout.groupIds).toEqual(['newId1']);
+            expect(layout.groupIds).toEqual([group.model.cid]);
         });
 
         it('should set the defaultGroupId to be the new group ID', function() {
-            expect(layout.defaultGroupId).toBe('newId1');
+            expect(layout.defaultGroupId).toBe(group.model.cid);
         });
 
         it('should set recordData on the model', function() {
@@ -952,7 +952,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         });
 
         it('should set the group groupId to be the new group ID', function() {
-            expect(group.groupId).toBe('newId1');
+            expect(group.groupId).toBe(group.model.cid);
         });
 
         it('should call attr function on $el to update the group ID', function() {
