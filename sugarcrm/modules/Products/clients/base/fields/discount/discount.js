@@ -61,9 +61,6 @@
     _validationComplete: function(isValid) {
         if (isValid) {
             app.alert.dismiss('invalid-data');
-            if (!this.context.isCreate()) {
-                this.model.save();
-            }
         }
     },
 
