@@ -28,7 +28,8 @@ else{
     $base_project_id = $sugarbean->id;
 }
 if(isset($_REQUEST['save_type']) || isset($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === "true") {
-    $query = "SELECT id FROM project_task WHERE project_id = '" . $base_project_id . "' AND deleted = 0";
+    $query = 'SELECT id FROM project_task WHERE project_id = ' . $sugarbean->db->quoted($base_project_id)
+        . ' AND deleted = 0';
     $result = $sugarbean->db->query($query,true,"Error retrieving project tasks");
     $row = $sugarbean->db->fetchByAssoc($result);
 
