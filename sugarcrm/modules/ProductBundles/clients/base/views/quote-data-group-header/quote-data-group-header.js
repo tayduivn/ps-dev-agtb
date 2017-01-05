@@ -131,10 +131,10 @@
 
         // on the first header row render, if this model was _justSaved
         // we want to toggle the row to edit mode adding this to toggledModels
-        if (this.isFirstRender && this.model.get('_justSaved')) {
+        if (this.isFirstRender && this.model.has('_justSaved')) {
             this.model.unset('_justSaved');
             this.isFirstRender = false;
-            this.toggleRow(this.model.module, this.model.get('id'), true);
+            this.toggleRow(this.model.module, this.model.cid, true);
         }
     },
 
@@ -322,30 +322,16 @@
     },
 
     /**
-     * Handles when a row is saved. Since newly added (but not saved) rows have temporary
-     * id's assigned to them, this is needed to go back and fix row id html attributes and
-     * also resets the rowFields with the new model's ID so rows toggle properly
+     * Handles when a row is saved.
      *
      * @param {Data.Bean} rowModel
-     * @param {string} oldModelId
      */
-    onSaveRowEdit: function(rowModel, oldModelId) {
-        var $oldRow;
-        var modelId = rowModel.get('id');
+    onSaveRowEdit: function(rowModel) {
+        // Quote groups always use the cid of the model
+        var modelId = rowModel.cid;
         var modelModule = rowModel.module;
 
         this.toggleCancelButton(false);
-
-        // If this was a newly created row that was saved, oldModelId will
-        // be different from the current rowModel's id, and we need to redelegate list events
-        if (modelId !== oldModelId) {
-            $oldRow = this.$('tr[name=' + modelModule + '_' + oldModelId + ']');
-            if ($oldRow.length) {
-                $oldRow.attr('name', modelModule + '_' + modelId);
-                // re-set the row fields based on new model IDs
-                this._setRowFields();
-            }
-        }
         this.toggleRow(modelModule, modelId, false);
     },
 

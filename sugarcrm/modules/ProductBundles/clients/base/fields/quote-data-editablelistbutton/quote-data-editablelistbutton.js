@@ -109,7 +109,7 @@
      */
     _saveRowModel: function() {
         var self = this;
-        var oldModelId = this.model.id || this.model.cid;
+        var oldModelId = this.model.cid;
         var successCallback = function(model) {
             self.changed = false;
             model.modelView = 'list';

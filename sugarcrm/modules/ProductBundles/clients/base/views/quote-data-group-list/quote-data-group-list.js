@@ -645,9 +645,17 @@
         var toggleModel;
         var row;
         if (isEdit) {
-            toggleModel = this.collection.get(rowModelId);
-            toggleModel.modelView = 'edit';
-            this.toggledModels[rowModelId] = toggleModel;
+            toggleModel = this.collection.find(function(model) {
+                return (model.cid == rowModelId || model.id == rowModelId);
+            });
+            if (_.isUndefined(toggleModel)) {
+                // its not there any more, so remove it from the toggledModels and return out from this method
+                delete this.toggledModels[rowModelId];
+                return;
+            } else {
+                toggleModel.modelView = 'edit';
+                this.toggledModels[rowModelId] = toggleModel;
+            }
         } else {
             if (this.toggledModels[rowModelId]) {
                 this.toggledModels[rowModelId].modelView = 'list';

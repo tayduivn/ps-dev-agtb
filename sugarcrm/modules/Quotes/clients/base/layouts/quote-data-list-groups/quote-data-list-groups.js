@@ -785,7 +785,6 @@
         newPosition = newPosition || 0;
         isDefaultGroup = isDefaultGroup || false;
         return app.data.createBean('ProductBundles', {
-            id: groupId,
             _module: 'ProductBundles',
             _action: 'create',
             _link: 'product_bundles',
