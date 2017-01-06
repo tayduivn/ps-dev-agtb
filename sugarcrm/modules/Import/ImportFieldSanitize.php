@@ -236,7 +236,12 @@ class ImportFieldSanitize
 
         $dateparts = array();
         $reg = $timedate->get_regular_expression($format);
-        preg_match('@'.$reg['format'].'@', $value, $dateparts);
+
+        // Escape the time separator if it is a period.
+        $timeSeparator = $timedate->timeSeparator();
+        $timeFormat = $timeSeparator === '.' ? preg_replace('/\./', '\\.', $reg['format']) : $reg['format'];
+
+        preg_match('@' . $timeFormat . '@', $value, $dateparts);
 
         if ( empty($dateparts) )
             return false;

@@ -550,13 +550,16 @@ EOQ;
         $time_separator = $timedate->timeSeparator();
         $hour_offset = $timedate->getUserUTCOffset() * 60;
 
+        // Escape the time separator if it is a period.
+        $timeFormat = $time_separator === '.' ? preg_replace('/\./', '\\.', $timereg['format']) : $timereg['format'];
+
         // Add in the number formatting styles here as well, we have been handling this with individual modules.
         require_once ('modules/Currencies/Currency.php');
         list ($num_grp_sep, $dec_sep) = get_number_seperators();
 
         $the_script = "<script type=\"text/javascript\">\n" . "\tvar time_reg_format = '" .
-             $timereg['format'] . "';\n" . "\tvar date_reg_format = '" .
-             $datereg['format'] . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
+             addslashes($timeFormat) . "';\n" . "\tvar date_reg_format = '" .
+             addslashes($datereg['format']) . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
              "\tvar time_separator = '$time_separator';\n" .
              "\tvar cal_date_format = '$cal_date_format';\n" .
              "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
