@@ -1,4 +1,4 @@
-ddescribe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
+describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
     var app;
     var layout;
 

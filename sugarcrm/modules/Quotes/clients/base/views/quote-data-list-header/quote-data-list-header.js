@@ -61,7 +61,6 @@
         if (qliListMetadata && qliListMetadata.panels) {
             this.meta.panels = qliListMetadata.panels;
         }
-        console.log(this.meta.panels);
 
         if (this.layout.isCreateView) {
             this.leftColumns.push({

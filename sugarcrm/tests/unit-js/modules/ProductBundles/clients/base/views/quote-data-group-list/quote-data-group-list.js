@@ -25,7 +25,6 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 link: ['products', 'product_bundle_notes']
             }
         };
-        debugger;
         layoutDefs = {
             'components': [
                 {'layout': {'span': 4}},
