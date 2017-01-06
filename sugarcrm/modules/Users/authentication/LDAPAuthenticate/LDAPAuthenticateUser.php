@@ -19,6 +19,7 @@
 require_once('modules/Users/authentication/LDAPAuthenticate/LDAPConfigs/default.php');
 
 define('DEFAULT_PORT', 389);
+define('LDAP_INVALID_CREDENTIALS', 49);
 class LDAPAuthenticateUser extends SugarAuthenticateUser{
 
 	/**
@@ -288,12 +289,12 @@ class LDAPAuthenticateUser extends SugarAuthenticateUser{
 		if(empty($error)) return false;
 		$errorstr = ldap_err2str($error);
 		// BEGIN SUGAR INT
-		$_SESSION['login_error'] = $errorstr;
-		/*
-		// END SUGAR INT
-		$_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
-		// BEGIN SUGAR INT
-		*/
+        // Trap ldap error 49 to make message same to authentication failure message for sugar user.
+        if ($error == LDAP_INVALID_CREDENTIALS) {
+            $_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
+        } else {
+            $_SESSION['login_error'] = $errorstr;
+        }
 		// END SUGAR INT
 		$GLOBALS['log']->fatal('[LDAP ERROR]['. $error . ']'.$errorstr);
 		return true;
