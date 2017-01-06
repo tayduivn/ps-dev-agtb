@@ -711,8 +711,10 @@
      * @protected
      */
     _getComponentByGroupId: function(groupId) {
+        // since groupId could be the cid or the model.id we should check both places
         return _.find(this._components, function(group) {
-            return group.name === 'quote-data-group' && group.groupId === groupId;
+            return group.name === 'quote-data-group' &&
+                (group.groupId === groupId || (group.model && group.model.id === groupId));
         });
     },
 
@@ -1057,7 +1059,7 @@
      * @private
      */
     _onDeleteQuoteGroup: function(groupToDelete) {
-        var groupId = groupToDelete.model.cid;
+        var groupId = groupToDelete.model.id;
         var groupName = groupToDelete.model.get('name') || '';
 
         app.alert.show('confirm_delete_bundle', {
