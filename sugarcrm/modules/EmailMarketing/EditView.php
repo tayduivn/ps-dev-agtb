@@ -197,5 +197,12 @@ $javascript = new javascript();
 $javascript->setFormName('EditView');
 $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
+$javascript->addFieldIsValidTime(
+    'time_start',
+    'time',
+    'LBL_TIME_START',
+    $javascript->stripEndColon(translate('LBL_START_DATE_TIME', $focus->module_dir)),
+    true
+);
 echo $javascript->getScript();
 ?>
