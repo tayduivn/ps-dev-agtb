@@ -67,6 +67,8 @@
     "sidecar/tests/",
     "sidecar/yarn.lock",
     "src/Console/Resources/sugarcrm-bash-completion",
+    "src/Dbal/Compat/PDO.php",
+    "src/Dbal/SqlSrv/Statement.php"
     "styleguide/content/charts/js/cookie-monster.min.js",
     "styleguide/content/charts/js/jquery-ui.min.js",
     "styleguide/content/charts/js/jquery.knob.min.js",
