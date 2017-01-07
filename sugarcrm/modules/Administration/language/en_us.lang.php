@@ -768,7 +768,6 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'LBL_THEME_SETTINGS_UNAVAILABLE_THEMES' => 'Unavailable Themes',
     'LBL_TIMEZONE' => 'Time Zone',
     'LBL_TO'    => ' to ',
-	'LBL_TRACKER_SETTINGS_DESC' => 'Select what system and user data is tracked',
     'LBL_UPDATE_CHECK_AUTO'=>'Automatically',
     'LBL_UPDATE_CHECK_MANUAL'=>'Manually',
     'LBL_UPDATE_CHECK_TYPE'=>'<B>Automatically Check For Updates</B> - If checked, the system will periodically check to see if updated versions of the application are available.',

@@ -297,7 +297,6 @@ $mod_strings = array(
     'LBL_INSTALL_TYPE_MSG1'             => 'The key is required for general application functionality, but it is not required for installation. You do not need to enter the key at this time, but you will need to provide the key after you have installed the application.',
     'LBL_INSTALL_TYPE_MSG2'             => 'Requires minimum information for the installation. Recommended for new users.',
     'LBL_INSTALL_TYPE_MSG3'             => 'Provides additional options to set during the installation. Most of these options are also available after installation in the admin screens. Recommended for advanced users.',
-    'LBL_INSTALL_TYPE_MSG3'             => 'Provides additional options to set during the installation. Most of these options are also available after installation in the admin screens. Recommended for advanced users.',
 	'LBL_LANG_1'						=> 'To use a language in Sugar other than the default language (US-English), you can upload and install the language pack at this time. You will be able to upload and install language packs from within the Sugar application as well.  If you would like to skip this step, click Next.',
 	'LBL_LANG_BUTTON_COMMIT'			=> 'Install',
 	'LBL_LANG_BUTTON_REMOVE'			=> 'Remove',
@@ -451,7 +450,6 @@ $mod_strings = array(
 	'LBL_STEP'							=> 'Step',
 	'LBL_TITLE_WELCOME'					=> 'Welcome to the SugarCRM ',
 	'LBL_WELCOME_1'						=> 'This installer creates the SugarCRM database tables and sets the configuration variables that you need to start. The entire process should take about ten minutes.',
-	'LBL_WELCOME_2'						=> 'For installation documentation, please visit the <a href="http://www.sugarcrm.com/crm/installation" target="_blank">Sugar Wiki</a>.  <BR><BR> You can also find help from the Sugar Community in the <a href="http://www.sugarcrm.com/forums/" target="_blank">Sugar Forums</a>.',
     //welcome page variables
     'LBL_TITLE_ARE_YOU_READY'            => 'Are you ready to install?',
     'REQUIRED_SYS_COMP' => 'Required System Components',

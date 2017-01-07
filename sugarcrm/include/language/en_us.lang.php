@@ -29,7 +29,6 @@ $app_list_strings = array (
     'Calendar' => 'Calendar',
     'Leads' => 'Leads',
     'Currencies' => 'Currencies',
-    'Project' => 'Project',
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
@@ -172,7 +171,6 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Task',
     'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
-    'Campaigns'=>'Campaign',
     'CampaignTrackers'=>'Campaign Tracker',
     'Documents'=>'Document',
     'DocumentRevisions'=>'Document Revision',
@@ -10198,7 +10196,6 @@ Sincerely, SugarCRM',
     'LBL_DNB_INDUSTRY_CODE_DESCRIPTION' => 'Industry Code Description',
     'LBL_DNB_INDUSTRY_CODE_DISPLAY_SEQUENCE' => 'Industry Code Display Sequence',
     'LBL_DNB_LINE_OF_BUSINESS_DESCRIPTION' => 'Line of Business Description',
-    'LBL_DNB_IMPORT_DETAILS_INDICATOR' => 'Import Details Indicator',
     'LBL_DNB_EXPORT_DETAILS_INDICATOR' => 'Export Details Indicator',
     'LBL_DNB_SUBAGENT_INDICATOR' => 'Subagent Indicator',
     'LBL_DNB_TOTAL_EMPLOYEE_QUANTITY' => 'Total Employee Quantity',
@@ -10301,7 +10298,6 @@ Sincerely, SugarCRM',
     'LBL_DNB_BAL_HIGH' => 'High',
     'LBL_DNB_BAL_ORG_ID' => 'Organization Identification #',
     'LBL_DNB_BAL_JOBCD_PH' => 'Select Job Function',
-    'LBL_DNB_BAL_ORG_NAME' => 'Organization Name',
     'LBL_DNB_BAL_IMPORT_AS' => 'Import As:',
     'LBL_DNB_BAL_ORG_NAME' => 'Company Name',
 
@@ -10854,7 +10850,6 @@ Sincerely, SugarCRM',
     'LBL_FEEDBACK' => 'Feedback',
     'LBL_SUPPORT' => 'Support',
     'LBL_LANGUAGE' => 'Language / Sprache / Idioma',
-    'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
     'LBL_IMAGE_DELETE_CONFIRM' => 'Are you sure you want to delete this image?',
@@ -11956,12 +11951,6 @@ $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['moduleListSingular']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
 $app_list_strings['moduleList']['EmailAddresses'] = 'Email Address';
-$app_list_strings['project_priority_default'] = 'Medium';
-$app_list_strings['project_priority_options'] = array (
-    'High' => 'High',
-    'Medium' => 'Medium',
-    'Low' => 'Low',
-);
 $app_list_strings['moduleListSingular']['EmailAddresses'] = 'Email Address';
 
 $app_list_strings['kbdocument_status_dom'] = array(

@@ -168,6 +168,5 @@ To create a {{module_name}}:
  - Click "Show More" to expose additional fields if necessary.
 2. Click "Save" to finalize the new record and return to the previous page.',
 
-    'LBL_MANUFACTURERS' => 'Manufacturers',
     'LBL_PRODUCT_POSITION' => 'Product Bundle Position',
 );

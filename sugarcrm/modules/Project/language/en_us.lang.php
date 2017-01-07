@@ -94,8 +94,6 @@ $mod_strings = array (
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
 	
 	'LBL_RESOURCES_SUBPANEL_TITLE' => 'Resources',
-	'LBL_RESOURCE_NAME' => 'Resource Name',
-	'LBL_RESOURCE_TYPE' => 'Resource Type',
 
     'LBL_TASK_ID' => 'ID',
     'LBL_TASK_NAME' => 'Task Name',

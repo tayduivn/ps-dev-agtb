@@ -305,7 +305,6 @@ $mod_strings = array(
         'moduleBtn'	=> 'Click to edit this module.',
         'moduleHelp'=> 'Select the module component that you would like to edit',
         'fieldsBtn'	=> 'Edit what information is stored in the module by controlling the <b>Fields</b> in the module.<br/><br/>You can edit and create custom fields here.',
-        'labelsBtn' => 'Click <b>Save</b> to save your custom labels.'	,
         'layoutsBtn'=> 'Customize the <b>Layouts</b> of the Edit, Detail, List and search views.',
         'subpanelBtn'=> 'Edit what information is shown in this modules subpanels.',
         'layoutsHelp'=> 'Select a <b>Layout to edit</b>.<br/<br/>To change the layout that contains data fields for entering data, click <b>Edit View</b>.<br/><br/>To change the layout that displays the data entered into the fields in the Edit View, click <b>Detail View</b>.<br/><br/>To change the columns which appear in the default list, click <b>List View</b>.<br/><br/>To change the Basic and Advanced search form layouts, click <b>Search</b>.',
