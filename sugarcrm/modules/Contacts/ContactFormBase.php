@@ -33,11 +33,11 @@ var $objectName = 'Contact';
  * @see checkForDuplicates (method), ContactFormBase.php, LeadFormBase.php, ProspectFormBase.php
  * @param $focus sugarbean
  * @param $prefix String value of prefix that may be present in $_POST variables
- * @return SQL String of the query that should be used for the initial duplicate lookup check
+ * @return string The query that should be used for the initial duplicate lookup check
  */
 public function getDuplicateQuery($focus, $prefix='')
 {
-
+        $db = DBManagerFactory::getInstance();
 	$query = 'SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title FROM contacts ';
 
     // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
@@ -50,14 +50,25 @@ public function getDuplicateQuery($focus, $prefix='')
     $query .= ' where contacts.deleted = 0 AND ';
 
 	if(isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0){
-		$query .= " contacts.first_name LIKE '". $_POST[$prefix.'first_name'] . "%' AND contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
+            $query .= sprintf(
+                ' contacts.first_name LIKE %s AND contacts.last_name = %s',
+                $db->quoted($_POST[$prefix . 'first_name'] . '%'),
+                $db->quoted($_POST[$prefix . 'last_name'])
+            );
 	} else {
-		$query .= " contacts.last_name = '". $_POST[$prefix.'last_name'] ."'";
+            $query .= sprintf(
+                ' contacts.last_name = %s',
+                $db->quoted($_POST[$prefix . 'last_name'])
+            );
 	}
 
 	if(!empty($_POST[$prefix.'record'])) {
-		$query .= " AND  contacts.id != '". $_POST[$prefix.'record'] ."'";
+            $query .= sprintf(
+                ' AND contacts.id != %s',
+                $db->quoted($_POST[$prefix . 'record'])
+            );
 	}
+
     return $query;
 }
 
