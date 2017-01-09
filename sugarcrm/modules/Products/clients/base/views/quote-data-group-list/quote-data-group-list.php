@@ -64,6 +64,8 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                             'name' => 'discount_amount',
                             'label' => 'LBL_DISCOUNT_AMOUNT',
                             'type' => 'discount',
+                            'convertToBase' => true,
+                            'showTransactionalAmount' => true,
                         ),
                         array(
                             'type' => 'discount-select',

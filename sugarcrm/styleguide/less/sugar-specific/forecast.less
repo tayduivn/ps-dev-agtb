@@ -550,6 +550,10 @@
     &.list {
       .fieldset-field {
         float: right;
+        &:first-child {
+          display: inline-block;
+          width: calc(~"100% - 28px");
+        }
       }
     }
     &.edit {
