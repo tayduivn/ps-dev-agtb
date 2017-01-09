@@ -34,7 +34,7 @@ class SugarUpgradeKBPrepare extends UpgradeScript
                 array($this, 'log')
             );
             if ($script->run()) {
-                $this->upgrader->fileToDelete($script->getFilesToDelete(), $this);
+                $this->fileToDelete($script->getFilesToDelete());
                 return true;
             }
             return false;
@@ -91,7 +91,7 @@ class PrepareKBDocument
         $this->newpath = $newpath;
         $this->logCallback = $logCallback;
         $this->db = DBManagerFactory::getInstance();
-        $this->upgrader->fileToDelete = array();
+        $this->fileToDelete = array();
     }
 
     /**
@@ -100,7 +100,7 @@ class PrepareKBDocument
      */
     public function getFilesToDelete()
     {
-        return $this->upgrader->fileToDelete;
+        return $this->fileToDelete;
     }
 
     /**
@@ -211,7 +211,7 @@ class PrepareKBDocument
             $files = array_diff($oldFiles, $tmpFiles);
             $files[$this->path . '/KBDocumentKBTags'] = $this->path . '/KBDocumentKBTags';
             $files[$this->path . '/KBDocumentRevisions'] = $this->path . '/KBDocumentRevisions';
-            $this->upgrader->fileToDelete = $files;
+            $this->fileToDelete = $files;
         }
         if (!$this->prepareTables()) {
             return $this->error("Can't create temporary tables for KB conversion");

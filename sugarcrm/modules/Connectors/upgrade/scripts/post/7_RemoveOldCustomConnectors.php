@@ -35,13 +35,13 @@ class SugarUpgradeRemoveOldCustomConnectors extends UpgradeScript
             return;
         }
 
-        $this->upgrader->fileToDelete(array(
+        $this->fileToDelete(array(
             'custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany',
             'custom/modules/Connectors/connectors/sources/ext/rest/zoominfoperson',
             'custom/modules/Connectors/connectors/sources/ext/rest/linkedin',
             'custom/modules/Connectors/connectors/sources/ext/rest/insideview',
             'custom/modules/Connectors/connectors/sources/ext/eapm/facebook',
             'custom/modules/Connectors/connectors/sources/ext/soap/hoovers',
-        ), $this);
+        ));
     }
 }

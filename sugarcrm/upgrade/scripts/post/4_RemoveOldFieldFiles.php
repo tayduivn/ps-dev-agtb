@@ -39,7 +39,7 @@ class SugarUpgradeRemoveOldFieldFiles extends UpgradeScript
                 'modules/Notifications/clients/base/fields/datetimecombo/detail.hbs',
             );
 
-            $this->upgrader->fileToDelete($files, $this);
+            $this->fileToDelete($files);
         }
 
         $this->log('Done removing old field files');

@@ -39,7 +39,7 @@ class SugarUpgradeConvertPortalTheme extends UpgradeScript
             sugar_file_put_contents($path . '/variables.php', $write);
 
             // Delete old defs
-            $this->upgrader->fileToDelete($path . '/variables.less', $this);
+            $this->fileToDelete($path . '/variables.less');
         }
     }
     

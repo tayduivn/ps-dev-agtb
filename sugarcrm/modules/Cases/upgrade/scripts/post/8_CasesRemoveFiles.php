@@ -41,7 +41,7 @@ class SugarUpgradeCasesRemoveFiles extends UpgradeScript
         }
 
         if (!empty($files)) {
-            $this->upgrader->fileToDelete($files, $this);
+            $this->fileToDelete($files);
         }
     }
 }

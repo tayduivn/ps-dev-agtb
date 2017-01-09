@@ -29,6 +29,6 @@ class SugarUpgradeProjectRemoveUnhideCustomFiles extends UpgradeScript
             $files[] = 'modules/Project/upgrade/scripts/post/6_ProjectShowModule.php';
         }
 
-        $this->upgrader->fileToDelete($files, $this);
+        $this->fileToDelete($files);
     }
 }

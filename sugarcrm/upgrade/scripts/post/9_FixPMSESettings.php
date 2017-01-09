@@ -48,7 +48,7 @@ class SugarUpgradeFixPMSESettings extends UpgradeScript
             $this->upgrader->config['pmse_settings_default'] = $pmse;
 
             // delete PMSESettings.php
-            $this->upgrader->fileToDelete('modules/pmse_Inbox/engine/PMSESettings.php', $this);
+            $this->fileToDelete('modules/pmse_Inbox/engine/PMSESettings.php');
         }
     }
 

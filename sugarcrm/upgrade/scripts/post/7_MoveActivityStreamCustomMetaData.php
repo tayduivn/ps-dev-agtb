@@ -37,7 +37,7 @@ class SugarUpgradeMoveActivityStreamCustomMetaData extends UpgradeScript
         rename($originalPath, $newPath);
         $this->log("MoveActivityStreamCustomMetaData: Renamed {$originalPath} to {$newPath}");
 
-        $this->upgrader->fileToDelete('modules/Activities/clients', $this);
-        $this->upgrader->fileToDelete('custom/modules/Activities/clients', $this);
+        $this->fileToDelete('modules/Activities/clients');
+        $this->fileToDelete('custom/modules/Activities/clients');
     }
 }

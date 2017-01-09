@@ -49,7 +49,7 @@ class SugarUpgradeRemoveOldHandlebars extends UpgradeScript
         $hbts = new RegexIterator($iter, '/.*\.hbt$/', RegexIterator::GET_MATCH);
         foreach ($hbts as $hbt) {
             list($filename) = $hbt;
-            $this->upgrader->fileToDelete($filename, $this);
+            $this->fileToDelete($filename);
         }
     }
 }

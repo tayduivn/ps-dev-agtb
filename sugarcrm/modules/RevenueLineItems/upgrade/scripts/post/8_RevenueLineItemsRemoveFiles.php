@@ -23,7 +23,7 @@ class SugarUpgradeRevenueLineItemsRemoveFiles extends UpgradeScript
 
         // we only need to remove these files if the from_version is less than 7.0 but greater or equal than 6.7.0
         if (version_compare($this->from_version, '7.2', '<')) {
-            $this->upgrader->fileToDelete('modules/RevenueLineItems/clients/base/views/list-headerpane', $this);
+            $this->fileToDelete('modules/RevenueLineItems/clients/base/views/list-headerpane');
         }
 
         $files = array();
@@ -32,6 +32,6 @@ class SugarUpgradeRevenueLineItemsRemoveFiles extends UpgradeScript
             $files[] = 'modules/RevenueLineItems/upgrade/scripts/post/2_RevenueLineItemMakeVisible.php';
         }
 
-        $this->upgrader->fileToDelete($files, $this);
+        $this->fileToDelete($files);
     }
 }

@@ -43,6 +43,6 @@ class SugarUpgradeFilesToRemove extends UpgradeScript
             return;
         }
 
-        $this->upgrader->fileToDelete($files, $this);
+        $this->fileToDelete($files);
     }
 }

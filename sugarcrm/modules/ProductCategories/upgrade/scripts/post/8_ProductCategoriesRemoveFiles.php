@@ -38,7 +38,7 @@ class SugarUpgradeProductCategoriesRemoveFiles extends UpgradeScript
                 'modules/ProductCategories/metadata/editviewdefs.php',
             );
 
-            $this->upgrader->fileToDelete($files, $this);
+            $this->fileToDelete($files);
         }
     }
 }
