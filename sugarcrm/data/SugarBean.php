@@ -6496,7 +6496,7 @@ class SugarBean
         $query = "SELECT $select_id FROM $table WHERE deleted = 0  ";
         foreach($values as $name=>$value)
         {
-            $query .= " AND $name = '$value' ";
+            $query .= " AND $name = " . $this->db->quoted($value);
         }
         $query .= " ORDER BY $select_id ";
         $result = $this->db->query($query, false, "Retrieving Relationship:" . $query);
