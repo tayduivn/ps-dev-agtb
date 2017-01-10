@@ -372,7 +372,13 @@ else if(!isset($_GET['execute'])){
                 switch($meta['type']){
 					case "text":
 					case "select":
-						$q_where .= " and {$object->table_name}{$addcstm}.{$meta['dbname']} = '{$_POST[$metaName]}' ";
+                        $q_where .= sprintf(
+                            ' and %s.%s = %s ',
+                            $object->table_name.$addcstm,
+                            $meta['dbname'],
+                            $db->quoted($_POST[$metaName])
+                        );
+
 						break;
 					case "multiselect":
 
@@ -391,7 +397,7 @@ else if(!isset($_GET['execute'])){
 							if(empty($onevalue)) {
 								$empty_check .= " OR {$object->table_name}{$addcstm}.{$meta['dbname']} is null ";
                             }
-							$in_string .= "'$onevalue', ";
+                            $in_string .= $db->quoted($onevalue).", ";
 						}
 						$in_string = substr($in_string, 0, count($in_string) - 3);
 						$q_where .= " and ({$object->table_name}{$addcstm}.{$meta['dbname']} in ($in_string) $empty_check)";
