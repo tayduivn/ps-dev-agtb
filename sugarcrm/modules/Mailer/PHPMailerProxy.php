@@ -29,6 +29,7 @@ class PHPMailerProxy extends PHPMailer
     {
         parent::__construct(true);
         $this->Timeout = SugarConfig::getInstance()->get('email_mailer_timeout', 10);
+        $this->SMTPAutoTLS = false;
     }
 
     /**
