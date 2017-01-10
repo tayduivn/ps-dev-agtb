@@ -83,7 +83,13 @@ class vCal extends SugarBean {
         // combines all freebusy vcals and returns just the FREEBUSY lines as a string
 	function get_freebusy_lines_cache(&$user_bean)
 	{
+        global $sugar_config;
         $ical_array = array();
+
+        if (empty($sugar_config['freebusy_use_vcal_cache'])) {
+            return ''; // VCal FreeBusy Cache Is Not Enabled - No Data will be returned from vcals table
+        }
+
 		// First, get the list of IDs.
 		$query = "SELECT id from vcals where user_id='{$user_bean->id}' AND type='vfb' AND deleted=0";
 		$vcal_arr = $this->build_related_list($query, BeanFactory::getBean('vCals'));
@@ -235,8 +241,13 @@ class vCal extends SugarBean {
         // caches vcal for Activities in Sugar database
         public static function cache_sugar_vcal_freebusy(&$user_focus)
         {
+            global $sugar_config;
             if (!static::$cacheUpdate_enabled) {
                 return;
+            }
+
+            if (empty($sugar_config['freebusy_use_vcal_cache'])) {
+                return; // VCal FreeBusy Cache Not Enabled - No Updates to vcals table will Occur
             }
 
             $focus = BeanFactory::getBean('vCals');
