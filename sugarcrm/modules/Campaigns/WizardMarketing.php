@@ -79,11 +79,18 @@ if(isset($_REQUEST['record']) and !empty($_REQUEST['record'])){
 
 }
 
+$meridiem = $timedate->AMPMMenu('', $mrkt_focus->time_start);
+$startTime = $mrkt_focus->time_start;
+
+if (!empty($meridiem) && !empty($mrkt_focus->time_start)) {
+    $split = $timedate->splitTime($mrkt_focus->time_start, $timedate->get_time_format());
+    $startTime = $split['h'] . $timedate->timeSeparator() . $split['m'];
+}
 
 $ss->assign("CALENDAR_LANG", "en");
 $ss->assign("USER_DATEFORMAT", '('. $timedate->get_user_date_format().')');
 $ss->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
-$ss->assign("TIME_MERIDIEM", $timedate->AMPMMenu('', $mrkt_focus->time_start));
+$ss->assign('TIME_MERIDIEM', $meridiem);
 $ss->assign("MRKT_ID", $mrkt_focus->id);
 $ss->assign("MRKT_NAME", $mrkt_focus->name);
 $ss->assign("MRKT_FROM_NAME", $mrkt_focus->from_name);
@@ -102,7 +109,7 @@ $ss->assign("MRKT_REPLY_ADDR_LEN", $def['len']);
 // end bug 15498
 $ss->assign("MRKT_REPLY_ADDR", $mrkt_focus->reply_to_addr);
 $ss->assign("MRKT_DATE_START", $mrkt_focus->date_start);
-$ss->assign("MRKT_TIME_START", $mrkt_focus->time_start);
+$ss->assign('MRKT_TIME_START', $startTime);
 //$_REQUEST['mass'] = $mrkt_focus->id;
 $ss->assign("MRKT_ID", $mrkt_focus->id);
 $emails=array();
@@ -141,7 +148,7 @@ if (empty($mrkt_focus->inbound_email_id)) {
     $ss->assign("MAILBOXES", get_select_options_with_id($mailboxes, $mrkt_focus->inbound_email_id));
 }
 
-$ss->assign("TIME_MERIDIEM", $timedate->AMPMMenu('', $mrkt_focus->time_start));
+$ss->assign('TIME_MERIDIEM', $meridiem);
 $ss->assign("TIME_FORMAT", '('. $timedate->get_user_time_format().')');
 
 $email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name','','name');
