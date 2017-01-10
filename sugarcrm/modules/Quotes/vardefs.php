@@ -569,6 +569,13 @@ $dictionary['Quote'] = array(
             'link' => 'shipping_accounts',
             'module' => 'Accounts',
             'source' => 'non-db',
+            'populate_list' => array(
+                'shipping_address_street' => 'shipping_address_street',
+                'shipping_address_city' => 'shipping_address_city',
+                'shipping_address_state' => 'shipping_address_state',
+                'shipping_address_postalcode' => 'shipping_address_postalcode',
+                'shipping_address_country' => 'shipping_address_country',
+            ),
         ),
         'shipping_account_id' => array(
             'name' => 'shipping_account_id',

@@ -102,7 +102,7 @@ describe('Quotes.Base.Views.Create', function() {
                 context: context
             };
 
-            sinon.collection.stub(view, '_prepopulateQuoteWithOpp', function() {});
+            sinon.collection.stub(view, '_prepopulateQuote', function() {});
             sinon.collection.stub(view, '_buildMeta', function() {});
         });
 
@@ -110,18 +110,18 @@ describe('Quotes.Base.Views.Create', function() {
             options = null;
         });
 
-        it('should call _prepopulateQuoteWithOpp if convert is on the context', function() {
+        it('should call _prepopulateQuote if convert is on the context', function() {
             options.context.set('convert', true);
             view.initialize(options);
 
-            expect(view._prepopulateQuoteWithOpp).toHaveBeenCalledWith(options);
+            expect(view._prepopulateQuote).toHaveBeenCalledWith(options);
 
         });
 
-        it('should not call _prepopulateQuoteWithOpp if convert is not on the context', function() {
+        it('should not call _prepopulateQuote if convert is not on the context', function() {
             view.initialize(options);
 
-            expect(view._prepopulateQuoteWithOpp).not.toHaveBeenCalled();
+            expect(view._prepopulateQuote).not.toHaveBeenCalled();
         });
 
         it('should call _buildMeta with ProductBundleNotes params', function() {
@@ -143,7 +143,7 @@ describe('Quotes.Base.Views.Create', function() {
         });
     });
 
-    describe('_prepopulateQuoteWithOpp()', function() {
+    describe('_prepopulateQuote()', function() {
         var options;
         var quoteModel;
         var otherModuleModel;
@@ -158,10 +158,33 @@ describe('Quotes.Base.Views.Create', function() {
             sinon.collection.stub(app.api, 'buildURL', function(params) {
                 return params;
             });
+            sinon.collection.stub(view, 'createLinkModel', function(model, linkName) {
+                var attribs;
+                if (linkName === 'quotes_shipto') {
+                    attribs = {
+                        shipping_account_id: 'acctId1',
+                        shipping_account_name: 'acctName1'
+                    };
+                } else if (linkName === 'quotes') {
+                    attribs = {
+                        billing_account_id: 'acctId1',
+                        billing_account_name: 'acctName1'
+                    };
+                } else {
+                    attribs = {
+                        opportunity_id: 'oppId1',
+                        opportunity_name: 'oppName1'
+                    };
+                }
+
+                return new Backbone.Model(attribs);
+            });
         });
 
         afterEach(function() {
             options = null;
+            otherModuleModel = null;
+            quoteModel = null;
         });
 
         describe('from Opportunity', function() {
@@ -173,13 +196,18 @@ describe('Quotes.Base.Views.Create', function() {
                 otherModuleModel.module = 'Opportunities';
                 context.set({
                     model: quoteModel,
-                    parentModel: otherModuleModel
+                    parentModel: otherModuleModel,
+                    fromLink: 'revenuelineitems'
                 });
                 options = {
                     context: context
                 };
 
-                view._prepopulateQuoteWithOpp(options);
+                view._prepopulateQuote(options);
+            });
+
+            it('should set isConvertFromShippingOrBilling to undefined', function() {
+                expect(view.isConvertFromShippingOrBilling).toBeUndefined();
             });
 
             it('should map fields and prepopulate the Quote context', function() {
@@ -211,7 +239,11 @@ describe('Quotes.Base.Views.Create', function() {
                     context: context
                 };
 
-                view._prepopulateQuoteWithOpp(options);
+                view._prepopulateQuote(options);
+            });
+
+            it('should set isConvertFromShippingOrBilling to undefined', function() {
+                expect(view.isConvertFromShippingOrBilling).toBeUndefined();
             });
 
             it('should map fields and prepopulate the Quote context', function() {
@@ -225,6 +257,144 @@ describe('Quotes.Base.Views.Create', function() {
             it('should call app.api.call to get the account', function() {
                 expect(app.api.call).toHaveBeenCalledWith('read', 'Accounts/acctId1');
             });
+        });
+
+        describe('from Accounts', function() {
+            beforeEach(function() {
+                otherModuleModel.unset('account_id');
+                otherModuleModel.unset('account_name');
+                otherModuleModel.set({
+                    id: 'acctId1',
+                    name: 'acctName1'
+                });
+                otherModuleModel.module = 'Accounts';
+                context.set({
+                    model: quoteModel,
+                    parentModel: otherModuleModel
+                });
+                options = {
+                    context: context
+                };
+            });
+
+            describe('from shipping', function() {
+                beforeEach(function() {
+                    options.context.set('fromLink', 'quotes_shipto');
+
+                    view._prepopulateQuote(options);
+                });
+
+                it('should set isConvertFromShippingOrBilling', function() {
+                    expect(view.isConvertFromShippingOrBilling).toBe('shipping');
+                });
+
+                it('should map fields and prepopulate the Quote context', function() {
+                    expect(quoteModel.get('billing_account_id')).toBeUndefined();
+                    expect(quoteModel.get('billing_account_name')).toBeUndefined();
+                    expect(quoteModel.get('shipping_account_id')).toBe('acctId1');
+                    expect(quoteModel.get('shipping_account_name')).toBe('acctName1');
+                });
+
+                it('should call app.api.call to get the account', function() {
+                    expect(app.api.call).toHaveBeenCalledWith('read', 'Accounts/acctId1');
+                });
+            });
+
+            describe('from billing', function() {
+                beforeEach(function() {
+                    options.context.set('fromLink', 'quotes');
+
+                    view._prepopulateQuote(options);
+                });
+
+                it('should set isConvertFromShippingOrBilling', function() {
+                    expect(view.isConvertFromShippingOrBilling).toBe('billing');
+                });
+
+                it('should map fields and prepopulate the Quote context', function() {
+                    expect(quoteModel.get('billing_account_id')).toBe('acctId1');
+                    expect(quoteModel.get('billing_account_name')).toBe('acctName1');
+                    expect(quoteModel.get('shipping_account_id')).toBeUndefined();
+                    expect(quoteModel.get('shipping_account_name')).toBeUndefined();
+                });
+            });
+        });
+    });
+
+    describe('_setAccountInfo()', function() {
+        var accountInfoData;
+        var viewModel;
+
+        beforeEach(function() {
+            accountInfoData = {
+                billing_address_city: 'billingCity',
+                billing_address_country: 'billingCountry',
+                billing_address_postalcode: 'billingZip',
+                billing_address_state: 'billingState',
+                billing_address_street: 'billingStreet',
+                shipping_address_city: 'shippingCity',
+                shipping_address_country: 'shippingCountry',
+                shipping_address_postalcode: 'shippingZip',
+                shipping_address_state: 'shippingState',
+                shipping_address_street: 'shippingStreet'
+            };
+
+            viewModel = app.data.createBean('Quotes');
+            view.model = viewModel;
+        });
+
+        afterEach(function() {
+            viewModel.dispose();
+            viewModel = null;
+            accountInfoData = null;
+        });
+
+        it('should only set shipping fields when isConvertFromShippingOrBilling is `shipping`', function() {
+            view.isConvertFromShippingOrBilling = 'shipping';
+            view._setAccountInfo(accountInfoData);
+
+            expect(viewModel.get('billing_address_city')).toBeUndefined();
+            expect(viewModel.get('billing_address_country')).toBeUndefined();
+            expect(viewModel.get('billing_address_postalcode')).toBeUndefined();
+            expect(viewModel.get('billing_address_state')).toBeUndefined();
+            expect(viewModel.get('billing_address_street')).toBeUndefined();
+            expect(viewModel.get('shipping_address_city')).toBe('shippingCity');
+            expect(viewModel.get('shipping_address_country')).toBe('shippingCountry');
+            expect(viewModel.get('shipping_address_postalcode')).toBe('shippingZip');
+            expect(viewModel.get('shipping_address_state')).toBe('shippingState');
+            expect(viewModel.get('shipping_address_street')).toBe('shippingStreet');
+        });
+
+        it('should only set billing fields when isConvertFromShippingOrBilling is `billing`', function() {
+            view.isConvertFromShippingOrBilling = 'billing';
+            view._setAccountInfo(accountInfoData);
+
+            expect(viewModel.get('billing_address_city')).toBe('billingCity');
+            expect(viewModel.get('billing_address_country')).toBe('billingCountry');
+            expect(viewModel.get('billing_address_postalcode')).toBe('billingZip');
+            expect(viewModel.get('billing_address_state')).toBe('billingState');
+            expect(viewModel.get('billing_address_street')).toBe('billingStreet');
+            expect(viewModel.get('shipping_address_city')).toBeUndefined();
+            expect(viewModel.get('shipping_address_country')).toBeUndefined();
+            expect(viewModel.get('shipping_address_postalcode')).toBeUndefined();
+            expect(viewModel.get('shipping_address_state')).toBeUndefined();
+            expect(viewModel.get('shipping_address_street')).toBeUndefined();
+        });
+
+        it('should only set shipping fields when isConvertFromShippingOrBilling is not set', function() {
+            view.isConvertFromShippingOrBilling = undefined;
+            view._setAccountInfo(accountInfoData);
+
+            expect(viewModel.get('billing_address_city')).toBe('billingCity');
+            expect(viewModel.get('billing_address_country')).toBe('billingCountry');
+            expect(viewModel.get('billing_address_postalcode')).toBe('billingZip');
+            expect(viewModel.get('billing_address_state')).toBe('billingState');
+            expect(viewModel.get('billing_address_street')).toBe('billingStreet');
+            expect(viewModel.get('shipping_address_city')).toBe('shippingCity');
+            expect(viewModel.get('shipping_address_country')).toBe('shippingCountry');
+            expect(viewModel.get('shipping_address_postalcode')).toBe('shippingZip');
+            expect(viewModel.get('shipping_address_state')).toBe('shippingState');
+            expect(viewModel.get('shipping_address_street')).toBe('shippingStreet');
         });
     });
 

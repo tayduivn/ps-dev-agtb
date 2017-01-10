@@ -34,25 +34,31 @@
             opportunity_id: 'opportunity_id',
             opportunity_name: 'opportunity_name'
         },
-        default: {
-            billing_accounts: 'accounts',
-            shipping_accounts: 'accounts',
+        defaultBilling: {
             billing_account_id: 'account_id',
-            billing_account_name: 'account_name',
+            billing_account_name: 'account_name'
+        },
+        defaultShipping: {
             shipping_account_id: 'account_id',
             shipping_account_name: 'account_name'
         }
     },
 
     /**
-     * A list of field names to pull from the Account model to the Quote model
+     * A list of billing field names to pull from the Account model to the Quote model
      */
-    acctToQuoteConvertFields: [
+    acctBillingToQuoteConvertFields: [
         'billing_address_city',
         'billing_address_country',
         'billing_address_postalcode',
         'billing_address_state',
-        'billing_address_street',
+        'billing_address_street'
+    ],
+
+    /**
+     * A list of shiping field names to pull from the Account model to the Quote model
+     */
+    acctShippingToQuoteConvertFields: [
         'shipping_address_city',
         'shipping_address_country',
         'shipping_address_postalcode',
@@ -61,16 +67,22 @@
     ],
 
     /**
+     * If this Create view is from converting items from other modules to Quotes, is this
+     * converting from a 'shipping' or 'billing' subpanel, or undefined if neither.
+     */
+    isConvertFromShippingOrBilling: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
-        this.plugins = _.union(this.plugins || [], ['QuotesViewSaveHelper']);
-
-        if (options.context.get('convert')) {
-            this._prepopulateQuoteWithOpp(options);
-        }
+        this.plugins = _.union(this.plugins || [], ['QuotesViewSaveHelper', 'LinkedModel']);
 
         this._super('initialize', [options]);
+
+        if (options.context.get('convert')) {
+            this._prepopulateQuote(options);
+        }
 
         this.moduleFieldsMeta = {};
 
@@ -86,31 +98,65 @@
     },
 
     /**
-     * Prepopulates the Quote context model with with Opp/Account ID
+     * Prepopulates the Quote context model with related module fields
      *
      * @param {Object} options The initialize options Object
      * @protected
      */
-    _prepopulateQuoteWithOpp: function(options) {
+    _prepopulateQuote: function(options) {
         var parentModel = options.context.get('parentModel');
         var ctxModel = options.context.get('model');
+        var parentModule = parentModel.module;
+        var parentModelAcctIdFieldName = parentModule === 'Accounts' ? 'id' : 'account_id';
+        var linkModel;
         var quoteData = {};
         var fieldMap;
 
+        this.isConvertFromShippingOrBilling = undefined;
+
         if (ctxModel && parentModel) {
+            linkModel = this.createLinkModel(parentModel, options.context.get('fromLink'));
+            // get the JSON attributes of the linked model
+            quoteData = linkModel.toJSON();
+
             // create a field map from the default fields and module-specific fields
-            fieldMap = _.extend(
-                {},
-                this.convertToQuoteFieldMap.default,
-                this.convertToQuoteFieldMap[parentModel.module]
-            );
+            fieldMap = _.extend({}, this.convertToQuoteFieldMap[parentModule]);
+
+            if (quoteData.shipping_account_id || quoteData.shipping_contact_id) {
+                // if the linked model had any shipping_ fields, set it to 'shipping'
+                this.isConvertFromShippingOrBilling = 'shipping';
+                quoteData.copy = false;
+            } else if (quoteData.billing_account_id || quoteData.billing_contact_id) {
+                // if the linked model had any billing_ fields, set it to 'billing'
+                this.isConvertFromShippingOrBilling = 'billing';
+            }
+
+            if (parentModule !== 'Accounts') {
+                // since its not from an Acct shipping/billing link, add in the default Acct field mappings
+                if (this.isConvertFromShippingOrBilling === 'shipping') {
+                    fieldMap = _.extend(fieldMap, this.convertToQuoteFieldMap.defaultShipping);
+                } else if (this.isConvertFromShippingOrBilling === 'billing') {
+                    fieldMap = _.extend(fieldMap, this.convertToQuoteFieldMap.defaultBilling);
+                } else {
+                    fieldMap = _.extend(
+                        fieldMap,
+                        this.convertToQuoteFieldMap.defaultShipping,
+                        this.convertToQuoteFieldMap.defaultBilling
+                    );
+                }
+            }
+
+            // copy field data from the parentModel to the quoteData object
             _.each(fieldMap, function(otherModuleField, quoteField) {
                 quoteData[quoteField] = parentModel.get(otherModuleField);
             }, this);
 
-            app.api.call('read', app.api.buildURL('Accounts/' + parentModel.get('account_id')), null, {
+            // make an api call to get related Account data
+            app.api.call('read', app.api.buildURL('Accounts/' + parentModel.get(parentModelAcctIdFieldName)), null, {
                 success: _.bind(this._setAccountInfo, this)
             });
+
+            // set new quoteData attributes onto the create model
             ctxModel.set(quoteData);
         }
     },
@@ -123,8 +169,24 @@
      */
     _setAccountInfo: function(accountInfoData) {
         var acctData = {};
+        var fields = [];
 
-        _.each(this.acctToQuoteConvertFields, function(fieldName) {
+        if (this.isConvertFromShippingOrBilling === 'shipping') {
+            // if this is a shipping conversion, set the Account shipping fields
+            fields = this.acctShippingToQuoteConvertFields;
+        } else if (this.isConvertFromShippingOrBilling === 'billing') {
+            // if this is a billing conversion, set the Account billing fields
+            fields = this.acctBillingToQuoteConvertFields;
+        } else {
+            // if this is neither a shipping nor billing conversion,
+            // set both Account shipping & billing fields
+            fields = fields.concat(
+                this.acctBillingToQuoteConvertFields,
+                this.acctShippingToQuoteConvertFields
+            );
+        }
+
+        _.each(fields, function(fieldName) {
             acctData[fieldName] = accountInfoData[fieldName];
         }, this);
 

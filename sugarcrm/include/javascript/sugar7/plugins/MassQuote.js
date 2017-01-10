@@ -138,8 +138,13 @@
                     // set the record model to be the parentModel
                     loadViewObj.parentModel = parentModel;
 
+                    // if the context has a link param 'quotes', 'quotes_shipto', etc
+                    // set it on the view object so the create view knows where this is coming from
+                    loadViewObj.fromLink = this.context.get('link');
+
                     // Load the Quotes create view
                     app.controller.loadView(loadViewObj);
+                    // update the browser URL with the proper
                     app.router.navigate('#Quotes/create', {trigger: false});
                 }
             }
