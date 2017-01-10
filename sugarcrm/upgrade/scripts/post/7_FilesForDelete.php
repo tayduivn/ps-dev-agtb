@@ -200,9 +200,9 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
         // must be upgrading from between 710 to 722
         if (version_compare($this->from_version, '7.1.0', '>') && version_compare($this->from_version, '7.2.2', '<')) {
             // can be files or directories
-            $this->fileToDelete('modules/WebLogicHooks/clients/base/layouts/record/record.php');
-            $this->fileToDelete('modules/WebLogicHooks/clients/base/layouts/records/records.php');
-            $this->fileToDelete('modules/WebLogicHooks/clients/base/views/list-headerpane/headerpane.php');
+            $files[] = 'modules/WebLogicHooks/clients/base/layouts/record/record.php';
+            $files[] = 'modules/WebLogicHooks/clients/base/layouts/records/records.php';
+            $files[] = 'modules/WebLogicHooks/clients/base/views/list-headerpane/headerpane.php';
         }
 
         if (version_compare($this->from_version, '7.2', '<')) {
@@ -213,7 +213,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'modules/Notifications/clients/base/views/raw/raw.php';
         }
 
-        $this->fileToDelete($this->getStaleFilesBy7220());
+        $this->upgrader->fileToDelete($this->getStaleFilesBy7220(), $this);
 
         if (version_compare($this->from_version, '7.5', '<=')) {
             $files[] = 'sidecar/lib/jquery/jquery.placeholder.min.js';
@@ -516,7 +516,7 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'sidecar/src/utils/file.js';
         }
 
-        $this->fileToDelete($files);
+        $this->upgrader->fileToDelete($files, $this);
     }
 
     /**

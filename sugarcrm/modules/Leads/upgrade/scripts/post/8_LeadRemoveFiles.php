@@ -27,7 +27,7 @@ class SugarUpgradeLeadRemoveFiles extends UpgradeScript
                 'modules/Leads/views/view.editconvertlayout.php',
             );
 
-            $this->fileToDelete($files);
+            $this->upgrader->fileToDelete($files, $this);
         }
     }
 }

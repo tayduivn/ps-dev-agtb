@@ -134,7 +134,7 @@ class SugarUpgradeRepairVendors extends UpgradeScript
                         }
 
                         if (copy_recursive($file, $correctCustomSmartyPluginsPath . $item->getFilename())) {
-                            $this->upgrader->fileToDelete($file);
+                            $this->upgrader->fileToDelete($file, $this);
                         } else {
                             $failedToCopySmartyPluginsList[] = $file;
                         }

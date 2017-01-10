@@ -22,6 +22,6 @@ class SugarUpgradeSugarParsersDelete extends UpgradeScript
     {
         $files = array('include/SugarParsers',
             'include/SugarCharts/ReportBuilder.php');
-        $this->fileToDelete($files);
+        $this->upgrader->fileToDelete($files, $this);
     }
 }

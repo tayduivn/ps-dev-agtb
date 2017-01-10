@@ -45,6 +45,6 @@ class SugarUpgradeProductRemoveFiles extends UpgradeScript
             $files[] = 'modules/Products/upgrade/scripts/post/2_ProductMigrateToRLI.php';
         }
 
-        $this->fileToDelete($files);
+        $this->upgrader->fileToDelete($files, $this);
     }
 }

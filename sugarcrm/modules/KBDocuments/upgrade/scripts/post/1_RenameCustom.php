@@ -102,7 +102,7 @@ class SugarUpgradeRenameCustom extends UpgradeScript
                 SugarAutoLoader::addToMap($dest);
 
                 SugarAutoLoader::delFromMap($file);
-                $this->fileToDelete(array($file));
+                $this->upgrader->fileToDelete(array($file), $this);
             }
 
             sugar_mkdir('custom/Extension/modules/KBContents/Ext/Language', null, true);
@@ -112,7 +112,7 @@ class SugarUpgradeRenameCustom extends UpgradeScript
                 SugarAutoLoader::addToMap($dest);
 
                 SugarAutoLoader::delFromMap($file);
-                $this->fileToDelete(array($file));
+                $this->upgrader->fileToDelete(array($file), $this);
             }
 
             foreach (glob('custom/include/language/*.php') as $file) {

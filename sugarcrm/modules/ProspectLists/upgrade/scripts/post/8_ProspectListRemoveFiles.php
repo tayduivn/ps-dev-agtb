@@ -28,7 +28,7 @@ class SugarUpgradeProspectListRemoveFiles extends UpgradeScript
                 'include/api/help/module_addtolist_post_help.html',
             );
 
-            $this->fileToDelete($files);
+            $this->upgrader->fileToDelete($files, $this);
         }
     }
 }

@@ -42,7 +42,7 @@ class SugarUpgradeFTSHook extends UpgradeScript
     protected function removeDuplicates()
     {
         foreach ($this->oldHookDefs as $defPath) {
-            $this->upgrader->fileToDelete($defPath);
+            $this->upgrader->fileToDelete($defPath, $this);
         }
     }
 
