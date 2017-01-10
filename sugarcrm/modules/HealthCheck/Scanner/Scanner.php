@@ -3072,7 +3072,7 @@ class HealthCheckScanner
     {
         if ($this->db->variant == 'mysql') {
             $this->updateStatus('unsupportedDbDriver', 'mysql', 'mysqli');
-        } elseif ($this->db->dbType == 'mssql') {
+        } elseif ($this->db->variant == 'mssql' || $this->db->variant == 'freetds') {
             $this->updateStatus('unsupportedDbDriver', 'mssql', 'sqlsrv');
         }
     }
