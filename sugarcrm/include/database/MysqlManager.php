@@ -1333,13 +1333,16 @@ FROM information_schema.statistics';
         $charset = explode("_", $collation);
         $charset = $charset[0];
 
-        $this->query("ALTER DATABASE {$this->connectOptions['db_name']} DEFAULT COLLATE {$collation}");
+        $this->query('ALTER DATABASE ' . $this->connectOptions['db_name']
+            . ' DEFAULT COLLATE ' . $this->quoted($collation));
         $res = $this->query("SHOW TABLES");
 
         while ($row = $this->fetchRow($res)) {
             foreach ($row as $key => $table) {
-                $this->query("ALTER TABLE {$table} COLLATE {$collation}");
-                $this->query("ALTER TABLE {$table} CONVERT TO CHARACTER SET {$charset} COLLATE {$collation}");
+                $this->query('ALTER TABLE ' . $table . ' COLLATE ' . $this->quoted($collation));
+                $this->query('ALTER TABLE ' . $table
+                    . ' CONVERT TO CHARACTER SET ' . $this->quoted($charset)
+                    . ' COLLATE ' . $this->quoted($collation));
             }
         }
     }
