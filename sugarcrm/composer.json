@@ -94,7 +94,7 @@
         "ruflin/elastica" : "v1.4.3.0",
         "onelogin/php-saml" : "2.6.1",
         "aws/aws-sdk-php": "2.7.7",
-        "phpmailer/phpmailer" : "v5.2.10",
+        "phpmailer/phpmailer" : "v5.2.22",
         "etechnika/idna-convert" : "1.0.*",
         "ircmaxell/password-compat": "v1.0.4",
         "symfony/security-core": "v2.7.1",

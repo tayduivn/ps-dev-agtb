@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "965b5ee7f0dcc8ff2b1e9ef78ff33e10",
-    "content-hash": "30c3033cb9cb5f8e03beeae7b61f29f4",
+    "hash": "d27b342fa860da03482352aac8a40f2a",
+    "content-hash": "fb72c13609569e70427fe656644c3513",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -975,29 +975,34 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.10",
+            "version": "v5.2.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer",
-                "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7"
+                "reference": "b18cb98131bd83103ccb26a888fdfe3177b8a663"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/phpmailer-phpmailer-v5.2.10-81765c.tar",
-                "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7",
-                "shasum": "b26b3ed514f5968c43878b62538b1d32c754e769"
+                "url": "https://satis.sugardev.team/dist/phpmailer-phpmailer-v5.2.22-f88abd.tar",
+                "reference": "b18cb98131bd83103ccb26a888fdfe3177b8a663",
+                "shasum": "02b421185876d238c3178836cbfce5b60d9c9cff"
             },
             "require": {
                 "php": ">=5.0.0"
             },
             "require-dev": {
                 "phpdocumentor/phpdocumentor": "*",
-                "phpunit/phpunit": "4.3.*"
+                "phpunit/phpunit": "4.7.*"
+            },
+            "suggest": {
+                "league/oauth2-google": "Needed for Google XOAUTH2 authentication"
             },
             "type": "library",
             "autoload": {
                 "classmap": [
                     "class.phpmailer.php",
+                    "class.phpmaileroauth.php",
+                    "class.phpmaileroauthgoogle.php",
                     "class.smtp.php",
                     "class.pop3.php",
                     "extras/EasyPeasyICS.php",
@@ -1025,7 +1030,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2015-05-04 12:37:21"
+            "time": "2017-01-09 09:33:47"
         },
         {
             "name": "psr/log",
