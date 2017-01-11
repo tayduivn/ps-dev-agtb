@@ -148,6 +148,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'name' => 'description_html',
                     'type' => 'htmleditable_tinymce',
                     'dismiss_label' => true,
+                    'preview_fullwidth' => true,
                     'readonly' => true,
                     'span' => 12,
                     'related_fields' => array(
@@ -170,6 +171,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                         'upload_id',
                     ),
                 ),
+                'team_name',
             ),
         ),
         array(
@@ -204,7 +206,6 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 'parent_name',
-                'team_name',
                 array(
                     'name' => 'tag',
                     'span' => 12,

@@ -28,6 +28,33 @@
     /**
      * @inheritdoc
      */
+    setViewContent: function(value) {
+        this._super('setViewContent', [value]);
+
+        // Only set this field height if it is in the preview pane
+        if (!_.isEqual('preview', this.tplName)) {
+            return;
+        }
+
+        var field = this._getHtmlEditableField();
+        // Pad this to the final height due to the iframe margins/padding
+        var padding = 25;
+        var contentHeight = field.contents().find('body')[0].offsetHeight + padding;
+
+        // Only resize the editor when the content is fully loaded
+        if (contentHeight > padding) {
+            // Set the maximum height to 600px
+            if (contentHeight > 600) {
+                contentHeight = 600;
+            }
+
+            field.css('height', contentHeight);
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
     addCustomButtons: function(editor) {
         var self = this;
 
