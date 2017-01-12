@@ -6062,6 +6062,7 @@ $app_list_strings ['emailTemplates_type_list'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
     'workflow' => 'Workflow',
+    'system' => 'System',
   );
 
 $app_list_strings ['emailTemplates_type_list_campaigns'] = array (

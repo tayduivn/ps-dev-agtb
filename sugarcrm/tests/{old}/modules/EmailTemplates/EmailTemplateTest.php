@@ -14,6 +14,30 @@ require_once 'modules/EmailTemplates/EmailTemplate.php';
 
 class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function testSystemTemplates_ProperConfiguration_ExistWithProperTypes()
+    {
+        $this->assertNotEmpty(
+            $GLOBALS['sugar_config']['passwordsetting']['lostpasswordtmpl'],
+            'lostpasswordtmpl id not set in config'
+        );
+
+        $this->assertNotEmpty(
+            $GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl'],
+            'generatepasswordtmpl id not set in config'
+        );
+
+        $lostPasswordTemplateId = $GLOBALS['sugar_config']['passwordsetting']['lostpasswordtmpl'];
+        $generatePasswordTemplateId = $GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl'];
+
+        $lostPasswordTemplateType =
+            $GLOBALS['db']->getOne("SELECT type FROM email_templates WHERE id='$lostPasswordTemplateId'");
+        $this->assertEquals('system', $lostPasswordTemplateType, "Lost Password Template Type not 'system'");
+
+        $generatePasswordTemplateType =
+            $GLOBALS['db']->getOne("SELECT type FROM email_templates WHERE id='$generatePasswordTemplateId'");
+        $this->assertEquals('system', $generatePasswordTemplateType, "Generate Password Template Type not 'system'");
+    }
+
     /**
      * @dataProvider dataProviderTemplateStringVariables
      * @covers EmailTemplate::checkStringHasVariables
