@@ -59,11 +59,11 @@ class PMSEEndEvent extends PMSEEvent
 
         $q = $this->caseFlowHandler->retrieveSugarQueryObject();
         $q->from($this->caseFlowHandler->retrieveBean('pmse_BpmThread'));
-        $q->select()->fieldRaw("count(id) open");
+        $q->select()->fieldRaw("count(id) open_count");
         $q->where()->equals('cas_id', $flowData['cas_id']);
         $q->where()->equals('cas_thread_status', 'OPEN');
         $result = $q->execute();
         $count = array_pop($result);
-        return $count['open'];
+        return $count['open_count'];
     }
 }
