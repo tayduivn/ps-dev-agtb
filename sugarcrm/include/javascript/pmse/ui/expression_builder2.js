@@ -317,8 +317,8 @@ ExpressionControl.prototype.getText = function () {
 };
 
 ExpressionControl.prototype._createCurrencyObject = function(data) {
-    if (!(data.id && data.name && data.rate && data.symbol)) {
-        throw new Error("_createCurrencyObject(): id, name, rate and symbol properties are required.");
+    if (!(data.id && data.name && data.rate)) {
+        throw new Error('_createCurrencyObject(): id, name and rate properties are required.');
     }
     return {
         id: data.id,
