@@ -159,7 +159,7 @@ class PMSEChangeField extends PMSEScriptTask
                                 $newValue = '';
                                 if (is_array($field->value)) {
                                     // Handle regular evaluation of values
-                                    $newValue = $this->beanHandler->processValueExpression($field->value, $bean);
+                                    $newValue = $this->beanHandler->processValueExpression($field->value, $beanModule);
 
                                     // Handle special field type processing
                                     $newValue = $this->handleFieldTypeProcessing($newValue, $field, $bean);
