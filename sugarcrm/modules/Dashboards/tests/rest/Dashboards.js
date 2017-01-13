@@ -8,7 +8,7 @@ describe('Dashboards', () => {
     let jane;
     let john;
 
-    before(() => {
+    before(function*() {
         let users = [
             {
                 attributes: {
@@ -22,11 +22,9 @@ describe('Dashboards', () => {
             }
         ];
 
-        return Fixtures.create(users, {module: 'Users'})
-            .then(() => {
-                john = Agent.as('John');
-                jane = Agent.as('Jane');
-            });
+        yield Fixtures.create(users, {module: 'Users'});
+        john = Agent.as('John');
+        jane = Agent.as('Jane');
     });
 
     after(() => {
@@ -34,7 +32,7 @@ describe('Dashboards', () => {
     });
 
     describe('Accessing one\'s own dashboard', () => {
-        it('should allow user to manage his own dashboard', () => {
+        it('should allow user to manage his own dashboard', function*() {
             let testDashboard = {
                 definition: {
                     name: 'TestDashboard'
@@ -42,37 +40,27 @@ describe('Dashboards', () => {
                 record: null
             };
 
-            return john.post('Dashboards', testDashboard.definition)
-                .then((response) => {
-                    // create test
-                    expect(response).to.have.status(200);
-                    testDashboard.record = response.response.body;
+            // create test
+            let response = yield john.post('Dashboards', testDashboard.definition);
+            expect(response).to.have.status(200);
+            testDashboard.record = response.response.body;
 
-                    return john.get('Dashboards/' + testDashboard.record.id);
-                })
-                .then((response) => {
-                    // read test
-                    expect(response).to.have.status(200);
+            // read test
+            response = yield john.get('Dashboards/' + testDashboard.record.id);
+            expect(response).to.have.status(200);
 
-                    return john.put('Dashboards/' + testDashboard.record.id, {name: 'UpdatedTestDashboard'});
-                })
-                .then((response) => {
-                    // edit test
-                    expect(response).to.have.status(200);
-                    expect(response.response.body.name).to.equal('UpdatedTestDashboard');
+            // edit test
+            response = yield john.put('Dashboards/' + testDashboard.record.id, {name: 'UpdatedTestDashboard'});
+            expect(response).to.have.status(200);
+            expect(response.response.body.name).to.equal('UpdatedTestDashboard');
 
-                    return john.delete('Dashboards/' + testDashboard.record.id);
-                })
-                .then((response) => {
-                    // delete test
-                    expect(response).to.have.status(200);
+            // delete test
+            response = yield john.delete('Dashboards/' + testDashboard.record.id);
+            expect(response).to.have.status(200);
 
-                    return john.get('Dashboards/' + testDashboard.record.id);
-                })
-                .then((response) => {
-                    // delete test verification
-                    expect(response).to.have.status(404);
-                });
+            // delete test verification
+            response = yield john.get('Dashboards/' + testDashboard.record.id);
+            expect(response).to.have.status(404);
         });
     });
 
@@ -80,12 +68,10 @@ describe('Dashboards', () => {
         let johnsDashboard;
         let johnsDashboardEndpoint;
 
-        before(() => {
-            return john.post('Dashboards', {name: 'JohnsDashboard'})
-                .then((response) => {
-                    johnsDashboard = response.response.body;
-                    johnsDashboardEndpoint = 'Dashboards/' + johnsDashboard.id;
-                });
+        before(function*() {
+            let response = yield john.post('Dashboards', {name: 'JohnsDashboard'});
+            johnsDashboard = response.response.body;
+            johnsDashboardEndpoint = 'Dashboards/' + johnsDashboard.id;
         });
 
         after(() => {

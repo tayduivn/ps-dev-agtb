@@ -311,7 +311,8 @@ gulp.task('test:rest', function() {
 
     var options = {
         env: env,
-        timeout: 15000
+        timeout: 15000,
+        require: 'co-mocha',
     };
 
     if (commander.ci) {
