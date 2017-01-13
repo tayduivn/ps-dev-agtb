@@ -373,9 +373,14 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'taxrate_name',
+                    'type' => 'taxrate',
                     'initial_filter' => 'active_taxrates',
                     'filter_populate' => array(
                         'module' => array('TaxRates'),
+                    ),
+                    'populate_list' => array(
+                        'id' => 'taxrate_id',
+                        'value' => 'taxrate_value',
                     ),
                 ),
                 'show_line_nums',
