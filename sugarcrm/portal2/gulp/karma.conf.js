@@ -26,8 +26,8 @@ module.exports = function(config) {
         ],
         proxies: {
             '/clients': '/base/clients',
-            '/fixtures': '/base/tests/fixtures',
-            '/tests/modules': '/base/tests/modules',
+            '/fixtures': '/base/tests/unit-js/fixtures',
+            '/tests/modules': '/base/tests/unit-js/modules',
             '/include': '/base/include',
             '/modules': '/base/modules',
             '/portal2': '/base/portal2'
