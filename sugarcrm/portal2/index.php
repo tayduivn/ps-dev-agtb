@@ -29,7 +29,7 @@ $versionToken = getVersionedPath(null);
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico?v=<?php echo $versionToken;?>">
         <!-- CSS -->
         <link rel="stylesheet" href="../styleguide/assets/css/loading.css?v=<?php echo $versionToken;?>" type="text/css">
-        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.11.4.custom.min.css?v=<?php echo $versionToken;?>" type="text/css"/>
+        <link rel="stylesheet" href="lib/jquery-ui/css/smoothness/jquery-ui-1.11.4.custom.min.css?v=<?php echo $versionToken;?>" type="text/css"/>
     </head>
     <body>
         <div id="sidecar">
