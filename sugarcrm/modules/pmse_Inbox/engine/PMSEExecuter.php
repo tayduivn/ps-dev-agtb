@@ -424,14 +424,30 @@ class PMSEExecuter
             $this->caseFlowHandler->changeCaseStatus($flowData['cas_id'], 'IN PROGRESS');
         }
 
+        // If there are flow elements after this one that need processing, handle
+        // them here
         if (!empty($routeData['next_elements'])) {
+            // If there are more than one following flow - like from a parallel
+            // gateway - then mark that as needing a thread
             $createThread = sizeof($routeData['next_elements']) > 1;
+
+            // And if we need a thread, adjust the execution time accordingly
             if ($createThread) {
-                $startTime = ($this->maxExecutionTimeout - $this->executionTime) / sizeof($routeData['next_elements']);
+                // Execution time should not change. Execution time per thread
+                // should be the same as it was when it started.
+                $startTime = $this->executionTime;
             }
+
+            // Now loop over the following elements and process them, setting the
+            // execution time to the previous start time if necessary.
             foreach ($routeData['next_elements'] as $elementData) {
-                //reset execution time if the derivation is in parallel
-                $this->executionTime = $createThread ? $startTime : $this->executionTime;
+                // Reset execution time to start time if we are in a parallel thread
+                // otherwise leave it as executionTime from before
+                if ($createThread) {
+                    $this->executionTime = $startTime;
+                }
+
+                // Now run the engine again
                 $this->runEngine($elementData, $createThread, $bean);
             }
         } else {
