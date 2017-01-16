@@ -179,6 +179,8 @@ class Hash
             return false;
         }
 
+        // using lower case encoded password
+        $password = strtolower($password);
         if ($this->allowLegacy && $this->isLegacyHash($hash)) {
             return $this->verifyLegacy($password, $hash);
         }

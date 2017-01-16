@@ -28,7 +28,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
      * @covers ::isLegacyHash
      * @covers ::verifyLegacy
      * @covers ::setAllowLegacy
-     * @dataProvider providerTestVerifyMd5
+     * @dataProvider providerTestVerify
      */
     public function testVerify($legacy, $password, $hash, $expected)
     {
@@ -44,7 +44,7 @@ class HashTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $sut->verify($password, $hash));
     }
 
-    public function providerTestVerifyMd5()
+    public function providerTestVerify()
     {
         return array(
             // invalid md5 hash, hits backend
@@ -74,6 +74,73 @@ class HashTest extends \PHPUnit_Framework_TestCase
                 'passwordgoeshere',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 null,
+            ),
+        );
+    }
+
+    /**
+     * @covers ::verifyMd5
+     * @covers ::isLegacyHash
+     * @covers ::verifyLegacy
+     * @covers ::setAllowLegacy
+     * @dataProvider providerTestVerifyMd5
+     */
+    public function testVerifyMd5($legacy, $passwordHash, $hash, $backendReturn, $expected)
+    {
+        $backend = $this->createMock('Sugarcrm\Sugarcrm\Security\Password\BackendInterface');
+        $backend->expects($this->any())
+            ->method('verify')
+            ->with($this->equalTo(strtolower($passwordHash)), $this->equalTo($hash))
+            ->will($this->returnValue($backendReturn));
+
+        $sut = new Hash($backend);
+        $sut->setAllowLegacy($legacy);
+
+        $this->assertSame($expected, $sut->verifyMd5($passwordHash, $hash));
+    }
+
+    public function providerTestVerifyMd5()
+    {
+        return array(
+            // valid md5 hash and matching password, no hit backend
+            array(
+                true,
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                false,
+                true,
+            ),
+            // valid md5 hash and matching password hash in upper case, no hit backend
+            array(
+                true,
+                strtoupper('061ed5c2fdbe73d1420ec470f2c3e210'),
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                false,
+                true,
+            ),
+            // valid md5 hash with wrong password hash
+            array(
+                true,
+                'd7eea11dffaf0936611d58d3c5aff066',
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                false,
+                false,
+            ),
+            // valid md5 hash and matching password hash, but not allowed, hits backend
+            array(
+                false,
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                true,
+                true,
+            ),
+            // valid md5 hash and matching password hash in uppercase, but not allowed, hits backend
+            array(
+                false,
+                strtoupper('061ed5c2fdbe73d1420ec470f2c3e210'),
+                '061ed5c2fdbe73d1420ec470f2c3e210',
+                true,
+                true,
             ),
         );
     }
