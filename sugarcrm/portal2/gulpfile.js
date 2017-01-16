@@ -12,7 +12,6 @@
 var _ = require('lodash');
 var commander = require('commander');
 var fs = require('fs');
-var glob = require('glob');
 var gulp = require('gulp');
 var karma = require('karma').server;
 var os = require('os');

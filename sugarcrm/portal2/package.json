@@ -2,7 +2,6 @@
   "private": true,
   "devDependencies": {
     "commander": "^2.9.0",
-    "glob": "^7.0.3",
     "gulp": "^3.9.0",
     "jasmine-sinon": "^0.3.2",
     "karma": "~0.12.16",
