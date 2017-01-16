@@ -275,6 +275,8 @@ $dictionary['Quote'] = array(
                 'base_rate'
             ),
             'default' => '0',
+            'formula' => 'ifElse(equal($shipping,""),"0.00",$shipping)',
+            'calculated' => true,
         ),
         'shipping_usdollar' => array(
             'name' => 'shipping_usdollar',

@@ -10,21 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="quote-footer-item quote-footer-input-item {{css_class}} record-cell"
-     data-type="{{type}}" data-name="{{name}}">
+
+<div class="quote-footer-item quote-footer-input-item {{css_class}}">
     <span class="quote-footer-label">{{label}}</span>
     <span class="quote-footer-value">
         <div class="currency-field" data-placement="bottom" data-original-title="{{value}}">
-            <span class="quote-edit-link-wrapper" data-name="{{name}}" data-wrapper="edit">
-                <a class="record-edit-link btn btn-invisible" data-type="{{type}}" data-name="{{name}}">
-                    <i class="fa fa-pencil"></i>
-                </a>
-            </span>
-            {{#if transactionValue}}
-                <label class="original">{{transactionValue}}</label><div class="converted">{{value}}</div>
-            {{else}}
-                {{value}}
-            {{/if}}
+            <div class="controls">
+                <span class="error-tooltip hide" rel="tooltip" data-container="body">
+                    <i class="fa fa-exclamation-circle"></i>
+                </span>
+            </div>
+            <input type="text" value="{{value}}" class="input-small tright" maxlength="26">
+            <span sfuuid="{{currencySfId}}" class="hide"></span>
         </div>
     </span>
 </div>

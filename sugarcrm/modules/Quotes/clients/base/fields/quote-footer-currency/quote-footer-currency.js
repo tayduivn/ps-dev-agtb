@@ -20,52 +20,52 @@
      * @inheritdoc
      */
     initialize: function(options) {
+        var isCreate = options.context.isCreate();
+        options.viewName = isCreate ? 'edit' : 'detail';
+
         this._super('initialize', [options]);
+
+        if (!isCreate) {
+            // only add this event on record view
+            this.events = _.extend({
+                'click .currency-field': '_toggleFieldToEdit'
+            }, this.events);
+        }
+
         this.model.addValidationTask(
             'isNumeric_validator_' + this.cid,
             _.bind(this._doValidateIsNumeric, this)
         );
+
+        this.action = isCreate ? 'edit' : 'detail';
+
+        this.context.trigger('quotes:editableFields:add', this);
     },
 
     /**
-     * @inheritdoc
-     */
-    bindDomChange: function() {
-        if (!(this.model instanceof Backbone.Model)) {
-            return;
-        }
-
-        var $el = this.$(this.fieldTag);
-        $el.on('change', _.bind(this._onModelChanged, this));
-    },
-
-    /**
-     * callback for when the shipping field changes.
-     * @param {Object} evt the JS event object passed into the change event.
+     * Toggles the field to edit if it not in edit
+     *
+     * @param {jQuery.Event} evt jQuery click event
      * @private
      */
-    _onModelChanged: function(evt) {
-        var value =  evt.currentTarget.value;
-        this.model.set(this.name, value);
-        this.model.doValidate(this.name, _.bind(this._validationComplete, this));
-    },
+    _toggleFieldToEdit: function(evt) {
+        var record;
 
-    /**
-     * Callback for after validation runs.
-     * @param {bool} isValid flag determining if the validation is correct
-     * @private
-     */
-    _validationComplete: function(isValid) {
-        if (isValid) {
-            app.alert.dismiss('invalid-data');
-            if (!this.context.isCreate()) {
-                this.model.save();
+        if (!this.$el.hasClass('edit')) {
+            this.action = 'edit';
+            this.tplName = 'detail';
+
+            // if this isn't already in edit, toggle to edit
+            record = this.closestComponent('record');
+            if (record) {
+                record.context.trigger('editable:handleEdit', evt);
             }
         }
     },
 
     /**
      * Validation function to check to see if a value is numeric.
+     *
      * @param {Array} fields
      * @param {Array} errors
      * @param {Function} callback
@@ -77,15 +77,6 @@
             errors[this.name] = app.lang.get('ERROR_NUMBER');
         }
         callback(null, fields, errors);
-    },
-
-    /**
-     * Formats number
-     * @param {integer|string} value Currency value to be formatted
-     * @override
-     */
-    format: function(value) {
-        return app.utils.formatNumberLocale(value);
     },
 
     /**

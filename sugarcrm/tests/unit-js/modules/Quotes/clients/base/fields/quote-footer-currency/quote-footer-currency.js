@@ -37,57 +37,149 @@ describe('Quotes.Base.Fields.QuoteFooterCurrency', function() {
         app = null;
     });
 
-    describe('bindDomChange', function() {
-        it('should attach _onModelChanged to the change event', function() {
-            var el = {
-                on: sinon.collection.stub()
-            };
+    describe('initialize', function() {
+        var initOptions;
 
-            sinon.collection.stub(field.$el, 'find', function() {
-                return el;
-            });
-
-            field.bindDomChange();
-
-            expect(el.on).toHaveBeenCalledWith('change');
-        });
-    });
-
-    describe('_onModelChanged', function() {
-        it('should set the value from the event and try to validate', function() {
-            var evt = {
-                currentTarget: {
-                    value: 'foo'
+        beforeEach(function() {
+            initOptions = {
+                context: {
+                    isCreate: function() {
+                        return false;
+                    }
                 }
             };
-
-            sinon.collection.stub(field.model, 'set', function() {});
-            sinon.collection.stub(field.model, 'doValidate', function() {});
-
-            field._onModelChanged(evt);
-
-            expect(field.model.set).toHaveBeenCalledWith(field.name, evt.currentTarget.value);
-            expect(field.model.doValidate).toHaveBeenCalledWith(field.name);
+            sinon.collection.stub(field.model, 'addValidationTask', function() {});
         });
-    });
 
-    describe('_validationComplete', function() {
-        beforeEach(function() {
-            sinon.collection.stub(app.alert, 'dismiss', function() {});
-            sinon.collection.stub(field.model, 'save', function() {});
-            sinon.collection.stub(field.context, 'isCreate', function() {
-                return false;
+        it('should add model validation task', function() {
+            field.initialize(initOptions);
+
+            expect(field.model.addValidationTask).toHaveBeenCalled();
+        });
+
+        it('should trigger quotes:editableFields:add to add this field to the record', function() {
+            sinon.collection.stub(field.context, 'trigger', function() {});
+            field.initialize(initOptions);
+
+            expect(field.context.trigger).toHaveBeenCalledWith('quotes:editableFields:add', field);
+        });
+
+        describe('on create view', function() {
+            beforeEach(function() {
+                initOptions = {
+                    context: {
+                        isCreate: function() {
+                            return true;
+                        }
+                    }
+                };
+
+                field.context = {
+                    trigger: sinon.collection.spy()
+                };
+            });
+
+            afterEach(function() {
+                delete field.context;
+            });
+
+            it('should not add click events', function() {
+                field.events = {};
+                field.initialize(initOptions);
+
+                expect(field.events['click .currency-field']).toBeUndefined();
+            });
+
+            it('should set options viewName to edit', function() {
+                field.initialize(initOptions);
+
+                expect(initOptions.viewName).toBe('edit');
+            });
+
+            it('should set action to edit', function() {
+                field.initialize(initOptions);
+
+                expect(field.action).toBe('edit');
             });
         });
 
-        it('should dismiss the error alert if valid', function() {
-            field._validationComplete(true);
-            expect(app.alert.dismiss).toHaveBeenCalledWith('invalid-data');
+        describe('on record view', function() {
+            beforeEach(function() {
+                initOptions = {
+                    context: {
+                        isCreate: function() {
+                            return false;
+                        }
+                    }
+                };
+
+                sinon.collection.stub(field.context, 'trigger', function() {});
+            });
+
+            afterEach(function() {
+                delete field.context;
+            });
+
+            it('should add click events', function() {
+                field.events = {};
+                field.initialize(initOptions);
+
+                expect(field.events['click .currency-field']).toBeDefined();
+            });
+
+            it('should set options viewName to detail', function() {
+                field.initialize(initOptions);
+
+                expect(initOptions.viewName).toBe('detail');
+            });
+
+            it('should set action to edit', function() {
+                field.initialize(initOptions);
+
+                expect(field.action).toBe('detail');
+            });
+        });
+    });
+
+    describe('_toggleFieldToEdit', function() {
+        var record;
+        var recordContextTriggerSpy;
+
+        beforeEach(function() {
+            recordContextTriggerSpy = sinon.collection.spy();
+            record = {
+                context: {
+                    trigger: recordContextTriggerSpy
+                }
+            };
+            sinon.collection.stub(field, 'closestComponent', function() {
+                return record;
+            });
         });
 
-        it('should call model.save if not in create mode', function() {
-            field._validationComplete(true);
-            expect(field.model.save).toHaveBeenCalled();
+        describe('when $el is in edit', function() {
+
+            beforeEach(function() {
+                field.$el = $('<div class="edit"></div>');
+            });
+
+            it('should not trigger the handleEdit event', function() {
+                field._toggleFieldToEdit({});
+
+                expect(recordContextTriggerSpy).not.toHaveBeenCalledWith('editable:handleEdit');
+            });
+        });
+
+        describe('when $el is in detail', function() {
+            beforeEach(function() {
+                field.$el = $('<div class="detail"></div>');
+            });
+
+            it('should trigger the handleEdit event', function() {
+                field._toggleFieldToEdit({});
+
+                expect(recordContextTriggerSpy).toHaveBeenCalledWith('editable:handleEdit');
+            });
         });
     });
 
@@ -105,30 +197,28 @@ describe('Quotes.Base.Fields.QuoteFooterCurrency', function() {
             sinon.collection.stub(field.model, 'get', function() {
                 return 1;
             });
-
             field._doValidateIsNumeric([], [], callback);
-            expect(callback).toHaveBeenCalledWith(null, [], errors);
+
+            expect(errors.shipping).toBeUndefined();
         });
 
-        it('should call the callback without errors ', function() {
+        it('should call the callback with one error', function() {
             sinon.collection.stub(field.model, 'get', function() {
                 return 'foo';
             });
-
             errors[field.name] = 'foo';
             field._doValidateIsNumeric([], [], callback);
-            expect(callback).toHaveBeenCalledWith(null, [], errors);
+
+            expect(errors.shipping).toBeDefined();
         });
     });
 
-    describe('format', function() {
+    describe('_dispose', function() {
         it('should call app.utils.formatNumberLocale ', function() {
-            sinon.collection.stub(app.utils, 'formatNumberLocale', function() {
+            sinon.collection.stub(field.model, 'removeValidationTask', function() {});
+            field._dispose();
 
-            });
-
-            field.format(42);
-            expect(app.utils.formatNumberLocale).toHaveBeenCalledWith(42);
+            expect(field.model.removeValidationTask).toHaveBeenCalled();
         });
     });
 });

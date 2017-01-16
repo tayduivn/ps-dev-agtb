@@ -40,6 +40,59 @@
     /**
      * @inheritdoc
      */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
+        this.context.on('editable:handleEdit', this._handleEditShippingField, this);
+
+        this.context.on('quotes:editableFields:add', function(field) {
+            this.editableFields.push(field);
+        }, this);
+    },
+
+    /**
+     * This is only when the Shipping field is clicked to handle toggling
+     * it to Edit mode since it's outside of this view's element. This is
+     * exactly the same as record.handleEdit except it grabs the jQuery
+     * event target from the full page instead of this.el and also uses the
+     * `this.editableFields` instead of this.getField to find the shipping field.
+     *
+     * @param {jQuery.Event} e The jQuery Click Event
+     * @private
+     */
+    _handleEditShippingField: function(e) {
+        var $target;
+        var cellData;
+        var field;
+        var cell;
+
+        if (e) {
+            // having to open this to full page $ instead of this.$
+            $target = $(e.target);
+            cell = $target.parents('.record-cell');
+        }
+
+        cellData = cell.data();
+        field = _.find(this.editableFields, function(field) {
+            return field.name === cellData.name;
+        });
+
+        // Set Editing mode to on.
+        this.inlineEditMode = true;
+
+        this.setButtonStates(this.STATE.EDIT);
+
+        this.toggleField(field);
+
+        if (cell.closest('.headerpane').length > 0) {
+            this.toggleViewButtons(true);
+            this.adjustHeaderpaneFields();
+        }
+    },
+
+    /**
+     * @inheritdoc
+     */
     getCustomSaveOptions: function(options) {
         options = options || {};
         var returnObject = {};

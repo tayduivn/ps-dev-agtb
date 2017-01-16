@@ -30,7 +30,7 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-footer'] = array(
                     'name' => 'shipping',
                     'type' => 'quote-footer-currency',
                     'css_class' => 'quote-footer-currency',
-                    'default' => 0,
+                    'default' => '0.00',
                 ),
                 array(
                     'name' => 'total',

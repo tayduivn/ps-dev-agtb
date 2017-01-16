@@ -93,6 +93,81 @@ describe('Quotes.Base.Views.Record', function() {
         });
     });
 
+    describe('bindDataChange()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super', function() {});
+            sinon.collection.stub(view.context, 'on', function() {});
+        });
+
+        it('should set listener on context for editable:handleEdit', function() {
+            view.bindDataChange();
+
+            expect(view.context.on).toHaveBeenCalledWith('editable:handleEdit');
+        });
+
+        it('should set listener on context for quotes:editableFields:add', function() {
+            view.bindDataChange();
+
+            expect(view.context.on).toHaveBeenCalledWith('editable:handleEdit');
+        });
+
+        it('should add a field to editableFields when the event is called', function() {
+            view.context.on.restore();
+            view.editableFields = [];
+            view.bindDataChange();
+            view.context.trigger('quotes:editableFields:add', {
+                id: 'myEditableField1'
+            });
+
+            expect(view.editableFields[0].id).toBe('myEditableField1');
+        });
+    });
+
+    describe('_handleEditShippingField()', function() {
+        var shipField;
+        var event;
+        var $targetEl;
+        var $targetElParent;
+
+        beforeEach(function() {
+            $targetEl = $('<a class="btn"></a>');
+            $targetElParent = $('<div class="record-cell" data-name="shipFieldName1"></div>');
+            $targetElParent.append($targetEl);
+            event = {
+                target: $targetEl
+            };
+            shipField = {
+                id: 'shipFieldId1',
+                name: 'shipFieldName1'
+            };
+            view.editableFields = [shipField];
+            sinon.collection.stub(view, 'setButtonStates', function() {});
+            sinon.collection.stub(view, 'toggleField', function() {});
+            view.inlineEditMode = false;
+
+            view._handleEditShippingField(event);
+        });
+
+        afterEach(function() {
+
+        });
+
+        it('should set inlineEditMode true', function() {
+            expect(view.inlineEditMode).toBeTruthy();
+        });
+
+        it('should call setButtonStates', function() {
+            expect(view.setButtonStates).toHaveBeenCalledWith('edit');
+        });
+
+        it('should call toggleField', function() {
+            expect(view.toggleField).toHaveBeenCalledWith(shipField);
+        });
+
+        it('should call setButtonStates', function() {
+            expect(view.setButtonStates).toHaveBeenCalledWith('edit');
+        });
+    });
     describe('hasUnsavedChanges()', function() {
         beforeEach(function() {
             sinon.collection.stub(view, 'hasUnsavedQuoteChanges', function() {});
@@ -105,112 +180,6 @@ describe('Quotes.Base.Views.Record', function() {
         });
     });
 
-    /*
-    describe('hasUnsavedChanges', function() {
-        var tmpRow;
-        var callReturn;
-        beforeEach(function() {
-            tmpRow = {
-                id: 1234,
-                name: 'test',
-                total: '100',
-                bundles: [{
-                    id: 1233,
-                    name: 'bundle_1',
-                    _module: 'ProductBundles',
-                    product_bundle_items: [{
-                        id: 12345,
-                        name: 'item_1',
-                        _module: 'Products'
-                    }]
-                }]
-            };
-            model.setSyncedAttributes(tmpRow);
-            model.set(tmpRow);
-        });
-
-        it('should reset the noEditFields variable', function() {
-            var existingValues = view.noEditFields;
-            view.hasUnsavedChanges();
-            expect(view.noEditFields).toBe(existingValues);
-        });
-
-        it('should call super with hasUnsavedChanges', function() {
-            sinon.collection.stub(view, '_super', function() {});
-            callReturn = view.hasUnsavedChanges();
-            expect(view._super).toHaveBeenCalledWith('hasUnsavedChanges');
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should find no changes', function() {
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should ignore changes on the total field', function() {
-            model.set('total', '125.00');
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should find the change on the bundle', function() {
-            var b = model.get('bundles').at(0);
-            b.set('name', 'bundle_123');
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeTruthy();
-        });
-
-        it('should find the change on the item in the bundle', function() {
-            var b = model.get('bundles').at(0);
-            var i = b.get('product_bundle_items').at(0);
-            i.set('name', 'item_123');
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeTruthy();
-        });
-
-        it('should find a change when an item is added to a group and is still new', function() {
-            var b = model.get('bundles').at(0);
-            b.get('product_bundle_items').add(app.data.createBean('Products'));
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeTruthy();
-        });
-
-        it('should find a change when an item is added to a group and is not new', function() {
-            var b = model.get('bundles').at(0);
-            b.get('product_bundle_items').add(app.data.createBean('Products', {id: 'my_new_id'}));
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should not find nay change when an item is removed from a group', function() {
-            var b = model.get('bundles').at(0).get('product_bundle_items');
-            b.remove(b.at(0));
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should not find any change when a group is added', function() {
-            var b = model.get('bundles');
-            b.add(app.data.createBean('ProductBundles'));
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-
-        it('should not find any change when a group is removed', function() {
-            var b = model.get('bundles');
-            b.remove(b.at(0));
-
-            callReturn = view.hasUnsavedChanges();
-            expect(callReturn).toBeFalsy();
-        });
-    });
-    */
     describe('getCustomSaveOptions', function() {
         var attributes;
         var actual;
