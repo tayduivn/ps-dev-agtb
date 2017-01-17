@@ -140,6 +140,10 @@
             } else {
                 this.formattedIds = idList;
             }
+
+            if (_.isEmpty(this.formattedIds)) {
+                this.formattedIds = value;
+            }
         }
 
         return value;

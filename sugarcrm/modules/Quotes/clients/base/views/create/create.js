@@ -325,25 +325,6 @@
     },
 
     /**
-     * @inheritdoc
-     */
-    saveModel: function(success, error) {
-        /*var bundles = this.model.get('bundles');
-        // unsetting _notSaved during CreateView so the it wont trip isNew() after the save
-        bundles.each(function(bundle) {
-            // bundle = ProductBundle model
-            var items = bundle.get('product_bundle_items');
-            items.each(function(item) {
-                // item = QLI/Note model
-                item.unset('_notSaved');
-            }, this);
-            bundle.unset('_notSaved');
-        }, this);*/
-
-        this._super('saveModel', [success, error]);
-    },
-
-    /**
      * Overriding to make the router go back to previous view, not Quotes module list
      *
      * @inheritdoc

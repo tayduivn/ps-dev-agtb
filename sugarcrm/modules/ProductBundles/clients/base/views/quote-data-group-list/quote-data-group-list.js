@@ -365,7 +365,7 @@
      * @param {string} linkName The link name of the new item to create: products or product_bundle_notes
      */
     onAddNewItemToGroup: function(linkName, prepopulateData) {
-        var relatedModel = app.data.createRelatedBean(this.model, null, linkName);//this.createLinkModel(this.model, linkName);
+        var relatedModel = app.data.createRelatedBean(this.model, null, linkName);
         var maxPositionModel;
         var position = 0;
         var $relatedRow;
