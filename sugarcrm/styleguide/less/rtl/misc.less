@@ -32,3 +32,32 @@ div#nprogress {
     padding-right: 0;
     padding-left: 63px;
 }
+
+.popover {
+    &.feedback {
+        text-align: right;
+        .fa.fa-times.feedback-close {
+            left: 10px;
+            right: auto;
+            margin-left: auto;
+        }
+    }
+
+    &.helpmodal {
+        .resource {
+            padding: 10px 0 10px 15px;
+            .resource-info {
+                margin-left: 0;
+            }
+        }
+    }
+
+    &.top {
+        .arrow {
+            &:after {
+                margin-right: -10px;
+                margin-left: auto;
+            }
+        }
+    }
+}

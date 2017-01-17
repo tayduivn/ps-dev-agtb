@@ -199,8 +199,14 @@
      */
     _positionPopover: function() {
         var $popoverContainer = this.button.data()['bs.popover'].tip();
-        // Leave 15px of space between rhs edge of popover and the screen.
-        var left = $(window).width() - $popoverContainer.width() - 15;
+        var left;
+        if (app.lang.direction === 'rtl') {
+            // Leave 16px of space between lhs edge of popover and the screen.
+            left = 16;
+        } else {
+            // Leave 16px of space between rhs edge of popover and the screen.
+            left = $(window).width() - $popoverContainer.width() - 16;
+        }
         $popoverContainer.css('left', left);
     },
 
