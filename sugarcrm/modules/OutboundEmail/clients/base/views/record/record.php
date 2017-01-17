@@ -169,6 +169,24 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
         array(
             'hooks' => array('edit'),
             'trigger' => 'true',
+            'triggerFields' => array('mail_smtpssl'),
+            'onload' => false,
+            'actions' => array(
+                array(
+                    'action' => 'SetValue',
+                    'params' => array(
+                        'target' => 'mail_smtpport',
+                        'value' =>
+                            'ifElse(equal($mail_smtpssl,"1"), "465",
+                                ifElse(equal($mail_smtpssl,"2"), "587",
+                                    "25"))',
+                    ),
+                ),
+            ),
+        ),
+        array(
+            'hooks' => array('edit'),
+            'trigger' => 'true',
             'triggerFields' => array('mail_smtpauth_req'),
             'onload' => true,
             'actions' => array(
