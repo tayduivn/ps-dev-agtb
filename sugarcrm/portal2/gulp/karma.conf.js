@@ -13,16 +13,16 @@ module.exports = function(config) {
     config.set({
         basePath: '../../',
         frameworks: [
-            'jasmine'
+            'jasmine',
         ],
         plugins: [
-            'karma-chrome-launcher',
-            'karma-coverage',
-            'karma-firefox-launcher',
             'karma-jasmine',
-            'karma-junit-reporter',
+            'karma-chrome-launcher',
+            'karma-firefox-launcher',
             'karma-phantomjs-launcher',
-            'karma-safari-launcher'
+            'karma-safari-launcher',
+            'karma-coverage',
+            'karma-junit-reporter',
         ],
         proxies: {
             '/clients': '/base/clients',
@@ -30,7 +30,7 @@ module.exports = function(config) {
             '/tests/modules': '/base/tests/unit-js/modules',
             '/include': '/base/include',
             '/modules': '/base/modules',
-            '/portal2': '/base/portal2'
+            '/portal2': '/base/portal2',
         },
         reportSlowerThan: 500,
         browserDisconnectTimeout: 5000,

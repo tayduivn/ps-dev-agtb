@@ -11,7 +11,8 @@
 
 [
     {"pattern": "clients/{base,portal}/**/*.hbs", "included": false, "served": true, "watched": false},
-    {"pattern": "modules/**/clients/{base,portal}/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "modules/**/clients/base/**/*.hbs", "included": false, "served": true, "watched": false},
+    {"pattern": "modules/**/clients/portal/**/*.hbs", "included": false, "served": true, "watched": false},
     {"pattern": "tests/unit-js/fixtures/*.json", "included": false, "served": true, "watched": false},
     {"pattern": "tests/unit-js/modules/**/fixtures/*.json", "included": false, "served": true, "watched": false},
 
@@ -77,5 +78,6 @@
     "portal2/error.js",
 
     {"pattern": "clients/{base,portal}/**/*.js", "included": false, "served": true, "watched": true},
-    {"pattern": "modules/**/clients/{base,portal}/**/*.js", "included": false, "served": true, "watched": true}
+    {"pattern": "modules/**/clients/base/**/*.js", "included": false, "served": true, "watched": true},
+    {"pattern": "modules/**/clients/portal/**/*.js", "included": false, "served": true, "watched": true}
 ]

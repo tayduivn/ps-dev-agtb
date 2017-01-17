@@ -13,7 +13,6 @@ var _ = require('lodash');
 var commander = require('commander');
 var fs = require('fs');
 var gulp = require('gulp');
-var karma = require('karma').server;
 var os = require('os');
 
 /**
@@ -48,6 +47,9 @@ function splitByCommas(val) {
 }
 
 gulp.task('karma', function(done) {
+
+    const { Server } = require('karma');
+
     // get command-line arguments (only relevant for karma tests)
     commander
         .option('-d, --dev', 'Set Karma options for debugging')
@@ -79,7 +81,7 @@ gulp.task('karma', function(done) {
     };
 
     var path = commander.path || os.tmpdir();
-    path += '/karma';
+    path += '/karma/portal';
 
     karmaOptions.preprocessors = {};
     _.each(getFirstPartyFiles(), function(value) {
@@ -109,9 +111,9 @@ gulp.task('karma', function(done) {
                 },
                 {
                     type: 'html',
-                    dir: path + '/coverage-html'
-                }
-            ]
+                    dir: path + '/coverage-html',
+                },
+            ],
         };
 
         process.stdout.write('Coverage reports will be generated to: ' + path + '\n');
@@ -123,7 +125,7 @@ gulp.task('karma', function(done) {
         karmaOptions.junitReporter = {
             outputDir: path,
             outputFile: '/test-results.xml',
-            useBrowserName: false
+            useBrowserName: false,
         };
     }
 
@@ -135,10 +137,10 @@ gulp.task('karma', function(done) {
         }
     }
 
-    return karma.start(karmaOptions, function(exitStatus) {
+    new Server(karmaOptions, function (exitStatus) {
         // Karma's return status is not compatible with gulp's streams
         // See: http://stackoverflow.com/questions/26614738/issue-running-karma-task-from-gulp
         // or: https://github.com/gulpjs/gulp/issues/587 for more information
         done(exitStatus ? 'There are failing unit tests' : undefined);
-    });
+    }).start();
 });
