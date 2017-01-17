@@ -27,29 +27,47 @@
 
     /**
      * @inheritdoc
+     * Resize the HTML content of the email based on the height of the iframe content
      */
     setViewContent: function(value) {
+        var field;
+        // Pad this to the final height due to the iframe margins/padding
+        var padding = 25;
+        var contentHeight = 0;
+
         this._super('setViewContent', [value]);
 
         // Only set this field height if it is in the preview pane
-        if (!_.isEqual('preview', this.tplName)) {
+        if (this.tplName !== 'preview') {
             return;
         }
 
-        var field = this._getHtmlEditableField();
-        // Pad this to the final height due to the iframe margins/padding
-        var padding = 25;
-        var contentHeight = field.contents().find('body')[0].offsetHeight + padding;
+        field = this._getHtmlEditableField();
+
+        contentHeight = this._getContentHeight() + padding;
 
         // Only resize the editor when the content is fully loaded
         if (contentHeight > padding) {
             // Set the maximum height to 600px
-            if (contentHeight > 600) {
-                contentHeight = 600;
+            if (contentHeight > 400) {
+                contentHeight = 400;
             }
 
             field.css('height', contentHeight);
         }
+    },
+
+    /**
+     * Get the content height of the field iframe
+     */
+    _getContentHeight: function() {
+        var field = this._getHtmlEditableField();
+
+        if (!_.isUndefined(field.get(0)) && !_.isEmpty(field.get(0).contentDocument)) {
+            return field.contents().find('body')[0].offsetHeight;
+        }
+
+        return 0;
     },
 
     /**

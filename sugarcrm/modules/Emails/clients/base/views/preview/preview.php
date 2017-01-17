@@ -9,7 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Emails']['base']['view']['record'] = array(
+$viewdefs['Emails']['base']['view']['preview'] = array(
     'buttons' => array(
         array(
             'type' => 'button',
@@ -171,6 +171,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                         'upload_id',
                     ),
                 ),
+                'team_name',
             ),
         ),
         array(
@@ -205,7 +206,6 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 'parent_name',
-                'team_name',
                 array(
                     'name' => 'tag',
                     'span' => 12,
