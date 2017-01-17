@@ -11,6 +11,7 @@
  */
 
 require_once 'include/OutboundEmail/OutboundEmail.php';
+require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
@@ -23,10 +24,12 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         SugarTestHelper::setUp('current_user');
+        OutboundEmailConfigurationTestHelper::setUp();
     }
 
     protected function tearDown()
     {
+        OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }
@@ -70,31 +73,20 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSave()
     {
-        $emailAddressId = Uuid::uuid1();
-
-        $db = SugarTestHelper::setUp('mock_db');
-        $db->addQuerySpy(
-            'save',
-            "/INSERT INTO outbound_email \\(id,name,type,user_id,email_address_id,mail_sendtype,mail_smtptype," .
-            "mail_smtpserver,mail_smtpport,mail_smtpuser,mail_smtppass,mail_smtpauth_req,mail_smtpssl,deleted\\) " .
-            "VALUES \\('[a-z0-9_-]{36}','test outbound account','user','{$GLOBALS['current_user']->id}'," .
-            "'{$emailAddressId}','smtp','other','smtp\\.sugarcrm\\.com',465,'sugarcrm','.*',0,'1',0\\)/"
-        );
-
         $bean = BeanFactory::newBean('OutboundEmail');
-        $bean->db = $db;
+        $bean->id = Uuid::uuid1();
+        $bean->new_with_id = true;
         $bean->name = 'test outbound account';
         $bean->mail_smtpserver = 'smtp.sugarcrm.com';
         $bean->mail_smtpuser = 'sugarcrm';
         $bean->mail_smtppass = 'foobar';
-        $bean->email_address_id = $emailAddressId;
-        $bean->save();
+        $bean->email_address_id = Uuid::uuid1();
+        $id = $bean->save();
 
-        $actual = $db->getQuerySpyRunCount('save');
-        $this->assertSame(1, $actual, 'Should have inserted the specified row');
-        $this->assertSame($GLOBALS['current_user']->id, $bean->user_id, 'Should be owned by the current user');
+        $this->assertSame($bean->id, $id, 'OutboundEmail save returned abnormally');
 
-        $db->deleteQuerySpy('save');
+        $userId = $GLOBALS['db']->getOne("SELECT user_id FROM outbound_email WHERE id='{$bean->id}'");
+        $this->assertSame($GLOBALS['current_user']->id, $userId, 'Should be owned by the current user');
     }
 
     /**
@@ -102,10 +94,7 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMarkDeleted()
     {
-        $bean = $this->getMockBuilder('OutboundEmail')
-            ->disableOriginalConstructor()
-            ->setMethods(array('delete'))
-            ->getMock();
+        $bean = $this->createPartialMock('OutboundEmail', ['delete']);
         $bean->method('delete')->willReturn(true);
         $bean->id = Uuid::uuid1();
 
@@ -126,18 +115,18 @@ class OutboundEmailTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $bean->delete();
         $this->assertFalse($actual, 'Should return false when trying to delete an instance without an ID');
 
-        $bean->id = Uuid::uuid1();
-        $db = SugarTestHelper::setUp('mock_db');
-        $db->addQuerySpy('delete', "/DELETE FROM outbound_email WHERE id = '{$bean->id}'/");
-        $bean->db = $db;
+        // Now create a record that can be deleted.
+        $bean->name = 'test outbound account';
+        $bean->mail_smtpserver = 'smtp.sugarcrm.com';
+        $bean->mail_smtpuser = 'sugarcrm';
+        $bean->mail_smtppass = 'foobar';
+        $bean->save();
 
         $actual = $bean->delete();
         $this->assertTrue($actual, 'Should return true when deleting the instance');
 
-        $actual = $db->getQuerySpyRunCount('delete');
-        $this->assertSame(1, $actual, 'Should have deleted the specified row');
-
-        $db->deleteQuerySpy('delete');
+        $actual = $GLOBALS['db']->getOne("SELECT COUNT(id) FROM outbound_email WHERE id='{$bean->id}'");
+        $this->assertEquals(0, $actual, 'Should have deleted the specified row');
     }
 
     /**
