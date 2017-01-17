@@ -805,6 +805,18 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
         'basic',
         'assignable',
     ),
+    'indices' => array(
+        array(
+            'name' => 'idx_prostatus_evntype_evnmodule_evn_behavior',
+            'type' => 'index',
+            'fields' => array(
+                'pro_status',
+                'evn_type',
+                'evn_module',
+                'evn_behavior',
+            ),
+        ),
+    ),
 );
 
 VardefManager::createVardef('pmse_BpmRelatedDependency', 'pmse_BpmRelatedDependency');
