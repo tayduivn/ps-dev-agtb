@@ -28,10 +28,8 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
                 null,
                 true
             );
-            sandbox.stub(field, '_getHtmlEditableField', function() {
-                return $textarea;
-            });
-            sandbox.stub(field, 'destroyTinyMCEEditor', $.noop());
+            sandbox.stub(field, '_getHtmlEditableField').returns($textarea);
+            sandbox.stub(field, 'destroyTinyMCEEditor');
         });
 
         afterEach(function() {
@@ -44,9 +42,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             var cssHeight;
 
             // Content height is padded to 25px more than it is set to allow for scrollbar padding
-            sandbox.stub(field, '_getContentHeight', function() {
-                return 200;
-            });
+            sandbox.stub(field, '_getContentHeight').returns(200);
 
             field.render();
 
@@ -58,9 +54,7 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             var editor = field._getHtmlEditableField();
             var cssHeight;
 
-            sandbox.stub(field, '_getContentHeight', function() {
-                return 550;
-            });
+            sandbox.stub(field, '_getContentHeight').returns(550);
 
             field.render();
 
@@ -83,10 +77,10 @@ describe('Emails.Field.Htmleditable_tinymce', function() {
             );
             var editor;
 
-            sandbox.stub(newField, '_getHtmlEditableField', function() {
-                return $('<iframe class="htmleditable" frameborder="0"></iframe>');
-            });
-            sandbox.stub(newField, 'destroyTinyMCEEditor', $.noop());
+            sandbox.stub(newField, '_getHtmlEditableField').returns(
+                $('<iframe class="htmleditable" frameborder="0"></iframe>')
+            );
+            sandbox.stub(newField, 'destroyTinyMCEEditor');
 
             editor = newField._getHtmlEditableField();
 

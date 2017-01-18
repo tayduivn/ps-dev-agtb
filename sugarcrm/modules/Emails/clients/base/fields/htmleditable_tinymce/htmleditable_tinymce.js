@@ -27,7 +27,7 @@
 
     /**
      * @inheritdoc
-     * Resize the HTML content of the email based on the height of the iframe content
+     * Resize the HTML content of the email based on the height of the iframe content in preview
      */
     setViewContent: function(value) {
         var field;
@@ -42,23 +42,23 @@
             return;
         }
 
-        field = this._getHtmlEditableField();
-
         contentHeight = this._getContentHeight() + padding;
 
         // Only resize the editor when the content is fully loaded
         if (contentHeight > padding) {
-            // Set the maximum height to 600px
+            // Set the maximum height to 400px
             if (contentHeight > 400) {
                 contentHeight = 400;
             }
 
+            field = this._getHtmlEditableField();
             field.css('height', contentHeight);
         }
     },
 
     /**
      * Get the content height of the field iframe
+     * @return {number}
      */
     _getContentHeight: function() {
         var field = this._getHtmlEditableField();

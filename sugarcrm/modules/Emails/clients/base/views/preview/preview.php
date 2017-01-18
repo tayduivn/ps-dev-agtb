@@ -10,78 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 $viewdefs['Emails']['base']['view']['preview'] = array(
-    'buttons' => array(
-        array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-            'events' => array(
-                'click' => 'button:cancel_button:click',
-            ),
-        ),
-        array(
-            'type' => 'rowaction',
-            'event' => 'button:save_button:click',
-            'name' => 'save_button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn btn-primary',
-            'showOn' => 'edit',
-            'acl_action' => 'edit',
-        ),
-        array(
-            'type' => 'actiondropdown',
-            'name' => 'main_dropdown',
-            'primary' => true,
-            'showOn' => 'view',
-            'buttons' => array(
-                array(
-                    'name' => 'reply_button',
-                    'type' => 'reply-action',
-                    'event' => 'button:reply_button:click',
-                    'label' => 'LBL_BUTTON_REPLY',
-                    'acl_module' => 'Emails',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'name' => 'reply_all_button',
-                    'type' => 'reply-action',
-                    'event' => 'button:reply_all_button:click',
-                    'label' => 'LBL_BUTTON_REPLY_ALL',
-                    'acl_module' => 'Emails',
-                    'acl_action' => 'create',
-                    'reply_all' => true,
-                ),
-                array(
-                    'name' => 'forward_button',
-                    'type' => 'rowaction',
-                    'event' => 'button:forward_button:click',
-                    'label' => 'LBL_BUTTON_FORWARD',
-                    'acl_module' => 'Emails',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:edit_button:click',
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'name' => 'delete_button',
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'label' => 'LBL_DELETE_BUTTON',
-                    'acl_action' => 'delete',
-                ),
-            ),
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'panel_header',
@@ -91,22 +19,8 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
                     'name' => 'picture',
                     'type' => 'avatar',
                     'size' => 'large',
-                    'dismiss_label' => false,
                     'label' => '',
                     'readonly' => true,
-                ),
-                array(
-                    'name' => 'name',
-                    'readonly' => true,
-                    'related_fields' => array(
-                        'state',
-                    ),
-                ),
-                array(
-                    'name' => 'favorite',
-                    'label' => 'LBL_FAVORITE',
-                    'type' => 'favorite',
-                    'dismiss_label' => true,
                 ),
             ),
         ),
@@ -117,6 +31,13 @@ $viewdefs['Emails']['base']['view']['preview'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                array(
+                    'name' => 'name',
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'state',
+                    ),
+                ),
                 array(
                     'name' => 'from',
                     'type' => 'from',

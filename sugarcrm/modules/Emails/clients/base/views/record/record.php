@@ -91,8 +91,7 @@ $viewdefs['Emails']['base']['view']['record'] = array(
                     'name' => 'picture',
                     'type' => 'avatar',
                     'size' => 'large',
-                    'dismiss_label' => false,
-                    'label' => '',
+                    'dismiss_label' => true,
                     'readonly' => true,
                 ),
                 array(
