@@ -702,6 +702,10 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
                 }
             };
 
+            rowModel.link = {
+                bean: oldGroupModel
+            };
+
             newGroupId = 'newGroupId1';
             newGroupModel = app.data.createBean('ProductBundles', {
                 id: newGroupId,
@@ -1332,6 +1336,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
     describe('_updateRowPositions()', function() {
         var dataGroup;
+        var dataGroupModel;
         var rowModel1;
         var rowModel2;
         var rowModel3;
@@ -1340,7 +1345,12 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         var callUrl;
 
         beforeEach(function() {
+            dataGroupModel = new Backbone.Model({
+                id: 'dataGroupId1'
+            });
+            dataGroupModel.id = 'dataGroupId1';
             dataGroup = {
+                model: dataGroupModel,
                 groupId: 'dataGroupId1',
                 collection: new Backbone.Collection(),
                 $: function() {

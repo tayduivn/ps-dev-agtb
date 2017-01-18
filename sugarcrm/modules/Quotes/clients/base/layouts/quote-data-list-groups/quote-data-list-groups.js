@@ -382,6 +382,8 @@
         var url;
         var linkName;
         var bulkMoveRequest;
+        var newGroupModelId = newGroup.model.id;
+        var itemModelId = rowModel.id;
 
         // if newPosition is not passed in, make it the newGroup collection length
         newPosition = _.isUndefined(newPosition) ? newGroup.collection.length : newPosition;
@@ -396,12 +398,15 @@
         // add rowModel to the new group
         newGroup.addRowModel(rowModel, isRowInEdit);
 
+        // update the link on the rowModel to be the newGroup's model
+        rowModel.link.bean = newGroup.model;
+
         // get the requests from updated rows for old and new group
         this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
         this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
 
         linkName = rowModel.module === 'Products' ? 'products' : 'product_bundle_notes';
-        url = app.api.buildURL('ProductBundles/' + newGroupId + '/link/' + linkName + '/' + itemId);
+        url = app.api.buildURL('ProductBundles/' + newGroupModelId + '/link/' + linkName + '/' + itemModelId);
 
         bulkMoveRequest = {
             url: url.substr(4),
@@ -673,6 +678,8 @@
         var rowModel;
         var url;
         var linkName;
+        var dataGroupModelId;
+        var itemModelId;
 
         _.each(rows, _.bind(function(dataGroup, retObj, row, index) {
             $row = $(row);
@@ -682,8 +689,10 @@
 
             rowModel = dataGroup.collection.get(rowId);
             if (rowModel.get('position') != index && !rowModel.isNew()) {
+                dataGroupModelId = dataGroup.model.id;
+                itemModelId = rowModel.id;
                 linkName = rowModule === 'Products' ? 'products' : 'product_bundle_notes';
-                url = app.api.buildURL('ProductBundles/' + dataGroup.groupId + '/link/' + linkName + '/' + rowId);
+                url = app.api.buildURL('ProductBundles/' + dataGroupModelId + '/link/' + linkName + '/' + itemModelId);
                 retCalls.push({
                     url: url.substr(4),
                     method: 'PUT',
