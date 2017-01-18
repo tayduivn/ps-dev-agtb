@@ -45,6 +45,7 @@
     {"pattern": "include/javascript/sugar7/plugins/*.js", "included": true, "served": true, "watched": true},
 
     "include/javascript/jquery/jquery.dataTables.min.js",
+    "include/javascript/jquery/jquery-ui-min.js",
     "include/javascript/jquery/sugar.resizableColumns.js",
     "include/javascript/twitterbootstrap/bootstrap-collapse.js",
     "include/javascript/twitterbootstrap/bootstrap-tooltip.js",
