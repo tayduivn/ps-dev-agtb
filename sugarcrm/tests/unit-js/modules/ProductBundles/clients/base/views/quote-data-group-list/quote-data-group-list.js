@@ -1484,4 +1484,46 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             expect(view.getFieldNames('ProductBundleNotes')).toEqual(['field3', 'field4']);
         });
     });
+
+    describe('AllChecked Functions', function() {
+        var $item = {
+            attr: function() {
+                return undefined;
+            },
+            trigger: sinon.collection.stub()
+        };
+        var oldJquery;
+
+        beforeEach(function() {
+            oldJquery = $;
+            $ = function(item) {
+                return $item;
+            };
+            sinon.collection.stub(view, '$', function() {
+                return [1];
+            });
+        });
+
+        afterEach(function() {
+            $ = oldJquery;
+        });
+
+        describe('onAllChecked', function() {
+            it('should trigger a click', function() {
+                view.onAllChecked();
+                expect($item.trigger).toHaveBeenCalledWith('click');
+            });
+        });
+
+        describe('onNotAllChecked', function() {
+            it('should trigger a click', function() {
+                $item.attr = function() {
+                    return 1;
+                };
+                view.onNotAllChecked();
+                expect($item.trigger).toHaveBeenCalledWith('click');
+            });
+        });
+
+    });
 });

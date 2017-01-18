@@ -204,7 +204,38 @@
         this.layout.on('editablelist:' + this.name + ':save', this.onSaveRowEdit, this);
         this.layout.on('editablelist:' + this.name + ':saving', this.onSavingRow, this);
 
+        this.context.parent.on('quotes:collections:all:checked', this.onAllChecked, this);
+        this.context.parent.on('quotes:collections:not:all:checked', this.onNotAllChecked, this);
+
         this.collection.on('add remove', this.onNewItemChanged, this);
+    },
+
+    /**
+     * handler for when the select all checkbox is checked
+     */
+    onAllChecked: function() {
+        //iterate over all of the masscollection checkboxes and check the ones that are unchecked.
+        _.each(this.$('div.checkall input'), function(item) {
+            var $item = $(item);
+            //only trigger if the item isn't checked.
+            if (_.isUndefined($item.attr('checked'))) {
+                $item.trigger('click');
+            }
+        });
+    },
+
+    /**
+     * handler for when the select all checkbox is unchecked
+     */
+    onNotAllChecked: function() {
+        //iterate over all of the masscollection checkboxes and uncheck the ones that are checked.
+        _.each(this.$('div.checkall input'), function(item) {
+            var $item = $(item);
+            //only trigger if the item IS checked.
+            if (!_.isUndefined($item.attr('checked'))) {
+                $item.trigger('click');
+            }
+        });
     },
 
     /**

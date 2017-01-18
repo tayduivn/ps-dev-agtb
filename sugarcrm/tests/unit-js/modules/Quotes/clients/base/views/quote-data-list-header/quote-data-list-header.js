@@ -120,6 +120,7 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         var massCollection;
         var quoteModel;
         var productModel;
+        var on = sinon.collection.stub();
 
         beforeEach(function() {
             quoteModel = app.data.createBean('Quotes', {
@@ -138,12 +139,24 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
             sinon.collection.stub(view, '_super', function() {});
             view.massCollection = massCollection;
+
+            sinon.collection.stub(view, '$', function() {
+                return {
+                    on: on
+                };
+            });
         });
 
         it('should remove Quotes module models', function() {
             view._render();
 
             expect(view.massCollection.models.length).toBe(1);
+            expect(view.$).toHaveBeenCalled();
+            expect(on).toHaveBeenCalledWith('click');
+        });
+
+        it('should assign a click event to checkboxes', function() {
+            view._render();
         });
     });
 
@@ -253,6 +266,29 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
         it('should call _super', function() {
             expect(view._super).toHaveBeenCalledWith('_dispose');
+        });
+    });
+
+    describe('_onSelectAllClicked', function() {
+        var evt = {
+            currentTarget: {
+                checked: true
+            }
+        };
+
+        beforeEach(function() {
+            sinon.collection.stub(view.context, 'trigger', function() {});
+        });
+
+        it('should trigger quotes:collections:all:checked', function() {
+            view._onSelectAllClicked(evt);
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:all:checked');
+        });
+
+        it('should trigger quotes:collections:not:all:checked', function() {
+            evt.currentTarget.checked = undefined;
+            view._onSelectAllClicked(evt);
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:not:all:checked');
         });
     });
 });

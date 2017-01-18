@@ -129,6 +129,23 @@
                 return model.module !== 'Quotes';
             });
         }
+
+        //add custom click event to the checkbox because MassCollection doesn't work well with quote-data-list.
+        this.$('input[type=checkbox]').on('click', _.bind(this._onSelectAllClicked, this));
+    },
+
+    /**
+     * Event handler for when the select all checkbox is checked. The MassCollection plugin doesn't work with the new
+     * collections very well, so this was a necessary workaround.
+     * @param {Object} evt click event.
+     * @private
+     */
+    _onSelectAllClicked: function(evt) {
+        if (evt.currentTarget.checked) {
+            this.context.trigger('quotes:collections:all:checked');
+        } else {
+            this.context.trigger('quotes:collections:not:all:checked');
+        }
     },
 
     /**
