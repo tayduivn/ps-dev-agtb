@@ -73,7 +73,6 @@
                             'include/javascript/jquery/jquery.dataTables.min.js'         =>   $target,
                             'include/javascript/jquery/jquery.dataTables.customSort.js'  =>   $target,
                             'include/javascript/jquery/jquery.jeditable.js'              =>   $target,
-                            'include/javascript/jquery/jquery.effects.custombounce.js'   =>   $target,
                         );
                         break;
                     default:
@@ -242,7 +241,6 @@
                    'include/javascript/jquery/jstree.state.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery-ui-min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
 
