@@ -337,7 +337,7 @@ MessagePanel.prototype.attachListeners = function () {
     }, 0);
 
     focushandler = function (e) {
-        if (!$(e.target).parents().andSelf().is('#' + that.id)) {
+        if (!$(e.target).parents().addBack().is('#' + that.id)) {
             $(that.html).focus();
         }
     };
