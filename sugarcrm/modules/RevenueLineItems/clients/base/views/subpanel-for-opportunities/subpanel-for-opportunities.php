@@ -23,7 +23,10 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'link' => true,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
+                    'related_fields' => array(
+                        'mft_part_num',
+                    ),
                 ),
                 'date_closed',
                 array(

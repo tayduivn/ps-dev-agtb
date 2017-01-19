@@ -255,6 +255,9 @@ $fields = array(
         'related_fields' => array('quote_id'),
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
+        'related_fields' => array(
+            'mft_part_num',
+        ),
     ),
     array(
         'name' => 'tag',
