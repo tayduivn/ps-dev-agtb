@@ -110,6 +110,7 @@ $dictionary['OutboundEmail'] = array (
 			'len' => 100,
 			'required' => false,
 			'reportable' => false,
+            'mandatory_fetch' => true,
 		),
 		'mail_smtpport' => array(
 			'name' => 'mail_smtpport',
@@ -126,6 +127,7 @@ $dictionary['OutboundEmail'] = array (
 			'type' => 'varchar',
 			'len' => 100,
 			'reportable' => false,
+            'mandatory_fetch' => true,
 		),
 		'mail_smtppass' => array(
 			'name' => 'mail_smtppass',
@@ -134,6 +136,7 @@ $dictionary['OutboundEmail'] = array (
 			'len' => 100,
 			'reportable' => false,
             'duplicate_on_record_copy' => 'no',
+            'mandatory_fetch' => true,
 		),
 		'mail_smtpauth_req' => array(
 			'name' => 'mail_smtpauth_req',
@@ -141,6 +144,7 @@ $dictionary['OutboundEmail'] = array (
 			'type' => 'bool',
 			'default' => 0,
 			'reportable' => false,
+            'mandatory_fetch' => true,
 		),
 		'mail_smtpssl' => array(
 			'name' => 'mail_smtpssl',

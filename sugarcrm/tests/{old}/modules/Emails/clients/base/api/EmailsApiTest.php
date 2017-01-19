@@ -228,24 +228,19 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendEmail_UsesSpecifiedConfiguration()
     {
-        $config = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
-            $GLOBALS['current_user'],
-            static::$currentUserConfiguration->id
-        );
+        $configId = static::$currentUserConfiguration->id;
 
-        $email = $this->getMockBuilder('Email')
-            ->disableOriginalConstructor()
-            ->setMethods(array('sendEmail'))
-            ->getMock();
+        $email = $this->createPartialMock('Email', ['sendEmail']);
         $email->expects($this->once())
             ->method('sendEmail')
-            ->with($this->equalTo($config));
+            ->with($this->callback(function ($config) use ($configId) {
+                return $config->getConfigId() === $configId;
+            }));
         $email->outbound_email_id = static::$currentUserConfiguration->id;
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
     }
-
 
     /**
      * @covers ::sendEmail
@@ -253,14 +248,14 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSendEmail_UsesSystemConfiguration()
     {
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+        $configId = $config->getConfigId();
 
-        $email = $this->getMockBuilder('Email')
-            ->disableOriginalConstructor()
-            ->setMethods(array('sendEmail'))
-            ->getMock();
+        $email = $this->createPartialMock('Email', ['sendEmail']);
         $email->expects($this->once())
             ->method('sendEmail')
-            ->with($this->equalTo($config));
+            ->with($this->callback(function ($config) use ($configId) {
+                return $config->getConfigId() === $configId;
+            }));
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
@@ -268,9 +263,37 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @covers ::sendEmail
+     */
+    public function testSendEmail_CurrentUserHasNoConfigurations_ThrowsException()
+    {
+        // Make sure the current user doesn't have any configurations. The existing current user does.
+        $saveUser = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+
+        $email = $this->createPartialMock('Email', ['sendEmail']);
+        $email->expects($this->never())->method('sendEmail');
+
+        $caught = false;
+
+        try {
+            $api = new EmailsApi();
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
+        } catch (SugarApiException $e) {
+            $caught = true;
+        }
+
+        // Restore the current user to the previous user before asserting to guarantee that the next test gets the user
+        // it expects.
+        $GLOBALS['current_user'] = $saveUser;
+
+        $this->assertTrue($caught);
+    }
+
+    /**
+     * @covers ::sendEmail
      * @expectedException SugarApiException
      */
-    public function testSendEmail_NoConfiguration()
+    public function testSendEmail_SpecifiedConfigurationCouldNotBeFound()
     {
         $email = $this->getMockBuilder('Email')
             ->disableOriginalConstructor()
@@ -282,6 +305,24 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $api = new EmailsApi();
         SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+    }
+
+    /**
+     * @covers ::sendEmail
+     * @expectedException SugarApiException
+     */
+    public function testSendEmail_ConfigurationIsNotComplete()
+    {
+        $oe = $this->createPartialMock('OutboundEmail', ['isConfigured']);
+        $oe->method('isConfigured')->willReturn(false);
+        BeanFactory::registerBean($oe);
+
+        $email = $this->createPartialMock('Email', ['sendEmail']);
+        $email->expects($this->never())->method('sendEmail');
+        $email->outbound_email_id = $oe->id;
+
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -395,8 +436,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'max_num' => 5,
         );
 
-        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
-        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $mailApi = $this->createPartialMock('EmailsApi', ['getEmailRecipientsService']);
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', ['findCount', 'find']);
         $emailRecipientsServiceMock->expects($this->any())
             ->method('find')
             ->will($this->returnValue(array_pad(array(10), 10, 0)));
@@ -418,8 +459,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'max_num' => 5,
         );
 
-        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
-        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $mailApi = $this->createPartialMock('EmailsApi', ['getEmailRecipientsService']);
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', ['findCount', 'find']);
         $emailRecipientsServiceMock->expects($this->any())
             ->method('findCount')
             ->will($this->returnValue(4));
@@ -443,8 +484,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'offset' => 'end',
         );
 
-        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
-        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $mailApi = $this->createPartialMock('EmailsApi', ['getEmailRecipientsService']);
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', ['findCount', 'find']);
         $emailRecipientsServiceMock->expects($this->never())->method('findCount');
         $emailRecipientsServiceMock->expects($this->never())->method('find');
 
@@ -462,8 +503,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $args = array();
 
-        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
-        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $mailApi = $this->createPartialMock('EmailsApi', ['getEmailRecipientsService']);
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', ['findCount', 'find']);
         $emailRecipientsServiceMock->expects($this->once())
             ->method('find')
             ->with(
@@ -492,8 +533,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             'offset' => 3,
         );
 
-        $mailApi = $this->getMock('EmailsApi', array('getEmailRecipientsService'));
-        $emailRecipientsServiceMock = $this->getMock('EmailRecipientsService', array('findCount', 'find'));
+        $mailApi = $this->createPartialMock('EmailsApi', ['getEmailRecipientsService']);
+        $emailRecipientsServiceMock = $this->createPartialMock('EmailRecipientsService', ['findCount', 'find']);
         $emailRecipientsServiceMock->expects($this->once())
             ->method('find')
             ->with(

@@ -66,7 +66,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAdd()
     {
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_DRAFT));
+        $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
         $lead = SugarTestLeadUtilities::createLead();
@@ -177,8 +177,7 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("{$contact->name} <{$address2->email_address}>", $email->from_addr_name);
 
         $additionalFields = array(
-            // An empty string would work too.
-            'email_address_id' => null,
+            'email_address_id' => $address1->id,
         );
         $contactsRelationship->add($email, $contact, $additionalFields);
         $rows = $this->getRows(array('email_id' => $email->id));
@@ -186,17 +185,20 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             'email_id' => $email->id,
-            'email_address_id' => '',
+            'email_address_id' => $address1->id,
             'bean_id' => $contact->id,
             'bean_type' => 'Contacts',
             'address_type' => 'from',
             'deleted' => '0',
         );
-        $this->assertRow($expected, $rows[0], 'The row should be the contact with the email address removed');
+        $this->assertRow($expected, $rows[0], 'The row should be the contact with the new email address');
 
         SugarRelationship::resaveRelatedBeans();
         $email->retrieveEmailText();
-        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->from_addr_name);
+        $this->assertEquals("{$contact->name} <{$address1->email_address}>", $email->from_addr_name);
+
+        $accountPrimaryAddress = $account->emailAddress->getPrimaryAddress($account);
+        $accountPrimaryAddressId = $account->emailAddress->getGuid($accountPrimaryAddress);
 
         $additionalFields = array();
         $accountsRelationship->add($email, $account, $additionalFields);
@@ -205,17 +207,69 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = array(
             'email_id' => $email->id,
-            'email_address_id' => null,
+            'email_address_id' => $accountPrimaryAddressId,
             'bean_id' => $account->id,
             'bean_type' => 'Accounts',
             'address_type' => 'from',
             'deleted' => '0',
         );
-        $this->assertRow($expected, $rows[0], 'The row should be the account without a defined email address');
+        $this->assertRow($expected, $rows[0], 'The row should be the account with its primary email address');
 
         SugarRelationship::resaveRelatedBeans();
         $email->retrieveEmailText();
-        $this->assertEquals("{$account->name} <{$account->email1}>", $email->from_addr_name);
+        $this->assertEquals("{$account->name} <{$accountPrimaryAddress}>", $email->from_addr_name);
+    }
+
+    /**
+     * The sender of a draft is always replaced by the current user once the email is resaved.
+     *
+     * @covers ::add
+     * @covers Email::save
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_TheCurrentUserIsTheSenderForDrafts()
+    {
+        $primaryAddress = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
+        $primaryAddressId = $GLOBALS['current_user']->emailAddress->getGuid($primaryAddress);
+
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::EMAIL_STATE_DRAFT]);
+        $contact = SugarTestContactUtilities::createContact();
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_from');
+
+        $additionalFields = [];
+        $relationship->add($email, $contact, $additionalFields);
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => null,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should be the contact without an email address');
+
+        // The sender is replaced with the current user after re-saving the draft.
+        SugarRelationship::resaveRelatedBeans();
+        $rows = $this->getRows(array('email_id' => $email->id));
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => null,
+            'bean_id' => $GLOBALS['current_user']->id,
+            'bean_type' => 'Users',
+            'address_type' => 'from',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0], 'The row should be the current user without an email address');
+
+        $email->retrieveEmailText();
+        $this->assertEquals("{$GLOBALS['current_user']->name} <{$primaryAddress}>", $email->from_addr_name);
     }
 
     /**
@@ -336,8 +390,9 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @param array $expected
      * @param array $row
+     * @param string $message
      */
-    protected function assertRow(array $expected, array $row)
+    protected function assertRow(array $expected, array $row, $message = '')
     {
         // Testing for id is unnecessary.
         unset($row['id']);
@@ -346,6 +401,6 @@ class EmailSenderRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($row['date_modified']);
         unset($row['date_modified']);
 
-        $this->assertEquals($expected, $row);
+        $this->assertEquals($expected, $row, $message);
     }
 }

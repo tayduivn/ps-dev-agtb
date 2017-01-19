@@ -29,6 +29,12 @@ $viewdefs['OutboundEmail']['base']['view']['list'] = array(
                     'link' => false,
                 ),
                 array(
+                    'name' => 'mail_smtpserver',
+                    'enabled' => true,
+                    'default' => true,
+                    'readonly' => true,
+                ),
+                array(
                     'name' => 'mail_smtpuser',
                     'enabled' => true,
                     'default' => true,

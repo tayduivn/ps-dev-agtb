@@ -153,15 +153,10 @@ class EmailsApi extends ModuleApi
                 'from'
             );
 
-            // Drop any submitted senders.
+            // Drop any submitted senders. The current user will be added as the sender.
             foreach ($fromLinks as $link) {
                 unset($args[$link]);
             }
-
-            // Add the current user as the sender.
-            $args['users_from'] = array(
-                'add' => array($GLOBALS['current_user']->id),
-            );
         }
 
         $result = parent::createRecord($api, $args);
@@ -467,15 +462,61 @@ class EmailsApi extends ModuleApi
     {
         try {
             $config = null;
+            $oe = null;
 
             if (empty($email->outbound_email_id)) {
-                $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
-                $email->outbound_email_id = $config->getConfigId();
-            } else {
-                $config = OutboundEmailConfigurationPeer::getMailConfigurationFromId(
-                    $GLOBALS['current_user'],
-                    $email->outbound_email_id
-                );
+                SugarAutoLoader::load('custom/include/RestService.php');
+                $restServiceClass = SugarAutoLoader::customClass('RestService');
+                $rest = new $restServiceClass();
+                $rest->user = $GLOBALS['current_user'];
+                $rest->platform = 'base';
+
+                $args = [
+                    'module' => 'OutboundEmail',
+                    'filter' => [
+                        [
+                            'type' => [
+                                '$in' => [
+                                    'system',
+                                    'system-override',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'fields' => 'id',
+                ];
+                $api = new OutboundEmailFilterApi();
+                $data = $api->filterList($rest, $args);
+
+                if (!empty($data['records'])) {
+                    // There should only be one system or system-override account that is accessible.
+                    $record = array_shift($data['records']);
+                    $email->outbound_email_id = $record['id'];
+                }
+            }
+
+            if (!empty($email->outbound_email_id)) {
+                $oe = BeanFactory::retrieveBean('OutboundEmail', $email->outbound_email_id);
+            }
+
+            if ($oe) {
+                if ($oe->isConfigured()) {
+                    $config = OutboundEmailConfigurationPeer::buildOutboundEmailConfiguration(
+                        $GLOBALS['current_user'],
+                        [
+                            'config_id' => $oe->id,
+                            'config_type' => $oe->type,
+                            'from_email' => $oe->email_address,
+                            'from_name' => $oe->name,
+                        ],
+                        $oe
+                    );
+                } else {
+                    throw new MailerException(
+                        'The configuration for sending email is invalid',
+                        MailerException::InvalidConfiguration
+                    );
+                }
             }
 
             if (empty($config)) {

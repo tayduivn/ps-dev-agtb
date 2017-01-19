@@ -1169,6 +1169,22 @@ class Email extends SugarBean {
 
 			$parentSaveResult = parent::save($check_notify);
 
+            // Add the current user as the sender when the email is a draft.
+            if ($this->state === static::EMAIL_STATE_DRAFT && $this->load_relationship('users_from')) {
+                $additionalData = [];
+
+                // Use the email address from the outbound email configuration.
+                if (!empty($this->outbound_email_id)) {
+                    $oe = BeanFactory::retrieveBean('OutboundEmail', $this->outbound_email_id);
+
+                    if ($oe) {
+                        $additionalData['email_address_id'] = $oe->email_address_id;
+                    }
+                }
+
+                $this->users_from->add($GLOBALS['current_user'], $additionalData);
+            }
+
 			if(!empty($this->parent_type) && !empty($this->parent_id)) {
                 if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
                     if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
@@ -3614,6 +3630,10 @@ eoq;
      */
     public function sendEmail(OutboundEmailConfiguration $config)
     {
+        if ($this->state !== static::EMAIL_STATE_DRAFT) {
+            throw new SugarException("Cannot send an email with state: {$this->state}");
+        }
+
         // Set the email address of the sender to be that of the configuration.
         if ($this->load_relationship('users_from')) {
             $this->users_from->add(
@@ -3855,18 +3875,36 @@ eoq;
      */
     public function getOutboundEmailDropdown()
     {
-        $options = array();
-        $configs = OutboundEmailConfigurationPeer::listValidMailConfigurations($GLOBALS['current_user']);
+        $options = [];
 
-        foreach ($configs as $config) {
-            $inboxId = $config->getInboxId();
-            $id = is_null($inboxId) ? $config->getConfigId() : $inboxId;
+        SugarAutoLoader::load('custom/include/RestService.php');
+        $restServiceClass = SugarAutoLoader::customClass('RestService');
+        $rest = new $restServiceClass();
+        $rest->user = $GLOBALS['current_user'];
+        $rest->platform = 'base';
 
-            if ($config->getConfigType() === 'system') {
-                // Force this element to the beginning of the array.
-                $options = array($id => $config->getDisplayName()) + $options;
-            } else {
-                $options[$id] = $config->getDisplayName();
+        $args = [
+            'module' => 'OutboundEmail',
+            'fields' => 'id,name,email_address,type,mail_smtpserver,mail_smtpauth_req,mail_smtpuser,mail_smtppass',
+        ];
+        $api = new OutboundEmailFilterApi();
+        $data = $api->filterList($rest, $args);
+
+        foreach ($data['records'] as $record) {
+            if (array_key_exists('is_configured', $record) && $record['is_configured']) {
+                $option = sprintf(
+                    '%s <%s> [%s]',
+                    $record['name'],
+                    $record['email_address'],
+                    $record['mail_smtpserver']
+                );
+
+                if ($record['type'] === 'system') {
+                    // Force this element to the beginning of the array.
+                    $options = [$record['id'] => $option] + $options;
+                } else {
+                    $options[$record['id']] = $option;
+                }
             }
         }
 

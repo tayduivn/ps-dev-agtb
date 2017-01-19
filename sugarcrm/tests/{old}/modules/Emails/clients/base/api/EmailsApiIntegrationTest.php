@@ -18,6 +18,7 @@ require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfig
  */
 class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 {
+    private static $systemConfiguration;
     private static $overrideConfig;
     private static $userConfig;
 
@@ -26,15 +27,13 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         parent::setUpBeforeClass();
 
         OutboundEmailConfigurationTestHelper::setUp();
+        static::$systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
         static::$overrideConfig = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS['current_user']->id
         );
         static::$userConfig = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfiguration(
             $GLOBALS['current_user']->id
         );
-
-        // Don't allow the system configuration to be used in these tests.
-        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
     }
 
     public static function tearDownAfterClass()
@@ -46,6 +45,14 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         SugarTestProspectUtilities::removeAllCreatedProspects();
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
         parent::tearDownAfterClass();
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        // By default, system configuration is not used, but can be safely overwritten by any test if needed
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
     }
 
     public function createArchivedEmailProvider()
@@ -294,7 +301,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 '_module' => 'Users',
                 '_link' => 'users_from',
                 'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => null,
+                'email_address_used' => static::$overrideConfig->email_address,
                 'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
             ),
         );
@@ -373,6 +380,18 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
         $expected = array(
             array(
+                '_module' => 'Users',
+                '_link' => 'users_from',
+                'id' => $GLOBALS['current_user']->id,
+                'email_address_used' => static::$overrideConfig->email_address,
+                'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
+            ),
+        );
+        $collection = $this->getCollection($record['id'], 'from');
+        $this->assertRecords($expected, $collection, 'The sender should be the current user');
+
+        $expected = array(
+            array(
                 '_module' => 'Prospects',
                 '_link' => 'prospects_cc',
                 'id' => $prospect->id,
@@ -405,7 +424,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         $this->assertSame(
             static::$userConfig->id,
             $record['outbound_email_id'],
-            'The configuration should not have changed'
+            'The configuration should have changed'
         );
 
         $expected = array(
@@ -413,7 +432,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
                 '_module' => 'Users',
                 '_link' => 'users_from',
                 'id' => $GLOBALS['current_user']->id,
-                'email_address_used' => null,
+                'email_address_used' => static::$userConfig->email_address,
                 'date_modified' => $this->getIsoTimestamp($GLOBALS['current_user']->date_modified),
             ),
         );
@@ -592,6 +611,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testCreateAndSendEmail()
     {
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
         $contact1 = $this->createRhsBean('contacts_to');
         $contact2 = $this->createRhsBean('contacts_to');
 
@@ -613,10 +633,11 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         );
         $record = $this->createRecord($args);
         $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'Should be archived');
+
         $this->assertSame(
-            static::$overrideConfig->id,
+            static::$systemConfiguration->id,
             $record['outbound_email_id'],
-            "Should use the user's system override configuration"
+            'Should use the system configuration'
         );
 
         $expected = array(
@@ -662,42 +683,6 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
         sort($to);
         $to = implode(', ', $to);
         $this->assertEquals($to, $bean->to_addrs_names);
-    }
-
-    /**
-     * When creating an email and immediately sending it, the status and type are set for compatibility
-     * with previous Emails implementation based on email2send()
-     *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::sendEmail
-     * @covers Email::sendEmail
-     */
-    public function testCreateAndSendEmail_StatusAndTypeAreSetCorrectlyForCompatibility()
-    {
-        $contact1 = $this->createRhsBean('contacts_to');
-        $contact2 = $this->createRhsBean('contacts_to');
-
-        $args = array(
-            'state' => Email::EMAIL_STATE_READY,
-            'assigned_user_id' => $GLOBALS['current_user']->id,
-            'contacts_from' => array(
-                'add' => array(
-                    $contact1,
-                    $contact2,
-                ),
-            ),
-            'contacts_to' => array(
-                'add' => array(
-                    $contact1->id,
-                    $contact2->id,
-                ),
-            ),
-        );
-        $record = $this->createRecord($args);
-        $this->assertSame(Email::EMAIL_STATE_ARCHIVED, $record['state'], 'State should be archived');
-        $this->assertSame('out', $record['type'], 'Type should be out');
-        $this->assertSame('sent', $record['status'], 'Status should be sent');
     }
 
     /**

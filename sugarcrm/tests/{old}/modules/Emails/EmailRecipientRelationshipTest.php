@@ -224,12 +224,86 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = $relationship->add($email, $contact, $additionalFields);
         $this->assertTrue($actual);
 
-        $rows = $this->getRows(array('email_id' => $email->id));
+        $rows = $this->getRows([
+            'email_id' => $email->id,
+            'address_type' => 'to',
+        ]);
         $this->assertCount(1, $rows, 'There should be one row');
 
         $expected = array(
             'email_id' => $email->id,
             'email_address_id' => null,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        );
+        $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
+    }
+
+    /**
+     * The email_address_id column can be emptied if the email is a draft. This comes up when a record -- Accounts,
+     * Contacts, Leads, etc. -- is added but the email address on record is incorrect and the intention is to repair the
+     * data while leaving the reference to the person record intact.
+     *
+     * @covers ::add
+     * @covers ::getRowToInsert
+     * @covers Email::saveEmailText
+     * @covers Email::retrieveEmailText
+     * @covers SugarRelationship::resaveRelatedBeans
+     */
+    public function testAdd_EmailAddressIsRemoved()
+    {
+        $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
+        $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::EMAIL_STATE_DRAFT]);
+        $contact = SugarTestContactUtilities::createContact();
+        $address = $contact->emailAddress->getPrimaryAddress($contact);
+        $addressId = $contact->emailAddress->getGuid($address);
+
+        $additionalFields = [
+            'email_address_id' => $addressId,
+        ];
+        $actual = $relationship->add($email, $contact, $additionalFields);
+        $this->assertTrue($actual);
+
+        $rows = $this->getRows([
+            'email_id' => $email->id,
+            'address_type' => 'to',
+        ]);
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = [
+            'email_id' => $email->id,
+            'email_address_id' => $addressId,
+            'bean_id' => $contact->id,
+            'bean_type' => 'Contacts',
+            'address_type' => 'to',
+            'deleted' => '0',
+        ];
+        $this->assertRow($expected, $rows[0]);
+
+        SugarRelationship::resaveRelatedBeans();
+        $email->retrieveEmailText();
+        $this->assertEquals("{$contact->name} <{$contact->email1}>", $email->to_addrs_names);
+
+        $additionalFields = [
+            // An empty string would work too.
+            'email_address_id' => null,
+        ];
+        $relationship->add($email, $contact, $additionalFields);
+        $rows = $this->getRows([
+            'email_id' => $email->id,
+            'address_type' => 'to',
+        ]);
+        $this->assertCount(1, $rows, 'There should be one row');
+
+        $expected = array(
+            'email_id' => $email->id,
+            'email_address_id' => '',
             'bean_id' => $contact->id,
             'bean_type' => 'Contacts',
             'address_type' => 'to',
@@ -257,7 +331,7 @@ class EmailRecipientRelationshipTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAdd_EmailAddressIdDefaultsToPrimaryAddress()
     {
         $relationship = SugarRelationshipFactory::getInstance()->getRelationship('emails_contacts_to');
-        $email = SugarTestEmailUtilities::createEmail('', array('state' => Email::EMAIL_STATE_ARCHIVED));
+        $email = SugarTestEmailUtilities::createEmail();
         $contact = SugarTestContactUtilities::createContact();
         $address = $contact->emailAddress->getPrimaryAddress($contact);
         $addressId = $contact->emailAddress->getGuid($address);

@@ -142,6 +142,22 @@ class OutboundEmail extends SugarBean
     }
 
     /**
+     * Returns `true` if all fields, which are necessary to connect to the server, are completed.
+     *
+     * @return bool
+     */
+    public function isConfigured()
+    {
+        if (empty($this->mail_smtpserver)) {
+            return false;
+        } elseif ($this->mail_smtpauth_req) {
+            return !empty($this->mail_smtpuser) && !empty($this->mail_smtppass);
+        }
+
+        return true;
+    }
+
+    /**
 	 * Retrieves the mailer for a user if they have overriden the username
 	 * and password for the default system account.
 	 *

@@ -499,7 +499,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $mockEmail = $this->getMock('Email', array('getEmailRecipients'));
+        $mockEmail = $this->createPartialMock('Email', array('getEmailRecipients'));
         $mockEmail->expects($this->once())
             ->method('getEmailRecipients')
             ->will($this->returnValue($mockResult));
@@ -535,7 +535,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $mockEmail = $this->getMock('Email', array('getEmailRecipients'));
+        $mockEmail = $this->createPartialMock('Email', array('getEmailRecipients'));
         $mockEmail->expects($this->exactly(2))
             ->method('getEmailRecipients')
             ->will($this->onConsecutiveCalls($mockResult1, $mockResult2));
@@ -762,7 +762,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             'description' => 'bar',
         );
         $email = SugarTestEmailUtilities::createEmail('', $data);
-        $draftDate = $email->date_sent;
 
         // The current user is the sender.
         $email->load_relationship('users_from');
@@ -789,6 +788,68 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         $td->allow_cache = $tdCache;
+    }
+
+    public function theCurrentUserIsTheSenderForDraftsProvider()
+    {
+        return [
+            // No outbound_email_id.
+            [null],
+            // The outbound_email_id doesn't exist.
+            [\Sugarcrm\Sugarcrm\Util\Uuid::uuid1()],
+        ];
+    }
+
+    /**
+     * @covers ::save
+     * @dataProvider theCurrentUserIsTheSenderForDraftsProvider
+     * @param $outboundEmailId
+     */
+    public function testSave_TheCurrentUserIsTheSenderForDrafts($outboundEmailId)
+    {
+        $email = BeanFactory::newBean('Emails');
+        $email->name = 'some subject';
+        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->outbound_email_id = $outboundEmailId;
+        $email->save();
+        SugarTestEmailUtilities::setCreatedEmail($email->id);
+
+        $q = "SELECT * FROM emails_email_addr_rel WHERE email_id='{$email->id}' AND address_type='from' AND deleted=0";
+        $db = DBManagerFactory::getInstance();
+        $row = $db->fetchOne($q);
+
+        $this->assertSame('Users', $row['bean_type'], 'Should be Users');
+        $this->assertSame($GLOBALS['current_user']->id, $row['bean_id'], 'Should be the current user');
+        $this->assertEmpty($row['email_address_id'], 'Should not have recorded an email address for the sender');
+    }
+
+    /**
+     * @covers ::save
+     */
+    public function testSave_TheCurrentUserIsTheSenderForDraftsAndTheFromEmailAddressIsDerivedFromTheConfiguration()
+    {
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oe->email_address_id = $address->id;
+        BeanFactory::registerBean($oe);
+
+        $email = BeanFactory::newBean('Emails');
+        $email->name = 'some subject';
+        $email->state = Email::EMAIL_STATE_DRAFT;
+        $email->outbound_email_id = $oe->id;
+        $email->save();
+        SugarTestEmailUtilities::setCreatedEmail($email->id);
+
+        $q = "SELECT * FROM emails_email_addr_rel WHERE email_id='{$email->id}' AND address_type='from' AND deleted=0";
+        $db = DBManagerFactory::getInstance();
+        $row = $db->fetchOne($q);
+
+        $this->assertSame('Users', $row['bean_type'], 'Should be Users');
+        $this->assertSame($GLOBALS['current_user']->id, $row['bean_id'], 'Should be the current user');
+        $this->assertSame($address->id, $row['email_address_id'], 'Should be the email address from the configuration');
+
+        BeanFactory::unregisterBean($oe);
     }
 
     /**
