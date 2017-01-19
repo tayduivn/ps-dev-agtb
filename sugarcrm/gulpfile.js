@@ -270,7 +270,7 @@ gulp.task('test:rest', function() {
 
     var mocha = require('gulp-spawn-mocha');
     var cmd = commander
-        .option('--url <url>', 'Instance URL')
+        .option('--url <url>', 'Instance URL, ex: http://my.sugar.server/my/sugar/directory')
         .option('-u, --username <username>', 'Administrator username')
         .option('-p, --password <password>', 'Administrator password')
         .option('-m, --metadata <filename>', 'Path to metadata JSON file')
@@ -279,11 +279,9 @@ gulp.task('test:rest', function() {
         .parse(process.argv);
 
     var env = {};
-    if (commander.url) {
-        env.API_URL = commander.url + '/rest';
-    } else if (process.env.API_URL) {
-        process.env.API_URL += '/rest';
-    } else {
+    env.API_URL = commander.url || process.env.API_URL;
+
+    if (!env.API_URL) {
         console.error('Either setting $API_URL or the --url flag is required.');
         help();
     }
@@ -304,9 +302,6 @@ gulp.task('test:rest', function() {
 
     if (commander.metadata) {
         env.METADATA_FILE = commander.metadata;
-    } else if (!process.env.METADATA_FILE) {
-        console.error('Either setting $METADATA_FILE or the --metadata flag is required.');
-        help();
     }
 
     var options = {
