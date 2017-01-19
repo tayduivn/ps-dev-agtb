@@ -180,7 +180,7 @@ function change_state(radiobutton) {
 		    <td width="15%">&nbsp;</td>
             <td width="40%">&nbsp;</td>
 		    <td width="40%">&nbsp;</td>
-		</tr>		
+		</tr>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 	<tr>
@@ -580,21 +580,15 @@ function notify_setrequired(f) {
 	return true;
 }
 
-function setDefaultSMTPPort() 
+function setDefaultSMTPPort()
 {
-    if (!first_load)
-    {
-        useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
-
-        if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
-            document.getElementById("mail_smtpport").value = '465';
-        }
-        if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
-            document.getElementById("mail_smtpport").value = '25';
-        }
-    }
-    else
-    {
+    var smtpPortField;
+    var smtpProtocol;
+    if (!first_load) {
+        smtpPortField = document.getElementById('mail_smtpport');
+        smtpProtocol  = document.getElementById('mail_smtpssl').value;
+        smtpPortField.value = smtpProtocol === '1' ? '465' : smtpProtocol === '2' ? '587' : '25';
+    } else {
         first_load = false;
     }
 }
