@@ -59,8 +59,11 @@ describe('Dashboards', () => {
             expect(response).to.have.status(200);
 
             // delete test verification
-            response = yield john.get('Dashboards/' + testDashboard.record.id);
-            expect(response).to.have.status(404);
+            try {
+                yield john.get('Dashboards/' + testDashboard.record.id);
+            } catch(response) {
+                expect(response).to.have.status(404);
+            }
         });
     });
 
@@ -78,16 +81,28 @@ describe('Dashboards', () => {
             return john.delete(johnsDashboardEndpoint);
         });
 
-        it('should not let a user view another user\'s dashboard', () => {
-            return expect(jane.get(johnsDashboardEndpoint)).to.have.status(404);
+        it('should not let a user view another user\'s dashboard', function*() {
+            try {
+                yield jane.get(johnsDashboardEndpoint)
+            } catch(response) {
+                expect(response).to.have.status(404);
+            }
         });
 
-        it('should not let a user edit another user\'s dashboard', () => {
-            return expect(jane.put(johnsDashboardEndpoint, {name: 'UpdateName'})).to.have.status(404);
+        it('should not let a user edit another user\'s dashboard', function*() {
+            try {
+                yield jane.put(johnsDashboardEndpoint, {name: 'UpdateName'});
+            } catch(response) {
+                expect(response).to.have.status(404);
+            }
         });
 
-        it('should not let a user delete another user\'s dashboard', () => {
-            return expect(jane.delete(johnsDashboardEndpoint)).to.have.status(404);
+        it('should not let a user delete another user\'s dashboard', function*() {
+            try {
+                yield jane.delete(johnsDashboardEndpoint);
+            } catch(response) {
+                expect(response).to.have.status(404);
+            }
         });
     });
 });
