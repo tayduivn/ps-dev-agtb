@@ -27,18 +27,15 @@ $cal = new Calendar($_REQUEST['view']);
 
 if(in_array($cal->view,array('day','week','month'))){
 	$cal->add_activities($GLOBALS['current_user']);	
+    $cal->load_activities();
 }else if($cal->view == 'shared'){
 	$cal->init_shared();	
 	global $shared_user;				
 	$shared_user = BeanFactory::getBean('Users');	
 	foreach($cal->shared_ids as $member){
 		$shared_user->retrieve($member);
-		$cal->add_activities($shared_user);
+        $cal->loadActivitiesForUser($shared_user);
 	}
-}
-
-if(in_array($cal->view, array("day","week","month","shared"))){
-	$cal->load_activities();
 }
 
 if (!empty($_REQUEST['print']) && $_REQUEST['print'] == 'true') {

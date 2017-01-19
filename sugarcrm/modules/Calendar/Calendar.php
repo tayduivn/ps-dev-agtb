@@ -149,74 +149,19 @@ class Calendar {
 		$this->calculate_grid_start_ts();
 		$this->calculate_day_range();		
 	}
-	
-	/**
-	 * Load activities data to array
-	 */		
+
+    /**
+     * Load activities data to array
+     */
 	public function load_activities(){
-		$field_list = CalendarUtils::get_fields();
-		
-		foreach($this->acts_arr as $user_id => $acts){	
-			foreach($acts as $act){
-											
-					$item = array();
-					$item['user_id'] = $user_id;
-					$item['module_name'] = $act->sugar_bean->module_dir;
-					$item['type'] = strtolower($act->sugar_bean->object_name);
-					$item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
-					$item['record'] = $act->sugar_bean->id;		
-					$item['name'] = $act->sugar_bean->name;
-					
-					if(isset($act->sugar_bean->duration_hours)){
-						$item['duration_hours'] = $act->sugar_bean->duration_hours;
-						$item['duration_minutes'] = $act->sugar_bean->duration_minutes;
-					}				
-					 			
-					$item['detail'] = 0;
-					$item['edit'] = 0;
-					
-					if($act->sugar_bean->ACLAccess('DetailView'))
-						$item['detail'] = 1;						
-					if($act->sugar_bean->ACLAccess('Save'))
-						$item['edit'] = 1;					
-						
-					if(empty($act->sugar_bean->id)){
-						$item['detail'] = 0;
-						$item['edit'] = 0;
-					}
-					
-					if(!empty($act->sugar_bean->repeat_parent_id))
-						$item['repeat_parent_id'] = $act->sugar_bean->repeat_parent_id;					
-					
-					if($item['detail'] == 1){
-						if(isset($field_list[$item['module_name']])){
-							foreach($field_list[$item['module_name']] as $field){
-								if(!isset($item[$field]) && isset($act->sugar_bean->$field)){
-									$item[$field] = $act->sugar_bean->$field;
-									if(empty($item[$field]))
-										$item[$field] = "";
-								}
-							}					
-						}				
-					}
+        foreach ($this->acts_arr as $user_id => $acts) {
+            foreach ($acts as $act) {
+                $item = $this->generateActivityItem($act, $user_id);
+                $this->items[] = $item;
+            }
+        }
+    }
 
-                    if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
-                        $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
-                        $item['related_to'] = $focus->name;
-                    }
-
-					if(!isset($item['duration_hours']) || empty($item['duration_hours']))
-						$item['duration_hours'] = 0;
-					if(!isset($item['duration_minutes']) || empty($item['duration_minutes']))
-						$item['duration_minutes'] = 0;	
-						
-					$item = array_merge($item,CalendarUtils::get_time_data($act->sugar_bean));			
-			
-					$this->items[] = $item;
-			}
-		}
-	}	
-	
 	/**
 	 * initialize ids of shared users
 	 */	
@@ -278,30 +223,8 @@ class Calendar {
 	 * @param string $type
 	 */	
 	public function add_activities($user,$type='sugar'){
-		global $timedate;
-		$start_date_time = $this->date_time;
-		if($this->view == 'week' || $this->view == 'shared'){		
-			$start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
-			$end_date_time = $start_date_time->get("+7 days");
-		}else if($this->view == 'month'){
-			$start_date_time = $this->date_time->get_day_by_index_this_month(0);	
-			$end_date_time = $start_date_time->get("+".$start_date_time->format('t')." days");
-			$start_date_time = CalendarUtils::get_first_day_of_week($start_date_time);
-			$end_date_time = CalendarUtils::get_first_day_of_week($end_date_time)->get("+7 days");
-		}else{
-			$end_date_time = $this->date_time->get("+1 day");
-		}
-		
-		$start_date_time = $start_date_time->get("-5 days"); // 5 days step back to fetch multi-day activities that
-
-		$acts_arr = array();
-	    	if($type == 'vfb'){
-				$acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
-	    	}else{
-				$acts_arr = CalendarActivity::get_activities($user->id, $this->show_tasks, $start_date_time, $end_date_time, $this->view,$this->show_calls);
-	    	}
-	    	
-	    	$this->acts_arr[$user->id] = $acts_arr;	 
+        $acts_arr = $this->getActivities($user, $type);
+        $this->acts_arr[$user->id] = $acts_arr;
 	}
 
 	/**
@@ -341,6 +264,127 @@ class Calendar {
         return $this->print;
     }
 
-}
+    /**
+     * Convert CalendarActivity to array for showing in view.
+     * @param CalendarActivity $act
+     * @param string $user_id
+     * @return array
+     */
+    protected function generateActivityItem($act, $user_id)
+    {
+        $field_list = CalendarUtils::get_fields();
+        $item = array();
+        $item['user_id'] = $user_id;
+        $item['module_name'] = $act->sugar_bean->module_dir;
+        $item['type'] = strtolower($act->sugar_bean->object_name);
+        $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
+        $item['record'] = $act->sugar_bean->id;
+        $item['name'] = $act->sugar_bean->name;
 
-?>
+        if (isset($act->sugar_bean->duration_hours)) {
+            $item['duration_hours'] = $act->sugar_bean->duration_hours;
+            $item['duration_minutes'] = $act->sugar_bean->duration_minutes;
+        }
+
+        $item['detail'] = 0;
+        $item['edit'] = 0;
+
+        if ($act->sugar_bean->ACLAccess('DetailView')) {
+            $item['detail'] = 1;
+        }
+        if ($act->sugar_bean->ACLAccess('Save')) {
+            $item['edit'] = 1;
+        }
+
+        if (empty($act->sugar_bean->id)) {
+            $item['detail'] = 0;
+            $item['edit'] = 0;
+        }
+
+        if (!empty($act->sugar_bean->repeat_parent_id)) {
+            $item['repeat_parent_id'] = $act->sugar_bean->repeat_parent_id;
+        }
+
+        if ($item['detail'] == 1) {
+            if (isset($field_list[$item['module_name']])) {
+                foreach ($field_list[$item['module_name']] as $field) {
+                    if (!isset($item[$field]) && isset($act->sugar_bean->$field)) {
+                        $item[$field] = $act->sugar_bean->$field;
+                        if (empty($item[$field])) {
+                            $item[$field] = "";
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
+            $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
+            $item['related_to'] = $focus->name;
+        }
+
+        if (!isset($item['duration_hours']) || empty($item['duration_hours'])) {
+            $item['duration_hours'] = 0;
+        }
+        if (!isset($item['duration_minutes']) || empty($item['duration_minutes'])) {
+            $item['duration_minutes'] = 0;
+        }
+
+        $item = array_merge($item, CalendarUtils::get_time_data($act->sugar_bean));
+        return $item;
+    }
+
+    /**
+     * Return array of objects CalendarActivity for user.
+     * @param User $user user object
+     * @param string $type
+     * @return array
+     */
+    protected function getActivities($user, $type = 'sugar')
+    {
+        $start_date_time = $this->date_time;
+        if ($this->view == 'week' || $this->view == 'shared') {
+            $start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
+            $end_date_time = $start_date_time->get("+7 days");
+        } else {
+            if ($this->view == 'month') {
+                $start_date_time = $this->date_time->get_day_by_index_this_month(0);
+                $end_date_time = $start_date_time->get("+" . $start_date_time->format('t') . " days");
+                $start_date_time = CalendarUtils::get_first_day_of_week($start_date_time);
+                $end_date_time = CalendarUtils::get_first_day_of_week($end_date_time)->get("+7 days");
+            } else {
+                $end_date_time = $this->date_time->get("+1 day");
+            }
+        }
+
+        $start_date_time = $start_date_time->get("-5 days"); // 5 days step back to fetch multi-day activities that
+
+        if ($type == 'vfb') {
+            $acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
+            return $acts_arr;
+        } else {
+            $acts_arr = CalendarActivity::get_activities(
+                $user->id,
+                $this->show_tasks,
+                $start_date_time,
+                $end_date_time,
+                $this->view,
+                $this->show_calls
+            );
+            return $acts_arr;
+        }
+    }
+
+    /**
+     * Load activities for user.
+     * @param User $user
+     */
+    public function loadActivitiesForUser(User $user)
+    {
+        $activityObjectList = $this->getActivities($user);
+        foreach ($activityObjectList as $act) {
+            $item = $this->generateActivityItem($act, $user->id);
+            $this->items[] = $item;
+        }
+    }
+}
