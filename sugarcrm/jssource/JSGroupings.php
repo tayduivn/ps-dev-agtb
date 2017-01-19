@@ -222,9 +222,12 @@
             'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_quickcomp.js',
             ),
            $sugar_grp_sidecar = array_merge(
-                array('include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
-               'sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'include/javascript/sugar_sidecar.min.js'),
-                getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
+               array(
+                   'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/jquery/jquery-ui-min.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'include/javascript/sugar_sidecar.min.js'
+               ),
+               getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
                array(
                    // D3 library
                    'include/javascript/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
@@ -239,7 +242,6 @@
                    'include/javascript/jquery/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.jstree.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jstree.state.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/jquery/jquery-ui-min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.nouislider.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/nprogress/nprogress.js' => 'include/javascript/sugar_sidecar.min.js',
