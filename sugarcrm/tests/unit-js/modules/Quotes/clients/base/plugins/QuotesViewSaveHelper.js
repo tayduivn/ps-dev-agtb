@@ -145,6 +145,15 @@ describe('Quotes.Base.Plugins.QuotesViewSaveHelper', function() {
             expect(callReturn).toBeTruthy();
         });
 
+        it('should not find the change on the bundle', function() {
+            bundles = model.get('bundles').at(0);
+            bundles.set('name', 'bundle_123');
+            view.type = 'create';
+
+            callReturn = view.hasUnsavedChanges();
+            expect(callReturn).toBeFalsy();
+        });
+
         it('should find the change on the item in the bundle', function() {
             bundles = model.get('bundles').at(0);
             items = bundles.get('product_bundle_items').at(0);

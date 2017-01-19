@@ -54,8 +54,10 @@
                     }
                 }
 
-                // if we don't have unsaved changes on the quote, check the bundles and their items
-                if (hasUnsavedChanges === false) {
+                // if we don't have unsaved changes on the quote, check the bundles and their items,
+                // but only do this if we aren't on the create view since the new bundle is always
+                // going to flag as unsaved.
+                if (hasUnsavedChanges === false && this.type != 'create') {
                     hasUnsavedChanges = this.hasUnsavedBundleChanges();
                 }
 
