@@ -8,6 +8,7 @@ var settings = {
 
     //Absolute path to project folder
     rootPath: path.resolve(__dirname, './'),
+    inactiveProcessTimeout: 60000,
 
     cucumberArguments: [
         {
