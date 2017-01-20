@@ -279,29 +279,29 @@ gulp.task('test:rest', function() {
         .parse(process.argv);
 
     var env = {};
-    env.API_URL = commander.url || process.env.API_URL;
+    env.THORN_SERVER_URL = commander.url || process.env.THORN_SERVER_URL;
 
-    if (!env.API_URL) {
-        console.error('Either setting $API_URL or the --url flag is required.');
+    if (!env.THORN_SERVER_URL) {
+        console.error('Either setting $THORN_SERVER_URL or the --url flag is required.');
         help();
     }
 
     if (commander.username) {
-        env.ADMIN_USERNAME = commander.username;
-    } else if (!process.env.ADMIN_USERNAME) {
-        console.error('Either setting $ADMIN_USERNAME or the --username flag is required.');
+        env.THORN_ADMIN_USERNAME = commander.username;
+    } else if (!process.env.THORN_ADMIN_USERNAME) {
+        console.error('Either setting $THORN_ADMIN_USERNAME or the --username flag is required.');
         help();
     }
 
     if (commander.password) {
-        env.ADMIN_PASSWORD = commander.password;
-    } else if (!process.env.ADMIN_PASSWORD) {
-        console.error('Either setting $ADMIN_PASSWORD or the --password flag is required.');
+        env.THORN_ADMIN_PASSWORD = commander.password;
+    } else if (!process.env.THORN_ADMIN_PASSWORD) {
+        console.error('Either setting $THORN_ADMIN_PASSWORD or the --password flag is required.');
         help();
     }
 
     if (commander.metadata) {
-        env.METADATA_FILE = commander.metadata;
+        env.THORN_METADATA_FILE = commander.metadata;
     }
 
     var options = {
