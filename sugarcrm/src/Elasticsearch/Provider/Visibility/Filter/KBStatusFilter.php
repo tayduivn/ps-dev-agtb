@@ -28,6 +28,6 @@ class KBStatusFilter implements FilterInterface
      */
     public function buildFilter(array $options = array())
     {
-        return new \Elastica\Filter\Terms('status', $options['published_statuses']);
+        return new \Elastica\Query\Terms('status', $options['published_statuses']);
     }
 }

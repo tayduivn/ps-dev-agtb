@@ -63,7 +63,7 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
      */
     public function getFacets()
     {
-        return $this->elasticaResultSet->getFacets();
+        return $this->elasticaResultSet->getAggregations();
     }
 
     /**
@@ -73,7 +73,7 @@ class SugarSeachEngineElasticResultSet implements SugarSearchEngineResultSet
      */
     public function getModuleFacet()
     {
-        $rs = $this->elasticaResultSet->getFacets();
+        $rs = $this->elasticaResultSet->getAggregations();
         $results = array();
         if( !isset($rs['_type'] ) || !isset($rs['_type']['terms']) )
         {

@@ -108,7 +108,8 @@ class MultiMatchQuery implements QueryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Create a multi-match query.
+     * @return \Elastica\Query\BoolQuery
      */
     public function build()
     {

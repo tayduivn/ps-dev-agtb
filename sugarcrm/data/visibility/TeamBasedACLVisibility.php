@@ -168,10 +168,10 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Filter\BoolFilter $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider)
     {
         if ($this->isApplicable()) {
-            $combo = new \Elastica\Filter\BoolOr();
+            $combo = new \Elastica\Query\BoolQuery();
             $combo->addFilter(
                 $provider->createFilter('TeamSet', array('user' => $user, 'field' => 'acl_team_set_id'))
             );

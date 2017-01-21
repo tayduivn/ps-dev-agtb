@@ -28,7 +28,7 @@ class KBActiveRevisionFilter implements FilterInterface
      */
     public function buildFilter(array $options = array())
     {
-        $filter = new \Elastica\Filter\Term();
+        $filter = new \Elastica\Query\Term();
         $filter->setTerm('active_rev', 1);
         return $filter;
     }

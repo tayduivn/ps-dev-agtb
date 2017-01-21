@@ -57,7 +57,7 @@ interface AggregationInterface
     /**
      * Build aggregation filter
      * @param array|boolean $options
-     * @return \Elastica\Filter\AbstractFilter
+     * @return \Elastica\Query\AbstractQuery
      */
     public function buildFilter($filterDefs);
 

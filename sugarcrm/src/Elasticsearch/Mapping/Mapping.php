@@ -49,8 +49,8 @@ class Mapping implements MappingInterface
      * @var array
      */
     private $multiFieldBase = array(
-        'type' => 'string',
-        'index' => 'not_analyzed',
+        'type' => 'text',
+        'index' => true,
         'include_in_all' => false,
     );
 
@@ -59,8 +59,8 @@ class Mapping implements MappingInterface
      * @var array
      */
     private $notIndexedBase = array(
-        'type' => 'string',
-        'index' => 'no',
+        'type' => 'text',
+        'index' => false,
         'include_in_all' => false,
     );
 

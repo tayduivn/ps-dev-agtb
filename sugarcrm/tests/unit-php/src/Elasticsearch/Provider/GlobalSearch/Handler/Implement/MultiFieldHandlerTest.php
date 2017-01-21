@@ -254,29 +254,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Accounts__billing_street' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_string_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'billing_street' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__billing_street',
@@ -294,29 +293,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Opporunities__name' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_string_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'name' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Opporunities__name',
@@ -334,29 +332,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Accounts__description' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_text_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_text_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'description' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__description',
@@ -374,8 +371,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'date_modified' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_datetime' =>  array(
@@ -397,8 +394,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'date_start' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_datetime' =>  array(
@@ -420,8 +417,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'date_closed' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_date' =>  array(
@@ -443,34 +440,33 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Cases__case_number' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_string_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_integer' => array(
                                 'type' => 'integer',
-                                'index' => 'no',
+                                'index' => false,
                                 'store' => false,
                             ),
                         ),
                     ),
                     'case_number' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Cases__case_number',
@@ -488,22 +484,22 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Contacts__mobile' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_phone_wildcard' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_phone_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_phone_ngram',
                                 'search_analyzer' => 'gs_analyzer_phone',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'mobile' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Contacts__mobile',
@@ -521,21 +517,20 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'website' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_url' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_url',
-                                'search_analyzer' => 'gs_analyzer_url',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_url',
                                 'store' => false,
                             ),
                             'gs_url_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_url_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_url_ngram',
                                 'search_analyzer' => 'gs_analyzer_url',
                                 'store' => false,
                             ),
@@ -553,8 +548,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'id' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                     ),
                 ),
@@ -569,22 +564,21 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Accounts__stuff' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string_exact' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string_exact',
-                                'search_analyzer' => 'gs_analyzer_string_exact',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string_exact',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'stuff' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__stuff',
@@ -602,29 +596,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Accounts__description' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_text_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_text_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'description' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__description',
@@ -642,29 +635,28 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'KBContents__body' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'fields' => array(
                             'gs_string' =>  array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_string',
-                                'search_analyzer' => 'gs_analyzer_string',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                             'gs_text_wildcard' => array(
-                                'type' => 'string',
-                                'index' => 'analyzed',
-                                'index_analyzer' => 'gs_analyzer_text_ngram',
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_text_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ),
                         ),
                     ),
                     'body' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'KBContents__body',
@@ -682,8 +674,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'status' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                     ),
                 ),
@@ -754,7 +746,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array(),
                 array(
-                    'mapping1' => array('type' => 'string'),
+                    'mapping1' => array('type' => 'text'),
                 ),
                 'field1',
                 array(
@@ -763,18 +755,18 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'custom_Module__field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'mapping1' => array(
-                                'type' => 'string',
+                                'type' => 'text',
                             ),
                         ),
                     ),
                     'field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'custom_Module__field1',
@@ -790,7 +782,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array(),
                 array(
-                    'mapping1' => array('type' => 'string'),
+                    'mapping1' => array('type' => 'text'),
                     'mapping2' => array('type' => 'integer'),
                 ),
                 'field1',
@@ -800,12 +792,12 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Accounts__field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'mapping1' => array(
-                                'type' => 'string',
+                                'type' => 'text',
                             ),
                             'mapping2' => array(
                                 'type' => 'integer',
@@ -813,8 +805,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         ),
                     ),
                     'field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Accounts__field1',
@@ -839,8 +831,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 false,
                 array(
                     'field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                     ),
                 ),
@@ -854,7 +846,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array(),
                 array(
                     'not_analyzed' => array(),
-                    'mapping1' => array('type' => 'string'),
+                    'mapping1' => array('type' => 'text'),
                     'mapping2' => array('type' => 'integer'),
                 ),
                 'field1',
@@ -864,12 +856,12 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Opportunities__field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
                             'mapping1' => array(
-                                'type' => 'string',
+                                'type' => 'text',
                             ),
                             'mapping2' => array(
                                 'type' => 'integer',
@@ -877,8 +869,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         ),
                     ),
                     'field1' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Opportunities__field1',
@@ -895,7 +887,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 array('type1'),
                 array(
                     'not_analyzed' => array(),
-                    'mapping1' => array('type' => 'string'),
+                    'mapping1' => array('type' => 'text'),
                     'mapping2' => array('type' => 'integer'),
                 ),
                 'field1',
@@ -905,12 +897,12 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'Opportunities__field1' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'fields' => array(
                             'mapping1' => array(
-                                'type' => 'string',
+                                'type' => 'text',
                             ),
                             'mapping2' => array(
                                 'type' => 'integer',
@@ -918,8 +910,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                         ),
                     ),
                     'field1' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'copy_to' => array(
                             'Opportunities__field1',
@@ -987,8 +979,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'test_default' => array('type' => 'string'),
-                    'test_ngram' => array('type' => 'string'),
+                    'test_default' => array('type' => 'text'),
+                    'test_ngram' => array('type' => 'text'),
                 ),
                 'Contacts',
                 'first_name',
@@ -1032,8 +1024,8 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array(
                     'not_analyzed' => array(),
-                    'test_default' => array('type' => 'string'),
-                    'test_ngram' => array('type' => 'string'),
+                    'test_default' => array('type' => 'text'),
+                    'test_ngram' => array('type' => 'text'),
                 ),
                 'CustomModule',
                 'custom_field',
@@ -1056,7 +1048,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                     ),
                 ),
                 array(
-                    'test_default' => array('type' => 'string'),
+                    'test_default' => array('type' => 'text'),
                     'test_integer' => array('type' => 'integer'),
                 ),
                 'CustomModule',
@@ -1080,7 +1072,7 @@ class MultiFieldHandlerTest extends \PHPUnit_Framework_TestCase
                 ),
                 array(
                     'not_analyzed' => array(),
-                    'test_default' => array('type' => 'string'),
+                    'test_default' => array('type' => 'text'),
                     'test_integer' => array('type' => 'integer'),
                 ),
                 'CustomModule',

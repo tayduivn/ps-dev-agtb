@@ -20,27 +20,27 @@ use Elastica\Result;
 class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    private $_responseString = '{"took":8,"timed_out":false,"_shards":{"total":1,"successful":1,"failed":0},"hits":{"total":2,"max_score":1.0,"hits":[{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"20575d83-63aa-2c15-a4e3-4f3ab8344249","_score":1.0, "_source" : {"name":"test account","module":"Accounts","team_set_id":"1"}},{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"e7abbd8c-1daa-80cc-bdce-4f3ab8cf1cca","_score":1.0, "_source" : {"name":"test2 account","module":"Accounts","team_set_id":"1"}}]},"facets":{"_type":{"_type":"terms","missing":0,"total":2,"other":0,"terms":[{"term":"Accounts","count":2}]}}}';
-    private $_sugarElsaticResultSet;
+    private $responseString = '{"took":8,"timed_out":false,"_shards":{"total":1,"successful":1,"failed":0},"hits":{"total":2,"max_score":1.0,"hits":[{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"20575d83-63aa-2c15-a4e3-4f3ab8344249","_score":1.0, "_source" : {"name":"test account","module":"Accounts","team_set_id":"1"}},{"_index":"c5368b06edf5dabf62a27e146d35ab3f","_type":"Accounts","_id":"e7abbd8c-1daa-80cc-bdce-4f3ab8cf1cca","_score":1.0, "_source" : {"name":"test2 account","module":"Accounts","team_set_id":"1"}}]},"aggregations":{"_type":{"_type":"terms","missing":0,"total":2,"other":0,"terms":[{"term":"Accounts","count":2}]}}}';
+    private $sugarElsaticResultSet;
 
     public function setUp()
     {
-        $response = new Response($this->_responseString);
+        $response = new Response($this->responseString);
         $query = new Query();
-        $resultSet = new ResultSet($response, $query);
-        $this->_sugarElsaticResultSet = new SugarSeachEngineElasticResultSet($resultSet);
+        $resultSet = new ResultSet($response, $query, array());
+        $this->sugarElsaticResultSet = new SugarSeachEngineElasticResultSet($resultSet);
     }
 
     public function testElasticResultSetTotalHits()
     {
-        $totalHits = $this->_sugarElsaticResultSet->getTotalHits();
+        $totalHits = $this->sugarElsaticResultSet->getTotalHits();
 
         $this->assertEquals(2, $totalHits, 'Incorrect total hits');
     }
 
     public function testElasticResultSetFacets()
     {
-        $facets = $this->_sugarElsaticResultSet->getFacets();
+        $facets = $this->sugarElsaticResultSet->getFacets();
 
         $this->assertEquals('terms', $facets['_type']['_type'], 'Incorrect type');
         $this->assertEquals(2, $facets['_type']['total'], 'Incorrect total');
@@ -50,22 +50,22 @@ class SugarSearchEngineElasticResultSetTest extends Sugar_PHPUnit_Framework_Test
 
     public function testElasticResultSetTotalTime()
     {
-        $totalTime = $this->_sugarElsaticResultSet->getTotalTime();
+        $totalTime = $this->sugarElsaticResultSet->getTotalTime();
 
         $this->assertEquals(8, $totalTime, 'Incorrect total time');
     }
 
     public function testElasticResultSetPosition()
     {
-        $key = $this->_sugarElsaticResultSet->key();
+        $key = $this->sugarElsaticResultSet->key();
         $this->assertEquals(0, $key, 'Incorrect key');
 
-        $this->_sugarElsaticResultSet->next();
-        $key = $this->_sugarElsaticResultSet->key();
+        $this->sugarElsaticResultSet->next();
+        $key = $this->sugarElsaticResultSet->key();
         $this->assertEquals(1, $key, 'Incorrect key after next()');
 
-        $this->_sugarElsaticResultSet->rewind();
-        $key = $this->_sugarElsaticResultSet->key();
+        $this->sugarElsaticResultSet->rewind();
+        $key = $this->sugarElsaticResultSet->key();
         $this->assertEquals(0, $key, 'Incorrect key after rewind()');
     }
 }

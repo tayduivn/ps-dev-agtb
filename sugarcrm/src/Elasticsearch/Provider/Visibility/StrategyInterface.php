@@ -55,9 +55,9 @@ interface StrategyInterface
 
     /**
      * Add visibility filters
-     * @param \Elastica\Filter\BoolFilter $filter
+     * @param \Elastica\Query\BoolQuery $filter
      * @param Visibility $provider
-     * @return \Elastica\Filter\AbstractFilter
+     * @return \Elastica\Query\AbstractQuery
      */
-    public function elasticAddFilters(\User $user, \Elastica\Filter\BoolFilter $filter, Visibility $provider);
+    public function elasticAddFilters(\User $user, \Elastica\Query\BoolQuery $filter, Visibility $provider);
 }

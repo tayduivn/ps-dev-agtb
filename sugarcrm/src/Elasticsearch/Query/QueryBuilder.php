@@ -83,13 +83,13 @@ class QueryBuilder
 
     /**
      * List of query filters
-     * @var \Elastica\Filter\AbstractFilter[]
+     * @var \Elastica\Query\AbstractQuery[]
      */
     protected $filters = array();
 
     /**
      * List of post filters
-     * @var \Elastica\Filter\AbstractFilter[]
+     * @var \Elastica\Query\AbstractQuery[]
      */
     protected $postFilters = array();
 
@@ -220,10 +220,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param \Elastica\Filter\AbstractFilter $filter
+     * @param \Elastica\Query\AbstractQuery $filter
      * @return QueryBuilder
      */
-    public function addFilter(\Elastica\Filter\AbstractFilter $filter)
+    public function addFilter(\Elastica\Query\AbstractQuery $filter)
     {
         $this->filters[] = $filter;
         return $this;
@@ -231,10 +231,10 @@ class QueryBuilder
 
     /**
      * Add query filter
-     * @param \Elastica\Filter\AbstractFilter $postFilter
+     * @param \Elastica\Query\AbstractQueryr $postFilter
      * @return QueryBuilder
      */
-    public function addPostFilter(\Elastica\Filter\AbstractFilter $postFilter)
+    public function addPostFilter(\Elastica\Query\AbstractQuery $postFilter)
     {
         $this->postFilters[] = $postFilter;
         return $this;
@@ -337,8 +337,8 @@ class QueryBuilder
     public function build()
     {
         // Wrap query in a filtered query
-        $query = new \Elastica\Query\Filtered();
-        $query->setQuery($this->query->build());
+        $query = new \Elastica\Query\BoolQuery();
+        $query->addMust($this->query->build());
 
         // Apply visibility filtering
         if ($this->applyVisibility) {
@@ -346,7 +346,7 @@ class QueryBuilder
         }
 
         // Add all filters to query
-        $query->setFilter($this->buildFilters($this->filters));
+        $query->addFilter($this->buildFilters($this->filters));
 
         // Wrap again in our main query object
         $query = $this->buildQuery($query);
@@ -387,13 +387,13 @@ class QueryBuilder
     /**
      * Build module filter
      * @param array $modules
-     * @return \Elastica\Filter\BoolFilter
+     * @return \Elastica\Query\BoolQuery
      */
     protected function buildModuleFilter(array $modules)
     {
-        $modules = new \Elastica\Filter\BoolFilter();
+        $modules = new \Elastica\Query\BoolQuery();
         foreach ($this->modules as $module) {
-            $filter = new \Elastica\Filter\Term();
+            $filter = new \Elastica\Query\Term();
             $filter->setTerm('_type', $module);
             $modules->addShould($filter);
         }
@@ -435,11 +435,11 @@ class QueryBuilder
 
     /**
      * Build filters
-     * @return \Elastica\Filter\BoolFilter
+     * @return \Elastica\Query\BoolQuery
      */
     protected function buildFilters(array $filters)
     {
-        $result = new \Elastica\Filter\BoolFilter();
+        $result = new \Elastica\Query\BoolQuery();
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
@@ -448,11 +448,11 @@ class QueryBuilder
 
     /**
      * Build post filters
-     * @return \Elastica\Filter\BoolFilter
+     * @return \Elastica\Query\BoolQuery
      */
     protected function buildPostFilters(array $postFilters)
     {
-        $result = new \Elastica\Filter\BoolFilter();
+        $result = new \Elastica\Query\BoolQuery();
         foreach ($postFilters as $postFilter) {
             $result->addMust($postFilter);
         }

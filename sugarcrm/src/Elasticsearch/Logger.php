@@ -143,7 +143,7 @@ class Logger extends BaseLogger
     protected function encodeData($data)
     {
         if (is_array($data)) {
-            $data = str_replace('\/', '/', JSON::stringify($data, 'JSON_ELASTICSEARCH'));
+            $data = str_replace('\/', '/', JSON::stringify($data));
         }
         return $data;
     }

@@ -70,29 +70,29 @@ class KBQuery implements QueryInterface
     /**
      * Create the filter.
      * @param bool $addLangFilter a flag indicate if a lang filter is needed
-     * @return \Elastica\Filter\BoolFilter
+     * @return \Elastica\Query\BoolQuery
      */
     public function createFilter($addLangFilter)
     {
-        $mainFilter = new \Elastica\Filter\BoolFilter();
+        $mainFilter = new \Elastica\Query\BoolQuery();
 
-        $currentIdFilter = new \Elastica\Filter\Term();
+        $currentIdFilter = new \Elastica\Query\Term();
         $currentIdFilter->setTerm('_id', $this->bean->id);
         $mainFilter->addMustNot($currentIdFilter);
 
-        $activeRevFilter = new \Elastica\Filter\Term();
+        $activeRevFilter = new \Elastica\Query\Term();
         $activeRevFilter->setTerm('active_rev', 1);
         $mainFilter->addMust($activeRevFilter);
 
         if ($addLangFilter === true) {
-            $langFilter = new \Elastica\Filter\Term();
+            $langFilter = new \Elastica\Query\Term();
             $langFilter->setTerm('language', $this->bean->language);
             $mainFilter->addMust($langFilter);
         }
 
-        $statusFilterOr = new \Elastica\Filter\BoolOr();
+        $statusFilterOr = new \Elastica\Query\BoolQuery();
         foreach ($this->bean->getPublishedStatuses() as $status) {
-            $statusFilterOr->addFilter(new \Elastica\Filter\Term(array('status' => $status)));
+            $statusFilterOr->addFilter(new \Elastica\Query\Term(array('status' => $status)));
         }
         $mainFilter->addMust($statusFilterOr);
         return $mainFilter;

@@ -148,8 +148,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
             ),
         ), $mapping->compile());
@@ -158,8 +158,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotAnalyzedField('field1', array('field1_copy1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -172,16 +172,16 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
             ),
             'field2' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -193,8 +193,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotAnalyzedField('field1', array('field1_copy2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -202,8 +202,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'field2' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -228,8 +228,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
             ),
         ), $mapping->compile());
@@ -238,8 +238,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotIndexedField('field1', array('field1_copy1'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -252,16 +252,16 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('field2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
                 )
             ),
             'field2' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -273,8 +273,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addNotIndexedField('field1', array('field1_copy2'));
         $this->assertSame(array(
             'field1' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field1_copy1',
@@ -282,8 +282,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'field2' => array(
-                'type' => 'string',
-                'index' => 'no',
+                'type' => 'text',
+                'index' => false,
                 'include_in_all' => false,
                 'copy_to' => array(
                     'field2_copy1',
@@ -308,11 +308,11 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($mapping->hasProperty('base1'));
         $this->assertSame(array(
             'base1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'fields' => array(
-                    'field1' => array('type' => 'string'),
+                    'field1' => array('type' => 'text'),
                 ),
             ),
         ), $mapping->compile());
@@ -321,12 +321,12 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping->addMultiField('base1', 'field2', new MultiFieldProperty());
         $this->assertSame(array(
             'base1' => array(
-                'type' => 'string',
-                'index' => 'not_analyzed',
+                'type' => 'text',
+                'index' => true,
                 'include_in_all' => false,
                 'fields' => array(
-                    'field1' => array('type' => 'string'),
-                    'field2' => array('type' => 'string'),
+                    'field1' => array('type' => 'text'),
+                    'field2' => array('type' => 'text'),
                 ),
             ),
         ), $mapping->compile());
@@ -391,11 +391,11 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 'addNotIndexedField',
                 array(
                     'base' => array(
-                        'type' => 'string',
-                        'index' => 'no',
+                        'type' => 'text',
+                        'index' => false,
                         'include_in_all' => false,
                         'fields' => array(
-                            'field1' => array('type' => 'string'),
+                            'field1' => array('type' => 'text'),
                         ),
                     ),
                 ),
@@ -404,11 +404,11 @@ class MappingTest extends \PHPUnit_Framework_TestCase
                 'addNotAnalyzedField',
                 array(
                     'base' => array(
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'text',
+                        'index' => true,
                         'include_in_all' => false,
                         'fields' => array(
-                            'field1' => array('type' => 'string'),
+                            'field1' => array('type' => 'text'),
                         ),
                     ),
                 ),

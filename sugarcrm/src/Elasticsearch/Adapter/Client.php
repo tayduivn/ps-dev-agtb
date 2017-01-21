@@ -53,6 +53,8 @@ class Client extends BaseClient
     protected $allowedVersions = [
         '1.4',
         '1.7',
+        '5.0',
+        '5.1',
     ];
 
     /**
@@ -60,7 +62,7 @@ class Client extends BaseClient
      * @var array
      */
     protected $supportedVersionsCheck = [
-        ['version' => '2.0.0', 'operator' => '<'],
+        ['version' => '5.2.0', 'operator' => '<'],
     ];
 
     /**
@@ -324,10 +326,12 @@ class Client extends BaseClient
                 throw new \Elastica\Exception\ConnectionException('HTTP 502 Bad gateway');
             }
 
-            $this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
+            //$this->_logger->onRequestSuccess($this->_lastRequest, $this->_lastResponse);
 
         } catch (\Exception $e) {
-            $this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
+            _ppl($e->getMessage());
+            
+            //$this->_logger->onRequestFailure($this->getConnection(), $e, $path, $method, $data);
 
             // On connection issues flag Elasticsearch as unavailable
             if ($e instanceof \Elastica\Exception\ConnectionException) {

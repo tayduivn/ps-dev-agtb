@@ -34,7 +34,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
 
         $postFilters = array();
         foreach ($filterParams as $key => $value) {
-            $termFilter = new \Elastica\Filter\Term();
+            $termFilter = new \Elastica\Query\Term();
             $termFilter->setTerm($key, $value);
             $postFilters[] = $termFilter;
         }
@@ -49,8 +49,11 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 array("_type" => "Accounts", "assigned_user_id" => "seed_max_id"),
-                array("bool" => array("must" => array("0" => array("term" => array("_type" => "Accounts")),
-                    "1" => array("term" => array("assigned_user_id" => "seed_max_id")))))
+                array("bool" => array("must" => array(
+                    "0" => array("term" => array("_type" => array(
+                        "value" => "Accounts", "boost" => 1.0))),
+                    "1" => array("term" => array("assigned_user_id" => array(
+                        "value" => "seed_max_id", "boost" => 1.0)))))),
             ),
         );
     }

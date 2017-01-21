@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f6784ebc5b21f436035c1753ca97d7e",
+    "content-hash": "b720da5d87e0d5e24c1376542328b60d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -566,6 +566,65 @@
             "time": "2014-09-09T13:34:57+00:00"
         },
         {
+            "name": "elasticsearch/elasticsearch",
+            "version": "v5.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/elastic/elasticsearch-php",
+                "reference": "1f618aa161af6790c13a6e091fcf07b78196b383"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/elasticsearch-elasticsearch-v5.3.0-51c82f.tar",
+                "reference": "1f618aa161af6790c13a6e091fcf07b78196b383",
+                "shasum": "6e65a5d6d2e47c081419a4373f50c15bf592fa12"
+            },
+            "require": {
+                "guzzlehttp/ringphp": "~1.0",
+                "php": "^5.6|^7.0",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "cpliakas/git-wrapper": "~1.0",
+                "doctrine/inflector": "^1.1",
+                "mockery/mockery": "0.9.4",
+                "phpunit/phpunit": "^4.7|^5.4",
+                "sami/sami": "~3.2",
+                "symfony/finder": "^2.8",
+                "symfony/yaml": "^2.8"
+            },
+            "suggest": {
+                "ext-curl": "*",
+                "monolog/monolog": "Allows for client-level logging and tracing"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Elasticsearch\\": "src/Elasticsearch/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Elasticsearch\\Tests\\": "tests/Elasticsearch/Tests/"
+                }
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Zachary Tong"
+                }
+            ],
+            "description": "PHP Client for Elasticsearch",
+            "keywords": [
+                "client",
+                "elasticsearch",
+                "search"
+            ],
+            "time": "2017-07-19T18:44:30+00:00"
+        },
+        {
             "name": "etechnika/idna-convert",
             "version": "1.0.3",
             "source": {
@@ -757,6 +816,110 @@
                 "web service"
             ],
             "time": "2015-03-18T18:23:50+00:00"
+        },
+        {
+            "name": "guzzlehttp/ringphp",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/RingPHP",
+                "reference": "dbbb91d7f6c191e5e405e900e3102ac7f261bc0b"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/guzzlehttp-ringphp-1.1.0-6654cd.tar",
+                "reference": "dbbb91d7f6c191e5e405e900e3102ac7f261bc0b",
+                "shasum": "4145b49b4377c27aa7382d28bddc854bbb7b3f71"
+            },
+            "require": {
+                "guzzlehttp/streams": "~3.0",
+                "php": ">=5.4.0",
+                "react/promise": "~2.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~4.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Ring\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "GuzzleHttp\\Tests\\Ring\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+            "time": "2015-05-20T03:37:09+00:00"
+        },
+        {
+            "name": "guzzlehttp/streams",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/streams",
+                "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/guzzlehttp-streams-3.0.0-c67b5d.tar",
+                "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5",
+                "shasum": "5a19f9bdd3a9dc90c658d95e807a7018e54fdf96"
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple abstraction over streams of data",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "guzzle",
+                "stream"
+            ],
+            "time": "2014-10-12T19:12:31+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -1380,37 +1543,88 @@
             "time": "2016-03-22T18:20:19+00:00"
         },
         {
-            "name": "ruflin/elastica",
-            "version": "2.3.1",
+            "name": "react/promise",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ruflin/Elastica",
-                "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a"
+                "url": "https://github.com/reactphp/promise",
+                "reference": "aeaf673d60dfc7cbcc1c4bb0f1d08e15ad6e5782"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/ruflin-elastica-2.3.1-c20d16.tar",
-                "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a",
-                "shasum": "9f57c4e0f9fe266ade3696472ea0478c4fef6464"
+                "url": "https://satis.sugardev.team/dist/react-promise-v2.5.1-dafdb5.tar",
+                "reference": "aeaf673d60dfc7cbcc1c4bb0f1d08e15ad6e5782",
+                "shasum": "2048a5589c04079ce4d4ac85f8392092d9010000"
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "React\\Promise\\": "tests/fixtures"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "A lightweight implementation of CommonJS Promises/A for PHP",
+            "keywords": [
+                "promise",
+                "promises"
+            ],
+            "time": "2017-03-25T12:08:31+00:00"
+        },
+        {
+            "name": "ruflin/elastica",
+            "version": "5.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ruflin/Elastica",
+                "reference": "6ca31124a7753edbe3cec0f7a0cb723829da57c5"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/ruflin-elastica-5.3.0-373e79.tar",
+                "reference": "6ca31124a7753edbe3cec0f7a0cb723829da57c5",
+                "shasum": "032bc2a1dc65b275879d2043bf333254a334fd1a"
+            },
+            "require": {
+                "elasticsearch/elasticsearch": "5.3.0",
+                "php": ">=5.6.0",
                 "psr/log": "~1.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "5.3.*",
-                "munkie/elasticsearch-thrift-php": "1.4.*"
+                "aws/aws-sdk-php": "~3.0",
+                "guzzlehttp/guzzle": "~6.0"
             },
             "suggest": {
+                "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
                 "egeloen/http-adapter": "Allow using httpadapter transport",
-                "guzzlehttp/guzzle": "Allow using guzzle 5.3.x as the http transport (Requires php 5.4)",
-                "monolog/monolog": "Logging request",
-                "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
+                "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport",
+                "monolog/monolog": "Logging request"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2.x-dev"
+                    "dev-master": "5.2.x-dev"
                 }
             },
             "autoload": {
@@ -1420,7 +1634,7 @@
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Elastica\\Test\\": "test/lib/Elastica/Test/"
+                    "Elastica\\Test\\": "test/Elastica/"
                 }
             },
             "license": [
@@ -1438,7 +1652,7 @@
                 "client",
                 "search"
             ],
-            "time": "2015-10-19T07:09:10+00:00"
+            "time": "2017-07-26T12:21:58+00:00"
         },
         {
             "name": "silex/silex",
@@ -1536,10 +1750,15 @@
         {
             "name": "sugarcrm/identity-provider",
             "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:sugarcrm/IdentityProvider.git",
+                "reference": "5dd124749c516ead17c0bd5534849e69a2c33434"
+            },
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "dcf04c0da743c114a0e7b9b596eea0a0770457f4",
+                "reference": "5dd124749c516ead17c0bd5534849e69a2c33434",
                 "shasum": null
             },
             "require": {

@@ -299,12 +299,10 @@ class GlobalSearchApiTest extends \PHPUnit_Framework_TestCase
             $elasticaResults[] = new \Elastica\Result($hit);
         }
 
-        $elasticaResultSet = $this->getMockBuilder('Elastica\ResultSet')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        TestReflection::setProtectedValue($elasticaResultSet, '_results', $elasticaResults);
+        $response = $this->createMock('\Elastica\Response');
+        $query = $this->createMock('\Elastica\Query');
+        $elasticaResultSet =  $this->getMockBuilder('\Elastica\ResultSet')
+            ->setConstructorArgs(array($response, $query, $elasticaResults))->setMethods(null)->getMock();
 
         $highlighter = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Query\Highlighter\AbstractHighlighter')
             ->getMockForAbstractClass();

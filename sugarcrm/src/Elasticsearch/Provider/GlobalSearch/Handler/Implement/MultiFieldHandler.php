@@ -125,10 +125,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * words tokenized by the standard analyzer.
          */
         'gs_string' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_string',
-            'search_analyzer' => 'gs_analyzer_string',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_string',
             'store' => true,
         ),
 
@@ -138,9 +137,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * matches using the default string mapping.
          */
         'gs_string_wildcard' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_string_ngram',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_string_ngram',
             'search_analyzer' => 'gs_analyzer_string',
             'store' => true,
         ),
@@ -150,9 +149,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * big we use a text_ngram definition.
          */
         'gs_text_wildcard' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_text_ngram',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_text_ngram',
             'search_analyzer' => 'gs_analyzer_string',
             'store' => true,
         ),
@@ -179,7 +178,7 @@ class MultiFieldHandler extends AbstractHandler implements
          */
         'gs_integer' => array(
             'type' => 'integer',
-            'index' => 'no',
+            'index' => false,
             'store' => false,
         ),
 
@@ -196,9 +195,9 @@ class MultiFieldHandler extends AbstractHandler implements
          *      ...
          */
         'gs_phone_wildcard' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_phone_ngram',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_phone_ngram',
             'search_analyzer' => 'gs_analyzer_phone',
             'store' => true,
         ),
@@ -207,10 +206,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * URL analyzer
          */
         'gs_url' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_url',
-            'search_analyzer' => 'gs_analyzer_url',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_url',
             'store' => false,
         ),
 
@@ -218,9 +216,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * Wildcard matching for URLs.
          */
         'gs_url_wildcard' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_url_ngram',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_url_ngram',
             'search_analyzer' => 'gs_analyzer_url',
             'store' => false,
         ),
@@ -231,10 +229,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * words tokenized by the whitespace analyzer.
          */
         'gs_string_exact' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_string_exact',
-            'search_analyzer' => 'gs_analyzer_string_exact',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_string_exact',
             'store' => true,
         ),
 
@@ -242,10 +239,9 @@ class MultiFieldHandler extends AbstractHandler implements
          * Analyzer for html
          */
         'gs_string_html' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_string_html',
-            'search_analyzer' => 'gs_analyzer_string_html',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_string_html',
             'store' => true,
         ),
     );
@@ -536,7 +532,7 @@ class MultiFieldHandler extends AbstractHandler implements
         }
 
         $defs = $this->multiFieldDefs[$multiFieldDef];
-        if (isset($defs['type']) && $defs['type'] === 'string') {
+        if (isset($defs['type']) && $defs['type'] === 'text') {
             return true;
         }
 

@@ -30,7 +30,7 @@ class MultiFieldProperty extends RawProperty implements PropertyInterface
      * @var array
      */
     protected $allowedTypes = array(
-        'string',
+        'text',
         'float',
         'double',
         'byte',
@@ -45,7 +45,7 @@ class MultiFieldProperty extends RawProperty implements PropertyInterface
     /**
      * @var string Core type
      */
-    protected $type = 'string';
+    protected $type = 'text';
 
     /**
      * {@inheritdoc}

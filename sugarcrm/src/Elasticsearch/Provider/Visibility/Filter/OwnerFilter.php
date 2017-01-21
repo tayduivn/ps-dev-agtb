@@ -29,7 +29,7 @@ class OwnerFilter implements FilterInterface
     public function buildFilter(array $options = array())
     {
         $ownerField = $this->getOwnerField($options['bean']);
-        $filter = new \Elastica\Filter\Term();
+        $filter = new \Elastica\Query\Term();
         $filter->setTerm($ownerField, $options['user']->id);
         return $filter;
     }

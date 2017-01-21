@@ -37,7 +37,7 @@ class MultiFieldPropertyTest extends \PHPUnit_Framework_TestCase
     public function providerTestSetType()
     {
         return array(
-            array('string'),
+            array('text'),
             array('float'),
             array('double'),
             array('byte'),

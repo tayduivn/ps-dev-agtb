@@ -44,16 +44,15 @@ class EmailAddressHandler extends AbstractHandler implements
      */
     protected $multiFieldDefs = array(
         'gs_email' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_email',
-            'search_analyzer' => 'gs_analyzer_email',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_email',
             'store' => true,
         ),
         'gs_email_wildcard' => array(
-            'type' => 'string',
-            'index' => 'analyzed',
-            'index_analyzer' => 'gs_analyzer_email_ngram',
+            'type' => 'text',
+            'index' => true,
+            'analyzer' => 'gs_analyzer_email_ngram',
             'search_analyzer' => 'gs_analyzer_email',
             'store' => true,
         ),

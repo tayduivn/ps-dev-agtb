@@ -35,7 +35,7 @@ class TeamSetFilter implements FilterInterface
     {
         $teamSetIds = $this->getTeamSetIds($options['user']);
         $field = !empty($options['field']) ? $options['field'] : $this->defaultField;
-        return new \Elastica\Filter\Terms($field, $teamSetIds);
+        return new \Elastica\Query\Terms($field, $teamSetIds);
     }
 
     /**

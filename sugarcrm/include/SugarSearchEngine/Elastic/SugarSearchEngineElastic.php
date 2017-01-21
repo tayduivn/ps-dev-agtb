@@ -84,7 +84,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Filter\Term(array(
+            $filters[] = new \Elastica\Query\Terms(array(
                 'owner_id' => $current_user->id,
             ));
         }
@@ -98,7 +98,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 return null;
             }
 
-            $filters[] = new \Elastica\Filter\Term(array(
+            $filters[] = new \Elastica\Query\Terms(array(
                 'user_favorites' => $current_user->id,
             ));
         }
