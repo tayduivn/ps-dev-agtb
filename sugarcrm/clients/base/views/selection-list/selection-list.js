@@ -41,13 +41,13 @@
 ({
     extendsFrom: 'FlexListView',
 
-    dataViewName: 'selection-list',
+    dataView: 'selection-list',
 
     initialize: function(options) {
         // Since list.js only fetches list view metadata, we need to build our
         // own metadata to send to the parent.
         var viewMeta = app.metadata.getView(options.module, options.name) ||
-                       app.metadata.getView(options.module, this.dataViewName) || {};
+                       app.metadata.getView(options.module, this.dataView) || {};
         this.plugins = _.union(this.plugins, ['ListColumnEllipsis', 'ListRemoveLinks']);
         //setting skipFetch to true so that loadData will not run on initial load and the filter load the view.
         options.context.set('skipFetch', true);
