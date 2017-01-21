@@ -61,6 +61,8 @@
 ({
     extendsFrom: 'ListView',
 
+    dataView: '',
+
     /**
      * The plugins used by this view.
      */
