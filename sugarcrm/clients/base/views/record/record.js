@@ -14,6 +14,11 @@
  * @extends View.View
  */
 ({
+    /**
+     * @inheritdoc
+     */
+    dataView: 'record',
+
     inlineEditMode: false,
 
     createMode: false,
@@ -146,8 +151,6 @@
 
         this.context.on('change:record_label', this.setLabel, this);
         this.context.set('viewed', true);
-        //Set the context to load the field list from the record metadata.
-        this.context.set('dataView', 'record');
         this.model.on('duplicate:before', this.setupDuplicateFields, this);
         // displays error msg when required field is missing
         this.model.on('error:validation', this.alerts.showInvalidModel, this);
