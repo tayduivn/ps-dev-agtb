@@ -100,19 +100,6 @@ class PMSEEngineFilterApi extends FilterApi
                 ),
 //                'shortHelp' => 'List of all records in this module',
             ),
-            'filterModuleById' => array(
-                'reqType' => 'GET',
-                'path' => array('pmse_Inbox', 'filter', '?'),
-                'pathVars' => array('module', '', 'record'),
-                'method' => 'filterById',
-                'exceptions' => array(
-                    'SugarApiExceptionNotFound',
-                    'SugarApiExceptionInvalidParameter',
-                    'SugarApiExceptionNotAuthorized',
-                    'SugarApiExceptionError',
-                ),
-//                'shortHelp' => 'Filter records for a module by a predefined filter id.',
-            ),
         );
     }
 
