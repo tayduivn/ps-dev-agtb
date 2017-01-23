@@ -13,37 +13,12 @@
 namespace Sugarcrm\Sugarcrm\Dbal\Oci8;
 
 use Doctrine\DBAL\Driver\OCI8\OCI8Statement as BaseStatement;
-use Sugarcrm\Sugarcrm\Dbal\FetchTrait;
 
 /**
  * Oci8 statement
  */
 class Statement extends BaseStatement
 {
-    use FetchTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetch($fetchMode = null)
-    {
-        $result = parent::fetch($fetchMode);
-        $result = $this->normalize($result, $fetchMode);
-
-        return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchAll($fetchMode = null)
-    {
-        $results = parent::fetchAll($fetchMode);
-        $results = $this->normalizeAll($results, $fetchMode);
-
-        return $results;
-    }
-
     /**
      * {@inheritdoc}
      *
