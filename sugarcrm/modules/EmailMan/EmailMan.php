@@ -304,7 +304,7 @@ class EmailMan extends SugarBean{
            if (empty($this->ref_email->id) or $upd_ref_email) {
                 //create email record.
                 $this->ref_email->id=$marketing_id;
-                $this->ref_email->date_sent = '';
+                $this->ref_email->date_sent = $timedate->nowDb();
 
                 if ($upd_ref_email==false) {
                     $this->ref_email->new_with_id=true;
@@ -330,8 +330,6 @@ class EmailMan extends SugarBean{
                     $this->ref_email->parent_type = '';
                     $this->ref_email->parent_id =  '';
                 }
-                $this->ref_email->date_start = $timedate->nowDate();
-                $this->ref_email->time_start = $timedate->asUserTime($timedate->getNow(true));
 
                 $this->ref_email->status='sent';
                $this->ref_email->state = Email::EMAIL_STATE_ARCHIVED;
@@ -440,8 +438,7 @@ class EmailMan extends SugarBean{
         $email->assigned_user_id = $this->user_id;
         $email->parent_type      = $this->related_type;
         $email->parent_id        = $this->related_id;
-        $email->date_start       = $timedate->nowDbDate();
-        $email->time_start       = $timedate->asDbTime($timedate->getNow());
+        $email->date_sent = $timedate->nowDb();
         $email->status           = 'sent';
         $email->state = Email::EMAIL_STATE_ARCHIVED;
         $email->message_id = $mail->getHeader(EmailHeaders::MessageId);
