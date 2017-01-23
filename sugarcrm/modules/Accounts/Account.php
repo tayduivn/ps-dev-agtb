@@ -145,15 +145,6 @@ class Account extends Company {
 		$this->db->query($query,true,"Error clearing account to case relationship: ");
 	}
 
-	/**
-	* This method is used to provide backward compatibility with old data that was prefixed with http://
-	* We now automatically prefix http://
-	* @deprecated.
- 	*/
-    public function remove_redundant_http()
-    {
-    }
-
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
