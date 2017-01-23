@@ -34,6 +34,9 @@
 
         this.listenTo(this.model, 'change:state', this._alertUserDraftState);
 
+        this.listenTo(this.model, 'change:from', function() {
+            this._renderRecipientsField('from');
+        });
         this.listenTo(this.model, 'change:to', function() {
             this._renderRecipientsField('to');
         });

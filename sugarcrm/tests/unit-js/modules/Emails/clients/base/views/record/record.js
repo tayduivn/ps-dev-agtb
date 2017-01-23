@@ -125,7 +125,7 @@ describe('Emails.Views.Record', function() {
         });
 
         describe('Render each recipient field when it has changed', function() {
-            using('recipient fields', ['to', 'cc', 'bcc'], function(data) {
+            using('recipient fields', ['from', 'to', 'cc', 'bcc'], function(data) {
                 it('should render the ' + data + ' field', function() {
                     var field = {
                         render: sandbox.spy()
