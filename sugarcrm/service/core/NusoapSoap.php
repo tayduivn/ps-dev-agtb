@@ -30,7 +30,6 @@ abstract class NusoapSoap extends SugarSoapService{
 		$this->server = new soap_server();
 		$this->soapURL = $url;
 		$this->server->configureWSDL('sugarsoap', $this->getNameSpace(), $url);
-		if(!isset($GLOBALS['HTTP_RAW_POST_DATA']))$GLOBALS['HTTP_RAW_POST_DATA'] = file_get_contents('php://input');
 		parent::__construct();
 		$GLOBALS['log']->info('End: NusoapSoap->__construct');
 	} // ctor
@@ -59,7 +58,8 @@ abstract class NusoapSoap extends SugarSoapService{
 		$this->in_service = true;
 		register_shutdown_function(array($this, "shutdown"));
 		ob_start();
-		$this->server->service($GLOBALS['HTTP_RAW_POST_DATA']);
+        $body = file_get_contents('php://input');
+        $this->server->service($body);
 		$this->in_service = false;
 		ob_end_flush();
 		flush();

@@ -22,8 +22,6 @@ error_reporting(E_ALL ^ E_NOTICE);
 checkSystemLicenseStatus();
 checkSystemState();
 
-global $HTTP_RAW_POST_DATA;
-
 $administrator = Administration::getSettings();
 
 $NAMESPACE = 'http://www.sugarcrm.com/sugarcrm';
@@ -50,10 +48,6 @@ require_once('soap/SoapUpgradeUtils.php');
 /* Begin the HTTP listener service and exit. */
 ob_clean();
 
-if (!isset($HTTP_RAW_POST_DATA)){
-    $HTTP_RAW_POST_DATA = file_get_contents('php://input');
-}
-
 $resourceManager = ResourceManager::getInstance();
 $resourceManager->setup('Soap');
 $observers = $resourceManager->getObservers();
@@ -64,10 +58,10 @@ foreach($observers as $observer) {
    }
 }
 
-$HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
 global $soap_server_object;
 $soap_server_object = $server;
-$server->service($HTTP_RAW_POST_DATA);
+$body = file_get_contents('php://input');
+$server->service($body);
 
 $action = substr($server->SOAPAction, strpos($server->SOAPAction, 'soap.php/') + 9);
 SugarMetric_Manager::getInstance()->setTransactionName('soap_' . $action);

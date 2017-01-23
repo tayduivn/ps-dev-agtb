@@ -137,11 +137,7 @@ class RestRequest
     public function getPostContents()
     {
         if(is_null($this->postContents)) {
-            if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
-                $this->postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
-            } else {
-                $this->postContents = file_get_contents('php://input');
-            }
+            $this->postContents = file_get_contents('php://input');
         }
         return $this->postContents;
     }

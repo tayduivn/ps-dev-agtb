@@ -18,16 +18,6 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-
-    }
-
-    public static function tearDownAfterClass()
-    {
-        SugarTestHelper::tearDown();
-        $_GET = array();
-        if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
-            unset($GLOBALS['HTTP_RAW_POST_DATA']);
-        }
     }
 
     public function tearDown()
@@ -39,13 +29,12 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRequestArgs()
     {
-        $request = $this->createPartialMock('request', array('getPathVars', 'getPostContents', 'getQueryVars'));
+        $request = $this->createPartialMock('RestRequest', array('getPathVars', 'getPostContents', 'getQueryVars'));
         $request->expects($this->any())
                 ->method('getPathVars')
                 ->will($this->returnValue(array()));
 
         $_GET = array('my_json'=>'{"christopher":"walken","bill":"murray"}');
-        $GLOBALS['HTTP_RAW_POST_DATA'] = '';
         $request->expects($this->any())
             ->method('getPostContents')
             ->will($this->onConsecutiveCalls(

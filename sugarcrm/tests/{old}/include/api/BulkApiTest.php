@@ -22,15 +22,6 @@ class BulkApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
     }
 
-    public static function tearDownAfterClass()
-    {
-        SugarTestHelper::tearDown();
-        unset($_GET);
-        if (isset($GLOBALS['HTTP_RAW_POST_DATA'])) {
-            unset($GLOBALS['HTTP_RAW_POST_DATA']);
-        }
-    }
-
     public function tearDown()
     {
         while ( ob_get_level() > 1 ) {

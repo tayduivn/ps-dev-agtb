@@ -73,6 +73,13 @@ class OAuth2Api extends SugarApi
 
     public function token($api, $args)
     {
+        //The token API supports setting a language for error messages as the user is not yet logged in.
+        global $current_language;
+
+        if (!empty($args['current_language'])) {
+            $current_language = $args['current_language'];
+        }
+
         $validVersion = $this->isSupportedClientVersion($api, $args);
 
         if ( !$validVersion ) {
