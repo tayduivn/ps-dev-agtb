@@ -90,6 +90,8 @@
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
+        //Adding the favorite and follow fields.
+        this.context.addFields(this._getDataFields());
 
         /**
          * An array of the {@link #alerts alert} names in this view.
