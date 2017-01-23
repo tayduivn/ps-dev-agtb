@@ -273,7 +273,6 @@ gulp.task('test:rest', function() {
         .option('--url <url>', 'Instance URL, ex: http://my.sugar.server/my/sugar/directory')
         .option('-u, --username <username>', 'Administrator username')
         .option('-p, --password <password>', 'Administrator password')
-        .option('-m, --metadata <filename>', 'Path to metadata JSON file')
         .option('--ci', 'Enable CI specific options')
         .option('--path <path>', 'Set base output path')
         .parse(process.argv);
@@ -298,10 +297,6 @@ gulp.task('test:rest', function() {
     } else if (!process.env.THORN_ADMIN_PASSWORD) {
         console.error('Either setting $THORN_ADMIN_PASSWORD or the --password flag is required.');
         help();
-    }
-
-    if (commander.metadata) {
-        env.THORN_METADATA_FILE = commander.metadata;
     }
 
     var options = {
