@@ -26,6 +26,8 @@
         'click [data-action=delete]' : 'triggerDelete'
     },
 
+    dataView: '',
+
     /**
      * Default settings used when none are supplied through metadata.
      *
