@@ -304,7 +304,7 @@ class Opportunity extends SugarBean
             if (!empty($idequals)) {
                 $idequals .= ' or ';
             }
-            $idequals .= "currency_id='$f'";
+            $idequals .= "currency_id=" . $this->db->quoted($f);
         }
 
 		if ( !empty($idequals) ) {
