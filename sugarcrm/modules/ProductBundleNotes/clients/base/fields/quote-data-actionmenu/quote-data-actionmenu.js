@@ -37,6 +37,7 @@
      */
     toggleSelect: function(checked) {
         var event = !!checked ? 'mass_collection:add' : 'mass_collection:remove';
+        this.model.selected = !!checked;
         this.context.parent.trigger(event, this.model);
     }
 })

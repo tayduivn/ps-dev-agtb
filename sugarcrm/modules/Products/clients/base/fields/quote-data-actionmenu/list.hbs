@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="btn btn-invisible checkall"><input data-check="one" type="checkbox" name="check" {{#if selected}}checked{{/if}}></div>
+<div class="btn btn-invisible checkall">
+    <input data-check="one" type="checkbox" name="check" {{#if model.selected}}checked{{/if}}>
+</div>
 {{#if dropdownFields}}
     <a track="click:listactiondropdown" class="btn btn-invisible dropdown-toggle"
        data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom"

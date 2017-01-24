@@ -258,13 +258,6 @@
     },
 
     /**
-     * @inheritdoc
-     */
-    bindDataChange: function() {
-        //this.collection.on('add', this.setupSugarLogicForModel, this);
-    },
-
-    /**
      * Load and cache SugarLogic dependencies for a module
      *
      * @param {Data.Bean} model
