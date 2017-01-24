@@ -22,7 +22,6 @@ use Sugarcrm\Sugarcrm\Console\Command\Api\SearchStatusCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand;
-use Sugarcrm\Sugarcrm\Console\Command\Thorn\BuildMetadataCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\CleanupQueueCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ModuleCommand;
 use Sugarcrm\Sugarcrm\Console\Command\Elasticsearch\ExplainCommand;
@@ -92,9 +91,6 @@ class Application extends BaseApplication
             new PasswordResetCommand(),
             new CleanupQueueCommand(),
             new ModuleCommand(),
-
-            // Thorn
-            new BuildMetadataCommand(),
         ));
 
         $app = new Application();
