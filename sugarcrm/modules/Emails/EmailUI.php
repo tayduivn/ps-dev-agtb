@@ -2085,7 +2085,7 @@ function getAssignedEmailsCountForUsers($userIds) {
 	$counts = array();
 	foreach($userIds as $id) {
             $query = sprintf(
-                'SELECT count(*) AS c FROM emails WHERE assigned_user_id = %s AND status = "unread"',
+                "SELECT count(*) AS c FROM emails WHERE assigned_user_id = %s AND status = 'unread'",
                 $this->db->quoted($id)
             );
             $r = $this->db->query($query);
