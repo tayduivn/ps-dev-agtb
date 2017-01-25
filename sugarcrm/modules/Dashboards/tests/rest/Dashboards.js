@@ -1,13 +1,7 @@
-let chakram = require('chakram');
-let expect = chakram.expect;
-let thorn = require('@sugarcrm/thorn');
-let Fixtures = thorn.Fixtures;
-let Agent = thorn.Agent;
+const expect = require('chakram').expect;
+const {Agent, Fixtures} = require('@sugarcrm/thorn');
 
-describe('Dashboards', () => {
-    let jane;
-    let john;
-
+describe('Dashboards', function() {
     before(function*() {
         let users = [
             {
@@ -23,15 +17,15 @@ describe('Dashboards', () => {
         ];
 
         yield Fixtures.create(users, {module: 'Users'});
-        john = Agent.as('John');
-        jane = Agent.as('Jane');
+        this.john = Agent.as('John');
+        this.jane = Agent.as('Jane');
     });
 
-    after(() => {
+    after(function() {
         return Fixtures.cleanup();
     });
 
-    describe('Accessing one\'s own dashboard', () => {
+    describe('Accessing one\'s own dashboard', function() {
         it('should allow user to manage his own dashboard', function*() {
             let testDashboard = {
                 definition: {
@@ -41,66 +35,63 @@ describe('Dashboards', () => {
             };
 
             // create test
-            let response = yield john.post('Dashboards', testDashboard.definition);
+            let response = yield this.john.post('Dashboards', testDashboard.definition);
             expect(response).to.have.status(200);
             testDashboard.record = response.response.body;
 
             // read test
-            response = yield john.get('Dashboards/' + testDashboard.record.id);
+            response = yield this.john.get('Dashboards/' + testDashboard.record.id);
             expect(response).to.have.status(200);
 
             // edit test
-            response = yield john.put('Dashboards/' + testDashboard.record.id, {name: 'UpdatedTestDashboard'});
+            response = yield this.john.put('Dashboards/' + testDashboard.record.id, {name: 'UpdatedTestDashboard'});
             expect(response).to.have.status(200);
             expect(response.response.body.name).to.equal('UpdatedTestDashboard');
 
             // delete test
-            response = yield john.delete('Dashboards/' + testDashboard.record.id);
+            response = yield this.john.delete('Dashboards/' + testDashboard.record.id);
             expect(response).to.have.status(200);
 
             // delete test verification
             try {
-                yield john.get('Dashboards/' + testDashboard.record.id);
-            } catch(response) {
+                yield this.john.get('Dashboards/' + testDashboard.record.id);
+            } catch (response) {
                 expect(response).to.have.status(404);
             }
         });
     });
 
-    describe('Accessing someone else\'s dashboard', () => {
-        let johnsDashboard;
-        let johnsDashboardEndpoint;
-
+    describe('Accessing someone else\'s dashboard', function() {
         before(function*() {
-            let response = yield john.post('Dashboards', {name: 'JohnsDashboard'});
-            johnsDashboard = response.response.body;
-            johnsDashboardEndpoint = 'Dashboards/' + johnsDashboard.id;
+            let response = yield this.john.post('Dashboards', {name: 'JohnsDashboard'});
+            this.johnsDashboard = response.response.body;
+            this.johnsDashboardEndpoint = 'Dashboards/' + this.johnsDashboard.id;
         });
 
-        after(() => {
-            return john.delete(johnsDashboardEndpoint);
+        after(function() {
+            return this.john.delete(this.johnsDashboardEndpoint);
         });
 
         it('should not let a user view another user\'s dashboard', function*() {
             try {
-                yield jane.get(johnsDashboardEndpoint)
-            } catch(response) {
+                yield this.jane.get(this.johnsDashboardEndpoint);
+            } catch (response) {
                 expect(response).to.have.status(404);
             }
         });
 
         it('should not let a user edit another user\'s dashboard', function*() {
             try {
-                yield jane.put(johnsDashboardEndpoint, {name: 'UpdateName'});
-            } catch(response) {
+                yield this.jane.put(this.johnsDashboardEndpoint, {name: 'UpdateName'});
+            } catch (response) {
                 expect(response).to.have.status(404);
             }
         });
 
         it('should not let a user delete another user\'s dashboard', function*() {
             try {
-                yield jane.delete(johnsDashboardEndpoint);
-            } catch(response) {
+                yield this.jane.delete(this.johnsDashboardEndpoint);
+            } catch (response) {
                 expect(response).to.have.status(404);
             }
         });
