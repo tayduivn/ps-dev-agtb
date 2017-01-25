@@ -54,7 +54,9 @@
         _.each(models, function(model) {
             //FIXME : SC-4196 will remove this.
             modelName = model.name || model.full_name || model.document_name ||
-                model.get('name') || model.get('full_name') || model.get('document_name');
+                model.get('name') || model.get('full_name') || app.utils.formatNameLocale(model.attributes) ||
+                model.get('document_name');
+
             if (modelName && !_.contains(pillsIds, model.id)) {
                 pillsAttrs.push({id: model.id, name: modelName});
             }
