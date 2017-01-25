@@ -1488,7 +1488,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                     'UPDATE pmse_bpm_activity_definition SET act_field_module = %s, act_fields = %s, act_readonly_fields = "", act_required_fields = "" WHERE pro_id = %s and id = %s;',
                     $db->quoted($res->newModule),
                     $db->quoted($cleanActivityFiels),
-                    $proId,
+                    $db->quoted($proId),
                     $db->quoted($actId)
                 );
                 //@codingStandardsIgnoreEnd
