@@ -21,8 +21,8 @@ describe('Dashboards', function() {
         this.jane = Agent.as('Jane');
     });
 
-    after(function() {
-        return Fixtures.cleanup();
+    after(function*() {
+        yield Fixtures.cleanup();
     });
 
     describe('Accessing one\'s own dashboard', function() {
@@ -68,8 +68,8 @@ describe('Dashboards', function() {
             this.johnsDashboardEndpoint = 'Dashboards/' + this.johnsDashboard.id;
         });
 
-        after(function() {
-            return this.john.delete(this.johnsDashboardEndpoint);
+        after(function*() {
+            yield this.john.delete(this.johnsDashboardEndpoint);
         });
 
         it('should not let a user view another user\'s dashboard', function*() {
