@@ -478,6 +478,8 @@ class DynamicField {
     public function deleteField($widget){
         require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
         global $beanList;
+
+        $db = DBManagerFactory::getInstance();
         if (!($widget instanceof TemplateField)) {
             $field_name = $widget;
             $widget = new TemplateField();
@@ -491,7 +493,7 @@ class DynamicField {
             $object_name = $newName != false ? $newName : $object_name;
         }
 
-        $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id='" . $this->module . $widget->name . "'");
+        $db->query("DELETE FROM fields_meta_data WHERE id=" . $db->quoted($this->module . $widget->name));
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;
         if (! empty( $sql ) )
             $GLOBALS['db']->query( $sql );
