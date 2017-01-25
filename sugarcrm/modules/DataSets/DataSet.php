@@ -178,7 +178,11 @@ class DataSet extends SugarBean {
 	}
 
 	function get_child_dataset(){
-		$query = "SELECT $this->table_name.name, $this->table_name.id from $this->table_name where $this->table_name.parent_id = '$this->id' AND $this->table_name.deleted=0 ";
+        $query = sprintf(
+            "SELECT name, id FROM %s WHERE parent_id=%s AND deleted=0 ",
+            $this->table_name,
+            $this->db->quoted($this->id)
+        );
 		$result = $this->db->query($query,true," Error filling in additional child detail fields: ");
 
 		// Get the id and the name.
@@ -198,9 +202,9 @@ class DataSet extends SugarBean {
 
 
 	function get_report_name(){
-		$query = "SELECT $this->report_table.id, $this->report_table.name from $this->table_name
-					LEFT JOIN $this->report_table ON $this->report_table.id = '$this->report_id'
-					WHERE $this->table_name.deleted=0 AND $this->report_table.deleted=0";
+        $query = "SELECT $this->report_table.id, $this->report_table.name from $this->table_name" .
+            " LEFT JOIN $this->report_table ON $this->report_table.id = " . $this->db->quoted($this->report_id) .
+            " WHERE $this->table_name.deleted=0 AND $this->report_table.deleted=0";
 		$result = $this->db->query($query,true," Error filling in report name information: ");
 
 		// Get the id and the name.
@@ -339,10 +343,11 @@ class DataSet extends SugarBean {
 
 	function check_interlock(){
 
-		$query = "	SELECT id from $this->table_name
-					WHERE deleted=0
-					AND parent_id = '$this->id'
-					";
+        $query = sprintf(
+            "SELECT id FROM %s WHERE deleted=0 AND parent_id=%s",
+            $this->table_name,
+            $this->db->quoted($this->id)
+        );
 		$result = $this->db->query($query,true," Error checking for interlock: ");
 
 		// Get the id and the name.
@@ -392,11 +397,12 @@ class DataSet extends SugarBean {
 
 	function get_layout_id_from_parent_value($parent_value){
 
-		$query = "	SELECT id from $this->rel_dataset_layout
-						WHERE parent_value='$parent_value'
-						AND deleted=0
-						AND parent_id = '$this->id'
-					 ";
+        $query = sprintf(
+            "SELECT id FROM %s WHERE parent_value=%s AND deleted=0 AND parent_id=%s",
+            $this->rel_dataset_layout,
+            $this->db->quoted($parent_value),
+            $this->db->quoted($this->id)
+        );
 		$result = $this->db->query($query,true," get layout id: ");
 
 		// Get the id and the name.
