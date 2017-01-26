@@ -263,9 +263,71 @@ gulp.task('test:unit:php', function(done) {
 
 // Task to run REST API tests on an installed instance
 gulp.task('test:rest', function() {
+    /**
+     * Output usage text for this task and then exit.
+     */
     function help() {
         cmd.outputHelp((text) => text.replace('Usage: gulp', 'Usage: gulp test:rest'));
         process.exit(1);
+    }
+
+    /**
+     * Retrieve an asset from the gulp REST test assets folder.
+     *
+     * @param {string} assetName File name of the desired asset.
+     * @return {Mixed} The result of parsing the asset as JSON.
+     */
+    function readAsset(assetName) {
+        var path = require('path');
+        var assetDirectory = 'gulp/assets/rest/';
+        var asset = path.join(assetDirectory, assetName);
+        return readJSONFile(asset);
+    }
+
+    /**
+     * Retrieve a test suite or cluster from a REST test asset.
+     * Aborts if the suite/cluster is not found.
+     *
+     * @param {string} assetName File name of the desired asset.
+     * @param {string} suiteName Name of the test suite/cluster.
+     * @return {string[]} A list of minimatch globs for tests in the suite/cluster.
+     */
+    function getSuiteFromAsset(assetName, suiteName) {
+        var tests = readAsset(assetName)[suiteName];
+        if (!tests) {
+            console.error('The test suite/cluster ' + suiteName + ' cannot be found.');
+            help();
+        }
+        return tests;
+    }
+
+    /**
+     * Get a list of all desired tests based on the given options.
+     *
+     * @param {Object} options Options specifying which tests you want to run.
+     * @param {string} [options.suite] Name of a test suite to run.
+     * @param {string} [options.cluster] Name of a test cluster to run.
+     * @param {boolean} [options.withoutSuite] If `true`, return tests not
+     *   present in any test suite.
+     * @param {boolean} [options.withoutCluster] If `true`, return tests not
+     *   present in any test cluster.
+     * @return {Array} A list of test file minimatch globs.
+     */
+    function getTestsToRun(options) {
+        if (options.suite) {
+            return getSuiteFromAsset('suites.json', options.suite);
+        } else if (options.cluster) {
+            return getSuiteFromAsset('clusters.json', options.cluster);
+        } else {
+            var baseTests = readAsset('default-tests.json');
+            if (options.withoutSuite || options.withoutCluster) {
+                var assetName = options.withoutSuite ? 'suites.json' : 'clusters.json';
+                return _.union(baseTests, _.map(_.flatten(_.values(readAsset(assetName))), function(glob) {
+                    return '!' + glob;
+                }));
+            }
+            return baseTests;
+        }
     }
 
     var mocha = require('gulp-spawn-mocha');
@@ -273,6 +335,10 @@ gulp.task('test:rest', function() {
         .option('--url <url>', 'Instance URL, ex: http://my.sugar.server/my/sugar/directory')
         .option('-u, --username <username>', 'Administrator username')
         .option('-p, --password <password>', 'Administrator password')
+        .option('-s, --suite <suite>', 'Run only the specified test suite')
+        .option('--without-suite', 'Run every test that isn\'t in a test suite')
+        .option('-c, --cluster <cluster>', 'Run only the specified test cluster')
+        .option('--without-cluster', 'Run every test that isn\'t in a test cluster')
         .option('--ci', 'Enable CI specific options')
         .option('--path <path>', 'Set base output path')
         .parse(process.argv);
@@ -299,6 +365,27 @@ gulp.task('test:rest', function() {
         help();
     }
 
+    if (_.compact([commander.suite, commander.cluster, commander.withoutSuite, commander.withoutCluster]).length > 1) {
+        console.error('The options --suite, --cluster, --without-suite, and --without-cluster are mutually exclusive.');
+        help();
+    }
+
+    var testsToRun = getTestsToRun(commander);
+
+    // don't actually run the tests for --without-suite or --without-cluster, just print out what tests are not included
+    if (commander.withoutSuite || commander.withoutCluster) {
+        var globby = require('globby');
+        return globby(testsToRun).then(function(paths) {
+            if (_.isEmpty(paths)) {
+                process.stdout.write('All tests are currently part of a suite/cluster');
+                process.exit(0);
+            }
+            process.stdout.write('Tests not part of any suite/cluster:\n');
+            process.stdout.write(paths.join('\n'));
+            process.exit(1);
+        });
+    }
+
     var options = {
         env: env,
         timeout: 15000,
@@ -317,7 +404,7 @@ gulp.task('test:rest', function() {
         options.reporter = 'spec';
     }
 
-    return gulp.src(['tests/rest/**/*.js', 'modules/**/tests/rest/**/*.js'], {read: false})
+    return gulp.src(testsToRun, {read: false})
         .pipe(mocha(options));
 });
 
