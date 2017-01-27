@@ -2346,7 +2346,8 @@ protected function checkQuery($sql, $object_name = false)
     public function updateParams($table, $field_defs, $data, array $where = array())
     {
         $values = array();
-        foreach ($field_defs as $field => $fieldDef) {
+        foreach ($field_defs as $fieldDef) {
+            $field = $fieldDef['name'];
             if (!array_key_exists($field, $data)) {
                 continue;
             }
