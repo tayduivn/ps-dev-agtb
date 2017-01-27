@@ -186,7 +186,7 @@ class Document extends SugarBean {
             }
 
             if ((isset($_POST['load_signed_id']) and !empty($_POST['load_signed_id']))) {
-                $query="update linked_documents set deleted=1 where id='".$_POST['load_signed_id']."'";
+                $query="update linked_documents set deleted=1 where id=".$this->db->quoted($_POST['load_signed_id']);
                 $this->db->query($query);
             }
         }
