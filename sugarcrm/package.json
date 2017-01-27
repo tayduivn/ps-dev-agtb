@@ -13,7 +13,7 @@
     "underscore": "1.6.0",
     "underscore.string": "2.3.3",
     "zip-folder": "1.0.0",
-    "@sugarcrm/thorn": "0.1.0-beta.1",
+    "@sugarcrm/thorn": "0.2.0-beta.1",
     "commander": "^2.9.0",
     "execa": "^0.5.0",
     "glob": "^7.0.3",
