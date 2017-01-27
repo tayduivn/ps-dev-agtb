@@ -2612,36 +2612,22 @@ function values_to_keys($array)
 
 function clone_relationship(&$db, $tables = array(), $from_column, $from_id, $to_id)
 {
+    global $dictionary;
     foreach ($tables as $table) {
 
         if ($table == 'emails_beans') {
-            $query = "SELECT * FROM $table WHERE $from_column='$from_id' and bean_module='Leads'";
+            $query = "SELECT * FROM $table WHERE $from_column=" . $db->quoted($from_id) . " and bean_module='Leads'";
         } else {
-            $query = "SELECT * FROM $table WHERE $from_column='$from_id'";
+            $query = "SELECT * FROM $table WHERE $from_column=" . $db->quoted($from_id);
         }
         $results = $db->query($query);
         while ($row = $db->fetchByAssoc($results)) {
-            $query = "INSERT INTO $table ";
-            $names = '';
-            $values = '';
             $row[$from_column] = $to_id;
             $row['id'] = create_guid();
-            if ($table=='emails_beans') {
-                $row['bean_module'] =='Contacts';
+            if ($table == 'emails_beans') {
+                $row['bean_module'] = 'Contacts';
             }
-
-            foreach ($row as $name=>$value) {
-
-                if (empty($names)) {
-                    $names .= $name;
-                    $values .= "'$value'";
-                } else {
-                    $names .= ', '. $name;
-                    $values .= ", '$value'";
-                }
-            }
-            $query .= "($names)	VALUES ($values)";
-            $db->query($query);
+            $db->insertParams($table, $dictionary[$table]['fields'], $row);
         }
     }
 }
