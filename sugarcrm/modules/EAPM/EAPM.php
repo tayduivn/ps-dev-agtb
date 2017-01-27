@@ -167,12 +167,22 @@ class EAPM extends Basic {
            return false;
        }
         // Don't use save, it will attempt to revalidate
-       $adata = $GLOBALS['db']->quote($this->api_data);
-       $GLOBALS['db']->query("UPDATE eapm SET validated=1,api_data='$adata'  WHERE id = '{$this->id}' AND deleted = 0");
+        $db = DBManagerFactory::getInstance();
+        $sql = sprintf(
+            "UPDATE eapm SET validated=1, api_data=%s WHERE id=%s AND deleted=0",
+            $db->quoted($this->api_data),
+            $db->quoted($this->id)
+        );
+        $db->query($sql);
        if(!$this->deleted && !empty($this->application)) {
            // deactivate other EAPMs with same app
-           $sql = "UPDATE eapm SET deleted=1 WHERE application = '{$this->application}' AND id != '{$this->id}' AND deleted = 0 AND assigned_user_id = '{$this->assigned_user_id}'";
-           $GLOBALS['db']->query($sql,true);
+            $sql = sprintf(
+                "UPDATE eapm SET deleted=1 WHERE application=%s AND id != %s AND deleted=0 AND assigned_user_id=%s",
+                $db->quoted($this->application),
+                $db->quoted($this->id),
+                $db->quoted($this->assigned_user_id)
+            );
+            $db->query($sql, true);
        }
 
        // Nuke the EAPM cache for this record
@@ -217,8 +227,13 @@ class EAPM extends Basic {
      * @return void
      */
     public function delete_user_accounts($user_id){
-        $sql = "DELETE FROM {$this->table_name} WHERE assigned_user_id = '{$user_id}'";
-        $GLOBALS['db']->query($sql,true);
+        $db = DBManagerFactory::getInstance();
+        $sql = sprintf(
+            "DELETE FROM %s WHERE assigned_user_id = %s",
+            $this->table_name,
+            $db->quoted($user_id)
+        );
+        $db->query($sql, true);
     }
 }
 
