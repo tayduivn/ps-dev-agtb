@@ -95,6 +95,10 @@
             .where({calculated: true})
             .pluck('name')
             .value();
+
+        // Set the bundles as a separate model validation task so the Quote Record can validate by itself
+        // then it calls the bundles validation
+        this.model.addValidationTask('quote_bundles_' + this.cid, _.bind(this.validateBundleModels, this));
     },
 
     /**
@@ -220,48 +224,28 @@
     },
 
     /**
-     * Overriding so after the Quote model validates,
-     * all the bundles and their models validate as well
-     *
-     * @inheritdoc
-     */
-    validateModelWaterfall: function(callback) {
-        // validate the main Quotes model
-        this.model.doValidate(this.getFields(this.module), _.bind(function(isValid) {
-            // then validate all the bundle models
-            this.validateModels(isValid, callback, true);
-        }, this));
-    },
-
-    /**
      * Validates the models in the Quote's ProductBundles
      *
-     * @param {boolean} isValid If the parent Quote model is valid or not
-     * @param {Function} callback The callback function to call after validation
-     * @param {undefined|boolean} [fromCreateView] If this function is being called from Create view or not
+     * @param {Object} fields The list of fields to validate.
+     * @param {Object} recordErrors The errors object during this validation task.
+     * @param {Function} callback The callback function to continue validation.
      */
-    validateModels: function(isValid, callback, fromCreateView) {
-        fromCreateView = fromCreateView || false;
-
+    validateBundleModels: function(fields, recordErrors, callback) {
         var returnCt = 0;
         var totalItemsToValidate = 0;
         var bundles = this.model.get('bundles');
         var productBundleItems;
 
-        if (bundles && bundles.length) {
+        recordErrors = recordErrors || {};
 
+        if (bundles && bundles.length) {
             //Check to see if we have only the default group
-            if (bundles.length === 1 && bundles.models.length === 1) {
+            if (bundles.length === 1) {
                 productBundleItems = bundles.models[0].get('product_bundle_items');
                 //check to see if that group is empty, if so, return the valid status of the parent.
                 if (productBundleItems.length === 0) {
-                    if (fromCreateView) {
-                        // the create waterfall wants the opposite of if this is validated
-                        callback(!isValid);
-                    } else {
-                        // this view wants if the models are valid or not
-                        callback(isValid);
-                    }
+                    callback(null, fields, recordErrors);
+                    return;
                 }
             }
 
@@ -272,55 +256,68 @@
                 return memo + bundle.get('product_bundle_items').length;
             }, totalItemsToValidate);
 
-            this.hasValidModels = isValid;
-
             // loop through each ProductBundles bean
             _.each(bundles.models, function(bundleModel) {
-                // get the bundle items for this bundle to validate later
-                productBundleItems = bundleModel.get('product_bundle_items');
-
                 // call validate on the ProductBundle model (if group name were required or some other field)
-                bundleModel.doValidate(this.moduleFieldsMeta[bundleModel.module], _.bind(function(isValid) {
+                bundleModel.isValidAsync(this.moduleFieldsMeta[bundleModel.module], _.bind(function(isValid, errors) {
                     // increment the validate count
                     returnCt++;
-                    if (this.hasValidModels && !isValid) {
-                        // hasValidModels was true, but a model returned false from validation
-                        this.hasValidModels = isValid;
+
+                    // get the bundle items for this bundle to validate later
+                    productBundleItems = bundleModel.get('product_bundle_items');
+
+                    // add any errors returned to the main record errors
+                    recordErrors = _.extend(recordErrors, errors);
+
+                    if (!isValid) {
+                        // if the bundleModel has bad fields,
+                        // trigger the error on the bundle model
+                        bundleModel.trigger('error:validation');
                     }
+
                     // loop through each product_bundle_items Products/ProductBundleNotes bean
-                    _.each(productBundleItems.models, function(pbItemModel) {
+                    _.each(productBundleItems.models, function(pbModel) {
                         // call validate on the Product/ProductBundleNote model
-                        pbItemModel.doValidate(this.moduleFieldsMeta[pbItemModel.module], _.bind(function(isValid) {
+                        pbModel.isValidAsync(this.moduleFieldsMeta[pbModel.module], _.bind(function(isValid, errors) {
                             // increment the validate count
                             returnCt++;
-                            if (this.hasValidModels && !isValid) {
-                                // hasValidModels was true, but a model returned false from validation
-                                this.hasValidModels = isValid;
+
+                            // add any errors returned to the main record errors
+                            recordErrors = _.extend(recordErrors, errors);
+
+                            if (!isValid) {
+                                // if the qli/pbn has bad fields,
+                                // trigger the error on the bundle model
+                                pbModel.trigger('error:validation');
+                            }
+
+                            // trigger validation complete and process the errors for this model
+                            pbModel.trigger('validation:complete', pbModel._processValidationErrors(errors));
+
+                            if (errors.description) {
+                                // if this is a ProductBundleNotes model where "description" field is required
+                                // we have already triggered to process validation errors on the PBN model to show
+                                // description is required, now we need to delete it off the error object
+                                // so that the Quote record "description" field doesn't show as required since
+                                // they have the same field name. So if errors.description (specifically checking
+                                // if this model validation threw the error) then remove it off the recordErrors
+                                // object that we're passing back
+                                delete recordErrors.description;
                             }
 
                             if (returnCt === totalItemsToValidate) {
                                 // if we've validated the correct number of models, call the callback fn
-                                if (fromCreateView) {
-                                    // the create waterfall wants the opposite of if this is validated
-                                    callback(!this.hasValidModels);
-                                } else {
-                                    // this view wants if the models are valid or not
-                                    callback(this.hasValidModels);
-                                }
+                                callback(null, fields, recordErrors);
                             }
                         }, this));
                     }, this);
+
+                    bundleModel.trigger('validation:complete', bundleModel._processValidationErrors(errors));
                 }, this));
             }, this);
         } else {
             // if there are no bundles to validate then just return
-            // if the original model was valid
-            if (fromCreateView) {
-                //but opposite because that is what the waterfall expects
-                callback(!isValid);
-            } else {
-                callback(isValid);
-            }
+            callback(null, fields, recordErrors);
         }
     },
 

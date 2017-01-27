@@ -411,108 +411,53 @@ describe('Quotes.Base.Views.Create', function() {
         });
     });
 
-    describe('validateModels', function() {
-        var bundleGet;
+    describe('validateBundleModels', function() {
+        var bundleModel;
         var callback;
+        var prodModel;
 
         beforeEach(function() {
-            view.model.get = function() {
-                return {
-                    get: bundleGet
-                };
-            };
-
             callback = sinon.collection.spy();
         });
 
         afterEach(function() {
-            view.model.get = null;
+            callback = null;
         });
 
-        it('should return false for no bundles (from create view)', function() {
-            bundleGet = function() {
-                return [];
-            };
-            view.validateModels(true, callback, true);
-            expect(callback).toHaveBeenCalledWith(false);
+        describe('with no bundles', function() {
+            it('should use callback with same empty fields, errors params passed in', function() {
+                view.validateBundleModels({}, {}, callback);
+
+                expect(callback).toHaveBeenCalledWith(null, {}, {});
+            });
         });
 
-        it('should return true for no bundles (not from create view)', function() {
-            bundleGet = function() {
-                return [];
-            };
-            view.validateModels(true, callback, false);
-            expect(callback).toHaveBeenCalledWith(true);
+        describe('with one empty bundle', function() {
+            it('should use callback with same empty fields, errors params passed in', function() {
+                bundleModel = new Backbone.Model({
+                    product_bundle_items: []
+                });
+                view.model.set('bundles', bundleModel);
+                view.validateBundleModels({}, {}, callback);
+
+                expect(callback).toHaveBeenCalledWith(null, {}, {});
+            });
         });
 
-        it('should return false for the default empty bundle (from create view)', function() {
-            bundleGet = function() {
-                return [
-                    {
-                        get: function() {
-                            return [];
-                        }
-                    }
-                ];
-            };
-            view.validateModels(true, callback, true);
-            expect(callback).toHaveBeenCalledWith(false);
-        });
+        describe('with items in a bundle', function() {
+            it('should use call isValidAsync on bundle model', function() {
+                prodModel = app.data.createBean('Products', {
+                    id: 'prodId1'
+                });
+                bundleModel = new Backbone.Model({
+                    product_bundle_items: [prodModel]
+                });
+                bundleModel.isValidAsync = sinon.collection.stub();
+                view.model.set('bundles', bundleModel);
+                view.validateBundleModels({}, {}, callback);
 
-        it('should return true for the default empty bundle (not from create view)', function() {
-            bundleGet = function() {
-                return [
-                    {
-                        get: function() {
-                            return [];
-                        }
-                    }
-                ];
-            };
-            view.validateModels(true, callback, false);
-            expect(callback).toHaveBeenCalledWith(true);
-        });
-
-        it('should return false for a valid bundle of one item (from create view)', function() {
-            bundleGet = function() {
-                return [
-                    {
-                        get: function() {
-                            return [{
-                                doValidate: function(stuff, fcn) {
-                                    fcn();
-                                }
-                            }];
-                        },
-                        doValidate: function(stuff, fcn) {
-                            fcn();
-                        }
-                    }
-                ];
-            };
-            view.validateModels(true, callback, true);
-            expect(callback).toHaveBeenCalledWith(false);
-        });
-
-        it('should return true for a valid bundle of one item (not from create view)', function() {
-            bundleGet = function() {
-                return [
-                    {
-                        get: function() {
-                            return [{
-                                doValidate: function(stuff, fcn) {
-                                    fcn();
-                                }
-                            }];
-                        },
-                        doValidate: function(stuff, fcn) {
-                            fcn();
-                        }
-                    }
-                ];
-            };
-            view.validateModels(true, callback, false);
-            expect(callback).toHaveBeenCalledWith(true);
+                expect(bundleModel.isValidAsync).toHaveBeenCalled();
+            });
         });
     });
 });
