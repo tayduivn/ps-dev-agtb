@@ -55,6 +55,25 @@ describe('Emails.Views.Create', function() {
         sandbox.restore();
     });
 
+    describe('email is not configured', function() {
+        it('should disable the send button', function() {
+            var error = {
+                status: 403,
+                code: 'not_authorized',
+                message: 'You are not authorized to perform this action.'
+            };
+            var sendField = {setDisabled: $.noop};
+
+            sandbox.spy(sendField, 'setDisabled');
+            sandbox.stub(view, 'getField').withArgs('send_button').returns(sendField);
+
+            view.trigger('email_not_configured', error);
+
+            expect(sendField.setDisabled).toHaveBeenCalledOnce();
+            expect(view._userHasConfiguration).toBe(false);
+        });
+    });
+
     describe('Render', function() {
         var setTitleStub;
         var prepopulateStub;
@@ -66,7 +85,6 @@ describe('Emails.Views.Create', function() {
 
         it('No prepopulate on context - title should be set no fields pre-populated', function() {
             sandbox.stub(view, '_setAttachmentVisibility');
-            sandbox.stub(view, 'notifyConfigurationStatus');
             view._render();
             expect(setTitleStub).toHaveBeenCalled();
             expect(prepopulateStub.callCount).toEqual(0);
@@ -76,44 +94,10 @@ describe('Emails.Views.Create', function() {
             var dummyPrepopulate = {name: 'Foo!'};
 
             sandbox.stub(view, '_setAttachmentVisibility');
-            sandbox.stub(view, 'notifyConfigurationStatus');
             view.context.set('prepopulate', dummyPrepopulate);
             view._render();
             expect(prepopulateStub.callCount).toEqual(1);
             expect(prepopulateStub.lastCall.args).toEqual([dummyPrepopulate]);
-        });
-
-        it('No email client preference error - should not disable the send button or alert user', function() {
-            var alertShowStub = sandbox.stub(app.alert, 'show');
-
-            sandbox.stub(view, '_setAttachmentVisibility');
-            sandbox.stub(app.user, 'getPreference')
-                .withArgs('email_client_preference')
-                .returns({type: 'sugar'});
-
-            view._render();
-
-            expect(alertShowStub.callCount).toBe(0);
-        });
-
-        it('Email client preference error - should disable the send button and alert user', function() {
-            var alertShowStub = sandbox.stub(app.alert, 'show');
-            var sendField = {setDisabled: $.noop};
-            var spyOnField = sandbox.spy(sendField, 'setDisabled');
-
-            sandbox.stub(view, '_setAttachmentVisibility');
-            sandbox.stub(app.user, 'getPreference')
-                .withArgs('email_client_preference')
-                .returns({type: 'sugar', error: {code: 101, message: 'LBL_EMAIL_INVALID_USER_CONFIGURATION'}});
-            sandbox.stub(view, 'getField')
-                .withArgs('send_button')
-                .returns(sendField);
-
-            view._render();
-
-            expect(alertShowStub.callCount).toBe(1);
-            expect(spyOnField.calledOnce).toBe(true);
-            expect(view._userHasConfiguration).toBe(false);
         });
     });
 

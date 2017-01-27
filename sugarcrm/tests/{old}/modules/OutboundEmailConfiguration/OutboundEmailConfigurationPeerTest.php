@@ -51,9 +51,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $configuration = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
-        $expected = "system";
+        $expected = "system-override";
         $actual   = $configuration[0]->getConfigType();
-        $this->assertEquals($expected, $actual, "The system-override configuration should be of type 'system'");
+        $this->assertEquals($expected, $actual, "The system-override configuration expected");
 
         $actual = $configuration[0]->getPersonal();
         $this->assertTrue($actual, "The system-override configuration should be a personal configuration");
@@ -69,7 +69,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $expected = "system";
         $actual   = $configuration[0]->getConfigType();
-        $this->assertEquals($expected, $actual, "The system configuration should be of type 'system'");
+        $this->assertEquals($expected, $actual, "Expected configuration of type 'system'");
 
         $actual = $configuration[0]->getPersonal();
         $this->assertFalse($actual, "The system configuration should not be a personal configuration");
@@ -80,9 +80,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $userConfigurations = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
 
         $expected = array(
-            $this->systemOverrideConfiguration->id => $this->systemOverrideConfiguration->name,
-            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->name,
-            $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
+            $this->systemOverrideConfiguration->id => $this->systemOverrideConfiguration->type,
+            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
+            $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->type,
         );
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -91,7 +91,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $actual         = array();
 
         foreach ($configurations AS $configuration) {
-            $actual[$configuration->getConfigId()] = $configuration->getConfigName();
+            $actual[$configuration->getConfigId()] = $configuration->getConfigType();
         }
 
         $this->assertEquals($expected, $actual, "The wrong configurations were returned");
@@ -103,9 +103,9 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
         $expected = array(
-            $systemConfiguration->id               => $systemConfiguration->name,
-            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->name,
-            $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->name,
+            $systemConfiguration->id               => $systemConfiguration->type,
+            $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
+            $userConfigurations[1]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
         );
 
         $this->setUpMockOutboundEmailConfigurationPeer(true);
@@ -114,7 +114,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $actual         = array();
 
         foreach ($configurations AS $configuration) {
-            $actual[$configuration->getConfigId()] = $configuration->getConfigName();
+            $actual[$configuration->getConfigId()] = $configuration->getConfigType();
         }
 
         $this->assertEquals($expected, $actual, "The wrong configurations were returned");

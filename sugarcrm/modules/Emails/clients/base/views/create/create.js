@@ -70,6 +70,7 @@
             this._checkAttachmentLimit();
         }, this);
         this.on('more-less:toggled', this.handleMoreLessToggled, this);
+        this.on('email_not_configured', this.notifyConfigurationStatus, this);
         this.listenTo(this.model, 'change:to', this._renderRecipientsField);
         this.listenTo(this.model, 'change:cc', this._renderRecipientsField);
         this.listenTo(this.model, 'change:bcc', this._renderRecipientsField);
@@ -166,8 +167,6 @@
         }
 
         this._setAttachmentVisibility();
-
-        this.notifyConfigurationStatus();
     },
 
     /**
@@ -181,28 +180,19 @@
     }, 200),
 
     /**
-     * Notifies the user of configuration issues and disables send button
+     * This method is called when the view is notified that email has not been
+     * configured. Disables send button.
+     *
+     * @param {HttpError} error
      */
-    notifyConfigurationStatus: function() {
-        var sendButton;
-        var emailClientPrefence = app.user.getPreference('email_client_preference');
+    notifyConfigurationStatus: function(error) {
+        var sendButton = this.getField('send_button');
 
-        if (_.isObject(emailClientPrefence) && _.isObject(emailClientPrefence.error)) {
-            app.alert.show('email-client-status', {
-                level: 'warning',
-                messages: app.lang.get(emailClientPrefence.error.message, this.module),
-                autoClose: false,
-                onLinkClick: function() {
-                    app.alert.dismiss('email-client-status');
-                }
-            });
-
-            this._userHasConfiguration = false;
-            sendButton = this.getField('send_button');
-            if (sendButton) {
-                sendButton.setDisabled(true);
-            }
+        if (sendButton) {
+            sendButton.setDisabled(true);
         }
+
+        this._userHasConfiguration = false;
     },
 
     /**

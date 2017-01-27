@@ -135,7 +135,7 @@ class OutboundEmailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $oe = $this->getMockBuilder('OutboundEmail')
             ->setMethods(['saveSystem', 'save'])
             ->getMock();
-        $oe->expects($this->exactly($saveSystemCallCount))->method('saveSystem');
+        $oe->expects($this->exactly($saveSystemCallCount))->method('saveSystem')->with($this->equalTo(true));
         $oe->expects($this->exactly($saveCallCount))->method('save');
 
         $oe->id = Uuid::uuid1();

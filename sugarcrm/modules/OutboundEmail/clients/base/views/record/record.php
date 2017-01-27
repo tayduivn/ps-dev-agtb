@@ -77,7 +77,12 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly' => true,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    'related_fields' => array(
+                        'type',
+                    ),
+                ),
             ),
         ),
         array(

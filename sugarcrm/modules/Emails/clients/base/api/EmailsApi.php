@@ -166,7 +166,7 @@ class EmailsApi extends ModuleApi
             $email = $this->loadBean($api, $loadArgs, 'save', array('source' => 'module_api'));
 
             try {
-                $this->sendEmail($email);
+                $this->sendEmail($api, $email);
                 $result = $this->formatBeanAfterSave($api, $args, $email);
             } catch (Exception $e) {
                 $email->delete();
@@ -207,7 +207,7 @@ class EmailsApi extends ModuleApi
 
         if ($isReady) {
             $email = $this->loadBean($api, $args, 'save', array('source' => 'module_api'));
-            $this->sendEmail($email);
+            $this->sendEmail($api, $email);
             $result = $this->formatBeanAfterSave($api, $args, $email);
         }
 
@@ -455,22 +455,17 @@ class EmailsApi extends ModuleApi
      * The system configuration is used if no configuration is specified on the email. An error will occur if the
      * application is not configured correctly to send email.
      *
+     * @param ServiceBase $service
      * @param SugarBean $email
      * @throws SugarApiException
      */
-    protected function sendEmail(SugarBean $email)
+    protected function sendEmail(ServiceBase $service, SugarBean $email)
     {
         try {
             $config = null;
             $oe = null;
 
             if (empty($email->outbound_email_id)) {
-                SugarAutoLoader::load('custom/include/RestService.php');
-                $restServiceClass = SugarAutoLoader::customClass('RestService');
-                $rest = new $restServiceClass();
-                $rest->user = $GLOBALS['current_user'];
-                $rest->platform = 'base';
-
                 $args = [
                     'module' => 'OutboundEmail',
                     'filter' => [
@@ -484,12 +479,16 @@ class EmailsApi extends ModuleApi
                         ],
                     ],
                     'fields' => 'id',
+                    // There should only be one system or system-override account that is accessible. The admin can
+                    // actually access both a system and system-override account. Sorting and setting a limit guarantees
+                    // that the system account is prioritized when finding the default record to use.
+                    'order_by' => 'type:asc',
+                    'max_num' => 1,
                 ];
                 $api = new OutboundEmailFilterApi();
-                $data = $api->filterList($rest, $args);
+                $data = $api->filterList($service, $args);
 
                 if (!empty($data['records'])) {
-                    // There should only be one system or system-override account that is accessible.
                     $record = array_shift($data['records']);
                     $email->outbound_email_id = $record['id'];
                 }

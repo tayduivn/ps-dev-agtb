@@ -3872,40 +3872,62 @@ eoq;
      * returned array. An enum field in the UI will use the first configuration as the default choice.
      *
      * @return array
+     * @throws SugarApiExceptionNotAuthorized
      */
     public function getOutboundEmailDropdown()
     {
         $options = [];
+        $hasConfiguredDefault = false;
+        $error = false;
 
         SugarAutoLoader::load('custom/include/RestService.php');
         $restServiceClass = SugarAutoLoader::customClass('RestService');
         $rest = new $restServiceClass();
         $rest->user = $GLOBALS['current_user'];
         $rest->platform = 'base';
-
-        $args = [
-            'module' => 'OutboundEmail',
-            'fields' => 'id,name,email_address,type,mail_smtpserver,mail_smtpauth_req,mail_smtpuser,mail_smtppass',
-        ];
         $api = new OutboundEmailFilterApi();
-        $data = $api->filterList($rest, $args);
+        $data = $api->filterList($rest, ['module' => 'OutboundEmail']);
 
         foreach ($data['records'] as $record) {
-            if (array_key_exists('is_configured', $record) && $record['is_configured']) {
-                $option = sprintf(
-                    '%s <%s> [%s]',
-                    $record['name'],
-                    $record['email_address'],
-                    $record['mail_smtpserver']
-                );
+            $oe = BeanFactory::retrieveBean('OutboundEmail', $record['id']);
 
-                if ($record['type'] === 'system') {
+            if (!$oe) {
+                continue;
+            }
+
+            if ($oe->isConfigured()) {
+                $name = $oe->type === 'system' ? "* {$oe->name}" : $oe->name;
+                $option = sprintf('%s <%s> [%s]', $name, $oe->email_address, $oe->mail_smtpserver);
+
+                if ($oe->type === 'system') {
                     // Force this element to the beginning of the array.
-                    $options = [$record['id'] => $option] + $options;
+                    $options = [$oe->id => $option] + $options;
                 } else {
-                    $options[$record['id']] = $option;
+                    $options[$oe->id] = $option;
+                }
+
+                if (in_array($oe->type, ['system', 'system-override'])) {
+                    $hasConfiguredDefault = true;
+                }
+            } else {
+                // The account is not configured. Reporting that the system account is not configured is prioritized so
+                // that, if both the system and system-override accounts are not configured, the error regarding the
+                // system account is returned.
+                if ($oe->type === 'system') {
+                    $error = 'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION';
+                } elseif ($oe->type === 'system-override' && empty($error)) {
+                    $error = 'LBL_EMAIL_INVALID_USER_CONFIGURATION';
                 }
             }
+        }
+
+        if (!$hasConfiguredDefault) {
+            // There wasn't a system or system-override account. Something must have gone really wrong.
+            $error = 'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION';
+        }
+
+        if ($error) {
+            throw new SugarApiExceptionNotAuthorized($error, null, $this->getModuleName());
         }
 
         return $options;

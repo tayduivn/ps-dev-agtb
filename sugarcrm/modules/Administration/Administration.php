@@ -117,11 +117,13 @@ class Administration extends SugarBean {
 
         // outbound email settings
         $oe = new OutboundEmail();
-        $oe->getSystemMailerSettings();
 
-        foreach ($oe->field_defs as $name => $value) {
-            if (strpos($name, "mail_") !== false) {
-                $this->settings[$name] = $oe->$name;
+        if ($oe->getSystemMailerSettings(false)) {
+            foreach ($oe->field_defs as $name => $value) {
+                // Only set the value if the key starts with "mail_".
+                if (strpos($name, 'mail_') === 0) {
+                    $this->settings[$name] = $oe->$name;
+                }
             }
         }
 
@@ -142,10 +144,20 @@ class Administration extends SugarBean {
                 }
                 $this->saveSetting($prefix[0], $prefix[1], $val);
             }
-            if(strpos($key, "mail_") !== false) {
-                if (array_key_exists($key, $oe->field_defs)) {
-                    $oe->$key = $val;
-                }
+
+            // Only store the value if the key starts with "mail_".
+            if (strpos($key, 'mail_') === 0 && array_key_exists($key, $oe->field_defs)) {
+                $oe->$key = $val;
+            }
+
+            // Keep the name and email address of the system account in sync with the configs notify_fromname and
+            // notify_fromaddress.
+            if ($key === 'notify_fromname') {
+                $oe->name = $val;
+            } elseif ($key === 'notify_fromaddress') {
+                $sea = new SugarEmailAddress();
+                $oe->email_address_id = $sea->getEmailGUID($val);
+                $oe->email_address = $val;
             }
         }
 

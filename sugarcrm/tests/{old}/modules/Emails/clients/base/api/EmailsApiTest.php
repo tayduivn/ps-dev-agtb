@@ -20,35 +20,32 @@ require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfig
  */
 class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected static $systemConfiguration;
-    protected static $currentUserConfiguration;
+    protected $systemConfiguration;
+    protected $currentUserConfiguration;
     protected $service;
-
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user');
-
-        OutboundEmailConfigurationTestHelper::backupExistingConfigurations();
-        static::$systemConfiguration = OutboundEmailConfigurationTestHelper::createSystemOutboundEmailConfiguration();
-        static::$currentUserConfiguration = OutboundEmailConfigurationTestHelper::
-        createSystemOverrideOutboundEmailConfiguration($GLOBALS['current_user']->id);
-    }
 
     protected function setUp()
     {
         parent::setUp();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('current_user');
+
+        OutboundEmailConfigurationTestHelper::setUp();
+        $this->systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
+        $this->currentUserConfiguration = OutboundEmailConfigurationTestHelper::
+        createSystemOverrideOutboundEmailConfiguration($GLOBALS['current_user']->id);
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+
         $this->service = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public static function tearDownAfterClass()
+    protected function tearDown()
     {
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        OutboundEmailConfigurationTestHelper::restoreExistingConfigurations();
-        parent::tearDownAfterClass();
+        OutboundEmailConfigurationTestHelper::tearDown();
+        parent::tearDown();
     }
 
     public function cannotMakeInvalidStateChangeProvider()
@@ -228,7 +225,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendEmail_UsesSpecifiedConfiguration()
     {
-        $configId = static::$currentUserConfiguration->id;
+        $configId = $this->currentUserConfiguration->id;
 
         $email = $this->createPartialMock('Email', ['sendEmail']);
         $email->expects($this->once())
@@ -236,10 +233,11 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($this->callback(function ($config) use ($configId) {
                 return $config->getConfigId() === $configId;
             }));
-        $email->outbound_email_id = static::$currentUserConfiguration->id;
+        $email->outbound_email_id = $this->currentUserConfiguration->id;
 
+        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
     }
 
     /**
@@ -257,8 +255,38 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 return $config->getConfigId() === $configId;
             }));
 
+        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+    }
+
+    /**
+     * @covers ::sendEmail
+     */
+    public function testSendEmail_UsesSystemConfigurationForAdmin()
+    {
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+        $configId = $this->systemConfiguration->id;
+
+        // Pretend that the current user is the admin with id=1.
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $GLOBALS['current_user']->id = 1;
+
+        // The admin should have a system-override configuration in addition to the system configuration.
+        $override = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
+            $GLOBALS['current_user']->id
+        );
+
+        $email = $this->createPartialMock('Email', ['sendEmail']);
+        $email->expects($this->once())
+            ->method('sendEmail')
+            ->with($this->callback(function ($config) use ($configId) {
+                return $config->getConfigId() === $configId;
+            }));
+
+        $service = SugarTestRestUtilities::getRestServiceMock();
+        $api = new EmailsApi();
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
     }
 
     /**
@@ -266,6 +294,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSendEmail_CurrentUserHasNoConfigurations_ThrowsException()
     {
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+
         // Make sure the current user doesn't have any configurations. The existing current user does.
         $saveUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -276,8 +306,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $caught = false;
 
         try {
+            $service = SugarTestRestUtilities::getRestServiceMock();
             $api = new EmailsApi();
-            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
         } catch (SugarApiException $e) {
             $caught = true;
         }
@@ -303,8 +334,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('sendEmail');
         $email->outbound_email_id = create_guid();
 
+        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
     }
 
     /**
@@ -321,8 +353,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email->expects($this->never())->method('sendEmail');
         $email->outbound_email_id = $oe->id;
 
+        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
     }
 
     /**
@@ -339,8 +372,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('sendEmail')
             ->willThrowException(new Exception('something happened'));
 
+        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
     }
 
     public function smtpServerErrorProvider()
@@ -395,10 +429,10 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('sendEmail')
             ->willThrowException(new MailerException('something happened', $errorCode));
 
-        $api = new EmailsApi();
-
         try {
-            SugarTestReflection::callProtectedMethod($api, 'sendEmail', array($email));
+            $service = SugarTestRestUtilities::getRestServiceMock();
+            $api = new EmailsApi();
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
         } catch (SugarApiException $e) {
             $this->assertEquals(
                 451,

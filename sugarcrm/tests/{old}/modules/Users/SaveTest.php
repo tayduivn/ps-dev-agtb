@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
 
 /**
  * User profile Save tests
@@ -49,5 +50,41 @@ class SaveTest extends Sugar_PHPUnit_Framework_TestCase
         include('modules/Users/Save.php');
         //Home was prepended
         $this->assertEquals(array('Home' => 'Home', 'Leads' => 'Leads'), $this->tabs->get_user_tabs($focus));
+    }
+
+    public function testSaveOfOutboundEmailSystemOverrideConfiguration()
+    {
+        $current_user = $this->current_user;
+        OutboundEmailConfigurationTestHelper::setUp();
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+        OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration($current_user->id);
+
+        $_POST['record'] = $current_user->id;
+        $_POST['first_name'] = 'Julia';
+        $_POST['last_name'] = 'Watkins';
+        $_POST['mail_smtpuser'] = $_REQUEST['mail_smtpuser'] = 'julia';
+        $_POST['mail_smtppass'] = $_REQUEST['mail_smtppass'] = 'B5rz71Kg';
+
+        include 'modules/Users/Save.php';
+
+        unset($_POST['record']);
+        unset($_POST['mail_smtpuser']);
+        unset($_REQUEST['mail_smtpuser']);
+        unset($_POST['mail_smtppass']);
+        unset($_REQUEST['mail_smtppass']);
+
+        $userData = $current_user->getUsersNameAndEmail();
+        $emailAddressId = $current_user->emailAddress->getGuid($userData['email']);
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $override = $oe->getUsersMailerForSystemOverride($current_user->id);
+
+        $this->assertSame($userData['name'], $override->name, 'The names should match');
+        $this->assertSame($current_user->id, $override->user_id, 'The current user should be the owner');
+        $this->assertSame($userData['email'], $override->email_address, 'The email addresses should match');
+        $this->assertSame($emailAddressId, $override->email_address_id, 'The email address IDs should match');
+        $this->assertSame('julia', $override->mail_smtpuser, 'The usernames should match');
+        $this->assertSame('B5rz71Kg', $override->mail_smtppass, 'The passwords should not match');
+
+        OutboundEmailConfigurationTestHelper::tearDown();
     }
 }

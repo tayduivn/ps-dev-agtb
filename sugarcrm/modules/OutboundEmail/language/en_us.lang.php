@@ -26,4 +26,5 @@ $mod_strings = array(
     'LBL_HELP_RECORD' => 'The {{plural_module_name}} module is used to manage SMTP email accounts that you can use ' .
         'to send emails to your customers.',
     'EXCEPTION_CREATE_SYSTEM_ACCOUNT_NOT_AUTHORIZED' => 'Not allowed to create records of type "{type}" for {module}',
+    'LBL_SYSTEM_ACCOUNT' => 'This is the system account.',
 );

@@ -20,6 +20,9 @@ $viewdefs['OutboundEmail']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'link' => true,
+                    'related_fields' => array(
+                        'type',
+                    ),
                 ),
                 array(
                     'name' => 'email_address',

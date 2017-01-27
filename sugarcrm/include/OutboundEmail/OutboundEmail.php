@@ -193,6 +193,13 @@ class OutboundEmail extends SugarBean
         $ob->type = static::TYPE_SYSTEM_OVERRIDE;
 	    $ob->mail_smtpuser = $user_name;
 	    $ob->mail_smtppass = $user_pass;
+
+        $user = BeanFactory::retrieveBean('Users', $user_id, ['disable_row_level_security' => true]);
+
+        if ($user) {
+            $ob->populateFromUser($user);
+        }
+
 	    $ob->save();
 
 	    return $ob;
@@ -261,7 +268,8 @@ class OutboundEmail extends SugarBean
         		else if ($autoCreateUserSystemOverride)
         	       $system = $this->createUserSystemOverrideAccount($user->id,"","");
 
-			    $isEditable = ($system->type == 'system') ? FALSE : TRUE; //User overrides can be edited.
+                // User overrides can be edited.
+                $isEditable = $system->type !== static::TYPE_SYSTEM;
 
                 if( !empty($system->mail_smtpserver) )
 				    $ret[] = array('id' =>$system->id, 'name' => "$system->name", 'mail_smtpserver' => $system->mail_smtpdisplay,
@@ -413,30 +421,51 @@ class OutboundEmail extends SugarBean
         return $allowAccess;
 	}
 
-	/**
-	 * Retrieves the system's Outbound options
-	 */
-    function getSystemMailerSettings() {
+    /**
+     * Retrieves the system's Outbound options
+     *
+     * @param bool $create Lazy create the system account when true.
+     * @return null|OutboundEmail
+     */
+    public function getSystemMailerSettings($create = true)
+    {
         if (is_null(static::$sysMailerCache)) {
             // result puts in static cache to avoid per-request repeating calls
             $a = $this->getSystemMailData();
 
             if(empty($a)) {
-                $this->id = "";
-                $this->name = 'system';
-                $this->type = 'system';
-                $this->user_id = '1';
-                $this->mail_sendtype = 'SMTP';
-                $this->mail_smtptype = 'other';
-                $this->mail_smtpserver = '';
-                $this->mail_smtpport = 25;
-                $this->mail_smtpuser = '';
-                $this->mail_smtppass = '';
-                $this->mail_smtpauth_req = 1;
-                $this->mail_smtpssl = 0;
-                $this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype,$this->mail_smtpserver);
-                $this->save();
-                static::$sysMailerCache = $this;
+                if ($create) {
+                    $admin = Administration::getSettings();
+                    $name = isset($admin->settings['notify_fromname']) ? $admin->settings['notify_fromname'] : 'system';
+                    $email = isset($admin->settings['notify_fromaddress']) ? $admin->settings['notify_fromaddress'] : '';
+                    $emailId = '';
+
+                    if (!empty($email)) {
+                        $sea = new SugarEmailAddress();
+                        $emailId = $sea->getEmailGUID($email);
+                    }
+
+                    $this->id = '';
+                    $this->name = $name;
+                    $this->email_address = $email;
+                    $this->email_address_id = $emailId;
+                    $this->type = static::TYPE_SYSTEM;
+                    $this->user_id = '1';
+                    $this->mail_sendtype = 'SMTP';
+                    $this->mail_smtptype = 'other';
+                    $this->mail_smtpserver = '';
+                    $this->mail_smtpport = 25;
+                    $this->mail_smtpuser = '';
+                    $this->mail_smtppass = '';
+                    $this->mail_smtpauth_req = 1;
+                    $this->mail_smtpssl = 0;
+                    $this->mail_smtpdisplay = $this->_getOutboundServerDisplay(
+                        $this->mail_smtptype,
+                        $this->mail_smtpserver
+                    );
+                    $this->save();
+                    static::$sysMailerCache = $this;
+                }
             } else {
                 $this->disable_row_level_security = true;
                 static::$sysMailerCache = $this->retrieve($a['id']);
@@ -533,7 +562,7 @@ class OutboundEmail extends SugarBean
         foreach ($this->field_defs as $name => $def) {
             if (array_key_exists($name, $_POST)) {
                 $this->$name = $_POST[$name];
-            } elseif ($name != 'mail_smtppass') {
+            } elseif ($name !== 'mail_smtppass') {
                 $this->$name = '';
             }
         }
@@ -541,22 +570,52 @@ class OutboundEmail extends SugarBean
 
     /**
      * {@inheritdoc}
-     *
-     * Defaults `name` to the current user's full name and `email_address` and `email_address_id` to the requisite
-     * values representing the current user's primary email address.
+     * @uses OutboundEmail::populateFromUser() to set `name`, `email_address`, and `email_address_id` from the current
+     * user's data when populating the system configuration and the user is allowed to use the system configuration.
+     */
+    public function populateFromRow($row, $convert = false)
+    {
+        $row = parent::populateFromRow($row, $convert);
+
+        if ($this->type === static::TYPE_SYSTEM) {
+            static::$sysMailerCache = $this;
+
+            if ($this->isAllowUserAccessToSystemDefaultOutbound() && isset($GLOBALS['current_user'])) {
+                $this->populateFromUser($GLOBALS['current_user']);
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @uses OutboundEmail::populateFromUser() to default `name`, `email_address`, and `email_address_id` from the
+     * current user's data.
      */
     public function populateDefaultValues($force = false)
     {
         parent::populateDefaultValues($force);
 
         if (isset($GLOBALS['current_user'])) {
-            $userData = $GLOBALS['current_user']->getUsersNameAndEmail();
-            $this->name = $userData['name'];
+            $this->populateFromUser($GLOBALS['current_user']);
+        }
+    }
 
-            if (!empty($userData['email'])) {
-                $this->email_address = $userData['email'];
-                $this->email_address_id = $GLOBALS['current_user']->emailAddress->getGuid($this->email_address);
-            }
+    /**
+     * Sets `name` to the user's full name and `email_address` and `email_address_id` to the requisite values
+     * representing the user's primary email address.
+     *
+     * @param User $user
+     */
+    public function populateFromUser(User $user)
+    {
+        $userData = $user->getUsersNameAndEmail();
+        $this->name = $userData['name'];
+
+        if (!empty($userData['email'])) {
+            $this->email_address = $userData['email'];
+            $this->email_address_id = $user->emailAddress->getEmailGUID($this->email_address);
         }
     }
 
@@ -627,10 +686,13 @@ class OutboundEmail extends SugarBean
         return $id;
     }
 
-	/**
-	 * Saves system mailer.  Presumes all values are filled.
-	 */
-	function saveSystem() {
+    /**
+     * Saves system mailer. Presumes all values are filled.
+     *
+     * @param bool $saveConfig Save the notify_fromname and notify_fromaddress configuration settings when true.
+     */
+    public function saveSystem($saveConfig = false)
+    {
         $a = $this->getSystemMailData();
 
 		if(empty($a)) {
@@ -638,10 +700,16 @@ class OutboundEmail extends SugarBean
 		}
 
 		$this->id = $a['id'];
-		$this->name = 'system';
-		$this->type = 'system';
+        $this->type = static::TYPE_SYSTEM;
 		$this->user_id = '1';
 		$this->save();
+
+        if ($saveConfig) {
+            $ea = BeanFactory::retrieveBean('EmailAddresses', $this->email_address_id);
+            $admin = BeanFactory::newBean('Administration');
+            $admin->saveSetting('notify', 'fromname', $this->name);
+            $admin->saveSetting('notify', 'fromaddress', $ea ? $ea->email_address : '');
+        }
 
         // If there is no system-override record for the System User - Create One using the System Mailer Configuration
         // If there already is one, update the smtpuser and smtppass

@@ -456,4 +456,6 @@ You may apply a predefined template using the Template button or include one of 
         'users who have access to this email.',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected email(s)? They will be removed ' .
         'for all users who have access to them.',
+
+    'LBL_OUTBOUND_EMAIL_ID_HELP' => 'An asterisk (*) indicates the system account.',
 );

@@ -693,6 +693,16 @@ class User extends Person {
         //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
         $this->hashTS = $this->date_modified;
 
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $oeSystemOverride = $oe->getUsersMailerForSystemOverride($this->id);
+
+        if ($oeSystemOverride) {
+            $oeSystemOverride->populateFromUser($this);
+            $oeSystemOverride->save();
+        } elseif (!$oe->isAllowUserAccessToSystemDefaultOutbound()) {
+            $oe->createUserSystemOverrideAccount($this->id);
+        }
+
         // In case this new/updated user changes the system status, reload it here
         apiLoadSystemStatus(true);
 

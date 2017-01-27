@@ -69,7 +69,7 @@ class OutboundEmailConfigurationPeer
 
         $configurations                = array();
         $configurations["config_id"]   = $systemUser->id;
-        $configurations["config_type"] = "system";
+        $configurations["config_type"] = $systemUser->type;
         $configurations["inbox_id"]    = null;
 
         $configurations["from_email"]    = $systemDefaultInfo["email"];
@@ -160,7 +160,12 @@ class OutboundEmailConfigurationPeer
         $mailConfigurations = self::listOutboundMailConfigurations($user, $locale, $charset);
 
         foreach ($mailConfigurations AS $mailConfiguration) {
-            if ($mailConfiguration->getConfigType() == 'system') {
+            $systemTypes = [
+                OutboundEmail::TYPE_SYSTEM,
+                OutboundEmail::TYPE_SYSTEM_OVERRIDE,
+            ];
+
+            if (in_array($mailConfiguration->getConfigType(), $systemTypes)) {
                 return $mailConfiguration;
             }
         }
@@ -405,7 +410,7 @@ class OutboundEmailConfigurationPeer
 
         $configurations                  = array();
         $configurations["config_id"]     = $system->id;
-        $configurations["config_type"]   = "system";
+        $configurations["config_type"]   = $system->type;
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];
@@ -511,7 +516,7 @@ class OutboundEmailConfigurationPeer
 
         $configurations                  = array();
         $configurations["config_id"]     = $system->id;
-        $configurations["config_type"]   = "system";
+        $configurations["config_type"]   = $system->type;
         $configurations["inbox_id"]      = null;
         $configurations["from_email"]    = $ret["email"];
         $configurations["from_name"]     = $ret["name"];

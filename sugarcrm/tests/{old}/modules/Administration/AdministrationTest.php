@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
+
+/**
+ * @coversDefaultClass Administration
+ */
 class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $configs = array(
@@ -144,5 +149,50 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
             array('"value1"', '"value1"'), // quoted string
             array(array(2 => '"val"ue2'), array(2 => '"val"ue2')), // array with quoted string
         );
+    }
+
+    /**
+     * @covers ::saveConfig
+     */
+    public function testSaveConfig()
+    {
+        // Don't allow the user to use the system configuration to guarantee that the true system configuration's name
+        // and email address are retrieved from the database instead of being replaced by the user's name and primary
+        // email address.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+
+        $_POST['mail_smtpserver'] = 'smtp.example.com';
+        $_POST['mail_smtpport'] = 1025;
+        $_POST['notify_fromname'] = 'Sugar';
+        $_POST['notify_fromaddress'] = 'sugar@ex.com';
+        // The following are ignored.
+        $_POST['type'] = 'system-override';
+        $_POST['email_address'] = 'foo@bar.com';
+        $_POST['test'] = 'test';
+
+        $admin = BeanFactory::newBean('Administration');
+        $admin->saveConfig();
+
+        unset($_POST['mail_smtpserver']);
+        unset($_POST['mail_smtpport']);
+        unset($_POST['notify_fromname']);
+        unset($_POST['notify_fromaddress']);
+        unset($_POST['type']);
+        unset($_POST['email_address']);
+
+        $this->assertSame('Sugar', $admin->settings['notify_fromname'], 'notify_fromname is incorrect');
+        $this->assertSame('sugar@ex.com', $admin->settings['notify_fromaddress'], 'notify_fromaddress is incorrect');
+
+        $oe = BeanFactory::newBean('OutboundEmail');
+        $system = $oe->getSystemMailerSettings();
+        $this->assertSame('smtp.example.com', $system->mail_smtpserver, 'The servers should match');
+        $this->assertEquals(1025, $system->mail_smtpport, 'The ports should match');
+        $this->assertSame('Sugar', $system->name, 'The names should match');
+        $this->assertSame('sugar@ex.com', $system->email_address, 'The email addresses should match');
+
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE config SET value='do_not_reply@example.com' WHERE name='fromaddress' AND category='notify'");
+        $db->query("UPDATE config SET value='SugarCRM' WHERE name='fromname' AND category='notify'");
+        OutboundEmailConfigurationTestHelper::tearDown();
     }
 }

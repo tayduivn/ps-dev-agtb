@@ -60,10 +60,12 @@ $viewdefs['Emails']['base']['view']['create'] = array(
                     'fields' => array(
                         array(
                             'name' => 'outbound_email_id',
+                            'type' => 'outbound-email',
                             'label' => 'LBL_FROM',
                             'span' => 12,
                             'css_class' => 'inherit-width',
                             'searchBarThreshold' => -1,
+                            'help' => 'LBL_OUTBOUND_EMAIL_ID_HELP',
                         ),
                         array(
                             'name' => 'to',

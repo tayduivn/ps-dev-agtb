@@ -326,6 +326,9 @@ if ($new_config) {
 }
 installerHook('post_createDefaultSettings');
 
+$oe = new OutboundEmail();
+$oe->getSystemMailerSettings();
+
 $KBContent = new KBContent();
 $KBContent->setupPrimaryLanguage();
 $KBContent->setupCategoryRoot();

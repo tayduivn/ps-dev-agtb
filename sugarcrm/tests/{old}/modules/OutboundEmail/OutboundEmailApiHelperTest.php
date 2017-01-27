@@ -192,12 +192,10 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name',
                     'type',
-                    'is_configured',
                 ],
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'is_configured' => true,
                 ],
             ],
             [
@@ -216,12 +214,10 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 [
                     'name',
                     'type',
-                    'is_configured',
                 ],
                 [
                     'name' => 'foo',
                     'type' => 'user',
-                    'is_configured' => false,
                 ],
             ],
             [
@@ -242,14 +238,12 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                     'type',
                     'mail_smtpuser',
                     'mail_smtppass',
-                    'is_configured',
                 ],
                 [
                     'name' => 'foo',
                     'type' => 'user',
                     'mail_smtpuser' => 'foo',
                     'mail_smtppass' => true,
-                    'is_configured' => true,
                 ],
             ],
             [
@@ -270,14 +264,12 @@ class OutboundEmailApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                     'type',
                     'mail_smtpuser',
                     'mail_smtppass',
-                    'is_configured',
                 ],
                 [
                     'name' => 'foo',
                     'type' => 'user',
                     'mail_smtpuser' => 'foo',
                     'mail_smtppass' => null,
-                    'is_configured' => false,
                 ],
             ],
         ];

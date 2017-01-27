@@ -10,6 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+require_once 'tests/{old}/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php';
+
+/**
+ * @coversDefaultClass User
+ */
 class UserTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -27,6 +32,79 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
+    /**
+     * @covers ::save
+     * @covers ::getUsersNameAndEmail
+     */
+    public function testSave_SystemOverrideConfigurationIsCreatedForTheUser()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        $oe = BeanFactory::newBean('OutboundEmail');
+
+        // Create the user while this setting is 2 so the override configuration is not created yet.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+        $user = SugarTestUserUtilities::createAnonymousUser();
+
+        $override = $oe->getUsersMailerForSystemOverride($user->id);
+        $this->assertNull($override, 'The override configuration should not exist yet');
+
+        // Update the user while this setting is 0 so the override configuration is created.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+        $user->save();
+
+        $override = $oe->getUsersMailerForSystemOverride($user->id);
+        $userData = $user->getUsersNameAndEmail();
+        $emailAddressId = $user->emailAddress->getGuid($userData['email']);
+        $this->assertSame($userData['name'], $override->name, 'The names should match');
+        $this->assertSame($userData['email'], $override->email_address, 'The email addresses should match');
+        $this->assertSame($emailAddressId, $override->email_address_id, 'The email address IDs should match');
+
+        OutboundEmailConfigurationTestHelper::tearDown();
+    }
+
+    /**
+     * @covers ::save
+     * @covers ::getUsersNameAndEmail
+     */
+    public function testSave_SystemOverrideConfigurationIsUpdatedForTheUser()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        $oe = BeanFactory::newBean('OutboundEmail');
+
+        // Create the user while this setting is 0 so the override configuration exists.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+        $user = SugarTestUserUtilities::createAnonymousUser();
+
+        $override = $oe->getUsersMailerForSystemOverride($user->id);
+        $userData = $user->getUsersNameAndEmail();
+        $emailAddressId = $user->emailAddress->getGuid($userData['email']);
+        $this->assertSame($userData['name'], $override->name, 'The names should match');
+        $this->assertSame($userData['email'], $override->email_address, 'The email addresses should match');
+        $this->assertSame($emailAddressId, $override->email_address_id, 'The email address IDs should match');
+
+        // Change the user's name.
+        $user->first_name = 'Bill';
+        $user->last_name = 'Roth';
+
+        // Change the user's primary email address.
+        $address = SugarTestEmailAddressUtilities::createEmailAddress();
+        $user->email1 = $address->email_address;
+        $user->email2 = $userData['email'];
+
+        // No matter what the setting, the user's override configuration will be updated if it exists.
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+        $user->save();
+
+        $override = $oe->getUsersMailerForSystemOverride($user->id);
+        $userData = $user->getUsersNameAndEmail();
+        $this->assertSame($userData['name'], $override->name, 'The names should match');
+        $this->assertSame($address->email_address, $override->email_address, 'The email addresses should match');
+        $this->assertSame($address->id, $override->email_address_id, 'The email address IDs should match');
+
+        OutboundEmailConfigurationTestHelper::tearDown();
+        SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
     }
 
     public function testSettingAUserPreference()

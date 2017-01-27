@@ -76,7 +76,7 @@ class OutboundEmailApi extends ModuleApi
         $this->validateSmtpConfiguration($bean, $api, $args);
 
         if ($bean->type === OutboundEmail::TYPE_SYSTEM) {
-            $bean->saveSystem();
+            $bean->saveSystem(true);
             BeanFactory::unregisterBean($bean->module_name, $bean->id);
         } else {
             parent::saveBean($bean, $api, $args);

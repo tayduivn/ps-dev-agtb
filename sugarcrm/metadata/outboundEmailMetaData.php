@@ -27,8 +27,9 @@ $dictionary['OutboundEmail'] = array (
 		'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_NAME',
-			'type' => 'varchar',
-			'len' => 50,
+            'type' => 'name',
+            'dbType' => 'varchar',
+            'len' => 255,
 			'required' => true,
 			'reportable' => false,
 		),

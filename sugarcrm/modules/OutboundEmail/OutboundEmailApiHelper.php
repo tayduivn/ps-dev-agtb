@@ -63,8 +63,6 @@ class OutboundEmailApiHelper extends SugarBeanApiHelper
             $record['mail_smtppass'] = empty($record['mail_smtppass']) ? null : true;
         }
 
-        $record['is_configured'] = $bean->isConfigured();
-
         return $record;
     }
 }
