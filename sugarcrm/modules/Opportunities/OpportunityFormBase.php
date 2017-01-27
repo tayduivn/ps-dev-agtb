@@ -22,10 +22,11 @@ function checkForDuplicates($prefix){
 	$query = '';
 	$baseQuery = 'select id, name, sales_stage,amount, date_closed  from opportunities where deleted!=1 and (';
 
-	if(isset($_POST[$prefix.'name']) && !empty($_POST[$prefix.'name'])){
-		$query = $baseQuery ."  name like '%".$_POST[$prefix.'name']."%'";
-		$query .= getLikeForEachWord('name', $_POST[$prefix.'name']);
-	}
+        if (!empty($_POST[$prefix.'name'])) {
+            $name = $_POST[$prefix.'name'];
+            $query = $baseQuery . " name LIKE " . $focus->db->quoted('%' . $name . '%');
+            $query .= getLikeForEachWord('name', $name);
+        }
 
 	if(!empty($query)){
 		$rows = array();
