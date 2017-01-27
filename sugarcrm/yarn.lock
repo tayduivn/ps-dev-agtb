@@ -58,9 +58,9 @@
     which "1.1.1"
     yargs "3.29.0"
 
-"@sugarcrm/thorn@0.1.0-beta.1":
-  version "0.1.0-beta.1"
-  resolved "https://cache.sugardev.team/repository/npm-sugar/@sugarcrm/thorn/-/thorn-0.1.0-beta.1.tgz#0ccf3231a94d99e0828e8eec499686af849af6e3"
+"@sugarcrm/thorn@0.2.0-beta.1":
+  version "0.2.0-beta.1"
+  resolved "https://cache.sugardev.team/repository/npm-sugar/@sugarcrm/thorn/-/thorn-0.2.0-beta.1.tgz#bd425f43b5184a8da085e7ef08253045acab1de7"
   dependencies:
     chakram "^1.5.0"
     faker "git+https://github.com/Marak/faker.js#7e96b93869b422af5a63c115e04ff0206bf7b228"
@@ -2559,9 +2559,9 @@ eyes@0.1.x:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
 
-"faker@git+https://github.com/Marak/faker.js#7e96b93869b422af5a63c115e04ff0206bf7b228":
+"faker@git+https://github.com/Marak/faker.js.git#7e96b93869b422af5a63c115e04ff0206bf7b228":
   version "3.1.0"
-  resolved "git+https://github.com/Marak/faker.js#7e96b93869b422af5a63c115e04ff0206bf7b228"
+  resolved "git+https://github.com/Marak/faker.js.git#7e96b93869b422af5a63c115e04ff0206bf7b228"
 
 fancy-log@^1.1.0:
   version "1.2.0"
@@ -5835,7 +5835,7 @@ request@2.72.0:
     tough-cookie "~2.2.0"
     tunnel-agent "~0.4.1"
 
-request@2.73.0, request@2.x.x:
+request@2.73.0:
   version "2.73.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.73.0.tgz#5f78a9fde4370abc8ff6479d7a84a71a14b878a2"
   dependencies:
@@ -5887,7 +5887,7 @@ request@2.75.0, request@^2.64.0:
     tough-cookie "~2.3.0"
     tunnel-agent "~0.4.1"
 
-request@^2.34, request@^2.57.0, request@^2.65.0, request@^2.79.0:
+request@2.x.x, request@^2.34, request@^2.57.0, request@^2.65.0, request@^2.79.0:
   version "2.79.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
   dependencies:
