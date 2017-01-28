@@ -122,7 +122,7 @@ class HealthCheckScanner
             array('version' => '*'),
         ),
         'FBSG SugarCRM QuickBooks Integration' => array(
-            array('version' => '*'),
+            array('version' => 'v1.85.13.1'),
         ),
         'JJWDesign_Google_Maps' => array(
             array('version' => '*'),

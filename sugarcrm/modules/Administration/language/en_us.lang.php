@@ -1046,7 +1046,7 @@ expressions in the regex. Regular expressions should not include any delimiters.
 'ML_ISSUES'=>'Issues',
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 'ML_CONFIG_OVERRIDE'=>'Config modification is not allowed',
-
+'ML_LANGUAGE_FILE_KEYS_INVALID'=>'Key - may only consist of letters, numbers and underscores. ',
 	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Navigation Bar Quick Create',
 	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the navigation bar quick create',
     'LBL_CONFIGURE_SHORTCUT_BAR_HELP' => 'Choose which modules for which users can quickly create records using the Plus icon in the top navigation bar. Drag & drop modules between the Enabled Modules and Disabled Modules boxes.',

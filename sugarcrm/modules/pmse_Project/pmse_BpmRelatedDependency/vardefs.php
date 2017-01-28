@@ -788,8 +788,10 @@ $dictionary['pmse_BpmRelatedDependency'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'calculated' => false,
-            'len' => '32',
-            'size' => '32',
+            // This needs to be able to accomodate the longest custom relationship
+            // name that can be created
+            'len' => '255',
+            'size' => '255',
         ),
     ),
     'relationships' => array(),
