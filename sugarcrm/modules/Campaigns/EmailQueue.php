@@ -26,10 +26,13 @@
 global $timedate;
 global $current_user;
 
+$db = DBManagerFactory::getInstance();
 
 $campaign = BeanFactory::getBean('Campaigns', $_REQUEST['record']);
 
-$query = "SELECT prospect_list_id as id FROM prospect_list_campaigns WHERE campaign_id='$campaign->id' AND deleted=0";
+$query = "SELECT prospect_list_id as id FROM prospect_list_campaigns WHERE campaign_id=" .
+    $db->quoted($campaign->id) .
+    " AND deleted=0";
 
 $fromName = $_REQUEST['from_name'];
 $fromEmail = $_REQUEST['from_address'];
@@ -47,7 +50,9 @@ while($list = $campaign->db->fetchByAssoc($listresult))
 	$prospect_list = $list['id'];
 	$focus = BeanFactory::getBean('ProspectLists', $prospect_list);
 
-	$query = "SELECT prospect_id,contact_id,lead_id FROM prospect_lists_prospects WHERE prospect_list_id='$focus->id' AND deleted=0";
+    $query = "SELECT prospect_id,contact_id,lead_id FROM prospect_lists_prospects WHERE prospect_list_id=" .
+        $db->quoted($focus->id) .
+        " AND deleted=0";
 	$result = $focus->db->query($query);
 
 	while($row = $focus->db->fetchByAssoc($result))
