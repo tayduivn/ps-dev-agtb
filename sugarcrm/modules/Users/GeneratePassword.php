@@ -107,7 +107,12 @@ if ($isLink){
 	$time_now=TimeDate::getInstance()->nowDb();
 	//$q2="UPDATE `users_password_link` SET `deleted` = '1' WHERE `username` = '".$username."'";
 	//$usr->db->query($q2);
-	$q = "INSERT INTO users_password_link (id, username, date_generated) VALUES('".$guid."','".$username."','".$time_now."') ";
+    $q = sprintf(
+        "INSERT INTO users_password_link (id, username, date_generated) VALUES(%s, %s, %s)",
+        $usr->db->quoted($guid),
+        $usr->db->quoted($username),
+        $usr->db->quoted($time_now)
+    );
 	$usr->db->query($q);
 }
 ///////
