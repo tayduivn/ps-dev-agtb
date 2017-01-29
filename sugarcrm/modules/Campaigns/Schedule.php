@@ -120,8 +120,8 @@ if ($campaign_id && isset($campaign) && $campaign->status == 'Inactive') {
 			$query.=" and prospect_lists.deleted=0 ";
 			$query.=" and prospect_lists.list_type='test' ";
 			$query.=" and plc.deleted=0 ";
-			$query.=" and plc.campaign_id='$campaign_id'";
-			$query.=" and email_marketing.campaign_id='$campaign_id'";
+            $query.=" and plc.campaign_id=" . $focus->db->quoted($campaign_id);
+            $query.=" and email_marketing.campaign_id=" . $focus->db->quoted($campaign_id);
 			$query.=" and email_marketing.deleted=0 ";
 			$query.=" and email_marketing.all_prospect_lists=0 ";
 
@@ -135,7 +135,7 @@ if ($campaign_id && isset($campaign) && $campaign->status == 'Inactive') {
 				$seed[]=$bean;
 			}
 			$query=" select email_marketing.id email_marketing_id from email_marketing ";
-			$query.=" WHERE email_marketing.campaign_id='$campaign_id'";
+            $query.=" WHERE email_marketing.campaign_id=" . $focus->db->quoted($campaign_id);
 			$query.=" and email_marketing.deleted=0 ";
 			$query.=" and email_marketing.all_prospect_lists=1 ";
 
