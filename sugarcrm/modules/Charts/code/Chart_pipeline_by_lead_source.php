@@ -200,7 +200,7 @@ global $timedate;
 			$id = array();
 			if ($count > 0 && !empty($user_id)) {
 				foreach ($user_id as $the_id) {
-					$id[] = "'".$the_id."'";
+                    $id[] = $opp->db->quoted($the_id);
 				}
 				$ids = join(",",$id);
 				$where .= "opportunities.assigned_user_id IN ($ids) ";
@@ -213,7 +213,7 @@ global $timedate;
 			if ($count > 0 && !empty($legends)) {
 
 				foreach ($legends as $key=>$value) {
-					$legendItem[] = "'".$key."'";
+                    $legendItem[] = $opp->db->quoted($key);
 				}
 				$legendItems = join(",",$legendItem);
 				$where .= " opportunities.lead_source IN	($legendItems) ";
