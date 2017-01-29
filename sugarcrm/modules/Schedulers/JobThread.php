@@ -22,10 +22,13 @@ if(!empty($_REQUEST['job_id'])) {
 	ob_implicit_flush();
 	ignore_user_abort(true);// keep processing if browser is closed
 	set_time_limit(0);// no time out
+    $db = DBManagerFactory::getInstance();
 	$GLOBALS['log']->debug('Job [ '.$job_id.' ] is about to FIRE. Updating Job status in DB');
-	$qLastRun = "UPDATE schedulers SET last_run = '".$runTime."' WHERE id = '".$job_id."'";
-	$this->db->query($qStatusUpdate);
-	$this->db->query($qLastRun);
+    $qLastRun = "UPDATE schedulers SET last_run = " .
+        $db->quoted($runTime) .
+        " WHERE id = " .
+        $db->quoted($job_id);
+    $db->query($qLastRun);
 	
 	$job = new Job();
 	$job->runtime = TimeDate::getInstance()->nowDb();
