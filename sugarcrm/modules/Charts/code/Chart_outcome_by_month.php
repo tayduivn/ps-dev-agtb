@@ -208,13 +208,14 @@ echo get_validate_chart_js();
 			$GLOBALS['log']->debug($user_id);
 			$GLOBALS['log']->debug("cache_file_name is: $cache_file_name");
 
+            $opp = BeanFactory::getBean('Opportunities');
 			$where = "";
 			//build the where clause for the query that matches $user
 			$count = count($user_id);
 			$id = array();
 			if ($count>0) {
 				foreach ($user_id as $the_id) {
-					$id[] = "'".$the_id."'";
+                    $id[] = $opp->db->quoted($the_id);
 				}
 				$ids = join(",",$id);
 				$where .= "opportunities.assigned_user_id IN ($ids) ";
@@ -225,7 +226,6 @@ echo get_validate_chart_js();
 			$dateStartDisplay = $timedate->asUserDate($timedate->fromString($date_start));
 			$dateEndDisplay = $timedate->asUserDate($timedate->fromString($date_end));
 
-			$opp = BeanFactory::getBean('Opportunities');
 			//build the where clause for the query that matches $date_start and $date_end
 			$where .= "AND opportunities.date_closed >= ".db_convert("'".$date_start."'",'date')." AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date')." AND opportunities.deleted=0";
 			$query = "SELECT sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))." as m, sum(amount_usdollar/1000) as total, count(*) as opp_count FROM opportunities ";
