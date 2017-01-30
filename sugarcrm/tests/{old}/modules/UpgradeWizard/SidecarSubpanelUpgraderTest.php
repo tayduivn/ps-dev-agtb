@@ -231,6 +231,10 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
      */
     public function testCheckIncorrectSubpanelDefinition()
     {
+        if (defined('SHADOW_INSTANCE_DIR')) {
+            self::markTestSkipped('Does not work on Shadow Enabled System');
+        }
+        
         $this->setUpDefinitionDefs();
 
         // create default subpanel file
