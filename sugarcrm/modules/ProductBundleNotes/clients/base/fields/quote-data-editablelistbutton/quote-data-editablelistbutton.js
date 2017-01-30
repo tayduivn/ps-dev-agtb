@@ -73,7 +73,7 @@
         this.view.clearValidationErrors();
 
         // this is the only line I had to change
-        this.view.toggleRow(this.model.module, this.model.id, false);
+        this.view.toggleRow(this.model.module, this.model.cid, false);
 
         // trigger a cancel event across the view layout so listening components
         // know the changes made in this row are being reverted
@@ -105,7 +105,7 @@
      */
     _saveRowModel: function() {
         var self = this;
-        var oldModelId = this.model.get('id');
+        var oldModelId = this.model.id || this.model.cid;
 
         var successCallback = function(model) {
             self.changed = false;
