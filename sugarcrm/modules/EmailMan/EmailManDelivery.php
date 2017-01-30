@@ -71,7 +71,7 @@ $emailman = BeanFactory::getBean('EmailMan');
         $select_query.=" WHERE em.list_id = pl.id and pl.list_type = 'test'";
         $select_query.=" AND em.send_date_time <= ". $db->now();
         $select_query.=" AND (em.in_queue ='0' OR em.in_queue IS NULL OR (em.in_queue ='1' AND em.in_queue_date <= " .$db->convert($db->quoted($timedate->fromString("-1 day")->asDb()),"datetime")."))";
-        $select_query.=" AND em.campaign_id='{$campaign_id}'";
+        $select_query.=" AND em.campaign_id=" .$db->quoted($campaign_id);
         $select_query.=" ORDER BY em.send_date_time ASC, em.user_id, em.list_id";
     }else{
         //this is not a test..
