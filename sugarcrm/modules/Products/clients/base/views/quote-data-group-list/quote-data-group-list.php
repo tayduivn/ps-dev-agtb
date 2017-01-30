@@ -18,15 +18,15 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                 array(
                     'name' => 'line_num',
                     'label' => null,
-                    'widthClass' => 'cell-small',
+                    'widthClass' => 'cell-xsmall',
                     'css_class' => 'line_num tcenter',
-                    'type' => 'int',
+                    'type' => 'line-num',
                     'readonly' => true,
                 ),
                 array(
                     'name' => 'quantity',
                     'label' => 'LBL_QUANTITY',
-                    'widthClass' => 'cell-xsmall',
+                    'widthClass' => 'cell-small',
                     'css_class' => 'quantity',
                     'type' => 'float',
                 ),
