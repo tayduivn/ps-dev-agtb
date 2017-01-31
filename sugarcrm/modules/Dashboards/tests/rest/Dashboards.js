@@ -1,4 +1,5 @@
-const {Agent, Fixtures, expect} = require('@sugarcrm/thorn');
+const {Agent, Fixtures} = require('@sugarcrm/thorn');
+const expect = require('chakram').expect;
 
 describe('Dashboards', function() {
     before(function*() {
