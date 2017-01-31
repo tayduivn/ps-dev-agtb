@@ -235,6 +235,7 @@
         var totalItemsToValidate = 0;
         var bundles = this.model.get('bundles');
         var productBundleItems;
+        var pbModelsAsyncCt = 0;
 
         recordErrors = recordErrors || {};
 
@@ -275,12 +276,25 @@
                         bundleModel.trigger('error:validation');
                     }
 
+                    // add any product bundle items to the async count
+                    pbModelsAsyncCt += productBundleItems.length;
+
+                    if (productBundleItems.length === 0) {
+                        // only try to use the callback here if this bundle is empty and
+                        // there are no other bundle items async waiting to validate
+                        if (pbModelsAsyncCt === 0 && returnCt === totalItemsToValidate) {
+                            // if we've validated the correct number of models, call the callback fn
+                            callback(null, fields, recordErrors);
+                        }
+                    }
+
                     // loop through each product_bundle_items Products/ProductBundleNotes bean
                     _.each(productBundleItems.models, function(pbModel) {
                         // call validate on the Product/ProductBundleNote model
                         pbModel.isValidAsync(this.moduleFieldsMeta[pbModel.module], _.bind(function(isValid, errors) {
                             // increment the validate count
                             returnCt++;
+                            pbModelsAsyncCt--;
 
                             // add any errors returned to the main record errors
                             recordErrors = _.extend(recordErrors, errors);

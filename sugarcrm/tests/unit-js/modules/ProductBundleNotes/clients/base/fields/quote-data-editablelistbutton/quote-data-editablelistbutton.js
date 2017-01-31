@@ -103,6 +103,7 @@ describe('ProductBundleNotes.Base.Fields.QuoteDataEditablelistbutton', function(
         beforeEach(function() {
             field.model.module = 'TestModule';
             field.model.id = 'testId';
+            field.model.cid = 'testId';
 
             sinon.collection.stub(field, 'setDisabled', function() {
                 return false;
