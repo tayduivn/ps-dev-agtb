@@ -383,7 +383,7 @@ describe('BaseEmailAttachmentsField', function() {
                 var json;
 
                 sandbox.spy(app.alert, 'show');
-                sandbox.spy(app.error, 'handleHttpError');
+                sandbox.spy(app.api, 'defaultErrorHandler');
                 sandbox.spy(app.lang, 'get');
                 sandbox.stub(field, '_getFileInput').returns($file);
                 sandbox.stub(app.api, 'file', function(method, data, $files, callbacks, options) {
@@ -413,7 +413,7 @@ describe('BaseEmailAttachmentsField', function() {
                 expect(error.handled).toBe(true);
                 expect(app.alert.show).toHaveBeenCalled();
                 expect(app.lang.get).toHaveBeenCalledWith('ERROR_MAX_FILESIZE_EXCEEDED');
-                expect(app.error.handleHttpError).toHaveBeenCalledWith(error);
+                expect(app.api.defaultErrorHandler).toHaveBeenCalledWith(error);
 
                 // The file input field should be cleared.
                 expect($file.val()).toEqual('');

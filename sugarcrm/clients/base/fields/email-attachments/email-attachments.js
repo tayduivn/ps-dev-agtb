@@ -486,7 +486,9 @@
             });
         }
 
-        app.error.handleHttpError(error);
+        if (_.isFunction(app.api.defaultErrorHandler)) {
+            app.api.defaultErrorHandler(error);
+        }
     },
 
     /**
