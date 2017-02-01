@@ -986,6 +986,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_FROM',
+            'reportable' => false,
         ),
         'emails_to' => array(
             'name' => 'emails_to',
@@ -993,6 +994,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'emails_cc' => array(
             'name' => 'emails_cc',
@@ -1000,6 +1002,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'emails_bcc' => array(
             'name' => 'emails_bcc',
@@ -1007,6 +1010,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'email_addresses_used' => array(
             'name' => 'email_addresses_used',
@@ -1014,6 +1018,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAIL_ADDRESSES_USED',
+            'reportable' => false,
         ),
         'email_address_used' => array(
             'name' => 'email_address_used',
@@ -1025,6 +1030,7 @@ $dictionary['User'] = array(
             'studio' => 'false',
             'massupdate' => false,
             'importable' => 'false',
+            'reportable' => false,
         ),
     ) ,
     'name_format_map' => array(

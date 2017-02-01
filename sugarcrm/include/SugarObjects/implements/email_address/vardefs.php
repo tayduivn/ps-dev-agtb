@@ -131,6 +131,7 @@ $vardefs = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_FROM',
+            'reportable' => false,
         ),
         'emails_to' => array(
             'name' => 'emails_to',
@@ -138,6 +139,7 @@ $vardefs = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'emails_cc' => array(
             'name' => 'emails_cc',
@@ -145,6 +147,7 @@ $vardefs = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'emails_bcc' => array(
             'name' => 'emails_bcc',
@@ -152,6 +155,7 @@ $vardefs = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAILS_RECEIVED',
+            'reportable' => false,
         ),
         'email_addresses_used' => array(
             'name' => 'email_addresses_used',
@@ -159,6 +163,7 @@ $vardefs = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_EMAIL_ADDRESSES_USED',
+            'reportable' => false,
         ),
         'email_address_used' => array(
             'name' => 'email_address_used',
@@ -170,6 +175,7 @@ $vardefs = array(
             'studio' => 'false',
             'massupdate' => false,
             'importable' => 'false',
+            'reportable' => false,
         ),
     ),
     'relationships' => array(

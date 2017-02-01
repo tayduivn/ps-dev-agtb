@@ -188,18 +188,21 @@ $dictionary['Email'] = array(
             'type' => 'varchar',
             'vname' => 'LBL_TO_ADDRS',
             'source' => 'non-db',
+            'reportable' => false,
         ),
         'cc_addrs_names' => array(
             'name' => 'cc_addrs_names',
             'type' => 'varchar',
             'vname' => 'LBL_CC',
             'source' => 'non-db',
+            'reportable' => false,
         ),
         'bcc_addrs_names' => array(
             'name' => 'bcc_addrs_names',
             'type' => 'varchar',
             'vname' => 'LBL_BCC',
             'source' => 'non-db',
+            'reportable' => false,
         ),
         'raw_source' => array(
             'name' => 'raw_source',
@@ -352,6 +355,7 @@ $dictionary['Email'] = array(
             'default' => 'Archived',
             'massupdate' => false,
             'comment' => 'An email is either a draft or archived',
+            'reportable' => false,
         ),
         'reply_to_id' => array(
             'name' => 'reply_to_id',
@@ -539,6 +543,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_ATTACHMENTS',
+            'reportable' => false,
         ),
         'total_attachments' => array(
             'name' => 'total_attachments',
@@ -550,6 +555,7 @@ $dictionary['Email'] = array(
             'studio' => false,
             'workflow' => false,
             'importable' => false,
+            'reportable' => false,
         ),
         'outbound_email_id' => array(
             'name' => 'outbound_email_id',
@@ -560,6 +566,7 @@ $dictionary['Email'] = array(
             'vname' => 'LBL_OUTBOUND_EMAIL_ID',
             'function' => 'getOutboundEmailDropdown',
             'function_bean' => 'Emails',
+            'reportable' => false,
         ),
         'from' => array(
             'name' => 'from',
@@ -581,6 +588,7 @@ $dictionary['Email'] = array(
             'studio' => false,
             'type' => 'collection',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'to' => array(
             'name' => 'to',
@@ -602,6 +610,7 @@ $dictionary['Email'] = array(
             'studio' => false,
             'type' => 'collection',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'cc' => array(
             'name' => 'cc',
@@ -623,6 +632,7 @@ $dictionary['Email'] = array(
             'studio' => false,
             'type' => 'collection',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'bcc' => array(
             'name' => 'bcc',
@@ -644,6 +654,7 @@ $dictionary['Email'] = array(
             'studio' => false,
             'type' => 'collection',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'accounts_from' => array(
             'name' => 'accounts_from',
@@ -651,6 +662,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'accounts_to' => array(
             'name' => 'accounts_to',
@@ -658,6 +670,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'accounts_cc' => array(
             'name' => 'accounts_cc',
@@ -665,6 +678,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'accounts_bcc' => array(
             'name' => 'accounts_bcc',
@@ -672,6 +686,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'contacts_from' => array(
             'name' => 'contacts_from',
@@ -679,6 +694,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'contacts_to' => array(
             'name' => 'contacts_to',
@@ -686,6 +702,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'contacts_cc' => array(
             'name' => 'contacts_cc',
@@ -693,6 +710,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'contacts_bcc' => array(
             'name' => 'contacts_bcc',
@@ -700,6 +718,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'email_addresses_from' => array(
             'name' => 'email_addresses_from',
@@ -707,6 +726,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'email_addresses_to' => array(
             'name' => 'email_addresses_to',
@@ -714,6 +734,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'email_addresses_cc' => array(
             'name' => 'email_addresses_cc',
@@ -721,6 +742,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'email_addresses_bcc' => array(
             'name' => 'email_addresses_bcc',
@@ -728,6 +750,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'leads_from' => array(
             'name' => 'leads_from',
@@ -735,6 +758,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'leads_to' => array(
             'name' => 'leads_to',
@@ -742,6 +766,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'leads_cc' => array(
             'name' => 'leads_cc',
@@ -749,6 +774,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'leads_bcc' => array(
             'name' => 'leads_bcc',
@@ -756,6 +782,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'prospects_from' => array(
             'name' => 'prospects_from',
@@ -763,6 +790,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'prospects_to' => array(
             'name' => 'prospects_to',
@@ -770,6 +798,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'prospects_cc' => array(
             'name' => 'prospects_cc',
@@ -777,6 +806,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'prospects_bcc' => array(
             'name' => 'prospects_bcc',
@@ -784,6 +814,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         'users_from' => array(
             'name' => 'users_from',
@@ -791,6 +822,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_FROM',
+            'reportable' => false,
         ),
         'users_to' => array(
             'name' => 'users_to',
@@ -798,6 +830,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_TO',
+            'reportable' => false,
         ),
         'users_cc' => array(
             'name' => 'users_cc',
@@ -805,6 +838,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_CC',
+            'reportable' => false,
         ),
         'users_bcc' => array(
             'name' => 'users_bcc',
@@ -812,6 +846,7 @@ $dictionary['Email'] = array(
             'source' => 'non-db',
             'type' => 'link',
             'vname' => 'LBL_BCC',
+            'reportable' => false,
         ),
         // SNIP
         'meetings' => array(
