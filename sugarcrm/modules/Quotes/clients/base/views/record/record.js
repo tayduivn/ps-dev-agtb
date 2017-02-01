@@ -24,6 +24,18 @@
     calculatedFields: [],
 
     /**
+     * Track the number of items in edit mode.
+     * @type {number}
+     */
+    editCount: 0,
+
+    /**
+     * Hashtable to keep track of id's in edit mode
+     * @type {Object}
+     */
+    editIds: {},
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -48,6 +60,45 @@
         this.context.on('quotes:editableFields:add', function(field) {
             this.editableFields.push(field);
         }, this);
+
+        this.context.on('quotes:item:toggle', this._handleItemToggled, this);
+        this.context.on('quotes:item:toggle:reset', this._handleToggleReset, this);
+    },
+
+    /**
+     * handles keeping track how many items are in edit mode.
+     * @param {boolean} isEdit
+     * @param {number} id id of the row being toggled
+     * @private
+     */
+    _handleItemToggled: function(isEdit, id) {
+        if (isEdit) {
+            if (_.isUndefined(this.editIds[id])) {
+                this.editIds[id] = true;
+                this.editCount++;
+            }
+        } else if (!isEdit && this.editCount > 0) {
+            delete this.editIds[id];
+            this.editCount--;
+        }
+    },
+
+    /**
+     * override the save clicked function to check if things are in edit mode before saving.
+     * @override
+     */
+    saveClicked: function() {
+        //if we don't have any qlis in edit mode, save.  If we do, show a warning.
+        if (this.editCount == 0) {
+            this._super('saveClicked');
+        } else {
+            app.alert.show('quotes_qli_editmode', {
+                level: 'error',
+                title: '',
+                messages: [app.lang.get('LBL_SAVE_LINE_ITEMS', 'Quotes')]
+            });
+        }
+
     },
 
     /**

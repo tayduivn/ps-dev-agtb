@@ -105,6 +105,18 @@ describe('Quotes.Base.Views.Record', function() {
             expect(view.context.on).toHaveBeenCalledWith('editable:handleEdit');
         });
 
+        it('should set listener on context for quotes:item:toggle', function() {
+            view.bindDataChange();
+
+            expect(view.context.on).toHaveBeenCalledWith('quotes:item:toggle');
+        });
+
+        it('should set listener on context for quotes:item:toggle:reset', function() {
+            view.bindDataChange();
+
+            expect(view.context.on).toHaveBeenCalledWith('quotes:item:toggle:reset');
+        });
+
         it('should set listener on context for quotes:editableFields:add', function() {
             view.bindDataChange();
 
@@ -120,6 +132,54 @@ describe('Quotes.Base.Views.Record', function() {
             });
 
             expect(view.editableFields[0].id).toBe('myEditableField1');
+        });
+    });
+
+    describe('_handleItemToggled', function() {
+        it('should have an edit count equal to 0', function() {
+            view.editCount = 0;
+            view.editIds[1] = true;
+            view._handleItemToggled(false, 1);
+            expect(view.editCount).toBe(0);
+        });
+
+        it('should have an edit count equal to 0', function() {
+            view.editCount = 1;
+            view.editIds[1] = true;
+            view._handleItemToggled(false, 1);
+            expect(view.editCount).toBe(0);
+        });
+
+        it('should have an edit count equal to 1', function() {
+            view.editCount = 0;
+            view._handleItemToggled(true, 1);
+            expect(view.editCount).toBe(1);
+        });
+
+        it('should have an edit count equal to 1', function() {
+            view.editCount = 1;
+            view.editIds[1] = true;
+            view._handleItemToggled(true, 1);
+            expect(view.editCount).toBe(1);
+        });
+    });
+
+    describe('saveClicked', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super', function() {});
+            sinon.collection.stub(app.alert, 'show', function() {});
+        });
+
+        it('should call _super', function() {
+            view.editCount = 0;
+            view.saveClicked();
+            expect(view._super).toHaveBeenCalled();
+        });
+
+        it('should call app.alert.show', function() {
+            view.editCount = 1;
+            view.saveClicked();
+            expect(app.alert.show).toHaveBeenCalled();
         });
     });
 

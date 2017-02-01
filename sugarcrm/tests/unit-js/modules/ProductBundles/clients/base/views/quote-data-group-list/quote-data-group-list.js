@@ -1034,6 +1034,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             sinon.collection.stub(view, '_setRowFields', function() {});
             sinon.collection.stub(view, 'toggleRow', function() {});
             sinon.collection.stub(view, 'onAddNewItemToGroup', function() {});
+            sinon.collection.stub(view.context.parent, 'trigger', function() {});
         });
 
         it('should call _setRowFields', function() {
@@ -1275,6 +1276,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
                 };
             });
             sinon.collection.stub(view, 'toggleFields', function() {});
+            sinon.collection.stub(view.context.parent, 'trigger', function() {});
 
             view.toggleRow(rowModule, rowModelId, true);
         });
@@ -1294,6 +1296,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             it('should set modelView to edit on the toggledModel', function() {
                 expect(view.toggledModels[rowModelId].modelView).toEqual('edit');
             });
+
+            it('should trigger quotes:item:toggle with true and the rowid', function() {
+                expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:item:toggle', true, rowModelId);
+            });
         });
 
         describe('when isEdit is false', function() {
@@ -1312,6 +1318,11 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
                 view.toggleRow(rowModule, rowModelId, false);
                 expect(rowModel.modelView).toBe('list');
+            });
+
+            it('should trigger quotes:item:toggle with false and the rowid', function() {
+                view.toggleRow(rowModule, rowModelId, false);
+                expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:item:toggle', false, rowModelId);
             });
 
             describe('with jquery not stubbed', function() {

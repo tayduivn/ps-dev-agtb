@@ -246,4 +246,5 @@ $mod_strings = array (
     'LBL_DELETE_NOTHING_SELECTED' => 'Unable to delete: nothing selected.',
     'LBL_DELETE_SELECTED_LABEL' => 'Delete Selected',
     'LBL_DELETE_SELECTED_TOOLTIP' => 'Delete selected items',
+    'LBL_SAVE_LINE_ITEMS' => 'Please save any active line items by clicking the blue check mark next to each one before saving this Quote.',
 );

@@ -668,6 +668,9 @@
     toggleRow: function(rowModule, rowModelId, isEdit) {
         var toggleModel;
         var row;
+
+        this.context.parent.trigger('quotes:item:toggle', isEdit, rowModelId);
+
         if (isEdit) {
             toggleModel = this.collection.find(function(model) {
                 return (model.cid == rowModelId || model.id == rowModelId);
