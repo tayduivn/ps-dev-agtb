@@ -112,6 +112,7 @@ describe("enum field", function() {
                 expect(field).toEqual('test_enum');
                 //Call success callback
                 callbacks.success(app.lang.getAppListStrings());
+                callbacks.complete();
             });
             field = SugarTest.createField('base', fieldName, 'enum', 'detail', {/* no options */});
             var renderSpy = sinon.spy(field, '_render');
@@ -163,6 +164,36 @@ describe("enum field", function() {
             apiSpy.restore();
             field.dispose();
             field2.dispose();
+        });
+
+        it('should call the error callback', function() {
+            var sandbox = sinon.sandbox.create();
+            var callback = sandbox.spy();
+            var onError = sandbox.spy();
+            var field = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, model);
+            var error = {
+                status: 403,
+                code: 'not_authorized',
+                message: 'You are not authorized to perform this action.'
+            };
+
+            sandbox.stub(app.api, 'enumOptions', function(module, field, callbacks) {
+                callbacks.error(error);
+                callbacks.complete();
+            });
+            sandbox.stub(app.api, 'defaultErrorHandler');
+            sandbox.stub(app.lang, 'get').withArgs('LBL_NO_DATA', module).returns('No Data');
+
+            field.loadEnumOptions(true, callback, onError);
+
+            expect(callback).toHaveBeenCalledOnce();
+            expect(onError).toHaveBeenCalledWith(error);
+            expect(app.api.defaultErrorHandler).toHaveBeenCalledWith(error);
+            expect(_.size(field.items)).toBe(1);
+            expect(field.items['']).toBe('No Data');
+
+            sandbox.restore();
+            field.dispose();
         });
     });
 
