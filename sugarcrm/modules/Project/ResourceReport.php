@@ -110,13 +110,13 @@ if (!empty($_REQUEST['resource'])) {
 
     //Holidays //////////////////////
     $query = "select holidays.*, holidays.holiday_date AS hol_date, project.name AS project_name from holidays, project where ";
-    $query .= "person_id like '". $holidayBean->db->quote($_REQUEST['resource']) ."'";
+    $query .= "person_id like ". $db->quoted($_REQUEST['resource']);
     $query .= ' and holiday_date between ' . $db->quoted($dateStartDb) . ' and ' . $db->quoted($dateFinishDb) .
-    	" AND holidays.related_module_id = project.id AND holidays.deleted=0 ";
+        " AND holidays.related_module_id = project.id AND holidays.deleted=0 ";
     $query .= "UNION ALL ";
-    $query .= "select holidays.*, holidays.holiday_date AS hol_date, '" . $mod_strings['LBL_PERSONAL_HOLIDAY'] . "' AS project_name from holidays where ";
-    $query .= "person_id like '". $holidayBean->db->quote($_REQUEST['resource']) ."'";
-    $query .= " and holiday_date between '$dateStartDb' and '$dateFinishDb'".
+    $query .= "select holidays.*, holidays.holiday_date AS hol_date, " . $db->quoted($mod_strings['LBL_PERSONAL_HOLIDAY']) . " AS project_name from holidays where ";
+    $query .= "person_id like ". $db->quoted($_REQUEST['resource']);
+    $query .= " and holiday_date between " . $db->quoted($dateStartDb) . " and " . $db->quoted($dateFinishDb) .
     " AND holidays.related_module_id IS NULL AND holidays.deleted=0 ORDER BY hol_date ";
     $result = $holidayBean->db->query($query, true, "");
 
