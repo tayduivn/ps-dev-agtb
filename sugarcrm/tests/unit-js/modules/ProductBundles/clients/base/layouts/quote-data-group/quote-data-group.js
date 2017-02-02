@@ -169,10 +169,13 @@ describe('ProductBundles.Base.Layouts.QuoteDataGroup', function() {
                 id: 'rowModelId1',
                 position: 0
             });
+            rowModel.cid = 'rowModelId1';
             rowModel2 = new Backbone.Model({
                 id: 'rowModelId2',
                 position: 0
             });
+            rowModel2.cid = 'rowModelId2';
+
             layout.collection.reset();
         });
 
