@@ -73,7 +73,6 @@ $dictionary['ProductBundleNote'] = array(
             'type' => 'textarea',
             'dbType' => 'text',
             'comment' => 'Note content',
-            'required' => true,
         ),
         'product_bundles' => array(
             'name' => 'product_bundles',
