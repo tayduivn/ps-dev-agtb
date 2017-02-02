@@ -69,6 +69,7 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_TAXRATE',
             'source' => 'non-db',
             'comment' => 'Tax Rate Name',
+            'massupdate' => false,
         ),
         'taxrate_value' => array(
             'name' => 'taxrate_value',
@@ -85,6 +86,7 @@ $dictionary['Quote'] = array(
             'vname' => 'LBL_TAXRATE_VALUE',
             'source' => 'non-db',
             'comment' => 'Tax Rate Value',
+            'massupdate' => false,
         ),
         'taxrates' => array(
             'name' => 'taxrates',
