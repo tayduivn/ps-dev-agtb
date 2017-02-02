@@ -195,6 +195,7 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                                     'max_num' => -1,
                                 ),
                             ),
+                            'max_num' => -1,
                         ),
                     ),
                 ),
