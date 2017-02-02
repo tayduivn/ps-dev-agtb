@@ -99,14 +99,6 @@ $viewdefs['Quotes']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Quotes',
-                    'acl_action' => 'create',
-                ),
-                array(
                     'type' => 'divider',
                 ),
                 array(
