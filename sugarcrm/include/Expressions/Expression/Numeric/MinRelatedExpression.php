@@ -79,7 +79,7 @@ class MinRelatedExpression extends NumericExpression
             target = this.context.target,
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             // has the model been removed from it's collection
             isCurrency = (model.fields[rel_field].type === 'currency'),
             sortByDesc = function (lhs, rhs) { return parseFloat(lhs) > parseFloat(rhs) ? 1 : parseFloat(lhs) < parseFloat(rhs) ? -1 : 0; },
@@ -87,18 +87,18 @@ class MinRelatedExpression extends NumericExpression
             current_value = this.context.getRelatedField(relationship, 'rollupMin', rel_field) || '',
             finite_values = {},
             rollup_value = '0';
-            
-       this.context.updateRelatedCollectionValues(
-           this.context.model,
-           relationship,
-           'rollupMin',
-           rel_field,
-           model,
-           (hasModelBeenRemoved ? 'remove' : 'add')
-       );
 
-       var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupMin', rel_field) || {};
-
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'rollupMin',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
+            );
+        }
+        var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupMin', rel_field) || {};
 
         if (_.size(all_values) > 0) {
             finite_values = _.map(_.values(all_values), _.partial(parseInt, _, 10));

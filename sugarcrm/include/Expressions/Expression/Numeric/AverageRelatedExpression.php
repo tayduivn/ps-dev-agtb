@@ -77,7 +77,7 @@ class AverageRelatedExpression extends NumericExpression
             target = this.context.target,
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
-        var model = this.context.relatedModel || this.context.model,  // the model,
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             // has the model been removed from it's collection
             isCurrency = (model.fields[rel_field].type === 'currency'),
             precision = model.fields[rel_field].precision || 6,
@@ -85,15 +85,16 @@ class AverageRelatedExpression extends NumericExpression
             current_value = this.context.getRelatedField(relationship, 'rollupAve', rel_field) || '',
             rollup_value = '0';
 
-        this.context.updateRelatedCollectionValues(
-            this.context.model,
-            relationship,
-            'rollupAve',
-            rel_field,
-            model,
-            (hasModelBeenRemoved ? 'remove' : 'add')
-        );
-
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'rollupAve',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
+            );
+        }
         var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupAve', rel_field) || {};
 
         if (_.size(all_values) > 0) {

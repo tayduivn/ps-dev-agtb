@@ -108,7 +108,7 @@ class MaxRelatedDateExpression extends DateExpression
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
 
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             model_id = model.id || model.cid,
             // has the model been removed from it's collection
             sortByDateDesc = function (lhs, rhs) { return lhs < rhs ? 1 : lhs > rhs ? -1 : 0; },
@@ -118,15 +118,16 @@ class MaxRelatedDateExpression extends DateExpression
             dates = [],
             rollup_value = '';
 
-        // always update the values array
-        this.context.updateRelatedCollectionValues(
-            this.context.model,
-            relationship,
-            'maxRelatedDate',
-            rel_field,
-            model,
-            (hasModelBeenRemoved ? 'remove' : 'add')
-        );
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'maxRelatedDate',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
+            );
+        }
 
         var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'maxRelatedDate', rel_field) || {};
 

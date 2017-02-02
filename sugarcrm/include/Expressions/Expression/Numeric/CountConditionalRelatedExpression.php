@@ -74,7 +74,7 @@ class CountConditionalRelatedExpression extends NumericExpression
             condition_values = [condition_values];
         }
 
-        var model = this.context.relatedModel || this.context.model,  // the model,
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             model_id = model.id || model.cid,
             // has the model been removed from it's collection
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
@@ -92,7 +92,8 @@ class CountConditionalRelatedExpression extends NumericExpression
                 new_value = model.get(condition_field);
                 rollup_value = undefined;
 
-             this.context.updateRelatedCollectionValues(
+            if (!_.isUndefined(this.context.relatedModel)) {
+                this.context.updateRelatedCollectionValues(
                     this.context.model,
                     relationship,
                     'countConditional',
@@ -100,6 +101,7 @@ class CountConditionalRelatedExpression extends NumericExpression
                     model,
                     (hasModelBeenRemoved ? 'remove' : 'add')
                 );
+            }
 
             // when the model is not new, and the previous_value is empty, lets try and fetch it from the
             // relatedModel just to make sure, as it might have a previous value

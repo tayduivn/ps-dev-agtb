@@ -79,7 +79,7 @@ class MaxRelatedExpression extends NumericExpression
             target = this.context.target,
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             model_id = model.id || model.cid,
             // has the model been removed from it's collection
             isCurrency = (model.fields[rel_field].type === 'currency'),
@@ -89,14 +89,16 @@ class MaxRelatedExpression extends NumericExpression
             finite_values = {},
             rollup_value = '0';
             
-        this.context.updateRelatedCollectionValues(
-            this.context.model,
-            relationship,
-            'rollupMax',
-            rel_field,
-            model,
-            (hasModelBeenRemoved ? 'remove' : 'add')
-        );
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'rollupMax',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
+            );
+        }
 
         var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupMax', rel_field) || {};
 
