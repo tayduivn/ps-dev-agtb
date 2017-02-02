@@ -245,7 +245,7 @@
                 return ($(item).attr('name') == $item.attr('name'));
             });
 
-            this._moveItemToNewGroup(oldGroupId, newGroupId, rowId, isRowInEdit, newPosition);
+            this._moveItemToNewGroup(oldGroupId, newGroupId, rowId, isRowInEdit, newPosition, true);
         } else {
             // get the requests from updated rows
             this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(newGroup));
@@ -307,14 +307,37 @@
         var massCollection = this.context.get('mass_collection');
         var oldGroupId;
         var isRowInEdit;
+        var modelCt = {};
+        var updateLinkBean;
+
+        // since model.link.bean is the same exact reference to a group's model across all models
+        // in a group, if multiple items in the same group are moved, we have to only update the
+        // model to the new model.link.bean when it's the last model in the group being moved. If we
+        // update a model.link.bean, it will change all other model.link.bean references in that group,
+        // so we have to count all the models in a group, and only update the model.link.bean when it's
+        // the last model we're updating for that group
+        _.each(massCollection.models, function(model) {
+            oldGroupId = model.link.bean.id;
+            if (modelCt[oldGroupId]) {
+                modelCt[oldGroupId]++;
+            } else {
+                modelCt[oldGroupId] = 1;
+            }
+        }, this);
 
         _.each(massCollection.models, function(model) {
             // get the old Group ID from the model link
             oldGroupId = model.link.bean.id;
             // get if the row was in Edit mode if modelView exists and is set to 'edit'
             isRowInEdit = model.modelView && model.modelView === 'edit' || false;
+            // set selected to false since this model will no longer be in the mass collection
+            model.selected = false;
+            // decrement the model count for this group
+            modelCt[oldGroupId]--;
+            // updateLinkBean should only be true when this is the last model in the group (modelCt === 0)
+            updateLinkBean = modelCt[oldGroupId] === 0;
 
-            this._moveItemToNewGroup(oldGroupId, newGroupId, model.id, isRowInEdit);
+            this._moveItemToNewGroup(oldGroupId, newGroupId, model.cid, isRowInEdit, undefined, updateLinkBean);
         }, this);
 
         // the items have all been moved on the frontend now call the BulkAPI
@@ -373,9 +396,10 @@
      * @param {string} itemId The ID of the item to move
      * @param {boolean} isRowInEdit If the row to move is in edit mode or not
      * @param {number|undefined} [newPosition] The new position to place the item in
+     * @param {boolean} updateLinkBean If we should update the model's link bean or not
      * @private
      */
-    _moveItemToNewGroup: function(oldGroupId, newGroupId, itemId, isRowInEdit, newPosition) {
+    _moveItemToNewGroup: function(oldGroupId, newGroupId, itemId, isRowInEdit, newPosition, updateLinkBean) {
         var oldGroup = this._getComponentByGroupId(oldGroupId);
         var newGroup = this._getComponentByGroupId(newGroupId);
         var rowModel = oldGroup.collection.get(itemId);
@@ -398,8 +422,12 @@
         // add rowModel to the new group
         newGroup.addRowModel(rowModel, isRowInEdit);
 
-        // update the link on the rowModel to be the newGroup's model
-        rowModel.link.bean = newGroup.model;
+        if (updateLinkBean) {
+            // update the link on all the models in the new group collection to be the newGroup's model
+            _.each(newGroup.collection.models, function(newGroupCollectionModel) {
+                newGroupCollectionModel.link.bean = newGroup.model;
+            }, this);
+        }
 
         // get the requests from updated rows for old and new group
         this.currentBulkSaveRequests = this.currentBulkSaveRequests.concat(this._updateRowPositions(oldGroup));
@@ -975,26 +1003,28 @@
         var url;
 
         _.each(massCollection.models, function(model) {
-            groupId = model.link.bean.id;
-            rowId = model.get('id');
+            if (model.link) {
+                groupId = model.link.bean.id;
+                rowId = model.get('id');
 
-            // add the group ID to update the group later
-            groupsToUpdate.push(groupId);
+                // add the group ID to update the group later
+                groupsToUpdate.push(groupId);
 
-            // get the QuoteDataGroupLayout component
-            groupLayout = this._getComponentByGroupId(groupId);
+                // get the QuoteDataGroupLayout component
+                groupLayout = this._getComponentByGroupId(groupId);
 
-            // get the QuoteDataGroupListView component
-            groupList = groupLayout.getGroupListComponent();
+                // get the QuoteDataGroupListView component
+                groupList = groupLayout.getGroupListComponent();
 
-            // remove this row from the list's toggledModels if it exists
-            delete groupList.toggledModels[rowId];
+                // remove this row from the list's toggledModels if it exists
+                delete groupList.toggledModels[rowId];
 
-            url = app.api.buildURL(model.module + '/' + rowId);
-            bulkRequests.push({
-                url: url.substr(4),
-                method: 'DELETE'
-            });
+                url = app.api.buildURL(model.module + '/' + rowId);
+                bulkRequests.push({
+                    url: url.substr(4),
+                    method: 'DELETE'
+                });
+            }
         }, this);
 
         // make sure the groups are only in here once

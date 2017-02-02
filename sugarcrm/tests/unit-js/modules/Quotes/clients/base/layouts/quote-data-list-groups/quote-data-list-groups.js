@@ -495,6 +495,7 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             rowModel = app.data.createBean('Products', {
                 id: 'rowModelId'
             });
+            rowModel.cid = 'rowModelId';
 
             rowModel.link = {
                 bean: {
@@ -531,14 +532,28 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
         it('should call _moveItemToNewGroup() with isRowEdit false', function() {
             layout.moveMassCollectionItemsToNewGroup(newGroupData);
 
-            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith('oldGroupId', 'newGroupId', 'rowModelId', false);
+            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith(
+                'oldGroupId',
+                'newGroupId',
+                'rowModelId',
+                false,
+                undefined,
+                true
+            );
         });
 
         it('should call _moveItemToNewGroup() with isRowEdit true', function() {
             rowModel.modelView = 'edit';
             layout.moveMassCollectionItemsToNewGroup(newGroupData);
 
-            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith('oldGroupId', 'newGroupId', 'rowModelId', true);
+            expect(layout._moveItemToNewGroup).toHaveBeenCalledWith(
+                'oldGroupId',
+                'newGroupId',
+                'rowModelId',
+                true,
+                undefined,
+                true
+            );
         });
 
         it('should call _callBulkRequests()', function() {
@@ -804,6 +819,24 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
 
             it('should set the position to be the passed in position', function() {
                 expect(rowModel.get('position')).toBe(2);
+            });
+        });
+
+        describe('when updating model.link.bean', function() {
+            beforeEach(function() {
+                oldGroup.collection.add(rowModel);
+            });
+
+            it('should not update model.link.bean if updateLinkBean is false', function() {
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false, undefined, false);
+
+                expect(rowModel.link.bean).toBe(oldGroupModel);
+            });
+
+            it('should update model.link.bean to new group model if updateLinkBean is true', function() {
+                layout._moveItemToNewGroup(oldGroupId, newGroupId, rowModelId, false, undefined, true);
+
+                expect(rowModel.link.bean).toBe(newGroupModel);
             });
         });
 

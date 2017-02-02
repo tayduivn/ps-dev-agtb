@@ -833,6 +833,11 @@
      * @inheritdoc
      */
     _dispose: function() {
+        if (this.context && this.context.parent) {
+            this.context.parent.off('quotes:collections:all:checked', null, this);
+            this.context.parent.off('quotes:collections:not:all:checked', null, this);
+        }
+
         _.each(this.sugarLogicContexts, function(slContext) {
             slContext.dispose();
         });
