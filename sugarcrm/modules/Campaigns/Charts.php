@@ -43,11 +43,13 @@ class campaign_charts {
 
 			$query = "SELECT activity_type,target_type, count(*) hits ";
 			$query.= " FROM campaign_log ";
-			$query.= " WHERE campaign_id = '$campaign_id' AND archived=0 AND deleted=0 AND target_id IS NOT NULL";
+            $query.= " WHERE campaign_id = ";
+            $query .= $focus->db->quoted($campaign_id);
+            $query .= " AND archived=0 AND deleted=0 AND target_id IS NOT NULL";
 
             //if $marketing id is specified, then lets filter the chart by the value
             if (!empty($marketing_id)){
-                $query.= " AND marketing_id ='$marketing_id'";
+                $query.= " AND marketing_id = " . $focus->db->quoted($marketing_id);
             }
 
 			$query.= " GROUP BY  activity_type, target_type";
@@ -167,7 +169,8 @@ class campaign_charts {
 			$opp_count=0;
 			$opp_query  = "select count(*) opp_count,sum(" . db_convert("amount_usdollar","IFNULL",array(0)).")  total_value";
             $opp_query .= " from opportunities";
-            $opp_query .= " where campaign_id='$campaign_id'";
+            $opp_query .= " where campaign_id=";
+            $opp_query .= $focus->db->quoted($campaign_id);
             $opp_query .= " and sales_stage='Prospecting'";
             $opp_query .= " and deleted=0";
 
@@ -186,7 +189,9 @@ class campaign_charts {
             //BEGIN SUGARCRM flav!=ent ONLY
             $opp_query1 .= " where opp.sales_stage = '".Opportunity::STAGE_CLOSED_WON;
             //END SUGARCRM flav!=ent ONLY
-            $opp_query1 .= "' and camp.id='$campaign_id' and opp.deleted=0";
+            $opp_query1 .= "' and camp.id=";
+            $opp_query1 .= $focus->db->quoted($campaign_id);
+            $opp_query1 .= " and opp.deleted=0";
             $opp_query1 .= " group by camp.name";
 
             $opp_result1=$focus->db->query($opp_query1);
@@ -204,7 +209,8 @@ class campaign_charts {
 
 			$camp_query1  = "select camp.name, SUM(camp.actual_cost) as investment,SUM(camp.budget) as budget,SUM(camp.expected_revenue) as expected_revenue";
             $camp_query1 .= " from campaigns camp";
-            $camp_query1 .= " where camp.id='$campaign_id'";
+            $camp_query1 .= " where camp.id=";
+            $camp_query1 .= $focus->db->quoted($campaign_id);
             $camp_query1 .= " group by camp.name";
 
             $camp_result1=$focus->db->query($camp_query1);
@@ -232,10 +238,13 @@ class campaign_charts {
 
 			$query = "SELECT activity_type,target_type, count(*) hits ";
 			$query.= " FROM campaign_log ";
-			$query.= " WHERE campaign_id = '$campaign_id' AND archived=0 AND deleted=0";
+            $query.= " WHERE campaign_id = ";
+            $query .= $focus->db->quoted($campaign_id);
+            $query .= " AND archived=0 AND deleted=0";
             //if $marketing id is specified, then lets filter the chart by the value
             if (!empty($marketing_id)){
-                $query.= " AND marketing_id ='$marketing_id'";
+                $query.= " AND marketing_id = ";
+                $query .= $focus->db->quoted($marketing_id);
             }
 			$query.= " GROUP BY  activity_type, target_type";
 			$query.= " ORDER BY  activity_type, target_type";
