@@ -100,12 +100,10 @@
      */
     addRowModel: function(model, isRowInEdit) {
         var listComp;
-        var modelId;
 
         if (isRowInEdit) {
-            modelId = model.get('id');
             listComp = this.getGroupListComponent();
-            listComp.toggledModels[modelId] = model;
+            listComp.toggledModels[model.cid] = model;
         }
 
         this.collection.add(model, {at: model.get('position')});
@@ -127,6 +125,9 @@
             listComp = this.getGroupListComponent();
             if (listComp.toggledModels[modelId]) {
                 delete listComp.toggledModels[modelId];
+            }
+            if (listComp.toggledModels[model.cid]) {
+                delete listComp.toggledModels[model.cid];
             }
         }
 
