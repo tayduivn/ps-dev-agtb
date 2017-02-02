@@ -52,6 +52,7 @@ $viewdefs['Quotes']['base']['view']['quote-data-grand-totals-header'] = array(
                     'name' => 'deal_tot',
                     'label' => 'LBL_LIST_DEAL_TOT',
                     'css_class' => 'quote-totals-row-item',
+                    'related_fields' => array('deal_tot_discount_percentage'),
                 ),
                 array(
                     'name' => 'new_sub',
