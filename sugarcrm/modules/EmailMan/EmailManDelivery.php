@@ -84,7 +84,7 @@ $emailman = BeanFactory::getBean('EmailMan');
         $select_query.=" AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " .$db->convert($db->quoted($timedate->fromString("-1 day")->asDb()),"datetime")."))";
 
         if (!empty($campaign_id)) {
-            $select_query.=" AND campaign_id='{$campaign_id}'";
+            $select_query.=" AND campaign_id=" . $db->quoted($campaign_id);
         }
         $select_query.=" ORDER BY send_date_time ASC,user_id, list_id";
 
@@ -179,7 +179,7 @@ do {
 			$plc_query= " SELECT prospect_list_id, prospect_lists.list_type,prospect_lists.domain_name FROM prospect_list_campaigns ";
 			$plc_query.=" LEFT JOIN prospect_lists on prospect_lists.id = prospect_list_campaigns.prospect_list_id";
 			$plc_query.=" WHERE ";
-			$plc_query.=" campaign_id='{$current_campaign_id}' ";
+            $plc_query.=" campaign_id=" . $db->quoted($current_campaign_id);
 			$plc_query.=" AND prospect_lists.list_type in ('exempt_address','exempt_domain')";
 			$plc_query.=" AND prospect_list_campaigns.deleted=0";
 			$plc_query.=" AND prospect_lists.deleted=0";
@@ -193,7 +193,12 @@ do {
 					$emailman->restricted_domains[strtolower($row1['domain_name'])]=1;
 				} else {
 	   			    //find email address of targets in this prospect list.
-					$email_query = "SELECT email_address FROM email_addresses ea JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id JOIN prospect_lists_prospects plp ON eabr.bean_id = plp.related_id AND eabr.bean_module = plp.related_type AND plp.prospect_list_id = '{$row1['prospect_list_id']}' and plp.deleted = 0";
+                    $email_query = 'SELECT email_address FROM email_addresses ea'
+                        . ' JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id'
+                        . ' JOIN prospect_lists_prospects plp ON eabr.bean_id = plp.related_id'
+                        . ' AND eabr.bean_module = plp.related_type'
+                        . ' AND plp.prospect_list_id = ' . $db->quoted($row1['prospect_list_id'])
+                        . ' AND plp.deleted = 0';
 					$email_query_result=$db->query($email_query);
 
 					while($email_address = $db->fetchByAssoc($email_query_result)){
@@ -244,4 +249,3 @@ if (isset($_REQUEST['return_module']) && isset($_REQUEST['return_action']) && is
 		header("Location: index.php?module=EmailMan&action=index");
 	}
 }
-?>
