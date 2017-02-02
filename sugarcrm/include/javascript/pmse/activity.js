@@ -15,7 +15,7 @@
  CheckboxField, CommandAdam, ItemUpdaterField, PROJECT_MODULE, FieldOption, MessagePanel, RestClient,
  NumberField, CheckboxGroup
  */
-
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 /**
  * @class AdamActivity
  * Handle BPMN Activities (Tasks)

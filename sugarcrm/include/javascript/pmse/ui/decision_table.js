@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-//DecisionTable
+// jscs:disable
     var DecisionTable = function(options) {
         Element.call(this, {id: options.id});
         this.base_module = null;

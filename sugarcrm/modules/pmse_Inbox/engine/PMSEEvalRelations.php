@@ -27,7 +27,7 @@ trait PMSEEvalRelations
             ">=",
             "<=",
             ">",
-            "<"
+            "<",
         );
         $arrayRelationsLit = array(
             "equals",
@@ -42,7 +42,7 @@ trait PMSEEvalRelations
             "does_not_contain",
             "changes",
             "changes_from",
-            "changes_to"
+            "changes_to",
         );
         $result = 0;
         if (!in_array($operator, $arrayRelationsLit)) {

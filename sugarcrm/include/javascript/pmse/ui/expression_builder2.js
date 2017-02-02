@@ -8,6 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+// jscs:disable
 var ExpressionControl = function (settings) {
     Element.call(this, settings);
     this._panel = null;

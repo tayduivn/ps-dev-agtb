@@ -1935,7 +1935,15 @@ DateUpdaterItem.prototype.isValid = function() {
  * @return Boolean Whether the expression is valid
  */
 DateUpdaterItem.prototype.validateExpression = function(value) {
-    var exp, val, curr, i, left, right, leftType, rightType, type;
+    var exp;
+    var val;
+    var curr;
+    var i;
+    var left;
+    var right;
+    var leftType;
+    var rightType;
+    var type;
     if (Array.isArray(value) && value.length > 0) {
         // only expected operators are + and -
         exp = value.slice(0);
