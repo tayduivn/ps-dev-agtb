@@ -87,6 +87,7 @@ $dictionary['Quote'] = array(
             'source' => 'non-db',
             'comment' => 'Tax Rate Value',
             'massupdate' => false,
+            'studio' => false,
         ),
         'taxrates' => array(
             'name' => 'taxrates',
