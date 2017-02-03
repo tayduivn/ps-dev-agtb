@@ -637,6 +637,7 @@
             // add the deleted group's models to the new group
             _.each(deletedGroupBundle.models, function(model) {
                 newGroupBundle.add(model);
+                model.link.bean = newGroup.model;
             }, this);
         }
 
@@ -1057,6 +1058,12 @@
         var model;
         var groupId;
         var groupLayout;
+        var $checkAllCheckbox = this.$('.checkall input').first();
+
+        if ($checkAllCheckbox.length) {
+            // uncheck the CheckAll box after items are deleted
+            $checkAllCheckbox.attr('checked', false);
+        }
 
         app.alert.dismiss('deleting_line_item');
         app.alert.show('deleted_line_item', {
@@ -1159,27 +1166,27 @@
             }
 
             if (bundleItems && bundleItems.length > 0) {
-                _.each(bundleItems.models, _.bind(function(bulkRequests, positionStart, model, key, list) {
+                _.each(bundleItems.models, _.bind(function(groupId, bulkRequests, posStart, model, index, list) {
                     linkName = (model.module === 'Products' ? 'products' : 'product_bundle_notes');
-                    url = app.api.buildURL('ProductBundles/' + this.defaultGroupId + '/link/' +
+                    url = app.api.buildURL('ProductBundles/' + groupId + '/link/' +
                         linkName + '/' + model.id);
-                    model.set('position', positionStart);
+
+                    posStart += index;
+                    model.set('position', posStart);
 
                     bulkRequests.push({
                         url: url.substr(4),
                         method: 'POST',
                         data: {
-                            id: this.defaultGroupId,
+                            id: groupId,
                             link: linkName,
                             relatedId: model.id,
                             related: {
-                                position: positionStart
+                                position: posStart
                             }
                         }
                     });
-
-                    positionStart++;
-                }, this, bulkRequests, positionStart));
+                }, this, defaultGroup.model.id, bulkRequests, positionStart));
             }
 
             url = app.api.buildURL('ProductBundles/' + groupId);

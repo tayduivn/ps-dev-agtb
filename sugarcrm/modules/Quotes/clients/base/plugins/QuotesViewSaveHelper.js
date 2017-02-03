@@ -94,6 +94,7 @@
                     var items;
                     var changedItem;
                     var keysToOmit;
+                    var changedFieldsList;
 
                     if (_.isUndefined(bundleCalculatedFields)) {
                         bundleCalculatedFields = _.chain(bundle.fields)
@@ -102,7 +103,7 @@
                             .value();
                     }
 
-                    keysToOmit = ['product_bundle_items'].concat(bundleCalculatedFields);
+                    keysToOmit = ['product_bundle_items', '_justSaved'].concat(bundleCalculatedFields);
                     // VirtualCollection will return the collection as changed if something was added and saved
                     // or canceled, just ignore it since all the items have checked the models to see if they changed
                     bundleChanged = !_.isEmpty(_.omit(changedFields(bundle), keysToOmit));
@@ -122,8 +123,11 @@
                                         .pluck('name')
                                         .value();
                             }
+                            changedFieldsList = changedFields(item);
+                            // omit any sugarlogic items that might be flagged as changed
+                            changedFieldsList = _.omit(changedFieldsList, '_-rel_exp_values');
                             return !_.isEmpty(
-                                _.omit(changedFields(item), itemCalculatedFields[item.module])
+                                _.omit(changedFieldsList, itemCalculatedFields[item.module])
                             );
                         });
 

@@ -47,46 +47,67 @@
     },
 
     /**
+     * Overriding cancelEdit so we can update the group name if this is coming from
+     * the quote data group header
+     *
      * @inheritdoc
+     * @override
      */
     cancelEdit: function() {
         var modelModule = this.model.module;
         var modelId = this.model.cid;
         var syncedAttribs = this.model.getSynced();
+        if (this.isDisabled()) {
+            this.setDisabled(false);
+        }
 
-        if (this.view.isCreateView || syncedAttribs._justSaved) {
+        this.changed = false;
+
+        if (this.view.name === 'quote-data-group-header') {
+            // for cancel on group-header, revertAttributes doesn't reset the model
+            if (this.model.get('name') !== syncedAttribs.name) {
+                if (_.isUndefined(syncedAttribs.name)) {
+                    // if name was undefined, unset name
+                    this.model.unset('name');
+                } else {
+                    // if name was defined or '', set back to that
+                    this.model.set('name', syncedAttribs.name);
+                }
+            }
+        } else {
+            this.model.revertAttributes();
+        }
+
+        this.view.clearValidationErrors();
+
+        this.view.toggleRow(modelModule, modelId, false);
+
+        // trigger a cancel event across the view layout so listening components
+        // know the changes made in this row are being reverted
+        if (this.view.layout) {
+            this.view.layout.trigger('editablelist:' + this.view.name + ':cancel', this.model);
+        }
+    },
+
+    /**
+     * Overriding cancelClicked to trigger an event if this is a
+     * create view or the group was just saved
+     *
+     * @inheritdoc
+     * @override
+     */
+    cancelClicked: function() {
+        var syncedAttribs = this.model.getSynced();
+        var itemsInGroup = this.model.get('product_bundle_items');
+
+        if (itemsInGroup) {
+            itemsInGroup = itemsInGroup.length;
+        }
+
+        if (this.view.isCreateView || (syncedAttribs._justSaved && itemsInGroup === 0)) {
             this.view.layout.trigger('editablelist:' + this.view.name + ':create:cancel', this.model);
         } else {
-            if (this.isDisabled()) {
-                this.setDisabled(false);
-            }
-
-            this.changed = false;
-
-            if (this.view.name === 'quote-data-group-header') {
-                // for cancel on group-header, revertAttributes doesn't reset the model
-                if (this.model.get('name') !== syncedAttribs.name) {
-                    if (_.isUndefined(syncedAttribs.name)) {
-                        // if name was undefined, unset name
-                        this.model.unset('name');
-                    } else {
-                        // if name was defined or '', set back to that
-                        this.model.set('name', syncedAttribs.name);
-                    }
-                }
-            } else {
-                this.model.revertAttributes();
-            }
-
-            this.view.clearValidationErrors();
-
-            this.view.toggleRow(modelModule, modelId, false);
-
-            // trigger a cancel event across the view layout so listening components
-            // know the changes made in this row are being reverted
-            if (this.view.layout) {
-                this.view.layout.trigger('editablelist:' + this.view.name + ':cancel', this.model);
-            }
+            this.cancelEdit();
         }
     },
 
@@ -98,7 +119,6 @@
      */
     _save: function() {
         this.view.layout.trigger('editablelist:' + this.view.name + ':saving', true);
-
         this._saveRowModel();
     },
 

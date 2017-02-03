@@ -1180,9 +1180,15 @@ describe('Quotes.Base.Layouts.QuoteDataListGroups', function() {
             bundleItem1 = app.data.createBean('Products', {
                 id: 'bundleItem1'
             });
+            bundleItem1.link = {
+                bean: {}
+            };
             bundleItem2 = app.data.createBean('Products', {
                 id: 'bundleItem2'
             });
+            bundleItem2.link = {
+                bean: {}
+            };
             oldProductGroupModel = app.data.createBean('ProductBundles', {
                 id: 'oldProductGroupModelId',
                 product_bundle_items: new Backbone.Collection(bundleItem1)

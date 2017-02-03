@@ -141,28 +141,57 @@ describe('ProductBundles.Base.Fields.QuoteDataEditablelistbutton', function() {
                 expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':cancel');
             });
         });
+    });
 
-        describe('when in create or new header row', function() {
-            it('should trigger editablelist:viewName:create:cancel on view layout', function() {
-                field.view.isCreateView = true;
-                field.cancelEdit();
-                lastCallCtxTrigger = field.view.layout.trigger.lastCall;
-
-                expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':create:cancel');
+    describe('cancelClicked()', function() {
+        var pbItems;
+        var pbItem;
+        beforeEach(function() {
+            pbItems = new Backbone.Collection();
+            pbItem = new Backbone.Model({
+                id: 'pbModel1'
             });
+            field.model.set('product_bundle_items', pbItems);
+            field.view.layout = {
+                trigger: $.noop
+            };
+            sinon.collection.stub(field, 'cancelEdit', function() {});
+            sinon.collection.stub(field.view.layout, 'trigger', function() {});
+            field.view.name = 'fieldViewName';
+        });
 
-            it('should trigger editablelist:viewName:create:cancel on view layout', function() {
-                field.view.isCreateView = false;
-                sinon.collection.stub(field.model, 'getSynced', function() {
-                    return {
-                        _justSaved: true
-                    };
-                });
-                field.cancelEdit();
-                lastCallCtxTrigger = field.view.layout.trigger.lastCall;
+        afterEach(function() {
+            field.view.layout.trigger.restore();
+            delete field.view.layout.trigger;
+            delete field.view.layout;
+        });
 
-                expect(lastCallCtxTrigger.args[0]).toBe('editablelist:' + field.view.name + ':create:cancel');
+        it('should trigger editablelist:fieldViewName:create:cancel when in create view', function() {
+            field.view.isCreateView = true;
+            field.cancelClicked();
+
+            expect(field.view.layout.trigger).toHaveBeenCalledWith('editablelist:fieldViewName:create:cancel');
+        });
+
+        it('should trigger editablelist:fieldViewName:create:cancel when group is empty', function() {
+            field.view.isCreateView = false;
+            field.model.setSyncedAttributes({
+                _justSaved: true
             });
+            field.cancelClicked();
+
+            expect(field.view.layout.trigger).toHaveBeenCalledWith('editablelist:fieldViewName:create:cancel');
+        });
+
+        it('should call cancelEdit when group is not empty and not in create', function() {
+            field.view.isCreateView = false;
+            field.model.setSyncedAttributes({
+                _justSaved: true
+            });
+            pbItems.add(pbItem);
+            field.cancelClicked();
+
+            expect(field.cancelEdit).toHaveBeenCalled();
         });
     });
 
