@@ -695,7 +695,7 @@
         this.toggleFields(this.rowFields[rowModelId], isEdit);
 
         if (isEdit) {
-            this.context.trigger('list:editrow:fire');
+            this.context.trigger('list:editrow:fire', toggleModel);
         } else if (row.hasClass('not-sortable')) {
             // if this is not edit mode and row still has not-sortable (from being a brand new row)
             // then remove the not-sortable and add the sortable classes

@@ -1277,6 +1277,7 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             });
             sinon.collection.stub(view, 'toggleFields', function() {});
             sinon.collection.stub(view.context.parent, 'trigger', function() {});
+            sinon.collection.stub(view.context, 'trigger', function() {});
 
             view.toggleRow(rowModule, rowModelId, true);
         });
@@ -1299,6 +1300,10 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
             it('should trigger quotes:item:toggle with true and the rowid', function() {
                 expect(view.context.parent.trigger).toHaveBeenCalledWith('quotes:item:toggle', true, rowModelId);
+            });
+
+            it('should have called view.context.trigger with list:editrow:fire, toggleModel', function() {
+                expect(view.context.trigger).toHaveBeenCalledWith('list:editrow:fire', rowModel);
             });
         });
 
