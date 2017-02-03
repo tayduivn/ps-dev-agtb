@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: logic_utils.php 45763 2009-04-01 19:16:18Z majed $
 function get_hook_array($module_name){
 
 			$hook_array = null;

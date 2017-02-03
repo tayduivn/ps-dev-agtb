@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: zip_utils.php 16276 2006-08-22 18:56:15Z awu $
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('pclzip/pclzip.lib.php');
 

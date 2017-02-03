@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: default.php 16292 2006-08-22 20:57:23Z awu $
 
 /**
  * @deprecated Will be removed in 7.11. IDM-46

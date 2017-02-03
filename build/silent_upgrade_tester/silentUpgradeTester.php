@@ -1,5 +1,4 @@
 <?php
-//$Id: silentUpgradeTester.php Jun 18, 2008 2:42:33 PM nchander $
 
 if(!defined('sugarEntry')) define('sugarEntry', true);
 

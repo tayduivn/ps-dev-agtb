@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: Upgrade.php 56930 2010-06-13 16:39:17Z jmertic $
 
 global $app_strings;
 global $app_list_strings;

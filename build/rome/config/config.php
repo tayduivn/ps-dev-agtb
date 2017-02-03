@@ -61,7 +61,7 @@ $config['builds']['dev']['flav'] = array('een','ent','pro','dev','ult','corp');
 $config['builds']['dev']['lic'] = array('sub');
 
 $config['product']= array("dce","dev","eng","exp","pro",);
-$config['replace'] = array('$Id:','$Log:','$Header$', '$Id$');
+$config['replace'] = array();
 
 //Controls whether or not to include the original line numbering (i.e. commented lines appear as newlines)
 $config['retainCommentSpacing'] = false;

@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: process_scheduled.php 53409 2010-01-04 03:31:15Z roger $
 
 //FILE SUGARCRM flav=ent ONLY
 $modListHeader = array();

@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\Installer;
 //BEGIN SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 //END SUGARCRM flav=ent ONLY
-// $Id: performSetup.php 55505 2010-03-22 15:20:57Z clee $
+
 // This file will load the configuration settings from session data,
 // write to the config file, and execute any necessary database steps.
 $GLOBALS['installing'] = true;

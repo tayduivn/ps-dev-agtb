@@ -1,5 +1,4 @@
 <?php
-//$Id: silentUpgradeUtils.php Jun 18, 2008 3:12:14 PM nchander $
 
 /* Given the operating system set up variables for used command line calls (i.e. pwd, cd, cp, etc)
  * If OS is Windows $pathToPhp MUST be set correctly */

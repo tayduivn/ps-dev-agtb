@@ -243,7 +243,6 @@ class Rome
         $tailout = '';
         $flushComment = false;
 
-        //remove '$Id:', '@version','$Log:','$Header:'
         foreach ($this->config['replace'] as $id) {
             if (strpos($line, $id)) {
                 $line = "\n";

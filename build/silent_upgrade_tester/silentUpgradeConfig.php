@@ -1,5 +1,4 @@
 <?php
-//$Id: silentUpgradeConfig.php Jun 18, 2008 2:42:51 PM nchander $
  
  /* Please read the comments before or next to each item to understand how to fill it.
     * NOTE: Windows uses backslashed (\) for paths and linux uses forward slash (/). When enter windows paths (i.e backslashes) be sure to escape it (i.e. \\ instead of just \).

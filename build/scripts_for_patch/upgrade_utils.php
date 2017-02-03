@@ -32,7 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2005 SugarCRM, Inc.; All Rights Reserved.
  *
- * $Id: upgrade_utils.php 52098 2009-11-02 18:38:07Z ajay $
  */
 
 require_once('include/database/DBManagerFactory.php');

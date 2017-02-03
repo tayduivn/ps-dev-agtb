@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: jsclass_async.js 51719 2009-10-22 17:18:00Z mitani $
 
 //////////////////////////////////////////////////////////////////
 // called on the return of a JSON-RPC async request,

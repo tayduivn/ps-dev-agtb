@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: TableDictionary.php 53116 2009-12-10 01:24:37Z mitani $
 
 include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: SugarAuthenticateUser.php 54098 2010-01-28 18:15:47Z jmertic $
 
 /**
  * This file is where the user authentication occurs. No redirection should happen in this file.

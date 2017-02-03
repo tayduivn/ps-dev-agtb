@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
-// $Id: post_install.php 52186 2009-11-04 07:28:38Z xye $
 
 require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
 function status_post_install_action($action){

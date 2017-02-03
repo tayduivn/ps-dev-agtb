@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
-* $Id: Charts.php 55337 2010-03-15 17:24:39Z roger $
 * Description:  Includes the functions for Customer module specific charts.
 ********************************************************************************/
 

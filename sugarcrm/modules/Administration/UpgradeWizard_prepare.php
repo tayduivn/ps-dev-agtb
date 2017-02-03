@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: UpgradeWizard_prepare.php 55665 2010-03-29 23:55:22Z dwheeler $
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;

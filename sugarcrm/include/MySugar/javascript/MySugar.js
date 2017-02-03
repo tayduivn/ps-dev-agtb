@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: home.js 24436 2007-07-18 23:11:36Z awu $
 initMySugar = function(){
 SUGAR.mySugar = function() {
 	var originalLayout = null;

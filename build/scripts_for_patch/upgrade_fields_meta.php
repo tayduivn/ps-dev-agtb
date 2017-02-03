@@ -27,7 +27,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  *
- * $Id$
  */
  global $db;
  $query = "SELECT * FROM fields_meta_data";

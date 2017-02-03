@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-// $Id: style.js 23344 2007-06-05 20:32:59Z eddy $
 
 YAHOO.util.Event.onContentReady('HideHandle',function()
 {

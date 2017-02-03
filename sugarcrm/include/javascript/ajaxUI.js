@@ -9,7 +9,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: ajaxUI.js 57264 2010-07-02 18:45:27Z kjing $
 // TODO this file is here only temporarily
 SUGAR.ajaxUI = {
     loadingWindow : false,

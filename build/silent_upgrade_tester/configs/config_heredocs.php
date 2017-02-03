@@ -1,5 +1,4 @@
 <?php
-// $Id: config_heredocs.php Jun 20, 2008 4:20:37 PM nchander $
 
 $date = date("Y-m-d G:i:s");
 

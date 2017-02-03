@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: listviewdefs.php 38404 2008-07-30 00:50:16Z dwheeler $
 
 $listViewDefs['ext_rest_zoominfoperson'] = array(
 	'firstname' => array(

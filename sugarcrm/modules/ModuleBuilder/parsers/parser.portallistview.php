@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: ListViewParser.php 23721 2007-06-15 23:52:36Z clee $
 
 //FILE SUGARCRM flav=ent ONLY
 

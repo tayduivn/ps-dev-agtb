@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: DisplayWarnings.php 56482 2010-05-14 20:03:31Z smalyshev $
 global $db;
 function displayAdminError($errorString){
 	$output = '<p class="error">' . $errorString .'</p>';

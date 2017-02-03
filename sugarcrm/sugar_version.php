@@ -11,7 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: sugar_version.php 56713 2010-05-27 20:55:55Z kjing $
 
 $sugar_version      = '@_SUGAR_VERSION';
 $sugar_db_version   = '@_SUGAR_VERSION';

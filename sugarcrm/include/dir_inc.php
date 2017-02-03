@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: dir_inc.php 55277 2010-03-15 13:43:46Z jmertic $
 
 function copy_recursive( $source, $dest ){
 	//BEGIN SUGARCRM flav=int ONLY

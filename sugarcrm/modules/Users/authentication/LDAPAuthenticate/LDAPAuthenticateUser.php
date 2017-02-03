@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: LDAPAuthenticateUser.php 47028 2009-05-11 21:50:51Z majed $
 
 /**
  * This file is where the user authentication occurs. No redirection should happen in this file.

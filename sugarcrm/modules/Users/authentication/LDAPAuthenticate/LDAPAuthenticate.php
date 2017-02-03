@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: LDAPAuthenticate.php 16292 2006-08-22 20:57:23Z awu $
 
 /**
  * This file is used to control the authentication process. 

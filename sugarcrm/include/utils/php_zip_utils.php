@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
- // $Id: zip_utils.php 16276 2006-08-22 18:56:15Z awu $
 function unzip( $zip_archive, $zip_dir)
 {
    return unzip_file($zip_archive, null, $zip_dir);

@@ -1,4 +1,3 @@
-$Id: README.txt Jul 3, 2008 4:30:45 PM nchander $
 
 This script (silentUpgradeTester.php) will install and upgrade different versions and flavors of SugarCRM onto different databases according to the settings specified in silentUpgradeConfig.php. 
 

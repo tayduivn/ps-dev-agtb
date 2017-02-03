@@ -10,7 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: checkSystem.php 19538 2007-01-23 01:16:25 +0000 (Tue, 23 Jan 2007) chris $
 $_SESSION['setup_license_accept'] = true;
 
 function runCheck($install_script = false, $mod_strings){

@@ -29,7 +29,6 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  *
- * $Id$
  */
 function add_new_iframe_dashlets(){
 	$hasDiscoverSugarPro = false;

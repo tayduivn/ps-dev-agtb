@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
- * $Id$
  * Description:  Base Form For Meetings
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc.
  * All Rights Reserved.

@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /*********************************************************************************
-* $Id: Link.php 56115 2010-04-26 17:08:09Z kjing $
 * Description:  Defines the base class for new data type, Relationship, methods in the class will
 * be used to manipulate relationship between object instances.
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.

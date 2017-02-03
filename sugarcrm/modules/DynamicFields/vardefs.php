@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: vardefs.php 42866 2008-12-31 02:07:55Z dwheeler $
 $dictionary['FieldsMetaData'] = array (
 	'table' => 'fields_meta_data',
 	'fields' => array (

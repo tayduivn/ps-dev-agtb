@@ -32,7 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  * 
- * $Id: pre_install.php 21862 2007-04-16 21:50:07Z awu $
  */
 
 

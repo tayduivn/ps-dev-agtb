@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-// $Id: Grab.php 51719 2009-10-22 17:18:00Z mitani $
 
 global $current_user;
 

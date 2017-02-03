@@ -11,7 +11,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: populateSeedData.php 56343 2010-05-10 21:18:10Z jenny $
 
 // load the correct demo data and main application language file depending upon the installer language selected; if
 // it's not found fall back on en_us

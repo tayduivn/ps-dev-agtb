@@ -10,7 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-// $Id: UpgradeHistory.php 45763 2009-04-01 19:16:18Z majed $
 
 
 // The history of upgrades on the system

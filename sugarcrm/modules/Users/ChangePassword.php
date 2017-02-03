@@ -17,7 +17,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
- // $Id: ChangePassword.php 55866 2010-04-07 19:53:06Z jmertic $
 if (isset($_POST['saveConfig'])){
 	$focus = BeanFactory::getBean('Users', $_POST['record']);	
 	if(!$focus->change_password($_POST['old_password'], $_POST['new_password']))
