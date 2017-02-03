@@ -106,15 +106,6 @@ $dictionary['ProductBundle'] = array(
                 'taxrate_id',
                 'new_sub',
             ),
-            'formula' => 'ifElse(and(isNumeric(related($taxrate, "value")), equal(related($taxrate, "status"), "Active")),
-                    currencyMultiply(
-                        rollupConditionalSum($products, "total_amount", "tax_class", "Taxable"),
-                        currencyDivide(related($taxrate, "value"), 100)
-                    ),
-                    0
-                )',
-            'calculated' => true,
-            'enforced' => true,
         ),
         'tax_usdollar' => array(
             'name' => 'tax_usdollar',
