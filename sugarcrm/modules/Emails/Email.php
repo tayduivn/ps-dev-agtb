@@ -3899,7 +3899,7 @@ eoq;
                 $name = $oe->type === 'system' ? "* {$oe->name}" : $oe->name;
                 $option = sprintf('%s <%s> [%s]', $name, $oe->email_address, $oe->mail_smtpserver);
 
-                if ($oe->type === 'system') {
+                if ($oe->type === 'system-override') {
                     // Force this element to the beginning of the array.
                     $options = [$oe->id => $option] + $options;
                 } else {
@@ -3910,13 +3910,14 @@ eoq;
                     $hasConfiguredDefault = true;
                 }
             } else {
-                // The account is not configured. Reporting that the system account is not configured is prioritized so
-                // that, if both the system and system-override accounts are not configured, the error regarding the
-                // system account is returned.
-                if ($oe->type === 'system') {
-                    $error = 'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION';
-                } elseif ($oe->type === 'system-override' && empty($error)) {
+                // The account is not configured. Reporting that the system-override account is not configured is
+                // prioritized so that the user will attempt to configure their account on his/her own. Once the user
+                // has configured his/her system-override account, the reported error will be for the system account,
+                // which tells the user to contact the administrator because there is nothing more he/she can do.
+                if ($oe->type === 'system-override') {
                     $error = 'LBL_EMAIL_INVALID_USER_CONFIGURATION';
+                } elseif ($oe->type === 'system' && empty($error)) {
+                    $error = 'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION';
                 }
             }
         }

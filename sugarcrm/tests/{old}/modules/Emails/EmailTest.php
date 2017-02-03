@@ -43,6 +43,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 		unset($this->email);
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
+        OutboundEmailConfigurationTestHelper::tearDown();
 	}
 
     public function saveAndSetDateSentProvider()
@@ -269,7 +270,6 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($to->getName(),  $actual_cc[0]->getName(),  "CC Name Incorrect");
 
         $this->assertEquals(true,$mockMailer->wasSent());
-        OutboundEmailConfigurationTestHelper::tearDown();
     }
 
     /**
@@ -293,20 +293,64 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetOutboundEmailDropdown()
     {
         OutboundEmailConfigurationTestHelper::setUp();
-        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
 
         SugarTestHelper::setUp('current_user');
         $systemConfig = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
-        $userConfigs = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
+        $overrideConfig = $systemConfig->getUsersMailerForSystemOverride($GLOBALS['current_user']->id);
+        $overrideConfig->mail_smtpuser = $GLOBALS['current_user']->last_name;
+        $overrideConfig->mail_smtppass = 'h1kdkdKKahsd73';
+        $overrideConfig->save();
+
+        $userConfigs = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(3);
+        $notConfigured = $userConfigs[2]['outbound'];
+        $notConfigured->mail_smtpuser = '';
+        $notConfigured->save();
 
         $email = new Email();
         $options = $email->getOutboundEmailDropdown();
         $optionKeys = array_keys($options);
 
         $this->assertCount(3, $options, 'There should be three options');
-        $this->assertSame($systemConfig->id, $optionKeys[0], 'The system configuration should be the first option');
+        $this->assertSame($overrideConfig->id, $optionKeys[0], 'The system override config should be the first option');
+        $this->assertArrayNotHasKey($notConfigured->id, $options, 'Should not include configs that are not configured');
+    }
 
-        OutboundEmailConfigurationTestHelper::tearDown();
+    /**
+     * @covers ::getOutboundEmailDropdown
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testGetOutboundEmailDropdown_SystemOverrideIsNotConfigured()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
+
+        SugarTestHelper::setUp('current_user');
+        $systemConfig = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
+        $overrideConfig = $systemConfig->getUsersMailerForSystemOverride($GLOBALS['current_user']->id);
+        $overrideConfig->mail_smtpuser = '';
+        $overrideConfig->save();
+
+        $email = new Email();
+        $options = $email->getOutboundEmailDropdown();
+    }
+
+    /**
+     * @covers ::getOutboundEmailDropdown
+     * @expectedException SugarApiExceptionNotAuthorized
+     */
+    public function testGetOutboundEmailDropdown_SystemIsNotConfigured()
+    {
+        OutboundEmailConfigurationTestHelper::setUp();
+        OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(2);
+
+        SugarTestHelper::setUp('current_user');
+        $systemConfig = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
+        $systemConfig->mail_smtpuser = '';
+        $systemConfig->save();
+
+        $email = new Email();
+        $options = $email->getOutboundEmailDropdown();
     }
 
     /**

@@ -263,10 +263,9 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers ::sendEmail
      */
-    public function testSendEmail_UsesSystemConfigurationForAdmin()
+    public function testSendEmail_UsesSystemOverrideConfigurationForAdmin()
     {
         OutboundEmailConfigurationTestHelper::setAllowDefaultOutbound(0);
-        $configId = $this->systemConfiguration->id;
 
         // Pretend that the current user is the admin with id=1.
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
@@ -276,6 +275,7 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $override = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS['current_user']->id
         );
+        $configId = $override->id;
 
         $email = $this->createPartialMock('Email', ['sendEmail']);
         $email->expects($this->once())

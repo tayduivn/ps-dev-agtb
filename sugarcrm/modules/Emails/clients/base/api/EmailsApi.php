@@ -481,8 +481,8 @@ class EmailsApi extends ModuleApi
                     'fields' => 'id',
                     // There should only be one system or system-override account that is accessible. The admin can
                     // actually access both a system and system-override account. Sorting and setting a limit guarantees
-                    // that the system account is prioritized when finding the default record to use.
-                    'order_by' => 'type:asc',
+                    // that the system-override account is prioritized when finding the default record to use.
+                    'order_by' => 'type:desc',
                     'max_num' => 1,
                 ];
                 $api = new OutboundEmailFilterApi();
