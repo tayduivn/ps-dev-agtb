@@ -395,6 +395,7 @@ gulp.task('test:rest', function() {
     if (commander.ci) {
         var path = commander.path || process.env.WORKSPACE || os.tmpdir();
         path += '/test-rest';
+        options.timeout = 60000;
 
         options.reporter = 'mocha-junit-reporter';
         options.reporterOptions = 'mochaFile=' + path + '/test-results.xml';

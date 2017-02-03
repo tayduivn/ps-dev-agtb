@@ -44,10 +44,6 @@ docker run -it --env DEV=true --rm -p 5900:5900 -v ${PWD}:/sugarcrm registry.sug
 ```
 As a matter of fact you can perform a yarn install and use nodejs without ever installing them on your Mac. Simply run the container in developer mode, as shown above, then fire away! All changes persist in your local Mango sugarcrm directory.
 
-## Modifying Seedbed's Docker Entrypoint
-
-As a friendly reminder, you should know that we copy the Seedbed entrypoint script into the Docker image root so that we can check for the presence of a /sugarcrm mount. Whenever you make changes to the Seedbed entrypoint script your changes won't be used until you rebuild the Docker image. As another friendly reminder, if you don't change anything inside the Dockerfile since the last time you built it, it won't automatically rebuild because Docker has no way to detect that you altered the contents of a script that's included in the Docker image itself. To rebuild the docker image after making changes to the Seedbed entrypoint script, run docker build with the --no-cache argument.
-
 # Running Tests Without Docker
 
 To run all Seedbed tests locally outside of Docker you'll need to install some external dependencies. [Click here](https://github.com/sugarcrm/Seedbed) to view those instructions. Once you've got all the external dependencies installed you'll need to do a yarn install inside sugarcrm/:
