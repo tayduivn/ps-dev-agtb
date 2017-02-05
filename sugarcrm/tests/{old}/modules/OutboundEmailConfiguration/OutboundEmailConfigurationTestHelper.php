@@ -16,6 +16,10 @@ class OutboundEmailConfigurationTestHelper
     private static $existingAllowDefaultOutbound = null;
     private static $systemConfiguration;
 
+    /**
+     * This should be called before any users are created to avoid leaving test configurations in the database after
+     * teardown.
+     */
     public static function setUp()
     {
         self::backupExistingConfigurations();

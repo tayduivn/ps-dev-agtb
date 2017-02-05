@@ -27,11 +27,11 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
+        OutboundEmailConfigurationTestHelper::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
 
-        OutboundEmailConfigurationTestHelper::setUp();
         $this->systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
         $this->currentUserConfiguration = OutboundEmailConfigurationTestHelper::
         createSystemOverrideOutboundEmailConfiguration($GLOBALS['current_user']->id);
