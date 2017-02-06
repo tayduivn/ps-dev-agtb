@@ -78,7 +78,6 @@ foreach ($_POST['mass'] as $message_id) {
 	} else {
 	    $send_date_time = $timedate->to_db($mergedvalue);
 	}
-    $send_date_time = $campaign->db->convert($campaign->db->quoted($send_date_time), "datetime");
 
 	//find all prospect lists associated with this email marketing message.
 	if ($marketing->all_prospect_lists == 1) {
@@ -120,7 +119,7 @@ foreach ($_POST['mass'] as $message_id) {
 		$insert_query.=')';
         $insert_query.= " SELECT $current_date,".$campaign->db->quoted($current_user->id).",plc.campaign_id,".
             $campaign->db->quoted($message_id).",plp.prospect_list_id, plp.related_id, plp.related_type,".
-            $campaign->db->quoted($send_date_time);
+            $campaign->db->convert($campaign->db->quoted($send_date_time), 'datetime');
 		$insert_query.= empty($auto)?"":",$auto";
 		$insert_query.= " FROM prospect_lists_prospects plp ";
 		$insert_query.= "INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = plp.prospect_list_id ";
@@ -160,4 +159,3 @@ if ($test) {
 }
 $GLOBALS['log']->debug("about to post header URL of: $header_URL");
 header($header_URL);
-?>
