@@ -88,16 +88,9 @@ class PMSERoundRobinTest extends PHPUnit_Framework_TestCase {
             ->setMethods(array('load_relationship', 'save'))
             ->getMock();
 
-        $beanMock->expects($this->exactly(1))
-            ->method('load_relationship');
-
         $dbMock = $this->getMockBuilder('DBHandler')
             ->setMethods(array('Query', 'fetchByAssoc'))
             ->getMock();
-
-        $dbMock->expects($this->exactly(1))
-            ->method('fetchByAssoc')
-            ->will($this->returnValue(array('count' => 1)));
 
         $beanMock->db = $dbMock;
         $beanMock->team_id = '932ei0923dk0239ike023';
