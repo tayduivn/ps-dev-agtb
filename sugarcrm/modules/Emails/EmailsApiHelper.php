@@ -23,13 +23,14 @@ class EmailsApiHelper extends SugarBeanApiHelper
     public function formatForApi(\SugarBean $bean, array $fieldList = array(), array $options = array())
     {
         $data = parent::formatForApi($bean, $fieldList, $options);
+        $oe = null;
 
-        if (isset($data['outbound_email_id'])) {
+        if (!empty($data['outbound_email_id'])) {
             $oe = BeanFactory::retrieveBean('OutboundEmail', $data['outbound_email_id']);
+        }
 
-            if (!$oe) {
-                 unset($data['outbound_email_id']);
-            }
+        if (empty($oe)) {
+             unset($data['outbound_email_id']);
         }
 
         return $data;
