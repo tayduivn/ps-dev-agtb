@@ -59,7 +59,7 @@ class PMSEAssignUser extends PMSEScriptTask
 
             if (isset($bpmnElement['act_update_record_owner']) && $bpmnElement['act_update_record_owner'] == 1) {
                 $bean->assigned_user_id = $act_assign_user;
-                if (isset($bean->teams)) {
+                if (!empty($bean->teams)) {
                     $bean->teams->setSaved(false);
                 }
                 PMSEEngineUtils::saveAssociatedBean($bean);
