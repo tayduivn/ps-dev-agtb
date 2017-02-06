@@ -1482,16 +1482,18 @@ class PMSECrmDataWrapper implements PMSEObservable
                         }
                     }
                 }
-//                $update_activity = "update bpm_activity_definition set act_field_module = '$res->newModule', act_fields = '$cleanActivityFiels', act_readonly_fields = '', act_required_fields = '' where pro_id = $proId and act_id = $actId;";
-                //@codingStandardsIgnoreStart
+
                 $update_activity = sprintf(
-                    'UPDATE pmse_bpm_activity_definition SET act_field_module = %s, act_fields = %s, act_readonly_fields = "", act_required_fields = "" WHERE pro_id = %s and id = %s;',
+                    "UPDATE pmse_bpm_activity_definition"
+                        . " SET act_field_module = %s, act_fields = %s, act_readonly_fields = '',"
+                        . " act_required_fields = ''"
+                        . " WHERE pro_id = %s AND id = %s",
                     $db->quoted($res->newModule),
                     $db->quoted($cleanActivityFiels),
                     $db->quoted($proId),
                     $db->quoted($actId)
                 );
-                //@codingStandardsIgnoreEnd
+
                 $resultUpdate = $db->Query($update_activity);
             }
             //cleaning gateways
