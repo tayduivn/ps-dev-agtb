@@ -1652,10 +1652,10 @@ LEFT JOIN all_constraints c
    			return $forPrepared?"00:00:00":$this->convert($this->quoted("00:00:00"), "time");
    		}
         if($ctype == "clob") {
-            return "EMPTY_CLOB()";
+            return $forPrepared ? '' : 'EMPTY_CLOB()';
         }
         if($ctype == "blob") {
-            return "EMPTY_BLOB()";
+            return $forPrepared ? '' : 'EMPTY_BLOB()';
         }
         return parent::emptyValue($type, $forPrepared);
     }
