@@ -46,7 +46,7 @@ class Connection extends BaseConnection
         if (isset($this->statements[$hash])) {
             $stmt = $this->statements[$hash];
         } else {
-            $stmt = $this->statements[$hash] = new Statement($this->conn, $prepareString, $this);
+            $stmt = $this->statements[$hash] = parent::prepare($prepareString);
         }
 
         return $stmt;

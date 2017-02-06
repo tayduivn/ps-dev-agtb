@@ -15,7 +15,6 @@
 namespace Sugarcrm\Sugarcrm\Dbal\IbmDb2;
 
 use Doctrine\DBAL\Driver\IBMDB2\DB2Connection as BaseConnection;
-use Doctrine\DBAL\Driver\IBMDB2\DB2Exception;
 use Sugarcrm\Sugarcrm\Dbal\SetConnectionTrait;
 
 /**
@@ -49,12 +48,7 @@ class Connection extends BaseConnection
         if (isset($this->statements[$hash])) {
             $stmt = $this->statements[$hash];
         } else {
-            $db2Stmt = @db2_prepare($this->conn, $sql);
-            if (!$db2Stmt) {
-                throw new DB2Exception(db2_stmt_errormsg());
-            }
-
-            $stmt = $this->statements[$hash] = new Statement($db2Stmt);
+            $stmt = $this->statements[$hash] = parent::prepare($sql);
         }
 
         return $stmt;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b23821233fe8dc762845ed79b12e725",
+    "content-hash": "eaf374943e252491ab0bec9b865ff2a1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -356,17 +356,17 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.5.5",
+            "version": "v2.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "5d9419f89555a2c7aa7799943dd3dd3c53446537"
+                "reference": "220cd9971c1de05ab5d4be982cf51f15c5530b36"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/doctrine-dbal-v2.5.5-04e781.tar",
-                "reference": "5d9419f89555a2c7aa7799943dd3dd3c53446537",
-                "shasum": "5277f6615fa32a49ec0a42c655f0ad7493213613"
+                "url": "https://satis.sugardev.team/dist/doctrine-dbal-v2.5.12-f1e0b4.tar",
+                "reference": "220cd9971c1de05ab5d4be982cf51f15c5530b36",
+                "shasum": "c4ebc36de3c5f85f8a9bb0d12eece35ff3e41344"
             },
             "archive": {
                 "exclude": [
@@ -380,7 +380,7 @@
                 ]
             },
             "require": {
-                "doctrine/common": ">=2.4,<2.7-dev",
+                "doctrine/common": ">=2.4,<2.8-dev",
                 "php": ">=5.3.2"
             },
             "require-dev": {
@@ -433,7 +433,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2016-09-09T19:13:33+00:00"
+            "time": "2017-02-08T12:53:47+00:00"
         },
         {
             "name": "doctrine/inflector",

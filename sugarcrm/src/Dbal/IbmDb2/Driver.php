@@ -29,12 +29,4 @@ class Driver extends BaseDriver
     {
         return new Connection($params['connection']);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDatabasePlatform()
-    {
-        return new IbmDb2Platform();
-    }
 }
