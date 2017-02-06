@@ -214,44 +214,50 @@ class PMSECasesListApi extends FilterApi
 
         $count = 0;
         $list = $q->execute();
-        foreach ($list as $key => $value) {
-
-            $list[$key]['cas_create_date'] = PMSEEngineUtils::getDateToFE($value['cas_create_date'],'datetime');
-            $list[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'],'datetime');
-            $list[$key]['date_modified'] = PMSEEngineUtils::getDateToFE($value['date_modified'],'datetime');
-
-            $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
-            $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
-
-            $qA = new SugarQuery();
-            $flowBean = BeanFactory::getBean('pmse_BpmFlow');
-            $qA->select->fieldRaw('*');
-            $qA->from($flowBean);
-            $qA->where()->equals('cas_id', $list[$key]['cas_id']);
-
-            $processUsers = $qA->execute();
-            $processUsersNames = array();
-            foreach($processUsers as $k => $v) {
-                if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
-                    $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
-                    $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : '';
+        if (!empty($list)) {
+            foreach ($list as $key => $value) {
+                $assignedBean = BeanFactory::getBean($list[$key]['cas_sugar_module'], $list[$key]['cas_sugar_object_id']);
+                // filter beans where target beans do not exist anymore
+                if (!isset($assignedBean->id)) {
+                    unset($list[$key]);
+                    continue;
                 }
-                $cas_sugar_module = $processUsers[$k]['cas_sugar_module'];
-                $cas_sugar_object_id = $processUsers[$k]['cas_sugar_object_id'];
-            }
-            if (empty($processUsersNames)) {
-                $userNames = '';
-            } else {
-                $processUsersNames = array_unique($processUsersNames);
-                $userNames = implode(', ',$processUsersNames);
-            }
-            $list[$key]['cas_user_id_full_name'] = $userNames;
+                $list[$key]['cas_create_date'] = PMSEEngineUtils::getDateToFE($value['cas_create_date'], 'datetime');
+                $list[$key]['date_entered'] = PMSEEngineUtils::getDateToFE($value['date_entered'], 'datetime');
+                $list[$key]['date_modified'] = PMSEEngineUtils::getDateToFE($value['date_modified'], 'datetime');
 
-            $assignedBean = BeanFactory::getBean($cas_sugar_module, $cas_sugar_object_id);
-            $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
-            $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+                $prjUsersBean = BeanFactory::getBean('Users', $list[$key]['prj_created_by']);
+                $list[$key]['prj_user_id_full_name'] = $prjUsersBean->full_name;
 
-            $count++;
+                $qA = new SugarQuery();
+                $flowBean = BeanFactory::getBean('pmse_BpmFlow');
+                $qA->select->fieldRaw('*');
+                $qA->from($flowBean);
+                $qA->where()->equals('cas_id', $list[$key]['cas_id']);
+
+                $processUsers = $qA->execute();
+                if (!empty($processUsers)) {
+                    $processUsersNames = array();
+                    foreach ($processUsers as $k => $v) {
+                        if ($processUsers[$k]['cas_flow_status'] != 'CLOSED') {
+                            $casUsersBean = BeanFactory::getBean('Users', $processUsers[$k]['cas_user_id']);
+                            $processUsersNames[] = (!empty($casUsersBean->full_name)) ? $casUsersBean->full_name : '';
+                        }
+                    }
+                    if (empty($processUsersNames)) {
+                        $userNames = '';
+                    } else {
+                        $processUsersNames = array_unique($processUsersNames);
+                        $userNames = implode(', ', $processUsersNames);
+                    }
+                    $list[$key]['cas_user_id_full_name'] = $userNames;
+
+                    $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+                    $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+
+                    $count++;
+                }
+            }
         }
         if ($count == $options['limit']) {
             $offset = $options['offset'] + $options['limit'];
@@ -261,7 +267,7 @@ class PMSECasesListApi extends FilterApi
 
         $data = array();
         $data['next_offset'] = $offset;
-        $data['records'] = $list;
+        $data['records'] = array_values($list);
         return $data;
     }
 

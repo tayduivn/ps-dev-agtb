@@ -1010,22 +1010,28 @@ class PMSEEngineApi extends SugarApi
             $result[] = $row['cas_id'];
         }
 
-        foreach ($rows as $key => $row) {
-            $arrayId = array_search($row['cas_id'], $result);
-            if ($arrayId !== false ) {
-                $usersBean = BeanFactory::getBean('Users', $arrayCases[$arrayId]['cas_user_id']);
-                $row['cas_user_full_name'] = $usersBean->full_name;
-                $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
-                $row['prj_id']=$processBean->prj_id;
-                $prjUsersBean = BeanFactory::getBean('Users', $processBean->assigned_user_id);
-                $row['prj_user_id_full_name'] = $prjUsersBean->full_name;
-                $row['cas_sugar_object_id']=$arrayCases[$arrayId]['cas_sugar_object_id'];
-                $row['cas_sugar_module']=$arrayCases[$arrayId]['cas_sugar_module'];
-                $assignedBean = BeanFactory::getBean($row['cas_sugar_module'], $row['cas_sugar_object_id']);
-                $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
-                $row['assigned_user_name'] = $assignedUsersBean->full_name;
-                $row['date_entered'] = PMSEEngineUtils::getDateToFE($row['date_entered'], 'datetime');
-                $rows_aux[] = $row;
+        if (!empty($rows)) {
+            foreach ($rows as $key => $row) {
+                $arrayId = array_search($row['cas_id'], $result);
+                if ($arrayId !== false) {
+                    // filter beans where target beans do not exist anymore
+                    $assignedBean = BeanFactory::getBean($arrayCases[$arrayId]['cas_sugar_module'], $arrayCases[$arrayId]['cas_sugar_object_id']);
+                    if (!isset($assignedBean->id)) {
+                        continue;
+                    }
+                    $usersBean = BeanFactory::getBean('Users', $arrayCases[$arrayId]['cas_user_id']);
+                    $row['cas_user_full_name'] = $usersBean->full_name;
+                    $processBean = BeanFactory::getBean('pmse_BpmnProcess', $row['pro_id']);
+                    $row['prj_id'] = $processBean->prj_id;
+                    $prjUsersBean = BeanFactory::getBean('Users', $processBean->assigned_user_id);
+                    $row['prj_user_id_full_name'] = $prjUsersBean->full_name;
+                    $row['cas_sugar_object_id'] = $arrayCases[$arrayId]['cas_sugar_object_id'];
+                    $row['cas_sugar_module'] = $arrayCases[$arrayId]['cas_sugar_module'];
+                    $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
+                    $row['assigned_user_name'] = $assignedUsersBean->full_name;
+                    $row['date_entered'] = PMSEEngineUtils::getDateToFE($row['date_entered'], 'datetime');
+                    $rows_aux[] = $row;
+                }
             }
         }
 

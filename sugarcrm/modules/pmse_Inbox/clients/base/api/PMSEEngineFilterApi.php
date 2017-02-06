@@ -555,6 +555,11 @@ class PMSEEngineFilterApi extends FilterApi
             if (!is_subclass_of($bean, 'SugarBean')) {
                 continue;
             }
+            // filter beans where target beans do not exist anymore
+            $assignedBean = BeanFactory::getBean($bean->fetched_row['cas_sugar_module'], $bean->fetched_row['cas_sugar_object_id']);
+            if (!isset($assignedBean->id)) {
+                continue;
+            }
             $arr_aux = array();
             $arr_aux['cas_id'] = (isset($bean->fetched_row['cas_id']))? $bean->fetched_row['cas_id']:$bean->fetched_row['pmse_bpm_flow__cas_id'];
             $arr_aux['act_assignment_method'] = $bean->fetched_row['act_assignment_method'];
@@ -577,14 +582,14 @@ class PMSEEngineFilterApi extends FilterApi
             $arr_aux['prj_created_by'] = $bean->fetched_row['prj_created_by'];
 
             $casUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['cas_user_id']);
-            $arr_aux['cas_user_id_full_name'] = $casUsersBean->full_name;
-            if (empty($casUsersBean->full_name)){
+            if (!empty($casUsersBean->full_name)) {
+                $arr_aux['cas_user_id_full_name'] = $casUsersBean->full_name;
+            } else {
                 $arr_aux['cas_user_id_full_name'] = $arr_aux['cas_user_id'];
             }
             $prjUsersBean = BeanFactory::getBean('Users', $bean->fetched_row['prj_assigned_to']);
             $arr_aux['prj_user_id_full_name'] = $prjUsersBean->full_name;
 
-            $assignedBean = BeanFactory::getBean($arr_aux['cas_sugar_module'], $arr_aux['cas_sugar_object_id']);
             $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
             $arr_aux['assigned_user_name'] = $assignedUsersBean->full_name;
 
