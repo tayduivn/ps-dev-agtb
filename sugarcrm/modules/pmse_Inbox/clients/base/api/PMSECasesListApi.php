@@ -253,7 +253,7 @@ class PMSECasesListApi extends FilterApi
                     $list[$key]['cas_user_id_full_name'] = $userNames;
 
                     $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
-                    $list[$key]['assigned_user_name'] = $assignedUsersBean->full_name;
+                    $list[$key]['assigned_user_full_name'] = $assignedUsersBean->full_name;
 
                     $count++;
                 }
