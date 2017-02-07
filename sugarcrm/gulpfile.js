@@ -422,11 +422,13 @@ gulp.task('check-license', function(done) {
             'jpg',
             'png',
             'ico',
+            'tiff',
             // special system files
             'DS_Store',
             // Doc files
             'md',
             'txt',
+            'pdf',
             // vector files
             'svg',
             'svgz',
@@ -437,7 +439,28 @@ gulp.task('check-license', function(done) {
             'otf',
             // stylesheets
             'less',
-            'css'
+            'css',
+            // VCard files
+            'vcf',
+            // Git quirks
+            'git',
+            'gitkeep',
+            'gitignore',
+            // calendar files
+            'ics',
+            // data files
+            'csv',
+            // archives
+            'zip',
+            // dotfiles
+            'editorconfig',
+            'npmrc',
+            'jscsrc',
+            'babelrc',
+            // lock files
+            'lock',
+            // checksum lists
+            'md5'
         ],
         licenseFile: 'LICENSE',
         // Add paths you want to exclude in the whiteList file.
