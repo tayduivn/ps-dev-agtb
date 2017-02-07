@@ -183,6 +183,23 @@ describe('Quotes.Base.Views.Record', function() {
         });
     });
 
+    describe('cancelClicked', function() {
+        beforeEach(function() {
+            sinon.collection.stub(view, '_super', function() {});
+            sinon.collection.stub(view.context, 'trigger', function() {});
+        });
+
+        it('should call _super', function() {
+            view.cancelClicked();
+            expect(view._super).toHaveBeenCalled();
+        });
+
+        it('should call context.trigger with list:editrow:fire', function() {
+            view.cancelClicked();
+            expect(view.context.trigger).toHaveBeenCalledWith('list:editrow:fire');
+        });
+    });
+
     describe('_handleEditShippingField()', function() {
         var shipField;
         var event;

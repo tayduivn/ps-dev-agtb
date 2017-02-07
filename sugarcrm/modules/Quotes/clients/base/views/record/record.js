@@ -102,6 +102,15 @@
     },
 
     /**
+     * override the cancel clicked function to retrigger sugarlogic.
+     * @override
+     */
+    cancelClicked: function() {
+        this._super('cancelClicked');
+        this.context.trigger('list:editrow:fire');
+    },
+
+    /**
      * This is only when the Shipping field is clicked to handle toggling
      * it to Edit mode since it's outside of this view's element. This is
      * exactly the same as record.handleEdit except it grabs the jQuery
