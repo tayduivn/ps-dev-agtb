@@ -12,7 +12,7 @@
 
 namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider;
 
-use Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -56,19 +56,21 @@ class SugarLocalUserProvider implements UserProviderInterface
      */
     protected function getUser($username)
     {
-        /** @var \User $user */
-        $user = $this->createUserBean();
-        $userId = $user->retrieve_user_id($username);
-        if (!$userId) {
+        /** @var \User $sugarUser */
+        $sugarUser = $this->createUserBean();
+        $sugarUserId = $sugarUser->retrieve_user_id($username);
+        if (!$sugarUserId) {
             throw new UsernameNotFoundException();
         }
-        $user->retrieve($userId, true, false);
+        $sugarUser->retrieve($sugarUserId, true, false);
 
-        if (!empty($user->is_group) || !empty($user->portal_only) || $user->status != 'Active') {
+        if (!empty($sugarUser->is_group) || !empty($sugarUser->portal_only) || $sugarUser->status != 'Active') {
             throw new UsernameNotFoundException();
         }
+        $user = new User($username, $sugarUser->user_hash);
+        $user->setSugarUser($sugarUser);
 
-        return new User($username, $user->user_hash, ['base' => $user]);
+        return $user;
    }
 
     /**

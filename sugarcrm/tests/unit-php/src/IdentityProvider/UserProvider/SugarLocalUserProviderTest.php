@@ -1,7 +1,7 @@
 <?php
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
-use Sugarcrm\IdentityProvider\Authentication\User;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider

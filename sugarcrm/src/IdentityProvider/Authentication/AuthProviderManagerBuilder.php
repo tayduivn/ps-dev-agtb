@@ -15,7 +15,6 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactory;
 
-use Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\IdentityProvider\Encoder\EncoderBuilder;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User\SugarUserChecker;
 use Symfony\Component\Security\Core\Authentication\Provider\DaoAuthenticationProvider;
