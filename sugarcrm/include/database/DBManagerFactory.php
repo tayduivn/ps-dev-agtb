@@ -171,13 +171,22 @@ class DBManagerFactory
             throw new Exception('Unsupported DB driver ' . $instance->variant);
         }
 
-        $conn = DoctrineDriverManager::getConnection(array(
-            'driverClass' => $driverMap[$instance->variant],
+        $params = array(
             'wrapperClass' => Connection::class,
-            'portability' => Connection::PORTABILITY_FIX_CASE,
-            'fetch_case' => PDO::CASE_LOWER,
+            'driverClass' => $driverMap[$instance->variant],
             'connection' => $instance->getDatabase(),
-        ));
+        );
+
+        // we only need the to fix case on Oracle and IBM DB2, and we do not on SQL Server,
+        // as its built-in stored procedures produce upper-cased keys which SqlSrvManager expects and can handle
+        if ($instance->variant === 'oci8' || $instance->variant === 'ibm_db2') {
+            $params = array_merge($params, array(
+                'portability' => Connection::PORTABILITY_FIX_CASE,
+                'fetch_case' => PDO::CASE_LOWER,
+            ));
+        }
+
+        $conn = DoctrineDriverManager::getConnection($params);
 
         $logger = self::getDbalLogger();
         $conn->getConfiguration()->setSQLLogger($logger);
