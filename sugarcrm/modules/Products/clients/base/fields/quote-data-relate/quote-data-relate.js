@@ -170,24 +170,16 @@
     },
 
     /**
-     * If there are no search results returned, add a new search choice for the user's text
+     * Add a new search choice for the user's text
      *
      * @param {string} term The text the user is searching for
-     * @param {Array} data The results returned from the server for the given term
      * @return {{id: (*|string), text: *}}
      * @private
      */
-    _createSearchChoice: function(term, data) {
-        if (data.length === 0) {
-            // only add the user's text as an option if the server returned no data
-            if ($(data).filter(function() {
-                    return this.text.localeCompare(term) === 0;
-                }).length === 0) {
-                return {
-                    id: this.newQLIId,
-                    text: term + this.createNewLabel
-                };
-            }
-        }
+    _createSearchChoice: function(term) {
+        return {
+            id: this.newQLIId,
+            text: term + this.createNewLabel
+        };
     }
 });
