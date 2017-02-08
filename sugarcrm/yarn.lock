@@ -58,9 +58,9 @@
     which "1.1.1"
     yargs "3.29.0"
 
-"@sugarcrm/thorn@0.3.0-beta.1":
-  version "0.3.0-beta.1"
-  resolved "https://cache.sugardev.team/repository/npm-sugar/@sugarcrm/thorn/-/thorn-0.3.0-beta.1.tgz#995e8dcb1c0063fcb4d325b342d91aa4f0be38f7"
+"@sugarcrm/thorn@0.4.0-beta.1":
+  version "0.4.0-beta.1"
+  resolved "https://cache.sugardev.team/repository/npm-sugar/@sugarcrm/thorn/-/thorn-0.4.0-beta.1.tgz#18b82413aad89505147ca72beb7cbad5c61aae93"
   dependencies:
     chakram "^1.5.0"
     faker "git+https://github.com/Marak/faker.js#7e96b93869b422af5a63c115e04ff0206bf7b228"

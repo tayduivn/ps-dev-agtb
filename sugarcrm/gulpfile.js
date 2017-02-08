@@ -336,20 +336,37 @@ gulp.task('test:rest', function() {
         .option('-u, --username <username>', 'Administrator username')
         .option('-p, --password <password>', 'Administrator password')
         .option('-s, --suite <suite>', 'Run only the specified test suite')
-        .option('--without-suite', 'Run every test that isn\'t in a test suite')
+        .option('--without-suite', 'Print a list of all tests that aren\'t in a test suite')
         .option('-c, --cluster <cluster>', 'Run only the specified test cluster')
-        .option('--without-cluster', 'Run every test that isn\'t in a test cluster')
+        .option('--without-cluster', 'Print a list of all tests that aren\'t in a test cluster')
         .option('--ci', 'Enable CI specific options')
         .option('--path <path>', 'Set base output path')
         .parse(process.argv);
 
-    var env = {};
-    env.THORN_SERVER_URL = commander.url || process.env.THORN_SERVER_URL;
+    var testsToRun = getTestsToRun(commander);
 
+    // don't actually run the tests for --without-suite or --without-cluster, just print out what tests are not included
+    if (commander.withoutSuite || commander.withoutCluster) {
+        var globby = require('globby');
+        return globby(testsToRun).then(function(paths) {
+            if (_.isEmpty(paths)) {
+                process.stdout.write('All tests are currently part of a suite/cluster.' + os.EOL);
+                process.exit(0);
+            }
+            process.stdout.write('Tests not part of any suite/cluster:' + os.EOL);
+            process.stdout.write(paths.join(os.EOL) + os.EOL);
+            process.exit(1);
+        });
+    }
+
+    var env = {};
+
+    env.THORN_SERVER_URL = commander.url || process.env.THORN_SERVER_URL;
     if (!env.THORN_SERVER_URL) {
         console.error('Either setting $THORN_SERVER_URL or the --url flag is required.');
         help();
     }
+    env.THORN_SERVER_URL = env.THORN_SERVER_URL.replace(/\/+$/, '');
 
     if (commander.username) {
         env.THORN_ADMIN_USERNAME = commander.username;
@@ -370,39 +387,23 @@ gulp.task('test:rest', function() {
         help();
     }
 
-    var testsToRun = getTestsToRun(commander);
-
-    // don't actually run the tests for --without-suite or --without-cluster, just print out what tests are not included
-    if (commander.withoutSuite || commander.withoutCluster) {
-        var globby = require('globby');
-        return globby(testsToRun).then(function(paths) {
-            if (_.isEmpty(paths)) {
-                process.stdout.write('All tests are currently part of a suite/cluster');
-                process.exit(0);
-            }
-            process.stdout.write('Tests not part of any suite/cluster:\n');
-            process.stdout.write(paths.join('\n'));
-            process.exit(1);
-        });
-    }
-
     var options = {
         env: env,
         timeout: 15000,
         require: 'co-mocha',
+        reporter: 'spec',
     };
 
     if (commander.ci) {
         var path = commander.path || process.env.WORKSPACE || os.tmpdir();
         path += '/test-rest';
-        options.timeout = 60000;
-
         options.reporter = 'mocha-junit-reporter';
         options.reporterOptions = 'mochaFile=' + path + '/test-results.xml';
 
+        options.bail = true;
+        options.timeout = 60000;
+
         process.stdout.write('Test reports will be generated to: ' + path + '\n');
-    } else {
-        options.reporter = 'spec';
     }
 
     return gulp.src(testsToRun, {read: false})
