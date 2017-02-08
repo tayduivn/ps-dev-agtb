@@ -112,6 +112,8 @@
             {sugar_getscript file="cache/include/javascript/pmse.utils.min.js"}
             {sugar_getscript file="cache/include/javascript/pmse.jcore.min.js"}
             {sugar_getscript file="cache/include/javascript/pmse.ui.min.js"}
+            {sugar_getscript file="cache/include/javascript/pmse.libraries.min.js"}
+            {sugar_getscript file="cache/include/javascript/pmse.designer.min.js"}
         {/if}
     </body>
 </html>

@@ -64,7 +64,6 @@ var project,
         BUTTON_CANCEL: translate('LBL_PMSE_BUTTON_CANCEL')
     },
     listPanelError = new ErrorListPanel({
-            title : translate('LBL_PMSE_BPMN_WARNING_PANEL_TITLE'),
             id : 'panel-Errors',
             onClickItem : function (listPanel, listItem, type, messageId){
                 var shape, shapeId, canvas;
@@ -134,6 +133,11 @@ var getAutoIncrementName = function (type, targetElement) {
 
 function renderProject (prjCode) {
     var pmseCurrencies, currencies, sugarCurrencies, currentCurrency, i;
+
+    // initialize the error sidebar
+    listPanelError.title = App.lang.get('LBL_PMSE_BPMN_WARNING_PANEL_TITLE', 'pmse_Project');
+    listPanelError.appendTo('#div-bpmn-error');
+
     adamUID = prjCode;
 
     //RESIZE OPTIONS
@@ -1418,6 +1422,5 @@ function renderProject (prjCode) {
     });
 }
 
-listPanelError.appendTo("#div-bpmn-error");
 //jQuery(".pane ui-layout-center").append(countErrors);
 

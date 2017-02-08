@@ -409,10 +409,6 @@
                 'include/javascript/pmse/designer.js' => 'include/javascript/pmse.designer.min.js',
             ),
 
-            $pmse_et = array(
-                'include/javascript/pmse/email_template.js' => 'include/javascript/pmse.et.min.js',
-            ),
-
             $pmse_libraries = array(
                 'include/javascript/pmse/lib/jquery.layout-latest.js' => 'include/javascript/pmse.libraries.min.js',
             ),
