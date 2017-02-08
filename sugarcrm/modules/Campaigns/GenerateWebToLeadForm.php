@@ -76,23 +76,25 @@ if(!empty($_REQUEST['assigned_user_id'])){
 if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
 	$sfh = new SugarFieldHandler();
 	$sf = $sfh->getSugarField('Teamset', true);
-	
+
     $teams = $sf->getTeamsFromRequest('team_name');
-    $teams_selected = $sf->getSelectedTeamIdsFromRequest('team_name', $_POST);
-	$web_team_user = $sf->getPrimaryTeamIdFromRequest('team_name', $_POST);
-	
-	$teamSet = BeanFactory::getBean('TeamSets');
+    $web_team_user = $sf->getPrimaryTeamIdFromRequest('team_name', $_POST);
+
+    $teamSet = BeanFactory::getBean('TeamSets');
     $web_team_set_id_user = $teamSet->addTeams(array_keys($teams));
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    $teams_selected = $sf->getSelectedTeamIdsFromRequest('team_name', $_POST);
     if (!empty($teams_selected)) {
         $teamSetSelected = BeanFactory::getBean('TeamSets');
         if (!empty($teamSetSelected)) {
             $web_acl_team_set_id = $teamSetSelected->addTeams($teams_selected);
         }
     }
+    //END SUGARCRM flav=ent ONLY
 
-	require_once('modules/Teams/TeamSetManager.php');
-	TeamSetManager::add($web_team_set_id_user, 'leads');
+    require_once 'modules/Teams/TeamSetManager.php';
+    TeamSetManager::add($web_team_set_id_user, 'leads');
 }
 
  $lead = BeanFactory::getBean('Leads');
