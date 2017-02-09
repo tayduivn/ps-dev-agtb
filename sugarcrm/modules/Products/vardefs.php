@@ -489,7 +489,8 @@ $dictionary['Product'] = array(
             'type' => 'enum',
             'options' => 'tax_class_dom',
             'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
+            'comment' => 'Tax classification (ex: Taxable, Non-taxable)',
+            'default' => 'Taxable',
         ),
         'website' => array(
             'name' => 'website',
