@@ -309,10 +309,17 @@
         background: @grayLighter;
       }
       tr.quote-data-group-header {
+        td[data-type="quote-group-title"] {
+          padding: 6px 8px 2px;
+        }
         .quote-data-group-title {
           .group-loading-icon {
             display: none;
             margin-right: 10px;
+          }
+          .group-name {
+            font-weight: bold;
+            font-size: 14px;
           }
         }
         .action-button-wrapper {

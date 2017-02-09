@@ -68,6 +68,7 @@ $viewdefs['ProductBundles']['base']['view']['quote-data-group-header'] = array(
                 array(
                     'name' => 'name',
                     'type' => 'quote-group-title',
+                    'css_class' => 'group-name',
                 ),
             ),
         ),
