@@ -409,6 +409,7 @@ $dictionary['Quote'] = array(
                 'new_sub',
             ),
             'formula' => 'currencyMultiply($new_sub, currencyDivide($taxrate_value, "100"))',
+            'default' => '0',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -443,7 +444,11 @@ $dictionary['Quote'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
-            'formula' => 'add(rollupCurrencySum($product_bundles, "total"), $shipping)',
+            'formula' => 'currencyAdd(
+                rollupCurrencySum($product_bundles, "total"),
+                ifElse(isNumeric($tax), $tax, "0"),
+                ifElse(isNumeric($shipping), $shipping, "0")
+            )',
             'calculated' => true,
             'enforced' => true,
         ),
