@@ -19,6 +19,7 @@ $mod_strings = array (
     'LBL_SHIPPING_USDOLLAR'=>'Shipping (US Dollar)',
     'LBL_SUBTOTAL_USDOLLAR'=>'Subtotal (US Dollar)',
     'LBL_SUBTOTAL' => 'Subtotal:',
+    'LBL_TAXABLE_SUBTOTAL' => 'Taxable Subtotal',
     'LBL_TAX_USDOLLAR'=>'Tax (US Dollar)',
     'LBL_TAX' => 'Tax:',
     'LBL_TOTAL_USDOLLAR'=>'Total (US Dollar)',

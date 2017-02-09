@@ -295,6 +295,18 @@ $dictionary['ProductBundle'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
+        'taxable_subtotal' => array(
+            'name' => 'taxable_subtotal',
+            'vname' => 'LBL_TAXABLE_SUBTOTAL',
+            'type' => 'currency',
+            'len' => '26,6',
+            'source' => 'non-db',
+            'disable_num_format' => true,
+            'comment' => 'Rollup of all products marked as Taxable',
+            'formula' => 'rollupConditionalSum($products, "subtotal", "tax_class", "Taxable")',
+            'calculated' => true,
+            'enforced' => true,
+        ),
         'shipping' => array(
             'name' => 'shipping',
             'vname' => 'LBL_SHIPPING',

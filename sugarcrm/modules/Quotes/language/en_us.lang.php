@@ -184,6 +184,7 @@ $mod_strings = array (
     'LBL_STATE' => 'State:',
     'LBL_SUBTOTAL_USDOLLAR'=>'Subtotal (US Dollar)',
     'LBL_SUBTOTAL' => 'Subtotal:',
+    'LBL_TAXABLE_SUBTOTAL' => 'Taxable Subtotal',
     'LBL_SYSTEM_ID' => 'System ID',
     'LBL_TAX_USDOLLAR'=>'Tax (US Dollar)',
     'LBL_TAX' => 'Tax:',
