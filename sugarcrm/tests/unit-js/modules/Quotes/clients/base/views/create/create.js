@@ -88,6 +88,9 @@ describe('Quotes.Base.Views.Create', function() {
 
     afterEach(function() {
         sinon.collection.restore();
+        SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
+        app.data.reset();
         view.dispose();
         view = null;
         context = null;

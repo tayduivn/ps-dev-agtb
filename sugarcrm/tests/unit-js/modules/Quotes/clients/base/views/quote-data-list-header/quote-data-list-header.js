@@ -9,6 +9,8 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
     beforeEach(function() {
         app = SugarTest.app;
 
+        SugarTest.loadPlugin('MassCollection');
+
         viewMeta = {
             selection: {
                 type: 'multi',
@@ -47,11 +49,22 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
             };
         });
 
-        view = SugarTest.createView('base', 'Quotes', 'quote-data-list-header', viewMeta, null, true, layout);
+        var context = app.context.getContext();
+        var prodBundles = new Backbone.Collection();
+        var model = app.data.createBean('Quotes', {
+            bundles: prodBundles
+        });
+        context.prepare();
+        context.set('model', model);
+
+        view = SugarTest.createView('base', 'Quotes', 'quote-data-list-header', viewMeta, context, true, layout);
     });
 
     afterEach(function() {
         sinon.collection.restore();
+        SugarTest.testMetadata.dispose();
+        SugarTest.app.view.reset();
+        app.data.reset();
         view.dispose();
         view = null;
         layout.dispose();
@@ -120,7 +133,6 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
         var massCollection;
         var quoteModel;
         var productModel;
-        var on = sinon.collection.stub();
 
         beforeEach(function() {
             quoteModel = app.data.createBean('Quotes', {
@@ -140,23 +152,120 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
             sinon.collection.stub(view, '_super', function() {});
             view.massCollection = massCollection;
 
-            sinon.collection.stub(view, '$', function() {
-                return {
-                    on: on
-                };
-            });
+            sinon.collection.stub(view, '_checkMassActions', function() {});
         });
 
         it('should remove Quotes module models', function() {
             view._render();
 
             expect(view.massCollection.models.length).toBe(1);
-            expect(view.$).toHaveBeenCalled();
-            expect(on).toHaveBeenCalledWith('click');
         });
 
-        it('should assign a click event to checkboxes', function() {
+        it('should call _checkMassActions', function() {
             view._render();
+
+            expect(view._checkMassActions).toHaveBeenCalled();
+        });
+    });
+
+    describe('checkAll()', function() {
+        var evt;
+
+        beforeEach(function() {
+            sinon.collection.stub(view.context, 'trigger', function() {});
+        });
+
+        it('should trigger quotes:collections:all:checked when checked', function() {
+            evt = {
+                currentTarget: '<input data-check="all" type="checkbox" name="check" checked="checked">'
+            };
+            view.checkAll(evt);
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:all:checked');
+        });
+
+        it('should trigger quotes:collections:not:all:checked when not checked', function() {
+            evt = {
+                currentTarget: '<input data-check="all" type="checkbox" name="check">'
+            };
+            view.checkAll(evt);
+
+            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:not:all:checked');
+        });
+    });
+
+    describe('_checkMassActions()', function() {
+        var massActionsField;
+        beforeEach(function() {
+            massActionsField = {
+                setDisabled: sinon.collection.spy()
+            };
+
+            sinon.collection.stub(view, 'getField', function() {
+                return massActionsField;
+            });
+        });
+
+        it('should set mass actions field disabled if bundles are empty', function() {
+            sinon.collection.stub(view, '_bundlesAreEmpty', function() {
+                return true;
+            });
+            view._checkMassActions();
+
+            expect(massActionsField.setDisabled).toHaveBeenCalledWith(true);
+        });
+
+        it('should not set mass actions field disabled if bundles have items', function() {
+            sinon.collection.stub(view, '_bundlesAreEmpty', function() {
+                return false;
+            });
+            view._checkMassActions();
+
+            expect(massActionsField.setDisabled).toHaveBeenCalledWith(false);
+        });
+    });
+
+    describe('_bundlesAreEmpty()', function() {
+        var bundles;
+        var bundle1;
+        var bundle2;
+        var pbItems;
+        var pbItem;
+        var result;
+        it('should return true if all bundles are empty', function() {
+            bundles = new Backbone.Collection();
+            pbItems = new Backbone.Collection();
+            bundle1 = new Backbone.Model({
+                id: 'bundleId1',
+                product_bundle_items: pbItems
+            });
+
+            bundles.add(bundle1);
+            view.model.set('bundles', bundles);
+            result = view._bundlesAreEmpty();
+            expect(result).toBeTruthy();
+        });
+
+        it('should return false any bundle has an item in it', function() {
+            bundles = new Backbone.Collection();
+            bundle1 = new Backbone.Model({
+                id: 'bundleId1',
+                product_bundle_items: new Backbone.Collection()
+            });
+            pbItem = new Backbone.Model({
+                id: 'pbItem1'
+            });
+            pbItems = new Backbone.Collection(pbItem);
+            bundle2 = new Backbone.Model({
+                id: 'bundleId2',
+                product_bundle_items: pbItems
+            });
+
+            bundles.add(bundle1);
+            bundles.add(bundle2);
+            view.model.set('bundles', bundles);
+            result = view._bundlesAreEmpty();
+            expect(result).toBeFalsy();
         });
     });
 
@@ -266,29 +375,6 @@ describe('Quotes.Base.Views.QuoteDataListHeader', function() {
 
         it('should call _super', function() {
             expect(view._super).toHaveBeenCalledWith('_dispose');
-        });
-    });
-
-    describe('_onSelectAllClicked', function() {
-        var evt = {
-            currentTarget: {
-                checked: true
-            }
-        };
-
-        beforeEach(function() {
-            sinon.collection.stub(view.context, 'trigger', function() {});
-        });
-
-        it('should trigger quotes:collections:all:checked', function() {
-            view._onSelectAllClicked(evt);
-            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:all:checked');
-        });
-
-        it('should trigger quotes:collections:not:all:checked', function() {
-            evt.currentTarget.checked = undefined;
-            view._onSelectAllClicked(evt);
-            expect(view.context.trigger).toHaveBeenCalledWith('quotes:collections:not:all:checked');
         });
     });
 });

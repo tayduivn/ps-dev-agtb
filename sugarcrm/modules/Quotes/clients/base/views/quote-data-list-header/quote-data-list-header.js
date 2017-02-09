@@ -19,7 +19,8 @@
      */
     events: {
         'click [name="group_button"]': '_onCreateGroupBtnClicked',
-        'click [name="massdelete_button"]': '_onDeleteBtnClicked'
+        'click [name="massdelete_button"]': '_onDeleteBtnClicked',
+        'click [data-check=all]': 'checkAll'
     },
 
     /**
@@ -51,6 +52,11 @@
     _fields: undefined,
 
     /**
+     * If this view is currently in the /create view or not
+     */
+    isCreateView: undefined,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -61,6 +67,8 @@
         if (qliListMetadata && qliListMetadata.panels) {
             this.meta.panels = qliListMetadata.panels;
         }
+
+        this.isCreateView = this.context.get('create') || false;
 
         if (this.layout.isCreateView) {
             this.leftColumns.push({
@@ -80,7 +88,16 @@
      * @inheritdoc
      */
     bindDataChange: function() {
+        var bundles;
+
         this._super('bindDataChange');
+
+        if (!this.isCreateView) {
+            bundles = this.model.get('bundles');
+            if (bundles) {
+                bundles.on('change', this._checkMassActions, this);
+            }
+        }
 
         // massCollection has the Quote record as its only model,
         // reset this during initialization so it's empty
@@ -130,22 +147,63 @@
             });
         }
 
-        //add custom click event to the checkbox because MassCollection doesn't work well with quote-data-list.
-        this.$('input[type=checkbox]').on('click', _.bind(this._onSelectAllClicked, this));
+        this._checkMassActions();
     },
 
     /**
-     * Event handler for when the select all checkbox is checked. The MassCollection plugin doesn't work with the new
-     * collections very well, so this was a necessary workaround.
-     * @param {Object} evt click event.
-     * @private
+     * Handles checking and unchecking all items in the quote data list
+     *
+     * @param {jQuery.Event} event The click event from the input checkbox
      */
-    _onSelectAllClicked: function(evt) {
-        if (evt.currentTarget.checked) {
+    checkAll: function(event) {
+        var $checkbox = $(event.currentTarget);
+
+        if ($(event.target).hasClass('checkall') || event.type === 'keydown') {
+            $checkbox.prop('checked', !$checkbox.is(':checked'));
+        }
+
+        if ($checkbox.is(':checked')) {
             this.context.trigger('quotes:collections:all:checked');
         } else {
             this.context.trigger('quotes:collections:not:all:checked');
         }
+    },
+
+    /**
+     * Checks if bundles are empty and sets mass actions disabled if empty
+     *
+     * @private
+     */
+    _checkMassActions: function() {
+        var massActionsField = this.getField('quote-data-mass-actions');
+        var disableMassActions = false;
+
+        if (massActionsField) {
+            if (this._bundlesAreEmpty()) {
+                disableMassActions = true;
+            }
+
+            massActionsField.setDisabled(disableMassActions);
+        }
+    },
+
+    /**
+     * Returns if the bundles are empty or not
+     *
+     * @return {boolean} True if bundles are empty, false if any bundle contains an item
+     * @private
+     */
+    _bundlesAreEmpty: function() {
+        var bundlesHaveItems = false;
+        var bundles = this.model.get('bundles');
+
+        if (bundles) {
+            bundlesHaveItems = bundles.every(function(bundle) {
+                return bundle.get('product_bundle_items').length === 0;
+            });
+        }
+
+        return bundlesHaveItems;
     },
 
     /**
@@ -154,16 +212,17 @@
     addMultiSelectionAction: function() {
         var _generateMeta = function(buttons, disableSelectAllAlert) {
             return {
-                'type': 'fieldset',
-                'fields': [
+                name: 'quote-data-mass-actions',
+                type: 'fieldset',
+                fields: [
                     {
-                        'type': 'quote-data-actionmenu',
-                        'buttons': buttons || [],
-                        'disable_select_all_alert': !!disableSelectAllAlert
+                        type: 'quote-data-actionmenu',
+                        buttons: buttons || [],
+                        disable_select_all_alert: !!disableSelectAllAlert
                     }
                 ],
-                'value': false,
-                'sortable': false
+                value: false,
+                sortable: false
             };
         };
         var buttons = this.meta.selection.actions;
@@ -245,6 +304,12 @@
      * @inheritdoc
      */
     _dispose: function() {
+        var bundles;
+        if (!this.isCreateView) {
+            bundles = this.model.get('bundles');
+            bundles.off('change', null, this);
+        }
+
         // in case something weird happens where this view gets
         // disposed between adding the listener and removing,
         // go ahead and remove it on dispose if it exists
