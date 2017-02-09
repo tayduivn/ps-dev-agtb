@@ -46,15 +46,20 @@
      * or array of those corresponding to the pills to add.
      */
     addPill: function(models) {
-        var modelName;
+
+        models = _.isArray(models) ? models : [models];
+
+        if (_.isEmpty(models)) {
+            return;
+        }
+
         var pillsAttrs = [];
         var pillsIds = _.pluck(this.pills, 'id');
-        models = _.isArray(models) ? models : [models];
 
         _.each(models, function(model) {
             //FIXME : SC-4196 will remove this.
-            modelName = model.name || model.full_name || model.document_name ||
-                model.get('name') || model.get('full_name') || app.utils.formatNameLocale(model.attributes) ||
+            var modelName = model.get('name') || model.get('full_name') ||
+                app.utils.formatNameLocale(model.attributes) ||
                 model.get('document_name');
 
             if (modelName && !_.contains(pillsIds, model.id)) {
@@ -187,17 +192,14 @@
      * @inheritdoc
      */
     bindDataChange: function() {
-        this.collection.on('sync', function(collection, fetchedRecords) {
-            if (!_.isArray(fetchedRecords)) {
-                return;
-            }
-            var recordsToAdd = _.filter(fetchedRecords, function(attrs) {
-                return this.massCollection.get(attrs.id);
-            }, this);
-            if (!recordsToAdd.length) {
-                return;
-            }
+        this.collection.on('sync', function() {
+
+            var recordsToAdd = this.collection.filter(_.bind(function(model) {
+                return this.massCollection.get(model.id);
+            }, this));
+
             this.addPill(recordsToAdd);
+
         }, this);
     },
 
