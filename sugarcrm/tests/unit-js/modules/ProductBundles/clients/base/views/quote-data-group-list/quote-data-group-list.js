@@ -502,8 +502,9 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         it('should call toggleCancelButton', function() {
-            view.onSavingRow();
-            expect(view.toggleCancelButton).toHaveBeenCalled();
+            view.onSavingRow(true, 'cid1');
+
+            expect(view.toggleCancelButton).toHaveBeenCalledWith(true, 'cid1');
         });
     });
 
@@ -513,7 +514,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             setDisabledSpy = sinon.collection.spy();
             view.fields = [{
                 name: 'inline-cancel',
-                setDisabled: setDisabledSpy
+                setDisabled: setDisabledSpy,
+                model: view.model
             }];
         });
 
@@ -523,7 +525,8 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
         });
 
         it('should call toggleCancelButton', function() {
-            view.toggleCancelButton();
+            view.toggleCancelButton(true, view.model.cid);
+
             expect(setDisabledSpy).toHaveBeenCalled();
         });
     });

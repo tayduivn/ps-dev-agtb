@@ -89,7 +89,7 @@
      * @inheritdoc
      */
     _save: function() {
-        this.view.layout.trigger('editablelist:' + this.view.name + ':saving', true);
+        this.view.layout.trigger('editablelist:' + this.view.name + ':saving', true, this.model.cid);
 
         if (this.view.model.isNew()) {
             this.view.context.parent.trigger('quotes:defaultGroup:save', _.bind(this._saveRowModel, this));

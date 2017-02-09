@@ -184,8 +184,10 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
         });
 
         it('should trigger editablelist:viewName:saving on the view.layout', function() {
+            var evtName = 'editablelist:' + field.view.name + ':saving';
             field._save();
-            expect(field.view.layout.trigger).toHaveBeenCalled();
+
+            expect(field.view.layout.trigger).toHaveBeenCalledWith(evtName, true, field.model.cid);
         });
 
         it('should trigger default group save if default group is not saved', function() {
@@ -193,6 +195,7 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
                 return true;
             });
             field._save();
+
             expect(field.view.context.parent.trigger).toHaveBeenCalled();
             expect(field._saveRowModel).not.toHaveBeenCalled();
         });
@@ -202,6 +205,7 @@ describe('Products.Base.Fields.QuoteDataEditablelistbutton', function() {
                 return false;
             });
             field._save();
+
             expect(field.view.context.parent.trigger).not.toHaveBeenCalled();
             expect(field._saveRowModel).toHaveBeenCalled();
         });

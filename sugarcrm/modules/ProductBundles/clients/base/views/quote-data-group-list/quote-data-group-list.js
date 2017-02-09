@@ -346,13 +346,12 @@
      * also resets the rowFields with the new model's ID so rows toggle properly
      *
      * @param {Data.Bean} rowModel
-     * @param {string} oldModelId
      */
-    onSaveRowEdit: function(rowModel, oldModelId) {
+    onSaveRowEdit: function(rowModel) {
         var modelId = rowModel.cid;
         var modelModule = rowModel.module;
 
-        this.toggleCancelButton(false);
+        this.toggleCancelButton(false, rowModel.cid);
         this.toggleRow(modelModule, modelId, false);
         this.onNewItemChanged();
     },
@@ -361,20 +360,22 @@
      * Handles when the row is being saved but has not been saved fully yet
      *
      * @param {boolean} disableCancelBtn If we should disable the button or not
+     * @param {string} rowModelCid The model.cid of the row that is saving
      */
-    onSavingRow: function(disableCancelBtn) {
+    onSavingRow: function(disableCancelBtn, rowModelCid) {
         // todo: SFA-4541 needs to add code in here to toggle fields to readonly
-        this.toggleCancelButton(disableCancelBtn);
+        this.toggleCancelButton(disableCancelBtn, rowModelCid);
     },
 
     /**
      * Toggles the cancel button disabled or not
      *
      * @param {boolean} disable If we should disable the button or not
+     * @param {string} rowModelCid The model.cid of the row that needs its cancel button toggled
      */
-    toggleCancelButton: function(disable) {
+    toggleCancelButton: function(disable, rowModelCid) {
         var cancelBtn = _.find(this.fields, function(field) {
-            return field.name == 'inline-cancel';
+            return field.name == 'inline-cancel' && field.model.cid === rowModelCid;
         });
         if (cancelBtn) {
             cancelBtn.setDisabled(disable);
