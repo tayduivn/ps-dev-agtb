@@ -43,6 +43,8 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($_REQUEST);
+        SugarTestCaseUtilities::removeAllCreatedCases();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
     }
 
     /**
@@ -672,5 +674,90 @@ class PMSEEngineUtilsTest extends PHPUnit_Framework_TestCase
         $result_test2 = $this->object->getAllFieldsBean('');
         $this->assertEquals('', $result_test2);
     }
-    
+
+    /**
+     * @covers PMSEEngineUtils::makeCacheKey
+     */
+    public function testMakeCacheKey_NoId()
+    {
+        $beanMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+        $result_test = PMSEEngineUtils::makeCacheKey('Tasks', $beanMock, 'cases');
+        $this->assertNull($result_test);
+    }
+
+    /**
+     * @covers PMSEEngineUtils::makeCacheKey
+     */
+    public function testMakeCacheKey()
+    {
+        $beanMock = $this->getMockBuilder('SugarBean')
+            ->disableOriginalConstructor()
+            ->setMethods(array('load_relationship'))
+            ->getMock();
+        $beanMock->name = 'MakeCacheKey Test';
+        $beanMock->id = '12345678';
+        $result_test = PMSEEngineUtils::makeCacheKey('Tasks', $beanMock, 'cases');
+        $this->assertEquals('pmse_Tasks_12345678_cases_parent_bean', $result_test);
+    }
+
+    /**
+     * @covers PMSEEngineUtils::getParentBean
+     */
+    public function testGetParentBean_NoCache()
+    {
+        $flowData = array(
+            'cas_id' => 1,
+            'cas_index' => 2,
+            'cas_previous' => 2,
+            'bpmn_id' => '9283jd9238j3d',
+            'cas_sugar_module' => 'Tasks',
+            'evn_module'=>'Cases',
+            'rel_process_module' => 'Cases',
+            'rel_element_module' => 'Tasks',
+            'cas_sugar_object_id' => '893u2d89qj2398d',
+            'rel_element_relationship' => 'tasks',
+        );
+
+        // Build the cases_tasks relationship
+        $case = SugarTestCaseUtilities::createCase('', ['name' => 'GetLinkedBeans Test Case']);
+        $task = SugarTestTaskUtilities::createTask('', ['name' => 'GetLinkedBeans Test Task']);
+        $case->tasks->add($task);
+
+        $result = PMSEEngineUtils::getParentBean($flowData, $task, false);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals($result->name, 'GetLinkedBeans Test Case');
+    }
+
+    /**
+     * @covers PMSEEngineUtils::getParentBean
+     */
+    public function testGetParentBean_WithCache()
+    {
+        $flowData = array(
+            'cas_id' => 1,
+            'cas_index' => 2,
+            'cas_previous' => 2,
+            'bpmn_id' => '9283jd9238j3d',
+            'cas_sugar_module' => 'Tasks',
+            'evn_module'=>'Cases',
+            'rel_process_module' => 'Cases',
+            'rel_element_module' => 'Tasks',
+            'cas_sugar_object_id' => '893u2d89qj2398d',
+            'rel_element_relationship' => 'tasks',
+        );
+
+        // Build the cases_tasks relationship
+        $case = SugarTestCaseUtilities::createCase('', ['name' => 'GetLinkedBeans Test Case']);
+        $task = SugarTestTaskUtilities::createTask('', ['name' => 'GetLinkedBeans Test Task']);
+        $case->tasks->add($task);
+
+        // By default getParentBean with cache enabled
+        $result = PMSEEngineUtils::getParentBean($flowData, $task);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals($result->name, 'GetLinkedBeans Test Case');
+    }
+
 }

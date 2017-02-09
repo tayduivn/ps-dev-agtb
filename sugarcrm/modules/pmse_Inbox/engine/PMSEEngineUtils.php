@@ -14,6 +14,8 @@
  * Get the logger class for handling the log
  */
 
+use Sugarcrm\Sugarcrm\ProcessManager;
+
 /**
  * Class contains utilities as encoder and decoders for codes url, remove bound fields,
  * generates random unique id code, get entity dictionary and checks if a field required, visible and editField
@@ -1483,7 +1485,9 @@ class PMSEEngineUtils
             return $bean->$relName->getRelatedModuleLinkName();
         }
 
-        throw new \Exception("Related module link name not found for {$flowData['evn_module']}->{$relName}");
+        $msgString = 'Related module link name not found for %s->%s. Rel Process Module: %s';
+        $msg = sprintf($msgString, $flowData['evn_module'], $relName, $flowData['rel_process_module']);
+        throw ProcessManager\Factory::getException('Execution', $msg);
     }
 
     /**
@@ -1507,19 +1511,74 @@ class PMSEEngineUtils
     }
 
     /**
+     * Makes a cache key in PMSE relationship parent bean cache.
+     * @param string $mName The name of the module for this bean
+     * @param SugarBean $bean The bean to use the ID from
+     * @param string $linkName The link name from the bean vardef
+     * @return string Cache key.
+     */
+    public static function makeCacheKey($mName, $bean, $linkName)
+    {
+        if (empty($bean->id)) {
+            return null;
+        }
+
+        return 'pmse_' . $mName . '_' . $bean->id . '_' . $linkName . '_parent_bean';
+    }
+
+    /**
      * @param $flowData
      * @param $bean
+     * @param bool $isCacheEnabled indicating that parent bean caching is enabled
      * @return mixed|null
      * @throws Exception
      */
-    public static function getParentBean($flowData, $bean) {
-        $linkName = self::getRelatedLinkName($flowData);
-        $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
-        if (empty($parentBean)) {
-            //Parent Bean not found
+    public static function getParentBean($flowData, $bean, $isCacheEnabled = true)
+    {
+        $cache = SugarCache::instance();
+
+        try {
+            $linkName = self::getRelatedLinkName($flowData);
+        } catch (\Exception $e) {
+            // Logging happens in the getRelatedLinkName method
             return null;
         }
-        return current($parentBean);
+
+        // Get the bean name, needed for logging and such
+        $mName = $bean->getModuleName();
+
+        // If the link name is empty, then we should bail out early
+        if (empty($linkName)) {
+            PMSELogger::getInstance()->warning('Link name on the ' . $mName . ' bean was not found');
+            return null;
+        }
+
+        // Just to be sure there is something to work with
+        if (!isset($bean->$linkName) || !$bean->load_relationship($linkName)) {
+            PMSELogger::getInstance()->warning('Link name ' . $linkName
+                . ' was not found on the ' . $mName . ' bean or not loadable');
+            return null;
+        }
+
+        $cacheKey = self::makeCacheKey($mName, $bean, $linkName);
+        // If there is no bean id then there is no related record we can find
+        if (empty($cacheKey)) {
+            PMSELogger::getInstance()->warning('Bean ID was not found');
+            return null;
+        }
+
+        // Generate and set the data here into $cache->$cacheKey
+        if (!isset($cache->$cacheKey) || !$isCacheEnabled) {
+            $parentBean = $bean->$linkName->getBeans(array('limit' => 1));
+            if (empty($parentBean)) {
+                // Parent Bean not found
+                PMSELogger::getInstance()->warning('No parent bean found for ' . $mName);
+                return null;
+            }
+            $cache->$cacheKey = current($parentBean);
+        }
+
+        return $cache->$cacheKey;
     }
 
     /*
