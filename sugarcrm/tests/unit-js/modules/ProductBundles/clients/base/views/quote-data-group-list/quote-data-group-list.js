@@ -1269,15 +1269,27 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
             view.rowFields[rowModelId] = rowModel;
 
             toggleClassStub = sinon.collection.stub();
+            sortableStub = sinon.collection.stub();
+            addClassStub = sinon.collection.stub();
+            jqueryStub = {
+                toggleClass: toggleClassStub,
+                hasClass: function() {
+                    return false;
+                },
+                parent: function() {},
+                addClass: addClassStub
+            };
 
             sinon.collection.stub(view, '$', function() {
+                return jqueryStub;
+            });
+
+            sinon.collection.stub(jqueryStub, 'parent', function() {
                 return {
-                    toggleClass: toggleClassStub,
-                    hasClass: function() {
-                        return false;
-                    }
+                    sortable: sortableStub
                 };
             });
+
             sinon.collection.stub(view, 'toggleFields', function() {});
             sinon.collection.stub(view.context.parent, 'trigger', function() {});
             sinon.collection.stub(view.context, 'trigger', function() {});
@@ -1307,6 +1319,14 @@ describe('ProductBundles.Base.Views.QuoteDataGroupList', function() {
 
             it('should have called view.context.trigger with list:editrow:fire, toggleModel', function() {
                 expect(view.context.trigger).toHaveBeenCalledWith('list:editrow:fire', rowModel);
+            });
+
+            it('should have called addClass with not-sortable', function() {
+                expect(addClassStub).toHaveBeenCalledWith('not-sortable');
+            });
+
+            it('should call sortable with a cancel structure', function() {
+                expect(sortableStub).toHaveBeenCalledWith({cancel: '.not-sortable'});
             });
         });
 
