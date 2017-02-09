@@ -598,6 +598,14 @@ class HealthCheckScannerMeta
             'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Sidecar_Controller_Extends_from_Removed_Sidecar/',
             //@codingStandardsIgnoreEnd
         ),
+        560 => array(
+            'report' => 'nextgenquotes_quotesjs',
+            'bucket' => self::MANUAL,
+        ),
+        561 => array(
+            'report' => 'nextgenquotes_editviewjs',
+            'bucket' => self::MANUAL,
+        ),
 
         // Bucket G
         901 => array(
