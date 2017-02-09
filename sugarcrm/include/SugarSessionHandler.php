@@ -64,7 +64,14 @@ class SugarSessionHandler extends SessionHandler
      */
     public function close()
     {
-        if ($this->isCurrentSessionExceeded()) {
+        if ($this->isCurrentSessionExceeded() && basename($_SERVER['SCRIPT_NAME']) !== 'cron.php') {
+            global $current_user;
+
+            $id = "unknown";
+            if (!empty($current_user)) {
+                $id = $current_user->id;
+            }
+
             $vars = array(
                 'SERVER_NAME',
                 'SERVER_ADDR',
@@ -83,8 +90,9 @@ class SugarSessionHandler extends SessionHandler
             }
 
             $this->log->fatal(sprintf(
-                '[SessionLock] Session lock was held for %d seconds which is longer than the maximum of %d seconds.'
+                '[SessionLock] Session lock for user id %s was held for %d seconds which is longer than the maximum of %d seconds.'
                 . ' Request details: %s',
+                $id,
                 $this->session_time,
                 $this->max_session_time,
                 implode(', ', $details)
@@ -118,7 +126,7 @@ class SugarSessionHandler extends SessionHandler
         if ($this->max_session_time && $this->session_time) {
             return $this->session_time > $this->max_session_time;
         }
-        
+
         return false;
     }
 }
