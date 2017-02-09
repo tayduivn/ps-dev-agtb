@@ -396,39 +396,37 @@ describe("Record View", function () {
                         view.context.trigger('button:cancel_button:click');
 
                         if (view.meta.hashSync) {
+                            expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id/edit', {trigger: false});
                             expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id', {trigger: false});
                         } else {
                             expect(navigateStub).not.toHaveBeenCalled();
                         }
                     });
 
-                    it('Should handle the url properly if save button is clicked', function() {
+                    it('Should handle the url properly if save button is clicked and unset context action', function() {
+
+                        // need this to pretend that the model is valid for record view first pass
+                        sinonSandbox.stub(view.model, 'doValidate', function(fields, cb) {
+                            cb(true);
+                        });
+
+                        // don't save the model (no need to send to the server)
+                        sinonSandbox.stub(view.model, 'save');
+
                         view.render();
                         view.meta.hashSync = hashSyncValue;
                         view.context.trigger('button:edit_button:click');
                         view.context.trigger('button:save_button:click');
 
                         if (view.meta.hashSync) {
-                            expect(navigateStub).toHaveBeenCalled();
+                            expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id/edit', {trigger: false});
+                            expect(navigateStub).toHaveBeenCalledWith('Cases/my-case-id', {trigger: false});
                         } else {
                             expect(navigateStub).not.toHaveBeenCalled();
                         }
                         expect(view.context.get('action')).toBeUndefined();
                     });
 
-                    it('Should unset the context action after edit if it exists', function() {
-                        view.render();
-                        view.meta.hashSync = hashSyncValue;
-                        view.context.trigger('button:edit_button:click');
-                        view.context.trigger('button:save_button:click');
-
-                        if (view.meta.hashSync) {
-                            expect(navigateStub).toHaveBeenCalled();
-                        } else {
-                            expect(navigateStub).not.toHaveBeenCalled();
-                        }
-
-                    });
                 });
         });
     });
