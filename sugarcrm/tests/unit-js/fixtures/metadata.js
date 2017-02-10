@@ -896,7 +896,6 @@ fixtures.metadata = {
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
-                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
                 "buttonImageOnly: true," +
                 "dateFormat: \"yy-mm-dd\"" +
                 "});" +
@@ -929,7 +928,6 @@ fixtures.metadata = {
                 "  	$(function() {" +
                 "$( \".datepicker\" ).datepicker({" +
                 "showOn: \"button\"," +
-                "buttonImage: \"../lib/jquery-ui/css/smoothness/images/calendar.gif\"," +
                 "buttonImageOnly: true" +
                 "});" +
                 "});\n" +
