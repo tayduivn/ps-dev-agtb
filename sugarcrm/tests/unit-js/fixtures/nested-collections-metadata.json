@@ -35,18 +35,20 @@
             "views": {
                 "detail": {
                     "meta": {
-                        "panels": [{
-                            "fields": {
-                                "amount": {
-                                    "name": "amount",
-                                    "type": "currency"
-                                },
-                                "name": {
-                                    "name": "name",
-                                    "type": "name"
+                        "panels": [
+                            {
+                                "fields": {
+                                    "amount": {
+                                        "name": "amount",
+                                        "type": "currency"
+                                    },
+                                    "name": {
+                                        "name": "name",
+                                        "type": "name"
+                                    }
                                 }
                             }
-                        }]
+                        ]
                     }
                 }
             },
@@ -135,10 +137,17 @@
             "dependencies": [
                 {
                     "name": "deal_tot",
-                    "hooks": ["all"],
+                    "hooks": [
+                        "all"
+                    ],
                     "trigger": "true",
-                    "triggerFields": ["products"],
-                    "relatedFields": ["deal_calc", "subtotal"],
+                    "triggerFields": [
+                        "products"
+                    ],
+                    "relatedFields": [
+                        "deal_calc",
+                        "subtotal"
+                    ],
                     "onload": false,
                     "isRelated": true,
                     "actions": [
@@ -151,22 +160,29 @@
                             }
                         },
                         {
-                           "action": "SetValue",
-                           "params": {
-                               "target": "subtotal",
-                               "value": "rollupCurrencySum($products, \"subtotal\")",
-                               "errorValue": null
-                           }
-                       }
+                            "action": "SetValue",
+                            "params": {
+                                "target": "subtotal",
+                                "value": "rollupCurrencySum($products, \"subtotal\")",
+                                "errorValue": null
+                            }
+                        }
                     ],
                     "notActions": []
                 },
                 {
                     "name": "new_sub",
-                    "hooks": ["all"],
+                    "hooks": [
+                        "all"
+                    ],
                     "trigger": "true",
-                    "triggerFields": ["subtotal", "deal_tot"],
-                    "relatedFields": ["new_sub"],
+                    "triggerFields": [
+                        "subtotal",
+                        "deal_tot"
+                    ],
+                    "relatedFields": [
+                        "new_sub"
+                    ],
                     "onload": false,
                     "isRelated": false,
                     "actions": [
@@ -248,10 +264,13 @@
                     ],
                     "trigger": "true",
                     "triggerFields": [
-                        "discount_price", "quantity", "discount_amount"
+                        "discount_price",
+                        "quantity",
+                        "discount_amount"
                     ],
                     "relatedFields": [
-                        "deal_calc", "subtotal"
+                        "deal_calc",
+                        "subtotal"
                     ],
                     "onload": false,
                     "isRelated": false,
