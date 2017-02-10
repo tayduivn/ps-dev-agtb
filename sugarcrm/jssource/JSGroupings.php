@@ -225,7 +225,6 @@
                array(
                    'include/javascript/phpjs/base64_encode.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery-ui-min.js' => 'include/javascript/sugar_sidecar.min.js',
-                   'sidecar/lib/jquery-placeholder/jquery.placeholder.js' => 'include/javascript/sugar_sidecar.min.js'
                ),
                getSubgroupForTarget('bootstrap', 'include/javascript/sugar_sidecar.min.js'),
                array(

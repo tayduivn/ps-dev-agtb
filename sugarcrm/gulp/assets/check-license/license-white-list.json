@@ -52,7 +52,6 @@
     "sidecar/lib/codecov/",
     "sidecar/lib/jasmine/",
     "sidecar/lib/jquery/",
-    "sidecar/lib/jquery-placeholder/",
     "sidecar/lib/jquery-ui/",
     "sidecar/lib/mousetrap/",
     "sidecar/lib/zepto/",

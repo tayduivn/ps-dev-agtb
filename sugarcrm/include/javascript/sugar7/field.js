@@ -227,17 +227,6 @@
                         this.decorateHelper();
                     }
                 }
-
-                /**
-                 * Fix placeholder on global search on IE and old browsers
-                 */
-                if ($.fn.placeholder) {
-                    var $input = this.$('input');
-                    _.each($input, function(element) {
-                        var $element = $(element);
-                        $element.attr('placeholder') && $element.placeholder();
-                    });
-                }
             },
 
             /**
