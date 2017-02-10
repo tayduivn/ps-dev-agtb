@@ -213,31 +213,6 @@ class Quote extends SugarBean
     public function fill_in_additional_detail_fields()
     {
         return false;
-        parent::fill_in_additional_detail_fields();
-        if (!empty($this->id)) {
-            $this->set_account();
-            $this->set_contact();
-            $this->set_opportunity();
-        }
-
-        if (!empty($this->currency_id)) {
-            $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-            if ($currency->id != $this->currency_id || $currency->deleted == 1) {
-                $this->tax = $this->tax_usdollar;
-                $this->total = $this->total_usdollar;
-                $this->subtotal = $this->subtotal_usdollar;
-                $this->shipping = $this->shipping_usdollar;
-                $this->currency_id = $currency->id;
-            }
-        }
-
-        if (!empty($this->shipper_id)) {
-            $this->set_shipper();
-        }
-
-        if (!empty($this->taxrate_id)) {
-            $this->set_taxrate_info();
-        }
     }
 
     public function set_contact()
