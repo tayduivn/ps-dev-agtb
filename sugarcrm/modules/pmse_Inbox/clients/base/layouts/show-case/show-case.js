@@ -470,12 +470,13 @@
                     if (this.checkReadonly(field)) {
                         field.def.readonly = true;
                     }
-                    if (field.fields && _.isArray(field.fields)) {
+                    if (field.def.fields && _.isArray(field.def.fields)) {
                         var that = this;
                         var basefield = field;
-                        _.each(field.fields, function (field) {
+                        _.each(field.def.fields, function(field) {
                             if (that.checkReadonly(field)) {
-                                field.action = "disabled";
+                                field.readonly = true;
+                                field.action = 'detail';
                                 // Some fields use shouldDisable to enable readonly property,
                                 // like 'body' in KBContents
                                 if (!_.isUndefined(field.shouldDisable)) {

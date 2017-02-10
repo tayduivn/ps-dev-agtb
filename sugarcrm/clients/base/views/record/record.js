@@ -1307,7 +1307,7 @@
                 }
 
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.type === 'fieldset') {
+                if (field.fields && _.isArray(field.fields)) {
                     if (field.readonly || _.every(field.fields, function(field) {
                         return !app.acl.hasAccessToModel('edit', this.model, field.name);
                     }, this)) {

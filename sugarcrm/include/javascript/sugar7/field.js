@@ -355,6 +355,19 @@
             /**
              * @inheritdoc
              *
+             * Set the viewname for readonly fields to be detail
+             * @override
+             */
+            setViewName: function(view) {
+                if (this.def.readonly) {
+                    view = 'detail';
+                }
+                this.options.viewName = view;
+            },
+
+            /**
+             * @inheritdoc
+             *
              * Override setMode to remove any stale view action CSS classes.
              * @override
              */
