@@ -11,7 +11,6 @@
  */
 
 require_once 'tests/{old}/upgrade/UpgradeTestCase.php';
-require_once 'tests/{old}/SugarTestEmailTemplateUtilities.php';
 require_once 'modules/EmailTemplates/upgrade/scripts/post/2_EmailTemplatesUpdateHasVariables.php';
 
 /**

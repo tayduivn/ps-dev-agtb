@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Emails/clients/base/api/EmailsRelateRecordApi.php';
-
 /**
  * @coversDefaultClass EmailsRelateRecordApi
  * @group api

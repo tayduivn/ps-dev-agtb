@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/FilterApi.php';
-
 class EmailsFilterApi extends FilterApi
 {
     const MACRO_CURRENT_USER_ID = '$current_user_id';

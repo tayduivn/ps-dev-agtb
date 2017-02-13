@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/DocumentRevisions/DocumentRevision.php';
-
 class DocumentRevisionTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private static $docs = array();

@@ -11,12 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-/**
- * Class MailApi
- * @deprecated Use EmailsApi instead.
- * @see EmailsApi
- */
 class MailApi extends ModuleApi
 {
     /*-- API Argument Constants --*/
@@ -155,6 +149,7 @@ class MailApi extends ModuleApi
 
     /**
      * @deprecated POST /Mail has been deprecated and will not be available after v11. Use POST /Emails instead.
+     * @see EmailsApi::createRecord()
      * @param ServiceBase $api
      * @param array $args
      * @return array
@@ -171,6 +166,7 @@ class MailApi extends ModuleApi
     /**
      * @deprecated PUT /Mail/:record has been deprecated and will not be available after v11. Use PUT /Emails/:record
      * instead.
+     * @see EmailsApi::updateRecord()
      * @param ServiceBase $api
      * @param array $args
      * @return array
@@ -207,6 +203,7 @@ class MailApi extends ModuleApi
      *
      * @deprecated POST /Mail/archive has been deprecated and will not be available after v11. Use POST /Emails with
      * `{"state": "Archived"}` instead.
+     * @see EmailsApi::createRecord()
      * @param ServiceBase $api
      * @param array $args
      * @return array

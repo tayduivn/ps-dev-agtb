@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/OutboundEmail/clients/base/api/OutboundEmailApi.php';
-
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**

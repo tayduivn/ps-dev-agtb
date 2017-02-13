@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'clients/base/api/ModuleApi.php';
-
 class EmailsApi extends ModuleApi
 {
     /**

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/EmailTemplates/EmailTemplate.php';
-
 class EmailTemplateTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testSystemTemplates_ProperConfiguration_ExistWithProperTypes()

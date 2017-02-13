@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Emails/clients/base/api/EmailsApi.php';
-
 class EmailsApiIntegrationTestCase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $service;

@@ -10,8 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'modules/Emails/EmailsApiHelper.php';
-
 use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**

@@ -146,6 +146,7 @@ require_once 'SugarTestDatabaseMock.php';
 require_once 'SugarTestKBContentUtilities.php';
 require_once 'SugarTestSchedulersJobUtilities.php';
 require_once 'SugarTestCategoryUtilities.php';
+require_once 'SugarTestEmailTemplateUtilities.php';
 
 //BEGIN SUGARCRM flav=ent ONLY
 require_once 'SugarTestProcessAuthorUtilities.php';
