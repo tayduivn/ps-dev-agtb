@@ -46,13 +46,13 @@ describe('Emails.Views.Create', function() {
     });
 
     afterEach(function() {
+        sandbox.restore();
         app.drawer = undefined;
         view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         Handlebars.templates = {};
-        sandbox.restore();
     });
 
     describe('email is not configured', function() {
@@ -185,7 +185,7 @@ describe('Emails.Views.Create', function() {
 
         it('should set other values if passed', function() {
             runs(function() {
-                view.prepopulate({foo: 'bar'});
+                view.prepopulate({name: 'bar'});
             });
 
             waitsFor(function() {
@@ -1291,6 +1291,27 @@ describe('Emails.Views.Create', function() {
                 view.model.trigger('change:' + data);
                 expect(field.render).toHaveBeenCalled();
             });
+        });
+    });
+
+    describe('hasUnsavedChanges', function() {
+        it('should use the create views hasUnsavedChanges()', function() {
+            sandbox.stub(view.model, 'isNew').returns(true);
+            sandbox.stub(view, '_super').withArgs('hasUnsavedChanges');
+
+            view.hasUnsavedChanges();
+
+            expect(view._super).toHaveBeenCalled();
+        });
+
+        it('should use the record views hasUnsavedChanges()', function() {
+            SugarTest.loadComponent('base', 'view', 'record', 'Emails');
+            sandbox.stub(view.model, 'isNew').returns(false);
+            sandbox.stub(app.view.views.BaseEmailsRecordView.prototype, 'hasUnsavedChanges');
+
+            view.hasUnsavedChanges();
+
+            expect(app.view.views.BaseEmailsRecordView.prototype.hasUnsavedChanges).toHaveBeenCalled();
         });
     });
 });

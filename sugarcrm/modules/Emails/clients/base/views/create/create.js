@@ -180,6 +180,23 @@
     }, 200),
 
     /**
+     * @inheritdoc
+     *
+     * `BaseEmailsCreateView` is used when creating new emails and editing
+     * existing drafts. The model is not new when editing drafts. In those
+     * cases, {@link BaseEmailsRecordView#hasUnsavedChanges} is called to use
+     * logic that checks for unsaved changes for existing records instead of
+     * new records.
+     */
+    hasUnsavedChanges: function() {
+        if (this.model.isNew()) {
+            return this._super('hasUnsavedChanges');
+        }
+
+        return app.view.views.BaseEmailsRecordView.prototype.hasUnsavedChanges.call(this);
+    },
+
+    /**
      * This method is called when the view is notified that email has not been
      * configured. Disables send button.
      *
@@ -203,6 +220,8 @@
      */
     prepopulate: function(values) {
         var self = this;
+        var fields = app.metadata.getModule(this.module, 'fields');
+        fields = _.keys(fields);
         _.defer(function() {
             _.each(values, function(value, fieldName) {
                 switch (fieldName) {
@@ -220,7 +239,9 @@
                         self._signatureLocation = value;
                         break;
                     default:
-                        self.model.set(fieldName, value);
+                        if (_.contains(fields, fieldName)) {
+                            self.model.set(fieldName, value);
+                        }
                 }
             });
 

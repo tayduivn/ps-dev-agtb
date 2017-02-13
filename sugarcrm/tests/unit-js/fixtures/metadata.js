@@ -1072,6 +1072,33 @@ fixtures.metadata = {
                     "source": "non-db",
                     "type": "link",
                     "vname": "LBL_ATTACHMENTS"
+                },
+                "description_html": {
+                    "name": "description_html",
+                    "type": "varchar",
+                    "vname": "description_html",
+                    "source": "non-db"
+                },
+                "description": {
+                    "name": "description",
+                    "type": "varchar",
+                    "vname": "LBL_TEXT_BODY",
+                    "source": "non-db",
+                    "full_text_search": {
+                        "enabled": "true",
+                        "searchable": "true",
+                        "type": "text"
+                    }
+                },
+                "reply_to_id": {
+                    "name": "reply_to_id",
+                    "vname": "LBL_EMAIL_REPLY_TO_ID",
+                    "type": "id",
+                    "len": "36",
+                    "reportable": "false",
+                    "duplicate_on_record_copy": "no",
+                    "importable": "false",
+                    "comment": "Identifier of email record that this email was a reply to"
                 }
             }
         },
