@@ -121,16 +121,6 @@
 </tr>
 <tr>
 <td width="210%">&nbsp;</td>
-<td width="45%">{$MOD.LBL_TPL_TAX}</td>
-<td align="right" width="45%">{literal}{$bundle.tax}{/literal}</td>
-</tr>
-<tr>
-<td width="210%">&nbsp;</td>
-<td width="45%">{$MOD.LBL_TPL_SHIPPING}</td>
-<td align="right" width="45%">{literal}{$bundle.shipping}{/literal}</td>
-</tr>
-<tr>
-<td width="210%">&nbsp;</td>
 <td width="45%">{$MOD.LBL_TPL_TOTAL}</td>
 <td align="right" width="45%">{literal}{$bundle.total}{/literal}</td>
 </tr>
