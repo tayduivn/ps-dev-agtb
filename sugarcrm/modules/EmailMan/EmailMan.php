@@ -608,15 +608,11 @@ class EmailMan extends SugarBean{
 				}
 			}
 
-			//test for duplicate email address by marketing id.
-            $dup_query="select id from campaign_log where more_information='".$module->email1."' and marketing_id='".$this->marketing_id."'";
-			$dup=$this->db->query($dup_query);
-			$dup_row=$this->db->fetchByAssoc($dup);
-			if (!empty($dup_row)) {
-				//we have seen this email address before
-				$this->set_as_sent($module->email1,true,null,null,'blocked');
-				return true;
-			}
+            if ($this->hasEmailBeenSent($module->email1, $this->marketing_id)) {
+                // A non-Test version of this marketing email was previously sent to this Email address
+                $this->set_as_sent($module->email1, true, null, null, 'blocked');
+                return true;
+            }
 
 			$this->target_tracker_key=create_guid();
 
@@ -908,9 +904,33 @@ class EmailMan extends SugarBean{
      * @param int $id
      */
     public function mark_deleted($id)
-	{
+    {
         $query = "DELETE FROM {$this->table_name} WHERE id = ? ";
         $conn = $this->db->getConnection();
         $conn->executeQuery($query, array($id));
+    }
+
+    /**
+     * Determine whether a non-Test email has already been sent to the supplied Email Address
+     * as part of the supplied EmailMarketing instance
+     *
+     * @param string $email Email Address
+     * @param string $marketingId EmailMarketing Id
+     * @return bool  true if a Non-Test Email Has Already Been Sent
+     * @throws SugarQueryException
+     */
+    protected function hasEmailBeenSent($email, $marketingId)
+    {
+        $q = new SugarQuery();
+        $q->select(array('id'));
+        $q->from(BeanFactory::getBean('CampaignLog'));
+        $q->where()->queryAnd()
+            ->equals('more_information', $email)
+            ->equals('activity_type', 'targeted')
+            ->equals('marketing_id', $marketingId)
+            ->equals('deleted', 0);
+        $q->limit(1);
+        $rows = $q->execute();
+        return !empty($rows);
     }
 }
