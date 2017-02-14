@@ -1344,7 +1344,12 @@
                  * {@link BeanOverrides#changedAttributes}.
                  */
                 this.changedAttributes = _.wrap(this.changedAttributes, function(_super, diff) {
-                    var changed = _.extend(_super.call(this, diff) || {}, overrides.changedAttributes(diff));
+                    var collectionFieldNames = this.getCollectionFieldNames();
+                    var collectionFields = _.pick(diff, collectionFieldNames);
+                    var nonCollectionFields = _.omit(diff, collectionFieldNames);
+                    var fromOverrides = overrides.changedAttributes(collectionFields);
+                    var fromSuper = _super.call(this, nonCollectionFields);
+                    var changed = _.extend(fromSuper || {}, fromOverrides);
 
                     return _.isEmpty(changed) ? false : changed;
                 });
@@ -1363,7 +1368,17 @@
                  * {@link BeanOverrides#getSynced}.
                  */
                 this.getSynced = _.wrap(this.getSynced, function(_super, key) {
-                    return _.extend(app.utils.deepCopy(_super.call(this, key) || {}), overrides.getSynced(key));
+                    var fromOverrides = overrides.getSynced(key);
+                    var fromSuper = _super.call(this, key);
+
+                    if (key) {
+                        // Let super return its value if the key isn't for a
+                        // collection.
+                        return _.contains(this.getCollectionFieldNames(), key) ? fromOverrides : fromSuper;
+                    }
+
+                    // Merge the collection fields onto the object from super.
+                    return _.extend(app.utils.deepCopy(fromSuper || {}), fromOverrides);
                 });
             },
 

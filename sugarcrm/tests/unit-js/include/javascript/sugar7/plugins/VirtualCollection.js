@@ -728,6 +728,7 @@ describe('Plugins.VirtualCollection', function() {
     describe('Bean overrides for supporting collection fields', function() {
         beforeEach(function() {
             model.set(attribute, _.first(contacts, 4));
+            model.setSyncedAttributes(model.attributes);
             collection = model.get(attribute);
             sandbox.spy(collection, '_triggerChange');
         });
@@ -1018,18 +1019,27 @@ describe('Plugins.VirtualCollection', function() {
 
         describe('getting changed attributes', function() {
             it('should not include `invitees` in the return value', function() {
-                var changed = model.changedAttributes(model.getSynced());
+                var synced = model.getSynced();
+                var changed = model.changedAttributes(synced);
 
                 expect(changed[attribute]).toBeUndefined();
             });
 
             it('should include `invitees` in the return value', function() {
                 var changed;
+                var synced = model.getSynced();
 
                 model.get(attribute).remove([2]);
-                changed = model.changedAttributes(model.getSynced());
+                changed = model.changedAttributes(synced);
 
                 expect(changed[attribute]).not.toBeUndefined();
+            });
+
+            it('should not include `invitees` in the return value when diff is a deep copy', function() {
+                var synced = app.utils.deepCopy(model.getSynced());
+                var changed = model.changedAttributes(synced);
+
+                expect(changed[attribute]).toBeUndefined();
             });
         });
 
