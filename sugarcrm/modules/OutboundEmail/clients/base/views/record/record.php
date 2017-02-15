@@ -102,6 +102,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'type' => 'email-address',
                     'link' => false,
                 ),
+                // empty array needed for field placement
                 array(),
                 array(
                     'name' => 'mail_smtpuser',
