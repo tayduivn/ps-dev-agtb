@@ -1,12 +1,24 @@
 <?php
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication\UserProvider;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserInterface;
+
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider
  */
-class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
+class SugarLocalUserProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,8 +47,8 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Core\Exception\UsernameNotFoundException
-     * @covers loadUserByUsername
+     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
+     * @covers ::loadUserByUsername
      */
     public function testLoadUserByUsernameNoId()
     {
@@ -49,6 +61,7 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @coversNothing
      * @return array
      */
     public function providerLoadUserByUsernameNotAllowed()
@@ -62,8 +75,8 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerLoadUserByUsernameNotAllowed
-     * @expectedException Symfony\Component\Security\Core\Exception\UsernameNotFoundException
-     * @covers loadUserByUsername
+     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
+     * @covers ::loadUserByUsername
      * @param $isGroup
      * @param $portalOnly
      * @param $status
@@ -88,7 +101,7 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers loadUserByUsername
+     * @covers ::loadUserByUsername
      */
     public function testLoadUserByUsername()
     {
@@ -115,8 +128,8 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Security\Core\Exception\UnsupportedUserException
-     * @covers refreshUser
+     * @expectedException \Symfony\Component\Security\Core\Exception\UnsupportedUserException
+     * @covers ::refreshUser
      */
     public function testRefreshUserNonSupported()
     {
@@ -125,7 +138,7 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers refreshUser
+     * @covers ::refreshUser
      */
     public function testRefreshUser()
     {
@@ -153,7 +166,7 @@ class SugarLocalUserProviderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers supportsClass
+     * @covers ::supportsClass
      */
     public function testSupportsClass()
     {

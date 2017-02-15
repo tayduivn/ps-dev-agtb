@@ -31,15 +31,22 @@ class IdMLocalAuthenticate extends SugarAuthenticate
      */
     public function loginAuthenticate($username, $password, $fallback = false, $params = [])
     {
+        $isPasswordEncrypted = !empty($params['passwordEncrypted']);
+
         try {
             $authManager = $this->getAuthProviderBuilder()->buildAuthProviders();
 
             $token = new UsernamePasswordToken(
                 $username,
-                (new SugarPreAuthPassEncoder())->encodePassword($password, '', $params),
+                (new SugarPreAuthPassEncoder())->encodePassword($password, '', $isPasswordEncrypted),
                 AuthProviderManagerBuilder::PROVIDER_KEY_LOCAL,
                 User::getDefaultRoles()
             );
+
+            // TODO delete this when strtolower+md5 encrypt will be deleted
+            $token->setAttribute('isPasswordEncrypted', $isPasswordEncrypted);
+            // Raw password is required for password rehash on success auth
+            $token->setAttribute('rawPassword', $password);
 
             $token = $authManager->authenticate($token);
             $isAuth = $token && $token->isAuthenticated();

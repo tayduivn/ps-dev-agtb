@@ -14,6 +14,7 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 
 class SugarUserChecker extends UserChecker
 {
@@ -30,6 +31,13 @@ class SugarUserChecker extends UserChecker
      */
     public function checkPostAuth(UserInterface $user)
     {
+        /**
+         * All password expiration requests are processed in Mango after login
+         * Disable IdM auth password expire check by default
+         * @see \Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener
+         * @var User $user
+         */
+        $user->setPasswordExpired(false);
         parent::checkPostAuth($user);
     }
 }

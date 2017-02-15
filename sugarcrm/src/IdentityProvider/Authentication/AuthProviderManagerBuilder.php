@@ -29,6 +29,11 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnSuccessAuthListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\RehashPasswordListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUserLastLoginListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\PostLoginAuthListener;
+
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnFailureAuthListener;
 use Symfony\Component\Security\Core\AuthenticationEvents;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthSubscriber;
@@ -82,7 +87,27 @@ class AuthProviderManagerBuilder
         ]));
 
         $dispatcher = new EventDispatcher();
-        $dispatcher->addListener(AuthenticationEvents::AUTHENTICATION_SUCCESS, new SugarOnSuccessAuthListener());
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new LoadUserOnSessionListener(), 'execute']
+        );
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new RehashPasswordListener(), 'execute']
+        );
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new UserPasswordListener(), 'execute']
+        );
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new UpdateUserLastLoginListener(), 'execute']
+        );
+        $dispatcher->addListener(
+            AuthenticationEvents::AUTHENTICATION_SUCCESS,
+            [new PostLoginAuthListener(), 'execute']
+        );
+
         $dispatcher->addListener(AuthenticationEvents::AUTHENTICATION_FAILURE, new SugarOnFailureAuthListener());
         $dispatcher->addSubscriber(new SugarOnAuthSubscriber());
         $manager->setEventDispatcher($dispatcher);

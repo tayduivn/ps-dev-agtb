@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLocalAuthenticate;
+
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -18,26 +20,26 @@ require 'include/utils.php';
 /**
  * @coversDefaultClass \IdMLocalAuthenticate
  */
-class IdMLocalAuthenticateTest extends PHPUnit_Framework_TestCase
+class IdMLocalAuthenticateTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $idmLocalAuth;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $authProviderBuilder;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $authProviderManager;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $token;
 
@@ -46,7 +48,7 @@ class IdMLocalAuthenticateTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->idmLocalAuth = $this->getMockBuilder(IdMLocalAuthenticate::class)
+        $this->idmLocalAuth = $this->getMockBuilder(\IdMLocalAuthenticate::class)
             ->disableOriginalConstructor()
             ->setMethods(['getAuthProviderBuilder'])
             ->getMock();
@@ -68,7 +70,7 @@ class IdMLocalAuthenticateTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers IdMLocalAuthenticate::loginAuthenticate()
-     * @expectedException SugarApiExceptionNeedLogin
+     * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testLoginAuthenticateFailure()
     {
@@ -86,7 +88,12 @@ class IdMLocalAuthenticateTest extends PHPUnit_Framework_TestCase
     {
         $this->authProviderManager->expects($this->once())
             ->method('authenticate')
-            ->with($this->isInstanceOf(UsernamePasswordToken::class))
+            ->with($this->callback(function ($token) {
+                $this->assertInstanceOf(UsernamePasswordToken::class, $token);
+                $this->assertEquals('test', $token->getAttribute('rawPassword'));
+                $this->assertFalse($token->getAttribute('isPasswordEncrypted'));
+                return true;
+            }))
             ->willReturn($this->token);
 
         $this->token->expects($this->once())

@@ -20,12 +20,12 @@ class SugarPreAuthPassEncoder implements PasswordEncoderInterface
      * encode form login raw password before check
      * @param string $raw
      * @param string $salt
-     * @param array $params
+     * @param bool $isPasswordEncrypted
      * @return string
      */
-    public function encodePassword($raw, $salt, $params = [])
+    public function encodePassword($raw, $salt, $isPasswordEncrypted = false)
     {
-        if (empty($params['passwordEncrypted'])) {
+        if (!$isPasswordEncrypted) {
             $raw = strtolower(md5($raw));
         }
         return $raw;
