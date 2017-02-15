@@ -399,17 +399,20 @@ describe('Plugins.NestedCollection', function() {
         beforeEach(function() {
             model.set('name', 'foo');
             model.set(link, attachments);
+            model.setSyncedAttributes(model.attributes);
             collection = model.get(link);
         });
 
         it('should not include `' + link + '` in the return value', function() {
-            var changed = model.changedAttributes(model.getSynced());
+            var synced = model.getSynced();
+            var changed = model.changedAttributes(synced);
 
             expect(changed[link]).toBeUndefined();
         });
 
         it('should include `' + link + '` in the return value', function() {
             var changed;
+            var synced = model.getSynced();
             var models = [
                 {
                     name: 'bar'
@@ -422,9 +425,16 @@ describe('Plugins.NestedCollection', function() {
 
             collection.add(models);
             collection.remove(collection.at(0));
-            changed = model.changedAttributes(model.getSynced());
+            changed = model.changedAttributes(synced);
 
             expect(changed[link]).toBe(collection);
+        });
+
+        it('should not include `' + link + '` in the return value when diff is a deep copy', function() {
+            var synced = app.utils.deepCopy(model.getSynced());
+            var changed = model.changedAttributes(synced);
+
+            expect(changed[link]).toBeUndefined();
         });
     });
 

@@ -494,7 +494,12 @@
                  * {@link BeanOverrides#changedAttributes}.
                  */
                 this.changedAttributes = _.wrap(this.changedAttributes, function(_super, diff) {
-                    var changed = _.extend(_super.call(this, diff) || {}, overrides.changedAttributes(diff));
+                    var linkFieldNames = this.getNestedCollectionFieldNames('link');
+                    var linkFields = _.pick(diff, linkFieldNames);
+                    var nonLinkFields = _.omit(diff, linkFieldNames);
+                    var fromOverrides = overrides.changedAttributes(linkFields);
+                    var fromSuper = _super.call(this, nonLinkFields);
+                    var changed = _.extend(fromSuper || {}, fromOverrides);
 
                     return _.isEmpty(changed) ? false : changed;
                 });
