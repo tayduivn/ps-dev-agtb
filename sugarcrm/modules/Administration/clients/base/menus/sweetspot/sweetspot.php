@@ -401,7 +401,7 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'route' => '#bwc/index.php?module=ProductTypes&action=index',
+        'route' => '#ProductTypes',
     ),
     // Tax Rates
     array(

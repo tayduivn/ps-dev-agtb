@@ -40,7 +40,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-list',
     ),
     array(
-        'route'=>'#bwc/index.php?module=ProductTypes&action=EditView&return_module=ProductTypes&return_action=DetailView',
+        'route'=>'#ProductTypes',
         'label' =>'LNK_NEW_PRODUCT_TYPE',
         'acl_action'=>'',
         'acl_module'=>'',
