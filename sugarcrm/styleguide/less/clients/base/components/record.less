@@ -158,10 +158,12 @@
     .box-sizing(border-box);
     font-size: @fontSizeLarge;
     font-weight: 400;
-    color: @gray;
     z-index: 1;
     &:focus {
       z-index: 2;
+    }
+    &:not([disabled]):not([readonly]) {
+      color: @gray;
     }
   }
 
