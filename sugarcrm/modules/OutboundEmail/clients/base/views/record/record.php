@@ -93,15 +93,16 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'email_address',
-                    'type' => 'email-address',
-                    'link' => false,
-                ),
-                array(
                     'name' => 'mail_smtptype',
                     'type' => 'email-provider',
                     'span' => 12,
                 ),
+                array(
+                    'name' => 'email_address',
+                    'type' => 'email-address',
+                    'link' => false,
+                ),
+                array(),
                 array(
                     'name' => 'mail_smtpuser',
                     'required' => true,
