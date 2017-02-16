@@ -238,37 +238,37 @@ class vCal extends SugarBean {
         }
 
 	// static function:
-        // caches vcal for Activities in Sugar database
-        public static function cache_sugar_vcal_freebusy(&$user_focus)
-        {
-            global $sugar_config;
-            if (!static::$cacheUpdate_enabled) {
-                return;
-            }
-
-            if (empty($sugar_config['freebusy_use_vcal_cache'])) {
-                return; // VCal FreeBusy Cache Not Enabled - No Updates to vcals table will Occur
-            }
-
-            $focus = BeanFactory::getBean('vCals');
-
-            if (static::$backtrace_log_enabled == 'cache' || static::$backtrace_log_enabled == 'all') {
-                $trace = $focus->getBackTrace("VCAL:CACHE - ");
-                $GLOBALS['log']->fatal("VCAL:CACHE - cache_sugar_vcal_freebusy()\n" . $trace);
-            }
-
-            // set freebusy members and save
-            $arr = array('user_id'=>$user_focus->id,'type'=>'vfb','source'=>'sugar');
-            $focus->retrieve_by_string_fields($arr);
-
-
-            $focus->content = $focus->get_vcal_freebusy($user_focus,false);
-            $focus->type = 'vfb';
-            $focus->date_modified = null;
-            $focus->source = 'sugar';
-            $focus->user_id = $user_focus->id;
-            $focus->save();
+    // caches vcal for Activities in Sugar database
+    public static function cache_sugar_vcal_freebusy(&$user_focus)
+    {
+        global $sugar_config;
+        if (!static::$cacheUpdate_enabled) {
+            return;
         }
+
+        if (empty($sugar_config['freebusy_use_vcal_cache'])) {
+            return; // VCal FreeBusy Cache Not Enabled - No Updates to vcals table will Occur
+        }
+
+        $focus = BeanFactory::getBean('vCals');
+
+        if (static::$backtrace_log_enabled == 'cache' || static::$backtrace_log_enabled == 'all') {
+            $trace = $focus->getBackTrace("VCAL:CACHE - ");
+            $GLOBALS['log']->fatal("VCAL:CACHE - cache_sugar_vcal_freebusy()\n" . $trace);
+        }
+
+        // set freebusy members and save
+        $arr = array('user_id' => $user_focus->id, 'type' => 'vfb', 'source' => 'sugar');
+        $focus->retrieve_by_string_fields($arr);
+
+
+        $focus->content = $focus->get_vcal_freebusy($user_focus, false);
+        $focus->type = 'vfb';
+        $focus->date_modified = null;
+        $focus->source = 'sugar';
+        $focus->user_id = $user_focus->id;
+        $focus->save();
+    }
 
     /*
      * Lines of text SHOULD NOT be longer than 75 octets, excluding the line break.
