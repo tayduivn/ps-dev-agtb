@@ -852,6 +852,7 @@ class PMSECrmDataWrapper implements PMSEObservable
             $person = array();
             $person['fullName'] = $a['first_name'] . ' ' . $a['last_name'];
             $person['emailAddress'] = $a['email_address'];
+            $person['id'] = $a['id'];
             $out[] = $person;
         }
 

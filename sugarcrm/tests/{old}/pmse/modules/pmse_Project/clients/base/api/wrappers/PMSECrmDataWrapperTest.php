@@ -171,8 +171,6 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
             'ProcessMaker' => 'BpmnProject',
         );
 
-        $this->db = $this->createPartialMock('db', array('query', 'fetchByAssoc'));
-
         $this->beanFactory = $this->getMockBuilder("BeanFactory")
                 ->setMethods(array('getBean'))
                 ->getMock();
@@ -303,10 +301,8 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers PMSECrmDataWrapper::retrieveEmails
      * @todo   Implement testAddRelatedRecord().
      */
-    public function testRetrieveEmailsWithFilter() {
-
-//        $this->object = new PMSECrmDataWrapper();
-
+    public function testRetrieveEmailsWithFilter()
+    {
         $sampleModule = 'Opportunities';
         // setting up the inbound email bean
         $inboundEmailBean = $this->getMockBuilder('InboundEmail')
@@ -319,9 +315,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
 
         //fictional rowdata returned from the database
         $testRows = array(
-            array('first_name' => 'Aldo', 'last_name'=>'Rayne', 'email_address'=>'arayne@example.com'),
-            array('first_name' => 'Dominic', 'last_name'=>'Margarete', 'email_address'=>'dmargarete@example.com'),
-            array('first_name' => 'Bridgitte', 'last_name'=>'Hammershmack', 'email_address'=>'bhammer@example.com'),
+            array('first_name' => 'Aldo', 'last_name'=>'Rayne', 'email_address'=>'arayne@example.com', 'id'=>null),
+            array('first_name' => 'Dominic', 'last_name'=>'Margarete', 'email_address'=>'dmargarete@example.com', 'id'=>'2'),
+            array('first_name' => 'Bridgitte', 'last_name'=>'Hammershmack', 'email_address'=>'bhammer@example.com', 'id'=>'3'),
         );
         // expect just one query call
         $dbHandler->expects($this->exactly(1))
@@ -345,9 +341,9 @@ class PMSECrmDataWrapperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->object->setEmailBean($emailBean);
 
         $expectedResult = array(
-            array ('fullName' => 'Aldo Rayne', 'emailAddress' => 'arayne@example.com'),
-            array ('fullName' => 'Dominic Margarete', 'emailAddress' => 'dmargarete@example.com'),
-            array ('fullName' => 'Bridgitte Hammershmack', 'emailAddress' => 'bhammer@example.com')
+            array ('fullName' => 'Aldo Rayne', 'emailAddress' => 'arayne@example.com', 'id'=>null),
+            array ('fullName' => 'Dominic Margarete', 'emailAddress' => 'dmargarete@example.com', 'id'=>'2'),
+            array ('fullName' => 'Bridgitte Hammershmack', 'emailAddress' => 'bhammer@example.com', 'id'=>'3'),
         );
 
         $result = $this->object->retrieveEmails($sampleModule);
