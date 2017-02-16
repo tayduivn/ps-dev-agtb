@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+include_once 'include/utils/array_utils.php';
+
 /**
  * Convert all \ to / in path, remove multiple '/'s and '/./'
  * @param string $path
