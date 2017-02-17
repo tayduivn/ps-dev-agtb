@@ -28,11 +28,11 @@ use Sugarcrm\IdentityProvider\Authentication\Provider\LdapAuthenticationProvider
 use Sugarcrm\IdentityProvider\Authentication\Provider\SAMLAuthenticationProvider;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnSuccessAuthListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\LoadUserOnSessionListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\RehashPasswordListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UpdateUserLastLoginListener;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\PostLoginAuthListener;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPasswordListener;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnFailureAuthListener;
 use Symfony\Component\Security\Core\AuthenticationEvents;
