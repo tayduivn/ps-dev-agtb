@@ -10,7 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
- 
 
 class SugarTestProductUtilities
 {
@@ -18,24 +17,29 @@ class SugarTestProductUtilities
 
     private function __construct() {}
 
-    public static function createProduct($id = '') 
+    public static function createProduct($id = '', $values = array())
     {
         $time = mt_rand();
-    	$name = 'SugarProduct';
-    	$product = new Product();
-        $product->currency_id = '-99';
-        $product->name = $name . $time;
-        $product->tax_class = 'Taxable';
-        $product->cost_price = '100.00';
-        $product->list_price = '100.00';
-        $product->discount_price = '100.00';
-        $product->quantity = '100';
+        $product = BeanFactory::newBean('Products');
 
-        //BEGIN SUGARCRM flav=ent ONLY
-        $product->best_case = '100.00';
-        $product->likely_case = '80.00';
-        $product->worst_case = '50.00';
-        //END SUGARCRM flav=ent ONLY
+        $values = array_merge(array(
+            'currency_id' => '-99',
+            'name' => 'SugarProduct' . $time,
+            'tax_class' => 'Taxable',
+            'cost_price' => '100.00',
+            'list_price' => '100.00',
+            'discount_price' => '100.00',
+            'quantity' => '100',
+//BEGIN SUGARCRM flav=ent ONLY
+            'best_case' => '100.00',
+            'likely_case' => '80.00',
+            'worst_case' => '50.00',
+//END SUGARCRM flav=ent ONLY
+        ), $values);
+
+        foreach ($values as $property => $value) {
+            $product->$property = $value;
+        }
 
         if(!empty($id))
         {
@@ -73,4 +77,3 @@ class SugarTestProductUtilities
         return $product_ids;
     }
 }
-?>

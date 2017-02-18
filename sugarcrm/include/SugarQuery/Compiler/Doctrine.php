@@ -720,6 +720,13 @@ class SugarQuery_Compiler_Doctrine
      */
     protected function bindValue(QueryBuilder $builder, $value, array $fieldDef)
     {
+        if ($value === null || $value === false || $value === '') {
+            $value = $this->db->emptyValue(
+                $this->db->getFieldType($fieldDef),
+                true
+            );
+        }
+
         return $this->db->bindValue($builder, $value, $fieldDef);
     }
 

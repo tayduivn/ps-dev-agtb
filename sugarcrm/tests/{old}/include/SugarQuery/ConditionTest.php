@@ -14,21 +14,8 @@ require_once 'tests/{old}/include/database/TestBean.php';
 
 class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @var DBManager
-     */
-    private static $db;
     protected static $products = array();
     protected static $prodIds = array();
-
-    protected $created = array();
-
-    protected $backupGlobals = false;
-
-    /**
-     * @var Product
-     */
-    protected $product_bean;
 
     static public function setupBeforeClass()
     {
@@ -37,188 +24,142 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 
-        if (empty(self::$db)) {
-            self::$db = DBManagerFactory::getInstance();
-        }
-
+        $db = DBManagerFactory::getInstance();
 
         // "Delete" all the products that may currently exist
         $sql = "SELECT id FROM products WHERE deleted = 0";
-        $res = self::$db->query($sql);
-        while ($row = self::$db->fetchRow($res)) {
+        $res = $db->query($sql);
+        while ($row = $db->fetchRow($res)) {
             self::$prodIds[] = $row['id'];
         }
 
         if (self::$prodIds) {
             $sql = "UPDATE products SET deleted = 1 WHERE id IN ('" . implode("','", self::$prodIds) . "')";
-            self::$db->query($sql);
+            $db->query($sql);
         }
 
-        for ($x = 100; $x <= 300; $x++) {
-            // create a new product
-            $product = SugarTestProductUtilities::createProduct();
-            $product->name = "SugarQuery Unit Test {$x}";
-            $product->quantity = $x;
-
-            $product->save();
-            self::$products[] = $product;
+        for ($x = 1; $x <= 4; $x++) {
+            self::$products[] = SugarTestProductUtilities::createProduct(null, array(
+                'name' => "SugarQuery Unit Test {$x}",
+                'quantity' => $x,
+            ));
         }
-
-        unset($opportunity);
     }
 
     static public function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+
+        $db = DBManagerFactory::getInstance();
+
         if (!empty(self::$products)) {
             $oppList = array();
             foreach (self::$products as $opp) {
                 $oppList[] = $opp->id;
             }
 
-            self::$db->query("DELETE FROM products WHERE id IN ('" . implode("','", $oppList) . "')");
+            $db->query("DELETE FROM products WHERE id IN ('" . implode("','", $oppList) . "')");
 
-            if (self::$db->tableExists('products_cstm')) {
-                self::$db->query("DELETE FROM products_cstm WHERE id_c IN ('" . implode("','", $oppList) . "')");
+            if ($db->tableExists('products_cstm')) {
+                $db->query("DELETE FROM products_cstm WHERE id_c IN ('" . implode("','", $oppList) . "')");
             }
         }
 
         if (self::$prodIds) {
             $sql = "UPDATE products SET deleted = 0 WHERE id IN ('" . implode("','", self::$prodIds) . "')";
-            self::$db->query($sql);
+            $db->query($sql);
         }
-    }
-
-    public function setUp()
-    {
-        $this->product_bean = BeanFactory::newBean('Products');
     }
 
     public function testEquals()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
-        $sq->from($this->product_bean);
-        $sq->where()->equals('quantity', 200, $this->product_bean);
+        $sq->select('quantity');
+        $sq->from(BeanFactory::newBean('Products'));
+        $sq->where()->equals('quantity', 3);
 
         $result = $sq->execute();
-        $this->assertEquals(count($result), 1, "Wrong row count, actually received: " . count($result) . " back.");
 
-        foreach ($result AS $opp) {
-            $this->assertEquals(200, $opp['quantity'], "The amount does not equal to 200 it was: {$opp['quantity']}");
-        }
+        $this->assertResult(array(3), $result);
     }
 
     public function testContains()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
-        $sq->from($this->product_bean);
-        $sq->where()->contains('name', 'Query Unit Test 10', $this->product_bean);
+        $sq->select('quantity');
+        $sq->from(BeanFactory::newBean('Products'));
+        $sq->where()->contains('name', 'Query Unit Test 2');
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 10, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $test_string = strstr($opp['name'], '10');
-            $this->assertTrue(!empty($test_string), "The name did not contain 10 it was: {$opp['name']}");
-        }
+        $this->assertResult(array(2), $result);
     }
 
     public function testStartsWith()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
-        $sq->from($this->product_bean);
-        $sq->where()->starts('name', 'SugarQuery Unit Test 10', $this->product_bean);
+        $sq->select('quantity');
+        $sq->from(BeanFactory::newBean('Products'));
+        $sq->where()->starts('name', 'SugarQuery Unit Test 3');
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 10, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $test_string = stristr($opp['name'], 'SugarQuery Unit Test 10');
-            $this->assertTrue(
-                !empty($test_string),
-                "The name did not start with SugarQuery Unit Test 10 it was: {$opp['name']}"
-            );
-        }
+        $this->assertResult(array(3), $result);
     }
 
     public function testLessThan()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->lt('quantity', 200, $this->product_bean);
+        $sq->where()->lt('quantity', 3);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 100, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $this->assertLessThan(200, $opp['quantity'], "The amount was not less than 2000 it was: {$opp['quantity']}");
-        }
+        $this->assertResult(array(1, 2), $result);
     }
 
     public function testLessThanEquals()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->lte('quantity', 200, $this->product_bean);
+        $sq->where()->lte('quantity', 3);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 101, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $this->assertLessThanOrEqual(
-                200,
-                $opp['quantity'],
-                "The amount was not less than 2000 it was: {$opp['quantity']}"
-            );
-        }
+        $this->assertResult(array(1, 2, 3), $result);
     }
 
     public function testGreaterThan()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->gt('quantity', 200, $this->product_bean);
+        $sq->where()->gt('quantity', 2);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 100, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $this->assertGreaterThan(200, $opp['quantity'], "The amount was not less than 2000 it was: {$opp['quantity']}");
-        }
+        $this->assertResult(array(3, 4), $result);
     }
 
     public function testGreaterThanEquals()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->gte('quantity', 200, $this->product_bean);
+        $sq->where()->gte('quantity', 2);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 101, "Wrong row count, actually received: " . count($result) . " back.");
-
-        foreach ($result AS $opp) {
-            $this->assertGreaterThanOrEqual(200, $opp['quantity'], "Wrong amount value detected.");
-        }
+        $this->assertResult(array(2, 3, 4), $result);
     }
 
     public function testDateRange()
@@ -227,7 +168,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select(array('name', 'date_modified'));
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->dateRange('date_entered', 'last_7_days', $this->product_bean);
+        $sq->where()->dateRange('date_entered', 'last_7_days');
 
         $result = $sq->execute();
 
@@ -258,7 +199,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array('name', 'date_modified'));
         $sq->from(BeanFactory::newBean('Products'));
         $params = array(gmdate('Y-m-d', gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))), gmdate('Y-m-d'));
-        $sq->where()->dateBetween('date_entered', $params, $this->product_bean);
+        $sq->where()->dateBetween('date_entered', $params);
 
         $result = $sq->execute();
 
@@ -282,141 +223,137 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    public function testIn()
+    /**
+     * @dataProvider inProvider
+     */
+    public function testIn(array $in, array $expected)
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->in('quantity', array(100, 101, 102, 103, 104, 105), $this->product_bean);
+        $sq->where()->in('quantity', $in);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 6, "Wrong row count, actually received: " . count($result) . " back.");
-
-
-        //With a null value
-        $sq = new SugarQuery();
-
-        $sq->select(array("name", "quantity"));
-        $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->in('quantity', array('', 100, 101, 102, 103, 104, 105), $this->product_bean);
-
-        $result = $sq->execute();
-
-        $this->assertEquals(count($result), 6, "Wrong row count, actually received: " . count($result) . " back.");
-
-
-        //With only a null value
-        $sq = new SugarQuery();
-
-        $sq->select(array("name", "quantity"));
-        $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->in('quantity', array(''), $this->product_bean);
-
-        $result = $sq->execute();
-
-        $this->assertEquals(count($result), 0, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertResult($expected, $result);
     }
 
-    public function testNotIn()
+    public static function inProvider()
+    {
+        return array(
+            'only-non-null' => array(
+                array(1, 3),
+                array(1, 3),
+            ),
+            'null-and-non-null' => array(
+                array('', 1, 3),
+                array(1, 3),
+            ),
+            'only-null' => array(
+                array(''),
+                array(),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider notInProvider
+     */
+    public function testNotIn(array $notIn, array $expected)
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->notIn('quantity', array(100, 101, 102, 103, 104, 105));
+        $sq->where()->notIn('quantity', $notIn);
 
         $result = $sq->execute();
 
-        $this->assertEquals(195, count($result), "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertResult($expected, $result);
+    }
 
-
-        //With a null value
-        $sq = new SugarQuery();
-
-        $sq->select(array("name", "quantity"));
-        $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->notIn('quantity', array('', 100, 101, 102, 103, 104, 105));
-
-        $result = $sq->execute();
-
-        $this->assertEquals(195, count($result), "Wrong row count, actually received: " . count($result) . " back.");
-
-
-        //With only a null value
-        $sq = new SugarQuery();
-
-        $sq->select(array("name", "quantity"));
-        $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->notIn('quantity', array(''));
-
-        $result = $sq->execute();
-
-        $this->assertEquals(201, count($result), "Wrong row count, actually received: " . count($result) . " back.");
+    public static function notInProvider()
+    {
+        return array(
+            'only-non-null' => array(
+                array(1, 3),
+                array(2, 4),
+            ),
+            'null-and-non-null' => array(
+                array('', 1, 3),
+                array(2, 4),
+            ),
+            'only-null' => array(
+                array(''),
+                array(1, 2, 3, 4),
+            ),
+        );
     }
 
     public function testBetween()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->between('quantity', 110, 120, $this->product_bean);
+        $sq->where()->between('quantity', 2, 4);
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 11, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertResult(array(2, 3, 4), $result);
     }
 
     public function testNotNull()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->notNull('quantity', $this->product_bean);
+        $sq->where()->notNull('quantity');
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 201, "Wrong row count, actually received: " . count($result) . " back.");
-
+        $this->assertResult(array(1, 2, 3, 4), $result);
     }
 
     public function testNull()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "quantity"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->isNull('quantity', $this->product_bean);
+        $sq->where()->isNull('quantity');
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 0, "Wrong row count, actually received: " . count($result) . " back.");
+        $this->assertResult(array(), $result);
+    }
 
+    public function testNotEmptyNotRequiredDate()
+    {
+        $sq = new SugarQuery();
+
+        $sq->select('quantity');
+        $sq->from(BeanFactory::newBean('Products'));
+        $sq->where()->isNotEmpty('date_entered');
+
+        $result = $sq->execute();
+
+        $this->assertResult(array(1, 2, 3, 4), $result);
     }
 
     public function testRaw()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select('quantity');
         $sq->from(BeanFactory::newBean('Products'));
-        $sq->where()->addRaw("name = 'SugarQuery Unit Test 131'");
+        $sq->where()->addRaw("name = 'SugarQuery Unit Test 2'");
 
         $result = $sq->execute();
 
-        $this->assertEquals(count($result), 1, "Wrong row count, actually received: " . count($result) . " back.");
-
-        $result = reset($result);
-
-        $this->assertEquals(
-            $result['name'],
-            "SugarQuery Unit Test 131",
-            "Wrong record returned, received: " . $result['name']
-        );
-
+        $this->assertResult(array(2), $result);
     }
 
     public function testOrderByLimit()
@@ -451,8 +388,12 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $high = $result[1]['quantity'];
 
         $this->assertGreaterThan($low, $high, "{$high} is not greater than {$low}");
-
-
     }
 
+    private function assertResult(array $expected, array $actual)
+    {
+        $actual = array_column($actual, 'quantity');
+        sort($actual);
+        $this->assertEquals($expected, $actual);
+    }
 }
