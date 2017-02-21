@@ -189,6 +189,11 @@ a > .label,
   &-KBRevisions {background-color: darken(@purple,20%);}
 }
 
+// had to move &-dark-text out because a > .label was overriding
+a .label-dark-text {
+  color: @grayDark;
+}
+
 /* Disabled: no box-shadow*/
 .disabled .label-module.label,
 .disabled .label-module-sm.label,
