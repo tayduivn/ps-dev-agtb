@@ -10,17 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMLocalAuthenticate;
+namespace Sugarcrm\SugarcrmTestUnit\modules\Users\authentication\IdMSugarAuthenticate;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
 require 'include/utils.php';
 
 /**
- * @coversDefaultClass \IdMLocalAuthenticate
+ * @coversDefaultClass \IdMSugarAuthenticate
  */
-class IdMLocalAuthenticateTest extends \PHPUnit_Framework_TestCase
+class IdMSugarAuthenticateTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -48,7 +49,7 @@ class IdMLocalAuthenticateTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->idmLocalAuth = $this->getMockBuilder(\IdMLocalAuthenticate::class)
+        $this->idmLocalAuth = $this->getMockBuilder(\IdMSugarAuthenticate::class)
             ->disableOriginalConstructor()
             ->setMethods(['getAuthProviderBuilder'])
             ->getMock();
@@ -69,7 +70,7 @@ class IdMLocalAuthenticateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers IdMLocalAuthenticate::loginAuthenticate()
+     * @covers IdMSugarAuthenticate::loginAuthenticate()
      * @expectedException \SugarApiExceptionNeedLogin
      */
     public function testLoginAuthenticateFailure()
@@ -82,7 +83,7 @@ class IdMLocalAuthenticateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers IdMLocalAuthenticate::loginAuthenticate()
+     * @covers IdMSugarAuthenticate::loginAuthenticate()
      */
     public function testLoginAuthenticateSuccess()
     {

@@ -14,8 +14,9 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
 use Sugarcrm\IdentityProvider\Authentication\User;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Encoder\SugarPreAuthPassEncoder;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
-class IdMLocalAuthenticate extends SugarAuthenticate
+class IdMSugarAuthenticate extends SugarAuthenticate
 {
     /**
      * Authenticates a user based on the username and password
@@ -33,36 +34,23 @@ class IdMLocalAuthenticate extends SugarAuthenticate
     {
         $isPasswordEncrypted = !empty($params['passwordEncrypted']);
 
-        try {
-            $authManager = $this->getAuthProviderBuilder()->buildAuthProviders();
+        $authManager = $this->getAuthProviderBuilder(new Config(\SugarConfig::getInstance()))->buildAuthProviders();
 
-            $token = new UsernamePasswordToken(
-                $username,
-                (new SugarPreAuthPassEncoder())->encodePassword($password, '', $isPasswordEncrypted),
-                AuthProviderManagerBuilder::PROVIDER_KEY_LOCAL,
-                User::getDefaultRoles()
-            );
+        $token = new UsernamePasswordToken(
+            $username,
+            (new SugarPreAuthPassEncoder())->encodePassword($password, '', $isPasswordEncrypted),
+            AuthProviderManagerBuilder::PROVIDER_KEY_LOCAL,
+            User::getDefaultRoles()
+        );
 
-            // TODO delete this when strtolower+md5 encrypt will be deleted
-            $token->setAttribute('isPasswordEncrypted', $isPasswordEncrypted);
-            // Raw password is required for password rehash on success auth
-            $token->setAttribute('rawPassword', $password);
+        // TODO delete this when strtolower+md5 encrypt will be deleted
+        $token->setAttribute('isPasswordEncrypted', $isPasswordEncrypted);
+        // Raw password is required for password rehash on success auth
+        $token->setAttribute('rawPassword', $password);
 
-            $token = $authManager->authenticate($token);
-            $isAuth = $token && $token->isAuthenticated();
-        } catch (\Exception $e) {
-            throw new SugarApiExceptionNeedLogin();
-        }
+        $token = $authManager->authenticate($token);
+        $isAuth = $token && $token->isAuthenticated();
 
         return $isAuth;
-    }
-
-    /**
-     * @return AuthProviderManagerBuilder
-     */
-    protected function getAuthProviderBuilder()
-    {
-        $config = \SugarConfig::getInstance();
-        return new AuthProviderManagerBuilder($config);
     }
 }

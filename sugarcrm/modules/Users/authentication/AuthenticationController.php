@@ -36,8 +36,18 @@ class AuthenticationController
         }
 
         // check in custom dir first, in case someone want's to override an auth controller
-        if(!SugarAutoLoader::requireWithCustom('modules/Users/authentication/'.$type.'/' . $type . '.php')) {
+        $customFile = SugarAutoLoader::requireWithCustom('modules/Users/authentication/' . $type . '/' . $type . '.php');
+        if (!$customFile) {
             $type = 'SugarAuthenticate';
+        }
+        if (!preg_match('|^custom/|', $customFile)) {
+            // if there's no customization we can safely use IdM glue
+            $idmType = 'IdM' . $type;
+            $idmGlueClass = 'modules/Users/authentication/' . $idmType . '/' . $idmType . '.php';
+            if (file_exists($idmGlueClass)) {
+                require_once $idmGlueClass;
+                $type = $idmType;
+            }
         }
 
         $this->authController = new $type();
@@ -97,8 +107,12 @@ class AuthenticationController
 		    LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 		}
 
-		$this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
-		$this->loggedIn = true;
+        try {
+            $this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
+            $this->loggedIn = true;
+        } catch (\Exception $e) {
+            throw new SugarApiExceptionNeedLogin($e->getMessage());
+        }
 
 		if($this->loginSuccess){
 			loginLicense();

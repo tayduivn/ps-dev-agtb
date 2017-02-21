@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
  * This file is used to control the authentication process.
@@ -361,5 +363,15 @@ class SugarAuthenticate{
     protected function updateUserLastLogin(User $user)
     {
         $user->updateLastLogin();
+    }
+
+    /**
+     * @param Config $config
+     *
+     * @return AuthProviderManagerBuilder
+     */
+    protected function getAuthProviderBuilder(Config $config)
+    {
+        return new AuthProviderManagerBuilder($config);
     }
 }

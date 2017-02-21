@@ -13,6 +13,7 @@ namespace Sugarcrm\SugarcrmTestUnit\IdentityProvider\Authentication;
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder;
 use Symfony\Component\Security\Core\Authentication\AuthenticationProviderManager;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Config;
 
 /**
  * @coversDefaultClass Sugarcrm\Sugarcrm\IdentityProvider\Authentication\AuthProviderManagerBuilder
@@ -25,15 +26,17 @@ class AuthProviderManagerBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildAuthProviders()
     {
         $data = $this->getConfig();
-        $config = $this->createMock(\SugarConfig::class);
-        $config->expects($this->exactly(3))
+        $config = $this->createMock(Config::class);
+        $config->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
                 [$this->equalTo('passwordHash'), $this->isEmpty()],
-                [$this->equalTo('auth.ldap')],
-                [$this->equalTo('auth.saml')]
+                [$this->equalTo('auth.ldap')]
             )
-            ->willReturnOnConsecutiveCalls([[], $data['auth']['ldap'], $data['auth']['saml']]);
+            ->willReturnOnConsecutiveCalls([[], $data['auth']['ldap']]);
+        $config->expects($this->once())
+            ->method('getSAMLConfig')
+            ->willReturn($data['auth']['saml']);
         $manager = (new AuthProviderManagerBuilder($config))->buildAuthProviders();
         $this->assertInstanceOf(AuthenticationProviderManager::class, $manager);
     }
