@@ -79,9 +79,28 @@
             <!-- global failures, tests are excluded -->
             <exclude>./metadata/Bug33522Test.php</exclude>
             <exclude>./metadata/MetaDataLocationChangeTest.php</exclude>
+            <!-- [BR-5035] Temporarily exclude tests performing DDL queries -->
+            <exclude>./modules/DynamicFields/Bug24095Test.php</exclude>
+            <exclude>./modules/DynamicFields/Bug34993Test.php</exclude>
+            <exclude>./modules/DynamicFields/Bug61859_p2Test.php</exclude>
+            <exclude>./modules/Expression/Bug53218Test.php</exclude>
+            <exclude>./modules/ModuleBuilder/Bug46152_P2Test.php</exclude>
+            <exclude>./modules/ModuleBuilder/Bug46152_P4Test.php</exclude>
+            <exclude>./modules/Sync/RS91Test.php</exclude>
+            <exclude>./modules/UpgradeWizard/UWUtilsTest.php</exclude>
+            <exclude>./modules/Users/ReportsToHierarchyTest.php</exclude>
         </testsuite>
         <testsuite name="Sugar Include Test Suite">
             <directory>./include/</directory>
+            <!-- [BR-5035] Temporarily exclude tests performing DDL queries -->
+            <exclude>./include/database/Bug61885Test.php</exclude>
+            <exclude>./include/database/DBManagerTest.php</exclude>
+            <exclude>./include/MetaDataManager/MetaDataManagerCacheRefreshTest.php</exclude>
+            <exclude>./include/MetaDataManager/MetaDataManagerTest.php</exclude>
+            <exclude>./include/RS1661Test.php</exclude>
+            <exclude>./include/SugarForecasting/Export/IndividualTest.php</exclude>
+            <exclude>./include/SugarForecasting/Export/ManagerTest.php</exclude>
+            <exclude>./include/SugarForecasting/Progress/ManagerTest.php</exclude>
         </testsuite>
         <testsuite name="Sugar Core Test Suite">
             <directory>./data/</directory>
@@ -91,6 +110,11 @@
             <directory>./src/Dbal</directory>
             <directory>./ModuleInstall/</directory>
             <directory>./HealthCheck/</directory>
+            <!-- [BR-5035] Temporarily exclude tests performing DDL queries -->
+            <exclude>./data/Bug50422Test.php</exclude>
+            <exclude>./data/Bug53963Test.php</exclude>
+            <exclude>./data/Bug56423Test.php</exclude>
+            <exclude>./upgrade/UpgradeBWCTest.php</exclude>
         </testsuite>
         <testsuite name="Sugar Vendor Test Suite">
             <directory>./vendor/</directory>
@@ -193,6 +217,11 @@
             <directory>./modules/TimePeriods/</directory>
             <!-- global failures, tests are excluded -->
             <exclude>./modules/Quotas/QuotaTest.php</exclude>
+            <!-- [BR-5035] Temporarily exclude tests performing DDL queries -->
+            <exclude>./modules/Currencies/CurrencyCacheClearTest.php</exclude>
+            <exclude>./modules/Forecasts/clients/base/api/ForecastsConfigApiTest.php</exclude>
+            <exclude>./modules/Forecasts/jobs/SugarJobCreateNextTimePeriodTest.php</exclude>
+            <exclude>./modules/ProductTemplates/Bug53944Test.php</exclude>
         </testsuite>
         <testsuite name="ProcessAuthor">
             <directory>./pmse/modules</directory>
