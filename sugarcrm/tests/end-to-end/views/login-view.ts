@@ -12,38 +12,35 @@
 Represents Login page PageObject.
  */
 
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseView = Cukes.BaseView;
+import BaseView from './base-view';
+import {seedbed} from '@sugarcrm/seedbed';
 
 /**
- * @class SugarCukes.LoginView
- * @extends Cukes.BaseView
+ * @class LoginView
+ * @extends BaseView
  */
-class LoginView extends BaseView {
+export default class LoginView extends BaseView {
 
     constructor(options) {
         super(options);
 
-        this.selectors = {
+        this.selectors = this.mergeSelectors({
 
-            "username": 'input[name=username]',
-                "password": 'input[name=password]',
+            'username': 'input[name=username]',
+                'password': 'input[name=password]',
                 buttons: {
-                "login": "a[name=login_button]"
+                'login': 'a[name=login_button]'
             }
-        };
+        });
 
     }
 
-    login(username, password, callback) {
+    public async login(username, password) {
 
-        var chain = seedbed.client
+        await seedbed.client
             .setValue(this.$('username'), username)
             .setValue(this.$('password'), password);
 
-        return chain.click(this.$('buttons.login'))
-            .call(callback);
+        return seedbed.client.click(this.$('buttons.login'));
     }
 }
-
-module.exports = LoginView;

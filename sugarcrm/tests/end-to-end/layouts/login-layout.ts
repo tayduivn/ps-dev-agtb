@@ -8,30 +8,31 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseLayout = Cukes.BaseLayout;
+
+import {BaseView} from '@sugarcrm/seedbed';
+import LoginView from '../views/login-view';
 
 /**
  * Represents Login page layout.
  *
- * @class SugarCukes.LoginLayout
- * @extends Cukes.BaseLayout
+ * @class LoginLayout
+ * @extends BaseView
  */
-class LoginLayout extends BaseLayout{
+export default class LoginLayout extends BaseView {
+
+    public type: string = 'login';
+    public LoginView: LoginView;
+    public defaultView: LoginView;
 
     constructor(options) {
 
         super(options);
 
-        this.type = 'login';
+        this.defaultView = this.LoginView = this.createComponent(LoginView, {module: 'Login', default: true});
 
-        this.addView('LoginView', 'LoginView', {module: 'Login',default: true});
-
-        this.selectors = {
+        this.selectors = this.mergeSelectors({
             $: '#sugarcrm .thumbnail.login'
-        };
+        });
 
     }
 }
-
-module.exports = LoginLayout;

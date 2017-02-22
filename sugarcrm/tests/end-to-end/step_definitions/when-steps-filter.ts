@@ -8,6 +8,18 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-'use strict';
 
-require('./ci-cukes.js').default();
+const whenStepsFilter = function () {
+
+    /**
+     * Search for "value" in list view search filter
+     *
+     * @example "I search for "Account_Search" in #AccountsList:FilterView view"
+     */
+    this.When(/^I search for "([^"]*)" in (#\S+) view$/,
+        (value, view) => {
+            return view.setSearchField(value);
+        }, true);
+};
+
+module.exports = whenStepsFilter;

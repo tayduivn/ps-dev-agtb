@@ -32,8 +32,7 @@ tasks.push({
         '--sp', utils.getArgument('-u', '--url'),
         '--cfg', CUKES_PATH + '/' + utils.getConfigFile(),
         '-t', '@crud',
-        '-p', utils.getArgument('-p', '--performance') ? utils.getArgument('-p', '--performance')
-         : 'false'
+        '-p', 'false'
     ]),
     extendsArgv: true
 });

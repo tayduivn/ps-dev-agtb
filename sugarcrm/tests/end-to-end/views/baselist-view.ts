@@ -12,63 +12,63 @@
  Represents a base list that is a parent for home, recents, list views.
  */
 
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseView = Cukes.BaseView,
-    _ = require('lodash');
+import BaseView from './base-view';
+import * as _ from 'lodash';
+import ListItemView from './list-item-view';
 
 /**
- * @class SugarCukes.BaseListView
- * @extends Cukes.BaseView
+ * @class BaseListView
+ * @extends BaseView
  */
-class BaseListView extends BaseView {
+export default class BaseListView extends BaseView {
+
+    public listItems: ListItemView [] = [];
 
     constructor(options) {
         super(options);
 
-        this.selectors = {
-            noRecordsFound: ".no-records-found",
+        this.selectors = this.mergeSelectors({
+            noRecordsFound: '.no-records-found',
                 pullToRefreshStartPosition: '.items article:nth-child(1)',
 
                 contextMenu: {
-                $: ".menu-container.on",
-                    edit: ".edit-item i",
-                    delete: ".delete-item i",
+                $: '.menu-container.on',
+                    edit: '.edit-item i',
+                    delete: '.delete-item i',
                     unlink: '.unlink-item i',
-                    grip: ".grip",
-                    follow: ".icon-check-circle-o",
-                    unfollow: ".icon-check-circle"
+                    grip: '.grip',
+                    follow: '.icon-check-circle-o',
+                    unfollow: '.icon-check-circle'
             }
-        };
+        });
 
-        this.listItems = [];
     }
 
-    getListItem (conditions, options) {
-        var keys = _.keys(conditions);
+    public getListItem (conditions) {
+        let keys = _.keys(conditions);
 
         if (keys.length !== 1 || !_.includes(['id', 'index', 'current'], keys[0])) {
             return null;
         } else {
-            var listItems = _.filter(this.listItems, conditions),
+            let listItems = _.filter(this.listItems, conditions),
                 listViewItem = listItems.length ? listItems[0] : null;
 
             if (!listViewItem) {
-                listViewItem = this.createListItem(conditions, options);
+                listViewItem = this.createListItem(conditions);
             }
             return listViewItem;
         }
     }
 
-    createListItem (conditions, options) {
+    public createListItem (conditions) {
 
         if (!(conditions || conditions.id)) {
             return null;
         }
 
-        var listViewItem = this.createComponent('ListItemView', {
+        let listViewItem = this.createComponent<ListItemView>(ListItemView, {
             id: conditions.id,
             module: this.module,
-            fieldsMeta: options && options.fields || this.fieldsMeta
         });
 
         this.listItems.push(listViewItem);
@@ -76,5 +76,3 @@ class BaseListView extends BaseView {
         return listViewItem;
     }
 }
-
-module.exports = BaseListView;

@@ -12,22 +12,22 @@
  Represents Filter view PageObject on ListView Layout.
  */
 
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseView = Cukes.BaseView;
+import {seedbed} from '@sugarcrm/seedbed';
+import BaseView from './base-view';
 
 /**
- * @class SugarCukes.FilterView
- * @extends Cukes.BaseView
+ * @class FilterView
+ * @extends BaseView
  */
-class FilterView extends BaseView {
+export default class FilterView extends BaseView {
 
     constructor(options) {
         super(options);
 
-        this.selectors = {
+        this.selectors = this.mergeSelectors({
             $: '.search-filter',
-            searchField: ".search-name"
-        };
+            searchField: '.search-name'
+        });
     }
 
     /**
@@ -36,13 +36,11 @@ class FilterView extends BaseView {
      * @param value
      * @returns {*}
      */
-    setSearchField (value) {
-        var locator = this.$('searchField');
+    public async setSearchField (value) {
+        let locator = this.$('searchField');
 
         return seedbed.client
             .waitForVisible(locator)
             .setValue(locator, value);
     }
 }
-
-module.exports = FilterView;

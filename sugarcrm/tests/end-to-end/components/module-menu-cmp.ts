@@ -8,16 +8,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseView = Cukes.BaseView;
+
+import {BaseView, seedbed} from '@sugarcrm/seedbed';
 
 /**
  * Represents Modules Top Menu.
  *
- * @class SugarCukes.ModuleMenuCmp
- * @extends Cukes.BaseView
+ * @class ModuleMenuCmp
+ * @extends BaseView
  */
-class ModuleMenuCmp extends BaseView {
+export default class extends BaseView {
 
     constructor(options) {
         super(options);
@@ -27,13 +27,13 @@ class ModuleMenuCmp extends BaseView {
                 $: '.module-list',
                 item: {
                     $: 'a[href="#{{itemName}}"].module-name',
-                    iconStatus: ".icon.status-{{status}}"
+                    iconStatus: '.icon.status-{{status}}'
                 },
                 listItem: {
                     $: 'a.module-list-link[href="#{{itemName}}"]'
                 },
                 currentItem: 'li.current a[href="#{{itemName}}"]',
-                moreIcon: ".more button"
+                moreIcon: '.more button'
             }
         };
     }
@@ -45,7 +45,7 @@ class ModuleMenuCmp extends BaseView {
      * @param dropdown
      * @returns {*|String}
      */
-    getModuleButtonSelector(itemName, dropdown) {
+    public getModuleButtonSelector(itemName, dropdown?) {
         return (dropdown) ?
             this.$('moduleList.listItem', {itemName: itemName}) :
             this.$('moduleList.item', {itemName: itemName});
@@ -58,8 +58,8 @@ class ModuleMenuCmp extends BaseView {
      * @param dropdown
      * @returns {*}
      */
-    clickItem (link, dropdown) {
-        var itemSelector = this.getModuleButtonSelector(link, dropdown);
+    public async clickItem (link, dropdown?) {
+        let itemSelector = this.getModuleButtonSelector(link, dropdown);
 
         return seedbed.client
             .waitForVisible(itemSelector)
@@ -72,21 +72,16 @@ class ModuleMenuCmp extends BaseView {
      * Modules Mega menu contain visible modules and other modules are hidden in dropdown menu
      *
      * @param itemName
-     * @param callback
      */
-    isVisible(itemName, callback) {
-        seedbed.client.isVisible(this.getModuleButtonSelector(itemName)).then((isVisible) => {
-                callback(isVisible);
-        });
+    public async isVisible(itemName) {
+        return seedbed.client.isVisible(this.getModuleButtonSelector(itemName));
     }
 
     /**
      * Click on Modules Mege Menu dropdown to show all modules
      */
-    showAllModules() {
+    public async showAllModules() {
         return seedbed.client
             .click(this.$('moduleList.moreIcon'));
     }
 };
-
-module.exports = ModuleMenuCmp;

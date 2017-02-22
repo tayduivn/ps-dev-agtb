@@ -28,10 +28,6 @@ var settings = {
             name: '-r',
             value: path.resolve(__dirname, './step_definitions')
         },
-        {
-            name: '-r',
-            value: path.resolve(__dirname, './support/hooks')
-        }
     ],
 
     proxy: {

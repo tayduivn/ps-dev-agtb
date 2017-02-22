@@ -8,18 +8,23 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var async = require('async');
 
-module.exports = function() {
-    this.registerHandler('BeforeFeatures', function (event, callback) {
+import BaseView from './base-view';
 
-        return seedbed.api.login({}).then(() => {
-            return seedbed.api.updatePreferences({
-                preferences: seedbed.config.users.default.defaultPreferences,
-            });
-        }).then(() => {
-            callback();
+/**
+ * Represents Preview view.
+ *
+ * @class PreviewView
+ * @extends BaseView
+ */
+export default class PreviewView extends BaseView {
+
+    constructor(options) {
+        super(options);
+
+        this.selectors = this.mergeSelectors({
+            $: '.preview-data',
         });
 
-    });
-};
+    }
+}

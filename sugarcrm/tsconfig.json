@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": true,
+        "experimentalDecorators": true,
+        "typeRoots" : ["node_modules/@types"],
+        "types": [
+            "node",
+            "webdriverio"
+        ],
+        "allowJs": true
+    },
+    "exclude": [
+        "./node_modules"
+    ],
+    "include": [
+        "./node_modules/@sugarcrm/seedbed",
+        "tests/end-to-end/**/*.ts"
+    ]
+}

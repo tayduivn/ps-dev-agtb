@@ -8,33 +8,28 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var Cukes = require('@sugarcrm/seedbed'),
-    BaseField = Cukes.BaseField;
+
+import BaseView from './base-view';
 
 /**
- * @class SugarCukes.NameField
- * @extends Cukes.BaseField
+ * Represents PreviewHeader view.
+ *
+ * @class PreviewHeaderView
+ * @extends BaseView
  */
-class NameField extends BaseField {
+export default class PreviewHeaderView extends BaseView {
 
     constructor(options) {
         super(options);
 
-        this.selectors = {
-            field: {
-                list: {
-                    selector: 'a'
-                },
-                detail: {
-                    selector: "div"
-                },
-                preview: {
-                    selector: "div"
-                }
+        this.selectors = this.mergeSelectors({
+            $: '.preview-headerbar',
+            buttons: {
+                edit: '.preview-edit-btn',
+                cancel: 'a[name="cancel_button"]',
+                save: 'a[name="save_button"]',
             }
-        };
+        });
 
-    };
+    }
 }
-
-module.exports = NameField;

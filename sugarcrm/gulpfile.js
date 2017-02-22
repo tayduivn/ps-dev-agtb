@@ -18,6 +18,8 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var os = require('os');
 var todo = require('gulp-todo');
+const tslint = require('gulp-tslint');
+const spawn = require('child-process-promise').spawn;
 
 /**
  * A function that returns an object from a given JSON filename, which will also strip comments.
@@ -573,3 +575,21 @@ gulp.task('find-todos', function() {
         console.error(e.toString());
     }
 });
+
+gulp.task('tslint', () =>
+    gulp.src([
+        './tests/end-to-end/**/*.ts',
+    ])
+        .pipe(
+            tslint({formatter: 'verbose'})
+        )
+        .pipe(tslint.report())
+);
+
+const tsTask = watchFiles => spawn('./node_modules/.bin/tsc', [
+    '--experimentalDecorators',
+].concat(watchFiles ? ['-w'] : []) , {capture: ['stdout', 'stderr']});
+
+gulp.task('ts-watch', ['tslint'], () => tsTask(true));
+
+gulp.task('ts', ['tslint'], () => tsTask(false));

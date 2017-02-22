@@ -8,18 +8,19 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-var myStepDefinitionsWrapper = function () {
+
+import AlertCmp from '../components/alert-cmp';
+
+const whenStepsAlert = function () {
 
     /**
-     * Search for "value" in list view search filter
-     *
-     * @example "I search for "Account_Search" in #AccountsList:FilterView view"
+     * Delete confirmation alert
      */
-    this.When(/^I search for "([^"]*)" in (#\S+) view$/,
-        function(value, view, callback) {
-            view.setSearchField(value)
-                .call(callback);
-        }, true);
+    this.When(/^I (Cancel|Confirm) confirmation alert$/, choice => {
+        let alert = new AlertCmp({type: 'warning'});
+        return alert.clickButton(choice.toLowerCase());
+    }, true);
+
 };
 
-module.exports = myStepDefinitionsWrapper;
+module.exports = whenStepsAlert;

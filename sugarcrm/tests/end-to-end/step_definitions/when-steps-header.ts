@@ -11,7 +11,7 @@
 // turn of warnings like "Confusing use of '!'., W018"
 /* jshint -W018 */
 
-var myStepDefinitionsWrapper = function () {
+const whenStepsHeader = function () {
 
     /**
      * Click header panel buttons
@@ -19,8 +19,8 @@ var myStepDefinitionsWrapper = function () {
      * @example "I click Save button on #AccountsDrawer header"
      */
     this.When(/^I click (Create|Edit|Cancel|Save) button on (#[A-Z](?:\w|\S)*) header$/,
-        function (btnName, layout, callback) {
-            layout.$$('HeaderView').clickButton(btnName.toLowerCase()).call(callback);
+         (btnName, layout) => {
+            return layout.HeaderView.clickButton(btnName.toLowerCase());
         }, true);
 
     /**
@@ -29,8 +29,8 @@ var myStepDefinitionsWrapper = function () {
      * @example "I open actions menu in #Account_ARecord"
      */
     this.When(/^I open actions menu in (#[A-Z]\w+)$/,
-        function (layout, callback) {
-            layout.$$('HeaderView').clickButton('actions').call(callback);
+        layout => {
+            return layout.HeaderView.clickButton('actions');
         }, true);
 
     /**
@@ -39,9 +39,9 @@ var myStepDefinitionsWrapper = function () {
      * @example "I choose Delete from actions menu in #Account_ARecord"
      */
     this.When(/^I choose (Copy|Delete) from actions menu in (#[A-Z]\w+)\s*$/,
-        function (action, layout, callback) {
-            layout.$$('HeaderView').clickButton(action).call(callback);
+        (action, layout) => {
+            return layout.HeaderView.clickButton(action);
         }, true);
 };
 
-module.exports = myStepDefinitionsWrapper;
+module.exports = whenStepsHeader;
