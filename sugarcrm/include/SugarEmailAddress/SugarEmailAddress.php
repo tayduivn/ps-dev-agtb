@@ -929,6 +929,10 @@ class SugarEmailAddress extends SugarBean
      */
     function getAddressesByGUID($id, $module)
     {
+        if (!$id) {
+            return array();
+        }
+
         $module = $this->getCorrectedModule($module);
 
         $q = "SELECT ea.email_address, ea.email_address_caps, ea.invalid_email, ea.opt_out, ea.date_created, ea.date_modified,

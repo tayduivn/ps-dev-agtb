@@ -17,6 +17,8 @@ use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 define('MB_TEMPLATES', 'include/SugarObjects/templates');
 define('MB_IMPLEMENTS', 'include/SugarObjects/implements');
 
+require_once 'modules/ModuleBuilder/parsers/constants.php';
+
 class MBModule
 {
     public $name = '' ;

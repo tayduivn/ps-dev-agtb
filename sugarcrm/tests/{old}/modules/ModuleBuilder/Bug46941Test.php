@@ -15,15 +15,17 @@
  */
 class Bug46941Test extends Sugar_PHPUnit_Framework_TestCase {
 
+    /** @var ModuleBuilderController */
     var $mbController;
     var $mbPackage;
     var $mbModule;
     var $hasCustomSearchFields;
     var $filename = 'custom/modulebuilder/packages/test/modules/test/metadata/SearchFields.php';
 
-    public function setUp() {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    $GLOBALS['current_user']->is_admin = true;
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user', array(true, true));
+
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = array();
 
@@ -48,7 +50,11 @@ class Bug46941Test extends Sugar_PHPUnit_Framework_TestCase {
 
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
+        if (!$this->mbController) {
+            return;
+        }
 
         $_REQUEST['package'] = 'test';
         $_REQUEST['module'] = 'test';
@@ -70,7 +76,6 @@ class Bug46941Test extends Sugar_PHPUnit_Framework_TestCase {
         unset($GLOBALS['mod_strings']);
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['current_user']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
 	/**
@@ -78,13 +83,9 @@ class Bug46941Test extends Sugar_PHPUnit_Framework_TestCase {
 	 * Tests that adding a search field to a custom module does not generate errors due to the module name not being
      * in beanList
 	 */
-    public function testActionAdvancedSearchSaveForCustomModule() {
-        try {
-            $this->mbController->action_searchViewSave();
-        } catch (Exception $e) {
-            $this->fail('An exception has been raised: ' . $e->getMessage());
-        }
+    public function testActionAdvancedSearchSaveForCustomModule()
+    {
+        $this->mbController->action_searchViewSave();
         $this->assertFileExists($this->filename);
     }
 }
-?>
