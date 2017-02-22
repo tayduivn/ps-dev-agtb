@@ -43,13 +43,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'icon' => 'fa-arrow-circle-o-up',
     ),
     array(
-        'route' => '#bwc/index.php?' . http_build_query(
-            array(
-                'module' => 'Reports',
-                'action' => 'index',
-                'view' => $moduleName,
-            )
-        ),
+        'route' => '#Reports?filterModule=' . $moduleName,
         'label' => 'LBL_ACTIVITIES_REPORTS',
         'acl_action' => 'list',
         'acl_module' => 'Reports',

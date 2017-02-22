@@ -914,7 +914,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('list', $defs[2]['acl_action']);
         $this->assertEquals($module, $defs[2]['acl_module']);
         $this->assertEquals('fa fa-bar-chart-o', $defs[2]['icon']);
-        $this->assertEquals("#bwc/index.php?module=Reports&action=index&view=$_module", $defs[2]['route']);
+        $this->assertEquals("#Reports", $defs[2]['route']);
         // import
         $this->assertEquals('import', $defs[3]['acl_action']);
         $this->assertEquals($module, $defs[3]['acl_module']);

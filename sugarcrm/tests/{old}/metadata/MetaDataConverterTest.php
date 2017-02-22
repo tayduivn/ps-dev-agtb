@@ -247,7 +247,7 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
                     array( 'label' => 'LBL_TRAINING', 'route' => 'http://support.sugarcrm.com', 'acl_action' => '', 'openwindow' => true),
                 )
             ),
-            'LBL_REPORTS' => array( 'label' => 'LBL_REPORTS', 'route' => '#bwc/index.php?module=Reports&action=index', 'acl_action' => 'list'),
+            'LBL_REPORTS' => array( 'label' => 'LBL_REPORTS', 'route' => '#Reports', 'acl_action' => 'list'),
             'LBL_ADMIN' => array( 'label' => 'LBL_ADMIN', 'route' => '#bwc/index.php?module=Administration&action=index', 'acl_action' => 'admin'),
         );
 

@@ -89,4 +89,5 @@ $dictionary['tracker_perf'] = array(
             ),
         )          
     ),
+    'acls' => array('SugarACLStatic' => true),
 );

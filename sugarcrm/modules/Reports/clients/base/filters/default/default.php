@@ -12,23 +12,14 @@
 $viewdefs['Reports']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
+        'module' => array(),
         'name' => array(),
-        'module' => array(
-            'type' => 'enum',
-            'options' => 'moduleList',
-        ),
         'report_type' => array(),
-        'date_entered' => array(),
-        'date_modified' => array(),
         'assigned_user_name' => array(),
         'team_name' => array(),
-        '$owner' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_CURRENT_USER_FILTER',
-        ),
-        '$favorite' => array(
-            'predefined_filter' => true,
-            'vname' => 'LBL_FAVORITES_FILTER',
-        ),
+        'tag' => array(),
+        'date_entered' => array(),
+        'date_modified' => array(),
+        'last_run_date' => array(),
     ),
 );

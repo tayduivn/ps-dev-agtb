@@ -477,7 +477,6 @@ $modInvisList[] = 'Connectors';
 $modInvisList[] = 'Styleguide';
 
 $report_include_modules = array();
-$report_include_modules['Currencies']='Currency';
 //add prospects
 $report_include_modules['Prospects']='Prospect';
 $report_include_modules['DocumentRevisions'] = 'DocumentRevision';
@@ -650,7 +649,6 @@ $bwcModules = array(
     //BEGIN SUGARCRM flav=ent ONLY
     'ReportMaker',
     //END SUGARCRM flav=ent ONLY
-    'Reports',
     'Roles',
     'SavedSearch',
     'Schedulers',

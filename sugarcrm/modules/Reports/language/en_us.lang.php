@@ -113,6 +113,7 @@ $mod_strings = array (
   'LBL_ACCOUNT_REPORTS' => 'Account Reports',
   'LBL_CONTACT_REPORTS' => 'Contact Reports',
   'LBL_OPPORTUNITY_REPORTS' => 'Opportunity Reports',
+    'LBL_RECENTLY_MODIFIED' => 'Recently Modified',
 
   'LBL_CASE_REPORTS' => 'Case Reports',
 
@@ -317,6 +318,7 @@ $mod_strings = array (
   'LBL_NEXT_30_DAYS'=>'Next 30 Days',
   'LBL_THIS_YEAR'=>'This Year',
   'LBL_LIST_FORM_TITLE' =>'Reports',
+  'LBL_LIST_REPORT_NAME' => 'Name',
   'LBL_PROSPECT_REPORTS'=>'Target Reports',
   'LBL_CHART_TYPE'=>'Chart Type',
   'LBL_IS_EMPTY'=>'Is Empty',
@@ -532,6 +534,7 @@ $mod_strings = array (
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
     'LBL_ALT_INFORMATION' => 'Information',
     'LBL_REPORT_GRAND_TOTAL' => "Grand Total",
+    'LBL_EDIT_REPORT_BUTTON' => 'Edit Report',
 
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_LESS_THAN_EQUAL' => 'Less Than Equal To',

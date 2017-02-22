@@ -7039,6 +7039,8 @@ class SugarBean
             if (!(isset($fieldDef['source']) &&
                 !in_array($fieldDef['source'], array('db', 'custom_fields', 'relate'))
                 && !isset($fieldDef['dbType']))
+                || (isset($fieldDef['type']) && $fieldDef['type'] == 'relate')
+                || isset($fieldDef['rname_link'])
             ) {
                 // fromConvert other fields
                 $fieldvalue = $this->db->fromConvert($fieldvalue, $this->db->getFieldType($fieldDef));

@@ -18,6 +18,8 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $bean =null;
 
+    protected $helper;
+
     public function setUp()
     {
         parent::setUp();
@@ -37,7 +39,7 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->report_type = 'summary';
         $this->bean->id = create_guid();
         $this->bean->name = 'Super Awesome Report Time';
-
+        $this->helper = new ReportsApiHelper(new ReportsServiceMockup());
     }
 
     public function tearDown()
@@ -49,11 +51,21 @@ class ReportsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFormatForApi() 
     {
-        $helper = new ReportsApiHelper(new ReportsServiceMockup());
-        $data = $helper->formatForApi($this->bean);
+        $data = $this->helper->formatForApi($this->bean);
         $this->assertEquals($data['report_type'], $this->bean->fetched_row['report_type'], "Report Type Does not match");
     }
 
+    public function testSanitizeSubmittedData()
+    {
+        $submittedData = array(
+            'module' => 'Reports',
+            'name' => 'Report Name',
+        );
+
+        $sanitized = $this->helper->sanitizeSubmittedData($submittedData);
+
+        $this->assertArrayNotHasKey('module', $sanitized);
+    }
 }
 
 class ReportsServiceMockup extends ServiceBase

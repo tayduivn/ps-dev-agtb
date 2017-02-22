@@ -71,8 +71,8 @@ class PersonFilterApi extends FilterApi {
 
         $args['module'] = $args['module_list'];
 
-        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
         $api->action = 'list';
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
 
         $this->getCustomWhereForModule($args['module_list'], $q);
 
