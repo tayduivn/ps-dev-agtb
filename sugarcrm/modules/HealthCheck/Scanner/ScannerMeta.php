@@ -601,10 +601,16 @@ class HealthCheckScannerMeta
         560 => array(
             'report' => 'nextgenquotes_quotesjs',
             'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Customizations_Incompatible_New_Quotes/index.html',
+            //@codingStandardsIgnoreEnd
         ),
         561 => array(
             'report' => 'nextgenquotes_editviewjs',
             'bucket' => self::MANUAL,
+            //@codingStandardsIgnoreStart
+            'kb' => 'http://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Customizations_Incompatible_New_Quotes/index.html',
+            //@codingStandardsIgnoreEnd
         ),
 
         // Bucket G
