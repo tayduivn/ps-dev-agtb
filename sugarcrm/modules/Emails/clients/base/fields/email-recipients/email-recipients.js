@@ -113,6 +113,8 @@
             value.on('add', function(models, collection) {
                 if (this.action === 'edit') {
                     this._formatCollectionModels(collection);
+                } else {
+                    this._render();
                 }
             }, this);
 
@@ -122,6 +124,8 @@
                 if (this.action === 'edit') {
                     // format the recipients and put them in the DOM
                     this._updateSelect2(this.getFormattedValue());
+                } else {
+                    this._render();
                 }
             }, this);
 
@@ -130,6 +134,8 @@
             value.on('reset', function(collection) {
                 if (this.action === 'edit') {
                     this._formatCollectionModels(collection);
+                } else {
+                    this._render();
                 }
             }, this);
         }
