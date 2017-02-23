@@ -77,7 +77,7 @@ class PackWebTest extends PHPUnit_Framework_TestCase
         $manifest = array();
         $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../../modules/UpgradeWizard/version.json';
-        $zip->expects($this->exactly(16))->method('addFile');
+        $zip->expects($this->exactly(15))->method('addFile');
         $zip->expects($this->exactly(2))->method('addFromString');
         $installdefs = array();
         list($zip, $manifest, $installdefs) = packUpgradeWizardWeb($zip, $manifest, $installdefs, $params);
