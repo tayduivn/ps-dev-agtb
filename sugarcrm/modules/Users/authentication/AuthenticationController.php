@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Symfony\Component\Security\Core\Exception\LockedException;
+
 class AuthenticationController
 {
 	public $loggedIn = false; //if a user has attempted to login
@@ -110,6 +112,8 @@ class AuthenticationController
         try {
             $this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $params);
             $this->loggedIn = true;
+        } catch (LockedException $e) {
+            throw new SugarApiExceptionNeedLogin($e->getMessage());            
         } catch (\Exception $e) {
             throw new SugarApiExceptionNeedLogin($e->getMessage());
         }

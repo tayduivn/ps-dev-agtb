@@ -19,21 +19,19 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 class IdMUserTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var User
+     * @var \TimeDate|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $user;
+    protected $timeDate = null;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var User|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $sugarUser;
+    protected $user = null;
 
-    protected function setUp()
-    {
-        $this->user = new User('test', 'test');
-        $this->sugarUser = $this->createMock(\User::class);
-        $this->user->setSugarUser($this->sugarUser);
-    }
+    /**
+     * @var \User|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $sugarUser = null;
 
     /**
      * @covers ::setSugarUser
@@ -89,5 +87,166 @@ class IdMUserTest extends \PHPUnit_Framework_TestCase
     {
         $this->user->allowUpdateDateModified(false);
         $this->assertFalse($this->sugarUser->update_date_modified);
+    }
+
+    /**
+     * @see testGetLoginFailed
+     * @see testIncrementLoginFailed
+     * @return array
+     */
+    public function userLoginFailedProvider()
+    {
+        return [
+            'integer' => ['value' => 1, 'expected' => 1, 'incremented' => 2],
+            'string' => ['value' => '2', 'expected' => 2, 'incremented' => 3],
+            'empty' => ['value' => null, 'expected' => 0, 'incremented' => 1],
+        ];
+    }
+
+    /**
+     * @covers       ::getLoginFailed
+     * @param mixed $value
+     * @param int $expected
+     * @dataProvider userLoginFailedProvider
+     */
+    public function testGetLoginFailed($value, $expected)
+    {
+        $this->sugarUser
+            ->method('getPreference')
+            ->with('loginfailed')
+            ->willReturn($value);
+
+        $result = $this->user->getLoginFailed();
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @see testGetLockout
+     * @return array
+     */
+    public function userLockoutProvider()
+    {
+        return [
+            'empty' => ['value' => null, 'expected' => false],
+            'false' => ['value' => false, 'expected' => false],
+            'zero' => ['value' => 0, 'expected' => false],
+            'true' => ['value' => true, 'expected' => true],
+            'one' => ['value' => 1, 'expected' => true],
+        ];
+    }
+
+    /**
+     * @covers ::getLockout
+     * @param mixed $value
+     * @param int $expected
+     * @dataProvider userLockoutProvider
+     */
+    public function testGetLockout($value, $expected)
+    {
+        $this->sugarUser
+            ->method('getPreference')
+            ->with('lockout')
+            ->willReturn($value);
+
+        $result = $this->user->getLockout();
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @covers ::clearLockout
+     */
+    public function testClearLockout()
+    {
+        $this->sugarUser
+            ->expects($this->exactly(2))
+            ->method('setPreference')
+            ->withConsecutive(
+                ['lockout', '', 0, 'global'],
+                ['loginfailed', 0, 0, 'global']
+            );
+
+        $this->sugarUser
+            ->expects($this->once())
+            ->method('savePreferencesToDB');
+
+        $this->user->clearLockout();
+    }
+
+    /**
+     * @covers ::lockUser
+     */
+    public function testLockUser()
+    {
+        $logoutTime = 'some lock time';
+        $this->timeDate
+            ->method('nowDb')
+            ->willReturn($logoutTime);
+
+        $this->sugarUser
+            ->expects($this->exactly(3))
+            ->method('setPreference')
+            ->withConsecutive(
+                ['lockout', '1', 0, 'global'],
+                ['logout_time', $logoutTime, 0, 'global'],
+                ['loginfailed', 0, 0, 'global']
+            );
+
+        $this->sugarUser
+            ->expects($this->once())
+            ->method('savePreferencesToDB');
+
+        $this->user->lockout();
+    }
+
+    /**
+     * @covers       ::incrementLoginFailed
+     * @dataProvider userLoginFailedProvider
+     * @param $value
+     * @param $unused
+     * @param $incrementExpected
+     */
+    public function testIncrementLoginFailed($value, $unused, $incrementExpected)
+    {
+        $this->sugarUser
+            ->method('getPreference')
+            ->with('loginfailed')
+            ->willReturn($value);
+
+        $this->sugarUser
+            ->expects($this->exactly(2))
+            ->method('setPreference')
+            ->withConsecutive(
+                ['lockout', '', 0, 'global'],
+                ['loginfailed', $incrementExpected, 0, 'global']
+            );
+        $this->sugarUser
+            ->expects($this->once())
+            ->method('savePreferencesToDB');
+
+        $this->user->incrementLoginFailed();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->timeDate = $this->getMockBuilder(\TimeDate::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getTimeDate'])
+            ->getMock();
+
+        $this->sugarUser = $this->getMockBuilder(\User::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->user->setSugarUser($this->sugarUser);
+        $this->user->method('getTimeDate')->willReturn($this->timeDate);
     }
 }

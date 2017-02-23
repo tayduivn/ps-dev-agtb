@@ -108,4 +108,67 @@ class User extends IdmUser
     {
         $this->getSugarUser()->update_date_modified = $flag;
     }
+
+    /**
+     * Return valid user login failed.
+     * @return int
+     */
+    public function getLoginFailed()
+    {
+        return intval($this->getSugarUser()->getPreference('loginfailed'));
+    }
+
+    /**
+     * Return user lockout.
+     * @return bool
+     */
+    public function getLockout()
+    {
+        return (bool)$this->getSugarUser()->getPreference('lockout');
+    }
+
+    /**
+     * Clear lockout state of user.
+     */
+    public function clearLockout()
+    {
+        /** @var \User $sugarUser */
+        $sugarUser = $this->getSugarUser();
+        $sugarUser->setPreference('lockout', '');
+        $sugarUser->setPreference('loginfailed', 0);
+        $sugarUser->savePreferencesToDB();
+    }
+
+    /**
+     * Locking user.
+     */
+    public function lockout()
+    {
+        /** @var \User $sugarUser */
+        $sugarUser = $this->getSugarUser();
+        $sugarUser->setPreference('lockout', '1');
+        $sugarUser->setPreference('logout_time', $this->getTimeDate()->nowDb());
+        $sugarUser->setPreference('loginfailed', 0);
+        $sugarUser->savePreferencesToDB();
+    }
+
+    /**
+     * Incrementing Login Failed.
+     */
+    public function incrementLoginFailed()
+    {
+        /** @var \User $sugarUser */
+        $sugarUser = $this->getSugarUser();
+        $sugarUser->setPreference('lockout', '');
+        $sugarUser->setPreference('loginfailed', $this->getLoginFailed() + 1);
+        $sugarUser->savePreferencesToDB();
+    }
+
+    /**
+     * @return \TimeDate
+     */
+    protected function getTimeDate()
+    {
+        return \TimeDate::getInstance();
+    }
 }

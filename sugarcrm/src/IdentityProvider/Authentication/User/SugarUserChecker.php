@@ -15,15 +15,40 @@ namespace Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
 use Symfony\Component\Security\Core\User\UserChecker;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\User;
+use Symfony\Component\Security\Core\Exception\LockedException;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Lockout;
 
 class SugarUserChecker extends UserChecker
 {
+    /**
+     * @var Lockout
+     */
+    protected $lockout;
+
+    /**
+     * @inheritDoc
+     * @param Lockout $lockout
+     */
+    public function __construct(Lockout $lockout)
+    {
+        $this->lockout = $lockout;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function checkPreAuth(UserInterface $user)
     {
         parent::checkPreAuth($user);
+
+        if ($user instanceof User) {
+            if ($this->lockout->isEnabled() && $this->lockout->isUserStillLocked($user)) {
+                $message = $this->lockout->getLockedMessage($user);
+                $ex = new LockedException($message);
+                $ex->setUser($user);
+                throw $ex;
+            }
+        }
     }
 
     /**

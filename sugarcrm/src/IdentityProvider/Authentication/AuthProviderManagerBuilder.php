@@ -21,7 +21,8 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\Success\UserPassw
 
 use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Listener\SugarOnFailureAuthListener;
 use Symfony\Component\Security\Core\AuthenticationEvents;
-use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthSubscriber;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\Subscriber\SugarOnAuthLockoutSubscriber;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\UserProvider\SugarLocalUserProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AuthProviderManagerBuilder extends AuthProviderBasicManagerBuilder
@@ -54,8 +55,7 @@ class AuthProviderManagerBuilder extends AuthProviderBasicManagerBuilder
         );
 
         $dispatcher->addListener(AuthenticationEvents::AUTHENTICATION_FAILURE, new SugarOnFailureAuthListener());
-        $dispatcher->addSubscriber(new SugarOnAuthSubscriber());
-
+        $dispatcher->addSubscriber(new SugarOnAuthLockoutSubscriber(new Lockout(), new SugarLocalUserProvider()));
         return $dispatcher;
     }
 }

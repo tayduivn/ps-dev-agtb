@@ -103,7 +103,7 @@ class AuthProviderBasicManagerBuilder
 
         return new DaoAuthenticationProvider(
             new SugarLocalUserProvider(),
-            new SugarUserChecker(),
+            new SugarUserChecker(new Lockout()),
             self::PROVIDER_KEY_LOCAL,
             $encoderFactory
         );
@@ -139,7 +139,7 @@ class AuthProviderBasicManagerBuilder
 
         return new LdapAuthenticationProvider(
             $userProvider,
-            new SugarUserChecker(),
+            new SugarUserChecker(new Lockout()),
             self::PROVIDER_KEY_LDAP,
             $ldap,
             $this->ldapConfig['dnString'],
