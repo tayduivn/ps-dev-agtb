@@ -158,7 +158,6 @@ class OAuth2Api extends SugarApi
 
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
-        session_regenerate_id(true);
 
         // Whack the cookie that was set in BWC mode
         $this->killSessionCookie();

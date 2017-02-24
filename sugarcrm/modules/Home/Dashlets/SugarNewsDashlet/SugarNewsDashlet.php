@@ -18,14 +18,6 @@ class SugarNewsDashlet extends Dashlet {
     var $defaultURL = 'http://apps.sugarcrm.com/dashlet/sugarcrm-news-dashlet.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@';
     var $url;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarNewsDashlet($id, $options = null)
-    {
-        self::__construct($id, $options);
-    }
-
     public function __construct($id, $options = null)
     {
         parent::__construct($id);
@@ -90,7 +82,8 @@ class SugarNewsDashlet extends Dashlet {
         return $options;
     }
 
-    function display(){
+    public function display($text = '')
+    {
         //BEGIN SUGARCRM flav=com ONLY
         $sugar_edition = 'COM';
         //END SUGARCRM flav=com ONLY
@@ -106,6 +99,7 @@ class SugarNewsDashlet extends Dashlet {
             array('@@LANG@@','@@VER@@','@@EDITION@@'),
             array($GLOBALS['current_language'],$GLOBALS['sugar_config']['sugar_version'],$sugar_edition),
             $this->url);
-        return parent::display() . "<iframe class='teamNoticeBox' title='{$out_url}' src='{$out_url}' height='{$this->height}px'></iframe>";
+        return parent::display($text)
+            . "<iframe class='teamNoticeBox' title='{$out_url}' src='{$out_url}' height='{$this->height}px'></iframe>";
     }
 }

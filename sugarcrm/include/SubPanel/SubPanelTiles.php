@@ -30,14 +30,6 @@ class SubPanelTiles
 	var $hidden_tabs=array(); //consumer of this class can array of tabs that should be hidden. the tab name
 							//should be the array.
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SubPanelTiles(&$focus, $layout_def_key = '', $layout_def_override = '')
-    {
-        self::__construct($focus, $layout_def_key, $layout_def_override);
-    }
-
     public function __construct(&$focus, $layout_def_key = '', $layout_def_override = '')
 	{
 		$this->focus = $focus;

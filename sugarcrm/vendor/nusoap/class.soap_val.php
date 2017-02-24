@@ -4,8 +4,6 @@
 
 Modification information for LGPL compliance
 
-2016-05-23 - smorozov - Restored PHP 4 constructor for backward compatibility
-
 2016-01-22 - avlasov - PHP 7 compatibility
 
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
@@ -103,20 +101,6 @@ class soapval extends nusoap_base {
 	 */
 	var $attributes;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function soapval(
-        $name = 'soapval',
-        $type = false,
-        $value = -1,
-        $element_ns = false,
-        $type_ns = false,
-        $attributes = false
-    ) {
-        self::__construct($name, $type, $value, $element_ns, $type_ns, $attributes);
-    }
-
 	/**
 	* constructor
 	*
@@ -160,3 +144,4 @@ class soapval extends nusoap_base {
 		return $this->value;
 	}
 }
+

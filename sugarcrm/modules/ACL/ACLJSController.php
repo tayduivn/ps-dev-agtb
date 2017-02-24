@@ -13,14 +13,6 @@
 
 class ACLJSController{
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ACLJSController($module, $form = '', $is_owner = false)
-    {
-        self::__construct($module, $form, $is_owner);
-    }
-
     public function __construct($module, $form = '', $is_owner = false)
     {
 
@@ -155,3 +147,4 @@ EOQ;
 
 
 }
+

@@ -13,14 +13,6 @@
 
 class ViewProperty extends SugarView
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewProperty()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();
@@ -41,7 +33,14 @@ class ViewProperty extends SugarView
     }
 
 
-    public function init () // pseduo-constuctor - given a well-known name to allow subclasses to call this classes constructor
+    /**
+     * {@inheritDoc}
+     * pseduo-constuctor - given a well-known name to allow subclasses to call this classes constructor
+     *
+     * @param SugarBean $bean            Ignored
+     * @param array     $view_object_map Ignored
+     */
+    public function init($bean = null, $view_object_map = array())
     {
         $this->editModule = $this->request->getValidInputRequest('view_module', 'Assert\ComponentName');
         $this->editPackage = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');

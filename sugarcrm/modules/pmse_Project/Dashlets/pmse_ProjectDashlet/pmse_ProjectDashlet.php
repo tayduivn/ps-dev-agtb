@@ -14,15 +14,6 @@
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_ProjectDashlet extends DashletGeneric { 
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_ProjectDashlet($id, $def = null)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;

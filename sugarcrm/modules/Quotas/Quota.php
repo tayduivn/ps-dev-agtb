@@ -432,7 +432,8 @@ class Quota extends SugarBean
         $sq->limit(1);
 
         // since there is only ever one row, just shift the value off the results
-        $row = array_shift($sq->execute());
+        $results = $sq->execute();
+        $row = array_shift($results);
 
         if (empty($row)) {
             // This is to prevent return value of false when a given timeperiod has no quota.

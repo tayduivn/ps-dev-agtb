@@ -518,7 +518,8 @@ class ProductBundle extends SugarBean
         $this->load_relationship('quotes');
 
         // get the beans
-        $quote = array_pop($this->quotes->getBeans());
+        $beans = $this->quotes->getBeans();
+        $quote = array_pop($beans);
 
         if (empty($quote)) {
             return true;

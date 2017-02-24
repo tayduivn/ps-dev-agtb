@@ -16,17 +16,5 @@
 
 class SugarWidgetSubPanelTopSelectReportsButton extends SugarWidgetSubPanelTopSelectButton
 {
-	//button_properties is a collection of properties associated with the widget_class definition. layoutmanager
-	function SugarWidgetSubPanelTopSelectReportButton($button_properties=array())
-	{
-		$this->button_properties=$button_properties;
-	}
-
-    public function getWidgetId()
-    {
-    	$label = parent::getWidgetId();
-        return str_replace("select_button", "select_reports_button", $label);
-    }
-
+    protected $buttonSuffix = 'select_reports_button';
 }
-?>

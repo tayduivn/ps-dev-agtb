@@ -13,14 +13,6 @@
 
 class ViewDisplaydeploy extends SugarView 
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewDisplaydeploy()
-    {
-        self::__construct();
-    }
-
     public function __construct()
 	{
         parent::__construct();

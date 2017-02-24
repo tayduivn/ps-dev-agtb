@@ -187,7 +187,7 @@ class Subscription extends Basic
     {
         $sub = self::getSubscription($user, $record);
         if ($sub) {
-            $sub->mark_deleted();
+            $sub->mark_deleted($sub->id);
             return true;
         }
         return false;
@@ -224,7 +224,7 @@ class Subscription extends Basic
     /**
      * Override mark_deleted().
      */
-    public function mark_deleted()
+    public function mark_deleted($id)
     {
         $this->deleted = 1;
         $this->save();

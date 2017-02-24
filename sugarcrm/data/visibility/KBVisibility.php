@@ -108,7 +108,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, \Elastica\Filter\BoolFilter $filter, Visibility $provider)
     {
         if (!$this->shouldCheckVisibility()) {
             return;
@@ -122,7 +122,7 @@ class KBVisibility extends SugarVisibility implements StrategyInterface
         $ownerFilter = $provider->createFilter('Owner', $options);
 
         if ($statuses = $this->getPublishedStatuses()) {
-            $combo = new \Elastica\Filter\Bool();
+            $combo = new \Elastica\Filter\BoolFilter();
             $combo->addShould($provider->createFilter('KBStatus', array('published_statuses' => $statuses)));
             $combo->addShould($ownerFilter);
             $filter->addMust($combo);

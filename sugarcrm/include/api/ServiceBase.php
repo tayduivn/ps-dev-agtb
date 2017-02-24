@@ -159,31 +159,4 @@ abstract class ServiceBase {
        }
        throw $login_exc;
     }
-
-    /**
-     * Capture PHP error output and handle it
-     *
-     * @param string $errorType The error type to hand down through the exception (default: 'php_error')
-     * @throw SugarApiExceptionError
-     */
-    public function handleErrorOutput($errorType = 'php_error')
-    {
-        if (ob_get_level() > 0 && ob_get_length() > 0) {
-            // Looks like something errored out first
-            $errorOutput = ob_get_clean();
-            if (trim(str_replace("\xEF\xBB\xBF", '', $errorOutput)) == '') {
-                // whitespace only and BOM
-                // we may let it slide on account of 6.x having broken templates with whitespace
-                // See BR-1038
-                return;
-            }
-            $GLOBALS['log']->error("A PHP error occurred:\n".$errorOutput);
-            $e = new SugarApiExceptionError();
-            $e->errorLabel = $errorType;
-            if (inDeveloperMode()) {
-                $e->setExtraData('error_output',$errorOutput);
-            }
-            throw $e;
-        }
-    }
 }

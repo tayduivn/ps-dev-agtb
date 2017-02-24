@@ -14,14 +14,6 @@
 
 class ViewPortalSync extends SugarView 
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewPortalSync()
-    {
-        self::__construct();
-    }
-
     public function __construct()
 	{
 	    $GLOBALS['log']->debug('ViewPortalSync constructor');

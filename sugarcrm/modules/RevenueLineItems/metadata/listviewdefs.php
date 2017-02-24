@@ -135,14 +135,14 @@ $fields = array(
         'type' => 'relate',
         'link' => 'revenuelineitems_templates_link',
         'label' => 'LBL_LIST_PRODUCT_TEMPLATE',
-        'width' => '10%',
+        'width' => '10',
         'default' => false
     ),
     'CATEGORY_NAME' => array (
         'type' => 'relate',
         'link' => 'revenuelineitems_categories_link',
         'label' => 'LBL_CATEGORY_NAME',
-        'width' => '10%',
+        'width' => '10',
         'default' => false
     ),
     'QUANTITY' => array (
@@ -179,7 +179,7 @@ $fields = array(
         'type' => 'relate',
         'link' => 'quotes',
         'label' => 'LBL_QUOTE_NAME',
-        'width' => '10%',
+        'width' => '10',
         'default' => false
     ),
     'ASSIGNED_USER_NAME' => array (

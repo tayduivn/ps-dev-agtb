@@ -36,14 +36,6 @@ class ListViewSmarty extends ListViewDisplay{
     var $menu_location = 'top';
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function ListViewSmarty(Request $request = null)
-    {
-        self::__construct($request);
-    }
-
-    /**
      * Constructor, Smarty object immediately available after
      *
      * @param Request $request
@@ -239,3 +231,4 @@ class ListViewSmarty extends ListViewDisplay{
         return $str;
     }
 }
+

@@ -440,7 +440,8 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
             $newLocalization->language = '';
             SugarTestKBContentUtilities::saveBean($newLocalization);
 
-            $this->assertEquals(reset(array_keys($language)), $newLocalization->language);
+            $keys = array_keys($language);
+            $this->assertEquals(reset($keys), $newLocalization->language);
         }
     }
 
@@ -464,7 +465,8 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         }, $filtered);
 
         foreach ($nonPrimaryLanguages as $language) {
-            $languageKey = reset(array_keys($language));
+            $keys = array_keys($language);
+            $languageKey = reset($keys);
             $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
             $newLocalization->kbdocument_id = $bean->kbdocument_id;
             $newLocalization->language = $languageKey;
@@ -491,7 +493,8 @@ class KBContentsTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $lang = array_pop($languages);
         unset($lang['primary']);
-        $languageKey = reset(array_keys($lang));
+        $keys = array_keys($lang);
+        $languageKey = reset($keys);
         $localizationData = [
             'kbdocument_id' => $this->bean->kbdocument_id,
             'language' => $languageKey,

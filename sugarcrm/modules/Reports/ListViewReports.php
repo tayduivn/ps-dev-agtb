@@ -20,8 +20,9 @@
 
 class ListViewReports extends ListViewSmarty {
     var $displayEndTpl;
-    
-    function display() {
+
+    public function display($end = true)
+    {
         global $current_user, $app_strings, $mod_strings;
 		$admin = is_admin($current_user) || is_admin_for_module($current_user,'Reports');
         foreach($this->data['data'] as $i => $rowData) {
@@ -51,7 +52,7 @@ class ListViewReports extends ListViewSmarty {
         }
 
         $this->ss->assign('act', 'ReportsWizard');
-        return parent::display();
+        return parent::display($end);
     }
     
     function displayEnd() {
@@ -59,5 +60,3 @@ class ListViewReports extends ListViewSmarty {
         return $smarty->fetch($this->displayEndTpl);
     }
 }
-
-?>

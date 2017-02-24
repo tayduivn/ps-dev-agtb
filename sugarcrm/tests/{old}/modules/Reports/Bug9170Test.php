@@ -30,8 +30,8 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    global $timedate;
 
-	    $today = gmdate($timedate->get_db_date_time_format(), mktime());
-        $yesterday = gmdate($timedate->get_db_date_time_format(), mktime() - 3600 * 24);
+        $today = gmdate($timedate->get_db_date_time_format(), time());
+        $yesterday = gmdate($timedate->get_db_date_time_format(), time() - 3600 * 24);
 
         return array(
             array($yesterday, 3600 * 24, $yesterday),
@@ -70,10 +70,10 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $timedate;
 
-        $today = gmdate($timedate->get_db_date_time_format(), mktime());
-        $tomorrow = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24);
-        $nextWeek = gmdate($timedate->get_db_date_time_format(), mktime() + 3600 * 24 * 7);
-        $yesterday = gmdate($timedate->get_db_date_time_format(), mktime() - 3600 * 24);
+        $today = gmdate($timedate->get_db_date_time_format(), time());
+        $tomorrow = gmdate($timedate->get_db_date_time_format(), time() + 3600 * 24);
+        $nextWeek = gmdate($timedate->get_db_date_time_format(), time() + 3600 * 24 * 7);
+        $yesterday = gmdate($timedate->get_db_date_time_format(), time() - 3600 * 24);
 
 	    return array(
            array($yesterday, 3600 * 24, $tomorrow),

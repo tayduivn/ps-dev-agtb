@@ -90,7 +90,9 @@ class Bug61859_p2Test extends Sugar_PHPUnit_Framework_TestCase
 
     static public function tearDownAfterClass()
     {
-        self::$field->delete(self::$dynamicField);
+        if (isset(self::$field)) {
+            self::$field->delete(self::$dynamicField);
+        }
 
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();

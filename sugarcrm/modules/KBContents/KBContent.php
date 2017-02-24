@@ -328,7 +328,8 @@ class KBContent extends SugarBean {
                 if ($language['primary'] === true) {
                     // language key is the first key argument in language definition array;
                     unset($language['primary']);
-                    return reset(array_keys($language));
+                    $languageKeys = array_keys($language);
+                    return reset($languageKeys);
                 }
                 $availableLanguages[] = $language;
             }
@@ -340,8 +341,9 @@ class KBContent extends SugarBean {
 
         $nextAvailable = reset($availableLanguages);
         unset($nextAvailable['primary']);
-        
-        return reset(array_keys($nextAvailable));
+    
+        $keys = array_keys($nextAvailable);
+        return reset($keys);
     }
 
     /**

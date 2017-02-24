@@ -42,14 +42,6 @@ class PopupSmarty extends ListViewSmarty{
     var $module;
     var $massUpdateData = '';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function PopupSmarty($seed, $module)
-    {
-        self::__construct($seed, $module);
-    }
-
     public function __construct($seed, $module)
     {
         parent::__construct();
@@ -242,9 +234,18 @@ class PopupSmarty extends ListViewSmarty{
 
 	/*
 	 * Setup up the smarty template. we added an extra step here to add the order by from the popupdefs.
+     * All parameters except first one are ignored
 	 */
-	function setup($file) {
-
+    public function setup(
+        $file,
+        $fileParent = '',
+        $where = '',
+        $params = array(),
+        $offset = 0,
+        $limit = -1,
+        $filter_fields = array(),
+        $id_field = 'id'
+    ) {
 	    if(isset($this->_popupMeta)){
 			if(isset($this->_popupMeta['create']['formBase'])) {
 				require_once FileLoader::validateFilePath('modules/' . $this->seed->module_dir . '/' . $this->_popupMeta['create']['formBase']);
@@ -538,3 +539,4 @@ EOQ;
 		return $qc->process($this->module);
 	}
 }
+

@@ -98,7 +98,7 @@ class MockNumericExpression extends NumericExpression
 
     }
 
-    public function getOperationName()
+    public static function getOperationName()
     {
         return 'MockNumeric';
     }

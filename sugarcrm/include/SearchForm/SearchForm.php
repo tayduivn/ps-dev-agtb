@@ -59,14 +59,6 @@ class SearchForm {
      protected $request;
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function SearchForm($module, $seedBean, $tpl = null)
-    {
-        self::__construct($module, $seedBean, $tpl);
-    }
-
-    /**
      * loads SearchFields MetaData, sets member variables
      *
      * @param string $module moduleDir
@@ -690,3 +682,4 @@ class SearchForm {
         return $str;
     }
 }
+

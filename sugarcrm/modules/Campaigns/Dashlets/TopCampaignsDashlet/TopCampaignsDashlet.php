@@ -59,14 +59,15 @@ class TopCampaignsDashlet extends Dashlet
     /**
 	 * @see Dashlet::display()
 	 */
-	public function display()
+    public function display($text = '')
 	{
     	$ss = new Sugar_Smarty();
     	$ss->assign('lbl_campaign_name', translate('LBL_TOP_CAMPAIGNS_NAME', 'Campaigns'));
     	$ss->assign('lbl_revenue', translate('LBL_TOP_CAMPAIGNS_REVENUE', 'Campaigns'));    	
     	$ss->assign('top_campaigns', $this->top_campaigns);
     	
-    	return parent::display() . $ss->fetch('modules/Campaigns/Dashlets/TopCampaignsDashlet/TopCampaignsDashlet.tpl');
+        return parent::display($text)
+            . $ss->fetch('modules/Campaigns/Dashlets/TopCampaignsDashlet/TopCampaignsDashlet.tpl');
     }
     
     /**

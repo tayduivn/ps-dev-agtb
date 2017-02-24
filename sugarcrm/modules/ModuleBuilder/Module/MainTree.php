@@ -10,15 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 class MainTree extends MBPackageTree{
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MainTree()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->tree = new Tree('package_tree');

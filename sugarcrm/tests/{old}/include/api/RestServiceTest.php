@@ -92,20 +92,4 @@ class RestServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #2");
 
     }
-
-    /**
-     * @expectedException SugarApiExceptionError
-     */
-    public function testHandleErrorOutput()
-    {
-        ob_start();
-        echo "I'm a little teapot.";
-        echo "Short and stout.";
-        echo "Here is my handle.";
-        echo "Here is my exception.";
-
-        $restService = new RestService();
-        $restService->handleErrorOutput();
-
-    }
 }

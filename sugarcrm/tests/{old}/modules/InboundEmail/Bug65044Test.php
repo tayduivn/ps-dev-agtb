@@ -55,6 +55,7 @@ class Bug65044Test extends Sugar_PHPUnit_Framework_TestCase
         $teamId = $GLOBALS["current_user"]->getPrivateTeam();
         $this->ie->team_id = $_REQUEST["team_id"] = $teamId;
         $this->ie->team_set_id = $_REQUEST["team_set_id"] = $this->ie->getTeamSetIdForTeams($teamId);
+        $_REQUEST['acl_team_set_id'] = '';
 
         $this->ie->save();
     }

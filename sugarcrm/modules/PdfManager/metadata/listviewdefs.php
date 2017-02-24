@@ -15,7 +15,7 @@ $listViewDefs['PdfManager'] =
 array (
   'NAME' =>
   array (
-    'width' => '32%',
+    'width' => '32',
     'label' => 'LBL_NAME',
     'default' => true,
     'link' => true,
@@ -26,7 +26,7 @@ array (
     'default' => true,
     'studio' => 'visible',
     'label' => 'LBL_BASE_MODULE',
-    'width' => '10%',
+    'width' => '10',
   ),
   'published' =>
   array (
@@ -34,17 +34,17 @@ array (
     'default' => true,
     'studio' => 'visible',
     'label' => 'LBL_PUBLISHED',
-    'width' => '10%',
+    'width' => '10',
   ),
   'DATE_ENTERED' =>
   array (
-    'width' => '5%',
+    'width' => '5',
     'label' => 'LBL_DATE_ENTERED',
     'default' => true,
   ),
   'team_name' =>
   array (
-    'width' => '9%',
+    'width' => '9',
     'label' => 'LBL_TEAM',
     'default' => false,
   ),

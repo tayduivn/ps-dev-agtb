@@ -15,13 +15,7 @@
 
 class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarWidgetSubPanelTopSelectButton($button_properties = array())
-    {
-        self::__construct($button_properties);
-    }
+    protected $buttonSuffix = 'select_button';
 
 	//button_properties is a collection of properties associated with the widget_class definition. layoutmanager
     public function __construct($button_properties = array())
@@ -29,17 +23,12 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 		$this->button_properties=$button_properties;
 	}
 
-    public function getWidgetId()
-    {
-        return parent::getWidgetId(false) . 'select_button';
-    }
-
     public function getDisplayName()
     {
         return $GLOBALS['app_strings']['LBL_SELECT_BUTTON_LABEL'];
     }
-	//widget_data is the collection of attributes associated with the button in the layout_defs file.
-    public function display($widget_data)
+
+    public function display(array $widget_data, $additionalFormFields = array())
 	{
 		global $app_strings;
 
@@ -181,3 +170,4 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
     }
 
 }
+

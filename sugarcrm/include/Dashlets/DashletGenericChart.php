@@ -11,7 +11,6 @@
  */
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
-
 abstract class DashletGenericChart extends Dashlet
 {
     /**
@@ -280,9 +279,9 @@ abstract class DashletGenericChart extends Dashlet
      *
      * @return string HTML that displays Dashlet
      */
-    public function display($text = '')
+    public function display()
     {
-        return parent::display($text) . $this->processAutoRefresh();
+        return parent::display() . $this->processAutoRefresh();
     }
 
     /**

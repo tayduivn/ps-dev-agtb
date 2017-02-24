@@ -31,7 +31,8 @@ class Sale extends Basic
         $join_type = '',
         $return_array = false,
         $parentbean = null,
-        $singleSelect = false
+        $singleSelect = false,
+        $ifListForExport = false
     ) {
         //Ensure that amount is always on list view queries if amount_usdollar is as well.
         if (!empty($filter) && isset($filter['amount_usdollar']) && !isset($filter['amount'])) {
@@ -46,7 +47,8 @@ class Sale extends Basic
             $join_type,
             $return_array,
             $parentbean,
-            $singleSelect
+            $singleSelect,
+            $ifListForExport
         );
     }
 

@@ -10,24 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 require_once('modules/EAPM/EAPM.php');
 class MeetingsViewListbytype extends ViewList {
     var $options = array('show_header' => false, 'show_title' => false, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => false, 'show_javascript' => false, 'view_print' => false,);
-    
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MeetingsViewListbytype($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
  	function listViewProcess(){
         if (!$eapmBean = EAPM::getLoginInfo('IBMSmartCloud', true) ) {

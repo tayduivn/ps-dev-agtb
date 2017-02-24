@@ -63,22 +63,11 @@ class QueryBuilder extends SugarBean {
         return "$this->name";
     }
 
+    public function create_export_query($order_by, $where)
+    {
+    }
 
-
-
-    /** Returns a list of the associated product_templates
-    * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-    * All Rights Reserved.
-    * Contributor(s): ______________________________________..
-    */
-        function create_export_query(&$order_by, &$where)
-        {
-
-        }
-
-
-
-    function save_relationship_changes($is_update)
+    public function save_relationship_changes($is_update, $exclude = array())
     {
     }
 

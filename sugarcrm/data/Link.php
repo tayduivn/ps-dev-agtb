@@ -43,14 +43,6 @@ class Link {
 	var $_duplicate_key;
 	var $_duplicate_where;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Link($_rel_name, &$_bean, $fieldDef, $_table_name = '', $_key_name = '')
-    {
-        self::__construct($_rel_name, $_bean, $fieldDef, $_table_name, $_key_name);
-    }
-
 	/* Parameters:
 	 * 		$_rel_name: use this relationship key.
 	 * 		$_bean: reference of the bean that instantiated this class.
@@ -1104,3 +1096,4 @@ class Link {
 
 
 }
+

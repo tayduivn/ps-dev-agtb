@@ -54,7 +54,6 @@ if($focus->has_records_in_modules()) {
 	}
 
 	//Call mark_deleted function
-	$focus->mark_deleted();
+    $focus->mark_deleted($focus->id);
 	header("Location: index.php?module=Teams&action=index");	
 }
-?>

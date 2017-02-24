@@ -16,7 +16,7 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->saved_search_id = md5(gmmktime());
+        $this->saved_search_id = md5(time());
         //Safety cleanup
         $GLOBALS['db']->query("DELETE FROM saved_search where name = 'Bug42378Test'");
 

@@ -11,14 +11,6 @@
  */
 class UpgradeSavedSearch {
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function UpgradeSavedSearch()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		

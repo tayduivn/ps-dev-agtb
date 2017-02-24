@@ -13,14 +13,6 @@ require_once 'vendor/ytree/Tree.php';
 require_once 'vendor/ytree/Node.php';
 class MBPackageTree
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MBPackageTree()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         $this->tree = new Tree('package_tree');
@@ -66,3 +58,4 @@ class MBPackageTree
     }
 
 }
+

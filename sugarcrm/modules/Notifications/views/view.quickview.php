@@ -10,23 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 class ViewQuickview extends SugarView{
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewQuickview($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
-
 	function display()
 	{
 	    $focus = BeanFactory::getBean('Notifications', empty($_REQUEST['record']) ? "" : $_REQUEST['record']);
@@ -55,3 +39,4 @@ class ViewQuickview extends SugarView{
         return $this->ss->fetch("modules/Notifications/tpls/detailView.tpl");
     }
 }
+

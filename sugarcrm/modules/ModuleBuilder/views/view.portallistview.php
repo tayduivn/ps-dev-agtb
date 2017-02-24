@@ -30,7 +30,12 @@ class ViewPortalListView extends ViewListView
     	   );
     }
 
-    function display() 
+    /**
+     * {@inheritDoc}
+     *
+     * @param bool $preview Ignored
+     */
+    public function display($preview = false)
     {
         $parser = ParserFactory::getParser(MB_PORTALLISTVIEW,$this->editModule,null,null,MB_PORTAL);
 

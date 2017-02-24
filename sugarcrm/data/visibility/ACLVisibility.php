@@ -140,7 +140,7 @@ class ACLVisibility extends SugarVisibility implements StrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, \Elastica\Filter\BoolFilter $filter, Visibility $provider)
     {
         $accessToHandle = 'list';
         if ($this->bean->bean_implements('ACL')) {

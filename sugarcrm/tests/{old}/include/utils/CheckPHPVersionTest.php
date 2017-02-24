@@ -23,8 +23,9 @@ class CheckPHPVersionTest extends Sugar_PHPUnit_Framework_TestCase
             array('5.4.0', 1, 'Supported version check Passed.'),
             array('5.5.0', 1, 'Supported version check Passed.'),
             array('5.6.0', 1, 'Supported version check Passed'),
-            array('7.0.0', -1, 'Threshold Check Failed'),
-            array('7.0.0.dev', -1, 'Threshold Check Failed'),
+            array('7.0.0', 1, 'Supported version check Passed'),
+            array('7.1.0', -1, 'Threshold Check Failed'),
+            array('7.1.0.dev', -1, 'Threshold Check Failed'),
         );
     }
 

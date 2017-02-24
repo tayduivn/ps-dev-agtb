@@ -14,15 +14,6 @@
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_Emails_TemplatesDashlet extends DashletGeneric { 
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_Emails_TemplatesDashlet($id, $def = null)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;
@@ -38,3 +29,4 @@ class pmse_Emails_TemplatesDashlet extends DashletGeneric {
         $this->seedBean = ProcessManager\Factory::getPMSEObject('pmse_Emails_Templates');
     }
 }
+

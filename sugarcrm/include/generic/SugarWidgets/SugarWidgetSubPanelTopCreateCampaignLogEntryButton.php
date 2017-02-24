@@ -12,15 +12,11 @@
 
 // $Id$
 
-
 class SugarWidgetSubPanelTopCreateCampaignLogEntryButton extends SugarWidgetSubPanelTopButton
 {
-    public function getWidgetId()
-    {
-        return parent::getWidgetId() . '_select_button';
-    }
+    protected $buttonSuffix = '_select_button';
 
-    function display($widget_data)
+    public function display(array $widget_data, $additionalFormFields = array())
     {
         global $app_strings;
         global $mod_strings;

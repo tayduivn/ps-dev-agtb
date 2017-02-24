@@ -16,7 +16,7 @@
 
 class SugarWidgetSubPanelRemoveButtonMeetings extends SugarWidgetField
 {
-	function displayHeaderCell(&$layout_def)
+    public function displayHeaderCell($layout_def)
 	{
 		return '&nbsp;';
 	}

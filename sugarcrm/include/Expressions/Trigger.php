@@ -20,14 +20,6 @@ class Trigger
 	public $conditionFunction = "";
 	static $ValueNotSetError = -1;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Trigger($condition, $fields = array())
-    {
-        self::__construct($condition, $fields);
-    }
-
     public function __construct($condition, $fields = array())
     {
 		$this->conditionFunction = $condition;
@@ -65,3 +57,4 @@ class Trigger
         return $this->triggerFields;
     }
 }
+

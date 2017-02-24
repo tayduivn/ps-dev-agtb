@@ -184,13 +184,20 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 	 * @param Array $ids -- An array of SugarBean IDs.
 	 * @param Array $select_fields -- A list of the fields to be included in the results. This optional parameter allows for only needed fields to be retrieved.
 	 * @param Array $link_name_to_fields_array -- A list of link_names and for each link_name, what fields value to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))
+     * @param bool $trackView -- Should we track the record accessed.
 	 * @return Array
 	 *        'entry_list' -- Array - The records name value pair for the simple data types excluding link field data.
 	 *	     'relationship_list' -- Array - The records link field data. The example is if asked about accounts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
 	 * @exception 'SoapFault' -- The SOAP error, if any
 	 */
-	public function get_entries($session, $module_name, $ids, $select_fields, $link_name_to_fields_array)
-	{
+    public function get_entries(
+        $session,
+        $module_name,
+        $ids,
+        $select_fields,
+        $link_name_to_fields_array,
+        $track_view = false
+    ) {
 	    $result = parent::get_entries($session, $module_name, $ids, $select_fields, $link_name_to_fields_array);
 		$relationshipList = $result['relationship_list'];
 		$returnRelationshipList = array();
@@ -228,8 +235,18 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      *	     		 'relationship_list' -- Array - The records link field data. The example is if asked about accounts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
     * @exception 'SoapFault' -- The SOAP error, if any
     */
-    function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted, $favorites = false ){
-
+    public function get_entry_list(
+        $session,
+        $module_name,
+        $query,
+        $order_by,
+        $offset,
+        $select_fields,
+        $link_name_to_fields_array,
+        $max_results,
+        $deleted = 0,
+        $favorites = false
+    ) {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
         global  $beanList, $beanFiles;
         $error = new SoapError();

@@ -19,8 +19,12 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
  */
 class ViewMapRoles extends SugarView
 {
-    /** {@inheritDoc} */
-    protected function _getModuleTitleParams()
+    /**
+     * {@inheritDoc}
+     *
+     * @param bool $browserTitle Ignored
+     */
+    protected function _getModuleTitleParams($browserTitle = false)
     {
         global $mod_strings;
 

@@ -14,15 +14,6 @@
 
 
 class SugarPortalTree extends MBPackageTree{
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarPortalTree()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->tree = new Tree('package_tree');

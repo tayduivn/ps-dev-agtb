@@ -9,24 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 class EmployeesController extends SugarController{
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function EmployeesController(Request $request = null)
-    {
-        self::__construct($request);
-    }
-
-    public function __construct(Request $request = null)
-    {
-        parent::__construct($request);
-    }
-
 	function action_editview(){
 		if(is_admin($GLOBALS['current_user']) || $_REQUEST['record'] == $GLOBALS['current_user']->id) 
 			$this->view = 'edit';

@@ -15,13 +15,9 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {
     static $createdBeans = array();
 
-    public function setUp()
-    {
-    }
-    
 	public static function setUpBeforeClass()
 	{
-	    parent::setUp();
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");

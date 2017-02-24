@@ -3151,7 +3151,7 @@ function check_php_version($sys_php_version = '')
     $min_considered_php_version = '5.4.0';
     //always use .unsupported to make sure that the dev/beta/rc releases are excluded as well
 
-    $version_threshold  = '7.0.unsupported';
+    $version_threshold  = '7.1.unsupported';
 
     // only the supported versions,
     // should be mutually exclusive with $invalid_php_versions

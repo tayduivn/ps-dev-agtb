@@ -35,14 +35,6 @@
  	var $prefix = '';
  	var $mod_strings = array();
 
-     /**
-      * @deprecated Use __construct() instead
-      */
-     public function ListViewFacade($focus, $module, $type = 0)
-     {
-         self::__construct($focus, $module, $type);
-     }
-
  	/**
  	 * Constructor
  	 * @param $focus - the bean
@@ -140,3 +132,4 @@
 		$this->title = $title;
 	}
  }
+

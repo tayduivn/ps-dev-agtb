@@ -63,27 +63,7 @@ class QueryGroupBy extends QueryBuilder
     {
         return "$this->name";
     }
-    /** Returns a list of the associated product_templates
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved.
-     * Contributor(s): ______________________________________..
-     */
 
-    function create_export_query (&$order_by, &$where)
-    {
-    }
-    function save_relationship_changes ($is_update)
-    {
-    }
-    function mark_relationships_deleted ($id)
-    {
-    }
-    function fill_in_additional_list_fields ()
-    {
-    }
-    function fill_in_additional_detail_fields ()
-    {
-    }
     function clear_deleted ()
     {
         //if this has a column, delete the column too

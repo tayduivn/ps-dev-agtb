@@ -12,8 +12,12 @@
 
 class ImportViewRevokeAccess extends SugarView
 {
-    /** {@inheritdoc} */
-    public function process()
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
+     */
+    public function process($params = array())
     {
         if (isset($_REQUEST['application'])) {
             $response = array(

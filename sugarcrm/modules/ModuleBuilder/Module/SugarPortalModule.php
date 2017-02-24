@@ -15,14 +15,6 @@
 class SugarPortalModule{
 	var $name;
 	
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarPortalModule($module)
-    {
-        self::__construct($module);
-    }
-
     public function __construct($module)
 	{
 	    global $app_list_strings;
@@ -89,3 +81,4 @@ class SugarPortalModule{
 	
 	
 }
+

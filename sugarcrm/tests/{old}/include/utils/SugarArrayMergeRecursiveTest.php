@@ -51,10 +51,12 @@ class SugarArrayMergeRecursiveTest extends Sugar_PHPUnit_Framework_TestCase
         
         $results = sugarArrayMergeRecursive($array1,$array2);
         
-        $keys1 = sort(array_keys($results['dog']));
-        $keys2 = sort(array_keys($array2['dog']));
+        $resultsKeys = array_keys($results['dog']);
+        sort($resultsKeys);
+        $array2Keys = array_keys($array2['dog']);
+        sort($array2Keys);
         
-        $this->assertEquals($keys1,$keys2);
+        $this->assertEquals($resultsKeys, $array2Keys);
     }
     
     public function testSugarArrayMergeMergesTwoArraysWithLikeKeysOverwritingExistingKeys()

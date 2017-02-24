@@ -59,10 +59,11 @@ class SugarAuthenticateUser{
      * @param STRING $name
      * @param STRING $password
      * @param STRING $fallback - is this authentication a fallback from a failed authentication
+     * @param array  $params
      *
      * @return boolean
      */
-    function loadUserOnLogin($name, $password, $fallback = false, $PARAMS = array())
+    public function loadUserOnLogin($name, $password, $fallback = false, array $params = array())
     {
         $passwordEncrypted = false;
         if (empty($name) && empty($password) && !empty($_REQUEST['MSID'])) {
@@ -73,7 +74,7 @@ class SugarAuthenticateUser{
                 return false;
             }
             $input_hash = $password;
-            if (!empty($PARAMS) && isset($PARAMS['passwordEncrypted']) && $PARAMS['passwordEncrypted']) {
+            if (!empty($params) && isset($params['passwordEncrypted']) && $params['passwordEncrypted']) {
                 $passwordEncrypted = true;
             }// if
             if (!$passwordEncrypted) {

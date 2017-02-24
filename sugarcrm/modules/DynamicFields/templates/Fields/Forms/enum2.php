@@ -66,7 +66,6 @@
     $ss->assign('radio', isset($radio) ? $radio: false);
 	$ss->assign('dropdown_name',(!empty($vardef['options']) ? $vardef['options'] : ''));
 
-	$json = new JSON(JSON_LOOSE_TYPE);
 	$ss->assign('app_list_strings', "''");
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/enum.tpl');
  }

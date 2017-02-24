@@ -16,7 +16,7 @@
 
 class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
-	function &_get_form($defines, $additionalFormFields = null)
+    public function &_get_form($defines, $additionalFormFields = null, $asUrl = false)
 	{
 		global $app_strings;
 		global $currentModule;
@@ -129,8 +129,7 @@ class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButto
 		return $button;
 	}
 
-
-	function display($defines, $additionalFormFields = null)
+    public function display(array $defines, $additionalFormFields = array())
 	{
 	    $focus = BeanFactory::getBean('Tasks');
 		if ( !$focus->ACLAccess('EditView') ) {
@@ -140,4 +139,3 @@ class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButto
 		return parent::display($defines, $additionalFormFields);
 	}
 }
-?>

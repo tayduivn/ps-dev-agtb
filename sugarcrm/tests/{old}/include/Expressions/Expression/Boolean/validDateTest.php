@@ -19,14 +19,9 @@ class validDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function setUpBeforeClass()
 	{
-        parent::setUp();
+        parent::setUpBeforeClass();
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference("datef", "n/d/Y");
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    parent::tearDown();
 	}
 
     /**

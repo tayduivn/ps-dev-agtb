@@ -46,7 +46,9 @@ class Bug42475TestBean extends SugarBean
             'type' => 'currency',
         );
     }
-    function getAuditEnabledFieldDefinitions() {
+
+    public function getAuditEnabledFieldDefinitions($includeRelateIdFields = false)
+    {
         return array('test_field'=>array('type'=>'currency'));
     }
 }

@@ -131,6 +131,7 @@ class SugarUpgradeFixCustomLabelsForCoreModules extends UpgradeScript
                     if (1 != count($viewdefsWrite)) {
                         break;
                     }
+                    reset($viewdefsWrite);
                     $keyNames[] = key($viewdefsWrite);
                     $viewdefsWrite = $viewdefsWrite[key($viewdefsWrite)];
                 }

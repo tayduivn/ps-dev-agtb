@@ -188,7 +188,13 @@ class ProjectSugarpdfProjectgrid extends Sugarpdf{
         $this->fileName = "{$filename}.pdf";
     }
 
-    public function Output()
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $name Ignored
+     * @param string $dest Ignored
+     */
+    public function Output($name = 'doc.pdf', $dest = 'I')
     {
         // the "D" will ensure forced download instead of displayed in browser
         return parent::Output($this->fileName,"D");

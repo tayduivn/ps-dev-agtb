@@ -387,7 +387,9 @@ function get_file_extension($filename, $string_to_lower=true)
 {
     if(strpos($filename, '.') !== false)
     {
-       return $string_to_lower ? strtolower(array_pop(explode('.',$filename))) : array_pop(explode('.',$filename));
+        $filenameParts = explode('.', $filename);
+        $extension = array_pop($filenameParts);
+        return $string_to_lower ? strtolower($extension) : $extension;
     }
 
     return '';
@@ -463,7 +465,7 @@ function get_mime_content_type_from_filename($filename)
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
-        $ext = strtolower(array_pop(explode('.',$filename)));
+        $ext = get_file_extension($filename, true);
         if (array_key_exists($ext, $mime_types)) {
             return $mime_types[$ext];
         }

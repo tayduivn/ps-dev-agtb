@@ -128,6 +128,7 @@ class ForecastWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        parent::setUp();
         $this->filterApi = new ForecastWorksheetsFilterApi();
         $this->putApi = new ForecastWorksheetsApi();
     }
@@ -136,14 +137,14 @@ class ForecastWorksheetsFilterApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->filterApi = null;
         $GLOBALS["current_user"] = null;
-        // override since we want to do this after the class is done
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::tearDownForecastConfig();
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**

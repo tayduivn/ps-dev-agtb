@@ -94,58 +94,6 @@ class NativeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Hash testing with predictable salt
-     *
-     * @covers ::hash
-     * @dataProvider providerTestHashPredictable
-     */
-    public function testHashPredictable($algo, array $options, $password, $expected)
-    {
-        $native = new Native();
-        $native->setAlgo($algo);
-
-        // set options directly to be able to used fixed salt
-        TestReflection::setProtectedValue($native, 'options', $options);
-
-        $this->assertSame($expected, $native->hash($password));
-    }
-
-    public function providerTestHashPredictable()
-    {
-        return array(
-            // regular password with cost 10
-            array(
-                'PASSWORD_BCRYPT',
-                array('salt' => '1234567890123456789012', 'cost' => 10),
-                'password1',
-                '$2y$10$123456789012345678901u9vgQM//r9FWIoM3yVqcwebIuEgRkstq',
-            ),
-            // regular password with cost 5
-            array(
-                'PASSWORD_BCRYPT',
-                array('salt' => '1234567890123456789012', 'cost' => 5),
-                'password1',
-                '$2y$05$123456789012345678901ukwggkT5y5Ppmxq71NB8qzqrFFshViC2',
-            ),
-            // using 72 chars password
-            array(
-                'PASSWORD_BCRYPT',
-                array('salt' => '1234567890123456789012'),
-                '123456789012345678901234567890123456789012345678901234567890123456789012',
-                '$2y$10$123456789012345678901uTN1X4CAKHEloJN7aZ4j9yLbh4GOiB1O',
-            ),
-            // brcypt cuts off on 72 characters input, below result is expected
-            // to have the same hash as the above
-            array(
-                'PASSWORD_BCRYPT',
-                array('salt' => '1234567890123456789012'),
-                '123456789012345678901234567890123456789012345678901234567890123456789012xxx',
-                '$2y$10$123456789012345678901uTN1X4CAKHEloJN7aZ4j9yLbh4GOiB1O',
-            ),
-        );
-    }
-
-    /**
      * Hash testing with real salt using regex matching on the hash result
      *
      * @covers ::hash

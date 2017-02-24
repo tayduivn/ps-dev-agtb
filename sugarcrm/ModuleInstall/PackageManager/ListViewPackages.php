@@ -10,24 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
- 
 class ListViewPackages extends ListViewSmarty{
     var $secondaryDisplayColumns;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ListViewPackages(Request $request = null)
-    {
-        self::__construct($request);
-    }
-
-    public function __construct(Request $request = null)
-    {
-        parent::__construct($request);
-    }
 
     /**
      * Override the setup method in ListViewSmarty since we are not passing in a bean
@@ -35,8 +19,16 @@ class ListViewPackages extends ListViewSmarty{
      * @param data  the data to display on the page
      * @param file  the template file to parse
      */
-    public function setup($data, $file, $where, $params = array(), $offset = 0, $limit = -1,  $filter_fields = array(), $id_field = 'id')
-    {
+    public function setup(
+        $data,
+        $file = '',
+        $where = '',
+        $params = array(),
+        $offset = 0,
+        $limit = -1,
+        $filter_fields = array(),
+        $id_field = 'id'
+    ) {
         $this->data = $data;
         $this->tpl = $file;       
     }

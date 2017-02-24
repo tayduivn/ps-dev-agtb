@@ -25,7 +25,7 @@ class SugarWidgetSubPanelTopComposeEmailButton extends SugarWidgetSubPanelTopBut
     	return parent::getWidgetId();
     }
 
-	function display($defines)
+    public function display(array $defines, $additionalFormFields = array())
 	{
 		if((ACLController::moduleSupportsACL($defines['module'])  && !ACLController::checkAccess($defines['module'], 'edit', true) ||
 			$defines['module'] == "Activities" & !ACLController::checkAccess("Emails", 'edit', true))){

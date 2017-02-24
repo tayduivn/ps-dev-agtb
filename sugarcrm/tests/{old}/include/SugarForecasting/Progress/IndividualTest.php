@@ -80,7 +80,7 @@ class SugarForecasting_Progress_IndividualTest extends Sugar_PHPUnit_Framework_T
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**

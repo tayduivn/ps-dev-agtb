@@ -33,9 +33,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
 
 class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopButton
 {
-
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
-	function display(&$widget_data)
+    public function display(array $widget_data, $additionalFormFields = array())
 	{
 		global $mod_strings;
 
@@ -59,4 +57,3 @@ class SugarWidgetSubPanelEditProjectTasksButton extends SugarWidgetSubPanelTopBu
 			. '</form>';
 	}
 }
-?>

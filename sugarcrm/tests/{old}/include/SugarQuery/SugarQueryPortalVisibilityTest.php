@@ -115,6 +115,6 @@ class SupportPortalVisibilityQueryMock extends SupportPortalVisibility
 {
     public function getAccountIds()
     {
-        return $this->accountIds = array('1','2','3','4');
+        return self::$accountIds = array('1','2','3','4');
     }
 }

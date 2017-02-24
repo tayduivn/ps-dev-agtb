@@ -64,7 +64,7 @@ class RangeAggregation extends AbstractAggregation
             return false;
         }
 
-        $filter = new \Elastica\Filter\Bool();
+        $filter = new \Elastica\Filter\BoolFilter();
         foreach ($filterDefs as $rangeId) {
 
             if (!isset($this->options['ranges'])) {

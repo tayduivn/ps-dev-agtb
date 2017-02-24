@@ -13,13 +13,6 @@ global $theme;
 
 class Popup_Picker
 {
-    /**
-     * @deprecated
-     */
-    public function Popup_Picker()
-    {
-    }
-
 	function process_page()
 	{
 		global $theme;
@@ -77,3 +70,4 @@ class Popup_Picker
 		return $return_list;
 	}
 }
+

@@ -72,14 +72,6 @@ class Smarty_Compiler extends Smarty {
     var $_strip_depth           =   0;
     var $_additional_newline    =   "\n";
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Smarty_Compiler()
-    {
-        self::__construct();
-    }
-
     /**#@-*/
     /**
      * The class constructor.

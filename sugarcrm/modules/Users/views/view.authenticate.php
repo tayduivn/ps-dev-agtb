@@ -21,7 +21,7 @@ class UsersViewAuthenticate extends SidecarView
      */
     protected $dataOnly = false;
 
-    public function preDisplay()
+    public function preDisplay($params = array())
     {
         $sess = SessionStorage::getInstance();
         if ($sess->getId()) {
@@ -68,17 +68,17 @@ class UsersViewAuthenticate extends SidecarView
         if (!empty($_REQUEST['platform'])) {
             $this->platform = $_REQUEST['platform'];
         }
-        parent::preDisplay();
+        parent::preDisplay($params);
     }
 
-    public function display()
+    public function display($params = array())
     {
         if($this->dataOnly) {
             $this->ss->assign("siteUrl", $GLOBALS['sugar_config']['site_url']);
             $template = $this->getAuthenticateTemplate();
             $this->ss->display($template);
         } else {
-            parent::display();
+            parent::display($params);
         }
     }
 

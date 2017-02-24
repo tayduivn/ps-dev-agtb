@@ -17,7 +17,8 @@ class Bug49008Test extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->sugarWidgetField = new SugarWidgetFieldDateTime49008Mock(new LayoutManager());
+        $layoutManager = new LayoutManager();
+        $this->sugarWidgetField = new SugarWidgetFieldDateTime49008Mock($layoutManager);
         global $current_user, $timedate;
         $timedate = TimeDate::getInstance();
         $current_user = SugarTestUserUtilities::createAnonymousUser();

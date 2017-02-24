@@ -34,25 +34,25 @@ class ViewRelationships extends SugarView
             $this->request->getValidInputRequest('edit_module', 'Assert\ComponentName')
         );
         $packageName = $this->request->getValidInputRequest('view_package', 'Assert\ComponentName');
-        $smarty = new Sugar_Smarty ( ) ;
         // set the mod_strings as we can be called after doing a Repair and the mod_strings are set to Administration
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
-        $smarty->assign ( 'mod_strings', $GLOBALS [ 'mod_strings' ] ) ;
-        $smarty->assign ( 'view_module', $moduleName ) ;
+        $this->_initSmarty();
+        $this->ss->assign('mod_strings', $GLOBALS [ 'mod_strings' ]);
+        $this->ss->assign('view_module', $moduleName);
 
         $ajax = new AjaxCompose ( ) ;
         $json = getJSONobj () ;
         $this->fromModuleBuilder = !empty($_REQUEST['MB']) || (!empty($packageName) && ($packageName != 'studio'));
-        $smarty->assign('fromModuleBuilder', $this->fromModuleBuilder);
+        $this->ss->assign('fromModuleBuilder', $this->fromModuleBuilder);
         if (!$this->fromModuleBuilder)
         {
-            $smarty->assign ( 'view_package', '' ) ;
+            $this->ss->assign('view_package', '');
 
             $relationships = new DeployedRelationships ( $moduleName ) ;
             $ajaxRelationships = $this->getAjaxRelationships( $relationships ) ;
-            $smarty->assign ( 'relationships', $json->encode ( $ajaxRelationships ) ) ;
-            $smarty->assign ( 'empty', (sizeof ( $ajaxRelationships ) == 0) ) ;
-            $smarty->assign ( 'studio', true ) ;
+            $this->ss->assign('relationships', $json->encode($ajaxRelationships));
+            $this->ss->assign('empty', (sizeof($ajaxRelationships) == 0));
+            $this->ss->assign('studio', true);
 
             //crumb
             global $app_list_strings ;
@@ -61,11 +61,15 @@ class ViewRelationships extends SugarView
             $ajax->addCrumb ( translate('LBL_STUDIO'), 'ModuleBuilder.main("studio")' ) ;
             $ajax->addCrumb ( $translatedModule, 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=' . $moduleName . '")' ) ;
             $ajax->addCrumb ( translate('LBL_RELATIONSHIPS'), '' ) ;
-            $ajax->addSection ( 'center', $moduleName . ' ' . translate('LBL_RELATIONSHIPS'), $this->fetchTemplate($smarty, 'modules/ModuleBuilder/tpls/studioRelationships.tpl'));
+            $ajax->addSection(
+                'center',
+                $moduleName . ' ' . translate('LBL_RELATIONSHIPS'),
+                $this->fetchTemplate('modules/ModuleBuilder/tpls/studioRelationships.tpl')
+            );
 
         } else
         {
-            $smarty->assign ( 'view_package', $packageName ) ;
+            $this->ss->assign('view_package', $packageName);
 
             $mb = new ModuleBuilder ( ) ;
             $module = &$mb->getPackageModule($packageName, $moduleName);
@@ -73,8 +77,8 @@ class ViewRelationships extends SugarView
 			$package->loadModuleTitles();
             $relationships = new UndeployedRelationships ( $module->getModuleDir () ) ;
             $ajaxRelationships = $this->getAjaxRelationships( $relationships ) ;
-            $smarty->assign ( 'relationships', $json->encode ( $ajaxRelationships ) ) ;
-            $smarty->assign ( 'empty', (sizeof ( $ajaxRelationships ) == 0) ) ;
+            $this->ss->assign('relationships', $json->encode($ajaxRelationships));
+            $this->ss->assign('empty', (sizeof($ajaxRelationships) == 0));
 
             $module->help['default'] = (empty($moduleName)) ? 'create' : 'modify';
             $module->help['group'] = 'module';
@@ -83,7 +87,11 @@ class ViewRelationships extends SugarView
             $ajax->addCrumb ( $package->name, 'ModuleBuilder.getContent("module=ModuleBuilder&action=package&package=' . $package->name . '")' ) ;
             $ajax->addCrumb ( $moduleName, 'ModuleBuilder.getContent("module=ModuleBuilder&action=module&view_package=' . $package->name . '&view_module=' . $moduleName . '")' ) ;
             $ajax->addCrumb ( translate('LBL_RELATIONSHIPS'), '' ) ;
-            $ajax->addSection ( 'center', $moduleName . ' ' . translate('LBL_RELATIONSHIPS'), $this->fetchTemplate($smarty, 'modules/ModuleBuilder/tpls/studioRelationships.tpl'));
+            $ajax->addSection(
+                'center',
+                $moduleName . ' ' . translate('LBL_RELATIONSHIPS'),
+                $this->fetchTemplate('modules/ModuleBuilder/tpls/studioRelationships.tpl')
+            );
         }
         echo $ajax->getJavascript () ;
     }
@@ -137,12 +145,17 @@ class ViewRelationships extends SugarView
      * fetchTemplate
      * This function overrides fetchTemplate from SugarView.
      *
-     * @param FieldViewer $mixed the Sugar_Smarty instance
      * @param string $template the file to fetch
      * @return string contents from calling the fetch method on the Sugar_Smarty instance
      */
-    protected function fetchTemplate($smarty, $template)
+    protected function fetchTemplate($template)
     {
-        return $smarty->fetch($this->getCustomFilePathIfExists($template));
+        if (func_num_args() > 1) { // for BC, @todo remove it in future
+            $GLOBALS['log']->deprecated('Invalid call to ' . __METHOD__ . ', only $template argument is expected');
+            if (!is_string($template)) {
+                $template = func_get_arg(1);
+            }
+        }
+        return $this->ss->fetch($this->getCustomFilePathIfExists($template));
     }
 }

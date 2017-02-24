@@ -16,15 +16,6 @@
 
 
 class MyOpportunitiesDashlet extends DashletGeneric { 
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MyOpportunitiesDashlet($id, $def = null)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def = null)
     {
         global $current_user, $app_strings, $dashletData;

@@ -49,7 +49,7 @@ class ViewStep1 extends ViewList
  	/**
 	 * @see SugarView::process()
 	 */
-	public function process()
+    public function process($params = array())
  	{
         $this->_merge_module = $this->request->getValidInputRequest('merge_module', 'Assert\Mvc\ModuleName');
         $moduleError = false;
@@ -120,7 +120,7 @@ class ViewStep1 extends ViewList
 			}//if
  	    }
         //end search form
-		parent::process();
+        parent::process($params);
 	}
 
     /**

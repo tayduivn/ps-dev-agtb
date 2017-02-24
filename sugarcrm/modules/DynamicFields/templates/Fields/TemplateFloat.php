@@ -18,14 +18,6 @@ class TemplateFloat extends TemplateRange
     var $len = '18';
     var $precision = '8';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function TemplateFloat()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();

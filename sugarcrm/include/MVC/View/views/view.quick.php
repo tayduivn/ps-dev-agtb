@@ -15,14 +15,6 @@
 class ViewQuick extends ViewDetail{
 	var $type ='detail';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewQuick()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         parent::__construct();
@@ -45,3 +37,4 @@ class ViewQuick extends ViewDetail{
 		echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $this->dv->display(false)));	
  	}
 }
+

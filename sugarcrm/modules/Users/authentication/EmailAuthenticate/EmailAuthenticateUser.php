@@ -23,13 +23,10 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
     private $passwordLength = 4;
 
     /**
-     * This is called when a user logs in.
-     *
-     * @param string $name
-     * @param string $password
-     * @return boolean
+     * @inheritDoc
      */
-    public function loadUserOnLogin($name, $password) {
+    public function loadUserOnLogin($name, $password, $fallback = false, array $params = array())
+    {
         global $login_error;
 
         $GLOBALS['log']->debug("Starting user load for {$name}");

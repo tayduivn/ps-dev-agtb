@@ -38,11 +38,11 @@ class SugarFavoritesDashlet extends DashletGeneric
         $this->seedBean = BeanFactory::getBean('SugarFavorites');   
         $this->filters = array();
     }
-    
-    public function process()
+
+    public function process($lvsParams = array())
     {
         $this->lvs->quickViewLinks = false;
-        parent::process();
+        parent::process($lvsParams);
     }
     
     /**

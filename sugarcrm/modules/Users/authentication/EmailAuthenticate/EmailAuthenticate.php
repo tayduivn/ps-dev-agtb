@@ -21,17 +21,4 @@
 class EmailAuthenticate extends SugarAuthenticate {
 	var $userAuthenticateClass = 'EmailAuthenticateUser';
 	var $authenticationDir = 'EmailAuthenticate';
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function EmailAuthenticate()
-    {
-        self::__construct();
-    }
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 }

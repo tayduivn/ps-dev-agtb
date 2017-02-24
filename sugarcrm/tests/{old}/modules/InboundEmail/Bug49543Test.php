@@ -63,7 +63,7 @@ class Bug49543Test extends Sugar_PHPUnit_Framework_TestCase
         $ie = new InboundEmail();
         $ie->id = $ie_id;
         
-        $ie->setCacheValue($mailbox, $insert, '', '');
+        $ie->setCacheValue($mailbox, $insert);
         
         $fr = $GLOBALS['db']->fetchRow($GLOBALS['db']->query("SELECT subject FROM email_cache WHERE imap_uid = '11'"));
         
@@ -73,4 +73,3 @@ class Bug49543Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query(sprintf("DELETE FROM email_cache WHERE mbox = '%s'", $mailbox));
     }
 }
-?>

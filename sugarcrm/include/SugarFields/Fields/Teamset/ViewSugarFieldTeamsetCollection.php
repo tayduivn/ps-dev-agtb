@@ -23,14 +23,6 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	var $team_id = null;
 	var $type = 'TeamsetCollection';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewSugarFieldTeamsetCollection($fill_data = false)
-    {
-        self::__construct($fill_data);
-    }
-
     public function __construct($fill_data = false)
     {
         parent::__construct($fill_data);

@@ -136,14 +136,6 @@ class SugarFolder {
         ),
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarFolder()
-    {
-        self::__construct();
-    }
-
 	/**
 	 * Sole constructor
 	 */

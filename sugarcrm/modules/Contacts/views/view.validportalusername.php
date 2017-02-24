@@ -24,10 +24,12 @@
 
 class ContactsViewValidPortalUsername extends SugarView 
 {
- 	/**
-     * @see SugarView::process()
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
      */
-    public function process() 
+    public function process($params = array())
  	{
 		$this->display();
  	}

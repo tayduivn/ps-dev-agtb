@@ -85,14 +85,6 @@ class SugarView
     protected $request;
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarView($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    /**
      * Ctor
      * @param SugarBean $bean
      * @param array $view_object_map
@@ -264,7 +256,7 @@ class SugarView
      * Displays the header on section of the page; basically everything before the content
      * @deprecated since 7.0, will be removed from 7.2.
      */
-    public function displayHeader($retModTabs=false)
+    public function displayHeader()
     {
         global $theme;
         global $max_tabs;

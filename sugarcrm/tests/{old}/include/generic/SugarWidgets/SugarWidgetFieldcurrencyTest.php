@@ -22,7 +22,8 @@ class SugarWidgetFieldcurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         global $current_user;
-        $this->widgetField = new SugarWidgetFieldCurrency(new LayoutManager());
+        $layoutManager = new LayoutManager();
+        $this->widgetField = new SugarWidgetFieldCurrency($layoutManager);
         $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 

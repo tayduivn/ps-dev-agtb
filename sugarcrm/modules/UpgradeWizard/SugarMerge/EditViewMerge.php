@@ -455,7 +455,10 @@ class EditViewMerge{
 			if($field['loc']['source'] == 'new') {
 				if($this->bestMatch){
 					//for best match as long as the column is filled let's keep walking down till we can fill it
-					$row = end(array_keys($this->customData[$this->module][$this->viewDefs][$this->panelName][$field['loc']['panel']]));
+                    $keys = array_keys(
+                        $this->customData[$this->module][$this->viewDefs][$this->panelName][$field['loc']['panel']]
+                    );
+                    $row = end($keys);
 					$col = 0;
 					while(!empty($panels[$field['loc']['panel']][$row][$col])){
 						$col++;

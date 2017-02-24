@@ -1139,7 +1139,8 @@ class MBModule
     public function getModuleType()
     {
         // The last key in the template array it the type
-        return end(array_keys($this->config['templates']));
+        $templateKeys = array_keys($this->config['templates']);
+        return end($templateKeys);
     }
 
     /**

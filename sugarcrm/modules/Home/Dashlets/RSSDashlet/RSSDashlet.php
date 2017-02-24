@@ -48,11 +48,10 @@ class RSSDashlet extends Dashlet
     }
 
     /**
-     * Displays the dashlet
-     *
-     * @return string html to display dashlet
+     * {@inheritDoc}
+     * @param string $text Ignored
      */
-    public function display()
+    public function display($text = '')
     {
         $ss = new Sugar_Smarty();
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
@@ -98,9 +97,7 @@ class RSSDashlet extends Dashlet
      * @param array $req $_REQUEST
      * @return array filtered options to save
      */
-    public function saveOptions(
-        array $req
-        )
+    public function saveOptions($req)
     {
         $options = array();
         $options['title'] = $req['title'];

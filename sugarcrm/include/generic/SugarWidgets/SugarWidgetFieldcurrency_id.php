@@ -44,7 +44,7 @@ class SugarWidgetFieldcurrency_id extends SugarWidgetFieldEnum
      * @param array $layout_def
      * @return string for display
      */
-    public function &displayListPlain($layout_def)
+    public function displayListPlain($layout_def)
     {
         static $currencies;
         $value = $this->_get_list_value($layout_def);

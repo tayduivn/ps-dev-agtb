@@ -35,7 +35,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 
 class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 {
-	function displayHeaderCell(&$layout_def)
+    public function displayHeaderCell($layout_def)
 	{
 		return '&nbsp;';
 	}

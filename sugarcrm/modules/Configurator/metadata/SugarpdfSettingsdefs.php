@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+
 require_once('include/Sugarpdf/sugarpdf_config.php');
 
 $SugarpdfSettings = array(
@@ -150,14 +152,14 @@ $SugarpdfSettings = array(
     "sugarpdf_pdf_user_password"=>array(
         "label"=>$mod_strings["PDF_USER_PASSWORD"],
         "info_label"=>$mod_strings["PDF_USER_PASSWORD_INFO"],
-        "value"=>blowfishDecode(blowfishGetKey('sugarpdf_pdf_user_password'), PDF_USER_PASSWORD),
+        "value" => Blowfish::decode(Blowfish::getKey('sugarpdf_pdf_user_password'), PDF_USER_PASSWORD),
         "class"=>"advanced",
         "type"=>"password"
     ),
     "sugarpdf_pdf_owner_password"=>array(
         "label"=>$mod_strings["PDF_OWNER_PASSWORD"],
         "info_label"=>$mod_strings["PDF_OWNER_PASSWORD_INFO"],
-        "value"=>blowfishDecode(blowfishGetKey('sugarpdf_pdf_owner_password'), PDF_OWNER_PASSWORD),
+        "value" => Blowfish::decode(Blowfish::getKey('sugarpdf_pdf_owner_password'), PDF_OWNER_PASSWORD),
         "class"=>"advanced",
         "type"=>"password"
     ),

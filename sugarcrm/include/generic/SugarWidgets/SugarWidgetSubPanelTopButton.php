@@ -31,15 +31,15 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
      */
     public $sidecar;
 
-//TODO rename defines to layout defs and make it a member variable instead of passing it multiple layers with extra copying.
-
     /**
-     * @deprecated Use __construct() instead
+     * Widget id suffix
+     *
+     * @var string
      */
-    public function SugarWidgetSubPanelTopButton($module = '', $title = '', $access_key = '', $form_value = '')
-    {
-        self::__construct($module, $title, $access_key, $form_value);
-    }
+    protected $buttonSuffix = '_button';
+
+// TODO rename defines to layout defs and
+// make it a member variable instead of passing it multiple layers with extra copying.
 
 	/** Take the keys for the strings and look them up.  Module is literal, the rest are label keys
 	*/
@@ -87,13 +87,13 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         }
 	}
 
-    public function getWidgetId($buttonSuffix = true)
+    public function getWidgetId()
     {
         $isUTF8 = mb_detect_encoding($this->form_value) == 'UTF-8';
         $formValue = $isUTF8 ? mb_strtolower($this->form_value, 'UTF-8') : strtolower($this->form_value);
     	$widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', $formValue);
-    	if($buttonSuffix){
-    		$widgetID .= '_button';
+        if ($this->buttonSuffix) {
+            $widgetID .= $this->buttonSuffix;
     	}
         return $widgetID;
     }
@@ -187,7 +187,11 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         return false;
     }
 
-    function &_get_form($defines, $additionalFormFields = null, $asUrl = false)
+    /**
+     * @param array $defines
+     * @param array $additionalFormFields
+     */
+    public function &_get_form($defines, $additionalFormFields = null)
     {
         global $app_strings;
         global $currentModule;
@@ -316,7 +320,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         }
         $formValues['action'] = "EditView";
 
-        if ( $asUrl ) {
+        if (!empty($this->asUrl)) {
             $returnLink = '';
             foreach($formValues as $key => $value ) {
                 $returnLink .= $key.'='.$value.'&';
@@ -352,8 +356,13 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         }
     }
 
-	/** This default function is used to create the HTML for a simple button */
-	function display($defines, $additionalFormFields = null, $nonbutton = false)
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $defines              Layout definitions
+     * @param array $additionalFormFields Additional form fields
+     */
+    public function display(array $defines, $additionalFormFields = array())
 	{
 		$temp='';
 		$inputID = $this->getWidgetId();
@@ -374,7 +383,8 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
         if ( isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
             // Subpanels generally don't go on the editview, so we have to handle this special
-            $megaLink = $this->_get_form($defines, $additionalFormFields,true);
+            $this->asUrl = true;
+            $megaLink = $this->_get_form($defines, $additionalFormFields);
             $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
         } else {
             $button = $this->_get_form($defines, $additionalFormFields);
@@ -384,10 +394,6 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='$this->form_value' />\n";
             }
             $button .= "</form>";
-        }
-
-        if ($nonbutton) {
-            $button = "<a onclick=''>$this->form_value";
         }
         return $button;
 	}
@@ -425,3 +431,4 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 	}
 
 }
+

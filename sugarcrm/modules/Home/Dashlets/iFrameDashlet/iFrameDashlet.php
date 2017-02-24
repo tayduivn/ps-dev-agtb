@@ -19,14 +19,6 @@ class iFrameDashlet extends Dashlet {
     var $url;
     protected $allowed_schemes = array("http", "https");
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function iFrameDashlet($id, $options = null)
-    {
-        self::__construct($id, $options);
-    }
-
     public function __construct($id, $options = null)
     {
         parent::__construct($id);
@@ -111,7 +103,8 @@ class iFrameDashlet extends Dashlet {
         return $options;
     }
 
-    function display(){
+    public function display($text = '')
+    {
         //BEGIN SUGARCRM flav=com ONLY
 
         $sugar_edition = 'COM';
@@ -133,6 +126,7 @@ class iFrameDashlet extends Dashlet {
         if(empty($title)){
             $title = 'empty';
         }
-        return parent::display() . "<iframe class='teamNoticeBox' title='{$title}' src='{$out_url}' height='{$this->height}px'></iframe>";
+        return parent::display($text)
+            . "<iframe class='teamNoticeBox' title='{$title}' src='{$out_url}' height='{$this->height}px'></iframe>";
     }
 }

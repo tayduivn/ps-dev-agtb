@@ -11,6 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+
 /**
  * Outbuound email management
  * @api
@@ -57,14 +59,6 @@ class OutboundEmail {
      * @var null|OutboundEmail
      */
     protected static $sysMailerCache = null;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function OutboundEmail()
-    {
-        self::__construct();
-    }
 
 	/**
 	 * Sole constructor
@@ -395,7 +389,7 @@ class OutboundEmail {
 		if(!empty($a)) {
 			foreach($a as $k => $v) {
 				if ($k == 'mail_smtppass' && !empty($v)) {
-					$this->$k = blowfishDecode(blowfishGetKey('OutBoundEmail'), $v);
+                    $this->$k = Blowfish::decode(Blowfish::getKey('OutBoundEmail'), $v);
 				} else {
 					$this->$k = $v;
 				} // else
@@ -431,7 +425,7 @@ class OutboundEmail {
 
 	    foreach($keys as $def) {
 	    	if ($def == 'mail_smtppass' && !empty($this->$def)) {
-	    		$this->$def = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->$def);
+                $this->$def = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->$def);
 	    	} // if
 	    	if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl' || $def == 'mail_smtpport'){
 	    		if(empty($this->$def)){

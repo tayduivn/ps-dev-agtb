@@ -52,9 +52,10 @@ class MyClosedOpportunitiesDashlet extends Dashlet
     }
     
     /**
+     * @param string $text
 	 * @see Dashlet::display()
 	 */
-	public function display()
+    public function display($text = '')
     {	
     	$ss = new Sugar_Smarty();
     	$ss->assign('lblTotalOpportunities', translate('LBL_TOTAL_OPPORTUNITIES', 'Opportunities'));
@@ -63,7 +64,10 @@ class MyClosedOpportunitiesDashlet extends Dashlet
     	$ss->assign('total_opportunities', $this->total_opportunities);
     	$ss->assign('total_opportunities_won', $this->total_opportunities_won);    	
     	
-    	return parent::display() . $ss->fetch('modules/Opportunities/Dashlets/MyClosedOpportunitiesDashlet/MyClosedOpportunitiesDashlet.tpl');
+        return parent::display($text)
+            . $ss->fetch(
+                'modules/Opportunities/Dashlets/MyClosedOpportunitiesDashlet/MyClosedOpportunitiesDashlet.tpl'
+            );
     }
     
     /**

@@ -15,14 +15,6 @@ class TemplateDecimal extends TemplateFloat{
 	var $default = null;
 	var $default_value = null;
 	
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function TemplateDecimal()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
     	parent::__construct();
@@ -37,3 +29,4 @@ class TemplateDecimal extends TemplateFloat{
 		return " ".sprintf($GLOBALS['db']->getColumnType("decimal_tpl"), $this->len, $precision); 
 	}
 }
+

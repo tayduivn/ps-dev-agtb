@@ -40,7 +40,16 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetQueryObject_ForHomePage_ShowsOnlyHomePostsAndActivitiesUserLinkedTo()
     {
-        $query = ActivitiesApi::getQueryObject($this->api, array('offset' => 0, 'limit' => 5));
+        $query = SugarTestReflection::callProtectedMethod(
+            'ActivitiesApi',
+            'getQueryObject',
+            array(
+                $this->getMock('SugarBean'),
+                array('offset' => 0, 'limit' => 5),
+                $this->api,
+                true,
+            )
+        );
         $sql = $query->compile()->getSQL();
         $this->assertContains('activities.parent_type IS NULL', $sql);
         $this->assertContains('activities_users.parent_type = ?', $sql);

@@ -13,13 +13,6 @@
 
 class Template
 {
-    /**
-     * @deprecated
-     */
-    public function Template()
-    {
-    }
-
  function display()
  { 
  }

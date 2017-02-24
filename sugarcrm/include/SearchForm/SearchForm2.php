@@ -13,10 +13,8 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
-require_once('include/EditView/EditView2.php');
-
-
- class SearchForm extends EditView{
+class SearchForm
+{
  	var $seed = null;
  	var $module = '';
  	var $action = 'index';
@@ -57,14 +55,6 @@ require_once('include/EditView/EditView2.php');
       * @var Request
       */
      protected $request;
-
-     /**
-      * @deprecated Use __construct() instead
-      */
-     public function SearchForm($seed, $module, $action = 'index', $options = array())
-     {
-         self::__construct($seed, $module, $action, $options);
-     }
 
     public function __construct($seed, $module, $action = 'index', $options = array())
     {
@@ -134,7 +124,7 @@ require_once('include/EditView/EditView2.php');
         }
  	}
 
-    public function display($header = true, $ajaxSave = false)
+    public function display($header = true)
     {
     	global $theme, $timedate, $current_user;
  		$header_txt = '';

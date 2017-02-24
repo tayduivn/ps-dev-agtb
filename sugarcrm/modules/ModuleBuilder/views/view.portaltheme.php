@@ -12,24 +12,8 @@
 
 //FILE SUGARCRM flav=ent ONLY
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
-
 class ViewPortalTheme extends SugarView
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewPortalSync($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-	{
-	    parent::__construct($bean, $view_object_map, $request);
-	}
-
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */

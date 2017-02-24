@@ -42,16 +42,6 @@ $image_path = 'themes/'.$theme.'/images/';
 
 class Popup_Picker
 {
-	
-	
-	/*
-	 * 
-	 */
-	function Popup_Picker()
-	{
-		;
-	}
-	
 	/*
 	 * 
 	 */

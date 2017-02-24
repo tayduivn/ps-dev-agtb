@@ -303,7 +303,8 @@ class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
             'default' => true,
             'sortable' => false
         );
-        $this->assertSame($expected, array_shift(array_splice($panel[0]['fields'], 1, 1)));
+        $addedField = array_splice($panel[0]['fields'], 1, 1);
+        $this->assertSame($expected, reset($addedField));
     }
 
     /**

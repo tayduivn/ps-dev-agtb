@@ -59,7 +59,7 @@ class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
     public function setUp()
@@ -69,12 +69,6 @@ class ForecastsRestApiTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
         // call a commit for transactional dbs
         $GLOBALS['db']->commit();
-    }
-
-    //Override tearDown so we don't lose current user settings
-    public function tearDown()
-    {
-
     }
 
     /**

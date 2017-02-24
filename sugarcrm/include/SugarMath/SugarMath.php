@@ -437,7 +437,7 @@ class SugarMath
                 // if operator, see if operator at the top of stack has
                 // higher precedence, and if so continue to pop from stack
                 // and push onto the output queue until false
-                while (in_array($last_op = end(array_values($stack)), $opsVals)) {
+                while (in_array($last_op = end($stack), $opsVals)) {
                     if (
                         ($ops[$char][1] == 'L' && $ops[$char][0] <= $ops[$last_op][0])
                         || ($ops[$char][0] < $ops[$last_op][0])
@@ -519,5 +519,4 @@ class SugarMath
         $this->value = !empty($result) ? $result[0] : '0';
         return $this;
     }
-
 }

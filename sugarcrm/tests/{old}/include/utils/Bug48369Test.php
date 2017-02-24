@@ -28,11 +28,6 @@ class Bug48369Test extends Sugar_PHPUnit_Framework_TestCase
 <?php
 class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 {
-    function SugarWidgetFieldCustomName(\$layout_manager)
-    {
-
-    }
-
 	function queryFilterIs(\$layout_def)
 	{
         return "Bug48369Test";
@@ -58,8 +53,8 @@ EOQ;
      */
     public function testCustomSugarWidgetFilesLoaded()
     {
-        require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
-        $customWidget = new SugarWidgetFieldCustomName(null);
-        $this->assertEquals("Bug48369Test", $customWidget->queryFilterIs(null));
+        $layoutManager = $this->getMock('LayoutManager');
+        $customWidget = new SugarWidgetFieldCustomName($layoutManager);
+        $this->assertEquals('Bug48369Test', $customWidget->queryFilterIs(array()));
     }
 }

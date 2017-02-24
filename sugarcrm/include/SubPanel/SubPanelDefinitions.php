@@ -49,20 +49,6 @@ class aSubPanel
 	var $bean_name ;
 	var $template_instance ;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function aSubPanel(
-        $name,
-        $instance_properties,
-        $parent_bean,
-        $reload = false,
-        $original_only = false,
-        $forApi = false
-    ) {
-        self::__construct($name, $instance_properties, $parent_bean, $reload, $original_only, $forApi);
-    }
-
     public function __construct($name, $instance_properties, $parent_bean, $reload = false, $original_only = false, $forApi = false)
 	{
 
@@ -618,14 +604,6 @@ class SubPanelDefinitions
 	var $layout_defs ;
 	var $platform ;
     static $refreshHiddenSubpanels = false;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SubPanelDefinitions($focus, $layout_def_key = '', $layout_def_override = '', $platform = null)
-    {
-        self::__construct($focus, $layout_def_key, $layout_def_override, $platform);
-    }
 
 	/**
 	 * Enter description here...

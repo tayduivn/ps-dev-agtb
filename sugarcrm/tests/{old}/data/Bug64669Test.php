@@ -57,7 +57,7 @@ class Bug64669Test extends Sugar_PHPUnit_Framework_TestCase
             $bean->mark_deleted($bean->id);
         }
 
-        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
@@ -123,7 +123,6 @@ class Bug64669Test extends Sugar_PHPUnit_Framework_TestCase
             'current_user_only_basic' => 0,
             'favorites_only_basic' => 0
         );
-        $current_req = empty($_REQUEST)? '':$_REQUEST;
         $reArr = serialize($reArr);
         $_REQUEST['current_post'] = base64_encode($reArr);
         $_REQUEST['entrypoint'] = 'export';
@@ -139,8 +138,5 @@ class Bug64669Test extends Sugar_PHPUnit_Framework_TestCase
             $exportContents,
             "A column with string 'Campaign' ('Campaign Name', 'Campaign ID', 'campaign_name_mod', 'campaign_name_owner') was found, exclusion logic is not working as expected "
         );
-        $_REQUEST = $current_req;
-
     }
-
 }

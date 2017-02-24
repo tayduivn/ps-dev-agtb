@@ -11,6 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
  
 
 class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
@@ -28,9 +29,8 @@ class SugarFieldEncryptTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function _providerEmailTemplateFormat()
     {
-        require_once("include/utils/encryption_utils.php");
         return array(
-            array(blowfishEncode(blowfishGetKey('encrypt_field'),'Test value'), 'Test value'),
+            array(Blowfish::encode(Blowfish::getKey('encrypt_field'), 'Test value'), 'Test value'),
             );
     }
     

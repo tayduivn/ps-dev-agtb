@@ -46,12 +46,15 @@ class ViewPopupview extends ViewListView
     	   );
     }
 
-    /*
+    /**
+     * {@inheritDoc}
      * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
+     *
+     * @param SugarBean $bean            Ignored
+     * @param array     $view_object_map Ignored
      */
-    function init()
+    public function init($bean = null, $view_object_map = array())
     {
-
     }
 
     function preDisplay()

@@ -16,14 +16,6 @@
 class ViewSpot extends ViewAjax
 {
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewSpot()
-    {
-        self::__construct();
-    }
-
-    /**
      * Constructor
      *
      * @see SugarView::__construct()
@@ -153,3 +145,4 @@ class ViewSpot extends ViewAjax
         return array('displayResults' => $displayResults, 'displayMoreForModule' => $displayMoreForModule);
     }
 }
+

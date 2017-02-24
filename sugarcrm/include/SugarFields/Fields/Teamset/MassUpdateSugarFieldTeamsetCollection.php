@@ -20,14 +20,6 @@
 
 class MassUpdateSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
 
-    /**
-     * @deprecated
-     */
-    public function MassUpdateSugarFieldTeamsetCollection($fill_data = false)
-    {
-        self::__construct($fill_data);
-    }
-
     public function __construct($fill_data = false)
     {
         parent::__construct($fill_data);
@@ -58,3 +50,4 @@ class MassUpdateSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollect
     }    
     
 }
+

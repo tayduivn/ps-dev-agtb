@@ -193,7 +193,7 @@ class RelatedValueApi extends SugarApi
                         $relBeans = $focus->$link->getBeans(array("enforce_teams" => true));
 
                         foreach ($relBeans as $bean) {
-                            if (in_array($bean->$rfDef['condition_field'], $condition_values)) {
+                            if (in_array($bean->{$rfDef['condition_field']}, $condition_values)) {
                                 $sum++;
                             }
                         }
@@ -224,7 +224,7 @@ class RelatedValueApi extends SugarApi
                                 //ensure the user can access the fields we are using.
                                 ACLField::hasAccess($rField, $bean->module_dir, $GLOBALS['current_user']->id, true)
                             ) {
-                                if (in_array($bean->$rfDef['condition_field'], $condition_values)) {
+                                if (in_array($bean->{$rfDef['condition_field']}, $condition_values)) {
                                     if (is_null($isCurrency)) {
                                         $isCurrency = $this->isFieldCurrency($bean, $rField);
                                     }

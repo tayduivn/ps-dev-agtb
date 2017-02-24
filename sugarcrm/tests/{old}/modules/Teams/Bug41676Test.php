@@ -55,7 +55,7 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
         
         //Simulate deleting the team
         $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
-        $team->mark_deleted();
+        $team->mark_deleted($team->id);
         
         $account = BeanFactory::getBean('Accounts', $this->testAccount->id);
      

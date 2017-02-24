@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+
 /**
  * source is the parent class of any source object.
  * @api
@@ -139,10 +141,12 @@ abstract class source{
 
         // Handle encryption
         if(!empty($this->_config['encrypt_properties']) && is_array($this->_config['encrypt_properties']) && !empty($this->_config['properties'])){
-            require_once('include/utils/encryption_utils.php');
             foreach($this->_config['encrypt_properties'] as $name) {
                 if(!empty($this->_config['properties'][$name])) {
-                    $this->_config['properties'][$name] = blowfishEncode(blowfishGetKey('encrypt_field'),$this->_config['properties'][$name]);
+                    $this->_config['properties'][$name] = Blowfish::encode(
+                        Blowfish::getKey('encrypt_field'),
+                        $this->_config['properties'][$name]
+                    );
                 }
             }
         }
@@ -185,11 +189,13 @@ abstract class source{
  	{
         if($this->config_decrypted) return;
         // Handle decryption
-        require_once('include/utils/encryption_utils.php');
         if(!empty($this->_config['encrypt_properties']) && is_array($this->_config['encrypt_properties']) && !empty($this->_config['properties'])){
             foreach($this->_config['encrypt_properties'] as $name) {
                 if(!empty($this->_config['properties'][$name])) {
-                    $this->_config['properties'][$name] = blowfishDecode(blowfishGetKey('encrypt_field'),$this->_config['properties'][$name]);
+                    $this->_config['properties'][$name] = Blowfish::decode(
+                        Blowfish::getKey('encrypt_field'),
+                        $this->_config['properties'][$name]
+                    );
                 }
             }
         }

@@ -207,7 +207,7 @@ class PMSEEngineFilterApi extends FilterApi
                 if (in_array($filter, self::$blockedFilters)) {
                     self::addInvalidFilter($where);
                 } else {
-                    self::addFieldFilter($filter, $expression, $where);
+                    self::addFieldFilterPA($filter, $expression, $where);
                 }
         }
     }
@@ -328,7 +328,7 @@ class PMSEEngineFilterApi extends FilterApi
      * @param $expression
      * @param SugarQuery_Builder_Where $where
      */
-    public static function addFieldFilter($field, $expression, SugarQuery_Builder_Where $where)
+    public static function addFieldFilterPA($field, $expression, SugarQuery_Builder_Where $where)
     {
         list($operator, $value) = self::getExpression($expression);
         switch($operator) {
@@ -543,7 +543,7 @@ class PMSEEngineFilterApi extends FilterApi
         return $q;
     }
 
-    protected function formatBeans(ServiceBase $api, $args, $beans)
+    protected function formatBeans(ServiceBase $api, $args, $beans, $options = array())
     {
         if (!empty($args['fields']) && !is_array($args['fields'])) {
             $args['fields'] = explode(',',$args['fields']);
@@ -588,7 +588,7 @@ class PMSEEngineFilterApi extends FilterApi
             $assignedUsersBean = BeanFactory::getBean('Users', $assignedBean->assigned_user_id);
             $arr_aux['assigned_user_name'] = $assignedUsersBean->full_name;
 
-            $ret[] = array_merge($this->formatBean($api, $args, $bean), $arr_aux);
+            $ret[] = array_merge($this->formatBean($api, $args, $bean, $options), $arr_aux);
         }
 
         return $ret;

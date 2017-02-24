@@ -1528,7 +1528,7 @@ EOQ;
 		$EditView->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$EditView->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
 
-        $json = new JSON(JSON_LOOSE_TYPE);
+        $json = new JSON();
         $prefillData = $json->encode($emailAddress);
         $EditView->assignVar('prefillData', $prefillData);
         $EditView->assignVar('prefillEmailAddresses', 'false');
@@ -1642,10 +1642,7 @@ EOQ;
 
 		// SETTING DEFAULTS
 		$focus = BeanFactory::getBean('Emails', $emailId);
-		$detailView->ss = new Sugar_Smarty();
-		$detailView	= new DetailView();
 		$title = "";
-		$offset		= 0;
 		if($focus->type == 'out') {
 			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_SENT_MODULE_NAME'],$focus->name), true);
 		} elseif ($focus->type == 'draft') {

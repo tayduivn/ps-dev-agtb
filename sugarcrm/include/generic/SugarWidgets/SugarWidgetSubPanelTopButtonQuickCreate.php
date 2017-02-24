@@ -16,9 +16,7 @@
 
 class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButton
 {
-
-
-	function &_get_form($defines, $additionalFormFields = null)
+    public function &_get_form($defines, $additionalFormFields = null)
 	{
 		global $app_strings;
 		global $currentModule;
@@ -178,4 +176,3 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 		 return $relationship_name;
 	}
 }
-?>

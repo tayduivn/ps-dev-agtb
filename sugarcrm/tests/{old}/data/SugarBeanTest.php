@@ -109,7 +109,8 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = new SugarBean();
 
         $query = "select id FROM " . $account->table_name . " where id = '" . $account->id . "'";
-        $return = array_shift($bean->build_related_list($query, BeanFactory::getBean('Accounts')));
+        $relatedList = $bean->build_related_list($query, BeanFactory::getBean('Accounts'));
+        $return = array_shift($relatedList);
 
         $this->assertEquals($account->id, $return->id);
 
@@ -308,12 +309,14 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'encrypt',
             ),
         );
-        $encrypted_value = 'encrypted_value';
+
+        // must be a valid base64-encoded string
+        $original_encrypted_value = $encrypted_value = base64_encode('smth');
         $oSugarBean->test_field = ''; //initialization to avoid "Indirect modification of overloaded property..." error
         $oSugarBean->test_field =& $encrypted_value; //use link to avoid calling __get method in assertEquals
         $oSugarBean->field_defs['test_field']['type'] = 'encrypt';
         $oSugarBean->check_date_relationships_load(); //$oSugarBean->test_field shouldn't be changed
-        $this->assertEquals('encrypted_value', $encrypted_value);
+        $this->assertEquals($original_encrypted_value, $encrypted_value);
         $decrypted_value = $oSugarBean->test_field; //$oSugarBean->test_field should be changed
         $this->assertNotEquals($encrypted_value, $decrypted_value);
     }

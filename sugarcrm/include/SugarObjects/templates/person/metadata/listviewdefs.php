@@ -14,7 +14,7 @@
 $module_name = '<module_name>';
 $listViewDefs[$module_name] = array(
 	'NAME' => array(
-		'width' => '20%', 		
+        'width' => '20',
 		'label' => 'LBL_NAME', 
 		'link' => true,
 		'orderBy' => 'last_name',
@@ -22,15 +22,15 @@ $listViewDefs[$module_name] = array(
         'related_fields' => array('first_name', 'last_name', 'salutation'),
 		), 
 	'TITLE' => array(
-		'width' => '15%', 
+        'width' => '15',
 		'label' => 'LBL_TITLE',
         'default' => true), 
 	'PHONE_WORK' => array(
-		'width' => '15%', 
+        'width' => '15',
 		'label' => 'LBL_OFFICE_PHONE',
         'default' => true),
 	'EMAIL1' => array(
-		'width' => '15%', 
+        'width' => '15',
 		'label' => 'LBL_EMAIL_ADDRESS',
 		'sortable' => false,
 		'link' => true,

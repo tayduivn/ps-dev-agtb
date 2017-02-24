@@ -11,23 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 class ViewSerialized extends SugarView{
 	var $type ='detail';
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewSerialized()
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
 	function display(){
 		ob_clean();
@@ -35,3 +20,4 @@ class ViewSerialized extends SugarView{
 		sugar_cleanup(true);
  	}
 }
+

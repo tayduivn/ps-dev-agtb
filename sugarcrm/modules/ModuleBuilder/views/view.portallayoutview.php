@@ -12,16 +12,10 @@
 
 //FILE SUGARCRM flav=ent ONLY
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 
 class ViewPortalLayoutView extends ViewLayoutView
 {
-    public function ViewPortalLayoutView($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
-
     public function __construct($bean = null, $view_object_map = array(), Request $request = null)
 	{
         parent::__construct($bean, $view_object_map, $request);
@@ -48,7 +42,12 @@ class ViewPortalLayoutView extends ViewLayoutView
 	{
 	}
 
-	function display() 
+    /**
+     * {@inheritDoc}
+     *
+     * @param bool $preview Ignored, for compatibility with parent method
+     */
+    public function display($preview = false)
 	{
 	    $this->parser = ParserFactory::getParser(MB_PORTAL . strtolower($this->editLayout),$this->editModule,null,null,MB_PORTAL);
 		$smarty = new Sugar_Smarty();

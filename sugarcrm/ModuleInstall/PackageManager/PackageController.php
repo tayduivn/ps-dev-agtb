@@ -13,14 +13,6 @@
  class PackageController{
         var $_pm;
 
-     /**
-      * @deprecated Use __construct() instead
-      */
-     public function PackageController()
-     {
-         self::__construct();
-     }
-
     /**
      * Constructor: this class is called from the the ajax call and handles invoking the correct
      * functionality on the server.
@@ -350,3 +342,4 @@
         echo $json->encode($output);
     }
 }
+

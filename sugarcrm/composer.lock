@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d27b342fa860da03482352aac8a40f2a",
-    "content-hash": "fb72c13609569e70427fe656644c3513",
+    "hash": "26da60cb9987823ee17e2a3fc586a138",
+    "content-hash": "cb6d3a827bf141ad1e05d503d4238618",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -830,17 +830,17 @@
         },
         {
             "name": "onelogin/php-saml",
-            "version": "2.6.1",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/onelogin/php-saml.git",
-                "reference": "9f3583c35339f185e114d148eac08d600a9360ef"
+                "reference": "a869401365f0c330a87db2666870856781e4dc5d"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/onelogin-php-saml-2.6.1-3ffac6.tar",
-                "reference": "9f3583c35339f185e114d148eac08d600a9360ef",
-                "shasum": "5bafbd0ef52da6ef3c40bd83e8928e7301e4a427"
+                "url": "https://satis.sugardev.team/dist/onelogin-php-saml-2.7.0-e8716b.tar",
+                "reference": "a869401365f0c330a87db2666870856781e4dc5d",
+                "shasum": "abe7624175fb02b19f02fb94e82e99e3605e113b"
             },
             "require": {
                 "ext-dom": "*",
@@ -852,7 +852,7 @@
                 "pdepend/pdepend": "1.1.0",
                 "phploc/phploc": "*",
                 "phpunit/phpunit": "3.7.31",
-                "satooshi/php-coveralls": "dev-master",
+                "satooshi/php-coveralls": "1.0.1",
                 "sebastian/phpcpd": "*",
                 "squizlabs/php_codesniffer": "*"
             },
@@ -884,7 +884,7 @@
                 "issues": "https://github.com/onelogin/php-saml/issues",
                 "source": "https://github.com/onelogin/php-saml/"
             },
-            "time": "2015-09-09 14:18:12"
+            "time": "2016-02-15 19:57:54"
         },
         {
             "name": "paragonie/random_compat",
@@ -1141,42 +1141,45 @@
         },
         {
             "name": "ruflin/elastica",
-            "version": "v1.4.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ruflin/Elastica",
-                "reference": "bfa9363bf2aa62af5907135863661c6c78a68ee4"
+                "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a"
             },
             "dist": {
                 "type": "tar",
-                "url": "https://satis.sugardev.team/dist/ruflin-elastica-v1.4.3.0-303899.tar",
-                "reference": "bfa9363bf2aa62af5907135863661c6c78a68ee4",
-                "shasum": "3f33be380279be221d15300099d79416f8c1ffca"
+                "url": "https://satis.sugardev.team/dist/ruflin-elastica-2.3.1-c20d16.tar",
+                "reference": "0df1d7b513960ba11d3075652dcd71fcab8dd37a",
+                "shasum": "9f57c4e0f9fe266ade3696472ea0478c4fef6464"
             },
             "require": {
                 "php": ">=5.3.3",
                 "psr/log": "~1.0"
             },
             "require-dev": {
-                "fabpot/php-cs-fixer": "~1.4",
-                "munkie/elasticsearch-thrift-php": "1.4.*",
-                "phpunit/phpunit": "4.1.*"
+                "guzzlehttp/guzzle": "5.3.*",
+                "munkie/elasticsearch-thrift-php": "1.4.*"
             },
             "suggest": {
                 "egeloen/http-adapter": "Allow using httpadapter transport",
-                "guzzlehttp/guzzle": "Allow using guzzle 4.x as the http transport (Requires php 5.4)",
+                "guzzlehttp/guzzle": "Allow using guzzle 5.3.x as the http transport (Requires php 5.4)",
                 "monolog/monolog": "Logging request",
                 "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "2.2.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Elastica\\": "lib/Elastica/",
+                    "Elastica\\": "lib/Elastica/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
                     "Elastica\\Test\\": "test/lib/Elastica/Test/"
                 }
             },
@@ -1195,7 +1198,7 @@
                 "client",
                 "search"
             ],
-            "time": "2015-02-17 19:57:36"
+            "time": "2015-10-19 07:09:10"
         },
         {
             "name": "symfony/console",
@@ -1555,6 +1558,58 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "time": "2015-06-07 06:33:05"
+        },
+        {
+            "name": "vanderlee/php-stable-sort-functions",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vanderlee/PHP-stable-sort-functions",
+                "reference": "4ea200455b775f0c6613108974d3332c68156194"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/vanderlee-php-stable-sort-functions-2.0.2-02e082.tar",
+                "reference": "4ea200455b775f0c6613108974d3332c68156194",
+                "shasum": "09c1e9187e81210a46a7046353faedc2d2c7c0a9"
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "functions/sarsort.php",
+                    "functions/sasort.php",
+                    "functions/snatcasesort.php",
+                    "functions/snatsort.php",
+                    "functions/suasort.php",
+                    "functions/suksort.php",
+                    "functions/susort.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Class of stable sort methods. Equal values remain in the original order. Only different values are sorted.",
+            "homepage": "https://github.com/vanderlee/PHP-stable-sort-functions",
+            "keywords": [
+                "array",
+                "arsort",
+                "asort",
+                "natcasesort",
+                "natsort",
+                "sort",
+                "stable",
+                "uasort",
+                "uksort",
+                "usort"
+            ],
+            "support": {
+                "issues": "https://github.com/vanderlee/PHP-stable-sort-functions/issues",
+                "source": "https://github.com/vanderlee/PHP-stable-sort-functions/"
+            },
+            "time": "2016-01-15 20:19:34"
         }
     ],
     "packages-dev": [

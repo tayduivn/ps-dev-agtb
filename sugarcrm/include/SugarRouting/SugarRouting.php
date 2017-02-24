@@ -36,14 +36,6 @@ class SugarRouting {
 	);
 	var $customActions;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarRouting($bean, $user)
-    {
-        self::__construct($bean, $user);
-    }
-
 	/**
 	 * Sole constructor
 	 */

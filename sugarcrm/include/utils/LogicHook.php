@@ -39,13 +39,6 @@ class LogicHook{
 
 	var $bean = null;
 
-    /**
-     * @deprecated
-     */
-    public function LogicHook()
-    {
-    }
-
 	/**
 	 * Static Function which returns and instance of LogicHook
 	 *

@@ -84,7 +84,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      */
     function get_module_layout_md5($session, $module_name, $type, $view, $acl_check = TRUE){
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout_md5');
-    	$results = self::get_module_layout($session, $module_name, $type, $view, $acl_check, TRUE);
+        $results = self::get_module_layout($session, $module_name, $type, $view, true, $acl_check);
             return array('md5'=> $results);
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout_md5');
     }
@@ -583,11 +583,22 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      *
      * @param String $session -- Session ID returned by a previous call to login.
      * @param array $module_name(s) -- The name of the module(s) to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @param array $a_type
+     * @param array $a_view
+     * @param bool $md5
+     * @param bool $acl_check
      * @return array $type The type(s) of views requested.  Current supported types are 'default' (for application) and 'wireless'
      * @return array $view The view(s) requested.  Current supported types are edit, detail, list, and subpanel.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    function get_module_layout($session, $a_module_names, $a_type, $a_view,$acl_check = TRUE, $md5 = FALSE){
+    public static function get_module_layout(
+        $session,
+        $a_module_names,
+        $a_type,
+        $a_view,
+        $md5 = false,
+        $acl_check = true
+    ) {
     	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
 
     	$error = new SoapError();
@@ -634,15 +645,28 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      * @param integer $offset -- The record offset to start from.
      * @param Array  $select_fields -- A list of the fields to be included in the results. This optional parameter allows for only needed fields to be retrieved.
      * @param Array $link_name_to_fields_array -- A list of link_names and for each link_name, what fields value to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))
-    * @param integer $max_results -- The maximum number of records to return.  The default is the sugar configuration value for 'list_max_entries_per_page'
+     * @param integer $max_results -- The maximum number of records to return.  The default is the sugar configuration
+     *                                  value for 'list_max_entries_per_page'
      * @param integer $deleted -- false if deleted records should not be include, true if deleted records should be included.
+     * @param bool $favorites
      * @return Array 'result_count' -- integer - The number of records returned
      *               'next_offset' -- integer - The start of the next page (This will always be the previous offset plus the number of rows returned.  It does not indicate if there is additional data unless you calculate that the next_offset happens to be closer than it should be.
      *               'entry_list' -- Array - The records that were retrieved
      *	     		 'relationship_list' -- Array - The records link field data. The example is if asked about accounts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
     * @exception 'SoapFault' -- The SOAP error, if any
     */
-    function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted, $favorites = false ){
+    public function get_entry_list(
+        $session,
+        $module_name,
+        $query,
+        $order_by,
+        $offset,
+        $select_fields,
+        $link_name_to_fields_array,
+        $max_results,
+        $deleted = 0,
+        $favorites = false
+    ) {
 
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
         $error = new SoapError();

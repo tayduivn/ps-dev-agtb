@@ -11,14 +11,6 @@
  */
 class ViewIndex extends SugarView
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewIndex()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->options['show_footer'] = false;
@@ -31,3 +23,4 @@ class ViewIndex extends SugarView
  		$smarty->display('modules/ExpressionEngine/tpls/index.tpl');
  	}
 }
+

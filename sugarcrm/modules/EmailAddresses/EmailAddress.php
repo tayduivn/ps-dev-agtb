@@ -18,16 +18,6 @@ class EmailAddress extends SugarEmailAddress
 {
 	var $disable_row_level_security = true;
 
-	function save($id = '', $module = '', $new_addrs=array(), $primary='', $replyTo='', $invalid='', $optOut='', $in_workflow=false)
-	{
-		if ( func_num_args() > 1 ) {
-		    parent::save($id, $module, $new_addrs, $primary, $replyTo, $invalid, $optOut, $in_workflow);
-		}
-		else {
-		    SugarBean::save($id);
-		}
-	}
-
     /**
      * Called by DuplicateCheck api to remove email_addr_bean_rel records created in the process
      * @param string $id

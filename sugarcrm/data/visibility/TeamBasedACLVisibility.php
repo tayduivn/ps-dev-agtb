@@ -168,7 +168,7 @@ class TeamBasedACLVisibility extends SugarVisibility implements StrategyInterfac
     /**
      * {@inheritdoc}
      */
-    public function elasticAddFilters(\User $user, \Elastica\Filter\Bool $filter, Visibility $provider)
+    public function elasticAddFilters(\User $user, \Elastica\Filter\BoolFilter $filter, Visibility $provider)
     {
         if ($this->isApplicable()) {
             $combo = new \Elastica\Filter\BoolOr();

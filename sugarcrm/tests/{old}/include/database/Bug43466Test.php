@@ -497,13 +497,6 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
         return $returnArray;
 	}
 
-	static function isEmpty($result){
-		if(trim($result) == ""){
-			return true;
-		}
-		return false;
-	}
-
 	/**
      * @dataProvider providerRepairTableParams
      */

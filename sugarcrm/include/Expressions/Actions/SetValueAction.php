@@ -39,14 +39,6 @@ class SetValueAction extends AbstractAction
     protected $errorValue = null;
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function SetValueAction($params)
-    {
-        self::__construct($params);
-    }
-
-    /**
      * Constructor
      *
      * @param array $params

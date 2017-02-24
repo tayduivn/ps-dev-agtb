@@ -12,15 +12,6 @@
 
 
 class DropDownTree extends MBPackageTree{
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function DropDownTree()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->tree = new Tree('package_tree');

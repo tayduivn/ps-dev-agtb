@@ -138,7 +138,7 @@ class MysqliManager extends MysqlManager
             $result = mysqli_use_result($this->database);
 
             // Clear any remaining recordsets
-            while (mysqli_next_result($this->database))  {
+            while (mysqli_more_results($this->database) && mysqli_next_result($this->database)) {
                 $tmp_result = mysqli_use_result($this->database);
                 mysqli_free_result($tmp_result);
             }

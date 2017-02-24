@@ -25,6 +25,7 @@ require_once 'include/utils.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -2552,7 +2553,7 @@ class SugarBean
                     }
 
                     if (isset($this->rel_fields_before_value[$def['id_name']]) &&
-                        $this->rel_fields_before_value[$def['id_name']] === $this->$def['id_name']) {
+                        $this->rel_fields_before_value[$def['id_name']] === $this->{$def['id_name']}) {
                         // the values didn't change, so ignore it.
                         continue;
                     }
@@ -3056,7 +3057,7 @@ class SugarBean
      *
      * Internal function, do not override.
     */
-    function retrieve($id='-1', $encode=true,$deleted=true)
+    public function retrieve($id = -1, $encode = true, $deleted = true)
     {
         global $locale;
 
@@ -7136,7 +7137,7 @@ class SugarBean
     protected function getEncryptKey()
     {
         if(empty(self::$field_key[$this->module_key])) {
-            self::$field_key[$this->module_key] = blowfishGetKey($this->module_key);
+            self::$field_key[$this->module_key] = Blowfish::getKey($this->module_key);
         }
         return self::$field_key[$this->module_key];
     }
@@ -7148,7 +7149,7 @@ class SugarBean
  */
     function encrpyt_before_save($value)
     {
-        return blowfishEncode($this->getEncryptKey(), $value);
+        return Blowfish::encode($this->getEncryptKey(), $value);
     }
 
 /**
@@ -7159,7 +7160,7 @@ class SugarBean
     public function decrypt_after_retrieve($value)
     {
         if(empty($value)) return $value; // no need to decrypt empty
-        return blowfishDecode($this->getEncryptKey(), $value);
+        return Blowfish::decode($this->getEncryptKey(), $value);
     }
 
     /**

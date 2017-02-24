@@ -17,14 +17,6 @@ class InvadersDashlet extends Dashlet {
     var $height = '100'; // height of the pad
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function InvadersDashlet($id, $def)
-    {
-        self::__construct($id, $def);
-    }
-
-    /**
      * Constructor
      *
      * @global string current language
@@ -49,11 +41,11 @@ class InvadersDashlet extends Dashlet {
     }
 
     /**
-     * Displays the dashlet
-     *
-     * @return string html to display dashlet
+     * {@inheritDoc}
+     * @param string $text Ignored
      */
-    function display() {
+    public function display($text = '')
+    {
         $ss = new Sugar_Smarty();
         $ss->assign('id', $this->id);
         $ss->assign('height', $this->height);
@@ -140,3 +132,4 @@ class InvadersDashlet extends Dashlet {
         echo $json->encode(array('id' => $guid, 'savedText' => $optionsArray['savedText']));
     }
 }
+

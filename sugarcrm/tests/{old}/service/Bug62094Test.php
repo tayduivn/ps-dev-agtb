@@ -60,8 +60,12 @@ class Bug62094Test extends SOAPTestCase
         $this->assertNotEmpty($vardef['module'], 'get_module_fields failed: empty module returned');
         $this->assertNotEmpty($vardef['bean_name'], 'get_module_fields failed: empty bean_name returned');
 
-        $relationship = new ActivitiesRelationship62094($this->definition);
-        $vardef = $relationship->getLinkFieldDefinition('Meetings', 'accounts_meetings_1');
+        $relationship = new ActivitiesRelationship($this->definition);
+        $vardef = SugarTestReflection::callProtectedMethod(
+            $relationship,
+            'getLinkFieldDefinition',
+            array('Meetings', 'accounts_meetings_1')
+        );
 
         $this->assertNotEmpty($vardef['module'], 'get_module_fields failed: empty module returned');
         $this->assertNotEmpty($vardef['bean_name'], 'get_module_fields failed: empty bean_name returned');
@@ -70,18 +74,13 @@ class Bug62094Test extends SOAPTestCase
 
 class AbstractRelationship62094 extends AbstractRelationship {
 
-    public function getLinkFieldDefinition ($sourceModule , $relationshipName)
-    {
+    public function getLinkFieldDefinition(
+        $sourceModule,
+        $relationshipName,
+        $right_side = false,
+        $vname = '',
+        $id_name = false
+    ) {
         return parent::getLinkFieldDefinition($sourceModule , $relationshipName);
     }
-
-}
-
-class ActivitiesRelationship62094 extends ActivitiesRelationship {
-
-    public function getLinkFieldDefinition ($sourceModule , $relationshipName)
-    {
-        return parent::getLinkFieldDefinition($sourceModule , $relationshipName);
-    }
-
 }

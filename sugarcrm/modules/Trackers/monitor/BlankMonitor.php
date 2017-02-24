@@ -11,15 +11,7 @@
  */
 
 class BlankMonitor extends Monitor implements Trackable {
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function BlankMonitor()
-    {
-        self::__construct();
-    }
-
+    
     /**
      * BlankMonitor constructor
      */
