@@ -140,7 +140,7 @@ class EmailsApi extends ModuleApi
             $email = $this->loadBean($api, $loadArgs, 'save', array('source' => 'module_api'));
 
             try {
-                $this->sendEmail($api, $email);
+                $this->sendEmail($email);
                 $result = $this->formatBeanAfterSave($api, $args, $email);
             } catch (Exception $e) {
                 $email->delete();
@@ -181,7 +181,7 @@ class EmailsApi extends ModuleApi
 
         if ($isReady) {
             $email = $this->loadBean($api, $args, 'save', array('source' => 'module_api'));
-            $this->sendEmail($api, $email);
+            $this->sendEmail($email);
             $result = $this->formatBeanAfterSave($api, $args, $email);
         }
 
@@ -293,42 +293,31 @@ class EmailsApi extends ModuleApi
      * The system configuration is used if no configuration is specified on the email. An error will occur if the
      * application is not configured correctly to send email.
      *
-     * @param ServiceBase $service
      * @param SugarBean $email
      * @throws SugarApiException
      */
-    protected function sendEmail(ServiceBase $service, SugarBean $email)
+    protected function sendEmail(SugarBean $email)
     {
         try {
             $config = null;
             $oe = null;
 
             if (empty($email->outbound_email_id)) {
-                $args = [
-                    'module' => 'OutboundEmail',
-                    'filter' => [
-                        [
-                            'type' => [
-                                '$in' => [
-                                    'system',
-                                    'system-override',
-                                ],
-                            ],
-                        ],
-                    ],
-                    'fields' => 'id',
-                    // There should only be one system or system-override account that is accessible. The admin can
-                    // actually access both a system and system-override account. Sorting and setting a limit guarantees
-                    // that the system-override account is prioritized when finding the default record to use.
-                    'order_by' => 'type:desc',
-                    'max_num' => 1,
-                ];
-                $api = new OutboundEmailFilterApi();
-                $data = $api->filterList($service, $args);
+                $seed = BeanFactory::newBean('OutboundEmail');
+                $q = new SugarQuery();
+                $q->from($seed);
+                $q->where()->in('type', [OutboundEmail::TYPE_SYSTEM, OutboundEmail::TYPE_SYSTEM_OVERRIDE]);
+                // There should only be one system or system-override account that is accessible. The admin can actually
+                // access both a system and system-override account. Sorting in descending order by type and setting a
+                // limit guarantees that the system-override account is prioritized when finding the default record to
+                // use.
+                $q->orderBy('type');
+                $q->limit(1);
+                $beans = $seed->fetchFromQuery($q, ['id']);
 
-                if (!empty($data['records'])) {
-                    $record = array_shift($data['records']);
-                    $email->outbound_email_id = $record['id'];
+                if (!empty($beans)) {
+                    $bean = array_shift($beans);
+                    $email->outbound_email_id = $bean->id;
                 }
             }
 

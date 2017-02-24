@@ -234,9 +234,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             }));
         $email->outbound_email_id = $this->currentUserConfiguration->id;
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -254,9 +253,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 return $config->getConfigId() === $configId;
             }));
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -283,9 +281,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
                 return $config->getConfigId() === $configId;
             }));
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -305,9 +302,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $caught = false;
 
         try {
-            $service = SugarTestRestUtilities::getRestServiceMock();
             $api = new EmailsApi();
-            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
         } catch (SugarApiException $e) {
             $caught = true;
         }
@@ -333,9 +329,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('sendEmail');
         $email->outbound_email_id = create_guid();
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -352,9 +347,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
         $email->expects($this->never())->method('sendEmail');
         $email->outbound_email_id = $oe->id;
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     /**
@@ -371,9 +365,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('sendEmail')
             ->willThrowException(new Exception('something happened'));
 
-        $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new EmailsApi();
-        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+        SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
     }
 
     public function smtpServerErrorProvider()
@@ -429,9 +422,8 @@ class EmailsApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->willThrowException(new MailerException('something happened', $errorCode));
 
         try {
-            $service = SugarTestRestUtilities::getRestServiceMock();
             $api = new EmailsApi();
-            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$service, $email]);
+            SugarTestReflection::callProtectedMethod($api, 'sendEmail', [$email]);
         } catch (SugarApiException $e) {
             $this->assertEquals(
                 451,

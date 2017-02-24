@@ -3873,34 +3873,32 @@ eoq;
         $options = [];
         $hasConfiguredDefault = false;
         $error = false;
+        $seed = BeanFactory::newBean('OutboundEmail');
 
-        SugarAutoLoader::load('custom/include/RestService.php');
-        $restServiceClass = SugarAutoLoader::customClass('RestService');
-        $rest = new $restServiceClass();
-        $rest->user = $GLOBALS['current_user'];
-        $rest->platform = 'base';
-        $api = new OutboundEmailFilterApi();
-        $data = $api->filterList($rest, ['module' => 'OutboundEmail']);
+        if (!$seed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized("No access to view records for module: {$seed->getModuleName()}");
+        }
 
-        foreach ($data['records'] as $record) {
-            $oe = BeanFactory::retrieveBean('OutboundEmail', $record['id']);
+        $q = new SugarQuery();
+        $q->from($seed);
+        $beans = $seed->fetchFromQuery($q, ['type', 'name', 'email_address', 'mail_smtpserver']);
 
-            if (!$oe) {
-                continue;
-            }
+        foreach ($beans as $bean) {
+            if ($bean->isConfigured()) {
+                // Don't apply field-level ACL's because the dropdown won't work without being able to view the data.
+                // It doesn't make sense to prevent users from seeing the name and email address of configurations they
+                // can use.
+                $name = $bean->type === OutboundEmail::TYPE_SYSTEM ? "* {$bean->name}" : $bean->name;
+                $option = sprintf('%s <%s> [%s]', $name, $bean->email_address, $bean->mail_smtpserver);
 
-            if ($oe->isConfigured()) {
-                $name = $oe->type === 'system' ? "* {$oe->name}" : $oe->name;
-                $option = sprintf('%s <%s> [%s]', $name, $oe->email_address, $oe->mail_smtpserver);
-
-                if ($oe->type === 'system-override') {
+                if ($bean->type === OutboundEmail::TYPE_SYSTEM_OVERRIDE) {
                     // Force this element to the beginning of the array.
-                    $options = [$oe->id => $option] + $options;
+                    $options = [$bean->id => $option] + $options;
                 } else {
-                    $options[$oe->id] = $option;
+                    $options[$bean->id] = $option;
                 }
 
-                if (in_array($oe->type, ['system', 'system-override'])) {
+                if (in_array($bean->type, [OutboundEmail::TYPE_SYSTEM, OutboundEmail::TYPE_SYSTEM_OVERRIDE])) {
                     $hasConfiguredDefault = true;
                 }
             } else {
@@ -3908,9 +3906,9 @@ eoq;
                 // prioritized so that the user will attempt to configure their account on his/her own. Once the user
                 // has configured his/her system-override account, the reported error will be for the system account,
                 // which tells the user to contact the administrator because there is nothing more he/she can do.
-                if ($oe->type === 'system-override') {
+                if ($bean->type === OutboundEmail::TYPE_SYSTEM_OVERRIDE) {
                     $error = 'LBL_EMAIL_INVALID_USER_CONFIGURATION';
-                } elseif ($oe->type === 'system' && empty($error)) {
+                } elseif ($bean->type === 'system' && empty($error)) {
                     $error = 'LBL_EMAIL_INVALID_SYSTEM_CONFIGURATION';
                 }
             }
