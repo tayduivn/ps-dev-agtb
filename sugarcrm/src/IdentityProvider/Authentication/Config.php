@@ -64,17 +64,19 @@ class Config
     {
         $defaultConfig = $this->getSAMLDefaultConfig();
 
-        $returnQueryVars = $this->get('SAML_returnQueryVars');
+        $returnQueryVars = $this->get('SAML_returnQueryVars', []);
+        $returnPath = '/index.php';
+        $returnQueryVars['module'] = 'Users';
+        $returnQueryVars['action'] = 'Authenticate';
+        $returnQueryVars['dataOnly'] = 1;
         if (!empty($returnQueryVars['platform'])
             && ($returnQueryVars['platform'] == 'base')
             && !empty($this->get('SAML_SAME_WINDOW'))
         ) {
-            $returnPath = '/index.php?module=Users&action=Authenticate';
-        } else {
-            $returnPath = '/index.php?module=Users&action=Authenticate&dataOnly=1';
+            unset($returnQueryVars['dataOnly']);
         }
         if (!empty($returnQueryVars) && is_array($returnQueryVars)) {
-            $returnPath .= '&' . http_build_query($returnQueryVars);
+            $returnPath .= '?'.urlencode(http_build_query($returnQueryVars));
         }
         $defaultConfig['sp']['assertionConsumerService']['url'] = rtrim($this->get('site_url'), '/') . $returnPath;
 

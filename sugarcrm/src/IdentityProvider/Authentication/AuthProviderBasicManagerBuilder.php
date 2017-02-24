@@ -159,7 +159,7 @@ class AuthProviderBasicManagerBuilder
         }
 
         return new SAMLAuthenticationProvider(
-            [$this->samlConfig],
+            $this->samlConfig,
             new SugarSAMLUserProvider(new SugarLocalUserProvider())
         );
     }

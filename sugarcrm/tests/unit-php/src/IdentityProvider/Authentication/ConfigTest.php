@@ -32,7 +32,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'default' => 'config',
                     'sp' => [
                         'assertionConsumerService' => [
-                            'url' => 'config_site_url/index.php?module=Users&action=Authenticate&platform=base',
+                            'url' =>
+                                'config_site_url/index.php?platform%3Dbase%26module%3DUsers%26action%3DAuthenticate',
                         ],
                     ],
                 ],
@@ -44,7 +45,8 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     'default' => 'overridden config',
                     'sp' => [
                         'assertionConsumerService' => [
-                            'url' => 'config_site_url/index.php?module=Users&action=Authenticate&platform=base',
+                            'url' =>
+                                'config_site_url/index.php?platform%3Dbase%26module%3DUsers%26action%3DAuthenticate',
                         ],
                     ],
                 ],
