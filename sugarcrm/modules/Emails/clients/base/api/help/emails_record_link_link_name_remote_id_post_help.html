@@ -1,0 +1,291 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Creates a relationship to a pre-existing email. See
+    <a href="module_record_link_link_name_remote_id_post_help.html">RelateRecordApi</a> for details.
+</span>
+
+<h2>Links</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Link</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            accounts_from
+        </td>
+        <td>
+            Existing accounts may be linked. An email may only have one sender. Linking an account replaces the existing
+            sender, if any. The sender cannot be changed after the email is archived. An <b>email_address</b> or
+            <b>email_address_id</b> can be provided along with the record to specify the email address used for the
+            sender, in the event that it was not the account's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_to
+        </td>
+        <td>
+            One or more accounts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the account's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_cc
+        </td>
+        <td>
+            One or more accounts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the account's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_bcc
+        </td>
+        <td>
+            One or more accounts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the account's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_from
+        </td>
+        <td>
+            Existing contacts may be linked. An email may only have one sender. Linking a contact replaces the existing
+            sender, if any. The sender cannot be changed after the email is archived. An <b>email_address</b> or
+            <b>email_address_id</b> can be provided along with the record to specify the email address used for the
+            sender, in the event that it was not the contact's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_to
+        </td>
+        <td>
+            One or more contacts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the contact's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_cc
+        </td>
+        <td>
+            One or more contacts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the contact's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_bcc
+        </td>
+        <td>
+            One or more contacts may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the contact's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_from
+        </td>
+        <td>
+            Existing email addresses may be linked. An email may only have one sender. Linking an email address replaces
+            the existing sender, if any. The sender cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_to
+        </td>
+        <td>
+            One or more email addresses may be linked. The recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_cc
+        </td>
+        <td>
+            One or more email addresses may be linked. The recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_bcc
+        </td>
+        <td>
+            One or more email addresses may be linked. The recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_from
+        </td>
+        <td>
+            Existing leads may be linked. An email may only have one sender. Linking a lead replaces the existing
+            sender, if any. The sender cannot be changed after the email is archived. An <b>email_address</b> or
+            <b>email_address_id</b> can be provided along with the record to specify the email address used for the
+            sender, in the event that it was not the lead's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_to
+        </td>
+        <td>
+            One or more leads may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the lead's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_cc
+        </td>
+        <td>
+            One or more leads may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the lead's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_bcc
+        </td>
+        <td>
+            One or more leads may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the lead's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_from
+        </td>
+        <td>
+            Existing targets may be linked. An email may only have one sender. Linking a target replaces the existing
+            sender, if any. The sender cannot be changed after the email is archived. An <b>email_address</b> or
+            <b>email_address_id</b> can be provided along with the record to specify the email address used for the
+            sender, in the event that it was not the target's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_to
+        </td>
+        <td>
+            One or more targets may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the target's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_cc
+        </td>
+        <td>
+            One or more targets may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the target's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_bcc
+        </td>
+        <td>
+            One or more targets may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the target's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_from
+        </td>
+        <td>
+            Existing users may be linked. An email may only have one sender. Linking a user replaces the existing
+            sender, if any. The sender cannot be changed after the email is archived. An <b>email_address</b> or
+            <b>email_address_id</b> can be provided along with the record to specify the email address used for the
+            sender, in the event that it was not the user's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_to
+        </td>
+        <td>
+            One or more users may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the user's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_cc
+        </td>
+        <td>
+            One or more users may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the user's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_bcc
+        </td>
+        <td>
+            One or more users may be linked. The recipients cannot be changed after the email is archived. An
+            <b>email_address</b> or <b>email_address_id</b> can be provided along with the record to specify the email
+            address used for the recipient, in the event that it was not the user's primary email address.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            attachments
+        </td>
+        <td>
+            Linking existing attachments is unsupported.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v11
+        </td>
+        <td>
+            Added <code>/Emails/:record/link/:link_name/:remote_id</code> POST endpoint.
+        </td>
+    </tr>
+</table>

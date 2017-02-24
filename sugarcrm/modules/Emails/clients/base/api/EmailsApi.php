@@ -189,82 +189,6 @@ class EmailsApi extends ModuleApi
     }
 
     /**
-     * Prevents existing Notes records from being linked as attachments.
-     *
-     * {@inheritdoc}
-     */
-    protected function linkRelatedRecords(
-        ServiceBase $service,
-        SugarBean $bean,
-        array $ids,
-        $securityTypeLocal = 'view',
-        $securityTypeRemote = 'view'
-    ) {
-        unset($ids['attachments']);
-        parent::linkRelatedRecords($service, $bean, $ids, $securityTypeLocal, $securityTypeRemote);
-    }
-
-    /**
-     * The sender cannot be removed.
-     *
-     * {@inheritdoc}
-     */
-    protected function unlinkRelatedRecords(ServiceBase $service, SugarBean $bean, array $ids)
-    {
-        $links = VardefManager::getLinkFieldsForCollection($bean->module_dir, $bean->object_name, 'from');
-
-        foreach ($links as $linkName) {
-            unset($ids[$linkName]);
-        }
-
-        parent::unlinkRelatedRecords($service, $bean, $ids);
-    }
-
-    /**
-     * Prepares attachments for being related. This includes patching the related record arguments for attachments to
-     * contain the data necessary for creating the requisite Notes records, as well as placing the file.
-     *
-     * Creating records for the links from the from, to, cc, and bcc collection fields is not supported. Only existing
-     * records can be added for these links, with the exception of email_addresses_from, email_addresses_to,
-     * email_addresses_cc, and email_addresses_bcc.
-     *
-     * {@inheritdoc}
-     */
-    protected function createRelatedRecords(ServiceBase $service, SugarBean $bean, array $data)
-    {
-        $relate = array();
-        $skip = array();
-        $doNotSkip = array(
-            'email_addresses_from',
-            'email_addresses_to',
-            'email_addresses_cc',
-            'email_addresses_bcc',
-        );
-
-        foreach (array('from', 'to', 'cc', 'bcc') as $field) {
-            $links = VardefManager::getLinkFieldsForCollection($bean->module_dir, $bean->object_name, $field);
-
-            foreach ($links as $linkName) {
-                if (!in_array($linkName, $doNotSkip)) {
-                    $skip[] = $linkName;
-                }
-            }
-        }
-
-        foreach ($data as $linkName => $records) {
-            switch ($linkName) {
-                case in_array($linkName, $skip):
-                    // Creating records over these links is not supported.
-                    break;
-                default:
-                    $relate[$linkName] = $records;
-            }
-        }
-
-        parent::createRelatedRecords($service, $bean, $relate);
-    }
-
-    /**
      * Is the supplied state transition valid?
      *
      * @param string $operation
@@ -393,7 +317,6 @@ class EmailsApi extends ModuleApi
     protected function getRelateRecordApi()
     {
         if (!$this->relateRecordApi) {
-            require_once 'modules/Emails/clients/base/api/EmailsRelateRecordApi.php';
             $this->relateRecordApi = new EmailsRelateRecordApi();
         }
 

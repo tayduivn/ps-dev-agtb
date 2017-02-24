@@ -1,0 +1,257 @@
+<!--
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
+-->
+<h2>Overview</h2>
+<span class="lead">
+    Creates a record related to an email. See <a href="module_record_link_link_name_post_help.html">RelateRecordApi</a>
+    for details.
+</span>
+
+<h2>Senders &amp; Recipients</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Link</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            accounts_from
+        </td>
+        <td>
+            Creating related accounts is unsupported. Only existing accounts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_to
+        </td>
+        <td>
+            Creating related accounts is unsupported. Only existing accounts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_cc
+        </td>
+        <td>
+            Creating related accounts is unsupported. Only existing accounts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            accounts_bcc
+        </td>
+        <td>
+            Creating related accounts is unsupported. Only existing accounts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_from
+        </td>
+        <td>
+            Creating related contacts is unsupported. Only existing contacts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_to
+        </td>
+        <td>
+            Creating related contacts is unsupported. Only existing contacts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_cc
+        </td>
+        <td>
+            Creating related contacts is unsupported. Only existing contacts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            contacts_bcc
+        </td>
+        <td>
+            Creating related contacts is unsupported. Only existing contacts may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_from
+        </td>
+        <td>
+            New email addresses may be created. If the email address already exists, then it will be linked. An email
+            may only have one sender. Creating a new email address replaces the existing sender, if any. The sender
+            cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_to
+        </td>
+        <td>
+            One or more email addresses may be created. If the email address already exists, then it will be linked. The
+            recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_cc
+        </td>
+        <td>
+            One or more email addresses may be created. If the email address already exists, then it will be linked. The
+            recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            email_addresses_bcc
+        </td>
+        <td>
+            One or more email addresses may be created. If the email address already exists, then it will be linked. The
+            recipients cannot be changed after the email is archived.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_from
+        </td>
+        <td>
+            Creating related leads is unsupported. Only existing leads may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_to
+        </td>
+        <td>
+            Creating related leads is unsupported. Only existing leads may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_cc
+        </td>
+        <td>
+            Creating related leads is unsupported. Only existing leads may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            leads_bcc
+        </td>
+        <td>
+            Creating related leads is unsupported. Only existing leads may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_from
+        </td>
+        <td>
+            Creating related targets is unsupported. Only existing targets may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_to
+        </td>
+        <td>
+            Creating related targets is unsupported. Only existing targets may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_cc
+        </td>
+        <td>
+            Creating related targets is unsupported. Only existing targets may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            prospects_bcc
+        </td>
+        <td>
+            Creating related targets is unsupported. Only existing targets may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_from
+        </td>
+        <td>
+            Creating related users is unsupported. Only existing users may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_to
+        </td>
+        <td>
+            Creating related users is unsupported. Only existing users may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_cc
+        </td>
+        <td>
+            Creating related users is unsupported. Only existing users may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            users_bcc
+        </td>
+        <td>
+            Creating related users is unsupported. Only existing users may be linked.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            attachments
+        </td>
+        <td>
+            Create related notes as attachments. <b>filename_guid</b> is used to specify the temporary
+            file ID for an uploaded file that should be attached as a Notes record. <b>upload_id</b> is used to specify
+            the ID of an existing file that the Notes record should reference as the attachment. This allows files to be
+            shared by multiple records. When using <b>upload_id</b>, the <b>file_source</b> should be provided to
+            indicate from where the file originated. The value should be the module of the record that shares its ID
+            with the file. So when an attachment comes from an email template, the <b>file_source</b> should be
+            <b>EmailTemplates</b>. And when an attachment comes from a document, the <b>file_source</b> should be
+            <b>DocumentRevisions</b>.
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Change Log</h2>
+<table class="table table-hover">
+    <tr>
+        <th>Version</th>
+        <th>Change</th>
+    </tr>
+    <tr>
+        <td>
+            v11
+        </td>
+        <td>
+            Added <code>/Emails/:record/link/:link_name</code> POST endpoint.
+        </td>
+    </tr>
+</table>
