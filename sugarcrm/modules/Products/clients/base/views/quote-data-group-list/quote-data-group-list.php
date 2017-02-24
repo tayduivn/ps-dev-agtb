@@ -93,7 +93,6 @@ $viewdefs['Products']['base']['view']['quote-data-group-list'] = array(
                     'label' => 'LBL_LINE_ITEM_TOTAL',
                     'type' => 'currency',
                     'widthClass' => 'cell-medium',
-                    'convertToBase' => true,
                     'showTransactionalAmount' => true,
                     'related_fields' => array(
                         'total_amount',
