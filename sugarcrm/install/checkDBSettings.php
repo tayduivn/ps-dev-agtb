@@ -90,7 +90,7 @@ function checkDBSettings($silent=false) {
 
         // Bug 29855 - Check to see if given db name is valid
         if($_SESSION['setup_db_type'] == 'oci8') {
-            if (preg_match("![\"'*\\?<>-]+!i", $_SESSION['setup_db_database_name'])) {
+            if (preg_match("![\"'*\\?<>]+!i", $_SESSION['setup_db_database_name'])) {
                 $errors['ERR_DB_OCI8_DB_NAME'] = $mod_strings['ERR_DB_OCI8_DB_NAME_INVALID'];
                 installLog("ERROR::  {$errors['ERR_DB_OCI8_DB_NAME']}");
             }
