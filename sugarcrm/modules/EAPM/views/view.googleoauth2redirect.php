@@ -12,8 +12,12 @@
 
 class EAPMViewGoogleOauth2Redirect extends SugarView
 {
-    /** {@inheritdoc} */
-    public function process()
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
+     */
+    public function process($params = array())
     {
         global $sugar_config;
 

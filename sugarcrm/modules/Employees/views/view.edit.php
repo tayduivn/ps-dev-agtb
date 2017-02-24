@@ -10,23 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 class EmployeesViewEdit extends ViewEdit {
     var $useForSubpanel = true;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function EmployeesViewEdit($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
  	function display() {
        	if(is_admin($GLOBALS['current_user'])) {

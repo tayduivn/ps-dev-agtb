@@ -44,19 +44,6 @@ class QuotesApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function testFormatForApiCallsFillInAdditionalDetailsOnBean()
-    {
-        $bean = $this->getMockBuilder('Quote')
-            ->setMethods(array('fill_in_additional_detail_fields'))
-            ->getMock();
-
-        $bean->expects($this->atLeastOnce())
-            ->method('fill_in_additional_detail_fields');
-
-        /* @var $bean Quote */
-        $this->helper->formatForApi($bean);
-    }
-
     public function testPopulateFromApiSettingBillingAddressCorrectly()
     {
         $account = SugarTestAccountUtilities::createAccount();

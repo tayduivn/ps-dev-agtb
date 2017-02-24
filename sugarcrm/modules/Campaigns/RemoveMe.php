@@ -45,14 +45,14 @@ if(!empty($_REQUEST['identifier'])) {
 		$db = DBManagerFactory::getInstance();
 
 		//no opt out for users.
-		if(preg_match('/^[0-9A-Za-z\-]*$/', $id) && $module != 'Users'){
+        if (!isset($module) || $module != 'Users') {
             //record this activity in the campaing log table..
             $status = true;
             $email = BeanFactory::newBean('EmailAddresses');
             $sql = 'SELECT ea.id FROM email_addresses ea'
                 . ' INNER JOIN email_addr_bean_rel eabr ON eabr.email_address_id = ea.id'
-                . ' WHERE eabr.bean_id = %s AND eabr.bean_module = %s AND eabr.deleted = 0 AND ea.opt_out = 0;';
-            $stmt = $db->query(sprintf($sql, $db->quoted($id), $db->quoted($module)));
+                . ' WHERE eabr.bean_id = %s AND eabr.deleted = 0 AND ea.opt_out = 0';
+            $stmt = $db->query(sprintf($sql, $db->quoted($id)));
             while ($row = $db->fetchByAssoc($stmt)) {
                 $status = $status && (bool) $db->updateParams(
                     $email->getTableName(),
@@ -68,7 +68,4 @@ if(!empty($_REQUEST['identifier'])) {
     }
 		//Print Confirmation Message.
 		echo $mod_strings['LBL_ELECTED_TO_OPTOUT'];
-
 }
-sugar_cleanup();
-?>

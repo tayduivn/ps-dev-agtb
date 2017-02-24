@@ -63,7 +63,11 @@
         var currencyField = this.def.currency_field || 'currency_id',
             currencyFieldValue, baseRateField, baseRateFieldValue;
 
-        if (this.model.isNew() && (!this.model.isCopy())) {
+        // should we ignore the user preference currency
+        // currently this is only used in quotes
+        var ignoreUserPrefCurrency = this.model.ignoreUserPrefCurrency || false;
+
+        if (this.model.isNew() && (!this.model.isCopy()) && (!ignoreUserPrefCurrency)) {
             // new records are set the user's preferred currency
             currencyFieldValue = app.user.getPreference('currency_id');
             this.model.set(currencyField, currencyFieldValue);
@@ -206,6 +210,12 @@
                 //When model is reset, it should not be called
                 if (!currencyId || !this._lastCurrencyId || options.revert === true) {
                     this._lastCurrencyId = currencyId;
+                    return;
+                }
+
+                if (_.has(model.changed, this.name)) {
+                    // if this field is on the view more than once, this will trigger x number of times. so if the
+                    // currency_id has changed and this field has already changed on the model, we should ignore it.
                     return;
                 }
 

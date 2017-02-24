@@ -91,11 +91,11 @@
     },
     "require": {
         "psr/log": "1.0.0",
-        "ruflin/elastica" : "v1.4.3.0",
-        "onelogin/php-saml" : "2.6.1",
+        "ruflin/elastica" : "2.3.1",
+        "onelogin/php-saml" : "2.7.0",
         "aws/aws-sdk-php": "2.7.7",
-        "phpmailer/phpmailer" : "v5.2.9",
-        "etechnika/idna-convert" : "1.0.*",
+        "phpmailer/phpmailer" : "v5.2.22",
+        "etechnika/idna-convert" : "1.0.3",
         "ircmaxell/password-compat": "v1.0.4",
         "symfony/security-core": "v2.7.1",
         "symfony/security-csrf": "v2.7.1",
@@ -108,6 +108,7 @@
         "ramsey/uuid": "2.9.0",
         "moontoast/math": "1.1.0",
         "doctrine/dbal": "2.5.5",
+        "vanderlee/php-stable-sort-functions": "2.0.2",
         "php": ">=5.6.0"
     },
     "require-dev": {
@@ -119,10 +120,6 @@
       "composer": {
         "type": "composer",
         "url": "https://satis.sugardev.team"
-      },
-      "phpmailer": {
-        "type": "git",
-        "url": "https://github.com/sugarcrm/PHPMailer"
       }
     }
 }

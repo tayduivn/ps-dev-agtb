@@ -105,8 +105,10 @@ class SugarWidgetReportFieldTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testQueryOrderBy($layoutDef, $reportDef, $expected)
     {
+        $report = new Report(json_encode($reportDef));
+        
         $layoutManager = new LayoutManager();
-        $layoutManager->setAttributePtr('reporter', new Report(json_encode($reportDef)));
+        $layoutManager->setAttributePtr('reporter', $report);
 
         $sugarWidget = new SugarWidgetReportField($layoutManager);
 

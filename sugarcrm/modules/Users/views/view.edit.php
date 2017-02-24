@@ -10,25 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
-
-
 class UsersViewEdit extends ViewEdit {
 var $useForSubpanel = true;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function UsersViewEdit($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
     function preDisplay() {
         $this->fieldHelper = UserViewHelper::create($this->ss, $this->bean, 'EditView');
@@ -37,7 +20,13 @@ var $useForSubpanel = true;
         parent::preDisplay();
     }
 
-    public function getMetaDataFile() {
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $type Ignored
+     */
+    public function getMetaDataFile($type = null)
+    {
         $userType = 'Regular';
         //BEGIN SUGARCRM flav=ent ONLY
         if($this->fieldHelper->usertype == 'PORTAL_ONLY'){
@@ -48,16 +37,7 @@ var $useForSubpanel = true;
             $userType = 'Group';
         }
 
-        if ( $userType != 'Regular' ) {
-            $oldType = $this->type;
-            $this->type = $oldType.'group';
-        }
-        $metadataFile = parent::getMetaDataFile();
-        if ( $userType != 'Regular' ) {
-            $this->type = $oldType;
-        }
-
-        return $metadataFile;
+        return parent::getMetaDataFile($userType != 'Regular' ? $this->type . 'group' : null);
     }
 
     function display() {

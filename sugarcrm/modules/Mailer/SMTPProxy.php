@@ -10,86 +10,48 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SMTPProxy
+class SMTPProxy extends SMTP
 {
     /**
-     * @var SMTP
-     * An SMTP object from PHPMailer.
-     */
-    protected $smtp;
-
-    /**
-     * Creates an PHPMailer SMTP object to which this object proxies.
-     */
-    public function __construct()
-    {
-        $this->smtp = new SMTP();
-    }
-
-    /**
-     * Calls the named method on the SMTP object and returns its return value.
+     * {@inheritDoc}
      *
-     * Handles any errors that are encountered.
-     *
-     * @param string $method
-     * @param array $args
-     * @return mixed
-     */
-    public function __call($method, $args)
-    {
-        $result = call_user_func_array(array($this->smtp, $method), $args);
-        $this->handleError($this->smtp->getError());
-
-        return $result;
-    }
-
-    /**
      * Logs the error if one exists.
-     *
-     * @param array
      */
-    protected function handleError($error = array())
+    protected function setError($message, $detail = '', $smtp_code = '', $smtp_code_ex = '')
     {
-        if (empty($error)) {
+        parent::setError($message, $detail, $smtp_code, $smtp_code_ex);
+
+        if (empty($message)) {
             return;
         }
 
-        $message = array('SMTP ->');
+        $logMessage = ['SMTP ->'];
         $level = 'warn';
 
-        if (is_array($error)) {
-            if (array_key_exists('error', $error)) {
-                $message[] = "ERROR: {$error['error']}.";
-            }
+        $logMessage[] = "ERROR: {$message}.";
 
-            $hasErrno = array_key_exists('errno', $error);
-            $hasSmtpCode = array_key_exists('smtp_code', $error);
+        $hasDetail = !empty($detail);
+        $hasSmtpCode = !empty($smtp_code);
+        $hasSmtpCodeEx = !empty($smtp_code_ex);
 
-            if ($hasErrno || $hasSmtpCode) {
-                // the presence of 'errno' or 'smtp_code' keys seems to indicate that a more serious error occurred
-                // it was likely a failure when attempting to talk with an SMTP server
-                $level = 'fatal';
-            }
-
-            if ($hasErrno) {
-                $message[] = "Code: {$error['errno']}";
-            } elseif ($hasSmtpCode) {
-                $message[] = "Code: {$error['smtp_code']}";
-            }
-
-            if (array_key_exists('errstr', $error)) {
-                $message[] = "Reply: {$error['errstr']}";
-            } elseif (array_key_exists('detail', $error)) {
-                $message[] = "Reply: {$error['detail']}";
-            } elseif (array_key_exists('smtp_msg', $error)) {
-                // kept around for legacy support
-                // PHPMailer no longer uses 'smtp_msg'; 'detail' is used instead
-                $message[] = "Reply: {$error['smtp_msg']}";
-            }
-        } else {
-            $message[] = "ERROR: {$error}";
+        if ($hasSmtpCode) {
+            // the presence of $smtp_code seems to indicate that a more serious error occurred
+            // it was likely a failure when attempting to talk with an SMTP server
+            $level = 'fatal';
         }
 
-        $GLOBALS['log']->$level(implode(' ', $message));
+        if ($hasDetail) {
+            $logMessage[] = "Reply: {$detail}";
+        }
+
+        if ($hasSmtpCode) {
+            $logMessage[] = "Code: {$smtp_code}";
+        }
+
+        if ($hasSmtpCodeEx) {
+            $logMessage[] = "Extended Code: {$smtp_code_ex}";
+        }
+
+        $GLOBALS['log']->$level(implode(' ', $logMessage));
     }
 }

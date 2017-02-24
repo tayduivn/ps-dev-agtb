@@ -85,7 +85,6 @@ class Meeting extends SugarBean {
         'assigned_user_id' => 'users',
         'contact_id' => 'contacts',
         'user_id' => 'users',
-        'meeting_id' => 'meetings',
     );
 	// so you can run get_users() twice and run query only once
 	var $cached_get_users = null;

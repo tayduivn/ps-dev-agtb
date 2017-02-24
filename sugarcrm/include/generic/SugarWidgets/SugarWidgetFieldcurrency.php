@@ -28,14 +28,6 @@ function get_currency()
 
 class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarWidgetFieldCurrency(&$layout_manager)
-    {
-        self::__construct($layout_manager);
-    }
-
     public function __construct(&$layout_manager)
     {
         parent::__construct($layout_manager);
@@ -43,8 +35,8 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
     }
 
 
-    function & displayList($layout_def)
-        {
+    public function displayList($layout_def)
+    {
             global $current_user;
 
             if (empty($layout_def['group_function'])) {
@@ -247,3 +239,4 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
         return array('currency_symbol' => $currency_symbol, 'currency_id' => $currency_id);
     }
 }
+

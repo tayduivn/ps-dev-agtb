@@ -505,10 +505,11 @@ class One2MBeanRelationship extends One2MRelationship
      *
      * @param SugarBean $lhs        Left hand side of the relationship
      * @param SugarBean $rhs        Right hand side of the relationship
+     * @param bool      $return_row Ignored
      *
      * @return boolean
      */
-    public function relationship_exists($lhs, $rhs)
+    public function relationship_exists($lhs, $rhs, $return_row = false)
     {
         $lhsIDName = $this->def['rhs_key'];
         $rhsIDName = $this->def['lhs_key'];

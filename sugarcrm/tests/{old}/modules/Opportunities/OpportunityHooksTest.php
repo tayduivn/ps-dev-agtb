@@ -266,7 +266,7 @@ class MockOpportunityHooks extends OpportunityHooks
         return self::$forecastIsSetup;
     }
 
-    public static function saveWorksheet($bean, $event, $args)
+    public static function saveWorksheet(Opportunity $bean, $event, $args)
     {
         if (self::$bypassSaveWorksheet) {
             return true;

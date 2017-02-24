@@ -88,14 +88,6 @@ class SugarFolder {
      */
     protected $folderSubscriptionTable;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarFolder()
-    {
-        self::__construct();
-    }
-
 	/**
 	 * Sole constructor
 	 */

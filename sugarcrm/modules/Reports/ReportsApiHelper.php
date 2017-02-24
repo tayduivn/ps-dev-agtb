@@ -23,6 +23,17 @@ class ReportsApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         $bean->fromApi = true;
+
+        // if we update the name, we need to update the report_def as well
+        if (isset($submittedData['name']) && $submittedData['name'] !== $bean->name) {
+            $fieldName = 'content';
+            // if content is sent over, we want to update that, otherwise get the data from the bean
+            $content = isset($submittedData[$fieldName]) ? $submittedData[$fieldName] : $bean->$fieldName;
+            $tmpContent = json_decode($content, true);
+            $tmpContent['report_name'] = $submittedData['name'];
+            $submittedData[$fieldName] = JSON::encode($tmpContent);
+        }
+
         return parent::populateFromApi($bean, $submittedData, $options);
     }
 
@@ -41,5 +52,14 @@ class ReportsApiHelper extends SugarBeanApiHelper
             $bean->report_type = $bean->fetched_row['report_type'];
         }
         return parent::formatForApi($bean, $fieldList, $options);
-    }    
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sanitizeSubmittedData($data)
+    {
+        unset($data['module']);
+        return $data;
+    }
 }

@@ -23,14 +23,6 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
 
 	var $user_id;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function EmailSugarFieldTeamsetCollection($bean, $field_defs, $customMethod = '', $form_name = 'EditView')
-    {
-        self::__construct($bean, $field_defs, $customMethod, $form_name);
-    }
-
     public function __construct($bean, $field_defs, $customMethod = '', $form_name = 'EditView')
     {
         parent::__construct(false);
@@ -201,3 +193,4 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
     }
 
 }
+

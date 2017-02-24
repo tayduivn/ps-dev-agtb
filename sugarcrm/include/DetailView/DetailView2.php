@@ -35,7 +35,7 @@ class DetailView2 extends EditView
      */
     function setup(
         $module,
-        $focus,
+        $focus = null,
         $metadataFile = null,
         $tpl = 'include/DetailView/DetailView.tpl',
         $createFocus = true

@@ -1,0 +1,61 @@
+describe('Reports.Routes', function() {
+    var app;
+    var loadViewStub;
+    var filterOptionsSpy;
+
+    beforeEach(function() {
+        app = SugarTest.app;
+        loadViewStub = sinon.collection.stub(app.controller, 'loadView');
+        SugarTest.loadFile('../modules/Reports/clients/base/routes', 'routes', 'js', function(d) {
+            eval(d);
+            app.routing.start();
+        });
+
+        app.isSynced = true;
+        sinon.collection.stub(app.router, 'index');
+        sinon.collection.stub(app.router, 'hasAccessToModule').returns(true);
+        sinon.collection.stub(app.api, 'isAuthenticated').returns(true);
+        sinon.collection.stub(app, 'sync');
+        filterOptionsSpy = sinon.collection.spy(app.utils, 'FilterOptions')
+        sinon.collection.stub(app.lang, 'get', function(key) {
+            return 'Accounts';
+        });
+    });
+
+    afterEach(function() {
+        app.router.navigate('', {trigger: true});
+        Backbone.history.stop();
+        sinon.collection.restore();
+        app.routing.stop();
+        app.events.off('router:init');
+    });
+
+
+    it('should route to Reports listview without filterOptions when no URL params are passed', function() {
+        app.router.navigate('Reports', {trigger: true});
+
+        expect(filterOptionsSpy).not.toHaveBeenCalled();
+        expect(loadViewStub).toHaveBeenCalledWith({
+            filterOptions: null,
+            layout: 'records',
+            module: 'Reports'
+        });
+    });
+
+    it('should set filterOptions with the filterModule passed in URL params', function() {
+        var filterModule = 'Accounts';
+        app.router.navigate('Reports?filterModule=' + filterModule, {trigger: true});
+
+        expect(filterOptionsSpy).toHaveBeenCalled();
+        expect(loadViewStub).toHaveBeenCalledWith({
+            module: 'Reports',
+            layout: 'records',
+            filterOptions: {
+                filter_populate: {module: {$in: [filterModule]}},
+                initial_filter: '$relate',
+                initial_filter_label: 'Accounts',
+                stickiness: false
+            }
+        });
+    });
+});

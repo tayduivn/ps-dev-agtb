@@ -108,7 +108,7 @@ class SugarWidgetSubPanelTopScheduleCallButton extends SugarWidgetSubPanelTopBut
         return $button;
     }
 
-    function display($defines, $additionalFormFields = null)
+    public function display(array $defines, $additionalFormFields = array())
     {
         $focus = BeanFactory::getBean('Calls');
         if (!$focus->ACLAccess('EditView')) {

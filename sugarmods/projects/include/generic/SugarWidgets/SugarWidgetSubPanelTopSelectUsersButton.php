@@ -35,14 +35,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopSelectButton.ph
 
 class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSelectButton
 {
-	//button_properties is a collection of properties associated with the widget_class definition. layoutmanager
-	function SugarWidgetSubPanelTopSelectUsersButton($button_properties=array())
-	{
-		$this->button_properties=$button_properties;
-	}
-
-	//widget_data is the collection of attributes assoicated with the button in the layout_defs file.
-	function display(&$widget_data)
+    public function display(array $widget_data, $additionalFormFields = array())
 	{
 		global $app_strings;
 		$initial_filter = '';
@@ -166,4 +159,3 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 			. " onclick='open_popup(\"$this->module_name\",600,400,\"$initial_filter\",true,true,$json_encoded_php_array,\"$popup_mode\",$create);' /></form>\n";
 	}
 }
-?>

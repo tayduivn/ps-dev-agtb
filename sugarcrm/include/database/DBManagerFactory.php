@@ -161,8 +161,10 @@ class DBManagerFactory
         static $driverMap = array(
             'mysqli' => 'Sugarcrm\Sugarcrm\Dbal\Mysqli\Driver',
             'sqlsrv' => 'Sugarcrm\Sugarcrm\Dbal\SqlSrv\Driver',
+// BEGIN SUGARCRM flav=ent ONLY
             'oci8' => 'Sugarcrm\Sugarcrm\Dbal\Oci8\Driver',
             'ibm_db2' => 'Sugarcrm\Sugarcrm\Dbal\IbmDb2\Driver',
+// END SUGARCRM flav=ent ONLY
         );
 
         if (!isset($driverMap[$instance->variant])) {

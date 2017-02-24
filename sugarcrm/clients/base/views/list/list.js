@@ -33,10 +33,9 @@
     },
 
     /**
-     * View name that corresponds to the list of fields API should retrieve.
-     * @property {string}
+     * @inheritdoc
      */
-    dataViewName: 'list',
+    dataView: 'list',
 
     defaultContextEvents: {},
 
@@ -63,8 +62,15 @@
 
         this.viewName = 'list';
 
-        //Set the context to load the field list from the record metadata.
-        this.context.set('dataView', this.dataViewName);
+        /**
+         * View name that corresponds to the list of fields API should retrieve.
+         * @property {string} dataViewName
+         * @deprecated Use {@link #dataView} instead
+         */
+        if (this.dataViewName) {
+            app.logger.warn('`dataViewName` is deprecated, please use `dataView`.');
+            this.context.set('dataView', this.dataViewName);
+        }
 
         this.attachEvents();
         this.orderByLastStateKey = app.user.lastState.key('order-by', this);

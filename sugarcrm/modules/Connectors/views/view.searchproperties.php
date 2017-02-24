@@ -16,13 +16,13 @@ class ViewSearchProperties extends ViewList
  	/**
 	 * @see SugarView::process()
 	 */
-	public function process() 
+    public function process($params = array())
 	{
  		$this->options['show_all'] = false;
  		$this->options['show_javascript'] = true;
  		$this->options['show_footer'] = false;
  		$this->options['show_header'] = false;
- 	    parent::process();
+        parent::process($params);
  	}
  	
     /**

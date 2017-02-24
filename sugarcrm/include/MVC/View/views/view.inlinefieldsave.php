@@ -39,9 +39,8 @@ class ViewInlineFieldSave extends ViewAjax
             }
         }
 
-        $json = new JSON(JSON_LOOSE_TYPE);
+        $json = new JSON();
 
         echo $json->encode($field_list);
 	}
 }
-

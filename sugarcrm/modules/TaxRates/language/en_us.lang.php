@@ -27,6 +27,7 @@ $mod_strings = array (
   'LBL_TAXRATE' => 'Tax Rate:',
   'LBL_LIST_NAME' => 'Tax Rate Name',
   'LBL_NAME' => 'Tax Rate Name:',
+  'LBL_FILTER_ACTIVE' => 'Active Tax Rates',
   'LBL_LIST_LIST_ORDER' => 'Order',
   'LBL_LIST_ORDER' => 'Order:',
   'LBL_LIST_STATUS' => 'Status',

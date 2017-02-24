@@ -115,7 +115,7 @@ if (!empty ($_REQUEST['return_id'])) {
 
 $temp_field_array = $focus->merge_bean->field_defs;
 $field_count = 1;
-$json = new JSON(JSON_LOOSE_TYPE);
+$json = new JSON();
 $diff_field_count=0;
 $focus->merge_bean->ACLFilterFieldList($temp_field_array, array(), array("min_access" => SugarACL::ACL_READ_WRITE));
 foreach ($temp_field_array as $field_array) {
@@ -503,4 +503,3 @@ function get_related_name($field_def,$id_value) {
     }
     return false;
 }
-?>

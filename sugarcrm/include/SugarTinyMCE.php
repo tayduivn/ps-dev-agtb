@@ -74,13 +74,6 @@ class SugarTinyMCE
 
         );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarTinyMCE()
-    {
-        self::__construct();
-    }
 
     /**
      * Sole constructor

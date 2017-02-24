@@ -14,6 +14,11 @@
 
     /**
      * @inheritdoc
+     */
+    dataView: 'subpanel-for-localizations',
+
+    /**
+     * @inheritdoc
      *
      * Check access to model.
      * Setup dataView to load correct viewdefs from subpanel-for-localizations
@@ -24,8 +29,6 @@
         if (!app.acl.hasAccessToModel('edit', this.model)) {
             this.context.set('requiredFilter', 'records-noedit');
         }
-
-        this.context.set('dataView', 'subpanel-for-localizations');
     },
 
     /**

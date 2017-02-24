@@ -176,11 +176,15 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      *
      * @param String $session -- Session ID returned by a previous call to login.
      * @param array $module_name(s) -- The name of the module(s) to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @param array $a_type
+     * @param array $a_view
+     * @param bool $md5
      * @return array $type The type(s) of views requested.  Current supported types are 'default' (for application) and 'wireless'
      * @return array $view The view(s) requested.  Current supported types are edit, detail, list, and subpanel.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
+    public static function get_module_layout($session, $a_module_names, $a_type, $a_view, $md5 = false)
+    {
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout');
 
     	global  $beanList, $beanFiles;

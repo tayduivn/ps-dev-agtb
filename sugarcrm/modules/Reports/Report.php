@@ -156,14 +156,6 @@ class Report
      */
     protected $request;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Report()
-    {
-        self::__construct();
-    }
-
     public function __construct($report_def_str = '', $filters_def_str = '', $panels_def_str = '')
     {
         global $current_user, $current_language, $app_list_strings;

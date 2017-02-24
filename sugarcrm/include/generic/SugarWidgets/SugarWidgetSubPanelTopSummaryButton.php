@@ -16,7 +16,7 @@
 
 class SugarWidgetSubPanelTopSummaryButton extends SugarWidgetSubPanelTopButton
 {
-	function display($widget_data)
+    public function display(array $widget_data, $additionalFormFields = array())
 	{
 		
 		
@@ -50,4 +50,3 @@ class SugarWidgetSubPanelTopSummaryButton extends SugarWidgetSubPanelTopButton
 			. " onclick='open_popup(\"$module_name\",600,400,\"$initial_filter\",false,false,$json_encoded_php_array);' />\n";
 	}
 }
-?>

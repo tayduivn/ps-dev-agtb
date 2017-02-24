@@ -18,6 +18,54 @@
 
     /**
      * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        var validationTaskName = 'isNumeric_validator_' + this.cid;
+
+        // removing the validation task if it exists already for this field
+        this.model.removeValidationTask(validationTaskName);
+        this.model.addValidationTask(validationTaskName, _.bind(this._validateAsNumber, this));
+    },
+
+    /**
+     * @inheritdoc
+     *
+     * Overriding to add the custom validation handler to the dom change event
+     *
+     * @override
+     */
+    bindDomChange: function() {
+        if (!(this.model instanceof Backbone.Model)) {
+            return;
+        }
+
+        var $el = this.$(this.fieldTag);
+        if ($el.length) {
+            $el.on('change', _.bind(function(evt) {
+                var val = evt.currentTarget.value;
+
+                this.clearErrorDecoration();
+                this.model.set(this.name, this.unformat(val));
+                this.model.doValidate(this.name, _.bind(this._validationComplete, this));
+            }, this));
+        }
+    },
+
+    /**
+     * Callback for after validation runs.
+     * @param {bool} isValid flag determining if the validation is correct
+     * @private
+     */
+    _validationComplete: function(isValid) {
+        if (isValid) {
+            app.alert.dismiss('invalid-data');
+        }
+    },
+
+    /**
+     * @inheritdoc
      *
      * Listen for the discount_select field to change, when it does, re-render the field
      */
@@ -72,5 +120,36 @@
         } else {
             return this._super('unformat', [value]);
         }
+    },
+
+    /**
+     * Validate the discount field as a number - do not allow letters
+     *
+     * @param {Object} fields The list of field names and their definitions.
+     * @param {Object} errors The list of field names and their errors.
+     * @param {Function} callback Async.js waterfall callback.
+     * @private
+     */
+     _validateAsNumber: function(fields, errors, callback) {
+        var value = this.model.get(this.name);
+
+        if (!_.isFinite(value)) {
+            errors[this.name] = {'number': value};
+        }
+
+        callback(null, fields, errors);
+    },
+
+    /**
+     * Extending to remove the custom validation task for this field
+     *
+     * @inheritdoc
+     * @private
+     */
+    _dispose: function() {
+        var validationTaskName = 'isNumeric_validator_' + this.cid;
+        this.model.removeValidationTask(validationTaskName);
+
+        this._super('_dispose');
     }
 })

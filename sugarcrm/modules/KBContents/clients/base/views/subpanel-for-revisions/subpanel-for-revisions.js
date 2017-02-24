@@ -14,11 +14,7 @@
 
     /**
      * @inheritdoc
-     *
-     * Setup dataView to load correct viewdefs from subpanel-for-revisions
      */
-    initialize: function(options) {
-        this._super('initialize', [options]);
-        this.context.set('dataView', 'subpanel-for-revisions');
-    }
+    dataView: 'subpanel-for-revisions',
+
 })

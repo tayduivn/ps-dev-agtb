@@ -27,13 +27,6 @@ class Chart_lead_source_by_outcome
 	var $modules = array('Opportunities');
 	var $order = 0;
 
-    /**
-     * @deprecated
-     */
-    public function Chart_lead_source_by_outcome()
-    {
-    }
-
 function draw($extra_tools)
 {
 

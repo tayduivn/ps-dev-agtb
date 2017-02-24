@@ -4,8 +4,6 @@
 
 Modification information for LGPL compliance
 
-2016-05-23 - smorozov - Restored PHP 4 constructor for backward compatibility
-
 2016-01-22 - avlasov - PHP 7 compatibility
 
 r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
@@ -104,14 +102,6 @@ class soap_transport_http extends nusoap_base {
 								// certpassword: SSL certificate password
 								// verifypeer: default is 1
 								// verifyhost: default is 1
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function soap_transport_http($url, $curl_options = null, $use_curl = false)
-    {
-        self::__construct($url, $curl_options, $use_curl);
-    }
 
 	/**
 	* constructor
@@ -1367,3 +1357,4 @@ class soap_transport_http extends nusoap_base {
 		return $cookie_str;
   }
 }
+

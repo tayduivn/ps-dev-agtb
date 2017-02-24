@@ -90,6 +90,6 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         $parser = ParserFactory::getParser(MB_BASICSEARCH, $module);
         $defs = $parser->getOriginalViewDefs();
 
-        return $defs['fields'];
+        return isset($defs['fields']) ? $defs['fields'] : array();
     }
 }

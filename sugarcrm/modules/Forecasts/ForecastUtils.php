@@ -31,7 +31,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
 
     $sel_user = BeanFactory::getBean('Users', $user_id);
 
-	$json = new JSON(JSON_LOOSE_TYPE);
+	$json = new JSON();
 
 	//make list view happy.
 	$_REQUEST['module'] = 'Forecasts';

@@ -453,6 +453,24 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
+     * Test if this rli can be converted to a quote.
+     *
+     * @return bool|string  Returns true if it can be converted, otherwise it returns
+     *                      a string with the reason it couldn't be converted.
+     */
+    public function canConvertToQuote()
+    {
+        $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
+        if (empty($this->product_template_id) && !empty($this->category_id)) {
+            return $mod_strings['LBL_CONVERT_INVALID_RLI_PRODUCT'];
+        } elseif (!empty($this->quote_id)) {
+            return $mod_strings['LBL_CONVERT_INVALID_RLI_ALREADYQUOTED'];
+        }
+
+        return true;
+    }
+
+    /**
      * getClosedStages
      *
      * Return an array of closed stage names from the admin bean.

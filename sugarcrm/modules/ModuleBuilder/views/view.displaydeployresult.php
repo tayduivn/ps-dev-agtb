@@ -12,14 +12,6 @@
 
 class ViewDisplaydeployresult extends SugarView
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewDisplaydeployresult()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->show_header = false;

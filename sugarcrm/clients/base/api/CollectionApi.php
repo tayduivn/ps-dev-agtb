@@ -215,10 +215,6 @@ abstract class CollectionApi extends SugarApi
             'offset' => $args['offset'][$source],
         ));
 
-        // this is a bit dirty: generic collection is not tied to any particular bean, but if some of its subtypes
-        // are tied (like related collection), we use the bean in order to get fields from arguments
-        $bean = isset($this->bean) ? $this->bean : null;
-        $args['fields'] = $this->getFieldsFromArgs($api, $args, $bean);
         $args['filter'] = $this->getSourceFilter($args, $definition, $source);
         unset($args['stored_filter']);
 
@@ -492,7 +488,7 @@ abstract class CollectionApi extends SugarApi
                 break;
             }
             if (!isset($index[$record['_module']][$record['id']])) {
-                if (count($records) >= $limit) {
+                if ($limit >= 0 && count($records) >= $limit) {
                     array_unshift($sourceRecords[$source], $record);
                     break;
                 }
@@ -607,9 +603,10 @@ abstract class CollectionApi extends SugarApi
         }
 
         if (!empty($args['fields'])) {
+            $fields = $this->normalizeFields($args['fields'], $displayParams);
             foreach ($sortSpec as $column) {
                 foreach ($column['map'] as $source => $sortFields) {
-                    $addedFields = array_diff($sortFields, $args['fields']);
+                    $addedFields = array_diff($sortFields, $fields);
                     foreach ($addedFields as $addedField) {
                         $result[$source][$addedField] = true;
                     }

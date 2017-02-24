@@ -389,10 +389,13 @@ function process_action_new_rel($focus, $action_array){
 
             //target module has been saved, now relate it to the original related bean
             $relName = $rel_handler->base_vardef_field;
-            $target_module->load_relationship($relName);
-            $relatedIds = $target_module->$relName->get();
-            if (empty($relatedIds) || !in_array($rel_object->id, $relatedIds)) {
-                $target_module->$relName->add($rel_object->id);
+
+            // But only if the relationship exists
+            if ($target_module->load_relationship($relName)) {
+                $relatedIds = $target_module->$relName->get();
+                if (empty($relatedIds) || !in_array($rel_object->id, $relatedIds)) {
+                    $target_module->$relName->add($rel_object->id);
+                }
             }
 
 		//end for loop of all,first, filter

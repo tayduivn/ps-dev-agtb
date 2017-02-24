@@ -13,7 +13,7 @@ $listViewDefs ['Calls'] =
 array (
   'SET_COMPLETE' => 
   array (
-    'width' => '1%',
+    'width' => '1',
     'label' => 'LBL_LIST_CLOSE',
     'link' => true,
     'sortable' => false,
@@ -25,21 +25,21 @@ array (
   ),
   'DIRECTION' => 
   array (
-    'width' => '10%',
+    'width' => '10',
     'label' => 'LBL_LIST_DIRECTION',
     'link' => false,
     'default' => true,
   ),
   'NAME' => 
   array (
-    'width' => '40%',
+    'width' => '40',
     'label' => 'LBL_LIST_SUBJECT',
     'link' => true,
     'default' => true,
   ),
   'CONTACT_NAME' => 
   array (
-    'width' => '20%',
+    'width' => '20',
     'label' => 'LBL_LIST_CONTACT',
     'link' => true,
     'id' => 'CONTACT_ID',
@@ -49,7 +49,7 @@ array (
   ),
   'PARENT_NAME' => 
   array (
-    'width' => '20%',
+    'width' => '20',
     'label' => 'LBL_LIST_RELATED_TO',
     'dynamic_module' => 'PARENT_TYPE',
     'id' => 'PARENT_ID',
@@ -70,7 +70,7 @@ array (
   ),
   'DATE_START' => 
   array (
-    'width' => '15%',
+    'width' => '15',
     'label' => 'LBL_LIST_DATE',
     'link' => false,
     'default' => true,
@@ -81,7 +81,7 @@ array (
   ),
   'ASSIGNED_USER_NAME' => 
   array (
-    'width' => '2%',
+    'width' => '2',
     'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
     'module' => 'Employees',
     'id' => 'ASSIGNED_USER_ID',
@@ -89,15 +89,14 @@ array (
   ),
   'STATUS' => 
   array (
-    'width' => '10%',
+    'width' => '10',
     'label' => 'LBL_STATUS',
     'link' => false,
     'default' => false,
   ),
   'DATE_ENTERED' => array (
-    'width' => '10%',
+    'width' => '10',
     'label' => 'LBL_DATE_ENTERED',
     'default' => true
   ),  
 );
-?>

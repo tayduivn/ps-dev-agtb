@@ -4081,7 +4081,7 @@ class MetaDataManager
      * @return SugarBean[]
      * @todo Move this to ACLRoleSet when it's merged
      */
-    protected function createCollectionFromDataSet(SugarBean $seed, array $data)
+    protected static function createCollectionFromDataSet(SugarBean $seed, array $data)
     {
         $result = array();
 

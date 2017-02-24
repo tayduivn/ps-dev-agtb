@@ -394,21 +394,19 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 if (isset ( $_REQUEST [ strtolower ( $fieldname ) . 'width' ] ))
                 {
                     $width = substr ( $_REQUEST [ $fieldname . 'width' ], 6, 3 ) ;
-                    if (strpos ( $width, "%" ) != false)
-                    {
-                        $width = substr ( $width, 0, 2 ) ;
-                    }
+
 					if (!($width < 101 && $width > 0))
                     {
                         $width = 10;
                     }
-                    $newViewdefs [ $fieldname ] [ 'width' ] = $width."%" ;
+
+                    $newViewdefs[$fieldname]['width'] = $width;
                 } else if (isset ( $this->_viewdefs [ $fieldname ] [ 'width' ] ))
                 {
                     $newViewdefs [ $fieldname ] [ 'width' ] = $this->_viewdefs [ $fieldname ] [ 'width' ] ;
                 }
                 else {
-                	$newViewdefs [ $fieldname ] [ 'width' ] = "10%";
+                    $newViewdefs[$fieldname]['width'] = 10;
                 }
 
                 $newViewdefs [ $fieldname ] [ 'default' ] = ($i == 0) ;

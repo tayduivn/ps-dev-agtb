@@ -1,3 +1,13 @@
+/*
+ * Your installation or use of this SugarCRM file is subject to the applicable
+ * terms available at
+ * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
+ * If you do not agree to all of the applicable terms or do not have the
+ * authority to bind the entity as an authorized representative, then do not
+ * install or use this SugarCRM file.
+ *
+ * Copyright (C) SugarCRM Inc. All rights reserved.
+ */
 describe('Base.Field.Relate', function() {
 
     var app, field, fieldDef;
@@ -47,6 +57,26 @@ describe('Base.Field.Relate', function() {
         Handlebars.templates = {};
         fieldDef = null;
         app.routing.stop();
+    });
+
+    describe('_getPopulateMetadata', function() {
+        beforeEach(function() {
+            field = SugarTest.createField('base', 'account_name', 'relate', 'edit', fieldDef);
+            sinon.collection.stub(field, 'getSearchModule', function() {});
+            sinon.collection.stub(app.metadata, 'getModule', function() {});
+            field.initialize(field.options);
+        });
+
+        afterEach(function() {
+            field.dispose();
+        });
+
+        it('should call getSearchModule', function() {
+            expect(field.getSearchModule).toHaveBeenCalled();
+        });
+        it('should call app.metadata.getModule', function() {
+            expect(app.metadata.getModule).toHaveBeenCalled();
+        });
     });
 
     describe('getSearchModule', function() {

@@ -579,7 +579,8 @@ class Product extends SugarBean
         // need to go though product bundles
         $this->load_relationship('product_bundles');
         // grab the first and only one
-        $bundle = array_pop($this->product_bundles->getBeans());
+        $bundles = $this->product_bundles->getBeans();
+        $bundle = array_pop($bundles);
 
         // make sure we have a bundle
         if (empty($bundle)) {
@@ -590,7 +591,8 @@ class Product extends SugarBean
         $bundle->load_relationship('quotes');
 
         // get the beans
-        $quote = array_pop($bundle->quotes->getBeans());
+        $quotes = $bundle->quotes->getBeans();
+        $quote = array_pop($quotes);
 
         if (empty($quote)) {
             return true;

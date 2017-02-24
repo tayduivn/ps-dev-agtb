@@ -106,15 +106,6 @@ $dictionary['ProductBundle'] = array(
                 'taxrate_id',
                 'new_sub',
             ),
-            'formula' => 'ifElse(and(isNumeric(related($taxrate, "value")), equal(related($taxrate, "status"), "Active")),
-                    currencyMultiply(
-                        rollupConditionalSum($products, "total_amount", "tax_class", "Taxable"),
-                        currencyDivide(related($taxrate, "value"), 100)
-                    ),
-                    0
-                )',
-            'calculated' => true,
-            'enforced' => true,
         ),
         'tax_usdollar' => array(
             'name' => 'tax_usdollar',
@@ -150,7 +141,11 @@ $dictionary['ProductBundle'] = array(
                 'tax',
                 'shipping',
             ),
-            'formula' => 'currencyAdd($new_sub, $tax, $shipping)',
+            'formula' => 'currencyAdd(
+                $new_sub,
+                ifElse(isNumeric($tax), $tax, "0"),
+                ifElse(isNumeric($shipping), $shipping, "0")
+            )',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -218,7 +213,7 @@ $dictionary['ProductBundle'] = array(
             'name' => 'deal_tot',
             'vname' => 'LBL_DEAL_TOT',
             'type' => 'currency',
-            'len' => '26,2',
+            'len' => '26,6',
             'disable_num_format' => true,
             'comment' => 'discount amount',
             'related_fields' => array(
@@ -233,7 +228,7 @@ $dictionary['ProductBundle'] = array(
             'name' => 'deal_tot_usdollar',
             'vname' => 'LBL_DEAL_TOT',
             'type' => 'currency',
-            'len' => '26,2',
+            'len' => '26,6',
             'disable_num_format' => true,
             'comment' => 'discount amount',
             'studio' => array(
@@ -300,6 +295,18 @@ $dictionary['ProductBundle'] = array(
             'calculated' => true,
             'enforced' => true,
         ),
+        'taxable_subtotal' => array(
+            'name' => 'taxable_subtotal',
+            'vname' => 'LBL_TAXABLE_SUBTOTAL',
+            'type' => 'currency',
+            'len' => '26,6',
+            'source' => 'non-db',
+            'disable_num_format' => true,
+            'comment' => 'Rollup of all products marked as Taxable',
+            'formula' => 'rollupConditionalSum($products, "subtotal", "tax_class", "Taxable")',
+            'calculated' => true,
+            'enforced' => true,
+        ),
         'shipping' => array(
             'name' => 'shipping',
             'vname' => 'LBL_SHIPPING',
@@ -351,6 +358,14 @@ $dictionary['ProductBundle'] = array(
             'rel_fields' => array('note_index' => array('type' => 'integer')),
             'vname' => 'LBL_NOTES',
         ),
+        'product_bundle_items' => array(
+            'name' => 'product_bundle_items',
+            'type' => 'collection',
+            'vname' => 'LBL_PRODUCT_BUNDLES',
+            'links' => array('products','product_bundle_notes'),
+            'source' => 'non-db',
+            'order_by' => 'position:asc',
+        ),
         'position' => array(
             'massupdate' => false,
             'name' => 'position',
@@ -361,6 +376,14 @@ $dictionary['ProductBundle'] = array(
             'importable' => false,
             'link' => 'quotes',
             'rname_link' => 'bundle_index',
+        ),
+        'default_group' => array(
+            'name' => 'default_group',
+            'type' => 'bool',
+            'studio' => false,
+            'vname' => 'LBL_QUOTE_BUNDLE_DEFAULT_GROUP',
+            'importable' => false,
+            'default' => false,
         ),
     ),
     'indices' => array(

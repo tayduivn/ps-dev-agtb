@@ -26,7 +26,7 @@ class TeamNoticesDashlet extends Dashlet
     {
     }
 
-    public function display()
+    public function display($text = '')
     {
         $data = array();
 
@@ -45,6 +45,7 @@ class TeamNoticesDashlet extends Dashlet
 
         $ss->assign("data", $data);
 
-        return parent::display() . $ss->fetch('modules/TeamNotices/Dashlets/TeamNoticesDashlet/TeamNoticesDashlet.tpl');
+        return parent::display($text)
+            . $ss->fetch('modules/TeamNotices/Dashlets/TeamNoticesDashlet/TeamNoticesDashlet.tpl');
     }
 }

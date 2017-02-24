@@ -36,17 +36,16 @@
 
     initialize: function(options) {
         // Use preview view if available, otherwise fallback to record view
-        var viewName = 'preview';
+        this.dataView = 'preview';
         var previewMeta = app.metadata.getView(options.module, 'preview');
         var recordMeta = app.metadata.getView(options.module, 'record');
 
         if (_.isEmpty(previewMeta) || _.isEmpty(previewMeta.panels)) {
-            viewName = 'record';
+            this.dataView = 'record';
         }
 
         this._super('initialize', [options]);
         this.meta = _.extend(this.meta, this._previewifyMetadata(_.extend({}, recordMeta, previewMeta)));
-        this.context.set('dataView', viewName);
         this.action = 'detail';
         this._delegateEvents();
         this.delegateButtonEvents();

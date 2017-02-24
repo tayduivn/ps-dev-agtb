@@ -325,7 +325,9 @@ class QueryBuilder
         }
 
         // Set post filter
-        $query->setPostFilter($this->buildPostFilters($this->postFilters));
+        if (!empty($this->postFilters)) {
+            $query->setPostFilter($this->buildPostFilters($this->postFilters));
+        }
     }
 
     /**
@@ -385,11 +387,11 @@ class QueryBuilder
     /**
      * Build module filter
      * @param array $modules
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     protected function buildModuleFilter(array $modules)
     {
-        $modules = new \Elastica\Filter\Bool();
+        $modules = new \Elastica\Filter\BoolFilter();
         foreach ($this->modules as $module) {
             $filter = new \Elastica\Filter\Term();
             $filter->setTerm('_type', $module);
@@ -433,11 +435,11 @@ class QueryBuilder
 
     /**
      * Build filters
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     protected function buildFilters(array $filters)
     {
-        $result = new \Elastica\Filter\Bool();
+        $result = new \Elastica\Filter\BoolFilter();
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }
@@ -446,11 +448,11 @@ class QueryBuilder
 
     /**
      * Build post filters
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     protected function buildPostFilters(array $postFilters)
     {
-        $result = new \Elastica\Filter\Bool();
+        $result = new \Elastica\Filter\BoolFilter();
         foreach ($postFilters as $postFilter) {
             $result->addMust($postFilter);
         }

@@ -113,6 +113,7 @@ class MetaDataFiles
         //END SUGARCRM flav=ent ONLY
         MB_FILTERVIEW             => 'default',
         MB_BWCFILTERVIEW          => 'SearchFields',
+        MB_SIDECARQUOTEDATAGROUPLIST => 'quote-data-group-list',
     );
 
     /**

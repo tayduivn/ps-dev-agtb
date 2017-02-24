@@ -2271,7 +2271,14 @@ DropdownUpdaterItem.prototype.setOptions = function (options) {
     this._massiveAction = true;
     this.clearOptions();
     for (i = 0; i < options.length; i += 1) {
-        this.addOption(options[i]);
+        var option = options[i];
+        if (typeof option === 'string') {
+            option = {
+                text: option,
+                value: i
+            };
+        }
+        this.addOption(option);
     }
     this._massiveAction = false;
     this._paintItems();

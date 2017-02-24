@@ -17,6 +17,8 @@ use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 define('MB_TEMPLATES', 'include/SugarObjects/templates');
 define('MB_IMPLEMENTS', 'include/SugarObjects/implements');
 
+require_once 'modules/ModuleBuilder/parsers/constants.php';
+
 class MBModule
 {
     public $name = '' ;
@@ -1137,7 +1139,8 @@ class MBModule
     public function getModuleType()
     {
         // The last key in the template array it the type
-        return end(array_keys($this->config['templates']));
+        $templateKeys = array_keys($this->config['templates']);
+        return end($templateKeys);
     }
 
     /**

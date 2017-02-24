@@ -216,7 +216,33 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
-                'discount_select',
+                array(
+                    'name' => 'discount',
+                    'type' => 'fieldset',
+                    'css_class' => 'quote-discount-percent',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'fields' => array(
+                        array(
+                            'type' => 'discount-select',
+                            'name' => 'discount_select',
+                            'no_default_action' => true,
+                            'buttons' => array(
+                                array(
+                                    'type' => 'rowaction',
+                                    'name' => 'select_discount_amount_button',
+                                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                                    'event' => 'button:discount_select_change:click',
+                                ),
+                                array(
+                                    'type' => 'rowaction',
+                                    'name' => 'select_discount_percent_button',
+                                    'label' => 'LBL_DISCOUNT_PERCENT',
+                                    'event' => 'button:discount_select_change:click',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
                 'contact_name',
                 array(
                     'name' => 'tag',

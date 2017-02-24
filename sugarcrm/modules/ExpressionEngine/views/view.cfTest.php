@@ -11,14 +11,6 @@
  */
 class ViewCfTest extends SugarView
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewCfTest()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
 		$this->options['show_footer'] = true;
@@ -39,3 +31,4 @@ class ViewCfTest extends SugarView
  		$smarty->display('modules/ExpressionEngine/tpls/cfTest.tpl');
  	}
 }
+

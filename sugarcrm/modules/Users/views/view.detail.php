@@ -10,24 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
-
 class UsersViewDetail extends ViewDetail {
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function UsersViewDetail($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
-
     function preDisplay() {
         global $current_user, $app_strings, $sugar_config;
 
@@ -127,7 +110,13 @@ class UsersViewDetail extends ViewDetail {
 
     }
 
-    public function getMetaDataFile() {
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $type Ignored
+     */
+    public function getMetaDataFile($type = null)
+    {
         $userType = 'Regular';
         //BEGIN SUGARCRM flav=ent ONLY
         if($this->bean->portal_only == 1){
@@ -138,15 +127,7 @@ class UsersViewDetail extends ViewDetail {
             $userType = 'Group';
         }
 
-        if ( $userType != 'Regular' ) {
-            $oldType = $this->type;
-            $this->type = $oldType.'group';
-        }
-        $metadataFile = parent::getMetaDataFile();
-        if ( $userType != 'Regular' ) {
-            $this->type = $oldType;
-        }
-        return $metadataFile;
+        return parent::getMetaDataFile(($userType != 'Regular') ? $this->type . 'group' : null);
     }
 
     function display() {

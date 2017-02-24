@@ -24,7 +24,7 @@ $mod_strings = array(
     'LBL_LIST_NAME' => 'Quoted Line Item',
     'LBL_LIST_MANUFACTURER' => 'Manufacturer',
     'LBL_MANUFACTURERS' => 'Manufacturers',
-    'LBL_LIST_LBL_MFT_PART_NUM' => 'Mft Num',
+    'LBL_LIST_LBL_MFT_PART_NUM' => 'Part Number',
     'LBL_LIST_QUANTITY' => 'Quantity',
     'LBL_LIST_COST_PRICE' => 'Cost',
     'LBL_LIST_DISCOUNT_PRICE' => 'Price',
@@ -52,7 +52,7 @@ $mod_strings = array(
     'LBL_SELECT_DISCOUNT' => 'Discount Select',
     'LBL_LIST_PRICE' => 'List Price:',
     'LBL_VENDOR_PART_NUM' => 'Vendor Part Number:',
-    'LBL_MFT_PART_NUM' => 'Mft Part Number:',
+    'LBL_MFT_PART_NUM' => 'Part Number:',
     'LBL_NEXT_STEP' => 'Next Step:',
     'LBL_DISCOUNT_PRICE_DATE' => 'Discount Price Date:',
     'LBL_WEIGHT' => 'Weight:',
@@ -169,4 +169,7 @@ To create a {{module_name}}:
 2. Click "Save" to finalize the new record and return to the previous page.',
 
     'LBL_PRODUCT_POSITION' => 'Product Bundle Position',
+    'LBL_PRODUCTS_QUOTE_DATA_LIST' => 'Quoted Line Items Quote Data List',
+    'LBL_CREATE_NEW_QLI_IN_DROPDOWN' => ' (New Quoted Line Item)',
+    'LBL_DISCOUNT_PERCENT' => '% Percent',
 );

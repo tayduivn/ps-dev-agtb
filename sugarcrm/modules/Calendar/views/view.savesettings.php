@@ -11,7 +11,13 @@
  */
 
 class CalendarViewSaveSettings extends SugarView {
-	function process(){
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
+     */
+    public function process($params = array())
+    {
 		$this->display();
 	}
 	

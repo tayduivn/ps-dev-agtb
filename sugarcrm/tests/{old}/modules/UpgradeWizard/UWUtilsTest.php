@@ -43,7 +43,6 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();
 
-        parent::tearDown();
         parent::tearDownAfterClass();
     }
 
@@ -52,6 +51,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestJobQueueUtilities::removeAllCreatedJobs();
+        parent::tearDown();
     }
 
 

@@ -30,8 +30,17 @@ class ParserModifySubPanel extends ParserModifyListView
     var $available = array ( ) ;
     var $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
 
-    function init ($module_name , $subPanelName)
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $module_name
+     * @param string $subPanelName
+     */
+    public function init($module_name, $subPanelName = '')
     {
+        if (empty($subPanelName)) {
+            throw new \BadMethodCallException('Missing required argument $subPanelName');
+        }
         $GLOBALS [ 'log' ]->debug ( "in ParserModifySubPanel: module_name={$module_name} child_module={$subPanelName}" ) ;
         $this->moduleName = $module_name ;
         $this->subPanelName = $subPanelName ;

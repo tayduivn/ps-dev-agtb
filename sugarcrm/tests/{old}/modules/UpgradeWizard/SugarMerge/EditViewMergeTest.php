@@ -114,8 +114,8 @@ class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
                         array(
                             'type' => 'divider',
                         ),
-                        'B4',
                         'B2',
+                        'B4',
                         array(
                             'type' => 'divider',
                         ),
@@ -166,8 +166,8 @@ class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
                     'buttons' => array(
                         'EDIT',
                         'SHARE',
-                        'DELETE',
                         'CUSTOM',
+                        'DELETE',
                     ),
                     'footerTpl' => 'custom/modules/Quotes/tpls/DetailViewFooter.tpl',
                 )
@@ -421,16 +421,16 @@ class EditViewMergeTest extends Sugar_PHPUnit_Framework_TestCase
                     'buttons' => array(
                         array(
                             'type' => 'button',
-                            'name' => 'modify_button',
-                            'label' => 'LBL_MODIFY_BUTTON_LABEL',
-                            'css_class' => 'btn-invisible btn-link',
-                        ),
-                        array(
-                            'type' => 'button',
                             'name' => 'send_button',
                             'label' => 'LBL_SEND_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => array('edit', 'record'),
+                        ),
+                        array(
+                            'type' => 'button',
+                            'name' => 'modify_button',
+                            'label' => 'LBL_MODIFY_BUTTON_LABEL',
+                            'css_class' => 'btn-invisible btn-link',
                         ),
                     ),
                 ),

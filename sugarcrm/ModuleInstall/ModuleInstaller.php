@@ -59,14 +59,6 @@ class ModuleInstaller{
      */
     protected $patch = array();
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ModuleInstaller()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
         $this->ms = new ModuleScanner();
@@ -2878,7 +2870,8 @@ class ModuleInstaller{
                         $this->copy_path($cp['to'], $backup_path);
 
                         $GLOBALS['log']->debug('ENABLE COPY:: REMOVING: ' . $cp['to']);
-                        rmdir_recursive($cp['to']);
+                        $cp['from'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['from']));
+                        $this->uninstall_new_files($cp, $backup_path);
                     }
                     $GLOBALS['log']->debug("ENABLE COPY:: FROM: ".$cp['from']. " TO: ".$cp['to']);
                     $this->copy_path($cp['from'], $cp['to']);

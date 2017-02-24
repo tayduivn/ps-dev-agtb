@@ -72,7 +72,7 @@ class Bug51086Test extends SOAPTestCase
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         parent::setUp();
-        $this->_login($this->_nonAdminUser);
+        $this->_login();
     }
 
     public function tearDown()
@@ -92,13 +92,14 @@ class Bug51086Test extends SOAPTestCase
     }
 
     //overwrite class login function because we need the user to be non admin for this test to work, otherwise acls will be ignored
-    function _login($thisUser)
+    public function _login()
    {
        $GLOBALS['db']->commit();
        $result = $this->_soapClient->call('login',
            array('user_auth' =>
-               array('user_name' => $thisUser->user_name,
-                   'password' => $thisUser->user_hash,
+               array(
+                   'user_name' => $this->_nonAdminUser->user_name,
+                   'password' => $this->_nonAdminUser->user_hash,
                    'version' => '.01'),
                'application_name' => 'SoapTest', "name_value_list" => array())
            );

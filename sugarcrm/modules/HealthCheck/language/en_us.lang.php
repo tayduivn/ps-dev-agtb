@@ -97,6 +97,8 @@ $mod_strings = array(
     'LBL_SCAN_435_LOG' => 'Class SugarSession was removed from API, use Sugarcrm\Sugarcrm\Session\SessionStorage instead. Files with deprecated code: ' . PHP_EOL . '%s',
     'LBL_SCAN_550_LOG' => 'Use of removed Sidecar app.date APIs in %s',
     'LBL_SCAN_551_LOG' => 'Use of removed Sidecar Bean APIs in %s',
+    'LBL_SCAN_560_LOG' => 'custom/modules/Quotes/quotes.js MAY contain customizations that are not compatible with new Quotes.',
+    'LBL_SCAN_561_LOG' => 'custom/modules/Quotes/EditView.js MAY contain customizations that are not compatible with new Quotes.',
 
     'LBL_SCAN_501_LOG' => 'Missing file: %s',
     'LBL_SCAN_502_LOG' => 'md5 mismatch for %s, expected %s',

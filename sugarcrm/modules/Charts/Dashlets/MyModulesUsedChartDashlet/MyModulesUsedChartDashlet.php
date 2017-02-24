@@ -36,9 +36,10 @@ class MyModulesUsedChartDashlet extends DashletGenericChart
     public $isConfigPanelClearShown = false;
     
     /**
+     * @param string $text Ignored
      * @see DashletGenericChart::display()
      */
-    public function display() 
+    public function display($text = '')
     {
         global $db,$app_list_strings;
         

@@ -35,14 +35,6 @@ class TeamDemoData {
 	*/
 	);
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function TeamDemoData($seed_team, $large_scale_test = false)
-    {
-        self::__construct($seed_team, $large_scale_test);
-    }
-
 	/**
 	 * Constructor for creating demo data for teams
 	 */
@@ -171,3 +163,4 @@ class TeamDemoData {
 	
 	
 }
+

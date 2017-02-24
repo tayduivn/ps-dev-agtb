@@ -264,7 +264,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 //populate the primary email address into the more_info field
                 if (!empty($row['target_id']) && !empty($row['target_type'])) {
                     $sugarEmailAddress = BeanFactory::getBean('EmailAddresses');
-                    $primeEmail = $sugarEmailAddress->getPrimaryAddress($this, $row['target_id'], $row['target_type']);
+                    $primeEmail = $sugarEmailAddress->getPrimaryAddress(null, $row['target_id'], $row['target_type']);
                     if (!empty($primeEmail)) {
                         $data['more_information'] =  "'" . $primeEmail . "'";
                     }

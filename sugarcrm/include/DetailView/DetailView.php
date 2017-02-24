@@ -17,7 +17,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
  * DetailView - display single record
  * @api
  */
-class DetailView extends ListView {
+class DetailView
+{
 
 	var $list_row_count = null;
 	var $return_to_list_only=false;
@@ -29,24 +30,16 @@ class DetailView extends ListView {
      */
     protected $request;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function DetailView()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
-        parent::__construct();
-
         $this->request = InputValidation::getService();
 
-		global $theme, $app_strings, $currentModule;
+        global $theme, $app_strings, $currentModule, $sugar_config;
 		$this->local_theme = $theme;
 		$this->local_app_strings =$app_strings;
-	}
+        $this->records_per_page = $sugar_config['list_max_entries_per_page'];
+        $this->local_current_module = $currentModule;
+    }
 
 	function processSugarBean($html_varName, $seed, &$offset, $isfirstview=0) {
 		global $row_count, $sugar_config;
@@ -441,4 +434,76 @@ class DetailView extends ListView {
     }
     }
 
-	}
+    /**
+     * Returns a session variable that is local to the detail view, not the current_module
+     *
+     * @param string $localVarName Prefix for variable name
+     * @param string $varName      Variable name
+     *
+     * @return mixed
+     */
+    protected function getLocalSessionVariable($localVarName, $varName)
+    {
+        return return_session_value_or_default($localVarName . '_' . $varName, '');
+    }
+
+    /**
+     * Sets a session variable keeping it local to the detail view not the current_module
+     *
+     * @param string $localVarName Prefix for variable name
+     * @param string $varName      Variable name
+     * @param mixed  $value        Value
+     */
+    protected function setLocalSessionVariable($localVarName, $varName, $value)
+    {
+        $_SESSION[$localVarName . '_' . $varName] = $value;
+    }
+
+    /**
+     * Returns a session variable first checking the query for it then checking the session
+     *
+     * @param string $localVarName Prefix for variable name
+     * @param string $varName      Variable name
+     *
+     * @return mixed
+     */
+    protected function getSessionVariable($localVarName, $varName)
+    {
+        $variableName = $this->getSessionVariableName($localVarName, $varName);
+        //Set any variables pass in through request first
+        if (isset($_REQUEST[$variableName])) {
+            $var = $this->request->getValidInputRequest($variableName);
+            $this->setSessionVariable($localVarName, $varName, $var);
+        }
+
+        if (isset($_SESSION[$variableName])) {
+            return $_SESSION[$variableName];
+        }
+        return '';
+    }
+
+    /**
+     * Sets a session variable
+     *
+     * @param string $localVarName Prefix for variable name
+     * @param string $varName      Variable name
+     * @param mixed  $value        Value
+     */
+    protected function setSessionVariable($localVarName, $varName, $value)
+    {
+        $_SESSION[$this->local_current_module . '_' . $localVarName . '_' . $varName] = $value;
+    }
+
+    /**
+     * Returns the session/query variable name
+     *
+     * @param string $localVarName Prefix for variable name
+     * @param string $varName      Variable name
+     *
+     * @return string
+     */
+    protected function getSessionVariableName($localVarName, $varName)
+    {
+        return $this->local_current_module . '_' . $localVarName . '_' . $varName;
+    }
+}

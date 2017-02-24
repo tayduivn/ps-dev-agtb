@@ -22,7 +22,8 @@ class Bug50549Test extends Sugar_PHPUnit_Framework_TestCase {
         require('include/modules.php');
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
 
-        $this->field = new SugarWidgetFieldMultiEnum(new Bug50549MockReporter());
+        $mock = new Bug50549MockReporter();
+        $this->field = new SugarWidgetFieldMultiEnum($mock);
     }
 
     public function tearDown() {

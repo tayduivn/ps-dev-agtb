@@ -16,14 +16,6 @@ class ParserSearchFields extends ModuleBuilderParser
 	var $searchFields;
 	var $packageKey; 
 	
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ParserSearchFields($moduleName, $packageName = '')
-    {
-        self::__construct($moduleName, $packageName);
-    }
-
     public function __construct($moduleName, $packageName = '')
     {
         $this->moduleName = $moduleName;
@@ -98,3 +90,4 @@ class ParserSearchFields extends ModuleBuilderParser
 
 
 }
+

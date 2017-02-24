@@ -15,21 +15,7 @@
 
 
 class SugarWidgetField extends SugarWidget {
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarWidgetField(&$layout_manager)
-    {
-        self::__construct($layout_manager);
-    }
-
-    public function __construct(&$layout_manager)
-    {
-        parent::__construct($layout_manager);
-    }
-
-    public function display($layout_def)
+    public function display(array $layout_def)
     {
 		//print $layout_def['start_link_wrapper']."===";
 		$context = $this->layout_manager->getAttribute('context'); //_ppd($context);

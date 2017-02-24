@@ -14,9 +14,11 @@
 class SchedulersViewDetail extends ViewDetail {
 
     /**
-	 * @see SugarView::_getModuleTitleListParam()
+     * {@inheritDoc}
+     *
+     * @param bool $browserTitle Ignored
 	 */
-	protected function _getModuleTitleListParam()
+    protected function _getModuleTitleListParam($browserTitle = false)
 	{
 	    global $mod_strings;
 

@@ -21,7 +21,8 @@ class SugarWidgetFieldfloatTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         global $current_user;
-        $this->widgetField = new SugarWidgetFieldFloat(new LayoutManager());
+        $layoutManager = new LayoutManager();
+        $this->widgetField = new SugarWidgetFieldFloat($layoutManager);
         $current_user = SugarTestUserUtilities::createAnonymousUser();
     }
 

@@ -324,7 +324,8 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 		$em->name = 'tst_' . uniqid();
 		$em->type = 'inbound';
 		$em->intent = 'pick';
-		$em->date_sent = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s", (gmmktime() + (3600 * 24 * 2) ))) ; //Two days from today
+        //Two days from today
+        $em->date_sent = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s", (time() + (3600 * 24 * 2))));
 
 		foreach ($additionalParams as $k => $v)
 		  $em->$k = $v;

@@ -33,7 +33,8 @@ class Bug48616Test extends PHPUnit_Framework_TestCase
     public function testExpandDateToday()
     {
         global $timedate;
-        $widget = new SugarWidgetFieldDateTime(new LayoutManager());
+        $layoutManager = new LayoutManager();
+        $widget = new SugarWidgetFieldDateTime($layoutManager);
 
         $result = SugarTestReflection::callProtectedMethod($widget, 'expandDate', array('Today'));
 

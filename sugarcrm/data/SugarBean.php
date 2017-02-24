@@ -25,6 +25,7 @@ require_once 'include/utils.php';
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\ProcessManager;
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -2498,18 +2499,22 @@ class SugarBean
                     }
                     $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - adding a relationship record: '.$rel_name . ' = ' . $this->$id);
                     //already related the new relationship id so let's set it to false so we don't add it again using the _REQUEST['relate_i'] mechanism in a later block
-                    $this->load_relationship($rel_name);
-                    $rel_add = $this->$rel_name->add($this->$id);
-                    // move this around to only take out the id if it was save successfully
-                    if ($this->$id == $new_rel_id && $rel_add == true) {
-                        $new_rel_id = false;
+                    //ut exempt to be used with unit tests that mock link classes
+                    if ($this->load_relationship($rel_name)) {
+                        $rel_add = $this->$rel_name->add($this->$id);
+                        // move this around to only take out the id if it was save successfully
+                        if ($this->$id == $new_rel_id && $rel_add == true) {
+                            $new_rel_id = false;
+                        }
                     }
                 } else {
                     //if before value is not empty then attempt to delete relationship
                     if (!empty($this->rel_fields_before_value[$id])) {
                         $GLOBALS['log']->debug('save_relationship_changes(): From relationship_field array - attempting to remove the relationship record, using relationship attribute' . $rel_name);
-                        $this->load_relationship($rel_name);
-                        $this->$rel_name->delete($this->id, $this->rel_fields_before_value[$id]);
+                        //ut exempt to be used with unit tests that mock link classes
+                        if ($this->load_relationship($rel_name)) {
+                            $this->$rel_name->delete($this->id, $this->rel_fields_before_value[$id]);
+                        }
                     }
                 }
             }
@@ -2548,7 +2553,7 @@ class SugarBean
                     }
 
                     if (isset($this->rel_fields_before_value[$def['id_name']]) &&
-                        $this->rel_fields_before_value[$def['id_name']] === $this->$def['id_name']) {
+                        $this->rel_fields_before_value[$def['id_name']] === $this->{$def['id_name']}) {
                         // the values didn't change, so ignore it.
                         continue;
                     }
@@ -3052,7 +3057,7 @@ class SugarBean
      *
      * Internal function, do not override.
     */
-    function retrieve($id='-1', $encode=true,$deleted=true)
+    public function retrieve($id = -1, $encode = true, $deleted = true)
     {
         global $locale;
 
@@ -7046,6 +7051,8 @@ class SugarBean
             if (!(isset($fieldDef['source']) &&
                 !in_array($fieldDef['source'], array('db', 'custom_fields', 'relate'))
                 && !isset($fieldDef['dbType']))
+                || (isset($fieldDef['type']) && $fieldDef['type'] == 'relate')
+                || isset($fieldDef['rname_link'])
             ) {
                 // fromConvert other fields
                 $fieldvalue = $this->db->fromConvert($fieldvalue, $this->db->getFieldType($fieldDef));
@@ -7141,7 +7148,7 @@ class SugarBean
     protected function getEncryptKey()
     {
         if(empty(self::$field_key[$this->module_key])) {
-            self::$field_key[$this->module_key] = blowfishGetKey($this->module_key);
+            self::$field_key[$this->module_key] = Blowfish::getKey($this->module_key);
         }
         return self::$field_key[$this->module_key];
     }
@@ -7153,7 +7160,7 @@ class SugarBean
  */
     function encrpyt_before_save($value)
     {
-        return blowfishEncode($this->getEncryptKey(), $value);
+        return Blowfish::encode($this->getEncryptKey(), $value);
     }
 
 /**
@@ -7164,7 +7171,7 @@ class SugarBean
     public function decrypt_after_retrieve($value)
     {
         if(empty($value)) return $value; // no need to decrypt empty
-        return blowfishDecode($this->getEncryptKey(), $value);
+        return Blowfish::decode($this->getEncryptKey(), $value);
     }
 
     /**

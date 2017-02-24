@@ -23,7 +23,10 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                     'link' => true,
                     'label' => 'LBL_LIST_NAME',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
+                    'related_fields' => array(
+                        'mft_part_num',
+                    ),
                 ),
                 'date_closed',
                 array(
@@ -129,7 +132,8 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
                 'events' => array (
                     'click' => 'list:massquote:fire',
                 ),
-                'acl_action' => 'massquote',
+                'acl_module' => 'Quotes',
+                'acl_action' => 'create',
             ),
             array(
                 'name' => 'massdelete_button',

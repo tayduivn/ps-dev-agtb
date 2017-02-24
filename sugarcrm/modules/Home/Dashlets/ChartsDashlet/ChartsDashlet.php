@@ -18,14 +18,6 @@ class ChartsDashlet extends Dashlet {
     var $report_id;
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function ChartsDashlet($id, $report_id, $def)
-    {
-        self::__construct($id, $report_id, $def);
-    }
-
-    /**
      * Constructor
      *
      * @global string current language
@@ -51,8 +43,8 @@ class ChartsDashlet extends Dashlet {
      *
      * @return string html to display dashlet
      */
-    function display() {
-
+    public function display($text = '')
+    {
         $chartReport = BeanFactory::getBean(
             'Reports', $this->report_id, array('encode' => false, 'strict_retrieve' => true)
         );
@@ -75,17 +67,8 @@ class ChartsDashlet extends Dashlet {
 			$str = ob_get_contents();
 			ob_end_clean();
 
-			$xmlFile = $chartDisplay->get_cache_file_name($reporter);
-
-			$html = parent::display() . "<div align='center'>" . $str . "</div>" . "<br />"; // return parent::display for title and such
-
-			$ss = new Sugar_Smarty();
-	        $ss->assign('chartName', $this->id);
-	        $ss->assign('chartXMLFile', $xmlFile);
-	        $script = $ss->fetch('modules/Home/Dashlets/ChartsDashlet/ChartsDashletScript.tpl');
-			$json = getJSONobj();
-
-	        return parent::display() . "<div align='center'>" . $str . "</div>" . "<br />"; // return parent::display for title and such
+            return parent::display($text)
+                . "<div align='center'>" . $str . "</div>" . "<br />"; // return parent::display for title and such
 		}
     }
 

@@ -26,7 +26,10 @@ class ShadowUpgrader extends CliUpgrader
         "backup" => array(false, 'b', 'backup'),
         "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
-        "autoconfirm" => array(false, 'A', 'autoconfirm')
+        "autoconfirm" => array(false, 'A', 'autoconfirm'),
+        "force" => array(false, 'F', 'force'),
+        // Appears when stage was not specified and upgrader is running step by step.
+        'all' => array(false, 'a', 'all'),
     );
 
     /**
@@ -61,9 +64,10 @@ Arguments:
 Optional arguments:
     -m/--mask scriptMask                 : Script mask - which types of scripts to run.
                                            Supported types: db, custom, none. Default is db,custom.
-    -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
+    -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 0.
     -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
-    -A/--autoconfirm                     : Automatic confirm health check results (use with caution !)
+    -A/--autoconfirm 0/1                 : Automatic confirm health check results, default is 1
+    -F/--force 0/1                       : Force upgrade regardless of health check results, default is 0 (use with caution !)
 
 eoq2;
     	echo $usage;
@@ -272,6 +276,25 @@ eoq2;
         }
 
         return parent::getScripts($dir, $stage);
+    }
+
+    /**
+     * @see UpgradeDriver::doHealthcheck()
+     */
+    protected function doHealthcheck()
+    {
+        //Inherits from CLI Parent
+        $parentHealthCheckPass = parent::doHealthcheck();
+
+        //Failures found
+        if (!$parentHealthCheckPass && array_key_exists('force', $this->context) && $this->context['force']) {
+            echo "WARNING: Health check failed (red flags). Please refer to the log file {$this->context['log']}\n";
+            echo "         Option force was specified so continuing in spite of failed healthcheck\n";
+            // ignore them and move on
+            $this->success = true;
+            return true;
+        }
+        return $parentHealthCheckPass;
     }
 }
 

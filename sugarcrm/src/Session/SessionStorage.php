@@ -38,6 +38,13 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     protected $closed = false;
 
     /**
+     * The last used session ID
+     *
+     * @var string
+     */
+    protected $lastId;
+
+    /**
      * {@inheritdoc} Checks for custom SessionStorage classes or alternate SessionStorage classes set in config.
      */
     public static function getInstance() {
@@ -58,10 +65,12 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
      */
     public function start($lock = false)
     {
-        static::_safeStart();
+        session_start();
         $this->populateFromArray($_SESSION);
         //keep session values
         $previousUserId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : false;
+
+        $this->lastId = $this->getId();
 
         $_SESSION = $this;
         $this->enableTracking();
@@ -77,7 +86,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
      */
     public function destroy() {
         if ($this->closed) {
-            static::_safeStart();
+            $this->restart();
         }
         session_destroy();
         $_SESSION = $this;
@@ -138,21 +147,31 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
     }
 
     /**
-     * This is a protected method. It is marked public only for php 5.3 compatability.
-     * TODO: Please mark it procted when php 5.3 support is dropped.
-     *
-     * Safely start a php session, possibly multiple times in a single request.
+     * Restart the last used php session without producing side effects.
      */
-    public static function _safeStart() {
-        //Supress any warning before we start the session. If there was any output, the cookie won't be sent
-        //But that is OK here as we are only saving changes, not outputting anything to user. They should already
-        //Have the session cookie.
-        $errRep = error_reporting();
-        error_reporting($errRep & ~E_WARNING);
-        session_start();
-        error_reporting($errRep);
-    }
+    protected function restart()
+    {
+        if (!$this->lastId) {
+            return;
+        }
 
+        $options = array(
+            'session.use_cookies' => false,
+            'session.cache_limiter' => null,
+        );
+
+        $backup = array();
+        foreach ($options as $key => $value) {
+            $backup[$key] = ini_set($key, $value);
+        }
+
+        session_id($this->lastId);
+        session_start();
+
+        foreach ($backup as $key => $value) {
+            ini_set($key, $value);
+        }
+    }
 
     protected static function registerShutdownFunction($previousUserId)
     {
@@ -168,7 +187,7 @@ class SessionStorage extends TrackableArray implements SessionStorageInterface
                         // session_start() sends http headers such as 'Cache-Control' depending on php configs
                         // flush ob to send out these headers so they won't be overwritten
                         while (@ob_end_flush());
-                        SessionStorage::_safeStart();
+                        $sessionObject->restart();
                         //First verify that the sessions still match and we didn't somehow switch users.
                         if ((!isset($_SESSION['user_id']) && $previousUserId) ||
                             ($previousUserId && isset($_SESSION['user_id']) && $previousUserId != $_SESSION['user_id'])

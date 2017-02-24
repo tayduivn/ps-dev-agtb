@@ -12,8 +12,12 @@
 
 class ImportViewAuthenticatedSources extends SugarView
 {
-    /** {@inheritdoc} */
-    public function process()
+    /**
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
+     */
+    public function process($params = array())
     {
         $sources = $this->getAuthenticatedImportableExternalEAPMs();
 

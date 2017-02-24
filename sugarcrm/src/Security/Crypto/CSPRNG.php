@@ -87,7 +87,10 @@ class CSPRNG
      */
     protected function binaryStrLen($string)
     {
-        return RandomCompat_strlen($string);
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($string, '8bit');
+        }
+        return strlen($string);
     }
 
     /**
@@ -100,7 +103,10 @@ class CSPRNG
      */
     protected function binarySubStr($string, $start, $length)
     {
-        return RandomCompat_substr($string, $start, $length);
+        if (function_exists('mb_substr')) {
+            return mb_substr($string, $start, $length, '8bit');
+        }
+        return substr($string, $start, $length);
     }
 
     /**

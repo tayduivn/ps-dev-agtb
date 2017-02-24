@@ -13,16 +13,4 @@
 
 class SugarWidgetFieldDouble extends SugarWidgetFieldInt
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function SugarWidgetFieldDouble(&$layout_manager)
-    {
-        self::__construct($layout_manager);
-    }
-
-    public function __construct(&$layout_manager)
-    {
-        parent::__construct($layout_manager);
-    }
 }

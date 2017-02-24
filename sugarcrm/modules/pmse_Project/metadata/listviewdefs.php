@@ -15,7 +15,7 @@ $listViewDefs[$module_name] =
     array (
         'name' =>
             array (
-                'width' => '32%',
+                'width' => '32',
                 'label' => 'LBL_NAME',
                 'default' => true,
                 'link' => true,
@@ -26,18 +26,18 @@ $listViewDefs[$module_name] =
                 'default' => true,
                 'studio' => 'visible',
                 'label' => 'LBL_PRJ_MODULE',
-                'width' => '10%',
+                'width' => '10',
             ),
         'prj_status' =>
             array (
                 'type' => 'varchar',
                 'default' => true,
                 'label' => 'LBL_PRJ_STATUS',
-                'width' => '10%',
+                'width' => '10',
             ),
         'assigned_user_name' =>
             array (
-                'width' => '9%',
+                'width' => '9',
                 'label' => 'LBL_ASSIGNED_TO_NAME',
                 'module' => 'Employees',
                 'id' => 'ASSIGNED_USER_ID',
@@ -45,7 +45,7 @@ $listViewDefs[$module_name] =
             ),
         'team_name' =>
             array (
-                'width' => '9%',
+                'width' => '9',
                 'label' => 'LBL_TEAM',
                 'default' => false,
             ),

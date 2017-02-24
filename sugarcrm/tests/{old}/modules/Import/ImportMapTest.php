@@ -108,7 +108,7 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals($importMapRetrieve->getMapping(),$mapping);
     }
-    
+
     public function testSetAndGetDefaultFields()
     {
         $mapping = array(

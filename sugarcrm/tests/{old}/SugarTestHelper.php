@@ -1139,7 +1139,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected function setUp_modInvisList($params = array(), $register = true)
+    protected static function setUp_modInvisList($params = array(), $register = true)
     {
         if ($register) {
             self::$registeredVars['modInvisList'] = true;

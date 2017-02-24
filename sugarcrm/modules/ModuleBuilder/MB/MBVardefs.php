@@ -21,14 +21,6 @@ class MBVardefs{
 	var $name = '';
 	var $errors = array();
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MBVardefs($name, $path, $key_name)
-    {
-        self::__construct($name, $path, $key_name);
-    }
-
     public function __construct($name, $path, $key_name)
     {
 		$this->path = $path;

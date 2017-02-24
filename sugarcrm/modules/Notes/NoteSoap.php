@@ -14,14 +14,6 @@ class NoteSoap
 {
     var $upload_file;
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function NoteSoap()
-    {
-        self::__construct();
-    }
-
     public function __construct()
     {
     	$this->upload_file = new UploadFile('uploadfile');

@@ -69,11 +69,11 @@ class KBFilterQuery implements QueryInterface
 
     /**
      * Create a multi-match query.
-     * @return \Elastica\Query\Bool
+     * @return \Elastica\Query\BoolQuery
      */
     public function build()
     {
-        $boolQuery = new \Elastica\Query\Bool();
+        $boolQuery = new \Elastica\Query\BoolQuery();
         if (isset($this->fields['kbdocument_body'])) {
             if (isset($this->term['$contains'])) {
                 $mltBody =
@@ -93,11 +93,11 @@ class KBFilterQuery implements QueryInterface
      * Create the filter.
      * @param bool $addLangFilter a flag indicate if a lang filter is needed
      * @param bool $addIdFilter a flag indicate if a id filter is needed
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     public function createFilter()
     {
-        $mainFilter = new \Elastica\Filter\Bool();
+        $mainFilter = new \Elastica\Filter\BoolFilter();
 
         $activeRevFilter = new \Elastica\Filter\Term();
         $activeRevFilter->setTerm('active_rev', 1);

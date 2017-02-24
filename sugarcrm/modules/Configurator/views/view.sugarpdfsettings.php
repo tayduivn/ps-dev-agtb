@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
+
 class ConfiguratorViewSugarpdfsettings extends SugarView
 {
 
@@ -62,7 +64,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
                 foreach($SugarpdfSettings as $k=>$v){
                     if($v['type'] == 'password'){
                         if(isset($_POST[$k])){
-                            $_POST[$k] = blowfishEncode(blowfishGetKey($k), $_POST[$k]);
+                            $_POST[$k] = Blowfish::encode(Blowfish::getKey($k), $_POST[$k]);
                         }
                     }
                 }

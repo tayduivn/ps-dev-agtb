@@ -96,12 +96,12 @@ class Visibility extends AbstractProvider implements ContainerAwareInterface
     public function buildVisibilityFilters(QueryBuilder $builder, array $modules)
     {
         // main filter object
-        $main = new \Elastica\Filter\Bool();
+        $main = new \Elastica\Filter\BoolFilter();
 
         foreach ($modules as $module) {
 
             // main module filter
-            $modFilter = new \Elastica\Filter\Bool();
+            $modFilter = new \Elastica\Filter\BoolFilter();
             $modFilter->addMust($this->createFilter('Type', array('module' => $module)));
 
             // now add filters from different strategies
@@ -148,10 +148,10 @@ class Visibility extends AbstractProvider implements ContainerAwareInterface
     /**
      * Add visibility filters on top of given filter
      * @param \User $user User context
-     * @param \Elastica\Filter\Bool $filter
+     * @param \Elastica\Filter\BoolFilter $filter
      * @param string $module
      */
-    protected function addVisibilityFilters(\User $user, \Elastica\Filter\Bool $filter, $module)
+    protected function addVisibilityFilters(\User $user, \Elastica\Filter\BoolFilter $filter, $module)
     {
         foreach ($this->getModuleStrategies($module) as $strategy) {
             $strategy->elasticAddFilters($user, $filter, $this);

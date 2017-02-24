@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 $dictionary['product_bundle_note'] = array(
     'table' => 'product_bundle_note',
     'fields' => array(
@@ -81,12 +80,13 @@ $dictionary['product_bundle_note'] = array(
             'lhs_table' => 'product_bundles',
             'lhs_key' => 'id',
             'rhs_module' => 'ProductBundleNotes',
-            'rhs_table' => 'product_bundle_note',
+            'rhs_table' => 'product_bundle_notes',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
             'join_table' => 'product_bundle_note',
             'join_key_lhs' => 'bundle_id',
             'join_key_rhs' => 'note_id',
+            'true_relationship_type' => 'one-to-many',
         ),
     ),
 );

@@ -48,12 +48,15 @@ class EditDropDownWizard extends StudioWizard {
 		         parent::process($option);
 		}
 	}
-	
-	function display()
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $error Ignored
+     */
+    public function display($error = '')
 	{
 	    // override the parent display - don't display any wizard stuff
 	}
 	
 }
-
-?>

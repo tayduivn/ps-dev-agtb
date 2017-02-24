@@ -375,7 +375,7 @@ class Activity extends Basic
     /**
      * Overwrite the notifications handler.
      */
-    public function _sendNotifications()
+    public function _sendNotifications($check_notify)
     {
         return false;
     }

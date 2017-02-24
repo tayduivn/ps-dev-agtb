@@ -24,13 +24,6 @@ $focus = BeanFactory::retrieveBean($_REQUEST['module_name'],$_REQUEST['record'])
 
 class Popup_Picker
 {
-    /**
-     * @deprecated
-     */
-    public function Popup_Picker()
-    {
-    }
-
 	/**
 	 *
 	 */

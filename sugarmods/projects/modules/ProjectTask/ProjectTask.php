@@ -107,7 +107,7 @@ class ProjectTask extends SugarBean {
 	/*
 	 *
 	 */
-	function ProjectTask()
+    public function __construct()
 	{
 		parent::__construct();
 

@@ -102,7 +102,7 @@ class ConfigModuleApi extends ModuleApi
      * @param array $args           'module' is required, 'platform' is optional and defaults to 'base'
      * @return array
      */
-    public function configSave(ServiceBase $api, $args)
+    public function configSave(ServiceBase $api, array $args)
     {
         $this->requireArgs($args, array('module'));
 

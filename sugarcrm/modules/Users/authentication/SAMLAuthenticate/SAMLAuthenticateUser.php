@@ -376,7 +376,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
      * @param array $params
      * @return boolean
      */
-    public function loadUserOnLogin($name, $password, $fallback = false, $params = array())
+    public function loadUserOnLogin($name, $password, $fallback = false, array $params = array())
     {
         // provide dummy login and password to parent class so that
         // authentication

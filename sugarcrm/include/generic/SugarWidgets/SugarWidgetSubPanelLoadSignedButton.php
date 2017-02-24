@@ -16,7 +16,7 @@
 //this widget is used only by the document subpanel under contracts.
 class SugarWidgetSubPanelLoadSignedButton extends SugarWidgetField
 {
-	function displayHeaderCell(&$layout_def)
+    public function displayHeaderCell($layout_def)
 	{
 		return '&nbsp;';
 	}

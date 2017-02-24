@@ -27,11 +27,7 @@ class ViewSugarpdf extends SugarView{
      */
     var $sugarpdfBean=NULL;
 
-    public function ViewSugarpdf()
-    {
-        self::__construct();
-    }
-
+    
     public function __construct()
     {
         parent::__construct();
@@ -65,3 +61,4 @@ class ViewSugarpdf extends SugarView{
      }
 
 }
+

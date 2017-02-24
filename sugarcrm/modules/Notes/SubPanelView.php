@@ -23,13 +23,6 @@
 
 class SubPanelViewNotes {
 
-    /**
-     * @deprecated
-     */
-    public function SubPanelViewNotes()
-    {
-    }
-
 var $notes_list = null;
 var $hideNewButton = false;
 var $focus;

@@ -232,10 +232,9 @@ class PMSEProjectApi extends ModuleApi
      *
      * @param ServiceBase $api The service object
      * @param array $args Request arguments
-     * @param SugarBean $bean The bean for this process
      * @return array Array of formatted fields
      */
-    protected function getLoadedAndFormattedBean($api, $args, SugarBean $bean)
+    protected function getLoadedAndFormattedBean($api, $args)
     {
         $addNoAccessAcl = false;
         // Load the bean fresh to ensure the cache entry from the create process

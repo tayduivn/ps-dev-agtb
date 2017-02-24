@@ -18,6 +18,11 @@
 ({
     extendsFrom: 'SubpanelListView',
 
+    /**
+     * @inheritdoc
+     */
+    dataView: 'subpanel-list-create',
+
     contextEvents: {
         'list:deleterow:fire': 'onDeleteRow',
         'list:addrow:fire': 'onAddRow'
@@ -37,9 +42,7 @@
         // undo flex-list's hardcoding and re-hardcode to use the subpanel-list-create.hbs
         this.template = app.template.getView('subpanel-list-create');
 
-        this.dataView = 'subpanel-list-create';
         this.context.set({
-            dataView: this.dataView,
             isCreateSubpanel: true
         });
     },

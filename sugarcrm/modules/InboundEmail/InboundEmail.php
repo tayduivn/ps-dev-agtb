@@ -673,7 +673,8 @@ class InboundEmail extends SugarBean {
 	/**
 	 * Sets cache values
 	 */
-	function setCacheValue($mbox, $insert, $update=array(), $remove=array()) {
+    public function setCacheValue($mbox, array $insert, array $update = array(), array $remove = array())
+    {
 		if(empty($mbox)) {
 			return;
 		}
@@ -6723,14 +6724,6 @@ class Overview {
 			),
 		);
 	*/
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Overview()
-    {
-        self::__construct();
-    }
 
     public function __construct()
     {

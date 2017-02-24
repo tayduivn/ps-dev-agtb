@@ -90,7 +90,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
             'timeperiod_shown_backward' => $shownBackward
         );
 
-        $this->updateForecastSettings($forecastConfigSettings);
+        self::updateForecastSettings($forecastConfigSettings);
 
         $admin = BeanFactory::getBean('Administration');
         $settings =  $admin->getConfigForModule('Forecasts', 'base');
@@ -114,7 +114,8 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends Sugar_PHPUnit_Framewo
 
     }
 
-    private function updateForecastSettings($settings) {
+    private static function updateForecastSettings($settings)
+    {
         $admin = BeanFactory::getBean('Administration');
         foreach($settings as $id=>$value) {
             $admin->saveSetting('Forecasts', $id, $value, 'base');

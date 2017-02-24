@@ -108,24 +108,31 @@ class MaxRelatedDateExpression extends DateExpression
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
 
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
+            model_id = model.id || model.cid,
             // has the model been removed from it's collection
             sortByDateDesc = function (lhs, rhs) { return lhs < rhs ? 1 : lhs > rhs ? -1 : 0; },
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             current_value = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field) || '',
-            all_values = this.context.getRelatedField(relationship, 'maxRelatedDate', rel_field + '_values') || {},
             new_value = model.get(rel_field) || '',
             dates = [],
             rollup_value = '';
 
-        if (_.isEqual(new_value, '')) {
-            return current_value;
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'maxRelatedDate',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
+            );
         }
 
-        if (hasModelBeenRemoved) {
-            delete all_values[model.get('id')];
-        } else {
-            all_values[model.get('id')] = new_value;
+        var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'maxRelatedDate', rel_field) || {};
+
+        if (_.isEqual(new_value, '')) {
+            return current_value;
         }
 
         _.each(all_values, function(_date) {
@@ -145,15 +152,6 @@ class MaxRelatedDateExpression extends DateExpression
                 this.context.model.isNew()
             );
         }
-
-        // always update the values array
-        this.context.updateRelatedFieldValue(
-            relationship,
-            'maxRelatedDate',
-            rel_field + '_values',
-            all_values,
-            this.context.model.isNew()
-        );
 JS;
 
     }

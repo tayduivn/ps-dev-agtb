@@ -130,7 +130,7 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 		return $button;
 	}
 
-	function display($defines, $additionalFormFields = null)
+    public function display(array $defines, $additionalFormFields = array())
 	{
 	    $focus = BeanFactory::getBean('Meetings');
 		if ( !$focus->ACLAccess('EditView') ) {
@@ -139,4 +139,4 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 
 		return parent::display($defines, $additionalFormFields);
 	}
-}?>
+}

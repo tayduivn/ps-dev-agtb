@@ -14,7 +14,12 @@
         /**
          * This plugin enables mass-quoting for RevenueLineItems (for use in Opps and QLIs)
          */
-        app.plugins.register('MassQuote', ["view"], {
+        app.plugins.register('MassQuote', ['view'], {
+            /**
+             * Fields to remove off the RLI model before converting to QLI
+             */
+            blacklistRLIFields: ['_acl', '_module', 'id'],
+
             /**
              * Attach code for when the plugin is registered on a view
              *
@@ -23,7 +28,7 @@
              */
             onAttach: function(component, plugin) {
                 this.once('init', function() {
-                    this.layout.on("list:massquote:fire", this.massQuote, this);
+                    this.layout.on('list:massquote:fire', this.massQuote, this);
                 }, this);
             },
 
@@ -31,14 +36,21 @@
              * Logic to convert multiple Revenue Line Items into a Quote
              */
             massQuote: function() {
-                this.hideAll();
-                var massQuote = this.context.get("mass_collection"),
-                    options = {},
-                    callbacks = {},
-                    errors = {
-                        'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': [],
-                        'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL': []
-                    };
+                var qliModels = [];
+                var rliObj;
+                var loadViewObj;
+                var parentModel;
+
+                if (_.isFunction(this.hideAll)) {
+                    this.hideAll();
+                }
+
+                var massQuote = this.context.get('mass_collection');
+                var errors = {
+                    'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': [],
+                    'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL': []
+                };
+                var messageTpl;
 
                 // find any blockers
                 var invalidItems = massQuote.filter(function(model) {
@@ -56,7 +68,7 @@
                 }, this);
 
                 if (!_.isEmpty(invalidItems)) {
-                    var messageTpl = app.template.getView('massupdate.invalid_link', this.module);
+                    messageTpl = app.template.getView('massupdate.invalid_link', this.module);
 
                     _.each(errors, function(val, key) {
                         if(val.length != 0) {
@@ -83,42 +95,61 @@
                 }
 
                 if (massQuote) {
-                    var alert = app.alert.show('info_quote', {
-                        level: 'info',
-                        autoClose: false,
-                        closeable: false,
-                        title: app.lang.get("LBL_CONVERT_TO_QUOTE_INFO", this.module) + ":",
-                        messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_INFO_MESSAGE", this.module)]
-                    });
-                    alert.$('a.close').remove();
+                    // remove unnecessary fields
+                    _.each(massQuote.models, function(rliModel) {
+                        rliObj = rliModel.toJSON();
+                        rliObj.revenuelineitem_id = rliObj.id;
 
-                    var url = app.api.buildURL(this.context.get('module'), 'multi-quote');
+                        _.each(this.blacklistRLIFields, function(fieldName) {
+                            delete rliObj[fieldName];
+                        }, this);
 
-                    // custom success handler
-                    options.success = _.bind(function(data) {
-                        app.alert.dismiss('info_quote');
-                        app.router.navigate(app.bwc.buildRoute('Quotes', data.id, 'EditView', {
-                            return_module: this.context.parent.get('module'),
-                            return_id: this.context.parent.get('model').get('id')
-                        }), {trigger: true});
+                        if (_.isEmpty(rliObj.product_template_name)) {
+                            // if product_template_name is empty, use the RLI's name
+                            rliObj.product_template_name = rliObj.name;
+                        } else {
+                            // if product_template_name is not empty, set that to the RLI's name
+                            rliObj.name = rliObj.product_template_name;
+                        }
+
+                        if (_.isEmpty(rliObj.discount_price)) {
+                            // if discount_price is empty, make it likely_Case
+                            rliObj.discount_price = rliObj.likely_case;
+                        }
+
+                        rliObj.discount_select = false;
+                        if (_.isEmpty(rliObj.discount_amount)) {
+                            rliObj.discount_amount = 0.00;
+                            // if discount_amount is '0' or '', set discount_select true
+                            rliObj.discount_select = true;
+                        }
+
+                        qliModels.push(app.data.createBean('Products', rliObj));
                     }, this);
-                    options.error = _.bind(function() {
-                        app.alert.dismiss('info_quote');
-                        app.alert.show('error_xhr', {
-                            level: 'error',
-                            title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.context.module) + ":",
-                            messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.context.module)]
-                        });
-                    }, this);
 
-                    var data = {
-                        'records': massQuote.pluck('id'),
-                        'opportunity_id': this.context.parent.get('model').get('id'),
-                        'account_id': this.context.parent.get('model').get('account_id')
+                    loadViewObj = {
+                        module: 'Quotes',
+                        layout: 'create',
+                        action: 'edit',
+                        convert: true,
+                        create: true,
+                        relatedRecords: qliModels
                     };
 
-                    callbacks = app.data.getSyncCallbacks('create', massQuote, options);
-                    app.api.call("create", url, data, callbacks);
+                    // for Opps->RLI subpanel, context.parent model contains the Opps record model
+                    // for RLI Record view, context model contains the RLI record model
+                    parentModel = this.context.parent ? this.context.parent.get('model') : this.context.get('model');
+                    // set the record model to be the parentModel
+                    loadViewObj.parentModel = parentModel;
+
+                    // if the context has a link param 'quotes', 'quotes_shipto', etc
+                    // set it on the view object so the create view knows where this is coming from
+                    loadViewObj.fromLink = this.context.get('link');
+
+                    // Load the Quotes create view
+                    app.controller.loadView(loadViewObj);
+                    // update the browser URL with the proper
+                    app.router.navigate('#Quotes/create', {trigger: false});
                 }
             }
         });

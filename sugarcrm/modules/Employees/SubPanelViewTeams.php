@@ -22,13 +22,6 @@ class SubPanelViewTeams {
 	var $users_list = null;
 	var $focus;
 
-    /**
-     * @deprecated
-     */
-    public function SubPanelViewTeams()
-    {
-    }
-
 	function setFocus(&$value){
 		$this->focus = (object) $value;
 	}

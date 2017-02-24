@@ -39,14 +39,6 @@ class DynamicField {
         ),
     );
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function DynamicField($module = '')
-    {
-        self::__construct($module);
-    }
-
     public function __construct($module = '') {
         $this->request = InputValidation::getService();
         if (!empty($module)) {
@@ -1054,3 +1046,4 @@ class DynamicField {
 
     ////////////////////////////END BACKWARDS COMPATIBILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 }
+

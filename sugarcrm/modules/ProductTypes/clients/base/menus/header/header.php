@@ -12,14 +12,14 @@
 $module_name = 'ProductTypes';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#bwc/index.php?module=ProductTypes&action=EditView&return_module=ProductTypes&return_action=DetailView',
+        'route'=>'#ProductTypes/create',
         'label' =>'LNK_NEW_PRODUCT_TYPE',
         'acl_action'=>'',
         'acl_module'=>'',
         'icon' => 'fa-plus',
     ),
     array(
-        'route'=>'#bwc/index.php?module=ProductTypes&action=DetailView',
+        'route'=>'#ProductTypes',
         'label' =>'LNK_VIEW_PRODUCT_TYPES',
         'acl_action'=>'',
         'acl_module'=>'',

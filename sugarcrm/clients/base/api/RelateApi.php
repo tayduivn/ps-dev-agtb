@@ -106,6 +106,8 @@ class RelateApi extends FilterApi {
         // into account instead of every bean property.
         if (!empty($args['view'])) {
             $args['fields'] = $options['select'];
+        } elseif (!empty($args['fields'])) {
+            $args['fields'] = $this->normalizeFields($args['fields'], $options['displayParams']);
         }
 
 

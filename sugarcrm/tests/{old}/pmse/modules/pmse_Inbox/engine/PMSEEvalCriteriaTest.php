@@ -192,15 +192,6 @@ class PMSEEvalCriteriaTest extends PHPUnit_Framework_TestCase
 
     /**
      * Generated from @assert ($value1, $relacion, $value2) == 0.
-     * @covers PMSEEvalCriteria::evalAritmetic
-     */
-    public function testEvalAritmeticLiteral()
-    {
-        $this->assertEquals(6, $this->object->evalAritmetic('a', '+', 6));
-    }
-
-    /**
-     * Generated from @assert ($value1, $relacion, $value2) == 0.
      * @covers PMSEEvalCriteria::evalRelations
      */
     public function testEvalRelationsTrueNumeric()

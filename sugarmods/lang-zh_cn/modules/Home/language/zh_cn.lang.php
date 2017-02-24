@@ -211,7 +211,6 @@ $mod_strings = array (
   'LBL_SOURCE_WICK' => 'WICK: Web Input Completion Kit - JavaScript 类型工具',
   'LBL_SOURCE_YAHOO_UI_LIB' => 'Yahoo! User Interface Library - 用于实施丰富的客户端功能的用户界面库.',
   'LBL_SOURCE_PHPMAILER' => 'PHPMailer - 一个对PHP的全面功能邮件转换类',
-  'LBL_SOURCE_CRYPT_BLOWFISH' => 'Crypt_Blowfish - 允许快速的双工 blowfish 加密，无需mcrypt PHP扩展.',
   'LBL_SOURCE_PHP_COMPAT' => 'PHP_Compat - 提供失踪功能较旧版本的PHP.',
   'LBL_SOURCE_HTML_SAFE' => 'HTML_Safe - 一个解析器它的脚本带了所有潜在危险的内容在HTML中',
   'LBL_SOURCE_XML_HTMLSAX3' => 'XML_HTMLSax3 - 一个SAX 解析器为HTML 和其它非法形成的XML文档',

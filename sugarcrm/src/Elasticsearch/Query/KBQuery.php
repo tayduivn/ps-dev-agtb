@@ -55,11 +55,11 @@ class KBQuery implements QueryInterface
 
     /**
      * Create a multi-match query.
-     * @return \Elastica\Query\Bool
+     * @return \Elastica\Query\BoolQuery
      */
     public function build()
     {
-        $boolQuery = new \Elastica\Query\Bool();
+        $boolQuery = new \Elastica\Query\BoolQuery();
         $mltName = $this->createMltQuery($this->fields['name'], $this->bean->name);
         $mltBody = $this->createMltQuery($this->fields['kbdocument_body'], $this->bean->kbdocument_body);
         $boolQuery->addShould($mltName); // And, addMust() for OR.
@@ -70,11 +70,11 @@ class KBQuery implements QueryInterface
     /**
      * Create the filter.
      * @param bool $addLangFilter a flag indicate if a lang filter is needed
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     public function createFilter($addLangFilter)
     {
-        $mainFilter = new \Elastica\Filter\Bool();
+        $mainFilter = new \Elastica\Filter\BoolFilter();
 
         $currentIdFilter = new \Elastica\Filter\Term();
         $currentIdFilter->setTerm('_id', $this->bean->id);

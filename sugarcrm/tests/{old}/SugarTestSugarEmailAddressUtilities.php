@@ -25,7 +25,7 @@ class SugarTestSugarEmailAddressUtilities
      * @param $time
      * @return Contact|null
      */
-    private function _createContact($time)
+    private static function createContact($time)
     {
         if (self::$_createdContact === null)
         {
@@ -82,7 +82,7 @@ class SugarTestSugarEmailAddressUtilities
     public static function createEmailAddress($address=null,$id = '', $override = array())
     {
         $time = mt_rand();
-        $contact = self::_createContact($time);
+        $contact = self::createContact($time);
         if (!empty($address)) {
             $override['email_address'] = $address;
         }
@@ -152,7 +152,7 @@ class SugarTestSugarEmailAddressUtilities
      * @return Contact|null
      */
     public static function getContact() {
-        return self::_createContact(mt_rand());
+        return self::createContact(mt_rand());
     }
 
 }

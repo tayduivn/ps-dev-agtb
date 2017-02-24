@@ -255,6 +255,9 @@ $fields = array(
         'related_fields' => array('quote_id'),
         // this is a hack to get the quote_id field loaded
         'readonly' => true,
+        'related_fields' => array(
+            'mft_part_num',
+        ),
     ),
     array(
         'name' => 'tag',
@@ -433,7 +436,8 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'acl_module' => 'RevenueLineItems'
+                    'acl_module' => 'Quotes',
+                    'acl_action' => 'create',
                 ),
                 array(
                     'type' => 'divider',
@@ -516,11 +520,11 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'badge',
-                    'name' => 'badge',
+                    'name' => 'quote_id',
+                    'event' => 'button:convert_to_quote:click',
                     'readonly' => true,
-                    'related_fields' => array(
-                        'quote_id',
-                    ),
+                    'tooltip' => 'LBL_CONVERT_RLI_TO_QUOTE',
+                    'acl_module' => 'RevenueLineItems',
                 ),
             ),
         ),

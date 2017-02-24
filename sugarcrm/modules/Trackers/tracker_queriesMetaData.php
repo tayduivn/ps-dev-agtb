@@ -102,6 +102,6 @@ $dictionary['tracker_queries'] = array(
                 'query_id'
        	    )
         )
-
-    )
+    ),
+    'acls' => array('SugarACLStatic' => true),
 );

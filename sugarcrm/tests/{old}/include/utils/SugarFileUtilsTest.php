@@ -87,7 +87,7 @@ class SugarFileUtilsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarTouchWithAccessTime()
     {
         $time  = filemtime($this->_filename);
-        $atime = gmmktime();
+        $atime = time();
         
         $this->assertTrue(sugar_touch($this->_filename, $time, $atime));
         

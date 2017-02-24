@@ -29,10 +29,16 @@ class ParserModifyLayoutView extends ModuleBuilderParser
 
 
     /**
-     * Constructor
+     * {@inheritDoc}
+     *
+     * @param string $module
+     * @param string $view
      */
-    public function init($module = null, $view = null, $submittedLayout = false)
+    public function init($module, $view = '')
     {
+        if (empty($view)) {
+            throw new \BadMethodCallException('Missing required argument $view');
+        }
         $this->_view = ucfirst($view);
         $this->_module = $module;
         $this->language_module = $module;

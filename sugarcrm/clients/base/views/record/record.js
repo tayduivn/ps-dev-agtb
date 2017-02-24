@@ -14,6 +14,11 @@
  * @extends View.View
  */
 ({
+    /**
+     * @inheritdoc
+     */
+    dataView: 'record',
+
     inlineEditMode: false,
 
     createMode: false,
@@ -85,6 +90,8 @@
         options.meta.hashSync = _.isUndefined(options.meta.hashSync) ? true : options.meta.hashSync;
         app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
+        //Adding the favorite and follow fields.
+        this.context.addFields(this._getDataFields());
 
         /**
          * An array of the {@link #alerts alert} names in this view.
@@ -146,8 +153,6 @@
 
         this.context.on('change:record_label', this.setLabel, this);
         this.context.set('viewed', true);
-        //Set the context to load the field list from the record metadata.
-        this.context.set('dataView', 'record');
         this.model.on('duplicate:before', this.setupDuplicateFields, this);
         // displays error msg when required field is missing
         this.model.on('error:validation', this.alerts.showInvalidModel, this);

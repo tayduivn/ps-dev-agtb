@@ -25,22 +25,22 @@ class SupportPortalVisibility extends SugarVisibility
      */
     public function getAccountIds() 
     {
-        if ( ! isset($this->accountIds) ) {
+        if (!isset(self::$accountIds)) {
             $db = DBManagerFactory::getInstance();
 
             if ( !empty($_SESSION['contact_id']) ) {
                 // Using a raw query here, if we attempt to load in a bean and relationships
                 // we end up back here again trying to load the same data.
                 $ret = $db->query("SELECT accounts_contacts.account_id FROM accounts_contacts INNER JOIN accounts ON accounts_contacts.account_id = accounts.id WHERE accounts_contacts.contact_id = '".$db->quote($_SESSION['contact_id'])."' AND accounts_contacts.deleted = 0 AND accounts.deleted = 0");
-                $this->accountIds = array();
+                self::$accountIds = array();
                 while ( $row = $db->fetchByAssoc($ret) ) {
-                    $this->accountIds[] = $row['account_id'];
+                    self::$accountIds[] = $row['account_id'];
                 }
             } else {
-                $this->accountIds = array();
+                self::$accountIds = array();
             }
         }
-        return $this->accountIds;
+        return self::$accountIds;
     }
 
     /**

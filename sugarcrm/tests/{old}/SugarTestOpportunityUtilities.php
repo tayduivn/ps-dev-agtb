@@ -54,7 +54,7 @@ class SugarTestOpportunityUtilities
         return $opportunity;
     }
 
-    private function _createOpportunity($id)
+    private static function _createOpportunity($id)
     {
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
@@ -64,11 +64,6 @@ class SugarTestOpportunityUtilities
 
         global $app_list_strings;
 
-        // make sure it's setup to be an array so it doesn't fail below
-        if (!isset($app_list_strings['sales_stage_dom'])) {
-            $app_list_strings['sales_stage_dom'] = array();
-        }
-
         if (!empty($id)) {
             $opportunity->new_with_id = true;
             $opportunity->id = $id;
@@ -77,7 +72,6 @@ class SugarTestOpportunityUtilities
         $opportunity->name = $name . time();
         $opportunity->amount = 10000;
         $opportunity->date_closed = $timedate->getNow()->asDbDate();
-        $opportunity->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
         $opportunity->save();
 
         $db->commit();
@@ -128,4 +122,3 @@ class SugarTestOpportunityUtilities
         return $opportunity_ids;
     }
 }
-?>

@@ -129,7 +129,7 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
 	}
 
 
-	function display($defines, $additionalFormFields = null)
+    public function display(array $defines, $additionalFormFields = array())
 	{
 	    $focus = BeanFactory::getBean('Notes');
 		if ( !$focus->ACLAccess('EditView') ) {
@@ -139,4 +139,3 @@ class SugarWidgetSubPanelTopCreateNoteButton extends SugarWidgetSubPanelTopButto
 		return parent::display($defines, $additionalFormFields);
 	}
 }
-?>

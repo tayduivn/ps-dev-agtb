@@ -48,11 +48,11 @@ class ManyToOneRelationship extends AbstractRelationship
         $this->one_to_many = new OneToManyRelationship($onetomanyDef);
     }
 
-    /*
+    /**
      * BUILD methods called during the build
+     * @param bool $update Ignored
      */
-	
-	function buildLabels ()
+    public function buildLabels($update = false)
     {
         return $this->one_to_many->buildLabels();
     }
@@ -105,11 +105,11 @@ class ManyToOneRelationship extends AbstractRelationship
         parent::setName($relationshipName);
     	$this->one_to_many->setname($relationshipName);
     }
-    
-    public function setReadonly ()
+
+    public function setReadonly($set = true)
     {
-        parent::setReadonly();
-    	$this->one_to_many->setReadonly();
+        parent::setReadonly($set);
+        $this->one_to_many->setReadonly($set);
     }
     
     public function delete ()

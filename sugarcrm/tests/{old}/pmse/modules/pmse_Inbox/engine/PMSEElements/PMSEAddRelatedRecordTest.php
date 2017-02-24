@@ -25,6 +25,7 @@ class PMSEAddRelatedRecordTest extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        SugarTestHelper::setUp('current_user');
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
             ->setMethods(array('info', 'debug', 'warning'))
@@ -37,7 +38,7 @@ class PMSEAddRelatedRecordTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+        SugarTestHelper::tearDown();
     }
     
     /**

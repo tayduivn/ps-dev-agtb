@@ -40,13 +40,13 @@ class TagsApi extends ModuleApi
     /**
      * Fetches data from the $args array and updates the bean with that data
      *
-     * @param $bean SugarBean The bean to be updated
-     * @param $api ServiceBase The API class of the request, used in cases
+     * @param SugarBean   $bean The bean to be updated
+     * @param ServiceBase $api  The API class of the request, used in cases
      *      where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
+     * @param array       $args The arguments array passed in from the API
      * @return id Bean id
      */
-    public function updateBean($bean, $api, $args)
+    public function updateBean(SugarBean $bean, ServiceBase $api, $args)
     {
         //Set verfiedUnique from args
         $bean->verifiedUnique = !empty($args['verifiedUnique']);

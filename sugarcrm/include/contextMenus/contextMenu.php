@@ -13,15 +13,7 @@
 class contextMenu {
     var $menuItems;
     var $objectName;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function contextMenu()
-    {
-        self::__construct();
-    }
-
+    
     public function __construct()
     {
         $this->menuItems = array();
@@ -88,3 +80,4 @@ class contextMenu {
         }
     }
 }
+

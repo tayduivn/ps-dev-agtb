@@ -16,13 +16,7 @@
 
 class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopButtonQuickCreate
 {
-
-    public function getWidgetId()
-    {
-        return parent::getWidgetId();
-    }
-
-	function display($defines)
+    public function display(array $defines, $additionalFormFields = array())
 	{
 		global $app_strings;
 		global $currentModule;
@@ -104,4 +98,3 @@ class SugarWidgetSubPanelTopCreateLeadNameButton extends SugarWidgetSubPanelTopB
 		return $button;
 	}
 }
-?>

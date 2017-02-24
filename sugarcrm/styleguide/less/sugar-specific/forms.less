@@ -129,7 +129,10 @@ select[readonly],
 textarea[readonly] {
   cursor: not-allowed;
   border: @inputBorder;
+  -webkit-text-fill-color: @placeholderText;
   color: @placeholderText;
+  -webkit-opacity: 1;
+  opacity: 1;
 }
 
 input[type=checkbox],

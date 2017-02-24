@@ -168,6 +168,11 @@
                     numOfToggledFields = fields.length;
 
                 _.each(fields, function(field) {
+                    if (field.disposed) {
+                        // if a field is disposed, skip this field
+                        return;
+                    }
+
                     if (field.action === viewName) {
                         field.$el.closest('.record-cell').toggleClass('edit', (viewName === 'edit'));
                         numOfToggledFields--;

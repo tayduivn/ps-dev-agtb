@@ -11,10 +11,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
-
-
 class ViewList extends SugarView{
     var $type ='list';
     var $lv;
@@ -26,19 +22,6 @@ class ViewList extends SugarView{
     var $listViewDefs;
     var $storeQuery;
     var $where = '';
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewList($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
     function oldSearch(){
 

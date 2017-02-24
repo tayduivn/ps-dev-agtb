@@ -246,6 +246,9 @@ class SugarBeanApiHelper
             $context['owner_override'] = true;
         }
 
+        // Sanitize the data if needed
+        $submittedData = $this->sanitizeSubmittedData($submittedData);
+
         // check ACLs first
         $acl = !empty($options['acl']) ? $options['acl'] : 'save';
         foreach ($bean->field_defs as $fieldName => $properties) {
@@ -317,6 +320,17 @@ class SugarBeanApiHelper
         }
 
         return $check_notify;
+    }
+
+    /**
+     * Handles cleaning up submitted data for child classes that need that functionality
+     *
+     * @param array $data Submitted data array
+     * @return array
+     */
+    public function sanitizeSubmittedData($data)
+    {
+        return $data;
     }
 
     /**

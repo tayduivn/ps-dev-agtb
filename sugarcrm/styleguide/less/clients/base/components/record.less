@@ -70,7 +70,9 @@
   &.vis_action_hidden:first-of-type:last-of-type {
     display: none;
   }
-
+  .label-dark-text {
+      color: #222;
+  }
   .record-label {
     font-size: @fontSizeSmall;
     line-height: @fontSizeSmall;
@@ -156,10 +158,12 @@
     .box-sizing(border-box);
     font-size: @fontSizeLarge;
     font-weight: 400;
-    color: @gray;
     z-index: 1;
     &:focus {
       z-index: 2;
+    }
+    &:not([disabled]):not([readonly]) {
+      color: @gray;
     }
   }
 

@@ -71,7 +71,8 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         $account = $this->createPartialMock('Account', array('load_relationship'));
         $account->expects($this->once())
             ->method('load_relationship')
-            ->with('contacts');
+            ->with('contacts')
+            ->willReturn(true);
 
         $account->contacts = $this->createPartialMock('Link2', array('add'));
         $account->contacts->expects($this->once())
@@ -96,7 +97,8 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
         $account->id = $accountId;
         $account->expects($this->once())
             ->method('load_relationship')
-            ->with('contacts');
+            ->with('contacts')
+            ->willReturn(true);
 
         $account->contacts = $this->createPartialMock('Link2', array('delete'));
         $account->contacts->expects($this->once())

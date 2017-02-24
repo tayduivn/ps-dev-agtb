@@ -112,6 +112,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_SUBTOTAL',
             'type' => 'currency',
             'len' => '26,6',
+            'default' => '0',
             'related_fields' => array(
                 'currency_id',
                 'base_rate',
@@ -301,6 +302,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_DISCOUNT_PRICE',
             'type' => 'currency',
             'len' => '26,6',
+            'default' => '0',
             'audited' => true,
             'comment' => 'Discounted price ("Unit Price" in Quote)',
             'related_fields' => array(
@@ -314,6 +316,7 @@ $dictionary['Product'] = array(
             'dbType' => 'currency',
             'type' => 'discount',
             'len' => '26,6',
+            'default' => '0',
             'precision' => '6',
             'comment' => 'Discounted amount',
             'related_fields' => array(
@@ -351,6 +354,7 @@ $dictionary['Product'] = array(
             'name' => 'discount_select',
             'vname' => 'LBL_DISCOUNT_AS_PERCENT',
             'type' => 'bool',
+            'default' => true,
             'reportable' => false,
         ),
         'deal_calc' => array(
@@ -485,7 +489,8 @@ $dictionary['Product'] = array(
             'type' => 'enum',
             'options' => 'tax_class_dom',
             'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
+            'comment' => 'Tax classification (ex: Taxable, Non-taxable)',
+            'default' => 'Taxable',
         ),
         'website' => array(
             'name' => 'website',
@@ -624,6 +629,28 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE',
             'source' => 'non-db',
         ),
+            'parentquote' => array(
+                'name' => 'parentquote',
+                'type' => 'link',
+                'relationship' => 'quote_quoted_line_item',
+                'vname' => 'LBL_QUOTE',
+                'source' => 'non-db',
+                'rel_fields' => array('quote_index' => array('type' => 'integer')),
+                'relationship_fields' => array(
+                    'quote_index' => 'quote_index',
+                ),
+            ),
+            'quote_position' => array(
+                'massupdate' => false,
+                'name' => 'quote_position',
+                'type' => 'integer',
+                'studio' => false,
+                'source' => 'non-db',
+                'vname' => 'LBL_PRODUCT_POSITION',
+                'importable' => false,
+                'link' => 'parentquote',
+                'rname_link' => 'quote_index',
+            ),
         'revenuelineitems' => array(
             'name' => 'revenuelineitems',
             'type' => 'link',

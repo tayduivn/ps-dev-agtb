@@ -190,7 +190,8 @@ class Category extends SugarBean implements NestedBeanInterface
      */
     public function getParent()
     {
-        return array_shift($this->getParents(1, true));
+        $parents = $this->getParents(1, true);
+        return array_shift($parents);
     }
 
     /**

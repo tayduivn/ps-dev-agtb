@@ -27,11 +27,13 @@ class SchedulersViewEdit extends ViewEdit {
  		$this->useForSubpanel = true;
  		//$this->useModuleQuickCreateTemplate = true;
  	}
- 	
+
     /**
-	 * @see SugarView::_getModuleTitleListParam()
-	 */
-	protected function _getModuleTitleListParam()
+     * {@inheritDoc}
+     *
+     * @param bool $browserTitle Ingored
+     */
+    protected function _getModuleTitleListParam($browserTitle = false)
 	{
 	    global $mod_strings;
 

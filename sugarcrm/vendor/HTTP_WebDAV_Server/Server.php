@@ -84,14 +84,6 @@ class HTTP_WebDAV_Server
     // {{{ Constructor
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function HTTP_WebDAV_Server()
-    {
-        self::__construct();
-    }
-
-    /**
      * Constructor
      *
      * @param void

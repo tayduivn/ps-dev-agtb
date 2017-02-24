@@ -12,23 +12,8 @@
 $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'visibility' => array('ReportVisibility' => true),
     'favorites'=>true,
+    'full_text_search' => false,
     'fields' => array (
-  'id' =>
-  array (
-    'name' => 'id',
-    'vname' => 'LBL_ID',
-    'type' => 'id',
-    'required'=>true,
-    'reportable'=>false,
-  ),
-  'name' =>
-  array (
-  	'name' => 'name',
-    'vname' => 'LBL_NAME',
-    'type' => 'varchar',
-    'len'=>'255',
-    'required'=>true,
-  ),
   'module' =>
   array (
     'name' => 'module',
@@ -36,6 +21,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'type' => 'enum',
     'function' => 'getModulesDropdown',
     'required' => true,
+      'massupdate' => false,
   ),
   'report_type' =>
   array (
@@ -44,95 +30,13 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'type' => 'enum',
     'options' => 'dom_report_types',
     'required' => true,
+      'massupdate' => false,
   ),
   'content' =>
   array (
   	'name' => 'content',
     'vname' => 'LBL_CONTENT',
     'type' => 'longtext',
-  ),
-   'deleted' =>
-  array (
-    'name' => 'deleted',
-    'vname' => 'LBL_DELETED',
-    'type' => 'bool',
-    'required'=>false,
-    'reportable'=>false,
-  ),
-   'date_entered' =>
-  array (
-    'name' => 'date_entered',
-    'vname' => 'LBL_DATE_ENTERED',
-    'type' => 'datetime',
-    'required'=>true,
-  ),
-  'date_modified' =>
-  array (
-    'name' => 'date_modified',
-    'vname' => 'LBL_DATE_MODIFIED',
-    'type' => 'datetime',
-    'required'=>true,
-  ),
-  'assigned_user_id' =>
-  array (
-    'name' => 'assigned_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
-      'type' => 'id',
-    'isnull' => 'false',
-    'massupdate' => false,
-    'reportable'=>false,
-  ),
-  'modified_user_id' =>
-  array (
-    'name' => 'modified_user_id',
-    'rname' => 'user_name',
-    'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
-    'type' => 'assigned_user_name',
-    'table' => 'users',
-    'isnull' => 'false',
-    'dbType' => 'id',
-    'reportable'=>false,
-  ),
- 'assigned_user_name' =>
-  array (
-    'name' => 'assigned_user_name',
-    'vname' => 'LBL_ASSIGNED_TO_NAME',
-    'type' => 'relate',
-	'link' => 'assigned_user_link',
-    'rname' => 'name',
-    'reportable'=>false,
-    'source'=>'non-db',
-    'table' => 'users',
-    'id_name' => 'assigned_user_id',
-    'module'=>'Users',
-    'exportable'=> true,
-  ),
-  'assigned_user_link' =>
-   array (
-	 'name' => 'assigned_user_link',
-	 'type' => 'link',
-	 'relationship' => 'report_assigned_user',
-	 'vname' => 'LBL_ASSIGNED_TO_USER',
-	 'link_type' => 'one',
-	 'module'=>'Users',
-	 'bean_name'=>'User',
-	 'source'=>'non-db',
-	 'duplicate_merge'=>'enabled',
-	 'rname' => 'user_name',
-	 'id_name' => 'assigned_user_id',
-	 'table' => 'users',
-  ),
-  'created_by' =>
-  array (
-    'name' => 'created_by',
-    'rname' => 'user_name',
-    'id_name' => 'modified_user_id',
-    'vname' => 'LBL_ASSIGNED_TO',
-    'type' => 'assigned_user_name',
-    'table' => 'users',
-    'isnull' => 'false',
-    'dbType' => 'id'
   ),
   'is_published' =>
   array (
@@ -141,14 +45,13 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'type' => 'bool',
     'default'=>0,
     'required'=>true,
+      'massupdate' => false,
   ),
   'last_run_date' => array(
     'name' => 'last_run_date',
-    'rname' => 'date_modified',
     'id_name' => 'report_cache_id',
     'vname' => 'LBL_REPORT_LAST_RUN_DATE',
-    'type' => 'relate',
-    'dbType' => 'datetime',
+    'type' => 'datetime',
     'table' => 'report_cache',
     'isnull' => 'true',
     'module' => 'Reports',
@@ -158,7 +61,18 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'duplicate_merge' => 'disabled',
     'hideacl' => true,
     'width' => '15',
+      'link' => 'last_run_date_link',
+      'rname_link' => 'date_modified',
   ),
+        'last_run_date_link' => array(
+            'name' => 'last_run_date_link',
+            'type' => 'link',
+            'relationship' => 'reports_last_run_date',
+            'source' => 'non-db',
+            'vname' => 'LBL_REPORT_LAST_RUN_DATE',
+            'reportable' => false,
+            'primary_only' => true,
+        ),
   'report_cache_id' => array(
     'name' => 'report_cache_id',
     'rname' => 'id',
@@ -200,24 +114,83 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
     'type' => 'bool',
     'required' => false,
     'reportable' => false,
+        'massupdate' => false,
   ),
+        'next_run' => array(
+            'name' => 'next_run',
+            'id_name' => 'report_id',
+            'link' => 'next_run_link',
+            'table' => 'report_schedules',
+            'vname' => 'LBL_SCHEDULE_REPORT',
+            'type' => 'datetime',
+            'source' => 'non-db',
+            'rname_link' => 'next_run',
+            'massupdate' => false,
+            'reportable' => false,
+        ),
+        'next_run_link' => array(
+            'name' => 'next_run_link',
+            'type' => 'link',
+            'relationship' => 'reports_next_run',
+            'source' => 'non-db',
+            'vname' => 'LBL_SCHEDULE_REPORT',
+            'primary_only' => true,
+        ),
+
 ),
 'indices' => array (
-       array('name' =>'save_reportspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_rep_owner_module_name', 'type'=>'index', 'fields'=>array('assigned_user_id','name','deleted')),
-       array('name' => 'idx_savedreport_module', 'type' => 'index', 'fields' => array('module')),
-       array('name' => 'idx_savedreport_date_entered', 'type' => 'index', 'fields' => array('date_entered')),
+    'idx_savedreport_module' => array(
+        'name' => 'idx_savedreport_module',
+        'type' => 'index',
+        'fields' => array('module'),
+    ),
 ),
 'relationships'=>array(
-    'report_assigned_user' =>
-        array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-              'rhs_module'=> 'Reports' , 'rhs_table'=> 'saved_reports', 'rhs_key' => 'assigned_user_id',
-              'relationship_type'=>'one-to-many'
-			 ),
+    'reports_last_run_date' => array(
+        'lhs_module' => 'Reports',
+        'lhs_table' => 'saved_reports',
+        'lhs_key' => 'id',
+        'rhs_module' => 'Users',
+        'rhs_table' => 'users',
+        'rhs_key' => 'id',
+        'join_table' => 'report_cache',
+        'join_key_lhs' => 'id',
+        'join_key_rhs' => 'assigned_user_id',
+        'relationship_type' => 'user-based',
+        'user_field' => 'assigned_user_id',
+    ),
+    'reports_next_run' => array(
+        'lhs_module' => 'Reports',
+        'lhs_table' => 'saved_reports',
+        'lhs_key' => 'id',
+        'rhs_module' => 'Users',
+        'rhs_table' => 'users',
+        'rhs_key' => 'id',
+        'join_table' => 'report_schedules',
+        'join_key_lhs' => 'report_id',
+        'join_key_rhs' => 'user_id',
+        'relationship_type' => 'user-based',
+        'user_field' => 'user_id',
+        'relationship_role_column' => 'active',
+        'relationship_role_column_value' => '1',
+    ),
    ),
+    'uses' => array(
+        'basic',
+        'assignable',
+        'team_security',
+    ),
+    'ignore_templates' => array(
+        'following',
+        'lockable_fields',
+    ),
 );
 
-VardefManager::createVardef('Reports','SavedReport', array(
-'team_security',
-));
-?>
+VardefManager::createVardef('Reports', 'SavedReport');
+
+// to override field attributes
+$dictionary['SavedReport']['fields']['id']['reportable'] = false;
+$dictionary['SavedReport']['fields']['modified_user_id']['reportable'] = false;
+$dictionary['SavedReport']['fields']['date_entered']['required'] = true;
+$dictionary['SavedReport']['fields']['date_modified']['required'] = true;
+$dictionary['SavedReport']['fields']['assigned_user_id']['reportable'] = false;

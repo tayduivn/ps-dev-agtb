@@ -512,8 +512,12 @@ class SugarUpgradeFilesForDelete extends UpgradeScript
             $files[] = 'vendor/sabre';
         }
 
-        if (version_compare($this->from_version, '7.9', '<')) {
+        if (version_compare($this->from_version, '7.9.0.0', '<')) {
             $files[] = 'sidecar/src/utils/file.js';
+        }
+
+        if (version_compare($this->from_version, '7.9.0.0', '<')) {
+            $files[] = 'modules/Reports/clients/base/layouts/records';
         }
 
         $this->upgrader->fileToDelete($files, $this);

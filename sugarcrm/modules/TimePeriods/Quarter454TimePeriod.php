@@ -32,10 +32,10 @@ class Quarter454TimePeriod extends TimePeriod implements TimePeriodInterface {
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
-     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
      * @return mixed
      */
-    public function buildLeaves($timePeriodType) {
+    public function buildLeaves($shownBackwardDifference, $shownForwardDifference)
+    {
         if($this->hasLeaves()) {
             throw new Exception("This TimePeriod already has leaves");
         }

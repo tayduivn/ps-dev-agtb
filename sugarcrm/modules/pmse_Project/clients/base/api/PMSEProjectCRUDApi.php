@@ -83,8 +83,8 @@ class PMSEProjectCRUDApi extends ModuleApi
         $bean->saveRelatedBeans();
     }
 
-
-    public function createRecord($api, $args) {
+    public function createRecord(ServiceBase $api, array $args)
+    {
         if (!isset($args['picture_duplicateBeanId'])) {
             return parent::createRecord($api, $args);
         }

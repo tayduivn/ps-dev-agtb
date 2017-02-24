@@ -35,8 +35,11 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
      * @param string $view The view defs to load
      * @param boolean $submittedLayout If there is a new layout proposed
      */
-    public function init($module = null, $view = null, $submittedLayout = false)
+    public function init($module, $view = '', $submittedLayout = false)
     {
+        if (empty($view)) {
+            throw new \BadMethodCallException('Missing required argument $view');
+        }
         $viewType = strtolower(str_ireplace('view', '', $view));
         $GLOBALS['log']->debug("in ParserPortalLayoutView");
         $file = 'modules/' . $module . '/metadata/portal/layouts/' . $viewType . '.php';

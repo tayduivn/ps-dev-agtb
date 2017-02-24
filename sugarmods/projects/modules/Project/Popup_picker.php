@@ -43,16 +43,6 @@ $image_path = 'themes/'.$theme.'/images/';
 
 class Popup_Picker
 {
-	
-	
-	/*
-	 * 
-	 */
-	function Popup_Picker()
-	{
-		;
-	}
-	
 	/*
 	 * 
 	 */
@@ -148,4 +138,3 @@ class Popup_Picker
 		return $output_html;
 	}
 } // end of class Popup_Picker
-?>

@@ -64,7 +64,7 @@ class SugarForecasting_ReportingUsersTest extends Sugar_PHPUnit_Framework_TestCa
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
         $GLOBALS['current_user'] = null;
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
     
     public function testReturnTreeShouldContain3Children()

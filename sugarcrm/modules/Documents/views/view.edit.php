@@ -12,14 +12,6 @@
 
 class DocumentsViewEdit extends ViewEdit
 {
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function DocumentsViewEdit()
-    {
-        self::__construct();
-    }
-
      public function __construct()
      {
          parent::__construct();

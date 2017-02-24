@@ -95,6 +95,11 @@
         this.fieldValues = [{}];
         this.setMetadata(options);
 
+        // FIXME massupdate shouldn't mess with the main context (should have own context)
+        // this is a hack to prevent the massupdate fields to be added to the
+        // context
+        this.dataView = true;
+
         this._super('initialize', [options]);
         this._initSettings();
 

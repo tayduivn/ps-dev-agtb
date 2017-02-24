@@ -29,7 +29,6 @@
 		</td>
         <td width='13%' scope="row">{$MOD.LBL_SHIPPING_PROVIDER}</td>
         <td width='13%' ><select name='shipper_id' id='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
-		<td width='13%' scope="row">{$MOD.LBL_CALC_GRAND}</td>
 		<td width='13%' ><input  type='checkbox' class='checkbox' name='calc_grand_total' id='calc_grand_total' onClick='toggleDisplay("grand_tally");' {$CALC_GRAND_TOTAL_CHECKED}></td>
 	    <td width='13%' scope="row">{$MOD.LBL_SHOW_LINE_NUMS}</td>
 	    <td width='40%' ><input type='checkbox' class='checkbox' name='show_line_nums' id='show_line_nums' {$SHOW_LINE_NUMS_CHECKED}></td>

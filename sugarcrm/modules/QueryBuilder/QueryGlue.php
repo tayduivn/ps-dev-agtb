@@ -30,14 +30,6 @@ class QueryGlue {
 	var $select_array = array();
 	var $rel_mod_array = array();
 	
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function QueryGlue(&$seed_object)
-    {
-        self::__construct($seed_object);
-    }
-
     public function __construct(& $seed_object)
     {
 		

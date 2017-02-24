@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once 'include/utils/encryption_utils.php';
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 /**
  * Outbuound email management
@@ -74,14 +74,6 @@ class OutboundEmail
      * @var null|OutboundEmail
      */
     protected static $sysMailerCache = null;
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function OutboundEmail()
-    {
-        self::__construct();
-    }
 
 	/**
 	 * Sole constructor
@@ -498,19 +490,22 @@ class OutboundEmail
         global $sugar_config;
 	    $values = array();
 
-        foreach ($fieldDefs as $field => $def) {
-            if (isset($this->$field)) {
-                if ($field == 'mail_smtppass') {
-                    $this->mail_smtppass = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->mail_smtppass);
-                }
-                if ($field == 'mail_smtpserver'
-                    && !empty($sugar_config['bad_smtpservers'])
-                    && in_array($this->mail_smtpserver, $sugar_config['bad_smtpservers'])
-                ) {
-                    $this->mail_smtpserver = '';
-                }
-                $values[$field] = $this->$field;
-            }
+        $validKeys = array();
+
+	    foreach($fieldDefs as $def) {
+	    	if ($def == 'mail_smtppass' && !empty($this->$def)) {
+                $this->$def = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->$def);
+	    	} // if
+	    	if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl' || $def == 'mail_smtpport'){
+	    		if(empty($this->$def)){
+	    			$this->$def = 0;
+	    		}
+	    		$values[] = intval($this->$def);
+                        $validKeys[] = $def;
+	    	} else if (isset($this->$def)) {
+	    		$values[] = $this->db->quoted($this->$def);
+                        $validKeys[] = $def;
+	    	}
 	    }
 	    return $values;
 	}

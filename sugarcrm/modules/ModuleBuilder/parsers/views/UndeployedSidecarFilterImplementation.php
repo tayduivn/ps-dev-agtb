@@ -70,7 +70,10 @@ class UndeployedSidecarFilterImplementation extends AbstractMetaDataImplementati
         if (isset($GLOBALS['current_language']) && !empty($GLOBALS['current_language'])) {
             $selected_lang = $GLOBALS['current_language'];
         }
-        $GLOBALS ['mod_strings'] = array_merge($GLOBALS['mod_strings'], $this->module->getModStrings($selected_lang));
+        $GLOBALS['mod_strings'] = array_merge(
+            $GLOBALS['mod_strings'] ?: array(),
+            $this->module->getModStrings($selected_lang)
+        );
     }
 
     /**

@@ -11,23 +11,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
 class ViewXML extends SugarView{
 	var $type ='detail';
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ViewXML($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
 
 	function display(){
 		echo 'Not implemented';

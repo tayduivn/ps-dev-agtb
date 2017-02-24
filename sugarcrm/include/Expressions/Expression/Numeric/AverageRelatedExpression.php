@@ -77,31 +77,25 @@ class AverageRelatedExpression extends NumericExpression
             target = this.context.target,
             relationship = params[0].evaluate(),
             rel_field = params[1].evaluate();
-        var model = this.context.relatedModel || this.context.model,  // the model
+        var model = this.context.relatedModel || App.data.createRelatedBean(this.context.model, null, relationship),
             // has the model been removed from it's collection
             isCurrency = (model.fields[rel_field].type === 'currency'),
             precision = model.fields[rel_field].precision || 6,
             hasModelBeenRemoved = this.context.isRemoveEvent || false,
             current_value = this.context.getRelatedField(relationship, 'rollupAve', rel_field) || '',
-            all_values = this.context.getRelatedField(relationship, 'rollupAve', rel_field + '_values') || {},
-            new_value = model.get(rel_field) || '',
             rollup_value = '0';
 
-        if (isCurrency) {
-            new_value = App.currency.convertToBase(
-                new_value,
-                model.get('currency_id')
+        if (!_.isUndefined(this.context.relatedModel)) {
+            this.context.updateRelatedCollectionValues(
+                this.context.model,
+                relationship,
+                'rollupAve',
+                rel_field,
+                model,
+                (hasModelBeenRemoved ? 'remove' : 'add')
             );
         }
-
-        if (!model.isNew()) {
-            if (hasModelBeenRemoved || !_.isFinite(new_value)) {
-                delete all_values[model.get('id')];
-            } else if (this.context.relatedModel || all_values[model.get('id')]) {
-                 // the model is related or current with related record
-                all_values[model.get('id')] = new_value;
-            }
-        }
+        var all_values = this.context.getRelatedCollectionValues(this.context.model, relationship, 'rollupAve', rel_field) || {};
 
         if (_.size(all_values) > 0) {
             rollup_value = _.reduce(all_values, function(memo, number) {
@@ -128,14 +122,6 @@ class AverageRelatedExpression extends NumericExpression
                 this.context.model.isNew()
             );
         }
-        // always update the values array
-        this.context.updateRelatedFieldValue(
-            relationship,
-            'rollupAve',
-            rel_field + '_values',
-            all_values,
-            this.context.model.isNew()
-        );
 
         return rollup_value;
 JS;

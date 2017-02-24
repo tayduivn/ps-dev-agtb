@@ -70,7 +70,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-list',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index',
+        'route'=> '#Reports',
         'label' =>'LBL_ALL_REPORTS',
         'acl_action'=>'',
         'acl_module'=>'',

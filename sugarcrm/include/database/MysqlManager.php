@@ -868,16 +868,16 @@ FROM information_schema.statistics';
 	 * @param  string   $sql        SQL Statement to execute
 	 * @param  bool     $dieOnError True if we want to call die if the query returns errors
 	 * @param  string   $msg        Message to log if error occurs
-	 * @param  bool     $suppress   Message to log if error occurs
+     * @param  bool     $encode     encode the result
 	 * @return array    single row from the query
 	 */
-	public function fetchOne($sql, $dieOnError = false, $msg = '', $suppress = false)
+    public function fetchOne($sql, $dieOnError = false, $msg = '', $encode = true)
 	{
 		if(stripos($sql, ' LIMIT ') === false) {
 			// little optimization to just fetch one row
 			$sql .= " LIMIT 0,1";
 		}
-		return parent::fetchOne($sql, $dieOnError, $msg, $suppress);
+        return parent::fetchOne($sql, $dieOnError, $msg, $encode);
 	}
 
 	/**

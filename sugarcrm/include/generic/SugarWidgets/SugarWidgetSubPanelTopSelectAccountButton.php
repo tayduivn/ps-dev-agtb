@@ -10,12 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
-
-
-
 class SugarWidgetSubPanelTopSelectAccountButton extends SugarWidgetSubPanelTopSelectButton {
-    public function display($widget_data)
+    public function display(array $widget_data, $additionalFormFields = array())
 	{
 		/*
 		* i.dymovsky
@@ -30,6 +26,6 @@ class SugarWidgetSubPanelTopSelectAccountButton extends SugarWidgetSubPanelTopSe
 		* Bug25633 code change end
 		*/
 		
-		return parent::display($widget_data);
+        return parent::display($widget_data, $additionalFormFields);
 	}
 }

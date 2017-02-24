@@ -11,6 +11,8 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Security\Validator\Constraints\DropdownList as ConstraintsDropdownList;
+use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 
 class ModuleScanner{
 	private $manifestMap = array(
@@ -483,28 +485,73 @@ class ModuleScanner{
 	    return false;
 	}
 
-	/**
-	 *Scans a directory and calls on scan file for each file
-         * @param string $path path of the directory to be scanned
-         * @param string $sugarFileAllowed whether should allow to override core files
-	 **/
-        public function scanDir($path, $sugarFileAllowed = true)
-        {
-		static $startPath = '';
-		if(empty($startPath))$startPath = $path;
-		if(!is_dir($path))return false;
-		$d = dir($path);
-		while($e = $d->read()){
-		$next = $path . '/' . $e;
-		if(is_dir($next)){
-			if(substr($e, 0, 1) == '.')continue;
-                        $this->scanDir($next, $sugarFileAllowed);
-		}else{
-                    $issues = $this->scanFile($next, $sugarFileAllowed);
-		}
-		}
-    	return true;
-	}
+    /**
+     * Scans a directory and calls on scan file for each file
+     * @param string $path path of the directory to be scanned
+     * @param string $sugarFileAllowed whether should allow to override core files
+     **/
+    public function scanDir($path, $sugarFileAllowed = true)
+    {
+        static $startPath = '';
+        if (empty($startPath)) {
+            $startPath = $path;
+        }
+        if (!is_dir($path)) {
+            return false;
+        }
+        $d = dir($path);
+        while ($e = $d->read()) {
+            $next = $path . '/' . $e;
+            if (is_dir($next)) {
+                if (substr($e, 0, 1) == '.') {
+                    continue;
+                }
+                $this->scanDir($next, $sugarFileAllowed);
+            } else {
+                $this->scanFile($next, $sugarFileAllowed);
+                if ($this->isLanguageFile($next)) {
+                    $this->checkLanguageFileKeysValidity($next);
+                }
+            }
+        }
+        return true;
+    }
+    /**
+     * Checks if a file is a language file from manifest installdefs
+     * @param string $file path to file
+     * @return bool true if file is a language file from manifest.
+     */
+    private function isLanguageFile($file)
+    {
+        $isLanguageFile = false;
+        foreach ($this->installdefs['language'] as $pack) {
+            $pack['from'] = str_replace('<basepath>', '', $pack['from']);
+            if ($pack['from'] == str_replace($this->baseDir, '', $file)) {
+                $isLanguageFile = true;
+            }
+        }
+        return $isLanguageFile;
+    }
+    /**
+     * Checks language file keys validity (starts with letter and contains only letters, numbers and underscore)
+     * @param $file string path to file
+     * @return array issues.
+     */
+    private function checkLanguageFileKeysValidity($file)
+    {
+        include $file;
+        if (!empty($app_list_strings) && is_array($app_list_strings)) {
+            $constraint = new ConstraintsDropdownList();
+            $violations = Validator::getService()->validate($app_list_strings, $constraint);
+            if ($violations->count() > 0) {
+                foreach ($violations as $violation) {
+                    $this->issues['file'][$file][] = $violation->getMessage();
+                }
+                return $this->issues['file'][$file];
+            }
+        }
+        return array();
+    }
 
 	/**
 	 * Check if the file contents looks like PHP
@@ -721,6 +768,7 @@ class ModuleScanner{
 		}
 		$this->lockConfig();
 		list($manifest, $installdefs) = MSLoadManifest($manifestPath);
+        $this->installdefs = $installdefs;
 		$fileIssues = $this->checkConfig($manifestPath);
 		if(!empty($fileIssues)){
 			return $fileIssues;

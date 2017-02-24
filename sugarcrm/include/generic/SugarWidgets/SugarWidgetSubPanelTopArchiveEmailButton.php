@@ -12,7 +12,7 @@
 
 class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopButton
 {
-    function display($defines)
+    public function display(array $defines, $additionalFormFields = array())
     {
         global $app_strings;
 

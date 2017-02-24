@@ -15,14 +15,6 @@
 class CalendarDashlet extends Dashlet {
     var $view = 'week';
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function CalendarDashlet($id, $def)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def)
     {
         $this->loadLanguage('CalendarDashlet','modules/Calendar/Dashlets/');
@@ -97,3 +89,4 @@ class CalendarDashlet extends Dashlet {
 
 
 }
+

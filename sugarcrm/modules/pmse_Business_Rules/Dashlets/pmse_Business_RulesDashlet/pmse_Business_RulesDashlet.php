@@ -24,15 +24,6 @@
 use Sugarcrm\Sugarcrm\ProcessManager;
 
 class pmse_Business_RulesDashlet extends DashletGeneric { 
-
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function pmse_Business_RulesDashlet($id, $def = null)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def = null)
     {
 		global $current_user, $app_strings;
@@ -48,3 +39,4 @@ class pmse_Business_RulesDashlet extends DashletGeneric {
         $this->seedBean = ProcessManager\Factory::getPMSEObject('pmse_Business_Rules');
     }
 }
+

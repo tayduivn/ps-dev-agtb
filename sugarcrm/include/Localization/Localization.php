@@ -63,14 +63,6 @@ class Localization {
      */
     protected $parsedFormats = array();
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function Localization()
-    {
-        self::__construct();
-    }
-
 	/**
 	 * sole constructor
 	 */
@@ -1139,3 +1131,4 @@ eoq;
         return $GLOBALS['sugar_config']['default_language'];
     }
 } // end class def
+

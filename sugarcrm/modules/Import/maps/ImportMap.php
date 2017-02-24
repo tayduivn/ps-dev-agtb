@@ -130,7 +130,8 @@ class ImportMap extends SugarBean
 	}
 
     /**
-     * Save
+     * {@inheritDoc}
+     * If one argument passed - calls standard SugarBean::save
      *
      * @param  string $owner_id
      * @param  string $name
@@ -141,16 +142,14 @@ class ImportMap extends SugarBean
      * @param  string $enclosure
      * @return bool
      */
-    public function save(
-        $owner_id,
-        $name,
-        $module,
-        $source,
-        $has_header,
-        $delimiter,
-        $enclosure
-        )
+    public function save($check_notify = false)
     {
+        if (func_num_args() <= 1) {
+            // calling SugarBean::save()
+            return call_user_func_array(array('parent', __FUNCTION__), func_get_args());
+        }
+        // keep backwards compatibility, old method expected these arguments
+        list($owner_id, $name, $module, $source, $has_header, $delimiter, $enclosure) = func_get_args();
         $olddefault_values = $this->default_values;
         $oldcontent = $this->content;
 

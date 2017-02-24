@@ -19,7 +19,8 @@ class ParserModifyListView extends ModuleBuilderParser
 	var $reserved = array(); // fields marked by 'studio'=>false in the listviewdefs; need to be preserved
 	//	var $language_module = '';
 	var $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
-	function init ( $module_name , $submodule = '' )
+
+    public function init($module_name)
 	{
 		global $app_list_strings ;
 		$this->module_name = $module_name ;

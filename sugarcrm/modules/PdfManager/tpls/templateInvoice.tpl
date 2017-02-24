@@ -70,6 +70,7 @@
 </table>
 <p>&nbsp;</p>
 {literal}{foreach from=$product_bundles item="bundle"}{/literal}
+{literal}{if $bundle.products|@count > 0}{/literal}
 <p>&nbsp;</p>
 <h3>{literal}{$bundle.name}{/literal}</h3>
 <table style="width: 100%;" border="0">
@@ -128,16 +129,6 @@
 </tr>
 <tr>
 <td width="210%">&nbsp;</td>
-<td width="45%">{$MOD.LBL_TPL_TAX}</td>
-<td align="right" width="45%">{literal}{$bundle.tax}{/literal}</td>
-</tr>
-<tr>
-<td width="210%">&nbsp;</td>
-<td width="45%">{$MOD.LBL_TPL_SHIPPING}</td>
-<td align="right" width="45%">{literal}{$bundle.shipping}{/literal}</td>
-</tr>
-<tr>
-<td width="210%">&nbsp;</td>
 <td width="45%">{$MOD.LBL_TPL_TOTAL}</td>
 <td align="right" width="45%">{literal}{$bundle.total}{/literal}</td>
 </tr>
@@ -145,6 +136,7 @@
 </table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
+{literal}{/if}{/literal}
 {literal}{/foreach}{/literal}
 <p>&nbsp;</p>
 <p>&nbsp;</p>

@@ -265,14 +265,22 @@ class SugarEmailAddress extends SugarBean
      * Saves email addresses for a parent bean
      * @param string $id Parent bean ID
      * @param string $module Parent bean's module
-     * @param array $addresses Override of $_REQUEST vars, used to handle non-standard bean saves
+     * @param array $new_addrs Override of $_REQUEST vars, used to handle non-standard bean saves
      * @param string $primary GUID of primary address
      * @param string $replyTo GUID of reply-to address
      * @param string $invalid GUID of invalid address
      */
-    function save($id, $module, $new_addrs = array(), $primary = '', $replyTo = '', $invalid = '', $optOut = '', $in_workflow = false)
+    public function save($check_notify = false)
     {
         global $dictionary;
+
+        if (func_num_args() <= 1) {
+            // calling SugarBean::save()
+            return call_user_func_array(array('parent', __FUNCTION__), func_get_args());
+        }
+        $defaultValues = array(null, null, array(), '', '', '', '', false);
+        list($id, $module, $new_addrs, $primary, $replyTo, $invalid, $optOut, $in_workflow)
+            = array_replace($defaultValues, func_get_args());
 
         if (empty($this->addresses) || $in_workflow) {
             $this->populateAddresses($id, $module, $new_addrs, $primary);
@@ -945,6 +953,10 @@ class SugarEmailAddress extends SugarBean
      */
     function getAddressesByGUID($id, $module)
     {
+        if (!$id) {
+            return array();
+        }
+
         $module = $this->getCorrectedModule($module);
 
         $q = "SELECT ea.email_address, ea.email_address_caps, ea.invalid_email, ea.opt_out, ea.date_created, ea.date_modified,
@@ -1028,7 +1040,7 @@ class SugarEmailAddress extends SugarBean
         }
 
         if (!empty($prefillDataArr)) {
-            $json = new JSON(JSON_LOOSE_TYPE);
+            $json = new JSON();
             $prefillData = $json->encode($prefillDataArr);
             $prefill = !empty($prefillDataArr) ? 'true' : 'false';
         }

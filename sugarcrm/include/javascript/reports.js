@@ -1772,7 +1772,7 @@ SUGAR.reports = function() {
             if (dashletEdit) {
                 parent.$(parent).trigger('dashletEdit');
             } else {
-                window.location.href = 'index.php?module=Reports&action=index&query=true&clear_query=true';
+                parent.App.router.navigate('Reports', {trigger: true});
             }
         },
         /**

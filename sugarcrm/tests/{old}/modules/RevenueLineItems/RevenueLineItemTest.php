@@ -20,6 +20,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('RevenueLineItems'));
     }
 
     public static function tearDownAfterClass()
@@ -415,6 +416,54 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
             array('Closed Lost', '0')
         );
     }
+
+    /**
+     * @dataProvider dataProviderCanConvertToQuote
+     * @param $fields
+     * @param $expected
+     */
+    public function testCanConvertToQuote($fields, $expected)
+    {
+        $rli = $this->getMockBuilder('RevenueLineItem')
+            ->setMethods(null)
+            ->getMock();
+
+        foreach ($fields as $field => $value) {
+            $rli->$field = $value;
+        }
+
+        $actual = $rli->canConvertToQuote();
+
+        if ($expected === false) {
+            // we have to assert not true, since it's returning a language string and testing against that
+            // is bad!
+            $this->assertNotTrue($actual);
+        } else {
+            $this->assertTrue($actual);
+        }
+    }
+
+    public static function dataProviderCanConvertToQuote()
+    {
+        return array(
+            array(
+                array(
+                    'category_id' => 'test_cat_id',
+                ),
+                false,
+            ),
+            array(
+                array(
+                    'quote_id' => 'test_quote_id',
+                ),
+                false,
+            ),
+            array(
+                array(
+                    'id' => 'test',
+                ),
+                true,
+            ),
+        );
+    }
 }
-
-

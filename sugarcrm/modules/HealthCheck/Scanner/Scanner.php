@@ -122,7 +122,7 @@ class HealthCheckScanner
             array('version' => '*'),
         ),
         'FBSG SugarCRM QuickBooks Integration' => array(
-            array('version' => '*'),
+            array('version' => 'v1.85.13.1'),
         ),
         'JJWDesign_Google_Maps' => array(
             array('version' => '*'),
@@ -918,6 +918,9 @@ class HealthCheckScanner
 
         $this->scanPhp4ConstructorCalls();
 
+        // Check for quotes customizations, can be removed after 7.9 is the base.
+        $this->checkQuotesCustomizations();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -1347,6 +1350,26 @@ class HealthCheckScanner
                     $this->updateStatus('invalidPAFieldUse', $warning['count'], $warning['type']);
                 }
             }
+        }
+    }
+
+    /**
+     * Check to see if BWC qutoes has any customizations. If so, flag it as bucket E so that
+     * things are checked by a human. This check can go away after all our source version upgrades are
+     * 7.9 (assuming this is the release train in which quotes goes out)
+     */
+    protected function checkQuotesCustomizations()
+    {
+        $quotesCustomDir = $this->instance . '/custom/modules/Quotes';
+
+        //quotes.js
+        if (file_exists($quotesCustomDir . '/quotes.js')) {
+            $this->updateStatus('nextgenquotes_quotesjs');
+        }
+
+        //EditView.js
+        if (file_exists($quotesCustomDir . '/EditView.js')) {
+            $this->updateStatus('nextgenquotes_editviewjs');
         }
     }
 
@@ -4293,7 +4316,6 @@ ENDP;
         'ProductTypes',
         'Project',
         'ProjectTask',
-        'Quotes',
         'QueryBuilder',
         'Relationships',
         'Releases',

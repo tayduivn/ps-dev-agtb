@@ -50,7 +50,7 @@ class PMSETimerEvent extends PMSEIntermediateEvent
      * @param type $externalAction
      * @return type
      */
-    public function run($flowData, $bean, $externalAction = '', $arguments = array())
+    public function run($flowData, $bean = null, $externalAction = '', $arguments = array())
     {
         if (empty($externalAction)) {
             $eventDefinition = $this->retrieveDefinitionData($flowData['bpmn_id']);

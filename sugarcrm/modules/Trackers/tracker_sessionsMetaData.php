@@ -119,5 +119,6 @@ $dictionary['tracker_sessions'] = array(
 		   		'rhs_module'=> 'TrackerSessions', 'rhs_table'=> 'tracker', 'rhs_key' => 'user_id',
 		   		'relationship_type'=>'one-to-many'
 		   )
-   	),          
+    ),
+    'acls' => array('SugarACLStatic' => true),
 );

@@ -1,3 +1,4 @@
 [submodule "sugarcrm/sidecar"]
 	path = sugarcrm/sidecar
 	url = git@github.com:sugarcrm/sidecar.git
+

@@ -19,25 +19,14 @@
  * @author Collin Lee
  * */
 
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
-
-
 class ContactsViewRetrieveEmail extends SugarView {
-
     /**
-     * @deprecated Use __construct() instead
+     * {@inheritDoc}
+     *
+     * @param array $params Ignored
      */
-    public function ContactsViewRetrieveEmail($bean = null, $view_object_map = array(), Request $request = null)
+    public function process($params = array())
     {
-        self::__construct($bean, $view_object_map, $request);
-    }
-
-    public function __construct($bean = null, $view_object_map = array(), Request $request = null)
-    {
-        parent::__construct($bean, $view_object_map, $request);
-    }
-
- 	function process() {
 		$this->display();
  	}
 

@@ -101,7 +101,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         $timedate = TimeDate::getInstance();
         $timedate->allow_cache = true;
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -109,6 +109,7 @@ class SugarForecasting_Progress_ManagerTest extends Sugar_PHPUnit_Framework_Test
      */
     public function tearDown() {
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        parent::tearDown();
     }
 
     /**

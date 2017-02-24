@@ -21,7 +21,7 @@ $dependencies['Products']['read_only_fields'] = array(
     'hooks' => array("edit"),
     //Trigger formula for the dependency. Defaults to 'true'.
     'trigger' => 'true',
-    'triggerFields' => array('product_template_name'),
+    'triggerFields' => array('product_template_id'),
     'onload' => true,
     //Actions is a list of actions to fire when the trigger is true
     'actions' => array(),
@@ -34,7 +34,7 @@ foreach ($fields as $field) {
         'params' => array(
             'target' => $field,
             'label' => $field . '_label', //normally <field>_label
-            'value' => 'not(equal($product_template_name,""))', //Formula
+            'value' => 'not(equal($product_template_id,""))', //Formula
         ),
     );
 }

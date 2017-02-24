@@ -169,7 +169,7 @@ class SugarTestDatabaseMock extends DBManager
      * @param string $msg Ignored, The message to throw when an error happens.
      * @return array|bool|mixed
      */
-    public function getOne($sql, $dieOnError = false, $msg = '')
+    public function getOne($sql, $dieOnError = false, $msg = '', $encode = true)
     {
         $response = $this->query($sql, $dieOnError, $msg);
         return isset($response[0]) ? array_shift($response[0]) : false;
@@ -183,12 +183,13 @@ class SugarTestDatabaseMock extends DBManager
      * @param string $sql SQL Statement to execute
      * @param bool $dieOnError Ignored, True if we want to call die if the query returns errors
      * @param string $msg Ignored, The message to throw when an error happens.
-     * @param bool $suppress Ignored, Flag to suppress all error output unless in debug logging mode.
+     * @param bool   $encode   encode the result
+     *
      * @return array|bool|mixed
      */
-    public function fetchOne($sql, $dieOnError = false, $msg = '', $suppress = false)
+    public function fetchOne($sql, $dieOnError = false, $msg = '', $encode = true)
     {
-        $response = $this->query($sql, $dieOnError, $msg, $suppress);
+        $response = $this->query($sql, $dieOnError, $msg);
 
         // if it's not an array or it's empty, return false
         if (!is_array($response) || empty($response)) {

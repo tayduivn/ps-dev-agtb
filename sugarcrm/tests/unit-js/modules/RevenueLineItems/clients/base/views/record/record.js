@@ -1,14 +1,3 @@
-
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 if (!(fixtures)) {
     var fixtures = {};
 }
@@ -62,6 +51,39 @@ describe("RevenueLineItems.Base.View.Record", function() {
 
         layout = SugarTest.createLayout('base', 'RevenueLineItems', 'record', {});
         view = SugarTest.createView('base', 'RevenueLineItems', 'record', options.meta, null, true, layout);
+        sinon.collection.stub(view, '_super', function() {});
+    });
+
+    afterEach(function() {
+        sinon.collection.restore();
+        view.dispose();
+        view = null;
+        layout.dispose();
+        layout = null;
+    });
+
+    describe('initialize()', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.utils, 'hideForecastCommitStageField', function() {});
+        });
+
+        it('should add HistoricalSummary plugin', function() {
+            expect(view.plugins).toContain('HistoricalSummary');
+        });
+
+        it('should add CommittedDeleteWarning plugin', function() {
+            expect(view.plugins).toContain('CommittedDeleteWarning');
+        });
+
+        it('should add MassQuote plugin', function() {
+            expect(view.plugins).toContain('MassQuote');
+        });
+
+        it('should call app.utils.hideForecastCommitStageField', function() {
+            view.initialize(options);
+
+            expect(app.utils.hideForecastCommitStageField).toHaveBeenCalled();
+        });
     });
 
     describe('_handleDuplicateBefore', function() {

@@ -26,10 +26,10 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => 'fa-bars',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Reports&action=index&view=cases&query=true&report_module=Cases',
+        'route' => '#Reports?filterModule=' . $module_name,
         'label' =>'LNK_CASE_REPORTS',
         'acl_action'=>'list',
-        'acl_module'=>$module_name,
+        'acl_module' => 'Reports',
         'icon' => 'fa-bar-chart-o',
     ),
     array(

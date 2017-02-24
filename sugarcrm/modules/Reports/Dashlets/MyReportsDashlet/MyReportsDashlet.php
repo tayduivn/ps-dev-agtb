@@ -17,14 +17,6 @@
 
 class MyReportsDashlet extends DashletGeneric { 
     
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function MyReportsDashlet($id, $def = null)
-    {
-        self::__construct($id, $def);
-    }
-
     public function __construct($id, $def = null)
     {
         global $current_user, $app_strings, $dashletData;
@@ -38,10 +30,11 @@ class MyReportsDashlet extends DashletGeneric {
         $this->columns = $dashletData['MyReportsDashlet']['columns'];
         $this->seedBean = BeanFactory::getBean('Reports');        
     }
-    
-    function process() {
+
+    public function process($lvsParams = array())
+    {
         $this->lvs->quickViewLinks = false;
-        parent::process();
+        parent::process($lvsParams);
     }
     
     function buildWhere() {
@@ -63,3 +56,4 @@ class MyReportsDashlet extends DashletGeneric {
     }
     
 }
+

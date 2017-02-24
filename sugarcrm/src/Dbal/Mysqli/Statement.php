@@ -21,12 +21,35 @@ use Doctrine\DBAL\Driver\Mysqli\MysqliStatement as BaseStatement;
 class Statement extends BaseStatement
 {
     /**
+     * @var int
+     * @link https://dev.mysql.com/doc/refman/5.7/en/error-messages-server.html#error_er_need_reprepare
+     */
+    const ER_NEED_REPREPARE = 1615;
+
+    /**
+     * @var string
+     */
+    protected $sql;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(\mysqli $conn, $sql)
+    {
+        parent::__construct($conn, $sql);
+
+        $this->sql = $sql;
+    }
+
+    /**
      * {@inheritdoc}
+     *
+     * @throws MysqliException
      */
     public function execute($params = null)
     {
         $isFirstExecution = $this->_columnNames === null;
-        $result = parent::execute($params);
+        $result = $this->tryToExecute($params);
 
         $hasColumns = $this->_columnNames !== false;
 
@@ -47,5 +70,33 @@ class Statement extends BaseStatement
         }
 
         return $result;
+    }
+
+    /**
+     * Tries to execute the statement. In case of getting "Prepared statement needs to be re-prepared" error,
+     * tries re-preparing the statement and executing it once again
+     *
+     * @param array|null $params An array of values with as many elements as there are
+     *                           bound parameters in the SQL statement being executed.
+     * @return boolean TRUE on success or FALSE on failure.
+     * @throws MysqliException
+     */
+    protected function tryToExecute(array $params = null)
+    {
+        try {
+            return parent::execute($params);
+        } catch (MysqliException $e) {
+            if ($e->getErrorCode() !== self::ER_NEED_REPREPARE) {
+                throw $e;
+            }
+
+            $this->_stmt = $this->_conn->prepare($this->sql);
+
+            if (false === $this->_stmt) {
+                throw new MysqliException($this->_conn->error, $this->_conn->sqlstate, $this->_conn->errno);
+            }
+
+            return parent::execute($params);
+        }
     }
 }

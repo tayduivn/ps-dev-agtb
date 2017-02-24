@@ -86,7 +86,11 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
     // test set favorite
     public function testRelateRecordViewNone() {
         $modules = array('Contacts');
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'edit', 'list', 'export'));
+        $this->roles[] = $role = $this->createRole(
+            'UNIT TEST ' . create_guid(),
+            $modules,
+            array('access', 'edit', 'list', 'export')
+        );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -97,7 +101,16 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
 
-        $result = $this->relateApi->filterRelated(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
+        $result = $this->relateApi->filterRelated(
+            new RelateApiServiceMockUp,
+            array(
+                'module' => 'Accounts',
+                'record' => $this->accounts[0]->id,
+                'link_name' => 'contacts',
+                'fields' => array(),
+            )
+        );
+
         $this->assertNotEmpty($result['records'], "Records were empty");
         $this->assertEquals($result['records'][0]['id'], $this->contacts[0]->id, "ID Does not match");
     }
@@ -107,7 +120,11 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
      */
     public function testRelateCountViewNone() {
         $modules = array('Contacts');
-        $this->roles[] = $role = $this->createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'edit', 'list', 'export'));
+        $this->roles[] = $role = $this->createRole(
+            'UNIT TEST ' . create_guid(),
+            $modules,
+            array('access', 'edit', 'list', 'export')
+        );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -118,7 +135,15 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
 
-        $reply = $this->relateApi->filterRelatedCount(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
+        $reply = $this->relateApi->filterRelatedCount(
+            new RelateApiServiceMockUp,
+            array(
+                'module' => 'Accounts',
+                'record' => $this->accounts[0]->id,
+                'link_name' => 'contacts',
+                'fields' => array(),
+            )
+        );
         $this->assertArrayHasKey('record_count', $reply);
         $this->assertSame(1, $reply['record_count']);
     }

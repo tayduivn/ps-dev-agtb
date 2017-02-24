@@ -59,11 +59,13 @@ include("metadata/saved_reportsMetaData.php");
 
 include("metadata/product_bundle_noteMetaData.php");
 include("metadata/product_bundle_productMetaData.php");
+include 'metadata/quote_quoted_line_itemMetaData.php';
 include("metadata/product_bundle_quoteMetaData.php");
 include("metadata/product_productMetaData.php");
 include("metadata/quotes_accountsMetaData.php");
 include("metadata/quotes_contactsMetaData.php");
 include("metadata/quotes_opportunitiesMetaData.php");
+include 'metadata/quotes_product_bundle_notesMetaData.php';
 include("metadata/products_categoryTreeMetaData.php");
 include("metadata/fts_queueMetaData.php");
 include("metadata/workflow_schedulesMetaData.php");

@@ -25,13 +25,6 @@ class Chart_outcome_by_month
 	var $modules = array('Opportunities');
 	var $order = 0;
 
-    /**
-     * @deprecated
-     */
-    public function Chart_outcome_by_month()
-    {
-    }
-
 function draw($extra_tools)
 {
 

@@ -562,14 +562,6 @@ function setDisplayHeaderAndFooter($bool) {
         $this->display_header_and_footer = $bool;
 }
 
-    /**
-     * @deprecated Use __construct() instead
-     */
-    public function ListView()
-    {
-        self::__construct();
-    }
-
 /**initializes ListView
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -903,7 +895,8 @@ function setUserVariable($localVarName,$varName, $value) {
     if (isset($_SESSION[$this->getSessionVariableName($localVarName, $varName)])) {
         return $_SESSION[$this->getSessionVariableName($localVarName, $varName)];
     }
-    return "";
+
+    return null;
 }
 
 function getUserVariable($localVarName, $varName) {
@@ -1924,7 +1917,8 @@ function getUserVariable($localVarName, $varName) {
         return $result;
     }
 
-    function getArrowUpDownImageSize($upDown) {
+    public static function getArrowUpDownImageSize($upDown)
+    {
         // just get the non-sort image's size.. the up and down have be the same.
         $image = SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif",false);
 

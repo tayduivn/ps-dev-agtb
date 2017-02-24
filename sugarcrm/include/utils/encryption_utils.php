@@ -9,6 +9,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 
 function sugarEncode($key, $data){
 	return base64_encode($data);
@@ -26,29 +27,11 @@ function sugarDecode($key, $encoded){
  * retrives the system's private key; will build one if not found, but anything encrypted before is gone...
  * @param string type
  * @return string key
+ * @deprecated Use Blowfish::getKey()
  */
 function blowfishGetKey($type)
 {
-	$key = array();
-
-	$type = str_rot13($type);
-
-	$keyCache = "custom/blowfish/{$type}.php";
-
-	// build cache dir if needed
-	if(!file_exists('custom/blowfish')) {
-		mkdir_recursive('custom/blowfish');
-	}
-
-	// get key from cache, or build if not exists
-	if(file_exists($keyCache)) {
-		include($keyCache);
-	} else {
-		// create a key
-		$key[0] = create_guid();
-		write_array_to_file('key', $key, $keyCache);
-	}
-	return $key[0];
+    return Blowfish::getKey($type);
 }
 
 /**
@@ -56,11 +39,10 @@ function blowfishGetKey($type)
  * @param STRING key - key to base encoding off of
  * @param STRING data - string to be encrypted and encoded
  * @return string
+ * @deprecated Use Blowfish::encode()
  */
 function blowfishEncode($key, $data){
-   	$bf = new Crypt_Blowfish($key);
-	$encrypted = $bf->encrypt($data);
-	return base64_encode($encrypted);
+    return Blowfish::encode($key, $data);
 }
 
 /**
@@ -68,10 +50,8 @@ function blowfishEncode($key, $data){
  * @param STRING key - key to base decoding off of
  * @param STRING encoded base64 encoded blowfish encrypted data
  * @return string
+ * @deprecated Use Blowfish::decode()
  */
 function blowfishDecode($key, $encoded){
-    $data = base64_decode($encoded);
-	$bf = new Crypt_Blowfish($key);
-	return trim($bf->decrypt($data));
+    return Blowfish::decode($key, $encoded);
 }
-

@@ -123,11 +123,11 @@ abstract class AbstractAggregation implements AggregationInterface
     /**
      * Build boolean filter for given filters
      * @param \Elastica\Filter\AbstractFilter[] $filters
-     * @return \Elastica\Filter\Bool
+     * @return \Elastica\Filter\BoolFilter
      */
     protected function buildFilters(array $filters)
     {
-        $result = new \Elastica\Filter\Bool();
+        $result = new \Elastica\Filter\BoolFilter();
         foreach ($filters as $filter) {
             $result->addMust($filter);
         }

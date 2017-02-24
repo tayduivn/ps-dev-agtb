@@ -17,14 +17,6 @@ class JotPadDashlet extends Dashlet {
     var $height = '200'; // height of the pad
 
     /**
-     * @deprecated Use __construct() instead
-     */
-    public function JotPadDashlet($id, $def)
-    {
-        self::__construct($id, $def);
-    }
-
-    /**
      * Constructor
      *
      * @global string current language
@@ -54,11 +46,11 @@ class JotPadDashlet extends Dashlet {
     }
 
     /**
-     * Displays the dashlet
-     *
-     * @return string html to display dashlet
+     * {@inheritDoc}
+     * @param string $text Ignored
      */
-    function display() {
+    public function display($text = '')
+    {
         $ss = new Sugar_Smarty();
         $ss->assign('savedText', SugarCleaner::cleanHtml($this->savedText));
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
@@ -146,3 +138,4 @@ class JotPadDashlet extends Dashlet {
                                        'savedText' => $optionsArray['savedText']));
     }
 }
+

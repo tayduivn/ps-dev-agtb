@@ -317,7 +317,7 @@ class GlobalSearchApi extends SugarApi
 
         // Compose the bool and term filter to exclude the tag module
         $tagFilter = new \Elastica\Filter\Terms("_type", array("Tags"));
-        $boolFilter = new \Elastica\Filter\Bool();
+        $boolFilter = new \Elastica\Filter\BoolFilter();
         $boolFilter->addMustNot($tagFilter);
         $this->filters[] = $boolFilter;
     }

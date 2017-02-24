@@ -62,11 +62,10 @@ foreach ($tabs as $tabModuleKey=>$tabModuleKeyValue)
 	}
 }
 */
+$fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
 // Add the remaining modules.
 foreach ($ACLAllowedModules as $module=>$singular) {
-    $fullModuleList = array_merge($GLOBALS['moduleList'], $GLOBALS['modInvisList']);
-    if ($module == 'Currencies' ||
-    (!isset($app_list_strings['moduleList'][$module]) && !in_array($module, $fullModuleList))) {
+    if (!isset($app_list_strings['moduleList'][$module]) && !in_array($module, $fullModuleList)) {
         continue;
     }
         $icon_name = _getIcon($module."_32");
@@ -288,7 +287,7 @@ else if ($isDelete !== null && ($isDelete == '1')) {
     $report = BeanFactory::getBean('Reports', $id);
     if($report->ACLAccess('Delete')){
         $report->mark_deleted($id);
-		header('location:index.php?action=index&module=Reports');
+        SugarApplication::redirect('location:index.php?action=index&module=Reports');
     }
 
 }

@@ -49,22 +49,6 @@
             },
 
             /**
-             * @deprecated since 7.7. Will be removed in 7.9.
-             *   Use {link Link#isSynced} instead.
-             *
-             * Returns `true` if the model has already been linked; `false` if
-             * not.
-             *
-             * @param {Data.Bean} model
-             * @return {boolean}
-             */
-            isDefault: function(model) {
-                app.logger.warn('Link.isDefault is deprecated. ' +
-                    'Please update your code to use Link.isSynced instead.');
-                return this.isSynced(model);
-            },
-
-            /**
              * Returns an object that contains all of the changes to be made to
              * the relationship.
              *
@@ -74,6 +58,7 @@
              *
              *     @example
              *     {
+             *         "create" [{"name": "foo"}],
              *         "add":[1,2],
              *         "delete":[3]
              *     }
@@ -88,12 +73,19 @@
                         case 'delete':
                             json.delete.push(model.id);
                             break;
+                        case 'create':
+                            json.create.push(_.omit(model.toJSON(), '_action'));
+                            break;
                         default:
-                            json.add.push(model.id);
+                            json.add.push(_.omit(model.toJSON(), '_action'));
                     }
 
                     return json;
-                }, {add: [], delete: []});
+                }, {create: [], add: [], delete: []});
+
+                if (actions.create.length === 0) {
+                    delete actions.create;
+                }
 
                 if (actions.add.length === 0) {
                     delete actions.add;
@@ -109,7 +101,7 @@
             /**
              * Adds a model to be linked.
              *
-             * An `_action` attribute will be set to `create` on the model if
+             * An `_action` attribute will be set to `add` on the model if
              * the model is a new {@link Data.Bean} to link. The `_action`
              * attribute will be set to `update` on the model if the model has
              * already been linked. The `update` action provides the means for
@@ -119,7 +111,7 @@
              * @chainable
              */
             linkRecord: function(model) {
-                model.set('_action', this.isSynced(model) ? 'update' : 'create');
+                model.set('_action', model.isNew() ? 'create' : 'add');
                 this.add(model, {merge: true});
 
                 return this;
@@ -231,28 +223,6 @@
             },
 
             /**
-             * @deprecated since 7.7. Will be removed in 7.9.
-             *   Use {link Link#setSynced} instead.
-             *
-             * Stores the ID's of the models know to be related through this
-             * relationship.
-             *
-             * There may be more that can be found through pagination.
-             *
-             * Models that were set to be linked or unlinked are removed from
-             * the collection.
-             *
-             * @param {Array} [models] Array of model ID's. If empty, then the
-             * ID's of the models currently in the collection will be used.
-             * @chainable
-             */
-            setDefaults: function(models) {
-                app.logger.warn('Link.setDefaults is deprecated. ' +
-                    'Please update your code to use Link.setSynced instead.');
-                return this.setSynced(models);
-            },
-
-            /**
              * Clears the changes to the link.
              *
              * Models that were linked are added to the synced set. Models
@@ -262,29 +232,16 @@
             clearAndUpdateSynced: function() {
                 var linked, unlinked;
 
-                linked = _.union(this.where({'_action': 'create'}), this.where({'_action': 'update'}));
+                linked = _.union(
+                    this.where({'_action': 'create'}),
+                    this.where({'_action': 'add'})
+                );
                 unlinked = this.where({'_action': 'delete'});
 
                 this.setSynced(_.union(this.synced, _.pluck(linked, 'id')));
                 this.setSynced(_.difference(this.synced, _.pluck(unlinked, 'id')));
 
                 return this;
-            },
-
-            /**
-             * @deprecated since 7.7. Will be removed in 7.9.
-             *   Use {link Link#clearAndUpdateSynced} instead.
-             *
-             * Clears the changes to the link.
-             *
-             * Models that were linked are added to the default set. Models
-             * that were unlinked are removed from the default set.
-             * @chainable
-             */
-            clearAndUpdateDefaults: function() {
-                app.logger.warn('Link.clearAndUpdateDefaults is deprecated. ' +
-                    'Please update your code to use Link.clearAndUpdateSynced instead.');
-                return this.clearAndUpdateSynced();
             },
 
             /**
@@ -301,24 +258,6 @@
                 this.undo(model);
 
                 return this;
-            },
-
-            /**
-             * @deprecated since 7.7. Will be removed in 7.9.
-             *   Use {link Link#addSynced} instead.
-             *
-             * Sets a model as a default.
-             *
-             * If the model was set to be linked or unlinked, then that change
-             * will be undone.
-             *
-             * @param {Data.Bean} model
-             * @chainable
-             */
-            addDefault: function(model) {
-                app.logger.warn('Link.addDefault is deprecated. ' +
-                    'Please update your code to use Link.addSynced instead.');
-                return this.addSynced(model);
             }
         }, false);
 
@@ -406,6 +345,7 @@
                 this.links = _.reduce(options.links, function(memo, link) {
                     var module, options;
 
+                    link = (_.isString(link)) ? link : link.name;
                     module = app.data.getRelatedModule(this.parent.module, link);
                     this.relatedModules[module] = link;
 
@@ -959,6 +899,7 @@
          *     {
          *         //...
          *         "contacts":{
+         *             "create" [{"name": "foo"}],
          *             "add":[1,2],
          *             "delete":[3]
          *         }
@@ -983,7 +924,7 @@
                 _.each(links[attribute], function(link) {
                     var actions = field.links[link].transpose();
 
-                    if (actions.add || actions.delete) {
+                    if (actions.create || actions.add || actions.delete) {
                         json[link] = actions;
                     }
                 });
@@ -1208,27 +1149,6 @@
         };
 
         /**
-         * {@link Data.Bean#getSyncedAttributes}
-         *
-         * Includes in the return value all collection fields and their
-         * associated link attributes. When comparing objects, Backbone does
-         * not do a deep comparison. As collections are objects, the current
-         * state of the collection is assumed to be synchronized. This method
-         * handles the deep comparison for us.
-         *
-         * TODO: Don't assume the collection is synchronized when moving
-         * collection field support to sidecar.
-         *
-         * @deprecated since 7.7. Will be removed in 7.9.
-         * Use {@link BeanOverrides#getSynced} instead.
-         */
-        BeanOverrides.prototype.getSyncedAttributes = function() {
-            app.logger.warn('BeanOverrides#getSyncedAttributes is deprecated. ' +
-            'Please update your code to use getSynced');
-            return this.getSynced();
-        };
-
-        /**
          * {@link Data.Bean#getSynced}
          *
          * Includes in the return value all collection fields and their
@@ -1256,6 +1176,7 @@
                 if (collection) {
                     memo[attr] = collection;
                 }
+                return memo;
             }, syncedAttributes, this.model);
 
             return syncedAttributes;
@@ -1278,7 +1199,6 @@
              * {@link Data.Bean#hasChanged}
              * {@link Data.Bean#changedAttributes}
              * {@link Data.Bean#revertAttributes}
-             * {@link Data.Bean#getSyncedAttributes}
              * {@link Data.Bean#getSynced}
              *
              * @param {Data.Bean} model The model to which the plugin is
@@ -1428,20 +1348,6 @@
                     overrides.revertAttributes(options);
                     _super.call(this, options);
                 });
-
-                /**
-                 * See {@link Data.Bean#getSyncedAttributes} and
-                 * {@link BeanOverrides#getSyncedAttributes}.
-                 *
-                 * @deprecated since 7.7. Will be removed in 7.9.
-                 * Use {@link #getSynced} instead.
-                 *
-                 */
-                this.getSyncedAttributes = function() {
-                    app.logger.warn('Data.Bean#getSyncedAttributes is deprecated. ' +
-                    'Please update your code to use Data.Bean#getSynced');
-                    return this.getSynced();
-                };
 
                 /**
                  * See {@link Data.Bean#getSynced} and

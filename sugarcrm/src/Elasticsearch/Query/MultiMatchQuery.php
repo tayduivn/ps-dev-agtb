@@ -96,11 +96,11 @@ class MultiMatchQuery implements QueryInterface
 
     /**
      * Create a multi-match query.
-     * @return \Elastica\Query\Bool
+     * @return \Elastica\Query\BoolQuery
      */
     public function build()
     {
-        $boolQuery = new \Elastica\Query\Bool();
+        $boolQuery = new \Elastica\Query\BoolQuery();
 
         //create the sub-query with read-acessible fields
         $this->isReadOwnerQuery = false;

@@ -2792,7 +2792,13 @@ SQL;
         );
 
         $result = array();
-        foreach (array('MysqliManager', 'SqlsrvManager', 'IBMDB2Manager') as $driver) {
+        foreach (array(
+            'MysqliManager',
+            'SqlsrvManager',
+// BEGIN SUGARCRM flav=ent ONLY
+            'IBMDB2Manager',
+// END SUGARCRM flav=ent ONLY
+        ) as $driver) {
             foreach ($data as $item) {
                 $item[] = $driver;
                 $result[] = $item;
