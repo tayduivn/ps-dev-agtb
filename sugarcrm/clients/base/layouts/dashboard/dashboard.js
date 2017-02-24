@@ -17,10 +17,12 @@
  * @class View.Layouts.Base.DashboardLayout
  * @alias SUGAR.App.view.layouts.BaseDashboardLayout
  * @extends View.Layout
+ * @deprecated 7.9 It will be removed in 7.11.
+ *   Please use {@link View.Layouts.Dashboards.DashboardLayout} instead.
  */
 ({
     className: 'row-fluid',
-    //FIXME We need to remove this. SC-4210 will address it.
+    //FIXME We need to remove this. TY-1132 will address it.
     dashboardLayouts: {
         'record': 'record-dashboard',
         'records': 'list-dashboard',
@@ -54,8 +56,12 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        var context = options.context,
-            module = context.parent && context.parent.get('module') || context.get('module');
+        app.logger.warn('The class `View.Layouts.Base.DashboardLayout`' +
+            'has been deprecated since 7.9.0.0 and will be removed in 7.11.0.0. ' +
+            'Please use `View.Layouts.Dashboards.DashboardLayout` instead.');
+
+        var context = options.context;
+        var module = context.parent && context.parent.get('module') || context.get('module');
 
         if (options.meta && options.meta.method && options.meta.method === 'record' && !context.get('modelId')) {
             context.set('create', true);
@@ -78,15 +84,11 @@
             hasDashboardModels = contextBro.get('collection') && contextBro.get('collection').length;
             if (hasDashboardModels) {
                 context.set({
-                    // currentDashboardIndex is the index of the dashboard that is currently being displayed.
-                    // For the search page, we hardcode the dashboard indexes.
+                    // For the search page, we hardcode the facet dashboard index to 0.
                     // This is possible because in search, we only allow the
-                    //   help and facets dashboards.
-                    // index 1 is for the search help dashboard
-                    // index 2 is for the search facets dashboard
-                    // 'currentDashboardIndex' is 1-based to be in sync with `model.id`.
+                    // facets dashboard.
                     // See `loadData` for more details.
-                    model: contextBro.get('collection').at(contextBro.get('currentDashboardIndex') - 1),
+                    model: contextBro.get('collection').at(0),
                     collection: this._getNewDashboardObject('collection', context),
                     skipFetch: true
                 });
@@ -116,23 +118,10 @@
             }
         }, this);
 
-        // help dashboard triggers
-        app.events.on('app:help:show', function() {
-            this.openHelpDashboard(true);
-        }, this);
-        app.events.on('app:help:hide', function() {
-            this.closeHelpDashboard(true);
-        }, this);
-
         var defaultLayout = this.closestComponent('sidebar');
         if (defaultLayout) {
             this.listenTo(defaultLayout, 'sidebar:state:changed', function(state) {
                 this.dashboardVisibleState = state;
-                if (state === 'open' && this.isHelpDashboard(true)) {
-                    app.events.trigger('app:help:shown');
-                } else {
-                    app.events.trigger('app:help:hidden');
-                }
             }, this);
 
             try {
@@ -143,26 +132,6 @@
                 // it this code will get run again once the logic below selects which dashboard to show.
             }
         }
-
-        // listen to the model sync event to figure out if we need to highlight the help button in the footer
-        this.model.on('sync', function() {
-            if (this.dashboardVisibleState === 'open' && this.isHelpDashboard(true)) {
-                // when on the home page and the dashboard is a help dashboard, we need to hide the edit button
-                // which means we need to re-render the dashboard-headerpane to contain the meta from
-                // the help-dashboard-headerpane view
-                if (this.module === 'Home') {
-                    var list = this.getComponent('list'),
-                        headerpane = (!_.isUndefined(list)) ? list.getComponent('dashboard-headerpane') : undefined;
-
-                    if (headerpane) {
-                        var help_headerpane_meta = app.metadata.getView(this.module, 'help-dashboard-headerpane');
-                        help_headerpane_meta.last_state = headerpane.meta.last_state;
-                        headerpane.meta = help_headerpane_meta;
-                        headerpane.render();
-                    }
-                }
-            }
-        }, this);
 
         if (module === 'Home' && context.has('modelId')) {
             // save it as last visit
@@ -210,154 +179,6 @@
     },
 
     /**
-     * Method to open the help dashboard if it's not already loaded. This will
-     * also toggle the sidebar to open if it's collapsed.
-     *
-     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
-     *   from an event. `true` if called from an event and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
-     *   {@link App#event-app:help:show} instead.
-     */
-    openHelpDashboard: function(fromEvent) {
-        if (!fromEvent) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#openHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:show" instead.');
-        }
-
-        if (this.dashboardVisibleState === 'close') {
-            var defaultLayout = this.closestComponent('sidebar');
-            if (defaultLayout) {
-                defaultLayout.toggleSidePane(true);
-            }
-        }
-        if (!this.isHelpDashboard(fromEvent)) {
-            if (this.isSearchContext()) {
-                var contextBro = this.getContextBro(this.context.get('module'));
-                // Index 1 is the help dashboard.
-                // See comments in `initialize` for more details.
-                contextBro.set('currentDashboardIndex', 1);
-                this.showHelpDashboard(contextBro.get('collection'), fromEvent);
-                return;
-            } else {
-                // if the help dashboard is already visible, just leave it
-                this.collection.fetch({
-                    silent: true,
-                    success: _.bind(function(collection) {
-                        this.showHelpDashboard.apply(this, [collection, fromEvent]);
-                    }, this)
-                });
-            }
-        }
-    },
-
-    /**
-     * Method to close the help dashbaord, if the help dashboard is visible.
-     *
-     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
-     *   from an event. `true` if called from an event and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
-     *   {@link App#event-app:help:hide} instead.
-     */
-    closeHelpDashboard: function(fromEvent) {
-        if (!fromEvent) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#closeHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:hide" instead.');
-        }
-
-        if (this.isHelpDashboard(fromEvent)) {
-            if (this.isSearchContext()) {
-                var contextBro = this.getContextBro(this.context.get('module'));
-                // Index 2 is the facet dashboard.
-                // See comments in `initialize` for more details.
-                contextBro.set('currentDashboardIndex', 2);
-                this.hideHelpDashboard(contextBro.get('collection'), fromEvent);
-                return;
-            }
-            // the active one is not a help dashboard, don't bother refreshing the page
-            this.collection.fetch({
-                silent: true,
-                success: _.bind(function(collection) {
-                    this.hideHelpDashboard.apply(this, [collection, fromEvent]);
-                }, this)
-            });
-        }
-    },
-
-    /**
-     * Load the dashboards for the current module/view and then find the help
-     * dashboard and display it, it should always exists but if it doesn't,
-     * just ignore it.
-     *
-     * @param {Object} collection The collection of dashboards returned from the
-     *   fetch.
-     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
-     *   from an event. `true` if called from an event and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
-     *   {@link App#event-app:help:show} instead.
-     */
-    showHelpDashboard: function(collection, fromEvent) {
-        if (!fromEvent) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#showHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:show" instead to open the help dashboard.');
-        }
-
-        var dashboard = _.find(collection.models, function(model) {
-            return (model.get('dashboard_type') === 'help-dashboard');
-        });
-        this._navigate(dashboard);
-        app.events.trigger('app:help:shown');
-    },
-
-    /**
-     * Load the dashboards for the current module/view and then find the first
-     * non-help dashboard and display it.
-     *
-     * @param {Object} collection The collection of dashboards returned from the
-     *   fetch.
-     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
-     *   from an event. `true` if called from an event and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9. Use the event
-     *   {@link App#event-app:help:hide} instead.
-     */
-    hideHelpDashboard: function(collection, fromEvent) {
-        if (!fromEvent) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#hideHelpDashboard is deprecated since 7.7. Will be removed in 7.9. Use the event "app:help:hide" instead to close the help dashboard.');
-        }
-
-        var dashboard = _.find(collection.models, function(model) {
-            return (model.get('dashboard_type') != 'help-dashboard');
-        });
-
-        // clear out the last state key for the help dashboard,
-        // it will be reset
-        app.user.lastState.set(this.getLastStateKey(), '');
-
-        this._navigate(dashboard);
-    },
-
-    /**
-     * Is the current open dashboad a help dashboard.
-     *
-     * @param {boolean} [fromEvent] Flag to indicate if the fuction was called
-     *   from an event. `true` if called from an event and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9.
-     */
-    isHelpDashboard: function(fromEvent) {
-        if (!fromEvent) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#isHelpDashboard is deprecated since 7.7. Will be removed in 7.9.');
-        }
-
-        return (this.model.get('dashboard_type') === 'help-dashboard');
-    },
-
-    /**
      * Gets the brother context.
      *
      * @param {string} module The module to get the brother context from.
@@ -382,13 +203,10 @@
                 return;
             }
 
-            this._loadSearchDashboards();
+            this._loadSearchDashboard();
 
             this.context.set('skipFetch', true);
-            // Index 2 is the facet dashboard. We display it by default in the
-            // search page.
-            this.context.set('currentDashboardIndex', 2);
-            this.navigateLayout(null, 'search-dashboard');
+            this.navigateLayout('search');
             return;
         }
 
@@ -407,23 +225,17 @@
     },
 
     /**
-     * Loads the facet and help dashboards for the search page, and add them in
-     * the collection.
+     * Loads the facet dashboard for the search page, and add it.
      *
      * @private
      */
-    _loadSearchDashboards: function() {
-        var dashboardsMeta = this._getInitialDashboardMetadata();
-        _.each(dashboardsMeta, function(dashMeta, index) {
-            var model = this._getNewDashboardObject('model', this.context);
-            // The `id` has to be 1-based, otherwise `data-id` has no value
-            // in dashboardtitle/detail.hbs because 0 is falsy.
-            model.set('id', ++index);
-            // In `dashMeta`, we have a `metadata` property which contains all
-            // the metadata needed for the dashboard.
-            model.set(dashMeta);
-            this.collection.add(model);
-        }, this);
+    _loadSearchDashboard: function() {
+        var dashboardMeta = this._getInitialDashboardMetadata();
+        var model = this._getNewDashboardObject('model', this.context);
+        // In `dashMeta`, we have a `metadata` property which contains all
+        // the metadata needed for the dashboard.
+        model.set(dashboardMeta);
+        this.collection.add(model);
     },
 
     /**
@@ -447,8 +259,9 @@
      * @private
      */
     _placeComponent: function(component) {
-        var dashboardEl = this.$('[data-dashboard]'),
-            css = this.context.get('create') ? ' edit' : '';
+        var dashboardEl = this.$('[data-dashboard]');
+        var css = this.context.get('create') ? ' edit' : '';
+
         if (dashboardEl.length === 0) {
             dashboardEl = $('<div></div>').attr({
                 'class': 'cols row-fluid'
@@ -497,28 +310,18 @@
         if (this.disposed) {
             return;
         }
-        var lastVisitedStateKey = this.getLastStateKey(),
-            lastViewed = app.user.lastState.get(lastVisitedStateKey),
-            hasHelpOnly = (this.collection.models.length == 1 &&
-                _.first(this.collection.models).get('dashboard_type') === 'help-dashboard'),
-            helpLastShown = (hasHelpOnly && lastViewed === _.first(this.collection.models).get('id'));
+        var lastVisitedStateKey = this.getLastStateKey();
+        var lastViewed = app.user.lastState.get(lastVisitedStateKey);
+        var model;
 
-        if (hasHelpOnly && !helpLastShown) {
-            // If the collection contains exactly one model that is a help dashboard,
-            // and the user saw the help dashboard last and chose to hide it, show the empty template
-            this._renderEmptyTemplate();
-        } else if (this.collection.models.length > 0) {
-            var currentModule = this.context.get('module'),
-                model;
+        // FIXME: SC-4915 will change this to rely on the `hidden` context flag
+        // instead.
+        var hasParentContext = this.context && this.context.parent;
+        var parentModule = hasParentContext && this.context.parent.get('module') || 'Home';
 
-            if (currentModule !== 'Home') {
-                model = _.first(this.collection.models);
-            } else {
-                // get the first model that is not a help-dashboard
-                model = this.collection.find(function(dash) {
-                    return dash.get('dashboard_type') === 'dashboard';
-                });
-            }
+        if (this.collection.length > 0) {
+            var currentModule = this.context.get('module');
+            model = _.first(this.collection.models);
 
             if (lastViewed) {
                 var lastVisitedModel = this.collection.get(lastViewed);
@@ -541,105 +344,76 @@
         } else {
             var _initDashboard = this._getInitialDashboardMetadata();
 
-            if (_initDashboard && !_.isEmpty(_initDashboard.metadata)) {
-                // Drill-down to the dashlet level to check permissions for that module.
-                _.each(_initDashboard.metadata['components'], function(component, component_key) {
-                    _.each(component['rows'], function(row, row_key) {
-                        // Loop the cells checking access, rebuilding the cell array to only contain permitted dashlets.
-                        _initDashboard.metadata['components'][component_key]['rows'][row_key] =
-                            _.filter(row, function(cell) {
-                                var module = (cell.context && cell.context.module) ? cell.context.module : this.module;
-                                return (!app.acl.hasAccess('access', module));
-                            });
-                    }, this);
-
-                    // Now that we've processed all the rows in this component,
-                    // rebuild the array to only have rows with dashlets.
-                    _initDashboard.metadata['components'][component_key]['rows'] =
-                        _.filter(_initDashboard.metadata['components'][component_key]['rows'], function(row) {
-                            return (row.length > 0);
-                        });
-                }, this);
+            // If there is no initial dashboard, render the empty template and bail
+            if (!_initDashboard || _.isEmpty(_initDashboard.metadata)) {
+                this._renderEmptyTemplate();
+                return;
             }
 
-            _.each(_initDashboard, function(dash) {
-                var model = this._getNewDashboardObject('model', this.context);
-                model.set(dash);
-                if (this.context.get('modelId')) {
-                    model.set('id', this.context.get('modelId'), {silent: true});
-                }
-                // make sure that the model actually has some metadata
-                if (!_.isUndefined(model.get('metadata'))) {
-                    model.save({}, this._getDashboardModelSaveParams());
-                    this.collection.add(model);
-                }
+            // Since we have an initial dashboard,
+            // Drill-down to the dashlet level to check permissions for that module.
+            _.each(_initDashboard.metadata.components, function(component, componentKey) {
+                _.each(component.rows, function(row, rowKey) {
+                    // Loop the cells checking access, rebuilding the cell array to only contain permitted dashlets.
+                    _initDashboard.metadata.components[componentKey].rows[rowKey] =
+                        _.filter(row, function(cell) {
+                            var module = (cell.context && cell.context.module) ? cell.context.module : this.module;
+                            return (app.acl.hasAccess('access', module));
+                        });
+                }, this);
+
+                // Now that we've processed all the rows in this component,
+                // rebuild the array to only have rows with dashlets.
+                _initDashboard.metadata.components[componentKey].rows =
+                    _.filter(_initDashboard.metadata.components[componentKey].rows, function(row) {
+                        return (row.length > 0);
+                    });
             }, this);
+
+            model = this._getNewDashboardObject('model', this.context);
+            model.set(_initDashboard);
+            if (this.context.get('modelId')) {
+                model.set('id', this.context.get('modelId'), {silent: true});
+            }
+            // make sure that the model actually has some metadata
+            if (!_.isUndefined(model.get('metadata'))) {
+                model.save({}, this._getDashboardModelSaveParams());
+                this.collection.add(model);
+            }
         }
     },
 
     /**
-     * Gets initial dashboard metadata and adds help dashboard if it doesnt exist
+     * Gets initial dashboard metadata
      *
-     * @return {Array} an array of dashboard metadata
+     * @return {Object} dashboard metadata
      * @private
      */
     _getInitialDashboardMetadata: function() {
-        var layoutName = this.dashboardLayouts[this.context.parent && this.context.parent.get('layout') || 'record'],
-            initDash = app.metadata.getLayout(this.model.dashboardModule, layoutName) || {};
-
-        // check to make sure this module has initial dashboards assigned for this view
-        if (_.has(initDash, 'metadata')) {
-            // make sure there's a dashboard_type of "dashboard" by default
-            // unless there's a specific custom dashboard_type already defined
-            initDash.dashboard_type = initDash.dashboard_type || 'dashboard';
-        }
-
-        return this.addHelpDashboardMetadata(initDash, true);
-    },
-
-    /**
-     * Adds the help-dashboard metadata to a metadata Object.
-     *
-     * @param {Object} _initDashboard The default dashboard for a module.
-     * @param {boolean} [suppressWarning] Flag to suppress the deprecation
-     *   warning. `true` if this method was called within
-     *   {@link View.Layouts.Base.DashboardLayout} and `false` if called
-     *   directly. Added for deprecation logging purposes only.
-     *
-     * @deprecated Since 7.7. Will be removed in 7.9.
-     */
-    addHelpDashboardMetadata: function(_initDashboard, suppressWarning) {
-        if (!suppressWarning) {
-            app.logger.warn('View.Layouts.Base.DashboardLayout#addHelpDashboardMetadata is deprecated since 7.7. Will be removed in 7.9.');
-        }
-
-        var _helpDB = app.metadata.getLayout(this.model.dashboardModule, 'help-dashboard');
-        if (_.has(_initDashboard, 'metadata')) {
-            _initDashboard = [_helpDB, _initDashboard];
-        } else {
-            _initDashboard = [_helpDB];
-        }
-        return _initDashboard;
+        var layoutName = this.dashboardLayouts[this.context.parent && this.context.parent.get('layout') || 'record'];
+        var initDash = app.metadata.getLayout(this.model.dashboardModule, layoutName) || {};
+        return initDash;
     },
 
     /**
      * Build the cache key for last visited dashboard
      * Combine parent module and view name to build the unique id
      *
-     * @return {String} hash key.
+     * @return {string} hash key.
      */
     getLastStateKey: function() {
         if (this._lastStateKey) {
             return this._lastStateKey;
         }
-        var model = this.context.get('model'),
-            view = model.get('view_name'),
-            module = model.dashboardModule,
-            key = module + '.' + view;
+
+        var model = this.context.get('model');
+        var view = model.get('view_name');
+        var module = model.dashboardModule;
+        var key = module + '.' + view;
+
         this._lastStateKey = app.user.lastState.key(key, this);
         return this._lastStateKey;
     },
-
 
     /**
      * Utility method to use when trying to figure out how we need to navigate when switching dashboards
@@ -648,18 +422,18 @@
      * @private
      */
     _navigate: function(dashboard) {
-        // if we get here and it's disposed, just return out
         if (this.disposed) {
             return;
         }
-        var hasParentContext = (this.context && this.context.parent),
-            hasModelId = (dashboard && dashboard.has('id')),
-            actualModule = (hasParentContext) ? this.context.parent.get('module') : this.module,
-            isHomeModule = (actualModule === 'Home');
+
+        var hasParentContext = (this.context && this.context.parent);
+        var hasModelId = (dashboard && dashboard.has('id'));
+        var actualModule = (hasParentContext) ? this.context.parent.get('module') : this.module;
+        var isHomeModule = (actualModule === 'Home');
 
         if (hasParentContext && hasModelId) {
             // we are on a module and we have an dashboard id
-            this._navigateLayout(dashboard.get('id'), dashboard.get('dashboard_type'));
+            this._navigateLayout(dashboard.get('id'));
         } else if (hasParentContext && !hasModelId) {
             // we are on a module but we don't have a dashboard id
             this._navigateLayout('list');
@@ -674,19 +448,18 @@
     },
 
     /**
-     * Intercept the navigateLayout calls to make sure that the dashboard we are currently one didn't change,
-     * if it did, we need to prompt and make sure they want to continue or cancel.
+     * Intercept the navigateLayout calls to make sure that the dashboard we are currently on didn't change.
+     * If it did, we need to prompt and make sure they want to continue or cancel.
      *
-     * @param {String} dashboard What dashboard do we want to display
-     * @param {string} [type] What type of dashboard are we loading, default `dashboard`
-     * @return {Boolean}
+     * @param {string} dashboard What dashboard do we want to display
+     * @return {boolean}
      * @private
      */
-    _navigateLayout: function(dashboard, type) {
+    _navigateLayout: function(dashboard) {
         var onConfirm = _.bind(function() {
-                this.navigateLayout(dashboard, type);
-            }, this),
-            headerpane = this.getComponent('dashboard-headerpane');
+            this.navigateLayout(dashboard);
+        }, this);
+        var headerpane = this.getComponent('dashboard-headerpane');
 
         // if we have a headerpane and it was changed then run the warnUnsavedChanges method
         if (headerpane && headerpane.changed) {
@@ -706,41 +479,25 @@
     },
 
     /**
-     * For the RHS dashboard, this method loads entire dashboard component and adds the
-     * <pre><code>dashboard_type</code></pre> member to the context of the dashboard.
-     * <pre><code>dashboard_type</code></pre> gets used in dashletselect to filter dashlets
+     * For the RHS dashboard, this method loads entire dashboard component
      *
-     * @param {String} id dashboard id
-     * @param {String} [type] what type of dashboard are we dealing with, default: `dashboard`
+     * @param {string} id dashboard id. This id can be the dashboard id, or
+     * the following strings: create, list, search.
+     * @param {string} type (Deprecated) the dashboard type.
      */
     navigateLayout: function(id, type) {
+        if (!_.isUndefined(type)) {
+            // TODO: Remove the `type` parameter. This is to be done in TY-654
+            app.logger.warn('The `type` parameter to `View.Layouts.Base.DashboardLayout.navigateLayout`' +
+                'has been deprecated since 7.9.0.0. Please update your code to stop using it.');
+        }
         var layout = this.layout;
         var lastVisitedStateKey = this.getLastStateKey();
-        var type = !_.isUndefined(type) ? type : 'dashboard';
 
-        // Default to using dashboard-headerpane for the header.
-        var headerPaneView = 'dashboard-headerpane';
-
-        // In the search page, we can't use the standard help dashboard
-        // headerpane for the help dashboard because we don't want the
-        // action buttons.
-        // Also, we can't use the same as the facets dashboard headerpane
-        // because that headerpane contains a search specific cog button.
-        // Therefore, we created a special headerpane for the help dashboard in
-        // the search page.
-        if (this.isSearchContext() && type === 'help-dashboard') {
-            headerPaneView = 'search-help-dashboard-headerpane';
-        } else if (app.metadata.getView('Home', type + '-headerpane')) {
-            headerPaneView = type + '-headerpane';
-        }
+        // For search dashboards, use the search-dashboard-headerpane
+        var headerPaneView = (id === 'search') ? 'search-dashboard-headerpane' : 'dashboard-headerpane';
 
         this.dispose();
-
-        if (type === 'help-dashboard') {
-            app.events.trigger('app:help:shown');
-        } else {
-            app.events.trigger('app:help:hidden');
-        }
 
         //if dashboard layout navigates to the different dashboard,
         //it should store last visited dashboard id.
@@ -748,9 +505,7 @@
             app.user.lastState.set(lastVisitedStateKey, id);
         }
 
-        // add dashboard type to context variables,
-        // can only create dashboards with dashboard_type of 'dashboard'
-        var ctxVars = { dashboard_type: 'dashboard' };
+        var ctxVars = {};
         if (id === 'create') {
             ctxVars.create = true;
         } else if (id !== 'list') {
@@ -790,13 +545,13 @@
      * @inheritdoc
      */
     unbindData: function() {
-        var model, collection;
         if (this.collection) {
             this.collection.off('reset', this.setDefaultDashboard, this);
         }
+
         if (this.context.parent) {
-            model = this.context.parent.get('model');
-            collection = this.context.parent.get('collection');
+            var model = this.context.parent.get('model');
+            var collection = this.context.parent.get('collection');
 
             if (model) {
                 model.off('sync', null, this);
@@ -812,36 +567,36 @@
     /**
      * Returns a Dashboard Model or Dashboard Collection based on modelOrCollection
      *
-     * @param {String} modelOrCollection The return type, 'model' or 'collection'
+     * @param {string} modelOrCollection The return type, 'model' or 'collection'
      * @param {Object} context
      * @return {Bean|BeanCollection}
      * @private
      */
     _getNewDashboardObject: function(modelOrCollection, context) {
-        var obj,
-            ctx = context && context.parent || context,
-            module = ctx.get('module') || context.get('module'),
-            layoutName = ctx.get('layout') || '',
-            sync = function(method, model, options) {
+        var obj;
+        var ctx = context && context.parent || context;
+        var module = ctx.get('module') || context.get('module');
+        var layoutName = ctx.get('layout') || '';
+        var sync = function(method, model, options) {
+            options = app.data.parseOptionsForSync(method, model, options);
+            // there is no max limit for number of dashboards permodule view
+            if (options && options.params) {
+                options.params.max_num = -1;
+            }
 
-                options = app.data.parseOptionsForSync(method, model, options);
-                // there is no max limit for number of dashboards permodule view
-                if (options && options.params ) {
-                    options.params.max_num = -1;
-                }
+            var callbacks = app.data.getSyncCallbacks(method, model, options);
+            var path = (this.dashboardModule === 'Home' || model.id) ?
+                this.apiModule : this.apiModule + '/' + this.dashboardModule;
 
-                var callbacks = app.data.getSyncCallbacks(method, model, options),
-                    path = (this.dashboardModule === 'Home' || model.id) ?
-                                this.apiModule : this.apiModule + '/' + this.dashboardModule;
-                if (method === 'read') {
-                    options.params.view_name = layoutName;
-                }
+            if (method === 'read') {
+                options.params.view_name = layoutName;
+            }
 
-                app.data.trigger('data:sync:start', method, model, options);
-                model.trigger('data:sync:start', method, options);
+            app.data.trigger('data:sync:start', method, model, options);
+            model.trigger('data:sync:start', method, options);
 
-                app.api.records(method, path, model.attributes, options.params, callbacks);
-            };
+            app.api.records(method, path, model.attributes, options.params, callbacks);
+        };
 
         if (module === 'Home') {
             layoutName = '';
@@ -862,10 +617,11 @@
     /**
      * Returns a new Dashboard Bean with proper view_name and sync function set
      *
-     * @param {String} module The name of the module we're in
-     * @param {String} layoutName The name of the layout
+     * @param {string} module The name of the module we're in
+     * @param {string} layoutName The name of the layout
      * @param {Function} syncFn The sync function to use
-     * @param {Boolean} getNew If you want a new instance or just the the Dashboard definition (optional)
+     * @param {boolean} [getNew=true] If you want a new instance or just the
+     *   Dashboard definition.
      * @return {Dashboard} a new Dashboard Bean
      * @private
      */
@@ -888,23 +644,26 @@
     /**
      * Returns a new DashboardCollection with proper view_name and sync function set
      *
-     * @param {String} module The name of the module we're in
-     * @param {String} layoutName The name of the layout
+     * @param {string} module The name of the module we're in
+     * @param {string} layoutName The name of the layout
      * @param {Function} syncFn The sync function to use
-     * @param {Boolean} getNew If you want a new instance or just the the DashboardCollection definition (optional)
+     * @param {boolean} [getNew=true] If you want a new instance or just the
+     *   DashboardCollection definition.
      * @return {DashboardCollection} A new Dashboard BeanCollection
      * @private
      */
     _getNewDashboardCollection: function(module, layoutName, syncFn, getNew) {
         getNew = (_.isUndefined(getNew)) ? true : getNew;
-        var Dashboard = this._getNewDashboardModel(module, layoutName, syncFn, false),
-            DashboardCollection = app.BeanCollection.extend({
-                sync: syncFn,
-                apiModule: 'Dashboards',
-                module: 'Home',
-                dashboardModule: module,
-                model: Dashboard
-            });
+
+        var Dashboard = this._getNewDashboardModel(module, layoutName, syncFn, false);
+        var DashboardCollection = app.BeanCollection.extend({
+            sync: syncFn,
+            apiModule: 'Dashboards',
+            module: 'Home',
+            dashboardModule: module,
+            model: Dashboard
+        });
+
         return (getNew) ? new DashboardCollection() : DashboardCollection;
     },
 
@@ -925,17 +684,7 @@
 
         params.success = _.bind(function(model) {
             if (!this.disposed) {
-                if (model.get('dashboard_module') !== 'Home') {
-                    // if this is not the Home module, only navigate to the Help dashboards
-                    if (model.get('dashboard_type') === 'help-dashboard') {
-                        this._navigate(model);
-                    }
-                } else {
-                    // if this is the Home module, navigate to the non-Help My Dashboard
-                    if (model.get('dashboard_type') === 'dashboard') {
-                        this._navigate(model);
-                    }
-                }
+                this._navigate(model);
             }
         }, this);
 
@@ -949,8 +698,9 @@
      * @private
      */
     _renderEmptyTemplate: function() {
-        var tplName = this.type || this.name,
-            template = app.template.getLayout(tplName + '.dashboard-empty');
+        var tplName = this.type || this.name;
+        var template = app.template.getLayout(tplName + '.dashboard-empty');
+
         this.$el.html(template(this));
     },
 
@@ -958,9 +708,6 @@
      * @inheritdoc
      */
     _dispose: function() {
-        // always trigger the help button off
-        app.events.trigger('app:help:hidden');
-
         var defaultLayout = this.closestComponent('sidebar');
         if (defaultLayout) {
             this.stopListening(defaultLayout);
@@ -978,10 +725,10 @@
             //Show alerts for this request
             showAlerts: true,
             fieldsToValidate: {
-                'name' : {
+                'name': {
                     required: true
                 },
-                'metadata' : {
+                'metadata': {
                     required: true
                 }
             },

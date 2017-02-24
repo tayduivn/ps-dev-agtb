@@ -160,6 +160,11 @@
      */
     _delegateEvents: function() {
         app.events.on('preview:collection:change', this.showPreviousNextBtnGroup, this);
+        //FIXME: SC-4915 will delete this listener.
+        app.events.on('app:help:shown', function() {
+            app.events.trigger('list:preview:decorate', false);
+            this.closePreview();
+        }, this);
 
         // TODO: Remove when pagination on activity streams is fixed.
         app.events.on('preview:module:update', this.updatePreviewModule, this);

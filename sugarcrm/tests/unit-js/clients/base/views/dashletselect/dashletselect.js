@@ -20,7 +20,6 @@ describe('Base.View.Dashletselect', function() {
         SugarTest.testMetadata.set();
 
         view = SugarTest.createView('base', moduleName, 'dashletselect');
-        view.model.set({ dashboard_type: 'dashboard' });
     });
     afterEach(function() {
         view.dispose();
@@ -125,36 +124,6 @@ describe('Base.View.Dashletselect', function() {
             expect(actual.at(0).get('title')).toBe('first1');
             expect(actual.at(1).get('type')).toBe('dashablelist');
             expect(actual.at(1).get('title')).toBe('first3');
-        });
-
-        it('should get all dashlet views that defines Dashlet plugin and are help dashlets', function() {
-            SugarTest.loadComponent('base', 'view', 'dashablelist');
-            SugarTest.loadComponent('base', 'view', 'help-dashlet');
-            sinon.collection.stub(app.view, 'componentHasPlugin', function() {
-                return true;
-            }, this);
-            SugarTest.testMetadata.addViewDefinition('dashablelist', {
-                dashlets: [
-                    {
-                        config: {}
-                    }
-                ]
-            });
-            SugarTest.testMetadata.addViewDefinition('help-dashlet', {
-                dashlets: [
-                    {
-                        config: {},
-                        filter: {
-                            dashboard: 'help-dashboard'
-                        }
-                    }
-                ]
-            });
-            view.model.set({ dashboard_type: 'help-dashboard' });
-            view.loadData();
-            var actual = view.collection;
-            expect(actual.length).toBe(1);
-            expect(actual.at(0).get('type')).toBe('help-dashlet');
         });
     });
 

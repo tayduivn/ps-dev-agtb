@@ -23,9 +23,9 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
             }
         });
 
-        sinon.collection.stub(app.template, 'getView', function(view) {
+        sinon.collection.stub(app.template, 'getLayout', function(layout, module) {
             return function() {
-                return view;
+                return layout;
             };
         });
     });
@@ -39,8 +39,8 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
         it('should set all Opportunities howto text properly', function() {
             layout._initHowTo();
             expect(layout.viewOppsByTitle).toEqual('LBL_OPPS_CONFIG_VIEW_BY_LABEL');
-            expect(layout.viewOppsByOppsTpl).toEqual('help-dashlet');
-            expect(layout.viewOppsByRLIsTpl).toEqual('help-dashlet');
+            expect(layout.viewOppsByOppsTpl).toEqual('config-drawer-content.help');
+            expect(layout.viewOppsByRLIsTpl).toEqual('config-drawer-content.help');
         });
     });
 
@@ -51,8 +51,8 @@ describe('Opportunities.Layout.ConfigDrawerContent', function() {
         });
         it('should set currentHowToData properly for OppsViewBy', function() {
             layout._switchHowToData('config-opps-view-by');
-            expect(layout.viewOppsByOppsTpl).toEqual('help-dashlet');
-            expect(layout.viewOppsByRLIsTpl).toEqual('help-dashlet');
+            expect(layout.viewOppsByOppsTpl).toEqual('config-drawer-content.help');
+            expect(layout.viewOppsByRLIsTpl).toEqual('config-drawer-content.help');
         });
     });
 

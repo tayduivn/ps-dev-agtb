@@ -12,6 +12,8 @@
  * @class View.Views.Base.DashboardHeaderpaneView
  * @alias SUGAR.App.view.views.BaseDashboardHeaderpaneView
  * @extends View.Views.Base.HeaderpaneView
+ * @deprecated 7.9 It will be removed in 7.11.
+ *   Please use {@link View.Views.Dashboards.DashboardHeaderpaneView} instead.
  */
 ({
     extendsFrom: 'HeaderpaneView',
@@ -28,6 +30,9 @@
         'click [name=expand_button]': 'expandClicked'
     },
     initialize: function(options) {
+        app.logger.warn('The class `View.Views.Base.DashboardHeaderpaneView`' +
+            'has been deprecated since 7.9.0.0 and will be removed in 7.11.0.0. ' +
+            'Please use `View.Views.Dashboards.DashboardHeaderpaneView` instead.');
         if(options.context.parent) {
             options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
             options.template = app.template.getView(options.name);

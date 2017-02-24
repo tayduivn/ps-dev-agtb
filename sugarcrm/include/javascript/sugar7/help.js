@@ -31,20 +31,18 @@
          * @param {String} module Module that we are currently on
          * @param {String} view The view that help text is needed for
          * @param {Object} (context) The model to use for the handlebar template
-         * @return {Object} Object containing title, body and more_help
+         * @return {Object} Object containing body and more_help
          */
-        get: function (module, view, context) {
+        get: function(module, view, context) {
             var objModule = _.extend({
-                    'module_name' : app.lang.getModuleName(module),
-                    'plural_module_name' : app.lang.getModuleName(module, {plural: true})
-                }, context || {}, this._getModuleLabelMap()),
-                viewName = this._cleanupViewName(view).toUpperCase();
-
-                return {
-                    'title' : this._get('LBL_HELP_' + viewName + '_TITLE', module, objModule),
-                    'body' :  this._get('LBL_HELP_' + viewName, module, objModule),
-                    'more_help': this._get('LBL_HELP_MORE_INFO', module, objModule)
-                };
+                'module_name': app.lang.getModuleName(module),
+                'plural_module_name': app.lang.getModuleName(module, {plural: true})
+            }, context || {}, this._getModuleLabelMap());
+            var viewName = this._cleanupViewName(view).toUpperCase();
+            return {
+                'body': this._get('LBL_HELP_' + viewName, module, objModule),
+                'more_help': this._get('LBL_HELP_MORE_INFO', module, objModule)
+            };
         },
 
         /**

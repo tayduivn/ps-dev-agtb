@@ -36,8 +36,8 @@
             viewOppsByOppsObj = app.help.get('Opportunities', 'config_opps', helpUrl),
             viewOppsByRLIsObj = app.help.get('Opportunities', 'config_rlis', helpUrl);
 
-        this.viewOppsByOppsTpl = app.template.getView('help-dashlet')(viewOppsByOppsObj);
-        this.viewOppsByRLIsTpl = app.template.getView('help-dashlet')(viewOppsByRLIsObj);
+        this.viewOppsByOppsTpl = app.template.getLayout(this.name + '.help', this.module)(viewOppsByOppsObj);
+        this.viewOppsByRLIsTpl = app.template.getLayout(this.name + '.help', this.module)(viewOppsByRLIsObj);
     },
 
     bindDataChange: function() {

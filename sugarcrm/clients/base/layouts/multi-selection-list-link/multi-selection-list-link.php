@@ -22,6 +22,7 @@ $viewdefs['base']['layout']['multi-selection-list-link'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'selection-headerpane',
@@ -66,6 +67,7 @@ $viewdefs['base']['layout']['multi-selection-list-link'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'preview-pane',
+                            'css_class' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

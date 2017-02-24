@@ -10,11 +10,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 $viewdefs['Home']['base']['view']['tutorial'] = array(
     'record' => array(
@@ -58,12 +53,6 @@ $viewdefs['Home']['base']['view']['tutorial'] = array(
                 'full' => true,
                 'horizAdj'=> -3,
             ),
-            array(
-                'name' => '[data-action="tour"]',
-                'text' => 'LBL_TOUR_TOUR',
-                'full' => true,
-                'vertAdj'=> -14,
-            ),
-        )
+        ),
     ),
 );

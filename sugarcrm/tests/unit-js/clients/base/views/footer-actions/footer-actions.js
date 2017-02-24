@@ -23,7 +23,6 @@ describe('Base.View.FooterActions', function () {
         SugarTest.loadHandlebarsTemplate('footer-actions', 'view', 'base');
         SugarTest.testMetadata.set();
         view = SugarTest.createView('base', 'Contacts', 'footer-actions');
-
     });
 
     afterEach(function () {
@@ -72,6 +71,103 @@ describe('Base.View.FooterActions', function () {
             view.render();
 
             expect(view.$('[data-action=shortcuts]').length).toBe(0);
+        });
+    });
+
+    describe('Help button', function() {
+        using('different layout names', [
+            {
+                layoutName: 'notBwc'
+            },
+            {
+                layoutName: null
+            }
+        ], function(data) {
+            it('should not open bwc help', function() {
+                var bwcHelpClickedStub = sandbox.stub(view, 'bwcHelpClicked').returns();
+                sandbox.stub(view, '_createHelpLayout', function() {
+                    view._helpLayout = {
+                        toggle: $.noop
+                    };
+                });
+
+                app.isSynced = true;
+                view.layoutName = data.layoutName;
+                view.helpButton = $('');
+                view.help();
+
+                expect(bwcHelpClickedStub.called).toBe(false);
+            });
+        });
+
+        using('bwc layout names or the About module', ['bwc', 'about'], function(layoutName) {
+            it('should open bwc help', function() {
+                var bwcHelpClickedStub = sinon.collection.stub(view, 'bwcHelpClicked').returns();
+
+                app.isSynced = true;
+                view.layoutName = layoutName;
+                view.helpButton = $('<button></button>');
+                view.help();
+                expect(bwcHelpClickedStub).toHaveBeenCalled();
+            });
+        });
+
+        it('should not open bwc help or create helpLayout if app is not synced', function() {
+            var bwcHelpClickedStub = sandbox.stub(view, 'bwcHelpClicked');
+            var createLayoutStub = sandbox.stub(view, '_createHelpLayout');
+
+            app.isSynced = false;
+            view.layoutName = 'notBwc';
+            view.help();
+
+            expect(bwcHelpClickedStub.called).toBe(false);
+            expect(createLayoutStub.called).toBe(false);
+        });
+
+        it('should not open bwc help or create helpLayout if help button is disabled', function() {
+            var bwcHelpClickedStub = sandbox.stub(view, 'bwcHelpClicked');
+            var createLayoutStub = sandbox.stub(view, '_createHelpLayout');
+
+            app.isSynced = true;
+            view.layoutName = 'notBwc';
+            view.helpButton = $('<button class="disabled"></button>');
+            view.help();
+
+            expect(bwcHelpClickedStub.called).toBe(false);
+            expect(createLayoutStub.called).toBe(false);
+        });
+
+        it('should create helpLayout if it does not already exist in a non-bwc module', function() {
+            var createLayoutStub = sandbox.stub(view, '_createHelpLayout', function() {
+                view._helpLayout = {
+                    toggle: $.noop
+                };
+            });
+
+            app.isSynced = true;
+            view.layoutName = 'notBwc';
+            view.helpButton = $('');
+            view.help();
+
+            expect(createLayoutStub.called).toBe(true);
+        });
+
+        it('should create helpLayout if it is disposed in a non-bwc module', function() {
+            var createLayoutStub = sandbox.stub(view, '_createHelpLayout', function() {
+                view._helpLayout = {
+                    toggle: $.noop
+                };
+            });
+
+            app.isSynced = true;
+            view.layoutName = 'notBwc';
+            view.helpButton = $('');
+            view._helpLayout = {
+                disposed: true
+            };
+            view.help();
+
+            expect(createLayoutStub.called).toBe(true);
         });
     });
 });

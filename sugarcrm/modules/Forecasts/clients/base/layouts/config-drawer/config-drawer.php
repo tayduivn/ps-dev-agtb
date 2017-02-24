@@ -20,6 +20,7 @@ $viewdefs['Forecasts']['base']['layout']['config-drawer'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'config-header-buttons',

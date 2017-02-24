@@ -112,6 +112,7 @@ $app_list_strings = array (
     'Feedbacks' => 'Feedbacks',
     'Tags' => 'Tags',
     'Categories' => 'Categories',
+    'Dashboards' => 'Dashboards',
   ),
 
     'moduleIconList' =>
@@ -124,13 +125,14 @@ $app_list_strings = array (
         'Notes' => 'Nt',
         'ProductCategories' => 'PG',
         'Quotas' => 'Fo',
-        'Tasks' => 'Ts'
+        'Tasks' => 'Ts',
+        'Dashboards' => 'Db',
     ),
 
   'moduleListSingular' =>
   array (
     'Home' => 'Home',
-    'Dashboard' => 'Dashboard',
+    'Dashboards' => 'Dashboard',
     'Styleguide' => 'Styleguide',
     'Contacts' => 'Contact',
     'Accounts' => 'Account',
@@ -8267,6 +8269,7 @@ $app_strings = array (
     'LBL_PRINT' => "Print",
     'LBL_HELP' => "Help",
     'LBL_TOUR' => "Tour",
+    'LBL_TOUR_LINK' => 'Tour - View the tour for feature highlights',
     'LBL_MOBILE' => "Mobile",
     'LBL_ID_FF_SELECT' => "Select",
     'DEFAULT'                              => 'Basic',
@@ -9696,9 +9699,6 @@ Sincerely, SugarCRM',
     'LBL_DASHBOARD' => 'Dashboard',
     'LBL_DASHBOARD_BWC' => 'My Legacy Dashboard',
     'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
-    'LBL_DEFAULT_HELP_DASHBOARD_TITLE' => 'Help Dashboard',
-    'LBL_DEFAULT_HELP_DASHLET_TITLE' => 'Help Dashlet',
-    'LBL_DEFAULT_HELP_DASHLET_DESC' => 'Help Dashlet provides module and view-specific help.',
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
     'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
@@ -9711,7 +9711,11 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_MAXIMIZE' => 'Open',
     'LBL_DASHLET_CONFIGURE' => 'Configure',
     'LBL_DASHLET_TOGGLE' => 'Open/Close',
-    'LBL_DASHBOARD_TOGGLE' => 'Open/Close Dashboard',
+    'LBL_SIDEPANE_TOGGLE' => 'Open/Close Side Pane',
+
+    /* Sugar7 Help Component */
+    'LBL_DEFAULT_HELP_COMPONENT_TITLE' => 'Help',
+    'LBL_HELPLET_TOGGLE' => 'Open/Close',
 
     /* Sugar7 search facets */
     'LBL_FACET_MODULES' => 'Modules',
@@ -10339,16 +10343,11 @@ Sincerely, SugarCRM',
     'LBL_TWITTER_NAME' => 'Twitter',
     'LBL_TWITTER_SOURCE' => 'Source Tweet:',
 
-    /* Learning Resources Dashlet */
+    /* Learning Resources */
     'LBL_LEARNING_RESOURCES_TITLE' => 'Learning Resources',
-    'LBL_LEARNING_RESOURCES_DESC' => 'SugarCRM Learning Resources',
-    'LBL_LEARNING_RESOURCES_NAME' => 'Learning Resources',
-    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University',
-    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_TEASER' => 'Become a Sugar expert with upgrade training, videos, classes, webinars, and certification.',
-    'LBL_LEARNING_RESOURCES_COMMUNITY_LINK' => 'Community Forums',
-    'LBL_LEARNING_RESOURCES_COMMUNITY_TEASER' => 'Join the discussion, problem solve, and share ideas with other users.',
-    'LBL_LEARNING_RESOURCES_SUPPORT_LINK' => 'Documentation & Support',
-    'LBL_LEARNING_RESOURCES_SUPPORT_TEASER' => 'Learn the details of how Sugar works and engage with support.',
+    'LBL_LEARNING_RESOURCES_SUGAR_UNIVERSITY_LINK' => 'Sugar University - Become an expert',
+    'LBL_LEARNING_RESOURCES_COMMUNITY_LINK' => 'Community Forums - Join the discussion',
+    'LBL_LEARNING_RESOURCES_SUPPORT_LINK' => 'Documentation & Support - Learn the details',
 
     /* Country Chart Dashlet */
     'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',

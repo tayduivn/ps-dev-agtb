@@ -18,6 +18,9 @@ $viewdefs['pmse_Emails_Templates']['base']['layout']['compose-sugarlinks'] = arr
                 'components' => array(
                     array(
                         'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'compose-sugarlinks-headerpane',
@@ -33,10 +36,14 @@ $viewdefs['pmse_Emails_Templates']['base']['layout']['compose-sugarlinks'] = arr
                     ),
                     array(
                         'layout' => array(
-                            'components' => array(),
-                            'type' => 'simple',
-                            'name' => 'dashboard-pane',
-                            'span' => 4,
+                            'type' => 'base',
+                            'name' => 'preview-pane',
+                            'css_class' => 'preview-pane',
+                            'components' => array(
+                                array(
+                                    'layout' => 'preview',
+                                ),
+                            ),
                         ),
                     ),
                 ),

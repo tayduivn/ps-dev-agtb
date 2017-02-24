@@ -17,15 +17,6 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                     array(
                         array(
                             'view' => array(
-                                'type' => 'learning-resources',
-                                'label' => 'LBL_LEARNING_RESOURCES_NAME',
-                            ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' => array(
                                 'type' => 'twitter',
                                 'label' => 'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME',
                                 'twitter' => 'sugarcrm',

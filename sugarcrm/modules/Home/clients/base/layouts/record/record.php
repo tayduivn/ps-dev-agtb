@@ -12,27 +12,46 @@
  */
 
 $viewdefs['Home']['base']['layout']['record'] = array(
-    'type' => 'dashboard',
-    'name' => 'dashboard',
     'components' => array(
         array(
             'layout' => array(
-                'type' => 'base',
-                'name' => 'list',
+                'type' => 'default',
+                'name' => 'sidebar',
+                'css_class' => 'home-dashboard',
                 'components' => array(
                     array(
-                        'view' => 'dashboard-headerpane',
-                    ),
-                    array(
-                        'layout' => 'dashlet-main',
+                        'layout' => array(
+                            'type' => 'base',
+                            'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
+                            'components' => array(
+                                array(
+                                    'layout' => array(
+                                        'name' => 'dashboard',
+                                        'type' => 'dashboard',
+                                        'components' => array(
+                                            array(
+                                                'view' => 'dashboard-headerpane',
+                                                'loadModule' => 'Dashboards',
+                                            ),
+                                            array(
+                                                'layout' => 'dashlet-main',
+                                            ),
+                                        ),
+                                        'last_state' => array(
+                                            'id' => 'last-visit',
+                                        ),
+                                    ),
+                                    'loadModule' => 'Dashboards',
+                                ),
+                            ),
+                        ),
                     ),
                 ),
             ),
         ),
     ),
-    'method' => 'record',
     'last_state' => array(
         'id' => 'last-visit',
-    )
+    ),
 );
-

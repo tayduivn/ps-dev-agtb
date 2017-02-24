@@ -142,9 +142,7 @@
             }
         },
         show: function(name, params) {
-            if (app.config.skipTutorial) {
-                return;
-            } else if (app.tutorial.data) {
+            if (app.tutorial.data) {
                 this.doTutorial(name, params);
             } else if (app.metadata.getView('','tutorial')) {
                 //Cache default tutorial metadata

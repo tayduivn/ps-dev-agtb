@@ -65,7 +65,7 @@
          * The internal state of this view.
          * By default this view is closed ({@link #toggle} will call render).
          *
-         * This is needed because of the bad popover plugin.
+         * FIXME TY-1798/TY-1800 This is needed due to the bad popover plugin.
          *
          * @type {boolean}
          * @private
@@ -109,6 +109,21 @@
             trigger: 'manual',
             template: '<div class="popover feedback"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
         });
+
+        // Reposition the modal so all of its contents are within the window.
+        button.on('shown.bs.popover', _.bind(this._positionPopover, this));
+    },
+
+    /**
+     * Sets the horizontal position of the modal.
+     *
+     * @private
+     */
+    _positionPopover: function() {
+        var $popoverContainer = this.button.data()['bs.popover'].tip();
+        // Leave 15px of space between rhs edge of popover and the screen.
+        var left = $(window).width() - $popoverContainer.width() - 15;
+        $popoverContainer.css('left', left);
     },
 
     /**

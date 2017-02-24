@@ -88,7 +88,6 @@ $viewdefs['Home']['base']['layout']['search-dashboard'] = array(
             ),
         ),
     ),
-    'dashboard_type' => 'search-dashboard',
     'name' => 'LBL_FACETS_DASHBOARD_TITLE',
     'css_class' => 'facets-dashboard',
     'drag_and_drop' => false,

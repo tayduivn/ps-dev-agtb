@@ -157,21 +157,19 @@
      * @return {Array} A list of filtered dashlet set.
      */
     getFilteredList: function(dashlets) {
-        var parentModule = app.controller.context.get('module'),
-            parentView = app.controller.context.get('layout'),
-            parentDashboard = this.model.get('dashboard_type') || this.context.get('dashboard_type') || 'dashboard';
+        var parentModule = app.controller.context.get('module');
+        var parentView = app.controller.context.get('layout');
 
         return _.chain(dashlets)
             .filter(function(dashlet) {
                 var filter = dashlet.filter;
+                // if there is no filter for this dashlet, include it
                 if (_.isUndefined(filter)) {
-                    // if filter is undefined
-                    return (parentDashboard === 'dashboard');
+                    return true;
                 }
 
-                var filterModules = filter.module || [parentModule],
-                    filterViews = filter.view || [parentView],
-                    filterDashboard = filter.dashboard || ['dashboard'];
+                var filterModules = filter.module || [parentModule];
+                var filterViews = filter.view || [parentView];
 
                 if (_.isString(filterModules)) {
                     filterModules = [filterModules];
@@ -179,14 +177,10 @@
                 if (_.isString(filterViews)) {
                     filterViews = [filterViews];
                 }
-                if (_.isString(filterDashboard)) {
-                    filterDashboard = [filterDashboard];
-                }
 
                 //if the filter is matched, then it returns true
-                return _.contains(filterModules, parentModule)
-                    && _.contains(filterViews, parentView)
-                    && _.contains(filterDashboard, parentDashboard);
+                return _.contains(filterModules, parentModule) &&
+                    _.contains(filterViews, parentView);
             })
             .value();
     },

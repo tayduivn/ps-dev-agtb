@@ -104,7 +104,7 @@ class DashboardListApi extends FilterApi
         if (!empty($args['view_name'])) {
             $args['filter'][]['view_name'] = $args['view_name'];
         }
-        $args['fields'] = 'id,name,view_name,dashboard_type';
+        $args['fields'] = 'id,name,view_name';
 
         $ret = $this->filterList($api, $args);
 
@@ -122,7 +122,7 @@ class DashboardListApi extends FilterApi
     protected function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
     {
         if (!isset($args['order_by'])) {
-            $args['order_by'] = 'dashboard_type:DESC,date_entered:DESC';
+            $args['order_by'] = 'date_entered:DESC';
         }
         $options = parent::parseArguments($api, $args, $seed);
         

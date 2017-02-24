@@ -22,6 +22,7 @@ $viewdefs['base']['layout']['dashletconfiguration'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'dashletconfiguration-headerpane',
