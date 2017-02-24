@@ -1506,27 +1506,20 @@ class Email extends SugarBean {
         );
 
         foreach (array_keys($collections) as $collection) {
-            $data = $this->getAllEmailRecipients($collection);
+            $recipients = $this->getRecipients($collection);
 
-            foreach ($data['records'] as $row) {
-                $bean = BeanFactory::retrieveBean(
-                    $row['_module'],
-                    $row['id'],
-                    array('disable_row_level_security' => true)
-                );
+            foreach ($recipients as $linkName => $beans) {
+                foreach ($beans as $bean) {
+                    // Use the recipient's primary email address if no email address has been chosen.
+                    if (empty($bean->email_address_used)) {
+                        $bean->email_address_used = $bean->emailAddress->getPrimaryAddress($bean);
+                    }
 
-                // Use the bean's primary email address if no email address has been chosen.
-                if (empty($row['email_address_used']) && $this->load_relationship($row['_link'])) {
-                    $row['email_address_used'] = $bean->emailAddress->getPrimaryAddress($bean);
-                }
-
-                // Only include the name if the email address and name don't match.
-                $name = ($bean->name === $row['email_address_used']) ? '' : $bean->name;
-
-                if (empty($name)) {
-                    $collections[$collection][] = $row['email_address_used'];
-                } else {
-                    $collections[$collection][] = "{$name} <{$row['email_address_used']}>";
+                    // Beans from Email Addresses don't have names.
+                    $email = empty($bean->name) ?
+                        $bean->email_address_used :
+                        "{$bean->name} <{$bean->email_address_used}>";
+                    $collections[$collection][] = $email;
                 }
             }
         }
@@ -3748,38 +3741,30 @@ eoq;
         );
 
         $num = 0;
-        $recipients = $this->getAllEmailRecipients($role);
+        $recipients = $this->getRecipients($role);
 
-        foreach ($recipients['records'] as $recipient) {
-            $bean = BeanFactory::retrieveBean(
-                $recipient['_module'],
-                $recipient['id'],
-                array('disable_row_level_security' => true)
-            );
-
-            // Set the email address of the recipient to the recipient's primary email address.
-            if (empty($recipient['email_address_used'])) {
-                $linkName = $recipient['_link'];
-
-                if ($this->load_relationship($linkName)) {
-                    $primary = $bean->emailAddress->getPrimaryAddress($bean);
-                    $primaryId = $bean->emailAddress->getEmailGUID($primary);
-                    $this->$linkName->add($bean, array('email_address_id' => $primaryId));
-                    $recipient['email_address_used'] = $primary;
+        foreach ($recipients as $linkName => $beans) {
+            foreach ($beans as $bean) {
+                // Set the email address of the recipient to the recipient's primary email address.
+                if (empty($bean->email_address_used)) {
+                    if ($this->load_relationship($linkName)) {
+                        $primary = $bean->emailAddress->getPrimaryAddress($bean);
+                        $primaryId = $bean->emailAddress->getEmailGUID($primary);
+                        $this->$linkName->add($bean, array('email_address_id' => $primaryId));
+                        $bean->email_address_used = $primary;
+                    }
                 }
-            }
 
-            // Only include the name if the email address and name don't match.
-            $name = ($bean->name === $recipient['email_address_used']) ? '' : $bean->name;
-            $identity = new EmailIdentity($recipient['email_address_used'], $name);
-
-            try {
-                $method = $methodMap[$role];
-                $mailer->$method($identity);
-                $num++;
-            } catch (MailerException $me) {
-                // Invalid email address. Log it and skip.
-                $GLOBALS['log']->warning($me->getLogMessage());
+                try {
+                    // Beans from Email Addresses don't have names. EmailIdentity can sort that out.
+                    $identity = new EmailIdentity($bean->email_address_used, $bean->name);
+                    $method = $methodMap[$role];
+                    $mailer->$method($identity);
+                    $num++;
+                } catch (MailerException $me) {
+                    // Invalid email address. Log it and skip.
+                    $GLOBALS['log']->warning($me->getLogMessage());
+                }
             }
         }
 
@@ -3791,71 +3776,69 @@ eoq;
      *
      * @param string $role Can be "to", "cc", or "bcc".
      * @return array
+     * @throws SugarException
      */
-    protected function getAllEmailRecipients($role)
+    protected function getRecipients($role)
     {
         $recipients = array();
-        $offset = array();
+        $links = $this->field_defs[$role]['links'];
 
-        do {
-            $args = array();
-            if (!empty($offset)) {
-                $args['offset'] = $offset;
+        foreach ($links as $link) {
+            $linkName = is_array($link) ? $link['name'] : $link;
+
+            if (!$this->load_relationship($linkName)) {
+                throw new SugarException("Cannot get recipients for link: {$linkName}");
             }
-            $result = $this->getEmailRecipients($role, $args);
-            $offset = $result['next_offset'];
-            $recipients = array_merge($recipients, $result['records']);
-        } while ($this->hasMoreRecipients($result));
 
-        return array(
-            'records' => $recipients,
-            'next_offset' => $offset,
-        );
-    }
+            $linkModuleName = $this->$linkName->getRelatedModuleName();
+            $seed = BeanFactory::newBean($linkModuleName);
+            $fields = ['email_address_used'];
+            $nameField = 'name';
 
-    /**
-     * Returns recipients with the specified role.
-     *
-     * @param string $role Can be "to", "cc", or "bcc".
-     * @param array $args Additional arguments to pass to the Collection Api
-     * @return array
-     */
-    protected function getEmailRecipients($role, $args)
-    {
-        $limit = 20;
-        $service = new RestService();
-        $service->user = $GLOBALS['current_user'];
-        $api = new RelateCollectionApi();
-        $limit = $api->checkMaxListLimit($limit);
-        $args = array_merge(array(
-            'module' => $this->module_dir,
-            'record' => $this->id,
-            'collection_name' => $role,
-            'fields' => array(
-                'email_address_used',
-            ),
-            'max_num' => $limit,
-        ), $args);
-
-        return $api->getCollection($service, $args);
-    }
-
-    /**
-     * Determine if the given recipient result set has more recipients to
-     * retrieve.
-     *
-     * @param array $result Recipient results containing a `next_offset`
-     * @return bool
-     */
-    protected function hasMoreRecipients($result)
-    {
-        $offsets = $result['next_offset'];
-        foreach ($offsets as $key => $value) {
-            if ($value > -1) {
-                return true;
+            // The name field is actually mapped to a different field. That's the field we want to retrieve.
+            if (is_array($link) && !empty($link['field_map']) && !empty($link['field_map']['name'])) {
+                $nameField = $link['field_map']['name'];
             }
+
+            $nameFieldDef = $seed->getFieldDefinition($nameField);
+
+            if ($nameFieldDef) {
+                // As long as there is a name field, we can retrieve it.
+                $fields[] = $nameField;
+
+                // Some name fields are made up of other fields. Merge those other fields so we retrieve them, too.
+                if (!empty($nameFieldDef['fields']) && is_array($nameFieldDef['fields'])) {
+                    $fields = array_merge($fields, $nameFieldDef['fields']);
+                }
+            }
+
+            // Some modules use name_format_map to construct the name. Merge those fields so we retrieve them, too.
+            $nameFields = $GLOBALS['locale']->getNameFormatFields($seed);
+            $fields = array_merge($fields, $nameFields);
+
+            // By now, we should have all of the fields that could possibly make up the name of the recipient, plus the
+            // email_address_used field. And we only need each field once.
+            $fields = array_unique($fields);
+
+            $q = new SugarQuery();
+            $q->from($seed);
+            // Must add the fields to select before calling SugarBean::fetchFromQuery() so that the email_address_used
+            // field is in SugarQuery::$joinLinkToKey. Otherwise, the joins that SugarQuery::joinSubpanel() adds will be
+            // replaced by new joins when the email_address_used field is added in SugarBean::fetchFromQuery(), and the
+            // the new joins will not include the role column for address_type, which is very important.
+            $q->select($fields);
+            $q->joinSubpanel($this, $linkName);
+            // Must also pass the fields here -- even though they have already been added to the query -- because
+            // SugarBean::fetchFromQuery() will add all of the fields in the vardefs if we don't.
+            $beans = $seed->fetchFromQuery($q, $fields);
+
+            // The fields from the collection field's field_map are not mapped in the returned beans. Consumers will
+            // need to do this if they care. Existing use cases don't require it. Should use cases emerge that do, then
+            // we can add the field mapping here.
+            $recipients[$linkName] = $beans;
         }
-        return false;
+
+        return $recipients;
     }
 
     /**

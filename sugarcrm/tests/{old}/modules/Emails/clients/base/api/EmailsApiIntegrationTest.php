@@ -672,12 +672,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
             "{$GLOBALS['current_user']->name} <{$GLOBALS['current_user']->email1}>",
             $bean->from_addr_name
         );
-        $to = array(
-            "{$contact1->name} <{$contact1->email1}>",
-            "{$contact2->name} <{$contact2->email1}>",
-        );
-        sort($to);
-        $to = implode(', ', $to);
+        $to = "{$contact1->name} <{$contact1->email1}>, {$contact2->name} <{$contact2->email1}>";
         $this->assertEquals($to, $bean->to_addrs_names);
     }
 

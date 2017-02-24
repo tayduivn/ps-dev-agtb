@@ -36,8 +36,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         // Clean up any dangling beans that need to be resaved.
         SugarRelationship::resaveRelatedBeans(false);
 
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestEmailUtilities::removeAllCreatedEmails();
 		unset($this->email);
@@ -523,68 +525,54 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::getAllEmailRecipients
-     * @covers ::hasMoreRecipients
+     * @covers ::getRecipients
      */
-    public function testGetAllEmailRecipients_LessRecipientsThanMaxBatch_RetrievesAllRecipientsOneCall()
+    public function testGetRecipients()
     {
-        $numberRecipients = 6;
-        $mockRecords = array();
+        $email = SugarTestEmailUtilities::createEmail();
+        $email->load_relationship('accounts_to');
+        $email->load_relationship('contacts_to');
+        $email->load_relationship('leads_to');
+        $email->load_relationship('prospects_to');
+        $email->load_relationship('email_addresses_to');
 
-        for ($i = 1; $i <= $numberRecipients; $i++) {
-            $mockRecords[] = array('id' => $i);
+        $accounts = 6;
+        $contacts = 3;
+        $leads = 2;
+        $prospects = 3;
+        $addresses = 1;
+
+        for ($i = 0; $i < $accounts; $i++) {
+            $account = SugarTestAccountUtilities::createAccount();
+            $email->accounts_to->add($account);
         }
-        $mockResult = array(
-            'records' => $mockRecords,
-            'next_offset' => array(
-                'foo' => -1,
-                'bar' => -1,
-            ),
-        );
 
-        $mockEmail = $this->createPartialMock('Email', array('getEmailRecipients'));
-        $mockEmail->expects($this->once())
-            ->method('getEmailRecipients')
-            ->will($this->returnValue($mockResult));
-
-        $result = SugarTestReflection::callProtectedMethod($mockEmail, 'getAllEmailRecipients', array('to'));
-        $this->assertEquals($result['records'], $mockRecords, 'records returned are not correct');
-    }
-
-    /**
-     * @covers ::getAllEmailRecipients
-     * @covers ::hasMoreRecipients
-     */
-    public function testGetAllEmailRecipients_MoreRecipientsThanMaxBatch_RetrievesAllRecipientsOneCall()
-    {
-        $numberRecipients = 26;
-        $mockRecords = array();
-
-        for ($i = 1; $i <= $numberRecipients; $i++) {
-            $mockRecords[] = array('id' => $i);
+        for ($i = 0; $i < $contacts; $i++) {
+            $contact = SugarTestContactUtilities::createContact();
+            $email->contacts_to->add($contact);
         }
-        $mockResult1 = array(
-            'records' => array_slice($mockRecords, 0, 20),
-            'next_offset' => array(
-                'foo' => -1,
-                'bar' => 20,
-            ),
-        );
-        $mockResult2 = array(
-            'records' => array_slice($mockRecords, 20),
-            'next_offset' => array(
-                'foo' => -1,
-                'bar' => -1,
-            ),
-        );
 
-        $mockEmail = $this->createPartialMock('Email', array('getEmailRecipients'));
-        $mockEmail->expects($this->exactly(2))
-            ->method('getEmailRecipients')
-            ->will($this->onConsecutiveCalls($mockResult1, $mockResult2));
+        for ($i = 0; $i < $leads; $i++) {
+            $lead = SugarTestLeadUtilities::createLead();
+            $email->leads_to->add($lead);
+        }
 
-        $result = SugarTestReflection::callProtectedMethod($mockEmail, 'getAllEmailRecipients', array('to'));
-        $this->assertEquals($result['records'], $mockRecords, 'number of records returned is not correct');
+        for ($i = 0; $i < $prospects; $i++) {
+            $prospect = SugarTestProspectUtilities::createProspect();
+            $email->prospects_to->add($prospect);
+        }
+
+        for ($i = 0; $i < $addresses; $i++) {
+            $address = SugarTestEmailAddressUtilities::createEmailAddress();
+            $email->email_addresses_to->add($address);
+        }
+
+        $recipients = SugarTestReflection::callProtectedMethod($email, 'getRecipients', array('to'));
+        $this->assertCount($accounts, $recipients['accounts_to'], 'Incorrect for accounts_to');
+        $this->assertCount($contacts, $recipients['contacts_to'], 'Incorrect for contacts_to');
+        $this->assertCount($leads, $recipients['leads_to'], 'Incorrect for leads_to');
+        $this->assertCount($prospects, $recipients['prospects_to'], 'Incorrect for prospects_to');
+        $this->assertCount($addresses, $recipients['email_addresses_to'], 'Incorrect for email_addresses_to');
     }
 
     /**
@@ -926,7 +914,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('sam@example.com', $email->from_addr_name);
         $this->assertEquals('tom@example.com, wendy@example.com', $email->to_addrs_names);
         $this->assertEquals('randy@example.com', $email->cc_addrs_names);
-        $this->assertEquals('bill@example.com, bonnie@example.com, tara@example.com', $email->bcc_addrs_names);
+        $this->assertEquals('bonnie@example.com, tara@example.com, bill@example.com', $email->bcc_addrs_names);
     }
 
     /**
