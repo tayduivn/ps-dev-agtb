@@ -22,6 +22,7 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'record',
@@ -91,6 +92,7 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'dashboard-pane',
+                            'css_class' => 'dashboard-pane',
                             'components' => array(
                                 array(
                                     'layout' => array(
@@ -103,6 +105,7 @@ $viewdefs['base']['layout']['record'] = array(
                                         'forceNew' => true,
                                         'module' => 'Home',
                                     ),
+                                    'loadModule' => 'Dashboards',
                                 ),
                             ),
                         ),
@@ -111,6 +114,7 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'preview-pane',
+                            'css_class' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

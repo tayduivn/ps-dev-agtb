@@ -149,7 +149,6 @@
             <!-- <file>./rest/RestPortalSecurityTest.php</file> -->
             <!-- FIXME TY-1317: Investigate why this test is failing -->
             <!-- <file>./soap/CanGetUserListTest.php</file> -->
-            <file>./upgrade/UpgradeDeleteLearningResourcesFromDashboardsTest.php</file>
             <file>./upgrade/UpgradeFixPdfTest.php</file>
             <file>./upgrade/UpgradeMigrateDashableLists.php</file>
             <file>./upgrade/scripts/post/RebuildActivitiesDashboardsTest.php</file>

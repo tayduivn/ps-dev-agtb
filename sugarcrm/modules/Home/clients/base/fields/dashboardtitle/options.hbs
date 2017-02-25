@@ -15,6 +15,6 @@
 {{/eq}}
 {{#notEq this.length 0}}
     {{#each this.models}}
-        <li><a href="javascript:void(0);" data-id="{{fieldValue this "id"}}" data-type="{{fieldValue this "dashboard_type"}}">{{fieldValue this "name"}}</a></li>
+        <li><a href="javascript:void(0);" data-id="{{fieldValue this "id"}}">{{fieldValue this "name"}}</a></li>
     {{/each}}
 {{/notEq}}

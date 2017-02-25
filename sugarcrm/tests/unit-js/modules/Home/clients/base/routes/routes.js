@@ -76,29 +76,30 @@ describe('Home.Routes', function() {
                 app.router.navigate('Home/test_ID', {trigger: true});
 
                 expect(setStub).toHaveBeenCalledWith(mockKey, 'dashboard');
-                expect(recordStub).toHaveBeenCalledWith('Home', 'test_ID');
+                expect(loadViewStub).toHaveBeenCalledWith({
+                    module: 'Home',
+                    layout: 'record',
+                    action: 'detail',
+                    modelId: 'test_ID'
+                });
             });
         });
 
         describe('Home', function() {
-            var redirectStub,
-                listStub;
+            var redirectStub;
 
             beforeEach(function() {
                 redirectStub = sinon.collection.stub(app.router, 'redirect');
-                listStub = sinon.collection.stub(app.router, 'list');
             });
 
             using('homeOptions', [
                 {
                     value: 'dashboard',
-                    redirectCalled: false,
-                    listRouteCalled: true
+                    redirectCalled: false
                 },
                 {
                     value: 'activities',
-                    redirectCalled: true,
-                    listRouteCalled: false
+                    redirectCalled: true
                 }
             ], function(option) {
                 it('should navigate to the appropriate route according to the lastState', function() {
@@ -106,7 +107,6 @@ describe('Home.Routes', function() {
                     app.router.navigate('Home', {trigger: true});
 
                     expect(redirectStub.calledWith('#activities')).toBe(option.redirectCalled);
-                    expect(listStub.called).toBe(option.listRouteCalled);
                 });
             });
         });

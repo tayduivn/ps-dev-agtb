@@ -45,21 +45,21 @@
      * @param {Object} evt The jQuery Event Object
      */
     navigateClicked: function(evt) {
-        var id = $(evt.currentTarget).data('id'),
-            type = $(evt.currentTarget).data('type');
-        this.navigate(id, type);
+        var id = $(evt.currentTarget).data('id');
+        this.navigate(id);
     },
     /**
      * Change the Dashboard
-     * @param {String} id The ID of the Dashboard to load
-     * @param {String} [type] The type of dashboard being loaded, default is undefined
+     * @param {string} id The ID of the Dashboard to load
+     * @param {string} [type] (Deprecated) The type of dashboard being loaded, default is undefined
      */
     navigate: function(id, type) {
-        if (this.view.layout.isSearchContext()) {
-            var contextBro = this.context.parent.getChildContext({module: 'Home'});
-            contextBro.set('currentDashboardIndex', id);
+        if (!_.isUndefined(type)) {
+            // TODO: Remove the `type` parameter. This is to be done in TY-654
+            app.logger.warn('The `type` parameter to `View.Fields.Base.Home.DashboardtitleField`' +
+            'has been deprecated since 7.9.0.0. Please update your code to stop using it.');
         }
-        this.view.layout.navigateLayout(id, type);
+        this.view.layout.navigateLayout(id);
     },
     /**
      * Inspect the dashlet's label and convert i18n string only if it's concerned

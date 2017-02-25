@@ -16,6 +16,7 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
             'layout' => array(
                 'type' => 'default',
                 'name' => 'sidebar',
+                'css_class' => 'styleguide main-pane span12',
                 'components' => array(
                     array(
                         'layout' => array(
@@ -28,6 +29,15 @@ $viewdefs['Styleguide']['base']['layout']['docs'] = array(
                             ),
                         ),
                     ),
+                ),
+            ),
+        ),
+        array(
+            'layout' => array(
+                'type' => 'base',
+                'name' => 'preview-pane',
+                'css_class' => 'preview-pane active',
+                'components' => array(
                     array(
                         'layout' => array(
                             'type' => 'base',

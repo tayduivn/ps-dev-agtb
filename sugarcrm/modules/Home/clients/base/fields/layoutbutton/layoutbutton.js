@@ -23,11 +23,6 @@
         return this.$el;
     },
     _render: function() {
-        // if this is a help-dashboard on the home page, dont render these buttons
-        if(this.context && this.context.get('model')
-            && this.context.get('model').get('dashboard_type') === 'help-dashboard') {
-            return this;
-        }
         var buttonField = app.view._getController({type: 'field', name: 'button', platform: app.config.platform});
         buttonField.prototype._render.call(this);
     },

@@ -36,21 +36,18 @@ describe('Sugar7 Help Extension', function () {
         it('should return the correct language strings', function() {
             var helpText = app.help.get('Accounts', 'Record');
 
-            expect(helpText.title).toEqual('Accounts Help Record Title');
             expect(helpText.body).toEqual('Accounts Help Record Body');
         });
 
-        it('should return undefined for title and body', function() {
+        it('should return undefined for body', function() {
             var helpText = app.help.get('Accounts', 'Compose');
 
-            expect(helpText.title).toBeUndefined();
             expect(helpText.body).toBeUndefined();
         });
 
         it('should fall back to defaults when not found in module', function() {
             var helpText = app.help.get('RevenueLineItems', 'Record');
 
-            expect(helpText.title).toEqual("Default Help Record Title");
             expect(helpText.body).toEqual("Default Help Record Body");
         });
     });
@@ -59,14 +56,12 @@ describe('Sugar7 Help Extension', function () {
         it('should return the correct language strings for current module', function() {
             var helpText = app.help.get('Accounts', 'Records');
 
-            expect(helpText.title).toEqual('Accounts Help Records Title');
             expect(helpText.body).toEqual('Account Help Records Body');
         });
 
         it('should return the correct language strings with other module names', function() {
             var helpText = app.help.get('Accounts', 'Create');
 
-            expect(helpText.title).toEqual('My Revenue Line Item');
             expect(helpText.body).toEqual('My Revenue Line Items');
         });
     });

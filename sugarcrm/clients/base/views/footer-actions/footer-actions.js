@@ -16,14 +16,18 @@
 ({
     events: {
         'click [data-action=shortcuts]': 'shortcuts',
-        'click [data-action=tour]': 'showTutorialClick',
         'click [data-action=feedback]': 'feedback',
-        'click [data-action=support]': 'support',
         'click [data-action=help]': 'help'
     },
     tagName: 'span',
     layoutName: '',
-    watchingForDashboard: false,
+
+    /**
+     * Flag to indicate if the footer is currently watching for the help status.
+     *
+     * @property {boolean}
+     */
+    watchingForHelp: false,
 
     /**
      * Array of layout names where the help button should be disabled
@@ -33,39 +37,49 @@
         'first-login-wizard'
     ],
 
+    /**
+     * Enable or disable buttons on the footer depending on view.
+     * @param {string|Object} layout The type of the layout we are changing to.
+     * @param {Object} params Additional parameters.
+     */
     handleViewChange: function(layout, params) {
-        var module = params && params.module ? params.module : null;
+        this.module = params && params.module ? params.module : app.controller.context.get('module');
         // should we disable the help button or not, this only happens when layout is 'bwc'
         this.layoutName = _.isObject(layout) ? layout.name : layout;
+        this.toggleHelpButton(this._shouldHelpBeActive(params.drawer));
         this.disableHelpButton(true);
-        if (app.tutorial.hasTutorial(this.layoutName, module)) {
-            this.enableTourButton();
-            if (params.module === 'Home' && params.layout === 'record' && params.action === 'detail') {
-                // first time in or upgrade, show tour
-                var serverInfo = app.metadata.getServerInfo(),
-                    currentKeyValue = serverInfo.build + '-' + serverInfo.flavor + '-' + serverInfo.version,
-                    lastStateKey = app.user.lastState.key('toggle-show-tutorial', this),
-                    lastKeyValue = app.user.lastState.get(lastStateKey);
-                if (currentKeyValue !== lastKeyValue) {
-                    // first time in, or first time after upgrade
-                    app.user.lastState.set(lastStateKey, currentKeyValue);
-                    this.showTutorial({showTooltip: true});
-                }
-            }
-        } else {
-            this.disableTourButton();
-        }
     },
+
     handleRouteChange: function(route, params) {
         this.routeParams = {'route': route, 'params': params};
     },
+
+    /**
+     * Enable the (now non-existent) tour button.
+     *
+     * @deprecated 7.9 Will be removed in 7.11.
+     *   Please use `HelpletView.toggleTourLink` instead.
+     */
     enableTourButton: function() {
+        app.logger.warn('The function `View.Views.Base.FooterActionsView.enableTourButton`' +
+            ' is deprecated in 7.9.0.0 and will be removed in 7.11.0.0. ' +
+            'Please use `View.Views.Base.HelpletView.toggleTourLink` instead.');
         this.$('[data-action=tour]').removeClass('disabled');
         this.events['click [data-action=tour]'] = 'showTutorialClick';
         this.undelegateEvents();
         this.delegateEvents();
     },
+
+    /**
+     * Disable the (now non-existent) tour button.
+     *
+     * @deprecated 7.9 Will be removed in 7.11.
+     *   Please use `HelpletView.toggleTourLink` instead.
+     */
     disableTourButton: function() {
+        app.logger.warn('The function `View.Views.Base.FooterActionsView.disableTourButton`' +
+            ' is deprecated in 7.9.0.0 and will be removed in 7.11.0.0. ' +
+            'Please use `View.Views.Base.HelpletView.toggleTourLink` instead.');
         this.$('[data-action=tour]').addClass('disabled');
         delete this.events['click [data-action=tour]'];
         this.undelegateEvents();
@@ -104,7 +118,8 @@
             this.disableHelpButton(this.shouldHelpBeDisabled());
         }, this);
 
-        this._watchForDashboard();
+        // Create a doWhen to update the help button in the footer.
+        this._watchForHelpActive();
 
         app.shortcuts.registerGlobal({
             id: 'Shortcut:Help',
@@ -120,42 +135,42 @@
             if (this._feedbackView) {
                 this._feedbackView.dispose();
             }
+
+            if (this._helpLayout) {
+                this._helpLayout.dispose();
+            }
         }, this);
     },
 
     /**
-     * Watch for when the dashboard container gets rendered and enable the help buttons
-     *
+     * Watch the app state for when the help button needs to be active.
      * @private
      */
-    _watchForDashboard: function() {
-        if (this.watchingForDashboard === false) {
-            this.watchingForDashboard = true;
-            app.utils.doWhen(function() {
-                var layout = app.controller.layout;
-                if (!_.isUndefined(layout)) {
-                    if (layout.module == 'Home' || layout.name === 'bwc') {
-                        // if the layout exists and it's the `Home` Module or `bw`, just enable the button as
-                        // a url redirect is what is used for the help here.
-                        return true;
-                    } else {
-                        var sidebar = layout.getComponent('sidebar');
-                        if (sidebar) {
-                            var dashboard = sidebar.getComponent('dashboard-pane');
-                            if (dashboard) {
-                                // return true if we have dashlets or if we are on the list
-                                return (dashboard.$('.dashlets').length > 0 ||
-                                dashboard.$('.container-fluid').length == 1);
-                            }
-                        }
-                    }
-                }
-                return false;
-            }, _.bind(function() {
-                this.watchingForDashboard = false;
-                this.disableHelpButton(false);
-            }, this));
+    _watchForHelpActive: function() {
+        if (this.watchingForHelp) {
+            return;
         }
+        this.watchingForHelp = true;
+
+        app.utils.doWhen(this.helpActiveCheck, _.bind(function() {
+            // If the layout check passes, enable the help button
+            this.watchingForHelp = false;
+            this.disableHelpButton(false);
+        }, this));
+    },
+
+    /**
+     * Check to see if the help button should be active based on the current layout.
+     *
+     * @return {boolean} Returns true if the app state should always highlight
+     *  the help button.
+     */
+    helpActiveCheck: function() {
+        if (app.drawer && !app.drawer.isActive(this.$el)) {
+            return false;
+        }
+
+        return true;
     },
 
     /**
@@ -166,10 +181,23 @@
         return (_.indexOf(this.helpBtnDisabledLayouts, this.layoutName) !== -1);
     },
 
+    /**
+     * Checks if the help button should be set active.
+     *
+     * @param {boolean} drawer `true` should be passed when this method is called when
+     * a drawer is closing or opening.
+     * @return {boolean}
+     * @private
+     */
+    _shouldHelpBeActive: function(drawer) {
+        return drawer ? this.helpButton && this.helpButton.hasClass('active') : false;
+    },
+
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
         this.isShortcutsEnabled = (this.isAuthenticated && app.shortcuts.isEnabled());
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
+        this.helpButton = this.$('[data-action=help]');
     },
 
     /**
@@ -208,31 +236,60 @@
         this._feedbackView.toggle();
     },
 
+    /**
+     * Open the SugarCRM support website in another tab.
+     *
+     * @deprecated 7.9. Will be removed in 7.11.
+     */
     support: function() {
+        app.logger.warn('The function `View.Views.Base.FooterActionsView.support`' +
+            ' is deprecated in 7.9.0.0 and will be removed in 7.11.0.0.');
         window.open('http://support.sugarcrm.com', '_blank');
     },
 
     /**
-     * Help Button Click Event Listener
-     *
-     * @param {Object} event        The Click Event
+     * Help button click event listener.
      */
-    help: function(event) {
+    help: function() {
+        if (!app.isSynced) {
+            return;
+        }
+
+        if (this.helpButton.hasClass('disabled')) {
+            return;
+        }
+
+        // For bwc modules and the About page, handle the help click differently.
         if (this.layoutName === 'bwc' || this.layoutName === 'about') {
             this.bwcHelpClicked();
             return;
         }
-        var button = this.$('[data-action="help"]');
-        var buttonDisabled = button.hasClass('disabled');
-        var buttonAppEvent = button.hasClass('active') ? 'app:help:hide' : 'app:help:show';
 
-        if (!buttonDisabled) {
-            // add the disabled so that way if it's clicked again, it won't triggered the events again,
-            // this will get removed below
-            button.addClass('disabled');
-            // trigger the app event to show and hide the help dashboard
-            app.events.trigger(buttonAppEvent);
+        if (!this._helpLayout || this._helpLayout.disposed) {
+            this._createHelpLayout();
         }
+
+        this._helpLayout.toggle();
+    },
+
+    /**
+     * Creates the help layout.
+     *
+     * @param {jQuery} button The Help button.
+     * @private
+     */
+    _createHelpLayout: function() {
+        this._helpLayout = app.view.createLayout({
+            module: app.controller.context.get('module'),
+            type: 'help',
+            button: this.helpButton
+        });
+
+        this._helpLayout.initComponents();
+
+        this.listenTo(this._helpLayout, 'show hide', function(view, active) {
+            this.helpButton.toggleClass('active', active);
+        });
     },
 
     /**
@@ -242,15 +299,12 @@
      */
     disableHelpButton: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
-
-        var button = this.$('[data-action=help]');
-        if (button) {
-            button.toggleClass('disabled', disable);
+        if (this.helpButton) {
+            this.helpButton.toggleClass('disabled', disable);
         }
 
         if (disable) {
-            button.attr('aria-pressed', false);
-            this._watchForDashboard();
+            this._watchForHelpActive();
         }
 
         return disable;
@@ -264,7 +318,7 @@
      */
     toggleHelpButton: function(active, button) {
         if (_.isUndefined(button)) {
-            button = this.$('[data-action=help]');
+            button = this.helpButton;
         }
 
         if (button) {
@@ -295,10 +349,15 @@
     },
 
     /**
-     * click event for show tour icon
+     * Click event for the (now non-existent) show tour icon.
+     *
      * @param {Object} e click event.
+     * @deprecated 7.9. Will be removed in 7.11.
+     *   Please use `HelpletView.showTour` instead.
      */
     showTutorialClick: function(e) {
+        app.logger.warn('The function `View.Views.Base.FooterActionsView.showTutorialClick`' +
+            ' is deprecated in 7.9.0.0 and will be removed in 7.11.0.0.');
         if (!app.tutorial.instance) {
             this.showTutorial();
             e.currentTarget.blur();
@@ -306,10 +365,15 @@
     },
 
     /**
-     * show tour overlay
+     * Show tour overlay.
+     *
      * @param {Object} prefs preferences to preserve.
+     * @deprecated 7.9. Will be removed in 7.11.
      */
     showTutorial: function(prefs) {
+        app.logger.warn('The function `View.Views.Base.FooterActionsView.showTutorial`' +
+            ' is deprecated in 7.9.0.0 and will be removed in 7.11.0.0. '  +
+            'Please use `View.Views.Base.HelpletView.showTour` instead.');
         app.tutorial.resetPrefs(prefs);
         app.tutorial.show(app.controller.context.get('layout'), {module: app.controller.context.get('module')});
     },
@@ -322,7 +386,8 @@
             lang = app.lang.getLanguage(),
             module = app.controller.context.get('module'),
             route = this.routeParams.route,
-            url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor + '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route;
+            url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor +
+                '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route;
         if (route == 'bwc') {
             var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
             if (action && !_.isUndefined(action[1])) {

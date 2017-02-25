@@ -22,6 +22,7 @@ $viewdefs['pmse_Emails_Templates']['base']['layout']['emailtemplates'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'compose',

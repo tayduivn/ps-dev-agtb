@@ -48,7 +48,10 @@
                     var lastHomeKey = getLastHomeKey(),
                         lastHome = app.user.lastState.get(lastHomeKey);
                     if (lastHome === homeOptions.dashboard) {
-                        app.router.list('Home');
+                        app.controller.loadView({
+                            module: 'Home',
+                            layout: 'record'
+                        });
                     } else if (lastHome === homeOptions.activities) {
                         app.router.redirect('#activities');
                     }
@@ -74,8 +77,12 @@
                     var lastHomeKey = getLastHomeKey();
                     app.user.lastState.set(lastHomeKey, homeOptions.dashboard);
 
-                    // then continue on with default record routing
-                    app.router.record('Home', id);
+                    app.controller.loadView({
+                        module: 'Home',
+                        layout: 'record',
+                        action: 'detail',
+                        modelId: id
+                    });
                 }
             }
         ];

@@ -21,6 +21,7 @@ $viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'main-pane',
+                            'css_class' => 'main-pane span8',
                             'components' => array(
                                 array(
                                     'view' => 'nested-set-headerpane',
@@ -35,6 +36,7 @@ $viewdefs['Categories']['base']['layout']['nested-set-list'] = array(
                         'layout' => array(
                             'type' => 'base',
                             'name' => 'preview-pane',
+                            'css_class' => 'preview-pane',
                             'components' => array(
                                 array(
                                     'layout' => 'preview',

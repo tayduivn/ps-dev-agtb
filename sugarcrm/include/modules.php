@@ -564,7 +564,6 @@ $modInvisList[] = 'Filters';
 
 $beanList['Dashboards'] = 'Dashboard';
 $beanFiles['Dashboard'] = 'modules/Dashboards/Dashboard.php';
-$modInvisList[] = 'Dashboards';
 
 // Make Tags a visible module since all should have at least access to it
 $moduleList[] = 'Tags';

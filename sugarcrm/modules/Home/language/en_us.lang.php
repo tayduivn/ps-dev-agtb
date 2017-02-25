@@ -285,10 +285,8 @@ $mod_strings = array (
     //END SUGARCRM flav=ent ONLY
 
     // Record View Help Text
-    'LBL_HELP_RECORD_TITLE' => 'Welcome to the Sugar 7 Help Dashboard',
-    'LBL_HELP_RECORD' => 'The Help Dashlet displays specific information about the module you are viewing, provides detailed steps for performing some actions in the module, and directs you where to go for more comprehensive information and support. The Help Dashlet remains open so you can view the steps as you execute the steps in the module.
-
-The Help Dashboard is available for all Sugar 7 modules and can be toggled "open" and "closed" by clicking the Help icon in the application footer.',
+    'LBL_HELP_RECORD_TITLE' => 'Help',
+    'LBL_HELP_RECORD' => 'Help displays specific information about the module you are viewing, provides detailed steps for performing some actions in the module, and directs you where to go for more comprehensive information and support.',
 
     'LBL_FACETS_DASHBOARD_TITLE' => 'Filter',
 );
