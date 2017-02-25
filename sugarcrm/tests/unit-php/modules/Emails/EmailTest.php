@@ -25,11 +25,11 @@ class EmailTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendEmail_OnlyDraftsCanBeSent()
     {
-        $user = $this->createMock('\User');
+        $user = $this->createMock('\\User');
         $user->id = Uuid::uuid1();
         $config = new \OutboundEmailConfiguration($user);
 
-        $email = $this->createPartialMock('\Email', []);
+        $email = $this->createPartialMock('\\Email', []);
         $email->state = \Email::STATE_ARCHIVED;
         $email->sendEmail($config);
     }

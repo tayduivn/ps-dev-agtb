@@ -24,7 +24,7 @@ class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testSmtpConnect()
     {
-        $mailer = $this->createPartialMock('\PHPMailerProxy', ['getSMTPInstance']);
+        $mailer = $this->createPartialMock('\\PHPMailerProxy', ['getSMTPInstance']);
         $mailer->expects($this->never())->method('getSMTPInstance');
         $actual = $mailer->smtpConnect();
         $this->assertTrue($actual);
@@ -37,7 +37,7 @@ class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testSend()
     {
-        $mailer = $this->createPartialMock('\PHPMailerProxy', ['preSend', 'postSend']);
+        $mailer = $this->createPartialMock('\\PHPMailerProxy', ['preSend', 'postSend']);
         $mailer->expects($this->once())->method('preSend')->willReturn(true);
         $mailer->expects($this->never())->method('postSend');
         $mailer->send();
@@ -66,7 +66,7 @@ class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
     {
         $hostname = 'mycompany.com';
 
-        $mailer = $this->createPartialMock('\PHPMailerProxy', [
+        $mailer = $this->createPartialMock('\\PHPMailerProxy', [
             'headerLine',
             'addrFormat',
             'addrAppend',
@@ -96,7 +96,7 @@ class PHPMailerProxyTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateHeader_UsesExistingMessageID()
     {
-        $mailer = $this->createPartialMock('\PHPMailerProxy', [
+        $mailer = $this->createPartialMock('\\PHPMailerProxy', [
             'headerLine',
             'addrFormat',
             'addrAppend',

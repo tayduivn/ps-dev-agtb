@@ -26,7 +26,7 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->bean = $this->createPartialMock('\OutboundEmail', []);
+        $this->bean = $this->createPartialMock('\\OutboundEmail', []);
         $this->bean->field_defs = [
             'id' => [
                 'name' => 'id',
@@ -202,7 +202,7 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsOwner()
     {
-        $GLOBALS['current_user'] = $this->createMock('\User');
+        $GLOBALS['current_user'] = $this->createMock('\\User');
         $GLOBALS['current_user']->id = Uuid::uuid1();
 
         $isOwner = $this->bean->isOwner($GLOBALS['current_user']->id);
@@ -328,17 +328,17 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
     {
         $primary = 'foo@bar.com';
         $primaryId = Uuid::uuid1();
-        $ea = $this->createPartialMock('\EmailAddress', ['getEmailGUID']);
+        $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID']);
         $ea->method('getEmailGUID')->willReturn($primaryId);
 
-        $user = $this->createPartialMock('\User', ['getUsersNameAndEmail']);
+        $user = $this->createPartialMock('\\User', ['getUsersNameAndEmail']);
         $user->id = Uuid::uuid1();
         $user->name = 'George Butler';
         $user->emailAddress = $ea;
         $user->method('getUsersNameAndEmail')->willReturn(['email' => $primary, 'name' => $user->name]);
         $GLOBALS['current_user'] = $user;
 
-        $bean = $this->createPartialMock('\OutboundEmail', [
+        $bean = $this->createPartialMock('\\OutboundEmail', [
             'isAllowUserAccessToSystemDefaultOutbound',
             'decrypt_after_retrieve',
         ]);
@@ -394,17 +394,17 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
     {
         $primary = 'foo@bar.com';
         $primaryId = Uuid::uuid1();
-        $ea = $this->createPartialMock('\EmailAddress', ['getEmailGUID']);
+        $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID']);
         $ea->method('getEmailGUID')->willReturn($primaryId);
 
-        $user = $this->createPartialMock('\User', ['getUsersNameAndEmail']);
+        $user = $this->createPartialMock('\\User', ['getUsersNameAndEmail']);
         $user->id = Uuid::uuid1();
         $user->name = 'George Butler';
         $user->emailAddress = $ea;
         $user->method('getUsersNameAndEmail')->willReturn(['email' => $primary, 'name' => $user->name]);
         $GLOBALS['current_user'] = $user;
 
-        $bean = $this->createPartialMock('\OutboundEmail', [
+        $bean = $this->createPartialMock('\\OutboundEmail', [
             'isAllowUserAccessToSystemDefaultOutbound',
             'decrypt_after_retrieve',
         ]);
@@ -482,10 +482,10 @@ class OutboundEmailTest extends \PHPUnit_Framework_TestCase
     {
         $primary = 'foo@bar.com';
         $primaryId = Uuid::uuid1();
-        $ea = $this->createPartialMock('\EmailAddress', ['getEmailGUID']);
+        $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID']);
         $ea->method('getEmailGUID')->willReturn($primaryId);
 
-        $user = $this->createPartialMock('\User', ['getUsersNameAndEmail']);
+        $user = $this->createPartialMock('\\User', ['getUsersNameAndEmail']);
         $user->id = Uuid::uuid1();
         $user->name = 'George Butler';
         $user->emailAddress = $ea;
