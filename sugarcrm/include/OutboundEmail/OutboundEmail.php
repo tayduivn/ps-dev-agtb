@@ -490,22 +490,19 @@ class OutboundEmail
         global $sugar_config;
 	    $values = array();
 
-        $validKeys = array();
-
-	    foreach($fieldDefs as $def) {
-	    	if ($def == 'mail_smtppass' && !empty($this->$def)) {
-                $this->$def = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->$def);
-	    	} // if
-	    	if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl' || $def == 'mail_smtpport'){
-	    		if(empty($this->$def)){
-	    			$this->$def = 0;
-	    		}
-	    		$values[] = intval($this->$def);
-                        $validKeys[] = $def;
-	    	} else if (isset($this->$def)) {
-	    		$values[] = $this->db->quoted($this->$def);
-                        $validKeys[] = $def;
-	    	}
+        foreach ($fieldDefs as $field => $def) {
+            if (isset($this->$field)) {
+                if ($field == 'mail_smtppass') {
+                    $this->mail_smtppass = Blowfish::encode(Blowfish::getKey('OutBoundEmail'), $this->mail_smtppass);
+                }
+                if ($field == 'mail_smtpserver'
+                    && !empty($sugar_config['bad_smtpservers'])
+                    && in_array($this->mail_smtpserver, $sugar_config['bad_smtpservers'])
+                ) {
+                    $this->mail_smtpserver = '';
+                }
+                $values[$field] = $this->$field;
+            }
 	    }
 	    return $values;
 	}
