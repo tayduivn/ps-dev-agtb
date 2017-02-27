@@ -168,9 +168,11 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
             $managerReportees[$subManager1->id],
             "SubManager leaf count did not match after delete"
         );
+
         //now with deleted rows
         $managerReportees = User::getReporteesWithLeafCount($manager->id, true);
         $this->assertEquals("1", $managerReportees[$subManager1->id], "SubManager leaf count did not match");
+
     }
 
     /**
@@ -202,7 +204,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $rep3->save();
 
         //get leaf arrays
-        $managerReportees = User::getReporteesWithLeafCount($manager->id, false, ['first_name']);
+        $managerReportees = User::getReporteesWithLeafCount($manager->id, false, array('first_name'));
 
         //check normal scenario
         $this->assertEquals("1", $managerReportees[$subManager1->id]['total'], "SubManager leaf count did not match");

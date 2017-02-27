@@ -83,9 +83,8 @@ class UsersLastImport extends SugarBean
      */
     public function mark_deleted_by_user_id($user_id)
     {
-        $query = "DELETE FROM {$this->table_name} WHERE assigned_user_id = ? ";
-        $conn = $this->db->getConnection();
-        $conn->executeQuery($query, array($user_id));
+        $query = "DELETE FROM $this->table_name WHERE assigned_user_id = '$user_id'";
+        $this->db->query($query,true,"Error marking last imported records deleted: ");
     }
 
     /**

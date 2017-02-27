@@ -64,8 +64,19 @@ class One2MRelationship extends M2MRelationship
             }
         } else
         {
-            $this->lhsLinkDef = $this->getLinkedDefForModuleByRelationship($lhsModule);
-            $this->rhsLinkDef = $this->getLinkedDefForModuleByRelationship($rhsModule);
+            $this->lhsLinkDef = VardefManager::getLinkFieldForRelationship(
+                $lhsModule, BeanFactory::getObjectName($lhsModule), $this->name
+            );
+            $this->rhsLinkDef = VardefManager::getLinkFieldForRelationship(
+                $rhsModule, BeanFactory::getObjectName($rhsModule), $this->name
+            );
+            if (!isset($this->lhsLinkDef['name']) && isset($this->lhsLinkDef[0]))
+            {
+                $this->lhsLinkDef = $this->lhsLinkDef[0];
+            }
+            if (!isset($this->rhsLinkDef['name']) && isset($this->rhsLinkDef[0])) {
+                $this->rhsLinkDef = $this->rhsLinkDef[0];
+            }
         }
         $this->lhsLink = $this->lhsLinkDef['name'];
         $this->rhsLink = $this->rhsLinkDef['name'];

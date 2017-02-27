@@ -55,15 +55,13 @@ class CampaignLog extends SugarBean {
         $table = strtolower($temp_array['TARGET_TYPE']);
 
         if($temp_array['TARGET_TYPE']=='Accounts'){
-            $query = "select name from $table where id = ? ";
+            $query = "select name from $table where id = ".$this->db->quoted($temp_array['TARGET_ID']);
         }else{
             $query = "select first_name, last_name, ".$this->db->concat($table, array('first_name', 'last_name'))." name from $table" .
-                " where id = ? ";
+                " where id = ".$this->db->quoted($temp_array['TARGET_ID']);
         }
-
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($temp_array['TARGET_ID']));
-        $row = $stmt->fetch();
+        $result=$this->db->query($query);
+        $row=$this->db->fetchByAssoc($result);
 
         if ($row) {
             if($temp_array['TARGET_TYPE']=='Accounts'){
@@ -75,10 +73,9 @@ class CampaignLog extends SugarBean {
         }
         $temp_array['RECIPIENT_EMAIL']=$this->retrieve_email_address($temp_array['TARGET_ID']);
 
-        $query = "select name from email_marketing where id = ? ";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($temp_array['MARKETING_ID']));
-        $row = $stmt->fetch();
+        $query = 'select name from email_marketing where id = \'' . $temp_array['MARKETING_ID'] . '\'';
+        $result=$this->db->query($query);
+        $row=$this->db->fetchByAssoc($result);
 
         if ($row)
         {
@@ -94,14 +91,13 @@ class CampaignLog extends SugarBean {
             $qry  = " select eabr.primary_address, ea.email_address";
             $qry .= " from email_addresses ea ";
             $qry .= " Left Join email_addr_bean_rel eabr on eabr.email_address_id = ea.id ";
-            $qry .= " where eabr.bean_id = ? ";
+            $qry .= " where eabr.bean_id = '{$trgt_id}' ";
             $qry .= " and ea.deleted = 0 ";
             $qry .= " and eabr.deleted = 0" ;
             $qry .= " order by primary_address desc ";
 
-            $conn = $this->db->getConnection();
-            $stmt = $conn->executeQuery($qry, array($trgt_id));
-            $row = $stmt->fetch();
+            $result=$this->db->query($qry);
+            $row=$this->db->fetchByAssoc($result);
 
             if (!empty($row['email_address'])){
                 $return_str = $row['email_address'];
@@ -119,57 +115,51 @@ class CampaignLog extends SugarBean {
         global $locale;
         $db= DBManagerFactory::getInstance();
         if ($related_type == 'Emails') {
-            $query="SELECT name from emails where id = ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $name = $stmt->fetchColumn();
-            if ($name != null) {
-                return $name;
+            $query="SELECT name from emails where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
+            if ($row != null) {
+                return $row['name'];
             }
         }
         if ($related_type == 'Contacts') {
-            $query="SELECT first_name, last_name from contacts where id = ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $row = $stmt->fetch();
+            $query="SELECT first_name, last_name from contacts where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
             if ($row != null) {
                 return $full_name = $locale->formatName('Contacts', $row);
             }
         }
         if ($related_type == 'Leads') {
-            $query="SELECT first_name, last_name from leads where id = ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $row = $stmt->fetch();
+            $query="SELECT first_name, last_name from leads where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
             if ($row != null) {
                 return $full_name = $locale->formatName('Leads', $row);
             }
         }
         if ($related_type == 'Prospects') {
-            $query="SELECT first_name, last_name from prospects where id = ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $row = $stmt->fetch();
+            $query="SELECT first_name, last_name from prospects where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
             if ($row != null) {
                 return $full_name = $locale->formatName('Prospects', $row);
             }
         }
         if ($related_type == 'CampaignTrackers') {
-            $query="SELECT tracker_url from campaign_trkrs where id = ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $col = $stmt->fetchColumn();
-            if ($col != null) {
-                return $col;
+            $query="SELECT tracker_url from campaign_trkrs where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
+            if ($row != null) {
+                return $row['tracker_url'] ;
             }
         }
         if ($related_type == 'Accounts') {
-            $query="SELECT name from accounts where id= ? ";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($query, array($related_id));
-            $name = $stmt->fetchColumn();
-            if ($name != null) {
-                return $name;
+            $query="SELECT name from accounts where id='$related_id'";
+            $result=$db->query($query);
+            $row=$db->fetchByAssoc($result);
+            if ($row != null) {
+                return $row['name'];
             }
         }
 		return $related_id.$related_type;

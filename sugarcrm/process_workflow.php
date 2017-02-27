@@ -20,7 +20,7 @@ $mod_strings = return_module_language('en_us', 'WorkFlow');
 
 //run as admin
 global $current_user;
-$current_user->getSystemUser();
+$current_user = Scheduler::initUser();
 
 $process_object = new WorkFlowSchedule();
 $process_object->process_scheduled();

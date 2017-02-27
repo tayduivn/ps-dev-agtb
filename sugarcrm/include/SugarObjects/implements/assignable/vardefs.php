@@ -66,7 +66,6 @@ $vardefs = array(
     'duplicate_merge'=>'enabled',
     'id_name' => 'assigned_user_id',
     'table' => 'users',
-        'side' => 'right',
   ),
 ),
     'indices' => array(

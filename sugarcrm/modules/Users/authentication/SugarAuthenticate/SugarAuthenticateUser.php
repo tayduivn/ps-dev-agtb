@@ -29,16 +29,15 @@ class SugarAuthenticateUser{
 	 */
 	function authenticateUser($name, $password, $fallback=false)
 	{
-        $row = User::getUserDataByNameAndPassword($name, $password);
+	    $row = User::findUserPassword($name, $password, "(portal_only IS NULL OR portal_only !='1') AND (is_group IS NULL OR is_group !='1') AND status !='Inactive'");
 
 	    // set the ID in the seed user.  This can be used for retrieving the full user record later
 		//if it's falling back on Sugar Authentication after the login failed on an external authentication return empty if the user has external_auth_disabled for them
-
-        if ($row && empty($row['external_auth_only']) && $row['portal_only'] != 1 && $row['is_group'] != 1) {
-            return $row['id'];
-        } else {
-            return '';
-        }
+		if (empty ($row) || !empty($row['external_auth_only'])) {
+			return '';
+		} else {
+			return $row['id'];
+		}
 	}
 	/**
 	 * Checks if a user is a sugarLogin user
@@ -50,8 +49,8 @@ class SugarAuthenticateUser{
 	 */
 	function isSugarLogin($name, $password)
 	{
-        $row = User::getUserDataByNameAndPassword($name, $password);
-        return $row && $row['portal_only'] != 1 && $row['is_group'] != 1 && $row['sugar_login'] == 1;
+	    $row = User::findUserPassword($name, $password, "(portal_only IS NULL OR portal_only !='1') AND (is_group IS NULL OR is_group !='1') AND status !='Inactive' AND sugar_login=1");
+	    return !empty($row);
 	}
 
     /**

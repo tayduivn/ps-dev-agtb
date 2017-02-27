@@ -9,7 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-use Sugarcrm\Sugarcrm\Util\Uuid;
 
 require_once("vendor/ytree/Tree.php");
 require_once("vendor/ytree/ExtNode.php");
@@ -65,28 +64,77 @@ class SugarFolder {
 	var $_depth;
 
     /**
-     * folder field definition
+     * Basic field metadata format.
+     * The metadata follows the basic SugarBean metadata format.
+     * Attention: This metadata does not accept the full metadata
+     * vardefs for dbTypes.
+     *
      * @var array
      */
-    private $fields = [];
-
-    /**
-     * folder subscription field definition
-     * @var array
-     */
-    protected $folderSubscriptionFields = [];
-
-    /**
-     * folder table name
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * folder subscription table name
-     * @var string
-     */
-    protected $folderSubscriptionTable;
+    private $fields = array(
+        'id' => array(
+            'name' => 'id',
+            'type' => 'id',
+        ),
+        'name' => array(
+            'name' => 'name',
+            'type' => 'varchar',
+        ),
+        'folder_type' => array(
+            'name' => 'folder_type',
+            'type' => 'varchar',
+        ),
+        'parent_folder' => array(
+            'name' => 'parent_folder',
+            'type' => 'link',
+        ),
+        'has_child' => array(
+            'name' => 'has_child',
+            'type' => 'tinyint',
+        ),
+        'is_group' => array(
+            'name' => 'is_group',
+            'type' => 'tinyint',
+        ),
+        'is_dynamic' => array(
+            'name' => 'is_dynamic',
+            'type' => 'tinyint',
+        ),
+        'dynamic_query' => array(
+            'name' => 'dynamic_query',
+            'type' => 'text',
+        ),
+        'assign_to_id' => array(
+            'name' => 'assign_to_id',
+            'type' => 'link',
+        ),
+        'team_set_id' => array(
+            'name' => 'team_set_id',
+            'type' => 'link',
+        ),
+        'team_id' => array(
+            'name' => 'team_id',
+            'type' => 'link',
+        ),
+//BEGIN SUGARCRM flav=ent ONLY
+        'acl_team_set_id' => array(
+            'name' => 'acl_team_set_id',
+            'type' => 'id',
+        ),
+//END SUGARCRM flav=ent ONLY
+        'created_by' => array(
+            'name' => 'created_by',
+            'type' => 'link',
+        ),
+        'modified_by' => array(
+            'name' => 'modified_by',
+            'type' => 'link',
+        ),
+        'deleted' => array(
+            'name' => 'deleted',
+            'type' => 'tinyint',
+        ),
+    );
 
 	/**
 	 * Sole constructor
@@ -95,35 +143,27 @@ class SugarFolder {
     {
 		$this->db = DBManagerFactory::getInstance();
         $this->emailBean = BeanFactory::getBean('Emails');
-        $dictionary = [];
-        require 'metadata/foldersMetaData.php';
-        $this->table = $dictionary['folders']['table'];
-        $this->fields = $dictionary['folders']['fields'];
-        $this->folderSubscriptionTable = $dictionary['folders_subscriptions']['table'];
-        $this->folderSubscriptionFields = $dictionary['folders_subscriptions']['fields'];
 	}
 
 	function deleteEmailFromAllFolder($id) {
-        $this->db->getConnection()->delete(
-            'folders_rel',
-            ['polymorphic_module' => 'Emails', 'polymorphic_id' => $id]
-        );
+		$q = "delete from folders_rel where polymorphic_module = 'Emails' AND polymorphic_id = '{$id}' ";
+		$r = $this->db->query($q);
 	}
 
 	function deleteEmailFromFolder($id) {
-        $this->db->getConnection()->delete(
-            'folders_rel',
-            ['polymorphic_module' => 'Emails', 'polymorphic_id' => $id, 'folder_id' => $this->id]
-        );
+		$q = "delete from folders_rel where polymorphic_module = 'Emails' AND polymorphic_id = '{$id}' AND folder_id = '{$this->id}'";
+		$r = $this->db->query($q);
 	}
 
 	function checkEmailExistForFolder($id) {
-        $count = $this->db->getConnection()->executeQuery(
-            "SELECT COUNT(*) FROM folders_rel"
-            . " WHERE polymorphic_module = 'Emails' AND polymorphic_id = ? AND folder_id = ?",
-            [$id, $this->id]
-        )->fetchColumn();
-        return $count > 0;
+		$q = "SELECT COUNT(*) c from folders_rel where polymorphic_module = 'Emails' AND polymorphic_id = '{$id}' AND folder_id = '{$this->id}'";
+		$r = $this->db->query($q);
+		$a = $this->db->fetchByAssoc($r);
+		if ($a['c'] > 0) {
+			return true;
+		} else {
+			return false;
+		} // else
 	}
 	/**
 	 * Moves beans from one folder to another folder
@@ -132,24 +172,17 @@ class SugarFolder {
 	 * @param string beanId GUID of SugarBean being moved
 	 */
 	function move($fromFolder, $toFolder, $beanId) {
-        $this->db->getConnection()->update('folders_rel', ['folder_id' => $toFolder], [
-            'folder_id' => $fromFolder,
-            'polymorphic_id' => $beanId,
-            'deleted' => 0,
-        ]);
+		$q = "UPDATE folders_rel SET folder_id = '{$toFolder}' WHERE folder_id = '{$fromFolder}' AND polymorphic_id = '{$beanId}' AND deleted = 0";
+		$r = $this->db->query($q);
 	}
 
 	/**
 	 * Copies one bean from one folder to another
 	 */
 	function copyBean($fromFolder, $toFolder, $beanId, $module) {
-        $this->db->getConnection()->insert('folders_rel', [
-            'id' => Uuid::uuid1(),
-            'folder_id' => $toFolder,
-            'polymorphic_module' => $module,
-            'polymorphic_id' => $beanId,
-            'deleted' => 0,
-        ]);
+		$q = "INSERT INTO folders_rel (id, folder_id, polymorphic_module, polymorphic_id, deleted)
+				VALUES('{$guid}', '{$toFolder}', '{$module}', '{$beanId}', 0)";
+		$r = $this->db->query($q);
 	}
 
 	/**
@@ -184,10 +217,14 @@ class SugarFolder {
 			global $current_user;
 			$user = $current_user;
 		}
-        return $this->db->getConnection()->executeQuery(
-            'SELECT folder_id FROM folders_subscriptions WHERE assigned_user_id = ?',
-            [$user->id]
-        )->fetchAll(\PDO::FETCH_COLUMN);
+
+		$q = "SELECT folder_id FROM folders_subscriptions WHERE assigned_user_id = '{$user->id}'";
+		$r = $this->db->query($q);
+		$ret = array();
+		while($a = $this->db->fetchByAssoc($r)) {
+			$ret[] = $a['folder_id'];
+		}
+		return $ret;
 	}
 
 	/**
@@ -209,11 +246,12 @@ class SugarFolder {
 			$id = trim($id);
 			if(!empty($id)) {
 				$cleanSubscriptions[] = $id;
-                $parentFolder = $this->db->getConnection()
-                    ->executeQuery('SELECT parent_folder FROM folders WHERE id = ?', [$id])
-                    ->fetchColumn();
-                if (!empty($parentFolder)) {
-                    $cleanSubscriptions = $this->getParentIDRecursive($parentFolder, $cleanSubscriptions);
+				$qChk = "SELECT parent_folder FROM folders WHERE id = '{$id}'";
+				$rChk = $this->db->query($qChk);
+				$aChk = $this->db->fetchByAssoc($rChk);
+
+				if(!empty($aChk['parent_folder'])) {
+					$cleanSubscriptions = $this->getParentIDRecursive($aChk['parent_folder'], $cleanSubscriptions);
 				}
 			}
 		}
@@ -234,13 +272,10 @@ class SugarFolder {
 	 */
 	function insertFolderSubscription($folderId, $userID)
 	{
-        $id = Uuid::uuid1();
-        $this->db->getConnection()->insert('folders_subscriptions', [
-            'id' => $id,
-            'folder_id' => $folderId,
-            'assigned_user_id' => $userID,
-        ]);
-        return $id;
+	    $guid = create_guid();
+		$query = "INSERT INTO folders_subscriptions (id, folder_id, assigned_user_id) VALUES ('{$guid}', '{$folderId}', '{$userID}')";
+		$r = $this->db->query($query);
+		return $guid;
 	}
 	/**
 	 * Recursively finds parent node until it hits root
@@ -249,15 +284,23 @@ class SugarFolder {
 	 * @return array of IDs
 	 */
 	function getParentIDRecursive($id, $ret=array()) {
+		$q = "SELECT * FROM folders WHERE id = '{$id}' AND deleted = 0";
+		$r = $this->db->query($q);
+		$a = $this->db->fetchByAssoc($r);
+
 		if(!in_array($id, $ret)) {
 			$ret[] = $id;
 		}
 
-        $parentFolder = $this->db->getConnection()
-            ->executeQuery('SELECT parent_folder FROM folders WHERE id = ? AND deleted = 0', [$id])->fetchColumn();
-        if (!empty($parentFolder)) {
-            $ret = $this->getParentIDRecursive($parentFolder, $ret);
-        }
+		if($a['parent_folder'] != '') {
+			$qChk = "SELECT parent_folder FROM folders WHERE id = '{$id}'";
+			$rChk = $this->db->query($qChk);
+			$aChk = $this->db->fetchByAssoc($rChk);
+
+			if(!empty($aChk['parent_folder'])) {
+				$ret = $this->getParentIDRecursive($aChk['parent_folder'], $ret);
+			}
+		}
 
 		return $ret;
 	}
@@ -269,8 +312,8 @@ class SugarFolder {
 		global $current_user;
 
 		if(!empty($current_user->id)) {
-            $this->db->getConnection()
-                ->delete('folders_subscriptions', ['assigned_user_id' => $current_user->id]);
+			$q = "DELETE FROM folders_subscriptions WHERE assigned_user_id = '{$current_user->id}'";
+			$r = $this->db->query($q);
 		}
 	}
 
@@ -282,7 +325,8 @@ class SugarFolder {
 	 */
 	function clearSubscriptionsForFolder($folderID)
 	{
-        $this->db->getConnection()->delete('folders_subscriptions', ['folder_id' => $folderID]);
+	    $query = "DELETE FROM folders_subscriptions WHERE folder_id = '$folderID'";
+	    $r = $this->db->query($query);
 	}
 
 	protected function generateArchiveFolderQuery()
@@ -549,14 +593,16 @@ ENDW;
 			return false;
 		}
 
-        $this->db->getConnection()->insert('folders_rel', [
-            'id' => Uuid::uuid1(),
-            'folder_id' => $this->id,
-            'polymorphic_module' => $bean->module_dir,
-            'polymorphic_id' => $bean->id,
-            'deleted' => 0,
-        ]);
+		global $current_user;
+		if($user == null) {
+			$user = $current_user;
+		}
 
+		$guid = create_guid();
+
+		$q = "INSERT INTO folders_rel (id, folder_id, polymorphic_module, polymorphic_id, deleted)
+				VALUES('{$guid}', '{$this->id}', '{$bean->module_dir}', '{$bean->id}', 0)";
+		$r = $this->db->query($q);
 		return true;
 	}
 
@@ -587,19 +633,17 @@ ENDW;
 
         // need space in coalesce for oracle to avoid to null conversion
         $rootWhere = "AND (f.parent_folder IS NULL OR f.parent_folder = '')";
-        $parameters = [];
+
 		if($subscribed) {
-            $q = $this->coreSubscribed . $teamSecurityClause . $this->coreWhereSubscribed . '? '
-                . $rootWhere . $this->coreOrderBy;
-            $parameters[] = $user->id;
-        } else {
+			$q = $this->coreSubscribed.$teamSecurityClause.$this->coreWhereSubscribed."'{$user->id}' ".$rootWhere.$this->coreOrderBy;
+		} else {
 			$q = $this->core.$teamSecurityClause.$this->coreWhere.$rootWhere.$this->coreOrderBy;
 		}
-        $stmt = $this->db->getConnection()->executeQuery($q, $parameters);
+		$r = $this->db->query($q);
 		$return = array();
 
 		$found = array();
-        while ($a = $stmt->fetch()) {
+		while($a = $this->db->fetchByAssoc($r, false)) {
             $a['created_by'] = $this->db->fromConvert($a['created_by'], 'id');
 
 			if ((($a['folder_type'] == $myEmailTypeString) ||
@@ -664,11 +708,10 @@ ENDW;
 			}
 
 			if($a['has_child'] == 1) {
-                $getChildrenStmt = $this->db->getConnection()->executeQuery(
-                    $this->core . $this->coreWhere . 'AND parent_folder = ?',
-                    [$a['id']]
-                );
-                while ($aGetChildren = $getChildrenStmt->fetch()) {
+				$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}'";
+				$rGetChildren = $this->db->query($qGetChildren);
+
+				while($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
 					if($a['is_group']) {
 						$this->_depth = 1;
 						$grp = $this->getFoldersChildForSettings($aGetChildren, $grp, $subscriptions);
@@ -705,11 +748,9 @@ ENDW;
 
 		if($a['has_child'] == 1) {
 			$this->_depth++;
-            $getChildrenStmt = $this->db->getConnection()->executeQuery(
-                $this->core . $this->coreWhere . 'AND parent_folder = ?',
-                [$a['id']]
-            );
-            while ($aGetChildren = $getChildrenStmt->fetch()) {
+			$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}'";
+			$rGetChildren = $this->db->query($qGetChildren);
+			while($aGetChildren = $this->db->fetchByAssoc($rGetChildren)) {
 				$collection = $this->getFoldersChildForSettings($aGetChildren, $collection, $subscriptions);
 			}
 		}
@@ -785,11 +826,10 @@ ENDW;
 	        $folderNode->set_property('children', array());
 
 			if(in_array($a['id'], $subscriptions) && $a['has_child'] == 1) {
-                $getChildrenStmt = $this->db->getConnection()->executeQuery(
-                    $this->core . $this->coreWhere . 'AND parent_folder = ?',
-                    [$a['id']]
-                );
-                while ($aGetChildren = $getChildrenStmt->fetch()) {
+				$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}'";
+				$rGetChildren = $this->db->query($qGetChildren);
+
+				while ($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
                     if (in_array($aGetChildren['id'], $subscriptions)) {
 						$folderNode->add_node($this->buildTreeNodeFolders($aGetChildren, $nodePath, $folderStates, $subscriptions));
 					}
@@ -876,12 +916,10 @@ ENDW;
 	    $folderNode->set_property('folder_type', $a['folder_type']);
 
 		if(in_array($a['id'], $subscriptions) && $a['has_child'] == 1) {
-            $getChildrenStmt = $this->db->getConnection()->executeQuery(
-                $this->core . $this->coreWhere . 'AND parent_folder = ? ' . $this->coreOrderBy,
-                [$a['id']]
-            );
+			$qGetChildren = $this->core.$this->coreWhere."AND parent_folder = '{$a['id']}' ".$this->coreOrderBy;
+			$rGetChildren = $this->db->query($qGetChildren);
 
-            while ($aGetChildren = $getChildrenStmt->fetch()) {
+			while ($aGetChildren = $this->db->fetchByAssoc($rGetChildren, false)) {
 				$folderNode->add_node($this->buildTreeNodeFolders($aGetChildren, $nodePath, $folderStates, $subscriptions));
 			}
 		}
@@ -899,14 +937,10 @@ ENDW;
 			if($this->has_child) {
 				$this->deleteChildrenCascade($this->id);
 			}
-            $qb = $this->db->getConnection()->createQueryBuilder();
-            $qb->update('folders')
-                ->set('deleted', 1)
-                ->where($qb->expr()->eq('id', $qb->createPositionalParameter($this->id)));
-            if (!$current_user->isAdmin()) {
-                $qb->andWhere($qb->expr()->eq('created_by', $current_user->id));
-            }
-            $qb->execute();
+
+			$ownerCheck = ($current_user->is_admin == 0) ? " AND created_by = '{$current_user->id}'" : "";
+			$q = "UPDATE folders SET deleted = 1 WHERE id = '{$this->id}'{$ownerCheck}";
+			$r = $this->db->query($q);
 			return true;
 		}
 		return false;
@@ -920,54 +954,75 @@ ENDW;
 	function deleteChildrenCascade($id) {
 		global $current_user;
 
-        $conn = $this->db->getConnection();
 		$canContinue = true;
-        $count = $conn->executeQuery(
-            'SELECT count(*) FROM inbound_email WHERE groupfolder_id = ? and deleted = 0',
-            [$id]
-        )->fetchColumn();
-        if ($count > 0) {
+		$checkInboundQuery = "SELECT count(*) c FROM inbound_email WHERE groupfolder_id = '{$id}' and deleted = 0";
+		$resultSet = $this->db->query($checkInboundQuery);
+		$a = $this->db->fetchByAssoc($resultSet);
+		if ($a['c'] > 0) {
 			return false;
 		} // if
 
-        $count = $conn->executeQuery(
-            "SELECT count(*) c FROM folders_rel where polymorphic_module = 'Emails' and folder_id = ? and deleted = 0",
-            [$id]
-        )->fetchColumn();
-        if ($count > 0) {
+		$q = "SELECT COUNT(*) c from folders_rel where polymorphic_module = 'Emails' AND polymorphic_id = '{$id}' AND folder_id = '{$this->id}'";
+
+		$checkEmailQuery = "SELECT count(*) c FROM folders_rel where polymorphic_module = 'Emails' and folder_id = '{$id}' and deleted = 0";
+		$resultSet = $this->db->query($checkEmailQuery);
+		$a = $this->db->fetchByAssoc($resultSet);
+		if ($a['c'] > 0) {
 			return false;
 		} // if
 
-        $doesFolderHaveChild = $conn->executeQuery('SELECT has_child FROM folders WHERE id = ?', [$id])->fetchColumn();
-        if ($doesFolderHaveChild == 1) {
-            $subFolderStmt = $conn->executeQuery(
-                'SELECT id FROM folders WHERE parent_folder = ?',
-                [$id]
-            );
-            while ($subFolder = $subFolderStmt->fetch()) {
-                $canContinue = $this->deleteChildrenCascade($subFolder['id']);
-            }
-        }
+		$q = "SELECT * FROM folders WHERE id = '{$id}'";
+		$r = $this->db->query($q);
+		$a = $this->db->fetchByAssoc($r);
+
+		if($a['has_child'] == 1) {
+			$q2 = "SELECT id FROM folders WHERE parent_folder = '{$id}'";
+			$r2 = $this->db->query($q2);
+
+			while($a2 = $this->db->fetchByAssoc($r2)) {
+				$canContinue = $this->deleteChildrenCascade($a2['id']);
+			}
+		}
 
 		if ($canContinue) {
-            // flag deleted
-            $update = $conn->createQueryBuilder()
-                ->update('folders')
-                ->set('deleted', 1);
-            $update->where($update->expr()->eq('id', $update->createPositionalParameter($id)));
-            if (!$current_user->isAdmin()) {
-                $update->andWhere(
-                    $update->expr()->eq('created_by', $update->createPositionalParameter($current_user->id))
-                );
-            }
-            $update->execute();
-            // flag rels
-            $conn->update('folders_rel', ['deleted' => 1], ['folder_id' => $id]);
-            // delete subscriptions
-            $conn->delete('folders_subscriptions', ['folder_id' => $id]);
+			// flag deleted
+			$ownerCheck = ($current_user->is_admin == 0) ? " AND created_by = '{$current_user->id}'" : "";
+			$q3 = "UPDATE folders SET deleted = 1 WHERE id = '{$id}'{$ownerCheck}";
+			$r3 = $this->db->query($q3);
+
+			// flag rels
+			$qRel = "UPDATE folders_rel SET deleted = 1 WHERE folder_id = '{$id}'";
+			$rRel = $this->db->query($qRel);
+
+			// delete subscriptions
+			$qSub = "DELETE FROM folders_subscriptions WHERE folder_id = '{$id}'";
+			$rSub = $this->db->query($qSub);
 		}
 		return $canContinue;
 	}
+
+    /**
+     * Outputs a correct string for the sql statement according to value.
+     *
+     * @param mixed $val Query value.
+     * @return Safe query string
+     */
+    public function massageValue($val, $fieldDef)
+    {
+        switch($fieldDef['type']) {
+            case 'varchar':
+                $val = $this->db->decodeHTML($val);
+                break;
+            case 'uint':
+            case 'tinyint':
+            case 'int':
+                return intval($val);
+        }
+        if (empty($val)) {
+            return 'NULL';
+        }
+        return $this->db->quoted($val);
+    }
 
     /**
      * Return the default mapping values.
@@ -986,29 +1041,64 @@ ENDW;
     }
 
     /**
-     * return DB field values according to mapping and object properties
-     * @param array $fields
-     * @return array
+     * Return the safe field value for query.
+     *
+     * @param string $field Name of field.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Safe field value.
      */
-    protected function getFieldValues(array $fields)
-    {
-        $result = [];
-        $mapping = $this->getFieldMapping();
-        foreach ($fields as $name) {
-            if (array_key_exists($name, $this->fields)) {
-                switch (true) {
-                    case isset($this->$name):
-                        $result[$name] = $this->$name;
-                        break;
-                    case array_key_exists($name, $mapping):
-                        $result[$name] = $mapping[$name];
-                        break;
-                    default:
-                        $result[$name] = null;
-                }
-            }
+    protected function getFieldValue($field, $fieldMapping) {
+        if (isset($this->$field)) {
+            return $this->massageValue($this->$field, $this->fields[$field]);
+        } elseif (isset($fieldMapping[$field])) {
+            return $this->massageValue($fieldMapping[$field], $this->fields[$field]);
         }
-        return $result;
+        return "NULL";
+    }
+
+    /**
+     * Generate insert SQL query command for SugarFolders.
+     *
+     * @param array $fieldNames Database field sets.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Generated SQL query.
+     */
+    protected function getInsertQuery($fieldNames, $fieldMapping = array())
+    {
+        $values = array();
+        foreach ($fieldNames as $field) {
+            $values[] = $this->getFieldValue($field, $fieldMapping);
+        }
+        return "INSERT INTO folders (".implode(",", $fieldNames).") VALUES(".implode(",", $values).")";
+    }
+
+    /**
+     * Generate update SQL query command for SugarFolders.
+     *
+     * @param array $fieldNames Database field sets.
+     * @param array $fieldMapping Key-value pair for mapping default values.
+     * @return string Generated SQL query.
+     */
+    protected function getUpdateQuery($fieldNames, $fieldMapping = array())
+    {
+        $columns = array();
+        $where = "where id = '{$this->id}'";
+
+        foreach (array_filter($fieldNames, array($this, 'isNotId')) as $field) {
+            $columns[] = "{$field}=" . $this->getFieldValue($field, $fieldMapping);
+        }
+
+        return "UPDATE folders SET ".implode(",", $columns)." $where";
+    }
+
+    /**
+     * Return true if field is not id
+     *
+     * @param $field
+     * @return bool
+     */
+    private function isNotId($field) {
+        return $field !== "id";
     }
 
 	/**
@@ -1019,23 +1109,31 @@ ENDW;
 
 		if((empty($this->id) && $this->new_with_id == false) || (!empty($this->id) && $this->new_with_id == true))
 		{
-            if (empty($this->id)) {
-                $this->id = Uuid::uuid1();
-            }
-            $this->db->insertParams($this->table, $this->fields, $this->getFieldValues(array_keys($this->fields)));
+
+		    if( empty($this->id) )
+		    {
+			    $guid = create_guid();
+			    $this->id = $guid;
+		    }
+
+            $q = $this->getInsertQuery(array_keys($this->fields), $this->getFieldMapping());
 
 			if($addSubscriptions)
 			{
 			    // create default subscription
 			    $this->addSubscriptionsToGroupFolder();
 			}
-            $this->db->getConnection()->update($this->table, ['has_child' => 1], ['id' => $this->parent_folder]);
+
+			// if parent_id is set, update parent's has_child flag
+			$q3 = "UPDATE folders SET has_child = 1 WHERE id = '{$this->parent_folder}'";
+			$r3 = $this->db->query($q3);
 		}
 		else {
-            $values = $this->getFieldValues(array_keys($this->fields));
-            unset($values['id'], $values['created_by']);
-            $this->db->updateParams($this->table, $this->fields, $values, ['id' => $this->id]);
+            $q = $this->getUpdateQuery(array_keys($this->fields), $this->getFieldMapping());
 		}
+
+		$this->db->query($q, true);
+
 		return true;
 	}
 
@@ -1066,15 +1164,9 @@ ENDW;
 	 */
 	function createSubscriptionForUser($user_id)
 	{
-        $this->db->insertParams(
-            $this->folderSubscriptionTable,
-            $this->folderSubscriptionFields,
-            [
-                'id' => Uuid::uuid1(),
-                'folder_id' => $this->id,
-                'assigned_user_id' => $user_id,
-            ]
-        );
+	   $guid2 = create_guid();
+	   $query = "INSERT INTO folders_subscriptions VALUES('{$guid2}', '{$this->id}', '{$user_id}')";
+	   $this->db->query($query);
 	}
 
 
@@ -1097,12 +1189,12 @@ ENDW;
 			}
 		}
 		// update has_child to 0 for this parent folder if this is the only child it has
-        $count = $this->db->getConnection()->executeQuery(
-            sprintf('SELECT COUNT(*) FROM %s WHERE parent_folder = ? AND deleted = 0', $this->table),
-            [$this->parent_folder]
-        )->fetchColumn();
-        if ($count == 1) {
-            $this->db->getConnection()->update($this->table, ['has_child' => 0], ['id' => $this->parent_folder]);
+		$q1 = "select count(*) count from folders where deleted = 0 AND parent_folder = '{$this->parent_folder}'";
+		$r1 = $this->db->query($q1);
+		$a1 = $this->db->fetchByAssoc($r1);
+		if ($a1['count'] == 1) {
+			$q1 = "UPDATE folders SET has_child = 0 WHERE id = '{$this->parent_folder}'";
+			$r1 = $this->db->query($q1);
 		} // if
 
 
@@ -1111,32 +1203,33 @@ ENDW;
 		$this->team_id = $team_id;
 		$this->team_set_id = $team_set_id;
 
-        $values = $this->getFieldValues([
-            'dynamic_query',
-            'parent_folder',
-            'team_set_id',
-            'team_id',
-            'modified_by',
-        ]);
-        $this->db->updateParams($this->table, $this->fields, $values, ['id' => $this->id]);
+        $q2 = $this->getUpdateQuery(array(
+                'dynamic_query',
+                'parent_folder',
+                'team_set_id',
+                'team_id',
+                'modified_by'
+            ), $this->getFieldMapping());
+
+		$r2 = $this->db->query($q2);
 		if (!empty($this->parent_folder)) {
-            $this->db->getConnection()->update($this->table, ['has_child' => 1], ['id' => $this->parent_folder]);
+			$q3 = "UPDATE folders SET has_child = 1 WHERE id = '{$this->parent_folder}'";
+			$r3 = $this->db->query($q3);
 		} // if
 		return array('status' => "done");
 
 	} // fn
 
 	function findAllChildren($folderId, &$childrenArray) {
-        $conn = $this->db->getConnection();
-        $doesFolderHaveChild = $conn
-            ->executeQuery('SELECT has_child FROM folders WHERE id = ?', [$folderId])
-            ->fetchColumn();
-        if ($doesFolderHaveChild == 1) {
-            $subFolderStmt = $conn->executeQuery(
-                'SELECT id FROM folders WHERE parent_folder = ? AND deleted = 0',
-                [$folderId]
-            );
-            while ($a2 = $subFolderStmt->fetch()) {
+		$q = "SELECT * FROM folders WHERE id = '{$folderId}'";
+		$r = $this->db->query($q);
+		$a = $this->db->fetchByAssoc($r, false);
+
+		if($a['has_child'] == 1) {
+			$q2 = "SELECT id FROM folders WHERE deleted = 0 AND parent_folder = '{$folderId}'";
+			$r2 = $this->db->query($q2);
+
+			while($a2 = $this->db->fetchByAssoc($r2)) {
 				$childrenArray[] = $a2['id'];
 				$this->findAllChildren($a2['id'], $childrenArray);
 			} // while
@@ -1150,17 +1243,60 @@ ENDW;
 	 * @return bool True on success
 	 */
 	function retrieve($id) {
-        $data = $this->db->getConnection()->executeQuery(
-            'SELECT * FROM folders WHERE id = ? AND deleted = 0',
-            [$id]
-        )->fetch();
-        if ($data) {
-            foreach ($data as $name => $value) {
-                $this->$name = $this->db->fromConvert($value, $this->fields[$name]['type']);
+        global $dictionary;
+        require_once 'modules/TableDictionary.php';
+
+		$q = "SELECT * FROM folders WHERE id = '{$id}' AND deleted = 0";
+		$r = $this->db->query($q);
+		$a = $this->db->fetchByAssoc($r);
+
+		if(!empty($a)) {
+            if (isset($a['dynamic_query'])) {
+                $a['dynamic_query'] = from_html($a['dynamic_query']);
             }
-            return true;
-        } else {
-            return false;
+
+            $fields = array();
+            foreach ($dictionary['folders']['fields'] as $field) {
+                $fields[$field['name']] = $field['type'];
+            }
+
+			foreach($a as $k => $v) {
+                if (isset($fields[$k])) {
+                    $v = $this->db->fromConvert($v, $fields[$k]);
+                }
+				$this->$k = $v;
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+
+    /**
+     * Generates clause for excluding emails that are placed into non-dynamic child folders of a dynamic one
+     * @return string SQL 'NOT IN' clause
+     */
+    protected function addNonDynamicChildFoldersClause()
+    {
+        $allChildFolders = array();
+        $folders = array();
+        $this->findAllChildren($this->id, $allChildFolders);
+        foreach ($allChildFolders as $value) {
+            $folders[] = $this->db->quoted($value);
         }
+        $foldersToExcludeString = implode($folders, ', ');
+        $clause = '';
+        if (!empty($foldersToExcludeString)) {
+            $clause = <<<SQL
+ AND emails.id NOT IN (
+ SELECT DISTINCT(folders_rel.polymorphic_id) FROM folders_rel
+  WHERE folders_rel.polymorphic_module = 'Emails' AND folders_rel.folder_id IN ({$foldersToExcludeString})
+  AND folders_rel.deleted = 0
+ )
+SQL;
+        }
+        return $clause;
     }
-}
+
+} // end class def

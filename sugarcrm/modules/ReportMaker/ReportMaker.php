@@ -78,9 +78,8 @@ class ReportMaker extends SugarBean {
 
     public function mark_deleted($id)
     {
-        $query = "update data_sets set report_id='' where report_id= ? and deleted=0";
-        $conn = $this->db->getConnection();
-        $conn->executeQuery($query, array($id));
+        $query = "update data_sets set report_id='' where report_id='$id' and deleted=0";
+        $this->db->query($query, true, "error removing data sets from reports: ");
         parent::mark_deleted($id);
     }
 

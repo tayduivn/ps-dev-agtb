@@ -603,6 +603,10 @@ if (isset($_SESSION['INSTALLED_LANG_PACKS']) && ArrayFunctions::is_array_access(
     updateUpgradeHistory();
 }
 
+///////////////////////////////////////////////////////////////////////////
+////    HANDLE SUGAR VERSIONS
+require_once('modules/Versions/InstallDefaultVersions.php');
+
 //BEGIN SUGARCRM flav=int ONLY
 if (is_file(sugar_cached('dashlets/dashlets.php'))) {
     unlink(sugar_cached('dashlets/dashlets.php'));

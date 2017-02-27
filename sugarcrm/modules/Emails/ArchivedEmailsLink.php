@@ -50,7 +50,7 @@ class ArchivedEmailsLink extends Link2
      * Get all beans from link
      * @see Link2::query()
      */
-    public function query($params = array())
+    public function query($params)
     {
         unset($params['return_as_array']);
         $query = $this->getQuery($params);
@@ -251,8 +251,6 @@ SQL;
      *            optional parameters. Possible Values;
      *            'return_as_array': returns the query broken into
      * @return String/Array query to grab just ids for this relationship
-     *
-     * @deprecated Use ArchivedEmailsLink::query() instead
      */
     public function getQuery($params = array())
     {

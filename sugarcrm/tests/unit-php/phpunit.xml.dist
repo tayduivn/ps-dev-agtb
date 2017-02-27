@@ -36,14 +36,12 @@
     <testsuites>
         <testsuite name="all">
             <directory>src/</directory>
-            <directory>data/</directory>
             <directory>include/</directory>
             <directory>clients/</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">../data/</directory>
             <directory suffix=".php">../src/</directory>
             <directory suffix=".php">../include/</directory>
             <directory suffix=".php">../clients/*/api</directory>

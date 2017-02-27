@@ -110,7 +110,6 @@ class Campaign extends SugarBean {
 	function mark_relationships_deleted($id)
 	{
 		$this->clear_campaign_prospect_list_relationship($id);
-        parent::mark_relationships_deleted($id);
 	}
 
 	function fill_in_additional_list_fields()
@@ -176,6 +175,18 @@ class Campaign extends SugarBean {
         return parent::save($check_notify);
 
     }
+
+
+	function mark_deleted($id){
+        $query = "update contacts set campaign_id = null where campaign_id = '{$id}' ";
+        $this->db->query($query);
+        $query = "update accounts set campaign_id = null where campaign_id = '{$id}' ";
+        $this->db->query($query);
+        // bug49632 - delete campaign logs for the campaign as well
+        $query = "update campaign_log set deleted = 1 where campaign_id = '{$id}' ";
+        $this->db->query($query);
+		return parent::mark_deleted($id);
+	}
 
 	function set_notification_body($xtpl, $camp)
 	{

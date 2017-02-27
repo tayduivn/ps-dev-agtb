@@ -1,4 +1,8 @@
 <?php
+
+
+require_once('vendor/ytree/Tree.php');
+require_once('vendor/ytree/Node.php');
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -45,27 +49,24 @@ class TeamSetModule extends SugarBean{
 
     public function save($check_notify = false)
     {
-        $query = "SELECT id
-            FROM $this->table_name
-            WHERE team_set_id = ?
-                AND module_table_name = ?";
-        $row = $this->db->getConnection()->fetchColumn(
-            $query,
-            [$this->team_set_id, $this->module_table_name]
+        $sql = sprintf(
+            'SELECT id FROM %s WHERE team_set_id = %s AND module_table_name = %s',
+            $this->table_name,
+            $this->db->quoted($this->team_set_id),
+            $this->db->quoted($this->module_table_name)
         );
+        $result = $this->db->query($sql);
+        $row = $this->db->fetchByAssoc($result);
         if (!$row){
+            $id = create_guid();
             // insert the record by means of plain SQL in order to not trigger all other logic in SugarBean::save(),
             // since this method is manually called from SugarBean::save()
-            $this->db->insertParams(
-                $this->table_name,
-                $this->getFieldDefinitions(),
-                [
-                    'id' => create_guid(),
-                    'team_set_id' => $this->team_set_id,
-                    'module_table_name' => $this->module_table_name,
-                    'deleted' => 0,
-                ]
-            );
+            $sql = 'INSERT INTO ' . $this->table_name . ' (id, team_set_id, module_table_name, deleted) VALUES ('
+                . $this->db->quoted($id) . ', '
+                . $this->db->quoted($this->team_set_id) . ', '
+                . $this->db->quoted($this->module_table_name) . ', '
+                . '0)';
+            $this->db->query($sql);
         }
     }
 }

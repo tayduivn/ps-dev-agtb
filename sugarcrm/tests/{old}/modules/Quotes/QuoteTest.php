@@ -26,22 +26,7 @@ class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
         SugarTestHelper::tearDown();
-    }
-
-    /**
-     * test get related product bundles
-     */
-    public function testGetProductBundles()
-    {
-        $quote = SugarTestQuoteUtilities::createQuote();
-        $pblist = $quote->get_product_bundles();
-        $this->assertEquals(0, count($pblist));
-        $prodBundle = SugarTestProductBundleUtilities::createProductBundle();
-        SugarTestQuoteUtilities::relateQuoteToProductBundle($quote->id, $prodBundle->id);
-        $pblist = $quote->get_product_bundles();
-        $this->assertEquals($prodBundle->id, $pblist[0]['id']);
     }
 
     /*
@@ -71,19 +56,6 @@ class QuoteTest extends Sugar_PHPUnit_Framework_TestCase
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         SugarTestQuoteUtilities::relateQuoteToOpportunity($quote->id, $opp->id);
         $this->assertEquals(1, $quote->getRelatedOpportunityCount());
-    }
-
-    /**
-     * test get related opportunities
-     */
-    public function testGetRelatedOpportunities()
-    {
-        $quote = SugarTestQuoteUtilities::createQuote();
-        $this->assertEquals(0, $quote->getRelatedOpportunityCount());
-        $opp = SugarTestOpportunityUtilities::createOpportunity();
-        SugarTestQuoteUtilities::relateQuoteToOpportunity($quote->id, $opp->id);
-        $relopp = $quote->getRelatedOpportunities();
-        $this->assertEquals($opp->id, $relopp[0]['opportunity_id']);
     }
 
     public function testMarkDeleted()

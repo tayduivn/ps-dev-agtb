@@ -106,32 +106,21 @@ class ACLField extends SugarBean
      * @param string $role_id
      * @return array
      */
-    public static function getFields($module, $user_id = null, $role_id = null)
+    public static function getFields($module, $user_id = '', $role_id = '')
     {
         $fields = ACLField::getAvailableFields($module, false);
-
-        if ($role_id) {
-            $builder = DBManagerFactory::getConnection()
-                ->createQueryBuilder();
-
-            $builder->from('acl_fields', 'af')
-                ->select('af.id', 'af.name', 'af.category', 'af.role_id', 'af.aclaccess')
-                ->join('af', 'acl_roles', 'ar', 'ar.id = af.role_id AND ar.deleted = 0');
-
-            $builder->where(
-                'af.category = ' . $builder->createPositionalParameter($module),
-                'ar.id = ' . $builder->createPositionalParameter($role_id),
-                'af.deleted = 0'
-            );
-
-            if ($user_id) {
-                $builder->join('af', 'acl_roles_users', 'aru', 'aru.role_id = ar.id AND aru.deleted = 0')
-                    ->andWhere('aru.user_id = ' . $user_id);
+        if(!empty($role_id)){
+            $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
+            if(!empty($user_id)){
+                $query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
+                            INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
             }
 
-            $stmt = $builder->execute();
-
-            while (($row = $stmt->fetch())) {
+            $query .=  " WHERE af.deleted = 0 ";
+            $query .= " AND af.role_id='$role_id' ";
+            $query .= " AND af.category='$module'";
+            $result = $GLOBALS['db']->query($query);
+            while($row = $GLOBALS['db']->fetchByAssoc($result)){
                 if(!empty($fields[$row['name']]) && ($row['aclaccess'] < $fields[$row['name']]['aclaccess'] || $fields[$row['name']]['aclaccess'] == 0) ){
                     $row['key'] = $row['name'];
                     $row['label'] = $fields[$row['name']]['label'];
@@ -155,19 +144,15 @@ class ACLField extends SugarBean
      */
     public static function getACLFieldsByRole($role_id)
     {
-        $query = 'SELECT id, name, category, role_id, aclaccess
-FROM acl_fields
-WHERE role_id = ?
-AND deleted = 0';
-
-        $stmt = DBManagerFactory::getConnection()
-            ->executeQuery($query, array($role_id));
-
         $fields = array();
-        while (($row = $stmt->fetch())) {
-            $fields[$row['id']] = $row;
+        $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
+        $query .=  " WHERE af.deleted = 0 ";
+        $query .= " AND af.role_id='$role_id' ";
+        $result = $GLOBALS['db']->query($query);
+        $fields = array();
+        while($row = $GLOBALS['db']->fetchByAssoc($result)){
+            $fields[$row['id']] =  $row;
         }
-
         return $fields;
     }
 
@@ -206,17 +191,17 @@ AND deleted = 0';
             }
         }
 
-        $query = 'SELECT af.name, af.aclaccess FROM acl_fields af '
-            . 'INNER JOIN acl_roles_users aru ON aru.user_id = ? AND aru.deleted=0 '
-            . 'INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0 '
-            . 'WHERE af.deleted = 0 '
-            . 'AND af.category = ?';
+        $query = "SELECT  af.name, af.aclaccess FROM acl_fields af ";
+        $query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
+                    INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
+        $query .=  " WHERE af.deleted = 0 ";
+        $query .= " AND af.category='$module_name'";
 
-        $stmt = $GLOBALS['db']->getConnection()->executeQuery($query, [$user_id, $module_name]);
+        $result = $GLOBALS['db']->query($query);
 
         $allFields = ACLField::getAvailableFields($module_name, $object);
         self::$acl_fields[$user_id][$module_name] = array();
-        while ($row = $stmt->fetch()) {
+        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
             if($row['aclaccess'] != 0 && (empty(self::$acl_fields[$user_id][$module_name][$row['name']]) || self::$acl_fields[$user_id][$module_name][$row['name']] > $row['aclaccess']))
             {
                 self::$acl_fields[$user_id][$module_name][$row['name']] = $row['aclaccess'];

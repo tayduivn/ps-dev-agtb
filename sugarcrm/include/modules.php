@@ -582,7 +582,6 @@ $objectList['Cases'] =  'Case';
 $objectList['Groups'] =  'User';
 $objectList['Users'] =  'User';
 $objectList['ActivityStream/Activities'] = 'Activities';
-$objectList['ActivityStream/Comments'] = 'Comments';
 $objectList['TrackerSessions'] =  'tracker_sessions';
 $objectList['TrackerPerfs'] =  'tracker_perf';
 $objectList['TrackerQueries'] =  'tracker_queries';

@@ -219,11 +219,8 @@ class Quote extends SugarBean
     {
         global $locale;
 
-        $query = "SELECT con.salutation, con.first_name, con.last_name, con.assigned_user_id contact_name_owner, ";
-        $query .= "con.id, c_q.contact_role from $this->contact_table  con, $this->rel_contact_table  c_q ";
-        $query .= "where con.id = c_q.contact_id and c_q.quote_id = ? and c_q.deleted=0 and con.deleted=0";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id));
+        $query = "SELECT con.salutation, con.first_name, con.last_name, con.assigned_user_id contact_name_owner, con.id, c_q.contact_role from $this->contact_table  con, $this->rel_contact_table  c_q where con.id = c_q.contact_id and c_q.quote_id = '$this->id' and c_q.deleted=0 and con.deleted=0";
+        $result = $this->db->query($query, true, "Error filling in additional detail fields: ");
 
         // Get the id and the name.
         $this->shipping_contact_name = '';
@@ -235,7 +232,7 @@ class Quote extends SugarBean
         $this->billing_contact_name_mod = '';
         $this->shipping_contact_name_mod = '';
 
-        while ($row = $stmt->fetch()) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             if ($row != null && $row['contact_role'] == 'Ship To') {
                 $this->shipping_contact_name = $locale->formatName('Contacts', $row);
                 $this->shipping_contact_id = stripslashes($row['id']);
@@ -255,11 +252,8 @@ class Quote extends SugarBean
 
     public function set_account()
     {
-        $query = "SELECT acc.name, acc.id,acc.assigned_user_id account_name_owner, a_o.account_role ";
-        $query .= "from $this->account_table  acc, $this->rel_account_table  a_o ";
-        $query .= "where acc.id = a_o.account_id and a_o.quote_id = ? and a_o.deleted=0 and acc.deleted=0";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id));
+        $query = "SELECT acc.name, acc.id,acc.assigned_user_id account_name_owner, a_o.account_role from $this->account_table  acc, $this->rel_account_table  a_o where acc.id = a_o.account_id and a_o.quote_id = '$this->id' and a_o.deleted=0 and acc.deleted=0";
+        $result = $this->db->query($query, true, "Error filling in additional detail fields: ");
 
         // Get the id and the name.
         $this->shipping_account_name = '';
@@ -271,7 +265,7 @@ class Quote extends SugarBean
         $this->billing_account_mod = '';
         $this->shipping_account_mod = '';
 
-        while ($row = $stmt->fetch()) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             if ($row != null && $row['account_role'] == 'Ship To') {
                 $this->shipping_account_name = stripslashes($row['name']);
                 $this->shipping_account_id = stripslashes($row['id']);
@@ -296,14 +290,11 @@ class Quote extends SugarBean
 
     public function set_taxrate_info()
     {
-        $query = "SELECT tr.id, tr.name, tr.value ";
-        $query .= "from $this->taxrate_table  tr, $this->table_name  q ";
-        $query .= "where tr.id = q.taxrate_id and q.id = ? and tr.deleted=0 and q.deleted=0 and tr.status = 'Active'";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id));
+        $query = "SELECT tr.id, tr.name, tr.value from $this->taxrate_table  tr, $this->table_name  q where tr.id = q.taxrate_id and q.id = '$this->id' and tr.deleted=0 and q.deleted=0 and tr.status = 'Active'";
+        $result = $this->db->query($query, true, "Error filling in additional detail fields: ");
 
         // Get the id and the name.
-        $row = $stmt->fetch();
+        $row = $this->db->fetchByAssoc($result);
 
         if ($row != null) {
             $this->taxrate_name = stripslashes($row['name']);
@@ -323,13 +314,11 @@ class Quote extends SugarBean
      */
     public function set_shipper()
     {
-        $query = "SELECT s1.name from shippers s1, $this->table_name q1 ";
-        $query .= "where s1.id = q1.shipper_id and q1.id = ? and q1.deleted=0 and s1.deleted=0";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id));
+        $query = "SELECT s1.name from shippers s1, $this->table_name q1 where s1.id = q1.shipper_id and q1.id = '$this->id' and q1.deleted=0 and s1.deleted=0";
+        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
 
         // Get the id and the name.
-        $row = $stmt->fetch();
+        $row = $this->db->fetchByAssoc($result);
 
         if ($row != null) {
             $this->shipper_name = $row['name'];
@@ -346,14 +335,11 @@ class Quote extends SugarBean
     public function set_opportunity()
     {
         // First, get the list of IDs.
-        $query = "SELECT opp.id, opp.name, opp.assigned_user_id opportunity_name_owner ";
-        $query .= "from $this->opportunity_table  opp, $this->rel_opportunity_table  a_o ";
-        $query .= "where opp.id = a_o.opportunity_id and a_o.quote_id = ? and a_o.deleted=0 and opp.deleted=0";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($this->id));
+        $query = "SELECT opp.id, opp.name, opp.assigned_user_id opportunity_name_owner from $this->opportunity_table  opp, $this->rel_opportunity_table  a_o where opp.id = a_o.opportunity_id and a_o.quote_id = '$this->id' and a_o.deleted=0 and opp.deleted=0";
+        $result = $this->db->query($query, true, "Error filling in additional detail fields: ");
 
         // Get the id and the name.
-        $row = $stmt->fetch();
+        $row = $this->db->fetchByAssoc($result);
 
         if ($row != null) {
             $this->opportunity_name = stripslashes($row['name']);
@@ -482,16 +468,12 @@ class Quote extends SugarBean
 
     public function get_product_bundles()
     {
-        $query = new SugarQuery();
-        $prodBundlesBean = BeanFactory::newBean('ProductBundles');
-        $query->select('*');
-        $query->from($prodBundlesBean);
-        $join = $query->joinSubpanel($this, 'product_bundles', array('joinType' => 'INNER'));
-        $query->orderBy($join->relationshipTableAlias . '.bundle_index', 'ASC');
+        // First, get the list of IDs.
+        $query = "SELECT bundle_id as id
+					FROM  $this->rel_product_bundles
+					WHERE quote_id='$this->id' AND deleted=0 ORDER BY bundle_index";
 
-        $prodBundles = $query->execute();
-
-        return $prodBundles;
+        return $this->build_related_list($query, BeanFactory::getBean('ProductBundles'));
     }
 
     public function bean_implements($interface)
@@ -633,9 +615,9 @@ class Quote extends SugarBean
     public function getRelatedOpportunities()
     {
         $results = array();
-        $query = "select * from quotes_opportunities where quote_id = ? and deleted = 0";
-        $stmt = $this->db->getConnection()->executeQuery($query, array($this->id));
-        while ($row = $stmt->fetch()) {
+        $query = "select * from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
+        $result = $this->db->query($query);
+        while ($row = $this->db->fetchByAssoc($result)) {
             $results[] = $row;
         }
         return $results;
@@ -648,11 +630,8 @@ class Quote extends SugarBean
      */
     public function getRelatedOpportunityCount()
     {
-        $query = "select count(id) from quotes_opportunities where quote_id = ? and deleted = 0";
-        $conn = $this->db->getConnection();
-        $count = $conn->executeQuery($query, array($this->id))->fetchColumn();
-
-        return $count;
+        $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
+        return $this->db->getOne($query);
     }
 
     /**

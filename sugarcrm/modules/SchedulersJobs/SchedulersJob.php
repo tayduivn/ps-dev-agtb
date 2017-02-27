@@ -349,9 +349,7 @@ class SchedulersJob extends Basic
      */
     public function mark_deleted($id)
     {
-        $query = "DELETE FROM {$this->table_name} WHERE id = ? ";
-        $conn = $this->db->getConnection();
-        return $conn->executeQuery($query, array($id));
+        return $this->db->query("DELETE FROM {$this->table_name} WHERE id=".$this->db->quoted($id));
     }
 
     /**

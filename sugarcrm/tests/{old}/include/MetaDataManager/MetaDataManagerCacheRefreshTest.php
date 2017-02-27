@@ -72,6 +72,12 @@ class MetaDataManagerCacheRefreshTest extends Sugar_PHPUnit_Framework_TestCase
             $c++;
         }
     }
+    
+    public static function tearDownAfterClass()
+    {
+        // After all is said and done, reset our caches to the beginning
+        //MetaDataManager::clearAPICache();
+    }
 
     /**
      * Tests the metadatamanager getManager method gets the right manager

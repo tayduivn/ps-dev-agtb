@@ -3078,56 +3078,69 @@ class SugarBean
         }
 
         // TODO: When BWC is removed, replace from here
-        $query = new \SugarQuery();
-        $query->from(
-            $this,
-            ['add_deleted' => $deleted, 'team_security' => !$this->disable_row_level_security, 'action' => 'view']
-        );
-        $query->select('*');
-        $query->where()->equals("$this->table_name.id", $id);
+        // ----------------------------------------------
+        $custom_join = $this->getCustomJoin();
+
+        $query_select = "{$this->table_name}.*";
+        $query_from = $this->table_name;
+        $where = " WHERE $this->table_name.id = ".$this->db->quoted($id);
+        if ($deleted) $where .= " AND $this->table_name.deleted=0";
+
+        $query_select .= " ".$custom_join['select'];
+        $query_from .= ' '.$custom_join['join'];
 
         $name_format_fields = $locale->getNameFormatFields('Users');
         if (!empty($name_format_fields)) {
-            $fields = [];
             foreach ($this->related_user_fields as $id_field => $params) {
                 list($name_field, $alias) = $params;
-                if (isset($this->field_defs[$id_field])
-                    && isset($this->field_defs[$name_field])
-                    && ($this->field_defs[$name_field]['type'] == 'relate')
-                ) {
-                    $join = $query->join($this->field_defs[$name_field]['link'], array('joinType' => 'LEFT'));
-                    $joinAlias = $join->joinName();
-                    foreach ($name_format_fields as $field) {
-                        $fields[] = [$joinAlias . '.' . $field, $alias . '_' . $field];
-                    }
+                if (!empty($this->field_defs[$id_field]) && !empty($this->field_defs[$name_field])) {
+                    list($select, $from) = $this->getUsersJoin($id_field, $alias, $name_format_fields);
+                    $query_select .= $select;
+                    $query_from   .= $from;
                 }
             }
-            $query->select($fields);
         }
 
-        if (!empty($this->field_defs['team_link'])) {
-            $query->join('team_link', ['joinType' => 'LEFT', 'alias' => 'teams_tn']);
-            $query->select([['teams_tn.name', 'tn_name'], ['teams_tn.name_2', 'tn_name_2']]);
+        if(!empty($this->field_defs['team_name']) && !empty($this->field_defs['team_id']) && (empty($this->field_defs['team_id']['source']))) {
+            $query_select .= ", teams_tn.name as tn_name, teams_tn.name_2 as tn_name_2";
+            $query_from .= " LEFT JOIN teams teams_tn ON teams_tn.id = {$this->table_name}.team_id";
+        }
+        // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
+        // TODO: add global vardef for my_favorite field
+        // We should only add Favorites if we know what module we are using and if we have a user.
+
+        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
+            $query_select .= ', sf.id AS my_favorite';
+            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = {$this->db->quoted($id)} AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
 
-        if (!empty($this->module_name) && !empty($GLOBALS['current_user'])) {
-            if ($this->isFavoritesEnabled()) {
-                $query->select(['my_favorite']);
-            }
-            if ($this->isActivityEnabled()) {
-                $query->select(['following']);
-            }
+        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isActivityEnabled()) {
+            $query_select .= ", case when sub.id IS NOT NULL then 1 else 0 end following";
+            $query_from .= " LEFT JOIN subscriptions sub ON sub.deleted = 0 AND sub.parent_type = '{$this->module_name}'
+            AND sub.parent_id = {$this->db->quoted($id)} AND sub.created_by = '{$GLOBALS['current_user']->id}'";
         }
-        $query->limit(1);
 
-        $GLOBALS['log']->debug("Retrieve $this->object_name");
-        $results = $query->execute();
-        if (empty($results)) {
+        $query = "SELECT $query_select FROM $query_from ";
+        $options = array(
+            'action' => 'view',
+            'where_condition' => true,
+        );
+        if(!$this->disable_row_level_security)
+        {
+            $this->addVisibilityFrom($query, $options);
+        }
+
+        $query .= $where;
+        if(!$this->disable_row_level_security) {
+            $this->addVisibilityWhere($query, $options);
+        }
+
+        $GLOBALS['log']->debug("Retrieve $this->object_name : ".$query);
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record by id $this->table_name:$id found ", $encode);
+
+        if(empty($row))
+        {
             return null;
-        }
-        $row = $results[0];
-        if ($encode && $this->db->getEncode()) {
-            $row = array_map([$this->db, 'encodeHTML'], $row);
         }
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
@@ -5750,7 +5763,7 @@ class SugarBean
     }
 
     /**
-     * This function may be overridden in each module.  It marks an item as deleted.
+     * This function should be overridden in each module.  It marks an item as deleted.
      *
      * If it is not overridden, then marking this type of item is not allowed
 	 */
@@ -5796,29 +5809,18 @@ class SugarBean
                 } else {
                     $this->modified_user_id = 1;
                 }
-                $this->db->updateParams(
-                    $this->table_name,
-                    $this->field_defs,
-                    array('deleted' => 1,
-                          'date_modified' => $date_modified,
-                          'modified_user_id' => $this->modified_user_id),
-                    array('id' => $id)
-                );
+                $query = "UPDATE $this->table_name set deleted=1, date_modified = '$date_modified',
+                            modified_user_id = '$this->modified_user_id' where id='$id'";
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
                 }
             } else {
-                $this->db->updateParams(
-                    $this->table_name,
-                    $this->field_defs,
-                    array('deleted' => 1,
-                          'date_modified' => $date_modified),
-                    array('id' => $id)
-                );
+                $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
                 }
             }
+            $this->db->query($query, true, "Error marking record deleted: ");
 
             // Take the item off the recently viewed lists
             $tracker = BeanFactory::getBean('Trackers');
@@ -5847,10 +5849,8 @@ class SugarBean
 
         $this->deleted = 0;
 		$date_modified = $GLOBALS['timedate']->nowDb();
-
-        $query = "UPDATE {$this->table_name} SET deleted = ?, date_modified = ? WHERE id = ?";
-        $conn = $this->db->getConnection();
-        $conn->executeQuery($query, array($this->deleted, $date_modified, $id));
+		$query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
+		$this->db->query($query, true,"Error marking record undeleted: ");
 
         // call the custom business logic
         $this->call_custom_logic("after_restore", $custom_logic_arguments);
@@ -6192,21 +6192,17 @@ class SugarBean
      */
     function retrieve_by_string_fields($fields_array, $encode=true, $deleted=true)
     {
-        $query = new \SugarQuery();
-        $query->from($this, ['add_deleted' => $deleted, 'team_security' => false]);
-        $query->select('*');
-        foreach ($fields_array as $field => $value) {
-            $query->where()->equals($field, $value);
-        }
-        $query->limit(1);
+        $where_clause = $this->get_where($fields_array, $deleted);
+        $custom_join = $this->getCustomJoin();
+        $query = "SELECT $this->table_name.*". $custom_join['select']. " FROM $this->table_name " . $custom_join['join'];
+        $query .= " $where_clause";
+        $GLOBALS['log']->debug("Retrieve $this->object_name: ".$query);
 
-        $results = $query->execute();
-        if (empty($results)) {
+        $row = $this->db->fetchOneOffset($query, 0, true, "Retrieving record $where_clause:", $encode);
+
+        if(empty($row))
+        {
             return null;
-        }
-        $row = $results[0];
-        if ($encode && $this->db->getEncode()) {
-            $row = array_map([$this->db, 'encodeHTML'], $row);
         }
         // Removed getRowCount-if-clause earlier and insert duplicates_found here as it seems that we have found something
         // if we didn't return null in the previous clause.
@@ -6263,48 +6259,45 @@ class SugarBean
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';
         $table = $GLOBALS['dictionary'][$object]['table'];
         $hasCustomFields = false;
-        $selectFields = ['id'];
+        $query  = 'SELECT id';
         foreach($fields as $field=>$alias){
             if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])){
-                $selectFields[]
-                    = $this->db->concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])
-                        . ' AS ' . $alias;
+                $query .= ' ,' .$this->db->concat($table, $GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields']) .  ' as ' . $alias ;
             }else if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]) &&
                 (empty($GLOBALS['dictionary'][$object]['fields'][$field]['source']) ||
                 $GLOBALS['dictionary'][$object]['fields'][$field]['source'] != "non-db"))
             {
                 if ('_c' == strtolower(substr($field, -2))) {
-                    $selectFields[] = $table . '_cstm.' . $field . ' AS ' . $alias;
+                    $query .= ' ,' . $table . '_cstm.' . $field . ' as ' . $alias;
                     $hasCustomFields = true;
                 } else {
-                    $selectFields[] = $table . '.' . $field . ' AS ' . $alias;
+                    $query .= ' ,' . $table . '.' . $field . ' as ' . $alias;
                 }
             }
             if(!$return_array)$this->$alias = '';
         }
-        if (count($selectFields) == 1 || empty($id)) {
+        if($query == 'SELECT id' || empty($id)){
             return '';
         }
 
 
         if(isset($GLOBALS['dictionary'][$object]['fields']['assigned_user_id']))
         {
-            $selectFields[] = $table . '.assigned_user_id AS owner';
+            $query .= " , ".	$table  . ".assigned_user_id owner";
+
         }
         else if(isset($GLOBALS['dictionary'][$object]['fields']['created_by']))
         {
-            $selectFields[] = $table . '.created_by AS owner';
+            $query .= " , ".	$table . ".created_by owner";
+
         }
-        $qb = $this->db->getConnection()->createQueryBuilder();
-        $qb->select($selectFields)
-            ->from($table)
-            ->where('deleted = 0')
-            ->andWhere($qb->expr()->eq('id', $qb->createPositionalParameter($id)));
         if ($hasCustomFields) {
-            $qb->leftJoin($table, $table . '_cstm', $table . '_cstm', 'id = id_c');
+            $query .=  ' FROM ' . $table  . ', ' . $table . '_cstm WHERE deleted=0 AND id=id_c AND id=';
+        } else {
+            $query .=  ' FROM ' . $table  . ' WHERE deleted=0 AND id=';
         }
-        $stmt = $qb->execute();
-        $row = $stmt->fetch();
+        $result = $GLOBALS['db']->query($query . "'$id'" );
+        $row = $GLOBALS['db']->fetchByAssoc($result, true);
         if($return_array){
             return $row;
         }
@@ -6444,50 +6437,46 @@ class SugarBean
     * 	RELATIONSHIP HANDLING
     */
 
-    public function set_relationship(
-        $table,
-        array $relate_values,
-        $check_duplicates = true,
-        $do_update = false,
-        array $data_values = array()
-    ) {
-        global $dictionary;
-        $fieldDefs = $dictionary[$table]['fields'];
+    function set_relationship($table, $relate_values, $check_duplicates = true,$do_update=false,$data_values=null)
+    {
+        $where = '';
 
 		// make sure there is a date modified
-        $date_modified = TimeDate::getInstance()->nowDb();
+		$date_modified = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
 
         $row=null;
         if($check_duplicates)
         {
-            $builder = $this->db->getConnection()->createQueryBuilder();
-            $expr = $builder->expr();
-            $builder->select('*')->from($table);
-            foreach ($relate_values as $name => $value) {
-                $builder->andWhere($expr->eq($name, $builder->createPositionalParameter($value)));
+            $query = "SELECT * FROM $table ";
+            $where = "WHERE deleted = '0'  ";
+            foreach($relate_values as $name=>$value)
+            {
+                $where .= " AND $name = '$value' ";
             }
-            $builder->andWhere($expr->eq('deleted', 0));
-            $row = $builder->execute()->fetch();
+            $query .= $where;
+            $row=$this->db->fetchOne($query, false, "Looking For Duplicate Relationship:" . $query);
         }
 
         if(!$check_duplicates || empty($row) )
         {
-            $values = array_merge($data_values, $relate_values, array(
-                'id' => create_guid(),
-                'date_modified' => $date_modified,
-            ));
+            unset($relate_values['id']);
+            if ( isset($data_values))
+            {
+                $relate_values = array_merge($relate_values,$data_values);
+            }
+            $query = "INSERT INTO $table (id, ". implode(',', array_keys($relate_values)) . ", date_modified) VALUES ('" . create_guid() . "', " . "'" . implode("', '", $relate_values) . "', ".$date_modified.")" ;
 
-            $this->db->insertParams($table, $fieldDefs, $values);
+            $this->db->query($query, false, "Creating Relationship:" . $query);
         }
         else if ($do_update)
         {
-            $data_values['date_modified'] = $date_modified;
-            $this->db->updateParams($table, $fieldDefs, $data_values, array_merge(
-                $relate_values,
-                array(
-                    'deleted' => 0,
-                )
-            ));
+            $conds = array();
+            foreach($data_values as $key=>$value)
+            {
+                array_push($conds,$key."='".$this->db->quote($value)."'");
+            }
+            $query = "UPDATE $table SET ". implode(',', $conds).",date_modified=".$date_modified." ".$where;
+            $this->db->query($query, false, "Updating Relationship:" . $query);
         }
     }
 

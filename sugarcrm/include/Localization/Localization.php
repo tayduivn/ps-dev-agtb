@@ -190,10 +190,9 @@ class Localization {
 		    );
 
             $q = "SELECT id, name, symbol, conversion_rate FROM currencies WHERE status = 'Active' and deleted = 0";
-            $conn = $db->getConnection();
-            $stmt = $conn->executeQuery($q);
+            $r = $db->query($q);
 
-            while ($a = $stmt->fetch()) {
+            while($a = $db->fetchByAssoc($r)) {
                 $load = array();
                 $load['name'] = $a['name'];
                 $load['symbol'] = $a['symbol'];

@@ -290,6 +290,17 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    function testGetUpdateQuery_WithIDField_FiltersOutIDFieldInSet()
+    {
+        $result = SugarTestReflection::callProtectedMethod(
+            $this->folder,
+            'getUpdateQuery',
+            array(array('id','foo','bar'))
+        );
+        $expected = "UPDATE folders SET foo=NULL,bar=NULL where id = ''";
+        $this->assertEquals($expected, $result, "Should filter ID from SET clause");
+    }
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * "a" is used for the admin user's ID because "1" has special meaning to other tests downstream. Using "1" for the
@@ -302,17 +313,25 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRetrieveFoldersForProcessing_UsingDB2_CurrentUserIsAdmin()
     {
-        SugarTestHelper::setUp('current_user');
-        global $current_user;
+        $folder = array(
+            'id' => create_guid(),
+            'folder_type' => 'inbound',
+            'created_by' => 'a                                  ',
+        );
+
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(false, true, array('id' => 'a'));
+
+        SugarAutoLoader::load('include/database/IBMDB2Manager.php');
+        $db = $this->getMockBuilder('IBMDB2Manager')->setMethods(array('query', 'fetchByAssoc'))->getMock();
+        $db->expects($this->exactly(2))->method('fetchByAssoc')->willReturnOnConsecutiveCalls($folder, null);
+        $this->db = SugarTestHelper::setUp('mock_db', $db);
 
         $sf = new SugarFolder();
-        $sf->folder_type = 'inbound';
-        $sf->save();
-        $this->additionalFolders[] = $sf->id;
+        $folders = $sf->retrieveFoldersForProcessing($GLOBALS['current_user']);
 
-        $folders = $sf->retrieveFoldersForProcessing($current_user);
-
-        $this->assertEquals($sf->id, $folders[0]['id']);
+        $this->assertEquals($folder['id'], $folders[0]['id']);
+        // the caller should not have to deal with untrimmed values
+        $this->assertEquals('a', $folders[0]['created_by'], 'Should have trimmed the created_by field');
     }
     //END SUGARCRM flav=ent ONLY
 

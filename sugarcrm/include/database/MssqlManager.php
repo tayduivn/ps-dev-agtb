@@ -872,17 +872,10 @@ abstract class MssqlManager extends DBManager
         $GLOBALS['log']->info("tableExists: $tableName");
 
         if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
-            $query = 'SELECT TABLE_NAME
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_NAME = ?
-    AND TABLE_TYPE = ?';
-
-            $result = $this->getConnection()
-                ->executeQuery($query, array(
-                    $tableName,
-                    'BASE TABLE',
-                ))->fetchColumn();
-
+            $result = $this->getOne(
+                "SELECT * FROM INFORMATION_SCHEMA.TABLES ".
+                "WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME=".$this->quoted($tableName)
+            );
             return !empty($result);
         }
         return false;
@@ -1435,15 +1428,14 @@ INNER JOIN sys.columns c
     ON c.object_id = t.object_id
         AND c.column_id = ic.column_id';
 
-        $where = $params = array();
+        $where = array();
         if ($filterByTable) {
-            $where[] = 't.name = ?';
-            $params[] = $table_name;
+            $where[] = 't.name = ' . $this->quoted($table_name);
         }
 
         if ($filterByIndex) {
-            $where[] = 'i.name = ?';
-            $params[] = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'i.name = ' . $this->quoted($query_index_name);
         }
 
         if ($where) {
@@ -1462,12 +1454,10 @@ INNER JOIN sys.columns c
         $order[] = 'ic.key_ordinal';
         $query .= ' ORDER BY ' . implode(', ', $order);
 
-        $stmt = $this
-            ->getConnection()
-            ->executeQuery($query, $params);
+        $result = $this->query($query);
 
         $data = array();
-        while (($row = $stmt->fetch())) {
+        while ($row = $this->fetchByAssoc($result)) {
             if (!$filterByTable) {
                 $table_name = $row['table_name'];
             }

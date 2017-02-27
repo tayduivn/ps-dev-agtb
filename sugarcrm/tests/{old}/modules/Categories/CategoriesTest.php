@@ -13,8 +13,6 @@
 
 include_once 'modules/Categories/Category.php';
 
-use Sugarcrm\SugarcrmTestsUnit\TestReflection;
-
 /**
  * Test for Categories module
  */
@@ -86,16 +84,13 @@ class CategoriesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $db = DBManagerFactory::getInstance();
         $expected = 'TestUpdateCategoryName' . mt_rand();
+        $result = self::$root->update(array(
+            'name' => $db->quoted($expected),
+        ), ' id = :id ', array(
+            ':id' => self::$root->id,
+        ));
 
-        TestReflection::callProtectedMethod(
-            self::$root,
-            'update',
-            array(
-                array('name = ?'),
-                ' id = ? ',
-                array($expected, self::$root->id),
-            )
-        );
+        $this->assertNotFalse($result);
 
         $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
             'use_cache' => false,

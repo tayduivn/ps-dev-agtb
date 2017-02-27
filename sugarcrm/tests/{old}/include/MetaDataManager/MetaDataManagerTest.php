@@ -569,50 +569,26 @@ PLATFORMS;
     public static function cacheStaticProvider()
     {
         return array(
-            array('getPlatformsWithCachesInDatabase', array('some-key'), 'getConnection'),
+            array('getPlatformsWithCachesInDatabase', array('some-key'), 'query'),
         );
     }
 
     private function getCacheEnabledDatabaseMock($method)
     {
-        $stmt = $this->getMockBuilder('\Doctrine\DBAL\Statement')
-            ->disableOriginalConstructor()
-            ->setMethods(array('fetchAll'))
-            ->getMock();
-        $stmt->expects($this->atLeastOnce())
-            ->method('fetchAll')
-            ->willReturn(array());
-
-        $conn = $this->getMockBuilder('\Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->setMethods(array('executeQuery'))
-            ->getMock();
-        $conn->expects($this->atLeastOnce())
-            ->method('executeQuery')
-            ->willReturn($stmt);
-
-        $db = $this->getAbstractDbManagerMock($method);
+        $db = $this->getMockForAbstractClass('DBManager');
         $db->expects($this->atLeastOnce())
-            ->method($method)
-            ->willReturn($conn);
+            ->method($method);
 
         return $db;
     }
 
     private function getCacheDisabledDatabaseMock($method)
     {
-        $db = $this->getAbstractDbManagerMock($method);
+        $db = $this->getMockForAbstractClass('DBManager');
         $db->expects($this->never())
             ->method($method);
 
         return $db;
-    }
-
-    protected function getAbstractDbManagerMock($method)
-    {
-        return $this->getMockBuilder('DBManager')
-            ->setMethods(array($method))
-            ->getMockForAbstractClass();
     }
 
     /**

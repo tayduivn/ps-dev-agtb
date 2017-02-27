@@ -23,12 +23,6 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static $db;
 
-    /**
-     * Beans registered through BeanFactory
-     * @var array
-     */
-    private $registeredBeans = [];
-
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -55,18 +49,9 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->id = '1';
     }
 
-    private function registerBean(\SugarBean $bean)
-    {
-        BeanFactory::registerBean($bean);
-        $this->registeredBeans[] = $bean;
-    }
-
     public function tearDown()
     {
         unset($this->bean);
-        foreach ($this->registeredBeans as $bean) {
-            BeanFactory::unregisterBean($bean);
-        }
         parent::tearDown();
     }
 
@@ -161,30 +146,32 @@ class AuditTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testHandleRelateField()
     {
-        $userBeforeMock = $this->getMockBuilder('User')
-            ->disableOriginalConstructor()
-            ->setMethods(array('get_summary_text'))
-            ->getMock();
-        $userBeforeMock->module_name = 'Users';
-        $userBeforeMock->id = create_guid();
-        $userBeforeMock->expects($this->once())
-            ->method('get_summary_text')
-            ->will($this->returnValue('Jim Brennan'));
-        $this->registerBean($userBeforeMock);
-        $userAfterMock = $this->getMockBuilder('User')
-            ->disableOriginalConstructor()
-            ->setMethods(array('get_summary_text'))
-            ->getMock();
-        $userAfterMock->module_name = 'Users';
-        $userAfterMock->id = create_guid();
-        $userAfterMock->expects($this->once())
-            ->method('get_summary_text')
-            ->will($this->returnValue('Sally Bronsen'));
-        $this->registerBean($userAfterMock);
+        self::$db->addQuerySpy(
+            'translateQuery',
+            '/jim_id/',
+            array(
+                array(
+                    'first_name' => 'Jim',
+                    'last_name' => 'Brennan',
+                    'date_modified' => ''
+                ),
+            )
+        );
+        self::$db->addQuerySpy(
+            'translateQuery2',
+            '/sally_id/',
+            array(
+                array(
+                    'first_name' => 'Sally',
+                    'last_name' => 'Bronsen',
+                    'date_modified' => ''
+                ),
+            )
+        );
         $row = array(
             'field_name' => 'user_id_c',
-            'before_value_string' => $userBeforeMock->id,
-            'after_value_string' => $userAfterMock->id,
+            'before_value_string' => 'jim_id',
+            'after_value_string' => 'sally_id',
         );
         $expected = array(
             'field_name' => 'user_c',

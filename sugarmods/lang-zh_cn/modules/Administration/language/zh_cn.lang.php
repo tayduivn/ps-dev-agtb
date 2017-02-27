@@ -846,6 +846,8 @@ $mod_strings = array (
 	'MSG_CONFIG_FILE_REBUILD_SUCCESS' => 'config.php文件成功重建。',
 	'MSG_INCREASE_UPLOAD_MAX_FILESIZE' => '警告:您的PHPconfiguration必须改成允许大与6M的文件上传。请在php.ini中修改文件上传最大值:',
 	'MSG_MAKE_CONFIG_FILE_WRITABLE' => '请启动配置文件的写入权限，系统才能够进行更新。',
+	'MSG_REBUILD_EXTENSIONS' => '请到<a href="index.php?module=Administration&action=Upgrade">修复</a>界面，点击“重建扩展”。',
+	'MSG_REBUILD_RELATIONSHIPS' => '请到<a href="index.php?module=Administration&action=Upgrade">修复</a>界面，点击“重建关系”。',
 	'NO_ENABLED_OFFLINE_CLIENTS' => '当前没有可用的离线客户端。',
 	'NTC_DISABLE_OFFLINE_CLIENT_ALERT' => '您确定要禁用这个离线客户端吗?',
 	'NTC_ENABLE_OFFLINE_CLIENT_ALERT' => '您确定要启用这个离线客户端吗?',

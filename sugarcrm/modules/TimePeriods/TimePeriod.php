@@ -406,19 +406,16 @@ class TimePeriod extends SugarBean
     {
         static $timeperiods;
 
-        if ($timeperiods === null) {
+        if (empty($timeperiods)) {
+            $db = DBManagerFactory::getInstance();
             $timeperiods = array();
-            $query = 'SELECT id, name FROM timeperiods WHERE deleted = 0';
-            $stmt = DBManagerFactory::getConnection()
-                ->executeQuery($query);
-
-            while (($row = $stmt->fetch())) {
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE deleted=0');
+            while (($row = $db->fetchByAssoc($result))) {
                 if (!isset($timeperiods[$row['id']])) {
                     $timeperiods[$row['id']] = $row['name'];
                 }
             }
         }
-
         return $timeperiods;
     }
 
@@ -448,26 +445,19 @@ class TimePeriod extends SugarBean
      */
     public function getNextTimePeriod()
     {
-        $timeDate = TimeDate::getInstance();
-        $queryDate = $timeDate->fromDbDate($this->end_date);
+        $timedate = TimeDate::getInstance();
+        $queryDate = $timedate->fromDbDate($this->end_date);
         $queryDate = $queryDate->modify('+1 day');
+        $query = sprintf(
+            "SELECT id FROM timeperiods WHERE type = %s AND start_date = %s AND deleted = 0 ",
+            $this->db->quoted($this->type),
+            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date')
+        );
 
-        $query = 'SELECT id
-FROM timeperiods
-WHERE start_date = ' . $this->db->convert('?', 'date') . '
-AND type = ?
-AND deleted = 0';
-        $id = $this->db->getConnection()
-            ->executeQuery($query, array(
-                $queryDate->asDbDate(),
-                $this->type,
-            ))->fetchColumn();
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
 
-        if (!$id) {
-            return null;
-        }
-
-        return TimePeriod::getByType($this->type, $id);
+        return ($row != null) ? TimePeriod::getByType($this->type, $row['id']) : null;
     }
 
 
@@ -478,26 +468,19 @@ AND deleted = 0';
      */
     public function getPreviousTimePeriod()
     {
-        $timeDate = TimeDate::getInstance();
-        $queryDate = $timeDate->fromDbDate($this->start_date);
+        $timedate = TimeDate::getInstance();
+        $queryDate = $timedate->fromDbDate($this->start_date);
         $queryDate = $queryDate->modify('-1 day');
+        $query = sprintf(
+            "SELECT id FROM timeperiods WHERE type = %s AND end_date = %s AND deleted = 0 ",
+            $this->db->quoted($this->type),
+            $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date')
+        );
 
-        $query = 'SELECT id
-FROM timeperiods
-WHERE end_date = ' . $this->db->convert('?', 'date') . '
-AND type = ?
-AND deleted = 0';
-        $id = $this->db->getConnection()
-            ->executeQuery($query, array(
-                $queryDate->asDbDate(),
-                $this->type,
-            ))->fetchColumn();
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
 
-        if (!$id) {
-            return null;
-        }
-
-        return TimePeriod::getByType($this->type, $id);
+        return ($row != null) ? TimePeriod::getByType($this->type, $row['id']) : null;
     }
 
     /**
@@ -516,10 +499,8 @@ AND deleted = 0';
         $timedate = TimeDate::getInstance();
         $currentDate = $timedate->getNow();
 
-        $query = 'SELECT COUNT(id) FROM timeperiods WHERE parent_id IS NULL AND deleted = 0';
-        $count = $this->db->getConnection()
-            ->executeQuery($query)
-            ->fetchColumn();
+        $db = DBManagerFactory::getInstance();
+        $count = $db->getOne('SELECT count(id) FROM timeperiods WHERE parent_id IS NULL AND deleted = 0');
 
         $isUpgrade = !empty($currentSettings['is_upgrade']);
 
@@ -539,20 +520,18 @@ AND deleted = 0';
     public function upgradeLegacyTimePeriods()
     {
         $sql = "SELECT id FROM timeperiods
-                WHERE (start_date_timestamp IS NULL OR end_date_timestamp IS NULL)
-                    AND deleted = 0";
-        $stmt = $this->db->getConnection()
-            ->executeQuery($sql);
+                WHERE deleted = 0
+                    AND (start_date_timestamp IS NULL OR end_date_timestamp IS NULL)";
+        $result = $this->db->query($sql);
 
         $updated = 0;
-        while (($id = $stmt->fetchColumn())) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             $tp = BeanFactory::getBean('TimePeriods');
-            $tp->retrieve($id);
+            $tp->retrieve($row['id']);
             $tp->save();
 
             $updated++;
         }
-
         return $updated;
     }
 
@@ -1078,65 +1057,71 @@ AND deleted = 0';
      */
     public static function getBean($id)
     {
-        $query = 'SELECT type FROM timeperiods WHERE id = ? AND deleted = 0';
-        $type = DBManagerFactory::getConnection()
-            ->executeQuery($query, array($id))
-            ->fetchColumn();
-
-        if (!$type) {
-            return null;
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query(sprintf("SELECT id, type FROM timeperiods WHERE id = '%s' AND deleted = 0", $id));
+        if ($result) {
+            $row = $db->fetchByAssoc($result);
+            if ($row) {
+                return BeanFactory::getBean($row['type'] . 'TimePeriods', $id);
+            }
         }
 
-        return BeanFactory::getBean($type . 'TimePeriods', $id);
+        return null;
     }
 
 
     /**
      * Returns the earliest TimePeriod bean instance for the given TimePeriod interval type
      *
-     * @param string $type TimePeriod interval type
-     * @return TimePeriod|null The earliest TimePeriod bean instance; null if none found
+     * @param $type String value of the TimePeriod interval type
+     * @return $bean The earliest TimePeriod bean instance; null if none found
      */
     public static function getEarliest($type)
     {
-        $conn = DBManagerFactory::getConnection();
-        $platform = $conn->getDatabasePlatform();
-
-        $query = 'SELECT id FROM timeperiods WHERE type = ? AND deleted = 0 ORDER BY start_date_timestamp ASC';
-        $query = $platform->modifyLimitQuery($query, 1);
-
-        $id = $conn->executeQuery($query, array($type))
-            ->fetchColumn();
-
-        if (!$id) {
-            return null;
+        $db = DBManagerFactory::getInstance();
+        $result = $db->limitQuery(
+            sprintf(
+                "SELECT * FROM timeperiods WHERE type = '%s' AND deleted = 0 ORDER BY start_date_timestamp ASC",
+                $type
+            ),
+            0,
+            1
+        );
+        if ($result) {
+            $row = $db->fetchByAssoc($result);
+            if (!empty($row)) {
+                $bean = BeanFactory::getBean("{$type}TimePeriods");
+                $bean->retrieve($row['id']);
+                return $bean;
+            }
         }
-
-        return TimePeriod::getByType($type, $id);
+        return null;
     }
 
     /**
      * Returns the latest TimePeriod bean instance for the given timeperiod interval type
      *
-     * @param string $type TimePeriod interval type
-     * @return TimePeriod|null The latest TimePeriod bean instance; null if none found
+     * @param $type String value of the TimePeriod interval type
+     * @return $bean The latest TimePeriod bean instance; null if none found
      */
     public static function getLatest($type)
     {
-        $conn = DBManagerFactory::getConnection();
-        $platform = $conn->getDatabasePlatform();
-
-        $query = 'SELECT id FROM timeperiods WHERE type = ? AND deleted = 0 ORDER BY start_date_timestamp DESC';
-        $query = $platform->modifyLimitQuery($query, 1);
-
-        $id = $conn->executeQuery($query, array($type))
-            ->fetchColumn();
-
-        if (!$id) {
-            return null;
+        $db = DBManagerFactory::getInstance();
+        $result = $db->limitQuery(
+            sprintf(
+                "SELECT * FROM timeperiods WHERE type = '%s' AND deleted = 0 ORDER BY start_date_timestamp DESC",
+                $type
+            ),
+            0,
+            1
+        );
+        if ($result) {
+            $row = $db->fetchByAssoc($result);
+            if (!empty($row)) {
+                return TimePeriod::getByType($type, $row['id']);
+            }
         }
-
-        return TimePeriod::getByType($type, $id);
+        return null;
     }
 
     /**

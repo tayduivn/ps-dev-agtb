@@ -670,9 +670,6 @@ function get_language_display($key)
     return $sugar_config['languages'][$key];
 }
 
-/**
- * @deprecated
- */
 function get_assigned_user_name($assigned_user_id, $is_group = '')
 {
 	// Declare static early so PSR-2 parser doesn't choke

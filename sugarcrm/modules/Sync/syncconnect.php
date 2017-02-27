@@ -154,6 +154,18 @@ if($sync_module_index == -1)add_to_msg("Logging Into Server...");
                                 $mi->rebuild_all(true);
 								$current_user->is_admin = 0;
 
+                                $db = DBManagerFactory::getInstance();
+                                $query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
+                                $db->query($query);
+
+                                // insert a new database row to show the rebuild extensions is done
+                                $id = create_guid();
+                                $gmdate = TimeDate::getInstance()->nowDb();
+                                $date_entered = db_convert("'$gmdate'", 'datetime');
+                                $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
+                                    . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
+                                $db->query($query);
+
 	   				            $current_step++;
 					            update_progress_bar('sync_setup', $current_step , $module_steps);
 
@@ -180,3 +192,6 @@ if($sync_module_index == -1)add_to_msg("Logging Into Server...");
 	}else{
 		add_to_msg('Failed to Login<br>');
 	}
+
+
+?>

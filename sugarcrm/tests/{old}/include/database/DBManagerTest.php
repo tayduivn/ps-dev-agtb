@@ -2864,9 +2864,7 @@ SQL;
                     'len' => '36',
                     'required'=>true,
                     'reportable'=>false,
-                ),
-                false,
-            ),
+                ), false),
             array(
                 array (
                     'name' => 'parent_tag_id',
@@ -2875,9 +2873,7 @@ SQL;
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                ),
-                true,
-            ),
+                ), true),
             array(
                 array (
                     'name' => 'any_id',
@@ -2886,29 +2882,7 @@ SQL;
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                ),
-                true,
-            ),
-            array(
-                array (
-                    'name' => 'any_id',
-                    'vname' => 'LBL_ANY_ID',
-                    'type' => 'id',
-                    'len' => '36',
-                    'reportable'=>false,
-                ),
-                true,
-            ),
-            array(
-                array (
-                    'name' => 'any_id',
-                    'vname' => 'LBL_ANY_ID',
-                    'dbType' => 'id',
-                    'len' => '36',
-                    'reportable'=>false,
-                ),
-                true,
-            ),
+                ), true)
         );
     }
 

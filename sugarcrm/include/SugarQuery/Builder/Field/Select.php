@@ -51,10 +51,8 @@ class SugarQuery_Builder_Field_Select extends SugarQuery_Builder_Field
 
         if ($this->field == '*') {
             // remove *
-            $bean = $this->query->getFromBean();
-            if (empty($this->moduleName)) {
-                $this->moduleName = $bean->module_name;
-            }
+            $this->moduleName = empty($this->moduleName) ? $this->query->getFromBean()->module_name : $this->moduleName;
+            $bean = BeanFactory::getBean($this->moduleName);
             foreach ($bean->field_defs AS $field => $def) {
                 if (!isset($def['source'])
                     || $def['source'] == 'db'

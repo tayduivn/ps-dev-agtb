@@ -456,11 +456,11 @@ class InboundEmail extends SugarBean {
 	 * Deletes all rows for a given instance
 	 */
 	function deleteCache() {
-        $q = "DELETE FROM email_cache WHERE ie_id = ? ";
+		$q = "DELETE FROM email_cache WHERE ie_id = '{$this->id}'";
 
 		$GLOBALS['log']->info("INBOUNDEMAIL: deleting cache using query [ {$q} ]");
-        $conn = $this->db->getConnection();
-        $conn->executeQuery($q, array($this->id));
+
+		$r = $this->db->query($q);
 	}
 
 	/**

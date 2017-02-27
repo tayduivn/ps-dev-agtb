@@ -2345,12 +2345,11 @@ function addDefaultRoles($defaultRoles = array()) {
                         ACLField::setAccessControl($category, $role1_id, $field_id, $access);
                     }
                 }else{
-                    $queryACL="SELECT id FROM acl_actions where category=? and name=?";
-                    $conn = $db->getConnection();
-                    $stmt = $conn->executeQuery($queryACL, array($category, $name));
-                    $actionId=$stmt->fetchColumn();
-                    if (!empty($actionId)) {
-                        $role1->setAction($role1_id, $actionId, $access_override);
+                    $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
+                    $result = $db->query($queryACL);
+                    $actionId=$db->fetchByAssoc($result);
+                    if (isset($actionId['id']) && !empty($actionId['id'])){
+                        $role1->setAction($role1_id, $actionId['id'], $access_override);
                     }
                 }
             }

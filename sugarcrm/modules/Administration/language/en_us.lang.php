@@ -935,6 +935,8 @@ expressions in the regex. Regular expressions should not include any delimiters.
     'MSG_CONFIG_FILE_REBUILD_SUCCESS' => 'The config.php was successfully rebuilt.',
     'MSG_INCREASE_UPLOAD_MAX_FILESIZE' => 'Warning: Your PHP configuration must be changed to allow files of at least 6MB to be uploaded.  Please modify the upload_max_filesize value in your php.ini located at:',
     'MSG_MAKE_CONFIG_FILE_WRITABLE' => 'Please make the config.php writable and try again.',
+    'MSG_REBUILD_EXTENSIONS' => 'Please go to the <a href="index.php?module=Administration&action=Upgrade">Repair</a> screen and click on Rebuild Extensions.',
+    'MSG_REBUILD_RELATIONSHIPS' => 'Please go to the <a href="index.php?module=Administration&action=Upgrade">Repair</a> screen and click on Rebuild Relationships.',
     'NO_ENABLED_OFFLINE_CLIENTS' => 'There currently are no enabled Offline Clients.',
     'NTC_DISABLE_OFFLINE_CLIENT_ALERT' => 'Are you sure you want to disable this Offline Client?',
     'NTC_ENABLE_OFFLINE_CLIENT_ALERT' => 'Are you sure you want to enable this Offline Client?',

@@ -159,20 +159,22 @@ class Currency extends SugarBean
      */
     function retrieveIDBySymbol($symbol)
     {
-        $query = "SELECT id FROM currencies WHERE symbol= ? AND deleted= ?";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($symbol, 0));
+         $query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0",
+             $this->db->quote($symbol)
+         );
+         $result = $this->db->query($query);
+         if($result){
+           $row = $this->db->fetchByAssoc($result);
+           if($row){
+              return $row['id'];
+           } else {
+               if($symbol == $this->getDefaultCurrencySymbol()) {
+                   return '-99';
+               }
+           }
+         }
 
-        $row = $stmt->fetchColumn();
-        if ($row) {
-            return $row;
-        }
-
-        if ($symbol == $this->getDefaultCurrencySymbol()) {
-            return '-99';
-        }
-
-        return '';
+         return '';
      }
 
     /**
@@ -185,19 +187,21 @@ class Currency extends SugarBean
      * @return string id value for symbol defined in currencies table,
      *                blank value for nothing found
      */
-    public function retrieveIDByISO($iso)
+    function retrieveIDByISO($ISO)
     {
-        $query = "SELECT id FROM currencies WHERE iso4217= ? AND deleted= ?";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($iso, 0));
-
-        $row = $stmt->fetchColumn();
-        if ($row) {
-            return $row;
-        }
-
-        if ($iso == $this->getDefaultISO4217()) {
-            return '-99';
+        $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0",
+            $this->db->quote($ISO)
+        );
+        $result = $this->db->query($query);
+        if($result){
+            $row = $this->db->fetchByAssoc($result);
+            if($row){
+                return $row['id'];
+            } else {
+                if($ISO == $this->getDefaultISO4217()) {
+                    return '-99';
+                }
+            }
         }
 
         return '';
@@ -232,19 +236,21 @@ class Currency extends SugarBean
      */
     function retrieveIDByName($name)
     {
-        $query = "select id from currencies where name= ? AND deleted= ?";
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery($query, array($name, 0));
+        $query = sprintf("select id from currencies where name='%s' and deleted=0",
+         $this->db->quote($name)
+        );
+        $result = $this->db->query($query);
+        if($result){
+            $row = $this->db->fetchByAssoc($result);
+            if($row){
+                return $row['id'];
+            } else {
+                if($name == $this->getDefaultCurrencyName()) {
+                    return '-99';
+                }
 
-        $row = $stmt->fetchColumn();
-        if ($row) {
-            return $row;
+            }
         }
-
-        if ($name == $this->getDefaultCurrencyName()) {
-            return '-99';
-        }
-
         return '';
     }
 

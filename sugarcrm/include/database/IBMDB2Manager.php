@@ -318,19 +318,11 @@ class IBMDB2Manager  extends DBManager
             return array();
         }        
 
-        $query = 'SELECT COLNAME, TYPENAME, LENGTH, SCALE, DEFAULT, NULLS, GENERATED
-FROM SYSCAT.COLUMNS
-WHERE TABSCHEMA = ?
-    AND TABNAME = ?';
-
-        $stmt = $this->getConnection()
-            ->executeQuery($query, array(
-                strtoupper($this->schema),
-                strtoupper($tablename),
-            ));
+		$result = $this->query(
+			"SELECT * FROM SYSCAT.COLUMNS WHERE TABSCHEMA = '".$this->schema."' AND TABNAME = '".strtoupper($tablename)."'");
 
 		$columns = array();
-        while (($row = $stmt->fetch())) {
+		while (($row=$this->fetchByAssoc($result)) !=null) {
 			$name = strtolower($row['colname']);
 			$columns[$name]['name']=$name;
 			$columns[$name]['type']=strtolower($row['typename']);
@@ -349,6 +341,7 @@ WHERE TABSCHEMA = ?
 			}
 			if ( !empty($row['default']) ) {
 				$matches = array();
+				$row['default'] = html_entity_decode($row['default'],ENT_QUOTES);
 				if ( preg_match("/^'(.*)'$/i",$row['default'],$matches) )
 					$columns[$name]['default'] = $matches[1];
 			}
@@ -1158,17 +1151,15 @@ FROM SYSCAT."INDEXES" i
 INNER JOIN SYSCAT."INDEXCOLUSE" c
     ON i.INDNAME = c.INDNAME';
 
-        $where = array('TABSCHEMA = ?');
-        $params = array($this->schema);
-
+        $where = array('TABSCHEMA = ' . $this->quoted($this->schema));
         if ($filterByTable) {
-            $where[] = 'i.TABNAME = ?';
-            $params[] = strtoupper($table_name);
+            $query_table_name = strtoupper($table_name);
+            $where[] = 'i.TABNAME = ' . $this->quoted($query_table_name);
         }
 
         if ($filterByIndex) {
-            $where[] = 'i.INDNAME = ?';
-            $params[] = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'i.INDNAME = ' . $this->quoted($query_index_name);
         }
 
         $query .= ' WHERE ' . implode(' AND ', $where);
@@ -1185,11 +1176,9 @@ INNER JOIN SYSCAT."INDEXCOLUSE" c
         $order[] = 'c.COLSEQ';
         $query .= ' ORDER BY ' . implode(', ', $order);
 
-        $stmt = $this
-            ->getConnection()
-            ->executeQuery($query, $params);
+        $result = $this->query($query);
 
-        while (($row = $stmt->fetch())) {
+        while ($row = $this->fetchByAssoc($result)) {
             if (!$filterByTable) {
                 $table_name = strtolower($row['table_name']);
             }
@@ -1240,24 +1229,19 @@ INNER JOIN SYSCAT."INDEXCOLUSE" c
             $query = 'SELECT ' . implode(', ', $columns) . '
 FROM SYSIBMTS.TSINDEXES';
 
-            $where = array('TABSCHEMA = ?');
-            $params = array($this->schema);
-
+            $where = array('TABSCHEMA = ' . $this->quoted($this->schema));
             if ($filterByTable) {
-                $where[] = 'TABNAME = ?';
-                $params[] = strtoupper($table_name);
+                $query_table_name = strtoupper($table_name);
+                $where[] = 'TABNAME = ' . $this->quoted($query_table_name);
             }
 
             if ($filterByIndex) {
-                $where[] = 'INDNAME = ?';
-                $params[] = strtoupper($this->getValidDBName($index_name, true, 'index'));
+                $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+                $where[] = 'INDNAME = ' . $this->quoted($query_index_name);
             }
 
-            $stmt = $this
-                ->getConnection()
-                ->executeQuery($query, $params);
-
-            while (($row = $stmt->fetch())) {
+            $result = $this->query($query);
+            while ($row = $this->fetchByAssoc($result)) {
                 if (!$filterByTable) {
                     $table_name = strtolower($row['table_name']);
                 }

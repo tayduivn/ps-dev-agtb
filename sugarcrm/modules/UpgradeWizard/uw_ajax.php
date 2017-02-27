@@ -288,6 +288,9 @@ function preflightCheckJsonFindUpgradeFiles($persistence) {
 	global $sugar_config;
 	global $mod_strings;
 
+	unset($persistence['rebuild_relationships']);
+	unset($persistence['rebuild_extensions']);
+
 	// don't bother if are rechecking
 	$manualDiff			= array();
 	if(!isset($persistence['unzip_dir']) || empty($persistence['unzip_dir'])) {

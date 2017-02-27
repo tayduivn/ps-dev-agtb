@@ -191,7 +191,7 @@ class SugarQuery
      * Set the from bean
      *
      * @param SugarBean $bean
-     * @param array     $options
+     * @param bool $alias
      *
      * @return SugarQuery
      */

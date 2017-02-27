@@ -350,13 +350,11 @@ class SqlsrvManager extends MssqlManager
             return array();
         }
 
-        $query = '{call sp_columns_90(?)}';
-
-        $stmt = $this->getConnection()
-            ->executeQuery($query, array($tablename));
+        //find all unique indexes and primary keys.
+        $result = $this->query("sp_columns_90 $tablename");
 
         $columns = array();
-        while (($row = $stmt->fetch())) {
+        while (($row=$this->fetchByAssoc($result)) !=null) {
             $column_name = strtolower($row['COLUMN_NAME']);
             $columns[$column_name]['name']=$column_name;
             $columns[$column_name]['type']=strtolower($row['TYPE_NAME']);
@@ -387,6 +385,7 @@ class SqlsrvManager extends MssqlManager
             }
             if ( $column_def != 0 && ($row['COLUMN_DEF'] != null)) {	// NOTE Not using !empty as an empty string may be a viable default value.
                 $matches = array();
+                $row['COLUMN_DEF'] = html_entity_decode($row['COLUMN_DEF'],ENT_QUOTES);
                 if ( preg_match('/\([\(|\'](.*)[\)|\']\)/i',$row['COLUMN_DEF'],$matches) )
                     $columns[$column_name]['default'] = $matches[1];
                 elseif ( preg_match('/\(N\'(.*)\'\)/i',$row['COLUMN_DEF'],$matches) )

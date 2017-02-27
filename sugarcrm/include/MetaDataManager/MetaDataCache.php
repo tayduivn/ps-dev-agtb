@@ -47,10 +47,13 @@ class MetaDataCache
 
     public function getKeys()
     {
-        return $this->db
-            ->getConnection()
-            ->executeQuery('SELECT type FROM ' . static::$cacheTable)
-            ->fetchAll(\PDO::FETCH_COLUMN);
+        $ret = array();
+        $result = $this->db->query('SELECT type FROM ' . static::$cacheTable);
+        while ($row = $this->db->fetchByAssoc($result)) {
+            $ret[] = $row['type'];
+        }
+
+        return $ret;
     }
 
     public function reset()
@@ -83,10 +86,17 @@ class MetaDataCache
         $result = null;
         //During install/setup, this function might get called before the DB is setup.
         if (!empty($this->db)) {
-            $cacheResult = null;
-            $row = $this->getLastModifiedByType($key);
-            if (!empty($row['data'])) {
+            $sqlResult = $this->db->query("SELECT id, data FROM " . static::$cacheTable . " WHERE type="
+                . $this->db->quoted($key) . " ORDER BY date_modified DESC");
+
+            if (($row = $this->db->fetchByAssoc($sqlResult))) {
                 $cacheResult = $row['data'];
+            }
+            if ($row){
+                //If we have more than one entry for the same key, we need to remove the duplicate entries.
+                while (($row = $this->db->fetchByAssoc($sqlResult))) {
+                    $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
+                }
             }
 
             if (!empty($cacheResult)) {
@@ -121,9 +131,15 @@ class MetaDataCache
             }
 
             $id = null;
-            $row = $this->getLastModifiedByType($key);
-            if (!empty($row['id'])) {
+            $result = $this->db->query("SELECT id FROM " . static::$cacheTable . " WHERE type="
+                            . $this->db->quoted($key) . " ORDER BY date_modified DESC");
+
+            if (($row = $this->db->fetchByAssoc($result)) && !empty($row['id'])) {
                 $id = $row['id'];
+                //If we have more than one entry for the same key, we need to remove the duplicate entries.
+                while (($row = $this->db->fetchByAssoc($result))) {
+                    $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE id=" . $this->db->quoted($row['id']));
+                }
             }
 
             $values = array(
@@ -156,34 +172,6 @@ class MetaDataCache
     }
 
     /**
-     * return last modified db row by type
-     * @param $type
-     * @return array|null
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function getLastModifiedByType($type)
-    {
-        $result = null;
-        if (empty($this->db)) {
-            return $result;
-        }
-        $conn = $this->db->getConnection();
-        $stmt = $conn->executeQuery(
-            sprintf('SELECT id, data FROM %s WHERE type = ? ORDER BY date_modified DESC', static::$cacheTable),
-            array($type)
-        );
-        $result = $stmt->fetch();
-        if ($result) {
-            //If we have more than one entry for the same key, we need to remove the duplicate entries.
-            while ($row = $stmt->fetch()) {
-                $conn->delete(static::$cacheTable, array('id' => $row['id']));
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Remove an entry in the cache table.
      *
      * @param String $key
@@ -195,7 +183,8 @@ class MetaDataCache
         if (!self::$isCacheEnabled) {
             return true;
         }
-        return $this->db->getConnection()->delete(static::$cacheTable, array('type' => $key));
+
+        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type=" . $this->db->quoted($key));
     }
 
     /**
@@ -214,10 +203,7 @@ class MetaDataCache
     }
 
     public function clearKeysLike($key) {
-        $qb = $this->db->getConnection()->createQueryBuilder();
-        return $qb->delete(static::$cacheTable)
-            ->where($qb->expr()->like('type', $qb->createPositionalParameter($key . '%')))
-            ->execute();
+        return $this->db->query("DELETE FROM " . static::$cacheTable . " WHERE type LIKE " . $this->db->quoted($key . '%'));
     }
 
 

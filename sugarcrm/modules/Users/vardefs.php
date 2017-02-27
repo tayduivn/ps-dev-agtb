@@ -534,7 +534,6 @@ $dictionary['User'] = array(
                 'source' => 'non-db',
                 'duplicate_merge' => 'disabled',
                 'studio' => 'false',
-                'side' => 'right',
             ),
 		    'team_count_link' =>
 	  			array (
@@ -548,7 +547,6 @@ $dictionary['User'] = array(
 			    'duplicate_merge' => 'disabled',
 	  			'reportable'=>false,
 	  			'studio' => 'false',
-                'side' => 'right',
 	  		),
 	  		'teams' =>
 			array (

@@ -295,20 +295,14 @@ abstract class MysqlManager extends DBManager
 		$this->log->info("tableExists: $tableName");
 
         if ($this->getDatabase() && !empty($this->connectOptions['db_name'])) {
-            $query = 'SELECT TABLE_NAME
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA = ?
-    AND TABLE_NAME = ?
-    AND TABLE_TYPE = ?';
-
-            $result = $this->getConnection()
-                ->executeQuery($query, array(
-                    $this->connectOptions['db_name'],
-                    $tableName,
-                    'BASE TABLE',
-                ))->fetchColumn();
-
-            return !empty($result);
+            $sql = sprintf(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+                  WHERE TABLE_TYPE='BASE TABLE' AND TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+                $this->quoted($this->connectOptions['db_name']),
+                $this->quoted($tableName)
+            );
+            $row = $this->getOne($sql);
+            return !empty($row);
         }
 
 		return false;
@@ -761,22 +755,16 @@ WHERE TABLE_SCHEMA = ?
         $query = 'SELECT ' . implode(', ', $columns) . '
 FROM information_schema.statistics';
 
-        $conn = $this->getConnection();
-        $schema = $conn->getDatabase();
-
-        $where = array('table_schema = ?');
-        $params = array($schema);
-
+        $schema = $this->getOne('SELECT DATABASE()');
+        $where = array('table_schema = ' . $this->quoted($schema));
         if ($filterByTable) {
-            $where[] = 'table_name = ?';
-            $params[] = $table_name;
+            $where[] = 'table_name = ' . $this->quoted($table_name);
         }
 
         if ($filterByIndex) {
-            $where[] = 'index_name = ?';
-            $params[] = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $query_index_name = strtoupper($this->getValidDBName($index_name, true, 'index'));
+            $where[] = 'index_name = ' . $this->quoted($query_index_name);
         }
-
         $query .= ' WHERE ' . implode(' AND ', $where);
 
         $order = array();
@@ -791,10 +779,10 @@ FROM information_schema.statistics';
         $order[] = 'seq_in_index';
         $query .= ' ORDER BY ' . implode(', ', $order);
 
-        $stmt = $conn->executeQuery($query, $params);
+        $result = $this->query($query);
 
         $data = array();
-        while (($row = $stmt->fetch())) {
+        while ($row = $this->fetchByAssoc($result)) {
             if (!$filterByTable) {
                 $table_name = $row['table_name'];
             }

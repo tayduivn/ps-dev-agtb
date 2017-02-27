@@ -11,26 +11,26 @@
  */
 
 function build_related_list_by_user_id($bean, $user_id,$where, $fill_additional_column_fields = true) {
-
     $bean_id_name = strtolower($bean->object_name).'_id';
 
-    $query = new SugarQuery();
-    $query->from($bean);
-    $query->joinTable($bean->rel_users_table)
-        ->on()
-        ->equalsField($bean->rel_users_table . '.' . $bean_id_name, $bean->table_name . '.id');
+    $select = "SELECT {$bean->table_name}.* from {$bean->rel_users_table},{$bean->table_name} ";
 
-    $query->where()
-        ->equals($bean->rel_users_table . '.user_id', $user_id)
-        ->equals($bean->rel_users_table . '.deleted', 0);
+    $auto_where = ' WHERE ';
+    if(!empty($where)) {
+        $auto_where .= $where. ' AND ';
+    }
 
-    $query->whereRaw($where);
+    $auto_where .= " {$bean->rel_users_table}.{$bean_id_name}={$bean->table_name}.id AND {$bean->rel_users_table}.user_id='{$user_id}' AND {$bean->table_name}.deleted=0 AND {$bean->rel_users_table}.deleted=0";
 
-    $result = $query->execute();
+    $bean->add_team_security_where_clause($select);
+
+    $query = $select.$auto_where;
+
+    $result = $bean->db->query($query, true);
 
     $list = array();
 
-    foreach ($result as $row) {
+    while($row = $bean->db->fetchByAssoc($result)) {
         $newbean = clone $bean;
         $row = $newbean->convertRow($row);
         $newbean->fetched_row = $row;
