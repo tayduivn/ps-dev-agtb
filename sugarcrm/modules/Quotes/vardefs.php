@@ -410,7 +410,7 @@ $dictionary['Quote'] = array(
                 'currency_id',
                 'base_rate',
                 'taxrate_value',
-                'new_sub',
+                'taxable_subtotal',
             ),
             'formula' => 'currencyMultiply($taxable_subtotal, currencyDivide($taxrate_value, "100"))',
             'default' => '0',

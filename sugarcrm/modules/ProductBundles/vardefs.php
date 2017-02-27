@@ -302,7 +302,7 @@ $dictionary['ProductBundle'] = array(
             'len' => '26,6',
             'disable_num_format' => true,
             'comment' => 'Rollup of all products marked as Taxable',
-            'formula' => 'rollupConditionalSum($products, "subtotal", "tax_class", "Taxable")',
+            'formula' => 'rollupConditionalSum($products, "total_amount", "tax_class", "Taxable")',
             'calculated' => true,
             'enforced' => true,
         ),
