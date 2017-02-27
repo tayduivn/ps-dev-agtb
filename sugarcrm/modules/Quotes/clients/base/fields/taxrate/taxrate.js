@@ -36,14 +36,9 @@
         taxrateValue = taxrateValue || '0';
 
         var taxratePercent = app.math.div(taxrateValue, '100');
-        var newTax = app.math.mul(this.model.get('new_sub'), taxratePercent);
+        var newTax = app.math.mul(this.model.get('taxable_subtotal'), taxratePercent);
 
         this.model.set('tax', newTax);
-
-        if (newTax === '0' && _.isEmpty(this.model.get('taxrate_value'))) {
-            // if tax is 0 also make taxrate_value 0
-            this.model.set('taxrate_value', '0');
-        }
     },
 
     /**

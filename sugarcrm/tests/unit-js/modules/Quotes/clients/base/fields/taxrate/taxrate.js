@@ -48,21 +48,10 @@ describe('Quotes.Base.Fields.Taxrate', function() {
 
     describe('_onTaxRateChange()', function() {
         it('should set tax based on the taxrate value', function() {
-            field.model.set('new_sub', '100');
+            field.model.set('taxable_subtotal', '100');
             field._onTaxRateChange({}, '8.25');
 
             expect(field.model.get('tax')).toBe('8.25');
-        });
-
-        it('should set taxrate_value to zero if tax is zero', function() {
-            field.model.set({
-                new_sub: '100',
-                taxrate_value: undefined
-            });
-            field._onTaxRateChange({}, '0');
-
-            expect(field.model.get('tax')).toBe('0');
-            expect(field.model.get('taxrate_value')).toBe('0');
         });
     });
 
